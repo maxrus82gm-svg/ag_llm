@@ -329,7 +329,19 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
     }
-    messages = [{"role": "user", "content": task}]
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Ты работаешь как локальный file-agent внутри workspace. "
+                "Для всех file tools используй ТОЛЬКО относительные пути. "
+                "Корень workspace обозначай точкой '.'. "
+                "Никогда не передавай абсолютные Windows-пути в list_dir, "
+                "read_file или write_file."
+            ),
+        },
+        {"role": "user", "content": task},
+    ]
     tool_iterations = 0
 
     async with httpx.AsyncClient(timeout=180.0) as client:
@@ -372,7 +384,20 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
                     ]
                 messages.append(assistant_message)
 
-                result = _execute_agent_function(root, function_call)
+                try:
+                    result = _execute_agent_function(root, function_call)
+                except Exception as exc:
+                    result = {
+                        "ok": False,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "instruction": (
+                            "Исправь аргументы и повтори вызов инструмента. "
+                            "Для путей используй только относительные пути "
+                            "внутри workspace; корень обозначается '.'."
+                        ),
+                    }
+
                 function_name = function_call["name"]
                 messages.append(
                     {
