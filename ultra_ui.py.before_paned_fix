@@ -134,7 +134,7 @@ class UltraApp(tk.Tk):
         # Левая панель — ЛОГ ДЕЙСТВИЙ
         left_frame = ttk.Frame(paned, width=340)
         left_frame.pack_propagate(False)
-        paned.add(left_frame, weight=0)
+        paned.add(left_frame, minsize=260)
 
         ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(anchor="w", padx=(0, 0), pady=(0, 6))
 
@@ -149,8 +149,7 @@ class UltraApp(tk.Tk):
 
         # Правая панель — всё остальное
         right_frame = ttk.Frame(paned)
-        paned.add(right_frame, weight=1)
-        self.after_idle(lambda: paned.sashpos(0, 340))
+        paned.add(right_frame)
 
         # Workspace
         workspace_frame = ttk.Frame(right_frame)
