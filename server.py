@@ -17,7 +17,7 @@ TEMPERATURE = 0.15
 MAX_TOKENS = 32768
 
 MAX_TASK_FILE_BYTES = 2 * 1024 * 1024
-ALLOWED_TEXT_SUFFIXES = {".md", ".txt", ".py"}
+ALLOWED_TEXT_SUFFIXES = {".md", ".txt", ".py", ".json", ".jsonl"}
 
 MAX_AGENT_FILE_BYTES = 2 * 1024 * 1024
 MAX_AGENT_LIST_ENTRIES = 500
@@ -191,9 +191,9 @@ def _resolve_workspace_path(root: Path, path_text: str) -> Path:
     return resolved
 
 def _require_text_suffix(path: Path) -> None:
-    if path.suffix.lower() not in ALLOWED_TEXT_SUFFIXES:
+    if path.suffix.lower() not in ALLOWED_TEXT_SUFFIXES and path.name != ".gitignore":
         allowed = ", ".join(sorted(ALLOWED_TEXT_SUFFIXES))
-        raise ValueError(f"Разрешены только текстовые файлы: {allowed}.")
+        raise ValueError(f"Разрешены только текстовые файлы: {allowed} или файл .gitignore.")
 
 def _agent_list_dir(root: Path, path_text: str) -> dict:
     path = _resolve_workspace_path(root, path_text)
@@ -270,7 +270,7 @@ def _agent_write_file(root: Path, path_text: str, content: str) -> dict:
     if resolved_parent != root and root not in resolved_parent.parents:
         raise ValueError("Родительская папка выходит за пределы workspace_root.")
 
-    path.write_text(content, encoding="utf-8")
+    path.write_text(content, encoding="utf-16" if path.suffix.lower() == ".jsonl" else "utf-8")
     return {
         "path": path.relative_to(root).as_posix(),
         "bytes_written": len(encoded_content),
@@ -318,10 +318,39 @@ def _execute_agent_function(root: Path, function_call: object) -> dict:
         return _agent_read_file(root, arguments["path"])
     return _agent_write_file(root, arguments["path"], arguments["content"])
 
-async def run_agent_task(task: str, workspace_root: str) -> str:
+async def run_agent_task(task: str, workspace_root: str, *, on_event=None) -> str:
     """Запустить автономный GigaChat file-agent без зависимости от MCP."""
     if not isinstance(task, str) or not task.strip():
         raise ValueError("task должен быть непустой строкой.")
+
+    run_id = time.strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+    start_time = time.time()
+    api_request_count = 0
+    tool_call_count = 0
+
+    def _emit(event_type: str, payload: dict):
+        event = {
+            "event": event_type,
+            "run_id": run_id,
+            "timestamp": time.time(),
+            **payload,
+        }
+        if on_event:
+            try:
+                on_event(event)
+            except Exception:
+                pass
+
+        log_dir = Path("logs") / "runs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / f"{run_id}.jsonl"
+        try:
+            with log_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(event, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+    _emit("run_started", {"task_preview": task[:200]})
 
     root = _validate_workspace_root(workspace_root)
     token = await get_access_token()
@@ -343,9 +372,17 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
         {"role": "user", "content": task},
     ]
     tool_iterations = 0
+    last_tool_sequence = 0
+    last_tool_name = None
+    last_tool_args = None
+    last_tool_error = None
+    last_tool_error_count = 0
 
     async with httpx.AsyncClient(timeout=180.0) as client:
         while True:
+            api_request_count += 1
+            _emit("api_request", {"api_request_number": api_request_count})
+
             body = {
                 "model": MODEL,
                 "messages": messages,
@@ -355,7 +392,9 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
                 "max_tokens": MAX_TOKENS,
                 "stream": False,
             }
+            request_start = time.time()
             response = await client.post(CHAT_URL, headers=headers, json=body)
+            request_duration = time.time() - request_start
             response.raise_for_status()
             data = response.json()
 
@@ -364,12 +403,48 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
                 message = choice["message"]
                 finish_reason = choice.get("finish_reason")
             except (KeyError, IndexError, TypeError) as exc:
+                _emit("api_response", {
+                    "api_request_number": api_request_count,
+                    "http_status": response.status_code,
+                    "duration": request_duration,
+                    "error": "Malformed response",
+                })
+                _emit("run_failed", {
+                    "reason": "malformed_response",
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
                 raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+
+            _emit("api_response", {
+                "api_request_number": api_request_count,
+                "http_status": response.status_code,
+                "finish_reason": finish_reason,
+                "duration": request_duration,
+            })
 
             if finish_reason == "function_call":
                 if tool_iterations >= MAX_AGENT_TOOL_ITERATIONS:
+                    _emit("run_failed", {
+                        "reason": "tool_limit",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "last_function": last_tool_name,
+                        "last_arguments": last_tool_args,
+                        "last_error": last_tool_error,
+                        "trace_path": f"logs/runs/{run_id}.jsonl",
+                    })
                     raise RuntimeError(
-                        "GigaChat превысил лимит в 20 вызовов функций."
+                        f"TOOL LIMIT REACHED\n"
+                        f"Run ID: {run_id}\n"
+                        f"API requests: {api_request_count}\n"
+                        f"Tool calls: {tool_call_count}\n"
+                        f"Last function: {last_tool_name}\n"
+                        f"Last arguments: {last_tool_args}\n"
+                        f"Last result/error: {last_tool_error}\n"
+                        f"Trace: logs/runs/{run_id}.jsonl"
                     )
 
                 function_call = message.get("function_call")
@@ -386,6 +461,8 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
 
                 try:
                     result = _execute_agent_function(root, function_call)
+                    tool_ok = True
+                    tool_error = None
                 except Exception as exc:
                     result = {
                         "ok": False,
@@ -397,8 +474,74 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
                             "внутри workspace; корень обозначается '.'."
                         ),
                     }
+                    tool_ok = False
+                    tool_error = {
+                        "type": type(exc).__name__,
+                        "message": str(exc),
+                    }
 
                 function_name = function_call["name"]
+                safe_args = dict(function_call.get("arguments", {}))
+                if function_name == "write_file" and "content" in safe_args:
+                    safe_args["content"] = f"<{len(safe_args['content'])} bytes>"
+
+                tool_call_count += 1
+                last_tool_sequence += 1
+                last_tool_name = function_name
+                last_tool_args = safe_args
+                last_tool_error = tool_error
+
+                _emit("tool_started", {
+                    "tool_sequence": last_tool_sequence,
+                    "function": function_name,
+                    "arguments": safe_args,
+                    "timestamp": time.time(),
+                })
+
+                if tool_ok:
+                    _emit("tool_finished", {
+                        "tool_sequence": last_tool_sequence,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "duration": None,
+                        "result": result,
+                    })
+                else:
+                    _emit("tool_error", {
+                        "tool_sequence": last_tool_sequence,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "error": tool_error,
+                    })
+
+                    last_tool_error_count += 1
+                    if (
+                        last_tool_error_count >= 3
+                        and function_name == last_tool_name
+                        and safe_args == last_tool_args
+                        and tool_error == last_tool_error
+                    ):
+                        _emit("run_failed", {
+                            "reason": "loop_detected",
+                            "api_requests": api_request_count,
+                            "tool_calls": tool_call_count,
+                            "duration": time.time() - start_time,
+                            "function": function_name,
+                            "arguments": safe_args,
+                            "error": tool_error,
+                            "repeat_count": last_tool_error_count,
+                            "trace_path": f"logs/runs/{run_id}.jsonl",
+                        })
+                        raise RuntimeError(
+                            f"LOOP DETECTED\n"
+                            f"Run ID: {run_id}\n"
+                            f"Function: {function_name}\n"
+                            f"Arguments: {safe_args}\n"
+                            f"Error: {tool_error}\n"
+                            f"Repeats: {last_tool_error_count}\n"
+                            f"Trace: logs/runs/{run_id}.jsonl"
+                        )
+
                 messages.append(
                     {
                         "role": "function",
@@ -410,6 +553,13 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
                 continue
 
             if finish_reason not in ("stop", "eos"):
+                _emit("run_failed", {
+                    "reason": "bad_finish_reason",
+                    "finish_reason": finish_reason,
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
                 raise RuntimeError(
                     "Агент GigaChat завершён нештатно. "
                     f"finish_reason={finish_reason!r}."
@@ -417,7 +567,20 @@ async def run_agent_task(task: str, workspace_root: str) -> str:
 
             content = message.get("content")
             if not isinstance(content, str) or not content:
+                _emit("run_failed", {
+                    "reason": "empty_final_content",
+                    "api_requests": api_request_count,
+                    "tool_calls": tool_call_count,
+                    "duration": time.time() - start_time,
+                })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+
+            _emit("run_finished", {
+                "status": "SUCCESS",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+            })
             return content
 
 def _validate_text_file(path_text: str, *, must_exist: bool) -> Path:
@@ -468,6 +631,23 @@ async def gigachat_file_task(task_file: str, report_file: str) -> str:
     task_text = task_path.read_text(encoding="utf-8-sig")
 
     if not task_text.strip():
+        run_id = time.strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+        log_dir = Path("logs") / "runs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / f"{run_id}.jsonl"
+        event = {
+            "event": "run_failed",
+            "run_id": run_id,
+            "timestamp": time.time(),
+            "reason": "empty_task_file",
+            "task_file": task_path.as_posix(),
+        }
+        try:
+            with log_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(event, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
         raise ValueError("Файл задачи пуст.")
 
     prompt = (

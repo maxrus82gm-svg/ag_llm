@@ -1,4 +1,5 @@
 import asyncio
+import json
 import queue
 import threading
 import time
@@ -62,16 +63,96 @@ class UltraApp(tk.Tk):
         self.running = False
         self.started_at = 0.0
         self.events: queue.Queue[tuple[str, str]] = queue.Queue()
+        self.trace_events: queue.Queue[dict] = queue.Queue()
+
+        # Отслеживание изменений исходного кода
+        self._code_changed = False
+        self._changed_files: list[str] = []
+        self._server_mtime = None
+        self._ui_mtime = None
+        self._record_initial_mtimes()
 
         self._build_ui()
         self.after(100, self._poll_events)
+        self.after(100, self._poll_trace_events)
         self.after(500, self._tick_status)
+        self.after(1000, self._poll_code_changes)
+
+    def _record_initial_mtimes(self) -> None:
+        """Запомнить mtime server.py и ultra_ui.py при старте."""
+        try:
+            self._server_mtime = Path("server.py").stat().st_mtime
+        except FileNotFoundError:
+            self._server_mtime = None
+        try:
+            self._ui_mtime = Path("ultra_ui.py").stat().st_mtime
+        except FileNotFoundError:
+            self._ui_mtime = None
+
+    def _poll_code_changes(self) -> None:
+        """Проверять изменения server.py и ultra_ui.py раз в секунду."""
+        changed = []
+        try:
+            current = Path("server.py").stat().st_mtime
+            if self._server_mtime is not None and current != self._server_mtime:
+                changed.append("server.py")
+        except FileNotFoundError:
+            pass
+        try:
+            current = Path("ultra_ui.py").stat().st_mtime
+            if self._ui_mtime is not None and current != self._ui_mtime:
+                changed.append("ultra_ui.py")
+        except FileNotFoundError:
+            pass
+
+        if changed and not self._code_changed:
+            self._code_changed = True
+            self._changed_files = changed
+            self._show_code_change_warning()
+
+        self.after(1000, self._poll_code_changes)
+
+    def _show_code_change_warning(self) -> None:
+        """Показать предупреждение об изменении исходного кода runtime."""
+        files = ", ".join(self._changed_files)
+        warning = (
+            "⚠ Исходный код runtime изменён.\n"
+            "Текущий процесс использует старую версию.\n"
+            "Требуется перезапуск приложения.\n\n"
+            f"Изменён: {files}"
+        )
+        self._append_chat("СИСТЕМА", warning, "system")
 
     def _build_ui(self) -> None:
         root = ttk.Frame(self, padding=12)
         root.pack(fill="both", expand=True)
 
-        workspace_frame = ttk.Frame(root)
+        # Главный контейнер с разделителем
+        paned = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+        paned.pack(fill="both", expand=True)
+
+        # Левая панель — ЛОГ ДЕЙСТВИЙ
+        left_frame = ttk.Frame(paned, width=340)
+        left_frame.pack_propagate(False)
+        paned.add(left_frame, minsize=260)
+
+        ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(anchor="w", padx=(0, 0), pady=(0, 6))
+
+        self.trace_log = scrolledtext.ScrolledText(
+            left_frame,
+            wrap="word",
+            state="disabled",
+            font=("Consolas", 9),
+        )
+        self.trace_log.pack(fill="both", expand=True)
+        self.trace_log.tag_configure("trace", font=("Consolas", 9))
+
+        # Правая панель — всё остальное
+        right_frame = ttk.Frame(paned)
+        paned.add(right_frame)
+
+        # Workspace
+        workspace_frame = ttk.Frame(right_frame)
         workspace_frame.pack(fill="x")
 
         ttk.Label(workspace_frame, text="Workspace:").pack(side="left")
@@ -89,12 +170,13 @@ class UltraApp(tk.Tk):
             command=self._choose_workspace,
         ).pack(side="left")
 
-        ttk.Separator(root).pack(fill="x", pady=10)
+        ttk.Separator(right_frame).pack(fill="x", pady=10)
 
-        ttk.Label(root, text="Чат").pack(anchor="w")
+        # Чат
+        ttk.Label(right_frame, text="Чат").pack(anchor="w")
 
         self.chat = scrolledtext.ScrolledText(
-            root,
+            right_frame,
             wrap="word",
             state="disabled",
             font=("Segoe UI", 10),
@@ -111,7 +193,10 @@ class UltraApp(tk.Tk):
                 lambda e: (e.widget.event_generate("<<Copy>>"), "break")[1],
             )
 
-        status_frame = ttk.Frame(root)
+        ttk.Separator(right_frame).pack(fill="x", pady=10)
+
+        # Статус и прогресс
+        status_frame = ttk.Frame(right_frame)
         status_frame.pack(fill="x", pady=(0, 8))
 
         ttk.Label(status_frame, text="Статус:").pack(side="left")
@@ -127,10 +212,11 @@ class UltraApp(tk.Tk):
         )
         self.progress.pack(side="right")
 
-        ttk.Label(root, text="Сообщение").pack(anchor="w")
+        # Поле сообщения
+        ttk.Label(right_frame, text="Сообщение").pack(anchor="w")
 
         self.input_box = scrolledtext.ScrolledText(
-            root,
+            right_frame,
             wrap="word",
             height=8,
             font=("Segoe UI", 10),
@@ -140,7 +226,8 @@ class UltraApp(tk.Tk):
         bind_edit_shortcuts(self.input_box)
         self.input_box.bind("<Control-Return>", self._send_from_hotkey)
 
-        buttons = ttk.Frame(root)
+        # Кнопки
+        buttons = ttk.Frame(right_frame)
         buttons.pack(fill="x")
 
         ttk.Label(
@@ -177,6 +264,80 @@ class UltraApp(tk.Tk):
         self.chat.insert("end", f"{text.strip()}\n\n", tag)
         self.chat.see("end")
         self.chat.configure(state="disabled")
+
+    def _append_trace(self, line: str) -> None:
+        self.trace_log.configure(state="normal")
+        self.trace_log.insert("end", f"{line}\n", "trace")
+        self.trace_log.see("end")
+        self.trace_log.configure(state="disabled")
+
+    def _format_event(self, event: dict) -> str:
+        event_type = event.get("event")
+        run_id = event.get("run_id", "")
+        timestamp = event.get("timestamp")
+        time_str = time.strftime("%H:%M:%S", time.localtime(timestamp)) if timestamp else "--:--:--"
+
+        if event_type == "run_started":
+            task_preview = event.get("task_preview", "")
+            return f"[{time_str}] RUN START | {run_id} | {task_preview[:60]}"
+
+        if event_type == "api_request":
+            num = event.get("api_request_number")
+            return f"[{time_str}] API #{num}"
+
+        if event_type == "api_response":
+            num = event.get("api_request_number")
+            status = event.get("http_status")
+            reason = event.get("finish_reason")
+            duration = event.get("duration")
+            dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
+            reason_str = f" | {reason}" if reason else ""
+            return f"[{time_str}] API #{num} -> {status}{reason_str}{dur_str}"
+
+        if event_type == "tool_started":
+            seq = event.get("tool_sequence")
+            func = event.get("function")
+            args = event.get("arguments", {})
+            args_str = ", ".join(f"{k}={v}" for k, v in args.items())
+            return f"[{time_str}] TOOL #{seq} {func}({args_str})"
+
+        if event_type == "tool_finished":
+            seq = event.get("tool_sequence")
+            func = event.get("function")
+            result = event.get("result", {})
+            duration = event.get("duration")
+            dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
+            return f"[{time_str}] TOOL #{seq} {func} -> OK{dur_str}"
+
+        if event_type == "tool_error":
+            seq = event.get("tool_sequence")
+            func = event.get("function")
+            error = event.get("error", {})
+            err_type = error.get("type", "")
+            err_msg = error.get("message", "")
+            duration = event.get("duration")
+            dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
+            return f"[{time_str}] TOOL #{seq} {func} -> ERROR ({err_type}){dur_str}: {err_msg}"
+
+        if event_type == "run_finished":
+            status = event.get("status")
+            api_count = event.get("api_requests")
+            tool_count = event.get("tool_calls")
+            duration = event.get("duration")
+            dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
+            return f"[{time_str}] {status} | API: {api_count} | TOOLS: {tool_count}{dur_str} | RUN {run_id}"
+
+        if event_type == "run_failed":
+            reason = event.get("reason")
+            api_count = event.get("api_requests")
+            tool_count = event.get("tool_calls")
+            duration = event.get("duration")
+            dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
+            trace_path = event.get("trace_path")
+            trace_str = f" | trace: {trace_path}" if trace_path else ""
+            return f"[{time_str}] ERROR ({reason}){dur_str} | API: {api_count} | TOOLS: {tool_count}{trace_str} | RUN {run_id}"
+
+        return f"[{time_str}] {event_type}"
 
     def _send_from_hotkey(self, _event: tk.Event) -> str:
         self._send()
@@ -220,8 +381,14 @@ class UltraApp(tk.Tk):
         thread.start()
 
     def _worker(self, task: str, workspace: str) -> None:
+        def on_event(event: dict):
+            try:
+                self.trace_events.put_nowait(event)
+            except queue.Full:
+                pass
+
         try:
-            result = asyncio.run(run_agent_task(task, workspace))
+            result = asyncio.run(run_agent_task(task, workspace, on_event=on_event))
             self.events.put(("success", result))
         except Exception as exc:
             self.events.put(("error", f"{type(exc).__name__}: {exc}"))
@@ -241,6 +408,17 @@ class UltraApp(tk.Tk):
             pass
 
         self.after(100, self._poll_events)
+
+    def _poll_trace_events(self) -> None:
+        try:
+            while True:
+                event = self.trace_events.get_nowait()
+                line = self._format_event(event)
+                self._append_trace(line)
+        except queue.Empty:
+            pass
+
+        self.after(100, self._poll_trace_events)
 
     def _tick_status(self) -> None:
         if self.running:
