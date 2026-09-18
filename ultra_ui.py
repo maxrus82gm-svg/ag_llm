@@ -151,6 +151,9 @@ class UltraApp(tk.Tk):
                     selectforeground=fg,
                 )
 
+        # Настройка цвета разделителя запусков
+        self.trace_log.tag_configure("run_separator", foreground="#6a8bb5" if dark else "#4a6b8f")
+
     def _record_initial_mtimes(self) -> None:
         try:
             self._server_mtime = Path("server.py").stat().st_mtime
@@ -173,7 +176,7 @@ class UltraApp(tk.Tk):
             current = Path("ultra_ui.py").stat().st_mtime
             if self._ui_mtime is not None and current != self._ui_mtime:
                 changed.append("ultra_ui.py")
-        except FileNotFoundError:
+        except FileNotFoundFileError:
             pass
 
         if changed and not self._code_changed:
@@ -359,6 +362,7 @@ class UltraApp(tk.Tk):
         )
         bind_edit_shortcuts(delete_scope_entry)
         delete_scope_button = ttk.Button(
+            run_scope_button = ttk.Button(
             security,
             text="Выбрать",
             command=lambda: self._choose_scope(self.delete_scope_var),
@@ -617,6 +621,7 @@ class UltraApp(tk.Tk):
             return f"[{time_str}] TOOL #{seq} {func} -> OK{dur_str}"
 
         if event_type == "tool_error":
+            seq = event типа == "tool_error":
             seq = event.get("tool_sequence")
             func = event.get("function")
             error = event.get("error", {})
@@ -789,10 +794,29 @@ class UltraApp(tk.Tk):
         try:
             while True:
                 event = self.trace_events.get_nowait()
-                self._append_trace(self._format_event(event))
+                self._handle_trace_event(event)
         except queue.Empty:
             pass
         self.after(100, self._poll_trace_events)
+
+    def _handle_trace_event(self, event: dict) -> None:
+        event_type = event.get("event")
+        if event_type == "run_started":
+            if self._has_any_run_started():
+                self._insert_run_separator()
+            self._append_trace(self._format_event(event))
+            self._set_run_started(True)
+        else:
+            self._append_trace(self._format_event(event))
+
+    def _insert_run_separator(self) -> None:
+        self.trace_log.configure(state="normal")
+        self.trace_log.insert("end", "\n", "trace")
+        self.trace_log.insert("end", "////////////////////////////////////////////////////////////\n", "run_separator")
+        self.trace_log.insert("end", "////////////////////////////////////////////////////////////\n", "run_separator")
+        self.trace_log.insert("end", "\n", "trace")
+        self.trace_log.see("end")
+        self.trace_log.configure(state="disabled")
 
     def _tick_status(self) -> None:
         if self.running:
@@ -806,6 +830,12 @@ class UltraApp(tk.Tk):
         self.status_var.set(status)
         self._set_run_controls_enabled(True)
         self.input_box.focus_set()
+
+    def _has_any_run_started(self) -> bool:
+        return getattr(self, "_run_started", False)
+
+    def _set_run_started(self, value: bool) -> None:
+        self._run_started = value
 
 
 if __name__ == "__main__":
