@@ -358,6 +358,38 @@ async def run_agent_task(task: str, workspace_root: str, *, on_event=None) -> st
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
     }
+
+    # Загрузка обязательного регламента Ultra
+    app_dir = Path(__file__).resolve().parent
+    policy_path = app_dir / "Документация" / "00_Обязательный регламент Ultra.md"
+    try:
+        policy_text = policy_path.read_text(encoding="utf-8")
+    except Exception as exc:
+        _emit("run_failed", {
+            "reason": "policy_load_error",
+            "api_requests": api_request_count,
+            "tool_calls": tool_call_count,
+            "duration": time.time() - start_time,
+            "error": str(exc),
+            "trace_path": f"logs/runs/{run_id}.jsonl",
+        })
+        raise RuntimeError(
+            "Не удалось загрузить обязательный регламент Ultra. "
+            "Запуск без регламента запрещён."
+        ) from exc
+
+    if not policy_text.strip():
+        _emit("run_failed", {
+            "reason": "policy_empty",
+            "api_requests": api_request_count,
+            "tool_calls": tool_call_count,
+            "duration": time.time() - start_time,
+            "trace_path": f"logs/runs/{run_id}.jsonl",
+        })
+        raise RuntimeError(
+            "Обязательный регламент Ultra пуст. Запуск без регламента запрещён."
+        )
+
     messages = [
         {
             "role": "system",
@@ -366,7 +398,9 @@ async def run_agent_task(task: str, workspace_root: str, *, on_event=None) -> st
                 "Для всех file tools используй ТОЛЬКО относительные пути. "
                 "Корень workspace обозначай точкой '.'. "
                 "Никогда не передавай абсолютные Windows-пути в list_dir, "
-                "read_file или write_file."
+                "read_file или write_file.\n\n"
+                "ОБЯЗАТЕЛЬНЫЙ РЕГЛАМЕНТ ULTRA\n\n"
+                f"{policy_text}"
             ),
         },
         {"role": "user", "content": task},
@@ -508,7 +542,7 @@ async def run_agent_task(task: str, workspace_root: str, *, on_event=None) -> st
                     })
                 else:
                     _emit("tool_error", {
-                        "tool_sequence": last_tool_sequence,
+                        "tool_sequence": run_id,
                         "function": function_name,
                         "arguments": safe_args,
                         "error": tool_error,
@@ -569,7 +603,7 @@ async def run_agent_task(task: str, workspace_root: str, *, on_event=None) -> st
             if not isinstance(content, str) or not content:
                 _emit("run_failed", {
                     "reason": "empty_final_content",
-                    "api_requests": api_request_count,
+                    "api_requests": api_request_order,
                     "tool_calls": tool_call_count,
                     "duration": time.time() - start_time,
                 })
@@ -637,36 +671,8 @@ async def gigachat_file_task(task_file: str, report_file: str) -> str:
         log_path = log_dir / f"{run_id}.jsonl"
         event = {
             "event": "run_failed",
-            "run_id": run_id,
-            "timestamp": time.time(),
-            "reason": "empty_task_file",
-            "task_file": task_path.as_posix(),
-        }
-        try:
-            with log_path.open("a", encoding="utf-8") as f:
-                f.write(json.dumps(event, ensure_ascii=False) + "\n")
-        except Exception:
-            pass
-
-        raise ValueError("Файл задачи пуст.")
-
-    prompt = (
-        "Ты работаешь как самостоятельный инженерный субагент.\n"
-        "Ниже находится полное техническое задание из локального файла.\n"
-        "Выполни его самостоятельно.\n"
-        "Не обращайся к Codex за дополнительными рассуждениями, если задача "
-        "уже содержит достаточный контекст.\n"
-        "Ответ должен строго соответствовать формату, указанному "
-        "в техническом задании.\n\n"
-        "===== НАЧАЛО ЗАДАЧИ =====\n"
-        f"{task_text}\n"
-        "===== КОНЕЦ ЗАДАЧИ =====\n"
+            "run_id": run полный отчёт: {report_path}"
     )
-
-    result = await ask_gigachat(prompt)
-
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(result, encoding="utf-8")
 
     return (
         "Готово. GigaChat Ultra прочитал файл задачи и записал полный отчёт: "
