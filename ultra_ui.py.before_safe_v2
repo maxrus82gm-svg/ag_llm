@@ -64,14 +64,10 @@ class UltraApp(tk.Tk):
         # читать можно весь workspace, писать нельзя, autobackup включён.
         self.allow_read_var = tk.BooleanVar(value=True)
         self.allow_write_var = tk.BooleanVar(value=False)
-        self.allow_delete_var = tk.BooleanVar(value=False)
         self.auto_backup_var = tk.BooleanVar(value=True)
-        self.dark_theme_var = tk.BooleanVar(value=True)
-        self.tool_limit_var = tk.StringVar(value="20")
         self.read_scope_var = tk.StringVar(value=".")
         default_write_scope = "Документация" if (Path.cwd() / "Документация").is_dir() else "."
         self.write_scope_var = tk.StringVar(value=default_write_scope)
-        self.delete_scope_var = tk.StringVar(value=".")
         self.backup_path_var = tk.StringVar(value=str(get_backup_base_path()))
 
         self.running = False
@@ -88,68 +84,10 @@ class UltraApp(tk.Tk):
         self._security_widgets: list[tk.Widget] = []
 
         self._build_ui()
-        self._apply_theme()
         self.after(100, self._poll_events)
         self.after(100, self._poll_trace_events)
         self.after(500, self._tick_status)
         self.after(1000, self._poll_code_changes)
-
-    def _apply_theme(self) -> None:
-        dark = self.dark_theme_var.get()
-        style = ttk.Style(self)
-        try:
-            style.theme_use("clam")
-        except tk.TclError:
-            pass
-
-        if dark:
-            bg = "#1e1f22"
-            panel = "#2b2d30"
-            field = "#202124"
-            fg = "#e8e8e8"
-            muted = "#b8b8b8"
-            select_bg = "#3f638f"
-            button_bg = "#35383d"
-        else:
-            bg = "#f3f3f3"
-            panel = "#f3f3f3"
-            field = "#ffffff"
-            fg = "#111111"
-            muted = "#444444"
-            select_bg = "#99c2ff"
-            button_bg = "#e7e7e7"
-
-        self.configure(bg=bg)
-        style.configure(".", background=panel, foreground=fg)
-        style.configure("TFrame", background=panel)
-        style.configure("TLabel", background=panel, foreground=fg)
-        style.configure("TLabelframe", background=panel, foreground=fg)
-        style.configure("TLabelframe.Label", background=panel, foreground=fg)
-        style.configure("TCheckbutton", background=panel, foreground=fg)
-        style.configure("TButton", background=button_bg, foreground=fg)
-        style.configure("TEntry", fieldbackground=field, foreground=fg)
-        style.configure("TSpinbox", fieldbackground=field, foreground=fg)
-        style.map(
-            "TButton",
-            background=[("active", button_bg)],
-            foreground=[("disabled", muted), ("!disabled", fg)],
-        )
-        style.map(
-            "TCheckbutton",
-            background=[("active", panel)],
-            foreground=[("disabled", muted), ("!disabled", fg)],
-        )
-
-        for name in ("trace_log", "chat", "input_box"):
-            widget = getattr(self, name, None)
-            if widget is not None:
-                widget.configure(
-                    bg=field,
-                    fg=fg,
-                    insertbackground=fg,
-                    selectbackground=select_bg,
-                    selectforeground=fg,
-                )
 
     def _record_initial_mtimes(self) -> None:
         try:
@@ -250,38 +188,14 @@ class UltraApp(tk.Tk):
         )
         security.pack(fill="x", pady=(10, 8))
 
-        # Верхняя строка: backup, лимит инструментов и тема.
+        # Автобэкап — отдельный общий переключатель запуска.
         backup_check = ttk.Checkbutton(
             security,
             text="Автобэкап ДО запуска",
             variable=self.auto_backup_var,
         )
         backup_check.grid(
-            row=0, column=0, columnspan=2, sticky="w", pady=(0, 4)
-        )
-
-        ttk.Label(security, text="Лимит tools:").grid(
-            row=0, column=2, sticky="e", padx=(12, 4), pady=(0, 4)
-        )
-        tool_limit_spin = ttk.Spinbox(
-            security,
-            from_=1,
-            to=200,
-            width=6,
-            textvariable=self.tool_limit_var,
-        )
-        tool_limit_spin.grid(
-            row=0, column=3, sticky="w", pady=(0, 4)
-        )
-
-        theme_check = ttk.Checkbutton(
-            security,
-            text="Тёмная тема",
-            variable=self.dark_theme_var,
-            command=self._apply_theme,
-        )
-        theme_check.grid(
-            row=0, column=4, sticky="w", padx=(14, 0), pady=(0, 4)
+            row=0, column=0, columnspan=4, sticky="w", pady=(0, 4)
         )
 
         # Галочка чтения находится прямо у области, которой она управляет.
@@ -338,35 +252,8 @@ class UltraApp(tk.Tk):
         )
         write_scope_button.grid(row=2, column=3, sticky="w", pady=(6, 0))
 
-        # Удаление — отдельное разрешение, независимо от записи.
-        delete_check = ttk.Checkbutton(
-            security,
-            text="",
-            variable=self.allow_delete_var,
-        )
-        delete_check.grid(row=3, column=0, sticky="w", pady=(6, 0))
-
-        ttk.Label(security, text="Удаление только в:").grid(
-            row=3, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
-        )
-        delete_scope_entry = ttk.Entry(
-            security,
-            textvariable=self.delete_scope_var,
-            width=62,
-        )
-        delete_scope_entry.grid(
-            row=3, column=2, sticky="w", padx=(8, 8), pady=(6, 0)
-        )
-        bind_edit_shortcuts(delete_scope_entry)
-        delete_scope_button = ttk.Button(
-            security,
-            text="Выбрать",
-            command=lambda: self._choose_scope(self.delete_scope_var),
-        )
-        delete_scope_button.grid(row=3, column=3, sticky="w", pady=(6, 0))
-
         ttk.Label(security, text="Защищённые бэкапы:").grid(
-            row=4, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
+            row=3, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
         )
         backup_label = ttk.Label(
             security,
@@ -374,7 +261,7 @@ class UltraApp(tk.Tk):
             font=("Consolas", 8),
         )
         backup_label.grid(
-            row=4, column=2, columnspan=3, sticky="w", padx=(8, 0), pady=(6, 0)
+            row=3, column=2, columnspan=2, sticky="w", padx=(8, 0), pady=(6, 0)
         )
 
         hint = ttk.Label(
@@ -384,21 +271,17 @@ class UltraApp(tk.Tk):
                 "Пример: чтение='.' + запись='Документация'."
             ),
         )
-        hint.grid(row=5, column=1, columnspan=4, sticky="w", pady=(8, 0))
+        hint.grid(row=4, column=1, columnspan=3, sticky="w", pady=(8, 0))
 
         self._security_widgets.extend(
             [
                 read_check,
                 write_check,
-                delete_check,
                 backup_check,
-                tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
                 write_scope_entry,
                 write_scope_button,
-                delete_scope_entry,
-                delete_scope_button,
             ]
         )
 
@@ -461,9 +344,8 @@ class UltraApp(tk.Tk):
             "СИСТЕМА",
             (
                 "Интерфейс готов. По умолчанию чтение разрешено, запись "
-                "и удаление ЗАПРЕЩЕНЫ, автобэкап включён. Лимит tools = 20. "
-                "Серверные галочки — это реальные ограничения, а не только "
-                "текст в промпте."
+                "ЗАПРЕЩЕНА, автобэкап включён. Серверные галочки — это "
+                "реальные ограничения, а не только текст в промпте."
             ),
             "system",
         )
@@ -566,8 +448,6 @@ class UltraApp(tk.Tk):
                 f"[{time_str}] RUN START | {run_id} | "
                 f"R={perms.get('allow_read')}:{perms.get('read_scope')} | "
                 f"W={perms.get('allow_write')}:{perms.get('write_scope')} | "
-                f"D={perms.get('allow_delete')}:{perms.get('delete_scope')} | "
-                f"LIMIT={perms.get('tool_limit')} | "
                 f"BACKUP={perms.get('auto_backup')} | {task_preview[:40]}"
             )
 
@@ -682,18 +562,6 @@ class UltraApp(tk.Tk):
                 "Область записи",
                 self.allow_write_var.get(),
             )
-            delete_scope = self._normalize_scope_for_ui(
-                workspace,
-                self.delete_scope_var.get(),
-                "Область удаления",
-                self.allow_delete_var.get(),
-            )
-            try:
-                tool_limit = int(self.tool_limit_var.get().strip())
-            except ValueError as exc:
-                raise ValueError("Лимит tools должен быть целым числом.") from exc
-            if not 1 <= tool_limit <= 200:
-                raise ValueError("Лимит tools должен быть от 1 до 200.")
         except ValueError as exc:
             messagebox.showerror(APP_TITLE, str(exc))
             return
@@ -701,11 +569,8 @@ class UltraApp(tk.Tk):
         permissions = {
             "allow_read": self.allow_read_var.get(),
             "allow_write": self.allow_write_var.get(),
-            "allow_delete": self.allow_delete_var.get(),
             "read_scope": read_scope,
             "write_scope": write_scope,
-            "delete_scope": delete_scope,
-            "tool_limit": tool_limit,
             "auto_backup": self.auto_backup_var.get(),
         }
 
@@ -718,9 +583,6 @@ class UltraApp(tk.Tk):
                 f"[{read_scope}], "
                 f"WRITE={'ON' if permissions['allow_write'] else 'OFF'} "
                 f"[{write_scope}], "
-                f"DELETE={'ON' if permissions['allow_delete'] else 'OFF'} "
-                f"[{delete_scope}], "
-                f"TOOLS={tool_limit}, "
                 f"BACKUP={'ON' if permissions['auto_backup'] else 'OFF'}."
             ),
             "system",

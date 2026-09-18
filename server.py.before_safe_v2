@@ -24,7 +24,6 @@ MAX_AGENT_FILE_BYTES = 2 * 1024 * 1024
 MAX_AGENT_LIST_ENTRIES = 500
 MAX_AGENT_LIST_BYTES = 64 * 1024
 MAX_AGENT_TOOL_ITERATIONS = 20
-MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 
 BACKUP_BASE = (
     Path(os.getenv("LOCALAPPDATA") or Path.home())
@@ -89,23 +88,6 @@ AGENT_FUNCTIONS = [
                 },
             },
             "required": ["path", "content"],
-        },
-    },
-    {
-        "name": "delete_file",
-        "description": (
-            "Удалить существующий текстовый файл внутри рабочей папки. "
-            "Инструмент доступен только когда сервер явно разрешил удаление."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Относительный путь к удаляемому текстовому файлу.",
-                }
-            },
-            "required": ["path"],
         },
     },
 ]
@@ -242,11 +224,8 @@ def _normalize_permissions(permissions: dict | None) -> dict:
         permissions = {
             "allow_read": True,
             "allow_write": False,
-            "allow_delete": False,
             "read_scope": ".",
             "write_scope": ".",
-            "delete_scope": ".",
-            "tool_limit": MAX_AGENT_TOOL_ITERATIONS,
             "auto_backup": True,
         }
     if not isinstance(permissions, dict):
@@ -265,32 +244,15 @@ def _normalize_permissions(permissions: dict | None) -> dict:
 
     allow_read = bool(permissions.get("allow_read", True))
     allow_write = bool(permissions.get("allow_write", False))
-    allow_delete = bool(permissions.get("allow_delete", False))
     auto_backup = bool(permissions.get("auto_backup", True))
     read_scope = clean_scope(permissions.get("read_scope", "."), "read_scope")
     write_scope = clean_scope(permissions.get("write_scope", "."), "write_scope")
-    delete_scope = clean_scope(permissions.get("delete_scope", "."), "delete_scope")
-
-    try:
-        tool_limit = int(
-            permissions.get("tool_limit", MAX_AGENT_TOOL_ITERATIONS)
-        )
-    except (TypeError, ValueError) as exc:
-        raise ValueError("tool_limit должен быть целым числом.") from exc
-    if not 1 <= tool_limit <= MAX_CONFIGURABLE_TOOL_ITERATIONS:
-        raise ValueError(
-            "tool_limit должен быть в диапазоне "
-            f"1..{MAX_CONFIGURABLE_TOOL_ITERATIONS}."
-        )
 
     return {
         "allow_read": allow_read,
         "allow_write": allow_write,
-        "allow_delete": allow_delete,
         "read_scope": read_scope,
         "write_scope": write_scope,
-        "delete_scope": delete_scope,
-        "tool_limit": tool_limit,
         "auto_backup": auto_backup,
     }
 
@@ -298,7 +260,6 @@ def _prepare_policy_for_workspace(root: Path, policy: dict) -> dict:
     result = dict(policy)
     read_root = _resolve_workspace_path(root, result["read_scope"])
     write_root = _resolve_workspace_path(root, result["write_scope"])
-    delete_root = _resolve_workspace_path(root, result["delete_scope"])
 
     if result["allow_read"] and not read_root.is_dir():
         raise NotADirectoryError(
@@ -308,14 +269,9 @@ def _prepare_policy_for_workspace(root: Path, policy: dict) -> dict:
         raise NotADirectoryError(
             f"Разрешённая область записи не найдена: {result['write_scope']}"
         )
-    if result["allow_delete"] and not delete_root.is_dir():
-        raise NotADirectoryError(
-            f"Разрешённая область удаления не найдена: {result['delete_scope']}"
-        )
 
     result["_read_root"] = read_root
     result["_write_root"] = write_root
-    result["_delete_root"] = delete_root
     return result
 
 def _deny_backup_area(path: Path) -> None:
@@ -340,11 +296,6 @@ def _require_operation_permission(
             raise PermissionError("Запись отключена для этого запуска.")
         scope_root = policy["_write_root"]
         scope_name = policy["write_scope"]
-    elif operation == "delete":
-        if not policy["allow_delete"]:
-            raise PermissionError("Удаление отключено для этого запуска.")
-        scope_root = policy["_delete_root"]
-        scope_name = policy["delete_scope"]
     else:
         raise ValueError(f"Неизвестная операция доступа: {operation}")
 
@@ -361,19 +312,14 @@ def _functions_for_policy(policy: dict) -> list[dict]:
         allowed_names.update({"list_dir", "read_file"})
     if policy["allow_write"]:
         allowed_names.add("write_file")
-    if policy["allow_delete"]:
-        allowed_names.add("delete_file")
     return [item for item in AGENT_FUNCTIONS if item["name"] in allowed_names]
 
 def _policy_summary(policy: dict) -> dict:
     return {
         "allow_read": policy["allow_read"],
         "allow_write": policy["allow_write"],
-        "allow_delete": policy["allow_delete"],
         "read_scope": policy["read_scope"],
         "write_scope": policy["write_scope"],
-        "delete_scope": policy["delete_scope"],
-        "tool_limit": policy["tool_limit"],
         "auto_backup": policy["auto_backup"],
     }
 
@@ -413,12 +359,10 @@ def _create_backup_session(
         "core_files": copied_core,
         "changed_files": [],
         "new_files": [],
-        "deleted_files": [],
     }
     session = {
         "backup_dir": backup_dir,
         "backed_up_paths": set(),
-        "delete_backed_up_paths": set(),
         "manifest": manifest,
     }
     _write_backup_manifest(session)
@@ -443,27 +387,6 @@ def _backup_before_write(root: Path, path: Path, session: dict | None) -> None:
     else:
         session["manifest"]["new_files"].append(relative)
     _write_backup_manifest(session)
-
-def _backup_before_delete(root: Path, path: Path, session: dict | None) -> None:
-    """Сохранить файл непосредственно перед delete_file."""
-    if session is None:
-        return
-
-    relative = path.relative_to(root).as_posix()
-    if relative in session["delete_backed_up_paths"]:
-        return
-    if not path.is_file():
-        raise ValueError(f"Нельзя резервировать перед удалением не-файл: {relative}")
-
-    destination = session["backup_dir"] / "deleted" / Path(relative)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(path, destination)
-
-    session["delete_backed_up_paths"].add(relative)
-    if relative not in session["manifest"]["deleted_files"]:
-        session["manifest"]["deleted_files"].append(relative)
-    _write_backup_manifest(session)
-
 
 def _require_text_suffix(path: Path) -> None:
     if path.suffix.lower() not in ALLOWED_TEXT_SUFFIXES and path.name != ".gitignore":
@@ -571,35 +494,6 @@ def _agent_write_file(
         "bytes_written": len(encoded_content),
     }
 
-def _agent_delete_file(
-    root: Path,
-    path_text: str,
-    policy: dict,
-    backup_session: dict | None,
-) -> dict:
-    path = _require_operation_permission(root, path_text, "delete", policy)
-    _require_text_suffix(path)
-
-    if path == root:
-        raise ValueError("Нельзя удалить workspace_root.")
-    if path.is_symlink():
-        raise ValueError("Удаление symlink запрещено.")
-    if not path.exists():
-        raise FileNotFoundError(f"Файл не найден: {path_text}")
-    if not path.is_file():
-        raise ValueError("delete_file удаляет только файлы, не папки.")
-
-    size = path.stat().st_size
-    _backup_before_delete(root, path, backup_session)
-    path.unlink()
-
-    return {
-        "path": path.relative_to(root).as_posix(),
-        "deleted": True,
-        "bytes": size,
-    }
-
-
 def _parse_agent_arguments(function_name: str, raw_arguments: object) -> dict:
     if isinstance(raw_arguments, str):
         try:
@@ -627,7 +521,7 @@ def _execute_agent_function(
         raise ValueError("GigaChat вернул невалидный function_call.")
 
     name = function_call.get("name")
-    if name not in {"list_dir", "read_file", "write_file", "delete_file"}:
+    if name not in {"list_dir", "read_file", "write_file"}:
         raise ValueError(f"GigaChat запросил неизвестную функцию: {name!r}.")
 
     arguments = _parse_agent_arguments(name, function_call.get("arguments"))
@@ -635,7 +529,6 @@ def _execute_agent_function(
         "list_dir": {"path"},
         "read_file": {"path"},
         "write_file": {"path", "content"},
-        "delete_file": {"path"},
     }[name]
     if set(arguments) != expected_keys:
         raise ValueError(
@@ -646,13 +539,6 @@ def _execute_agent_function(
         return _agent_list_dir(root, arguments["path"], policy)
     if name == "read_file":
         return _agent_read_file(root, arguments["path"], policy)
-    if name == "delete_file":
-        return _agent_delete_file(
-            root,
-            arguments["path"],
-            policy,
-            backup_session,
-        )
     return _agent_write_file(
         root,
         arguments["path"],
@@ -783,11 +669,6 @@ async def run_agent_task(
         f"Область чтения: {policy['read_scope']}\n"
         f"Запись: {'РАЗРЕШЕНА' if policy['allow_write'] else 'ЗАПРЕЩЕНА'}\n"
         f"Область записи: {policy['write_scope']}\n"
-        f"Удаление: {'РАЗРЕШЕНО' if policy['allow_delete'] else 'ЗАПРЕЩЕНО'}\n"
-        f"Область удаления: {policy['delete_scope']}\n"
-        f"Лимит вызовов инструментов: {policy['tool_limit']}\n"
-        "Планируй действия так, чтобы уложиться в этот лимит. "
-        "Не трать вызовы на повторное чтение без необходимости.\n"
         f"Автобэкап: {'ВКЛЮЧЁН' if policy['auto_backup'] else 'ВЫКЛЮЧЕН'}\n"
         "Эти ограничения применяются кодом сервера. Не пытайся выходить "
         "за их пределы; при необходимости сообщи пользователю, какого "
@@ -802,7 +683,7 @@ async def run_agent_task(
                 "Для всех file tools используй ТОЛЬКО относительные пути. "
                 "Корень workspace обозначай точкой '.'. "
                 "Никогда не передавай абсолютные Windows-пути в list_dir, "
-                "read_file, write_file или delete_file."
+                "read_file или write_file."
                 f"{permission_text}\n"
                 "ОБЯЗАТЕЛЬНЫЙ РЕГЛАМЕНТ ULTRA\n\n"
                 f"{policy_text}"
@@ -869,7 +750,7 @@ async def run_agent_task(
             })
 
             if finish_reason == "function_call":
-                if tool_iterations >= policy["tool_limit"]:
+                if tool_iterations >= MAX_AGENT_TOOL_ITERATIONS:
                     _emit("run_failed", {
                         "reason": "tool_limit",
                         "api_requests": api_request_count,
@@ -885,7 +766,6 @@ async def run_agent_task(
                         f"Run ID: {run_id}\n"
                         f"API requests: {api_request_count}\n"
                         f"Tool calls: {tool_call_count}\n"
-                        f"Tool limit: {policy['tool_limit']}\n"
                         f"Last function: {last_tool_name}\n"
                         f"Last arguments: {last_tool_args}\n"
                         f"Last result/error: {last_tool_error}\n"
@@ -1024,25 +904,14 @@ async def run_agent_task(
                             f"Trace: logs/runs/{run_id}.jsonl"
                         )
 
-                tool_iterations += 1
-                result_for_model = dict(result)
-                remaining_tools = max(policy["tool_limit"] - tool_iterations, 0)
-                result_for_model["_tool_budget"] = {
-                    "limit": policy["tool_limit"],
-                    "used": tool_iterations,
-                    "remaining": remaining_tools,
-                    "instruction": (
-                        "Если оставшихся вызовов мало, прекрати лишнее исследование "
-                        "и заверши задачу или сообщи, что требуется новый запуск."
-                    ),
-                }
                 messages.append(
                     {
                         "role": "function",
                         "name": function_name,
-                        "content": json.dumps(result_for_model, ensure_ascii=False),
+                        "content": json.dumps(result, ensure_ascii=False),
                     }
                 )
+                tool_iterations += 1
                 continue
 
             if finish_reason not in ("stop", "eos"):
