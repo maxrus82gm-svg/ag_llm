@@ -158,27 +158,21 @@ class UltraApp(tk.Tk):
         right_frame = ttk.Frame(root)
         right_frame.grid(row=0, column=1, sticky="nsew")
 
-        # Workspace — намеренно компактный: оставляем справа запас под будущие controls.
         workspace_frame = ttk.Frame(right_frame)
         workspace_frame.pack(fill="x")
-        ttk.Label(workspace_frame, text="Workspace:").grid(
-            row=0, column=0, sticky="w"
-        )
+        ttk.Label(workspace_frame, text="Workspace:").pack(side="left")
         self.workspace_entry = ttk.Entry(
             workspace_frame,
             textvariable=self.workspace_var,
-            width=72,
         )
-        self.workspace_entry.grid(
-            row=0, column=1, sticky="w", padx=(8, 8)
-        )
+        self.workspace_entry.pack(side="left", fill="x", expand=True, padx=(8, 8))
         bind_edit_shortcuts(self.workspace_entry)
         self.workspace_button = ttk.Button(
             workspace_frame,
             text="Выбрать папку",
             command=self._choose_workspace,
         )
-        self.workspace_button.grid(row=0, column=2, sticky="w")
+        self.workspace_button.pack(side="left")
 
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
@@ -187,35 +181,35 @@ class UltraApp(tk.Tk):
             padding=8,
         )
         security.pack(fill="x", pady=(10, 8))
+        security.columnconfigure(1, weight=1)
 
-        # Автобэкап — отдельный общий переключатель запуска.
+        read_check = ttk.Checkbutton(
+            security,
+            text="Разрешить чтение",
+            variable=self.allow_read_var,
+        )
+        read_check.grid(row=0, column=0, sticky="w", padx=(0, 14))
+
+        write_check = ttk.Checkbutton(
+            security,
+            text="Разрешить запись",
+            variable=self.allow_write_var,
+        )
+        write_check.grid(row=0, column=1, sticky="w", padx=(0, 14))
+
         backup_check = ttk.Checkbutton(
             security,
             text="Автобэкап ДО запуска",
             variable=self.auto_backup_var,
         )
-        backup_check.grid(
-            row=0, column=0, columnspan=4, sticky="w", pady=(0, 4)
-        )
-
-        # Галочка чтения находится прямо у области, которой она управляет.
-        read_check = ttk.Checkbutton(
-            security,
-            text="",
-            variable=self.allow_read_var,
-        )
-        read_check.grid(row=1, column=0, sticky="w", pady=(4, 0))
+        backup_check.grid(row=0, column=2, sticky="w")
 
         ttk.Label(security, text="Чтение только в:").grid(
-            row=1, column=1, sticky="w", padx=(2, 0), pady=(4, 0)
+            row=1, column=0, sticky="w", pady=(8, 0)
         )
-        read_scope_entry = ttk.Entry(
-            security,
-            textvariable=self.read_scope_var,
-            width=62,
-        )
+        read_scope_entry = ttk.Entry(security, textvariable=self.read_scope_var)
         read_scope_entry.grid(
-            row=1, column=2, sticky="w", padx=(8, 8), pady=(4, 0)
+            row=1, column=1, sticky="ew", padx=(8, 8), pady=(8, 0)
         )
         bind_edit_shortcuts(read_scope_entry)
         read_scope_button = ttk.Button(
@@ -223,26 +217,14 @@ class UltraApp(tk.Tk):
             text="Выбрать",
             command=lambda: self._choose_scope(self.read_scope_var),
         )
-        read_scope_button.grid(row=1, column=3, sticky="w", pady=(4, 0))
-
-        # Галочка записи находится прямо у области, которой она управляет.
-        write_check = ttk.Checkbutton(
-            security,
-            text="",
-            variable=self.allow_write_var,
-        )
-        write_check.grid(row=2, column=0, sticky="w", pady=(6, 0))
+        read_scope_button.grid(row=1, column=2, sticky="e", pady=(8, 0))
 
         ttk.Label(security, text="Запись только в:").grid(
-            row=2, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
+            row=2, column=0, sticky="w", pady=(6, 0)
         )
-        write_scope_entry = ttk.Entry(
-            security,
-            textvariable=self.write_scope_var,
-            width=62,
-        )
+        write_scope_entry = ttk.Entry(security, textvariable=self.write_scope_var)
         write_scope_entry.grid(
-            row=2, column=2, sticky="w", padx=(8, 8), pady=(6, 0)
+            row=2, column=1, sticky="ew", padx=(8, 8), pady=(6, 0)
         )
         bind_edit_shortcuts(write_scope_entry)
         write_scope_button = ttk.Button(
@@ -250,10 +232,10 @@ class UltraApp(tk.Tk):
             text="Выбрать",
             command=lambda: self._choose_scope(self.write_scope_var),
         )
-        write_scope_button.grid(row=2, column=3, sticky="w", pady=(6, 0))
+        write_scope_button.grid(row=2, column=2, sticky="e", pady=(6, 0))
 
         ttk.Label(security, text="Защищённые бэкапы:").grid(
-            row=3, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
+            row=3, column=0, sticky="w", pady=(6, 0)
         )
         backup_label = ttk.Label(
             security,
@@ -261,17 +243,17 @@ class UltraApp(tk.Tk):
             font=("Consolas", 8),
         )
         backup_label.grid(
-            row=3, column=2, columnspan=2, sticky="w", padx=(8, 0), pady=(6, 0)
+            row=3, column=1, columnspan=2, sticky="w", padx=(8, 0), pady=(6, 0)
         )
 
         hint = ttk.Label(
             security,
             text=(
-                "✓ слева включает доступ для строки. '.' = корень workspace. "
-                "Пример: чтение='.' + запись='Документация'."
+                "Пример: чтение='.' + запись='Документация' — Ultra видит весь "
+                "workspace, но физически может писать только в Документация/."
             ),
         )
-        hint.grid(row=4, column=1, columnspan=3, sticky="w", pady=(8, 0))
+        hint.grid(row=4, column=0, columnspan=3, sticky="w", pady=(8, 0))
 
         self._security_widgets.extend(
             [
