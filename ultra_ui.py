@@ -127,14 +127,16 @@ class UltraApp(tk.Tk):
         root = ttk.Frame(self, padding=12)
         root.pack(fill="both", expand=True)
 
-        # Главный контейнер с разделителем
-        paned = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-        paned.pack(fill="both", expand=True)
+        # Конфигурация колонок: левая фиксированная, правая растягивается
+        root.columnconfigure(0, weight=0, minsize=340)
+        root.columnconfigure(1, weight=1)
+        root.rowconfigure(0, weight=1)
 
         # Левая панель — ЛОГ ДЕЙСТВИЙ
-        left_frame = ttk.Frame(paned, width=340)
-        left_frame.pack_propagate(False)
-        paned.add(left_frame, weight=0)
+        left_frame = ttk.Frame(root)
+        left_frame.grid(row=0, column=0, sticky="nsew")
+        left_frame.configure(width=340)
+        left_frame.grid_propagate(False)
 
         ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(anchor="w", padx=(0, 0), pady=(0, 6))
 
@@ -148,9 +150,8 @@ class UltraApp(tk.Tk):
         self.trace_log.tag_configure("trace", font=("Consolas", 9))
 
         # Правая панель — всё остальное
-        right_frame = ttk.Frame(paned)
-        paned.add(right_frame, weight=1)
-        self.after_idle(lambda: paned.sashpos(0, 340))
+        right_frame = ttk.Frame(root)
+        right_frame.grid(row=0, column=1, sticky="nsew")
 
         # Workspace
         workspace_frame = ttk.Frame(right_frame)
