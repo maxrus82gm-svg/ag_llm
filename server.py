@@ -77,6 +77,7 @@ CORE_BACKUP_RELATIVE_PATHS = (
     "Start_Ultra.cmd",
     ".gitignore",
     "agent_global_context.py",
+    "server_context_messages.py",
 )
 
 AGENT_FUNCTIONS = [
