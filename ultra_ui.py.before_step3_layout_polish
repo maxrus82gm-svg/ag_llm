@@ -76,9 +76,7 @@ class UltraApp(tk.Tk):
         self._ui_state = load_ui_state()
 
         self.title(APP_TITLE)
-        self.geometry(
-            self._ui_state.get("normal_geometry") or "1500x860"
-        )
+        self.geometry(self._ui_state.get("geometry") or "1500x860")
         self.minsize(1180, 720)
 
         self.workspace_var = tk.StringVar(value=str(Path.cwd()))
@@ -141,16 +139,12 @@ class UltraApp(tk.Tk):
             self._ui_state.get("workspaces") or []
         )
         self._theme_colors: dict[str, str] = {}
-        self._last_window_mode = "normal"
-        self._last_root_width: int | None = None
-        self._layout_sync_after = None
 
         self._build_ui()
         self._apply_theme()
         self._record_context_storage_mtime()
         self._initialize_workspace_registry()
-        self.bind("<Configure>", self._on_root_configure)
-        self.after_idle(self._restore_window_and_layout)
+        self.after_idle(self._restore_panel_layout)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.after(100, self._poll_events)
         self.after(100, self._poll_trace_events)
@@ -182,9 +176,6 @@ class UltraApp(tk.Tk):
             select_bg = "#99c2ff"
             button_bg = "#e7e7e7"
 
-        border = "#474b50" if dark else "#b7b7b7"
-        progress_bar = "#c8c8c8" if dark else "#666666"
-
         self._theme_colors = {
             "bg": bg,
             "panel": panel,
@@ -193,17 +184,9 @@ class UltraApp(tk.Tk):
             "muted": muted,
             "select_bg": select_bg,
             "button_bg": button_bg,
-            "border": border,
-            "progress_bar": progress_bar,
         }
 
         self.configure(bg=bg)
-        paned = getattr(self, "main_paned", None)
-        if paned is not None:
-            try:
-                paned.configure(bg=panel)
-            except tk.TclError:
-                pass
         style.configure(".", background=panel, foreground=fg)
         style.configure("TFrame", background=panel)
         style.configure("TLabel", background=panel, foreground=fg)
@@ -213,38 +196,6 @@ class UltraApp(tk.Tk):
         style.configure("TButton", background=button_bg, foreground=fg)
         style.configure("TEntry", fieldbackground=field, foreground=fg)
         style.configure("TSpinbox", fieldbackground=field, foreground=fg)
-        style.configure(
-            "TLabelframe",
-            background=panel,
-            foreground=fg,
-            bordercolor=border,
-            lightcolor=border,
-            darkcolor=border,
-            relief="solid",
-        )
-        style.configure(
-            "TLabelframe.Label",
-            background=panel,
-            foreground=fg,
-        )
-        style.configure(
-            "Vertical.TScrollbar",
-            background=button_bg,
-            troughcolor=field,
-            bordercolor=panel,
-            arrowcolor=fg,
-            lightcolor=button_bg,
-            darkcolor=button_bg,
-        )
-        style.configure(
-            "Ultra.Horizontal.TProgressbar",
-            troughcolor=field,
-            background=progress_bar,
-            bordercolor=border,
-            lightcolor=progress_bar,
-            darkcolor=progress_bar,
-            thickness=10,
-        )
         style.map(
             "TButton",
             background=[("active", button_bg)],
@@ -265,37 +216,7 @@ class UltraApp(tk.Tk):
                     insertbackground=fg,
                     selectbackground=select_bg,
                     selectforeground=fg,
-                    relief="flat",
-                    borderwidth=0,
-                    highlightthickness=0,
                 )
-                frame = getattr(widget, "frame", None)
-                if frame is not None:
-                    try:
-                        frame.configure(
-                            bg=panel,
-                            relief="flat",
-                            borderwidth=0,
-                            highlightthickness=1,
-                            highlightbackground=border,
-                            highlightcolor=border,
-                        )
-                    except tk.TclError:
-                        pass
-                vbar = getattr(widget, "vbar", None)
-                if vbar is not None:
-                    try:
-                        vbar.configure(
-                            bg=button_bg,
-                            troughcolor=field,
-                            activebackground=select_bg,
-                            relief="flat",
-                            borderwidth=0,
-                            highlightthickness=0,
-                            width=12,
-                        )
-                    except tk.TclError:
-                        pass
 
         trace_log = getattr(self, "trace_log", None)
         if trace_log is not None:
@@ -422,17 +343,15 @@ class UltraApp(tk.Tk):
         self.main_paned = tk.PanedWindow(
             root,
             orient="horizontal",
-            sashwidth=5,
+            sashwidth=6,
             showhandle=False,
             bd=0,
             relief="flat",
-            sashrelief="flat",
-            bg="#2b2d30",
         )
         self.main_paned.pack(fill="both", expand=True)
         self.main_paned.bind(
             "<ButtonRelease-1>",
-            self._on_sash_release,
+            lambda _event: self.after(40, self._save_ui_state),
         )
 
         # Левая панель — наблюдаемый trace.
@@ -737,20 +656,14 @@ class UltraApp(tk.Tk):
 
         ttk.Separator(right_frame).pack(fill="x", pady=8)
 
-        chat_section = ttk.LabelFrame(
-            right_frame,
-            text="Чат",
-            padding=4,
-        )
-        chat_section.pack(fill="both", expand=True, pady=(0, 8))
-
+        ttk.Label(right_frame, text="Чат").pack(anchor="w")
         self.chat = scrolledtext.ScrolledText(
-            chat_section,
+            right_frame,
             wrap="word",
             state="disabled",
             font=("Segoe UI", 10),
         )
-        self.chat.pack(fill="both", expand=True)
+        self.chat.pack(fill="both", expand=True, pady=(5, 8))
         self.chat.tag_configure(
             "user",
             foreground=self.user_text_color_var.get(),
@@ -779,25 +692,18 @@ class UltraApp(tk.Tk):
             status_frame,
             mode="indeterminate",
             length=180,
-            style="Ultra.Horizontal.TProgressbar",
         )
         self.progress.pack(side="right")
 
-        message_section = ttk.LabelFrame(
-            right_frame,
-            text="Сообщение",
-            padding=4,
-        )
-        message_section.pack(fill="x", pady=(0, 8))
-
+        ttk.Label(right_frame, text="Сообщение").pack(anchor="w")
         self.input_box = scrolledtext.ScrolledText(
-            message_section,
+            right_frame,
             wrap="word",
             height=7,
             font=("Segoe UI", 10),
             undo=True,
         )
-        self.input_box.pack(fill="x")
+        self.input_box.pack(fill="x", pady=(5, 8))
         bind_edit_shortcuts(self.input_box)
         self.input_box.bind("<Control-Return>", self._send_from_hotkey)
 
@@ -837,168 +743,60 @@ class UltraApp(tk.Tk):
         self._apply_theme()
         self._save_ui_state(silent=True)
 
-    def _window_mode(self) -> str:
-        try:
-            return "zoomed" if self.state() == "zoomed" else "normal"
-        except tk.TclError:
-            return "normal"
-
-    def _capture_panel_ratios(self) -> list[float]:
+    def _capture_panel_sashes(self) -> list[int]:
         paned = getattr(self, "main_paned", None)
         if paned is None:
             return []
         try:
-            width = int(paned.winfo_width())
-            if width < 800:
-                return []
-            left_x = int(paned.sash_coord(0)[0])
-            right_x = int(paned.sash_coord(1)[0])
+            return [
+                int(paned.sash_coord(0)[0]),
+                int(paned.sash_coord(1)[0]),
+            ]
         except (tk.TclError, IndexError):
             return []
 
-        if not (0 < left_x < right_x < width):
-            return []
-
-        return [
-            round(left_x / width, 6),
-            round(right_x / width, 6),
-        ]
-
-    def _store_current_panel_ratios(self) -> None:
-        ratios = self._capture_panel_ratios()
-        if len(ratios) != 2:
-            return
-
-        mode = self._window_mode()
-        panel_ratios = self._ui_state.setdefault(
-            "panel_ratios",
-            {
-                "normal": [0.24, 0.80],
-                "zoomed": [0.24, 0.80],
-            },
-        )
-        panel_ratios[mode] = ratios
-
-    def _apply_panel_ratios(self, mode: str | None = None) -> None:
+    def _restore_panel_layout(self) -> None:
         paned = getattr(self, "main_paned", None)
         if paned is None:
             return
-
-        if mode not in {"normal", "zoomed"}:
-            mode = self._window_mode()
-
         try:
             self.update_idletasks()
-            width = int(paned.winfo_width())
-            if width < 900:
-                return
+            total_width = max(paned.winfo_width(), 1180)
+            sashes = self._ui_state.get("panel_sashes") or []
+            if (
+                isinstance(sashes, list)
+                and len(sashes) == 2
+                and all(isinstance(item, int) for item in sashes)
+                and 220 < sashes[0] < sashes[1] - 400
+                and sashes[1] < total_width - 180
+            ):
+                left_pos, right_pos = sashes
+            else:
+                left_pos = 360
+                right_pos = max(820, total_width - 320)
 
-            all_ratios = self._ui_state.get("panel_ratios") or {}
-            ratios = all_ratios.get(mode) or [0.24, 0.80]
-            left_ratio = float(ratios[0])
-            right_ratio = float(ratios[1])
-
-            # Минимальные размеры панелей:
-            # left >= 240, center >= 600, right >= 240.
-            left_x = int(round(width * left_ratio))
-            right_x = int(round(width * right_ratio))
-
-            left_x = max(240, min(left_x, width - 840))
-            right_x = max(left_x + 600, right_x)
-            right_x = min(right_x, width - 240)
-
-            paned.sash_place(0, left_x, 0)
-            paned.sash_place(1, right_x, 0)
-        except (tk.TclError, ValueError, TypeError, IndexError):
-            pass
-
-    def _restore_window_and_layout(self) -> None:
-        desired = self._ui_state.get("window_state")
-        if desired not in {"normal", "zoomed"}:
-            desired = "normal"
-
-        self._last_window_mode = "normal"
-        self.update_idletasks()
-
-        if desired == "zoomed":
-            try:
-                self.state("zoomed")
-                self._last_window_mode = "zoomed"
-            except tk.TclError:
-                self._last_window_mode = "normal"
-
-        self.after(
-            100,
-            lambda: self._apply_panel_ratios(self._window_mode()),
-        )
-
-    def _on_sash_release(self, _event=None) -> None:
-        self.after(30, self._save_ui_state)
-
-    def _on_root_configure(self, event) -> None:
-        if event.widget is not self:
-            return
-
-        if self._layout_sync_after is not None:
-            try:
-                self.after_cancel(self._layout_sync_after)
-            except tk.TclError:
-                pass
-
-        self._layout_sync_after = self.after(
-            140,
-            self._sync_window_layout,
-        )
-
-    def _sync_window_layout(self) -> None:
-        self._layout_sync_after = None
-        mode = self._window_mode()
-        width = int(self.winfo_width())
-
-        mode_changed = mode != self._last_window_mode
-        width_changed = (
-            self._last_root_width is not None
-            and abs(width - self._last_root_width) > 2
-        )
-
-        self._last_window_mode = mode
-        self._last_root_width = width
-        self._ui_state["window_state"] = mode
-
-        if mode == "normal":
-            geometry = self.geometry()
-            if geometry:
-                self._ui_state["normal_geometry"] = geometry
-
-        # При maximize/restore или resize пересчитываем sash из ПРОПОРЦИЙ
-        # текущего canvas, а не переносим старые абсолютные пиксели.
-        if mode_changed or width_changed:
-            self._apply_panel_ratios(mode)
-
-        try:
-            save_ui_state(self._ui_state)
-        except Exception:
+            paned.sash_place(0, left_pos, 0)
+            paned.sash_place(1, right_pos, 0)
+        except tk.TclError:
             pass
 
     def _reset_panel_layout(self) -> None:
-        self._ui_state["panel_ratios"] = {
-            "normal": [0.24, 0.80],
-            "zoomed": [0.24, 0.80],
-        }
-        self._apply_panel_ratios(self._window_mode())
+        self._ui_state["panel_sashes"] = []
+        self.update_idletasks()
+        paned = getattr(self, "main_paned", None)
+        if paned is None:
+            return
+        try:
+            total_width = max(paned.winfo_width(), 1180)
+            paned.sash_place(0, 360, 0)
+            paned.sash_place(1, max(820, total_width - 320), 0)
+        except tk.TclError:
+            pass
         self._save_ui_state(silent=True)
 
     def _save_ui_state(self, _event=None, *, silent: bool = True) -> None:
         try:
-            mode = self._window_mode()
-            self._store_current_panel_ratios()
-
-            if mode == "normal":
-                geometry = self.geometry()
-                if geometry:
-                    self._ui_state["normal_geometry"] = geometry
-
-            self._ui_state["window_state"] = mode
+            self._ui_state["geometry"] = self.geometry()
             self._ui_state["dark_theme"] = self.dark_theme_var.get()
             self._ui_state["colors"] = {
                 "log": self.log_text_color_var.get(),
@@ -1006,6 +804,9 @@ class UltraApp(tk.Tk):
                 "assistant": self.assistant_text_color_var.get(),
                 "workspace": self.workspace_text_color_var.get(),
             }
+            sashes = self._capture_panel_sashes()
+            if len(sashes) == 2:
+                self._ui_state["panel_sashes"] = sashes
             self._ui_state["workspaces"] = list(self._workspace_registry)
             self._ui_state["active_workspace_id"] = self.current_workspace_id
             save_ui_state(self._ui_state)

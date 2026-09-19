@@ -7,17 +7,12 @@ from pathlib import Path
 from typing import Any
 
 
-STATE_VERSION = 2
+STATE_VERSION = 1
 STATE_DIR = (
     Path(os.getenv("LOCALAPPDATA") or Path.home())
     / "GigaChatUltra"
 ).resolve()
 STATE_PATH = STATE_DIR / "ui_state.json"
-
-DEFAULT_PANEL_RATIOS = {
-    "normal": [0.24, 0.80],
-    "zoomed": [0.24, 0.80],
-}
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
@@ -40,8 +35,7 @@ def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
 def default_ui_state() -> dict[str, Any]:
     return {
         "version": STATE_VERSION,
-        "normal_geometry": "1500x860",
-        "window_state": "normal",
+        "geometry": "1500x860",
         "dark_theme": True,
         "colors": {
             "log": "#76E68A",
@@ -49,26 +43,11 @@ def default_ui_state() -> dict[str, Any]:
             "assistant": "#8EC5FF",
             "workspace": "#E8E8E8",
         },
-        "panel_ratios": {
-            "normal": list(DEFAULT_PANEL_RATIOS["normal"]),
-            "zoomed": list(DEFAULT_PANEL_RATIOS["zoomed"]),
-        },
+        "panel_sashes": [],
         "workspaces": [],
         "active_workspace_id": None,
         "registry_initialized": False,
     }
-
-
-def _clean_ratios(value: Any) -> list[float] | None:
-    if not isinstance(value, list) or len(value) != 2:
-        return None
-    if not all(isinstance(item, (int, float)) for item in value):
-        return None
-    left = float(value[0])
-    right = float(value[1])
-    if not (0.10 < left < 0.45 and 0.55 < right < 0.95 and left < right):
-        return None
-    return [left, right]
 
 
 def load_ui_state() -> dict[str, Any]:
@@ -84,26 +63,8 @@ def load_ui_state() -> dict[str, Any]:
     if not isinstance(loaded, dict):
         return state
 
-    loaded_version = loaded.get("version")
-    is_v2 = isinstance(loaded_version, int) and loaded_version >= 2
-
-    # При переходе со STEP 3 v1 намеренно НЕ переносим старую geometry/sashes:
-    # именно они создавали неверное открытие после maximized -> restart.
-    if is_v2:
-        geometry = loaded.get("normal_geometry")
-        if isinstance(geometry, str) and geometry.strip():
-            state["normal_geometry"] = geometry
-
-        window_state = loaded.get("window_state")
-        if window_state in {"normal", "zoomed"}:
-            state["window_state"] = window_state
-
-        ratios = loaded.get("panel_ratios")
-        if isinstance(ratios, dict):
-            for mode in ("normal", "zoomed"):
-                clean = _clean_ratios(ratios.get(mode))
-                if clean is not None:
-                    state["panel_ratios"][mode] = clean
+    if isinstance(loaded.get("geometry"), str):
+        state["geometry"] = loaded["geometry"]
 
     if isinstance(loaded.get("dark_theme"), bool):
         state["dark_theme"] = loaded["dark_theme"]
@@ -115,6 +76,14 @@ def load_ui_state() -> dict[str, Any]:
             if isinstance(value, str) and value.startswith("#"):
                 state["colors"][key] = value
 
+    sashes = loaded.get("panel_sashes")
+    if (
+        isinstance(sashes, list)
+        and len(sashes) == 2
+        and all(isinstance(item, int) for item in sashes)
+    ):
+        state["panel_sashes"] = sashes
+
     workspaces = loaded.get("workspaces")
     if isinstance(workspaces, list):
         clean = []
@@ -123,20 +92,20 @@ def load_ui_state() -> dict[str, Any]:
             if not isinstance(item, dict):
                 continue
             workspace_id = item.get("workspace_id")
-            workspace_path = item.get("path")
+            path = item.get("path")
             if (
                 not isinstance(workspace_id, str)
                 or not workspace_id
                 or workspace_id in seen_ids
-                or not isinstance(workspace_path, str)
-                or not workspace_path
+                or not isinstance(path, str)
+                or not path
             ):
                 continue
             seen_ids.add(workspace_id)
             clean.append(
                 {
                     "workspace_id": workspace_id,
-                    "path": workspace_path,
+                    "path": path,
                     "last_chat_id": (
                         item.get("last_chat_id")
                         if isinstance(item.get("last_chat_id"), str)
