@@ -1,0 +1,184 @@
+from __future__ import annotations
+
+import json
+import os
+import re
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+
+SCHEMA_VERSION = 1
+ULTRA_DIRNAME = ".ultra"
+WORKSPACE_METADATA_NAME = "workspace.json"
+PROJECT_CONTEXT_NAME = "project_context.md"
+MAX_PROJECT_CONTEXT_BYTES = 256 * 1024
+
+_WORKSPACE_ID_RE = re.compile(r"^ws_[A-Za-z0-9_-]{16,128}$")
+
+PROJECT_CONTEXT_TEMPLATE = """# PROJECT CONTEXT
+
+Пока не заполнен.
+
+Этот файл — общий подтверждённый контекст WORKSPACE для всех его чатов.
+Он читается системой перед каждым новым RUN.
+
+Важно:
+- сюда попадают только важные и актуальные сведения о проекте;
+- LLM не должна молча менять этот контекст;
+- изменения PROJECT CONTEXT должны подтверждаться пользователем.
+"""
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def _validate_workspace_root(workspace_root: str | Path) -> Path:
+    root = Path(workspace_root).expanduser()
+    if not root.is_absolute():
+        raise ValueError("Workspace должен быть абсолютным путём.")
+    if not root.exists():
+        raise FileNotFoundError(f"Workspace не найден: {root}")
+    if not root.is_dir():
+        raise NotADirectoryError(f"Workspace не является папкой: {root}")
+    return root.resolve()
+
+
+def _atomic_write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        with temp_path.open("w", encoding="utf-8", newline="\n") as file:
+            file.write(text)
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(temp_path, path)
+    finally:
+        try:
+            temp_path.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
+    payload = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    _atomic_write_text(path, payload)
+
+
+def _load_workspace_metadata(path: Path) -> dict[str, Any]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            f"Повреждён {path}: JSON не читается. "
+            "Workspace ID нельзя молча пересоздавать."
+        ) from exc
+
+    if not isinstance(data, dict):
+        raise RuntimeError(f"Повреждён {path}: корень JSON должен быть объектом.")
+
+    schema_version = data.get("schema_version")
+    if schema_version != SCHEMA_VERSION:
+        raise RuntimeError(
+            f"Неподдерживаемая версия workspace schema: {schema_version!r}. "
+            f"Ожидалась версия {SCHEMA_VERSION}."
+        )
+
+    workspace_id = data.get("workspace_id")
+    if not isinstance(workspace_id, str) or not _WORKSPACE_ID_RE.fullmatch(
+        workspace_id
+    ):
+        raise RuntimeError(
+            f"Повреждён {path}: некорректный workspace_id. "
+            "ID нельзя молча пересоздавать."
+        )
+
+    return data
+
+
+def ensure_workspace_storage(workspace_root: str | Path) -> dict[str, Any]:
+    """Создать или подхватить переносимое хранилище `.ultra/` Workspace.
+
+    Существующий workspace_id никогда не заменяется автоматически.
+    Абсолютный путь к проекту намеренно НЕ сохраняется в workspace.json,
+    чтобы один и тот же Workspace можно было клонировать на другой компьютер.
+    """
+
+    root = _validate_workspace_root(workspace_root)
+    ultra_dir = root / ULTRA_DIRNAME
+    workspace_path = ultra_dir / WORKSPACE_METADATA_NAME
+    project_context_path = ultra_dir / PROJECT_CONTEXT_NAME
+
+    storage_created = not ultra_dir.exists()
+    workspace_created = not workspace_path.exists()
+    project_context_created = not project_context_path.exists()
+
+    ultra_dir.mkdir(parents=True, exist_ok=True)
+
+    for directory in (
+        ultra_dir / "chats",
+        ultra_dir / "proposals",
+        ultra_dir / "project_context_history",
+    ):
+        directory.mkdir(parents=True, exist_ok=True)
+
+    if workspace_path.exists():
+        metadata = _load_workspace_metadata(workspace_path)
+    else:
+        metadata = {
+            "schema_version": SCHEMA_VERSION,
+            "workspace_id": f"ws_{uuid.uuid4().hex}",
+            "display_name": root.name or "workspace",
+            "created_at": _utc_now_iso(),
+        }
+        _atomic_write_json(workspace_path, metadata)
+
+    if not project_context_path.exists():
+        _atomic_write_text(project_context_path, PROJECT_CONTEXT_TEMPLATE)
+
+    return {
+        "workspace_root": str(root),
+        "ultra_dir": str(ultra_dir),
+        "workspace_path": str(workspace_path),
+        "project_context_path": str(project_context_path),
+        "workspace_id": metadata["workspace_id"],
+        "display_name": metadata.get("display_name") or root.name,
+        "schema_version": metadata["schema_version"],
+        "storage_created": storage_created,
+        "workspace_created": workspace_created,
+        "project_context_created": project_context_created,
+    }
+
+
+def load_project_context(workspace_root: str | Path) -> str:
+    """Загрузить текущий PROJECT CONTEXT для конкретного Workspace."""
+
+    info = ensure_workspace_storage(workspace_root)
+    path = Path(info["project_context_path"])
+
+    size = path.stat().st_size
+    if size > MAX_PROJECT_CONTEXT_BYTES:
+        raise ValueError(
+            "PROJECT CONTEXT слишком большой: "
+            f"{size} байт. Лимит текущей версии: "
+            f"{MAX_PROJECT_CONTEXT_BYTES} байт."
+        )
+
+    text = path.read_text(encoding="utf-8-sig")
+    if not text.strip():
+        return "# PROJECT CONTEXT\n\nПока не заполнен.\n"
+    return text
+
+
+def is_context_storage_path(
+    workspace_root: str | Path,
+    candidate: str | Path,
+) -> bool:
+    """True, если путь находится внутри служебной `.ultra/`."""
+
+    root = _validate_workspace_root(workspace_root)
+    context_root = (root / ULTRA_DIRNAME).resolve()
+    path = Path(candidate).resolve()
+    return path == context_root or context_root in path.parents
