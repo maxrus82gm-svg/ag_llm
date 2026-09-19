@@ -94,6 +94,7 @@ class UltraApp(tk.Tk):
         self.allow_write_var = tk.BooleanVar(value=False)
         self.allow_delete_var = tk.BooleanVar(value=False)
         self.allow_verify_var = tk.BooleanVar(value=True)
+        self.allow_guard_p1_var = tk.BooleanVar(value=True)
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(
             value=bool(self._ui_state.get("dark_theme", True))
@@ -504,7 +505,16 @@ class UltraApp(tk.Tk):
             variable=self.allow_verify_var,
         )
         verify_check.grid(
-            row=0, column=2, columnspan=2, sticky="w", pady=(0, 2)
+            row=0, column=2, sticky="w", padx=(0, 12), pady=(0, 2)
+        )
+
+        guard_p1_check = ttk.Checkbutton(
+            security,
+            text="GUARD P1",
+            variable=self.allow_guard_p1_var,
+        )
+        guard_p1_check.grid(
+            row=0, column=3, sticky="w", pady=(0, 2)
         )
 
         # Компактные визуальные настройки вынесены в отдельный блок справа.
@@ -691,6 +701,7 @@ class UltraApp(tk.Tk):
                 write_check,
                 delete_check,
                 verify_check,
+                guard_p1_check,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -782,10 +793,10 @@ class UltraApp(tk.Tk):
         self._append_chat(
             "СИСТЕМА",
             (
-                "Интерфейс готов. По умолчанию чтение и VERIFY разрешены, запись "
-                "и удаление ЗАПРЕЩЕНЫ, автобэкап включён. Лимит tools = 20. "
-                "Серверные галочки — это реальные ограничения, а не только "
-                "текст в промпте."
+                "Интерфейс готов. По умолчанию чтение, VERIFY и GUARD P1 "
+                "разрешены, запись и удаление ЗАПРЕЩЕНЫ, автобэкап включён. "
+                "Лимит tools = 20. Серверные галочки — это реальные ограничения, "
+                "а не только текст в промпте."
             ),
             "system",
         )
@@ -2030,6 +2041,7 @@ class UltraApp(tk.Tk):
                 f"W={perms.get('allow_write')}:{perms.get('write_scope')} | "
                 f"D={perms.get('allow_delete')}:{perms.get('delete_scope')} | "
                 f"V={perms.get('allow_verify')} | "
+                f"G1={perms.get('allow_guard_p1')} | "
                 f"LIMIT={perms.get('tool_limit')} | "
                 f"BACKUP={perms.get('auto_backup')} | {task_preview[:40]}"
             )
@@ -2101,6 +2113,39 @@ class UltraApp(tk.Tk):
             return (
                 f"[{time_str}] TOOL #{seq} {func} -> ERROR "
                 f"({error.get('type', '')}): {error.get('message', '')}"
+            )
+
+        if event_type == "guard_intervention":
+            kind = event.get("kind")
+            if kind == "repeated_tool":
+                return (
+                    f"[{time_str}] GUARD P1 | SUPERVISOR CHECK | "
+                    f"REPEAT {event.get('function')} | "
+                    f"budget={event.get('tool_budget_used')}/"
+                    f"{event.get('tool_budget_limit')}"
+                )
+            if kind == "possible_duplicate_create":
+                return (
+                    f"[{time_str}] GUARD P1 | SUPERVISOR CHECK | CREATE | "
+                    f"{event.get('requested_path')} ~ "
+                    f"{event.get('similar_path')} | "
+                    f"score={event.get('score')}"
+                )
+            return (
+                f"[{time_str}] GUARD P1 | SUPERVISOR CHECK | {kind}"
+            )
+
+        if event_type == "guard_override":
+            return (
+                f"[{time_str}] GUARD P1 | CREATE CONFIRMED | "
+                f"{event.get('requested_path')}"
+            )
+
+        if event_type == "guard_blocked":
+            return (
+                f"[{time_str}] GUARD P1 | BLOCKED | "
+                f"{event.get('kind')} | "
+                f"{event.get('function', '')}"
             )
 
         if event_type == "verification_required":
@@ -2203,6 +2248,7 @@ class UltraApp(tk.Tk):
             "allow_write": self.allow_write_var.get(),
             "allow_delete": self.allow_delete_var.get(),
             "allow_verify": self.allow_verify_var.get(),
+            "allow_guard_p1": self.allow_guard_p1_var.get(),
             "read_scope": read_scope,
             "write_scope": write_scope,
             "delete_scope": delete_scope,
@@ -2240,6 +2286,7 @@ class UltraApp(tk.Tk):
                 f"DELETE={'ON' if permissions['allow_delete'] else 'OFF'} "
                 f"[{delete_scope}], "
                 f"VERIFY={'ON' if permissions['allow_verify'] else 'OFF'}, "
+                f"GUARD_P1={'ON' if permissions['allow_guard_p1'] else 'OFF'}, "
                 f"TOOLS={tool_limit}."
             ),
             "system",

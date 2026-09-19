@@ -1,0 +1,35 @@
+GUARD P1 — установка
+
+Подготовлено под commit 30:
+1c3cbebad28a3ddec3bdf4949caec3417b4ed305
+
+1. Положи apply_guard_p1_commit30.py в корень:
+M:\GitHub\ag_llm
+
+2. Git Bash:
+
+cd /m/GitHub/ag_llm
+./.venv/Scripts/python.exe apply_guard_p1_commit30.py
+
+Скрипт НЕ трогает Git.
+Если хотя бы один ожидаемый anchor не совпал ровно один раз, он откажется менять файлы.
+До записи server.py / ultra_ui.py обе собранные версии проходят compile() в памяти.
+
+3. После успешного применения:
+
+./.venv/Scripts/python.exe -m py_compile server.py ultra_ui.py
+
+Если команда молчит — синтаксис OK.
+
+4. Полностью закрой Ultra и запусти снова через Start_Ultra.cmd.
+
+В верхней строке рядом с VERIFY должна появиться галочка:
+GUARD P1
+
+Она должна быть включена по умолчанию.
+
+5. Пока НЕ пуши runtime-изменения.
+Сначала пришли скрин верхней панели. Потом отдельно проверим:
+- repeat read/list;
+- suspicious duplicate CREATE;
+- выключение GUARD P1.
