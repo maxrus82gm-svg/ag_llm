@@ -16,7 +16,6 @@ from context_storage import (
     load_chat_messages,
     load_project_context,
 )
-from workspace_runtime_settings import ensure_workspace_runtime_dirs
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
@@ -55,7 +54,6 @@ BACKUP_BASE = (
 CORE_BACKUP_RELATIVE_PATHS = (
     "server.py",
     "context_storage.py",
-    "workspace_runtime_settings.py",
     "ui_state.py",
     "ultra_ui.py",
     "run_ultra.py",
@@ -356,10 +354,7 @@ def _normalize_permissions(permissions: dict | None) -> dict:
     allow_write = bool(permissions.get("allow_write", False))
     allow_delete = bool(permissions.get("allow_delete", False))
     allow_verify = bool(permissions.get("allow_verify", True))
-    # Защищённый backup — обязательная серверная защита.
-    # Поле сохраняется в policy для обратной совместимости старых вызовов,
-    # но отключить backup через permissions больше нельзя.
-    auto_backup = True
+    auto_backup = bool(permissions.get("auto_backup", True))
     read_scope = clean_scope(permissions.get("read_scope", "."), "read_scope")
     write_scope = clean_scope(permissions.get("write_scope", "."), "write_scope")
     delete_scope = clean_scope(permissions.get("delete_scope", "."), "delete_scope")
@@ -518,20 +513,12 @@ def _write_backup_manifest(session: dict) -> None:
     )
 
 def _create_backup_session(
-    app_dir: Path,
-    root: Path,
-    run_id: str,
-    task: str,
-    policy: dict,
-    *,
-    backup_base: Path,
-    workspace_id: str,
-    chat_id: str | None,
+    app_dir: Path, root: Path, run_id: str, task: str, policy: dict
 ) -> dict | None:
     if not policy["auto_backup"]:
         return None
 
-    backup_dir = backup_base / run_id
+    backup_dir = BACKUP_BASE / run_id
     backup_dir.mkdir(parents=True, exist_ok=False)
     core_dir = backup_dir / "core"
     copied_core = []
@@ -545,25 +532,12 @@ def _create_backup_session(
         shutil.copy2(source, destination)
         copied_core.append(relative_text)
 
-    # `.ultra` — маленькое переносимое состояние Workspace:
-    # workspace metadata, PROJECT CONTEXT, чаты и RAW HISTORY.
-    context_snapshot = None
-    context_source = (root / ".ultra").resolve()
-    if context_source.is_dir():
-        context_destination = backup_dir / "context" / ".ultra"
-        context_destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(context_source, context_destination)
-        context_snapshot = "context/.ultra"
-
     manifest = {
         "run_id": run_id,
         "created_at": time.time(),
-        "workspace_id": workspace_id,
         "workspace": str(root),
-        "chat_id": chat_id,
         "task_preview": task[:500],
         "policy": _policy_summary(policy),
-        "context_snapshot": context_snapshot,
         "core_files": copied_core,
         "changed_files": [],
         "new_files": [],
@@ -1216,16 +1190,6 @@ async def run_agent_task(
     tool_call_count = 0
     policy = _normalize_permissions(permissions)
 
-    # Пока workspace_id ещё не загружен, ошибки пишутся в системный fallback.
-    # После загрузки Workspace путь переключается на его собственный namespace.
-    runtime_log_path = (
-        Path(os.getenv("LOCALAPPDATA") or Path.home())
-        / "GigaChatUltra"
-        / "system_logs"
-        / f"{run_id}.jsonl"
-    ).resolve()
-    workspace_backup_base = BACKUP_BASE
-
     def _emit(event_type: str, payload: dict):
         event = {
             "event": event_type,
@@ -1239,9 +1203,11 @@ async def run_agent_task(
             except Exception:
                 pass
 
-        runtime_log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_dir = Path("logs") / "runs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / f"{run_id}.jsonl"
         try:
-            with runtime_log_path.open("a", encoding="utf-8") as f:
+            with log_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(event, ensure_ascii=False) + "\n")
         except Exception:
             pass
@@ -1264,48 +1230,11 @@ async def run_agent_task(
                 "tool_calls": tool_call_count,
                 "duration": time.time() - start_time,
                 "error": str(exc),
-                "trace_path": str(runtime_log_path),
+                "trace_path": f"logs/runs/{run_id}.jsonl",
             },
         )
         raise RuntimeError(
             "Не удалось создать или загрузить переносимый контекст Workspace."
-        ) from exc
-
-    try:
-        runtime_paths = ensure_workspace_runtime_dirs(
-            workspace_info["workspace_id"]
-        )
-        workspace_backup_base = Path(
-            runtime_paths["backup_dir"]
-        ).resolve()
-        runtime_log_dir = Path(runtime_paths["log_dir"]).resolve()
-
-        # Бэкапы/логи не должны лежать внутри Workspace: иначе снимок может
-        # начать резервировать сам себя и потеряется смысл внешней защиты.
-        for label, path in (
-            ("backup", workspace_backup_base),
-            ("log", runtime_log_dir),
-        ):
-            if path == root or root in path.parents:
-                raise ValueError(
-                    f"{label} directory не должна находиться внутри Workspace."
-                )
-
-        runtime_log_path = runtime_log_dir / f"{run_id}.jsonl"
-    except Exception as exc:
-        _emit(
-            "run_failed",
-            {
-                "reason": "workspace_runtime_settings_error",
-                "api_requests": api_request_count,
-                "tool_calls": tool_call_count,
-                "duration": time.time() - start_time,
-                "error": str(exc),
-                "trace_path": str(runtime_log_path),
-            },
-        )
-        raise RuntimeError(
-            "Не удалось подготовить локальные пути backup/log для Workspace."
         ) from exc
 
     active_chat_messages = []
@@ -1322,7 +1251,7 @@ async def run_agent_task(
                     "duration": time.time() - start_time,
                     "chat_id": chat_id,
                     "error": str(exc),
-                    "trace_path": str(runtime_log_path),
+                    "trace_path": f"logs/runs/{run_id}.jsonl",
                 },
             )
             raise RuntimeError(
@@ -1400,7 +1329,7 @@ async def run_agent_task(
             "tool_calls": tool_call_count,
             "duration": time.time() - start_time,
             "error": str(exc),
-            "trace_path": str(runtime_log_path),
+            "trace_path": f"logs/runs/{run_id}.jsonl",
         })
         raise RuntimeError(
             "Не удалось загрузить обязательный регламент Ultra. "
@@ -1413,7 +1342,7 @@ async def run_agent_task(
             "api_requests": api_request_count,
             "tool_calls": tool_call_count,
             "duration": time.time() - start_time,
-            "trace_path": str(runtime_log_path),
+            "trace_path": f"logs/runs/{run_id}.jsonl",
         })
         raise RuntimeError(
             "Обязательный регламент Ultra пуст. "
@@ -1423,18 +1352,11 @@ async def run_agent_task(
     # Бэкап выполняется синхронно ДО обращения к модели.
     backup_session = None
     if policy["auto_backup"]:
-        planned_backup_path = workspace_backup_base / run_id
+        planned_backup_path = BACKUP_BASE / run_id
         _emit("backup_started", {"backup_path": str(planned_backup_path)})
         try:
             backup_session = _create_backup_session(
-                app_dir,
-                root,
-                run_id,
-                task,
-                policy,
-                backup_base=workspace_backup_base,
-                workspace_id=workspace_info["workspace_id"],
-                chat_id=chat_id,
+                app_dir, root, run_id, task, policy
             )
         except Exception as exc:
             _emit("run_failed", {
@@ -1443,7 +1365,7 @@ async def run_agent_task(
                 "tool_calls": tool_call_count,
                 "duration": time.time() - start_time,
                 "error": str(exc),
-                "trace_path": str(runtime_log_path),
+                "trace_path": f"logs/runs/{run_id}.jsonl",
             })
             raise RuntimeError(
                 "Не удалось создать обязательный backup. "
@@ -1604,7 +1526,7 @@ async def run_agent_task(
                         "last_function": last_tool_name,
                         "last_arguments": last_tool_args,
                         "last_error": last_tool_error,
-                        "trace_path": str(runtime_log_path),
+                        "trace_path": f"logs/runs/{run_id}.jsonl",
                     })
                     raise RuntimeError(
                         f"TOOL LIMIT REACHED\n"
@@ -1807,7 +1729,7 @@ async def run_agent_task(
                             "arguments": safe_args,
                             "error": tool_error,
                             "repeat_count": repeated_error_count,
-                            "trace_path": str(runtime_log_path),
+                            "trace_path": f"logs/runs/{run_id}.jsonl",
                         })
                         raise RuntimeError(
                             f"LOOP DETECTED\n"
@@ -1891,7 +1813,7 @@ async def run_agent_task(
                             "duration": time.time() - start_time,
                             "missing": missing_verification,
                             "verification_state": dict(verification_state),
-                            "trace_path": str(runtime_log_path),
+                            "trace_path": f"logs/runs/{run_id}.jsonl",
                         },
                     )
                     raise RuntimeError(
