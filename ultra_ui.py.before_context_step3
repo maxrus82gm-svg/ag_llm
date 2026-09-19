@@ -26,7 +26,6 @@ from context_storage import (
     rename_workspace,
     save_project_context,
 )
-from ui_state import load_ui_state, save_ui_state
 
 
 APP_TITLE = "GigaChat Ultra Local Agent"
@@ -73,10 +72,8 @@ def bind_edit_shortcuts(widget) -> None:
 class UltraApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self._ui_state = load_ui_state()
-
         self.title(APP_TITLE)
-        self.geometry(self._ui_state.get("geometry") or "1500x860")
+        self.geometry("1500x860")
         self.minsize(1180, 720)
 
         self.workspace_var = tk.StringVar(value=str(Path.cwd()))
@@ -89,24 +86,12 @@ class UltraApp(tk.Tk):
         self.allow_delete_var = tk.BooleanVar(value=False)
         self.allow_verify_var = tk.BooleanVar(value=True)
         self.auto_backup_var = tk.BooleanVar(value=True)
-        self.dark_theme_var = tk.BooleanVar(
-            value=bool(self._ui_state.get("dark_theme", True))
-        )
+        self.dark_theme_var = tk.BooleanVar(value=True)
 
         # Настраиваемые цвета основных текстовых потоков интерфейса.
-        saved_colors = self._ui_state.get("colors") or {}
-        self.log_text_color_var = tk.StringVar(
-            value=saved_colors.get("log", "#76E68A")
-        )
-        self.user_text_color_var = tk.StringVar(
-            value=saved_colors.get("user", "#FFFFFF")
-        )
-        self.assistant_text_color_var = tk.StringVar(
-            value=saved_colors.get("assistant", "#8EC5FF")
-        )
-        self.workspace_text_color_var = tk.StringVar(
-            value=saved_colors.get("workspace", "#E8E8E8")
-        )
+        self.log_text_color_var = tk.StringVar(value="#76E68A")
+        self.user_text_color_var = tk.StringVar(value="#FFFFFF")
+        self.assistant_text_color_var = tk.StringVar(value="#8EC5FF")
 
         self.tool_limit_var = tk.StringVar(value="20")
         self.read_scope_var = tk.StringVar(value=".")
@@ -135,17 +120,11 @@ class UltraApp(tk.Tk):
         self.current_chat_id: str | None = None
         self._loaded_workspace_root: str | None = None
         self._context_storage_mtime = None
-        self._workspace_registry: list[dict] = list(
-            self._ui_state.get("workspaces") or []
-        )
-        self._theme_colors: dict[str, str] = {}
 
         self._build_ui()
         self._apply_theme()
         self._record_context_storage_mtime()
-        self._initialize_workspace_registry()
-        self.after_idle(self._restore_panel_layout)
-        self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self._load_workspace_browser(silent=True)
         self.after(100, self._poll_events)
         self.after(100, self._poll_trace_events)
         self.after(500, self._tick_status)
@@ -175,16 +154,6 @@ class UltraApp(tk.Tk):
             muted = "#444444"
             select_bg = "#99c2ff"
             button_bg = "#e7e7e7"
-
-        self._theme_colors = {
-            "bg": bg,
-            "panel": panel,
-            "field": field,
-            "fg": fg,
-            "muted": muted,
-            "select_bg": select_bg,
-            "button_bg": button_bg,
-        }
 
         self.configure(bg=bg)
         style.configure(".", background=panel, foreground=fg)
@@ -254,16 +223,12 @@ class UltraApp(tk.Tk):
             )
 
         self._refresh_color_swatches()
-        self._apply_workspace_sidebar_theme()
-        if hasattr(self, "workspace_list_frame"):
-            self._render_workspace_sidebar()
 
     def _refresh_color_swatches(self) -> None:
         values = {
             "log": self.log_text_color_var.get(),
             "user": self.user_text_color_var.get(),
             "assistant": self.assistant_text_color_var.get(),
-            "workspace": self.workspace_text_color_var.get(),
         }
         for key, color in values.items():
             swatch = self._color_swatches.get(key)
@@ -283,7 +248,6 @@ class UltraApp(tk.Tk):
             return
         target_var.set(selected.upper())
         self._apply_text_colors()
-        self._save_ui_state(silent=True)
 
     def _record_initial_mtimes(self) -> None:
         try:
@@ -339,28 +303,18 @@ class UltraApp(tk.Tk):
     def _build_ui(self) -> None:
         root = ttk.Frame(self, padding=12)
         root.pack(fill="both", expand=True)
-
-        self.main_paned = tk.PanedWindow(
-            root,
-            orient="horizontal",
-            sashwidth=6,
-            showhandle=False,
-            bd=0,
-            relief="flat",
-        )
-        self.main_paned.pack(fill="both", expand=True)
-        self.main_paned.bind(
-            "<ButtonRelease-1>",
-            lambda _event: self.after(40, self._save_ui_state),
-        )
+        root.columnconfigure(0, weight=0, minsize=360)
+        root.columnconfigure(1, weight=1, minsize=620)
+        root.columnconfigure(2, weight=0, minsize=285)
+        root.rowconfigure(0, weight=1)
 
         # Левая панель — наблюдаемый trace.
-        left_frame = ttk.Frame(self.main_paned, width=360)
-        self.main_paned.add(left_frame, minsize=240)
+        left_frame = ttk.Frame(root)
+        left_frame.grid(row=0, column=0, sticky="nsew")
+        left_frame.configure(width=360)
+        left_frame.grid_propagate(False)
 
-        ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(
-            anchor="w", pady=(0, 6)
-        )
+        ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(anchor="w", pady=(0, 6))
         self.trace_log = scrolledtext.ScrolledText(
             left_frame,
             wrap="word",
@@ -374,12 +328,13 @@ class UltraApp(tk.Tk):
             font=("Consolas", 9),
         )
 
-        # Центральная панель — текущий чат и верхняя системная зона.
-        right_frame = ttk.Frame(self.main_paned)
-        self.main_paned.add(right_frame, minsize=600, stretch="always")
+        # Правая панель.
+        right_frame = ttk.Frame(root)
+        right_frame.grid(row=0, column=1, sticky="nsew")
 
-        # Справа — отдельная подвижная панель WORKSPACES / ЧАТЫ.
-        self._build_workspace_browser(self.main_paned)
+        # STEP 2: отдельная правая панель Workspace/Chat.
+        # Верхняя системная панель в центре остаётся без перестройки.
+        self._build_workspace_browser(root)
 
         # Workspace — намеренно компактный: оставляем справа запас под будущие controls.
         workspace_frame = ttk.Frame(right_frame)
@@ -454,7 +409,7 @@ class UltraApp(tk.Tk):
             interface_frame,
             text="Тёмная тема",
             variable=self.dark_theme_var,
-            command=self._on_theme_changed,
+            command=self._apply_theme,
         )
         theme_check.grid(
             row=0, column=0, columnspan=2, sticky="w", pady=(0, 4)
@@ -482,13 +437,6 @@ class UltraApp(tk.Tk):
                 self.assistant_text_color_var,
                 "Цвет текста — ответ Ultra",
             ),
-            (
-                4,
-                "Workspace / чаты",
-                "workspace",
-                self.workspace_text_color_var,
-                "Цвет текста — Workspace и чаты",
-            ),
         ]
 
         for row, label_text, key, color_var, dialog_title in compact_color_rows:
@@ -510,19 +458,6 @@ class UltraApp(tk.Tk):
             )
             swatch.grid(row=row, column=1, sticky="w", padx=(8, 0), pady=1)
             self._color_swatches[key] = swatch
-
-        reset_layout_button = ttk.Button(
-            interface_frame,
-            text="Сброс панелей",
-            command=self._reset_panel_layout,
-        )
-        reset_layout_button.grid(
-            row=5,
-            column=0,
-            columnspan=2,
-            sticky="ew",
-            pady=(5, 0),
-        )
 
         # Галочка чтения находится прямо у области, которой она управляет.
         read_check = ttk.Checkbutton(
@@ -733,412 +668,75 @@ class UltraApp(tk.Tk):
 
     def _record_context_storage_mtime(self) -> None:
         try:
-            self._context_storage_mtime = Path(
-                "context_storage.py"
-            ).stat().st_mtime
+            self._context_storage_mtime = Path("context_storage.py").stat().st_mtime
         except FileNotFoundError:
             self._context_storage_mtime = None
 
-    def _on_theme_changed(self) -> None:
-        self._apply_theme()
-        self._save_ui_state(silent=True)
-
-    def _capture_panel_sashes(self) -> list[int]:
-        paned = getattr(self, "main_paned", None)
-        if paned is None:
-            return []
-        try:
-            return [
-                int(paned.sash_coord(0)[0]),
-                int(paned.sash_coord(1)[0]),
-            ]
-        except (tk.TclError, IndexError):
-            return []
-
-    def _restore_panel_layout(self) -> None:
-        paned = getattr(self, "main_paned", None)
-        if paned is None:
-            return
-        try:
-            self.update_idletasks()
-            total_width = max(paned.winfo_width(), 1180)
-            sashes = self._ui_state.get("panel_sashes") or []
-            if (
-                isinstance(sashes, list)
-                and len(sashes) == 2
-                and all(isinstance(item, int) for item in sashes)
-                and 220 < sashes[0] < sashes[1] - 400
-                and sashes[1] < total_width - 180
-            ):
-                left_pos, right_pos = sashes
-            else:
-                left_pos = 360
-                right_pos = max(820, total_width - 320)
-
-            paned.sash_place(0, left_pos, 0)
-            paned.sash_place(1, right_pos, 0)
-        except tk.TclError:
-            pass
-
-    def _reset_panel_layout(self) -> None:
-        self._ui_state["panel_sashes"] = []
-        self.update_idletasks()
-        paned = getattr(self, "main_paned", None)
-        if paned is None:
-            return
-        try:
-            total_width = max(paned.winfo_width(), 1180)
-            paned.sash_place(0, 360, 0)
-            paned.sash_place(1, max(820, total_width - 320), 0)
-        except tk.TclError:
-            pass
-        self._save_ui_state(silent=True)
-
-    def _save_ui_state(self, _event=None, *, silent: bool = True) -> None:
-        try:
-            self._ui_state["geometry"] = self.geometry()
-            self._ui_state["dark_theme"] = self.dark_theme_var.get()
-            self._ui_state["colors"] = {
-                "log": self.log_text_color_var.get(),
-                "user": self.user_text_color_var.get(),
-                "assistant": self.assistant_text_color_var.get(),
-                "workspace": self.workspace_text_color_var.get(),
-            }
-            sashes = self._capture_panel_sashes()
-            if len(sashes) == 2:
-                self._ui_state["panel_sashes"] = sashes
-            self._ui_state["workspaces"] = list(self._workspace_registry)
-            self._ui_state["active_workspace_id"] = self.current_workspace_id
-            save_ui_state(self._ui_state)
-        except Exception as exc:
-            if not silent:
-                messagebox.showerror(
-                    APP_TITLE,
-                    f"Не удалось сохранить UI state.\n\n"
-                    f"{type(exc).__name__}: {exc}",
-                )
-
-    def _on_close(self) -> None:
-        self._save_ui_state(silent=True)
-        self.destroy()
-
-    def _apply_workspace_sidebar_theme(self) -> None:
-        canvas = getattr(self, "workspace_canvas", None)
-        list_frame = getattr(self, "workspace_list_frame", None)
-        if canvas is None or list_frame is None:
-            return
-        field = self._theme_colors.get("field", "#202124")
-        try:
-            canvas.configure(bg=field)
-            list_frame.configure(bg=field)
-        except tk.TclError:
-            pass
-
-    def _build_workspace_browser(self, parent) -> None:
+    def _build_workspace_browser(self, root: ttk.Frame) -> None:
         panel = ttk.LabelFrame(
-            parent,
+            root,
             text="WORKSPACES / ЧАТЫ",
             padding=8,
         )
-        self.workspace_panel = panel
-        parent.add(panel, minsize=240)
+        panel.grid(row=0, column=2, sticky="nsew", padx=(10, 0))
+        panel.configure(width=285)
+        panel.grid_propagate(False)
 
-        self.add_workspace_button = ttk.Button(
-            panel,
-            text="+ Создать Workspace",
-            command=self._add_workspace_dialog,
+        tree_host = ttk.Frame(panel)
+        tree_host.pack(fill="both", expand=True)
+
+        self.workspace_tree = ttk.Treeview(
+            tree_host,
+            show="tree",
+            selectmode="browse",
         )
-        self.add_workspace_button.pack(fill="x", pady=(0, 8))
-
-        host = ttk.Frame(panel)
-        host.pack(fill="both", expand=True)
-
-        self.workspace_canvas = tk.Canvas(
-            host,
-            highlightthickness=0,
-            bd=0,
-        )
-        scroll = ttk.Scrollbar(
-            host,
+        self.workspace_tree.column("#0", width=245, stretch=True)
+        workspace_scroll = ttk.Scrollbar(
+            tree_host,
             orient="vertical",
-            command=self.workspace_canvas.yview,
+            command=self.workspace_tree.yview,
         )
-        self.workspace_canvas.configure(yscrollcommand=scroll.set)
+        self.workspace_tree.configure(yscrollcommand=workspace_scroll.set)
 
-        self.workspace_canvas.pack(side="left", fill="both", expand=True)
-        scroll.pack(side="right", fill="y")
+        self.workspace_tree.pack(side="left", fill="both", expand=True)
+        workspace_scroll.pack(side="right", fill="y")
 
-        self.workspace_list_frame = tk.Frame(self.workspace_canvas)
-        self._workspace_canvas_window = self.workspace_canvas.create_window(
-            (0, 0),
-            window=self.workspace_list_frame,
-            anchor="nw",
+        self.workspace_tree.bind(
+            "<<TreeviewSelect>>",
+            self._on_workspace_tree_select,
         )
 
-        def on_inner_configure(_event=None):
-            self.workspace_canvas.configure(
-                scrollregion=self.workspace_canvas.bbox("all")
-            )
+        buttons = ttk.Frame(panel)
+        buttons.pack(fill="x", pady=(8, 0))
 
-        def on_canvas_configure(event):
-            self.workspace_canvas.itemconfigure(
-                self._workspace_canvas_window,
-                width=max(event.width, 1),
-            )
-
-        self.workspace_list_frame.bind("<Configure>", on_inner_configure)
-        self.workspace_canvas.bind("<Configure>", on_canvas_configure)
-        self.workspace_canvas.bind(
-            "<MouseWheel>",
-            lambda event: self.workspace_canvas.yview_scroll(
-                int(-1 * (event.delta / 120)),
-                "units",
-            ),
+        self.new_chat_button = ttk.Button(
+            buttons,
+            text="+ Чат",
+            command=self._create_chat_ui,
         )
+        self.new_chat_button.pack(side="left")
 
-        self._workspace_widgets.append(self.add_workspace_button)
-        self._apply_workspace_sidebar_theme()
-
-    def _sidebar_button(
-        self,
-        parent,
-        text: str,
-        command,
-        *,
-        width: int | None = None,
-    ) -> tk.Button:
-        colors = self._theme_colors
-        button = tk.Button(
-            parent,
-            text=text,
-            command=command,
-            bg=colors.get("button_bg", "#35383d"),
-            fg=colors.get("fg", "#e8e8e8"),
-            activebackground=colors.get("select_bg", "#3f638f"),
-            activeforeground=colors.get("fg", "#e8e8e8"),
-            relief="flat",
-            borderwidth=1,
-            padx=4,
-            pady=1,
-            cursor="hand2",
-            width=width or 0,
+        self.rename_tree_button = ttk.Button(
+            buttons,
+            text="Переименовать",
+            command=self._rename_selected_tree_item,
         )
-        self._workspace_widgets.append(button)
-        return button
+        self.rename_tree_button.pack(side="left", padx=(6, 0))
 
-    def _register_workspace_path(self, workspace: Path) -> dict:
-        root = workspace.resolve()
-        info = ensure_workspace_storage(root)
-        existing = next(
-            (
-                item
-                for item in self._workspace_registry
-                if item.get("workspace_id") == info["workspace_id"]
-            ),
-            None,
+        self.project_context_button = ttk.Button(
+            panel,
+            text="Контекст проекта",
+            command=self._open_project_context_editor,
         )
-        if existing is None:
-            existing = {
-                "workspace_id": info["workspace_id"],
-                "path": str(root),
-                "last_chat_id": None,
-            }
-            self._workspace_registry.append(existing)
-        else:
-            existing["path"] = str(root)
-        return existing
+        self.project_context_button.pack(fill="x", pady=(8, 0))
 
-    def _initialize_workspace_registry(self) -> None:
-        clean_registry = []
-        seen = set()
-
-        for item in self._workspace_registry:
-            try:
-                path = Path(str(item.get("path") or "")).resolve()
-                if not path.is_dir():
-                    continue
-                info = ensure_workspace_storage(path)
-            except Exception:
-                continue
-            workspace_id = info["workspace_id"]
-            if workspace_id in seen:
-                continue
-            seen.add(workspace_id)
-            clean_registry.append(
-                {
-                    "workspace_id": workspace_id,
-                    "path": str(path),
-                    "last_chat_id": (
-                        item.get("last_chat_id")
-                        if isinstance(item.get("last_chat_id"), str)
-                        else None
-                    ),
-                }
-            )
-
-        self._workspace_registry = clean_registry
-
-        current_entry = None
-        if not self._ui_state.get("registry_initialized", False):
-            cwd = Path.cwd().resolve()
-            try:
-                current_entry = self._register_workspace_path(cwd)
-            except Exception:
-                current_entry = None
-            self._ui_state["registry_initialized"] = True
-
-        active_id = self._ui_state.get("active_workspace_id")
-        active_entry = next(
-            (
-                item
-                for item in self._workspace_registry
-                if item.get("workspace_id") == active_id
-            ),
-            None,
-        )
-        if active_entry is None:
-            active_entry = current_entry
-        if active_entry is None and self._workspace_registry:
-            active_entry = self._workspace_registry[0]
-
-        if active_entry is not None:
-            self._activate_workspace(
-                Path(active_entry["path"]),
-                preferred_chat_id=active_entry.get("last_chat_id"),
-                save=False,
-            )
-        else:
-            self._render_workspace_sidebar()
-
-        self._save_ui_state(silent=True)
-
-    def _render_workspace_sidebar(self) -> None:
-        frame = getattr(self, "workspace_list_frame", None)
-        if frame is None:
-            return
-
-        for child in frame.winfo_children():
-            child.destroy()
-
-        persistent = []
-        if hasattr(self, "add_workspace_button"):
-            persistent.append(self.add_workspace_button)
-        self._workspace_widgets = persistent
-
-        colors = self._theme_colors or {
-            "field": "#202124",
-            "fg": "#e8e8e8",
-            "select_bg": "#3f638f",
-            "button_bg": "#35383d",
-        }
-        field = colors["field"]
-        text_color = self.workspace_text_color_var.get()
-
-        try:
-            frame.configure(bg=field)
-            self.workspace_canvas.configure(bg=field)
-        except tk.TclError:
-            pass
-
-        for index, item in enumerate(list(self._workspace_registry)):
-            path = Path(item["path"])
-            if not path.is_dir():
-                continue
-
-            try:
-                info = ensure_workspace_storage(path)
-                chats = list_chats(path)
-                if not chats:
-                    chats = [create_chat(path)]
-            except Exception:
-                continue
-
-            active_workspace = (
-                info["workspace_id"] == self.current_workspace_id
-            )
-
-            workspace_row = tk.Frame(frame, bg=field)
-            workspace_row.pack(fill="x", padx=2, pady=(4 if index else 2, 2))
-
-            name_label = tk.Label(
-                workspace_row,
-                text=("▶ " if active_workspace else "") + info["display_name"],
-                anchor="w",
-                bg=field,
-                fg=text_color,
-                font=("Segoe UI", 9, "bold"),
-                cursor="hand2",
-            )
-            name_label.pack(side="left", fill="x", expand=True)
-            name_label.bind(
-                "<Button-1>",
-                lambda _event, p=path: self._activate_workspace(p),
-            )
-
-            self._sidebar_button(
-                workspace_row,
-                "+",
-                lambda p=path: self._create_chat_for_workspace(p),
-                width=2,
-            ).pack(side="left", padx=(2, 0))
-
-            self._sidebar_button(
-                workspace_row,
-                "✎",
-                lambda p=path: self._rename_workspace_ui(p),
-                width=2,
-            ).pack(side="left", padx=(2, 0))
-
-            self._sidebar_button(
-                workspace_row,
-                "Контекст",
-                lambda p=path: self._open_project_context_editor(p),
-            ).pack(side="left", padx=(2, 0))
-
-            self._sidebar_button(
-                workspace_row,
-                "×",
-                lambda wid=info["workspace_id"]: self._remove_workspace_ui(wid),
-                width=2,
-            ).pack(side="left", padx=(2, 0))
-
-            for chat in chats:
-                chat_row = tk.Frame(frame, bg=field)
-                chat_row.pack(fill="x", padx=(16, 4), pady=1)
-
-                is_active_chat = (
-                    active_workspace
-                    and chat["chat_id"] == self.current_chat_id
-                )
-                chat_label = tk.Label(
-                    chat_row,
-                    text=("• " if is_active_chat else "  ") + chat["title"],
-                    anchor="w",
-                    bg=field,
-                    fg=text_color,
-                    font=("Segoe UI", 9),
-                    cursor="hand2",
-                )
-                chat_label.pack(side="left", fill="x", expand=True)
-                chat_label.bind(
-                    "<Button-1>",
-                    lambda _event, p=path, cid=chat["chat_id"]:
-                        self._activate_workspace(
-                            p,
-                            preferred_chat_id=cid,
-                        ),
-                )
-
-                self._sidebar_button(
-                    chat_row,
-                    "✎",
-                    lambda p=path, cid=chat["chat_id"]:
-                        self._rename_chat_ui(p, cid),
-                    width=2,
-                ).pack(side="right")
-
-        self.workspace_canvas.configure(
-            scrollregion=self.workspace_canvas.bbox("all")
+        self._workspace_widgets.extend(
+            [
+                self.workspace_tree,
+                self.new_chat_button,
+                self.rename_tree_button,
+                self.project_context_button,
+            ]
         )
 
     def _workspace_path_from_ui(self) -> Path:
@@ -1150,44 +748,6 @@ class UltraApp(tk.Tk):
             )
         return workspace.resolve()
 
-    def _activate_workspace(
-        self,
-        workspace: Path,
-        *,
-        preferred_chat_id: str | None = None,
-        save: bool = True,
-    ) -> None:
-        if self.running:
-            return
-
-        root = workspace.resolve()
-        entry = self._register_workspace_path(root)
-        info = ensure_workspace_storage(root)
-        chats = list_chats(root)
-        if not chats:
-            chats = [create_chat(root)]
-
-        valid_ids = {item["chat_id"] for item in chats}
-        candidate = preferred_chat_id or entry.get("last_chat_id")
-        if candidate not in valid_ids:
-            candidate = chats[-1]["chat_id"]
-
-        self.current_workspace_id = info["workspace_id"]
-        self.current_chat_id = candidate
-        self._loaded_workspace_root = str(root)
-        self.workspace_var.set(str(root))
-        entry["last_chat_id"] = candidate
-
-        if (root / "Документация").is_dir():
-            self.write_scope_var.set("Документация")
-        else:
-            self.write_scope_var.set(".")
-
-        self._render_current_chat()
-        self._render_workspace_sidebar()
-        if save:
-            self._save_ui_state(silent=True)
-
     def _load_workspace_browser(
         self,
         *,
@@ -1196,15 +756,49 @@ class UltraApp(tk.Tk):
     ) -> None:
         try:
             workspace = self._workspace_path_from_ui()
-            self._activate_workspace(
-                workspace,
-                preferred_chat_id=preferred_chat_id,
+            info = ensure_workspace_storage(workspace)
+            chats = list_chats(workspace)
+            if not chats:
+                chats = [create_chat(workspace)]
+
+            valid_ids = {item["chat_id"] for item in chats}
+            candidate = preferred_chat_id or self.current_chat_id
+            if candidate not in valid_ids:
+                candidate = chats[-1]["chat_id"]
+
+            self.current_workspace_id = info["workspace_id"]
+            self.current_chat_id = candidate
+            self._loaded_workspace_root = str(workspace)
+
+            self.workspace_tree.delete(*self.workspace_tree.get_children())
+            self.workspace_tree.insert(
+                "",
+                "end",
+                iid="workspace",
+                text=info["display_name"],
+                open=True,
             )
+            for chat in chats:
+                iid = f"chat:{chat['chat_id']}"
+                self.workspace_tree.insert(
+                    "workspace",
+                    "end",
+                    iid=iid,
+                    text=chat["title"],
+                )
+
+            selected_iid = f"chat:{self.current_chat_id}"
+            if self.workspace_tree.exists(selected_iid):
+                self.workspace_tree.selection_set(selected_iid)
+                self.workspace_tree.focus(selected_iid)
+                self.workspace_tree.see(selected_iid)
+
+            self._render_current_chat()
         except Exception as exc:
             if not silent:
                 messagebox.showerror(
                     APP_TITLE,
-                    f"Не удалось загрузить Workspace/Chats.\n\n"
+                    f"Не удалось загрузить Workspace/Chats.\\n\\n"
                     f"{type(exc).__name__}: {exc}",
                 )
 
@@ -1214,7 +808,7 @@ class UltraApp(tk.Tk):
             self._loaded_workspace_root != resolved
             or not self.current_chat_id
         ):
-            self._activate_workspace(workspace)
+            self._load_workspace_browser(silent=False)
         if self._loaded_workspace_root != resolved or not self.current_chat_id:
             raise RuntimeError("Workspace/Chat не удалось активировать.")
 
@@ -1251,166 +845,113 @@ class UltraApp(tk.Tk):
                     "system",
                 )
 
-    def _add_workspace_dialog(self) -> None:
+    def _on_workspace_tree_select(self, _event=None) -> None:
         if self.running:
             return
-        selected = filedialog.askdirectory(
-            initialdir=self.workspace_var.get() or str(Path.cwd()),
-            title="Создать / подключить Workspace",
-        )
+
+        selected = self.workspace_tree.selection()
         if not selected:
             return
+
+        iid = selected[0]
+        if not iid.startswith("chat:"):
+            return
+
+        chat_id = iid.split(":", 1)[1]
+        if chat_id == self.current_chat_id:
+            return
+
+        self.current_chat_id = chat_id
         try:
-            workspace = Path(selected).resolve()
-            entry = self._register_workspace_path(workspace)
-            chats = list_chats(workspace)
-            if not chats:
-                chat = create_chat(workspace)
-                entry["last_chat_id"] = chat["chat_id"]
-            self._activate_workspace(
-                workspace,
-                preferred_chat_id=entry.get("last_chat_id"),
-            )
+            self._render_current_chat()
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
-                f"Не удалось создать / подключить Workspace.\n\n"
-                f"{type(exc).__name__}: {exc}",
+                f"Не удалось открыть чат.\\n\\n{type(exc).__name__}: {exc}",
             )
 
-    def _choose_workspace(self) -> None:
-        self._add_workspace_dialog()
-
-    def _create_chat_for_workspace(self, workspace: Path) -> None:
+    def _create_chat_ui(self) -> None:
         if self.running:
             return
         try:
+            workspace = self._workspace_path_from_ui()
             chat = create_chat(workspace)
-            self._activate_workspace(
-                workspace,
+            self._load_workspace_browser(
+                silent=False,
                 preferred_chat_id=chat["chat_id"],
             )
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
-                f"Не удалось создать чат.\n\n"
-                f"{type(exc).__name__}: {exc}",
+                f"Не удалось создать чат.\\n\\n{type(exc).__name__}: {exc}",
             )
 
-    def _rename_workspace_ui(self, workspace: Path) -> None:
+    def _rename_selected_tree_item(self) -> None:
         if self.running:
             return
+
+        selected = self.workspace_tree.selection()
+        if not selected:
+            return
+
+        iid = selected[0]
         try:
-            info = ensure_workspace_storage(workspace)
-            new_name = simpledialog.askstring(
-                "Переименовать Workspace",
-                "Новое название Workspace:",
-                initialvalue=info["display_name"],
-                parent=self,
-            )
-            if new_name is None:
-                return
-            rename_workspace(workspace, new_name)
-            self._render_workspace_sidebar()
-            self._save_ui_state(silent=True)
-        except Exception as exc:
-            messagebox.showerror(
-                APP_TITLE,
-                f"Не удалось переименовать Workspace.\n\n"
-                f"{type(exc).__name__}: {exc}",
-            )
+            workspace = self._workspace_path_from_ui()
 
-    def _rename_chat_ui(self, workspace: Path, chat_id: str) -> None:
-        if self.running:
-            return
-        try:
-            chats = {
-                item["chat_id"]: item
-                for item in list_chats(workspace)
-            }
-            current = chats.get(chat_id)
-            if current is None:
-                raise FileNotFoundError(f"Чат не найден: {chat_id}")
-
-            new_name = simpledialog.askstring(
-                "Переименовать чат",
-                "Новое название чата:",
-                initialvalue=current["title"],
-                parent=self,
-            )
-            if new_name is None:
-                return
-            rename_chat(workspace, chat_id, new_name)
-            self._render_workspace_sidebar()
-        except Exception as exc:
-            messagebox.showerror(
-                APP_TITLE,
-                f"Не удалось переименовать чат.\n\n"
-                f"{type(exc).__name__}: {exc}",
-            )
-
-    def _remove_workspace_ui(self, workspace_id: str) -> None:
-        if self.running:
-            return
-
-        item = next(
-            (
-                entry
-                for entry in self._workspace_registry
-                if entry.get("workspace_id") == workspace_id
-            ),
-            None,
-        )
-        if item is None:
-            return
-
-        if not messagebox.askyesno(
-            APP_TITLE,
-            "Убрать Workspace только из списка приложения?\n\n"
-            "Папка проекта, .ultra, чаты и PROJECT CONTEXT "
-            "НЕ будут удалены.",
-        ):
-            return
-
-        self._workspace_registry = [
-            entry
-            for entry in self._workspace_registry
-            if entry.get("workspace_id") != workspace_id
-        ]
-
-        if self.current_workspace_id == workspace_id:
-            if self._workspace_registry:
-                next_item = self._workspace_registry[0]
-                self._activate_workspace(
-                    Path(next_item["path"]),
-                    preferred_chat_id=next_item.get("last_chat_id"),
-                    save=False,
+            if iid == "workspace":
+                info = ensure_workspace_storage(workspace)
+                new_name = simpledialog.askstring(
+                    "Переименовать Workspace",
+                    "Новое название Workspace:",
+                    initialvalue=info["display_name"],
+                    parent=self,
                 )
-            else:
-                self.current_workspace_id = None
-                self.current_chat_id = None
-                self._loaded_workspace_root = None
-                self._render_workspace_sidebar()
-                self.chat.configure(state="normal")
-                self.chat.delete("1.0", "end")
-                self.chat.configure(state="disabled")
+                if new_name is None:
+                    return
+                rename_workspace(workspace, new_name)
+                self._load_workspace_browser(
+                    silent=False,
+                    preferred_chat_id=self.current_chat_id,
+                )
+                return
 
-        self._save_ui_state(silent=True)
-        self._render_workspace_sidebar()
+            if iid.startswith("chat:"):
+                chat_id = iid.split(":", 1)[1]
+                chats = {
+                    item["chat_id"]: item
+                    for item in list_chats(workspace)
+                }
+                current = chats.get(chat_id)
+                if current is None:
+                    raise FileNotFoundError(f"Чат не найден: {chat_id}")
 
-    def _open_project_context_editor(
-        self,
-        workspace: Path | None = None,
-    ) -> None:
+                new_name = simpledialog.askstring(
+                    "Переименовать чат",
+                    "Новое название чата:",
+                    initialvalue=current["title"],
+                    parent=self,
+                )
+                if new_name is None:
+                    return
+                rename_chat(workspace, chat_id, new_name)
+                self._load_workspace_browser(
+                    silent=False,
+                    preferred_chat_id=chat_id,
+                )
+        except Exception as exc:
+            messagebox.showerror(
+                APP_TITLE,
+                f"Не удалось переименовать.\\n\\n{type(exc).__name__}: {exc}",
+            )
+
+    def _open_project_context_editor(self) -> None:
         try:
-            if workspace is None:
-                workspace = self._workspace_path_from_ui()
-            workspace = workspace.resolve()
+            workspace = self._workspace_path_from_ui()
             text = load_project_context(workspace)
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
-                f"Не удалось открыть PROJECT CONTEXT.\n\n"
+                f"Не удалось открыть PROJECT CONTEXT.\\n\\n"
                 f"{type(exc).__name__}: {exc}",
             )
             return
@@ -1455,7 +996,7 @@ class UltraApp(tk.Tk):
             except Exception as exc:
                 messagebox.showerror(
                     APP_TITLE,
-                    f"Не удалось сохранить PROJECT CONTEXT.\n\n"
+                    f"Не удалось сохранить PROJECT CONTEXT.\\n\\n"
                     f"{type(exc).__name__}: {exc}",
                     parent=window,
                 )
@@ -1470,6 +1011,18 @@ class UltraApp(tk.Tk):
             text="Закрыть",
             command=window.destroy,
         ).pack(side="right")
+
+    def _choose_workspace(self) -> None:
+        selected = filedialog.askdirectory(
+            initialdir=self.workspace_var.get() or str(Path.cwd()),
+            title="Выбрать рабочую папку",
+        )
+        if selected:
+            self.workspace_var.set(selected)
+            workspace = Path(selected)
+            if (workspace / "Документация").is_dir():
+                self.write_scope_var.set("Документация")
+            self._load_workspace_browser(silent=False)
 
     def _choose_scope(self, target_var: tk.StringVar) -> None:
         workspace_text = self.workspace_var.get().strip().strip('"')
@@ -1568,14 +1121,6 @@ class UltraApp(tk.Tk):
                 f"[{time_str}] WORKSPACE CONTEXT | "
                 f"{event.get('workspace_id')} | "
                 f"chars={event.get('project_context_chars')}"
-            )
-
-        if event_type == "chat_context_loaded":
-            return (
-                f"[{time_str}] CHAT CONTEXT | "
-                f"{event.get('chat_id')} | "
-                f"messages={event.get('messages')} | "
-                f"chars={event.get('chars')}"
             )
 
         if event_type == "backup_started":
@@ -1825,7 +1370,6 @@ class UltraApp(tk.Tk):
                     workspace,
                     on_event=on_event,
                     permissions=permissions,
-                    chat_id=chat_id,
                 )
             )
             append_raw_message(

@@ -11,11 +11,7 @@ from pathlib import Path
 import httpx
 from mcp.server.mcpserver import MCPServer
 
-from context_storage import (
-    ensure_workspace_storage,
-    load_chat_messages,
-    load_project_context,
-)
+from context_storage import ensure_workspace_storage, load_project_context
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
@@ -54,7 +50,6 @@ BACKUP_BASE = (
 CORE_BACKUP_RELATIVE_PATHS = (
     "server.py",
     "context_storage.py",
-    "ui_state.py",
     "ultra_ui.py",
     "run_ultra.py",
     "Start_Ultra.cmd",
@@ -1178,7 +1173,6 @@ async def run_agent_task(
     *,
     on_event=None,
     permissions: dict | None = None,
-    chat_id: str | None = None,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
@@ -1237,73 +1231,14 @@ async def run_agent_task(
             "Не удалось создать или загрузить переносимый контекст Workspace."
         ) from exc
 
-    active_chat_messages = []
-    if chat_id:
-        try:
-            raw_history = load_chat_messages(root, chat_id)
-        except Exception as exc:
-            _emit(
-                "run_failed",
-                {
-                    "reason": "chat_context_load_error",
-                    "api_requests": api_request_count,
-                    "tool_calls": tool_call_count,
-                    "duration": time.time() - start_time,
-                    "chat_id": chat_id,
-                    "error": str(exc),
-                    "trace_path": f"logs/runs/{run_id}.jsonl",
-                },
-            )
-            raise RuntimeError(
-                "Не удалось загрузить историю активного чата."
-            ) from exc
-
-        for item in raw_history:
-            role = item.get("role")
-            content = item.get("original_text")
-            if (
-                role in {"user", "assistant"}
-                and isinstance(content, str)
-                and content.strip()
-            ):
-                active_chat_messages.append(
-                    {"role": role, "content": content}
-                )
-
-        # UI сохраняет текущее пользовательское сообщение ДО запуска API.
-        # Для прямых вызовов run_agent_task без предварительного сохранения
-        # гарантируем, что текущая задача всё равно попадёт в запрос ровно один раз.
-        if not (
-            active_chat_messages
-            and active_chat_messages[-1]["role"] == "user"
-            and active_chat_messages[-1]["content"] == task
-        ):
-            active_chat_messages.append({"role": "user", "content": task})
-
-    else:
-        active_chat_messages = [{"role": "user", "content": task}]
-
     _emit(
         "run_started",
         {
             "task_preview": task[:200],
             "permissions": _policy_summary(policy),
             "workspace_id": workspace_info["workspace_id"],
-            "chat_id": chat_id,
         },
     )
-    if chat_id:
-        _emit(
-            "chat_context_loaded",
-            {
-                "chat_id": chat_id,
-                "messages": len(active_chat_messages),
-                "chars": sum(
-                    len(item.get("content") or "")
-                    for item in active_chat_messages
-                ),
-            },
-        )
     _emit(
         "workspace_context_loaded",
         {
@@ -1441,7 +1376,7 @@ async def run_agent_task(
                 f"{policy_text}"
             ),
         },
-        *active_chat_messages,
+        {"role": "user", "content": task},
     ]
 
     available_functions = _functions_for_policy(policy)
