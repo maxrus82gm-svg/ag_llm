@@ -462,12 +462,31 @@ class UltraApp(tk.Tk):
         # Справа — отдельная подвижная панель WORKSPACES / ЧАТЫ.
         self._build_workspace_browser(self.main_paned)
 
-        # Центральная системная зона.
-        # Активный Workspace выбирается только через правую панель.
-        ttk.Label(
-            right_frame,
-            text="НАСТРОЙКИ ИНСТРУМЕНТОВ LLM",
-        ).pack(anchor="w", pady=(0, 6))
+        # Workspace — намеренно компактный: оставляем справа запас под будущие controls.
+        workspace_frame = ttk.Frame(right_frame)
+        workspace_frame.pack(fill="x")
+        ttk.Label(workspace_frame, text="Workspace:").grid(
+            row=0, column=0, sticky="w"
+        )
+        self.workspace_entry = ttk.Entry(
+            workspace_frame,
+            textvariable=self.workspace_var,
+            width=72,
+        )
+        self.workspace_entry.grid(
+            row=0, column=1, sticky="w", padx=(8, 8)
+        )
+        bind_edit_shortcuts(self.workspace_entry)
+        self.workspace_entry.bind(
+            "<Return>",
+            lambda _event: self._load_workspace_browser(silent=False),
+        )
+        self.workspace_button = ttk.Button(
+            workspace_frame,
+            text="Выбрать папку",
+            command=self._choose_workspace,
+        )
+        self.workspace_button.grid(row=0, column=2, sticky="w")
 
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
@@ -475,13 +494,20 @@ class UltraApp(tk.Tk):
             text="БЕЗОПАСНОСТЬ ЗАПУСКА — ограничения применяет server.py",
             padding=8,
         )
-        security.pack(fill="x", pady=(0, 8))
+        security.pack(fill="x", pady=(10, 8))
 
-        # Верхняя компактная строка.
-        # Backup для UI считается обязательной системной защитой и
-        # не занимает место отдельной пользовательской настройкой.
+        # Верхняя строка: backup, лимит инструментов и тема.
+        backup_check = ttk.Checkbutton(
+            security,
+            text="Автобэкап ДО запуска",
+            variable=self.auto_backup_var,
+        )
+        backup_check.grid(
+            row=0, column=0, columnspan=2, sticky="w", pady=(0, 4)
+        )
+
         ttk.Label(security, text="Лимит tools:").grid(
-            row=0, column=0, sticky="w", padx=(0, 4), pady=(0, 2)
+            row=0, column=2, sticky="e", padx=(12, 4), pady=(0, 4)
         )
         tool_limit_spin = ttk.Spinbox(
             security,
@@ -491,16 +517,7 @@ class UltraApp(tk.Tk):
             textvariable=self.tool_limit_var,
         )
         tool_limit_spin.grid(
-            row=0, column=1, sticky="w", padx=(0, 14), pady=(0, 2)
-        )
-
-        verify_check = ttk.Checkbutton(
-            security,
-            text="VERIFY",
-            variable=self.allow_verify_var,
-        )
-        verify_check.grid(
-            row=0, column=2, columnspan=2, sticky="w", pady=(0, 2)
+            row=0, column=3, sticky="w", pady=(0, 4)
         )
 
         # Компактные визуальные настройки вынесены в отдельный блок справа.
@@ -588,64 +605,59 @@ class UltraApp(tk.Tk):
             pady=(5, 0),
         )
 
-        # Компактные и одинаковые строки областей доступа.
+        # Галочка чтения находится прямо у области, которой она управляет.
         read_check = ttk.Checkbutton(
             security,
             text="",
             variable=self.allow_read_var,
         )
-        read_check.grid(row=1, column=0, sticky="w", pady=2)
+        read_check.grid(row=1, column=0, sticky="w", pady=(4, 0))
 
         ttk.Label(security, text="Чтение только в:").grid(
-            row=1, column=1, sticky="w", padx=(2, 0), pady=2
+            row=1, column=1, sticky="w", padx=(2, 0), pady=(4, 0)
         )
         read_scope_entry = ttk.Entry(
             security,
             textvariable=self.read_scope_var,
-            width=38,
+            width=62,
         )
         read_scope_entry.grid(
-            row=1, column=2, sticky="w", padx=(6, 4), pady=2
+            row=1, column=2, sticky="w", padx=(8, 8), pady=(4, 0)
         )
         bind_edit_shortcuts(read_scope_entry)
         read_scope_button = ttk.Button(
             security,
-            text="...",
-            width=3,
+            text="Выбрать",
             command=lambda: self._choose_scope(self.read_scope_var),
         )
-        read_scope_button.grid(
-            row=1, column=3, sticky="w", pady=2
-        )
+        read_scope_button.grid(row=1, column=3, sticky="w", pady=(4, 0))
 
+        # Галочка записи находится прямо у области, которой она управляет.
         write_check = ttk.Checkbutton(
             security,
             text="",
             variable=self.allow_write_var,
         )
-        write_check.grid(row=2, column=0, sticky="w", pady=2)
+        write_check.grid(row=2, column=0, sticky="w", pady=(6, 0))
 
         ttk.Label(security, text="Запись только в:").grid(
-            row=2, column=1, sticky="w", padx=(2, 0), pady=2
+            row=2, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
         )
         write_scope_entry = ttk.Entry(
             security,
             textvariable=self.write_scope_var,
-            width=38,
+            width=62,
         )
         write_scope_entry.grid(
-            row=2, column=2, sticky="w", padx=(6, 4), pady=2
+            row=2, column=2, sticky="w", padx=(8, 8), pady=(6, 0)
         )
         bind_edit_shortcuts(write_scope_entry)
         write_scope_button = ttk.Button(
             security,
-            text="...",
-            width=3,
+            text="Выбрать",
             command=lambda: self._choose_scope(self.write_scope_var),
         )
-        write_scope_button.grid(
-            row=2, column=3, sticky="w", pady=2
-        )
+        write_scope_button.grid(row=2, column=3, sticky="w", pady=(6, 0))
 
         # Удаление — отдельное разрешение, независимо от записи.
         delete_check = ttk.Checkbutton(
@@ -653,33 +665,58 @@ class UltraApp(tk.Tk):
             text="",
             variable=self.allow_delete_var,
         )
-        delete_check.grid(row=3, column=0, sticky="w", pady=2)
+        delete_check.grid(row=3, column=0, sticky="w", pady=(6, 0))
 
         ttk.Label(security, text="Удаление только в:").grid(
-            row=3, column=1, sticky="w", padx=(2, 0), pady=2
+            row=3, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
         )
         delete_scope_entry = ttk.Entry(
             security,
             textvariable=self.delete_scope_var,
-            width=38,
+            width=62,
         )
         delete_scope_entry.grid(
-            row=3, column=2, sticky="w", padx=(6, 4), pady=2
+            row=3, column=2, sticky="w", padx=(8, 8), pady=(6, 0)
         )
         bind_edit_shortcuts(delete_scope_entry)
         delete_scope_button = ttk.Button(
             security,
-            text="...",
-            width=3,
+            text="Выбрать",
             command=lambda: self._choose_scope(self.delete_scope_var),
         )
-        delete_scope_button.grid(
-            row=3, column=3, sticky="w", pady=2
+        delete_scope_button.grid(row=3, column=3, sticky="w", pady=(6, 0))
+
+
+        # VERIFY — отдельное безопасное разрешение на белый список проверок.
+        verify_check = ttk.Checkbutton(
+            security,
+            text="VERIFY — Python / Git / UI проверки",
+            variable=self.allow_verify_var,
+        )
+        verify_check.grid(
+            row=4, column=1, columnspan=3, sticky="w", pady=(6, 0)
         )
 
+        ttk.Label(security, text="Защищённые бэкапы:").grid(
+            row=5, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
+        )
+        backup_label = ttk.Label(
+            security,
+            textvariable=self.backup_path_var,
+            font=("Consolas", 8),
+        )
+        backup_label.grid(
+            row=5, column=2, columnspan=3, sticky="w", padx=(8, 0), pady=(6, 0)
+        )
 
-        # VERIFY остаётся явной настройкой.
-        # Backup и служебные подсказки больше не занимают место в панели.
+        hint = ttk.Label(
+            security,
+            text=(
+                "✓ слева включает доступ для строки. '.' = корень workspace. "
+                "Пример: чтение='.' + запись='Документация'."
+            ),
+        )
+        hint.grid(row=6, column=1, columnspan=4, sticky="w", pady=(8, 0))
 
         self._security_widgets.extend(
             [
@@ -687,6 +724,7 @@ class UltraApp(tk.Tk):
                 write_check,
                 delete_check,
                 verify_check,
+                backup_check,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -1013,15 +1051,11 @@ class UltraApp(tk.Tk):
 
         host = ttk.Frame(panel)
         host.pack(fill="both", expand=True)
-        host.columnconfigure(0, weight=1)
-        host.columnconfigure(1, weight=0)
-        host.rowconfigure(0, weight=1)
 
         self.workspace_canvas = tk.Canvas(
             host,
             highlightthickness=0,
             bd=0,
-            width=1,
         )
         scroll = ttk.Scrollbar(
             host,
@@ -1030,18 +1064,8 @@ class UltraApp(tk.Tk):
         )
         self.workspace_canvas.configure(yscrollcommand=scroll.set)
 
-        # GRID здесь намеренно: scrollbar получает собственную колонку
-        # и больше не может быть вытеснен Canvas при сужении правой панели.
-        self.workspace_canvas.grid(
-            row=0,
-            column=0,
-            sticky="nsew",
-        )
-        scroll.grid(
-            row=0,
-            column=1,
-            sticky="ns",
-        )
+        self.workspace_canvas.pack(side="left", fill="both", expand=True)
+        scroll.pack(side="right", fill="y")
 
         self.workspace_list_frame = tk.Frame(self.workspace_canvas)
         self._workspace_canvas_window = self.workspace_canvas.create_window(
@@ -1454,8 +1478,6 @@ class UltraApp(tk.Tk):
             )
 
     def _choose_workspace(self) -> None:
-        # Совместимость для внутренних/старых вызовов.
-        # В UI создание и подключение Workspace выполняется справа.
         self._add_workspace_dialog()
 
     def _create_chat_for_workspace(self, workspace: Path) -> None:
@@ -1946,7 +1968,8 @@ class UltraApp(tk.Tk):
                 f"DELETE={'ON' if permissions['allow_delete'] else 'OFF'} "
                 f"[{delete_scope}], "
                 f"VERIFY={'ON' if permissions['allow_verify'] else 'OFF'}, "
-                f"TOOLS={tool_limit}."
+                f"TOOLS={tool_limit}, "
+                f"BACKUP={'ON' if permissions['auto_backup'] else 'OFF'}."
             ),
             "system",
         )
@@ -1968,6 +1991,8 @@ class UltraApp(tk.Tk):
     def _set_run_controls_enabled(self, enabled: bool) -> None:
         state = "normal" if enabled else "disabled"
         self.send_button.configure(state=state)
+        self.workspace_entry.configure(state=state)
+        self.workspace_button.configure(state=state)
         for widget in self._security_widgets:
             try:
                 widget.configure(state=state)
