@@ -73,7 +73,6 @@ CORE_BACKUP_RELATIVE_PATHS = (
     "workspace_runtime_settings.py",
     "ui_state.py",
     "ultra_ui.py",
-    "run_ultra.py",
     "Start_Ultra.cmd",
     ".gitignore",
     "agent_global_context.py",
