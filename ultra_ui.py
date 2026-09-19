@@ -36,6 +36,13 @@ from agent_global_context import (
     load_agent_global_context,
     save_agent_global_context,
 )
+from server_context_messages import (
+    delete_server_context_message,
+    get_server_context_messages_path,
+    list_server_context_messages,
+    upsert_server_context_message,
+    validate_event_id,
+)
 
 
 APP_TITLE = "GigaChat Ultra Local Agent"
@@ -136,6 +143,7 @@ class UltraApp(tk.Tk):
         self._changed_files: list[str] = []
         self._server_mtime = None
         self._ui_mtime = None
+        self._server_context_messages_mtime = None
         self._record_initial_mtimes()
 
         self._security_widgets: list[tk.Widget] = []
@@ -383,6 +391,12 @@ class UltraApp(tk.Tk):
             self._ui_mtime = Path("ultra_ui.py").stat().st_mtime
         except FileNotFoundError:
             self._ui_mtime = None
+        try:
+            self._server_context_messages_mtime = Path(
+                "server_context_messages.py"
+            ).stat().st_mtime
+        except FileNotFoundError:
+            self._server_context_messages_mtime = None
 
     def _poll_code_changes(self) -> None:
         changed = []
@@ -390,6 +404,15 @@ class UltraApp(tk.Tk):
             current = Path("server.py").stat().st_mtime
             if self._server_mtime is not None and current != self._server_mtime:
                 changed.append("server.py")
+        except FileNotFoundError:
+            pass
+        try:
+            current = Path("server_context_messages.py").stat().st_mtime
+            if (
+                self._server_context_messages_mtime is not None
+                and current != self._server_context_messages_mtime
+            ):
+                changed.append("server_context_messages.py")
         except FileNotFoundError:
             pass
         try:
@@ -530,6 +553,15 @@ class UltraApp(tk.Tk):
         )
         global_context_button.grid(
             row=0, column=4, sticky="w", padx=(12, 0), pady=(0, 2)
+        )
+
+        context_messages_button = ttk.Button(
+            security,
+            text="Контекстные сообщения",
+            command=self._open_server_context_messages_editor,
+        )
+        context_messages_button.grid(
+            row=1, column=4, sticky="w", padx=(12, 0), pady=2
         )
 
         # Компактные визуальные настройки вынесены в отдельный блок справа.
@@ -718,6 +750,7 @@ class UltraApp(tk.Tk):
                 verify_check,
                 guard_p1_check,
                 global_context_button,
+                context_messages_button,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -1986,6 +2019,224 @@ class UltraApp(tk.Tk):
         ).pack(side="right")
 
         editor.focus_set()
+
+    def _open_server_context_messages_editor(self) -> None:
+        try:
+            storage_path = get_server_context_messages_path("ultra")
+            initial_records = list_server_context_messages("ultra")
+        except Exception as exc:
+            messagebox.showerror(
+                APP_TITLE,
+                "Не удалось открыть Контекстные сообщения сервера.\n\n"
+                f"{type(exc).__name__}: {exc}",
+            )
+            return
+
+        window = tk.Toplevel(self)
+        window.title("КОНТЕКСТНЫЕ СООБЩЕНИЯ СЕРВЕРА")
+        window.geometry("1080x700")
+        window.minsize(820, 540)
+        window.transient(self)
+
+        header = ttk.Frame(window, padding=(10, 10, 10, 0))
+        header.pack(fill="x")
+        ttk.Label(
+            header,
+            text=(
+                "Редактор LLM-facing текста серверных событий. "
+                "Записи не меняют permissions, GUARD, Verification Gate "
+                "или другие решения server.py."
+            ),
+            wraplength=1040,
+            justify="left",
+        ).pack(anchor="w")
+        ttk.Label(
+            header,
+            text=f"Локальное хранилище: {storage_path}",
+        ).pack(anchor="w", pady=(4, 0))
+
+        body = ttk.PanedWindow(window, orient="horizontal")
+        body.pack(fill="both", expand=True, padx=10, pady=10)
+
+        left = ttk.Frame(body, padding=(0, 0, 8, 0))
+        right = ttk.Frame(body, padding=(8, 0, 0, 0))
+        body.add(left, weight=1)
+        body.add(right, weight=3)
+
+        ttk.Label(left, text="EVENT ID").pack(anchor="w", pady=(0, 5))
+        event_list = tk.Listbox(left, exportselection=False)
+        event_list.pack(fill="both", expand=True)
+
+        event_id_var = tk.StringVar()
+        ttk.Label(right, text="Event ID").pack(anchor="w")
+        event_id_entry = ttk.Entry(right, textvariable=event_id_var)
+        event_id_entry.pack(fill="x", pady=(3, 10))
+        bind_edit_shortcuts(event_id_entry)
+
+        ttk.Label(right, text="Описание ситуации").pack(anchor="w")
+        description_editor = scrolledtext.ScrolledText(
+            right,
+            wrap="word",
+            height=6,
+            undo=True,
+            font=("Segoe UI", 10),
+        )
+        description_editor.pack(fill="x", pady=(3, 10))
+        bind_edit_shortcuts(description_editor)
+
+        ttk.Label(right, text="Текст сообщения").pack(anchor="w")
+        template_editor = scrolledtext.ScrolledText(
+            right,
+            wrap="word",
+            undo=True,
+            font=("Segoe UI", 10),
+        )
+        template_editor.pack(fill="both", expand=True, pady=(3, 0))
+        bind_edit_shortcuts(template_editor)
+
+        records = {
+            item["event_id"]: item for item in initial_records
+        }
+        selected_event_id: str | None = None
+
+        def clear_fields() -> None:
+            event_id_var.set("")
+            description_editor.delete("1.0", "end")
+            template_editor.delete("1.0", "end")
+
+        def refresh_list(select_event_id: str | None = None) -> None:
+            nonlocal records
+            records = {
+                item["event_id"]: item
+                for item in list_server_context_messages("ultra")
+            }
+            event_list.delete(0, "end")
+            selected_index = None
+            for index, event_id in enumerate(sorted(records)):
+                event_list.insert("end", event_id)
+                if event_id == select_event_id:
+                    selected_index = index
+            if selected_index is not None:
+                event_list.selection_set(selected_index)
+                event_list.see(selected_index)
+                load_selected()
+
+        def load_selected(_event=None) -> None:
+            nonlocal selected_event_id
+            selection = event_list.curselection()
+            if not selection:
+                return
+            event_id = str(event_list.get(selection[0]))
+            record = records[event_id]
+            selected_event_id = event_id
+            event_id_entry.configure(state="normal")
+            clear_fields()
+            event_id_var.set(event_id)
+            description_editor.insert("1.0", record["description"])
+            template_editor.insert("1.0", record["template"])
+            event_id_entry.configure(state="readonly")
+
+        def add_record() -> None:
+            nonlocal selected_event_id
+            selected_event_id = None
+            event_list.selection_clear(0, "end")
+            event_id_entry.configure(state="normal")
+            clear_fields()
+            event_id_entry.focus_set()
+
+        def save_record() -> None:
+            nonlocal selected_event_id
+            try:
+                event_id = validate_event_id(event_id_var.get())
+                if selected_event_id is None and event_id in records:
+                    raise ValueError(
+                        f"Запись {event_id!r} уже существует. "
+                        "Выберите её в списке для изменения."
+                    )
+                if (
+                    selected_event_id is not None
+                    and event_id != selected_event_id
+                ):
+                    raise ValueError(
+                        "event_id существующей записи нельзя переименовать."
+                    )
+                upsert_server_context_message(
+                    event_id,
+                    description_editor.get("1.0", "end-1c"),
+                    template_editor.get("1.0", "end-1c"),
+                    "ultra",
+                )
+                selected_event_id = event_id
+                refresh_list(event_id)
+                messagebox.showinfo(
+                    APP_TITLE,
+                    "Контекстное сообщение сохранено. "
+                    "Следующий RUN использует новую версию без restart.",
+                    parent=window,
+                )
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Не удалось сохранить запись.\n\n"
+                    f"{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+
+        def delete_record() -> None:
+            nonlocal selected_event_id
+            if selected_event_id is None:
+                messagebox.showinfo(
+                    APP_TITLE,
+                    "Сначала выберите запись для удаления.",
+                    parent=window,
+                )
+                return
+            event_id = selected_event_id
+            if not messagebox.askyesno(
+                APP_TITLE,
+                f"Удалить пользовательскую запись {event_id!r}?\n\n"
+                "Server.py продолжит работать на встроенном default_text.",
+                parent=window,
+            ):
+                return
+            try:
+                delete_server_context_message(event_id, "ultra")
+                selected_event_id = None
+                event_id_entry.configure(state="normal")
+                clear_fields()
+                refresh_list()
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Не удалось удалить запись.\n\n"
+                    f"{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+
+        event_list.bind("<<ListboxSelect>>", load_selected)
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+        ttk.Button(buttons, text="Добавить", command=add_record).pack(
+            side="left"
+        )
+        ttk.Button(buttons, text="Сохранить", command=save_record).pack(
+            side="left", padx=(8, 0)
+        )
+        ttk.Button(
+            buttons,
+            text="Удалить запись",
+            command=delete_record,
+        ).pack(side="left", padx=(8, 0))
+        ttk.Button(
+            buttons, text="Закрыть", command=window.destroy
+        ).pack(side="right")
+
+        if initial_records:
+            event_list.selection_set(0)
+            load_selected()
+        else:
+            add_record()
 
     def _open_project_context_editor(
         self,

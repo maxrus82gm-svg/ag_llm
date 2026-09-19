@@ -21,6 +21,7 @@ from context_storage import (
 )
 from workspace_runtime_settings import ensure_workspace_runtime_dirs
 from agent_global_context import load_agent_global_context
+from server_context_messages import resolve_server_context_message
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
@@ -1561,6 +1562,21 @@ async def run_agent_task(
         except Exception:
             pass
 
+    def _context_message(
+        event_id: str,
+        default_text: str,
+        variables: dict | None = None,
+    ) -> str:
+        return resolve_server_context_message(
+            event_id,
+            default_text,
+            variables,
+            "ultra",
+            on_warning=lambda warning: _emit(
+                "server_context_message_warning", warning
+            ),
+        )
+
     root = _validate_workspace_root(workspace_root)
     policy = _prepare_policy_for_workspace(root, policy)
 
@@ -2137,6 +2153,33 @@ async def run_agent_task(
                                     )
 
                     if guard_payload is not None:
+                        guard_event_id = (
+                            "guard.repeat"
+                            if guard_payload.get("kind") == "repeated_tool"
+                            else "guard.suspicious_create"
+                        )
+                        guard_variables = {
+                            key: value
+                            for key, value in guard_payload.items()
+                            if key != "instruction"
+                        }
+                        default_guard_text = str(
+                            guard_payload.get("instruction") or ""
+                        )
+                        resolved_guard_text = _context_message(
+                            guard_event_id,
+                            default_guard_text,
+                            guard_variables,
+                        )
+                        guard_payload["instruction"] = resolved_guard_text
+                        guard_payload["_server_context_message"] = {
+                            "event_id": guard_event_id,
+                            "text": resolved_guard_text,
+                            "facts": {
+                                "guard": "P1",
+                                **guard_variables,
+                            },
+                        }
                         guard_p1_state["interventions"] += 1
                         if (
                             guard_p1_state["interventions"]
@@ -2232,25 +2275,109 @@ async def run_agent_task(
                         tool_error = None
                 except Exception as exc:
                     permission_denied = isinstance(exc, PermissionError)
-                    result = {
-                        "ok": False,
-                        "error_type": type(exc).__name__,
-                        "error": str(exc),
-                        "instruction": (
+                    error_type = type(exc).__name__
+                    error_message = str(exc)
+                    capability_by_tool = {
+                        "list_dir": "READ",
+                        "read_file": "READ",
+                        "write_file": "WRITE",
+                        "delete_file": "DELETE",
+                        "python_compile": "VERIFY",
+                        "git_diff": "VERIFY",
+                        "git_status": "VERIFY",
+                        "ui_smoke_test": "VERIFY",
+                    }
+                    capability = capability_by_tool.get(
+                        function_name, "UNKNOWN"
+                    )
+                    if permission_denied:
+                        context_event_id = "permission.denied"
+                        default_instruction = (
+                            "Сервер отказал в доступе к capability "
+                            "{capability} для tool {tool_name}. "
                             "Не повторяй тот же запрещённый вызов. "
-                            "Соблюдай серверные разрешения и сообщи пользователю, "
-                            "если для задачи требуется дополнительный доступ."
-                            if permission_denied
-                            else
+                            "Соблюдай серверные разрешения и сообщи "
+                            "пользователю, если для задачи требуется "
+                            "дополнительный доступ."
+                        )
+                    else:
+                        context_event_id = "tool.error"
+                        default_instruction = (
+                            "Tool {tool_name} завершился ошибкой "
+                            "{error_type}: {error_message}. "
                             "Исправь аргументы и повтори вызов инструмента. "
                             "Для путей используй только относительные пути "
                             "внутри workspace; корень обозначается '.'."
-                        ),
+                        )
+                    context_variables = {
+                        "capability": capability,
+                        "tool_name": function_name,
+                        "error_type": error_type,
+                        "error_message": error_message,
+                        "path": safe_args.get("path", ""),
+                    }
+                    context_text = _context_message(
+                        context_event_id,
+                        default_instruction,
+                        context_variables,
+                    )
+                    result = {
+                        "ok": False,
+                        "error_type": error_type,
+                        "error": error_message,
+                        "instruction": context_text,
+                        "_server_context_message": {
+                            "event_id": context_event_id,
+                            "text": context_text,
+                            "facts": {
+                                "decision": (
+                                    "DENIED"
+                                    if permission_denied
+                                    else "ERROR"
+                                ),
+                                "arguments": safe_args,
+                                **context_variables,
+                            },
+                        },
                     }
                     tool_ok = False
                     tool_error = {
-                        "type": type(exc).__name__,
-                        "message": str(exc),
+                        "type": error_type,
+                        "message": error_message,
+                    }
+
+                if (
+                    not tool_ok
+                    and isinstance(result, dict)
+                    and "_server_context_message" not in result
+                ):
+                    error_type = str(tool_error.get("type") or "ToolError")
+                    error_message = str(tool_error.get("message") or "")
+                    context_variables = {
+                        "tool_name": function_name,
+                        "error_type": error_type,
+                        "error_message": error_message,
+                    }
+                    context_text = _context_message(
+                        "tool.error",
+                        (
+                            "Tool {tool_name} завершился ошибкой "
+                            "{error_type}: {error_message}. "
+                            "Исправь причину ошибки и повтори необходимую "
+                            "проверку или вызов."
+                        ),
+                        context_variables,
+                    )
+                    result = dict(result)
+                    result["instruction"] = context_text
+                    result["_server_context_message"] = {
+                        "event_id": "tool.error",
+                        "text": context_text,
+                        "facts": {
+                            "decision": "ERROR",
+                            "arguments": safe_args,
+                            **context_variables,
+                        },
                     }
 
                 if tool_ok and function_name in {"write_file", "delete_file"}:
@@ -2546,9 +2673,33 @@ async def run_agent_task(
                 messages.append(
                     {
                         "role": "user",
-                        "content": _verification_gate_prompt(
-                            missing_verification,
-                            verification_state,
+                        "content": _context_message(
+                            "verification.required",
+                            _verification_gate_prompt(
+                                missing_verification,
+                                verification_state,
+                            ),
+                            {
+                                "attempt": verification_gate_repeat_count,
+                                "missing_count": len(missing_verification),
+                                "missing": json.dumps(
+                                    missing_verification,
+                                    ensure_ascii=False,
+                                    sort_keys=True,
+                                ),
+                            },
+                        )
+                        + "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                        + json.dumps(
+                            {
+                                "event_id": "verification.required",
+                                "decision": "SUCCESS_BLOCKED",
+                                "attempt": verification_gate_repeat_count,
+                                "missing": missing_verification,
+                                "verification_state": verification_state,
+                            },
+                            ensure_ascii=False,
+                            sort_keys=True,
                         ),
                     }
                 )
