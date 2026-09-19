@@ -1479,16 +1479,8 @@ def _verification_missing_requirements(state: dict) -> list[dict]:
     return missing
 
 
-def _verification_gate_prompt(missing: list[dict], state: dict) -> str:
-    lines = [
-        "SERVER VERIFICATION GATE — SUCCESS BLOCKED.",
-        "Ты попытался завершить RUN, но сервер физически запрещает SUCCESS, "
-        "пока реальные проверки после последних изменений не завершены.",
-        "Не объявляй задачу завершённой и не утверждай, что код исправен, "
-        "пока ниже остаются пункты.",
-        "",
-        "ОБЯЗАТЕЛЬНО ВЫПОЛНИ:",
-    ]
+def _verification_missing_lines(missing: list[dict]) -> str:
+    lines = []
     for item in missing:
         tool = item["tool"]
         paths = item.get("paths")
@@ -1496,21 +1488,6 @@ def _verification_gate_prompt(missing: list[dict], state: dict) -> str:
             lines.append(f"- {tool}(paths={paths}) — {item['reason']}")
         else:
             lines.append(f"- {tool} — {item['reason']}")
-
-    lines.extend(
-        [
-            "",
-            "Если проверка падает из-за изменённого тобой кода — исправь код "
-            "в разрешённом scope и повтори проверки. Любая новая запись снова "
-            "делает git_diff/git_status устаревшими, а новая Python-запись — "
-            "python_compile; изменение server.py/ultra_ui.py — ui_smoke_test.",
-            "Если исправление невозможно в текущих разрешениях, сообщи о блокере, "
-            "но SUCCESS всё равно запрещён.",
-            "",
-            "Текущее verification state:",
-            json.dumps(state, ensure_ascii=False, sort_keys=True),
-        ]
-    )
     return "\n".join(lines)
 
 
@@ -1564,12 +1541,10 @@ async def run_agent_task(
 
     def _context_message(
         event_id: str,
-        default_text: str,
         variables: dict | None = None,
     ) -> str:
         return resolve_server_context_message(
             event_id,
-            default_text,
             variables,
             "ultra",
             on_warning=lambda warning: _emit(
@@ -2044,16 +2019,6 @@ async def run_agent_task(
                                     "repeat_success_count"
                                 ],
                                 "intervention": repeat_hits,
-                                "instruction": (
-                                    "SUPERVISOR CHECK — этот же успешный tool "
-                                    "с теми же arguments уже выполнялся несколько "
-                                    "раз, а релевантное состояние не изменилось. "
-                                    "Вызов сейчас НЕ выполнен. Снова сопоставь "
-                                    "действие с исходной TASK и используй уже "
-                                    "полученный результат. Если повтор действительно "
-                                    "нужен, измени план/состояние; не продолжай "
-                                    "механически повторять тот же вызов."
-                                ),
                             }
                         else:
                             _emit(
@@ -2122,18 +2087,6 @@ async def run_agent_task(
                                             "possible_duplicate_create"
                                         ),
                                         **suspicious,
-                                        "instruction": (
-                                            "SUPERVISOR CHECK — ты собираешься "
-                                            "СОЗДАТЬ новый файл, очень похожий "
-                                            "на существующий. Новый файл пока "
-                                            "НЕ создан. Снова сопоставь действие "
-                                            "с исходной TASK: действительно нужен "
-                                            "новый документ или следовало изменить "
-                                            "существующий? Если после самопроверки "
-                                            "создание действительно нужно, повтори "
-                                            "тот же write_file: повторный осознанный "
-                                            "запрос в этом RUN будет разрешён."
-                                        ),
                                     }
                                 else:
                                     _emit(
@@ -2163,12 +2116,8 @@ async def run_agent_task(
                             for key, value in guard_payload.items()
                             if key != "instruction"
                         }
-                        default_guard_text = str(
-                            guard_payload.get("instruction") or ""
-                        )
                         resolved_guard_text = _context_message(
                             guard_event_id,
-                            default_guard_text,
                             guard_variables,
                         )
                         guard_payload["instruction"] = resolved_guard_text
@@ -2292,23 +2241,8 @@ async def run_agent_task(
                     )
                     if permission_denied:
                         context_event_id = "permission.denied"
-                        default_instruction = (
-                            "Сервер отказал в доступе к capability "
-                            "{capability} для tool {tool_name}. "
-                            "Не повторяй тот же запрещённый вызов. "
-                            "Соблюдай серверные разрешения и сообщи "
-                            "пользователю, если для задачи требуется "
-                            "дополнительный доступ."
-                        )
                     else:
                         context_event_id = "tool.error"
-                        default_instruction = (
-                            "Tool {tool_name} завершился ошибкой "
-                            "{error_type}: {error_message}. "
-                            "Исправь аргументы и повтори вызов инструмента. "
-                            "Для путей используй только относительные пути "
-                            "внутри workspace; корень обозначается '.'."
-                        )
                     context_variables = {
                         "capability": capability,
                         "tool_name": function_name,
@@ -2318,7 +2252,6 @@ async def run_agent_task(
                     }
                     context_text = _context_message(
                         context_event_id,
-                        default_instruction,
                         context_variables,
                     )
                     result = {
@@ -2360,12 +2293,6 @@ async def run_agent_task(
                     }
                     context_text = _context_message(
                         "tool.error",
-                        (
-                            "Tool {tool_name} завершился ошибкой "
-                            "{error_type}: {error_message}. "
-                            "Исправь причину ошибки и повтори необходимую "
-                            "проверку или вызов."
-                        ),
                         context_variables,
                     )
                     result = dict(result)
@@ -2675,15 +2602,19 @@ async def run_agent_task(
                         "role": "user",
                         "content": _context_message(
                             "verification.required",
-                            _verification_gate_prompt(
-                                missing_verification,
-                                verification_state,
-                            ),
                             {
                                 "attempt": verification_gate_repeat_count,
                                 "missing_count": len(missing_verification),
                                 "missing": json.dumps(
                                     missing_verification,
+                                    ensure_ascii=False,
+                                    sort_keys=True,
+                                ),
+                                "missing_lines": _verification_missing_lines(
+                                    missing_verification
+                                ),
+                                "verification_state": json.dumps(
+                                    verification_state,
                                     ensure_ascii=False,
                                     sort_keys=True,
                                 ),

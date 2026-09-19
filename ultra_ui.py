@@ -39,7 +39,7 @@ from agent_global_context import (
 from server_context_messages import (
     delete_server_context_message,
     get_server_context_messages_path,
-    list_server_context_messages,
+    list_server_context_event_records,
     upsert_server_context_message,
     validate_event_id,
 )
@@ -2023,7 +2023,7 @@ class UltraApp(tk.Tk):
     def _open_server_context_messages_editor(self) -> None:
         try:
             storage_path = get_server_context_messages_path("ultra")
-            initial_records = list_server_context_messages("ultra")
+            initial_payload = list_server_context_event_records("ultra")
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
@@ -2034,12 +2034,14 @@ class UltraApp(tk.Tk):
 
         window = tk.Toplevel(self)
         window.title("КОНТЕКСТНЫЕ СООБЩЕНИЯ СЕРВЕРА")
-        window.geometry("1080x700")
-        window.minsize(820, 540)
+        window.geometry("1120x760")
+        window.minsize(820, 560)
         window.transient(self)
+        window.columnconfigure(0, weight=1)
+        window.rowconfigure(1, weight=1)
 
         header = ttk.Frame(window, padding=(10, 10, 10, 0))
-        header.pack(fill="x")
+        header.grid(row=0, column=0, sticky="ew")
         ttk.Label(
             header,
             text=(
@@ -2054,66 +2056,201 @@ class UltraApp(tk.Tk):
             header,
             text=f"Локальное хранилище: {storage_path}",
         ).pack(anchor="w", pady=(4, 0))
+        diagnostic_var = tk.StringVar()
+        tk.Label(
+            header,
+            textvariable=diagnostic_var,
+            fg="#9A3030",
+            bg="#E7E7E7",
+            anchor="w",
+            justify="left",
+        ).pack(fill="x", pady=(4, 0))
 
         body = ttk.PanedWindow(window, orient="horizontal")
-        body.pack(fill="both", expand=True, padx=10, pady=10)
+        body.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 
         left = ttk.Frame(body, padding=(0, 0, 8, 0))
         right = ttk.Frame(body, padding=(8, 0, 0, 0))
         body.add(left, weight=1)
         body.add(right, weight=3)
+        right.columnconfigure(0, weight=1)
+        right.rowconfigure(8, weight=3)
+        right.rowconfigure(10, weight=2)
 
-        ttk.Label(left, text="EVENT ID").pack(anchor="w", pady=(0, 5))
-        event_list = tk.Listbox(left, exportselection=False)
+        ttk.Label(left, text="EVENT ID / STATUS").pack(
+            anchor="w", pady=(0, 5)
+        )
+        event_list = tk.Listbox(
+            left,
+            exportselection=False,
+            bg="#E5E6E8",
+            fg="#252525",
+            selectbackground="#B8C7D9",
+            selectforeground="#111111",
+            activestyle="none",
+        )
         event_list.pack(fill="both", expand=True)
 
         event_id_var = tk.StringVar()
-        ttk.Label(right, text="Event ID").pack(anchor="w")
+        status_var = tk.StringVar()
+        source_var = tk.StringVar()
+        built_in_description_var = tk.StringVar()
+
+        ttk.Label(right, text="Event ID").grid(
+            row=0, column=0, sticky="w"
+        )
         event_id_entry = ttk.Entry(right, textvariable=event_id_var)
-        event_id_entry.pack(fill="x", pady=(3, 10))
+        event_id_entry.grid(
+            row=1, column=0, sticky="ew", pady=(3, 7)
+        )
         bind_edit_shortcuts(event_id_entry)
 
-        ttk.Label(right, text="Описание ситуации").pack(anchor="w")
+        metadata = ttk.Frame(right)
+        metadata.grid(row=2, column=0, sticky="ew", pady=(0, 7))
+        ttk.Label(metadata, text="Статус:").pack(side="left")
+        ttk.Label(metadata, textvariable=status_var).pack(
+            side="left", padx=(5, 18)
+        )
+        ttk.Label(metadata, text="Источник:").pack(side="left")
+        ttk.Label(metadata, textvariable=source_var).pack(
+            side="left", padx=(5, 0)
+        )
+
+        ttk.Label(right, text="Встроенное описание").grid(
+            row=3, column=0, sticky="w"
+        )
+        tk.Label(
+            right,
+            textvariable=built_in_description_var,
+            bg="#E5E6E8",
+            fg="#252525",
+            anchor="w",
+            justify="left",
+            wraplength=760,
+            padx=6,
+            pady=4,
+        ).grid(row=4, column=0, sticky="ew", pady=(3, 7))
+
+        ttk.Label(right, text="Описание override / DRAFT").grid(
+            row=5, column=0, sticky="w"
+        )
         description_editor = scrolledtext.ScrolledText(
             right,
             wrap="word",
-            height=6,
+            height=4,
             undo=True,
             font=("Segoe UI", 10),
+            bg="#F0F0F0",
+            fg="#202020",
+            insertbackground="#202020",
         )
-        description_editor.pack(fill="x", pady=(3, 10))
+        description_editor.grid(
+            row=6, column=0, sticky="ew", pady=(3, 7)
+        )
         bind_edit_shortcuts(description_editor)
 
-        ttk.Label(right, text="Текст сообщения").pack(anchor="w")
+        ttk.Label(right, text="Редактируемый текст сообщения").grid(
+            row=7, column=0, sticky="w"
+        )
         template_editor = scrolledtext.ScrolledText(
             right,
             wrap="word",
             undo=True,
             font=("Segoe UI", 10),
+            bg="#F0F0F0",
+            fg="#202020",
+            insertbackground="#202020",
         )
-        template_editor.pack(fill="both", expand=True, pady=(3, 0))
+        template_editor.grid(
+            row=8, column=0, sticky="nsew", pady=(3, 7)
+        )
         bind_edit_shortcuts(template_editor)
 
+        ttk.Label(right, text="Встроенный default (только чтение)").grid(
+            row=9, column=0, sticky="w"
+        )
+        default_editor = scrolledtext.ScrolledText(
+            right,
+            wrap="word",
+            height=6,
+            state="disabled",
+            font=("Segoe UI", 9),
+            bg="#E5E6E8",
+            fg="#252525",
+        )
+        default_editor.grid(
+            row=10, column=0, sticky="nsew", pady=(3, 0)
+        )
+
         records = {
-            item["event_id"]: item for item in initial_records
+            item["event_id"]: item
+            for item in initial_payload["records"]
         }
+        event_ids_by_index: list[str] = []
         selected_event_id: str | None = None
+
+        def set_readonly_text(widget, text: str) -> None:
+            widget.configure(state="normal")
+            widget.delete("1.0", "end")
+            if text:
+                widget.insert("1.0", text)
+            widget.configure(state="disabled")
 
         def clear_fields() -> None:
             event_id_var.set("")
+            status_var.set("DRAFT — не сохранён")
+            source_var.set("Новая пользовательская запись")
+            built_in_description_var.set("—")
             description_editor.delete("1.0", "end")
             template_editor.delete("1.0", "end")
+            set_readonly_text(default_editor, "")
+
+        def configure_record_action(record: dict | None) -> None:
+            if record is None:
+                record_action_button.configure(
+                    text="Удалить DRAFT", state="disabled"
+                )
+            elif record["is_active"] and record["has_override"]:
+                record_action_button.configure(
+                    text="Сбросить override", state="normal"
+                )
+            elif not record["is_active"]:
+                record_action_button.configure(
+                    text="Удалить DRAFT", state="normal"
+                )
+            else:
+                record_action_button.configure(
+                    text="Нет override", state="disabled"
+                )
 
         def refresh_list(select_event_id: str | None = None) -> None:
-            nonlocal records
+            nonlocal records, event_ids_by_index
+            payload = list_server_context_event_records("ultra")
             records = {
                 item["event_id"]: item
-                for item in list_server_context_messages("ultra")
+                for item in payload["records"]
             }
+            diagnostics = payload.get("diagnostics") or []
+            diagnostic_var.set(
+                "ОШИБКА USER JSON: " + diagnostics[0]["message"]
+                if diagnostics
+                else ""
+            )
             event_list.delete(0, "end")
+            event_ids_by_index = []
             selected_index = None
             for index, event_id in enumerate(sorted(records)):
-                event_list.insert("end", event_id)
+                record = records[event_id]
+                event_ids_by_index.append(event_id)
+                event_list.insert(
+                    "end", f"● {record['status']}  {event_id}"
+                )
+                color = {
+                    "ACTIVE": "#2F7D4A",
+                    "ACTIVE + OVERRIDE": "#2D5F9A",
+                    "DRAFT": "#4A4A4A",
+                }[record["status"]]
+                event_list.itemconfig(index, foreground=color)
                 if event_id == select_event_id:
                     selected_index = index
             if selected_index is not None:
@@ -2126,15 +2263,24 @@ class UltraApp(tk.Tk):
             selection = event_list.curselection()
             if not selection:
                 return
-            event_id = str(event_list.get(selection[0]))
+            event_id = event_ids_by_index[selection[0]]
             record = records[event_id]
             selected_event_id = event_id
             event_id_entry.configure(state="normal")
             clear_fields()
             event_id_var.set(event_id)
+            status_var.set(record["status"])
+            source_var.set(record["source"])
+            built_in_description_var.set(
+                record.get("built_in_description") or "—"
+            )
             description_editor.insert("1.0", record["description"])
             template_editor.insert("1.0", record["template"])
+            set_readonly_text(
+                default_editor, record.get("default_template") or ""
+            )
             event_id_entry.configure(state="readonly")
+            configure_record_action(record)
 
         def add_record() -> None:
             nonlocal selected_event_id
@@ -2142,6 +2288,7 @@ class UltraApp(tk.Tk):
             event_list.selection_clear(0, "end")
             event_id_entry.configure(state="normal")
             clear_fields()
+            configure_record_action(None)
             event_id_entry.focus_set()
 
         def save_record() -> None:
@@ -2182,7 +2329,7 @@ class UltraApp(tk.Tk):
                     parent=window,
                 )
 
-        def delete_record() -> None:
+        def remove_user_record() -> None:
             nonlocal selected_event_id
             if selected_event_id is None:
                 messagebox.showinfo(
@@ -2192,23 +2339,40 @@ class UltraApp(tk.Tk):
                 )
                 return
             event_id = selected_event_id
+            record = records[event_id]
+            if record["is_active"] and not record["has_override"]:
+                return
+            action = (
+                "Сбросить пользовательский override"
+                if record["is_active"]
+                else "Удалить DRAFT"
+            )
             if not messagebox.askyesno(
                 APP_TITLE,
-                f"Удалить пользовательскую запись {event_id!r}?\n\n"
-                "Server.py продолжит работать на встроенном default_text.",
+                f"{action} для {event_id!r}?\n\n"
+                + (
+                    "Runtime-событие останется ACTIVE и вернётся к "
+                    "встроенному default."
+                    if record["is_active"]
+                    else "DRAFT полностью исчезнет из списка."
+                ),
                 parent=window,
             ):
                 return
             try:
                 delete_server_context_message(event_id, "ultra")
-                selected_event_id = None
-                event_id_entry.configure(state="normal")
-                clear_fields()
-                refresh_list()
+                if record["is_active"]:
+                    refresh_list(event_id)
+                else:
+                    selected_event_id = None
+                    event_id_entry.configure(state="normal")
+                    clear_fields()
+                    configure_record_action(None)
+                    refresh_list()
             except Exception as exc:
                 messagebox.showerror(
                     APP_TITLE,
-                    "Не удалось удалить запись.\n\n"
+                    "Не удалось изменить пользовательскую запись.\n\n"
                     f"{type(exc).__name__}: {exc}",
                     parent=window,
                 )
@@ -2216,23 +2380,38 @@ class UltraApp(tk.Tk):
         event_list.bind("<<ListboxSelect>>", load_selected)
 
         buttons = ttk.Frame(window)
-        buttons.pack(fill="x", padx=10, pady=(0, 10))
+        buttons.grid(
+            row=2, column=0, sticky="ew", padx=10, pady=(0, 10)
+        )
         ttk.Button(buttons, text="Добавить", command=add_record).pack(
             side="left"
         )
         ttk.Button(buttons, text="Сохранить", command=save_record).pack(
             side="left", padx=(8, 0)
         )
-        ttk.Button(
+        record_action_button = ttk.Button(
             buttons,
-            text="Удалить запись",
-            command=delete_record,
-        ).pack(side="left", padx=(8, 0))
+            text="Удалить DRAFT",
+            command=remove_user_record,
+        )
+        record_action_button.pack(side="left", padx=(8, 0))
         ttk.Button(
             buttons, text="Закрыть", command=window.destroy
         ).pack(side="right")
 
-        if initial_records:
+        window._server_context_messages_widgets = {
+            "event_list": event_list,
+            "status_var": status_var,
+            "source_var": source_var,
+            "built_in_description_var": built_in_description_var,
+            "template_editor": template_editor,
+            "default_editor": default_editor,
+            "action_button": record_action_button,
+            "button_bar": buttons,
+        }
+
+        refresh_list()
+        if records:
             event_list.selection_set(0)
             load_selected()
         else:

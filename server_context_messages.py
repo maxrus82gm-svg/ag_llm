@@ -26,6 +26,7 @@ _AGENT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 _EVENT_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,127}$")
 _PLACEHOLDER_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 _SIMPLE_PLACEHOLDER_TOKEN_RE = re.compile(r"\{([a-z][a-z0-9_]*)\}")
+_REGISTERED_EVENTS: dict[str, dict[str, str]] = {}
 
 
 def _validate_agent_id(agent_id: str) -> str:
@@ -45,6 +46,44 @@ def validate_event_id(event_id: str) -> str:
             "a-z, 0-9, точку, подчёркивание или дефис."
         )
     return value
+
+
+def register_server_context_event(
+    event_id: str,
+    description: str,
+    default_template: str,
+) -> dict[str, str]:
+    """Зарегистрировать реально используемое runtime-событие."""
+
+    event_id = validate_event_id(event_id)
+    description = _validate_text_field(
+        description, "built-in description", MAX_DESCRIPTION_LENGTH
+    )
+    default_template = _validate_text_field(
+        default_template, "default_template", MAX_TEMPLATE_LENGTH
+    )
+    record = {
+        "event_id": event_id,
+        "description": description,
+        "default_template": default_template,
+    }
+    existing = _REGISTERED_EVENTS.get(event_id)
+    if existing is not None and existing != record:
+        raise ValueError(
+            f"Runtime event {event_id!r} уже зарегистрирован с другими metadata."
+        )
+    _REGISTERED_EVENTS[event_id] = record
+    return dict(record)
+
+
+def list_registered_server_context_events() -> list[dict[str, str]]:
+    return [dict(_REGISTERED_EVENTS[event_id]) for event_id in sorted(_REGISTERED_EVENTS)]
+
+
+def get_registered_server_context_event(event_id: str) -> dict[str, str] | None:
+    event_id = validate_event_id(event_id)
+    record = _REGISTERED_EVENTS.get(event_id)
+    return dict(record) if record is not None else None
 
 
 def get_server_context_messages_path(agent_id: str = "ultra") -> Path:
@@ -191,6 +230,77 @@ def list_server_context_messages(
     ]
 
 
+def list_server_context_event_records(
+    agent_id: str = "ultra",
+    *,
+    path: Path | str | None = None,
+) -> dict[str, Any]:
+    """Объединить runtime registry и пользовательские overrides/drafts для UI."""
+
+    diagnostics: list[dict[str, str]] = []
+    try:
+        catalog = load_server_context_messages(agent_id, path=path)
+        user_messages = catalog["messages"]
+    except Exception as exc:
+        user_messages = {}
+        diagnostics.append(
+            {
+                "kind": "invalid_user_catalog",
+                "message": str(exc),
+            }
+        )
+
+    event_ids = sorted(set(_REGISTERED_EVENTS) | set(user_messages))
+    records: list[dict[str, Any]] = []
+    for event_id in event_ids:
+        runtime_record = _REGISTERED_EVENTS.get(event_id)
+        user_record = user_messages.get(event_id)
+        is_active = runtime_record is not None
+        has_override = user_record is not None
+
+        if is_active and has_override:
+            status = "ACTIVE + OVERRIDE"
+            source = "Пользовательский override"
+            description = user_record["description"]
+            template = user_record["template"]
+        elif is_active:
+            status = "ACTIVE"
+            source = "Встроенный default"
+            description = runtime_record["description"]
+            template = runtime_record["default_template"]
+        else:
+            status = "DRAFT"
+            source = "Пользовательский draft"
+            description = user_record["description"]
+            template = user_record["template"]
+
+        records.append(
+            {
+                "event_id": event_id,
+                "status": status,
+                "source": source,
+                "description": description,
+                "template": template,
+                "is_active": is_active,
+                "has_override": has_override,
+                "built_in_description": (
+                    runtime_record["description"] if is_active else None
+                ),
+                "default_template": (
+                    runtime_record["default_template"] if is_active else None
+                ),
+                "user_description": (
+                    user_record["description"] if has_override else None
+                ),
+                "override_template": (
+                    user_record["template"] if has_override else None
+                ),
+            }
+        )
+
+    return {"records": records, "diagnostics": diagnostics}
+
+
 def upsert_server_context_message(
     event_id: str,
     description: str,
@@ -297,14 +407,13 @@ def _report_warning(
 
 def resolve_server_context_message(
     event_id: str,
-    default_text: str,
     variables: Mapping[str, object] | None = None,
     agent_id: str = "ultra",
     *,
     path: Path | str | None = None,
     on_warning: Callable[[dict[str, str]], None] | None = None,
 ) -> str:
-    """Разрешить пользовательский override, никогда не делая его runtime-зависимостью."""
+    """Разрешить override зарегистрированного события с built-in fallback."""
 
     variables = variables or {}
     try:
@@ -312,7 +421,14 @@ def resolve_server_context_message(
     except Exception as exc:
         safe_event_id = str(event_id)
         _report_warning(safe_event_id, str(exc), on_warning)
-        return str(default_text)
+        return ""
+
+    runtime_record = _REGISTERED_EVENTS.get(event_id)
+    if runtime_record is None:
+        raise KeyError(
+            f"Runtime event {event_id!r} не зарегистрирован."
+        )
+    default_template = runtime_record["default_template"]
 
     custom_template = None
     try:
@@ -329,4 +445,73 @@ def resolve_server_context_message(
         except Exception as exc:
             _report_warning(event_id, f"ошибка шаблона: {exc}", on_warning)
 
-    return _render_default_text(str(default_text), variables)
+    return _render_default_text(default_template, variables)
+
+
+register_server_context_event(
+    "permission.denied",
+    "Сервер отказал в доступе к capability для вызванного инструмента.",
+    (
+        "Сервер отказал в доступе к capability {capability} для tool "
+        "{tool_name}. Не повторяй тот же запрещённый вызов. Соблюдай "
+        "серверные разрешения и сообщи пользователю, если для задачи "
+        "требуется дополнительный доступ."
+    ),
+)
+
+register_server_context_event(
+    "tool.error",
+    "Вызов инструмента завершился ошибкой.",
+    (
+        "Tool {tool_name} завершился ошибкой {error_type}: {error_message}. "
+        "Исправь причину ошибки и повтори необходимую проверку или вызов. "
+        "Для путей используй только относительные пути внутри workspace; "
+        "корень обозначается '.'."
+    ),
+)
+
+register_server_context_event(
+    "guard.repeat",
+    "GUARD P1 остановил механический повтор успешного read/list.",
+    (
+        "SUPERVISOR CHECK — этот же успешный tool с теми же arguments уже "
+        "выполнялся несколько раз, а релевантное состояние не изменилось. "
+        "Вызов сейчас НЕ выполнен. Снова сопоставь действие с исходной TASK "
+        "и используй уже полученный результат. Если повтор действительно "
+        "нужен, измени план/состояние; не продолжай механически повторять "
+        "тот же вызов."
+    ),
+)
+
+register_server_context_event(
+    "guard.suspicious_create",
+    "GUARD P1 обнаружил создание файла, похожего на существующий.",
+    (
+        "SUPERVISOR CHECK — ты собираешься СОЗДАТЬ новый файл, очень похожий "
+        "на существующий. Новый файл пока НЕ создан. Снова сопоставь действие "
+        "с исходной TASK: действительно нужен новый документ или следовало "
+        "изменить существующий? Если после самопроверки создание действительно "
+        "нужно, повтори тот же write_file: повторный осознанный запрос в этом "
+        "RUN будет разрешён."
+    ),
+)
+
+register_server_context_event(
+    "verification.required",
+    "Verification Gate заблокировал SUCCESS до обязательных проверок.",
+    (
+        "SERVER VERIFICATION GATE — SUCCESS BLOCKED.\n"
+        "Ты попытался завершить RUN, но сервер физически запрещает SUCCESS, "
+        "пока реальные проверки после последних изменений не завершены.\n"
+        "Не объявляй задачу завершённой и не утверждай, что код исправен, "
+        "пока ниже остаются пункты.\n\n"
+        "ОБЯЗАТЕЛЬНО ВЫПОЛНИ:\n{missing_lines}\n\n"
+        "Если проверка падает из-за изменённого тобой кода — исправь код "
+        "в разрешённом scope и повтори проверки. Любая новая запись снова "
+        "делает git_diff/git_status устаревшими, а новая Python-запись — "
+        "python_compile; изменение server.py/ultra_ui.py — ui_smoke_test.\n"
+        "Если исправление невозможно в текущих разрешениях, сообщи о блокере, "
+        "но SUCCESS всё равно запрещён.\n\n"
+        "Текущее verification state:\n{verification_state}"
+    ),
+)
