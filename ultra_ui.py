@@ -4,7 +4,7 @@ import threading
 import time
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, messagebox, scrolledtext, ttk
+from tkinter import colorchooser, filedialog, messagebox, scrolledtext, ttk
 
 from server import get_backup_base_path, run_agent_task
 
@@ -68,6 +68,12 @@ class UltraApp(tk.Tk):
         self.allow_verify_var = tk.BooleanVar(value=True)
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(value=True)
+
+        # Настраиваемые цвета основных текстовых потоков интерфейса.
+        self.log_text_color_var = tk.StringVar(value="#76E68A")
+        self.user_text_color_var = tk.StringVar(value="#FFFFFF")
+        self.assistant_text_color_var = tk.StringVar(value="#8EC5FF")
+
         self.tool_limit_var = tk.StringVar(value="20")
         self.read_scope_var = tk.StringVar(value=".")
         default_write_scope = "Документация" if (Path.cwd() / "Документация").is_dir() else "."
@@ -87,6 +93,7 @@ class UltraApp(tk.Tk):
         self._record_initial_mtimes()
 
         self._security_widgets: list[tk.Widget] = []
+        self._color_swatches: dict[str, tk.Widget] = {}
         self._run_started_once = False
 
         self._build_ui()
@@ -162,6 +169,59 @@ class UltraApp(tk.Tk):
                 font=("Consolas", 9, "bold"),
             )
 
+        # Пользовательские цвета применяются ПОСЛЕ темы, чтобы переключение
+        # светлой/тёмной темы не сбрасывало выбранные оттенки.
+        self._apply_text_colors()
+
+    def _apply_text_colors(self) -> None:
+        trace_log = getattr(self, "trace_log", None)
+        if trace_log is not None:
+            trace_log.tag_configure(
+                "trace",
+                foreground=self.log_text_color_var.get(),
+                font=("Consolas", 9),
+            )
+
+        chat = getattr(self, "chat", None)
+        if chat is not None:
+            chat.tag_configure(
+                "user",
+                foreground=self.user_text_color_var.get(),
+                font=("Segoe UI", 10, "bold"),
+            )
+            chat.tag_configure(
+                "assistant",
+                foreground=self.assistant_text_color_var.get(),
+                font=("Segoe UI", 10),
+            )
+
+        self._refresh_color_swatches()
+
+    def _refresh_color_swatches(self) -> None:
+        values = {
+            "log": self.log_text_color_var.get(),
+            "user": self.user_text_color_var.get(),
+            "assistant": self.assistant_text_color_var.get(),
+        }
+        for key, color in values.items():
+            swatch = self._color_swatches.get(key)
+            if swatch is not None:
+                try:
+                    swatch.configure(bg=color, activebackground=color)
+                except tk.TclError:
+                    pass
+
+    def _choose_text_color(self, target_var: tk.StringVar, title: str) -> None:
+        _rgb, selected = colorchooser.askcolor(
+            color=target_var.get(),
+            parent=self,
+            title=title,
+        )
+        if not selected:
+            return
+        target_var.set(selected.upper())
+        self._apply_text_colors()
+
     def _record_initial_mtimes(self) -> None:
         try:
             self._server_mtime = Path("server.py").stat().st_mtime
@@ -225,7 +285,11 @@ class UltraApp(tk.Tk):
             font=("Consolas", 9),
         )
         self.trace_log.pack(fill="both", expand=True)
-        self.trace_log.tag_configure("trace", font=("Consolas", 9))
+        self.trace_log.tag_configure(
+            "trace",
+            foreground=self.log_text_color_var.get(),
+            font=("Consolas", 9),
+        )
 
         # Правая панель.
         right_frame = ttk.Frame(root)
@@ -285,15 +349,70 @@ class UltraApp(tk.Tk):
             row=0, column=3, sticky="w", pady=(0, 4)
         )
 
-        theme_check = ttk.Checkbutton(
+        # Компактные визуальные настройки вынесены в отдельный блок справа.
+        # Цвет меняется кликом прямо по цветному квадрату.
+        interface_frame = ttk.LabelFrame(
             security,
+            text="ИНТЕРФЕЙС",
+            padding=(8, 5),
+        )
+        interface_frame.grid(
+            row=0, column=4, rowspan=4, sticky="nw", padx=(18, 0), pady=(0, 2)
+        )
+
+        theme_check = ttk.Checkbutton(
+            interface_frame,
             text="Тёмная тема",
             variable=self.dark_theme_var,
             command=self._apply_theme,
         )
         theme_check.grid(
-            row=0, column=4, sticky="w", padx=(14, 0), pady=(0, 4)
+            row=0, column=0, columnspan=2, sticky="w", pady=(0, 4)
         )
+
+        compact_color_rows = [
+            (
+                1,
+                "Лог действий",
+                "log",
+                self.log_text_color_var,
+                "Цвет текста — лог действий",
+            ),
+            (
+                2,
+                "Пользователь",
+                "user",
+                self.user_text_color_var,
+                "Цвет текста — сообщение пользователя в чате",
+            ),
+            (
+                3,
+                "Ответ Ultra",
+                "assistant",
+                self.assistant_text_color_var,
+                "Цвет текста — ответ Ultra",
+            ),
+        ]
+
+        for row, label_text, key, color_var, dialog_title in compact_color_rows:
+            ttk.Label(interface_frame, text=label_text).grid(
+                row=row, column=0, sticky="w", pady=1
+            )
+            swatch = tk.Button(
+                interface_frame,
+                width=3,
+                height=1,
+                bg=color_var.get(),
+                activebackground=color_var.get(),
+                relief="sunken",
+                borderwidth=1,
+                cursor="hand2",
+                command=lambda var=color_var, title=dialog_title: self._choose_text_color(
+                    var, title
+                ),
+            )
+            swatch.grid(row=row, column=1, sticky="w", padx=(8, 0), pady=1)
+            self._color_swatches[key] = swatch
 
         # Галочка чтения находится прямо у области, которой она управляет.
         read_check = ttk.Checkbutton(
@@ -435,8 +554,16 @@ class UltraApp(tk.Tk):
             font=("Segoe UI", 10),
         )
         self.chat.pack(fill="both", expand=True, pady=(5, 8))
-        self.chat.tag_configure("user", font=("Segoe UI", 10, "bold"))
-        self.chat.tag_configure("assistant", font=("Segoe UI", 10))
+        self.chat.tag_configure(
+            "user",
+            foreground=self.user_text_color_var.get(),
+            font=("Segoe UI", 10, "bold"),
+        )
+        self.chat.tag_configure(
+            "assistant",
+            foreground=self.assistant_text_color_var.get(),
+            font=("Segoe UI", 10),
+        )
         self.chat.tag_configure("system", font=("Segoe UI", 9, "italic"))
 
         for sequence in ("<Control-c>", "<Control-C>"):
@@ -647,6 +774,28 @@ class UltraApp(tk.Tk):
             return (
                 f"[{time_str}] TOOL #{seq} {func} -> ERROR "
                 f"({error.get('type', '')}): {error.get('message', '')}"
+            )
+
+        if event_type == "verification_required":
+            attempt = event.get("attempt")
+            missing = event.get("missing") or []
+            tools = []
+            for item in missing:
+                if isinstance(item, dict):
+                    tool = item.get("tool")
+                    if tool:
+                        tools.append(str(tool))
+            tools_text = ", ".join(tools) if tools else "unknown"
+            return (
+                f"[{time_str}] VERIFY GATE | SUCCESS BLOCKED | "
+                f"attempt={attempt} | missing={tools_text}"
+            )
+
+        if event_type == "verification_passed":
+            state = event.get("verification_state") or {}
+            return (
+                f"[{time_str}] VERIFY GATE -> PASSED | "
+                f"revision={state.get('write_revision')}"
             )
 
         if event_type == "run_finished":

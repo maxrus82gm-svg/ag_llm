@@ -31,6 +31,7 @@ MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
 VERIFY_TIMEOUT_SECONDS = 30
 UI_SMOKE_TIMEOUT_SECONDS = 30
+MAX_VERIFICATION_GATE_RETRIES = 3
 VERIFICATION_TOOL_NAMES = {
     "python_compile",
     "git_status",
@@ -393,6 +394,31 @@ def _prepare_policy_for_workspace(root: Path, policy: dict) -> dict:
             f"Разрешённая область удаления не найдена: {result['delete_scope']}"
         )
 
+    # Фундаментальный fail-closed: изменяющий RUN нельзя запускать без
+    # возможности перечитать и реально проверить результат.
+    if result["allow_write"] or result["allow_delete"]:
+        if not result["allow_read"]:
+            raise PermissionError(
+                "WRITE/DELETE требуют READ=ON: сервер обязан иметь возможность "
+                "перечитать и проверить изменения до SUCCESS."
+            )
+        if not result["allow_verify"]:
+            raise PermissionError(
+                "WRITE/DELETE требуют VERIFY=ON: изменяющий RUN без реальных "
+                "проверок запрещён сервером."
+            )
+        if result["allow_write"] and not _is_within(write_root, read_root):
+            raise PermissionError(
+                "Область WRITE должна находиться внутри области READ: сервер "
+                "обязан иметь возможность перечитать и проверить каждый файл, "
+                "который Ultra может изменить."
+            )
+        if result["allow_delete"] and not _is_within(delete_root, read_root):
+            raise PermissionError(
+                "Область DELETE должна находиться внутри области READ: сервер "
+                "обязан видеть изменения рабочего дерева до финального SUCCESS."
+            )
+
     result["_read_root"] = read_root
     result["_write_root"] = write_root
     result["_delete_root"] = delete_root
@@ -427,7 +453,6 @@ def _require_operation_permission(
         scope_name = policy["delete_scope"]
     else:
         raise ValueError(f"Неизвестная операция доступа: {operation}")
-
     if not _is_within(path, scope_root):
         raise PermissionError(
             f"Доступ запрещён сервером: {path_text!r} находится вне "
@@ -827,7 +852,7 @@ def _agent_python_compile(root: Path, paths: object, policy: dict) -> dict:
         "    source = item[\"absolute\"]\n"
         "    target = out_dir / f\"verify_{index}.pyc\"\n"
         "    py_compile.compile(source, cfile=str(target), doraise=True)\n"
-        "    print(f\"OK: {item[\'relative\']}\")\n"
+        "    print(f\"OK: {item['relative']}\")\n"
     )
     with tempfile.TemporaryDirectory(prefix="ultra_verify_") as temp_dir:
         result = _run_verify_process(
@@ -1029,6 +1054,106 @@ def _execute_agent_function(
         return _agent_git_diff(root, arguments["paths"], policy)
     return _agent_ui_smoke_test(root, policy)
 
+
+def _verification_missing_requirements(state: dict) -> list[dict]:
+    """Вернуть физически недостающие проверки для финального SUCCESS."""
+    if state.get("write_revision", 0) <= 0:
+        return []
+
+    missing: list[dict] = []
+    changed_python_paths = sorted(set(state.get("changed_python_paths") or []))
+    verified_python_paths = set(state.get("python_verified_paths") or [])
+
+    if changed_python_paths:
+        python_revision_ok = (
+            state.get("python_write_revision") is not None
+            and state.get("python_verified_revision")
+            == state.get("python_write_revision")
+        )
+        paths_ok = set(changed_python_paths).issubset(verified_python_paths)
+        if not python_revision_ok or not paths_ok:
+            missing.append(
+                {
+                    "tool": "python_compile",
+                    "paths": changed_python_paths,
+                    "reason": (
+                        "Все изменённые существующие .py должны быть успешно "
+                        "скомпилированы после последней Python-записи."
+                    ),
+                }
+            )
+
+    if state.get("ui_smoke_required"):
+        if (
+            state.get("ui_smoke_write_revision") is None
+            or state.get("ui_smoke_verified_revision")
+            != state.get("ui_smoke_write_revision")
+        ):
+            missing.append(
+                {
+                    "tool": "ui_smoke_test",
+                    "reason": (
+                        "После последнего изменения server.py/ultra_ui.py "
+                        "обязателен реальный UltraApp smoke-test."
+                    ),
+                }
+            )
+
+    if state.get("git_diff_revision") != state.get("write_revision"):
+        missing.append(
+            {
+                "tool": "git_diff",
+                "paths": [],
+                "reason": "git_diff должен быть выполнен после последней записи/удаления.",
+            }
+        )
+
+    if state.get("git_status_revision") != state.get("write_revision"):
+        missing.append(
+            {
+                "tool": "git_status",
+                "reason": "git_status должен быть выполнен после последней записи/удаления.",
+            }
+        )
+
+    return missing
+
+
+def _verification_gate_prompt(missing: list[dict], state: dict) -> str:
+    lines = [
+        "SERVER VERIFICATION GATE — SUCCESS BLOCKED.",
+        "Ты попытался завершить RUN, но сервер физически запрещает SUCCESS, "
+        "пока реальные проверки после последних изменений не завершены.",
+        "Не объявляй задачу завершённой и не утверждай, что код исправен, "
+        "пока ниже остаются пункты.",
+        "",
+        "ОБЯЗАТЕЛЬНО ВЫПОЛНИ:",
+    ]
+    for item in missing:
+        tool = item["tool"]
+        paths = item.get("paths")
+        if paths is not None:
+            lines.append(f"- {tool}(paths={paths}) — {item['reason']}")
+        else:
+            lines.append(f"- {tool} — {item['reason']}")
+
+    lines.extend(
+        [
+            "",
+            "Если проверка падает из-за изменённого тобой кода — исправь код "
+            "в разрешённом scope и повтори проверки. Любая новая запись снова "
+            "делает git_diff/git_status устаревшими, а новая Python-запись — "
+            "python_compile; изменение server.py/ultra_ui.py — ui_smoke_test.",
+            "Если исправление невозможно в текущих разрешениях, сообщи о блокере, "
+            "но SUCCESS всё равно запрещён.",
+            "",
+            "Текущее verification state:",
+            json.dumps(state, ensure_ascii=False, sort_keys=True),
+        ]
+    )
+    return "\n".join(lines)
+
+
 async def run_agent_task(
     task: str,
     workspace_root: str,
@@ -1160,11 +1285,14 @@ async def run_agent_task(
         f"Автобэкап: {'ВКЛЮЧЁН' if policy['auto_backup'] else 'ВЫКЛЮЧЕН'}\n"
         "VERIFY использует только белый список: python_compile, git_status, "
         "git_diff, ui_smoke_test. Произвольного terminal/shell нет.\n"
-        "Если в RUN изменён .py, после ПОСЛЕДНЕЙ записи обязательно запусти "
-        "python_compile. Если изменён ultra_ui.py — дополнительно ui_smoke_test. "
-        "После последних записей просмотри git_diff и используй git_status для "
-        "фактического списка изменений. Ошибку проверки сначала исправь, затем "
-        "повтори проверку. Не утверждай, что код проверен, без этих tools.\n"
+        "Если в RUN изменён .py, после ПОСЛЕДНЕЙ Python-записи обязательно "
+        "успешно проверь ВСЕ изменённые существующие .py через python_compile. "
+        "Если изменён server.py или ultra_ui.py — дополнительно ui_smoke_test. "
+        "После ПОСЛЕДНЕЙ записи/удаления обязательны git_diff и git_status. "
+        "Сервер сам проверяет свежесть этих результатов и физически блокирует "
+        "финальный SUCCESS, если хотя бы одна проверка отсутствует или устарела. "
+        "Ошибка проверки не является завершением задачи: сначала исправь причину, "
+        "затем повтори ставшие устаревшими проверки.\n"
         "Эти ограничения применяются кодом сервера. Не пытайся выходить "
         "за их пределы; при необходимости сообщи пользователю, какого "
         "доступа не хватает.\n"
@@ -1197,14 +1325,19 @@ async def run_agent_task(
     repeated_error_count = 0
     verification_state = {
         "write_revision": 0,
+        "python_write_revision": None,
         "python_verified_revision": None,
         "python_verified_paths": [],
         "git_status_revision": None,
         "git_diff_revision": None,
+        "ui_smoke_required": False,
+        "ui_smoke_write_revision": None,
         "ui_smoke_verified_revision": None,
         "changed_python_paths": [],
-        "ultra_ui_modified": False,
+        "deleted_python_paths": [],
     }
+    last_verification_gate_signature = None
+    verification_gate_repeat_count = 0
 
     async with httpx.AsyncClient(timeout=180.0) as client:
         while True:
@@ -1355,29 +1488,44 @@ async def run_agent_task(
 
                 if tool_ok and function_name in {"write_file", "delete_file"}:
                     verification_state["write_revision"] += 1
-                    verification_state["python_verified_revision"] = None
-                    verification_state["python_verified_paths"] = []
+                    current_revision = verification_state["write_revision"]
+                    # Любая мутация делает обзор рабочего дерева устаревшим.
                     verification_state["git_status_revision"] = None
                     verification_state["git_diff_revision"] = None
-                    verification_state["ui_smoke_verified_revision"] = None
+
                     changed_path = result.get("path") if isinstance(result, dict) else None
-                    if (
-                        function_name == "write_file"
-                        and isinstance(changed_path, str)
-                        and changed_path.lower().endswith(".py")
-                    ):
-                        if changed_path not in verification_state["changed_python_paths"]:
-                            verification_state["changed_python_paths"].append(changed_path)
-                        if changed_path == "ultra_ui.py":
-                            verification_state["ultra_ui_modified"] = True
+                    if isinstance(changed_path, str) and changed_path.lower().endswith(".py"):
+                        verification_state["python_write_revision"] = current_revision
+                        verification_state["python_verified_revision"] = None
+                        verification_state["python_verified_paths"] = []
+
+                        changed_paths = verification_state["changed_python_paths"]
+                        deleted_paths = verification_state["deleted_python_paths"]
+                        if function_name == "write_file":
+                            if changed_path not in changed_paths:
+                                changed_paths.append(changed_path)
+                            if changed_path in deleted_paths:
+                                deleted_paths.remove(changed_path)
+                        else:
+                            if changed_path in changed_paths:
+                                changed_paths.remove(changed_path)
+                            if changed_path not in deleted_paths:
+                                deleted_paths.append(changed_path)
+
+                    if changed_path in {"server.py", "ultra_ui.py"}:
+                        verification_state["ui_smoke_required"] = True
+                        verification_state["ui_smoke_write_revision"] = current_revision
+                        verification_state["ui_smoke_verified_revision"] = None
 
                 if tool_ok and function_name == "python_compile":
-                    verification_state["python_verified_revision"] = verification_state[
-                        "write_revision"
-                    ]
-                    verification_state["python_verified_paths"] = list(
-                        result.get("paths") or []
-                    )
+                    python_revision = verification_state["python_write_revision"]
+                    if python_revision is not None:
+                        if verification_state["python_verified_revision"] != python_revision:
+                            verification_state["python_verified_paths"] = []
+                        verified = set(verification_state["python_verified_paths"])
+                        verified.update(result.get("paths") or [])
+                        verification_state["python_verified_paths"] = sorted(verified)
+                        verification_state["python_verified_revision"] = python_revision
                 elif tool_ok and function_name == "git_status":
                     verification_state["git_status_revision"] = verification_state[
                         "write_revision"
@@ -1387,9 +1535,9 @@ async def run_agent_task(
                         "write_revision"
                     ]
                 elif tool_ok and function_name == "ui_smoke_test":
-                    verification_state["ui_smoke_verified_revision"] = verification_state[
-                        "write_revision"
-                    ]
+                    ui_revision = verification_state["ui_smoke_write_revision"]
+                    if ui_revision is not None:
+                        verification_state["ui_smoke_verified_revision"] = ui_revision
 
                 tool_call_count += 1
                 last_tool_sequence += 1
@@ -1497,6 +1645,83 @@ async def run_agent_task(
                 raise RuntimeError(
                     "Агент GigaChat завершён нештатно. "
                     f"finish_reason={finish_reason!r}."
+                )
+
+            missing_verification = _verification_missing_requirements(
+                verification_state
+            )
+            if missing_verification:
+                gate_signature = json.dumps(
+                    {
+                        "write_revision": verification_state["write_revision"],
+                        "missing": missing_verification,
+                    },
+                    ensure_ascii=False,
+                    sort_keys=True,
+                )
+                if gate_signature == last_verification_gate_signature:
+                    verification_gate_repeat_count += 1
+                else:
+                    last_verification_gate_signature = gate_signature
+                    verification_gate_repeat_count = 1
+
+                _emit(
+                    "verification_required",
+                    {
+                        "attempt": verification_gate_repeat_count,
+                        "missing": missing_verification,
+                        "verification_state": dict(verification_state),
+                    },
+                )
+
+                if verification_gate_repeat_count > MAX_VERIFICATION_GATE_RETRIES:
+                    _emit(
+                        "run_failed",
+                        {
+                            "reason": "verification_gate_stuck",
+                            "api_requests": api_request_count,
+                            "tool_calls": tool_call_count,
+                            "duration": time.time() - start_time,
+                            "missing": missing_verification,
+                            "verification_state": dict(verification_state),
+                            "trace_path": f"logs/runs/{run_id}.jsonl",
+                        },
+                    )
+                    raise RuntimeError(
+                        "VERIFICATION GATE STUCK\n"
+                        f"Run ID: {run_id}\n"
+                        f"Missing: {missing_verification}\n"
+                        f"Trace: logs/runs/{run_id}.jsonl"
+                    )
+
+                premature_content = message.get("content")
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": (
+                            premature_content
+                            if isinstance(premature_content, str)
+                            else ""
+                        ),
+                    }
+                )
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": _verification_gate_prompt(
+                            missing_verification,
+                            verification_state,
+                        ),
+                    }
+                )
+                continue
+
+            if verification_state["write_revision"] > 0:
+                _emit(
+                    "verification_passed",
+                    {
+                        "verification_state": dict(verification_state),
+                    },
                 )
 
             content = message.get("content")
