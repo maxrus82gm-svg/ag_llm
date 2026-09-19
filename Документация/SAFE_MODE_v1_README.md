@@ -30,9 +30,10 @@
 
 - `server.py`
 - `ultra_ui.py`
-- `run_ultra.py`
+- `context_storage.py`
+- `workspace_runtime_settings.py`
+- `ui_state.py`
 - `Start_Ultra.cmd`
-- `.gitignore`
 - `Документация/00_Обязательный регламент Ultra.md`
 
 Дополнительно перед **первой записью каждого существующего файла** сервер сохраняет его исходную версию в:
@@ -50,7 +51,6 @@
 При выключенной записи `write_file` вообще не передаётся модели в списке доступных функций.
 
 При выключенном чтении `list_dir` и `read_file` не передаются модели.
-
 
 ## Безопасный default вне UI
 
@@ -110,3 +110,21 @@ python -m py_compile server.py ultra_ui.py
 - smoke-test: чтение всего workspace + запись только в `Документация`.
 - smoke-test: запись вне `Документация` блокируется.
 - smoke-test: исходная версия изменяемого файла попадает в backup до записи.
+
+## Актуальный статус (после TASK DOC-SYNC-01)
+
+Safe Mode v1 остаётся историческим прототипом раннего этапа. В текущей реализации безопасность обеспечивается встроенными механизмами server.py:
+
+- READ/WRITE/DELETE scopes с относительными путями.
+- VERIFY с белым списком: python_compile, git_status, git_diff, ui_smoke_test.
+- Server-side Verification Gate, физически блокирующий SUCCESS до выполнения проверок.
+- Обязательный pre-RUN backup с namespace по workspace_id.
+- Защита служебного хранилища `.ultra/` от обычных file tools.
+- Отдельные RUN logs по workspace_id, настраиваемые backup/log пути вне Workspace.
+
+Фактическая безопасность проекта описана в:
+
+- [[01_Архитектура и текущее состояние]]
+- [[08_Старт]]
+
+Этот документ сохранён как исторический артефакт раннего Safe Mode.
