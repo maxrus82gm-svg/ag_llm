@@ -65,7 +65,6 @@ class UltraApp(tk.Tk):
         self.allow_read_var = tk.BooleanVar(value=True)
         self.allow_write_var = tk.BooleanVar(value=False)
         self.allow_delete_var = tk.BooleanVar(value=False)
-        self.allow_verify_var = tk.BooleanVar(value=True)
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(value=True)
         self.tool_limit_var = tk.StringVar(value="20")
@@ -376,19 +375,8 @@ class UltraApp(tk.Tk):
         )
         delete_scope_button.grid(row=3, column=3, sticky="w", pady=(6, 0))
 
-
-        # VERIFY — отдельное безопасное разрешение на белый список проверок.
-        verify_check = ttk.Checkbutton(
-            security,
-            text="VERIFY — Python / Git / UI проверки",
-            variable=self.allow_verify_var,
-        )
-        verify_check.grid(
-            row=4, column=1, columnspan=3, sticky="w", pady=(6, 0)
-        )
-
         ttk.Label(security, text="Защищённые бэкапы:").grid(
-            row=5, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
+            row=4, column=1, sticky="w", padx=(2, 0), pady=(6, 0)
         )
         backup_label = ttk.Label(
             security,
@@ -396,7 +384,7 @@ class UltraApp(tk.Tk):
             font=("Consolas", 8),
         )
         backup_label.grid(
-            row=5, column=2, columnspan=3, sticky="w", padx=(8, 0), pady=(6, 0)
+            row=4, column=2, columnspan=3, sticky="w", padx=(8, 0), pady=(6, 0)
         )
 
         hint = ttk.Label(
@@ -406,14 +394,13 @@ class UltraApp(tk.Tk):
                 "Пример: чтение='.' + запись='Документация'."
             ),
         )
-        hint.grid(row=6, column=1, columnspan=4, sticky="w", pady=(8, 0))
+        hint.grid(row=5, column=1, columnspan=4, sticky="w", pady=(8, 0))
 
         self._security_widgets.extend(
             [
                 read_check,
                 write_check,
                 delete_check,
-                verify_check,
                 backup_check,
                 tool_limit_spin,
                 read_scope_entry,
@@ -483,7 +470,7 @@ class UltraApp(tk.Tk):
         self._append_chat(
             "СИСТЕМА",
             (
-                "Интерфейс готов. По умолчанию чтение и VERIFY разрешены, запись "
+                "Интерфейс готов. По умолчанию чтение разрешено, запись "
                 "и удаление ЗАПРЕЩЕНЫ, автобэкап включён. Лимит tools = 20. "
                 "Серверные галочки — это реальные ограничения, а не только "
                 "текст в промпте."
@@ -590,7 +577,6 @@ class UltraApp(tk.Tk):
                 f"R={perms.get('allow_read')}:{perms.get('read_scope')} | "
                 f"W={perms.get('allow_write')}:{perms.get('write_scope')} | "
                 f"D={perms.get('allow_delete')}:{perms.get('delete_scope')} | "
-                f"V={perms.get('allow_verify')} | "
                 f"LIMIT={perms.get('tool_limit')} | "
                 f"BACKUP={perms.get('auto_backup')} | {task_preview[:40]}"
             )
@@ -726,7 +712,6 @@ class UltraApp(tk.Tk):
             "allow_read": self.allow_read_var.get(),
             "allow_write": self.allow_write_var.get(),
             "allow_delete": self.allow_delete_var.get(),
-            "allow_verify": self.allow_verify_var.get(),
             "read_scope": read_scope,
             "write_scope": write_scope,
             "delete_scope": delete_scope,
@@ -745,7 +730,6 @@ class UltraApp(tk.Tk):
                 f"[{write_scope}], "
                 f"DELETE={'ON' if permissions['allow_delete'] else 'OFF'} "
                 f"[{delete_scope}], "
-                f"VERIFY={'ON' if permissions['allow_verify'] else 'OFF'}, "
                 f"TOOLS={tool_limit}, "
                 f"BACKUP={'ON' if permissions['auto_backup'] else 'OFF'}."
             ),
