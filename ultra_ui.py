@@ -31,6 +31,11 @@ from workspace_runtime_settings import (
     load_workspace_runtime_settings,
     save_workspace_runtime_settings,
 )
+from agent_global_context import (
+    get_agent_global_context_path,
+    load_agent_global_context,
+    save_agent_global_context,
+)
 
 
 APP_TITLE = "GigaChat Ultra Local Agent"
@@ -517,6 +522,16 @@ class UltraApp(tk.Tk):
             row=0, column=3, sticky="w", pady=(0, 2)
         )
 
+        # GLOBAL_ULTRA_CONTEXT_V1
+        global_context_button = ttk.Button(
+            security,
+            text="Глобальный контекст Ultra",
+            command=self._open_global_ultra_context_editor,
+        )
+        global_context_button.grid(
+            row=0, column=4, sticky="w", padx=(12, 0), pady=(0, 2)
+        )
+
         # Компактные визуальные настройки вынесены в отдельный блок справа.
         # Цвет меняется кликом прямо по цветному квадрату.
         interface_frame = ttk.LabelFrame(
@@ -525,7 +540,7 @@ class UltraApp(tk.Tk):
             padding=(8, 5),
         )
         interface_frame.grid(
-            row=0, column=4, rowspan=4, sticky="nw", padx=(18, 0), pady=(0, 2)
+            row=0, column=5, rowspan=4, sticky="nw", padx=(18, 0), pady=(0, 2)
         )
 
         theme_check = ttk.Checkbutton(
@@ -702,6 +717,7 @@ class UltraApp(tk.Tk):
                 delete_check,
                 verify_check,
                 guard_p1_check,
+                global_context_button,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -1880,6 +1896,97 @@ class UltraApp(tk.Tk):
         self._save_ui_state(silent=True)
         self._render_workspace_sidebar()
 
+    def _open_global_ultra_context_editor(self) -> None:
+        try:
+            text = load_agent_global_context(
+                "ultra",
+                allow_missing=True,
+            )
+            storage_path = get_agent_global_context_path("ultra")
+        except Exception as exc:
+            messagebox.showerror(
+                APP_TITLE,
+                "Не удалось открыть Глобальный контекст Ultra.\n\n"
+                f"{type(exc).__name__}: {exc}",
+            )
+            return
+
+        window = tk.Toplevel(self)
+        window.title("ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA")
+        window.geometry("920x700")
+        window.minsize(720, 520)
+        window.transient(self)
+
+        header = ttk.Frame(window, padding=(10, 10, 10, 0))
+        header.pack(fill="x")
+        ttk.Label(
+            header,
+            text=(
+                "Общий контекст правил Ultra для всех Workspace. "
+                "Хранится локально вне Workspace и недоступен обычным file tools."
+            ),
+            wraplength=880,
+            justify="left",
+        ).pack(anchor="w")
+        ttk.Label(
+            header,
+            text=f"Локальное хранилище: {storage_path}",
+        ).pack(anchor="w", pady=(4, 0))
+
+        editor = scrolledtext.ScrolledText(
+            window,
+            wrap="word",
+            undo=True,
+            font=("Segoe UI", 10),
+        )
+        editor.pack(fill="both", expand=True, padx=10, pady=(8, 6))
+        if text:
+            editor.insert("1.0", text)
+        bind_edit_shortcuts(editor)
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+
+        def save_context() -> None:
+            try:
+                result = save_agent_global_context(
+                    editor.get("1.0", "end-1c"),
+                    "ultra",
+                )
+                if result.get("changed"):
+                    messagebox.showinfo(
+                        APP_TITLE,
+                        "Глобальный контекст Ultra сохранён. "
+                        "Следующий RUN прочитает новую версию без restart.",
+                        parent=window,
+                    )
+                else:
+                    messagebox.showinfo(
+                        APP_TITLE,
+                        "Изменений нет.",
+                        parent=window,
+                    )
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Не удалось сохранить Глобальный контекст Ultra.\n\n"
+                    f"{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+
+        ttk.Button(
+            buttons,
+            text="Сохранить",
+            command=save_context,
+        ).pack(side="left")
+        ttk.Button(
+            buttons,
+            text="Закрыть",
+            command=window.destroy,
+        ).pack(side="right")
+
+        editor.focus_set()
+
     def _open_project_context_editor(
         self,
         workspace: Path | None = None,
@@ -2044,6 +2151,12 @@ class UltraApp(tk.Tk):
                 f"G1={perms.get('allow_guard_p1')} | "
                 f"LIMIT={perms.get('tool_limit')} | "
                 f"BACKUP={perms.get('auto_backup')} | {task_preview[:40]}"
+            )
+
+        if event_type == "global_agent_context_loaded":
+            return (
+                f"[{time_str}] GLOBAL ULTRA CONTEXT | "
+                f"chars={event.get('chars')}"
             )
 
         if event_type == "workspace_context_loaded":

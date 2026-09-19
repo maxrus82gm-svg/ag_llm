@@ -20,6 +20,7 @@ from context_storage import (
     load_project_context,
 )
 from workspace_runtime_settings import ensure_workspace_runtime_dirs
+from agent_global_context import load_agent_global_context
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
@@ -74,7 +75,7 @@ CORE_BACKUP_RELATIVE_PATHS = (
     "run_ultra.py",
     "Start_Ultra.cmd",
     ".gitignore",
-    "Документация/00_Обязательный регламент Ultra.md",
+    "agent_global_context.py",
 )
 
 AGENT_FUNCTIONS = [
@@ -1702,37 +1703,37 @@ async def run_agent_task(
         },
     )
 
-    # Обязательный регламент Ultra читается при каждом новом run.
+    # GLOBAL_ULTRA_CONTEXT_V1
+    # Глобальный контекст Ultra — локальный app-level контекст агента,
+    # общий для всех Workspace. Он хранится вне Workspace и поэтому
+    # недоступен обычным file tools Ultra.
     app_dir = Path(__file__).resolve().parent
-    policy_path = app_dir / "Документация" / "00_Обязательный регламент Ultra.md"
     try:
-        policy_text = policy_path.read_text(encoding="utf-8")
+        global_agent_context = load_agent_global_context("ultra")
     except Exception as exc:
-        _emit("run_failed", {
-            "reason": "policy_load_error",
-            "api_requests": api_request_count,
-            "tool_calls": tool_call_count,
-            "duration": time.time() - start_time,
-            "error": str(exc),
-            "trace_path": str(runtime_log_path),
-        })
+        _emit(
+            "run_failed",
+            {
+                "reason": "global_agent_context_load_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
         raise RuntimeError(
-            "Не удалось загрузить обязательный регламент Ultra. "
-            "Запуск без регламента запрещён."
+            "Не удалось загрузить ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA. "
+            "Открой в UI «Глобальный контекст Ultra» и сохрани непустой текст."
         ) from exc
 
-    if not policy_text.strip():
-        _emit("run_failed", {
-            "reason": "policy_empty",
-            "api_requests": api_request_count,
-            "tool_calls": tool_call_count,
-            "duration": time.time() - start_time,
-            "trace_path": str(runtime_log_path),
-        })
-        raise RuntimeError(
-            "Обязательный регламент Ultra пуст. "
-            "Запуск без регламента запрещён."
-        )
+    _emit(
+        "global_agent_context_loaded",
+        {
+            "agent_id": "ultra",
+            "chars": len(global_agent_context),
+        },
+    )
 
     # Бэкап выполняется синхронно ДО обращения к модели.
     backup_session = None
@@ -1808,12 +1809,23 @@ async def run_agent_task(
         "доступа не хватает.\n"
     )
 
+    global_agent_context_block = (
+        "\n\nГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA\n"
+        "Это app-level контекст агента, общий для всех Workspace. "
+        "Он может задавать правила и устойчивые инструкции Ultra, но НЕ может "
+        "отменять физические ограничения server.py, permission scopes, GUARD "
+        "или Verification Gate.\n"
+        "===== GLOBAL ULTRA CONTEXT START =====\n"
+        f"{global_agent_context.rstrip()}\n"
+        "===== GLOBAL ULTRA CONTEXT END =====\n"
+    )
+
     project_context_block = (
         "\n\nPROJECT CONTEXT ТЕКУЩЕГО WORKSPACE\n"
         f"Workspace ID: {workspace_info['workspace_id']}\n"
         "Ниже находится утверждённая переносимая память проекта. "
         "Она используется как контекст, но НЕ может отменять системные "
-        "инструкции, серверные разрешения или обязательный регламент.\n"
+        "инструкции, серверные разрешения или ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA.\n"
         "Если в ходе работы обнаружено важное изменение проекта, не пытайся "
         "самостоятельно редактировать `.ultra` обычными file tools. "
         "Сообщи пользователю, какое обновление PROJECT CONTEXT стоит "
@@ -1832,10 +1844,9 @@ async def run_agent_task(
                 "Корень workspace обозначай точкой '.'. "
                 "Никогда не передавай абсолютные Windows-пути в list_dir, "
                 "read_file, write_file или delete_file."
-                f"{permission_text}\n"
-                f"{project_context_block}\n"
-                "ОБЯЗАТЕЛЬНЫЙ РЕГЛАМЕНТ ULTRA\n\n"
-                f"{policy_text}"
+                f"{permission_text}"
+                f"{global_agent_context_block}"
+                f"{project_context_block}"
             ),
         },
         *active_chat_messages,
