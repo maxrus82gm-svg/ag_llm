@@ -4,6 +4,19 @@
 
 Архитектурное решение / переходный этап разработки.
 
+### CURRENT IMPLEMENTATION STATUS
+
+Фактически сейчас:
+
+- `server.py` использует GigaChat API;
+- `MODEL = "GigaChat-3-Ultra"`;
+- MODEL REGISTRY отсутствует;
+- Provider Adapter abstraction отсутствует;
+- MAIN CHAT MODEL и COMPRESSION MODEL ASSIGNMENTS отсутствуют;
+- per-Chat model selection, Local Provider, Agent Profiles и Coordinator отсутствуют.
+
+Этот документ описывает принятую целевую переходную архитектуру, а не уже работающую мультимодельность.
+
 Этот документ фиксирует переход проекта `ag_llm / GigaChat Ultra Local Agent` от системы, в которой основной исполнитель фактически жёстко связан с одной моделью GigaChat Ultra, к системе, в которой LLM становится выбираемым и назначаемым ресурсом.
 
 На текущем этапе существующий рабочий runtime, инструменты, Workspace, Chat, Project Context, RAW HISTORY, SAFE Mode, Backup, Verification, Trace и другие уже реализованные механизмы сохраняются.
@@ -20,7 +33,9 @@
         ↓
     server.py
         ↓
-    GigaChat Ultra API
+    GigaChat API
+        ↓
+    MODEL = "GigaChat-3-Ultra"
         ↓
     Agent Runtime / Tools
         ↓
@@ -56,29 +71,19 @@ LLM должна перестать быть жёстко встроенным �
 
 Вместо этого модель становится подключаемым вычислительным ресурсом, который можно назначить конкретной роли, операции, Chat или будущему Agent.
 
-Целевая схема:
+Целевая каноническая цепочка:
 
-    ┌───────────────────────────────┐
-    │         MODEL REGISTRY        │
-    │      Справочник моделей       │
-    └───────────────┬───────────────┘
-                    │
-          ┌─────────┼──────────┐
-          │         │          │
-          ▼         ▼          ▼
-      GigaChat    Ollama     Future Provider
-       API        Server      / Runtime
-          │         │          │
-          └─────────┼──────────┘
-                    │
-                    ▼
-           MODEL ASSIGNMENTS
-                    │
-       ┌────────────┼────────────┐
-       │            │            │
-       ▼            ▼            ▼
-    MAIN CHAT   COMPRESSION   FUTURE AGENT
-      MODEL        MODEL          MODEL
+    AGENT RUNTIME
+        ↓
+    MODEL ASSIGNMENT
+        ↓
+    MODEL REGISTRY
+        ↓
+    PROVIDER ADAPTER
+        ↓
+    MODEL
+
+MODEL ASSIGNMENT выбирает модель для роли / операции / Chat. MODEL REGISTRY разрешает это назначение в конкретную запись модели, а Provider Adapter выполняет обращение к внешнему API или локальному inference runtime.
 
 Основной принцип:
 
@@ -474,6 +479,10 @@ MAIN CHAT MODEL — модель, являющаяся основным «моз
 
     DeepSeek R1 8B
 
+DeepSeek R1 8B через Ollama уже использовался как экспериментальный local backend для исследования сжатия. Это не production-компонент и не обязательная зависимость Context Compressor.
+
+Отдельной проверки и реализации всё ещё требуют effective context window Ollama, runtime context configuration, wake-up, model loading, `keep_alive` и warm-up перед рабочими проходами. Теоретический context limit нельзя считать гарантированным runtime limit без такой проверки.
+
 Однако Ollama не должна становиться обязательной частью архитектуры.
 
 Ollama является только одним из возможных runtime.
@@ -499,7 +508,9 @@ Ollama является только одним из возможных runtime.
 
     Agent Runtime
         ↓
-    Model Router
+    Model Assignment
+        ↓
+    Model Registry
         ↓
     Provider Adapter
         ↓
@@ -878,9 +889,9 @@ Coordinator сможет:
 
 Правильнее:
 
-    MODEL REGISTRY
-        ↓
     MODEL ASSIGNMENT
+        ↓
+    MODEL REGISTRY
         ↓
     PROVIDER ADAPTER
         ↓
@@ -988,17 +999,27 @@ Coordinator сможет:
 
 Мультимодельная архитектура не заменяет существующую архитектуру контекста.
 
-Сохраняются:
+**Фактически реализованы сейчас:**
 
     RAW HISTORY
 
-    WORKING REPRESENTATION
-
-    ACTIVE CONTEXT
-
     PROJECT CONTEXT
 
+    текущий Active Chat Context из RAW HISTORY выбранного Chat
+
+**Приняты архитектурно, но ещё НЕ РЕАЛИЗОВАНЫ:**
+
+    WORKING REPRESENTATION / SUMMARY
+
     RUN MICROCONTEXT
+
+    MODEL REGISTRY
+
+    MODEL ASSIGNMENTS
+
+    Provider Adapter abstraction
+
+Будущий управляемый ACTIVE CONTEXT будет собираться Agent Runtime из соответствующих источников и передаваться назначенной модели.
 
 Контекст должен собираться системой и передаваться назначенной модели.
 
@@ -1067,8 +1088,9 @@ GigaChat Ultra остаётся:
 
 - первой основной моделью;
 - проверенным рабочим исполнителем;
-- важным Provider;
 - одной из доступных моделей.
+
+GigaChat API при этом остаётся первым работающим Provider.
 
 Но архитектурно система начинает развиваться в сторону:
 
@@ -1088,49 +1110,49 @@ GigaChat Ultra остаётся:
 
 Текущий переход рекомендуется выполнять в следующем порядке:
 
-    ЭТАП A
+    MM.1
     MODEL REGISTRY
 
         ↓
 
-    ЭТАП B
+    MM.2
     GIGACHAT MULTI-MODEL
 
         ↓
 
-    ЭТАП C
+    MM.3
     MAIN CHAT MODEL ASSIGNMENT
 
         ↓
 
-    ЭТАП D
+    MM.4
     COMPRESSION MODEL ASSIGNMENT
 
         ↓
 
-    ЭТАП E
+    06.5
     CONTEXT COMPRESSOR
     Compress → Verify → Finalize
 
         ↓
 
-    ЭТАП F
+    MM.5
     LOCAL PROVIDER
     Ollama / другой runtime
 
         ↓
 
-    ЭТАП G
+    MM.6
     PER-CHAT MODEL ASSIGNMENT
 
         ↓
 
-    ЭТАП H
+    MM.7
     AGENT PROFILES
 
         ↓
 
-    ЭТАП I
+    MM.8
     MULTI-AGENT COMMUNICATION / COORDINATOR
 
 Это направление не является обязательством реализовать все этапы сразу.
