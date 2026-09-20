@@ -1417,34 +1417,36 @@ class UltraApp(tk.Tk):
         return existing
 
     def _initialize_workspace_registry(self) -> None:
-        clean_registry = []
-        seen = set()
-
+        remembered_registry = []
         for item in self._workspace_registry:
-            try:
-                path = Path(str(item.get("path") or "")).resolve()
-                if not path.is_dir():
-                    continue
-                info = ensure_workspace_storage(path)
-            except Exception:
+            workspace_id = item.get("workspace_id")
+            path_text = item.get("path")
+            if not isinstance(workspace_id, str) or not workspace_id:
                 continue
-            workspace_id = info["workspace_id"]
-            if workspace_id in seen:
+            if not isinstance(path_text, str) or not path_text:
                 continue
-            seen.add(workspace_id)
-            clean_registry.append(
-                {
-                    "workspace_id": workspace_id,
-                    "path": str(path),
-                    "last_chat_id": (
-                        item.get("last_chat_id")
-                        if isinstance(item.get("last_chat_id"), str)
-                        else None
-                    ),
-                }
-            )
 
-        self._workspace_registry = clean_registry
+            entry = {
+                "workspace_id": workspace_id,
+                "path": path_text,
+                "last_chat_id": (
+                    item.get("last_chat_id")
+                    if isinstance(item.get("last_chat_id"), str)
+                    else None
+                ),
+            }
+            path = Path(path_text)
+            if path.is_dir():
+                try:
+                    info = ensure_workspace_storage(path)
+                except Exception:
+                    pass
+                else:
+                    entry["workspace_id"] = info["workspace_id"]
+                    entry["path"] = str(path.resolve())
+            remembered_registry.append(entry)
+
+        self._workspace_registry = remembered_registry
 
         current_entry = None
         if not self._ui_state.get("registry_initialized", False):
@@ -1464,18 +1466,37 @@ class UltraApp(tk.Tk):
             ),
             None,
         )
-        if active_entry is None:
-            active_entry = current_entry
-        if active_entry is None and self._workspace_registry:
-            active_entry = self._workspace_registry[0]
 
-        if active_entry is not None:
-            self._activate_workspace(
-                Path(active_entry["path"]),
-                preferred_chat_id=active_entry.get("last_chat_id"),
-                save=False,
-            )
-        else:
+        candidates = []
+        for candidate in (
+            active_entry,
+            current_entry,
+            *self._workspace_registry,
+        ):
+            if candidate is None or candidate in candidates:
+                continue
+            candidates.append(candidate)
+
+        activated = False
+        for candidate in candidates:
+            path = Path(candidate["path"])
+            if not path.is_dir():
+                continue
+            try:
+                self._activate_workspace(
+                    path,
+                    preferred_chat_id=candidate.get("last_chat_id"),
+                    save=False,
+                )
+            except Exception:
+                continue
+            activated = True
+            break
+
+        if not activated:
+            self.current_workspace_id = None
+            self.current_chat_id = None
+            self._loaded_workspace_root = None
             self._render_workspace_sidebar()
 
         self._save_ui_state(silent=True)
@@ -1509,17 +1530,51 @@ class UltraApp(tk.Tk):
             pass
 
         for index, item in enumerate(list(self._workspace_registry)):
-            path = Path(item["path"])
-            if not path.is_dir():
+            path_text = item["path"]
+            path = Path(path_text)
+            info = None
+            chats = []
+            if path.is_dir():
+                try:
+                    loaded_info = ensure_workspace_storage(path)
+                    loaded_chats = list_chats(path)
+                    load_project_context(path)
+                    if not loaded_chats:
+                        loaded_chats = [create_chat(path)]
+                except Exception:
+                    pass
+                else:
+                    info = loaded_info
+                    chats = loaded_chats
+
+            if info is None:
+                workspace_row = tk.Frame(frame, bg=field)
+                workspace_row.pack(
+                    fill="x",
+                    padx=2,
+                    pady=(4 if index else 2, 2),
+                )
+                fallback_name = path.name or path_text
+                tk.Label(
+                    workspace_row,
+                    text=f"{fallback_name}  [НЕДОСТУПЕН]\n{path_text}",
+                    anchor="w",
+                    justify="left",
+                    bg=field,
+                    fg=text_color,
+                    font=("Segoe UI", 9, "bold"),
+                ).pack(side="left", fill="x", expand=True)
+                self._sidebar_button(
+                    workspace_row,
+                    "×",
+                    lambda wid=item["workspace_id"]:
+                        self._remove_workspace_ui(wid),
+                    width=2,
+                ).pack(side="left", padx=(2, 0))
                 continue
 
-            try:
-                info = ensure_workspace_storage(path)
-                chats = list_chats(path)
-                if not chats:
-                    chats = [create_chat(path)]
-            except Exception:
-                continue
+            item["workspace_id"] = info["workspace_id"]
+            item["path"] = str(path.resolve())
 
             active_workspace = (
                 info["workspace_id"] == self.current_workspace_id
@@ -1632,6 +1687,7 @@ class UltraApp(tk.Tk):
         entry = self._register_workspace_path(root)
         info = ensure_workspace_storage(root)
         chats = list_chats(root)
+        load_project_context(root)
         if not chats:
             chats = [create_chat(root)]
 
@@ -2139,17 +2195,27 @@ class UltraApp(tk.Tk):
         ]
 
         if self.current_workspace_id == workspace_id:
-            if self._workspace_registry:
-                next_item = self._workspace_registry[0]
-                self._activate_workspace(
-                    Path(next_item["path"]),
-                    preferred_chat_id=next_item.get("last_chat_id"),
-                    save=False,
-                )
-            else:
-                self.current_workspace_id = None
-                self.current_chat_id = None
-                self._loaded_workspace_root = None
+            self.current_workspace_id = None
+            self.current_chat_id = None
+            self._loaded_workspace_root = None
+
+            activated = False
+            for next_item in self._workspace_registry:
+                path = Path(next_item["path"])
+                if not path.is_dir():
+                    continue
+                try:
+                    self._activate_workspace(
+                        path,
+                        preferred_chat_id=next_item.get("last_chat_id"),
+                        save=False,
+                    )
+                except Exception:
+                    continue
+                activated = True
+                break
+
+            if not activated:
                 self._render_workspace_sidebar()
                 self.chat.configure(state="normal")
                 self.chat.delete("1.0", "end")
