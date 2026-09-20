@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import server
+from ultra_ui import get_message_display_text
 
 from context_storage import (
     MESSAGE_CONTEXT_SCHEMA_VERSION,
@@ -86,6 +87,7 @@ class MessageContextStorageTests(unittest.TestCase):
             source="llm_compression",
             compression={"run_id": "cmp_test"},
         )
+        self.assertEqual(self.raw_path(message_id).read_bytes(), before)
         second = create_message_context_variant(
             self.workspace,
             self.chat_id,
@@ -100,6 +102,39 @@ class MessageContextStorageTests(unittest.TestCase):
         self.assertEqual(load_raw_message(self.workspace, self.chat_id, message_id)["original_text"], "ORIGINAL LONG TEXT")
         self.assertEqual(load_context_variant(self.workspace, self.chat_id, message_id, first["context_variant_id"])["text"], "SHORT")
         self.assertEqual(load_context_variant(self.workspace, self.chat_id, message_id, second["context_variant_id"])["text"], "BETTER SHORT")
+
+    def test_visible_chat_body_follows_production_working_representation(self) -> None:
+        message = self.add("user", "ORIGINAL LONG TEXT")
+        message_id = message["message_id"]
+
+        full = get_message_working_representation(
+            self.workspace, self.chat_id, message_id
+        )
+        self.assertEqual(get_message_display_text(message, full), "ORIGINAL LONG TEXT")
+
+        create_message_context_variant(
+            self.workspace,
+            self.chat_id,
+            message_id,
+            "ACTIVE SUMMARY",
+            source="llm_compression",
+        )
+        compressed_after_reload = get_message_working_representation(
+            self.workspace, self.chat_id, message_id
+        )
+        self.assertEqual(
+            get_message_display_text(message, compressed_after_reload),
+            "ACTIVE SUMMARY",
+        )
+
+        restore_message_raw(self.workspace, self.chat_id, message_id)
+        restored = get_message_working_representation(
+            self.workspace, self.chat_id, message_id
+        )
+        self.assertEqual(
+            get_message_display_text(message, restored),
+            "ORIGINAL LONG TEXT",
+        )
 
     def test_accept_restart_restore_and_variant_survival(self) -> None:
         message = self.add("user", "X" * 100)
@@ -211,6 +246,16 @@ class MessageContextStorageTests(unittest.TestCase):
             [item["message_id"] for item in working],
             [first["message_id"], second["message_id"], third["message_id"]],
         )
+        restore_message_raw(self.workspace, self.chat_id, second["message_id"])
+        restored = load_chat_working_messages(self.workspace, self.chat_id)
+        self.assertEqual(
+            [(item["role"], item["content"]) for item in restored],
+            [
+                ("user", "AAA RAW"),
+                ("assistant", "BBBBBBBB"),
+                ("user", "CCC"),
+            ],
+        )
 
     def test_server_request_uses_working_context_without_network(self) -> None:
         self.add("user", "AAA RAW")
@@ -252,7 +297,8 @@ class MessageContextStorageTests(unittest.TestCase):
                 captured_bodies.append(json)
                 return FakeResponse()
 
-        events = []
+        compressed_events = []
+        restored_events = []
         runtime_root = self.workspace.parent / "runtime"
         runtime_paths = {
             "backup_dir": str(runtime_root / "backup"),
@@ -276,40 +322,63 @@ class MessageContextStorageTests(unittest.TestCase):
             patch.object(server, "ensure_workspace_runtime_dirs", return_value=runtime_paths),
             patch.object(server.httpx, "AsyncClient", return_value=FakeClient()),
         ):
-            result = asyncio.run(
+            compressed_result = asyncio.run(
                 server.run_agent_task(
                     "CCC",
                     str(self.workspace),
                     chat_id=self.chat_id,
                     permissions=permissions,
-                    on_event=events.append,
+                    on_event=compressed_events.append,
                 )
             )
-        self.assertEqual(result, "DONE")
-        request_messages = captured_bodies[0]["messages"][-3:]
+            restore_message_raw(
+                self.workspace, self.chat_id, second["message_id"]
+            )
+            restored_result = asyncio.run(
+                server.run_agent_task(
+                    "CCC",
+                    str(self.workspace),
+                    chat_id=self.chat_id,
+                    permissions=permissions,
+                    on_event=restored_events.append,
+                )
+            )
+        self.assertEqual(compressed_result, "DONE")
+        self.assertEqual(restored_result, "DONE")
+        compressed_request_messages = captured_bodies[0]["messages"][-3:]
         self.assertEqual(
-            request_messages,
+            compressed_request_messages,
             [
                 {"role": "user", "content": "AAA RAW"},
                 {"role": "assistant", "content": "BBB"},
                 {"role": "user", "content": "CCC"},
             ],
         )
-        context_event = next(
-            event for event in events if event["event"] == "chat_context_loaded"
+        restored_request_messages = captured_bodies[1]["messages"][-3:]
+        self.assertEqual(
+            restored_request_messages,
+            [
+                {"role": "user", "content": "AAA RAW"},
+                {"role": "assistant", "content": "BBBBBBBB"},
+                {"role": "user", "content": "CCC"},
+            ],
         )
-        self.assertEqual(context_event["raw_messages"], 2)
-        self.assertEqual(context_event["compressed_messages"], 1)
-
-    def test_proposal_runtime_has_no_storage_side_effect(self) -> None:
-        message = self.add("user", "RAW SOURCE")
-        message_id = message["message_id"]
-        # A compressor proposal is only text in memory until UI acceptance.
-        proposal = "PROPOSED"
-        self.assertEqual(proposal, "PROPOSED")
-        self.assertEqual(get_message_context_state(self.workspace, self.chat_id, message_id)["active_representation"], "raw")
-        self.assertFalse(self.state_path(message_id).exists())
-
+        compressed_context_event = next(
+            event
+            for event in compressed_events
+            if event["event"] == "chat_context_loaded"
+        )
+        restored_context_event = next(
+            event
+            for event in restored_events
+            if event["event"] == "chat_context_loaded"
+        )
+        self.assertEqual(compressed_context_event["raw_messages"], 2)
+        self.assertEqual(compressed_context_event["compressed_messages"], 1)
+        self.assertEqual(compressed_context_event["chars"], 13)
+        self.assertEqual(restored_context_event["raw_messages"], 3)
+        self.assertEqual(restored_context_event["compressed_messages"], 0)
+        self.assertEqual(restored_context_event["chars"], 18)
 
 if __name__ == "__main__":
     unittest.main()

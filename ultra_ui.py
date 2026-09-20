@@ -73,6 +73,21 @@ from server_context_messages import (
 APP_TITLE = "GigaChat Ultra Local Agent"
 
 
+def get_message_display_text(message: dict, resolved: dict | None = None) -> str:
+    """Return the representation that the persistent CHAT body must show."""
+    if message.get("role") in {"user", "assistant"}:
+        if not isinstance(resolved, dict):
+            raise RuntimeError(
+                "Для user/assistant message не разрешён working context."
+            )
+        text = resolved.get("text")
+    else:
+        text = message.get("original_text")
+    if not isinstance(text, str):
+        raise RuntimeError("Текст сообщения недоступен для отображения.")
+    return text
+
+
 def bind_edit_shortcuts(widget) -> None:
     """Явно включить привычные Windows-сочетания для Tkinter."""
 
@@ -2107,18 +2122,14 @@ class UltraApp(tk.Tk):
         for message in messages:
             role = message.get("role")
             message_id = message.get("message_id")
-            text = message.get("original_text") or ""
             resolved = None
             if role in {"user", "assistant"}:
-                # CHAT показывает неизменяемую RAW HISTORY пользователю.
-                # resolved используется только для FULL/COMPRESSED state
-                # и message actions; MAIN CHAT получает working representation
-                # отдельно через server.py / load_chat_working_messages().
                 resolved = get_message_working_representation(
                     workspace,
                     self.current_chat_id,
                     message_id,
                 )
+            text = get_message_display_text(message, resolved)
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
