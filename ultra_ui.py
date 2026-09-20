@@ -16,6 +16,12 @@ from tkinter import (
 from server import get_backup_base_path, run_agent_task
 from model_registry import get_model_spec, list_model_specs
 from context_storage import (
+    MAX_PROJECT_CONTEXT_BYTES,
+    PROJECT_CONTEXT_NAME,
+    ULTRA_DIRNAME,
+    WORKSPACE_METADATA_NAME,
+    _load_chat_metadata,
+    _load_workspace_metadata,
     append_raw_message,
     create_chat,
     ensure_chat,
@@ -1416,8 +1422,120 @@ class UltraApp(tk.Tk):
             existing["path"] = str(root)
         return existing
 
+    def _probe_registered_workspace(
+        self,
+        entry: dict,
+    ) -> tuple[Path | None, dict | None, str]:
+        path_text = entry.get("path")
+        remembered_id = entry.get("workspace_id")
+        if not isinstance(path_text, str) or not path_text:
+            return None, None, "НЕДОСТУПЕН"
+        if not isinstance(remembered_id, str) or not remembered_id:
+            return None, None, "НЕДОСТУПЕН"
+
+        path = Path(path_text)
+        if not path.is_dir():
+            return None, None, "НЕДОСТУПЕН"
+
+        metadata_path = (
+            path / ULTRA_DIRNAME / WORKSPACE_METADATA_NAME
+        )
+        if not metadata_path.is_file():
+            return None, None, "НЕДОСТУПЕН"
+
+        try:
+            metadata = _load_workspace_metadata(metadata_path)
+        except Exception:
+            return None, None, "НЕДОСТУПЕН"
+
+        if metadata["workspace_id"] != remembered_id:
+            return None, metadata, "ID КОНФЛИКТ"
+
+        return path.resolve(), metadata, ""
+
+    def _list_registered_workspace_chats(
+        self,
+        workspace: Path,
+    ) -> list[dict]:
+        chats_dir = workspace / ULTRA_DIRNAME / "chats"
+        if not chats_dir.exists():
+            return []
+        if not chats_dir.is_dir():
+            raise NotADirectoryError(
+                f"Папка чатов недоступна: {chats_dir}"
+            )
+
+        chats = []
+        for child in chats_dir.iterdir():
+            if not child.is_dir():
+                continue
+            metadata_path = child / "metadata.json"
+            if not metadata_path.is_file():
+                continue
+            metadata = _load_chat_metadata(metadata_path)
+            if metadata["chat_id"] != child.name:
+                raise RuntimeError(
+                    "chat_id не совпадает с именем папки: "
+                    f"{metadata_path}"
+                )
+            chats.append(metadata)
+
+        chats.sort(
+            key=lambda item: (
+                str(item.get("created_at") or ""),
+                str(item.get("chat_id") or ""),
+            )
+        )
+        return chats
+
+    def _read_registered_project_context(self, workspace: Path) -> None:
+        context_path = workspace / ULTRA_DIRNAME / PROJECT_CONTEXT_NAME
+        if not context_path.exists():
+            return
+        if not context_path.is_file():
+            raise FileNotFoundError(
+                f"PROJECT CONTEXT недоступен: {context_path}"
+            )
+        size = context_path.stat().st_size
+        if size > MAX_PROJECT_CONTEXT_BYTES:
+            raise ValueError(
+                "PROJECT CONTEXT слишком большой: "
+                f"{size} байт. Лимит текущей версии: "
+                f"{MAX_PROJECT_CONTEXT_BYTES} байт."
+            )
+        context_path.read_text(encoding="utf-8-sig")
+
+    def _find_registered_workspace_entry(
+        self,
+        workspace: Path,
+        workspace_id: str | None = None,
+    ) -> dict | None:
+        root = workspace.resolve()
+        candidates = []
+        for entry in self._workspace_registry:
+            try:
+                same_path = Path(entry["path"]).resolve() == root
+            except Exception:
+                continue
+            if not same_path:
+                continue
+            if workspace_id is not None:
+                if entry.get("workspace_id") == workspace_id:
+                    return entry
+                continue
+            candidates.append(entry)
+
+        for entry in candidates:
+            confirmed_root, _metadata, issue = (
+                self._probe_registered_workspace(entry)
+            )
+            if confirmed_root == root and not issue:
+                return entry
+        return None
+
     def _initialize_workspace_registry(self) -> None:
         remembered_registry = []
+        seen_workspace_ids = set()
         for item in self._workspace_registry:
             workspace_id = item.get("workspace_id")
             path_text = item.get("path")
@@ -1425,6 +1543,9 @@ class UltraApp(tk.Tk):
                 continue
             if not isinstance(path_text, str) or not path_text:
                 continue
+            if workspace_id in seen_workspace_ids:
+                continue
+            seen_workspace_ids.add(workspace_id)
 
             entry = {
                 "workspace_id": workspace_id,
@@ -1435,26 +1556,11 @@ class UltraApp(tk.Tk):
                     else None
                 ),
             }
-            path = Path(path_text)
-            if path.is_dir():
-                try:
-                    info = ensure_workspace_storage(path)
-                except Exception:
-                    pass
-                else:
-                    entry["workspace_id"] = info["workspace_id"]
-                    entry["path"] = str(path.resolve())
             remembered_registry.append(entry)
 
         self._workspace_registry = remembered_registry
 
-        current_entry = None
         if not self._ui_state.get("registry_initialized", False):
-            cwd = Path.cwd().resolve()
-            try:
-                current_entry = self._register_workspace_path(cwd)
-            except Exception:
-                current_entry = None
             self._ui_state["registry_initialized"] = True
 
         active_id = self._ui_state.get("active_workspace_id")
@@ -1470,7 +1576,6 @@ class UltraApp(tk.Tk):
         candidates = []
         for candidate in (
             active_entry,
-            current_entry,
             *self._workspace_registry,
         ):
             if candidate is None or candidate in candidates:
@@ -1487,6 +1592,7 @@ class UltraApp(tk.Tk):
                     path,
                     preferred_chat_id=candidate.get("last_chat_id"),
                     save=False,
+                    workspace_id=candidate["workspace_id"],
                 )
             except Exception:
                 continue
@@ -1532,22 +1638,22 @@ class UltraApp(tk.Tk):
         for index, item in enumerate(list(self._workspace_registry)):
             path_text = item["path"]
             path = Path(path_text)
-            info = None
+            confirmed_path, info, issue = (
+                self._probe_registered_workspace(item)
+            )
             chats = []
-            if path.is_dir():
+            if confirmed_path is not None:
                 try:
-                    loaded_info = ensure_workspace_storage(path)
-                    loaded_chats = list_chats(path)
-                    load_project_context(path)
-                    if not loaded_chats:
-                        loaded_chats = [create_chat(path)]
+                    chats = self._list_registered_workspace_chats(
+                        confirmed_path
+                    )
+                    self._read_registered_project_context(confirmed_path)
                 except Exception:
-                    pass
-                else:
-                    info = loaded_info
-                    chats = loaded_chats
+                    confirmed_path = None
+                    info = None
+                    issue = "НЕДОСТУПЕН"
 
-            if info is None:
+            if confirmed_path is None or info is None:
                 workspace_row = tk.Frame(frame, bg=field)
                 workspace_row.pack(
                     fill="x",
@@ -1557,7 +1663,7 @@ class UltraApp(tk.Tk):
                 fallback_name = path.name or path_text
                 tk.Label(
                     workspace_row,
-                    text=f"{fallback_name}  [НЕДОСТУПЕН]\n{path_text}",
+                    text=f"{fallback_name}  [{issue}]\n{path_text}",
                     anchor="w",
                     justify="left",
                     bg=field,
@@ -1573,11 +1679,10 @@ class UltraApp(tk.Tk):
                 ).pack(side="left", padx=(2, 0))
                 continue
 
-            item["workspace_id"] = info["workspace_id"]
-            item["path"] = str(path.resolve())
+            path = confirmed_path
 
             active_workspace = (
-                info["workspace_id"] == self.current_workspace_id
+                item["workspace_id"] == self.current_workspace_id
             )
 
             workspace_row = tk.Frame(frame, bg=field)
@@ -1585,7 +1690,8 @@ class UltraApp(tk.Tk):
 
             name_label = tk.Label(
                 workspace_row,
-                text=("▶ " if active_workspace else "") + info["display_name"],
+                text=("▶ " if active_workspace else "")
+                + (info.get("display_name") or path.name),
                 anchor="w",
                 bg=field,
                 fg=text_color,
@@ -1595,7 +1701,8 @@ class UltraApp(tk.Tk):
             name_label.pack(side="left", fill="x", expand=True)
             name_label.bind(
                 "<Button-1>",
-                lambda _event, p=path: self._activate_workspace(p),
+                lambda _event, p=path, wid=item["workspace_id"]:
+                    self._activate_workspace(p, workspace_id=wid),
             )
 
             self._sidebar_button(
@@ -1621,7 +1728,8 @@ class UltraApp(tk.Tk):
             self._sidebar_button(
                 workspace_row,
                 "×",
-                lambda wid=info["workspace_id"]: self._remove_workspace_ui(wid),
+                lambda wid=item["workspace_id"]:
+                    self._remove_workspace_ui(wid),
                 width=2,
             ).pack(side="left", padx=(2, 0))
 
@@ -1645,10 +1753,12 @@ class UltraApp(tk.Tk):
                 chat_label.pack(side="left", fill="x", expand=True)
                 chat_label.bind(
                     "<Button-1>",
-                    lambda _event, p=path, cid=chat["chat_id"]:
+                    lambda _event, p=path, cid=chat["chat_id"],
+                    wid=item["workspace_id"]:
                         self._activate_workspace(
                             p,
                             preferred_chat_id=cid,
+                            workspace_id=wid,
                         ),
                 )
 
@@ -1679,35 +1789,61 @@ class UltraApp(tk.Tk):
         *,
         preferred_chat_id: str | None = None,
         save: bool = True,
+        workspace_id: str | None = None,
     ) -> None:
         if self.running:
             return
 
         root = workspace.resolve()
-        entry = self._register_workspace_path(root)
-        info = ensure_workspace_storage(root)
-        chats = list_chats(root)
-        load_project_context(root)
-        if not chats:
-            chats = [create_chat(root)]
+        entry = self._find_registered_workspace_entry(
+            root,
+            workspace_id,
+        )
+        if entry is None:
+            raise RuntimeError(
+                "Workspace отсутствует в UI registry или его identity "
+                "не подтверждена."
+            )
+
+        confirmed_root, info, issue = self._probe_registered_workspace(
+            entry
+        )
+        if confirmed_root is None or info is None:
+            raise RuntimeError(
+                f"Workspace недоступен: {issue or 'НЕДОСТУПЕН'}."
+            )
+        root = confirmed_root
+        chats = self._list_registered_workspace_chats(root)
+        self._read_registered_project_context(root)
 
         valid_ids = {item["chat_id"] for item in chats}
         candidate = preferred_chat_id or entry.get("last_chat_id")
         if candidate not in valid_ids:
-            candidate = chats[-1]["chat_id"]
+            candidate = chats[-1]["chat_id"] if chats else None
 
-        self.current_workspace_id = info["workspace_id"]
+        self.current_workspace_id = entry["workspace_id"]
         self.current_chat_id = candidate
         self._loaded_workspace_root = str(root)
         self.workspace_var.set(str(root))
-        entry["last_chat_id"] = candidate
+        if candidate is not None:
+            entry["last_chat_id"] = candidate
 
         if (root / "Документация").is_dir():
             self.write_scope_var.set("Документация")
         else:
             self.write_scope_var.set(".")
 
-        self._render_current_chat()
+        if candidate is not None:
+            self._render_current_chat()
+        else:
+            self.chat.configure(state="normal")
+            self.chat.delete("1.0", "end")
+            self.chat.configure(state="disabled")
+            self._append_chat(
+                "СИСТЕМА",
+                "В Workspace пока нет чатов. Используйте кнопку «+».",
+                "system",
+            )
         self._render_workspace_sidebar()
         if save:
             self._save_ui_state(silent=True)
@@ -1723,6 +1859,7 @@ class UltraApp(tk.Tk):
             self._activate_workspace(
                 workspace,
                 preferred_chat_id=preferred_chat_id,
+                workspace_id=self.current_workspace_id,
             )
         except Exception as exc:
             if not silent:
@@ -1738,7 +1875,10 @@ class UltraApp(tk.Tk):
             self._loaded_workspace_root != resolved
             or not self.current_chat_id
         ):
-            self._activate_workspace(workspace)
+            self._activate_workspace(
+                workspace,
+                workspace_id=self.current_workspace_id,
+            )
         if self._loaded_workspace_root != resolved or not self.current_chat_id:
             raise RuntimeError("Workspace/Chat не удалось активировать.")
 
@@ -1794,6 +1934,7 @@ class UltraApp(tk.Tk):
             self._activate_workspace(
                 workspace,
                 preferred_chat_id=entry.get("last_chat_id"),
+                workspace_id=entry["workspace_id"],
             )
         except Exception as exc:
             messagebox.showerror(
@@ -1815,6 +1956,7 @@ class UltraApp(tk.Tk):
             self._activate_workspace(
                 workspace,
                 preferred_chat_id=chat["chat_id"],
+                workspace_id=chat["workspace_id"],
             )
         except Exception as exc:
             messagebox.showerror(
@@ -2209,6 +2351,7 @@ class UltraApp(tk.Tk):
                         path,
                         preferred_chat_id=next_item.get("last_chat_id"),
                         save=False,
+                        workspace_id=next_item["workspace_id"],
                     )
                 except Exception:
                     continue
