@@ -46,8 +46,11 @@ from compressor_runtime import (
     validate_reduction_percent,
 )
 from compressor_settings import (
+    get_final_check_template_path,
     get_message_compression_template_path,
+    load_final_check_template,
     load_message_compression_template,
+    save_final_check_template,
     save_message_compression_template,
 )
 from server_context_messages import (
@@ -914,6 +917,14 @@ class UltraApp(tk.Tk):
         compressor_template_button.grid(
             row=1, column=1, sticky="w", padx=(6, 0), pady=(6, 0)
         )
+        compressor_final_template_button = ttk.Button(
+            compressor_frame,
+            text="Финальная проверка...",
+            command=self._open_compressor_final_check_template_editor,
+        )
+        compressor_final_template_button.grid(
+            row=1, column=2, sticky="w", padx=(12, 0), pady=(6, 0)
+        )
 
         ttk.Label(
             compressor_frame,
@@ -967,6 +978,7 @@ class UltraApp(tk.Tk):
                 compressor_models_button,
                 compressor_role_button,
                 compressor_template_button,
+                compressor_final_template_button,
                 compressor_reduction_spin,
                 compressor_final_check,
             ]
@@ -2627,19 +2639,54 @@ class UltraApp(tk.Tk):
         editor.focus_set()
 
     def _open_compressor_template_editor(self) -> None:
+        self._open_compressor_text_template_editor(
+            window_title="MESSAGE COMPRESSION TEMPLATE",
+            description=(
+                "Шаблон инструкции для конкретного SOURCE MESSAGE. "
+                "Поддерживаются только {{REDUCTION_PERCENT}} и "
+                "{{REMAINING_PERCENT}}."
+            ),
+            load_template=load_message_compression_template,
+            get_template_path=get_message_compression_template_path,
+            save_template=save_message_compression_template,
+        )
+
+    def _open_compressor_final_check_template_editor(self) -> None:
+        self._open_compressor_text_template_editor(
+            window_title="FINAL CHECK TEMPLATE",
+            description=(
+                "Дополнительная финальная инструкция COMPRESSOR. "
+                "Checkbox определяет, включать ли этот блок в prompt. "
+                "Поддерживаются {{REDUCTION_PERCENT}} и "
+                "{{REMAINING_PERCENT}}."
+            ),
+            load_template=load_final_check_template,
+            get_template_path=get_final_check_template_path,
+            save_template=save_final_check_template,
+        )
+
+    def _open_compressor_text_template_editor(
+        self,
+        *,
+        window_title: str,
+        description: str,
+        load_template,
+        get_template_path,
+        save_template,
+    ) -> None:
         try:
-            text = load_message_compression_template()
-            storage_path = get_message_compression_template_path()
+            text = load_template()
+            storage_path = get_template_path()
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
-                "Не удалось открыть шаблон задачи COMPRESSOR.\n\n"
+                f"Не удалось открыть {window_title}.\n\n"
                 f"{type(exc).__name__}: {exc}",
             )
             return
 
         window = tk.Toplevel(self)
-        window.title("MESSAGE COMPRESSION TEMPLATE")
+        window.title(window_title)
         window.geometry("920x700")
         window.minsize(720, 520)
         window.transient(self)
@@ -2648,11 +2695,7 @@ class UltraApp(tk.Tk):
         header.pack(fill="x")
         ttk.Label(
             header,
-            text=(
-                "Шаблон инструкции для конкретного SOURCE MESSAGE. "
-                "Поддерживаются только {{REDUCTION_PERCENT}} и "
-                "{{REMAINING_PERCENT}}."
-            ),
+            text=description,
             wraplength=880,
             justify="left",
         ).pack(anchor="w")
@@ -2674,13 +2717,13 @@ class UltraApp(tk.Tk):
         buttons = ttk.Frame(window)
         buttons.pack(fill="x", padx=10, pady=(0, 10))
 
-        def save_template() -> None:
+        def save_current_template() -> None:
             try:
-                result = save_message_compression_template(
+                result = save_template(
                     editor.get("1.0", "end-1c")
                 )
                 message = (
-                    "Шаблон задачи COMPRESSOR сохранён."
+                    f"{window_title} сохранён."
                     if result.get("changed")
                     else "Изменений нет."
                 )
@@ -2688,7 +2731,7 @@ class UltraApp(tk.Tk):
             except Exception as exc:
                 messagebox.showerror(
                     APP_TITLE,
-                    "Не удалось сохранить шаблон задачи COMPRESSOR.\n\n"
+                    f"Не удалось сохранить {window_title}.\n\n"
                     f"{type(exc).__name__}: {exc}",
                     parent=window,
                 )
@@ -2696,7 +2739,7 @@ class UltraApp(tk.Tk):
         ttk.Button(
             buttons,
             text="Сохранить",
-            command=save_template,
+            command=save_current_template,
         ).pack(side="left")
         ttk.Button(
             buttons,

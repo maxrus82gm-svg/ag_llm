@@ -9,7 +9,11 @@ from typing import Any, Callable
 import httpx
 
 from agent_global_context import APP_DATA_ROOT, load_agent_global_context
-from compressor_settings import load_message_compression_template
+from compressor_settings import (
+    DEFAULT_FINAL_CHECK_TEMPLATE,
+    load_final_check_template,
+    load_message_compression_template,
+)
 from context_storage import load_existing_project_context, probe_existing_workspace
 from model_registry import get_model_spec
 from server import CHAT_URL, MAX_TOKENS, TEMPERATURE, get_access_token
@@ -37,6 +41,10 @@ GUARD_REJECT_EMPTY = "reject_empty"
 GUARD_REJECT_UNCHANGED = "reject_unchanged"
 GUARD_REJECT_NOT_SHORTER = "reject_not_shorter"
 GUARD_REJECT_INSUFFICIENT_REDUCTION = "reject_insufficient_reduction"
+TARGET_PLACEHOLDERS = (
+    "{{REDUCTION_PERCENT}}",
+    "{{REMAINING_PERCENT}}",
+)
 
 
 class CompressorGuardError(RuntimeError):
@@ -54,21 +62,40 @@ def validate_reduction_percent(value: object) -> int:
     return value
 
 
-def render_message_compression_template(
-    template: str,
+def render_compressor_placeholders(
+    text: str,
     reduction_percent: int,
 ) -> str:
-    if not isinstance(template, str):
-        raise TypeError("message_template должен быть строкой.")
+    if not isinstance(text, str):
+        raise TypeError("Текст COMPRESSOR prompt должен быть строкой.")
     reduction_percent = validate_reduction_percent(reduction_percent)
     remaining_percent = 100 - reduction_percent
-    return template.replace(
+    return text.replace(
         "{{REDUCTION_PERCENT}}",
         str(reduction_percent),
     ).replace(
         "{{REMAINING_PERCENT}}",
         str(remaining_percent),
     )
+
+
+def render_message_compression_template(
+    template: str,
+    reduction_percent: int,
+) -> str:
+    """Compatibility wrapper для прежнего публичного helper."""
+    return render_compressor_placeholders(template, reduction_percent)
+
+
+def has_compressor_target_placeholder(*texts: str) -> bool:
+    for text in texts:
+        if not isinstance(text, str):
+            raise TypeError(
+                "Редактируемый COMPRESSOR prompt должен быть строкой."
+            )
+        if any(token in text for token in TARGET_PLACEHOLDERS):
+            return True
+    return False
 
 
 def measure_compression(source_text: str, result_text: str) -> dict[str, Any]:
@@ -111,18 +138,60 @@ def build_compressor_prompt_blocks(
     message_template: str,
     reduction_percent: int,
     final_check_enabled: bool,
+    final_check_template: str | None = None,
 ) -> list[dict[str, str]]:
     reduction_percent = validate_reduction_percent(reduction_percent)
     if not isinstance(source_text, str) or not source_text.strip():
         raise ValueError("SOURCE TEXT не может быть пустым.")
-    remaining_percent = 100 - reduction_percent
-    rendered_template = render_message_compression_template(
+    if not isinstance(final_check_enabled, bool):
+        raise TypeError("final_check_enabled должен быть bool.")
+    if final_check_template is None:
+        final_check_template = DEFAULT_FINAL_CHECK_TEMPLATE
+
+    editable_target_blocks = [role_context, message_template]
+    if final_check_enabled:
+        editable_target_blocks.append(final_check_template)
+    has_user_target = has_compressor_target_placeholder(
+        *editable_target_blocks
+    )
+
+    rendered_role_context = render_compressor_placeholders(
+        role_context,
+        reduction_percent,
+    )
+    rendered_template = render_compressor_placeholders(
         message_template,
         reduction_percent,
     )
+    rendered_final_check = render_compressor_placeholders(
+        final_check_template,
+        reduction_percent,
+    )
+
+    runtime_target_parts = [
+        "The provided SOURCE TEXT is the canonical full RAW original.",
+    ]
+    if not has_user_target:
+        runtime_target_parts.append(
+            f"Requested approximate reduction: {reduction_percent}%"
+        )
+    runtime_target_parts.extend(
+        [
+            (
+                "Preserving meaning, facts, constraints, numbers, names, "
+                "relationships and important qualifications has higher "
+                "priority than hitting the numerical target exactly."
+            ),
+            (
+                "Do not calculate the percentage from any previous, "
+                "compressed or intermediate representation."
+            ),
+            "Return only the compressed message text.",
+        ]
+    )
 
     contents = {
-        "role_context": role_context,
+        "role_context": rendered_role_context,
         "project_context": (
             "PROJECT CONTEXT is reference material for understanding terms and "
             "the surrounding environment. SOURCE TEXT is the source of truth. "
@@ -131,27 +200,9 @@ def build_compressor_prompt_blocks(
             f"{project_context}"
         ),
         "message_template": rendered_template,
-        "runtime_target": (
-            "The provided SOURCE TEXT is the canonical full RAW original.\n\n"
-            f"Requested approximate reduction: {reduction_percent}%\n\n"
-            f"Approximate desired remaining size: {remaining_percent}%\n\n"
-            "Preserving meaning, facts, constraints, numbers, names, "
-            "relationships and important qualifications has higher priority "
-            "than hitting the numerical target exactly.\n\n"
-            "Do not calculate the percentage from any previous, compressed or "
-            "intermediate representation.\n\n"
-            "Return only the compressed message text."
-        ),
+        "runtime_target": "\n\n".join(runtime_target_parts),
         "source_text": source_text,
-        "final_check": (
-            "Before returning the result, compare it specifically with the "
-            "original full RAW SOURCE TEXT.\n\n"
-            "Confirm internally that the result is reasonably compressed "
-            f"toward the requested {reduction_percent}% reduction target.\n\n"
-            "The original RAW SOURCE TEXT is the only measurement baseline.\n\n"
-            "Preservation of meaning has priority over exact percentage.\n\n"
-            "Do not print a check report. Return only the compressed text."
-        ),
+        "final_check": rendered_final_check,
     }
 
     blocks = []
@@ -236,6 +287,7 @@ async def run_compressor_task(
     role_context: str | None = None,
     message_template: str | None = None,
     project_context: str | None = None,
+    final_check_template: str | None = None,
 ) -> str:
     if not isinstance(source_text, str) or not source_text.strip():
         raise ValueError("SOURCE TEXT не может быть пустым.")
@@ -260,6 +312,8 @@ async def run_compressor_task(
         role_context = load_agent_global_context(COMPRESSOR_ROLE_ID)
     if message_template is None:
         message_template = load_message_compression_template()
+    if final_check_enabled and final_check_template is None:
+        final_check_template = load_final_check_template()
     if project_context is None:
         project_context = load_existing_project_context(
             workspace_root,
@@ -273,6 +327,7 @@ async def run_compressor_task(
         message_template=message_template,
         reduction_percent=reduction_percent,
         final_check_enabled=final_check_enabled,
+        final_check_template=final_check_template,
     )
 
     run_id = (

@@ -89,6 +89,109 @@ class CompressorPureTests(unittest.TestCase):
                     rendered,
                 )
 
+            final_path = Path(temp_dir) / "final_check_template.md"
+            with patch.object(
+                compressor_settings,
+                "FINAL_CHECK_TEMPLATE_PATH",
+                final_path,
+            ):
+                compressor_settings.save_final_check_template(
+                    "Check {{REDUCTION_PERCENT}}%."
+                )
+                self.assertEqual(
+                    compressor_settings.load_final_check_template(),
+                    "Check {{REDUCTION_PERCENT}}%.",
+                )
+
+    def test_placeholders_render_in_all_editable_prompt_blocks(self) -> None:
+        blocks = compressor_runtime.build_compressor_prompt_blocks(
+            source_text="SOURCE {{REDUCTION_PERCENT}}",
+            role_context=(
+                "Role reduction={{REDUCTION_PERCENT}} "
+                "remaining={{REMAINING_PERCENT}}"
+            ),
+            project_context="PROJECT {{REMAINING_PERCENT}}",
+            message_template="Message {{REDUCTION_PERCENT}}",
+            final_check_template="Final {{REMAINING_PERCENT}}",
+            reduction_percent=40,
+            final_check_enabled=True,
+        )
+        by_id = {block["id"]: block["content"] for block in blocks}
+        self.assertEqual(by_id["role_context"], "Role reduction=40 remaining=60")
+        self.assertEqual(by_id["message_template"], "Message 40")
+        self.assertEqual(by_id["final_check"], "Final 60")
+        self.assertIn("PROJECT {{REMAINING_PERCENT}}", by_id["project_context"])
+        self.assertEqual(
+            by_id["source_text"],
+            "SOURCE {{REDUCTION_PERCENT}}",
+        )
+
+    def test_default_target_mentions_follow_final_check_switch(self) -> None:
+        common = {
+            "source_text": "SOURCE",
+            "role_context": "COMPRESSOR ROLE",
+            "project_context": "REFERENCE",
+            "message_template": (
+                compressor_settings.DEFAULT_MESSAGE_COMPRESSION_TEMPLATE
+            ),
+            "final_check_template": (
+                compressor_settings.DEFAULT_FINAL_CHECK_TEMPLATE
+            ),
+            "reduction_percent": 50,
+        }
+        prompt_without_check = compressor_runtime.render_compressor_prompt(
+            compressor_runtime.build_compressor_prompt_blocks(
+                **common,
+                final_check_enabled=False,
+            )
+        )
+        self.assertEqual(prompt_without_check.count("50%"), 1)
+
+        prompt_with_check = compressor_runtime.render_compressor_prompt(
+            compressor_runtime.build_compressor_prompt_blocks(
+                **common,
+                final_check_enabled=True,
+            )
+        )
+        self.assertEqual(prompt_with_check.count("50%"), 2)
+
+    def test_server_fallback_and_conscious_multiple_mentions(self) -> None:
+        fallback_prompt = compressor_runtime.render_compressor_prompt(
+            compressor_runtime.build_compressor_prompt_blocks(
+                source_text="SOURCE",
+                role_context="ROLE WITHOUT TARGET",
+                project_context="REFERENCE",
+                message_template="Compress while preserving meaning.",
+                final_check_template=(
+                    compressor_settings.DEFAULT_FINAL_CHECK_TEMPLATE
+                ),
+                reduction_percent=50,
+                final_check_enabled=False,
+            )
+        )
+        self.assertEqual(fallback_prompt.count("50%"), 1)
+        self.assertIn("Requested approximate reduction: 50%", fallback_prompt)
+
+        experimental_prompt = compressor_runtime.render_compressor_prompt(
+            compressor_runtime.build_compressor_prompt_blocks(
+                source_text="SOURCE",
+                role_context=(
+                    "Role {{REDUCTION_PERCENT}}% and "
+                    "{{REDUCTION_PERCENT}}%."
+                ),
+                project_context="REFERENCE",
+                message_template="Message {{REDUCTION_PERCENT}}%.",
+                final_check_template="Unused.",
+                reduction_percent=40,
+                final_check_enabled=False,
+            )
+        )
+        self.assertEqual(experimental_prompt.count("40%"), 3)
+        self.assertNotIn(
+            "Requested approximate reduction: 40%",
+            experimental_prompt,
+        )
+
     def test_prompt_blocks_and_request_are_isolated(self) -> None:
         blocks = compressor_runtime.build_compressor_prompt_blocks(
             source_text="SOURCE_ONLY",
@@ -187,6 +290,7 @@ class CompressorRuntimeTests(unittest.IsolatedAsyncioTestCase):
                     role_context="COMPRESSOR ROLE",
                     message_template="Reduce {{REDUCTION_PERCENT}}%.",
                     project_context="REFERENCE",
+                    final_check_template="Check meaning.",
                     on_event=events.append,
                 )
 
@@ -229,6 +333,7 @@ class CompressorRuntimeTests(unittest.IsolatedAsyncioTestCase):
                         role_context="COMPRESSOR ROLE",
                         message_template="Reduce {{REDUCTION_PERCENT}}%.",
                         project_context="REFERENCE",
+                        final_check_template="Check meaning.",
                     )
             self.assertEqual(request.await_count, 2)
 
