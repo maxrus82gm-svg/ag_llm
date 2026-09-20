@@ -33,7 +33,59 @@ TEMPERATURE = 0.15
 MAX_TOKENS = 32768
 
 MAX_TASK_FILE_BYTES = 2 * 1024 * 1024
-ALLOWED_TEXT_SUFFIXES = {".md", ".txt", ".py", ".json", ".jsonl"}
+ALLOWED_TEXT_SUFFIXES = {
+    # Обычный текст / документация / данные
+    ".txt", ".md", ".mdx", ".rst", ".log", ".csv", ".tsv",
+
+    # Конфигурации / structured text
+    ".json", ".jsonl", ".jsonc", ".json5", ".xml", ".yaml", ".yml", ".toml",
+    ".ini", ".cfg", ".conf", ".config", ".properties", ".vdf", ".lock",
+    ".reg", ".inf", ".manifest",
+
+    # Python
+    ".py", ".pyi",
+
+    # C / C++
+    ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx",
+    ".inl", ".ipp", ".tpp", ".ixx", ".cppm", ".mpp", ".rc", ".def",
+
+    # C# / .NET / Visual Studio
+    ".cs", ".csproj", ".fs", ".fsx", ".fsproj", ".vb", ".vbproj",
+    ".sln", ".slnx", ".vcxproj", ".props", ".targets", ".filters",
+    ".user", ".natvis",
+
+    # Shell / Windows scripts
+    ".bat", ".cmd", ".ps1", ".psm1", ".psd1", ".sh", ".bash", ".zsh", ".fish",
+
+    # Web / JavaScript / TypeScript
+    ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx",
+    ".html", ".htm", ".css", ".scss", ".sass", ".less", ".vue", ".svelte",
+
+    # Java / Kotlin / Gradle
+    ".java", ".kt", ".kts", ".gradle",
+
+    # Другие языки разработки
+    ".go", ".rs", ".lua", ".rb", ".php", ".pl", ".sql",
+    ".graphql", ".gql", ".proto",
+
+    # Build / native tooling
+    ".cmake", ".mk", ".mak",
+
+    # Assembly / include
+    ".asm", ".s", ".inc",
+
+    # Unity / shaders
+    ".shader", ".compute", ".cginc", ".hlsl", ".glsl",
+    ".asmdef", ".asmref", ".uxml", ".uss",
+    ".shadergraph", ".shadersubgraph",
+}
+
+ALLOWED_TEXT_FILENAMES = {
+    ".gitignore", ".gitattributes", ".gitmodules", ".editorconfig",
+    ".dockerignore", ".npmrc", ".nvmrc",
+    "Dockerfile", "Makefile", "CMakeLists.txt", "Jenkinsfile",
+    "Procfile", "Vagrantfile", "Pipfile",
+}
 
 MAX_AGENT_FILE_BYTES = 2 * 1024 * 1024
 MAX_AGENT_LIST_ENTRIES = 500
@@ -639,9 +691,27 @@ def _backup_before_delete(root: Path, path: Path, session: dict | None) -> None:
 
 
 def _require_text_suffix(path: Path) -> None:
-    if path.suffix.lower() not in ALLOWED_TEXT_SUFFIXES and path.name != ".gitignore":
-        allowed = ", ".join(sorted(ALLOWED_TEXT_SUFFIXES))
-        raise ValueError(f"Разрешены только текстовые файлы: {allowed} или файл .gitignore.")
+    suffix = path.suffix.lower()
+    name = path.name
+
+    if suffix in ALLOWED_TEXT_SUFFIXES:
+        return
+
+    if name in ALLOWED_TEXT_FILENAMES:
+        return
+
+    if name == ".env" or name.startswith(".env."):
+        return
+
+    allowed_suffixes = ", ".join(sorted(ALLOWED_TEXT_SUFFIXES))
+    allowed_names = ", ".join(sorted(ALLOWED_TEXT_FILENAMES))
+
+    raise ValueError(
+        "Формат файла не разрешён для обычных текстовых file tools. "
+        f"Расширения: {allowed_suffixes}. "
+        f"Специальные имена: {allowed_names}. "
+        "Также разрешены .env и .env.*"
+    )
 
 def _agent_list_dir(root: Path, path_text: str, policy: dict) -> dict:
     path = _require_operation_permission(root, path_text, "list", policy)
