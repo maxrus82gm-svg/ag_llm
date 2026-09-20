@@ -16,19 +16,16 @@ from tkinter import (
 from server import get_backup_base_path, run_agent_task
 from model_registry import get_model_spec, list_model_specs
 from context_storage import (
-    MAX_PROJECT_CONTEXT_BYTES,
-    PROJECT_CONTEXT_NAME,
-    ULTRA_DIRNAME,
-    WORKSPACE_METADATA_NAME,
-    _load_chat_metadata,
-    _load_workspace_metadata,
     append_raw_message,
     create_chat,
     ensure_chat,
     ensure_workspace_storage,
+    list_existing_chats,
     list_chats,
     load_chat_messages,
+    load_existing_project_context,
     load_project_context,
+    probe_existing_workspace,
     rename_chat,
     rename_workspace,
     save_project_context,
@@ -1433,77 +1430,20 @@ class UltraApp(tk.Tk):
         if not isinstance(remembered_id, str) or not remembered_id:
             return None, None, "НЕДОСТУПЕН"
 
-        path = Path(path_text)
-        if not path.is_dir():
-            return None, None, "НЕДОСТУПЕН"
-
-        metadata_path = (
-            path / ULTRA_DIRNAME / WORKSPACE_METADATA_NAME
-        )
-        if not metadata_path.is_file():
-            return None, None, "НЕДОСТУПЕН"
-
         try:
-            metadata = _load_workspace_metadata(metadata_path)
+            probe = probe_existing_workspace(
+                path_text,
+                expected_workspace_id=remembered_id,
+            )
         except Exception:
             return None, None, "НЕДОСТУПЕН"
 
-        if metadata["workspace_id"] != remembered_id:
-            return None, metadata, "ID КОНФЛИКТ"
-
-        return path.resolve(), metadata, ""
-
-    def _list_registered_workspace_chats(
-        self,
-        workspace: Path,
-    ) -> list[dict]:
-        chats_dir = workspace / ULTRA_DIRNAME / "chats"
-        if not chats_dir.exists():
-            return []
-        if not chats_dir.is_dir():
-            raise NotADirectoryError(
-                f"Папка чатов недоступна: {chats_dir}"
-            )
-
-        chats = []
-        for child in chats_dir.iterdir():
-            if not child.is_dir():
-                continue
-            metadata_path = child / "metadata.json"
-            if not metadata_path.is_file():
-                continue
-            metadata = _load_chat_metadata(metadata_path)
-            if metadata["chat_id"] != child.name:
-                raise RuntimeError(
-                    "chat_id не совпадает с именем папки: "
-                    f"{metadata_path}"
-                )
-            chats.append(metadata)
-
-        chats.sort(
-            key=lambda item: (
-                str(item.get("created_at") or ""),
-                str(item.get("chat_id") or ""),
-            )
-        )
-        return chats
-
-    def _read_registered_project_context(self, workspace: Path) -> None:
-        context_path = workspace / ULTRA_DIRNAME / PROJECT_CONTEXT_NAME
-        if not context_path.exists():
-            return
-        if not context_path.is_file():
-            raise FileNotFoundError(
-                f"PROJECT CONTEXT недоступен: {context_path}"
-            )
-        size = context_path.stat().st_size
-        if size > MAX_PROJECT_CONTEXT_BYTES:
-            raise ValueError(
-                "PROJECT CONTEXT слишком большой: "
-                f"{size} байт. Лимит текущей версии: "
-                f"{MAX_PROJECT_CONTEXT_BYTES} байт."
-            )
-        context_path.read_text(encoding="utf-8-sig")
+        status = probe.get("status")
+        if status == "ok":
+            return Path(probe["workspace_root"]), probe, ""
+        if status == "id_conflict":
+            return None, probe, "ID КОНФЛИКТ"
+        return None, probe, "НЕДОСТУПЕН"
 
     def _find_registered_workspace_entry(
         self,
@@ -1644,10 +1584,14 @@ class UltraApp(tk.Tk):
             chats = []
             if confirmed_path is not None:
                 try:
-                    chats = self._list_registered_workspace_chats(
-                        confirmed_path
+                    chats = list_existing_chats(
+                        confirmed_path,
+                        expected_workspace_id=item["workspace_id"],
                     )
-                    self._read_registered_project_context(confirmed_path)
+                    load_existing_project_context(
+                        confirmed_path,
+                        expected_workspace_id=item["workspace_id"],
+                    )
                 except Exception:
                     confirmed_path = None
                     info = None
@@ -1813,8 +1757,14 @@ class UltraApp(tk.Tk):
                 f"Workspace недоступен: {issue or 'НЕДОСТУПЕН'}."
             )
         root = confirmed_root
-        chats = self._list_registered_workspace_chats(root)
-        self._read_registered_project_context(root)
+        chats = list_existing_chats(
+            root,
+            expected_workspace_id=entry["workspace_id"],
+        )
+        load_existing_project_context(
+            root,
+            expected_workspace_id=entry["workspace_id"],
+        )
 
         valid_ids = {item["chat_id"] for item in chats}
         candidate = preferred_chat_id or entry.get("last_chat_id")

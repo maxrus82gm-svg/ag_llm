@@ -106,6 +106,125 @@ def _load_workspace_metadata(path: Path) -> dict[str, Any]:
     return data
 
 
+def _probe_existing_workspace_internal(
+    workspace_root: str | Path,
+    expected_workspace_id: str | None = None,
+) -> tuple[dict[str, Any], Path | None, dict[str, Any] | None]:
+    root = Path(workspace_root).expanduser()
+    result: dict[str, Any] = {
+        "status": "missing_path",
+        "workspace_root": str(root),
+    }
+
+    try:
+        exists = root.exists()
+    except OSError as exc:
+        result["error"] = str(exc)
+        return result, None, None
+    if not exists:
+        return result, None, None
+
+    try:
+        is_directory = root.is_dir()
+    except OSError as exc:
+        result["error"] = str(exc)
+        return result, None, None
+    if not is_directory:
+        result["status"] = "not_directory"
+        return result, None, None
+
+    try:
+        root = root.resolve()
+    except OSError as exc:
+        result["error"] = str(exc)
+        return result, None, None
+    result["workspace_root"] = str(root)
+
+    metadata_path = root / ULTRA_DIRNAME / WORKSPACE_METADATA_NAME
+    if not metadata_path.is_file():
+        result["status"] = "missing_metadata"
+        return result, root, None
+
+    try:
+        metadata = _load_workspace_metadata(metadata_path)
+    except (OSError, UnicodeError, RuntimeError) as exc:
+        result["status"] = "invalid_metadata"
+        result["error"] = str(exc)
+        return result, root, None
+
+    actual_workspace_id = metadata["workspace_id"]
+    if (
+        expected_workspace_id is not None
+        and actual_workspace_id != expected_workspace_id
+    ):
+        result.update(
+            {
+                "status": "id_conflict",
+                "expected_workspace_id": expected_workspace_id,
+                "actual_workspace_id": actual_workspace_id,
+            }
+        )
+        return result, root, metadata
+
+    result.update(
+        {
+            "status": "ok",
+            "workspace_id": actual_workspace_id,
+            "display_name": metadata.get("display_name") or root.name,
+            "schema_version": metadata["schema_version"],
+        }
+    )
+    return result, root, metadata
+
+
+def probe_existing_workspace(
+    workspace_root: str | Path,
+    expected_workspace_id: str | None = None,
+) -> dict[str, Any]:
+    """Read-only probe существующей Workspace identity без создания storage."""
+    result, _root, _metadata = _probe_existing_workspace_internal(
+        workspace_root,
+        expected_workspace_id,
+    )
+    return result
+
+
+def _require_existing_workspace(
+    workspace_root: str | Path,
+    expected_workspace_id: str | None = None,
+) -> tuple[Path, dict[str, Any]]:
+    result, root, metadata = _probe_existing_workspace_internal(
+        workspace_root,
+        expected_workspace_id,
+    )
+    status = result["status"]
+    if status == "ok" and root is not None and metadata is not None:
+        return root, metadata
+    if status == "missing_path":
+        raise FileNotFoundError(
+            f"Workspace не найден: {result['workspace_root']}"
+        )
+    if status == "not_directory":
+        raise NotADirectoryError(
+            f"Workspace не является папкой: {result['workspace_root']}"
+        )
+    if status == "missing_metadata":
+        raise FileNotFoundError(
+            "Workspace metadata не найдена: "
+            f"{result['workspace_root']}"
+        )
+    if status == "id_conflict":
+        raise RuntimeError(
+            "Workspace identity conflict: expected="
+            f"{result.get('expected_workspace_id')!r}, actual="
+            f"{result.get('actual_workspace_id')!r}."
+        )
+    raise RuntimeError(
+        result.get("error")
+        or f"Workspace metadata недоступна: {result['workspace_root']}"
+    )
+
+
 def ensure_workspace_storage(workspace_root: str | Path) -> dict[str, Any]:
     root = _validate_workspace_root(workspace_root)
     ultra_dir = root / ULTRA_DIRNAME
@@ -170,10 +289,7 @@ def rename_workspace(workspace_root: str | Path, display_name: str) -> dict[str,
     return metadata
 
 
-def load_project_context(workspace_root: str | Path) -> str:
-    info = ensure_workspace_storage(workspace_root)
-    path = Path(info["project_context_path"])
-
+def _read_project_context_file(path: Path) -> str:
     size = path.stat().st_size
     if size > MAX_PROJECT_CONTEXT_BYTES:
         raise ValueError(
@@ -186,6 +302,30 @@ def load_project_context(workspace_root: str | Path) -> str:
     if not text.strip():
         return "# PROJECT CONTEXT\n\nПока не заполнен.\n"
     return text
+
+
+def load_project_context(workspace_root: str | Path) -> str:
+    info = ensure_workspace_storage(workspace_root)
+    path = Path(info["project_context_path"])
+    return _read_project_context_file(path)
+
+
+def load_existing_project_context(
+    workspace_root: str | Path,
+    *,
+    expected_workspace_id: str | None = None,
+) -> str | None:
+    """Прочитать существующий PROJECT CONTEXT без создания файла."""
+    root, _metadata = _require_existing_workspace(
+        workspace_root,
+        expected_workspace_id,
+    )
+    path = root / ULTRA_DIRNAME / PROJECT_CONTEXT_NAME
+    if not path.exists():
+        return None
+    if not path.is_file():
+        raise FileNotFoundError(f"PROJECT CONTEXT недоступен: {path}")
+    return _read_project_context_file(path)
 
 
 def save_project_context(workspace_root: str | Path, text: str) -> dict[str, Any]:
@@ -241,11 +381,12 @@ def _load_chat_metadata(path: Path) -> dict[str, Any]:
     return data
 
 
-def list_chats(workspace_root: str | Path) -> list[dict[str, Any]]:
-    root = _validate_workspace_root(workspace_root)
-    info = ensure_workspace_storage(root)
-    chats_dir = Path(info["ultra_dir"]) / "chats"
-
+def _list_existing_chats_from_root(root: Path) -> list[dict[str, Any]]:
+    chats_dir = root / ULTRA_DIRNAME / "chats"
+    if not chats_dir.exists():
+        return []
+    if not chats_dir.is_dir():
+        raise NotADirectoryError(f"Папка чатов недоступна: {chats_dir}")
     chats: list[dict[str, Any]] = []
     for child in chats_dir.iterdir():
         if not child.is_dir():
@@ -267,6 +408,25 @@ def list_chats(workspace_root: str | Path) -> list[dict[str, Any]]:
         )
     )
     return chats
+
+
+def list_chats(workspace_root: str | Path) -> list[dict[str, Any]]:
+    root = _validate_workspace_root(workspace_root)
+    info = ensure_workspace_storage(root)
+    return _list_existing_chats_from_root(Path(info["workspace_root"]))
+
+
+def list_existing_chats(
+    workspace_root: str | Path,
+    *,
+    expected_workspace_id: str | None = None,
+) -> list[dict[str, Any]]:
+    """Перечислить существующие чаты без создания storage или Chat 1."""
+    root, _metadata = _require_existing_workspace(
+        workspace_root,
+        expected_workspace_id,
+    )
+    return _list_existing_chats_from_root(root)
 
 
 def _next_default_chat_title(chats: list[dict[str, Any]]) -> str:
