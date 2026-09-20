@@ -40,6 +40,16 @@ from agent_global_context import (
     load_agent_global_context,
     save_agent_global_context,
 )
+from compressor_runtime import (
+    DEFAULT_COMPRESSOR_MODEL_ID,
+    DEFAULT_REDUCTION_PERCENT,
+    validate_reduction_percent,
+)
+from compressor_settings import (
+    get_message_compression_template_path,
+    load_message_compression_template,
+    save_message_compression_template,
+)
 from server_context_messages import (
     delete_server_context_message,
     get_server_context_messages_path,
@@ -121,6 +131,41 @@ class UltraApp(tk.Tk):
         )
         self._running_model_display_name = selected_model.display_name
 
+        saved_compressor_model_id = self._ui_state.get(
+            "compressor_model_id",
+            DEFAULT_COMPRESSOR_MODEL_ID,
+        )
+        try:
+            compressor_model = get_model_spec(saved_compressor_model_id)
+        except (KeyError, RuntimeError, ValueError):
+            compressor_model = get_model_spec(DEFAULT_COMPRESSOR_MODEL_ID)
+        self._ui_state["compressor_model_id"] = compressor_model.model_id
+        self.compressor_model_id_var = tk.StringVar(
+            value=compressor_model.model_id
+        )
+        self.compressor_model_display_var = tk.StringVar(
+            value=compressor_model.display_name
+        )
+        self.compressor_reduction_percent_var = tk.StringVar(
+            value=str(
+                self._ui_state.get(
+                    "compressor_reduction_percent",
+                    DEFAULT_REDUCTION_PERCENT,
+                )
+            )
+        )
+        self.compressor_final_check_enabled_var = tk.BooleanVar(
+            value=bool(
+                self._ui_state.get(
+                    "compressor_final_check_enabled",
+                    True,
+                )
+            )
+        )
+        self.compressor_status_var = tk.StringVar(
+            value="сообщение не выбрано"
+        )
+
         # Серверные разрешения запуска. Безопасные значения по умолчанию:
         # читать можно весь workspace, писать нельзя, autobackup включён.
         self.allow_read_var = tk.BooleanVar(value=True)
@@ -168,6 +213,7 @@ class UltraApp(tk.Tk):
         self._record_initial_mtimes()
 
         self._security_widgets: list[tk.Widget] = []
+        self._compressor_widgets: list[tk.Widget] = []
         self._workspace_widgets: list[tk.Widget] = []
         self._color_swatches: dict[str, tk.Widget] = {}
         self._run_started_once = False
@@ -537,9 +583,15 @@ class UltraApp(tk.Tk):
         model_registry_button = ttk.Button(
             model_frame,
             text="Модели...",
-            command=self._open_model_registry,
+            command=lambda: self._open_model_registry("main_chat"),
         )
         model_registry_button.pack(side="left")
+        main_context_button = ttk.Button(
+            model_frame,
+            text="Контекст MAIN CHAT...",
+            command=self._open_global_ultra_context_editor,
+        )
+        main_context_button.pack(side="left", padx=(8, 0))
 
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
@@ -582,16 +634,6 @@ class UltraApp(tk.Tk):
         )
         guard_p1_check.grid(
             row=0, column=3, sticky="w", pady=(0, 2)
-        )
-
-        # GLOBAL_ULTRA_CONTEXT_V1
-        global_context_button = ttk.Button(
-            security,
-            text="Глобальный контекст Ultra",
-            command=self._open_global_ultra_context_editor,
-        )
-        global_context_button.grid(
-            row=0, column=4, sticky="w", padx=(12, 0), pady=(0, 2)
         )
 
         context_messages_button = ttk.Button(
@@ -788,9 +830,9 @@ class UltraApp(tk.Tk):
                 delete_check,
                 verify_check,
                 guard_p1_check,
-                global_context_button,
                 context_messages_button,
                 model_registry_button,
+                main_context_button,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -834,6 +876,101 @@ class UltraApp(tk.Tk):
                 sequence,
                 lambda e: (e.widget.event_generate("<<Copy>>"), "break")[1],
             )
+
+        compressor_frame = ttk.LabelFrame(
+            right_frame,
+            text="КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR",
+            padding=(8, 5),
+        )
+        compressor_frame.pack(fill="x", pady=(0, 8))
+
+        ttk.Label(compressor_frame, text="Модель:").grid(
+            row=0, column=0, sticky="w"
+        )
+        ttk.Label(
+            compressor_frame,
+            textvariable=self.compressor_model_display_var,
+        ).grid(row=0, column=1, sticky="w", padx=(6, 12))
+        compressor_models_button = ttk.Button(
+            compressor_frame,
+            text="Модели...",
+            command=lambda: self._open_model_registry("compressor"),
+        )
+        compressor_models_button.grid(row=0, column=2, sticky="w")
+
+        compressor_role_button = ttk.Button(
+            compressor_frame,
+            text="Контекст роли...",
+            command=self._open_compressor_role_context_editor,
+        )
+        compressor_role_button.grid(
+            row=1, column=0, sticky="w", pady=(6, 0)
+        )
+        compressor_template_button = ttk.Button(
+            compressor_frame,
+            text="Шаблон задачи...",
+            command=self._open_compressor_template_editor,
+        )
+        compressor_template_button.grid(
+            row=1, column=1, sticky="w", padx=(6, 0), pady=(6, 0)
+        )
+
+        ttk.Label(
+            compressor_frame,
+            text="Сократить примерно на:",
+        ).grid(row=2, column=0, sticky="w", pady=(6, 0))
+        compressor_reduction_spin = ttk.Spinbox(
+            compressor_frame,
+            from_=1,
+            to=95,
+            width=5,
+            textvariable=self.compressor_reduction_percent_var,
+            command=lambda: self._save_ui_state(silent=True),
+        )
+        compressor_reduction_spin.grid(
+            row=2, column=1, sticky="w", padx=(6, 0), pady=(6, 0)
+        )
+        ttk.Label(compressor_frame, text="%").grid(
+            row=2, column=1, sticky="w", padx=(58, 0), pady=(6, 0)
+        )
+        compressor_reduction_spin.bind(
+            "<FocusOut>",
+            lambda _event: self._save_ui_state(silent=True),
+        )
+        compressor_final_check = ttk.Checkbutton(
+            compressor_frame,
+            text="Финальная проверка цели",
+            variable=self.compressor_final_check_enabled_var,
+            command=lambda: self._save_ui_state(silent=True),
+        )
+        compressor_final_check.grid(
+            row=2, column=2, sticky="w", padx=(12, 0), pady=(6, 0)
+        )
+
+        ttk.Label(compressor_frame, text="Состояние:").grid(
+            row=3, column=0, sticky="w", pady=(6, 0)
+        )
+        ttk.Label(
+            compressor_frame,
+            textvariable=self.compressor_status_var,
+        ).grid(
+            row=3,
+            column=1,
+            columnspan=2,
+            sticky="w",
+            padx=(6, 0),
+            pady=(6, 0),
+        )
+
+        self._compressor_widgets.extend(
+            [
+                compressor_models_button,
+                compressor_role_button,
+                compressor_template_button,
+                compressor_reduction_spin,
+                compressor_final_check,
+            ]
+        )
 
         status_frame = ttk.Frame(right_frame)
         status_frame.pack(fill="x", pady=(0, 8))
@@ -901,12 +1038,33 @@ class UltraApp(tk.Tk):
         self.main_chat_model_display_var.set(model.display_name)
         self._ui_state["main_chat_model_id"] = model.model_id
 
-    def _open_model_registry(self) -> None:
+    def _set_compressor_model(self, model_id: str) -> None:
+        try:
+            model = get_model_spec(model_id)
+        except (KeyError, RuntimeError, ValueError):
+            model = get_model_spec(DEFAULT_COMPRESSOR_MODEL_ID)
+
+        self.compressor_model_id_var.set(model.model_id)
+        self.compressor_model_display_var.set(model.display_name)
+        self._ui_state["compressor_model_id"] = model.model_id
+
+    def _open_model_registry(self, assignment: str = "main_chat") -> None:
+        if assignment == "main_chat":
+            assignment_title = "MAIN CHAT MODEL"
+            current_model_id = self.main_chat_model_id_var.get()
+            apply_model = self._set_main_chat_model
+        elif assignment == "compressor":
+            assignment_title = "COMPRESSOR MODEL"
+            current_model_id = self.compressor_model_id_var.get()
+            apply_model = self._set_compressor_model
+        else:
+            raise ValueError(f"Неизвестный Model Assignment: {assignment!r}")
+
         models = list_model_specs()
         models_by_id = {model.model_id: model for model in models}
 
         window = tk.Toplevel(self)
-        window.title("MODEL REGISTRY / MAIN CHAT MODEL")
+        window.title(f"MODEL REGISTRY / {assignment_title}")
         window.transient(self)
         window.geometry("960x560")
         window.minsize(820, 480)
@@ -918,7 +1076,7 @@ class UltraApp(tk.Tk):
 
         ttk.Label(
             content,
-            text="MODEL REGISTRY / MAIN CHAT MODEL",
+            text=f"MODEL REGISTRY / {assignment_title}",
             font=("Segoe UI", 11, "bold"),
         ).grid(row=0, column=0, sticky="w", pady=(0, 10))
 
@@ -949,7 +1107,7 @@ class UltraApp(tk.Tk):
 
         selected_model_id_var = tk.StringVar(
             window,
-            value=self.main_chat_model_id_var.get(),
+            value=current_model_id,
         )
 
         details_vars = {
@@ -1066,7 +1224,7 @@ class UltraApp(tk.Tk):
                 )
                 return
 
-            self._set_main_chat_model(model.model_id)
+            apply_model(model.model_id)
             self._save_ui_state(silent=False)
 
         ttk.Button(
@@ -1266,6 +1424,32 @@ class UltraApp(tk.Tk):
             }
             self._ui_state["workspaces"] = list(self._workspace_registry)
             self._ui_state["active_workspace_id"] = self.current_workspace_id
+            self._ui_state["main_chat_model_id"] = (
+                self.main_chat_model_id_var.get()
+            )
+            self._ui_state["compressor_model_id"] = (
+                self.compressor_model_id_var.get()
+            )
+            try:
+                reduction_percent = validate_reduction_percent(
+                    int(self.compressor_reduction_percent_var.get())
+                )
+            except (TypeError, ValueError):
+                reduction_percent = int(
+                    self._ui_state.get(
+                        "compressor_reduction_percent",
+                        DEFAULT_REDUCTION_PERCENT,
+                    )
+                )
+                self.compressor_reduction_percent_var.set(
+                    str(reduction_percent)
+                )
+            self._ui_state["compressor_reduction_percent"] = (
+                reduction_percent
+            )
+            self._ui_state["compressor_final_check_enabled"] = (
+                self.compressor_final_check_enabled_var.get()
+            )
             save_ui_state(self._ui_state)
         except Exception as exc:
             if not silent:
@@ -2329,22 +2513,48 @@ class UltraApp(tk.Tk):
         self._render_workspace_sidebar()
 
     def _open_global_ultra_context_editor(self) -> None:
+        self._open_agent_context_editor(
+            agent_id="ultra",
+            window_title="КОНТЕКСТ MAIN CHAT",
+            description=(
+                "Общий контекст правил MAIN CHAT для всех Workspace. "
+                "Существующее локальное storage agent_id='ultra' сохранено."
+            ),
+        )
+
+    def _open_compressor_role_context_editor(self) -> None:
+        self._open_agent_context_editor(
+            agent_id="compressor",
+            window_title="КОНТЕКСТ РОЛИ COMPRESSOR",
+            description=(
+                "Независимый Role Context COMPRESSOR: роль, общие правила "
+                "и сведения, которые нельзя терять при сжатии."
+            ),
+        )
+
+    def _open_agent_context_editor(
+        self,
+        *,
+        agent_id: str,
+        window_title: str,
+        description: str,
+    ) -> None:
         try:
             text = load_agent_global_context(
-                "ultra",
+                agent_id,
                 allow_missing=True,
             )
-            storage_path = get_agent_global_context_path("ultra")
+            storage_path = get_agent_global_context_path(agent_id)
         except Exception as exc:
             messagebox.showerror(
                 APP_TITLE,
-                "Не удалось открыть Глобальный контекст Ultra.\n\n"
+                f"Не удалось открыть {window_title}.\n\n"
                 f"{type(exc).__name__}: {exc}",
             )
             return
 
         window = tk.Toplevel(self)
-        window.title("ГЛОБАЛЬНЫЙ КОНТЕКСТ ULTRA")
+        window.title(window_title)
         window.geometry("920x700")
         window.minsize(720, 520)
         window.transient(self)
@@ -2353,10 +2563,7 @@ class UltraApp(tk.Tk):
         header.pack(fill="x")
         ttk.Label(
             header,
-            text=(
-                "Общий контекст правил Ultra для всех Workspace. "
-                "Хранится локально вне Workspace и недоступен обычным file tools."
-            ),
+            text=description,
             wraplength=880,
             justify="left",
         ).pack(anchor="w")
@@ -2383,12 +2590,12 @@ class UltraApp(tk.Tk):
             try:
                 result = save_agent_global_context(
                     editor.get("1.0", "end-1c"),
-                    "ultra",
+                    agent_id,
                 )
                 if result.get("changed"):
                     messagebox.showinfo(
                         APP_TITLE,
-                        "Глобальный контекст Ultra сохранён. "
+                        f"{window_title} сохранён. "
                         "Следующий RUN прочитает новую версию без restart.",
                         parent=window,
                     )
@@ -2401,7 +2608,7 @@ class UltraApp(tk.Tk):
             except Exception as exc:
                 messagebox.showerror(
                     APP_TITLE,
-                    "Не удалось сохранить Глобальный контекст Ultra.\n\n"
+                    f"Не удалось сохранить {window_title}.\n\n"
                     f"{type(exc).__name__}: {exc}",
                     parent=window,
                 )
@@ -2417,6 +2624,85 @@ class UltraApp(tk.Tk):
             command=window.destroy,
         ).pack(side="right")
 
+        editor.focus_set()
+
+    def _open_compressor_template_editor(self) -> None:
+        try:
+            text = load_message_compression_template()
+            storage_path = get_message_compression_template_path()
+        except Exception as exc:
+            messagebox.showerror(
+                APP_TITLE,
+                "Не удалось открыть шаблон задачи COMPRESSOR.\n\n"
+                f"{type(exc).__name__}: {exc}",
+            )
+            return
+
+        window = tk.Toplevel(self)
+        window.title("MESSAGE COMPRESSION TEMPLATE")
+        window.geometry("920x700")
+        window.minsize(720, 520)
+        window.transient(self)
+
+        header = ttk.Frame(window, padding=(10, 10, 10, 0))
+        header.pack(fill="x")
+        ttk.Label(
+            header,
+            text=(
+                "Шаблон инструкции для конкретного SOURCE MESSAGE. "
+                "Поддерживаются только {{REDUCTION_PERCENT}} и "
+                "{{REMAINING_PERCENT}}."
+            ),
+            wraplength=880,
+            justify="left",
+        ).pack(anchor="w")
+        ttk.Label(
+            header,
+            text=f"Локальное хранилище: {storage_path}",
+        ).pack(anchor="w", pady=(4, 0))
+
+        editor = scrolledtext.ScrolledText(
+            window,
+            wrap="word",
+            undo=True,
+            font=("Segoe UI", 10),
+        )
+        editor.pack(fill="both", expand=True, padx=10, pady=(8, 6))
+        editor.insert("1.0", text)
+        bind_edit_shortcuts(editor)
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+
+        def save_template() -> None:
+            try:
+                result = save_message_compression_template(
+                    editor.get("1.0", "end-1c")
+                )
+                message = (
+                    "Шаблон задачи COMPRESSOR сохранён."
+                    if result.get("changed")
+                    else "Изменений нет."
+                )
+                messagebox.showinfo(APP_TITLE, message, parent=window)
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Не удалось сохранить шаблон задачи COMPRESSOR.\n\n"
+                    f"{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+
+        ttk.Button(
+            buttons,
+            text="Сохранить",
+            command=save_template,
+        ).pack(side="left")
+        ttk.Button(
+            buttons,
+            text="Закрыть",
+            command=window.destroy,
+        ).pack(side="right")
         editor.focus_set()
 
     def _open_server_context_messages_editor(self) -> None:
@@ -2968,6 +3254,35 @@ class UltraApp(tk.Tk):
             else "--:--:--"
         )
 
+        if event_type == "compressor_run_started":
+            return (
+                f"[{time_str}] COMPRESSOR START | {run_id} | "
+                f"MODEL={event.get('model_display_name')} "
+                f"[{event.get('provider_model_id')}] | "
+                f"TARGET={event.get('target_reduction_percent')}% | "
+                f"FINAL_CHECK={event.get('final_check_enabled')}"
+            )
+
+        if event_type == "compressor_attempt_finished":
+            actual = event.get("actual_reduction_percent")
+            actual_text = f"{actual:.2f}%" if isinstance(actual, (int, float)) else "?"
+            return (
+                f"[{time_str}] COMPRESSOR ATTEMPT "
+                f"#{event.get('attempt')} | {run_id} | "
+                f"{event.get('source_chars')} -> {event.get('output_chars')} chars | "
+                f"ACTUAL={actual_text} | GUARD={event.get('guard_status')}"
+            )
+
+        if event_type == "compressor_run_finished":
+            actual = event.get("actual_reduction_percent")
+            actual_text = f"{actual:.2f}%" if isinstance(actual, (int, float)) else "?"
+            return (
+                f"[{time_str}] COMPRESSOR FINISH | {run_id} | "
+                f"ATTEMPTS={event.get('attempts')} | ACTUAL={actual_text} | "
+                f"GUARD={event.get('guard_status')} | "
+                f"{event.get('duration', 0):.2f}s"
+            )
+
         if event_type == "run_started":
             task_preview = event.get("task_preview", "")
             perms = event.get("permissions", {})
@@ -3274,6 +3589,11 @@ class UltraApp(tk.Tk):
         state = "normal" if enabled else "disabled"
         self.send_button.configure(state=state)
         for widget in self._security_widgets:
+            try:
+                widget.configure(state=state)
+            except tk.TclError:
+                pass
+        for widget in self._compressor_widgets:
             try:
                 widget.configure(state=state)
             except tk.TclError:
