@@ -13,7 +13,8 @@
 - MODEL REGISTRY отсутствует;
 - Provider Adapter abstraction отсутствует;
 - MAIN CHAT MODEL и COMPRESSION MODEL ASSIGNMENTS отсутствуют;
-- per-Chat model selection, Local Provider, Agent Profiles и Coordinator отсутствуют.
+- CONTEXT POLICY и Agent Profiles отсутствуют;
+- per-Chat model selection, Local Provider и Coordinator отсутствуют.
 
 Этот документ описывает принятую целевую переходную архитектуру, а не уже работающую мультимодельность.
 
@@ -377,6 +378,75 @@ MAIN CHAT MODEL — модель, являющаяся основным «моз
 
 Их контекст не должен смешиваться.
 
+MODEL является только вычислительным «мозгом». Сама по себе она не владеет Chat history, PROJECT CONTEXT, Global Context, ROLE CONTEXT, RUN CONTEXT, Workspace state, tools, permissions, состоянием прошлых Agent/RUN или provider-side session memory. MODEL получает только данные и возможности, которые Agent Runtime явно передал ей в конкретном вызове.
+
+## 9.1. CONTEXT POLICY
+
+CONTEXT POLICY принадлежит роли / Agent Profile и определяет:
+
+- разрешённые и запрещённые источники контекста;
+- допустимый shared context;
+- динамический RUN CONTEXT;
+- доступ к Chat history и PROJECT CONTEXT;
+- допустимость результатов других Agent;
+- данные, которые нельзя наследовать;
+- источники истины и reference / orientation context.
+
+CONTEXT POLICY является принятым архитектурным решением и пока **НЕ РЕАЛИЗОВАНА** в runtime.
+
+## 9.2. Три класса контекста
+
+**ROLE CONTEXT** — относительно постоянные инструкции конкретной роли: цель, правила, ограничения и формат результата. ROLE CONTEXT не является Chat history.
+
+**ALLOWED SHARED CONTEXT** — общие данные Workspace, явно разрешённые CONTEXT POLICY данной роли: например PROJECT CONTEXT, Workspace facts, будущий glossary или PROJECT ORIENTATION. Эти данные не подключаются автоматически ко всем ролям.
+
+**RUN CONTEXT** — динамический payload конкретного вызова. Для Main Chat это может быть текущий Chat context, сообщение пользователя и task state; для COMPRESS — selected RAW; для VERIFY — ORIGINAL + DRAFT; для FINALIZE — ORIGINAL + DRAFT + VERIFICATION.
+
+Каноническая сборка вызова:
+
+    MODEL CALL
+        =
+    ROLE CONTEXT
+        +
+    ALLOWED SHARED CONTEXT
+        +
+    RUN CONTEXT
+        +
+    EXPLICIT TOOL SET
+
+Никакой дополнительный контекст не должен появляться из самой MODEL автоматически.
+
+## 9.3. Context isolation не равна слепоте
+
+CONTEXT ISOLATION означает, что роль получает только явно разрешённые источники, а не то, что роль ничего не знает о проекте.
+
+Например, Context Compressor может получить PROJECT CONTEXT как ALLOWED SHARED CONTEXT и понимать термины, TASK ID и архитектурные сущности. При этом он не получает автоматически весь Main Chat, другой Chat, прошлые Compression RUN, скрытую историю Main Agent или состояние других Agent.
+
+Если Provider поддерживает conversation, session, thread, cached history или server-side continuation state, это состояние также не должно автоматически объединять независимые роли, Chat и RUN. По умолчанию новый Role/RUN является логически новым изолированным вызовом. Повторное использование provider session допустимо только как явное решение Agent Runtime в рамках CONTEXT POLICY роли.
+
+## 9.4. MODEL, CONTEXT POLICY и TOOL POLICY
+
+Это три независимые сущности:
+
+    MODEL
+    = какой мозг думает
+
+    CONTEXT POLICY
+    = что этому мозгу разрешено знать в данной роли
+
+    TOOL / PERMISSION POLICY
+    = что этому мозгу разрешено делать в данной роли
+
+Смена MODEL сама по себе не меняет ROLE CONTEXT, CONTEXT POLICY, TOOL SET, permissions, Chat, Workspace, RAW HISTORY, PROJECT CONTEXT или Agent state.
+
+Tools принадлежат роли / Agent Runtime, а не MODEL REGISTRY или MODEL ASSIGNMENT. Действует принцип **DEFAULT DENY**: если роли tools не нужны, она не получает никаких tools. Например, Main Chat Agent может иметь разрешённый runtime tool set, а Context Compressor и Context Verifier — `TOOLS: NONE`.
+
+## 9.5. PROJECT ORIENTATION — будущая оптимизация
+
+Если PROJECT CONTEXT станет слишком большим, специализированной роли в будущем можно передавать сокращённый PROJECT ORIENTATION с назначением проекта, основными сущностями, терминами, решениями и структурой.
+
+PROJECT ORIENTATION пока **НЕ РЕАЛИЗОВАН**, не является отдельным этапом Roadmap и не создаёт зависимость MM.1–MM.4. На текущем архитектурном этапе используется обычный PROJECT CONTEXT, только когда он явно разрешён CONTEXT POLICY роли.
+
 ---
 
 # 10. COMPRESSION MODEL
@@ -672,11 +742,13 @@ AGENT:
     +
     назначенная модель
     +
-    собственный контекст
+    ROLE CONTEXT
     +
-    инструменты
+    CONTEXT POLICY
     +
-    разрешения
+    TOOL SET
+    +
+    PERMISSION POLICY
     +
     состояние
     +
@@ -711,7 +783,7 @@ AGENT:
         Compression Context
 
     TOOLS:
-        none / restricted
+        none
 
 Одна и та же MODEL может одновременно использоваться несколькими Agent.
 
@@ -727,9 +799,32 @@ MODEL REGISTRY должен стать общей инфраструктурой
 
     role
     model_assignment
-    context
-    tools
-    permissions
+    role_context
+    context_policy
+    tool_set
+    permission_policy
+    state
+    execution_rules
+
+Каноническая структура:
+
+    AGENT PROFILE
+
+    role
+    +
+    model_assignment
+    +
+    role_context
+    +
+    context_policy
+    +
+    tool_set
+    +
+    permission_policy
+    +
+    state
+    +
+    execution_rules
 
 Пример:
 
@@ -796,13 +891,16 @@ MODEL REGISTRY должен стать общей инфраструктурой
 
     Agent A
         ↓
-    structured result / task state
+    RESULT
         ↓
-    Coordinator / Server
+    Agent Runtime / Coordinator
+        ↓
+    явно выбранные данные добавляются
+    в RUN CONTEXT Agent B
         ↓
     Agent B
 
-Каждый Agent сохраняет собственный контекст и получает только необходимые данные.
+Agent B получает только те данные, которые Runtime явно решил передать. Будущая multi-agent система не должна использовать случайно общую память физических моделей как канал обмена.
 
 Такой подход позволяет контролировать:
 
@@ -863,6 +961,10 @@ Coordinator сможет:
 Это COMPRESSION MODEL.
 
 Оба selector должны использовать один MODEL REGISTRY.
+
+Общий механизм Model Selector может быть встроен в разные функциональные места: MAIN CHAT SLOT, COMPRESSION SLOT, будущие VERIFY / FINALIZE / CODE AGENT SLOT. Selector выбирает только MODEL и не переносит вместе с ней context, Chat history, ROLE CONTEXT, tools, permissions или state.
+
+Контекст и возможности определяет роль / slot. Поэтому одна физическая GigaChat Ultra может работать и в MAIN CHAT SLOT с Current Chat и разрешёнными tools, и в COMPRESSION SLOT с Selected RAW и `TOOLS: NONE`; это два независимых логических процесса с разными CONTEXT POLICY.
 
 Также должна существовать точка входа в управление справочником, например:
 
@@ -1018,6 +1120,8 @@ Coordinator сможет:
     MODEL ASSIGNMENTS
 
     Provider Adapter abstraction
+
+    CONTEXT POLICY / Agent Profiles
 
 Будущий управляемый ACTIVE CONTEXT будет собираться Agent Runtime из соответствующих источников и передаваться назначенной модели.
 
