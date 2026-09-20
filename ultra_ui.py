@@ -2110,12 +2110,15 @@ class UltraApp(tk.Tk):
             text = message.get("original_text") or ""
             resolved = None
             if role in {"user", "assistant"}:
+                # CHAT показывает неизменяемую RAW HISTORY пользователю.
+                # resolved используется только для FULL/COMPRESSED state
+                # и message actions; MAIN CHAT получает working representation
+                # отдельно через server.py / load_chat_working_messages().
                 resolved = get_message_working_representation(
                     workspace,
                     self.current_chat_id,
                     message_id,
                 )
-                text = resolved["text"]
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
