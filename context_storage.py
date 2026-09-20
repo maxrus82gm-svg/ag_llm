@@ -19,6 +19,15 @@ MAX_MESSAGE_BYTES = 2 * 1024 * 1024
 _WORKSPACE_ID_RE = re.compile(r"^ws_[A-Za-z0-9_-]{16,128}$")
 _CHAT_ID_RE = re.compile(r"^chat_[A-Za-z0-9_-]{16,128}$")
 _MESSAGE_ID_RE = re.compile(r"^msg_[A-Za-z0-9_-]{16,128}$")
+_LLM_PRODUCER_STRING_FIELDS = (
+    "kind",
+    "role_id",
+    "run_id",
+    "model_id",
+    "model_display_name",
+    "provider",
+    "provider_model_id",
+)
 
 PROJECT_CONTEXT_TEMPLATE = """# PROJECT CONTEXT
 
@@ -82,6 +91,25 @@ def _read_json_object(path: Path, label: str) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise RuntimeError(f"Повреждён {label}: корень JSON должен быть объектом.")
     return data
+
+
+def _validate_producer(producer: object) -> dict[str, Any]:
+    if not isinstance(producer, dict):
+        raise TypeError("producer должен быть словарём.")
+
+    kind = producer.get("kind")
+    if not isinstance(kind, str) or not kind.strip():
+        raise ValueError("producer.kind должен быть непустой строкой.")
+
+    if kind == "llm":
+        for field in _LLM_PRODUCER_STRING_FIELDS:
+            value = producer.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(
+                    f"producer.{field} должен быть непустой строкой."
+                )
+
+    return dict(producer)
 
 
 def _load_workspace_metadata(path: Path) -> dict[str, Any]:
@@ -510,6 +538,8 @@ def append_raw_message(
     chat_id: str,
     role: str,
     original_text: str,
+    *,
+    producer: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     root = _validate_workspace_root(workspace_root)
     info = ensure_workspace_storage(root)
@@ -541,6 +571,8 @@ def append_raw_message(
         "created_at": _utc_now_iso(),
         "original_text": original_text,
     }
+    if producer is not None:
+        message["producer"] = _validate_producer(producer)
 
     messages_dir = chat_dir / "messages"
     messages_dir.mkdir(parents=True, exist_ok=True)
@@ -578,6 +610,13 @@ def load_chat_messages(
             raise RuntimeError(f"Сообщение принадлежит другому чату: {msg_path}")
         if not isinstance(data.get("original_text"), str):
             raise RuntimeError(f"В RAW MESSAGE отсутствует original_text: {msg_path}")
+        if "producer" in data:
+            try:
+                _validate_producer(data["producer"])
+            except (TypeError, ValueError) as exc:
+                raise RuntimeError(
+                    f"Повреждён producer RAW MESSAGE: {msg_path}"
+                ) from exc
         messages.append(data)
 
     messages.sort(

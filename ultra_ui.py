@@ -157,7 +157,7 @@ class UltraApp(tk.Tk):
 
         self.running = False
         self.started_at = 0.0
-        self.events: queue.Queue[tuple[str, str]] = queue.Queue()
+        self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         self.trace_events: queue.Queue[dict] = queue.Queue()
 
         self._code_changed = False
@@ -1832,6 +1832,13 @@ class UltraApp(tk.Tk):
         if self._loaded_workspace_root != resolved or not self.current_chat_id:
             raise RuntimeError("Workspace/Chat не удалось активировать.")
 
+    def _assistant_label(self, producer: object) -> str:
+        if isinstance(producer, dict):
+            display_name = producer.get("model_display_name")
+            if isinstance(display_name, str) and display_name.strip():
+                return f"АССИСТЕНТ · {display_name}"
+        return "АССИСТЕНТ"
+
     def _render_current_chat(self) -> None:
         if not self.current_chat_id:
             return
@@ -1857,7 +1864,11 @@ class UltraApp(tk.Tk):
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
-                self._append_chat("АССИСТЕНТ", text, "assistant")
+                self._append_chat(
+                    self._assistant_label(message.get("producer")),
+                    text,
+                    "assistant",
+                )
             else:
                 self._append_chat(
                     str(role or "SYSTEM").upper(),
@@ -3281,7 +3292,49 @@ class UltraApp(tk.Tk):
         chat_id: str,
         model_id: str,
     ) -> None:
+        producer_snapshot: dict | None = None
+        provenance_warning: str | None = None
+        run_started_seen = False
+
         def on_event(event: dict):
+            nonlocal producer_snapshot, provenance_warning, run_started_seen
+            if event.get("event") == "run_started" and not run_started_seen:
+                run_started_seen = True
+                actual_model_id = event.get("model_id")
+                if actual_model_id != model_id:
+                    provenance_warning = (
+                        "Provenance не сохранена: model_id RUN не совпал "
+                        f"с зафиксированным выбором ({actual_model_id!r} != "
+                        f"{model_id!r})."
+                    )
+                else:
+                    snapshot = {
+                        "kind": "llm",
+                        "role_id": "main_chat",
+                        "run_id": event.get("run_id"),
+                        "model_id": actual_model_id,
+                        "model_display_name": event.get(
+                            "model_display_name"
+                        ),
+                        "provider": event.get("provider"),
+                        "provider_model_id": event.get(
+                            "provider_model_id"
+                        ),
+                    }
+                    invalid_fields = [
+                        key
+                        for key, value in snapshot.items()
+                        if not isinstance(value, str) or not value.strip()
+                    ]
+                    if invalid_fields:
+                        provenance_warning = (
+                            "Provenance не сохранена: run_started содержит "
+                            "неполные поля: "
+                            + ", ".join(invalid_fields)
+                            + "."
+                        )
+                    else:
+                        producer_snapshot = snapshot
             try:
                 self.trace_events.put_nowait(event)
             except queue.Full:
@@ -3298,13 +3351,28 @@ class UltraApp(tk.Tk):
                     model_id=model_id,
                 )
             )
-            append_raw_message(
+            if not run_started_seen and provenance_warning is None:
+                provenance_warning = (
+                    "Provenance не сохранена: событие run_started не получено."
+                )
+
+            stored_message = append_raw_message(
                 workspace,
                 chat_id,
                 "assistant",
                 result,
+                producer=producer_snapshot,
             )
-            self.events.put(("success", result))
+            self.events.put(
+                (
+                    "success",
+                    {
+                        "text": result,
+                        "producer": stored_message.get("producer"),
+                        "provenance_warning": provenance_warning,
+                    },
+                )
+            )
         except Exception as exc:
             self.events.put(("error", f"{type(exc).__name__}: {exc}"))
 
@@ -3313,7 +3381,27 @@ class UltraApp(tk.Tk):
             while True:
                 event_type, payload = self.events.get_nowait()
                 if event_type == "success":
-                    self._append_chat("АССИСТЕНТ", payload, "assistant")
+                    if isinstance(payload, dict):
+                        text = str(payload.get("text") or "")
+                        producer = payload.get("producer")
+                        provenance_warning = payload.get(
+                            "provenance_warning"
+                        )
+                    else:
+                        text = str(payload)
+                        producer = None
+                        provenance_warning = None
+                    self._append_chat(
+                        self._assistant_label(producer),
+                        text,
+                        "assistant",
+                    )
+                    if provenance_warning:
+                        self._append_chat(
+                            "СИСТЕМА",
+                            str(provenance_warning),
+                            "system",
+                        )
                     self._finish_run("Готово")
                 elif event_type == "error":
                     self._append_chat("ОШИБКА", payload, "system")
