@@ -56,6 +56,7 @@ def default_ui_state() -> dict[str, Any]:
         "workspaces": [],
         "active_workspace_id": None,
         "registry_initialized": False,
+        "main_chat_model_id": "gigachat_ultra",
     }
 
 
@@ -152,6 +153,9 @@ def load_ui_state() -> dict[str, Any]:
 
     if isinstance(loaded.get("registry_initialized"), bool):
         state["registry_initialized"] = loaded["registry_initialized"]
+
+    if isinstance(loaded.get("main_chat_model_id"), str):
+        state["main_chat_model_id"] = loaded["main_chat_model_id"]
 
     return state
 

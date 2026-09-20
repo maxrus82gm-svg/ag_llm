@@ -14,6 +14,7 @@ from tkinter import (
 )
 
 from server import get_backup_base_path, run_agent_task
+from model_registry import get_model_spec, list_model_specs
 from context_storage import (
     append_raw_message,
     create_chat,
@@ -99,6 +100,23 @@ class UltraApp(tk.Tk):
 
         self.workspace_var = tk.StringVar(value=str(Path.cwd()))
         self.status_var = tk.StringVar(value="Готово")
+
+        saved_model_id = self._ui_state.get(
+            "main_chat_model_id",
+            "gigachat_ultra",
+        )
+        try:
+            selected_model = get_model_spec(saved_model_id)
+        except (KeyError, RuntimeError, ValueError):
+            selected_model = get_model_spec("gigachat_ultra")
+        self._ui_state["main_chat_model_id"] = selected_model.model_id
+        self.main_chat_model_id_var = tk.StringVar(
+            value=selected_model.model_id
+        )
+        self.main_chat_model_display_var = tk.StringVar(
+            value=selected_model.display_name
+        )
+        self._running_model_display_name = selected_model.display_name
 
         # Серверные разрешения запуска. Безопасные значения по умолчанию:
         # читать можно весь workspace, писать нельзя, autobackup включён.
@@ -502,6 +520,24 @@ class UltraApp(tk.Tk):
             text="НАСТРОЙКИ ИНСТРУМЕНТОВ LLM",
         ).pack(anchor="w", pady=(0, 6))
 
+        model_frame = ttk.LabelFrame(
+            right_frame,
+            text="MAIN CHAT MODEL",
+            padding=(8, 5),
+        )
+        model_frame.pack(fill="x", pady=(0, 8))
+        ttk.Label(model_frame, text="Модель:").pack(side="left")
+        ttk.Label(
+            model_frame,
+            textvariable=self.main_chat_model_display_var,
+        ).pack(side="left", padx=(6, 12))
+        model_registry_button = ttk.Button(
+            model_frame,
+            text="Модели...",
+            command=self._open_model_registry,
+        )
+        model_registry_button.pack(side="left")
+
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
             right_frame,
@@ -602,10 +638,10 @@ class UltraApp(tk.Tk):
             ),
             (
                 3,
-                "Ответ Ultra",
+                "Ответ ассистента",
                 "assistant",
                 self.assistant_text_color_var,
-                "Цвет текста — ответ Ultra",
+                "Цвет текста — ответ ассистента",
             ),
             (
                 4,
@@ -751,6 +787,7 @@ class UltraApp(tk.Tk):
                 guard_p1_check,
                 global_context_button,
                 context_messages_button,
+                model_registry_button,
                 tool_limit_spin,
                 read_scope_entry,
                 read_scope_button,
@@ -850,6 +887,198 @@ class UltraApp(tk.Tk):
             "system",
         )
         self.input_box.focus_set()
+
+    def _set_main_chat_model(self, model_id: str) -> None:
+        try:
+            model = get_model_spec(model_id)
+        except (KeyError, RuntimeError, ValueError):
+            model = get_model_spec("gigachat_ultra")
+
+        self.main_chat_model_id_var.set(model.model_id)
+        self.main_chat_model_display_var.set(model.display_name)
+        self._ui_state["main_chat_model_id"] = model.model_id
+
+    def _open_model_registry(self) -> None:
+        models = list_model_specs()
+        models_by_id = {model.model_id: model for model in models}
+
+        window = tk.Toplevel(self)
+        window.title("MODEL REGISTRY / MAIN CHAT MODEL")
+        window.transient(self)
+        window.geometry("960x560")
+        window.minsize(820, 480)
+
+        content = ttk.Frame(window, padding=12)
+        content.pack(fill="both", expand=True)
+        content.columnconfigure(0, weight=1)
+        content.rowconfigure(1, weight=1)
+
+        ttk.Label(
+            content,
+            text="MODEL REGISTRY / MAIN CHAT MODEL",
+            font=("Segoe UI", 11, "bold"),
+        ).grid(row=0, column=0, sticky="w", pady=(0, 10))
+
+        table = ttk.Frame(content)
+        table.grid(row=1, column=0, sticky="nsew")
+        table.columnconfigure(1, weight=1)
+
+        headers = (
+            "SELECT",
+            "DISPLAY NAME",
+            "PROVIDER",
+            "PROVIDER MODEL ID",
+            "TYPE",
+            "STATUS",
+        )
+        for column, text in enumerate(headers):
+            ttk.Label(
+                table,
+                text=text,
+                font=("Segoe UI", 9, "bold"),
+            ).grid(
+                row=0,
+                column=column,
+                sticky="w",
+                padx=(0, 14),
+                pady=(0, 6),
+            )
+
+        selected_model_id_var = tk.StringVar(
+            window,
+            value=self.main_chat_model_id_var.get(),
+        )
+
+        details_vars = {
+            "model_id": tk.StringVar(window),
+            "display_name": tk.StringVar(window),
+            "provider": tk.StringVar(window),
+            "provider_model_id": tk.StringVar(window),
+            "type": tk.StringVar(window),
+            "enabled": tk.StringVar(window),
+        }
+
+        def update_details() -> None:
+            model = models_by_id.get(selected_model_id_var.get())
+            if model is None:
+                return
+            details_vars["model_id"].set(model.model_id)
+            details_vars["display_name"].set(model.display_name)
+            details_vars["provider"].set(model.provider)
+            details_vars["provider_model_id"].set(
+                model.provider_model_id
+            )
+            details_vars["type"].set(
+                "Local" if model.is_local else "Cloud"
+            )
+            details_vars["enabled"].set(
+                "Enabled" if model.enabled else "Disabled"
+            )
+
+        for row, model in enumerate(models, start=1):
+            radio = ttk.Radiobutton(
+                table,
+                variable=selected_model_id_var,
+                value=model.model_id,
+                command=update_details,
+            )
+            if not model.enabled:
+                radio.state(["disabled"])
+            radio.grid(row=row, column=0, sticky="w", pady=2)
+
+            values = (
+                model.display_name,
+                model.provider,
+                model.provider_model_id,
+                "Local" if model.is_local else "Cloud",
+                "Enabled" if model.enabled else "Disabled",
+            )
+            for column, text in enumerate(values, start=1):
+                ttk.Label(table, text=text).grid(
+                    row=row,
+                    column=column,
+                    sticky="w",
+                    padx=(0, 14),
+                    pady=2,
+                )
+
+        details = ttk.LabelFrame(
+            content,
+            text="ВЫБРАННАЯ MODEL",
+            padding=8,
+        )
+        details.grid(row=2, column=0, sticky="ew", pady=(12, 10))
+        details.columnconfigure(1, weight=1)
+
+        detail_rows = (
+            ("Internal ID", "model_id"),
+            ("Display name", "display_name"),
+            ("Provider", "provider"),
+            ("Provider model ID", "provider_model_id"),
+            ("Local / Cloud", "type"),
+            ("Enabled", "enabled"),
+        )
+        for row, (label, key) in enumerate(detail_rows):
+            ttk.Label(details, text=f"{label}:").grid(
+                row=row,
+                column=0,
+                sticky="w",
+                padx=(0, 12),
+                pady=1,
+            )
+            ttk.Label(details, textvariable=details_vars[key]).grid(
+                row=row,
+                column=1,
+                sticky="w",
+                pady=1,
+            )
+
+        buttons = ttk.Frame(content)
+        buttons.grid(row=3, column=0, sticky="e")
+
+        def apply_selection() -> None:
+            if self.running:
+                messagebox.showinfo(
+                    APP_TITLE,
+                    "Дождитесь завершения текущего RUN.",
+                    parent=window,
+                )
+                return
+
+            selected_id = selected_model_id_var.get()
+            try:
+                model = get_model_spec(selected_id)
+            except (KeyError, RuntimeError, ValueError) as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    str(exc),
+                    parent=window,
+                )
+                return
+            if not model.enabled:
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Выбранная MODEL отключена.",
+                    parent=window,
+                )
+                return
+
+            self._set_main_chat_model(model.model_id)
+            self._save_ui_state(silent=False)
+
+        ttk.Button(
+            buttons,
+            text="Применить",
+            command=apply_selection,
+        ).pack(side="left", padx=(0, 8))
+        ttk.Button(
+            buttons,
+            text="Закрыть",
+            command=window.destroy,
+        ).pack(side="left")
+
+        update_details()
+        window.focus_set()
 
     def _record_context_storage_mtime(self) -> None:
         try:
@@ -1482,7 +1711,7 @@ class UltraApp(tk.Tk):
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
-                self._append_chat("ULTRA", text, "assistant")
+                self._append_chat("АССИСТЕНТ", text, "assistant")
             else:
                 self._append_chat(
                     str(role or "SYSTEM").upper(),
@@ -2572,8 +2801,11 @@ class UltraApp(tk.Tk):
         if event_type == "run_started":
             task_preview = event.get("task_preview", "")
             perms = event.get("permissions", {})
+            model_display_name = event.get("model_display_name", "?")
+            provider_model_id = event.get("provider_model_id", "?")
             return (
                 f"[{time_str}] RUN START | {run_id} | "
+                f"MODEL={model_display_name} [{provider_model_id}] | "
                 f"R={perms.get('allow_read')}:{perms.get('read_scope')} | "
                 f"W={perms.get('allow_write')}:{perms.get('write_scope')} | "
                 f"D={perms.get('allow_delete')}:{perms.get('delete_scope')} | "
@@ -2740,13 +2972,16 @@ class UltraApp(tk.Tk):
 
     def _send(self) -> None:
         if self.running:
-            messagebox.showinfo(APP_TITLE, "Ultra уже выполняет задачу.")
+            messagebox.showinfo(APP_TITLE, "Ассистент уже выполняет задачу.")
             return
 
         workspace_text = self.workspace_var.get().strip().strip('"')
         task = self.input_box.get("1.0", "end").strip()
         if not task:
-            messagebox.showwarning(APP_TITLE, "Введи сообщение для Ultra.")
+            messagebox.showwarning(
+                APP_TITLE,
+                "Введи сообщение для ассистента.",
+            )
             return
 
         workspace = Path(workspace_text)
@@ -2799,6 +3034,13 @@ class UltraApp(tk.Tk):
             "auto_backup": self.auto_backup_var.get(),
         }
 
+        model_id = self.main_chat_model_id_var.get()
+        try:
+            selected_model = get_model_spec(model_id)
+        except (KeyError, RuntimeError, ValueError) as exc:
+            messagebox.showerror(APP_TITLE, str(exc))
+            return
+
         try:
             self._ensure_workspace_ui_current(workspace)
             if not self.current_chat_id:
@@ -2838,13 +3080,22 @@ class UltraApp(tk.Tk):
 
         self.running = True
         self.started_at = time.monotonic()
-        self.status_var.set("Ultra работает...")
+        self._running_model_display_name = selected_model.display_name
+        self.status_var.set(
+            f"{self._running_model_display_name} работает..."
+        )
         self.progress.start(12)
         self._set_run_controls_enabled(False)
 
         thread = threading.Thread(
             target=self._worker,
-            args=(task, str(workspace), permissions, self.current_chat_id),
+            args=(
+                task,
+                str(workspace),
+                permissions,
+                self.current_chat_id,
+                model_id,
+            ),
             daemon=True,
         )
         thread.start()
@@ -2869,6 +3120,7 @@ class UltraApp(tk.Tk):
         workspace: str,
         permissions: dict,
         chat_id: str,
+        model_id: str,
     ) -> None:
         def on_event(event: dict):
             try:
@@ -2884,6 +3136,7 @@ class UltraApp(tk.Tk):
                     on_event=on_event,
                     permissions=permissions,
                     chat_id=chat_id,
+                    model_id=model_id,
                 )
             )
             append_raw_message(
@@ -2901,7 +3154,7 @@ class UltraApp(tk.Tk):
             while True:
                 event_type, payload = self.events.get_nowait()
                 if event_type == "success":
-                    self._append_chat("ULTRA", payload, "assistant")
+                    self._append_chat("АССИСТЕНТ", payload, "assistant")
                     self._finish_run("Готово")
                 elif event_type == "error":
                     self._append_chat("ОШИБКА", payload, "system")
@@ -2943,7 +3196,10 @@ class UltraApp(tk.Tk):
     def _tick_status(self) -> None:
         if self.running:
             elapsed = int(time.monotonic() - self.started_at)
-            self.status_var.set(f"Ultra работает... {elapsed} сек.")
+            self.status_var.set(
+                f"{self._running_model_display_name} работает... "
+                f"{elapsed} сек."
+            )
         self.after(500, self._tick_status)
 
     def _finish_run(self, status: str) -> None:

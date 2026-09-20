@@ -29,10 +29,9 @@ mcp = MCPServer("GigaChat Ultra Subagent")
 OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 CHAT_URL = "https://api.giga.chat/v1/chat/completions"
 
-# MM.1 bootstrap.
 # MODEL REGISTRY хранит описание доступных моделей.
-# Само назначение MAIN CHAT MODEL пока намеренно остаётся фиксированным
-# в runtime до реализации MM.3 — MAIN CHAT MODEL ASSIGNMENT.
+# Эти глобальные значения остаются compatibility default для старых путей;
+# основной agent RUN выбирает модель локально через run_agent_task().
 MAIN_CHAT_MODEL_ID = "gigachat_ultra"
 MAIN_CHAT_MODEL = get_model_spec(MAIN_CHAT_MODEL_ID)
 MODEL = MAIN_CHAT_MODEL.provider_model_id
@@ -1577,10 +1576,20 @@ async def run_agent_task(
     on_event=None,
     permissions: dict | None = None,
     chat_id: str | None = None,
+    model_id: str | None = None,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
         raise ValueError("task должен быть непустой строкой.")
+
+    selected_model_id = model_id or MAIN_CHAT_MODEL_ID
+    selected_model = get_model_spec(selected_model_id)
+    if selected_model.provider != "gigachat":
+        raise RuntimeError(
+            "MAIN CHAT Provider пока не поддерживается: "
+            f"{selected_model.provider}"
+        )
+    run_model = selected_model.provider_model_id
 
     run_id = time.strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
     start_time = time.time()
@@ -1746,6 +1755,10 @@ async def run_agent_task(
             "permissions": _policy_summary(policy),
             "workspace_id": workspace_info["workspace_id"],
             "chat_id": chat_id,
+            "model_id": selected_model.model_id,
+            "model_display_name": selected_model.display_name,
+            "provider": selected_model.provider,
+            "provider_model_id": selected_model.provider_model_id,
         },
     )
     if chat_id:
@@ -1963,7 +1976,7 @@ async def run_agent_task(
             _emit("api_request", {"api_request_number": api_request_count})
 
             body = {
-                "model": MODEL,
+                "model": run_model,
                 "messages": messages,
                 "temperature": TEMPERATURE,
                 "max_tokens": MAX_TOKENS,
