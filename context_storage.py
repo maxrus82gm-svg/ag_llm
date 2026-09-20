@@ -10,15 +10,18 @@ from typing import Any
 
 
 SCHEMA_VERSION = 1
+MESSAGE_CONTEXT_SCHEMA_VERSION = 1
 ULTRA_DIRNAME = ".ultra"
 WORKSPACE_METADATA_NAME = "workspace.json"
 PROJECT_CONTEXT_NAME = "project_context.md"
 MAX_PROJECT_CONTEXT_BYTES = 256 * 1024
 MAX_MESSAGE_BYTES = 2 * 1024 * 1024
+MAX_CONTEXT_VARIANT_BYTES = 2 * 1024 * 1024
 
 _WORKSPACE_ID_RE = re.compile(r"^ws_[A-Za-z0-9_-]{16,128}$")
 _CHAT_ID_RE = re.compile(r"^chat_[A-Za-z0-9_-]{16,128}$")
 _MESSAGE_ID_RE = re.compile(r"^msg_[A-Za-z0-9_-]{16,128}$")
+_CONTEXT_VARIANT_ID_RE = re.compile(r"^ctxv_[A-Za-z0-9_-]{16,128}$")
 _LLM_PRODUCER_STRING_FIELDS = (
     "kind",
     "role_id",
@@ -626,6 +629,340 @@ def load_chat_messages(
         )
     )
     return messages
+
+
+def _require_chat(
+    root: Path,
+    workspace_metadata: dict[str, Any],
+    chat_id: str,
+) -> tuple[Path, dict[str, Any]]:
+    chat_dir = _chat_root(root, chat_id)
+    metadata_path = chat_dir / "metadata.json"
+    if not metadata_path.is_file():
+        raise FileNotFoundError(f"Чат не найден: {chat_id}")
+    metadata = _load_chat_metadata(metadata_path)
+    if metadata.get("chat_id") != chat_id:
+        raise RuntimeError(f"chat_id не совпадает с папкой: {metadata_path}")
+    if metadata.get("workspace_id") != workspace_metadata.get("workspace_id"):
+        raise RuntimeError(f"Чат принадлежит другому Workspace: {metadata_path}")
+    return chat_dir, metadata
+
+
+def _validate_message_id(message_id: str) -> str:
+    if not isinstance(message_id, str) or not _MESSAGE_ID_RE.fullmatch(message_id):
+        raise ValueError(f"Некорректный message_id: {message_id!r}")
+    return message_id
+
+
+def _validate_context_variant_id(context_variant_id: str) -> str:
+    if (
+        not isinstance(context_variant_id, str)
+        or not _CONTEXT_VARIANT_ID_RE.fullmatch(context_variant_id)
+    ):
+        raise ValueError(
+            f"Некорректный context_variant_id: {context_variant_id!r}"
+        )
+    return context_variant_id
+
+
+def load_raw_message(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    """Load one immutable RAW MESSAGE by identity without creating storage."""
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    _validate_message_id(message_id)
+    path = chat_dir / "messages" / f"{message_id}.json"
+    if not path.is_file():
+        raise FileNotFoundError(f"RAW MESSAGE не найден: {message_id}")
+    data = _read_json_object(path, "RAW MESSAGE")
+    if data.get("workspace_id") != workspace_metadata.get("workspace_id"):
+        raise RuntimeError(f"RAW MESSAGE принадлежит другому Workspace: {path}")
+    if data.get("chat_id") != chat_id or data.get("message_id") != message_id:
+        raise RuntimeError(f"Повреждена identity RAW MESSAGE: {path}")
+    if not isinstance(data.get("original_text"), str):
+        raise RuntimeError(f"В RAW MESSAGE отсутствует original_text: {path}")
+    return data
+
+
+def _message_context_root(chat_dir: Path, message_id: str) -> Path:
+    return chat_dir / "message_context" / message_id
+
+
+def _default_message_context_state(
+    workspace_id: str,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    return {
+        "schema_version": MESSAGE_CONTEXT_SCHEMA_VERSION,
+        "workspace_id": workspace_id,
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "active_representation": "raw",
+        "active_variant_id": None,
+        "updated_at": None,
+    }
+
+
+def _validate_context_owner(
+    data: dict[str, Any],
+    *,
+    label: str,
+    workspace_id: str,
+    chat_id: str,
+    message_id: str,
+) -> None:
+    if data.get("schema_version") != MESSAGE_CONTEXT_SCHEMA_VERSION:
+        raise RuntimeError(
+            f"Неподдерживаемая версия {label}: {data.get('schema_version')!r}."
+        )
+    expected = {
+        "workspace_id": workspace_id,
+        "chat_id": chat_id,
+        "message_id": message_id,
+    }
+    for key, value in expected.items():
+        if data.get(key) != value:
+            raise RuntimeError(f"{label} принадлежит другому {key}: {data.get(key)!r}")
+
+
+def get_message_context_state(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    """Return persisted state, or a non-persisted FULL default for legacy RAW."""
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    load_raw_message(root, chat_id, message_id)
+    state_path = _message_context_root(chat_dir, message_id) / "state.json"
+    if not state_path.exists():
+        return _default_message_context_state(
+            workspace_metadata["workspace_id"], chat_id, message_id
+        )
+    if not state_path.is_file():
+        raise RuntimeError(f"MESSAGE CONTEXT state недоступен: {state_path}")
+    state = _read_json_object(state_path, "MESSAGE CONTEXT state")
+    _validate_context_owner(
+        state,
+        label="MESSAGE CONTEXT state",
+        workspace_id=workspace_metadata["workspace_id"],
+        chat_id=chat_id,
+        message_id=message_id,
+    )
+    representation = state.get("active_representation")
+    variant_id = state.get("active_variant_id")
+    if representation == "raw":
+        if variant_id is not None:
+            raise RuntimeError("Повреждён MESSAGE CONTEXT state: RAW с active_variant_id.")
+    elif representation == "summary":
+        try:
+            _validate_context_variant_id(variant_id)
+        except ValueError as exc:
+            raise RuntimeError(
+                "Повреждён MESSAGE CONTEXT state: некорректный active_variant_id."
+            ) from exc
+        # Fail closed immediately if the active reference is missing/corrupt.
+        load_context_variant(root, chat_id, message_id, variant_id)
+    else:
+        raise RuntimeError(
+            "Повреждён MESSAGE CONTEXT state: неизвестное active_representation."
+        )
+    return state
+
+
+def load_context_variant(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    context_variant_id: str,
+) -> dict[str, Any]:
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    load_raw_message(root, chat_id, message_id)
+    _validate_context_variant_id(context_variant_id)
+    path = (
+        _message_context_root(chat_dir, message_id)
+        / "variants"
+        / f"{context_variant_id}.json"
+    )
+    if not path.is_file():
+        raise RuntimeError(f"Активный Context Variant не найден: {path}")
+    data = _read_json_object(path, "Context Variant")
+    _validate_context_owner(
+        data,
+        label="Context Variant",
+        workspace_id=workspace_metadata["workspace_id"],
+        chat_id=chat_id,
+        message_id=message_id,
+    )
+    if data.get("context_variant_id") != context_variant_id:
+        raise RuntimeError(f"Context Variant id не совпадает с именем файла: {path}")
+    text = data.get("text")
+    if not isinstance(text, str) or not text.strip():
+        raise RuntimeError(f"Context Variant содержит пустой text: {path}")
+    if len(text.encode("utf-8")) > MAX_CONTEXT_VARIANT_BYTES:
+        raise RuntimeError(f"Context Variant превышает допустимый размер: {path}")
+    parent_id = data.get("parent_variant_id")
+    if parent_id is not None:
+        try:
+            _validate_context_variant_id(parent_id)
+        except ValueError as exc:
+            raise RuntimeError(f"Context Variant имеет некорректный parent id: {path}") from exc
+    return data
+
+
+def activate_message_context_variant(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    context_variant_id: str,
+    *,
+    require_raw: bool = False,
+) -> dict[str, Any]:
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    current = get_message_context_state(root, chat_id, message_id)
+    if require_raw and current["active_representation"] != "raw":
+        raise RuntimeError(
+            "Повторное сжатие запрещено: сначала восстановите RAW в контекст."
+        )
+    load_context_variant(root, chat_id, message_id, context_variant_id)
+    state = {
+        "schema_version": MESSAGE_CONTEXT_SCHEMA_VERSION,
+        "workspace_id": workspace_metadata["workspace_id"],
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "active_representation": "summary",
+        "active_variant_id": context_variant_id,
+        "updated_at": _utc_now_iso(),
+    }
+    state_path = _message_context_root(chat_dir, message_id) / "state.json"
+    _atomic_write_json(state_path, state)
+    return state
+
+
+def create_message_context_variant(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    text: str,
+    *,
+    source: str,
+    parent_variant_id: str | None = None,
+    manually_edited: bool = False,
+    compression: dict[str, Any] | None = None,
+    activate: bool = True,
+    require_raw: bool = False,
+) -> dict[str, Any]:
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    raw = load_raw_message(root, chat_id, message_id)
+    if raw.get("role") not in {"user", "assistant"}:
+        raise ValueError("Context Variant допустим только для user/assistant message.")
+    if not isinstance(text, str) or not text.strip():
+        raise ValueError("Текст Context Variant не может быть пустым.")
+    if len(text.encode("utf-8")) > MAX_CONTEXT_VARIANT_BYTES:
+        raise ValueError("Текст Context Variant превышает допустимый размер.")
+    clean_source = str(source).strip()
+    if clean_source not in {"llm_compression", "manual_edit"}:
+        raise ValueError(f"Некорректный source Context Variant: {source!r}")
+    if clean_source == "llm_compression":
+        require_raw = True
+    current = get_message_context_state(root, chat_id, message_id)
+    if require_raw and current["active_representation"] != "raw":
+        raise RuntimeError(
+            "Повторное сжатие запрещено: сначала восстановите RAW в контекст."
+        )
+    if parent_variant_id is not None:
+        load_context_variant(root, chat_id, message_id, parent_variant_id)
+    variant_id = f"ctxv_{uuid.uuid4().hex}"
+    variant = {
+        "schema_version": MESSAGE_CONTEXT_SCHEMA_VERSION,
+        "workspace_id": workspace_metadata["workspace_id"],
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "context_variant_id": variant_id,
+        "created_at": _utc_now_iso(),
+        "text": text,
+        "source": clean_source,
+        "parent_variant_id": parent_variant_id,
+        "manually_edited": bool(manually_edited),
+    }
+    if compression is not None:
+        if not isinstance(compression, dict):
+            raise TypeError("compression metadata должна быть словарём.")
+        variant["compression"] = dict(compression)
+    path = _message_context_root(chat_dir, message_id) / "variants" / f"{variant_id}.json"
+    _atomic_write_json(path, variant)
+    if activate:
+        activate_message_context_variant(
+            root,
+            chat_id,
+            message_id,
+            variant_id,
+            require_raw=require_raw,
+        )
+    return {**variant, "path": str(path)}
+
+
+def restore_message_raw(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    root, workspace_metadata = _require_existing_workspace(workspace_root)
+    chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
+    load_raw_message(root, chat_id, message_id)
+    state = _default_message_context_state(
+        workspace_metadata["workspace_id"], chat_id, message_id
+    )
+    state["updated_at"] = _utc_now_iso()
+    _atomic_write_json(_message_context_root(chat_dir, message_id) / "state.json", state)
+    return state
+
+
+def get_message_working_representation(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    raw = load_raw_message(workspace_root, chat_id, message_id)
+    state = get_message_context_state(workspace_root, chat_id, message_id)
+    if state["active_representation"] == "raw":
+        return {"text": raw["original_text"], "state": state, "variant": None}
+    variant = load_context_variant(
+        workspace_root, chat_id, message_id, state["active_variant_id"]
+    )
+    return {"text": variant["text"], "state": state, "variant": variant}
+
+
+def load_chat_working_messages(
+    workspace_root: str | Path,
+    chat_id: str,
+) -> list[dict[str, Any]]:
+    """Resolve user/assistant history in RAW order, failing closed on corruption."""
+    working: list[dict[str, Any]] = []
+    for raw in load_chat_messages(workspace_root, chat_id):
+        role = raw.get("role")
+        if role not in {"user", "assistant"}:
+            continue
+        resolved = get_message_working_representation(
+            workspace_root, chat_id, raw["message_id"]
+        )
+        working.append(
+            {
+                "role": role,
+                "content": resolved["text"],
+                "message_id": raw["message_id"],
+                "context_representation": resolved["state"]["active_representation"],
+                "active_variant_id": resolved["state"]["active_variant_id"],
+            }
+        )
+    return working
 
 
 def is_context_storage_path(

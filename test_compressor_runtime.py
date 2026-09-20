@@ -9,7 +9,14 @@ import compressor_runtime
 import compressor_settings
 import ui_state
 import agent_global_context
-from context_storage import ensure_workspace_storage
+from context_storage import (
+    append_raw_message,
+    create_chat,
+    create_message_context_variant,
+    ensure_workspace_storage,
+    get_message_context_state,
+    restore_message_raw,
+)
 
 
 class CompressorPureTests(unittest.TestCase):
@@ -269,6 +276,94 @@ class CompressorPureTests(unittest.TestCase):
 
 
 class CompressorRuntimeTests(unittest.IsolatedAsyncioTestCase):
+    async def test_message_compressor_reloads_raw_after_restore(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            workspace = Path(temp_dir) / "workspace"
+            workspace.mkdir()
+            ensure_workspace_storage(workspace)
+            chat = create_chat(workspace)
+            raw_text = "R" * 1000
+            message = append_raw_message(
+                workspace, chat["chat_id"], "user", raw_text
+            )
+            create_message_context_variant(
+                workspace,
+                chat["chat_id"],
+                message["message_id"],
+                "S" * 300,
+                source="llm_compression",
+            )
+            restore_message_raw(
+                workspace, chat["chat_id"], message["message_id"]
+            )
+            expected = compressor_runtime.CompressorRunResult(
+                text="S" * 250,
+                run_id="cmp_test",
+                model_id="gigachat_3_pro",
+                model_display_name="GigaChat 3 Pro",
+                provider="gigachat",
+                provider_model_id="GigaChat-3-Pro",
+                target_reduction_percent=50,
+                actual_reduction_percent=75.0,
+                source_chars=1000,
+                output_chars=250,
+                attempts=1,
+                final_check_enabled=True,
+            )
+            detailed = AsyncMock(return_value=expected)
+            with patch.object(
+                compressor_runtime,
+                "run_compressor_task_detailed",
+                detailed,
+            ):
+                actual = await compressor_runtime.run_message_compressor_task_detailed(
+                    workspace,
+                    chat["chat_id"],
+                    message["message_id"],
+                    compressor_model_id="gigachat_3_pro",
+                )
+            self.assertIs(actual, expected)
+            self.assertEqual(detailed.await_args.args[0], raw_text)
+            self.assertNotEqual(detailed.await_args.args[0], "S" * 300)
+            self.assertEqual(
+                get_message_context_state(
+                    workspace, chat["chat_id"], message["message_id"]
+                )["active_representation"],
+                "raw",
+            )
+
+    async def test_detailed_result_preserves_compatibility_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            workspace = Path(temp_dir) / "workspace"
+            workspace.mkdir()
+            ensure_workspace_storage(workspace)
+            with (
+                patch.object(
+                    compressor_runtime,
+                    "_request_gigachat",
+                    AsyncMock(return_value="z" * 50),
+                ),
+                patch.object(
+                    compressor_runtime,
+                    "COMPRESSOR_LOG_ROOT",
+                    Path(temp_dir) / "logs",
+                ),
+            ):
+                result = await compressor_runtime.run_compressor_task_detailed(
+                    "x" * 100,
+                    workspace,
+                    role_context="COMPRESSOR ROLE",
+                    message_template="Reduce {{REDUCTION_PERCENT}}%.",
+                    project_context="REFERENCE",
+                    final_check_template="Check meaning.",
+                )
+            self.assertEqual(result.text, "z" * 50)
+            self.assertEqual(result.source_chars, 100)
+            self.assertEqual(result.output_chars, 50)
+            self.assertEqual(result.actual_reduction_percent, 50.0)
+            self.assertEqual(result.model_id, "gigachat_3_pro")
+            self.assertRegex(result.run_id, r"^cmp_")
+
     async def test_exactly_one_corrective_retry_then_success(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             workspace = Path(temp_dir) / "workspace"

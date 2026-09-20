@@ -17,17 +17,23 @@ from server import get_backup_base_path, run_agent_task
 from model_registry import get_model_spec, list_model_specs
 from context_storage import (
     append_raw_message,
+    create_message_context_variant,
     create_chat,
     ensure_chat,
     ensure_workspace_storage,
+    get_message_context_state,
+    get_message_working_representation,
     list_existing_chats,
     list_chats,
     load_chat_messages,
+    load_context_variant,
     load_existing_project_context,
     load_project_context,
+    load_raw_message,
     probe_existing_workspace,
     rename_chat,
     rename_workspace,
+    restore_message_raw,
     save_project_context,
 )
 from ui_state import load_ui_state, save_ui_state
@@ -43,6 +49,8 @@ from agent_global_context import (
 from compressor_runtime import (
     DEFAULT_COMPRESSOR_MODEL_ID,
     DEFAULT_REDUCTION_PERCENT,
+    CompressorRunResult,
+    run_message_compressor_task_detailed,
     validate_reduction_percent,
 )
 from compressor_settings import (
@@ -203,6 +211,7 @@ class UltraApp(tk.Tk):
         self.backup_path_var = tk.StringVar(value=str(get_backup_base_path()))
 
         self.running = False
+        self.compressor_running = False
         self.started_at = 0.0
         self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         self.trace_events: queue.Queue[dict] = queue.Queue()
@@ -216,12 +225,15 @@ class UltraApp(tk.Tk):
 
         self._security_widgets: list[tk.Widget] = []
         self._compressor_widgets: list[tk.Widget] = []
+        self._message_action_widgets: list[tk.Widget] = []
         self._workspace_widgets: list[tk.Widget] = []
         self._color_swatches: dict[str, tk.Widget] = {}
         self._run_started_once = False
 
         self.current_workspace_id: str | None = None
         self.current_chat_id: str | None = None
+        self.selected_message_id: str | None = None
+        self._selected_message_chat_id: str | None = None
         self._loaded_workspace_root: str | None = None
         self._context_storage_mtime = None
         self._workspace_registry: list[dict] = list(
@@ -1240,7 +1252,7 @@ class UltraApp(tk.Tk):
         buttons.grid(row=3, column=0, sticky="e")
 
         def apply_selection() -> None:
-            if self.running:
+            if self.running or self.compressor_running:
                 messagebox.showinfo(
                     APP_TITLE,
                     "Дождитесь завершения текущего RUN.",
@@ -1961,7 +1973,7 @@ class UltraApp(tk.Tk):
         save: bool = True,
         workspace_id: str | None = None,
     ) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
 
         root = workspace.resolve()
@@ -1999,6 +2011,8 @@ class UltraApp(tk.Tk):
 
         self.current_workspace_id = entry["workspace_id"]
         self.current_chat_id = candidate
+        if self._selected_message_chat_id != candidate:
+            self._clear_selected_message()
         self._loaded_workspace_root = str(root)
         self.workspace_var.set(str(root))
         if candidate is not None:
@@ -2072,6 +2086,12 @@ class UltraApp(tk.Tk):
         workspace = self._workspace_path_from_ui()
         messages = load_chat_messages(workspace, self.current_chat_id)
 
+        for widget in self._message_action_widgets:
+            try:
+                widget.destroy()
+            except tk.TclError:
+                pass
+        self._message_action_widgets.clear()
         self.chat.configure(state="normal")
         self.chat.delete("1.0", "end")
         self.chat.configure(state="disabled")
@@ -2086,7 +2106,16 @@ class UltraApp(tk.Tk):
 
         for message in messages:
             role = message.get("role")
+            message_id = message.get("message_id")
             text = message.get("original_text") or ""
+            resolved = None
+            if role in {"user", "assistant"}:
+                resolved = get_message_working_representation(
+                    workspace,
+                    self.current_chat_id,
+                    message_id,
+                )
+                text = resolved["text"]
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
@@ -2101,9 +2130,17 @@ class UltraApp(tk.Tk):
                     text,
                     "system",
                 )
+            if role in {"user", "assistant"} and resolved is not None:
+                self._append_message_actions(message, resolved)
+
+        if self.selected_message_id:
+            try:
+                self._select_message(self.selected_message_id)
+            except Exception:
+                self._clear_selected_message()
 
     def _add_workspace_dialog(self) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
         selected = filedialog.askdirectory(
             initialdir=self.workspace_var.get() or str(Path.cwd()),
@@ -2136,7 +2173,7 @@ class UltraApp(tk.Tk):
         self._add_workspace_dialog()
 
     def _create_chat_for_workspace(self, workspace: Path) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
         try:
             chat = create_chat(workspace)
@@ -2153,7 +2190,7 @@ class UltraApp(tk.Tk):
             )
 
     def _rename_workspace_ui(self, workspace: Path) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
 
         try:
@@ -2466,7 +2503,7 @@ class UltraApp(tk.Tk):
         name_entry.selection_range(0, "end")
 
     def _rename_chat_ui(self, workspace: Path, chat_id: str) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
         try:
             chats = {
@@ -2495,7 +2532,7 @@ class UltraApp(tk.Tk):
             )
 
     def _remove_workspace_ui(self, workspace_id: str) -> None:
-        if self.running:
+        if self.running or self.compressor_running:
             return
 
         item = next(
@@ -3304,6 +3341,455 @@ class UltraApp(tk.Tk):
             raise ValueError(f"{label}: папка не найдена: {text}")
         return candidate.as_posix() or "."
 
+    def _clear_selected_message(self) -> None:
+        self.selected_message_id = None
+        self._selected_message_chat_id = None
+        self.compressor_message_id_var.set("—")
+        self.compressor_status_var.set("не выбрано")
+
+    def _context_status_text(self, resolved: dict) -> str:
+        state = resolved["state"]
+        if state["active_representation"] == "raw":
+            return "FULL"
+        variant = resolved.get("variant") or {}
+        compression = variant.get("compression") or {}
+        model_name = compression.get("model_display_name")
+        reduction = compression.get("actual_reduction_percent")
+        parts = ["COMPRESSED"]
+        if isinstance(model_name, str) and model_name.strip():
+            parts.append(model_name.strip())
+        if isinstance(reduction, (int, float)):
+            parts.append(f"{reduction:.0f}%")
+        return " · ".join(parts)
+
+    def _select_message(self, message_id: str) -> None:
+        if not self.current_chat_id:
+            self._clear_selected_message()
+            return
+        workspace = self._workspace_path_from_ui()
+        resolved = get_message_working_representation(
+            workspace, self.current_chat_id, message_id
+        )
+        self.selected_message_id = message_id
+        self._selected_message_chat_id = self.current_chat_id
+        self.compressor_message_id_var.set(message_id)
+        self.compressor_status_var.set(self._context_status_text(resolved))
+
+    def _append_message_actions(self, message: dict, resolved: dict) -> None:
+        message_id = message["message_id"]
+        frame = ttk.Frame(self.chat)
+        compress_button = ttk.Button(
+            frame,
+            text="Сжать",
+            command=lambda mid=message_id: self._start_message_compression(mid),
+        )
+        edit_button = ttk.Button(
+            frame,
+            text="✎",
+            width=3,
+            command=lambda mid=message_id: self._open_message_context_editor(mid),
+        )
+        original_button = ttk.Button(
+            frame,
+            text="Оригинал",
+            command=lambda mid=message_id: self._open_original_message(mid),
+        )
+        compress_button.pack(side="left")
+        edit_button.pack(side="left", padx=(4, 0))
+        original_button.pack(side="left", padx=(4, 0))
+        status_label = ttk.Label(
+            frame,
+            text=self._context_status_text(resolved),
+            cursor="hand2",
+        )
+        status_label.pack(side="left", padx=(8, 0))
+        status_label.bind(
+            "<Button-1>",
+            lambda _event, mid=message_id: self._select_message(mid),
+        )
+        if (
+            resolved["state"]["active_representation"] != "raw"
+            or self.running
+            or self.compressor_running
+        ):
+            compress_button.configure(state="disabled")
+        if self.running or self.compressor_running:
+            edit_button.configure(state="disabled")
+            original_button.configure(state="disabled")
+        self.chat.configure(state="normal")
+        self.chat.window_create("end", window=frame)
+        self.chat.insert("end", "\n\n")
+        self.chat.configure(state="disabled")
+        self._message_action_widgets.append(frame)
+
+    def _begin_context_operation(self, message_id: str, status: str) -> None:
+        if self.running:
+            raise RuntimeError("Дождитесь завершения MAIN CHAT RUN.")
+        if self.compressor_running:
+            raise RuntimeError("Другая операция с контекстом уже выполняется.")
+        self._select_message(message_id)
+        self.compressor_running = True
+        self.status_var.set(status)
+        self._set_run_controls_enabled(False)
+
+    def _finish_context_operation(
+        self,
+        status: str = "Готово",
+        *,
+        rerender: bool = True,
+    ) -> None:
+        self.compressor_running = False
+        self.status_var.set(status)
+        if not self.running:
+            self._set_run_controls_enabled(True)
+        if rerender and self.current_chat_id:
+            self._render_current_chat()
+
+    def _start_message_compression(self, message_id: str) -> None:
+        try:
+            workspace = self._workspace_path_from_ui()
+            chat_id = self.current_chat_id
+            if not chat_id:
+                raise RuntimeError("Не выбран активный чат.")
+            state = get_message_context_state(workspace, chat_id, message_id)
+            if state["active_representation"] != "raw":
+                raise RuntimeError(
+                    "Сообщение уже сжато. Сначала восстановите RAW в контекст."
+                )
+            model_id = self.compressor_model_id_var.get()
+            reduction = validate_reduction_percent(
+                int(self.compressor_reduction_percent_var.get().strip())
+            )
+            final_check = bool(self.compressor_final_check_enabled_var.get())
+            self._begin_context_operation(message_id, "COMPRESSOR работает...")
+        except Exception as exc:
+            messagebox.showerror(APP_TITLE, str(exc), parent=self)
+            return
+
+        thread = threading.Thread(
+            target=self._compressor_worker,
+            args=(
+                str(workspace),
+                chat_id,
+                message_id,
+                model_id,
+                reduction,
+                final_check,
+            ),
+            daemon=True,
+        )
+        thread.start()
+
+    def _compressor_worker(
+        self,
+        workspace: str,
+        chat_id: str,
+        message_id: str,
+        model_id: str,
+        reduction: int,
+        final_check: bool,
+    ) -> None:
+        def on_event(event: dict) -> None:
+            try:
+                self.trace_events.put_nowait(event)
+            except queue.Full:
+                pass
+
+        try:
+            # The source is always reloaded by immutable identity in the worker.
+            raw_message = load_raw_message(workspace, chat_id, message_id)
+            result = asyncio.run(
+                run_message_compressor_task_detailed(
+                    workspace,
+                    chat_id,
+                    message_id,
+                    compressor_model_id=model_id,
+                    reduction_percent=reduction,
+                    final_check_enabled=final_check,
+                    on_event=on_event,
+                )
+            )
+            self.events.put(
+                (
+                    "compressor_success",
+                    {
+                        "workspace": workspace,
+                        "chat_id": chat_id,
+                        "message_id": message_id,
+                        "raw_text": raw_message["original_text"],
+                        "result": result,
+                    },
+                )
+            )
+        except Exception as exc:
+            self.events.put(
+                ("compressor_error", f"{type(exc).__name__}: {exc}")
+            )
+
+    def _open_compression_proposal(self, payload: dict) -> None:
+        workspace = payload["workspace"]
+        chat_id = payload["chat_id"]
+        message_id = payload["message_id"]
+        raw_text = payload["raw_text"]
+        result: CompressorRunResult = payload["result"]
+
+        window = tk.Toplevel(self)
+        window.title("COMPRESSION PROPOSAL")
+        window.geometry("1000x760")
+        window.transient(self)
+        window.grab_set()
+
+        info = ttk.Label(
+            window,
+            text=(
+                f"Message ID: {message_id}\n"
+                f"Model: {result.model_display_name}\n"
+                f"Target: {result.target_reduction_percent}%   "
+                f"Actual: {result.actual_reduction_percent:.2f}%   "
+                f"Chars: {result.source_chars} → {result.output_chars}"
+            ),
+            justify="left",
+        )
+        info.pack(fill="x", padx=10, pady=(10, 6))
+        ttk.Label(window, text="Исходный RAW (read-only)").pack(
+            anchor="w", padx=10
+        )
+        raw_view = scrolledtext.ScrolledText(window, height=12, wrap="word")
+        raw_view.pack(fill="both", expand=True, padx=10, pady=(2, 8))
+        raw_view.insert("1.0", raw_text)
+        raw_view.configure(state="disabled")
+        ttk.Label(window, text="Предлагаемая рабочая версия").pack(
+            anchor="w", padx=10
+        )
+        editor = scrolledtext.ScrolledText(
+            window, height=12, wrap="word", undo=True
+        )
+        editor.pack(fill="both", expand=True, padx=10, pady=(2, 8))
+        editor.insert("1.0", result.text)
+        bind_edit_shortcuts(editor)
+
+        closed = False
+
+        def close_proposal(status: str) -> None:
+            nonlocal closed
+            if closed:
+                return
+            closed = True
+            try:
+                window.grab_release()
+            except tk.TclError:
+                pass
+            window.destroy()
+            self._finish_context_operation(status)
+
+        def accept() -> None:
+            accepted_text = editor.get("1.0", "end-1c")
+            if not accepted_text.strip():
+                messagebox.showerror(
+                    APP_TITLE,
+                    "Рабочая версия не может быть пустой.",
+                    parent=window,
+                )
+                return
+            manually_edited = accepted_text != result.text
+            accepted_output_chars = len(accepted_text)
+            accepted_reduction = (
+                round(
+                    (1.0 - (accepted_output_chars / len(raw_text))) * 100.0,
+                    2,
+                )
+                if raw_text
+                else 0.0
+            )
+            compression = {
+                "role_id": "compressor",
+                "run_id": result.run_id,
+                "model_id": result.model_id,
+                "model_display_name": result.model_display_name,
+                "provider": result.provider,
+                "provider_model_id": result.provider_model_id,
+                "target_reduction_percent": result.target_reduction_percent,
+                "actual_reduction_percent": accepted_reduction,
+                "source_chars": len(raw_text),
+                "output_chars": accepted_output_chars,
+                "attempts": result.attempts,
+                "final_check_enabled": result.final_check_enabled,
+            }
+            try:
+                create_message_context_variant(
+                    workspace,
+                    chat_id,
+                    message_id,
+                    accepted_text,
+                    source="llm_compression",
+                    manually_edited=manually_edited,
+                    compression=compression,
+                    require_raw=True,
+                )
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    f"Не удалось принять proposal.\n\n{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+                return
+            close_proposal("Сжатая версия принята")
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+        ttk.Button(buttons, text="Принять", command=accept).pack(side="left")
+        ttk.Button(
+            buttons,
+            text="Отклонить",
+            command=lambda: close_proposal("Proposal отклонён"),
+        ).pack(side="right")
+        window.protocol(
+            "WM_DELETE_WINDOW", lambda: close_proposal("Proposal отклонён")
+        )
+
+    def _open_message_context_editor(self, message_id: str) -> None:
+        try:
+            workspace = self._workspace_path_from_ui()
+            chat_id = self.current_chat_id
+            if not chat_id:
+                raise RuntimeError("Не выбран активный чат.")
+            resolved = get_message_working_representation(
+                workspace, chat_id, message_id
+            )
+            self._begin_context_operation(message_id, "Редактирование контекста")
+        except Exception as exc:
+            messagebox.showerror(APP_TITLE, str(exc), parent=self)
+            return
+
+        parent_variant_id = resolved["state"]["active_variant_id"]
+        title = (
+            "Редактировать рабочую версию"
+            if parent_variant_id
+            else "Создать рабочую версию вручную"
+        )
+        window = tk.Toplevel(self)
+        window.title(title)
+        window.geometry("900x650")
+        window.transient(self)
+        window.grab_set()
+        editor = scrolledtext.ScrolledText(window, wrap="word", undo=True)
+        editor.pack(fill="both", expand=True, padx=10, pady=10)
+        editor.insert("1.0", resolved["text"])
+        bind_edit_shortcuts(editor)
+
+        closed = False
+
+        def close(status: str = "Изменения отменены") -> None:
+            nonlocal closed
+            if closed:
+                return
+            closed = True
+            try:
+                window.grab_release()
+            except tk.TclError:
+                pass
+            window.destroy()
+            self._finish_context_operation(status)
+
+        def save() -> None:
+            text = editor.get("1.0", "end-1c")
+            try:
+                create_message_context_variant(
+                    workspace,
+                    chat_id,
+                    message_id,
+                    text,
+                    source="manual_edit",
+                    parent_variant_id=parent_variant_id,
+                    manually_edited=True,
+                )
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    f"Не удалось сохранить рабочую версию.\n\n"
+                    f"{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+                return
+            close("Рабочая версия сохранена")
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+        ttk.Button(buttons, text="Сохранить", command=save).pack(side="left")
+        ttk.Button(buttons, text="Отмена", command=close).pack(side="right")
+        window.protocol("WM_DELETE_WINDOW", close)
+
+    def _open_original_message(self, message_id: str) -> None:
+        try:
+            workspace = self._workspace_path_from_ui()
+            chat_id = self.current_chat_id
+            if not chat_id:
+                raise RuntimeError("Не выбран активный чат.")
+            raw = load_raw_message(workspace, chat_id, message_id)
+            state = get_message_context_state(workspace, chat_id, message_id)
+            self._begin_context_operation(message_id, "Просмотр RAW MESSAGE")
+        except Exception as exc:
+            messagebox.showerror(APP_TITLE, str(exc), parent=self)
+            return
+
+        window = tk.Toplevel(self)
+        window.title("Исходное сообщение")
+        window.geometry("900x650")
+        window.transient(self)
+        window.grab_set()
+        ttk.Label(
+            window,
+            text=(
+                f"ID: {message_id}\n"
+                + (
+                    "Сейчас RAW уже используется в контексте."
+                    if state["active_representation"] == "raw"
+                    else "Сейчас в контексте используется сжатая версия."
+                )
+            ),
+            justify="left",
+        ).pack(fill="x", padx=10, pady=(10, 6))
+        viewer = scrolledtext.ScrolledText(window, wrap="word")
+        viewer.pack(fill="both", expand=True, padx=10, pady=(0, 8))
+        viewer.insert("1.0", raw["original_text"])
+        viewer.configure(state="disabled")
+        closed = False
+
+        def close(status: str = "Готово") -> None:
+            nonlocal closed
+            if closed:
+                return
+            closed = True
+            try:
+                window.grab_release()
+            except tk.TclError:
+                pass
+            window.destroy()
+            self._finish_context_operation(status)
+
+        def restore() -> None:
+            try:
+                restore_message_raw(workspace, chat_id, message_id)
+            except Exception as exc:
+                messagebox.showerror(
+                    APP_TITLE,
+                    f"Не удалось восстановить RAW.\n\n{type(exc).__name__}: {exc}",
+                    parent=window,
+                )
+                return
+            close("RAW восстановлен в контекст")
+
+        buttons = ttk.Frame(window)
+        buttons.pack(fill="x", padx=10, pady=(0, 10))
+        if state["active_representation"] == "summary":
+            ttk.Button(
+                buttons,
+                text="Восстановить в контекст",
+                command=restore,
+            ).pack(side="left")
+        ttk.Button(buttons, text="Закрыть", command=close).pack(side="right")
+        window.protocol("WM_DELETE_WINDOW", close)
+
     def _append_chat(self, author: str, text: str, tag: str) -> None:
         self.chat.configure(state="normal")
         self.chat.insert("end", f"{author}:\n", tag)
@@ -3391,6 +3877,8 @@ class UltraApp(tk.Tk):
                 f"[{time_str}] CHAT CONTEXT | "
                 f"{event.get('chat_id')} | "
                 f"messages={event.get('messages')} | "
+                f"raw={event.get('raw_messages')} | "
+                f"compressed={event.get('compressed_messages')} | "
                 f"chars={event.get('chars')}"
             )
 
@@ -3529,8 +4017,11 @@ class UltraApp(tk.Tk):
         return "break"
 
     def _send(self) -> None:
-        if self.running:
-            messagebox.showinfo(APP_TITLE, "Ассистент уже выполняет задачу.")
+        if self.running or self.compressor_running:
+            messagebox.showinfo(
+                APP_TITLE,
+                "Дождитесь завершения текущей операции.",
+            )
             return
 
         workspace_text = self.workspace_var.get().strip().strip('"')
@@ -3676,6 +4167,13 @@ class UltraApp(tk.Tk):
                 widget.configure(state=state)
             except tk.TclError:
                 pass
+        for frame in self._message_action_widgets:
+            try:
+                for widget in frame.winfo_children():
+                    if isinstance(widget, ttk.Button):
+                        widget.configure(state=state)
+            except tk.TclError:
+                pass
 
     def _worker(
         self,
@@ -3784,21 +4282,30 @@ class UltraApp(tk.Tk):
                         text = str(payload)
                         producer = None
                         provenance_warning = None
-                    self._append_chat(
-                        self._assistant_label(producer),
-                        text,
-                        "assistant",
-                    )
+                    self._finish_run("Готово")
                     if provenance_warning:
                         self._append_chat(
                             "СИСТЕМА",
                             str(provenance_warning),
                             "system",
                         )
-                    self._finish_run("Готово")
                 elif event_type == "error":
-                    self._append_chat("ОШИБКА", payload, "system")
                     self._finish_run("Ошибка")
+                    self._append_chat("ОШИБКА", payload, "system")
+                elif event_type == "compressor_success":
+                    try:
+                        self._open_compression_proposal(payload)
+                    except Exception as exc:
+                        self._finish_context_operation("Ошибка COMPRESSOR")
+                        messagebox.showerror(
+                            APP_TITLE,
+                            "Не удалось открыть proposal.\n\n"
+                            f"{type(exc).__name__}: {exc}",
+                            parent=self,
+                        )
+                elif event_type == "compressor_error":
+                    self._finish_context_operation("Ошибка COMPRESSOR")
+                    messagebox.showerror(APP_TITLE, str(payload), parent=self)
         except queue.Empty:
             pass
         self.after(100, self._poll_events)
@@ -3847,6 +4354,15 @@ class UltraApp(tk.Tk):
         self.progress.stop()
         self.status_var.set(status)
         self._set_run_controls_enabled(True)
+        if self.current_chat_id:
+            try:
+                self._render_current_chat()
+            except Exception as exc:
+                self._append_chat(
+                    "ОШИБКА",
+                    f"Не удалось перерисовать persistent chat: {exc}",
+                    "system",
+                )
         self.input_box.focus_set()
 
 

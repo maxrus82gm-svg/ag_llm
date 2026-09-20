@@ -16,7 +16,7 @@ from mcp.server.mcpserver import MCPServer
 
 from context_storage import (
     ensure_workspace_storage,
-    load_chat_messages,
+    load_chat_working_messages,
     load_project_context,
 )
 from workspace_runtime_settings import ensure_workspace_runtime_dirs
@@ -1705,7 +1705,7 @@ async def run_agent_task(
     active_chat_messages = []
     if chat_id:
         try:
-            raw_history = load_chat_messages(root, chat_id)
+            working_history = load_chat_working_messages(root, chat_id)
         except Exception as exc:
             _emit(
                 "run_failed",
@@ -1723,9 +1723,11 @@ async def run_agent_task(
                 "Не удалось загрузить историю активного чата."
             ) from exc
 
-        for item in raw_history:
+        raw_message_count = 0
+        compressed_message_count = 0
+        for item in working_history:
             role = item.get("role")
-            content = item.get("original_text")
+            content = item.get("content")
             if (
                 role in {"user", "assistant"}
                 and isinstance(content, str)
@@ -1734,6 +1736,10 @@ async def run_agent_task(
                 active_chat_messages.append(
                     {"role": role, "content": content}
                 )
+                if item.get("context_representation") == "summary":
+                    compressed_message_count += 1
+                else:
+                    raw_message_count += 1
 
         # UI сохраняет текущее пользовательское сообщение ДО запуска API.
         # Для прямых вызовов run_agent_task без предварительного сохранения
@@ -1744,6 +1750,7 @@ async def run_agent_task(
             and active_chat_messages[-1]["content"] == task
         ):
             active_chat_messages.append({"role": "user", "content": task})
+            raw_message_count += 1
 
     else:
         active_chat_messages = [{"role": "user", "content": task}]
@@ -1767,6 +1774,8 @@ async def run_agent_task(
             {
                 "chat_id": chat_id,
                 "messages": len(active_chat_messages),
+                "raw_messages": raw_message_count,
+                "compressed_messages": compressed_message_count,
                 "chars": sum(
                     len(item.get("content") or "")
                     for item in active_chat_messages

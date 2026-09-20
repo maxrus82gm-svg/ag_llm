@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import time
 import uuid
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
@@ -14,7 +15,12 @@ from compressor_settings import (
     load_final_check_template,
     load_message_compression_template,
 )
-from context_storage import load_existing_project_context, probe_existing_workspace
+from context_storage import (
+    get_message_context_state,
+    load_existing_project_context,
+    load_raw_message,
+    probe_existing_workspace,
+)
 from model_registry import get_model_spec
 from server import CHAT_URL, MAX_TOKENS, TEMPERATURE, get_access_token
 
@@ -49,6 +55,22 @@ TARGET_PLACEHOLDERS = (
 
 class CompressorGuardError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class CompressorRunResult:
+    text: str
+    run_id: str
+    model_id: str
+    model_display_name: str
+    provider: str
+    provider_model_id: str
+    target_reduction_percent: int
+    actual_reduction_percent: float
+    source_chars: int
+    output_chars: int
+    attempts: int
+    final_check_enabled: bool
 
 
 def validate_reduction_percent(value: object) -> int:
@@ -276,7 +298,7 @@ async def _request_gigachat(body: dict[str, Any]) -> str:
     return content
 
 
-async def run_compressor_task(
+async def run_compressor_task_detailed(
     source_text: str,
     workspace_root: str | Path,
     *,
@@ -288,7 +310,7 @@ async def run_compressor_task(
     message_template: str | None = None,
     project_context: str | None = None,
     final_check_template: str | None = None,
-) -> str:
+) -> CompressorRunResult:
     if not isinstance(source_text, str) or not source_text.strip():
         raise ValueError("SOURCE TEXT не может быть пустым.")
     reduction_percent = validate_reduction_percent(reduction_percent)
@@ -425,4 +447,53 @@ async def run_compressor_task(
             "COMPRESSOR не прошёл soft guard после одного corrective retry: "
             f"{last_guard_status}."
         )
-    return last_result
+    return CompressorRunResult(
+        text=last_result,
+        run_id=run_id,
+        model_id=selected_model.model_id,
+        model_display_name=selected_model.display_name,
+        provider=selected_model.provider,
+        provider_model_id=selected_model.provider_model_id,
+        target_reduction_percent=reduction_percent,
+        actual_reduction_percent=float(
+            last_metrics["actual_reduction_percent"]
+        ),
+        source_chars=int(last_metrics["source_chars"]),
+        output_chars=int(last_metrics["output_chars"]),
+        attempts=attempts,
+        final_check_enabled=final_check_enabled,
+    )
+
+
+async def run_compressor_task(
+    source_text: str,
+    workspace_root: str | Path,
+    **kwargs: Any,
+) -> str:
+    """Compatibility wrapper returning only the compressed text."""
+    result = await run_compressor_task_detailed(
+        source_text,
+        workspace_root,
+        **kwargs,
+    )
+    return result.text
+
+
+async def run_message_compressor_task_detailed(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    **kwargs: Any,
+) -> CompressorRunResult:
+    """Run COMPRESSOR for a message identity, always sourcing immutable RAW."""
+    state = get_message_context_state(workspace_root, chat_id, message_id)
+    if state["active_representation"] != "raw":
+        raise RuntimeError(
+            "Повторное сжатие запрещено: сначала восстановите RAW в контекст."
+        )
+    raw_message = load_raw_message(workspace_root, chat_id, message_id)
+    return await run_compressor_task_detailed(
+        raw_message["original_text"],
+        workspace_root,
+        **kwargs,
+    )
