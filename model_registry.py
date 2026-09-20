@@ -16,9 +16,49 @@ class ModelSpec:
 
 
 _MODEL_REGISTRY = {
+    "gigachat_2": ModelSpec(
+        model_id="gigachat_2",
+        display_name="GigaChat 2",
+        provider="gigachat",
+        provider_model_id="GigaChat-2",
+        enabled=True,
+        is_local=False,
+    ),
+    "gigachat_2_max": ModelSpec(
+        model_id="gigachat_2_max",
+        display_name="GigaChat 2 Max",
+        provider="gigachat",
+        provider_model_id="GigaChat-2-Max",
+        enabled=True,
+        is_local=False,
+    ),
+    "gigachat_2_pro": ModelSpec(
+        model_id="gigachat_2_pro",
+        display_name="GigaChat 2 Pro",
+        provider="gigachat",
+        provider_model_id="GigaChat-2-Pro",
+        enabled=True,
+        is_local=False,
+    ),
+    "gigachat_3_lightning": ModelSpec(
+        model_id="gigachat_3_lightning",
+        display_name="GigaChat 3 Lightning",
+        provider="gigachat",
+        provider_model_id="GigaChat-3-Lightning",
+        enabled=True,
+        is_local=False,
+    ),
+    "gigachat_3_pro": ModelSpec(
+        model_id="gigachat_3_pro",
+        display_name="GigaChat 3 Pro",
+        provider="gigachat",
+        provider_model_id="GigaChat-3-Pro",
+        enabled=True,
+        is_local=False,
+    ),
     "gigachat_ultra": ModelSpec(
         model_id="gigachat_ultra",
-        display_name="GigaChat Ultra",
+        display_name="GigaChat 3 Ultra",
         provider="gigachat",
         provider_model_id="GigaChat-3-Ultra",
         enabled=True,
