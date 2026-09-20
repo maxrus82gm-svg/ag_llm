@@ -22,13 +22,21 @@ from context_storage import (
 from workspace_runtime_settings import ensure_workspace_runtime_dirs
 from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
+from model_registry import get_model_spec
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
 OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 CHAT_URL = "https://api.giga.chat/v1/chat/completions"
 
-MODEL = "GigaChat-3-Ultra"
+# MM.1 bootstrap.
+# MODEL REGISTRY хранит описание доступных моделей.
+# Само назначение MAIN CHAT MODEL пока намеренно остаётся фиксированным
+# в runtime до реализации MM.3 — MAIN CHAT MODEL ASSIGNMENT.
+MAIN_CHAT_MODEL_ID = "gigachat_ultra"
+MAIN_CHAT_MODEL = get_model_spec(MAIN_CHAT_MODEL_ID)
+MODEL = MAIN_CHAT_MODEL.provider_model_id
+
 TEMPERATURE = 0.15
 MAX_TOKENS = 32768
 
@@ -121,6 +129,7 @@ BACKUP_BASE = (
 
 CORE_BACKUP_RELATIVE_PATHS = (
     "server.py",
+    "model_registry.py",
     "context_storage.py",
     "workspace_runtime_settings.py",
     "ui_state.py",
