@@ -310,7 +310,7 @@ class VerifierRuntimeTests(unittest.IsolatedAsyncioTestCase):
             for node in ast.walk(ast.parse(server_source))
             if isinstance(node, ast.ImportFrom) and node.module
         }
-        self.assertNotIn("verifier_runtime", server_imports)
+        self.assertIn("verifier_runtime", server_imports)
         self.assertEqual(server.CHAT_URL, gigachat_transport.CHAT_URL)
         self.assertEqual(server.OAUTH_URL, gigachat_transport.OAUTH_URL)
         self.assertIs(server.get_access_token, gigachat_transport.get_access_token)

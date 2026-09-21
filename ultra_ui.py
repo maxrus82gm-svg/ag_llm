@@ -4150,8 +4150,10 @@ class UltraApp(tk.Tk):
         }
 
         model_id = self.main_chat_model_id_var.get()
+        verifier_model_id = self.verifier_model_id_var.get()
         try:
             selected_model = get_model_spec(model_id)
+            get_model_spec(verifier_model_id)
         except (KeyError, RuntimeError, ValueError) as exc:
             messagebox.showerror(APP_TITLE, str(exc))
             return
@@ -4210,6 +4212,7 @@ class UltraApp(tk.Tk):
                 permissions,
                 self.current_chat_id,
                 model_id,
+                verifier_model_id,
             ),
             daemon=True,
         )
@@ -4248,6 +4251,7 @@ class UltraApp(tk.Tk):
         permissions: dict,
         chat_id: str,
         model_id: str,
+        verifier_model_id: str,
     ) -> None:
         producer_snapshot: dict | None = None
         provenance_warning: str | None = None
@@ -4306,6 +4310,7 @@ class UltraApp(tk.Tk):
                     permissions=permissions,
                     chat_id=chat_id,
                     model_id=model_id,
+                    verifier_model_id=verifier_model_id,
                 )
             )
             if not run_started_seen and provenance_warning is None:

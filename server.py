@@ -24,6 +24,12 @@ from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
+from verifier_runtime import (
+    DEFAULT_VERIFIER_MODEL_ID,
+    VerifierProtocolError,
+    VerifierRuntimeError,
+    run_verifier_check,
+)
 
 mcp = MCPServer("GigaChat Ultra Subagent")
 
@@ -98,6 +104,8 @@ MAX_AGENT_LIST_BYTES = 64 * 1024
 MAX_AGENT_TOOL_ITERATIONS = 20
 MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
+MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
+MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
 VERIFY_TIMEOUT_SECONDS = 30
 UI_SMOKE_TIMEOUT_SECONDS = 30
 MAX_VERIFICATION_GATE_RETRIES = 3
@@ -1528,6 +1536,250 @@ def _verification_missing_lines(missing: list[dict]) -> str:
     return "\n".join(lines)
 
 
+class FinalAuditEvidenceError(RuntimeError):
+    """Server could not collect mutation evidence safely enough to audit."""
+
+
+class FinalAuditSemanticError(RuntimeError):
+    """A valid verifier response rejected the candidate final answer."""
+
+
+def _clip_final_audit_text(text: str, limit: int) -> tuple[str, bool, int]:
+    """Bound one evidence field without ever claiming that it is complete."""
+    raw = text.encode("utf-8", errors="replace")
+    original_bytes = len(raw)
+    if original_bytes <= limit:
+        return text, False, original_bytes
+    marker = b"\n... <FINAL AUDIT EVIDENCE TRUNCATED> ..."
+    kept = max(limit - len(marker), 0)
+    clipped = raw[:kept].decode("utf-8", errors="replace")
+    return clipped + marker.decode("ascii"), True, original_bytes
+
+
+def _collect_final_audit_evidence(
+    *,
+    root: Path,
+    candidate_final: str,
+    policy: dict,
+    run_id: str,
+    api_request_count: int,
+    tool_call_count: int,
+    verification_state: dict,
+    backup_session: dict | None,
+) -> tuple[str, dict]:
+    """Build a bounded FINAL context only from server-observed facts."""
+    mutation_manifest = (
+        dict(backup_session.get("manifest") or {})
+        if isinstance(backup_session, dict)
+        else {}
+    )
+    mutation_facts = {
+        "changed_files": sorted(set(mutation_manifest.get("changed_files") or [])),
+        "new_files": sorted(set(mutation_manifest.get("new_files") or [])),
+        "deleted_files": sorted(set(mutation_manifest.get("deleted_files") or [])),
+    }
+    is_mutating_run = verification_state.get("write_revision", 0) > 0
+    incomplete_reasons: list[str] = []
+    mutation_evidence_incomplete_reasons: list[str] = []
+    critical_reasons: list[str] = []
+    any_truncated = False
+
+    candidate_text, candidate_truncated, candidate_bytes = (
+        _clip_final_audit_text(candidate_final, MAX_VERIFY_OUTPUT_BYTES)
+    )
+    if candidate_truncated:
+        any_truncated = True
+        incomplete_reasons.append("candidate_final_response_truncated")
+        critical_reasons.append("candidate_final_response_truncated")
+
+    if policy.get("allow_read"):
+        # Final Audit is mandatory even when Executor-facing VERIFY is off.
+        # These are server-side, read-only observations; READ scope still
+        # remains authoritative and is enforced by the existing primitives.
+        audit_policy = dict(policy)
+        audit_policy["allow_verify"] = True
+        fresh_status = {
+            "available": True,
+            **_agent_git_status(root, audit_policy),
+        }
+        fresh_diff = {
+            "available": True,
+            **_agent_git_diff(root, [], audit_policy),
+        }
+        for label, evidence in (
+            ("fresh_git_status", fresh_status),
+            ("fresh_git_diff", fresh_diff),
+        ):
+            if not evidence.get("ok"):
+                reason = f"{label}_failed"
+                incomplete_reasons.append(reason)
+                mutation_evidence_incomplete_reasons.append(reason)
+            if evidence.get("truncated"):
+                any_truncated = True
+                reason = f"{label}_truncated"
+                incomplete_reasons.append(reason)
+                mutation_evidence_incomplete_reasons.append(reason)
+    else:
+        unavailable = {
+            "available": False,
+            "complete": False,
+            "truncated": False,
+            "reason": "READ is disabled; server did not inspect workspace state.",
+        }
+        fresh_status = dict(unavailable)
+        fresh_diff = dict(unavailable)
+        reason = "fresh_git_evidence_unavailable_read_disabled"
+        incomplete_reasons.append(reason)
+        mutation_evidence_incomplete_reasons.append(reason)
+
+    new_file_evidence = []
+    remaining_new_file_bytes = MAX_FINAL_AUDIT_NEW_FILE_BYTES
+    for relative_path in mutation_facts["new_files"]:
+        item = {
+            "path": relative_path,
+            "available": False,
+            "complete": False,
+            "truncated": False,
+        }
+        try:
+            resolved = _resolve_workspace_path(root, relative_path)
+            if not resolved.exists():
+                item.update(
+                    {
+                        "state": "absent_after_run",
+                        "complete": True,
+                        "reason": "File was created during the run but is now absent.",
+                    }
+                )
+            else:
+                file_result = _agent_read_file(root, relative_path, policy)
+                content = file_result["content"]
+                clipped, truncated, original_bytes = _clip_final_audit_text(
+                    content,
+                    remaining_new_file_bytes,
+                )
+                consumed = len(clipped.encode("utf-8", errors="replace"))
+                remaining_new_file_bytes = max(
+                    remaining_new_file_bytes - consumed,
+                    0,
+                )
+                item.update(
+                    {
+                        "available": True,
+                        "complete": not truncated,
+                        "truncated": truncated,
+                        "original_bytes": original_bytes,
+                        "content": clipped,
+                    }
+                )
+                if truncated:
+                    any_truncated = True
+                    reason = f"new_file_content_truncated:{relative_path}"
+                    incomplete_reasons.append(reason)
+                    mutation_evidence_incomplete_reasons.append(reason)
+        except Exception as exc:
+            item["reason"] = f"{type(exc).__name__}: {exc}"
+            reason = f"new_file_content_unavailable:{relative_path}"
+            incomplete_reasons.append(reason)
+            mutation_evidence_incomplete_reasons.append(reason)
+        new_file_evidence.append(item)
+
+    if is_mutating_run:
+        critical_reasons.extend(mutation_evidence_incomplete_reasons)
+    critical_reasons = list(dict.fromkeys(critical_reasons))
+    completeness = {
+        "complete": not incomplete_reasons,
+        "truncated": any_truncated,
+        "reasons": incomplete_reasons,
+        "critical_for_success": bool(critical_reasons),
+        "critical_reasons": critical_reasons,
+        "critical_for_mutating_run": bool(
+            is_mutating_run and mutation_evidence_incomplete_reasons
+        ),
+    }
+    evidence = {
+        "check_type": "FINAL",
+        "evidence_semantics": {
+            "raw_task": (
+                "Source of truth for requested work; supplied separately as "
+                "run_verifier_check.raw_task."
+            ),
+            "candidate_final_response": (
+                "Executor claim about completion; not an authoritative fact."
+            ),
+            "mutation_facts": (
+                "Server-observed mutations performed during the current RUN."
+            ),
+            "fresh_git_state": (
+                "Workspace-wide observation that may include pre-existing or "
+                "external changes."
+            ),
+            "git_attribution_rule": (
+                "Do not attribute a Git change to the current RUN unless it is "
+                "corroborated by mutation_facts."
+            ),
+        },
+        "candidate_final_response": {
+            "content": candidate_text,
+            "complete": not candidate_truncated,
+            "truncated": candidate_truncated,
+            "original_bytes": candidate_bytes,
+        },
+        "run_facts": {
+            "run_id": run_id,
+            "api_request_count": api_request_count,
+            "tool_call_count": tool_call_count,
+            "write_revision": verification_state.get("write_revision", 0),
+            "changed_python_paths": list(
+                verification_state.get("changed_python_paths") or []
+            ),
+            "deleted_python_paths": list(
+                verification_state.get("deleted_python_paths") or []
+            ),
+        },
+        "permission_policy": _policy_summary(policy),
+        "deterministic_verification": {
+            "verification_state": dict(verification_state),
+            "missing_requirements": _verification_missing_requirements(
+                verification_state
+            ),
+        },
+        "mutation_facts": mutation_facts,
+        "fresh_git_status": fresh_status,
+        "fresh_git_diff": fresh_diff,
+        "new_file_evidence": new_file_evidence,
+        "evidence_completeness": completeness,
+    }
+    completeness["context_limit_bytes"] = MAX_FINAL_AUDIT_CONTEXT_BYTES
+    context = ""
+    context_bytes = -1
+    for _attempt in range(4):
+        context = json.dumps(evidence, ensure_ascii=False, sort_keys=True, indent=2)
+        measured_bytes = len(context.encode("utf-8", errors="replace"))
+        if measured_bytes == context_bytes:
+            break
+        context_bytes = measured_bytes
+        completeness["context_bytes"] = context_bytes
+    if context_bytes > MAX_FINAL_AUDIT_CONTEXT_BYTES:
+        completeness["complete"] = False
+        size_reason = "verification_context_size_limit_exceeded"
+        if size_reason not in completeness["reasons"]:
+            completeness["reasons"].append(size_reason)
+        if size_reason not in completeness["critical_reasons"]:
+            completeness["critical_reasons"].append(size_reason)
+        completeness["critical_for_success"] = True
+        for _attempt in range(4):
+            context = json.dumps(
+                evidence, ensure_ascii=False, sort_keys=True, indent=2
+            )
+            measured_bytes = len(context.encode("utf-8", errors="replace"))
+            if measured_bytes == completeness["context_bytes"]:
+                break
+            completeness["context_bytes"] = measured_bytes
+
+    return context, completeness
+
+
 async def run_agent_task(
     task: str,
     workspace_root: str,
@@ -1536,6 +1788,7 @@ async def run_agent_task(
     permissions: dict | None = None,
     chat_id: str | None = None,
     model_id: str | None = None,
+    verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
@@ -2713,6 +2966,165 @@ async def run_agent_task(
                     "duration": time.time() - start_time,
                 })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+
+            final_audit_started_at = time.time()
+            _emit(
+                "final_audit_started",
+                {
+                    "check_type": "FINAL",
+                    "model_id": verifier_model_id,
+                    "write_revision": verification_state["write_revision"],
+                },
+            )
+            try:
+                verification_context, evidence_completeness = (
+                    _collect_final_audit_evidence(
+                        root=root,
+                        candidate_final=content,
+                        policy=policy,
+                        run_id=run_id,
+                        api_request_count=api_request_count,
+                        tool_call_count=tool_call_count,
+                        verification_state=verification_state,
+                        backup_session=backup_session,
+                    )
+                )
+                if evidence_completeness.get("critical_for_success"):
+                    raise FinalAuditEvidenceError(
+                        "Критические доказательства для SUCCESS неполны: "
+                        + ", ".join(
+                            evidence_completeness.get("critical_reasons") or []
+                        )
+                    )
+
+                audit_result = await run_verifier_check(
+                    verifier_model_id=verifier_model_id,
+                    check_type="FINAL",
+                    raw_task=task,
+                    verification_context=verification_context,
+                    task_id=run_id,
+                )
+
+                if audit_result.verdict == "FAIL":
+                    _emit(
+                        "final_audit_failed",
+                        {
+                            "verifier_run_id": audit_result.verifier_run_id,
+                            "model_id": audit_result.model_id,
+                            "provider_model_id": audit_result.provider_model_id,
+                            "check_type": audit_result.check_type,
+                            "verdict": audit_result.verdict,
+                            "violations_count": len(audit_result.violations),
+                            "reason": audit_result.reason,
+                            "required_action": audit_result.required_action,
+                            "duration": time.time() - final_audit_started_at,
+                        },
+                    )
+                    _emit(
+                        "run_failed",
+                        {
+                            "reason": "final_audit_semantic_fail",
+                            "api_requests": api_request_count,
+                            "tool_calls": tool_call_count,
+                            "duration": time.time() - start_time,
+                            "verifier_reason": audit_result.reason,
+                            "violations_count": len(audit_result.violations),
+                            "required_action": audit_result.required_action,
+                            "trace_path": str(runtime_log_path),
+                        },
+                    )
+                    violations = "\n".join(
+                        f"- {item}" for item in audit_result.violations
+                    ) or "- отсутствуют"
+                    raise FinalAuditSemanticError(
+                        "FINAL AUDIT FAILED\n"
+                        f"Reason: {audit_result.reason}\n"
+                        f"Violations:\n{violations}\n"
+                        f"Required action: {audit_result.required_action}"
+                    )
+
+                if audit_result.verdict != "PASS":
+                    raise VerifierProtocolError(
+                        "Final Audit вернул неизвестный verdict: "
+                        f"{audit_result.verdict!r}."
+                    )
+
+                _emit(
+                    "final_audit_passed",
+                    {
+                        "verifier_run_id": audit_result.verifier_run_id,
+                        "model_id": audit_result.model_id,
+                        "provider_model_id": audit_result.provider_model_id,
+                        "check_type": audit_result.check_type,
+                        "verdict": audit_result.verdict,
+                        "violations_count": len(audit_result.violations),
+                        "reason": audit_result.reason,
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+            except FinalAuditSemanticError:
+                raise
+            except (FinalAuditEvidenceError, VerifierRuntimeError) as exc:
+                error_reason = (
+                    "final_audit_evidence_incomplete"
+                    if isinstance(exc, FinalAuditEvidenceError)
+                    else "final_audit_runtime_error"
+                )
+                _emit(
+                    "final_audit_error",
+                    {
+                        "model_id": verifier_model_id,
+                        "check_type": "FINAL",
+                        "error_type": type(exc).__name__,
+                        "reason": str(exc),
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": error_reason,
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "trace_path": str(runtime_log_path),
+                    },
+                )
+                raise RuntimeError(
+                    "FINAL AUDIT ERROR\n"
+                    f"Type: {type(exc).__name__}\n"
+                    f"Reason: {exc}"
+                ) from exc
+            except Exception as exc:
+                _emit(
+                    "final_audit_error",
+                    {
+                        "model_id": verifier_model_id,
+                        "check_type": "FINAL",
+                        "error_type": type(exc).__name__,
+                        "reason": str(exc),
+                        "duration": time.time() - final_audit_started_at,
+                    },
+                )
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": "final_audit_runtime_error",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                        "trace_path": str(runtime_log_path),
+                    },
+                )
+                raise RuntimeError(
+                    "FINAL AUDIT ERROR\n"
+                    f"Type: {type(exc).__name__}\n"
+                    f"Reason: {exc}"
+                ) from exc
 
             _emit("run_finished", {
                 "status": "SUCCESS",

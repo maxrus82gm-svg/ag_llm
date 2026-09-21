@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import server
+from verifier_runtime import VerifierResult
 from ultra_ui import get_message_display_text
 
 from context_storage import (
@@ -316,11 +317,29 @@ class MessageContextStorageTests(unittest.TestCase):
             "tool_limit": 5,
             "auto_backup": False,
         }
+        final_audit = AsyncMock(
+            return_value=VerifierResult(
+                verdict="PASS",
+                check_type="FINAL",
+                violations=(),
+                reason="Message-context fixture evidence accepted.",
+                required_action="None.",
+                verifier_run_id="ver_message_context_test",
+                model_id="gigachat_3_pro",
+                model_display_name="GigaChat 3 Pro",
+                provider="gigachat",
+                provider_model_id="GigaChat-3-Pro",
+                task_id=None,
+                checkpoint_id=None,
+                operation_id=None,
+            )
+        )
         with (
             patch.object(server, "get_access_token", AsyncMock(return_value="token")),
             patch.object(server, "load_agent_global_context", return_value="ROLE"),
             patch.object(server, "ensure_workspace_runtime_dirs", return_value=runtime_paths),
             patch.object(server.httpx, "AsyncClient", return_value=FakeClient()),
+            patch.object(server, "run_verifier_check", final_audit),
         ):
             compressed_result = asyncio.run(
                 server.run_agent_task(
@@ -343,6 +362,7 @@ class MessageContextStorageTests(unittest.TestCase):
                     on_event=restored_events.append,
                 )
             )
+        self.assertEqual(final_audit.await_count, 2)
         self.assertEqual(compressed_result, "DONE")
         self.assertEqual(restored_result, "DONE")
         compressed_request_messages = captured_bodies[0]["messages"][-3:]
