@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "message_id": "msg_1164238903e44e819e82b7326799a0fb",
+  "context_variant_id": "ctxv_d7680b73ec5c42bbbb72323cf985300b",
+  "created_at": "2026-09-21T15:14:01.227430+00:00",
+  "text": "TASK DOC-08A-RETRY — исправить только разделы 2 и 4 файла 08_Старт.md\n\nВАЖНО: это повтор предыдущей задачи после внешней проверки результата. Предыдущий RUN завершился некорректно: финальный отчёт сообщил, что разделы 2 и 4 были обновлены, но проверка GitHub показала, что файл Документация/08_Старт.md фактически остался без изменений.\n\nРАЗРЕШЁННЫЙ ФАЙЛ ДЛЯ ИЗМЕНЕНИЯ:\nДокументация/08_Старт.md\n\nИЗМЕНЯТЬ МОЖНО ТОЛЬКО ЭТОТ ФАЙЛ.\n\n## 2. Назначение проекта\nПроект создаёт локальную агентскую среду для работы с проектами, файлами, Workspace, Chat и управляемым контекстом. Мультимодельный фундамент уже реализован.\n\nСхема MAIN CHAT:\nUI → MAIN CHAT MODEL ASSIGNMENT → MODEL REGISTRY → GigaChat provider → выбранная модель GigaChat\n\nОтдельно существует Context Compressor:\nRAW MESSAGE → COMPRESSOR RUNTIME → COMPRESSION MODEL ASSIGNMENT → MODEL REGИСТРИИ → выбранная модель GigaChat → COMPRESSION PROPOSAL\n\nФундаментальный принцип: MODEL ≠ AGENT. Контекст, Workspace, Chat, инструменты, разрешения, состояние, бэкап, верификация и trace принадлежат Agent Runtime, а не физической LLM. Одна модель может использоваться разными ролями с разным Role Context, Context Policy и Tool Set.\n\nОсновные файлы runtime: server.py, ultra_ui.py, context_storage.py, model_registry.py, compressor_runtime.py, compressor_settings.py, workspace_runtime_settings.py, ui_state.py, Start_Ultra.cmd, agent_global_context.py\n\nОсновная документация: Документация/00_Главная - карта проекта.md, Документация/01_Архитектура и текущее состояние.md, Документация/02_Правила разработки и работы с Ultra.md, Документация/03_Чаты, проекты и контекст.md, Документация/04_Дорожная карта разработки.md, Документация/05_Реестр задач.md, Документация/06_Журнал выполнения и отчёты.md, Документация/07_Шаблоны задач, отчётов и решений.md, Документация/09_Обязательный регламент Ultra.md, Документация/10_рабочая микро_память_Ultra(концепт).md, Документация/11_Мультимодельная архитектура и назначение LLM.md, Документация/12_Архитектура голосового ввода и распознавания речи.md, Документация/Архитектурное решение - управляемое сжатие контекста.md\n\n## 4. Текущее состояние runtime\nРабочий интерфейс — Tkinter UI. MAIN CHOT больше не привязан к одной жёстко заданной модели. Путь MAIN CHAT: UI → MAIN CHAT MODEL ASSIGNMENT → MODEL REGISTRY → GigaChat provider → выбранная модель.\n\nУже реализованы: MODEL REGISTRY, GigaChat Multi-Model, MAIN CHAT MODEL selection, assistant model provenance, независимый Compressor runtime, выбор модели компрессии, per-message Working Representation, переключение RAW/SUMMARY, Compression Proposal, Original Viewer, Restore RAW, persistent Working Context.\n\nПока НЕ реализованы как законченные production-механизмы: Local Provider, per-Chat persistent model assignment, универсальные Agent Profiles, универсальный фреймворк Context Policy, Independent Verifier, Compression Review / Discussion Chat, Multi-Agent Coordinator, Voice / ASR, Web UI.\n\nSAFE Mode управляется из интерфейса, реальные ограничения применяет server.py.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_201352_70e280",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 66.07,
+    "source_chars": 8893,
+    "output_chars": 3017,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}
