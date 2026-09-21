@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_83ae6639942b4e0382a9e291f2337d52",
+  "context_variant_id": "ctxv_178fe88ea3594f1590697a161eda7b8a",
+  "created_at": "2026-09-21T14:12:34.370103+00:00",
+  "text": "STATUS: 08_Старт.md синхронизирован с реализацией. Внесены изменения:\n- Добавлен agent_global_context.py в список runtime-файлов.\n- Путь бэкапов обновлён до %LOCALAPPDATA%\\GigaChatUltra\\workspaces\\<workspace_id>\\backups.\n- MAX_AGENT_TOOL_ITERATIONS стал настраиваемым параметром, отображаемым в UI рядом с SAFE Mode и автобэкапом.\n- Логи действий теперь сохраняются по адресу <workspace_root>/.ultra/logs/runs/<run_id>.jsonl.\n- Удалены ссылки на старый Markdown-регламент Ultra; кратко описано хранение Глобального контекста вне Workspace через UI.\n- Автобэкап обозначен как обязательная серверная защита перед первым обращением к Ultra.\n- Исторический commit сохранён только для контрольной точки, не HEAD.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191229_fa45b2",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 67.88,
+    "source_chars": 2201,
+    "output_chars": 707,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

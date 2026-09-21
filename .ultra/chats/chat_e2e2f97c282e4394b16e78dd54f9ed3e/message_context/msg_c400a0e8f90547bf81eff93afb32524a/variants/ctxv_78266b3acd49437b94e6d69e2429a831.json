@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_c400a0e8f90547bf81eff93afb32524a",
+  "context_variant_id": "ctxv_78266b3acd49437b94e6d69e2429a831",
+  "created_at": "2026-09-21T14:12:25.455643+00:00",
+  "text": "Задача: исправить ошибки в Документация/08_Старт.md согласно фактической реализации.\n\nРазрешено изменять только этот файл. Runtime-код и другие документы не трогать.\n\nОбязательная проверка перед любыми изменениями:\n1. Прочитать 08_Старт.md, server.py, ultra_ui.py, workspace_runtime_settings.py, agent_global_context.py.\n2. Без успешного чтения всех пяти файлов запись запрещена.\n\nИсправить нужно следующие блоки:\nA) TOOL LIMIT — описать реальную схему (default 20, UI задаёт значение, сервер принимает 1–200).\nB) RUN LOGS — указать верный путь по умолчанию (%LOCALAPPDATA%\\GigaChatUltra\\workspaces\\<workspace_id>\\logs\\<run_id>.jsonl), логи вне .ultra.\nC) SAFE MODE / SERVER PERMISSIONS — перечислить текущие controls: READ, WRITE, DELETE, VERIFY, GUARD P1, tool limit; убрать упоминания нереализованных механизмов.\nD) BACKUP — подтвердить обязательность backup на сервере, default-путь %LOCALAPPDATA%\\...\\<workspace_id>\\backups, lazy-сохранение файлов проекта.\n\nНе менять то, что уже верно.\nПосле записи повторно проверить 08_Старт.md, убедиться в отсутствии ошибок из списка A-D, выполнить git_diff и git_status.\n\nКритически: нельзя утверждать о проверке файла без trace read_file или об исправлении без write_file+read_file.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191215_553a6a",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 81.61,
+    "source_chars": 6672,
+    "output_chars": 1227,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

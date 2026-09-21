@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_4f1e8608d77e4abd9ce6d59e406dd08f",
+  "context_variant_id": "ctxv_9576e9994b214f65928812f1e05323ed",
+  "created_at": "2026-09-21T14:15:50.559029+00:00",
+  "text": "Отчёт по TASK DOC-SYNC-01 — документация синхронизирована с реализацией.\n\nОбновлены файлы: 00_Главная, 01_Архитектура, 03_Чаты и контекст, 04_Дорожная карта, 05_Реестр задач, 08_Старт, SAFE_MODE_v1_README, Архитектурное решение - управляемое сжатие контекста. Актуализированы статусы подсистем (06.1–06.5), подтверждены реализованные функции (RAW HISTORY, Active Chat Context) и отмечены отсутствующие компоненты (SUMMARY/Compression Provider, удаление Chat, авто-.venv). Проблемы вынесены в отдельный реестр без исправления кода. Проверка через git_status/git_diff подтверждает изменения только внутри документации; runtime-код не изменялся.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191544_5566ef",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 85.82,
+    "source_chars": 4529,
+    "output_chars": 642,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

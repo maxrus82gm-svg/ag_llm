@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_165c23f9d8c44fd5845b2ba406d9a153",
+  "context_variant_id": "ctxv_d5c6cf2c80234038a89259c14238a830",
+  "created_at": "2026-09-21T14:12:55.986333+00:00",
+  "text": "Задача: синхронизировать Документацию/08_Старт.md с текущим состоянием проекта, не изменяя код и другие документы.\n\nРазрешено редактировать только Документация/08_Старт.md. Запрещено изменять runtime-файлы (server.py, ultra_ui.py и др.), создавать или удалять файлы.\n\nНеобходимо проверить и обновить следующие разделы:\n1. Актуальный список runtime-файлов, включая agent_global_context.py.\n2. Описание глобального контекста Ultra как отдельного механизма, а не через старые Markdown-регламенты.\n3. Текущие настройки server permissions (READ, WRITE, DELETE, VERIFY, GUARD P1) и tool limit в UI.\n4. Современную систему backup для каждого Workspace и её обязательность.\n5. Расположение RUN logs внутри Workspace-specific namespace.\n6. Реализованные компоненты Context Storage (Workspace, Chat, RAW HISTORY и т.д.).\n7. Операции с Chat (создание, переключение, история, переименование; удаление — если отсутствует).\n8. Роль GUARD P1 как дополнительного серверного супервизора.\n9. Требования Verification Gate (git_diff, git_status, python_compile, ui_smoke_test).\n10. Отсутствие реализованного NO-TOOL STOP GAP.\n11. Список актуальных документов документации без устаревших ссылок на 00/09 регламент.\n12. Актуальный roadmap по состоянию на 04 и 05 документы.\n13. Исторические сведения о Git-контроле пользователя.\n\nПосле внесения изменений провести повторное чтение документа, убедиться в удалении устаревшей информации (старый путь логов, общий backup-путь, фиксированный лимит итераций, отсутствие настроек лимита в UI), корректном описании текущего состояния и наличии исторических пометок. Выполнить git_diff и git_status.\n\nВ финальном отчёте указать, что был изменён только Документация/08_Старт.md, runtime-код не трогался, новые файлы не создавались, удаления не было, Git-операции не выполнялись, перезапуск после documentation-only TASK не требуется.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191246_d06bd2",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 75.77,
+    "source_chars": 7643,
+    "output_chars": 1852,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

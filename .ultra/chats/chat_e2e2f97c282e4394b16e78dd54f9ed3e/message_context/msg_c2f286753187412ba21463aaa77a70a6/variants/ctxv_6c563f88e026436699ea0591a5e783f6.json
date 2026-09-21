@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_c2f286753187412ba21463aaa77a70a6",
+  "context_variant_id": "ctxv_6c563f88e026436699ea0591a5e783f6",
+  "created_at": "2026-09-21T14:13:15.480383+00:00",
+  "text": "Задача: удалить из документации активные ссылки и архитектурные зависимости на старый Markdown-регламент Ultra.\n\nТекущая архитектура:\nГлобальный контекст Ultra хранится локально вне Workspace, редактируется через UI и загружается server.py перед каждым RUN. PROJECT CONTEXT Workspace остаётся отдельным механизмом.\n\nРазрешено изменять только Документация/*.md; нельзя менять runtime-код, .ultra, .obsidian или создавать/удалять документы.\n\nНеобходимо проверить документацию на упоминания 00_Обязательный регламент Ultra, 09_Обязательный регламент Ultra и автоматической загрузки отдельного Markdown-регламента из Документация, удалить навигационные ссылки на 00/09 и заменить описания старого механизма на текущее решение. Исторические записи в журнале не удалять. После изменений выполнить git_diff и git_status по изменённым документам. В отчёте указать только реально подтверждённые действия.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191310_dd8f2d",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 66.23,
+    "source_chars": 2650,
+    "output_chars": 895,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

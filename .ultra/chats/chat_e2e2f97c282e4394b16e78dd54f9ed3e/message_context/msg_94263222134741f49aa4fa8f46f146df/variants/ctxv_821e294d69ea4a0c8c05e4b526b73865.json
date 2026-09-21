@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_94263222134741f49aa4fa8f46f146df",
+  "context_variant_id": "ctxv_821e294d69ea4a0c8c05e4b526b73865",
+  "created_at": "2026-09-21T14:12:09.061301+00:00",
+  "text": "08_Старт.md синхронизирован с реализацией. Исправлены устаревшие сведения о лимитах инструментов, путях логов и политике безопасности SAFE Mode. Добавлен пример настройки DELETE/VERIFY/GUARD P1. Путь к логам изменён на Workspace-specific namespace: %LOCALAPPDATA%\\GigaChatUltra\\workspaces\\<workspace_id>\\logs\\<run_id>.jsonl. Backup остался обязательным fail-closed механизмом по адресу %LOCALAPPDATA%\\GigaChatUltra\\workspaces\\<workspace_id>\\backups. Изменения внесены только в документацию; runtime-код не затронут.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191201_8f4ee2",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 75.86,
+    "source_chars": 2133,
+    "output_chars": 515,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

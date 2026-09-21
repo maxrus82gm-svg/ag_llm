@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_e2e2f97c282e4394b16e78dd54f9ed3e",
+  "message_id": "msg_4643acc35c4d43ee951a49e9ded1ac6b",
+  "context_variant_id": "ctxv_4cb3d6aea11c4476a5c86f383699a029",
+  "created_at": "2026-09-21T14:15:33.894435+00:00",
+  "text": "Проект готов к первому запуску: инфраструктура настроена, проверки пройдены успешно. В репозитории три ключевых Python-модуля с активной разработкой:\n- server.py — рантайм и MCP-сервер; реализована защита .ultra через _deny_context_storage_area, расширены пути бэкапа, инициализация переносимого контекста Workspace (.ultra) при старте RUN, подмешивание PROJECT CONTEXT в промпты агента.\n- ultra_ui.py — десктоп-клиент UltraApp; трёхколоночное UI (trace, чат/ввод, WORKSPACES/чаты), элементы управления чатом, привязки Ctrl+A/C/V/X, динамическая работа с сообщениями через context_storage, отслеживание изменений runtime-файлов с предупреждением о перезапуске, увеличенные размеры окна.\n- context_storage.py — единый API хранения рабочих пространств, проектного контекста, истории версий, каталогов чатов/мессаджей со строгими ID-правилами, атомарная запись JSON/text, лимиты размеров, миграции схемы.\n\nИзменения зафиксированы системой контроля версий: появились новые артефакты инфраструктуры (.ultra/*, apply_context_step*.py, *before_*.py). Проверки python_compile всех файлов и ui_smoke_test(UltraApp) прошли без ошибок; git_status/diff подтверждают наличие изменений.\n\nДля первого запуска агент стартует внутри подготовленного workspace с идентификатором ws_* и читает PROJECT CONTEXT из .ultra/project_context.md. Все операции записи/чтения ограничены политиками сервера; доступ к .ultra разрешён только через Context Storage API. Интерфейс сразу показывает список рабочих пространств и чатов, позволяет создавать/переименовывать чаты и редактировать общий контекст проекта. При изменении server.py/ultra_ui.py/context_storage.py UI предупреждает о необходимости перезапуска.\n\nРекомендации перед началом диалога: открыть PROJECT CONTEXT для фиксации базовых сведений о задаче, целях и ограничениях run-полномочий (READ/WRITE/DELETE/VERIFY, области scopes, tool_limit, автобэкап); убедиться в корректности рабочей папки; ограничить политику WRITE («Документация»).",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260921_191526_d71e3e",
+    "model_id": "gigachat_3_pro",
+    "model_display_name": "GigaChat 3 Pro",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Pro",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 43.53,
+    "source_chars": 3487,
+    "output_chars": 1969,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}
