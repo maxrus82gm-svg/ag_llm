@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "message_id": "msg_807c049a369d489c8fb1f5bd5c7dbe4b",
+  "role": "assistant",
+  "created_at": "2026-09-21T15:12:06.224420+00:00",
+  "original_text": "STATUS: OK\n\nИЗМЕНЁННЫЙ ФАЙЛ:\nДокументация/08_Старт.md\n\nРАЗДЕЛ 2 — что реально изменено\n- Обновлена формулировка назначения проекта и добавлено упоминание Workspace, Chat и управляемого контекста.\n- Заменена устаревшая схема на актуальную схему MAIN CHAT с MODEL REGISTRY и GigaChat provider.\n- Добавлен отдельный блок Context Compressor (RAW → COMPRESSOR RUNTIME → PROPOSAL).\n- Введён фундаментальный принцип «MODEL ≠ AGENT» и уточнены границы ответственности Agent Runtime.\n- Расширен список основных runtime-файлов за счёт model_registry.py, compressor_runtime.py, compressor_settings.py.\n- Дополнен перечень документации файлом Документация/12_Архитектура голосового ввода и распознавания речи.md.\n- Явно указано требование не добавлять новые [[Wiki Links]].\n\nРАЗДЕЛ 4 — что реально изменено\n- Удалена жёсткая привязка к одной модели; путь теперь идёт через UI → MAIN CHAT MODEL ASSIGNMENT → MODEL REGISTRY → selected model.\n- Зафиксирован фактический набор реализованных механизмов: MODEL REGISTRY, GigaChat Multi-Model, selection, provenance, независимый Compressor runtime, per-message Working Representation, RAW/SUMMARY switching, Compression Proposal, Original Viewer, Restore RAW, persistent Working Context.\n- Чётко перечислены ещё не реализованные production-механизмы (Local Provider, Verifier, Review Chat, Coordinator, Voice/ASR, Web UI).\n- Сохранена ключевая оговорка о том, что реальные ограничения SAFE Mode применяет server.py.\n\nVERIFY:\n- перечитан файл: YES\n- git_diff непустой: YES (изменения именно в разделах 2 и 4)\n- изменены только нужные части: YES\n- другие файлы TASK не изменяла: ДА (в diff фигурирует только Документация/08_Старт.md)",
+  "producer": {
+    "kind": "llm",
+    "role_id": "main_chat",
+    "run_id": "20260921_201106_2c9a96",
+    "model_id": "gigachat_ultra",
+    "model_display_name": "GigaChat 3 Ultra",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Ultra"
+  }
+}
