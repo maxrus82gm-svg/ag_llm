@@ -172,6 +172,23 @@ class UltraApp(tk.Tk):
         self.compressor_model_display_var = tk.StringVar(
             value=compressor_model.display_name
         )
+
+        saved_verifier_model_id = self._ui_state.get(
+            "verifier_model_id",
+            "gigachat_3_pro",
+        )
+        try:
+            verifier_model = get_model_spec(saved_verifier_model_id)
+        except (KeyError, RuntimeError, ValueError):
+            verifier_model = get_model_spec("gigachat_3_pro")
+        self._ui_state["verifier_model_id"] = verifier_model.model_id
+        self.verifier_model_id_var = tk.StringVar(
+            value=verifier_model.model_id
+        )
+        self.verifier_model_display_var = tk.StringVar(
+            value=verifier_model.display_name
+        )
+
         self.compressor_reduction_percent_var = tk.StringVar(
             value=str(
                 self._ui_state.get(
@@ -621,6 +638,23 @@ class UltraApp(tk.Tk):
         )
         main_context_button.pack(side="left")
 
+        verifier_model_frame = ttk.LabelFrame(
+            right_frame,
+            text="VERIFIER MODEL",
+            padding=(8, 5),
+        )
+        verifier_model_frame.pack(fill="x", pady=(0, 8))
+        verifier_model_button = ttk.Button(
+            verifier_model_frame,
+            text="Модель",
+            command=lambda: self._open_model_registry("verifier"),
+        )
+        verifier_model_button.pack(side="left")
+        ttk.Label(
+            verifier_model_frame,
+            textvariable=self.verifier_model_display_var,
+        ).pack(side="left", padx=(8, 16))
+
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
             right_frame,
@@ -860,6 +894,7 @@ class UltraApp(tk.Tk):
                 guard_p1_check,
                 context_messages_button,
                 model_registry_button,
+                verifier_model_button,
                 main_context_button,
                 tool_limit_spin,
                 read_scope_entry,
@@ -1117,6 +1152,16 @@ class UltraApp(tk.Tk):
         self.compressor_model_display_var.set(model.display_name)
         self._ui_state["compressor_model_id"] = model.model_id
 
+    def _set_verifier_model(self, model_id: str) -> None:
+        try:
+            model = get_model_spec(model_id)
+        except (KeyError, RuntimeError, ValueError):
+            model = get_model_spec("gigachat_3_pro")
+
+        self.verifier_model_id_var.set(model.model_id)
+        self.verifier_model_display_var.set(model.display_name)
+        self._ui_state["verifier_model_id"] = model.model_id
+
     def _open_model_registry(self, assignment: str = "main_chat") -> None:
         if assignment == "main_chat":
             assignment_title = "MAIN CHAT MODEL"
@@ -1126,6 +1171,10 @@ class UltraApp(tk.Tk):
             assignment_title = "COMPRESSOR MODEL"
             current_model_id = self.compressor_model_id_var.get()
             apply_model = self._set_compressor_model
+        elif assignment == "verifier":
+            assignment_title = "VERIFIER MODEL"
+            current_model_id = self.verifier_model_id_var.get()
+            apply_model = self._set_verifier_model
         else:
             raise ValueError(f"Неизвестный Model Assignment: {assignment!r}")
 
@@ -1498,6 +1547,9 @@ class UltraApp(tk.Tk):
             )
             self._ui_state["compressor_model_id"] = (
                 self.compressor_model_id_var.get()
+            )
+            self._ui_state["verifier_model_id"] = (
+                self.verifier_model_id_var.get()
             )
             try:
                 reduction_percent = validate_reduction_percent(

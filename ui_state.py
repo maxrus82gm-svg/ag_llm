@@ -58,6 +58,7 @@ def default_ui_state() -> dict[str, Any]:
         "registry_initialized": False,
         "main_chat_model_id": "gigachat_ultra",
         "compressor_model_id": "gigachat_3_pro",
+        "verifier_model_id": "gigachat_3_pro",
         "compressor_reduction_percent": 50,
         "compressor_final_check_enabled": True,
     }
@@ -162,6 +163,9 @@ def load_ui_state() -> dict[str, Any]:
 
     if isinstance(loaded.get("compressor_model_id"), str):
         state["compressor_model_id"] = loaded["compressor_model_id"]
+
+    if isinstance(loaded.get("verifier_model_id"), str):
+        state["verifier_model_id"] = loaded["verifier_model_id"]
 
     reduction_percent = loaded.get("compressor_reduction_percent")
     if (
