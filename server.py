@@ -23,11 +23,9 @@ from workspace_runtime_settings import ensure_workspace_runtime_dirs
 from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
+from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
 
 mcp = MCPServer("GigaChat Ultra Subagent")
-
-OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
-CHAT_URL = "https://api.giga.chat/v1/chat/completions"
 
 # MODEL REGISTRY хранит описание доступных моделей.
 # Эти глобальные значения остаются compatibility default для старых путей;
@@ -272,45 +270,6 @@ AGENT_FUNCTIONS = [
         },
     },
 ]
-
-_access_token: str | None = None
-_access_token_valid_until = 0.0
-
-async def get_access_token() -> str:
-    global _access_token, _access_token_valid_until
-
-    if _access_token and time.time() < _access_token_valid_until:
-        return _access_token
-
-    credentials = os.getenv("GIGACHAT_CREDENTIALS")
-    scope = os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS")
-
-    if not credentials:
-        raise RuntimeError("Не найдена переменная среды GIGACHAT_CREDENTIALS.")
-
-    headers = {
-        "Authorization": f"Basic {credentials}",
-        "RqUID": str(uuid.uuid4()),
-        "Accept": "application/json",
-    }
-
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            OAUTH_URL,
-            headers=headers,
-            data={"scope": scope},
-        )
-        response.raise_for_status()
-
-    data = response.json()
-    token = data.get("access_token")
-
-    if not token:
-        raise RuntimeError(f"GigaChat не вернул access_token: {data}")
-
-    _access_token = token
-    _access_token_valid_until = time.time() + 25 * 60
-    return token
 
 async def ask_gigachat(prompt: str) -> str:
     token = await get_access_token()
