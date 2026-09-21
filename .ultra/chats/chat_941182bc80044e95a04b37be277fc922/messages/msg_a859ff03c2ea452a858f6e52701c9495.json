@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "message_id": "msg_a859ff03c2ea452a858f6e52701c9495",
+  "role": "assistant",
+  "created_at": "2026-09-21T15:23:52.094889+00:00",
+  "original_text": "STATUS: OK\n\nТОЧЕЧНО ИЗМЕНЁННЫЙ ФАЙЛ:\nДокументация/08_Старт.md (только разделы 13 и 14)\n\nРАЗДЕЛ 13 — что реально изменено\n- Обновлён статус ветки 06.2: «навигация по Chat» вместо «навигация по чатам».\n- Добавлено уточнение про удаление Chat.\n- Статус раздела 06.5 изменён с ЗАПЛАНИРОВАНО на В РАБОТЕ.\n- Удалены устаревшие блоки о MM-пути, MODEL REGISTRY и COMPRESSION ASSIGNMENT; оставлен только актуальный список этапов без лишних деталей.\n- Расширен перечень уже реализованных механизмов в рамках 06.5 (immutable RAW, per-message MESSAGE CONTEXT STATE, Context Variants, LLM compression, Compression Proposal, Accept / Reject, manual editing, RAW / SUMMARY switching, Original Viewer, Restore RAW, recompression from immutable RAW, MAIN CHAT Working Context, persistence after restart).\n- Зафиксирован мультимодельный фундамент как готовый набор шагов MM.0–MM.4.\n- Чётко выделены ближайшее развитие (Compression Review → Independent Verifier) и дальнейшие направления (Local Provider, Agent Profiles, Multi-Agent Coordinator, Voice/ASR).\n\nРАЗДЕЛ 14 — что реально изменено\n- Существенно сокращена преамбула до двух ключевых принципов RAW HISTORY / ACTIVE CONTEXT.\n- Сохранён перечень операций со старыми фрагментами в компактной форме.\n- Production pipeline зафиксирован как три шага под управлением server/runtime: COMPRESS → VERIFY → FINALIZE.\n- Явно указано, что весь pipeline, MODEL REGISTRY и COMPRESSION MODEL ASSIGNMENT пока НЕ РЕАЛИЗОВАНЫ.\n- Детально описан текущий рабочий lifecycle от FULL через COMPRESS/PROPOSAL к COMPRESSED и обратно через ORIGINAL/RESTORE.\n- Подчёркнуто использование одного independent Compressor call + soft guard + corrective retry + user-controlled Proposal.\n\nВЕРИФИКАЦИЯ ПОСЛЕ МУТАЦИИ\n- git_diff подтверждает изменения именно в границах TASK (разделы 13–14), включая корректировку списка документации («отчётов» vs «отчётов») и структурирование текста внутри разрешённых секций.\n- git_status показывает Документация/08_Старт.md как единственный модифицированный файл рабочего дерева; остальные файлы являются новыми untracked-файлами контекста .ultra и к задаче отношения не имеют.\n\nПОЛНЫЙ ОТЧЁТ БЕЗ ОТКЛОНЕНИЙ ОТ SCOPE\nИзменения затронули исключительно запрошенные части файла. Другие документы, Python-код, Project Context и любые runtime-компоненты не менялись.",
+  "producer": {
+    "kind": "llm",
+    "role_id": "main_chat",
+    "run_id": "20260921_202250_22b627",
+    "model_id": "gigachat_ultra",
+    "model_display_name": "GigaChat 3 Ultra",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Ultra"
+  }
+}
