@@ -26,7 +26,7 @@
 
 Полный текст этого регламента не обязан автоматически становиться ROLE CONTEXT каждого будущего узкоспециализированного Agent. Например, Context Compressor может иметь отдельный Compression Role Context и не иметь файловых tools. При этом физические server-side ограничения остаются выше любой модели и любой роли.
 
-MODEL REGISTRY, MODEL ASSIGNMENTS, Local Provider, Agent Profiles и Coordinator пока НЕ РЕАЛИЗОВАНЫ. Каноническое целевое решение описано в [[11_Мультимодельная архитектура и назначение LLM]].
+MODEL REGISTRY, MODEL ASSIGNMENTS, Local Provider, Agent Profiles и Coordinator пока НЕ РЕАЛИЗОВАНЫ. Каноническое целевое решение описано в 11_Мультимодельная архитектура и назначение LLM.
 
 ---
 
