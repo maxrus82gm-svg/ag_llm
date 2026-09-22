@@ -145,6 +145,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         verifier_model_id: str = "gigachat_3_pro",
         fake_client: FakeClient | None = None,
         extra_patches: tuple = (),
+        mock_git: bool = True,
     ):
         client = fake_client or FakeClient()
         if isinstance(verifier_side_effect, BaseException):
@@ -210,12 +211,13 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             stack.enter_context(
                 patch.object(server.httpx, "AsyncClient", return_value=client)
             )
-            stack.enter_context(
-                patch.object(server, "_agent_git_status", return_value=dict(git_result))
-            )
-            stack.enter_context(
-                patch.object(server, "_agent_git_diff", return_value=dict(git_result))
-            )
+            if mock_git:
+                stack.enter_context(
+                    patch.object(server, "_agent_git_status", return_value=dict(git_result))
+                )
+                stack.enter_context(
+                    patch.object(server, "_agent_git_diff", return_value=dict(git_result))
+                )
             stack.enter_context(patch.object(server, "run_verifier_check", verifier))
             for item in extra_patches:
                 stack.enter_context(item)
@@ -227,6 +229,93 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 verifier_model_id=verifier_model_id,
             )
         return result, verifier, client
+
+    async def test_non_git_workspace_mutation_reaches_final_pass(self) -> None:
+        self.assertFalse((self.workspace / ".git").exists())
+        self.permissions.update(allow_write=True, allow_verify=True, tool_limit=3)
+        client = FakeClient([
+            FakeResponse("", finish_reason="function_call", function_call={
+                "name": "write_file", "arguments": {"path": "result.txt", "content": "done"},
+            }),
+            FakeResponse("Done"),
+        ])
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS"), fake_client=client, mock_git=False
+        )
+        self.assertEqual(result, "Done")
+        self.assertEqual((self.workspace / "result.txt").read_text(encoding="utf-8"), "done")
+        context = json.loads(verifier.await_args.kwargs["verification_context"])
+        self.assertFalse(context["fresh_git_status"]["available"])
+        self.assertTrue(context["run_owned_filesystem_evidence"][0]["match"])
+        self.assertTrue(context["evidence_completeness"]["complete"])
+        self.assertFalse(context["evidence_completeness"]["critical_for_success"])
+
+    async def test_non_git_workspace_hash_mismatch_blocks_verifier(self) -> None:
+        self.permissions.update(allow_write=True, allow_verify=True, tool_limit=3)
+        client = FakeClient([
+            FakeResponse("", finish_reason="function_call", function_call={
+                "name": "write_file", "arguments": {"path": "result.txt", "content": "expected"},
+            }),
+            FakeResponse("Done"),
+        ])
+        original_write = server._agent_write_file
+
+        def tampered_write(*args, **kwargs):
+            result = original_write(*args, **kwargs)
+            (self.workspace / "result.txt").write_text("external", encoding="utf-8")
+            return result
+
+        with self.assertRaisesRegex(RuntimeError, "FinalAuditEvidenceError.*"):
+            await self.run_case(
+                verifier_result("PASS"), fake_client=client, mock_git=False,
+                extra_patches=(patch.object(server, "_agent_write_file", side_effect=tampered_write),),
+            )
+        self.last_verifier.assert_not_awaited()
+        self.assertNotIn("run_completed", [event["event"] for event in self.events])
+
+    def test_run_owned_delete_absent_and_reappeared(self) -> None:
+        expected = {"deleted.txt": {"state": "absent"}}
+        evidence, mismatches = server._verify_run_owned_filesystem(self.workspace, expected)
+        self.assertTrue(evidence[0]["match"])
+        self.assertEqual(mismatches, [])
+        (self.workspace / "deleted.txt").write_text("external", encoding="utf-8")
+        evidence, mismatches = server._verify_run_owned_filesystem(self.workspace, expected)
+        self.assertFalse(evidence[0]["match"])
+        self.assertEqual(mismatches, ["run_owned_filesystem_mismatch:deleted.txt"])
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        _context, metadata = server._collect_final_audit_evidence(
+            root=self.workspace, candidate_final="Done", policy=policy,
+            run_id="test", api_request_count=1, tool_call_count=1,
+            verification_state={"write_revision": 1}, backup_session=None,
+            run_owned_state=expected,
+        )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertTrue(metadata["critical_for_mutating_run"])
+
+    def test_run_owned_jsonl_uses_utf16_logical_content(self) -> None:
+        content = '{"message": "Привет"}\n'
+        (self.workspace / "messages.jsonl").write_text(content, encoding="utf-16")
+        expected = {"messages.jsonl": {
+            "state": "present", "content_sha256": server._sha256_utf8(content),
+        }}
+        evidence, mismatches = server._verify_run_owned_filesystem(self.workspace, expected)
+        self.assertEqual(mismatches, [])
+        self.assertTrue(evidence[0]["match"])
+
+    def test_python_and_ui_gates_remain_required_without_git(self) -> None:
+        state = {
+            "write_revision": 1, "changed_python_paths": ["module.py"],
+            "python_write_revision": 1, "python_verified_revision": None,
+            "python_verified_paths": [], "ui_smoke_required": False,
+        }
+        missing = server._verification_missing_requirements(state)
+        self.assertEqual([item["tool"] for item in missing], ["python_compile"])
+        state.update(changed_python_paths=[], ui_smoke_required=True,
+                     ui_smoke_write_revision=1, ui_smoke_verified_revision=None)
+        missing = server._verification_missing_requirements(state)
+        self.assertEqual([item["tool"] for item in missing], ["ui_smoke_test"])
 
     async def test_valid_pass_allows_normal_success(self) -> None:
         result, verifier, _client = await self.run_case(verifier_result("PASS"))
@@ -1103,7 +1192,8 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         status.assert_not_called()
         diff.assert_not_called()
         self.assertFalse(payload["fresh_git_status"]["available"])
-        self.assertIn("read_disabled", metadata["reasons"][0])
+        self.assertIn("READ is disabled", payload["fresh_git_status"]["reason"])
+        self.assertTrue(metadata["complete"])
         self.assertFalse(metadata["critical_for_success"])
 
     def test_context_hard_size_limit_is_critical_for_success(self) -> None:

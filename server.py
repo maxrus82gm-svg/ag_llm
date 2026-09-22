@@ -1512,6 +1512,51 @@ def _run_owned_state_fingerprint(
     )
 
 
+def _verify_run_owned_filesystem(
+    root: Path, run_owned_state: dict[str, dict[str, str]]
+) -> tuple[list[dict], list[str]]:
+    """Check current-RUN writes/deletes against physical files, without Executor READ."""
+    evidence: list[dict] = []
+    mismatches: list[str] = []
+    for relative_path, expected in sorted(run_owned_state.items()):
+        expected_state = expected.get("state")
+        expected_hash = expected.get("content_sha256") if expected_state == "present" else None
+        item = {
+            "path": relative_path,
+            "expected_state": expected_state,
+            "actual_state": "unavailable",
+            "expected_content_sha256": expected_hash,
+            "actual_content_sha256": None,
+            "match": False,
+        }
+        try:
+            lexical_path = root / relative_path
+            path = _resolve_workspace_path(root, relative_path)
+            _require_text_suffix(path)
+            if lexical_path.is_symlink():
+                item["actual_state"] = "symlink"
+            elif not path.exists():
+                item["actual_state"] = "absent"
+            elif not path.is_file():
+                item["actual_state"] = "not_regular_file"
+            else:
+                item["actual_state"] = "present"
+                encoding = "utf-16" if path.suffix.lower() == ".jsonl" else "utf-8"
+                item["actual_content_sha256"] = _sha256_utf8(
+                    path.read_text(encoding=encoding)
+                )
+            item["match"] = item["actual_state"] == expected_state and (
+                expected_state == "absent"
+                or item["actual_content_sha256"] == expected_hash
+            )
+        except Exception as exc:
+            item["reason"] = type(exc).__name__
+        if not item["match"]:
+            mismatches.append(f"run_owned_filesystem_mismatch:{relative_path}")
+        evidence.append(item)
+    return evidence, mismatches
+
+
 
 def _execute_agent_function(
     root: Path,
@@ -1621,23 +1666,6 @@ def _verification_missing_requirements(state: dict) -> list[dict]:
                 }
             )
 
-    if state.get("git_diff_revision") != state.get("write_revision"):
-        missing.append(
-            {
-                "tool": "git_diff",
-                "paths": [],
-                "reason": "git_diff должен быть выполнен после последней записи/удаления.",
-            }
-        )
-
-    if state.get("git_status_revision") != state.get("write_revision"):
-        missing.append(
-            {
-                "tool": "git_status",
-                "reason": "git_status должен быть выполнен после последней записи/удаления.",
-            }
-        )
-
     return missing
 
 
@@ -1683,6 +1711,7 @@ def _collect_final_audit_evidence(
     tool_call_count: int,
     verification_state: dict,
     backup_session: dict | None,
+    run_owned_state: dict[str, dict[str, str]] | None = None,
 ) -> tuple[str, dict]:
     """Build a bounded FINAL context only from server-observed facts."""
     mutation_manifest = (
@@ -1700,6 +1729,11 @@ def _collect_final_audit_evidence(
     mutation_evidence_incomplete_reasons: list[str] = []
     critical_reasons: list[str] = []
     any_truncated = False
+    run_owned_filesystem_evidence, filesystem_mismatches = (
+        _verify_run_owned_filesystem(root, run_owned_state or {})
+    )
+    incomplete_reasons.extend(filesystem_mismatches)
+    critical_reasons.extend(filesystem_mismatches)
 
     candidate_text, candidate_truncated, candidate_bytes = (
         _clip_final_audit_text(candidate_final, MAX_VERIFY_OUTPUT_BYTES)
@@ -1715,27 +1749,24 @@ def _collect_final_audit_evidence(
         # remains authoritative and is enforced by the existing primitives.
         audit_policy = dict(policy)
         audit_policy["allow_verify"] = True
-        fresh_status = {
-            "available": True,
-            **_agent_git_status(root, audit_policy),
-        }
-        fresh_diff = {
-            "available": True,
-            **_agent_git_diff(root, [], audit_policy),
-        }
+        try:
+            status_result = _agent_git_status(root, audit_policy)
+            fresh_status = {"available": bool(status_result.get("ok")), **status_result}
+        except Exception as exc:
+            fresh_status = {"available": False, "reason": type(exc).__name__}
+        try:
+            diff_result = _agent_git_diff(root, [], audit_policy)
+            fresh_diff = {"available": bool(diff_result.get("ok")), **diff_result}
+        except Exception as exc:
+            fresh_diff = {"available": False, "reason": type(exc).__name__}
         for label, evidence in (
             ("fresh_git_status", fresh_status),
             ("fresh_git_diff", fresh_diff),
         ):
             if not evidence.get("ok"):
-                reason = f"{label}_failed"
-                incomplete_reasons.append(reason)
-                mutation_evidence_incomplete_reasons.append(reason)
+                evidence.setdefault("reason", f"{label}_unavailable")
             if evidence.get("truncated"):
-                any_truncated = True
-                reason = f"{label}_truncated"
-                incomplete_reasons.append(reason)
-                mutation_evidence_incomplete_reasons.append(reason)
+                evidence.setdefault("reason", f"{label}_truncated")
     else:
         unavailable = {
             "available": False,
@@ -1745,9 +1776,6 @@ def _collect_final_audit_evidence(
         }
         fresh_status = dict(unavailable)
         fresh_diff = dict(unavailable)
-        reason = "fresh_git_evidence_unavailable_read_disabled"
-        incomplete_reasons.append(reason)
-        mutation_evidence_incomplete_reasons.append(reason)
 
     new_file_evidence = []
     remaining_new_file_bytes = MAX_FINAL_AUDIT_NEW_FILE_BYTES
@@ -1811,7 +1839,9 @@ def _collect_final_audit_evidence(
         "critical_for_success": bool(critical_reasons),
         "critical_reasons": critical_reasons,
         "critical_for_mutating_run": bool(
-            is_mutating_run and mutation_evidence_incomplete_reasons
+            is_mutating_run and (
+                mutation_evidence_incomplete_reasons or filesystem_mismatches
+            )
         ),
     }
     evidence = {
@@ -1826,6 +1856,10 @@ def _collect_final_audit_evidence(
             ),
             "mutation_facts": (
                 "Server-observed mutations performed during the current RUN."
+            ),
+            "run_owned_filesystem_evidence": (
+                "Server integrity check of the current RUN's expected file states "
+                "and logical content hashes; no file content is included."
             ),
             "fresh_git_state": (
                 "Workspace-wide observation that may include pre-existing or "
@@ -1862,6 +1896,7 @@ def _collect_final_audit_evidence(
             ),
         },
         "mutation_facts": mutation_facts,
+        "run_owned_filesystem_evidence": run_owned_filesystem_evidence,
         "fresh_git_status": fresh_status,
         "fresh_git_diff": fresh_diff,
         "new_file_evidence": new_file_evidence,
@@ -3132,6 +3167,7 @@ async def run_agent_task(
                         tool_call_count=tool_call_count,
                         verification_state=verification_state,
                         backup_session=backup_session,
+                        run_owned_state=final_audit_retry_state["run_owned_state"],
                     )
                 )
                 if evidence_completeness.get("critical_for_success"):
