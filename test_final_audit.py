@@ -16,15 +16,34 @@ import ultra_ui
 import verifier_runtime
 
 
-def verifier_result(verdict: str = "PASS") -> verifier_runtime.VerifierResult:
+def verifier_result(
+    verdict: str = "PASS",
+    *,
+    reason: str | None = None,
+    violations: tuple[str, ...] | None = None,
+    required_action: str | None = None,
+    verifier_run_id: str = "ver_test_final",
+) -> verifier_runtime.VerifierResult:
     failed = verdict == "FAIL"
     return verifier_runtime.VerifierResult(
         verdict=verdict,
         check_type="FINAL",
-        violations=("Required evidence is missing.",) if failed else (),
-        reason="Evidence is incomplete." if failed else "Evidence is sufficient.",
-        required_action="Collect the missing evidence." if failed else "None.",
-        verifier_run_id="ver_test_final",
+        violations=(
+            violations
+            if violations is not None
+            else (("Required evidence is missing.",) if failed else ())
+        ),
+        reason=(
+            reason
+            if reason is not None
+            else ("Evidence is incomplete." if failed else "Evidence is sufficient.")
+        ),
+        required_action=(
+            required_action
+            if required_action is not None
+            else ("Collect the missing evidence." if failed else "None.")
+        ),
+        verifier_run_id=verifier_run_id,
         model_id="gigachat_3_pro",
         model_display_name="GigaChat 3 Pro",
         provider="gigachat",
@@ -32,6 +51,16 @@ def verifier_result(verdict: str = "PASS") -> verifier_runtime.VerifierResult:
         task_id="task-test",
         checkpoint_id=None,
         operation_id=None,
+    )
+
+
+def fail_result(label: str) -> verifier_runtime.VerifierResult:
+    return verifier_result(
+        "FAIL",
+        reason=f"Reason {label}",
+        violations=(f"Violation {label}",),
+        required_action=f"Fix {label}",
+        verifier_run_id=f"ver_{label.lower()}",
     )
 
 
@@ -126,8 +155,12 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             verifier = AsyncMock(return_value=verifier_side_effect)
         self.last_verifier = verifier
         self.last_client = client
+        backup_dir = self.runtime / "backup" / "run"
+        backup_dir.mkdir(parents=True, exist_ok=True)
         backup = {
-            "backup_dir": self.runtime / "backup" / "run",
+            "backup_dir": backup_dir,
+            "backed_up_paths": set(),
+            "delete_backed_up_paths": set(),
             "manifest": {
                 "core_files": [],
                 "changed_files": [],
@@ -200,6 +233,11 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, "CANDIDATE FINAL")
         verifier.assert_awaited_once()
         self.assertIn("final_audit_passed", [item["event"] for item in self.events])
+        self.assertNotIn(
+            "final_audit_retry_evaluated",
+            [item["event"] for item in self.events],
+        )
+        self.assertNotIn("run_failed", [item["event"] for item in self.events])
         self.assertEqual(self.events[-1]["event"], "run_finished")
         self.assertEqual(self.events[-1]["status"], "SUCCESS")
 
@@ -209,6 +247,95 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(context["run_facts"]["tool_call_count"], 0)
         self.assertEqual(context["run_facts"]["write_revision"], 0)
         verifier.assert_awaited_once()
+
+    def test_candidate_fingerprint_is_conservative_nfc(self) -> None:
+        baseline = server._candidate_final_fingerprint("Café\r\n  code  \r\n")
+        equivalent = server._candidate_final_fingerprint(
+            "Cafe\u0301\n  code\n\n"
+        )
+        self.assertEqual(baseline, equivalent)
+        self.assertNotEqual(
+            baseline,
+            server._candidate_final_fingerprint("café\n  code"),
+        )
+        self.assertNotEqual(
+            baseline,
+            server._candidate_final_fingerprint("Café\n code"),
+        )
+
+    def test_failure_signatures_are_deterministic_and_distinct(self) -> None:
+        first = server._final_audit_failure_signatures(
+            check_type="FINAL",
+            reason="  REASON   A ",
+            violations=("Path X", "Section 2"),
+            required_action="Fix now",
+        )
+        reordered = server._final_audit_failure_signatures(
+            check_type="final",
+            reason="reason a",
+            violations=(" section 2 ", "PATH X"),
+            required_action=" FIX   NOW ",
+        )
+        self.assertEqual(first, reordered)
+
+        changed_action = server._final_audit_failure_signatures(
+            check_type="FINAL",
+            reason="Reason A",
+            violations=("Path X", "Section 2"),
+            required_action="Different action",
+        )
+        self.assertNotEqual(first[0], changed_action[0])
+        self.assertEqual(first[1], changed_action[1])
+
+        no_violations_a = server._final_audit_failure_signatures(
+            check_type="FINAL",
+            reason="Reason A",
+            violations=(),
+            required_action="One",
+        )
+        no_violations_b = server._final_audit_failure_signatures(
+            check_type="FINAL",
+            reason="Reason B",
+            violations=(),
+            required_action="One",
+        )
+        self.assertNotEqual(no_violations_a[1], no_violations_b[1])
+
+    def test_repeated_identical_write_is_not_run_owned_progress(self) -> None:
+        state = {}
+        empty = server._run_owned_state_fingerprint(state)
+        server._record_run_owned_mutation(
+            state,
+            function_name="write_file",
+            relative_path="folder/file.txt",
+            content="same content",
+        )
+        first = server._run_owned_state_fingerprint(state)
+        self.assertNotEqual(empty, first)
+
+        server._record_run_owned_mutation(
+            state,
+            function_name="write_file",
+            relative_path="folder\\file.txt",
+            content="same content",
+        )
+        self.assertEqual(first, server._run_owned_state_fingerprint(state))
+
+        server._record_run_owned_mutation(
+            state,
+            function_name="write_file",
+            relative_path="folder/file.txt",
+            content="different content",
+        )
+        changed = server._run_owned_state_fingerprint(state)
+        self.assertNotEqual(first, changed)
+
+        server._record_run_owned_mutation(
+            state,
+            function_name="delete_file",
+            relative_path="folder/file.txt",
+        )
+        self.assertNotEqual(changed, server._run_owned_state_fingerprint(state))
 
     async def test_non_mutating_truncated_candidate_blocks_before_verifier(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "FINAL AUDIT ERROR"):
@@ -225,6 +352,10 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("run_finished", names)
         failure = next(item for item in self.events if item["event"] == "run_failed")
         self.assertEqual(failure["reason"], "final_audit_evidence_incomplete")
+        error = next(
+            item for item in self.events if item["event"] == "final_audit_error"
+        )
+        self.assertEqual(error["final_audit_attempt_count"], 0)
 
     async def test_first_fail_hands_off_and_second_pass_returns_correction(self) -> None:
         client = FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate B")])
@@ -241,6 +372,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         expected = [
             "final_audit_started",
             "final_audit_failed",
+            "final_audit_retry_evaluated",
             "final_audit_feedback_created",
             "final_audit_feedback_delivered",
             "final_audit_correction_started",
@@ -261,6 +393,141 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             1,
         )
         self.assertEqual(self.events[-1]["status"], "SUCCESS")
+
+    async def test_two_corrections_then_pass(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        result, verifier, _client = await self.run_case(
+            [fail_result("A"), fail_result("B"), verifier_result("PASS")],
+            fake_client=client,
+        )
+        self.assertEqual(result, "Candidate C")
+        self.assertEqual(verifier.await_count, 3)
+        names = [item["event"] for item in self.events]
+        self.assertEqual(names.count("final_audit_feedback_created"), 2)
+        self.assertEqual(names.count("final_audit_feedback_delivered"), 2)
+        self.assertEqual(names.count("final_audit_correction_started"), 2)
+        self.assertEqual(names.count("final_audit_retry_evaluated"), 2)
+        self.assertNotIn("run_failed", names)
+        self.assertEqual(self.events[-1]["event"], "run_finished")
+        self.assertEqual(len({item["run_id"] for item in self.events}), 1)
+        for audit_call in verifier.await_args_list:
+            self.assertEqual(audit_call.kwargs["raw_task"], "ORIGINAL RAW TASK")
+            self.assertEqual(
+                audit_call.kwargs["task_id"],
+                verifier.await_args_list[0].kwargs["task_id"],
+            )
+            self.assertNotIn("messages", audit_call.kwargs)
+
+        retry_events = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ]
+        self.assertEqual(
+            [item["correction_count"] for item in retry_events],
+            [0, 1],
+        )
+        delivered = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_feedback_delivered"
+        ]
+        self.assertEqual(
+            [item["correction_count"] for item in delivered],
+            [1, 2],
+        )
+        self.assertEqual(
+            [item["remaining_corrections"] for item in delivered],
+            [1, 0],
+        )
+        self.assertEqual(
+            self.events[-2]["audit_attempt"],
+            3,
+        )
+
+        third_messages = client.bodies[2]["messages"]
+        self.assertEqual(third_messages[-2]["content"], "Candidate B")
+        second_feedback = third_messages[-1]["content"]
+        facts = json.loads(
+            second_feedback.split(
+                "SERVER FACTS — NOT TEMPLATE CONTROLLED:\n", 1
+            )[1]
+        )
+        self.assertEqual(facts["correction_cycle"], 2)
+        self.assertEqual(facts["correction_count"], 2)
+        self.assertEqual(facts["correction_limit"], 2)
+        self.assertEqual(facts["remaining_corrections"], 0)
+
+    async def test_candidate_only_progress_allows_second_handoff(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        await self.run_case(
+            [fail_result("A"), fail_result("B"), verifier_result("PASS")],
+            fake_client=client,
+        )
+        retry_events = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ]
+        self.assertEqual(retry_events[1]["progress_class"], "MATERIAL_PROGRESS")
+        self.assertTrue(retry_events[1]["candidate_changed"])
+        self.assertFalse(retry_events[1]["run_owned_state_changed"])
+        self.assertEqual(
+            [
+                item["event"]
+                for item in self.events
+                if item["event"] == "final_audit_feedback_delivered"
+            ].count("final_audit_feedback_delivered"),
+            2,
+        )
+
+    async def test_run_owned_mutation_is_material_progress(self) -> None:
+        self.permissions.update(allow_write=True, allow_verify=True, tool_limit=6)
+        client = FakeClient([
+            FakeResponse("Same Candidate"),
+            FakeResponse(
+                "",
+                finish_reason="function_call",
+                function_call={
+                    "name": "write_file",
+                    "arguments": {
+                        "path": "result.txt",
+                        "content": "version one",
+                    },
+                },
+            ),
+            FakeResponse("Same Candidate"),
+            FakeResponse("Final Candidate"),
+        ])
+        result, verifier, _client = await self.run_case(
+            [fail_result("A"), fail_result("B"), verifier_result("PASS")],
+            fake_client=client,
+            extra_patches=(
+                patch.object(
+                    server,
+                    "_verification_missing_requirements",
+                    return_value=[],
+                ),
+            ),
+        )
+        self.assertEqual(result, "Final Candidate")
+        self.assertEqual(verifier.await_count, 3)
+        retry_events = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ]
+        self.assertFalse(retry_events[1]["candidate_changed"])
+        self.assertTrue(retry_events[1]["run_owned_state_changed"])
+        self.assertEqual(retry_events[1]["progress_class"], "MATERIAL_PROGRESS")
 
     async def test_rejected_candidate_and_feedback_reach_second_request(self) -> None:
         client = FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate B")])
@@ -306,12 +573,22 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(facts["verdict"], "FAIL")
         self.assertEqual(facts["reason"], "Evidence is incomplete.")
         self.assertEqual(facts["correction_cycle"], 1)
-        self.assertEqual(facts["correction_limit"], 1)
+        self.assertEqual(facts["correction_count"], 1)
+        self.assertEqual(facts["correction_limit"], 2)
+        self.assertEqual(facts["remaining_corrections"], 1)
 
-    async def test_one_correction_allows_multiple_api_calls_and_a_tool(self) -> None:
+    async def test_one_correction_allows_multiple_api_and_tool_calls(self) -> None:
         (self.workspace / "sample.txt").write_text("sample", encoding="utf-8")
         client = FakeClient([
             FakeResponse("Candidate A"),
+            FakeResponse(
+                "",
+                finish_reason="function_call",
+                function_call={
+                    "name": "read_file",
+                    "arguments": {"path": "sample.txt"},
+                },
+            ),
             FakeResponse(
                 "",
                 finish_reason="function_call",
@@ -327,11 +604,11 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             fake_client=client,
         )
         self.assertEqual(result, "Candidate B")
-        self.assertEqual(client.post_count, 3)
+        self.assertEqual(client.post_count, 4)
         self.assertEqual(verifier.await_count, 2)
         names = [item["event"] for item in self.events]
         self.assertEqual(names.count("final_audit_feedback_created"), 1)
-        self.assertEqual(names.count("tool_finished"), 1)
+        self.assertEqual(names.count("tool_finished"), 2)
 
     async def test_verification_required_is_independent_of_correction(self) -> None:
         client = FakeClient([
@@ -364,18 +641,27 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         names = [item["event"] for item in self.events]
         self.assertEqual(names.count("verification_required"), 1)
         self.assertEqual(names.count("final_audit_feedback_created"), 1)
+        retry_events = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ]
+        self.assertEqual(len(retry_events), 1)
+        self.assertEqual(retry_events[0]["correction_count"], 0)
 
-    async def test_second_semantic_fail_is_terminal_and_exposes_details(self) -> None:
-        client = FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate B")])
+    async def test_no_progress_is_terminal_and_exposes_details(self) -> None:
+        client = FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate A")])
         with self.assertRaises(server.FinalAuditSemanticError) as raised:
             await self.run_case(
-                [verifier_result("FAIL"), verifier_result("FAIL")],
+                [fail_result("A"), fail_result("B")],
                 fake_client=client,
             )
-        self.assertIn("Evidence is incomplete", str(raised.exception))
-        self.assertIn("Required evidence is missing", str(raised.exception))
+        self.assertIn("NO_PROGRESS", str(raised.exception))
+        self.assertIn("Reason B", str(raised.exception))
+        self.assertIn("Violation B", str(raised.exception))
         names = [item["event"] for item in self.events]
         self.assertEqual(names.count("final_audit_failed"), 2)
+        self.assertEqual(names.count("final_audit_retry_evaluated"), 2)
         self.assertEqual(names.count("final_audit_feedback_created"), 1)
         self.assertEqual(names.count("final_audit_feedback_delivered"), 1)
         self.assertEqual(names.count("final_audit_correction_started"), 1)
@@ -385,9 +671,157 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             any(item["event"] == "run_finished" for item in self.events)
         )
         failure = next(item for item in self.events if item["event"] == "run_failed")
-        self.assertEqual(failure["reason"], "final_audit_correction_exhausted")
+        self.assertEqual(failure["reason"], "final_audit_retry_no_progress")
+        self.assertEqual(failure["audit_attempt"], 2)
+        self.assertEqual(failure["semantic_fail_count"], 2)
+        self.assertEqual(failure["correction_count"], 1)
+        second_failed = [
+            item for item in self.events if item["event"] == "final_audit_failed"
+        ][-1]
+        self.assertNotIn("correction_cycle", second_failed)
         self.assertEqual(self.last_verifier.await_count, 2)
         self.assertEqual(client.post_count, 2)
+
+    async def test_external_git_change_is_not_material_progress(self) -> None:
+        client = FakeClient([
+            FakeResponse("Same Candidate"),
+            FakeResponse("Same Candidate"),
+        ])
+        git_before = {
+            "ok": True,
+            "exit_code": 0,
+            "stdout": " M external-before.txt",
+            "stderr": "",
+            "truncated": False,
+        }
+        git_after = {
+            **git_before,
+            "stdout": " M external-after.txt",
+        }
+        with self.assertRaises(server.FinalAuditSemanticError):
+            await self.run_case(
+                [fail_result("A"), fail_result("B")],
+                fake_client=client,
+                extra_patches=(
+                    patch.object(
+                        server,
+                        "_agent_git_status",
+                        side_effect=[dict(git_before), dict(git_after)],
+                    ),
+                    patch.object(
+                        server,
+                        "_agent_git_diff",
+                        side_effect=[dict(git_before), dict(git_after)],
+                    ),
+                ),
+            )
+        retry = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ][-1]
+        self.assertEqual(retry["progress_class"], "NO_PROGRESS")
+        self.assertFalse(retry["candidate_changed"])
+        self.assertFalse(retry["run_owned_state_changed"])
+        failure = next(item for item in self.events if item["event"] == "run_failed")
+        self.assertEqual(failure["reason"], "final_audit_retry_no_progress")
+
+    async def test_deterministic_ping_pong_is_terminal(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        with self.assertRaisesRegex(
+            server.FinalAuditSemanticError, "PING_PONG"
+        ):
+            await self.run_case(
+                [fail_result("A"), fail_result("B"), fail_result("A")],
+                fake_client=client,
+            )
+        names = [item["event"] for item in self.events]
+        self.assertEqual(names.count("final_audit_feedback_delivered"), 2)
+        self.assertEqual(names.count("final_audit_retry_evaluated"), 3)
+        self.assertEqual(names.count("run_failed"), 1)
+        failure = next(item for item in self.events if item["event"] == "run_failed")
+        self.assertEqual(failure["reason"], "final_audit_retry_ping_pong")
+        self.assertEqual(failure["audit_attempt"], 3)
+        self.assertEqual(failure["semantic_fail_count"], 3)
+        self.assertEqual(failure["correction_count"], 2)
+        third_failed = [
+            item for item in self.events if item["event"] == "final_audit_failed"
+        ][-1]
+        self.assertNotIn("correction_cycle", third_failed)
+
+    async def test_repeated_core_failure_threshold_is_terminal(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        repeated = [
+            verifier_result(
+                "FAIL",
+                reason=f"wording {index}",
+                violations=("Same core violation",),
+                required_action=f"Action {index}",
+            )
+            for index in range(3)
+        ]
+        with self.assertRaisesRegex(
+            server.FinalAuditSemanticError, "REPEATED_FAILURE"
+        ):
+            await self.run_case(repeated, fake_client=client)
+        retry = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ][-1]
+        self.assertEqual(retry["same_core_failure_streak"], 3)
+        self.assertFalse(retry["ping_pong_detected"])
+        failure = next(item for item in self.events if item["event"] == "run_failed")
+        self.assertEqual(
+            failure["reason"], "final_audit_retry_repeated_failure"
+        )
+        self.assertEqual(
+            [item["event"] for item in self.events].count(
+                "final_audit_feedback_delivered"
+            ),
+            2,
+        )
+
+    async def test_pure_correction_budget_exhaustion_is_terminal(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        with self.assertRaisesRegex(
+            server.FinalAuditSemanticError, "CORRECTION_EXHAUSTED"
+        ):
+            await self.run_case(
+                [fail_result("A"), fail_result("B"), fail_result("C")],
+                fake_client=client,
+            )
+        retry = [
+            item
+            for item in self.events
+            if item["event"] == "final_audit_retry_evaluated"
+        ][-1]
+        self.assertEqual(retry["progress_class"], "MATERIAL_PROGRESS")
+        self.assertFalse(retry["ping_pong_detected"])
+        self.assertEqual(retry["same_core_failure_streak"], 1)
+        failure = next(item for item in self.events if item["event"] == "run_failed")
+        self.assertEqual(failure["reason"], "final_audit_correction_exhausted")
+        self.assertEqual(failure["audit_attempt"], 3)
+        self.assertEqual(failure["semantic_fail_count"], 3)
+        self.assertEqual(failure["correction_count"], 2)
+        self.assertEqual(
+            [item["event"] for item in self.events].count(
+                "final_audit_feedback_delivered"
+            ),
+            2,
+        )
 
     async def test_runtime_error_is_fail_closed_and_distinct(self) -> None:
         error = verifier_runtime.VerifierRuntimeError("transport unavailable")
@@ -398,6 +832,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("final_audit_failed", names)
         failure = next(item for item in self.events if item["event"] == "run_failed")
         self.assertEqual(failure["reason"], "final_audit_runtime_error")
+        self.assertEqual(failure["final_audit_attempt_count"], 1)
 
     async def test_protocol_error_is_fail_closed(self) -> None:
         error = verifier_runtime.VerifierProtocolError("malformed response")
@@ -424,6 +859,30 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             next(item for item in self.events if item["event"] == "run_failed")["reason"],
             "final_audit_runtime_error",
         )
+
+    async def test_protocol_error_after_two_corrections_is_terminal(self) -> None:
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("Candidate B"),
+            FakeResponse("Candidate C"),
+        ])
+        with self.assertRaisesRegex(RuntimeError, "VerifierProtocolError"):
+            await self.run_case(
+                [
+                    fail_result("A"),
+                    fail_result("B"),
+                    verifier_runtime.VerifierProtocolError("malformed response"),
+                ],
+                fake_client=client,
+            )
+        names = [item["event"] for item in self.events]
+        self.assertEqual(names.count("final_audit_feedback_delivered"), 2)
+        self.assertEqual(names.count("final_audit_retry_evaluated"), 2)
+        self.assertEqual(names.count("final_audit_error"), 1)
+        self.assertEqual(names.count("run_failed"), 1)
+        self.assertNotIn("run_finished", names)
+        error = next(item for item in self.events if item["event"] == "final_audit_error")
+        self.assertEqual(error["final_audit_attempt_count"], 3)
 
     async def test_explicit_model_assignment_reaches_verifier(self) -> None:
         _result, verifier, _client = await self.run_case(
@@ -454,7 +913,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("messages", verifier.await_args_list[0].kwargs)
         self.assertNotIn("messages", verifier.await_args_list[1].kwargs)
 
-    def test_v4_handoff_does_not_persist_chat_messages(self) -> None:
+    def test_v5_handoffs_do_not_persist_chat_messages(self) -> None:
         source = inspect.getsource(server.run_agent_task)
         self.assertNotIn("append_raw_message", source)
 
@@ -605,6 +1064,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         verifier.assert_not_awaited()
         failure = next(item for item in self.events if item["event"] == "run_failed")
         self.assertEqual(failure["reason"], "final_audit_evidence_incomplete")
+        self.assertEqual(failure["final_audit_attempt_count"], 0)
 
     async def test_trace_outcomes_are_distinct(self) -> None:
         await self.run_case(verifier_result("PASS"))

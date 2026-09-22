@@ -518,14 +518,15 @@ register_server_context_event(
 
 register_server_context_event(
     "final_audit.feedback",
-    "Final Audit заблокировал SUCCESS и запросил единственную коррекцию RUN.",
+    "Final Audit заблокировал SUCCESS и запросил ограниченную коррекцию RUN.",
     (
         "SERVER FINAL VERIFIER FEEDBACK — SUCCESS ЗАБЛОКИРОВАН.\n\n"
         "РЕЗУЛЬТАТ:\n{verdict}\n\n"
         "ПРИЧИНА:\n{reason}\n\n"
         "НАРУШЕНИЯ:\n{violations_lines}\n\n"
         "ТРЕБУЕМОЕ ДЕЙСТВИЕ:\n{required_action}\n\n"
-        "ЦИКЛ КОРРЕКЦИИ: {correction_cycle} из {correction_limit}.\n\n"
+        "ЦИКЛ КОРРЕКЦИИ: {correction_cycle} из {correction_limit}.\n"
+        "ОСТАЛОСЬ КОРРЕКЦИЙ: {remaining_corrections}.\n\n"
         "Это серверная обратная связь Final Verifier по исходной RAW TASK, "
         "а НЕ новая пользовательская задача. RAW TASK остаётся источником "
         "истины и имеет приоритет. Исправь фактический результат задачи, "

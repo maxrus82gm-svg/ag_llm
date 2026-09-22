@@ -180,7 +180,8 @@ class ServerContextMessagesTests(unittest.TestCase):
             "verifier_run_id": "ver-1",
             "check_type": "FINAL",
             "correction_cycle": 1,
-            "correction_limit": 1,
+            "correction_limit": 2,
+            "remaining_corrections": 1,
         }
         text = resolve_server_context_message(
             "final_audit.feedback", variables, path=self.path
@@ -190,7 +191,8 @@ class ServerContextMessagesTests(unittest.TestCase):
         self.assertIn("Недостаточно доказательств", text)
         self.assertIn("Не выполнена проверка", text)
         self.assertIn("Выполнить проверку", text)
-        self.assertIn("1 из 1", text)
+        self.assertIn("1 из 2", text)
+        self.assertIn("ОСТАЛОСЬ КОРРЕКЦИЙ: 1", text)
         self.assertIn("НЕ новая пользовательская задача", text)
         self.assertNotIn("{verdict}", text)
         self.assertEqual(
@@ -206,7 +208,8 @@ class ServerContextMessagesTests(unittest.TestCase):
             "verifier_run_id": "ver-1",
             "check_type": "FINAL",
             "correction_cycle": 1,
-            "correction_limit": 1,
+            "correction_limit": 2,
+            "remaining_corrections": 1,
         }
         upsert_server_context_message(
             "final_audit.feedback",

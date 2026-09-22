@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -106,7 +107,8 @@ MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
 MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
 MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
-FINAL_AUDIT_CORRECTION_LIMIT = 1
+FINAL_AUDIT_CORRECTION_LIMIT = 2
+FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD = 3
 VERIFY_TIMEOUT_SECONDS = 30
 UI_SMOKE_TIMEOUT_SECONDS = 30
 MAX_VERIFICATION_GATE_RETRIES = 3
@@ -1396,6 +1398,120 @@ def _safe_tool_result_summary(
     )[:500]
 
 
+def _sha256_utf8(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _candidate_final_fingerprint(candidate: str) -> str:
+    """Fingerprint Candidate без разрушения значимого текста/отступов."""
+
+    normalized = unicodedata.normalize("NFC", str(candidate))
+    normalized = normalized.replace("\r\n", "\n").replace("\r", "\n")
+    normalized = "\n".join(line.rstrip() for line in normalized.split("\n"))
+    normalized = normalized.strip("\n")
+    return _sha256_utf8(normalized)
+
+
+def _normalize_final_audit_failure_prose(value: object) -> str:
+    normalized = unicodedata.normalize("NFKC", str(value)).casefold()
+    return re.sub(r"\s+", " ", normalized).strip()
+
+
+def _final_audit_failure_signatures(
+    *,
+    check_type: str,
+    reason: str,
+    violations: tuple[str, ...] | list[str],
+    required_action: str,
+) -> tuple[str, str]:
+    normalized_check_type = _normalize_final_audit_failure_prose(check_type)
+    normalized_reason = _normalize_final_audit_failure_prose(reason)
+    normalized_violations = sorted(
+        _normalize_final_audit_failure_prose(item) for item in violations
+    )
+    normalized_required_action = _normalize_final_audit_failure_prose(
+        required_action
+    )
+    exact_payload = {
+        "check_type": normalized_check_type,
+        "reason": normalized_reason,
+        "violations": normalized_violations,
+        "required_action": normalized_required_action,
+    }
+    core_payload = {
+        "check_type": normalized_check_type,
+        "failure_core": (
+            normalized_violations
+            if normalized_violations
+            else normalized_reason
+        ),
+    }
+    exact_signature = _sha256_utf8(
+        json.dumps(
+            exact_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    core_signature = _sha256_utf8(
+        json.dumps(
+            core_payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    return exact_signature, core_signature
+
+
+def _record_run_owned_mutation(
+    run_owned_state: dict[str, dict[str, str]],
+    *,
+    function_name: str,
+    relative_path: str,
+    content: str | None = None,
+) -> None:
+    path = str(relative_path).replace("\\", "/")
+    if function_name == "write_file":
+        if not isinstance(content, str):
+            raise TypeError("Успешный write_file должен иметь logical content.")
+        run_owned_state[path] = {
+            "state": "present",
+            "content_sha256": _sha256_utf8(content),
+        }
+        return
+    if function_name == "delete_file":
+        run_owned_state[path] = {"state": "absent"}
+        return
+    raise ValueError(f"Неизвестная RUN-owned mutation: {function_name!r}.")
+
+
+def _run_owned_state_fingerprint(
+    run_owned_state: dict[str, dict[str, str]],
+) -> str:
+    canonical = [
+        {
+            "path": path,
+            "state": record["state"],
+            **(
+                {"content_sha256": record["content_sha256"]}
+                if record["state"] == "present"
+                else {}
+            ),
+        }
+        for path, record in sorted(run_owned_state.items())
+    ]
+    return _sha256_utf8(
+        json.dumps(
+            canonical,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+
+
 
 def _execute_agent_function(
     root: Path,
@@ -2182,7 +2298,14 @@ async def run_agent_task(
     }
     last_verification_gate_signature = None
     verification_gate_repeat_count = 0
-    final_audit_feedback_count = 0
+    final_audit_retry_state = {
+        "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
+        "correction_count": 0,
+        "final_audit_attempt_count": 0,
+        "semantic_fail_count": 0,
+        "failure_history": [],
+        "run_owned_state": {},
+    }
 
     guard_p1_state = {
         "used_paths": set(),
@@ -2623,13 +2746,33 @@ async def run_agent_task(
                     }
 
                 if tool_ok and function_name in {"write_file", "delete_file"}:
+                    successful_arguments = _parse_agent_arguments(
+                        function_name,
+                        function_call.get("arguments"),
+                    )
+                    changed_path = (
+                        result.get("path") if isinstance(result, dict) else None
+                    )
+                    if not isinstance(changed_path, str):
+                        raise RuntimeError(
+                            "Успешная mutation не вернула относительный path."
+                        )
+                    _record_run_owned_mutation(
+                        final_audit_retry_state["run_owned_state"],
+                        function_name=function_name,
+                        relative_path=changed_path,
+                        content=(
+                            successful_arguments["content"]
+                            if function_name == "write_file"
+                            else None
+                        ),
+                    )
                     verification_state["write_revision"] += 1
                     current_revision = verification_state["write_revision"]
                     # Любая мутация делает обзор рабочего дерева устаревшим.
                     verification_state["git_status_revision"] = None
                     verification_state["git_diff_revision"] = None
 
-                    changed_path = result.get("path") if isinstance(result, dict) else None
                     if isinstance(changed_path, str) and changed_path.lower().endswith(".py"):
                         verification_state["python_write_revision"] = current_revision
                         verification_state["python_verified_revision"] = None
@@ -2999,6 +3142,10 @@ async def run_agent_task(
                         )
                     )
 
+                final_audit_retry_state["final_audit_attempt_count"] += 1
+                audit_attempt = final_audit_retry_state[
+                    "final_audit_attempt_count"
+                ]
                 audit_result = await run_verifier_check(
                     verifier_model_id=verifier_model_id,
                     check_type="FINAL",
@@ -3008,10 +3155,119 @@ async def run_agent_task(
                 )
 
                 if audit_result.verdict == "FAIL":
-                    correction_cycle = final_audit_feedback_count + 1
-                    handoff_available = (
-                        final_audit_feedback_count
-                        < FINAL_AUDIT_CORRECTION_LIMIT
+                    final_audit_retry_state["semantic_fail_count"] += 1
+                    semantic_fail_count = final_audit_retry_state[
+                        "semantic_fail_count"
+                    ]
+                    correction_count = final_audit_retry_state[
+                        "correction_count"
+                    ]
+                    correction_limit = final_audit_retry_state[
+                        "correction_limit"
+                    ]
+                    candidate_fingerprint = _candidate_final_fingerprint(
+                        content
+                    )
+                    run_owned_state_fingerprint = (
+                        _run_owned_state_fingerprint(
+                            final_audit_retry_state["run_owned_state"]
+                        )
+                    )
+                    (
+                        exact_failure_signature,
+                        core_failure_signature,
+                    ) = _final_audit_failure_signatures(
+                        check_type=audit_result.check_type,
+                        reason=audit_result.reason,
+                        violations=audit_result.violations,
+                        required_action=audit_result.required_action,
+                    )
+
+                    history = final_audit_retry_state["failure_history"]
+                    previous_failure = history[-1] if history else None
+                    if previous_failure is None:
+                        candidate_changed = False
+                        run_owned_state_changed = False
+                        progress_class = "INITIAL"
+                    else:
+                        candidate_changed = (
+                            candidate_fingerprint
+                            != previous_failure["candidate_fingerprint"]
+                        )
+                        run_owned_state_changed = (
+                            run_owned_state_fingerprint
+                            != previous_failure[
+                                "run_owned_state_fingerprint"
+                            ]
+                        )
+                        progress_class = (
+                            "MATERIAL_PROGRESS"
+                            if candidate_changed or run_owned_state_changed
+                            else "NO_PROGRESS"
+                        )
+
+                    same_core_failure_streak = (
+                        previous_failure["same_core_failure_streak"] + 1
+                        if previous_failure is not None
+                        and previous_failure["core_failure_signature"]
+                        == core_failure_signature
+                        else 1
+                    )
+                    failure_snapshot = {
+                        "audit_attempt": audit_attempt,
+                        "semantic_fail_count": semantic_fail_count,
+                        "candidate_fingerprint": candidate_fingerprint,
+                        "run_owned_state_fingerprint": (
+                            run_owned_state_fingerprint
+                        ),
+                        "exact_failure_signature": exact_failure_signature,
+                        "core_failure_signature": core_failure_signature,
+                        "same_core_failure_streak": (
+                            same_core_failure_streak
+                        ),
+                    }
+                    history.append(failure_snapshot)
+                    history_limit = max(
+                        correction_limit + 1,
+                        FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD,
+                        3,
+                    )
+                    del history[:-history_limit]
+                    ping_pong_detected = (
+                        len(history) >= 3
+                        and history[-1]["core_failure_signature"]
+                        == history[-3]["core_failure_signature"]
+                        and history[-1]["core_failure_signature"]
+                        != history[-2]["core_failure_signature"]
+                    )
+
+                    terminal_reason = None
+                    policy_reason = progress_class
+                    if progress_class == "NO_PROGRESS":
+                        terminal_reason = "final_audit_retry_no_progress"
+                        policy_reason = "NO_PROGRESS"
+                    elif ping_pong_detected:
+                        terminal_reason = "final_audit_retry_ping_pong"
+                        policy_reason = "PING_PONG"
+                    elif (
+                        same_core_failure_streak
+                        >= FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD
+                    ):
+                        terminal_reason = (
+                            "final_audit_retry_repeated_failure"
+                        )
+                        policy_reason = "REPEATED_FAILURE"
+                    elif correction_count >= correction_limit:
+                        terminal_reason = "final_audit_correction_exhausted"
+                        policy_reason = "CORRECTION_EXHAUSTED"
+
+                    decision = (
+                        "TERMINATE" if terminal_reason else "CONTINUE"
+                    )
+                    correction_cycle = (
+                        correction_count + 1
+                        if decision == "CONTINUE"
+                        else None
                     )
                     _emit(
                         "final_audit_failed",
@@ -3024,10 +3280,50 @@ async def run_agent_task(
                             "violations_count": len(audit_result.violations),
                             "reason": audit_result.reason,
                             "required_action": audit_result.required_action,
-                            "correction_cycle": correction_cycle,
-                            "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
-                            "correction_handoff_available": handoff_available,
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_count,
+                            "correction_limit": correction_limit,
+                            "correction_handoff_available": (
+                                decision == "CONTINUE"
+                            ),
+                            **(
+                                {"correction_cycle": correction_cycle}
+                                if correction_cycle is not None
+                                else {}
+                            ),
                             "duration": time.time() - final_audit_started_at,
+                        },
+                    )
+
+                    _emit(
+                        "final_audit_retry_evaluated",
+                        {
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_count,
+                            "correction_limit": correction_limit,
+                            "candidate_fingerprint": candidate_fingerprint,
+                            "run_owned_state_fingerprint": (
+                                run_owned_state_fingerprint
+                            ),
+                            "exact_failure_signature": (
+                                exact_failure_signature
+                            ),
+                            "core_failure_signature": (
+                                core_failure_signature
+                            ),
+                            "progress_class": progress_class,
+                            "candidate_changed": candidate_changed,
+                            "run_owned_state_changed": (
+                                run_owned_state_changed
+                            ),
+                            "same_core_failure_streak": (
+                                same_core_failure_streak
+                            ),
+                            "ping_pong_detected": ping_pong_detected,
+                            "decision": decision,
+                            "decision_reason": policy_reason,
                         },
                     )
 
@@ -3035,7 +3331,42 @@ async def run_agent_task(
                         f"- {item}" for item in audit_result.violations
                     ) or "- отсутствуют"
 
-                    if handoff_available:
+                    if terminal_reason is not None:
+                        _emit(
+                            "run_failed",
+                            {
+                                "reason": terminal_reason,
+                                "api_requests": api_request_count,
+                                "tool_calls": tool_call_count,
+                                "duration": time.time() - start_time,
+                                "verifier_reason": audit_result.reason,
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                                "required_action": (
+                                    audit_result.required_action
+                                ),
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_count,
+                                "correction_limit": correction_limit,
+                                "policy_reason": policy_reason,
+                                "trace_path": str(runtime_log_path),
+                            },
+                        )
+                        raise FinalAuditSemanticError(
+                            "FINAL AUDIT RETRY TERMINATED\n"
+                            f"Policy: {policy_reason}\n"
+                            f"Reason: {audit_result.reason}\n"
+                            f"Violations:\n{violations}\n"
+                            "Required action: "
+                            f"{audit_result.required_action}"
+                        )
+
+                    if correction_cycle is not None:
+                        remaining_corrections = (
+                            correction_limit - correction_cycle
+                        )
                         feedback_template = _context_message(
                             "final_audit.feedback",
                             {
@@ -3050,8 +3381,9 @@ async def run_agent_task(
                                 ),
                                 "check_type": audit_result.check_type,
                                 "correction_cycle": correction_cycle,
-                                "correction_limit": (
-                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
                                 ),
                             },
                         )
@@ -3076,9 +3408,13 @@ async def run_agent_task(
                             "required_action": (
                                 audit_result.required_action
                             ),
+                            "audit_attempt": audit_attempt,
+                            "semantic_fail_count": semantic_fail_count,
+                            "correction_count": correction_cycle,
                             "correction_cycle": correction_cycle,
-                            "correction_limit": (
-                                FINAL_AUDIT_CORRECTION_LIMIT
+                            "correction_limit": correction_limit,
+                            "remaining_corrections": (
+                                remaining_corrections
                             ),
                         }
                         feedback_content = (
@@ -3097,9 +3433,12 @@ async def run_agent_task(
                                     audit_result.verifier_run_id
                                 ),
                                 "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
                                 "correction_cycle": correction_cycle,
-                                "correction_limit": (
-                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
                                 ),
                                 "feedback_chars": len(feedback_content),
                                 "violations_count": len(
@@ -3113,7 +3452,9 @@ async def run_agent_task(
                         messages.append(
                             {"role": "user", "content": feedback_content}
                         )
-                        final_audit_feedback_count += 1
+                        final_audit_retry_state["correction_count"] = (
+                            correction_cycle
+                        )
                         _emit(
                             "final_audit_feedback_delivered",
                             {
@@ -3121,9 +3462,13 @@ async def run_agent_task(
                                     audit_result.verifier_run_id
                                 ),
                                 "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_cycle,
                                 "correction_cycle": correction_cycle,
-                                "correction_limit": (
-                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
                                 ),
                                 "feedback_chars": len(feedback_content),
                                 "violations_count": len(
@@ -3138,35 +3483,17 @@ async def run_agent_task(
                                     audit_result.verifier_run_id
                                 ),
                                 "check_type": audit_result.check_type,
+                                "audit_attempt": audit_attempt,
+                                "semantic_fail_count": semantic_fail_count,
+                                "correction_count": correction_cycle,
                                 "correction_cycle": correction_cycle,
-                                "correction_limit": (
-                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                "correction_limit": correction_limit,
+                                "remaining_corrections": (
+                                    remaining_corrections
                                 ),
                             },
                         )
                         continue
-
-                    _emit(
-                        "run_failed",
-                        {
-                            "reason": "final_audit_correction_exhausted",
-                            "api_requests": api_request_count,
-                            "tool_calls": tool_call_count,
-                            "duration": time.time() - start_time,
-                            "verifier_reason": audit_result.reason,
-                            "violations_count": len(audit_result.violations),
-                            "required_action": audit_result.required_action,
-                            "correction_count": final_audit_feedback_count,
-                            "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
-                            "trace_path": str(runtime_log_path),
-                        },
-                    )
-                    raise FinalAuditSemanticError(
-                        "FINAL AUDIT FAILED AFTER CORRECTION EXHAUSTION\n"
-                        f"Reason: {audit_result.reason}\n"
-                        f"Violations:\n{violations}\n"
-                        f"Required action: {audit_result.required_action}"
-                    )
 
                 if audit_result.verdict != "PASS":
                     raise VerifierProtocolError(
@@ -3184,6 +3511,16 @@ async def run_agent_task(
                         "verdict": audit_result.verdict,
                         "violations_count": len(audit_result.violations),
                         "reason": audit_result.reason,
+                        "audit_attempt": audit_attempt,
+                        "semantic_fail_count": final_audit_retry_state[
+                            "semantic_fail_count"
+                        ],
+                        "correction_count": final_audit_retry_state[
+                            "correction_count"
+                        ],
+                        "correction_limit": final_audit_retry_state[
+                            "correction_limit"
+                        ],
                         "duration": time.time() - final_audit_started_at,
                     },
                 )
@@ -3202,6 +3539,11 @@ async def run_agent_task(
                         "check_type": "FINAL",
                         "error_type": type(exc).__name__,
                         "reason": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
                         "duration": time.time() - final_audit_started_at,
                     },
                 )
@@ -3214,6 +3556,11 @@ async def run_agent_task(
                         "duration": time.time() - start_time,
                         "error_type": type(exc).__name__,
                         "error": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
                         "trace_path": str(runtime_log_path),
                     },
                 )
@@ -3230,6 +3577,11 @@ async def run_agent_task(
                         "check_type": "FINAL",
                         "error_type": type(exc).__name__,
                         "reason": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
                         "duration": time.time() - final_audit_started_at,
                     },
                 )
@@ -3242,6 +3594,11 @@ async def run_agent_task(
                         "duration": time.time() - start_time,
                         "error_type": type(exc).__name__,
                         "error": str(exc),
+                        "final_audit_attempt_count": (
+                            final_audit_retry_state[
+                                "final_audit_attempt_count"
+                            ]
+                        ),
                         "trace_path": str(runtime_log_path),
                     },
                 )
