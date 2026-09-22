@@ -13,6 +13,7 @@ from server_context_messages import (
 
 
 ACTIVE_EVENT_IDS = {
+    "final_audit.feedback",
     "permission.denied",
     "tool.error",
     "guard.repeat",
@@ -169,6 +170,81 @@ class ServerContextMessagesTests(unittest.TestCase):
         self.assertIn("read_file", text)
         self.assertIn("ValueError", text)
         self.assertEqual(diagnostics[-1]["fallback"], "default_text")
+
+    def test_07_final_audit_feedback_default_is_russian_and_resolves(self) -> None:
+        variables = {
+            "verdict": "FAIL",
+            "reason": "Недостаточно доказательств.",
+            "violations_lines": "- Не выполнена проверка.",
+            "required_action": "Выполнить проверку.",
+            "verifier_run_id": "ver-1",
+            "check_type": "FINAL",
+            "correction_cycle": 1,
+            "correction_limit": 1,
+        }
+        text = resolve_server_context_message(
+            "final_audit.feedback", variables, path=self.path
+        )
+        self.assertIn("SERVER FINAL VERIFIER FEEDBACK", text)
+        self.assertIn("РЕЗУЛЬТАТ:\nFAIL", text)
+        self.assertIn("Недостаточно доказательств", text)
+        self.assertIn("Не выполнена проверка", text)
+        self.assertIn("Выполнить проверку", text)
+        self.assertIn("1 из 1", text)
+        self.assertIn("НЕ новая пользовательская задача", text)
+        self.assertNotIn("{verdict}", text)
+        self.assertEqual(
+            self.records()["final_audit.feedback"]["status"], "ACTIVE"
+        )
+
+    def test_08_final_audit_feedback_override_and_invalid_fallback(self) -> None:
+        variables = {
+            "verdict": "FAIL",
+            "reason": "Причина",
+            "violations_lines": "- Нарушение",
+            "required_action": "Исправить",
+            "verifier_run_id": "ver-1",
+            "check_type": "FINAL",
+            "correction_cycle": 1,
+            "correction_limit": 1,
+        }
+        upsert_server_context_message(
+            "final_audit.feedback",
+            "Пользовательская подача feedback.",
+            "CUSTOM {verdict}: {reason} / {required_action}",
+            path=self.path,
+        )
+        self.assertEqual(
+            resolve_server_context_message(
+                "final_audit.feedback", variables, path=self.path
+            ),
+            "CUSTOM FAIL: Причина / Исправить",
+        )
+
+        upsert_server_context_message(
+            "final_audit.feedback",
+            "Некорректный override.",
+            "BROKEN {unknown}",
+            path=self.path,
+        )
+        diagnostics = []
+        with self.assertWarns(RuntimeWarning):
+            fallback = resolve_server_context_message(
+                "final_audit.feedback",
+                variables,
+                path=self.path,
+                on_warning=diagnostics.append,
+            )
+        self.assertIn("SERVER FINAL VERIFIER FEEDBACK", fallback)
+        self.assertIn("Причина", fallback)
+        self.assertEqual(diagnostics[-1]["fallback"], "default_text")
+
+    def test_09_final_audit_template_does_not_own_server_facts(self) -> None:
+        record = self.records()["final_audit.feedback"]
+        editable_template = record["default_template"]
+        self.assertNotIn("SERVER FACTS — NOT TEMPLATE CONTROLLED", editable_template)
+        self.assertNotIn("SUCCESS_BLOCKED_CORRECTION_REQUESTED", editable_template)
+        self.assertNotIn('"run_id"', editable_template)
 
 
 if __name__ == "__main__":

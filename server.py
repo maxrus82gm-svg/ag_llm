@@ -106,6 +106,7 @@ MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
 MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
 MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
+FINAL_AUDIT_CORRECTION_LIMIT = 1
 VERIFY_TIMEOUT_SECONDS = 30
 UI_SMOKE_TIMEOUT_SECONDS = 30
 MAX_VERIFICATION_GATE_RETRIES = 3
@@ -2181,6 +2182,7 @@ async def run_agent_task(
     }
     last_verification_gate_signature = None
     verification_gate_repeat_count = 0
+    final_audit_feedback_count = 0
 
     guard_p1_state = {
         "used_paths": set(),
@@ -3006,6 +3008,11 @@ async def run_agent_task(
                 )
 
                 if audit_result.verdict == "FAIL":
+                    correction_cycle = final_audit_feedback_count + 1
+                    handoff_available = (
+                        final_audit_feedback_count
+                        < FINAL_AUDIT_CORRECTION_LIMIT
+                    )
                     _emit(
                         "final_audit_failed",
                         {
@@ -3017,27 +3024,145 @@ async def run_agent_task(
                             "violations_count": len(audit_result.violations),
                             "reason": audit_result.reason,
                             "required_action": audit_result.required_action,
+                            "correction_cycle": correction_cycle,
+                            "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
+                            "correction_handoff_available": handoff_available,
                             "duration": time.time() - final_audit_started_at,
                         },
                     )
+
+                    violations = "\n".join(
+                        f"- {item}" for item in audit_result.violations
+                    ) or "- отсутствуют"
+
+                    if handoff_available:
+                        feedback_template = _context_message(
+                            "final_audit.feedback",
+                            {
+                                "verdict": audit_result.verdict,
+                                "reason": audit_result.reason,
+                                "violations_lines": violations,
+                                "required_action": (
+                                    audit_result.required_action
+                                ),
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": (
+                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                ),
+                            },
+                        )
+                        server_facts = {
+                            "event_id": "final_audit.feedback",
+                            "message_kind": (
+                                "SERVER_FINAL_VERIFIER_FEEDBACK"
+                            ),
+                            "is_new_user_task": False,
+                            "raw_task_authority": "SOURCE_OF_TRUTH",
+                            "decision": (
+                                "SUCCESS_BLOCKED_CORRECTION_REQUESTED"
+                            ),
+                            "run_id": run_id,
+                            "verifier_run_id": (
+                                audit_result.verifier_run_id
+                            ),
+                            "check_type": audit_result.check_type,
+                            "verdict": audit_result.verdict,
+                            "reason": audit_result.reason,
+                            "violations": list(audit_result.violations),
+                            "required_action": (
+                                audit_result.required_action
+                            ),
+                            "correction_cycle": correction_cycle,
+                            "correction_limit": (
+                                FINAL_AUDIT_CORRECTION_LIMIT
+                            ),
+                        }
+                        feedback_content = (
+                            feedback_template
+                            + "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                            + json.dumps(
+                                server_facts,
+                                ensure_ascii=False,
+                                sort_keys=True,
+                            )
+                        )
+                        _emit(
+                            "final_audit_feedback_created",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": (
+                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                ),
+                                "feedback_chars": len(feedback_content),
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                            },
+                        )
+                        messages.append(
+                            {"role": "assistant", "content": content}
+                        )
+                        messages.append(
+                            {"role": "user", "content": feedback_content}
+                        )
+                        final_audit_feedback_count += 1
+                        _emit(
+                            "final_audit_feedback_delivered",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": (
+                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                ),
+                                "feedback_chars": len(feedback_content),
+                                "violations_count": len(
+                                    audit_result.violations
+                                ),
+                            },
+                        )
+                        _emit(
+                            "final_audit_correction_started",
+                            {
+                                "verifier_run_id": (
+                                    audit_result.verifier_run_id
+                                ),
+                                "check_type": audit_result.check_type,
+                                "correction_cycle": correction_cycle,
+                                "correction_limit": (
+                                    FINAL_AUDIT_CORRECTION_LIMIT
+                                ),
+                            },
+                        )
+                        continue
+
                     _emit(
                         "run_failed",
                         {
-                            "reason": "final_audit_semantic_fail",
+                            "reason": "final_audit_correction_exhausted",
                             "api_requests": api_request_count,
                             "tool_calls": tool_call_count,
                             "duration": time.time() - start_time,
                             "verifier_reason": audit_result.reason,
                             "violations_count": len(audit_result.violations),
                             "required_action": audit_result.required_action,
+                            "correction_count": final_audit_feedback_count,
+                            "correction_limit": FINAL_AUDIT_CORRECTION_LIMIT,
                             "trace_path": str(runtime_log_path),
                         },
                     )
-                    violations = "\n".join(
-                        f"- {item}" for item in audit_result.violations
-                    ) or "- отсутствуют"
                     raise FinalAuditSemanticError(
-                        "FINAL AUDIT FAILED\n"
+                        "FINAL AUDIT FAILED AFTER CORRECTION EXHAUSTION\n"
                         f"Reason: {audit_result.reason}\n"
                         f"Violations:\n{violations}\n"
                         f"Required action: {audit_result.required_action}"
