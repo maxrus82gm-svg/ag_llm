@@ -612,10 +612,17 @@ def _policy_summary(policy: dict) -> dict:
 
 def _write_backup_manifest(session: dict) -> None:
     manifest_path = session["backup_dir"] / "manifest.json"
-    manifest_path.write_text(
-        json.dumps(session["manifest"], ensure_ascii=False, indent=2),
-        encoding="utf-8",
+    content = json.dumps(session["manifest"], ensure_ascii=False, indent=2)
+    fd, temporary_name = tempfile.mkstemp(
+        prefix=".manifest.", suffix=".tmp", dir=session["backup_dir"]
     )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as stream:
+            stream.write(content)
+        os.replace(temporary_name, manifest_path)
+    finally:
+        if os.path.exists(temporary_name):
+            os.unlink(temporary_name)
 
 def _create_backup_session(
     app_dir: Path,
@@ -686,17 +693,22 @@ def _backup_before_write(root: Path, path: Path, session: dict | None) -> None:
     if relative in session["backed_up_paths"]:
         return
 
-    session["backed_up_paths"].add(relative)
     if path.exists():
         if not path.is_file():
             raise ValueError(f"Нельзя резервировать не-файл: {relative}")
         destination = session["backup_dir"] / "changed" / Path(relative)
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, destination)
-        session["manifest"]["changed_files"].append(relative)
+        manifest_key = "changed_files"
     else:
-        session["manifest"]["new_files"].append(relative)
-    _write_backup_manifest(session)
+        manifest_key = "new_files"
+    updated_manifest = dict(session["manifest"])
+    updated_manifest[manifest_key] = [
+        *updated_manifest[manifest_key], relative
+    ]
+    _write_backup_manifest({**session, "manifest": updated_manifest})
+    session["manifest"] = updated_manifest
+    session["backed_up_paths"].add(relative)
 
 def _backup_before_delete(root: Path, path: Path, session: dict | None) -> None:
     """Сохранить файл непосредственно перед delete_file."""
@@ -713,10 +725,14 @@ def _backup_before_delete(root: Path, path: Path, session: dict | None) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(path, destination)
 
+    updated_manifest = dict(session["manifest"])
+    if relative not in updated_manifest["deleted_files"]:
+        updated_manifest["deleted_files"] = [
+            *updated_manifest["deleted_files"], relative
+        ]
+    _write_backup_manifest({**session, "manifest": updated_manifest})
+    session["manifest"] = updated_manifest
     session["delete_backed_up_paths"].add(relative)
-    if relative not in session["manifest"]["deleted_files"]:
-        session["manifest"]["deleted_files"].append(relative)
-    _write_backup_manifest(session)
 
 
 def _require_text_suffix(path: Path) -> None:
@@ -788,6 +804,16 @@ def _logical_text_encoding(path: Path) -> str:
     return "utf-16" if path.suffix.lower() == ".jsonl" else "utf-8"
 
 
+def _logical_line_starts(content: str) -> list[int]:
+    starts = [0]
+    offset = 0
+    for line in content.splitlines(keepends=True):
+        offset += len(line)
+        if offset < len(content):
+            starts.append(offset)
+    return starts
+
+
 def _read_logical_text(path: Path) -> str:
     _require_text_suffix(path)
     if not path.is_file():
@@ -796,7 +822,7 @@ def _read_logical_text(path: Path) -> str:
     if path.stat().st_size > physical_limit:
         raise ValueError(f"Файл превышает лимит чтения: {physical_limit} байт.")
     try:
-        with path.open("r", encoding=_logical_text_encoding(path), newline=None) as stream:
+        with path.open("r", encoding=_logical_text_encoding(path), newline="") as stream:
             content = stream.read()
     except UnicodeError as exc:
         raise ValueError(f"Некорректная кодировка {_logical_text_encoding(path)}: {path}") from exc
@@ -839,15 +865,15 @@ def _agent_find_text(root: Path, path_text: str, text: str, policy: dict) -> dic
         raise ValueError("text должен быть непустой строкой.")
     path = _require_operation_permission(root, path_text, "read", policy)
     content = _read_logical_text(path)
-    newline_offsets = [index for index, char in enumerate(content) if char == "\n"]
+    line_starts = _logical_line_starts(content)
     matches = []
     count = 0
     offset = 0
     while (found := content.find(text, offset)) != -1:
         count += 1
         if len(matches) < MAX_FIND_TEXT_MATCHES:
-            line_index = bisect_right(newline_offsets, found - 1)
-            line_start = newline_offsets[line_index - 1] + 1 if line_index else 0
+            line_index = bisect_right(line_starts, found) - 1
+            line_start = line_starts[line_index]
             snippet_start = max(line_start, found - 40)
             snippet = content[snippet_start:found + len(text) + 40]
             matches.append({
@@ -981,13 +1007,13 @@ def _agent_precise_edit(
     # All checks are complete. Preserve the original before physical mutation.
     _backup_before_write(root, path, backup_session)
     _write_logical_text(path, updated)
-    changed_line = previous.count("\n", 0, start) + 1
+    changed_line = bisect_right(_logical_line_starts(previous), start)
     return {
         "path": path.relative_to(root).as_posix(),
         "previous_content_sha256": previous_hash,
         "content_sha256": _sha256_utf8(_read_logical_text(path)),
         "start_line": changed_line,
-        "end_line": changed_line + inserted.count("\n"),
+        "end_line": changed_line + len(re.findall(r"\r\n|\r|\n", inserted)),
         "removed_chars": end - start,
         "added_chars": len(inserted),
         "resulting_snippet": updated[max(0, start - 40):start + min(len(inserted), 80) + 40][:160],

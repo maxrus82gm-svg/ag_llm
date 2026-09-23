@@ -321,7 +321,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
 
     def test_run_owned_jsonl_uses_utf16_logical_content(self) -> None:
         content = '{"message": "Привет"}\n'
-        (self.workspace / "messages.jsonl").write_text(content, encoding="utf-16")
+        (self.workspace / "messages.jsonl").write_bytes(content.encode("utf-16"))
         expected = {"messages.jsonl": {
             "state": "present", "content_sha256": server._sha256_utf8(content),
         }}
@@ -1079,7 +1079,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
 
     def test_new_file_evidence_includes_current_content(self) -> None:
         new_file = self.workspace / "new_module.py"
-        new_file.write_text("VALUE = 42\n", encoding="utf-8")
+        new_file.write_bytes(b"VALUE = 42\n")
         policy = server._prepare_policy_for_workspace(
             self.workspace, server._normalize_permissions(self.permissions)
         )

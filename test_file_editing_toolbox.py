@@ -134,6 +134,137 @@ class FileEditingToolboxTests(unittest.TestCase):
         self.assertEqual(result["content_sha256"], self.call("read_file", path="events.jsonl")["content_sha256"])
         self.assertTrue((self.root / "events.jsonl").read_bytes().startswith(b"\xff\xfe"))
 
+    def test_crlf_replace_preserves_untouched_utf8_bytes_and_read_views(self):
+        path = self.root / "text.txt"
+        original = b"first\r\nold value\r\nlast\r\n"
+        path.write_bytes(original)
+        read = self.call("read_file", path="text.txt")
+        self.assertEqual(read["content"], original.decode("utf-8"))
+        self.assertEqual(self.call("read_file_range", path="text.txt", start_line=1, end_line=2)["content"], "first\r\nold value\r\n")
+        found = self.call("find_text", path="text.txt", text="old")
+        self.assertEqual(found["content_sha256"], read["content_sha256"])
+        self.assertEqual((found["matches"][0]["line"], found["matches"][0]["column"]), (2, 1))
+        result = self.call("replace_text", path="text.txt", old_text="old", new_text="new", expected_content_sha256=found["content_sha256"])
+        self.assertEqual(path.read_bytes(), b"first\r\nnew value\r\nlast\r\n")
+        self.assertEqual(result["content_sha256"], self.call("read_file", path="text.txt")["content_sha256"])
+
+    def test_crlf_insert_before_after_preserves_surrounding_bytes(self):
+        path = self.root / "text.txt"
+        path.write_bytes(b"HEAD\r\nMARK\r\nTAIL\r\n")
+        expected = self.call("read_file", path="text.txt")["content_sha256"]
+        before = self.call("insert_before", path="text.txt", marker="MARK", content="PRE-", expected_content_sha256=expected)
+        after = self.call("insert_after", path="text.txt", marker="MARK", content="-POST", expected_content_sha256=before["content_sha256"])
+        self.assertEqual(path.read_bytes(), b"HEAD\r\nPRE-MARK-POST\r\nTAIL\r\n")
+        self.assertEqual(after["content_sha256"], self.call("read_file", path="text.txt")["content_sha256"])
+
+    def test_lf_and_mixed_line_endings_remain_unchanged_outside_edit(self):
+        for original, expected in (
+            (b"one\nold\nthree\n", b"one\nnew\nthree\n"),
+            (b"one\r\nold\nthree\r", b"one\r\nnew\nthree\r"),
+        ):
+            with self.subTest(original=original):
+                path = self.root / "lines.txt"
+                path.write_bytes(original)
+                old_hash = self.call("read_file", path="lines.txt")["content_sha256"]
+                self.call("replace_text", path="lines.txt", old_text="old", new_text="new", expected_content_sha256=old_hash)
+                self.assertEqual(path.read_bytes(), expected)
+
+    def test_utf16_jsonl_crlf_precise_edit_preserves_encoding_and_endings(self):
+        path = self.root / "events.jsonl"
+        original = '{"event":"old"}\r\n{"event":"keep"}\r\n'
+        path.write_bytes(original.encode("utf-16"))
+        read = self.call("read_file", path="events.jsonl")
+        self.assertEqual(read["content"], original)
+        self.call("replace_text", path="events.jsonl", old_text="old", new_text="new", expected_content_sha256=read["content_sha256"])
+        self.assertEqual(path.read_bytes(), original.replace("old", "new").encode("utf-16"))
+
+    def test_failed_physical_backup_retries_before_precise_mutation(self):
+        path = self.root / "stable.txt"
+        path.write_bytes(b"old text")
+        expected = self.call("read_file", path="stable.txt")["content_sha256"]
+        with patch.object(server.shutil, "copy2", side_effect=OSError("copy failed")) as copy:
+            with self.assertRaises(OSError):
+                self.call("replace_text", path="stable.txt", old_text="old", new_text="new", expected_content_sha256=expected)
+            copy.assert_called_once()
+        self.assertEqual(path.read_bytes(), b"old text")
+        self.assertNotIn("stable.txt", self.session["backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["changed_files"], [])
+        original_copy = server.shutil.copy2
+        with patch.object(server.shutil, "copy2", wraps=original_copy) as copy:
+            self.call("replace_text", path="stable.txt", old_text="old", new_text="new", expected_content_sha256=expected)
+            copy.assert_called_once()
+        self.assertEqual((self.backup_dir / "changed" / "stable.txt").read_bytes(), b"old text")
+        self.assertEqual(path.read_bytes(), b"new text")
+        self.assertIn("stable.txt", self.session["backed_up_paths"])
+
+    def test_failed_manifest_commit_does_not_mark_backup_complete(self):
+        path = self.root / "stable.txt"
+        path.write_bytes(b"old text")
+        expected = self.call("read_file", path="stable.txt")["content_sha256"]
+        server._write_backup_manifest(self.session)
+        old_manifest_bytes = (self.backup_dir / "manifest.json").read_bytes()
+        original_replace = server.os.replace
+
+        def fail_manifest_replace(source, destination):
+            if Path(destination).name == "manifest.json":
+                raise OSError("manifest commit failed")
+            return original_replace(source, destination)
+
+        with patch.object(server.os, "replace", side_effect=fail_manifest_replace):
+            with self.assertRaises(OSError):
+                self.call("replace_text", path="stable.txt", old_text="old", new_text="new", expected_content_sha256=expected)
+        self.assertEqual(path.read_bytes(), b"old text")
+        self.assertEqual((self.backup_dir / "manifest.json").read_bytes(), old_manifest_bytes)
+        self.assertNotIn("stable.txt", self.session["backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["changed_files"], [])
+        original_copy = server.shutil.copy2
+        with patch.object(server.shutil, "copy2", wraps=original_copy) as copy:
+            self.call("replace_text", path="stable.txt", old_text="old", new_text="new", expected_content_sha256=expected)
+            copy.assert_called_once()
+        self.assertEqual((self.backup_dir / "changed" / "stable.txt").read_bytes(), b"old text")
+        self.assertEqual(path.read_bytes(), b"new text")
+        self.assertEqual(self.session["manifest"]["changed_files"], ["stable.txt"])
+
+    def test_new_file_and_delete_manifest_failures_are_fail_closed(self):
+        with patch.object(server, "_write_backup_manifest", side_effect=OSError("manifest failed")):
+            with self.assertRaises(OSError):
+                self.call("write_file", path="new.txt", content="new")
+        self.assertFalse((self.root / "new.txt").exists())
+        self.assertNotIn("new.txt", self.session["backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["new_files"], [])
+        self.call("write_file", path="new.txt", content="new")
+        self.assertIn("new.txt", self.session["backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["new_files"], ["new.txt"])
+
+        path = self.root / "delete.txt"
+        path.write_bytes(b"keep original")
+        with patch.object(server, "_write_backup_manifest", side_effect=OSError("manifest failed")):
+            with self.assertRaises(OSError):
+                self.call("delete_file", path="delete.txt")
+        self.assertEqual(path.read_bytes(), b"keep original")
+        self.assertNotIn("delete.txt", self.session["delete_backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["deleted_files"], [])
+        self.call("delete_file", path="delete.txt")
+        self.assertFalse(path.exists())
+        self.assertEqual((self.backup_dir / "deleted" / "delete.txt").read_bytes(), b"keep original")
+        self.assertIn("delete.txt", self.session["delete_backed_up_paths"])
+
+    def test_delete_physical_backup_failure_retries(self):
+        path = self.root / "delete.txt"
+        path.write_bytes(b"original")
+        with patch.object(server.shutil, "copy2", side_effect=OSError("copy failed")):
+            with self.assertRaises(OSError):
+                self.call("delete_file", path="delete.txt")
+        self.assertEqual(path.read_bytes(), b"original")
+        self.assertNotIn("delete.txt", self.session["delete_backed_up_paths"])
+        self.assertEqual(self.session["manifest"]["deleted_files"], [])
+        original_copy = server.shutil.copy2
+        with patch.object(server.shutil, "copy2", wraps=original_copy) as copy:
+            self.call("delete_file", path="delete.txt")
+            copy.assert_called_once()
+        self.assertFalse(path.exists())
+        self.assertEqual((self.backup_dir / "deleted" / "delete.txt").read_bytes(), b"original")
+
     def test_backup_is_created_before_precise_edit(self):
         path = self.root / "text.txt"
         path.write_text("old text", encoding="utf-8")
