@@ -116,6 +116,43 @@ class FakeClient:
         return FakeResponse()
 
 
+class BackupContextSnapshotTests(unittest.TestCase):
+    def test_audit_namespace_is_excluded_but_other_context_is_preserved(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            workspace = base / "workspace"
+            context = workspace / ".ultra"
+            (context / "audit" / "chat").mkdir(parents=True)
+            (context / "chats").mkdir()
+            (context / "workspace.json").write_text('{"id":"ws_test"}', encoding="utf-8")
+            (context / "project_context.md").write_text("PROJECT CONTEXT", encoding="utf-8")
+            (context / "chats" / "raw.json").write_text("RAW HISTORY", encoding="utf-8")
+            (context / "audit" / "chat" / "run.json").write_text("AUDIT THREAD", encoding="utf-8")
+            policy = server._normalize_permissions({"auto_backup": True})
+            session = server._create_backup_session(
+                base, workspace, "run_with_audit", "task", policy,
+                backup_base=base / "backups", workspace_id="ws_test", chat_id="chat",
+            )
+            snapshot = session["backup_dir"] / "context" / ".ultra"
+            self.assertEqual(session["manifest"]["context_snapshot"], "context/.ultra")
+            self.assertFalse((snapshot / "audit").exists())
+            self.assertEqual((snapshot / "workspace.json").read_text(encoding="utf-8"), '{"id":"ws_test"}')
+            self.assertEqual((snapshot / "project_context.md").read_text(encoding="utf-8"), "PROJECT CONTEXT")
+            self.assertEqual((snapshot / "chats" / "raw.json").read_text(encoding="utf-8"), "RAW HISTORY")
+
+            (context / "audit" / "chat" / "run.json").unlink()
+            (context / "audit" / "chat").rmdir()
+            (context / "audit").rmdir()
+            session_without_audit = server._create_backup_session(
+                base, workspace, "run_without_audit", "task", policy,
+                backup_base=base / "backups", workspace_id="ws_test", chat_id="chat",
+            )
+            second_snapshot = session_without_audit["backup_dir"] / "context" / ".ultra"
+            self.assertTrue((second_snapshot / "workspace.json").is_file())
+            self.assertTrue((second_snapshot / "chats" / "raw.json").is_file())
+            self.assertFalse((second_snapshot / "audit").exists())
+
+
 class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -138,6 +175,18 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
+
+    async def test_executor_prompt_keeps_required_checks_but_git_is_optional(self) -> None:
+        _result, _verifier, client = await self.run_case(verifier_result("PASS"))
+        system_prompt = client.bodies[0]["messages"][0]["content"]
+        self.assertIn("обязательно успешно проверь", system_prompt)
+        self.assertIn("через python_compile", system_prompt)
+        self.assertIn("дополнительно ui_smoke_test", system_prompt)
+        self.assertIn("git_status и git_diff доступны как read-only diagnostic tools", system_prompt)
+        self.assertIn("Отсутствие Git-репозитория не является ошибкой задачи", system_prompt)
+        self.assertIn("Отсутствие вызовов git_status/git_diff не блокирует SUCCESS", system_prompt)
+        self.assertNotIn("обязательны git_diff и git_status", system_prompt)
+        self.assertNotIn("После ПОСЛЕДНЕЙ записи/удаления обязательны git", system_prompt)
 
     async def run_case(
         self,

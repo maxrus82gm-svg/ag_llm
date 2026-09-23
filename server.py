@@ -664,14 +664,21 @@ def _create_backup_session(
         shutil.copy2(source, destination)
         copied_core.append(relative_text)
 
-    # `.ultra` — маленькое переносимое состояние Workspace:
-    # workspace metadata, PROJECT CONTEXT, чаты и RAW HISTORY.
+    # Snapshot переносимого context state: metadata, PROJECT CONTEXT,
+    # чаты и RAW HISTORY. Persistent Audit Thread не нужен для rollback.
     context_snapshot = None
     context_source = (root / ".ultra").resolve()
     if context_source.is_dir():
         context_destination = backup_dir / "context" / ".ultra"
         context_destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(context_source, context_destination)
+        def ignore_audit_namespace(source_dir: str, names: list[str]) -> set[str]:
+            if Path(source_dir) == context_source and "audit" in names:
+                return {"audit"}
+            return set()
+
+        shutil.copytree(
+            context_source, context_destination, ignore=ignore_audit_namespace
+        )
         context_snapshot = "context/.ultra"
 
     manifest = {
@@ -2605,9 +2612,12 @@ async def run_agent_task(
         "Если в RUN изменён .py, после ПОСЛЕДНЕЙ Python-записи обязательно "
         "успешно проверь ВСЕ изменённые существующие .py через python_compile. "
         "Если изменён server.py или ultra_ui.py — дополнительно ui_smoke_test. "
-        "После ПОСЛЕДНЕЙ записи/удаления обязательны git_diff и git_status. "
-        "Сервер сам проверяет свежесть этих результатов и физически блокирует "
-        "финальный SUCCESS, если хотя бы одна проверка отсутствует или устарела. "
+        "git_status и git_diff доступны как read-only diagnostic tools; "
+        "используй их только если это полезно для задачи. Отсутствие Git-репозитория "
+        "не является ошибкой задачи. Отсутствие вызовов git_status/git_diff "
+        "не блокирует SUCCESS. Сервер проверяет свежесть обязательных "
+        "python_compile и ui_smoke_test и блокирует SUCCESS, если нужная "
+        "проверка отсутствует или устарела. "
         "Ошибка проверки не является завершением задачи: сначала исправь причину, "
         "затем повтори ставшие устаревшими проверки.\n"
         "Эти ограничения применяются кодом сервера. Не пытайся выходить "
