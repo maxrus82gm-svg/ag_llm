@@ -196,6 +196,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         fake_client: FakeClient | None = None,
         extra_patches: tuple = (),
         mock_git: bool = True,
+        task_block_id: str | None = None,
     ):
         client = fake_client or FakeClient()
         if isinstance(verifier_side_effect, BaseException):
@@ -283,8 +284,39 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 permissions=self.permissions,
                 on_event=self.events.append,
                 verifier_model_id=verifier_model_id,
+                task_block_id=task_block_id,
             )
         return result, verifier, client
+
+    async def test_task_block_id_links_run_event_and_audit_without_context_pollution(self) -> None:
+        from context_storage import new_task_block_id
+        from audit_storage import AuditThreadRecorder
+
+        task_id = new_task_block_id()
+        previous_audit = AuditThreadRecorder(self.workspace, "ws_test", None, "old_run")
+        previous_audit.observe({
+            "event": "final_audit_failed", "reason": "AUDIT_ONLY_SENTINEL",
+        })
+        result, _verifier, client = await self.run_case(
+            verifier_result("PASS"), task_block_id=task_id
+        )
+        self.assertEqual(result, "CANDIDATE FINAL")
+        started = next(item for item in self.events if item["event"] == "run_started")
+        self.assertEqual(started["task_block_id"], task_id)
+        self.assertNotEqual(started["run_id"], task_id)
+        thread = load_audit_thread(self.workspace, "ws_test", None, started["run_id"])
+        self.assertEqual(thread["task_block_id"], task_id)
+        self.assertNotIn(task_id, json.dumps(client.bodies[0]["messages"]))
+        self.assertNotIn("AUDIT_ONLY_SENTINEL", json.dumps(client.bodies[0]["messages"]))
+
+    async def test_direct_run_without_task_block_id_remains_supported(self) -> None:
+        result, _verifier, _client = await self.run_case(verifier_result("PASS"))
+        self.assertEqual(result, "CANDIDATE FINAL")
+        started = next(item for item in self.events if item["event"] == "run_started")
+        self.assertIsNone(started["task_block_id"])
+        self.assertIsNone(load_audit_thread(
+            self.workspace, "ws_test", None, started["run_id"]
+        )["task_block_id"])
 
     async def test_non_git_workspace_mutation_reaches_final_pass(self) -> None:
         self.assertFalse((self.workspace / ".git").exists())

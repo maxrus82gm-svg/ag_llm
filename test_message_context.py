@@ -23,6 +23,9 @@ from context_storage import (
     load_chat_working_messages,
     load_context_variant,
     load_raw_message,
+    load_chat_messages,
+    new_task_block_id,
+    validate_task_block_id,
     restore_message_raw,
 )
 
@@ -41,6 +44,32 @@ class MessageContextStorageTests(unittest.TestCase):
 
     def add(self, role: str, text: str) -> dict:
         return append_raw_message(self.workspace, self.chat_id, role, text)
+
+    def test_task_block_identity_is_unique_metadata_and_legacy_still_loads(self) -> None:
+        first_id = new_task_block_id()
+        second_id = new_task_block_id()
+        self.assertNotEqual(first_id, second_id)
+        self.assertEqual(validate_task_block_id(first_id), first_id)
+        user = append_raw_message(
+            self.workspace, self.chat_id, "user", "RAW TASK",
+            task_block_id=first_id,
+        )
+        assistant = append_raw_message(
+            self.workspace, self.chat_id, "assistant", "DONE",
+            task_block_id=first_id,
+        )
+        legacy = self.add("user", "legacy")
+        self.assertNotEqual(first_id, user["message_id"])
+        self.assertEqual(load_raw_message(self.workspace, self.chat_id, user["message_id"])["task_block_id"], first_id)
+        self.assertEqual(load_raw_message(self.workspace, self.chat_id, assistant["message_id"])["task_block_id"], first_id)
+        self.assertEqual(user["original_text"], "RAW TASK")
+        self.assertNotIn(first_id, user["original_text"])
+        self.assertNotIn("task_block_id", load_raw_message(self.workspace, self.chat_id, legacy["message_id"]))
+        self.assertEqual(len(load_chat_messages(self.workspace, self.chat_id)), 3)
+        self.assertTrue(all("task_block_id" not in item for item in
+                            load_chat_working_messages(self.workspace, self.chat_id)))
+        with self.assertRaises(ValueError):
+            append_raw_message(self.workspace, self.chat_id, "user", "bad", task_block_id="tb_invalid")
 
     def raw_path(self, message_id: str) -> Path:
         return (

@@ -22,6 +22,7 @@ from context_storage import (
     ensure_workspace_storage,
     load_chat_working_messages,
     load_project_context,
+    validate_task_block_id,
 )
 from workspace_runtime_settings import ensure_workspace_runtime_dirs
 from agent_global_context import load_agent_global_context
@@ -2283,10 +2284,13 @@ async def run_agent_task(
     chat_id: str | None = None,
     model_id: str | None = None,
     verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
+    task_block_id: str | None = None,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
         raise ValueError("task должен быть непустой строкой.")
+    if task_block_id is not None:
+        validate_task_block_id(task_block_id)
 
     selected_model_id = model_id or MAIN_CHAT_MODEL_ID
     selected_model = get_model_spec(selected_model_id)
@@ -2379,7 +2383,8 @@ async def run_agent_task(
 
     try:
         audit_recorder = AuditThreadRecorder(
-            root, workspace_info["workspace_id"], chat_id, run_id
+            root, workspace_info["workspace_id"], chat_id, run_id,
+            task_block_id=task_block_id,
         )
     except Exception as exc:
         # Audit observability is not allowed to veto the Executor RUN.
@@ -2483,6 +2488,7 @@ async def run_agent_task(
             "permissions": _policy_summary(policy),
             "workspace_id": workspace_info["workspace_id"],
             "chat_id": chat_id,
+            "task_block_id": task_block_id,
             "model_id": selected_model.model_id,
             "model_display_name": selected_model.display_name,
             "provider": selected_model.provider,

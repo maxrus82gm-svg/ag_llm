@@ -9,6 +9,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
 import audit_storage
+import context_storage
 import server
 import ui_state
 import ultra_ui
@@ -39,6 +40,34 @@ class AuditStorageTests(unittest.TestCase):
         return audit_storage.load_audit_thread(
             self.workspace, self.workspace_id, self.chat_id, self.run_id
         )
+
+    def test_list_chat_threads_links_task_id_and_keeps_legacy_readable(self):
+        task_id = context_storage.new_task_block_id()
+        linked = audit_storage.AuditThreadRecorder(
+            self.workspace, self.workspace_id, self.chat_id, "run_linked", task_id
+        )
+        threads = audit_storage.list_chat_audit_threads(
+            self.workspace, self.workspace_id, self.chat_id
+        )
+        self.assertEqual([item["run_id"] for item in threads], ["run_linked", "run_test"])
+        self.assertEqual(threads[0]["task_block_id"], task_id)
+        self.assertIsNone(threads[1]["task_block_id"])
+        self.assertNotEqual(task_id, linked.thread["run_id"])
+        other_chat = "chat_other"
+        self.assertEqual(audit_storage.list_chat_audit_threads(
+            self.workspace, self.workspace_id, other_chat
+        ), [])
+        self.assertFalse((self.workspace / ".ultra" / "audit" / other_chat).exists())
+        with self.assertRaises(ValueError):
+            audit_storage.list_chat_audit_threads(self.workspace, "wrong_workspace", self.chat_id)
+        # Older records without this key remain readable and are not rewritten.
+        legacy_path = audit_storage.audit_thread_path(self.workspace, self.chat_id, self.run_id)
+        legacy = json.loads(legacy_path.read_text(encoding="utf-8"))
+        legacy.pop("task_block_id")
+        legacy_path.write_text(json.dumps(legacy), encoding="utf-8")
+        self.assertNotIn("task_block_id", audit_storage.load_audit_thread(
+            self.workspace, self.workspace_id, self.chat_id, self.run_id
+        ))
 
     def test_issue_diagnostic_tool_activity_pass_and_reload(self):
         self.issue()
@@ -177,6 +206,217 @@ class CompactLayoutTests(unittest.TestCase):
         self.assertEqual(int(app.input_box.pack_info()["expand"]), 1)
         self.assertEqual(str(app.send_button.master.master), str(lower))
         self.assertEqual(app.send_button.master.pack_info()["side"], "bottom")
+
+
+class TaskBlockUiTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.workspace = Path(self.temp.name) / "workspace"
+        self.workspace.mkdir()
+        self.workspace_info = context_storage.ensure_workspace_storage(self.workspace)
+        self.chat_id = context_storage.create_chat(self.workspace)["chat_id"]
+        self.task_a = context_storage.new_task_block_id()
+        self.task_b = context_storage.new_task_block_id()
+        self.user_a = context_storage.append_raw_message(
+            self.workspace, self.chat_id, "user", "TASK A", task_block_id=self.task_a
+        )
+        self.assistant_a = context_storage.append_raw_message(
+            self.workspace, self.chat_id, "assistant", "ANSWER A",
+            task_block_id=self.task_a,
+            producer={
+                "kind": "llm", "role_id": "main_chat", "run_id": "run_a",
+                "model_id": "gigachat_ultra", "model_display_name": "Ultra",
+                "provider": "gigachat", "provider_model_id": "GigaChat-Ultra",
+            },
+        )
+        self.user_b = context_storage.append_raw_message(
+            self.workspace, self.chat_id, "user", "TASK B", task_block_id=self.task_b
+        )
+        audit_a = audit_storage.AuditThreadRecorder(
+            self.workspace, self.workspace_info["workspace_id"], self.chat_id, "run_a", self.task_a
+        )
+        audit_a.observe({"event": "run_finished", "status": "SUCCESS"})
+        audit_b = audit_storage.AuditThreadRecorder(
+            self.workspace, self.workspace_info["workspace_id"], self.chat_id, "run_b", self.task_b
+        )
+        audit_b.observe({"event": "final_audit_failed", "reason": "Wrong", "violations": ["Missing"]})
+        audit_b.observe({"event": "run_failed"})
+        with patch.object(ultra_ui, "load_ui_state", return_value=ui_state.default_ui_state()), \
+             patch.object(ultra_ui.UltraApp, "_initialize_workspace_registry"):
+            self.app = ultra_ui.UltraApp()
+        self.addCleanup(self.app.destroy)
+        self.app.withdraw()
+        self.app.current_workspace_id = self.workspace_info["workspace_id"]
+        self.app.current_chat_id = self.chat_id
+        self.app.workspace_var.set(str(self.workspace))
+        self.app._render_current_chat()
+
+    def test_reopen_rebuilds_index_and_failed_run_remains_selected(self):
+        app = self.app
+        self.assertEqual(list(app._task_block_index), [self.task_a, self.task_b])
+        self.assertEqual(app._task_block_order, [self.task_a, self.task_b])
+        self.assertEqual(app._task_block_index[self.task_a]["assistant_message_id"], self.assistant_a["message_id"])
+        self.assertIsNone(app._task_block_index[self.task_b]["assistant_message_id"])
+        self.assertEqual(app._selected_task_block_id, self.task_b)
+        self.assertEqual(app._selected_audit_run_id, "run_b")
+        self.assertIn("RUN STATUS: FAILED", app.audit_text.get("1.0", "end"))
+        self.assertIn(f"TASK BLOCK: {self.task_b}", app.audit_text.get("1.0", "end"))
+        self.assertTrue(app.chat.mark_names().count(f"task_block_{self.task_a}"))
+        self.assertTrue(app.chat.mark_names().count(f"task_block_{self.task_b}"))
+        app._render_current_chat()
+        self.assertEqual((app._selected_task_block_id, app._selected_audit_run_id), (self.task_b, "run_b"))
+        for reference, expected_id, expected_run in (
+            (f"task_block_{self.task_a}", self.task_a, "run_a"),
+            (f"task_block_{self.task_b}", self.task_b, "run_b"),
+        ):
+            selected = app._task_block_for_viewport(
+                app._task_block_order, app._task_block_index,
+                lambda mark: app.chat.compare(mark, "<=", reference),
+            )
+            app._select_task_block(selected)
+            self.assertEqual((app._selected_task_block_id, app._selected_audit_run_id),
+                             (expected_id, expected_run))
+        app._selected_task_block_id = None
+        app._task_block_index = {}
+        app._task_block_order = []
+        app._render_current_chat()
+        self.assertEqual((app._selected_task_block_id, app._selected_audit_run_id), (self.task_b, "run_b"))
+
+    def test_user_assistant_buttons_and_explicit_selection_resolve_same_audit(self):
+        message_dir = self.workspace / ".ultra" / "chats" / self.chat_id / "messages"
+        before = {path.name: path.read_bytes() for path in message_dir.glob("*.json")}
+        frames = self.app._message_action_widgets
+        def audit_button(frame):
+            return next(w for w in frame.winfo_children()
+                        if isinstance(w, ultra_ui.ttk.Button) and w.cget("text") == "Разбор")
+        audit_button(frames[0]).invoke()
+        self.assertEqual(self.app._selected_audit_run_id, "run_a")
+        audit_button(frames[1]).invoke()
+        self.assertEqual(self.app._selected_audit_run_id, "run_a")
+        audit_button(frames[2]).invoke()
+        self.assertEqual(self.app._selected_audit_run_id, "run_b")
+        self.app._select_message(self.user_a["message_id"])
+        self.assertEqual(self.app._selected_audit_run_id, "run_a")
+        self.app._select_message(self.user_b["message_id"])
+        self.assertEqual(self.app._selected_audit_run_id, "run_b")
+        self.assertEqual(before, {path.name: path.read_bytes() for path in message_dir.glob("*.json")})
+
+    def test_send_creates_one_id_and_worker_persists_it_on_assistant(self):
+        captured = {}
+        class FakeThread:
+            def __init__(self, *, target, args, daemon):
+                captured["args"] = args
+            def start(self): pass
+        self.app.input_box.insert("1.0", "TASK C")
+        with patch.object(self.app, "_ensure_workspace_ui_current"), \
+             patch.object(ultra_ui.threading, "Thread", FakeThread):
+            self.app._send()
+        task_id = captured["args"][-1]
+        user_c = context_storage.load_chat_messages(self.workspace, self.chat_id)[-1]
+        self.assertEqual(user_c["task_block_id"], task_id)
+        self.assertEqual(user_c["original_text"], "TASK C")
+        self.assertNotIn(task_id, user_c["original_text"])
+        self.assertNotEqual(task_id, user_c["message_id"])
+        async def fake_run(_task, _workspace, **kwargs):
+            self.assertEqual(kwargs["task_block_id"], task_id)
+            kwargs["on_event"]({
+                "event": "run_started", "run_id": "run_c", "task_block_id": task_id,
+                "model_id": kwargs["model_id"], "model_display_name": "Ultra",
+                "provider": "gigachat", "provider_model_id": "GigaChat-Ultra",
+            })
+            return "ANSWER C"
+        with patch.object(ultra_ui, "run_agent_task", fake_run):
+            self.app._worker(*captured["args"])
+        assistant_c = context_storage.load_chat_messages(self.workspace, self.chat_id)[-1]
+        self.assertEqual(assistant_c["role"], "assistant")
+        self.assertEqual(assistant_c["task_block_id"], task_id)
+        self.assertEqual(assistant_c["producer"]["run_id"], "run_c")
+
+    def test_legacy_assistant_audit_button_remains_available(self):
+        context_storage.append_raw_message(self.workspace, self.chat_id, "user", "legacy task")
+        context_storage.append_raw_message(
+            self.workspace, self.chat_id, "assistant", "legacy answer",
+            producer={
+                "kind": "llm", "role_id": "main_chat", "run_id": "run_legacy",
+                "model_id": "gigachat_ultra", "model_display_name": "Ultra",
+                "provider": "gigachat", "provider_model_id": "GigaChat-Ultra",
+            },
+        )
+        audit_storage.AuditThreadRecorder(
+            self.workspace, self.workspace_info["workspace_id"], self.chat_id, "run_legacy"
+        )
+        self.app._render_current_chat()
+        button = next(w for w in self.app._message_action_widgets[-1].winfo_children()
+                      if isinstance(w, ultra_ui.ttk.Button) and w.cget("text") == "Разбор")
+        button.invoke()
+        self.assertEqual(self.app._selected_audit_run_id, "run_legacy")
+        self.assertIn("TASK BLOCK: LEGACY", self.app.audit_text.get("1.0", "end"))
+
+    def test_running_task_gets_audit_button_when_run_started_is_observed(self):
+        task_id = context_storage.new_task_block_id()
+        context_storage.append_raw_message(
+            self.workspace, self.chat_id, "user", "running task", task_block_id=task_id
+        )
+        self.app._render_current_chat()
+        frame = self.app._message_action_widgets[-1]
+        self.assertFalse(any(w.cget("text") == "Разбор" for w in frame.winfo_children()
+                             if isinstance(w, ultra_ui.ttk.Button)))
+        audit_storage.AuditThreadRecorder(
+            self.workspace, self.workspace_info["workspace_id"], self.chat_id,
+            "run_running", task_id,
+        )
+        self.app.trace_events.put({
+            "event": "run_started", "run_id": "run_running",
+            "chat_id": self.chat_id, "task_block_id": task_id,
+        })
+        self.app._poll_trace_events()
+        self.assertTrue(any(w.cget("text") == "Разбор" for w in frame.winfo_children()
+                            if isinstance(w, ultra_ui.ttk.Button)))
+        self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
+                         (task_id, "run_running"))
+        self.assertIn("RUN STATUS: RUNNING", self.app.audit_text.get("1.0", "end"))
+
+    def test_scroll_resolver_and_debounce_do_not_rerender_same_block(self):
+        order = ["A", "B", "C"]
+        index = {key: {"ui_start_mark": key, "run_id": f"run_{key}"}
+                 for key in order}
+        positions = {"A": 0, "B": 100, "C": 200}
+        draws = []
+        fake = SimpleNamespace(
+            _task_block_order=order, _task_block_index=index,
+            _selected_task_block_id=None, _selected_audit_run_id=None,
+            _chat_audit_sync_after=None,
+            _task_block_for_viewport=ultra_ui.UltraApp._task_block_for_viewport,
+            _render_audit_thread=lambda: draws.append(True),
+            _select_task_block=None,
+        )
+        fake._select_task_block = lambda tid: ultra_ui.UltraApp._select_task_block(fake, tid)
+        viewport = {"position": 0}
+        fake.chat = SimpleNamespace(
+            index=lambda _pos: viewport["position"],
+            compare=lambda mark, _op, ref: positions[mark] <= ref,
+        )
+        for position, expected in ((0, "A"), (50, "A"), (100, "B"), (200, "C"), (150, "B"), (20, "A")):
+            viewport["position"] = position
+            ultra_ui.UltraApp._sync_audit_to_viewport(fake)
+            self.assertEqual(fake._selected_task_block_id, expected)
+        self.assertEqual(len(draws), 5)
+        scheduled = []
+        fake.chat.vbar = SimpleNamespace(set=lambda *_: None)
+        fake.after = lambda delay, callback: scheduled.append((delay, callback)) or "pending"
+        fake._sync_audit_to_viewport = lambda: ultra_ui.UltraApp._sync_audit_to_viewport(fake)
+        fake._chat_rendering = True
+        ultra_ui.UltraApp._on_chat_yview(fake, "0.0", "1.0")
+        self.assertEqual(scheduled, [])
+        fake._chat_rendering = False
+        fake._last_chat_yview_first = 0.0
+        ultra_ui.UltraApp._on_chat_yview(fake, "0.0", "1.0")
+        self.assertEqual(scheduled, [])
+        ultra_ui.UltraApp._on_chat_yview(fake, "0.1", "0.5")
+        ultra_ui.UltraApp._on_chat_yview(fake, "0.2", "0.6")
+        self.assertEqual(len(scheduled), 1)
+        self.assertEqual(scheduled[0][0], 40)
 
 
 class TraceAndUiStateTests(unittest.TestCase):
@@ -328,7 +568,7 @@ class TraceAndUiStateTests(unittest.TestCase):
             "role": "user", "producer": {"run_id": "run_test"},
         }))
         neutral = ultra_ui.UltraApp._audit_segments(None, "run_test")
-        self.assertIn("нет событий", neutral[0][1])
+        self.assertIn("нет событий", "".join(text for _tag, text in neutral))
         thread = {"issues": [{
             "audit_attempt": 1, "verifier_run_id": "ver_test",
             "reason": "Wrong", "violations": ["Missing"],

@@ -11,6 +11,8 @@ import re
 import uuid
 from pathlib import Path
 
+from context_storage import validate_task_block_id
+
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 _AUDIT_EVENTS = {
@@ -47,7 +49,24 @@ def load_audit_thread(
         or data.get("run_id") != run_id
     ):
         raise ValueError("Audit Thread identity mismatch.")
+    if data.get("task_block_id") is not None:
+        validate_task_block_id(data["task_block_id"])
     return data
+
+
+def list_chat_audit_threads(
+    workspace_root: str | Path, workspace_id: str, chat_id: str
+) -> list[dict]:
+    """Read existing threads for one chat without creating audit storage."""
+    audit_dir = Path(workspace_root).resolve() / ".ultra" / "audit" / _safe_identifier(chat_id, "chat_id")
+    if not audit_dir.is_dir():
+        return []
+    threads = []
+    for path in sorted(audit_dir.glob("*.json"), key=lambda item: item.name):
+        thread = load_audit_thread(workspace_root, workspace_id, chat_id, path.stem)
+        if thread is not None:
+            threads.append(thread)
+    return threads
 
 
 def _save_audit_thread(path: Path, thread: dict) -> None:
@@ -71,13 +90,14 @@ def _short(value: object) -> str:
 class AuditThreadRecorder:
     def __init__(
         self, workspace_root: str | Path, workspace_id: str,
-        chat_id: str | None, run_id: str,
+        chat_id: str | None, run_id: str, task_block_id: str | None = None,
     ) -> None:
         self.path = audit_thread_path(workspace_root, chat_id, run_id)
         self.thread = {
             "schema_version": 1,
             "workspace_id": _safe_identifier(workspace_id, "workspace_id"),
             "chat_id": chat_id,
+            "task_block_id": validate_task_block_id(task_block_id) if task_block_id is not None else None,
             "run_id": run_id,
             "issues": [],
             "final_audit": "PENDING",

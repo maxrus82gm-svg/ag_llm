@@ -30,6 +30,7 @@ from context_storage import (
     load_existing_project_context,
     load_project_context,
     load_raw_message,
+    new_task_block_id,
     probe_existing_workspace,
     rename_chat,
     rename_workspace,
@@ -38,7 +39,7 @@ from context_storage import (
 )
 from ui_state import load_ui_state, save_ui_state
 from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
-from audit_storage import load_audit_thread
+from audit_storage import list_chat_audit_threads, load_audit_thread
 from workspace_runtime_settings import (
     load_workspace_runtime_settings,
     save_workspace_runtime_settings,
@@ -274,6 +275,7 @@ class UltraApp(tk.Tk):
         self._security_widgets: list[tk.Widget] = []
         self._compressor_widgets: list[tk.Widget] = []
         self._message_action_widgets: list[tk.Widget] = []
+        self._message_action_frames: dict[str, tk.Widget] = {}
         self._workspace_widgets: list[tk.Widget] = []
         self._color_swatches: dict[str, tk.Widget] = {}
         self._run_started_once = False
@@ -281,7 +283,14 @@ class UltraApp(tk.Tk):
             value=bool(self._ui_state.get("audit_visible", True))
         )
         self._selected_audit_run_id: str | None = None
+        self._selected_task_block_id: str | None = None
         self._active_audit_run_id: str | None = None
+        self._task_block_index: dict[str, dict] = {}
+        self._task_block_order: list[str] = []
+        self._message_task_block_ids: dict[str, str] = {}
+        self._chat_audit_sync_after = None
+        self._chat_rendering = False
+        self._last_chat_yview_first: float | None = None
 
         self.current_workspace_id: str | None = None
         self.current_chat_id: str | None = None
@@ -988,6 +997,7 @@ class UltraApp(tk.Tk):
             font=("Segoe UI", 10),
         )
         self.chat.pack(fill="both", expand=True)
+        self.chat.configure(yscrollcommand=self._on_chat_yview)
         self.chat.tag_configure(
             "user",
             foreground=self.user_text_color_var.get(),
@@ -2202,6 +2212,7 @@ class UltraApp(tk.Tk):
 
         if (self.current_workspace_id, self.current_chat_id) != (entry["workspace_id"], candidate):
             self._selected_audit_run_id = None
+            self._selected_task_block_id = None
             self._active_audit_run_id = None
         self.current_workspace_id = entry["workspace_id"]
         self.current_chat_id = candidate
@@ -2221,6 +2232,10 @@ class UltraApp(tk.Tk):
             self._render_current_chat()
         else:
             self._selected_audit_run_id = None
+            self._selected_task_block_id = None
+            self._task_block_index = {}
+            self._task_block_order = []
+            self._message_task_block_ids = {}
             self._render_audit_thread()
             self.chat.configure(state="normal")
             self.chat.delete("1.0", "end")
@@ -2275,12 +2290,130 @@ class UltraApp(tk.Tk):
                 return f"АССИСТЕНТ · {display_name}"
         return "АССИСТЕНТ"
 
+    @staticmethod
+    def _build_task_block_index(
+        messages: list[dict], threads: list[dict], chat_id: str,
+    ) -> tuple[dict[str, dict], list[str], dict[str, str]]:
+        """Rebuild transient UI bindings only from persistent identities."""
+        index: dict[str, dict] = {}
+        order: list[str] = []
+        message_ids: dict[str, str] = {}
+        for message in messages:
+            task_id = message.get("task_block_id")
+            role = message.get("role")
+            message_id = message.get("message_id")
+            if not task_id:
+                continue
+            if role == "user":
+                if task_id in index:
+                    raise RuntimeError(f"Повторный task_block_id в Chat: {task_id}")
+                index[task_id] = {
+                    "task_block_id": task_id,
+                    "chat_id": chat_id,
+                    "user_message_id": message_id,
+                    "assistant_message_id": None,
+                    "run_id": None,
+                    "audit_available": False,
+                    "ui_start_mark": f"task_block_{task_id}",
+                }
+                order.append(task_id)
+                message_ids[message_id] = task_id
+            elif role == "assistant" and task_id in index:
+                binding = index[task_id]
+                if binding["assistant_message_id"] is not None:
+                    raise RuntimeError(f"Повторный Assistant в Task Block: {task_id}")
+                binding["assistant_message_id"] = message_id
+                binding["run_id"] = get_assistant_audit_run_id(message)
+                message_ids[message_id] = task_id
+        for thread in threads:
+            task_id = thread.get("task_block_id")
+            if task_id in index:
+                binding = index[task_id]
+                run_id = thread["run_id"]
+                if binding["audit_available"] and binding["run_id"] != run_id:
+                    raise RuntimeError(f"Несколько RUN у Task Block: {task_id}")
+                if binding["run_id"] not in (None, run_id):
+                    raise RuntimeError(f"RUN identity mismatch для {task_id}")
+                binding["run_id"] = run_id
+                binding["audit_available"] = True
+        return index, order, message_ids
+
+    @staticmethod
+    def _task_block_for_viewport(order: list[str], index: dict[str, dict], is_above) -> str | None:
+        if not order:
+            return None
+        active = order[0]
+        for task_id in order:
+            if is_above(index[task_id]["ui_start_mark"]):
+                active = task_id
+            else:
+                break
+        return active
+
+    def _on_chat_yview(self, first: str, last: str) -> None:
+        self.chat.vbar.set(first, last)
+        first_fraction = float(first)
+        if getattr(self, "_chat_rendering", False) or first_fraction == getattr(
+            self, "_last_chat_yview_first", None
+        ):
+            return
+        self._last_chat_yview_first = first_fraction
+        if self._task_block_order and self._chat_audit_sync_after is None:
+            self._chat_audit_sync_after = self.after(40, self._sync_audit_to_viewport)
+
+    def _sync_audit_to_viewport(self) -> None:
+        self._chat_audit_sync_after = None
+        if not self._task_block_order:
+            return
+        reference = self.chat.index("@0,0")
+        task_id = self._task_block_for_viewport(
+            self._task_block_order, self._task_block_index,
+            lambda mark: self.chat.compare(mark, "<=", reference),
+        )
+        if task_id:
+            self._select_task_block(task_id)
+
+    def _select_task_block(self, task_id: str, *, reveal: bool = False, force: bool = False) -> None:
+        binding = self._task_block_index.get(task_id)
+        if binding is None:
+            return
+        run_id = binding["run_id"]
+        changed = (self._selected_task_block_id, self._selected_audit_run_id) != (task_id, run_id)
+        self._selected_task_block_id = task_id
+        self._selected_audit_run_id = run_id
+        if reveal and not self.audit_visible_var.get():
+            self.audit_visible_var.set(True)
+            self._toggle_audit_panel()
+        if changed or force:
+            self._render_audit_thread()
+
     def _render_current_chat(self) -> None:
         if not self.current_chat_id:
             return
+        self._chat_rendering = True
+        try:
+            self._render_current_chat_body()
+        finally:
+            self.chat.update_idletasks()
+            self._chat_rendering = False
+            self._last_chat_yview_first = self.chat.yview()[0]
+
+    def _render_current_chat_body(self) -> None:
+        if self._chat_audit_sync_after is not None:
+            self.after_cancel(self._chat_audit_sync_after)
+            self._chat_audit_sync_after = None
 
         workspace = self._workspace_path_from_ui()
         messages = load_chat_messages(workspace, self.current_chat_id)
+        threads = list_chat_audit_threads(
+            workspace, self.current_workspace_id, self.current_chat_id
+        ) if self.current_workspace_id else []
+        previous_task_id = self._selected_task_block_id
+        for binding in self._task_block_index.values():
+            self.chat.mark_unset(binding["ui_start_mark"])
+        self._task_block_index, self._task_block_order, self._message_task_block_ids = (
+            self._build_task_block_index(messages, threads, self.current_chat_id)
+        )
 
         for widget in self._message_action_widgets:
             try:
@@ -2288,12 +2421,14 @@ class UltraApp(tk.Tk):
             except tk.TclError:
                 pass
         self._message_action_widgets.clear()
+        self._message_action_frames.clear()
         self.chat.configure(state="normal")
         self.chat.delete("1.0", "end")
         self.chat.configure(state="disabled")
 
         if not messages:
             self._selected_audit_run_id = None
+            self._selected_task_block_id = None
             self._render_audit_thread()
             self._append_chat(
                 "СИСТЕМА",
@@ -2315,6 +2450,13 @@ class UltraApp(tk.Tk):
                 )
             text = get_message_display_text(message, resolved)
             if role == "user":
+                task_id = message.get("task_block_id")
+                if task_id in self._task_block_index:
+                    self.chat.configure(state="normal")
+                    mark = self._task_block_index[task_id]["ui_start_mark"]
+                    self.chat.mark_set(mark, "end-1c")
+                    self.chat.mark_gravity(mark, "left")
+                    self.chat.configure(state="disabled")
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
                 latest_audit_run_id = get_assistant_audit_run_id(message) or latest_audit_run_id
@@ -2332,9 +2474,16 @@ class UltraApp(tk.Tk):
             if role in {"user", "assistant"} and resolved is not None:
                 self._append_message_actions(message, resolved)
 
-        if self._active_audit_run_id is None:
+        selected_task_id = (
+            previous_task_id if previous_task_id in self._task_block_index
+            else self._task_block_order[-1] if self._task_block_order else None
+        )
+        if selected_task_id:
+            self._select_task_block(selected_task_id, force=True)
+        elif self._active_audit_run_id is None:
+            self._selected_task_block_id = None
             self._selected_audit_run_id = latest_audit_run_id
-        self._render_audit_thread()
+            self._render_audit_thread()
 
         if self.selected_message_id:
             try:
@@ -3577,6 +3726,9 @@ class UltraApp(tk.Tk):
         self._selected_message_chat_id = self.current_chat_id
         self.compressor_message_id_var.set(message_id)
         self.compressor_status_var.set(self._context_status_text(resolved))
+        task_id = self._message_task_block_ids.get(message_id)
+        if task_id:
+            self._select_task_block(task_id)
 
     def _append_message_actions(self, message: dict, resolved: dict) -> None:
         message_id = message["message_id"]
@@ -3600,8 +3752,15 @@ class UltraApp(tk.Tk):
         compress_button.pack(side="left")
         edit_button.pack(side="left", padx=(4, 0))
         original_button.pack(side="left", padx=(4, 0))
-        run_id = get_assistant_audit_run_id(message)
-        if run_id:
+        task_id = self._message_task_block_ids.get(message_id)
+        binding = self._task_block_index.get(task_id) if task_id else None
+        run_id = binding["run_id"] if binding and binding["audit_available"] else get_assistant_audit_run_id(message)
+        if run_id and binding and binding["audit_available"]:
+            ttk.Button(
+                frame, text="Разбор",
+                command=lambda tid=task_id: self._select_task_block(tid, reveal=True),
+            ).pack(side="left", padx=(4, 0))
+        elif run_id:
             ttk.Button(
                 frame, text="Разбор",
                 command=lambda rid=run_id: self._show_audit_thread(rid),
@@ -3630,6 +3789,22 @@ class UltraApp(tk.Tk):
         self.chat.insert("end", "\n\n")
         self.chat.configure(state="disabled")
         self._message_action_widgets.append(frame)
+        self._message_action_frames[message_id] = frame
+
+    def _ensure_task_audit_button(self, task_id: str) -> None:
+        binding = self._task_block_index.get(task_id)
+        if not binding or not binding["audit_available"]:
+            return
+        frame = self._message_action_frames.get(binding["user_message_id"])
+        if frame is None or any(
+            isinstance(child, ttk.Button) and child.cget("text") == "Разбор"
+            for child in frame.winfo_children()
+        ):
+            return
+        ttk.Button(
+            frame, text="Разбор",
+            command=lambda tid=task_id: self._select_task_block(tid, reveal=True),
+        ).pack(side="left", padx=(4, 0))
 
     def _begin_context_operation(self, message_id: str, status: str) -> None:
         if self.running:
@@ -4007,6 +4182,7 @@ class UltraApp(tk.Tk):
         self.chat.configure(state="disabled")
 
     def _show_audit_thread(self, run_id: str) -> None:
+        self._selected_task_block_id = None
         self._selected_audit_run_id = run_id
         if not self.audit_visible_var.get():
             self.audit_visible_var.set(True)
@@ -4014,12 +4190,24 @@ class UltraApp(tk.Tk):
         self._render_audit_thread()
 
     @staticmethod
-    def _audit_segments(thread: dict | None, run_id: str | None) -> list[tuple[str, str]]:
+    def _audit_segments(
+        thread: dict | None, run_id: str | None, task_block_id: str | None = None,
+    ) -> list[tuple[str, str]]:
+        task_label = task_block_id or (thread or {}).get("task_block_id") or (
+            "LEGACY" if run_id else "—"
+        )
+        status = (thread.get("run_status") or "RUNNING") if thread else "—"
+        final_audit = (thread.get("final_audit") or "PENDING") if thread else "NOT_RUN"
+        segments = [("metadata", (
+            f"TASK BLOCK: {task_label}\nRUN: {run_id or '—'}\n"
+            f"RUN STATUS: {status}\nFINAL AUDIT: {final_audit}\n\n"
+        ))]
         if not run_id:
-            return [("metadata", "Выберите ответ ассистента, чтобы открыть разбор RUN.\n")]
+            segments.append(("metadata", "Выберите Task Block, чтобы открыть разбор RUN.\n"))
+            return segments
         if thread is None:
-            return [("metadata", f"RUN {run_id}\nДля этого RUN нет событий разбора.\n")]
-        segments = [("metadata", f"RUN {run_id}\n\n")]
+            segments.append(("metadata", "Для этого RUN нет событий разбора.\n"))
+            return segments
         issues = thread.get("issues") or []
         for issue in issues:
             segments.append(("dredd_fail", f"СУДЬЯ ДРЕДД — FAIL · попытка {issue.get('audit_attempt')}\n"))
@@ -4068,7 +4256,9 @@ class UltraApp(tk.Tk):
         widget.configure(state="normal")
         try:
             widget.delete("1.0", "end")
-            for tag, text in self._audit_segments(thread, run_id):
+            for tag, text in self._audit_segments(
+                thread, run_id, getattr(self, "_selected_task_block_id", None)
+            ):
                 widget.insert("end", text, tag)
             widget.see("end")
         finally:
@@ -4451,11 +4641,13 @@ class UltraApp(tk.Tk):
             self._ensure_workspace_ui_current(workspace)
             if not self.current_chat_id:
                 raise RuntimeError("Не выбран активный чат.")
-            append_raw_message(
+            task_block_id = new_task_block_id()
+            stored_user_message = append_raw_message(
                 workspace,
                 self.current_chat_id,
                 "user",
                 task,
+                task_block_id=task_block_id,
             )
         except Exception as exc:
             messagebox.showerror(
@@ -4465,7 +4657,8 @@ class UltraApp(tk.Tk):
             )
             return
 
-        self._append_chat("ТЫ", task, "user")
+        self._render_current_chat()
+        self._select_message(stored_user_message["message_id"])
         self._append_chat(
             "СИСТЕМА",
             (
@@ -4502,6 +4695,7 @@ class UltraApp(tk.Tk):
                 self.current_chat_id,
                 model_id,
                 verifier_model_id,
+                task_block_id,
             ),
             daemon=True,
         )
@@ -4528,7 +4722,7 @@ class UltraApp(tk.Tk):
         for frame in self._message_action_widgets:
             try:
                 for widget in frame.winfo_children():
-                    if isinstance(widget, ttk.Button):
+                    if isinstance(widget, ttk.Button) and widget.cget("text") != "Разбор":
                         widget.configure(state=state)
             except tk.TclError:
                 pass
@@ -4541,6 +4735,7 @@ class UltraApp(tk.Tk):
         chat_id: str,
         model_id: str,
         verifier_model_id: str,
+        task_block_id: str | None = None,
     ) -> None:
         producer_snapshot: dict | None = None
         provenance_warning: str | None = None
@@ -4600,6 +4795,7 @@ class UltraApp(tk.Tk):
                     chat_id=chat_id,
                     model_id=model_id,
                     verifier_model_id=verifier_model_id,
+                    task_block_id=task_block_id,
                 )
             )
             if not run_started_seen and provenance_warning is None:
@@ -4613,6 +4809,7 @@ class UltraApp(tk.Tk):
                 "assistant",
                 result,
                 producer=producer_snapshot,
+                task_block_id=task_block_id,
             )
             self.events.put(
                 (
@@ -4696,8 +4893,25 @@ class UltraApp(tk.Tk):
                         )
                     if event_type == "run_started" and event.get("chat_id") == self.current_chat_id:
                         self._active_audit_run_id = event.get("run_id")
-                        self._selected_audit_run_id = self._active_audit_run_id
-                        self._render_audit_thread()
+                        task_id = event.get("task_block_id")
+                        binding = getattr(self, "_task_block_index", {}).get(task_id)
+                        if binding:
+                            binding["run_id"] = self._active_audit_run_id
+                            try:
+                                thread = load_audit_thread(
+                                    self.workspace_var.get(), self.current_workspace_id,
+                                    self.current_chat_id, self._active_audit_run_id,
+                                )
+                            except Exception:
+                                thread = None
+                            binding["audit_available"] = bool(
+                                thread and thread.get("task_block_id") == task_id
+                            )
+                            self._ensure_task_audit_button(task_id)
+                            self._select_task_block(task_id, force=True)
+                        else:
+                            self._selected_audit_run_id = self._active_audit_run_id
+                            self._render_audit_thread()
                     elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",

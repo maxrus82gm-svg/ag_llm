@@ -21,6 +21,7 @@ MAX_CONTEXT_VARIANT_BYTES = 2 * 1024 * 1024
 _WORKSPACE_ID_RE = re.compile(r"^ws_[A-Za-z0-9_-]{16,128}$")
 _CHAT_ID_RE = re.compile(r"^chat_[A-Za-z0-9_-]{16,128}$")
 _MESSAGE_ID_RE = re.compile(r"^msg_[A-Za-z0-9_-]{16,128}$")
+_TASK_BLOCK_ID_RE = re.compile(r"^tb_[a-f0-9]{32}$")
 _CONTEXT_VARIANT_ID_RE = re.compile(r"^ctxv_[A-Za-z0-9_-]{16,128}$")
 _LLM_PRODUCER_STRING_FIELDS = (
     "kind",
@@ -113,6 +114,17 @@ def _validate_producer(producer: object) -> dict[str, Any]:
                 )
 
     return dict(producer)
+
+
+def new_task_block_id() -> str:
+    """Create one persistent identity for a new user task."""
+    return f"tb_{uuid.uuid4().hex}"
+
+
+def validate_task_block_id(task_block_id: str) -> str:
+    if not isinstance(task_block_id, str) or not _TASK_BLOCK_ID_RE.fullmatch(task_block_id):
+        raise ValueError(f"Некорректный task_block_id: {task_block_id!r}")
+    return task_block_id
 
 
 def _load_workspace_metadata(path: Path) -> dict[str, Any]:
@@ -543,6 +555,7 @@ def append_raw_message(
     original_text: str,
     *,
     producer: dict[str, Any] | None = None,
+    task_block_id: str | None = None,
 ) -> dict[str, Any]:
     root = _validate_workspace_root(workspace_root)
     info = ensure_workspace_storage(root)
@@ -576,6 +589,8 @@ def append_raw_message(
     }
     if producer is not None:
         message["producer"] = _validate_producer(producer)
+    if task_block_id is not None:
+        message["task_block_id"] = validate_task_block_id(task_block_id)
 
     messages_dir = chat_dir / "messages"
     messages_dir.mkdir(parents=True, exist_ok=True)
@@ -620,6 +635,11 @@ def load_chat_messages(
                 raise RuntimeError(
                     f"Повреждён producer RAW MESSAGE: {msg_path}"
                 ) from exc
+        if "task_block_id" in data:
+            try:
+                validate_task_block_id(data["task_block_id"])
+            except ValueError as exc:
+                raise RuntimeError(f"Повреждён task_block_id RAW MESSAGE: {msg_path}") from exc
         messages.append(data)
 
     messages.sort(
@@ -684,6 +704,11 @@ def load_raw_message(
         raise RuntimeError(f"Повреждена identity RAW MESSAGE: {path}")
     if not isinstance(data.get("original_text"), str):
         raise RuntimeError(f"В RAW MESSAGE отсутствует original_text: {path}")
+    if "task_block_id" in data:
+        try:
+            validate_task_block_id(data["task_block_id"])
+        except ValueError as exc:
+            raise RuntimeError(f"Повреждён task_block_id RAW MESSAGE: {path}") from exc
     return data
 
 
