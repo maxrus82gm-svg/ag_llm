@@ -506,6 +506,8 @@ class UltraApp(tk.Tk):
     def _refresh_color_swatches(self) -> None:
         values = {
             "log": self.log_text_color_var.get(),
+            "error_log": self.error_log_color_var.get(),
+            "audit": self.audit_text_color_var.get(),
             "user": self.user_text_color_var.get(),
             "assistant": self.assistant_text_color_var.get(),
             "workspace": self.workspace_text_color_var.get(),
@@ -697,61 +699,55 @@ class UltraApp(tk.Tk):
             padding=8,
         )
         security.pack(fill="x", pady=(0, 8))
+        security_controls = ttk.Frame(security)
+        security_controls.pack(side="left", anchor="n")
+        security_service = ttk.Frame(security)
+        security_service.pack(side="right", anchor="n", padx=(16, 0))
+        security_top = ttk.Frame(security_controls)
+        security_top.grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 2))
 
         # Верхняя компактная строка.
         # Backup для UI считается обязательной системной защитой и
         # не занимает место отдельной пользовательской настройкой.
-        ttk.Label(security, text="Лимит tools:").grid(
-            row=0, column=0, sticky="w", padx=(0, 4), pady=(0, 2)
-        )
+        ttk.Label(security_top, text="Лимит tools:").pack(side="left", padx=(0, 4))
         tool_limit_spin = ttk.Spinbox(
-            security,
+            security_top,
             from_=1,
             to=200,
             width=6,
             textvariable=self.tool_limit_var,
         )
-        tool_limit_spin.grid(
-            row=0, column=1, sticky="w", padx=(0, 14), pady=(0, 2)
-        )
+        tool_limit_spin.pack(side="left", padx=(0, 18))
 
         verify_check = ttk.Checkbutton(
-            security,
+            security_top,
             text="VERIFY",
             variable=self.allow_verify_var,
         )
-        verify_check.grid(
-            row=0, column=2, sticky="w", padx=(0, 12), pady=(0, 2)
-        )
+        verify_check.pack(side="left", padx=(0, 18))
 
         guard_p1_check = ttk.Checkbutton(
-            security,
+            security_top,
             text="GUARD P1",
             variable=self.allow_guard_p1_var,
         )
-        guard_p1_check.grid(
-            row=0, column=3, sticky="w", pady=(0, 2)
-        )
+        guard_p1_check.pack(side="left")
 
         context_messages_button = ttk.Button(
-            security,
+            security_service,
             text="Контекстные сообщения",
             command=self._open_server_context_messages_editor,
         )
-        context_messages_button.grid(
-            row=1, column=4, sticky="w", padx=(12, 0), pady=2
-        )
+        context_messages_button.pack(anchor="e", pady=(0, 5))
 
         # Компактные визуальные настройки вынесены в отдельный блок справа.
         # Цвет меняется кликом прямо по цветному квадрату.
         interface_frame = ttk.LabelFrame(
-            security,
+            security_service,
             text="ИНТЕРФЕЙС",
             padding=(8, 5),
         )
-        interface_frame.grid(
-            row=0, column=5, rowspan=4, sticky="nw", padx=(18, 0), pady=(0, 2)
-        )
+        interface_frame.pack(anchor="e")
 
         theme_check = ttk.Checkbutton(
             interface_frame,
@@ -765,42 +761,42 @@ class UltraApp(tk.Tk):
 
         compact_color_rows = [
             (
-                1,
+                1, 0,
                 "Лог действий",
                 "log",
                 self.log_text_color_var,
                 "Цвет текста — лог действий",
             ),
             (
-                2,
+                2, 0,
                 "Ошибки лога",
                 "error_log",
                 self.error_log_color_var,
                 "Цвет ошибок — лог действий",
             ),
             (
-                3,
+                3, 0,
                 "Разбор выполнения",
                 "audit",
                 self.audit_text_color_var,
                 "Цвет текста — разбор выполнения",
             ),
             (
-                4,
+                1, 2,
                 "Пользователь",
                 "user",
                 self.user_text_color_var,
                 "Цвет текста — сообщение пользователя в чате",
             ),
             (
-                5,
+                2, 2,
                 "Ответ ассистента",
                 "assistant",
                 self.assistant_text_color_var,
                 "Цвет текста — ответ ассистента",
             ),
             (
-                6,
+                3, 2,
                 "Workspace / чаты",
                 "workspace",
                 self.workspace_text_color_var,
@@ -808,9 +804,9 @@ class UltraApp(tk.Tk):
             ),
         ]
 
-        for row, label_text, key, color_var, dialog_title in compact_color_rows:
+        for row, column, label_text, key, color_var, dialog_title in compact_color_rows:
             ttk.Label(interface_frame, text=label_text).grid(
-                row=row, column=0, sticky="w", pady=1
+                row=row, column=column, sticky="w", padx=(10, 0) if column else 0, pady=1
             )
             swatch = tk.Button(
                 interface_frame,
@@ -825,7 +821,7 @@ class UltraApp(tk.Tk):
                     var, title
                 ),
             )
-            swatch.grid(row=row, column=1, sticky="w", padx=(8, 0), pady=1)
+            swatch.grid(row=row, column=column + 1, sticky="w", padx=(8, 0), pady=1)
             self._color_swatches[key] = swatch
 
         reset_layout_button = ttk.Button(
@@ -834,26 +830,26 @@ class UltraApp(tk.Tk):
             command=self._reset_panel_layout,
         )
         reset_layout_button.grid(
-            row=7,
+            row=4,
             column=0,
-            columnspan=2,
+            columnspan=4,
             sticky="ew",
             pady=(5, 0),
         )
 
         # Компактные и одинаковые строки областей доступа.
         read_check = ttk.Checkbutton(
-            security,
+            security_controls,
             text="",
             variable=self.allow_read_var,
         )
         read_check.grid(row=1, column=0, sticky="w", pady=2)
 
-        ttk.Label(security, text="Чтение только в:").grid(
+        ttk.Label(security_controls, text="Чтение только в:").grid(
             row=1, column=1, sticky="w", padx=(2, 0), pady=2
         )
         read_scope_entry = ttk.Entry(
-            security,
+            security_controls,
             textvariable=self.read_scope_var,
             width=38,
         )
@@ -862,7 +858,7 @@ class UltraApp(tk.Tk):
         )
         bind_edit_shortcuts(read_scope_entry)
         read_scope_button = ttk.Button(
-            security,
+            security_controls,
             text="...",
             width=3,
             command=lambda: self._choose_scope(self.read_scope_var),
@@ -872,17 +868,17 @@ class UltraApp(tk.Tk):
         )
 
         write_check = ttk.Checkbutton(
-            security,
+            security_controls,
             text="",
             variable=self.allow_write_var,
         )
         write_check.grid(row=2, column=0, sticky="w", pady=2)
 
-        ttk.Label(security, text="Запись только в:").grid(
+        ttk.Label(security_controls, text="Запись только в:").grid(
             row=2, column=1, sticky="w", padx=(2, 0), pady=2
         )
         write_scope_entry = ttk.Entry(
-            security,
+            security_controls,
             textvariable=self.write_scope_var,
             width=38,
         )
@@ -891,7 +887,7 @@ class UltraApp(tk.Tk):
         )
         bind_edit_shortcuts(write_scope_entry)
         write_scope_button = ttk.Button(
-            security,
+            security_controls,
             text="...",
             width=3,
             command=lambda: self._choose_scope(self.write_scope_var),
@@ -902,17 +898,17 @@ class UltraApp(tk.Tk):
 
         # Удаление — отдельное разрешение, независимо от записи.
         delete_check = ttk.Checkbutton(
-            security,
+            security_controls,
             text="",
             variable=self.allow_delete_var,
         )
         delete_check.grid(row=3, column=0, sticky="w", pady=2)
 
-        ttk.Label(security, text="Удаление только в:").grid(
+        ttk.Label(security_controls, text="Удаление только в:").grid(
             row=3, column=1, sticky="w", padx=(2, 0), pady=2
         )
         delete_scope_entry = ttk.Entry(
-            security,
+            security_controls,
             textvariable=self.delete_scope_var,
             width=38,
         )
@@ -921,7 +917,7 @@ class UltraApp(tk.Tk):
         )
         bind_edit_shortcuts(delete_scope_entry)
         delete_scope_button = ttk.Button(
-            security,
+            security_controls,
             text="...",
             width=3,
             command=lambda: self._choose_scope(self.delete_scope_var),
@@ -1023,11 +1019,11 @@ class UltraApp(tk.Tk):
         self._render_audit_thread()
 
         compressor_frame = ttk.LabelFrame(
-            lower_frame,
+            upper_frame,
             text="КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR",
             padding=(8, 5),
         )
-        compressor_frame.pack(fill="x", pady=(0, 8))
+        compressor_frame.pack(side="bottom", fill="x", pady=(8, 0))
         compressor_frame.columnconfigure(1, minsize=180)
         compressor_frame.columnconfigure(3, weight=1)
 
@@ -1177,7 +1173,7 @@ class UltraApp(tk.Tk):
             text="Сообщение",
             padding=4,
         )
-        message_section.pack(fill="x", pady=(0, 8))
+        message_section.pack(fill="both", expand=True, pady=(0, 8))
 
         self.input_box = scrolledtext.ScrolledText(
             message_section,
@@ -1186,12 +1182,12 @@ class UltraApp(tk.Tk):
             font=("Segoe UI", 10),
             undo=True,
         )
-        self.input_box.pack(fill="x")
+        self.input_box.pack(fill="both", expand=True)
         bind_edit_shortcuts(self.input_box)
         self.input_box.bind("<Control-Return>", self._send_from_hotkey)
 
         buttons = ttk.Frame(lower_frame)
-        buttons.pack(fill="x")
+        buttons.pack(side="bottom", fill="x")
         self.send_button = ttk.Button(
             buttons,
             text="Отправить",
@@ -4239,6 +4235,33 @@ class UltraApp(tk.Tk):
             return (
                 f"[{time_str}] TOOL #{seq} {func} -> ERROR{path_str} "
                 f"({error.get('type', '')}): {str(error.get('message', ''))[:300]}"
+            )
+
+        if event_type == "final_audit_started":
+            return (
+                f"[{time_str}] СУДЬЯ ДРЕДД — START | RUN {run_id} | "
+                f"model={event.get('model_id')} | revision={event.get('write_revision')}"
+            )
+
+        if event_type == "final_audit_retry_evaluated":
+            return (
+                f"[{time_str}] RETRY POLICY → {event.get('decision')} | RUN {run_id} | "
+                f"attempt={event.get('audit_attempt')} | "
+                f"progress={event.get('progress_class')} | "
+                f"reason={str(event.get('decision_reason') or '')[:160]}"
+            )
+
+        if event_type == "final_audit_feedback_delivered":
+            return (
+                f"[{time_str}] DREDD FEEDBACK → EXECUTOR | RUN {run_id} | "
+                f"cycle {event.get('correction_cycle')}/{event.get('correction_limit')} | "
+                f"violations={event.get('violations_count')}"
+            )
+
+        if event_type == "final_audit_correction_started":
+            return (
+                f"[{time_str}] CORRECTION START | RUN {run_id} | "
+                f"cycle {event.get('correction_cycle')}/{event.get('correction_limit')}"
             )
 
         if event_type == "final_audit_failed":

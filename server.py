@@ -50,8 +50,8 @@ MAX_TOKENS = 32768
 MAX_AUDIT_DIAGNOSTIC_TOKENS = 160
 AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS = 25
 AUDIT_DIAGNOSTIC_QUESTION = (
-    "Судья Дредд отклонил результат. Кратко объясни, какой факт, инструкция, "
-    "предыдущий контекст или предположение привели тебя к этому решению. "
+    "Кратко объясни, какое требование, контекст или предположение привели "
+    "тебя к отклонённому решению. "
     "Не спорь с FAIL. Не исправляй TASK в этом ответе. Не раскрывай "
     "пошаговые внутренние рассуждения. Дай 1–3 коротких предложения "
     "об основании решения."
@@ -3714,17 +3714,28 @@ async def run_agent_task(
                         )
 
                     if correction_cycle is not None:
+                        diagnostic_question = (
+                            "Судья Дредд отклонил результат. Его замечания:\n"
+                            f"REASON:\n{audit_result.reason}\n\n"
+                            "VIOLATIONS:\n"
+                            + "\n".join(
+                                f"- {violation}"
+                                for violation in audit_result.violations
+                            )
+                            + f"\n\nREQUIRED ACTION:\n{audit_result.required_action}\n\n"
+                            + AUDIT_DIAGNOSTIC_QUESTION
+                        )
                         _emit(
                             "audit_diagnostic_question",
                             {
                                 "audit_attempt": audit_attempt,
-                                "text": AUDIT_DIAGNOSTIC_QUESTION,
+                                "text": diagnostic_question,
                             },
                         )
                         try:
                             diagnostic_answer = await _request_audit_diagnostic(
                                 client, headers, run_model, messages, content,
-                                AUDIT_DIAGNOSTIC_QUESTION,
+                                diagnostic_question,
                             )
                         except Exception as exc:
                             _emit(

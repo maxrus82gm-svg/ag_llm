@@ -124,7 +124,118 @@ class DiagnosticForkTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(messages, [{"role": "user", "content": "Task"}])
 
 
+class CompactLayoutTests(unittest.TestCase):
+    def test_security_interface_and_bottom_composer_structure(self):
+        with patch.object(ultra_ui, "load_ui_state", return_value=ui_state.default_ui_state()), \
+             patch.object(ultra_ui.UltraApp, "_initialize_workspace_registry"):
+            app = ultra_ui.UltraApp()
+        self.addCleanup(app.destroy)
+        app.withdraw()
+        app.update_idletasks()
+
+        def descendants(widget):
+            for child in widget.winfo_children():
+                yield child
+                yield from descendants(child)
+
+        def titled(name):
+            return next(w for w in descendants(app)
+                        if isinstance(w, ultra_ui.ttk.LabelFrame) and w.cget("text") == name)
+
+        security = next(w for w in descendants(app)
+                        if isinstance(w, ultra_ui.ttk.LabelFrame)
+                        and str(w.cget("text")).startswith("БЕЗОПАСНОСТЬ ЗАПУСКА"))
+        controls, service = security.winfo_children()
+        top = controls.winfo_children()[0]
+        self.assertEqual(top.grid_info()["columnspan"], 4)
+        self.assertEqual([w.cget("text") for w in top.winfo_children()
+                          if isinstance(w, ultra_ui.ttk.Checkbutton)], ["VERIFY", "GUARD P1"])
+        scope_rows = [int(w.grid_info()["row"]) for w in controls.winfo_children()
+                      if isinstance(w, ultra_ui.ttk.Entry)]
+        self.assertEqual(scope_rows, [1, 2, 3])
+        self.assertTrue(any(w.cget("text") == "Контекстные сообщения"
+                            for w in service.winfo_children()
+                            if isinstance(w, ultra_ui.ttk.Button)))
+
+        interface = titled("ИНТЕРФЕЙС")
+        labels = {w.cget("text"): (int(w.grid_info()["row"]), int(w.grid_info()["column"]))
+                  for w in interface.winfo_children() if isinstance(w, ultra_ui.ttk.Label)}
+        self.assertEqual(labels["Лог действий"], (1, 0))
+        self.assertEqual(labels["Пользователь"], (1, 2))
+        self.assertEqual(labels["Разбор выполнения"], (3, 0))
+        self.assertEqual(labels["Workspace / чаты"], (3, 2))
+        self.assertEqual(len(app._color_swatches), 6)
+
+        upper, lower = app.central_vertical_paned.panes()
+        self.assertEqual(str(app.chat_audit_paned.master), str(upper))
+        self.assertEqual(str(titled("КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR").master), str(upper))
+        message = titled("Сообщение")
+        self.assertEqual(str(message.master), str(lower))
+        self.assertEqual(message.pack_info()["fill"], "both")
+        self.assertEqual(int(message.pack_info()["expand"]), 1)
+        self.assertEqual(app.input_box.pack_info()["fill"], "both")
+        self.assertEqual(int(app.input_box.pack_info()["expand"]), 1)
+        self.assertEqual(str(app.send_button.master.master), str(lower))
+        self.assertEqual(app.send_button.master.pack_info()["side"], "bottom")
+
+
 class TraceAndUiStateTests(unittest.TestCase):
+    def test_final_audit_lifecycle_formatting_and_non_error_tags(self):
+        samples = (
+            ("final_audit_started", {"model_id": "verifier", "write_revision": 2}, "ДРЕДД — START"),
+            ("final_audit_retry_evaluated", {"decision": "CONTINUE", "progress_class": "MATERIAL_PROGRESS", "audit_attempt": 1}, "RETRY POLICY → CONTINUE"),
+            ("final_audit_feedback_delivered", {"correction_cycle": 1, "correction_limit": 2}, "DREDD FEEDBACK → EXECUTOR"),
+            ("final_audit_correction_started", {"correction_cycle": 1, "correction_limit": 2}, "CORRECTION START"),
+        )
+        formatter = SimpleNamespace(_compact_event_arguments=ultra_ui.UltraApp._compact_event_arguments)
+        events = queue.Queue()
+        for kind, fields, expected in samples:
+            event = {"event": kind, "run_id": "run_test", **fields}
+            self.assertIn(expected, ultra_ui.UltraApp._format_event(formatter, event))
+            events.put(event)
+        events.put({"event": "final_audit_failed", "run_id": "run_test"})
+        appended = []
+        fake = SimpleNamespace(
+            trace_events=events,
+            _format_event=lambda event: ultra_ui.UltraApp._format_event(formatter, event),
+            _append_trace=lambda line, tag="trace": appended.append((line, tag)),
+            _run_started_once=False, _selected_audit_run_id=None,
+            _active_audit_run_id=None, current_chat_id=None,
+            _poll_trace_events=lambda: None,
+            after=lambda *_: None,
+        )
+        ultra_ui.UltraApp._poll_trace_events(fake)
+        self.assertEqual([tag for _line, tag in appended], ["trace"] * 4 + ["trace_error"])
+
+    def test_new_color_swatches_refresh(self):
+        class Swatch:
+            def __init__(self): self.options = {}
+            def configure(self, **options): self.options.update(options)
+        class ColorVar:
+            def __init__(self, value): self.value = value
+            def get(self): return self.value
+            def set(self, value): self.value = value
+        swatches = {key: Swatch() for key in ("log", "error_log", "audit", "user", "assistant", "workspace")}
+        fake = SimpleNamespace(
+            _color_swatches=swatches,
+            log_text_color_var=ColorVar("#000001"),
+            error_log_color_var=ColorVar("#000002"),
+            audit_text_color_var=ColorVar("#000003"),
+            user_text_color_var=ColorVar("#000004"),
+            assistant_text_color_var=ColorVar("#000005"),
+            workspace_text_color_var=ColorVar("#000006"),
+        )
+        ultra_ui.UltraApp._refresh_color_swatches(fake)
+        self.assertEqual(swatches["error_log"].options["bg"], "#000002")
+        self.assertEqual(swatches["error_log"].options["activebackground"], "#000002")
+        self.assertEqual(swatches["audit"].options["bg"], "#000003")
+        self.assertEqual(swatches["audit"].options["activebackground"], "#000003")
+        fake._apply_text_colors = lambda: ultra_ui.UltraApp._refresh_color_swatches(fake)
+        fake._save_ui_state = lambda **_kwargs: None
+        with patch.object(ultra_ui.colorchooser, "askcolor", return_value=((255, 0, 0), "#ff0000")):
+            ultra_ui.UltraApp._choose_text_color(fake, fake.error_log_color_var, "Ошибки лога")
+        self.assertEqual(swatches["error_log"].options["bg"], "#FF0000")
+
     def test_formatter_failure_cannot_stop_polling_or_next_event(self):
         events = queue.Queue()
         events.put({"event": "broken"})

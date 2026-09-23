@@ -512,6 +512,27 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len({item["run_id"] for item in self.events}), 1)
         self.assertEqual(self.events[-1]["status"], "SUCCESS")
 
+    async def test_diagnostic_question_includes_verifier_findings(self) -> None:
+        diagnostic = AsyncMock(return_value="Краткое основание решения.")
+        result, _verifier, client = await self.run_case(
+            [fail_result("A"), verifier_result("PASS")],
+            fake_client=FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate B")]),
+            extra_patches=(patch.object(server, "_request_audit_diagnostic", diagnostic),),
+        )
+        self.assertEqual(result, "Candidate B")
+        self.assertEqual(diagnostic.await_count, 1)
+        args = diagnostic.await_args.args
+        self.assertEqual(args[2], server.MODEL)
+        self.assertEqual(args[4], "Candidate A")
+        self.assertIn("REASON:\nReason A", args[5])
+        self.assertIn("VIOLATIONS:\n- Violation A", args[5])
+        self.assertIn("REQUIRED ACTION:\nFix A", args[5])
+        self.assertIn("Кратко объясни", args[5])
+        event = next(item for item in self.events if item["event"] == "audit_diagnostic_question")
+        self.assertEqual(event["text"], args[5])
+        self.assertFalse(any("REASON:\nReason A" in str(item.get("content"))
+                             for item in client.bodies[1]["messages"]))
+
     async def test_audit_thread_persists_real_fail_diagnostic_tools_and_resolution(self) -> None:
         (self.workspace / "sample.txt").write_text("sample", encoding="utf-8")
         client = FakeClient([
