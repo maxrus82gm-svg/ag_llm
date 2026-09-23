@@ -250,6 +250,31 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(context["evidence_completeness"]["complete"])
         self.assertFalse(context["evidence_completeness"]["critical_for_success"])
 
+    async def test_precise_edit_tracks_run_and_reaches_final_audit(self) -> None:
+        (self.workspace / "result.txt").write_text("old value", encoding="utf-8")
+        expected = server._sha256_utf8("old value")
+        self.permissions.update(allow_write=True, allow_verify=True, tool_limit=3)
+        client = FakeClient([
+            FakeResponse("", finish_reason="function_call", function_call={
+                "name": "replace_text", "arguments": {
+                    "path": "result.txt", "old_text": "old", "new_text": "new",
+                    "expected_content_sha256": expected,
+                },
+            }),
+            FakeResponse("Done"),
+        ])
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS"), fake_client=client, mock_git=False
+        )
+        self.assertEqual(result, "Done")
+        self.assertEqual((self.workspace / "result.txt").read_text(encoding="utf-8"), "new value")
+        context = json.loads(verifier.await_args.kwargs["verification_context"])
+        self.assertEqual(context["run_facts"]["write_revision"], 1)
+        self.assertEqual(context["mutation_facts"]["changed_files"], ["result.txt"])
+        self.assertTrue(context["run_owned_filesystem_evidence"][0]["match"])
+        self.assertEqual(context["run_owned_filesystem_evidence"][0]["actual_content_sha256"],
+                         server._sha256_utf8("new value"))
+
     async def test_non_git_workspace_hash_mismatch_blocks_verifier(self) -> None:
         self.permissions.update(allow_write=True, allow_verify=True, tool_limit=3)
         client = FakeClient([

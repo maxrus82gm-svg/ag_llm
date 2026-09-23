@@ -1,4 +1,5 @@
 import hashlib
+from bisect import bisect_right
 import json
 import os
 import re
@@ -100,6 +101,10 @@ ALLOWED_TEXT_FILENAMES = {
 }
 
 MAX_AGENT_FILE_BYTES = 2 * 1024 * 1024
+MAX_FIND_TEXT_MATCHES = 100
+MAX_FIND_TEXT_SNIPPET_CHARS = 120
+MAX_READ_RANGE_LINES = 200
+MAX_READ_RANGE_BYTES = 64 * 1024
 MAX_AGENT_LIST_ENTRIES = 500
 MAX_AGENT_LIST_BYTES = 64 * 1024
 MAX_AGENT_TOOL_ITERATIONS = 20
@@ -128,6 +133,11 @@ VERIFICATION_TOOL_NAMES = {
     "git_diff",
     "ui_smoke_test",
 }
+READ_TOOL_NAMES = {"list_dir", "read_file", "find_text", "read_file_range"}
+TEXT_MUTATION_TOOL_NAMES = {
+    "write_file", "replace_text", "insert_before", "insert_after",
+}
+MUTATION_TOOL_NAMES = TEXT_MUTATION_TOOL_NAMES | {"delete_file"}
 
 BACKUP_BASE = (
     Path(os.getenv("LOCALAPPDATA") or Path.home())
@@ -165,7 +175,7 @@ AGENT_FUNCTIONS = [
     },
     {
         "name": "read_file",
-        "description": "Прочитать UTF-8 текстовый файл внутри рабочей папки.",
+        "description": "Прочитать целиком текстовый файл (UTF-8; .jsonl — UTF-16). Для большого файла и локальной правки предпочитай find_text/read_file_range.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -178,10 +188,28 @@ AGENT_FUNCTIONS = [
         },
     },
     {
+        "name": "find_text",
+        "description": "Найти точное вхождение текста в файле; вернуть позиции, короткие фрагменты и SHA-256 содержимого. Для локальной правки большого файла начни с этого инструмента.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к текстовому файлу."},
+            "text": {"type": "string", "description": "Непустая точная подстрока для поиска."},
+        }, "required": ["path", "text"]},
+    },
+    {
+        "name": "read_file_range",
+        "description": "Прочитать только заданные строки файла (1-based, границы включительно) и вернуть SHA-256 полного logical content.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к текстовому файлу."},
+            "start_line": {"type": "integer", "description": "Первая строка, от 1."},
+            "end_line": {"type": "integer", "description": "Последняя строка включительно."},
+        }, "required": ["path", "start_line", "end_line"]},
+    },
+    {
         "name": "write_file",
         "description": (
-            "Создать или полностью перезаписать UTF-8 текстовый файл "
-            "внутри рабочей папки, при необходимости создав каталоги."
+            "Создать файл или намеренно полностью перезаписать текстовый файл "
+            "(UTF-8; .jsonl — UTF-16). Для локальной правки существующего файла "
+            "предпочитай find_text/read_file_range и точные edit tools."
         ),
         "parameters": {
             "type": "object",
@@ -198,6 +226,29 @@ AGENT_FUNCTIONS = [
             "required": ["path", "content"],
         },
     },
+    {
+        "name": "replace_text",
+        "description": "Точно заменить единственное вхождение old_text после проверки SHA-256 файла. Не выполняет fuzzy replacement и не возвращает весь файл.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Относительный путь к существующему текстовому файлу."},
+            "old_text": {"type": "string", "description": "Непустой уникальный точный фрагмент."},
+            "new_text": {"type": "string", "description": "Новый фрагмент."},
+            "expected_content_sha256": {"type": "string", "description": "SHA-256 полного logical content из find_text/read_file_range."},
+        }, "required": ["path", "old_text", "new_text", "expected_content_sha256"]},
+    },
+    *[
+        {
+            "name": name,
+            "description": f"Точно вставить content {'перед' if name == 'insert_before' else 'после'} единственного marker после проверки SHA-256 файла. Не возвращает весь файл.",
+            "parameters": {"type": "object", "properties": {
+                "path": {"type": "string", "description": "Относительный путь к существующему текстовому файлу."},
+                "marker": {"type": "string", "description": "Непустой уникальный точный маркер."},
+                "content": {"type": "string", "description": "Вставляемый фрагмент."},
+                "expected_content_sha256": {"type": "string", "description": "SHA-256 полного logical content из find_text/read_file_range."},
+            }, "required": ["path", "marker", "content", "expected_content_sha256"]},
+        }
+        for name in ("insert_before", "insert_after")
+    ],
     {
         "name": "delete_file",
         "description": (
@@ -534,9 +585,9 @@ def _require_operation_permission(
 def _functions_for_policy(policy: dict) -> list[dict]:
     allowed_names = set()
     if policy["allow_read"]:
-        allowed_names.update({"list_dir", "read_file"})
+        allowed_names.update(READ_TOOL_NAMES)
     if policy["allow_write"]:
-        allowed_names.add("write_file")
+        allowed_names.update(TEXT_MUTATION_TOOL_NAMES)
     if policy["allow_delete"]:
         allowed_names.add("delete_file")
     # VERIFY не является обходом READ: инструменты проверки получают код/дифф
@@ -733,25 +784,111 @@ def _agent_list_dir(root: Path, path_text: str, policy: dict) -> dict:
         "truncated": truncated,
     }
 
-def _agent_read_file(root: Path, path_text: str, policy: dict) -> dict:
-    path = _require_operation_permission(root, path_text, "read", policy)
+def _logical_text_encoding(path: Path) -> str:
+    return "utf-16" if path.suffix.lower() == ".jsonl" else "utf-8"
+
+
+def _read_logical_text(path: Path) -> str:
     _require_text_suffix(path)
     if not path.is_file():
-        raise FileNotFoundError(f"Файл не найден: {path_text}")
-
-    size = path.stat().st_size
-    if size > MAX_AGENT_FILE_BYTES:
-        raise ValueError(
-            f"Файл слишком большой: {size} байт. "
-            f"Лимит: {MAX_AGENT_FILE_BYTES} байт."
-        )
-
+        raise FileNotFoundError(f"Файл не найден: {path}")
+    physical_limit = MAX_AGENT_FILE_BYTES * (2 if path.suffix.lower() == ".jsonl" else 1) + 2
+    if path.stat().st_size > physical_limit:
+        raise ValueError(f"Файл превышает лимит чтения: {physical_limit} байт.")
     try:
-        content = path.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        raise ValueError(f"Файл не является корректным UTF-8: {path_text}") from exc
+        with path.open("r", encoding=_logical_text_encoding(path), newline=None) as stream:
+            content = stream.read()
+    except UnicodeError as exc:
+        raise ValueError(f"Некорректная кодировка {_logical_text_encoding(path)}: {path}") from exc
+    if len(content.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Logical content превышает лимит: {MAX_AGENT_FILE_BYTES} байт.")
+    return content
 
-    return {"path": path.relative_to(root).as_posix(), "content": content}
+
+def _write_logical_text(path: Path, content: str) -> int:
+    if not isinstance(content, str):
+        raise ValueError("content должен быть строкой.")
+    _require_text_suffix(path)
+    encoded_bytes = len(content.encode("utf-8"))
+    if encoded_bytes > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Содержимое слишком большое: {encoded_bytes} байт. Лимит: {MAX_AGENT_FILE_BYTES} байт.")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding=_logical_text_encoding(path), newline="") as stream:
+            stream.write(content)
+        os.replace(temporary_name, path)
+    finally:
+        if os.path.exists(temporary_name):
+            os.unlink(temporary_name)
+    return encoded_bytes
+
+
+def _agent_read_file(root: Path, path_text: str, policy: dict) -> dict:
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "content": content,
+        "content_sha256": _sha256_utf8(content),
+    }
+
+
+def _agent_find_text(root: Path, path_text: str, text: str, policy: dict) -> dict:
+    if not isinstance(text, str) or not text:
+        raise ValueError("text должен быть непустой строкой.")
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    newline_offsets = [index for index, char in enumerate(content) if char == "\n"]
+    matches = []
+    count = 0
+    offset = 0
+    while (found := content.find(text, offset)) != -1:
+        count += 1
+        if len(matches) < MAX_FIND_TEXT_MATCHES:
+            line_index = bisect_right(newline_offsets, found - 1)
+            line_start = newline_offsets[line_index - 1] + 1 if line_index else 0
+            snippet_start = max(line_start, found - 40)
+            snippet = content[snippet_start:found + len(text) + 40]
+            matches.append({
+                "line": line_index + 1,
+                "column": found - line_start + 1,
+                "snippet": snippet[:MAX_FIND_TEXT_SNIPPET_CHARS],
+            })
+        offset = found + 1
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "count": count,
+        "matches": matches,
+        "truncated": count > len(matches),
+        "content_sha256": _sha256_utf8(content),
+    }
+
+
+def _agent_read_file_range(
+    root: Path, path_text: str, start_line: int, end_line: int, policy: dict
+) -> dict:
+    if (type(start_line) is not int or type(end_line) is not int
+            or start_line < 1 or end_line < start_line):
+        raise ValueError("start_line/end_line должны быть целыми 1-based inclusive границами.")
+    if end_line - start_line + 1 > MAX_READ_RANGE_LINES:
+        raise ValueError(f"Диапазон превышает {MAX_READ_RANGE_LINES} строк.")
+    path = _require_operation_permission(root, path_text, "read", policy)
+    content = _read_logical_text(path)
+    lines = content.splitlines(keepends=True)
+    if end_line > len(lines):
+        raise ValueError(f"end_line={end_line} выходит за пределы файла ({len(lines)} строк).")
+    selected = "".join(lines[start_line - 1:end_line])
+    if len(selected.encode("utf-8")) > MAX_READ_RANGE_BYTES:
+        raise ValueError(f"Диапазон превышает {MAX_READ_RANGE_BYTES} байт.")
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "start_line": start_line,
+        "end_line": end_line,
+        "total_lines": len(lines),
+        "content": selected,
+        "content_sha256": _sha256_utf8(content),
+    }
 
 def _agent_write_file(
     root: Path,
@@ -783,13 +920,77 @@ def _agent_write_file(
     if resolved_parent != root and root not in resolved_parent.parents:
         raise ValueError("Родительская папка выходит за пределы workspace_root.")
 
-    path.write_text(
-        content,
-        encoding="utf-16" if path.suffix.lower() == ".jsonl" else "utf-8",
-    )
+    _write_logical_text(path, content)
     return {
         "path": path.relative_to(root).as_posix(),
         "bytes_written": len(encoded_content),
+        "content_sha256": _sha256_utf8(_read_logical_text(path)),
+    }
+
+
+class StaleFileStateError(ValueError):
+    """The file changed since the model obtained its expected content hash."""
+
+
+def _agent_precise_edit(
+    root: Path,
+    name: str,
+    path_text: str,
+    target_text: str,
+    replacement_text: str,
+    expected_content_sha256: str,
+    policy: dict,
+    backup_session: dict | None,
+) -> dict:
+    if name not in {"replace_text", "insert_before", "insert_after"}:
+        raise ValueError(f"Неизвестный precise edit: {name!r}.")
+    if not isinstance(target_text, str) or not target_text:
+        raise ValueError("old_text/marker должен быть непустой строкой.")
+    if not isinstance(replacement_text, str):
+        raise ValueError("new_text/content должен быть строкой.")
+    if not isinstance(expected_content_sha256, str) or not re.fullmatch(
+        r"[0-9a-f]{64}", expected_content_sha256
+    ):
+        raise ValueError("expected_content_sha256 должен быть lowercase SHA-256 hex.")
+    path = _require_operation_permission(root, path_text, "write", policy)
+    previous = _read_logical_text(path)
+    previous_hash = _sha256_utf8(previous)
+    if previous_hash != expected_content_sha256:
+        raise StaleFileStateError("STALE_FILE_STATE: logical content SHA-256 не совпадает.")
+    index = previous.find(target_text)
+    if index < 0:
+        raise ValueError("Точный old_text/marker не найден; файл не изменён.")
+    if previous.find(target_text, index + 1) >= 0:
+        raise ValueError("old_text/marker встречается больше одного раза; файл не изменён.")
+
+    if name == "replace_text":
+        start, end = index, index + len(target_text)
+        inserted = replacement_text
+    elif name == "insert_before":
+        start = end = index
+        inserted = replacement_text
+    else:
+        start = end = index + len(target_text)
+        inserted = replacement_text
+    updated = previous[:start] + inserted + previous[end:]
+    if updated == previous:
+        raise ValueError("Логическое содержимое не изменилось; mutation не выполнена.")
+    if len(updated.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+        raise ValueError(f"Результат превышает лимит {MAX_AGENT_FILE_BYTES} байт.")
+
+    # All checks are complete. Preserve the original before physical mutation.
+    _backup_before_write(root, path, backup_session)
+    _write_logical_text(path, updated)
+    changed_line = previous.count("\n", 0, start) + 1
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "previous_content_sha256": previous_hash,
+        "content_sha256": _sha256_utf8(_read_logical_text(path)),
+        "start_line": changed_line,
+        "end_line": changed_line + inserted.count("\n"),
+        "removed_chars": end - start,
+        "added_chars": len(inserted),
+        "resulting_snippet": updated[max(0, start - 40):start + min(len(inserted), 80) + 40][:160],
     }
 
 def _agent_delete_file(
@@ -1373,17 +1574,20 @@ def _safe_tool_result_summary(
         return str(result)[:500]
 
     path = result.get("path")
-    if function_name == "read_file":
+    if function_name in {"read_file", "read_file_range"}:
         content = result.get("content")
         chars = len(content) if isinstance(content, str) else None
         return f"path={path!r}, chars={chars}"
+
+    if function_name == "find_text":
+        return f"path={path!r}, count={result.get('count')!r}"
 
     if function_name == "list_dir":
         entries = result.get("entries")
         count = len(entries) if isinstance(entries, list) else None
         return f"path={path!r}, entries={count}"
 
-    if function_name in {"write_file", "delete_file"}:
+    if function_name in MUTATION_TOOL_NAMES:
         return f"path={path!r}, ok={result.get('ok', True)!r}"
 
     safe = {
@@ -1471,20 +1675,69 @@ def _record_run_owned_mutation(
     function_name: str,
     relative_path: str,
     content: str | None = None,
+    content_sha256: str | None = None,
 ) -> None:
     path = str(relative_path).replace("\\", "/")
-    if function_name == "write_file":
-        if not isinstance(content, str):
-            raise TypeError("Успешный write_file должен иметь logical content.")
+    if function_name in TEXT_MUTATION_TOOL_NAMES:
+        if content_sha256 is None and isinstance(content, str):
+            content_sha256 = _sha256_utf8(content)
+        if not isinstance(content_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", content_sha256):
+            raise TypeError("Успешная text mutation должна иметь logical content SHA-256.")
         run_owned_state[path] = {
             "state": "present",
-            "content_sha256": _sha256_utf8(content),
+            "content_sha256": content_sha256,
         }
         return
     if function_name == "delete_file":
         run_owned_state[path] = {"state": "absent"}
         return
     raise ValueError(f"Неизвестная RUN-owned mutation: {function_name!r}.")
+
+
+def _bookkeep_successful_mutation(
+    *,
+    function_name: str,
+    result: dict,
+    run_owned_state: dict[str, dict[str, str]],
+    verification_state: dict,
+) -> None:
+    if function_name not in MUTATION_TOOL_NAMES:
+        raise ValueError(f"Неизвестная mutation: {function_name!r}.")
+    changed_path = result.get("path")
+    if not isinstance(changed_path, str):
+        raise RuntimeError("Успешная mutation не вернула относительный path.")
+    _record_run_owned_mutation(
+        run_owned_state,
+        function_name=function_name,
+        relative_path=changed_path,
+        content_sha256=result.get("content_sha256"),
+    )
+    verification_state["write_revision"] += 1
+    current_revision = verification_state["write_revision"]
+    verification_state["git_status_revision"] = None
+    verification_state["git_diff_revision"] = None
+
+    if changed_path.lower().endswith(".py"):
+        verification_state["python_write_revision"] = current_revision
+        verification_state["python_verified_revision"] = None
+        verification_state["python_verified_paths"] = []
+        changed_paths = verification_state["changed_python_paths"]
+        deleted_paths = verification_state["deleted_python_paths"]
+        if function_name in TEXT_MUTATION_TOOL_NAMES:
+            if changed_path not in changed_paths:
+                changed_paths.append(changed_path)
+            if changed_path in deleted_paths:
+                deleted_paths.remove(changed_path)
+        else:
+            if changed_path in changed_paths:
+                changed_paths.remove(changed_path)
+            if changed_path not in deleted_paths:
+                deleted_paths.append(changed_path)
+
+    if changed_path in {"server.py", "ultra_ui.py"}:
+        verification_state["ui_smoke_required"] = True
+        verification_state["ui_smoke_write_revision"] = current_revision
+        verification_state["ui_smoke_verified_revision"] = None
 
 
 def _run_owned_state_fingerprint(
@@ -1541,10 +1794,7 @@ def _verify_run_owned_filesystem(
                 item["actual_state"] = "not_regular_file"
             else:
                 item["actual_state"] = "present"
-                encoding = "utf-16" if path.suffix.lower() == ".jsonl" else "utf-8"
-                item["actual_content_sha256"] = _sha256_utf8(
-                    path.read_text(encoding=encoding)
-                )
+                item["actual_content_sha256"] = _sha256_utf8(_read_logical_text(path))
             item["match"] = item["actual_state"] == expected_state and (
                 expected_state == "absent"
                 or item["actual_content_sha256"] == expected_hash
@@ -1569,10 +1819,8 @@ def _execute_agent_function(
 
     name = function_call.get("name")
     allowed_names = {
-        "list_dir",
-        "read_file",
-        "write_file",
-        "delete_file",
+        *READ_TOOL_NAMES,
+        *MUTATION_TOOL_NAMES,
         *VERIFICATION_TOOL_NAMES,
     }
     if name not in allowed_names:
@@ -1582,7 +1830,12 @@ def _execute_agent_function(
     expected_keys = {
         "list_dir": {"path"},
         "read_file": {"path"},
+        "find_text": {"path", "text"},
+        "read_file_range": {"path", "start_line", "end_line"},
         "write_file": {"path", "content"},
+        "replace_text": {"path", "old_text", "new_text", "expected_content_sha256"},
+        "insert_before": {"path", "marker", "content", "expected_content_sha256"},
+        "insert_after": {"path", "marker", "content", "expected_content_sha256"},
         "delete_file": {"path"},
         "python_compile": {"paths"},
         "git_status": set(),
@@ -1598,6 +1851,12 @@ def _execute_agent_function(
         return _agent_list_dir(root, arguments["path"], policy)
     if name == "read_file":
         return _agent_read_file(root, arguments["path"], policy)
+    if name == "find_text":
+        return _agent_find_text(root, arguments["path"], arguments["text"], policy)
+    if name == "read_file_range":
+        return _agent_read_file_range(
+            root, arguments["path"], arguments["start_line"], arguments["end_line"], policy
+        )
     if name == "delete_file":
         return _agent_delete_file(
             root,
@@ -1612,6 +1871,14 @@ def _execute_agent_function(
             arguments["content"],
             policy,
             backup_session,
+        )
+    if name in {"replace_text", "insert_before", "insert_after"}:
+        target_key = "old_text" if name == "replace_text" else "marker"
+        replacement_key = "new_text" if name == "replace_text" else "content"
+        return _agent_precise_edit(
+            root, name, arguments["path"], arguments[target_key],
+            arguments[replacement_key], arguments["expected_content_sha256"],
+            policy, backup_session,
         )
     if name == "python_compile":
         return _agent_python_compile(root, arguments["paths"], policy)
@@ -2299,7 +2566,8 @@ async def run_agent_task(
                 "Для всех file tools используй ТОЛЬКО относительные пути. "
                 "Корень workspace обозначай точкой '.'. "
                 "Никогда не передавай абсолютные Windows-пути в list_dir, "
-                "read_file, write_file или delete_file."
+                "read_file, find_text, read_file_range, write_file, "
+                "replace_text, insert_before, insert_after или delete_file."
                 f"{permission_text}"
                 f"{global_agent_context_block}"
                 f"{project_context_block}"
@@ -2450,8 +2718,9 @@ async def run_agent_task(
                     safe_args = dict(raw_args)
                 else:
                     safe_args = {"raw_arguments": str(raw_args)}
-                if function_name == "write_file" and "content" in safe_args:
-                    safe_args["content"] = f"<{len(str(safe_args['content']))} chars>"
+                for field in ("content", "new_text", "old_text", "marker", "text"):
+                    if field in safe_args:
+                        safe_args[field] = f"<{len(str(safe_args[field]))} chars>"
 
                 # GUARD P1 — supervisor BEFORE actual tool execution.
                 # Interventions do not consume tool budget because the
@@ -2697,12 +2966,20 @@ async def run_agent_task(
                         tool_error = None
                 except Exception as exc:
                     permission_denied = isinstance(exc, PermissionError)
-                    error_type = type(exc).__name__
+                    error_type = (
+                        "STALE_FILE_STATE" if isinstance(exc, StaleFileStateError)
+                        else type(exc).__name__
+                    )
                     error_message = str(exc)
                     capability_by_tool = {
                         "list_dir": "READ",
                         "read_file": "READ",
+                        "find_text": "READ",
+                        "read_file_range": "READ",
                         "write_file": "WRITE",
+                        "replace_text": "WRITE",
+                        "insert_before": "WRITE",
+                        "insert_after": "WRITE",
                         "delete_file": "DELETE",
                         "python_compile": "VERIFY",
                         "git_diff": "VERIFY",
@@ -2780,56 +3057,13 @@ async def run_agent_task(
                         },
                     }
 
-                if tool_ok and function_name in {"write_file", "delete_file"}:
-                    successful_arguments = _parse_agent_arguments(
-                        function_name,
-                        function_call.get("arguments"),
-                    )
-                    changed_path = (
-                        result.get("path") if isinstance(result, dict) else None
-                    )
-                    if not isinstance(changed_path, str):
-                        raise RuntimeError(
-                            "Успешная mutation не вернула относительный path."
-                        )
-                    _record_run_owned_mutation(
-                        final_audit_retry_state["run_owned_state"],
+                if tool_ok and function_name in MUTATION_TOOL_NAMES:
+                    _bookkeep_successful_mutation(
                         function_name=function_name,
-                        relative_path=changed_path,
-                        content=(
-                            successful_arguments["content"]
-                            if function_name == "write_file"
-                            else None
-                        ),
+                        result=result,
+                        run_owned_state=final_audit_retry_state["run_owned_state"],
+                        verification_state=verification_state,
                     )
-                    verification_state["write_revision"] += 1
-                    current_revision = verification_state["write_revision"]
-                    # Любая мутация делает обзор рабочего дерева устаревшим.
-                    verification_state["git_status_revision"] = None
-                    verification_state["git_diff_revision"] = None
-
-                    if isinstance(changed_path, str) and changed_path.lower().endswith(".py"):
-                        verification_state["python_write_revision"] = current_revision
-                        verification_state["python_verified_revision"] = None
-                        verification_state["python_verified_paths"] = []
-
-                        changed_paths = verification_state["changed_python_paths"]
-                        deleted_paths = verification_state["deleted_python_paths"]
-                        if function_name == "write_file":
-                            if changed_path not in changed_paths:
-                                changed_paths.append(changed_path)
-                            if changed_path in deleted_paths:
-                                deleted_paths.remove(changed_path)
-                        else:
-                            if changed_path in changed_paths:
-                                changed_paths.remove(changed_path)
-                            if changed_path not in deleted_paths:
-                                deleted_paths.append(changed_path)
-
-                    if changed_path in {"server.py", "ultra_ui.py"}:
-                        verification_state["ui_smoke_required"] = True
-                        verification_state["ui_smoke_write_revision"] = current_revision
-                        verification_state["ui_smoke_verified_revision"] = None
 
                 if tool_ok and function_name == "python_compile":
                     python_revision = verification_state["python_write_revision"]
@@ -2896,11 +3130,7 @@ async def run_agent_task(
                         path_text = safe_args.get("path")
                         if (
                             function_name
-                            in {
-                                "read_file",
-                                "write_file",
-                                "delete_file",
-                            }
+                            in (READ_TOOL_NAMES | MUTATION_TOOL_NAMES)
                             and isinstance(path_text, str)
                         ):
                             try:
