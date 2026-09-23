@@ -12,6 +12,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 import server
+from audit_storage import load_audit_thread
 import ultra_ui
 import verifier_runtime
 
@@ -218,6 +219,12 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 stack.enter_context(
                     patch.object(server, "_agent_git_diff", return_value=dict(git_result))
                 )
+            stack.enter_context(
+                patch.object(
+                    server, "_request_audit_diagnostic",
+                    AsyncMock(return_value="Краткое основание решения."),
+                )
+            )
             stack.enter_context(patch.object(server, "run_verifier_check", verifier))
             for item in extra_patches:
                 stack.enter_context(item)
@@ -502,11 +509,63 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             search_from = position + 1
         self.assertEqual(positions, sorted(positions))
         self.assertNotIn("run_failed", names)
-        self.assertEqual(
-            len({item["run_id"] for item in self.events}),
-            1,
-        )
+        self.assertEqual(len({item["run_id"] for item in self.events}), 1)
         self.assertEqual(self.events[-1]["status"], "SUCCESS")
+
+    async def test_audit_thread_persists_real_fail_diagnostic_tools_and_resolution(self) -> None:
+        (self.workspace / "sample.txt").write_text("sample", encoding="utf-8")
+        client = FakeClient([
+            FakeResponse("Candidate A"),
+            FakeResponse("", finish_reason="function_call", function_call={
+                "name": "read_file", "arguments": {"path": "sample.txt"},
+            }),
+            FakeResponse("Candidate B"),
+        ])
+        result, _verifier, _ = await self.run_case(
+            [fail_result("A"), verifier_result("PASS")], fake_client=client
+        )
+        self.assertEqual(result, "Candidate B")
+        run_id = next(item["run_id"] for item in self.events if item["event"] == "run_started")
+        thread = load_audit_thread(self.workspace, "ws_test", None, run_id)
+        self.assertEqual(len(thread["issues"]), 1)
+        issue = thread["issues"][0]
+        self.assertEqual(issue["reason"], "Reason A")
+        self.assertEqual(issue["violations"], ["Violation A"])
+        self.assertEqual(issue["required_action"], "Fix A")
+        self.assertEqual(issue["diagnostic_answer"], "Краткое основание решения.")
+        self.assertEqual(issue["correction_activity"][0]["tool_name"], "read_file")
+        self.assertEqual(issue["result"], "RESOLVED")
+        self.assertEqual(thread["final_audit"], "PASS")
+        correction_messages = client.bodies[1]["messages"]
+        self.assertFalse(any(server.AUDIT_DIAGNOSTIC_QUESTION in str(item.get("content")) for item in correction_messages))
+        self.assertFalse(any("Краткое основание решения." in str(item.get("content")) for item in correction_messages))
+
+    async def test_diagnostic_failure_does_not_block_correction(self) -> None:
+        client = FakeClient([FakeResponse("Candidate A"), FakeResponse("Candidate B")])
+        result, verifier, _ = await self.run_case(
+            [fail_result("A"), verifier_result("PASS")], fake_client=client,
+            extra_patches=(patch.object(
+                server, "_request_audit_diagnostic",
+                AsyncMock(side_effect=TimeoutError("diagnostic timeout")),
+            ),),
+        )
+        self.assertEqual(result, "Candidate B")
+        self.assertEqual(verifier.await_count, 2)
+        run_id = next(item["run_id"] for item in self.events if item["event"] == "run_started")
+        thread = load_audit_thread(self.workspace, "ws_test", None, run_id)
+        self.assertIn("TimeoutError", thread["issues"][0]["diagnostic_error"])
+        self.assertEqual(thread["issues"][0]["result"], "RESOLVED")
+        self.assertIn("final_audit_feedback_delivered", [item["event"] for item in self.events])
+
+    async def test_terminal_audit_issue_has_no_extra_diagnostic(self) -> None:
+        client = FakeClient([FakeResponse("Same"), FakeResponse("Same")])
+        with self.assertRaises(server.FinalAuditSemanticError):
+            await self.run_case([fail_result("A"), fail_result("B")], fake_client=client)
+        run_id = next(item["run_id"] for item in self.events if item["event"] == "run_started")
+        thread = load_audit_thread(self.workspace, "ws_test", None, run_id)
+        self.assertEqual([issue["result"] for issue in thread["issues"]], ["UNRESOLVED", "UNRESOLVED"])
+        self.assertIsNone(thread["issues"][1]["diagnostic_question"])
+        self.assertEqual(thread["final_audit"], "FAIL")
 
     async def test_two_corrections_then_pass(self) -> None:
         client = FakeClient([

@@ -1,3 +1,5 @@
+import asyncio
+import copy
 import hashlib
 from bisect import bisect_right
 import json
@@ -26,6 +28,7 @@ from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
+from audit_storage import AuditThreadRecorder
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
     VerifierProtocolError,
@@ -44,6 +47,15 @@ MODEL = MAIN_CHAT_MODEL.provider_model_id
 
 TEMPERATURE = 0.15
 MAX_TOKENS = 32768
+MAX_AUDIT_DIAGNOSTIC_TOKENS = 160
+AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS = 25
+AUDIT_DIAGNOSTIC_QUESTION = (
+    "Судья Дредд отклонил результат. Кратко объясни, какой факт, инструкция, "
+    "предыдущий контекст или предположение привели тебя к этому решению. "
+    "Не спорь с FAIL. Не исправляй TASK в этом ответе. Не раскрывай "
+    "пошаговые внутренние рассуждения. Дай 1–3 коротких предложения "
+    "об основании решения."
+)
 
 MAX_TASK_FILE_BYTES = 2 * 1024 * 1024
 ALLOWED_TEXT_SUFFIXES = {
@@ -2225,6 +2237,36 @@ def _collect_final_audit_evidence(
     return context, completeness
 
 
+async def _request_audit_diagnostic(
+    client, headers: dict, run_model: str, messages: list[dict],
+    rejected_candidate: str, question: str,
+) -> str:
+    """One bounded, tool-free call on an isolated copy of Executor context."""
+    fork = copy.deepcopy(messages)
+    fork.append({"role": "assistant", "content": rejected_candidate})
+    fork.append({"role": "user", "content": question})
+    body = {
+        "model": run_model,
+        "messages": fork,
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_AUDIT_DIAGNOSTIC_TOKENS,
+        "stream": False,
+    }
+    response = await asyncio.wait_for(
+        client.post(CHAT_URL, headers=headers, json=body),
+        timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
+    )
+    response.raise_for_status()
+    data = response.json()
+    try:
+        answer = data["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as exc:
+        raise ValueError("Malformed diagnostic response") from exc
+    if not isinstance(answer, str) or not answer.strip():
+        raise ValueError("Empty diagnostic response")
+    return answer.strip()[:600]
+
+
 async def run_agent_task(
     task: str,
     workspace_root: str,
@@ -2263,6 +2305,7 @@ async def run_agent_task(
         / f"{run_id}.jsonl"
     ).resolve()
     workspace_backup_base = BACKUP_BASE
+    audit_recorder: AuditThreadRecorder | None = None
 
     def _emit(event_type: str, payload: dict):
         event = {
@@ -2271,6 +2314,11 @@ async def run_agent_task(
             "timestamp": time.time(),
             **payload,
         }
+        if audit_recorder is not None:
+            try:
+                audit_recorder.observe(event)
+            except Exception as exc:
+                event["audit_storage_error"] = type(exc).__name__
         if on_event:
             try:
                 on_event(event)
@@ -2321,6 +2369,15 @@ async def run_agent_task(
         raise RuntimeError(
             "Не удалось создать или загрузить переносимый контекст Workspace."
         ) from exc
+
+    try:
+        audit_recorder = AuditThreadRecorder(
+            root, workspace_info["workspace_id"], chat_id, run_id
+        )
+    except Exception as exc:
+        # Audit observability is not allowed to veto the Executor RUN.
+        audit_recorder = None
+        _emit("audit_storage_error", {"error_type": type(exc).__name__})
 
     try:
         runtime_paths = ensure_workspace_runtime_dirs(
@@ -3570,6 +3627,7 @@ async def run_agent_task(
                             "check_type": audit_result.check_type,
                             "verdict": audit_result.verdict,
                             "violations_count": len(audit_result.violations),
+                            "violations": list(audit_result.violations),
                             "reason": audit_result.reason,
                             "required_action": audit_result.required_action,
                             "audit_attempt": audit_attempt,
@@ -3656,6 +3714,34 @@ async def run_agent_task(
                         )
 
                     if correction_cycle is not None:
+                        _emit(
+                            "audit_diagnostic_question",
+                            {
+                                "audit_attempt": audit_attempt,
+                                "text": AUDIT_DIAGNOSTIC_QUESTION,
+                            },
+                        )
+                        try:
+                            diagnostic_answer = await _request_audit_diagnostic(
+                                client, headers, run_model, messages, content,
+                                AUDIT_DIAGNOSTIC_QUESTION,
+                            )
+                        except Exception as exc:
+                            _emit(
+                                "audit_diagnostic_error",
+                                {
+                                    "audit_attempt": audit_attempt,
+                                    "text": f"{type(exc).__name__}: {str(exc)[:300]}",
+                                },
+                            )
+                        else:
+                            _emit(
+                                "audit_diagnostic_answer",
+                                {
+                                    "audit_attempt": audit_attempt,
+                                    "text": diagnostic_answer,
+                                },
+                            )
                         remaining_corrections = (
                             correction_limit - correction_cycle
                         )

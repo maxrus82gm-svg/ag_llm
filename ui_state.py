@@ -18,6 +18,8 @@ DEFAULT_PANEL_RATIOS = {
     "normal": [0.24, 0.80],
     "zoomed": [0.24, 0.80],
 }
+DEFAULT_CHAT_AUDIT_RATIOS = {"normal": 0.64, "zoomed": 0.64}
+DEFAULT_CENTRAL_VERTICAL_RATIOS = {"normal": 0.58, "zoomed": 0.58}
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
@@ -45,6 +47,8 @@ def default_ui_state() -> dict[str, Any]:
         "dark_theme": True,
         "colors": {
             "log": "#76E68A",
+            "error_log": "#F08080",
+            "audit": "#83919B",
             "user": "#FFFFFF",
             "assistant": "#8EC5FF",
             "workspace": "#E8E8E8",
@@ -53,6 +57,9 @@ def default_ui_state() -> dict[str, Any]:
             "normal": list(DEFAULT_PANEL_RATIOS["normal"]),
             "zoomed": list(DEFAULT_PANEL_RATIOS["zoomed"]),
         },
+        "chat_audit_ratios": dict(DEFAULT_CHAT_AUDIT_RATIOS),
+        "central_vertical_ratios": dict(DEFAULT_CENTRAL_VERTICAL_RATIOS),
+        "audit_visible": True,
         "workspaces": [],
         "active_workspace_id": None,
         "registry_initialized": False,
@@ -110,12 +117,23 @@ def load_ui_state() -> dict[str, Any]:
                 if clean is not None:
                     state["panel_ratios"][mode] = clean
 
+        for key in ("chat_audit_ratios", "central_vertical_ratios"):
+            values = loaded.get(key)
+            if isinstance(values, dict):
+                for mode in ("normal", "zoomed"):
+                    value = values.get(mode)
+                    if isinstance(value, (int, float)) and not isinstance(value, bool) and 0.2 <= value <= 0.85:
+                        state[key][mode] = float(value)
+
+        if isinstance(loaded.get("audit_visible"), bool):
+            state["audit_visible"] = loaded["audit_visible"]
+
     if isinstance(loaded.get("dark_theme"), bool):
         state["dark_theme"] = loaded["dark_theme"]
 
     colors = loaded.get("colors")
     if isinstance(colors, dict):
-        for key in ("log", "user", "assistant", "workspace"):
+        for key in ("log", "error_log", "audit", "user", "assistant", "workspace"):
             value = colors.get(key)
             if isinstance(value, str) and value.startswith("#"):
                 state["colors"][key] = value

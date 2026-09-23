@@ -37,6 +37,8 @@ from context_storage import (
     save_project_context,
 )
 from ui_state import load_ui_state, save_ui_state
+from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
+from audit_storage import load_audit_thread
 from workspace_runtime_settings import (
     load_workspace_runtime_settings,
     save_workspace_runtime_settings,
@@ -86,6 +88,14 @@ def get_message_display_text(message: dict, resolved: dict | None = None) -> str
     if not isinstance(text, str):
         raise RuntimeError("Текст сообщения недоступен для отображения.")
     return text
+
+
+def get_assistant_audit_run_id(message: dict) -> str | None:
+    if message.get("role") != "assistant":
+        return None
+    producer = message.get("producer")
+    run_id = producer.get("run_id") if isinstance(producer, dict) else None
+    return run_id if isinstance(run_id, str) and run_id else None
 
 
 def bind_edit_shortcuts(widget) -> None:
@@ -225,6 +235,12 @@ class UltraApp(tk.Tk):
         self.log_text_color_var = tk.StringVar(
             value=saved_colors.get("log", "#76E68A")
         )
+        self.error_log_color_var = tk.StringVar(
+            value=saved_colors.get("error_log", "#F08080")
+        )
+        self.audit_text_color_var = tk.StringVar(
+            value=saved_colors.get("audit", "#83919B")
+        )
         self.user_text_color_var = tk.StringVar(
             value=saved_colors.get("user", "#FFFFFF")
         )
@@ -261,6 +277,11 @@ class UltraApp(tk.Tk):
         self._workspace_widgets: list[tk.Widget] = []
         self._color_swatches: dict[str, tk.Widget] = {}
         self._run_started_once = False
+        self.audit_visible_var = tk.BooleanVar(
+            value=bool(self._ui_state.get("audit_visible", True))
+        )
+        self._selected_audit_run_id: str | None = None
+        self._active_audit_run_id: str | None = None
 
         self.current_workspace_id: str | None = None
         self.current_chat_id: str | None = None
@@ -329,12 +350,13 @@ class UltraApp(tk.Tk):
         }
 
         self.configure(bg=bg)
-        paned = getattr(self, "main_paned", None)
-        if paned is not None:
-            try:
-                paned.configure(bg=panel)
-            except tk.TclError:
-                pass
+        for name in ("main_paned", "central_vertical_paned", "chat_audit_paned"):
+            paned = getattr(self, name, None)
+            if paned is not None:
+                try:
+                    paned.configure(bg=panel)
+                except tk.TclError:
+                    pass
         style.configure(".", background=panel, foreground=fg)
         style.configure("TFrame", background=panel)
         style.configure("TLabel", background=panel, foreground=fg)
@@ -387,7 +409,7 @@ class UltraApp(tk.Tk):
             foreground=[("disabled", muted), ("!disabled", fg)],
         )
 
-        for name in ("trace_log", "chat", "input_box"):
+        for name in ("trace_log", "chat", "audit_text", "input_box"):
             widget = getattr(self, name, None)
             if widget is not None:
                 widget.configure(
@@ -449,6 +471,19 @@ class UltraApp(tk.Tk):
                 foreground=self.log_text_color_var.get(),
                 font=("Consolas", 9),
             )
+            trace_log.tag_configure(
+                "trace_error",
+                foreground=self.error_log_color_var.get(),
+                font=("Consolas", 9),
+            )
+
+        audit_text = getattr(self, "audit_text", None)
+        if audit_text is not None:
+            audit_text.tag_configure("audit", foreground=self.audit_text_color_var.get())
+            audit_text.tag_configure("dredd_fail", foreground=self.error_log_color_var.get())
+            audit_text.tag_configure("ultra", foreground=self.assistant_text_color_var.get())
+            audit_text.tag_configure("resolved", foreground=self.log_text_color_var.get())
+            audit_text.tag_configure("metadata", foreground=self._theme_colors.get("muted", "#888888"))
 
         chat = getattr(self, "chat", None)
         if chat is not None:
@@ -738,20 +773,34 @@ class UltraApp(tk.Tk):
             ),
             (
                 2,
+                "Ошибки лога",
+                "error_log",
+                self.error_log_color_var,
+                "Цвет ошибок — лог действий",
+            ),
+            (
+                3,
+                "Разбор выполнения",
+                "audit",
+                self.audit_text_color_var,
+                "Цвет текста — разбор выполнения",
+            ),
+            (
+                4,
                 "Пользователь",
                 "user",
                 self.user_text_color_var,
                 "Цвет текста — сообщение пользователя в чате",
             ),
             (
-                3,
+                5,
                 "Ответ ассистента",
                 "assistant",
                 self.assistant_text_color_var,
                 "Цвет текста — ответ ассистента",
             ),
             (
-                4,
+                6,
                 "Workspace / чаты",
                 "workspace",
                 self.workspace_text_color_var,
@@ -785,7 +834,7 @@ class UltraApp(tk.Tk):
             command=self._reset_panel_layout,
         )
         reset_layout_button.grid(
-            row=5,
+            row=7,
             column=0,
             columnspan=2,
             sticky="ew",
@@ -908,12 +957,33 @@ class UltraApp(tk.Tk):
 
         ttk.Separator(right_frame).pack(fill="x", pady=8)
 
+        self.central_vertical_paned = tk.PanedWindow(
+            right_frame, orient="vertical", sashwidth=6, showhandle=False,
+            bd=0, relief="flat", sashrelief="flat",
+        )
+        self.central_vertical_paned.pack(fill="both", expand=True)
+        self.central_vertical_paned.bind("<ButtonRelease-1>", self._on_sash_release)
+        upper_frame = ttk.Frame(self.central_vertical_paned)
+        lower_frame = ttk.Frame(self.central_vertical_paned)
+        self.central_vertical_paned.add(upper_frame, minsize=180, stretch="always")
+        self.central_vertical_paned.add(lower_frame, minsize=210)
+
+        self.chat_audit_paned = tk.PanedWindow(
+            upper_frame, orient="horizontal", sashwidth=6, showhandle=False,
+            bd=0, relief="flat", sashrelief="flat",
+        )
+        self.chat_audit_paned.pack(fill="both", expand=True)
+        self.chat_audit_paned.bind("<ButtonRelease-1>", self._on_sash_release)
         chat_section = ttk.LabelFrame(
-            right_frame,
+            self.chat_audit_paned,
             text="Чат",
             padding=4,
         )
-        chat_section.pack(fill="both", expand=True, pady=(0, 8))
+        self.chat_audit_paned.add(chat_section, minsize=260, stretch="always")
+        ttk.Checkbutton(
+            chat_section, text="Разбор выполнения",
+            variable=self.audit_visible_var, command=self._toggle_audit_panel,
+        ).pack(anchor="e")
 
         self.chat = scrolledtext.ScrolledText(
             chat_section,
@@ -940,8 +1010,20 @@ class UltraApp(tk.Tk):
                 lambda e: (e.widget.event_generate("<<Copy>>"), "break")[1],
             )
 
+        self.audit_section = ttk.LabelFrame(
+            self.chat_audit_paned, text="РАЗБОР ВЫПОЛНЕНИЯ", padding=4,
+        )
+        self.audit_text = scrolledtext.ScrolledText(
+            self.audit_section, wrap="word", state="disabled",
+            font=("Segoe UI", 9),
+        )
+        self.audit_text.pack(fill="both", expand=True)
+        if self.audit_visible_var.get():
+            self.chat_audit_paned.add(self.audit_section, minsize=180)
+        self._render_audit_thread()
+
         compressor_frame = ttk.LabelFrame(
-            right_frame,
+            lower_frame,
             text="КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR",
             padding=(8, 5),
         )
@@ -1076,7 +1158,7 @@ class UltraApp(tk.Tk):
             ]
         )
 
-        status_frame = ttk.Frame(right_frame)
+        status_frame = ttk.Frame(lower_frame)
         status_frame.pack(fill="x", pady=(0, 8))
         ttk.Label(status_frame, text="Статус:").pack(side="left")
         ttk.Label(status_frame, textvariable=self.status_var).pack(
@@ -1091,7 +1173,7 @@ class UltraApp(tk.Tk):
         self.progress.pack(side="right")
 
         message_section = ttk.LabelFrame(
-            right_frame,
+            lower_frame,
             text="Сообщение",
             padding=4,
         )
@@ -1108,7 +1190,7 @@ class UltraApp(tk.Tk):
         bind_edit_shortcuts(self.input_box)
         self.input_box.bind("<Control-Return>", self._send_from_hotkey)
 
-        buttons = ttk.Frame(right_frame)
+        buttons = ttk.Frame(lower_frame)
         buttons.pack(fill="x")
         self.send_button = ttk.Button(
             buttons,
@@ -1400,18 +1482,45 @@ class UltraApp(tk.Tk):
 
     def _store_current_panel_ratios(self) -> None:
         ratios = self._capture_panel_ratios()
-        if len(ratios) != 2:
-            return
-
         mode = self._window_mode()
-        panel_ratios = self._ui_state.setdefault(
-            "panel_ratios",
-            {
-                "normal": [0.24, 0.80],
-                "zoomed": [0.24, 0.80],
-            },
-        )
-        panel_ratios[mode] = ratios
+        if len(ratios) == 2:
+            self._ui_state.setdefault("panel_ratios", {})[mode] = ratios
+        for name, key, dimension, visible in (
+            ("chat_audit_paned", "chat_audit_ratios", "width", self.audit_visible_var.get()),
+            ("central_vertical_paned", "central_vertical_ratios", "height", True),
+        ):
+            paned = getattr(self, name, None)
+            if paned is None or not visible:
+                continue
+            try:
+                size = int(getattr(paned, f"winfo_{dimension}")())
+                position = int(paned.sash_coord(0)[0 if dimension == "width" else 1])
+                if size >= 300 and 0 < position < size:
+                    self._ui_state.setdefault(key, {})[mode] = round(position / size, 6)
+            except (tk.TclError, IndexError, ValueError):
+                pass
+        self._ui_state["audit_visible"] = self.audit_visible_var.get()
+
+    def _apply_inner_panel_ratios(self, mode: str) -> None:
+        for name, key, dimension, minimum in (
+            ("chat_audit_paned", "chat_audit_ratios", "width", 180),
+            ("central_vertical_paned", "central_vertical_ratios", "height", 210),
+        ):
+            paned = getattr(self, name, None)
+            if paned is None:
+                continue
+            try:
+                if len(paned.panes()) < 2:
+                    continue
+                size = int(getattr(paned, f"winfo_{dimension}")())
+                if size < minimum * 2:
+                    continue
+                ratio = float((self._ui_state.get(key) or {}).get(mode, 0.6))
+                position = max(minimum, min(int(size * ratio), size - minimum))
+                paned.sash_place(0, position if dimension == "width" else 0,
+                                 position if dimension == "height" else 0)
+            except (tk.TclError, ValueError, TypeError, IndexError):
+                pass
 
     def _apply_panel_ratios(self, mode: str | None = None) -> None:
         paned = getattr(self, "main_paned", None)
@@ -1443,6 +1552,7 @@ class UltraApp(tk.Tk):
 
             paned.sash_place(0, left_x, 0)
             paned.sash_place(1, right_x, 0)
+            self._apply_inner_panel_ratios(mode)
         except (tk.TclError, ValueError, TypeError, IndexError):
             pass
 
@@ -1519,8 +1629,24 @@ class UltraApp(tk.Tk):
             "normal": [0.24, 0.80],
             "zoomed": [0.24, 0.80],
         }
+        self._ui_state["chat_audit_ratios"] = dict(DEFAULT_CHAT_AUDIT_RATIOS)
+        self._ui_state["central_vertical_ratios"] = dict(DEFAULT_CENTRAL_VERTICAL_RATIOS)
+        self.audit_visible_var.set(True)
+        self._toggle_audit_panel(save=False)
         self._apply_panel_ratios(self._window_mode())
         self._save_ui_state(silent=True)
+
+    def _toggle_audit_panel(self, *, save: bool = True) -> None:
+        panes = self.chat_audit_paned.panes()
+        present = str(self.audit_section) in panes
+        if self.audit_visible_var.get() and not present:
+            self.chat_audit_paned.add(self.audit_section, minsize=180)
+            self.after_idle(lambda: self._apply_inner_panel_ratios(self._window_mode()))
+        elif not self.audit_visible_var.get() and present:
+            self.chat_audit_paned.forget(self.audit_section)
+        self._ui_state["audit_visible"] = self.audit_visible_var.get()
+        if save:
+            self._save_ui_state(silent=True)
 
     def _save_ui_state(self, _event=None, *, silent: bool = True) -> None:
         try:
@@ -1536,6 +1662,8 @@ class UltraApp(tk.Tk):
             self._ui_state["dark_theme"] = self.dark_theme_var.get()
             self._ui_state["colors"] = {
                 "log": self.log_text_color_var.get(),
+                "error_log": self.error_log_color_var.get(),
+                "audit": self.audit_text_color_var.get(),
                 "user": self.user_text_color_var.get(),
                 "assistant": self.assistant_text_color_var.get(),
                 "workspace": self.workspace_text_color_var.get(),
@@ -2076,6 +2204,9 @@ class UltraApp(tk.Tk):
         if candidate not in valid_ids:
             candidate = chats[-1]["chat_id"] if chats else None
 
+        if (self.current_workspace_id, self.current_chat_id) != (entry["workspace_id"], candidate):
+            self._selected_audit_run_id = None
+            self._active_audit_run_id = None
         self.current_workspace_id = entry["workspace_id"]
         self.current_chat_id = candidate
         if self._selected_message_chat_id != candidate:
@@ -2093,6 +2224,8 @@ class UltraApp(tk.Tk):
         if candidate is not None:
             self._render_current_chat()
         else:
+            self._selected_audit_run_id = None
+            self._render_audit_thread()
             self.chat.configure(state="normal")
             self.chat.delete("1.0", "end")
             self.chat.configure(state="disabled")
@@ -2164,6 +2297,8 @@ class UltraApp(tk.Tk):
         self.chat.configure(state="disabled")
 
         if not messages:
+            self._selected_audit_run_id = None
+            self._render_audit_thread()
             self._append_chat(
                 "СИСТЕМА",
                 "Новый чат. RAW HISTORY пока пуста.",
@@ -2171,6 +2306,7 @@ class UltraApp(tk.Tk):
             )
             return
 
+        latest_audit_run_id = None
         for message in messages:
             role = message.get("role")
             message_id = message.get("message_id")
@@ -2185,6 +2321,7 @@ class UltraApp(tk.Tk):
             if role == "user":
                 self._append_chat("ТЫ", text, "user")
             elif role == "assistant":
+                latest_audit_run_id = get_assistant_audit_run_id(message) or latest_audit_run_id
                 self._append_chat(
                     self._assistant_label(message.get("producer")),
                     text,
@@ -2198,6 +2335,10 @@ class UltraApp(tk.Tk):
                 )
             if role in {"user", "assistant"} and resolved is not None:
                 self._append_message_actions(message, resolved)
+
+        if self._active_audit_run_id is None:
+            self._selected_audit_run_id = latest_audit_run_id
+        self._render_audit_thread()
 
         if self.selected_message_id:
             try:
@@ -3463,6 +3604,12 @@ class UltraApp(tk.Tk):
         compress_button.pack(side="left")
         edit_button.pack(side="left", padx=(4, 0))
         original_button.pack(side="left", padx=(4, 0))
+        run_id = get_assistant_audit_run_id(message)
+        if run_id:
+            ttk.Button(
+                frame, text="Разбор",
+                command=lambda rid=run_id: self._show_audit_thread(rid),
+            ).pack(side="left", padx=(4, 0))
         status_label = ttk.Label(
             frame,
             text=self._context_status_text(resolved),
@@ -3863,11 +4010,97 @@ class UltraApp(tk.Tk):
         self.chat.see("end")
         self.chat.configure(state="disabled")
 
-    def _append_trace(self, line: str) -> None:
+    def _show_audit_thread(self, run_id: str) -> None:
+        self._selected_audit_run_id = run_id
+        if not self.audit_visible_var.get():
+            self.audit_visible_var.set(True)
+            self._toggle_audit_panel()
+        self._render_audit_thread()
+
+    @staticmethod
+    def _audit_segments(thread: dict | None, run_id: str | None) -> list[tuple[str, str]]:
+        if not run_id:
+            return [("metadata", "Выберите ответ ассистента, чтобы открыть разбор RUN.\n")]
+        if thread is None:
+            return [("metadata", f"RUN {run_id}\nДля этого RUN нет событий разбора.\n")]
+        segments = [("metadata", f"RUN {run_id}\n\n")]
+        issues = thread.get("issues") or []
+        for issue in issues:
+            segments.append(("dredd_fail", f"СУДЬЯ ДРЕДД — FAIL · попытка {issue.get('audit_attempt')}\n"))
+            segments.append(("audit", f"Причина: {issue.get('reason') or '—'}\n"))
+            for violation in issue.get("violations") or []:
+                segments.append(("audit", f"• {violation}\n"))
+            segments.append(("audit", f"Требуется: {issue.get('required_action') or '—'}\n"))
+            segments.append(("metadata", f"Verifier RUN: {issue.get('verifier_run_id') or '—'}\n"))
+            question = issue.get("diagnostic_question")
+            if question:
+                segments.append(("metadata", f"\nВОПРОС ОТВЕТЧИКУ\n{question}\n"))
+            if issue.get("diagnostic_answer"):
+                segments.append(("ultra", f"\nОТВЕТЧИК — ULTRA\n{issue['diagnostic_answer']}\n"))
+            elif issue.get("diagnostic_error"):
+                segments.append(("dredd_fail", f"\nДиагностика недоступна: {issue['diagnostic_error']}\n"))
+            activity = issue.get("correction_activity") or []
+            if activity:
+                segments.append(("metadata", "\nCORRECTION ACTIVITY\n"))
+                for item in activity:
+                    path = f" · {item['path']}" if item.get("path") else ""
+                    segments.append(("audit", f"#{item.get('tool_sequence')} {item.get('tool_name')}{path} → {item.get('status')}\n"))
+            result = issue.get("result") or "PENDING"
+            segments.append(("resolved" if result == "RESOLVED" else "metadata", f"RESULT: {result}\n\n"))
+        resolved = sum(issue.get("result") == "RESOLVED" for issue in issues)
+        unresolved = sum(issue.get("result") == "UNRESOLVED" for issue in issues)
+        segments.append(("metadata", "ИТОГ RUN\n"))
+        segments.append(("audit", f"Замечаний Судьи Дредда: {len(issues)}\nИсправлено: {resolved}\nНерешённых: {unresolved}\n"))
+        final = thread.get("final_audit") or "PENDING"
+        segments.append(("resolved" if final == "PASS" else "metadata", f"Final Audit: {final}\n"))
+        return segments
+
+    def _render_audit_thread(self) -> None:
+        widget = getattr(self, "audit_text", None)
+        if widget is None:
+            return
+        run_id = self._selected_audit_run_id
+        thread = None
+        if run_id and self.current_workspace_id and self.current_chat_id:
+            try:
+                thread = load_audit_thread(
+                    self.workspace_var.get(), self.current_workspace_id,
+                    self.current_chat_id, run_id,
+                )
+            except Exception:
+                thread = None
+        widget.configure(state="normal")
+        try:
+            widget.delete("1.0", "end")
+            for tag, text in self._audit_segments(thread, run_id):
+                widget.insert("end", text, tag)
+            widget.see("end")
+        finally:
+            widget.configure(state="disabled")
+
+    def _append_trace(self, line: str, tag: str = "trace") -> None:
         self.trace_log.configure(state="normal")
-        self.trace_log.insert("end", f"{line}\n", "trace")
-        self.trace_log.see("end")
-        self.trace_log.configure(state="disabled")
+        try:
+            self.trace_log.insert("end", f"{line}\n", tag)
+            self.trace_log.see("end")
+        finally:
+            self.trace_log.configure(state="disabled")
+
+    @staticmethod
+    def _compact_event_arguments(arguments: object) -> str:
+        if not isinstance(arguments, dict):
+            return "<invalid arguments>"
+        compact = []
+        for key, value in arguments.items():
+            if key in {"content", "old_text", "new_text", "marker", "text"}:
+                if isinstance(value, str) and value.startswith("<") and value.endswith(" chars>"):
+                    shown = value
+                else:
+                    shown = f"<{len(str(value))} chars>"
+            else:
+                shown = str(value)[:160]
+            compact.append(f"{key}={shown}")
+        return ", ".join(compact)[:600]
 
     def _format_event(self, event: dict) -> str:
         event_type = event.get("event")
@@ -3963,8 +4196,8 @@ class UltraApp(tk.Tk):
             args = event.get("arguments", {})
             err = event.get("error", {})
             return (
-                f"[{time_str}] DENIED TOOL #{seq} {func}({args}) | "
-                f"{err.get('message', '')}"
+                f"[{time_str}] DENIED TOOL #{seq} {func}({self._compact_event_arguments(args)}) | "
+                f"{str(err.get('message', ''))[:300]}"
             )
 
         if event_type == "api_request":
@@ -3983,24 +4216,57 @@ class UltraApp(tk.Tk):
             seq = event.get("tool_sequence")
             func = event.get("function")
             args = event.get("arguments", {})
-            args_str = ", ".join(f"{k}={v}" for k, v in args.items())
+            args_str = self._compact_event_arguments(args)
             return f"[{time_str}] TOOL #{seq} {func}({args_str})"
 
         if event_type == "tool_finished":
             seq = event.get("tool_sequence")
             func = event.get("function")
+            arguments = event.get("arguments") or {}
+            path = str(arguments.get("path") or "")[:160] if isinstance(arguments, dict) else ""
             duration = event.get("duration")
             dur_str = f" | {duration:.2f} s" if isinstance(duration, (int, float)) else ""
-            return f"[{time_str}] TOOL #{seq} {func} -> OK{dur_str}"
+            path_str = f" | path={path}" if path else ""
+            return f"[{time_str}] TOOL #{seq} {func} -> OK{path_str}{dur_str}"
 
         if event_type == "tool_error":
             seq = event.get("tool_sequence")
             func = event.get("function")
+            arguments = event.get("arguments") or {}
+            path = str(arguments.get("path") or "")[:160] if isinstance(arguments, dict) else ""
+            path_str = f" | path={path}" if path else ""
             error = event.get("error", {})
             return (
-                f"[{time_str}] TOOL #{seq} {func} -> ERROR "
-                f"({error.get('type', '')}): {error.get('message', '')}"
+                f"[{time_str}] TOOL #{seq} {func} -> ERROR{path_str} "
+                f"({error.get('type', '')}): {str(error.get('message', ''))[:300]}"
             )
+
+        if event_type == "final_audit_failed":
+            violations = event.get("violations") or []
+            shown = "; ".join(str(item)[:120] for item in violations[:5])
+            return (
+                f"[{time_str}] СУДЬЯ ДРЕДД FAIL | RUN {run_id} | "
+                f"attempt={event.get('audit_attempt')} | verifier={event.get('verifier_run_id')} | "
+                f"reason={str(event.get('reason') or '')[:250]} | "
+                f"violations={shown} | action={str(event.get('required_action') or '')[:250]}"
+            )
+
+        if event_type in {"audit_diagnostic_question", "audit_diagnostic_answer", "audit_diagnostic_error"}:
+            label = {
+                "audit_diagnostic_question": "ВОПРОС ОТВЕТЧИКУ",
+                "audit_diagnostic_answer": "ОТВЕТЧИК ULTRA",
+                "audit_diagnostic_error": "DIAGNOSTIC ERROR",
+            }[event_type]
+            return f"[{time_str}] {label} | RUN {run_id} | {str(event.get('text') or '')[:600]}"
+
+        if event_type == "final_audit_passed":
+            return f"[{time_str}] СУДЬЯ ДРЕДД PASS | RUN {run_id} | attempt={event.get('audit_attempt')}"
+
+        if event_type == "final_audit_error":
+            return f"[{time_str}] FINAL AUDIT ERROR | RUN {run_id} | {str(event.get('reason') or '')[:300]}"
+
+        if event_type == "audit_storage_error":
+            return f"[{time_str}] AUDIT STORAGE ERROR | RUN {run_id} | {str(event.get('error_type') or '')[:100]}"
 
         if event_type == "guard_intervention":
             kind = event.get("kind")
@@ -4384,15 +4650,51 @@ class UltraApp(tk.Tk):
     def _poll_trace_events(self) -> None:
         try:
             while True:
-                event = self.trace_events.get_nowait()
-                if event.get("event") == "run_started":
-                    if self._run_started_once:
-                        self._insert_run_separator()
-                    self._run_started_once = True
-                self._append_trace(self._format_event(event))
-        except queue.Empty:
-            pass
-        self.after(100, self._poll_trace_events)
+                try:
+                    event = self.trace_events.get_nowait()
+                except queue.Empty:
+                    break
+                try:
+                    event_type = event.get("event")
+                    if event_type == "run_started":
+                        if self._run_started_once:
+                            self._insert_run_separator()
+                        self._run_started_once = True
+                    tag = "trace_error" if event_type in {
+                        "tool_error", "permission_denied", "run_failed",
+                        "final_audit_failed", "final_audit_error", "guard_blocked",
+                        "audit_diagnostic_error", "audit_storage_error",
+                    } else "trace"
+                    self._append_trace(self._format_event(event), tag)
+                    if event.get("audit_storage_error"):
+                        self._append_trace(
+                            f"[AUDIT STORAGE ERROR] {str(event['audit_storage_error'])[:80]}",
+                            "trace_error",
+                        )
+                    if event_type == "run_started" and event.get("chat_id") == self.current_chat_id:
+                        self._active_audit_run_id = event.get("run_id")
+                        self._selected_audit_run_id = self._active_audit_run_id
+                        self._render_audit_thread()
+                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in {
+                        "final_audit_failed", "audit_diagnostic_question",
+                        "audit_diagnostic_answer", "audit_diagnostic_error",
+                        "tool_finished", "tool_error", "final_audit_passed",
+                        "final_audit_error", "run_failed", "run_finished",
+                    }:
+                        self._render_audit_thread()
+                    if event_type in {"run_failed", "run_finished"} and event.get("run_id") == self._active_audit_run_id:
+                        self._active_audit_run_id = None
+                except Exception as exc:
+                    try:
+                        kind = event.get("event") if isinstance(event, dict) else type(event).__name__
+                        self._append_trace(
+                            f"[TRACE RENDER ERROR] {str(kind)[:60]}: {type(exc).__name__}",
+                            "trace_error",
+                        )
+                    except Exception:
+                        pass
+        finally:
+            self.after(100, self._poll_trace_events)
 
     def _insert_run_separator(self) -> None:
         self.trace_log.configure(state="normal")
