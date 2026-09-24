@@ -19,6 +19,11 @@ _AUDIT_EVENTS = {
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
     "audit_diagnostic_error", "tool_finished", "tool_error",
     "final_audit_passed", "final_audit_error", "run_failed", "run_finished",
+    "execution_consistency_detected", "execution_consistency_feedback_delivered",
+    "execution_consistency_recheck_started", "execution_consistency_verifier_started",
+    "execution_consistency_verifier_passed", "execution_consistency_verifier_failed",
+    "execution_consistency_correction_started", "execution_consistency_resolved",
+    "execution_consistency_terminal",
 }
 _TEXT_LIMIT = 2000
 
@@ -110,7 +115,27 @@ class AuditThreadRecorder:
         if kind not in _AUDIT_EVENTS:
             return
         issues = self.thread["issues"]
-        if kind == "final_audit_failed":
+        if kind.startswith("execution_consistency_"):
+            consistency = self.thread.setdefault("execution_consistency", {
+                "status": "PENDING", "events": [], "correction_activity": [],
+            })
+            consistency["events"].append({
+                "event": kind, "attempt": event.get("attempt"),
+                "decision": _short(event.get("decision")),
+                "mutation_intent": event.get("mutation_intent"),
+                "verifier_run_id": _short(event.get("verifier_run_id")),
+                "reason": _short(event.get("reason")),
+                "violations": [_short(item) for item in (event.get("violations") or [])[:20]],
+                "required_action": _short(event.get("required_action")),
+                "write_revision": event.get("write_revision"),
+                "tool_call_count": event.get("tool_call_count"),
+                "correction_count": event.get("correction_count"),
+            })
+            if kind == "execution_consistency_resolved":
+                consistency["status"] = "RESOLVED"
+            elif kind == "execution_consistency_terminal":
+                consistency["status"] = "UNRESOLVED"
+        elif kind == "final_audit_failed":
             issues.append({
                 "audit_attempt": event.get("audit_attempt"),
                 "verifier_run_id": _short(event.get("verifier_run_id")),
@@ -131,15 +156,22 @@ class AuditThreadRecorder:
                     "audit_diagnostic_error": "diagnostic_error",
                 }[kind]
                 issues[-1][key] = _short(event.get("text"))
-        elif kind in {"tool_finished", "tool_error"} and issues and issues[-1]["result"] == "PENDING":
+        elif kind in {"tool_finished", "tool_error"}:
             arguments = event.get("arguments") or {}
             path = arguments.get("path") if isinstance(arguments, dict) else None
-            issues[-1]["correction_activity"].append({
+            activity = {
                 "tool_sequence": event.get("tool_sequence"),
                 "tool_name": _short(event.get("function"))[:80],
                 "path": _short(path)[:300] if path else None,
                 "status": "OK" if kind == "tool_finished" else "ERROR",
-            })
+            }
+            if issues and issues[-1]["result"] == "PENDING":
+                issues[-1]["correction_activity"].append(activity)
+            consistency = self.thread.get("execution_consistency")
+            if (consistency and consistency["status"] == "PENDING"
+                    and any(item["event"] == "execution_consistency_correction_started"
+                            for item in consistency["events"])):
+                consistency["correction_activity"].append(activity)
         elif kind == "final_audit_passed":
             self.thread["final_audit"] = "PASS"
             for issue in issues:
@@ -155,6 +187,9 @@ class AuditThreadRecorder:
             for issue in issues:
                 if issue["result"] == "PENDING":
                     issue["result"] = "UNRESOLVED"
+            consistency = self.thread.get("execution_consistency")
+            if consistency and consistency["status"] == "PENDING":
+                consistency["status"] = "UNRESOLVED"
         elif kind == "run_finished":
             self.thread["run_status"] = _short(event.get("status")) or "FINISHED"
         _save_audit_thread(self.path, self.thread)

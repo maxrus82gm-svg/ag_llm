@@ -184,6 +184,27 @@ class VerifierRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 verifier_json(check_type="PREFLIGHT"), check_type="FINAL"
             )
 
+    async def test_consistency_mode_has_distinct_hard_context_and_fail_closed_protocol(self) -> None:
+        result, request = await self.call(
+            verifier_json(check_type="CONSISTENCY", result="FAIL",
+                          reason="No observed action", violations=["No tools"],
+                          required_action="Read the target and apply the requested edit"),
+            check_type="CONSISTENCY", raw_task="Update file result.txt",
+        )
+        self.assertEqual(result.check_type, "CONSISTENCY")
+        self.assertEqual(result.required_action, "Read the target and apply the requested edit")
+        prompt = request.await_args.args[0]["messages"][0]["content"]
+        self.assertIn("repeated execution inconsistency", prompt)
+        self.assertIn("Do not assume mutation is mandatory", prompt)
+        self.assertIn("RAW TASK is the source of truth", prompt)
+        with self.assertRaises(verifier_runtime.VerifierProtocolError):
+            await self.call("not-json", check_type="CONSISTENCY")
+        with self.assertRaises(verifier_runtime.VerifierProtocolError):
+            await self.call(verifier_json(check_type="FINAL"), check_type="CONSISTENCY")
+        passed, _ = await self.call(verifier_json(check_type="CONSISTENCY"),
+                                    check_type="CONSISTENCY")
+        self.assertEqual(passed.verdict, "PASS")
+
     async def test_invalid_violations_type_is_rejected(self) -> None:
         for invalid in ("none", ["valid", 7], {"problem": "x"}):
             with self.subTest(invalid=invalid):

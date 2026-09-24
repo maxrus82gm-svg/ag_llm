@@ -97,6 +97,43 @@ class AuditStorageTests(unittest.TestCase):
         # A fresh loader after the recorder is gone reads the portable file.
         self.assertTrue(audit_storage.audit_thread_path(self.workspace, self.chat_id, self.run_id).is_file())
 
+    def test_consistency_lifecycle_persists_and_renders_without_changing_final_issues(self):
+        self.recorder.observe({"event": "execution_consistency_detected", "attempt": 1,
+                               "mutation_intent": {"mutation_intent": "LIKELY_MUTATION", "reasons": ["action:update"]},
+                               "reason": "likely_mutation_without_run_mutation"})
+        self.recorder.observe({"event": "execution_consistency_feedback_delivered", "attempt": 1})
+        self.recorder.observe({"event": "execution_consistency_verifier_started", "attempt": 2})
+        self.recorder.observe({"event": "execution_consistency_verifier_failed", "attempt": 2,
+                               "verifier_run_id": "ver_consistency", "reason": "No observed work",
+                               "violations": ["No tool calls"], "required_action": "Read target"})
+        self.recorder.observe({"event": "execution_consistency_correction_started", "attempt": 2})
+        self.recorder.observe({"event": "tool_finished", "tool_sequence": 1,
+                               "function": "write_file", "arguments": {"path": "notes.txt"}})
+        self.recorder.observe({"event": "execution_consistency_resolved", "decision": "MUTATION_OBSERVED"})
+        self.recorder.observe({"event": "final_audit_passed"})
+        saved = self.load()
+        self.assertEqual(saved["execution_consistency"]["status"], "RESOLVED")
+        self.assertEqual(saved["execution_consistency"]["correction_activity"][0]["tool_name"], "write_file")
+        self.assertEqual(saved["issues"], [])
+        rendered = "".join(text for _tag, text in ultra_ui.UltraApp._audit_segments(saved, self.run_id))
+        self.assertIn("EXECUTION CONSISTENCY", rendered)
+        self.assertIn("повторная попытка", rendered)
+        self.assertIn("DREDD CONSISTENCY", rendered)
+        self.assertIn("No observed work", rendered)
+        self.assertIn("CONSISTENCY: RESOLVED", rendered)
+
+    def test_consistency_terminal_is_unresolved_and_legacy_panel_stays_clean(self):
+        legacy = self.load()
+        self.assertNotIn("EXECUTION CONSISTENCY", "".join(
+            text for _tag, text in ultra_ui.UltraApp._audit_segments(legacy, self.run_id)))
+        self.recorder.observe({"event": "execution_consistency_detected"})
+        self.recorder.observe({"event": "execution_consistency_terminal",
+                               "reason": "execution_consistency_unresolved"})
+        self.recorder.observe({"event": "run_failed", "reason": "execution_consistency_unresolved"})
+        saved = self.load()
+        self.assertEqual(saved["execution_consistency"]["status"], "UNRESOLVED")
+        self.assertEqual(saved["final_audit"], "NOT_RUN")
+
     def test_terminal_fail_keeps_open_issues_unresolved(self):
         self.issue()
         self.recorder.observe({"event": "run_failed", "reason": "final_audit_retry_no_progress"})
@@ -527,7 +564,9 @@ class TraceAndUiStateTests(unittest.TestCase):
 
     def test_live_audit_events_refresh_current_run_panel(self):
         events = queue.Queue()
-        for kind in ("run_started", "final_audit_failed", "audit_diagnostic_answer", "final_audit_passed"):
+        for kind in ("run_started", "execution_consistency_detected",
+                     "execution_consistency_verifier_failed", "execution_consistency_resolved",
+                     "final_audit_failed", "audit_diagnostic_answer", "final_audit_passed"):
             events.put({"event": kind, "run_id": "run_test", "chat_id": "chat_test"})
         refreshed = []
         fake = SimpleNamespace(
@@ -539,7 +578,7 @@ class TraceAndUiStateTests(unittest.TestCase):
         )
         ultra_ui.UltraApp._poll_trace_events(fake)
         self.assertEqual(fake._selected_audit_run_id, "run_test")
-        self.assertEqual(len(refreshed), 4)
+        self.assertEqual(len(refreshed), 7)
 
     def test_precise_arguments_are_compact_and_dredd_label_is_ui_only(self):
         compact = ultra_ui.UltraApp._compact_event_arguments({

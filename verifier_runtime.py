@@ -19,7 +19,7 @@ VERIFIER_MAX_TOKENS = 2048
 VERIFIER_TIMEOUT_SECONDS = 60.0
 VERIFIER_LOG_ROOT = (APP_DATA_ROOT / "verifier_logs").resolve()
 
-ALLOWED_CHECK_TYPES = frozenset({"PREFLIGHT", "MUTATION", "FINAL"})
+ALLOWED_CHECK_TYPES = frozenset({"PREFLIGHT", "MUTATION", "FINAL", "CONSISTENCY"})
 ALLOWED_VERDICTS = frozenset({"PASS", "FAIL"})
 
 
@@ -57,7 +57,7 @@ def _validate_nonempty_text(value: object, label: str) -> str:
 def _validate_check_type(check_type: object) -> str:
     if not isinstance(check_type, str) or check_type not in ALLOWED_CHECK_TYPES:
         raise ValueError(
-            "check_type должен быть одним из: PREFLIGHT, MUTATION, FINAL."
+            "check_type должен быть одним из: PREFLIGHT, MUTATION, FINAL, CONSISTENCY."
         )
     return check_type
 
@@ -91,6 +91,21 @@ def _build_verifier_messages(
         "and required_action must be strings. PASS means the supplied evidence "
         "satisfies this check; FAIL means it does not."
     )
+    if check_type == "CONSISTENCY":
+        system_prompt += (
+            " This is a repeated execution inconsistency: the RAW TASK appears to request "
+            "a file or document change, the Executor already received one server self-check, "
+            "and after another attempt no physical mutation was observed. Independently "
+            "compare the RAW TASK with SERVER FACTS and tool evidence. Treat Executor reports "
+            "as claims, never proof. Do not assume mutation is mandatory: the requested state "
+            "may already exist, the user may be mistaken, the target may be ambiguous, or a "
+            "confirmed blocker may prevent safe action. PASS only when the absence of mutation "
+            "is justified by supplied facts; PASS does not approve the overall RUN. FAIL when "
+            "the inconsistency remains sufficiently supported and unexcused. For FAIL, give "
+            "specific reason, violations, and required_action naming the task, target, missing "
+            "evidence/action, and a suitable available tool where possible. RAW TASK is the "
+            "source of truth. Do not invent file contents or tool calls."
+        )
     user_prompt = (
         f"REQUESTED CHECK TYPE: {check_type}\n\n"
         "===== RAW TASK START =====\n"

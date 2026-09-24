@@ -4208,6 +4208,42 @@ class UltraApp(tk.Tk):
         if thread is None:
             segments.append(("metadata", "Для этого RUN нет событий разбора.\n"))
             return segments
+        consistency = thread.get("execution_consistency")
+        if consistency:
+            segments.append(("metadata", "EXECUTION CONSISTENCY\n"))
+            for item in consistency.get("events") or []:
+                kind = item.get("event")
+                label = {
+                    "execution_consistency_detected": "SERVER SELF-CHECK: TASK предполагает изменение, в RUN нет mutation",
+                    "execution_consistency_feedback_delivered": "SERVER FEEDBACK → повторная попытка",
+                    "execution_consistency_recheck_started": "Повторная попытка завершилась без mutation",
+                    "execution_consistency_verifier_started": "DREDD CONSISTENCY → независимая проверка",
+                    "execution_consistency_verifier_passed": "DREDD CONSISTENCY PASS",
+                    "execution_consistency_verifier_failed": "DREDD CONSISTENCY FAIL",
+                    "execution_consistency_correction_started": "TARGETED CORRECTION → Executor",
+                    "execution_consistency_resolved": "CONSISTENCY RESOLVED",
+                    "execution_consistency_terminal": "CONSISTENCY UNRESOLVED",
+                }.get(kind, kind)
+                segments.append(("dredd_fail" if kind in {
+                    "execution_consistency_verifier_failed", "execution_consistency_terminal"
+                } else "metadata", f"{label}\n"))
+                if item.get("mutation_intent"):
+                    segments.append(("audit", f"Mutation intent: {item['mutation_intent']}\n"))
+                if item.get("verifier_run_id"):
+                    segments.append(("metadata", f"Verifier RUN: {item['verifier_run_id']}\n"))
+                if item.get("reason"):
+                    segments.append(("audit", f"Причина: {item['reason']}\n"))
+                for violation in item.get("violations") or []:
+                    segments.append(("audit", f"• {violation}\n"))
+                if item.get("required_action"):
+                    segments.append(("audit", f"Требуется: {item['required_action']}\n"))
+            activity = consistency.get("correction_activity") or []
+            if activity:
+                segments.append(("metadata", "CORRECTION TOOLS\n"))
+                for item in activity:
+                    segments.append(("audit", f"#{item.get('tool_sequence')} {item.get('tool_name')} {item.get('path') or ''} → {item.get('status')}\n"))
+            segments.append(("resolved" if consistency.get("status") == "RESOLVED" else "dredd_fail",
+                             f"CONSISTENCY: {consistency.get('status', 'PENDING')}\n\n"))
         issues = thread.get("issues") or []
         for issue in issues:
             segments.append(("dredd_fail", f"СУДЬЯ ДРЕДД — FAIL · попытка {issue.get('audit_attempt')}\n"))
@@ -4425,6 +4461,14 @@ class UltraApp(tk.Tk):
             return (
                 f"[{time_str}] TOOL #{seq} {func} -> ERROR{path_str} "
                 f"({error.get('type', '')}): {str(error.get('message', ''))[:300]}"
+            )
+
+        if event_type.startswith("execution_consistency_"):
+            label = event_type.removeprefix("execution_consistency_").upper().replace("_", " ")
+            return (
+                f"[{time_str}] EXECUTION CONSISTENCY {label} | RUN {run_id} | "
+                f"attempt={event.get('attempt')} | verifier={event.get('verifier_run_id')} | "
+                f"reason={str(event.get('reason') or '')[:180]}"
             )
 
         if event_type == "final_audit_started":
@@ -4884,6 +4928,7 @@ class UltraApp(tk.Tk):
                         "tool_error", "permission_denied", "run_failed",
                         "final_audit_failed", "final_audit_error", "guard_blocked",
                         "audit_diagnostic_error", "audit_storage_error",
+                        "execution_consistency_verifier_failed", "execution_consistency_terminal",
                     } else "trace"
                     self._append_trace(self._format_event(event), tag)
                     if event.get("audit_storage_error"):
@@ -4917,6 +4962,11 @@ class UltraApp(tk.Tk):
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",
                         "final_audit_error", "run_failed", "run_finished",
+                        "execution_consistency_detected", "execution_consistency_feedback_delivered",
+                        "execution_consistency_recheck_started", "execution_consistency_verifier_started",
+                        "execution_consistency_verifier_passed", "execution_consistency_verifier_failed",
+                        "execution_consistency_correction_started", "execution_consistency_resolved",
+                        "execution_consistency_terminal",
                     }:
                         self._render_audit_thread()
                     if event_type in {"run_failed", "run_finished"} and event.get("run_id") == self._active_audit_run_id:

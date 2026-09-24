@@ -126,6 +126,9 @@ MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
 MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
 MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
 FINAL_AUDIT_CORRECTION_LIMIT = 2
+EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT = 1
+EXECUTION_CONSISTENCY_CORRECTION_LIMIT = 1
+MAX_CONSISTENCY_CONTEXT_BYTES = 128 * 1024
 FINAL_AUDIT_REPEATED_FAILURE_THRESHOLD = 3
 VERIFY_TIMEOUT_SECONDS = 30
 UI_SMOKE_TIMEOUT_SECONDS = 30
@@ -151,6 +154,100 @@ TEXT_MUTATION_TOOL_NAMES = {
     "write_file", "replace_text", "insert_before", "insert_after",
 }
 MUTATION_TOOL_NAMES = TEXT_MUTATION_TOOL_NAMES | {"delete_file"}
+
+
+def _classify_mutation_intent(task: str) -> dict:
+    """Only a high-confidence hint; it never requires a write."""
+    lowered = task.casefold()
+    if re.search(r"\b(?:ничего\s+не\s+меняй|не\s+(?:изменяй|меняй|редактируй|удаляй|создавай)|do\s+not\s+(?:edit|modify|change|write|delete|create)|don't\s+(?:edit|modify|change|write|delete|create)|read.only)\b", lowered):
+        return {"mutation_intent": "UNKNOWN", "reasons": ["explicit_read_only_or_negation"]}
+    action = re.search(
+        r"\b(?:измен(?:и|ить)|обнов(?:и|ить)|исправ(?:ь|ить)|добав(?:ь|ить)|встав(?:ь|ить)|замен(?:и|ить)|удал(?:и|ить)|созда(?:й|ть)|созд(?:ай|ать)|перепиш(?:и|ите)|edit|update|modify|fix|add|insert|replace|delete|create|write)\b",
+        lowered,
+    )
+    target = re.search(
+        r"(?:[\wА-Яа-яЁё .-]+[/\\])?[^\s\"'<>:;]+\.(?:md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml)\b|\b(?:файл|документ|код|конфигураци\w*|file|document|code|config\w*)\b",
+        lowered,
+    )
+    if action and target:
+        return {"mutation_intent": "LIKELY_MUTATION", "reasons": [f"action:{action.group()}", f"target:{target.group()[:120]}"]}
+    return {"mutation_intent": "UNKNOWN", "reasons": ["no_unambiguous_action_target_pair"]}
+
+
+def _consistency_target_paths(task: str) -> list[str]:
+    """Extract only explicit relative file names; reads still pass READ scope checks."""
+    suffixes = r"md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml"
+    found = re.findall(rf"[^\r\n\"'<>:;]+?\.(?:{suffixes})\b", task, re.I)
+    paths = []
+    for value in found:
+        value = re.sub(r"^(?:.*?\b(?:файл|file|документ|document)\s*:?\s*)", "", value.strip(), flags=re.I)
+        value = value.strip(" \t`*•-.,")
+        if value and value not in paths:
+            paths.append(value)
+    return paths[:3]
+
+
+def _consistency_safe_snippet(content: str, limit: int = 12000) -> str:
+    redacted = []
+    for line in content.splitlines(keepends=True):
+        if re.search(
+            r"(?i)(?:\b(?:password|passwd|api[_-]?key|secret|access[_-]?token|private[_-]?key)\b[\"']?\s*[:=]|\bbearer\s+|-----BEGIN .*PRIVATE KEY-----)",
+            line,
+        ):
+            redacted.append("<sensitive line omitted>\n")
+        else:
+            redacted.append(line)
+    return _clip_final_audit_text("".join(redacted), limit)[0]
+
+
+def _collect_consistency_evidence(*, task: str, root: Path, policy: dict,
+                                  run_id: str, intent: dict, candidates: list[str],
+                                  tool_facts: list[dict], tool_call_count: int,
+                                  verification_state: dict, run_owned_state: dict,
+                                  available_functions: list[dict]) -> str:
+    targets = _consistency_target_paths(task)
+    independent = []
+    for path in targets:
+        item = {"path": path}
+        try:
+            result = _agent_read_file(root, path, policy)
+            content = result.get("content", "")
+            clipped, truncated, size = _clip_final_audit_text(content, 12000)
+            item.update({"available": True, "exists": True,
+                         "logical_content_sha256": _sha256_utf8(content),
+                         "content": _consistency_safe_snippet(clipped),
+                         "truncated": truncated, "original_bytes": size})
+        except Exception as exc:
+            item.update({"available": False, "reason": f"{type(exc).__name__}: {str(exc)[:200]}"})
+        independent.append(item)
+    facts = {
+        "check_type": "CONSISTENCY", "run_id": run_id,
+        "problem": "Repeated no-mutation after one server self-check",
+        "first_consistency_feedback_delivered": True,
+        "mutation_intent": intent, "permission_policy": _policy_summary(policy),
+        "available_executor_tools": [item["name"] for item in available_functions],
+        "first_candidate_final_response": candidates[0][:12000] if candidates else None,
+        "second_candidate_final_response": candidates[-1][:12000] if candidates else None,
+        "candidate_history": [item[:12000] for item in candidates[-3:]],
+        "tool_call_count": tool_call_count, "tool_calls": tool_facts[-30:],
+        "successful_tool_calls": sum(item["status"] == "OK" for item in tool_facts),
+        "failed_tool_calls": sum(item["status"] == "ERROR" for item in tool_facts),
+        "write_revision": verification_state["write_revision"],
+        "verification_state": verification_state, "run_owned_state": run_owned_state,
+        "independent_target_evidence": independent if independent else "unavailable",
+        "evidence_rule": "Executor reports are claims, not proof; no mutation is mandatory solely from this hint.",
+    }
+    encoded = json.dumps(facts, ensure_ascii=False, sort_keys=True)
+    if len(encoded.encode("utf-8")) > MAX_CONSISTENCY_CONTEXT_BYTES:
+        facts["tool_calls"] = tool_facts[-10:]
+        facts["candidate_history"] = [item[:8000] for item in candidates[-3:]]
+        for item in independent:
+            item.pop("content", None)
+            item["content_omitted_due_to_limit"] = True
+        encoded = json.dumps(facts, ensure_ascii=False, sort_keys=True)
+    if len(encoded.encode("utf-8")) > MAX_CONSISTENCY_CONTEXT_BYTES:
+        raise FinalAuditEvidenceError("Consistency evidence exceeds its hard size limit")
+    return encoded
 
 BACKUP_BASE = (
     Path(os.getenv("LOCALAPPDATA") or Path.home())
@@ -2306,6 +2403,7 @@ async def run_agent_task(
     api_request_count = 0
     tool_call_count = 0
     policy = _normalize_permissions(permissions)
+    mutation_intent = _classify_mutation_intent(task)
 
     # Пока workspace_id ещё не загружен, ошибки пишутся в системный fallback.
     # После загрузки Workspace путь переключается на его собственный namespace.
@@ -2708,6 +2806,10 @@ async def run_agent_task(
         "failure_history": [],
         "run_owned_state": {},
     }
+    consistency_state = {"server_retries": 0, "corrections": 0,
+                         "verifier_checks": 0, "candidates": [],
+                         "resolved": False}
+    consistency_tool_facts: list[dict] = []
 
     guard_p1_state = {
         "used_paths": set(),
@@ -3205,6 +3307,27 @@ async def run_agent_task(
                         else str(tool_error)
                     )
                 )
+                consistency_tool_facts.append({
+                    "sequence": last_tool_sequence,
+                    "tool": function_name,
+                    "path": str(safe_args.get("path", ""))[:300],
+                    "status": "OK" if tool_ok else "ERROR",
+                    "summary": str(last_tool_result_summary)[:1000],
+                    "error": (str(tool_error.get("message", ""))[:300]
+                              if isinstance(tool_error, dict) else None),
+                    "content_sha256": (result.get("content_sha256")
+                                       if tool_ok and isinstance(result, dict) else None),
+                    "result_excerpt": (
+                        _consistency_safe_snippet(result.get("content", ""), 1000)
+                        if tool_ok and function_name in {"read_file", "read_file_range"}
+                        and isinstance(result, dict)
+                        else json.dumps(result.get("matches", [])[:5], ensure_ascii=False)[:1000]
+                        if tool_ok and function_name == "find_text" and isinstance(result, dict)
+                        else json.dumps(result.get("entries", [])[:20], ensure_ascii=False)[:1000]
+                        if tool_ok and function_name == "list_dir" and isinstance(result, dict)
+                        else None
+                    ),
+                })
 
                 _emit("tool_started", {
                     "tool_sequence": last_tool_sequence,
@@ -3475,6 +3598,153 @@ async def run_agent_task(
                     "duration": time.time() - start_time,
                 })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+
+            no_run_mutation = (
+                verification_state["write_revision"] == 0
+                and not final_audit_retry_state["run_owned_state"]
+            )
+            if mutation_intent["mutation_intent"] == "LIKELY_MUTATION" and not consistency_state["resolved"]:
+                if not no_run_mutation:
+                    if consistency_state["server_retries"]:
+                        consistency_state["resolved"] = True
+                        _emit("execution_consistency_resolved", {
+                            "decision": "MUTATION_OBSERVED", "write_revision": verification_state["write_revision"],
+                            "tool_call_count": tool_call_count,
+                            "correction_count": consistency_state["corrections"],
+                        })
+                else:
+                    consistency_state["candidates"].append(content[:MAX_VERIFY_OUTPUT_BYTES])
+                    attempt = len(consistency_state["candidates"])
+                    if consistency_state["server_retries"] < EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT:
+                        consistency_state["server_retries"] += 1
+                        _emit("execution_consistency_detected", {
+                            "attempt": attempt, "mutation_intent": mutation_intent,
+                            "write_revision": 0, "tool_call_count": tool_call_count,
+                            "reason": "likely_mutation_without_run_mutation",
+                        })
+                        feedback = _context_message("execution_consistency.feedback")
+                        feedback += "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n" + json.dumps({
+                            "event_id": "execution_consistency.feedback",
+                            "message_kind": "SERVER_FEEDBACK", "is_new_user_task": False,
+                            "raw_task_authority": "SOURCE_OF_TRUTH", "run_id": run_id,
+                            "decision": "SELF_CHECK_REQUESTED", "mutation_intent": mutation_intent,
+                            "write_revision": 0, "tool_call_count": tool_call_count,
+                            "tool_budget_remaining": max(policy["tool_limit"] - tool_iterations, 0),
+                        }, ensure_ascii=False)
+                        messages.extend([{"role": "assistant", "content": content},
+                                         {"role": "user", "content": feedback}])
+                        _emit("execution_consistency_feedback_delivered", {
+                            "attempt": attempt, "decision": "SELF_CHECK_REQUESTED",
+                            "mutation_intent": mutation_intent, "write_revision": 0,
+                            "tool_call_count": tool_call_count,
+                        })
+                        continue
+
+                    _emit("execution_consistency_recheck_started", {
+                        "attempt": attempt, "write_revision": 0,
+                        "tool_call_count": tool_call_count,
+                        "correction_count": consistency_state["corrections"],
+                    })
+                    _emit("execution_consistency_verifier_started", {
+                        "attempt": attempt, "check_type": "CONSISTENCY",
+                        "mutation_intent": mutation_intent,
+                        "write_revision": 0, "tool_call_count": tool_call_count,
+                    })
+                    try:
+                        consistency_result = await run_verifier_check(
+                            verifier_model_id=verifier_model_id,
+                            check_type="CONSISTENCY", raw_task=task,
+                            verification_context=_collect_consistency_evidence(
+                                task=task, root=root, policy=policy, run_id=run_id,
+                                intent=mutation_intent,
+                                candidates=consistency_state["candidates"],
+                                tool_facts=consistency_tool_facts,
+                                tool_call_count=tool_call_count,
+                                verification_state=verification_state,
+                                run_owned_state=final_audit_retry_state["run_owned_state"],
+                                available_functions=available_functions,
+                            ), task_id=run_id,
+                        )
+                    except Exception as exc:
+                        _emit("execution_consistency_terminal", {
+                            "attempt": attempt, "reason": "execution_consistency_verifier_error",
+                            "error_type": type(exc).__name__,
+                        })
+                        _emit("run_failed", {"reason": "execution_consistency_verifier_error",
+                                              "api_requests": api_request_count,
+                                              "tool_calls": tool_call_count})
+                        raise RuntimeError("CONSISTENCY VERIFIER ERROR") from exc
+                    consistency_state["verifier_checks"] += 1
+                    verdict_event = ("execution_consistency_verifier_passed"
+                                     if consistency_result.verdict == "PASS"
+                                     else "execution_consistency_verifier_failed")
+                    _emit(verdict_event, {
+                        "attempt": attempt, "verifier_run_id": consistency_result.verifier_run_id,
+                        "reason": consistency_result.reason,
+                        "violations": list(consistency_result.violations)[:20],
+                        "required_action": consistency_result.required_action,
+                        "correction_count": consistency_state["corrections"],
+                        "write_revision": 0, "tool_call_count": tool_call_count,
+                    })
+                    if consistency_result.verdict == "PASS":
+                        consistency_state["resolved"] = True
+                        _emit("execution_consistency_resolved", {
+                            "decision": "NO_MUTATION_JUSTIFIED", "attempt": attempt,
+                            "verifier_run_id": consistency_result.verifier_run_id,
+                            "write_revision": 0, "tool_call_count": tool_call_count,
+                        })
+                    elif consistency_state["corrections"] >= EXECUTION_CONSISTENCY_CORRECTION_LIMIT:
+                        reason = "execution_consistency_unresolved"
+                        _emit("execution_consistency_terminal", {
+                            "attempt": attempt, "reason": reason,
+                            "verifier_run_id": consistency_result.verifier_run_id,
+                            "correction_count": consistency_state["corrections"],
+                        })
+                        _emit("run_failed", {"reason": reason,
+                                              "api_requests": api_request_count,
+                                              "tool_calls": tool_call_count})
+                        raise RuntimeError(reason)
+                    elif tool_iterations >= policy["tool_limit"]:
+                        reason = "execution_consistency_tool_budget_exhausted"
+                        _emit("execution_consistency_terminal", {
+                            "attempt": attempt, "reason": reason,
+                            "verifier_run_id": consistency_result.verifier_run_id,
+                            "tool_call_count": tool_call_count,
+                        })
+                        _emit("run_failed", {"reason": reason,
+                                              "api_requests": api_request_count,
+                                              "tool_calls": tool_call_count})
+                        raise RuntimeError(reason)
+                    else:
+                        consistency_state["corrections"] += 1
+                        feedback = _context_message("execution_consistency.correction", {
+                            "reason": consistency_result.reason,
+                            "violations_lines": "\n".join(f"- {item}" for item in consistency_result.violations),
+                            "required_action": consistency_result.required_action,
+                        })
+                        feedback += "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n" + json.dumps({
+                            "event_id": "execution_consistency.correction",
+                            "message_kind": "SERVER_VERIFIER_FEEDBACK",
+                            "is_new_user_task": False, "raw_task_authority": "SOURCE_OF_TRUTH",
+                            "run_id": run_id, "decision": "CORRECTION_REQUESTED",
+                            "mutation_intent": mutation_intent, "write_revision": 0,
+                            "tool_call_count": tool_call_count,
+                            "verifier_run_id": consistency_result.verifier_run_id,
+                            "reason": consistency_result.reason,
+                            "violations": list(consistency_result.violations),
+                            "required_action": consistency_result.required_action,
+                            "correction_limit": EXECUTION_CONSISTENCY_CORRECTION_LIMIT,
+                        }, ensure_ascii=False)
+                        messages.extend([{"role": "assistant", "content": content},
+                                         {"role": "user", "content": feedback}])
+                        _emit("execution_consistency_correction_started", {
+                            "attempt": attempt, "verifier_run_id": consistency_result.verifier_run_id,
+                            "reason": consistency_result.reason,
+                            "required_action": consistency_result.required_action,
+                            "correction_count": consistency_state["corrections"],
+                            "tool_call_count": tool_call_count,
+                        })
+                        continue
 
             final_audit_started_at = time.time()
             _emit(
