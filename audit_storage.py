@@ -24,6 +24,10 @@ _AUDIT_EVENTS = {
     "execution_consistency_verifier_passed", "execution_consistency_verifier_failed",
     "execution_consistency_correction_started", "execution_consistency_resolved",
     "execution_consistency_terminal",
+    "permission_denied", "permission_scope_blocked", "permission_review_started",
+    "permission_review_passed", "permission_review_failed",
+    "permission_user_prompted", "permission_granted", "permission_user_denied",
+    "permission_escalation_terminal",
 }
 _TEXT_LIMIT = 2000
 
@@ -115,7 +119,45 @@ class AuditThreadRecorder:
         if kind not in _AUDIT_EVENTS:
             return
         issues = self.thread["issues"]
-        if kind.startswith("execution_consistency_"):
+        if kind.startswith("permission_"):
+            capability = event.get("capability") or "UNKNOWN"
+            permission = self.thread.setdefault("permission_escalations", {}).setdefault(capability, {
+                "capability": None, "status": "PENDING", "attempts": [],
+                "verifier_run_id": None, "verifier_reason": None,
+                "required_action": None, "user_decision": None, "scope": None,
+            })
+            # Keep the latest section readable by clients using the V1 shape.
+            self.thread["permission_escalation"] = permission
+            permission["capability"] = event.get("capability") or permission["capability"]
+            if kind == "permission_denied":
+                args = event.get("arguments") or {}
+                permission["attempts"].append({
+                    "attempt": event.get("attempt"),
+                    "tool": _short(event.get("function")),
+                    "path": _short(args.get("path")) if isinstance(args, dict) else "",
+                    "executed": False,
+                })
+            if event.get("scope") is not None:
+                permission["scope"] = _short(event["scope"])
+            for source, target in (("verifier_run_id", "verifier_run_id"),
+                                   ("verifier_reason", "verifier_reason"),
+                                   ("required_action", "required_action"),
+                                   ("user_decision", "user_decision")):
+                if event.get(source) is not None:
+                    permission[target] = _short(event[source])
+            permission["status"] = {
+                "permission_scope_blocked": "BLOCKED",
+                "permission_review_started": "PENDING",
+                "permission_review_passed": "PENDING",
+                "permission_review_failed": "NOT_JUSTIFIED",
+                "permission_user_prompted": "PENDING",
+                "permission_granted": "GRANTED",
+                "permission_user_denied": "DENIED",
+                "permission_escalation_terminal": "BLOCKED",
+            }.get(kind, permission["status"])
+            if kind == "permission_escalation_terminal":
+                permission["terminal_reason"] = _short(event.get("reason"))
+        elif kind.startswith("execution_consistency_"):
             consistency = self.thread.setdefault("execution_consistency", {
                 "status": "PENDING", "events": [], "correction_activity": [],
             })

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "task_block_id": "tb_dbee1a6a94354b4ea9144456bdeec1d4",
+  "run_id": "20260924_211010_13f582",
+  "issues": [],
+  "final_audit": "PASS",
+  "run_status": "SUCCESS",
+  "execution_consistency": {
+    "status": "RESOLVED",
+    "events": [
+      {
+        "event": "execution_consistency_detected",
+        "attempt": 1,
+        "decision": "",
+        "mutation_intent": {
+          "mutation_intent": "LIKELY_MUTATION",
+          "reasons": [
+            "action:fix",
+            "target:документация/safe_allow_test.md",
+            "target_source:declared"
+          ]
+        },
+        "verifier_run_id": "",
+        "reason": "likely_mutation_without_run_mutation",
+        "violations": [],
+        "required_action": "",
+        "write_revision": 0,
+        "tool_call_count": 0,
+        "correction_count": null
+      },
+      {
+        "event": "execution_consistency_feedback_delivered",
+        "attempt": 1,
+        "decision": "SELF_CHECK_REQUESTED",
+        "mutation_intent": {
+          "mutation_intent": "LIKELY_MUTATION",
+          "reasons": [
+            "action:fix",
+            "target:документация/safe_allow_test.md",
+            "target_source:declared"
+          ]
+        },
+        "verifier_run_id": "",
+        "reason": "",
+        "violations": [],
+        "required_action": "",
+        "write_revision": 0,
+        "tool_call_count": 0,
+        "correction_count": null
+      },
+      {
+        "event": "execution_consistency_resolved",
+        "attempt": null,
+        "decision": "MUTATION_OBSERVED",
+        "mutation_intent": null,
+        "verifier_run_id": "",
+        "reason": "",
+        "violations": [],
+        "required_action": "",
+        "write_revision": 1,
+        "tool_call_count": 3,
+        "correction_count": 0
+      }
+    ],
+    "correction_activity": []
+  }
+}

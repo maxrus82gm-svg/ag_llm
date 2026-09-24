@@ -4208,6 +4208,28 @@ class UltraApp(tk.Tk):
         if thread is None:
             segments.append(("metadata", "Для этого RUN нет событий разбора.\n"))
             return segments
+        permissions = thread.get("permission_escalations") or {}
+        if not permissions and thread.get("permission_escalation"):
+            permissions = {"legacy": thread["permission_escalation"]}
+        for permission in permissions.values():
+            capability = permission.get("capability") or "—"
+            segments.append(("metadata", "SERVER PERMISSION CONTROL\n"))
+            segments.append(("audit", f"{capability} был отключён при запросе.\n"))
+            for attempt in permission.get("attempts") or []:
+                segments.append(("dredd_fail", (
+                    f"#{attempt.get('attempt')} {attempt.get('tool')} "
+                    f"{attempt.get('path') or ''} → DENIED\n"
+                )))
+            if permission.get("verifier_run_id"):
+                segments.append(("metadata", "DREDD PERMISSION REVIEW\n"))
+                segments.append(("audit", f"{permission.get('verifier_reason') or '—'}\n"))
+            if permission.get("user_decision"):
+                segments.append(("metadata", "РЕШЕНИЕ ПОЛЬЗОВАТЕЛЯ\n"))
+                segments.append(("audit", f"{permission['user_decision']}\n"))
+            status = permission.get("status") or "PENDING"
+            status_tag = ("dredd_fail" if status in {"DENIED", "BLOCKED", "NOT_JUSTIFIED"}
+                          else "resolved" if status == "GRANTED" else "metadata")
+            segments.append((status_tag, f"PERMISSION: {status}\n\n"))
         consistency = thread.get("execution_consistency")
         if consistency:
             segments.append(("metadata", "EXECUTION CONSISTENCY\n"))
@@ -4413,14 +4435,16 @@ class UltraApp(tk.Tk):
             )
 
         if event_type == "permission_denied":
-            seq = event.get("tool_sequence")
             func = event.get("function")
-            args = event.get("arguments", {})
-            err = event.get("error", {})
             return (
-                f"[{time_str}] DENIED TOOL #{seq} {func}({self._compact_event_arguments(args)}) | "
-                f"{str(err.get('message', ''))[:300]}"
+                f"[{time_str}] PERMISSION DENIED | capability={event.get('capability')} "
+                f"| attempt={event.get('attempt')} | tool={func}"
             )
+
+        if event_type.startswith("permission_"):
+            return (f"[{time_str}] {event_type.upper()} | "
+                    f"capability={event.get('capability')} | "
+                    f"reason={str(event.get('reason') or event.get('verifier_reason') or '')[:200]}")
 
         if event_type == "api_request":
             return f"[{time_str}] API #{event.get('api_request_number')}"
@@ -4791,9 +4815,12 @@ class UltraApp(tk.Tk):
         producer_snapshot: dict | None = None
         provenance_warning: str | None = None
         run_started_seen = False
+        final_run_status = "SUCCESS"
 
         def on_event(event: dict):
-            nonlocal producer_snapshot, provenance_warning, run_started_seen
+            nonlocal producer_snapshot, provenance_warning, run_started_seen, final_run_status
+            if event.get("event") == "run_finished":
+                final_run_status = str(event.get("status") or "SUCCESS")
             if event.get("event") == "run_started" and not run_started_seen:
                 run_started_seen = True
                 actual_model_id = event.get("model_id")
@@ -4836,6 +4863,15 @@ class UltraApp(tk.Tk):
             except queue.Full:
                 pass
 
+        def permission_request_callback(payload: dict) -> bool:
+            ready = threading.Event()
+            answer = {"granted": False}
+            self.events.put(("permission_request", {
+                "payload": payload, "ready": ready, "answer": answer,
+            }))
+            ready.wait()
+            return answer["granted"] is True
+
         try:
             result = asyncio.run(
                 run_agent_task(
@@ -4847,6 +4883,7 @@ class UltraApp(tk.Tk):
                     model_id=model_id,
                     verifier_model_id=verifier_model_id,
                     task_block_id=task_block_id,
+                    permission_request_callback=permission_request_callback,
                 )
             )
             if not run_started_seen and provenance_warning is None:
@@ -4869,11 +4906,54 @@ class UltraApp(tk.Tk):
                         "text": result,
                         "producer": stored_message.get("producer"),
                         "provenance_warning": provenance_warning,
+                        "run_status": final_run_status,
                     },
                 )
             )
         except Exception as exc:
             self.events.put(("error", f"{type(exc).__name__}: {exc}"))
+
+    def _open_permission_request(self, request: dict) -> None:
+        """Called only by Tk's event poller, never by the worker thread."""
+        if threading.current_thread() is not threading.main_thread():
+            raise RuntimeError("Permission dialog must run on the Tk main thread.")
+        payload = request["payload"]
+        capability = payload["capability"]
+        window = tk.Toplevel(self)
+        window.title(f"ТРЕБУЕТСЯ РАЗРЕШЕНИЕ {capability}")
+        window.transient(self)
+        window.resizable(False, False)
+        frame = ttk.Frame(window, padding=16)
+        frame.pack(fill="both", expand=True)
+        ttk.Label(frame, text=(
+            f"Для завершения текущей задачи требуется {capability}.\n"
+            f"Executor дважды запросил {capability}, но capability отключена.\n"
+            "Ни одна запрещённая операция не была выполнена.\n\n"
+            f"Проверка задачи подтверждает необходимость {capability}.\n"
+            f"Текущая область: {payload['scope']}\n"
+            f"Последний requested path: {payload['last_requested_path']}\n\n"
+            f"Разрешить {capability} для ТЕКУЩЕГО RUN?"
+        ), justify="left", wraplength=470).pack(anchor="w")
+
+        def decide(granted: bool) -> None:
+            if request["ready"].is_set():
+                return
+            request["answer"]["granted"] = granted
+            request["ready"].set()
+            window.grab_release()
+            window.destroy()
+
+        buttons = ttk.Frame(frame)
+        buttons.pack(fill="x", pady=(14, 0))
+        ttk.Button(buttons, text=f"Разрешить {capability} и продолжить",
+                   command=lambda: decide(True)).pack(side="left", padx=(0, 8))
+        ttk.Button(buttons, text="Не разрешать / завершить задачу",
+                   command=lambda: decide(False)).pack(side="left")
+        window.protocol("WM_DELETE_WINDOW", lambda: decide(False))
+        window.bind("<Destroy>", lambda event: request["ready"].set()
+                    if event.widget is window else None)
+        window.grab_set()
+        window.focus_set()
 
     def _poll_events(self) -> None:
         try:
@@ -4890,7 +4970,8 @@ class UltraApp(tk.Tk):
                         text = str(payload)
                         producer = None
                         provenance_warning = None
-                    self._finish_run("Готово")
+                    run_status = payload.get("run_status") if isinstance(payload, dict) else "SUCCESS"
+                    self._finish_run("Готово" if run_status != "BLOCKED" else "BLOCKED")
                     if provenance_warning:
                         self._append_chat(
                             "СИСТЕМА",
@@ -4900,6 +4981,12 @@ class UltraApp(tk.Tk):
                 elif event_type == "error":
                     self._finish_run("Ошибка")
                     self._append_chat("ОШИБКА", payload, "system")
+                elif event_type == "permission_request":
+                    try:
+                        self._open_permission_request(payload)
+                    except Exception:
+                        payload["answer"]["granted"] = False
+                        payload["ready"].set()
                 elif event_type == "compressor_success":
                     try:
                         self._open_compression_proposal(payload)
@@ -4936,6 +5023,8 @@ class UltraApp(tk.Tk):
                         "final_audit_failed", "final_audit_error", "guard_blocked",
                         "audit_diagnostic_error", "audit_storage_error",
                         "execution_consistency_verifier_failed", "execution_consistency_terminal",
+                        "permission_scope_blocked", "permission_review_failed",
+                        "permission_user_denied", "permission_escalation_terminal",
                     } else "trace"
                     self._append_trace(self._format_event(event), tag)
                     if event.get("audit_storage_error"):
@@ -4969,6 +5058,11 @@ class UltraApp(tk.Tk):
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",
                         "final_audit_error", "run_failed", "run_finished",
+                        "permission_denied", "permission_scope_blocked",
+                        "permission_review_started", "permission_review_passed",
+                        "permission_review_failed", "permission_user_prompted",
+                        "permission_granted", "permission_user_denied",
+                        "permission_escalation_terminal",
                         "execution_consistency_detected", "execution_consistency_feedback_delivered",
                         "execution_consistency_recheck_started", "execution_consistency_verifier_started",
                         "execution_consistency_verifier_passed", "execution_consistency_verifier_failed",

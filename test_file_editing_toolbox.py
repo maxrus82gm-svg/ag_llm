@@ -338,10 +338,36 @@ class FileEditingToolboxTests(unittest.TestCase):
         read_only = self.make_policy(allow_write=False, allow_delete=False)
         names = {item["name"] for item in server._functions_for_policy(read_only)}
         self.assertIn("find_text", names)
-        self.assertNotIn("replace_text", names)
+        self.assertIn("replace_text", names)
+        self.assertIn("delete_file", names)
+        descriptions = {item["name"]: item["description"]
+                        for item in server._functions_for_policy(read_only)}
+        self.assertIn("сервер отклонит", descriptions["replace_text"])
+        self.assertIn("сервер отклонит", descriptions["delete_file"])
         for bad_path in ("../outside.txt", str(self.root / "outside.txt")):
             with self.assertRaises(ValueError):
                 server._agent_find_text(self.root, bad_path, "secret", self.policy)
+
+    def test_visible_mutation_schemas_still_fail_closed_without_permission(self):
+        target = self.root / "stable.txt"
+        target.write_text("stable", encoding="utf-8")
+        policy = self.make_policy(allow_write=False, allow_delete=False)
+        calls = (
+            ("write_file", {"path": "stable.txt", "content": "changed"}),
+            ("replace_text", {"path": "stable.txt", "old_text": "stable",
+                              "new_text": "changed", "expected_content_sha256": "0" * 64}),
+            ("insert_before", {"path": "stable.txt", "marker": "stable",
+                               "content": "changed", "expected_content_sha256": "0" * 64}),
+            ("insert_after", {"path": "stable.txt", "marker": "stable",
+                              "content": "changed", "expected_content_sha256": "0" * 64}),
+            ("delete_file", {"path": "stable.txt"}),
+        )
+        for name, arguments in calls:
+            with self.subTest(name=name), self.assertRaises(PermissionError):
+                server._execute_agent_function(self.root, {"name": name,
+                    "arguments": arguments}, policy, self.session)
+            self.assertEqual(target.read_text(encoding="utf-8"), "stable")
+        self.assertEqual(self.session["manifest"]["changed_files"], [])
 
 
 if __name__ == "__main__":

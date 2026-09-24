@@ -213,6 +213,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         mock_git: bool = True,
         task_block_id: str | None = None,
         task: str = "ORIGINAL RAW TASK",
+        permission_request_callback=None,
     ):
         client = fake_client or FakeClient()
         if isinstance(verifier_side_effect, BaseException):
@@ -301,6 +302,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 on_event=self.events.append,
                 verifier_model_id=verifier_model_id,
                 task_block_id=task_block_id,
+                permission_request_callback=permission_request_callback,
             )
         return result, verifier, client
 
@@ -525,222 +527,203 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                     self.assertIn("target_source:declared", result["reasons"])
                     self.assertNotIn("target:server.py", result["reasons"])
 
-    async def test_declared_safe_allow_target_zero_tool_report_gets_self_check(self) -> None:
-        client = FakeClient([
-            FakeResponse("Файл изменён: TEST_2 заменён на TEST_3 через replace_text."),
-            FakeResponse("Нужно проверить состояние файла."),
-        ])
-        result, verifier, _ = await self.run_case([
-            verifier_result("PASS", check_type="CONSISTENCY"),
-            verifier_result("PASS"),
-        ], fake_client=client, task=SAFE_ALLOW_DECLARED_TARGET_TASK)
-        self.assertEqual(result, "Нужно проверить состояние файла.")
-        classified = next(item for item in self.events if item["event"] == "mutation_intent_classified")
-        self.assertEqual(classified["mutation_intent"], "LIKELY_MUTATION")
-        self.assertIn("target_source:declared", classified["reasons"])
-        self.assertTrue(any("safe_allow_test.md" in reason for reason in classified["reasons"]))
-        names = [item["event"] for item in self.events]
-        self.assertLess(names.index("execution_consistency_detected"), names.index("final_audit_started"))
-        self.assertLess(names.index("execution_consistency_feedback_delivered"), names.index("final_audit_started"))
-        self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list],
-                         ["CONSISTENCY", "FINAL"])
-        self.assertEqual(client.post_count, 2)
-        self.assertIn("execution_consistency.feedback", str(client.bodies[1]["messages"]))
-
-    async def test_live_document_13_fabricated_report_enters_consistency_before_final(self) -> None:
-        task = (
-            "ИЗМЕНЯТЬ МОЖНО ТОЛЬКО ОДИН ФАЙЛ:\n"
-            "Документация/13_Архитектура оперативной верификации и контроля выполнения задач.md\n"
-            "EDIT 1–8. Используй replace_text и insert_before.\n"
-            "НЕ изменять Python runtime. Не изменяй другие файлы.\n"
-            "git_diff / git_status — optional read-only diagnostics."
-        )
-        client = FakeClient([
-            FakeResponse("Выполнено 8 precise mutations: replace_text, insert_before; readback выполнен."),
-            FakeResponse("Нужно проверить целевой файл фактически."),
-        ])
-        result, verifier, _ = await self.run_case([
-            verifier_result("PASS", check_type="CONSISTENCY"),
-            verifier_result("PASS"),
-        ], fake_client=client, task=task)
-        self.assertEqual(result, "Нужно проверить целевой файл фактически.")
-        names = [item["event"] for item in self.events]
-        self.assertLess(names.index("execution_consistency_detected"), names.index("final_audit_started"))
-        self.assertLess(names.index("execution_consistency_feedback_delivered"), names.index("final_audit_started"))
-        self.assertEqual(client.post_count, 2)
-        self.assertEqual(verifier.await_args_list[0].kwargs["check_type"], "CONSISTENCY")
-        classified = next(item for item in self.events if item["event"] == "mutation_intent_classified")
-        self.assertEqual(classified["mutation_intent"], "LIKELY_MUTATION")
-        self.assertEqual(classified["run_id"], self.events[0]["run_id"])
-        self.assertIn("execution_consistency.feedback", str(client.bodies[1]["messages"]))
+    async def test_mutation_intent_is_diagnostic_only_for_declared_target_and_fix_title(self) -> None:
+        for task in (SAFE_ALLOW_DECLARED_TARGET_TASK, "TASK — fix report.txt\\nOnly explain the blocker."):
+            with self.subTest(task=task[:32]):
+                self.events.clear()
+                client = FakeClient([FakeResponse("No change was made.")])
+                result, verifier, _ = await self.run_case(
+                    verifier_result("PASS"), fake_client=client, task=task,
+                )
+                self.assertEqual(result, "No change was made.")
+                self.assertEqual(client.post_count, 1)
+                self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list], ["FINAL"])
+                self.assertFalse(any(event["event"].startswith("execution_consistency_")
+                                     for event in self.events))
+                classified = next(event for event in self.events
+                                  if event["event"] == "mutation_intent_classified")
+                self.assertEqual(classified["mutation_intent"], "LIKELY_MUTATION")
 
     async def test_read_only_zero_tool_task_uses_only_final(self) -> None:
-        _result, verifier, client = await self.run_case(verifier_result("PASS"),
-            task="Проанализируй server.py. Ничего не меняй.")
+        _result, verifier, client = await self.run_case(
+            verifier_result("PASS"), task="Проанализируй server.py. Ничего не меняй.",
+        )
         verifier.assert_awaited_once()
         self.assertEqual(verifier.await_args.kwargs["check_type"], "FINAL")
         self.assertEqual(client.post_count, 1)
 
-    async def test_live_zero_tool_failure_self_check_then_consistency_correction(self) -> None:
-        task = "Обнови только файл:\nДокументация/09_Обязательный регламент Ultra.md"
-        self.permissions.update(allow_write=True, allow_verify=True)
+    @staticmethod
+    def denied_call(name: str) -> FakeResponse:
+        args = {"path": "result.txt", "expected_content_sha256": "0" * 64}
+        if name == "replace_text":
+            args.update(old_text="old", new_text="new")
+        elif name == "insert_after":
+            args.update(marker="old", content="new")
+        elif name == "delete_file":
+            args = {"path": "result.txt"}
+        return FakeResponse("", finish_reason="function_call",
+                            function_call={"name": name, "arguments": args})
+
+    async def test_first_write_denial_is_physical_and_does_not_review(self) -> None:
+        target = self.workspace / "result.txt"
+        target.write_text("old", encoding="utf-8")
+        client = FakeClient([self.denied_call("replace_text"), FakeResponse("Cannot edit.")])
+        result, verifier, _ = await self.run_case(verifier_result("PASS"),
+            fake_client=client, task="Replace old in result.txt")
+        self.assertEqual(result, "Cannot edit.")
+        self.assertEqual(target.read_text(encoding="utf-8"), "old")
+        denied = [e for e in self.events if e["event"] == "permission_denied"]
+        self.assertEqual([(e["capability"], e["attempt"]) for e in denied], [("WRITE", 1)])
+        self.assertIn("permission.denied", str(client.bodies[1]["messages"]))
+        self.assertEqual([c.kwargs["check_type"] for c in verifier.await_args_list], ["FINAL"])
+        self.assertFalse(any(e["event"] == "permission_review_started" for e in self.events))
+        thread = load_audit_thread(self.workspace, "ws_test", None, denied[0]["run_id"])
+        self.assertEqual(thread["permission_escalation"]["attempts"][0]["tool"], "replace_text")
+
+    async def test_write_review_pass_grant_continues_same_run_without_replaying_denial(self) -> None:
+        self.permissions["allow_verify"] = True
+        target = self.workspace / "result.txt"
+        target.write_text("old", encoding="utf-8")
         client = FakeClient([
-            FakeResponse("Документ изменён; read_file, git_diff и git_status выполнены."),
-            FakeResponse("Документ изменён и проверен."),
-            FakeResponse("", finish_reason="function_call", function_call={
-                "name": "write_file", "arguments": {"path": "result.txt", "content": "done"},
-            }),
-            FakeResponse("Done"),
-        ])
-        consistency_fail = verifier_result("FAIL", check_type="CONSISTENCY",
-            reason="No observed work", violations=("No tool calls",),
-            required_action="Inspect the target and make the requested change")
-        result, verifier, _ = await self.run_case(
-            [consistency_fail, verifier_result("PASS")], fake_client=client, task=task,
-        )
-        self.assertEqual(result, "Done")
-        self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list],
-                         ["CONSISTENCY", "FINAL"])
-        context = json.loads(verifier.await_args_list[0].kwargs["verification_context"])
-        self.assertEqual(verifier.await_args_list[0].kwargs["raw_task"], task)
-        self.assertEqual(context["write_revision"], 0)
-        self.assertEqual(context["tool_call_count"], 0)
-        self.assertEqual(context["first_candidate_final_response"],
-                         "Документ изменён; read_file, git_diff и git_status выполнены.")
-        self.assertEqual(sum(item["event"] == "execution_consistency_feedback_delivered"
-                             for item in self.events), 1)
-        self.assertIn("execution_consistency_resolved", [item["event"] for item in self.events])
-        self.assertNotIn("CONSISTENCY", str(client.bodies[0]["messages"]))
-        self.assertTrue(any("is_new_user_task" in str(item.get("content"))
-                            for item in client.bodies[2]["messages"]))
-        run_id = next(item["run_id"] for item in self.events if item["event"] == "run_started")
-        thread = load_audit_thread(self.workspace, "ws_test", None, run_id)
-        self.assertEqual(thread["execution_consistency"]["status"], "RESOLVED")
-        self.assertEqual(thread["execution_consistency"]["correction_activity"][0]["tool_name"], "write_file")
-        self.assertEqual(thread["task_block_id"], None)
-
-    async def test_existing_state_can_pass_consistency_without_mutation(self) -> None:
-        (self.workspace / "result.txt").write_text("done", encoding="utf-8")
-        client = FakeClient([
-            FakeResponse("Already done"),
-            FakeResponse("", finish_reason="function_call", function_call={
-                "name": "read_file", "arguments": {"path": "result.txt"},
-            }),
-            FakeResponse("Confirmed already done"),
-        ])
-        result, verifier, _ = await self.run_case([
-            verifier_result("PASS", check_type="CONSISTENCY"),
-            verifier_result("PASS"),
-        ], fake_client=client, task="Update file result.txt to say done")
-        self.assertEqual(result, "Confirmed already done")
-        self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list],
-                         ["CONSISTENCY", "FINAL"])
-        context = json.loads(verifier.await_args_list[0].kwargs["verification_context"])
-        self.assertEqual(context["independent_target_evidence"][0]["content"], "done")
-
-    async def test_bad_target_can_be_justified_without_forced_mutation(self) -> None:
-        client = FakeClient([FakeResponse("Target seems wrong"),
-                             FakeResponse("Confirmed target does not exist")])
-        result, verifier, _ = await self.run_case([
-            verifier_result("PASS", check_type="CONSISTENCY",
-                            reason="User named a nonexistent target"),
-            verifier_result("PASS"),
-        ], fake_client=client, task="Update file missing.txt")
-        self.assertEqual(result, "Confirmed target does not exist")
-        evidence = json.loads(verifier.await_args_list[0].kwargs["verification_context"])
-        self.assertFalse(evidence["independent_target_evidence"][0]["available"])
-        self.assertFalse((self.workspace / "missing.txt").exists())
-
-    async def test_consistency_failure_after_one_correction_is_terminal(self) -> None:
-        client = FakeClient([FakeResponse("claim 1"), FakeResponse("claim 2"),
-                             FakeResponse("claim 3")])
-        with self.assertRaisesRegex(RuntimeError, "execution_consistency_unresolved"):
-            await self.run_case([
-                verifier_result("FAIL", check_type="CONSISTENCY"),
-                verifier_result("FAIL", check_type="CONSISTENCY"),
-            ], fake_client=client, task="Update file result.txt")
-        self.assertEqual(client.post_count, 3)
-        self.assertEqual(self.last_verifier.await_count, 2)
-        self.assertEqual(self.events[-1]["reason"], "execution_consistency_unresolved")
-
-    async def test_final_consistency_recheck_can_justify_no_mutation(self) -> None:
-        client = FakeClient([FakeResponse("claim 1"), FakeResponse("claim 2"),
-                             FakeResponse("Verified blocker")])
-        result, verifier, _ = await self.run_case([
-            verifier_result("FAIL", check_type="CONSISTENCY"),
-            verifier_result("PASS", check_type="CONSISTENCY",
-                            reason="Blocker now established"),
-            verifier_result("PASS"),
-        ], fake_client=client, task="Update file result.txt")
-        self.assertEqual(result, "Verified blocker")
-        self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list],
-                         ["CONSISTENCY", "CONSISTENCY", "FINAL"])
-        self.assertEqual(sum(item["event"] == "execution_consistency_correction_started"
-                             for item in self.events), 1)
-
-    async def test_server_retry_mutation_skips_consistency_verifier(self) -> None:
-        self.permissions.update(allow_write=True, allow_verify=True)
-        client = FakeClient([
-            FakeResponse("claim 1"),
+            self.denied_call("replace_text"), self.denied_call("insert_after"),
             FakeResponse("", finish_reason="function_call", function_call={
                 "name": "write_file", "arguments": {"path": "result.txt", "content": "done"},
             }), FakeResponse("Done"),
         ])
-        _result, verifier, _ = await self.run_case(verifier_result("PASS"),
-            fake_client=client, task="Update file result.txt")
-        verifier.assert_awaited_once()
-        self.assertEqual(verifier.await_args.kwargs["check_type"], "FINAL")
+        requests = []
+        def grant(payload):
+            requests.append(payload)
+            self.assertEqual(target.read_text(encoding="utf-8"), "old")
+            return True
+        result, verifier, _ = await self.run_case([
+            verifier_result("PASS", check_type="PERMISSION"), verifier_result("PASS"),
+        ], fake_client=client, task="Update result.txt", permission_request_callback=grant)
+        self.assertEqual(result, "Done")
+        self.assertEqual(target.read_text(encoding="utf-8"), "done")
+        self.assertEqual([c.kwargs["check_type"] for c in verifier.await_args_list],
+                         ["PERMISSION", "FINAL"])
+        self.assertEqual([a["tool"] for a in requests[0]["attempts"]],
+                         ["replace_text", "insert_after"])
+        self.assertEqual(len({e["run_id"] for e in self.events}), 1)
+        self.assertEqual(len([e for e in self.events if e["event"] == "permission_review_started"]), 1)
+        self.assertEqual(len([e for e in self.events if e["event"] == "permission_granted"]), 1)
+        self.assertIn("Capability WRITE", str(client.bodies[2]["messages"]))
+        review_context = json.loads(verifier.await_args_list[0].kwargs["verification_context"])
+        self.assertFalse(review_context["denied_calls_executed"])
+        self.assertEqual(review_context["write_revision"], 0)
+        self.assertEqual(review_context["run_owned_mutation_state"], {})
+        self.assertNotIn("WRITE", review_context["allowed_capabilities"])
+        thread = load_audit_thread(self.workspace, "ws_test", None, requests[0]["run_id"])
+        self.assertEqual(thread["permission_escalation"]["status"], "GRANTED")
+        self.assertEqual(thread["permission_escalation"]["user_decision"], "GRANTED")
 
-    async def test_consistency_correction_does_not_reset_tool_budget(self) -> None:
-        (self.workspace / "result.txt").write_text("old", encoding="utf-8")
-        self.permissions["tool_limit"] = 1
-        client = FakeClient([
-            FakeResponse("claim 1"),
-            FakeResponse("", finish_reason="function_call", function_call={
-                "name": "read_file", "arguments": {"path": "result.txt"},
-            }),
-            FakeResponse("claim 2"),
-        ])
-        with self.assertRaisesRegex(RuntimeError, "execution_consistency_tool_budget_exhausted"):
-            await self.run_case(verifier_result("FAIL", check_type="CONSISTENCY"),
-                fake_client=client, task="Update file result.txt")
+    async def test_write_review_pass_user_deny_blocks_without_mutation(self) -> None:
+        self.permissions["allow_verify"] = True
+        target = self.workspace / "result.txt"
+        target.write_text("old", encoding="utf-8")
+        client = FakeClient([self.denied_call("replace_text"), self.denied_call("insert_after")])
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS", check_type="PERMISSION"),
+            fake_client=client, task="Update result.txt",
+            permission_request_callback=lambda _: False,
+        )
+        self.assertIn("permission_not_granted", result)
+        self.assertEqual(target.read_text(encoding="utf-8"), "old")
+        self.assertEqual(client.post_count, 2)
+        self.assertEqual([c.kwargs["check_type"] for c in verifier.await_args_list], ["PERMISSION"])
+        self.assertEqual(self.events[-1]["status"], "BLOCKED")
+
+    async def test_write_review_fail_has_no_prompt_and_repeat_blocks(self) -> None:
+        client = FakeClient([self.denied_call("replace_text"),
+                             self.denied_call("insert_after"),
+                             self.denied_call("replace_text")])
+        callback = Mock(return_value=True)
+        result, verifier, _ = await self.run_case(
+            verifier_result("FAIL", check_type="PERMISSION"),
+            fake_client=client, task="Explain result.txt",
+            permission_request_callback=callback,
+        )
+        self.assertIn("permission_escalation_not_justified_repeat", result)
+        callback.assert_not_called()
+        self.assertEqual(verifier.await_count, 1)
         self.assertEqual(client.post_count, 3)
-        self.assertEqual(self.last_verifier.await_count, 1)
-        self.assertFalse(any(item["event"] == "execution_consistency_correction_started"
-                             for item in self.events))
+        self.assertEqual(self.events[-1]["status"], "BLOCKED")
 
-    async def test_consistency_keeps_task_block_and_runtime_feedback_out_of_raw_storage(self) -> None:
-        from context_storage import new_task_block_id
-        task_id = new_task_block_id()
-        client = FakeClient([FakeResponse("claim 1"), FakeResponse("claim 2")])
-        _result, verifier, _ = await self.run_case([
-            verifier_result("PASS", check_type="CONSISTENCY"),
-            verifier_result("PASS"),
-        ], fake_client=client, task="Update file result.txt", task_block_id=task_id)
-        run_ids = {item["run_id"] for item in self.events}
-        self.assertEqual(len(run_ids), 1)
-        run_id = next(iter(run_ids))
-        thread = load_audit_thread(self.workspace, "ws_test", None, run_id)
-        self.assertEqual(thread["task_block_id"], task_id)
-        self.assertEqual(verifier.await_count, 2)
-        self.assertFalse(any("execution_consistency.feedback" in item.read_text(encoding="utf-8")
-                             for item in (self.workspace / ".ultra" / "chats").glob("*.json*")))
-        self.assertNotIn("append_raw_message", inspect.getsource(server.run_agent_task))
+    async def test_callback_unavailable_fails_closed(self) -> None:
+        self.permissions["allow_verify"] = True
+        client = FakeClient([self.denied_call("replace_text"), self.denied_call("insert_after")])
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS", check_type="PERMISSION"),
+            fake_client=client, task="Update result.txt",
+        )
+        self.assertIn("permission_callback_unavailable", result)
+        self.assertEqual(verifier.await_count, 1)
+        self.assertEqual(self.events[-1]["status"], "BLOCKED")
 
-    async def test_consistency_server_facts_survive_custom_template(self) -> None:
-        client = FakeClient([FakeResponse("claim"), FakeResponse("confirmed")])
-        with patch.object(server, "resolve_server_context_message",
-                          return_value="CUSTOM TEMPLATE CLAIMS write_revision=9"):
-            await self.run_case([
-                verifier_result("PASS", check_type="CONSISTENCY"),
-                verifier_result("PASS"),
-            ], fake_client=client, task="Update file result.txt")
-        feedback = client.bodies[1]["messages"][-1]["content"]
-        facts = json.loads(feedback.split("SERVER FACTS — NOT TEMPLATE CONTROLLED:\n", 1)[1])
-        self.assertEqual(facts["write_revision"], 0)
-        self.assertEqual(facts["mutation_intent"]["mutation_intent"], "LIKELY_MUTATION")
-        self.assertFalse(facts["is_new_user_task"])
-        self.assertEqual(facts["raw_task_authority"], "SOURCE_OF_TRUTH")
+    async def test_grant_cannot_bypass_verify_dependency(self) -> None:
+        client = FakeClient([self.denied_call("replace_text"), self.denied_call("insert_after")])
+        callback = Mock(return_value=True)
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS", check_type="PERMISSION"),
+            fake_client=client, task="Update result.txt",
+            permission_request_callback=callback,
+        )
+        self.assertIn("permission_policy_validation_failed", result)
+        callback.assert_not_called()
+        self.assertEqual(verifier.await_count, 1)
+
+    async def test_permission_review_protocol_error_blocks_without_prompt(self) -> None:
+        client = FakeClient([self.denied_call("replace_text"), self.denied_call("insert_after")])
+        callback = Mock(return_value=True)
+        result, verifier, _ = await self.run_case(
+            verifier_runtime.VerifierProtocolError("malformed"),
+            fake_client=client, task="Update result.txt",
+            permission_request_callback=callback,
+        )
+        self.assertIn("permission_review_error", result)
+        callback.assert_not_called()
+        self.assertEqual(verifier.await_count, 1)
+
+    async def test_delete_capability_is_independent(self) -> None:
+        self.permissions["allow_verify"] = True
+        target = self.workspace / "result.txt"
+        target.write_text("old", encoding="utf-8")
+        client = FakeClient([self.denied_call("delete_file"), self.denied_call("delete_file")])
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS", check_type="PERMISSION"),
+            fake_client=client, task="Delete result.txt",
+            permission_request_callback=lambda _: False,
+        )
+        self.assertIn("permission_not_granted", result)
+        self.assertTrue(target.exists())
+        self.assertEqual([e["capability"] for e in self.events
+                          if e["event"] == "permission_denied"], ["DELETE", "DELETE"])
+        self.assertEqual(verifier.await_count, 1)
+
+    async def test_scope_denial_does_not_widen_scope(self) -> None:
+        (self.workspace / "inside").mkdir()
+        self.permissions["write_scope"] = "inside"
+        client = FakeClient([self.denied_call("replace_text")])
+        callback = Mock(return_value=True)
+        result, verifier, _ = await self.run_case(
+            verifier_result("PASS"), fake_client=client,
+            task="Update result.txt", permission_request_callback=callback,
+        )
+        self.assertIn("permission_scope_blocked", result)
+        callback.assert_not_called()
+        verifier.assert_not_awaited()
+        self.assertEqual(self.events[-1]["status"], "BLOCKED")
+
+    async def test_exact_repeated_error_detector_remains_active(self) -> None:
+        call = FakeResponse("", finish_reason="function_call", function_call={
+            "name": "read_file", "arguments": {"path": "missing.txt"},
+        })
+        client = FakeClient([call, call, call])
+        with self.assertRaisesRegex(RuntimeError, "LOOP DETECTED"):
+            await self.run_case(verifier_result("PASS"), fake_client=client,
+                                task="Read missing.txt")
+        self.assertEqual(client.post_count, 3)
+        self.assertEqual(self.events[-1]["reason"], "loop_detected")
 
     async def test_immediate_mutation_has_no_consistency_overhead(self) -> None:
         self.permissions.update(allow_write=True, allow_verify=True)

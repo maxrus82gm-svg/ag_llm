@@ -452,11 +452,32 @@ register_server_context_event(
     "permission.denied",
     "Сервер отказал в доступе к capability для вызванного инструмента.",
     (
-        "Сервер отказал в доступе к capability {capability} для tool "
-        "{tool_name}. Не повторяй тот же запрещённый вызов. Соблюдай "
-        "серверные разрешения и сообщи пользователю, если для задачи "
-        "требуется дополнительный доступ."
+        "Capability {capability} отключена в текущем RUN. Tool {tool_name} не "
+        "выполнен. Не повторяй вызов механически: перепроверь RAW TASK. "
+        "Если capability действительно необходима, повторный запрос приведёт "
+        "к серверной проверке разрешения."
     ),
+)
+
+register_server_context_event(
+    "permission.review_not_required", "Расширение прав не подтверждено.",
+    "Необходимость {capability} не подтверждена. Capability остаётся OFF; "
+    "запрещённый вызов не выполнен. Продолжи или заверши задачу с текущими правами.",
+)
+register_server_context_event(
+    "permission.granted", "Разрешение выдано для текущего RUN.",
+    "Capability {capability} теперь разрешена в текущем RUN и прежнем scope. "
+    "Предыдущий запрещённый вызов не выполнен. Если действие ещё нужно, "
+    "запроси tool заново с актуальным состоянием файла.",
+)
+register_server_context_event(
+    "permission.user_denied", "Разрешение не выдано.",
+    "Capability {capability} не разрешена. Запрещённые операции не выполнялись.",
+)
+register_server_context_event(
+    "permission.scope_blocked", "Путь вне разрешённой области.",
+    "Путь {path} находится вне настроенного scope для {capability}. "
+    "Scope не расширен, вызов не выполнен.",
 )
 
 register_server_context_event(

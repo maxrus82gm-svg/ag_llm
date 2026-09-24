@@ -2,6 +2,7 @@ import asyncio
 import copy
 import json
 import queue
+import threading
 import tempfile
 import unittest
 from pathlib import Path
@@ -133,6 +134,48 @@ class AuditStorageTests(unittest.TestCase):
         saved = self.load()
         self.assertEqual(saved["execution_consistency"]["status"], "UNRESOLVED")
         self.assertEqual(saved["final_audit"], "NOT_RUN")
+
+    def test_permission_lifecycle_is_persisted_and_rendered(self):
+        for number, tool in ((1, "replace_text"), (2, "insert_after")):
+            self.recorder.observe({"event": "permission_denied", "capability": "WRITE",
+                                   "attempt": number, "function": tool,
+                                   "arguments": {"path": "notes.txt"}})
+        self.recorder.observe({"event": "permission_review_started", "capability": "WRITE",
+                               "scope": "."})
+        self.recorder.observe({"event": "permission_review_passed", "capability": "WRITE",
+                               "verifier_run_id": "ver_permission", "verifier_reason": "Edit required",
+                               "required_action": "Ask user"})
+        self.recorder.observe({"event": "permission_user_prompted", "capability": "WRITE"})
+        self.recorder.observe({"event": "permission_user_denied", "capability": "WRITE",
+                               "user_decision": "DENIED"})
+        self.recorder.observe({"event": "permission_escalation_terminal",
+                               "capability": "WRITE", "reason": "permission_not_granted"})
+        self.recorder.observe({"event": "run_finished", "status": "BLOCKED"})
+        saved = self.load()
+        permission = saved["permission_escalation"]
+        self.assertEqual(permission["status"], "BLOCKED")
+        self.assertEqual(permission["user_decision"], "DENIED")
+        self.assertEqual([a["tool"] for a in permission["attempts"]],
+                         ["replace_text", "insert_after"])
+        segments = ultra_ui.UltraApp._audit_segments(saved, self.run_id)
+        rendered = "".join(text for _, text in segments)
+        self.assertIn("SERVER PERMISSION CONTROL", rendered)
+        self.assertIn("DREDD PERMISSION REVIEW", rendered)
+        self.assertIn("РЕШЕНИЕ ПОЛЬЗОВАТЕЛЯ", rendered)
+        self.assertTrue(any(tag == "dredd_fail" and "PERMISSION: BLOCKED" in text
+                            for tag, text in segments))
+
+    def test_write_and_delete_permission_sections_remain_separate(self):
+        for capability, tool in (("WRITE", "replace_text"), ("DELETE", "delete_file")):
+            self.recorder.observe({"event": "permission_denied", "capability": capability,
+                                   "attempt": 1, "function": tool,
+                                   "arguments": {"path": "notes.txt"}})
+        saved = self.load()
+        self.assertEqual(set(saved["permission_escalations"]), {"WRITE", "DELETE"})
+        rendered = "".join(text for _, text in
+                           ultra_ui.UltraApp._audit_segments(saved, self.run_id))
+        self.assertIn("replace_text", rendered)
+        self.assertIn("delete_file", rendered)
 
     def test_terminal_fail_keeps_open_issues_unresolved(self):
         self.issue()
@@ -478,6 +521,52 @@ class TaskBlockUiTests(unittest.TestCase):
 
 
 class TraceAndUiStateTests(unittest.TestCase):
+    def test_permission_request_crosses_worker_to_main_event_queue(self):
+        events = queue.Queue()
+        seen = []
+        fake = SimpleNamespace(events=events, trace_events=queue.Queue(),
+                               after=lambda *_: None,
+                               _finish_run=lambda *_: None,
+                               _append_chat=lambda *_: None)
+        fake._poll_events = lambda: ultra_ui.UltraApp._poll_events(fake)
+        def open_request(item):
+            self.assertIs(threading.current_thread(), threading.main_thread())
+            seen.append(item["payload"]["capability"])
+            item["answer"]["granted"] = True
+            item["ready"].set()
+        fake._open_permission_request = open_request
+        async def run_task(_task, _workspace, *, permission_request_callback, on_event, **_kwargs):
+            granted = permission_request_callback({"capability": "WRITE"})
+            on_event({"event": "run_finished", "status": "SUCCESS"})
+            return "granted" if granted else "denied"
+        with (patch.object(ultra_ui, "run_agent_task", side_effect=run_task),
+              patch.object(ultra_ui, "append_raw_message", return_value={"producer": None})):
+            worker = threading.Thread(target=ultra_ui.UltraApp._worker,
+                args=(fake, "task", "workspace", {}, "chat", "gigachat_ultra",
+                      "gigachat_3_pro"))
+            worker.start()
+            for _ in range(100):
+                ultra_ui.UltraApp._poll_events(fake)
+                if not worker.is_alive():
+                    break
+                worker.join(0.01)
+            worker.join(1)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(seen, ["WRITE"])
+
+    def test_permission_dialog_rejects_worker_thread(self):
+        errors = []
+        def call():
+            try:
+                ultra_ui.UltraApp._open_permission_request(object(), {})
+            except Exception as exc:
+                errors.append(exc)
+        worker = threading.Thread(target=call)
+        worker.start()
+        worker.join()
+        self.assertEqual(len(errors), 1)
+        self.assertIsInstance(errors[0], RuntimeError)
+
     def test_mutation_intent_classification_is_visible_in_live_trace(self):
         fake = SimpleNamespace(_compact_event_arguments=ultra_ui.UltraApp._compact_event_arguments)
         line = ultra_ui.UltraApp._format_event(fake, {

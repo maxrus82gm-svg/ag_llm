@@ -205,6 +205,22 @@ class VerifierRuntimeTests(unittest.IsolatedAsyncioTestCase):
                                     check_type="CONSISTENCY")
         self.assertEqual(passed.verdict, "PASS")
 
+    async def test_permission_protocol_pass_fail_and_malformed_fail_closed(self) -> None:
+        for verdict in ("PASS", "FAIL"):
+            with self.subTest(verdict=verdict):
+                result, request = await self.call(
+                    verifier_json(check_type="PERMISSION", result=verdict),
+                    check_type="PERMISSION", raw_task="Update result.txt",
+                )
+                self.assertEqual(result.verdict, verdict)
+                prompt = request.await_args.args[0]["messages"][0]["content"]
+                self.assertIn("disabled WRITE or DELETE capability", prompt)
+                self.assertIn("Denied calls did not execute", prompt)
+        with self.assertRaises(verifier_runtime.VerifierProtocolError):
+            await self.call("not-json", check_type="PERMISSION")
+        with self.assertRaises(verifier_runtime.VerifierProtocolError):
+            await self.call(verifier_json(check_type="FINAL"), check_type="PERMISSION")
+
     async def test_final_prompt_requires_fail_on_candidate_server_fact_conflict(self) -> None:
         result, request = await self.call(
             verifier_json(check_type="FINAL", result="FAIL",

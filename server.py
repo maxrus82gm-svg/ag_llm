@@ -154,6 +154,13 @@ TEXT_MUTATION_TOOL_NAMES = {
     "write_file", "replace_text", "insert_before", "insert_after",
 }
 MUTATION_TOOL_NAMES = TEXT_MUTATION_TOOL_NAMES | {"delete_file"}
+CAPABILITY_BY_TOOL = {
+    **{name: "READ" for name in READ_TOOL_NAMES},
+    **{name: "WRITE" for name in TEXT_MUTATION_TOOL_NAMES},
+    "delete_file": "DELETE",
+    **{name: "VERIFY" for name in VERIFICATION_TOOL_NAMES},
+}
+PERMISSION_ESCALATION_THRESHOLD = 2
 
 
 def _classify_mutation_intent(task: str) -> dict:
@@ -749,15 +756,26 @@ def _functions_for_policy(policy: dict) -> list[dict]:
     allowed_names = set()
     if policy["allow_read"]:
         allowed_names.update(READ_TOOL_NAMES)
-    if policy["allow_write"]:
-        allowed_names.update(TEXT_MUTATION_TOOL_NAMES)
-    if policy["allow_delete"]:
-        allowed_names.add("delete_file")
+    # Schemas are visible for permission review; execution remains gated by
+    # _require_operation_permission, including path scopes.
+    allowed_names.update(MUTATION_TOOL_NAMES)
     # VERIFY не является обходом READ: инструменты проверки получают код/дифф
     # только когда физически разрешено чтение.
     if policy["allow_verify"] and policy["allow_read"]:
         allowed_names.update(VERIFICATION_TOOL_NAMES)
-    return [item for item in AGENT_FUNCTIONS if item["name"] in allowed_names]
+    functions = []
+    for item in AGENT_FUNCTIONS:
+        if item["name"] not in allowed_names:
+            continue
+        exposed = dict(item)
+        capability = CAPABILITY_BY_TOOL.get(item["name"])
+        if capability in {"WRITE", "DELETE"} and not policy[f"allow_{capability.lower()}"]:
+            exposed["description"] += (
+                f" Schema доступна, но {capability} выключена: сервер отклонит "
+                "выполнение до отдельного разрешения для текущего RUN."
+            )
+        functions.append(exposed)
+    return functions
 
 def _policy_summary(policy: dict) -> dict:
     return {
@@ -772,6 +790,40 @@ def _policy_summary(policy: dict) -> dict:
         "tool_limit": policy["tool_limit"],
         "auto_backup": policy["auto_backup"],
     }
+
+
+def _permission_review_context(
+    *, policy: dict, capability: str, attempts: list[dict],
+    tool_facts: list[dict], verification_state: dict, run_owned_state: dict,
+    available_functions: list[dict],
+) -> str:
+    """Bounded, server-owned facts; no Executor conversation or assertions."""
+    facts = {
+        "permission_policy": _policy_summary(policy),
+        "capability": capability,
+        "denied_attempts": attempts[:PERMISSION_ESCALATION_THRESHOLD],
+        "denied_calls_executed": False,
+        "recent_server_observed_tools": tool_facts[-12:],
+        "write_revision": verification_state["write_revision"],
+        "run_owned_mutation_state": dict(list(run_owned_state.items())[-20:]),
+        "run_owned_mutation_count": len(run_owned_state),
+        "allowed_capabilities": [name for name, key in (
+            ("READ", "allow_read"), ("WRITE", "allow_write"),
+            ("DELETE", "allow_delete"), ("VERIFY", "allow_verify"),
+        ) if policy[key]],
+        "exposed_tool_schemas": [item["name"] for item in available_functions],
+    }
+    encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    if len(encoded) > MAX_VERIFY_OUTPUT_BYTES:
+        facts["recent_server_observed_tools"] = tool_facts[-4:]
+        facts["run_owned_mutation_state"] = dict(list(run_owned_state.items())[-5:])
+        encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    if len(encoded) > MAX_VERIFY_OUTPUT_BYTES:
+        facts["recent_server_observed_tools"] = []
+        facts["run_owned_mutation_state"] = {}
+        facts["evidence_truncated"] = True
+        encoded = json.dumps(facts, ensure_ascii=False, default=str)
+    return encoded
 
 def _write_backup_manifest(session: dict) -> None:
     manifest_path = session["backup_dir"] / "manifest.json"
@@ -2513,6 +2565,7 @@ async def run_agent_task(
     model_id: str | None = None,
     verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
     task_block_id: str | None = None,
+    permission_request_callback=None,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
@@ -2534,6 +2587,7 @@ async def run_agent_task(
     api_request_count = 0
     tool_call_count = 0
     policy = _normalize_permissions(permissions)
+    # DIAGNOSTIC ONLY — NOT A CONTROL GATE.
     mutation_intent = _classify_mutation_intent(task)
 
     # Пока workspace_id ещё не загружен, ошибки пишутся в системный fallback.
@@ -2841,6 +2895,10 @@ async def run_agent_task(
         f"Лимит вызовов инструментов: {policy['tool_limit']}\n"
         "Планируй действия так, чтобы уложиться в этот лимит. "
         "Не трать вызовы на повторное чтение без необходимости.\n"
+        "Наличие tool schema не означает разрешение на выполнение: WRITE/DELETE "
+        "проверяются сервером для каждого вызова. При отказе файл не меняется. "
+        "Не повторяй отказ механически; сервер может предложить запросить "
+        "разрешение для текущего RUN после повторной необходимой попытки.\n"
         "GUARD P1 при включении может ДО выполнения подозрительного действия "
         "вернуть SUPERVISOR CHECK: повторное чтение без изменения состояния "
         "или создание нового файла, очень похожего на существующий. "
@@ -2941,10 +2999,21 @@ async def run_agent_task(
         "failure_history": [],
         "run_owned_state": {},
     }
-    consistency_state = {"server_retries": 0, "corrections": 0,
-                         "verifier_checks": 0, "candidates": [],
-                         "resolved": False}
     consistency_tool_facts: list[dict] = []
+    permission_attempts: dict[str, list[dict]] = {"WRITE": [], "DELETE": []}
+    permission_review_failed: set[str] = set()
+
+    def _permission_blocked(reason: str, capability: str, detail: str) -> str:
+        _emit("permission_escalation_terminal", {
+            "status": "BLOCKED", "reason": reason, "capability": capability,
+            "detail": detail,
+        })
+        _emit("run_finished", {
+            "status": "BLOCKED", "reason": reason,
+            "api_requests": api_request_count, "tool_calls": tool_call_count,
+            "duration": time.time() - start_time,
+        })
+        return f"RUN STATUS: BLOCKED\nreason: {reason}\n{detail}"
 
     guard_p1_state = {
         "used_paths": set(),
@@ -3307,22 +3376,7 @@ async def run_agent_task(
                         else type(exc).__name__
                     )
                     error_message = str(exc)
-                    capability_by_tool = {
-                        "list_dir": "READ",
-                        "read_file": "READ",
-                        "find_text": "READ",
-                        "read_file_range": "READ",
-                        "write_file": "WRITE",
-                        "replace_text": "WRITE",
-                        "insert_before": "WRITE",
-                        "insert_after": "WRITE",
-                        "delete_file": "DELETE",
-                        "python_compile": "VERIFY",
-                        "git_diff": "VERIFY",
-                        "git_status": "VERIFY",
-                        "ui_smoke_test": "VERIFY",
-                    }
-                    capability = capability_by_tool.get(
+                    capability = CAPABILITY_BY_TOOL.get(
                         function_name, "UNKNOWN"
                     )
                     if permission_denied:
@@ -3477,6 +3531,9 @@ async def run_agent_task(
                         "function": function_name,
                         "arguments": safe_args,
                         "error": tool_error,
+                        "capability": CAPABILITY_BY_TOOL.get(function_name, "UNKNOWN"),
+                        "attempt": (len(permission_attempts.get(
+                            CAPABILITY_BY_TOOL.get(function_name, ""), [])) + 1),
                     })
 
                 if tool_ok:
@@ -3562,7 +3619,10 @@ async def run_agent_task(
                         repeated_error_signature = signature
                         repeated_error_count = 1
 
-                    if repeated_error_count >= 3:
+                    if repeated_error_count >= 3 and not (
+                        permission_denied and function_name in MUTATION_TOOL_NAMES
+                        and CAPABILITY_BY_TOOL[function_name] in permission_review_failed
+                    ):
                         _emit("run_failed", {
                             "reason": "loop_detected",
                             "api_requests": api_request_count,
@@ -3604,6 +3664,137 @@ async def run_agent_task(
                         "content": json.dumps(result_for_model, ensure_ascii=False),
                     }
                 )
+                if permission_denied and function_name in MUTATION_TOOL_NAMES:
+                    capability = CAPABILITY_BY_TOOL[function_name]
+                    path_text = safe_args.get("path")
+                    scope_root = policy[f"_{capability.lower()}_root"]
+                    try:
+                        requested_path = _resolve_workspace_path(root, path_text)
+                        outside_scope = not _is_within(requested_path, scope_root)
+                        _deny_backup_area(requested_path)
+                        _deny_context_storage_area(root, requested_path)
+                    except PermissionError:
+                        outside_scope = True
+                    except (TypeError, ValueError):
+                        outside_scope = False
+                    if outside_scope:
+                        _emit("permission_scope_blocked", {
+                            "capability": capability, "path": path_text,
+                            "scope": policy[f"{capability.lower()}_scope"],
+                        })
+                        return _permission_blocked(
+                            "permission_scope_blocked", capability,
+                            _context_message("permission.scope_blocked", {
+                                "capability": capability, "path": path_text,
+                            }),
+                        )
+                    if not policy[f"allow_{capability.lower()}"]:
+                        attempt = {
+                            "attempt": len(permission_attempts[capability]) + 1,
+                            "tool": function_name, "path": path_text,
+                            "tool_sequence": last_tool_sequence,
+                            "executed": False,
+                        }
+                        permission_attempts[capability].append(attempt)
+                        if capability in permission_review_failed:
+                            return _permission_blocked(
+                                "permission_escalation_not_justified_repeat",
+                                capability,
+                                "Расширение прав не подтверждено; повторный запрещённый вызов не выполнен.",
+                            )
+                        if len(permission_attempts[capability]) == PERMISSION_ESCALATION_THRESHOLD:
+                            _emit("permission_review_started", {
+                                "capability": capability, "attempts": permission_attempts[capability],
+                                "scope": policy[f"{capability.lower()}_scope"],
+                            })
+                            try:
+                                review = await run_verifier_check(
+                                    verifier_model_id=verifier_model_id,
+                                    check_type="PERMISSION", raw_task=task,
+                                    verification_context=_permission_review_context(
+                                        policy=policy, capability=capability,
+                                        attempts=permission_attempts[capability],
+                                        tool_facts=consistency_tool_facts,
+                                        verification_state=verification_state,
+                                        run_owned_state=final_audit_retry_state["run_owned_state"],
+                                        available_functions=available_functions,
+                                    ), task_id=run_id,
+                                )
+                            except Exception as exc:
+                                _emit("permission_review_failed", {
+                                    "capability": capability, "reason": f"{type(exc).__name__}: {exc}",
+                                })
+                                return _permission_blocked(
+                                    "permission_review_error", capability,
+                                    "Проверка разрешения недоступна; запрещённые вызовы не выполнены.",
+                                )
+                            review_payload = {
+                                "capability": capability,
+                                "verifier_run_id": review.verifier_run_id,
+                                "verifier_reason": review.reason,
+                                "required_action": review.required_action,
+                            }
+                            if review.verdict != "PASS":
+                                permission_review_failed.add(capability)
+                                _emit("permission_review_failed", review_payload)
+                                messages.append({"role": "user", "content": _context_message(
+                                    "permission.review_not_required", {"capability": capability},
+                                )})
+                            else:
+                                _emit("permission_review_passed", review_payload)
+                                new_policy = dict(policy)
+                                new_policy[f"allow_{capability.lower()}"] = True
+                                try:
+                                    _prepare_policy_for_workspace(
+                                        root, _normalize_permissions(new_policy))
+                                except (PermissionError, ValueError, OSError) as exc:
+                                    return _permission_blocked(
+                                        "permission_policy_validation_failed", capability,
+                                        f"Текущая policy не допускает {capability}: {exc}",
+                                    )
+                                if permission_request_callback is None:
+                                    return _permission_blocked(
+                                        "permission_callback_unavailable", capability,
+                                        f"Для завершения TASK требуется {capability}. Повторите RUN с разрешением или UI permission callback; запрещённые операции не выполнялись.",
+                                    )
+                                request = {
+                                    **review_payload, "run_id": run_id,
+                                    "attempts": list(permission_attempts[capability]),
+                                    "scope": policy[f"{capability.lower()}_scope"],
+                                    "last_requested_path": path_text,
+                                }
+                                _emit("permission_user_prompted", request)
+                                try:
+                                    granted = permission_request_callback(request) is True
+                                except Exception:
+                                    granted = False
+                                if not granted:
+                                    _emit("permission_user_denied", {**request, "user_decision": "DENIED"})
+                                    return _permission_blocked(
+                                        "permission_not_granted", capability,
+                                        f"Для завершения TASK требуется {capability}, но пользователь не предоставил разрешение. Запрещённые операции не выполнялись.",
+                                    )
+                                try:
+                                    policy = _prepare_policy_for_workspace(
+                                        root, _normalize_permissions(new_policy))
+                                except (PermissionError, ValueError, OSError) as exc:
+                                    return _permission_blocked(
+                                        "permission_policy_validation_failed", capability,
+                                        f"Разрешение не применено: {exc}",
+                                    )
+                                old_flag = ("Запись: ЗАПРЕЩЕНА" if capability == "WRITE"
+                                            else "Удаление: ЗАПРЕЩЕНО")
+                                new_flag = ("Запись: РАЗРЕШЕНА" if capability == "WRITE"
+                                            else "Удаление: РАЗРЕШЕНО")
+                                messages[0]["content"] = messages[0]["content"].replace(old_flag, new_flag)
+                                available_functions = _functions_for_policy(policy)
+                                _emit("permission_granted", {
+                                    **request, "user_decision": "GRANTED",
+                                    "permissions": _policy_summary(policy),
+                                })
+                                messages.append({"role": "user", "content": _context_message(
+                                    "permission.granted", {"capability": capability},
+                                )})
                 continue
 
             if finish_reason not in ("stop", "eos"):
@@ -3733,153 +3924,6 @@ async def run_agent_task(
                     "duration": time.time() - start_time,
                 })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
-
-            no_run_mutation = (
-                verification_state["write_revision"] == 0
-                and not final_audit_retry_state["run_owned_state"]
-            )
-            if mutation_intent["mutation_intent"] == "LIKELY_MUTATION" and not consistency_state["resolved"]:
-                if not no_run_mutation:
-                    if consistency_state["server_retries"]:
-                        consistency_state["resolved"] = True
-                        _emit("execution_consistency_resolved", {
-                            "decision": "MUTATION_OBSERVED", "write_revision": verification_state["write_revision"],
-                            "tool_call_count": tool_call_count,
-                            "correction_count": consistency_state["corrections"],
-                        })
-                else:
-                    consistency_state["candidates"].append(content[:MAX_VERIFY_OUTPUT_BYTES])
-                    attempt = len(consistency_state["candidates"])
-                    if consistency_state["server_retries"] < EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT:
-                        consistency_state["server_retries"] += 1
-                        _emit("execution_consistency_detected", {
-                            "attempt": attempt, "mutation_intent": mutation_intent,
-                            "write_revision": 0, "tool_call_count": tool_call_count,
-                            "reason": "likely_mutation_without_run_mutation",
-                        })
-                        feedback = _context_message("execution_consistency.feedback")
-                        feedback += "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n" + json.dumps({
-                            "event_id": "execution_consistency.feedback",
-                            "message_kind": "SERVER_FEEDBACK", "is_new_user_task": False,
-                            "raw_task_authority": "SOURCE_OF_TRUTH", "run_id": run_id,
-                            "decision": "SELF_CHECK_REQUESTED", "mutation_intent": mutation_intent,
-                            "write_revision": 0, "tool_call_count": tool_call_count,
-                            "tool_budget_remaining": max(policy["tool_limit"] - tool_iterations, 0),
-                        }, ensure_ascii=False)
-                        messages.extend([{"role": "assistant", "content": content},
-                                         {"role": "user", "content": feedback}])
-                        _emit("execution_consistency_feedback_delivered", {
-                            "attempt": attempt, "decision": "SELF_CHECK_REQUESTED",
-                            "mutation_intent": mutation_intent, "write_revision": 0,
-                            "tool_call_count": tool_call_count,
-                        })
-                        continue
-
-                    _emit("execution_consistency_recheck_started", {
-                        "attempt": attempt, "write_revision": 0,
-                        "tool_call_count": tool_call_count,
-                        "correction_count": consistency_state["corrections"],
-                    })
-                    _emit("execution_consistency_verifier_started", {
-                        "attempt": attempt, "check_type": "CONSISTENCY",
-                        "mutation_intent": mutation_intent,
-                        "write_revision": 0, "tool_call_count": tool_call_count,
-                    })
-                    try:
-                        consistency_result = await run_verifier_check(
-                            verifier_model_id=verifier_model_id,
-                            check_type="CONSISTENCY", raw_task=task,
-                            verification_context=_collect_consistency_evidence(
-                                task=task, root=root, policy=policy, run_id=run_id,
-                                intent=mutation_intent,
-                                candidates=consistency_state["candidates"],
-                                tool_facts=consistency_tool_facts,
-                                tool_call_count=tool_call_count,
-                                verification_state=verification_state,
-                                run_owned_state=final_audit_retry_state["run_owned_state"],
-                                available_functions=available_functions,
-                            ), task_id=run_id,
-                        )
-                    except Exception as exc:
-                        _emit("execution_consistency_terminal", {
-                            "attempt": attempt, "reason": "execution_consistency_verifier_error",
-                            "error_type": type(exc).__name__,
-                        })
-                        _emit("run_failed", {"reason": "execution_consistency_verifier_error",
-                                              "api_requests": api_request_count,
-                                              "tool_calls": tool_call_count})
-                        raise RuntimeError("CONSISTENCY VERIFIER ERROR") from exc
-                    consistency_state["verifier_checks"] += 1
-                    verdict_event = ("execution_consistency_verifier_passed"
-                                     if consistency_result.verdict == "PASS"
-                                     else "execution_consistency_verifier_failed")
-                    _emit(verdict_event, {
-                        "attempt": attempt, "verifier_run_id": consistency_result.verifier_run_id,
-                        "reason": consistency_result.reason,
-                        "violations": list(consistency_result.violations)[:20],
-                        "required_action": consistency_result.required_action,
-                        "correction_count": consistency_state["corrections"],
-                        "write_revision": 0, "tool_call_count": tool_call_count,
-                    })
-                    if consistency_result.verdict == "PASS":
-                        consistency_state["resolved"] = True
-                        _emit("execution_consistency_resolved", {
-                            "decision": "NO_MUTATION_JUSTIFIED", "attempt": attempt,
-                            "verifier_run_id": consistency_result.verifier_run_id,
-                            "write_revision": 0, "tool_call_count": tool_call_count,
-                        })
-                    elif consistency_state["corrections"] >= EXECUTION_CONSISTENCY_CORRECTION_LIMIT:
-                        reason = "execution_consistency_unresolved"
-                        _emit("execution_consistency_terminal", {
-                            "attempt": attempt, "reason": reason,
-                            "verifier_run_id": consistency_result.verifier_run_id,
-                            "correction_count": consistency_state["corrections"],
-                        })
-                        _emit("run_failed", {"reason": reason,
-                                              "api_requests": api_request_count,
-                                              "tool_calls": tool_call_count})
-                        raise RuntimeError(reason)
-                    elif tool_iterations >= policy["tool_limit"]:
-                        reason = "execution_consistency_tool_budget_exhausted"
-                        _emit("execution_consistency_terminal", {
-                            "attempt": attempt, "reason": reason,
-                            "verifier_run_id": consistency_result.verifier_run_id,
-                            "tool_call_count": tool_call_count,
-                        })
-                        _emit("run_failed", {"reason": reason,
-                                              "api_requests": api_request_count,
-                                              "tool_calls": tool_call_count})
-                        raise RuntimeError(reason)
-                    else:
-                        consistency_state["corrections"] += 1
-                        feedback = _context_message("execution_consistency.correction", {
-                            "reason": consistency_result.reason,
-                            "violations_lines": "\n".join(f"- {item}" for item in consistency_result.violations),
-                            "required_action": consistency_result.required_action,
-                        })
-                        feedback += "\n\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n" + json.dumps({
-                            "event_id": "execution_consistency.correction",
-                            "message_kind": "SERVER_VERIFIER_FEEDBACK",
-                            "is_new_user_task": False, "raw_task_authority": "SOURCE_OF_TRUTH",
-                            "run_id": run_id, "decision": "CORRECTION_REQUESTED",
-                            "mutation_intent": mutation_intent, "write_revision": 0,
-                            "tool_call_count": tool_call_count,
-                            "verifier_run_id": consistency_result.verifier_run_id,
-                            "reason": consistency_result.reason,
-                            "violations": list(consistency_result.violations),
-                            "required_action": consistency_result.required_action,
-                            "correction_limit": EXECUTION_CONSISTENCY_CORRECTION_LIMIT,
-                        }, ensure_ascii=False)
-                        messages.extend([{"role": "assistant", "content": content},
-                                         {"role": "user", "content": feedback}])
-                        _emit("execution_consistency_correction_started", {
-                            "attempt": attempt, "verifier_run_id": consistency_result.verifier_run_id,
-                            "reason": consistency_result.reason,
-                            "required_action": consistency_result.required_action,
-                            "correction_count": consistency_state["corrections"],
-                            "tool_call_count": tool_call_count,
-                        })
-                        continue
 
             final_audit_started_at = time.time()
             _emit(
