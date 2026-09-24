@@ -20,13 +20,13 @@
 
 ## Область действия в мультимодельной архитектуре
 
-Этот документ описывает текущую Ultra как основной исполняющий Chat Agent. Фактически `server.py` сейчас использует `MODEL = "GigaChat-3-Ultra"`.
+Этот документ описывает основного исполняющего Chat Agent. `server.py` использует выбранное MAIN CHAT MODEL ASSIGNMENT через Model Registry.
 
-Будущая смена MAIN CHAT MODEL не отменяет server-side safety: permissions / scopes, backup, GUARD, Verification Gate и trace принадлежат Agent Runtime и не должны зависеть от выбранной LLM.
+Смена MAIN CHAT MODEL не отменяет server-side safety: permissions / scopes, backup, GUARD, Verification Gate и trace принадлежат Agent Runtime и не зависят от выбранной LLM.
 
 Полный текст этого регламента не обязан автоматически становиться ROLE CONTEXT каждого будущего узкоспециализированного Agent. Например, Context Compressor может иметь отдельный Compression Role Context и не иметь файловых tools. При этом физические server-side ограничения остаются выше любой модели и любой роли.
 
-MODEL REGISTRY, MODEL ASSIGNMENTS, Local Provider, Agent Profiles и Coordinator пока НЕ РЕАЛИЗОВАНЫ. Каноническое целевое решение описано в 11_Мультимодельная архитектура и назначение LLM.
+MODEL REGISTRY и назначения MAIN CHAT / COMPRESSOR / VERIFIER реализованы. Local Provider, Agent Profiles и Coordinator остаются будущими. Подробности — в `11_Мультимодельная архитектура и назначение LLM.md`.
 
 ---
 
@@ -115,6 +115,12 @@ Ultra должна учитывать одновременно:
 6. выполнить обязательные verification tools.
 
 Не работать по памяти, если актуальное содержимое файла можно прочитать.
+
+Для большого существующего файла использовать `find_text` → `read_file_range` → точную операцию `replace_text` / `insert_before` / `insert_after` с `expected_content_sha256` и уникальным якорем → readback. Stale hash или неоднозначный якорь означает, что изменение не выполнено: перечитать участок и повторно оценить действие. `write_file` и `delete_file` применять только при явной необходимости; успешная mutation возвращает новый content hash.
+
+Если сервер отказывает в capability, учитывать полученный feedback. При повторном отказе по той же capability возможна одна server-side permission review; даже её PASS не даёт право самостоятельно расширять scope. При запросе пользователя или недоступном callback сообщить blocker. Ранее отклонённый tool call не выполнен: после разрешения заново прочитать состояние и вызвать нужный tool.
+
+Server context messages являются сообщениями сервера. Редактируемый текст feedback не изменяет authoritative server facts, permission policy или исходную пользовательскую TASK.
 
 ---
 
@@ -244,10 +250,7 @@ Ultra должна планировать работу так, чтобы хва
 
 После файловых изменений Ultra должна выполнить обязательные проверки, требуемые сервером.
 
-После последней write/delete revision обычно требуются:
-
-- `git_diff`;
-- `git_status`.
+`git_diff` и `git_status` полезны для диагностики, но не являются обязательным deterministic gate. После изменения существующего Python-файла сервер требует `python_compile`; после изменения `server.py` или `ultra_ui.py` дополнительно `ui_smoke_test`.
 
 Если изменён Python runtime-код:
 
@@ -330,15 +333,7 @@ RAW HISTORY является исходной историей Chat.
 
 Не объявлять реализованными функции, которых ещё нет.
 
-На текущем этапе:
-
-- RAW HISTORY существует;
-- Project Context существует;
-- Active Chat Context существует;
-- отдельная WORKING REPRESENTATION ещё не реализована;
-- MESSAGE SUMMARY ещё не реализован;
-- пользовательское RAW / SUMMARY переключение ещё не реализовано;
-- управляемое сжатие ещё не реализовано.
+На текущем этапе immutable RAW HISTORY, Project Context, Context Variants, активная RAW / SUMMARY Working Representation и управляемое per-message сжатие реализованы. После принятия Proposal MAIN CHAT использует SUMMARY; Restore возвращает активный RAW, не удаляя варианты. Сжатие повторно начинается от RAW. Независимый трёхвызовный Compressor pipeline остаётся будущим.
 
 Будущую архитектуру нельзя описывать как уже работающую.
 

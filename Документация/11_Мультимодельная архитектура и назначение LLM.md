@@ -2,23 +2,20 @@
 
 ## Статус документа
 
-Архитектурное решение / переходный этап разработки.
+Архитектура мультимодельного фундамента и будущих расширений.
 
 ### CURRENT IMPLEMENTATION STATUS
 
 Фактически сейчас:
 
-- `server.py` использует GigaChat API;
-- `MODEL = "GigaChat-3-Ultra"`;
-- MODEL REGISTRY отсутствует;
-- Provider Adapter abstraction отсутствует;
-- MAIN CHAT MODEL и COMPRESSION MODEL ASSIGNMENTS отсутствуют;
-- CONTEXT POLICY и Agent Profiles отсутствуют;
-- per-Chat model selection, Local Provider и Coordinator отсутствуют.
+- Model Registry и GigaChat multi-model transport реализованы;
+- MAIN CHAT, COMPRESSOR и VERIFIER имеют отдельные model assignments; Verifier default — `gigachat_3_pro`;
+- Compressor выполняет отдельный model call, а Main Chat использует назначенную модель и Working Representation;
+- универсальный Provider Adapter, Local Provider, per-Chat assignment, Agent Profiles / Context Policy и Coordinator остаются будущими.
 
-Этот документ описывает принятую целевую переходную архитектуру, а не уже работающую мультимодельность.
+MM.0–MM.4 реализованы в коде и покрыты tests. Будущие роли и провайдеры ниже помечены как целевая архитектура.
 
-Этот документ фиксирует переход проекта `ag_llm / GigaChat Ultra Local Agent` от системы, в которой основной исполнитель фактически жёстко связан с одной моделью GigaChat Ultra, к системе, в которой LLM становится выбираемым и назначаемым ресурсом.
+Этот документ фиксирует работающий выбор модели через Registry и Assignment, а также следующие расширения проекта `ag_llm / GigaChat Ultra Local Agent`.
 
 На текущем этапе существующий рабочий runtime, инструменты, Workspace, Chat, Project Context, RAW HISTORY, SAFE Mode, Backup, Verification, Trace и другие уже реализованные механизмы сохраняются.
 
@@ -483,7 +480,7 @@ PROJECT ORIENTATION пока **НЕ РЕАЛИЗОВАН**, не являетс�
 
 # 11. Связь с Compress → Verify → Finalize
 
-Разрабатываемая система управляемого сжатия использует несколько логических этапов:
+Три независимых model calls остаются целевой архитектурой управляемого сжатия:
 
     COMPRESS
         ↓
@@ -517,11 +514,11 @@ PROJECT ORIENTATION пока **НЕ РЕАЛИЗОВАН**, не являетс�
     FINALIZE
         GigaChat Lite
 
-На первом этапе допустимо использовать одно общее назначение:
+Сейчас реализовано одно назначение:
 
     COMPRESSION MODEL
 
-для всех трёх проходов.
+для одного Compressor call. Optional Final Check находится внутри prompt; отдельные VERIFY и FINALIZE calls пока не реализованы.
 
 Архитектура при этом не должна препятствовать будущему разделению.
 
@@ -1005,7 +1002,7 @@ Coordinator сможет:
 
 # 24. Текущий минимальный этап реализации
 
-Первый практический этап должен быть максимально маленьким.
+Первый практический этап MM.1–MM.4 выполнен.
 
 Цель:
 
@@ -1040,13 +1037,13 @@ Coordinator сможет:
 
        COMPRESSION MODEL
 
-8. использовать его как источник модели для будущего Context Compressor.
+8. использовать его как источник модели работающего Context Compressor.
 
 ---
 
 # 25. Следующий этап
 
-После проверки GigaChat multi-model:
+После реализованного GigaChat multi-model будущим этапом остаётся:
 
     MODEL REGISTRY
         ↓
@@ -1058,7 +1055,7 @@ Coordinator сможет:
 
     Ollama / Local Provider
 
-После этого схема становится реальной мультимодельной системой:
+После этого схема получит второй Provider:
 
     MODEL REGISTRY
         │
@@ -1107,23 +1104,21 @@ Coordinator сможет:
 
     PROJECT CONTEXT
 
-    текущий Active Chat Context из RAW HISTORY выбранного Chat
+    текущий Active Chat Context из RAW / SUMMARY Working Representation выбранного Chat
+
+    MODEL REGISTRY и назначения MAIN CHAT / COMPRESSOR / VERIFIER
+
+    Context Variants и управляемый Compressor Proposal
 
 **Приняты архитектурно, но ещё НЕ РЕАЛИЗОВАНЫ:**
 
-    WORKING REPRESENTATION / SUMMARY
-
     RUN MICROCONTEXT
-
-    MODEL REGISTRY
-
-    MODEL ASSIGNMENTS
 
     Provider Adapter abstraction
 
     CONTEXT POLICY / Agent Profiles
 
-Будущий управляемый ACTIVE CONTEXT будет собираться Agent Runtime из соответствующих источников и передаваться назначенной модели.
+Управляемый ACTIVE CONTEXT уже собирается Agent Runtime из активных представлений и передаётся назначенной модели. Универсальный Context Policy framework остаётся будущим.
 
 Контекст должен собираться системой и передаваться назначенной модели.
 
@@ -1212,7 +1207,7 @@ GigaChat API при этом остаётся первым работающим 
 
 # 30. Ближайшая последовательность развития
 
-Текущий переход рекомендуется выполнять в следующем порядке:
+MM.1–MM.4 выполнены. Дальнейший порядок развития:
 
     MM.1
     MODEL REGISTRY
@@ -1235,8 +1230,8 @@ GigaChat API при этом остаётся первым работающим 
         ↓
 
     06.5
-    CONTEXT COMPRESSOR
-    Compress → Verify → Finalize
+    CONTEXT COMPRESSOR — базовый lifecycle работает;
+    три независимых вызова Compress → Verify → Finalize остаются целью
 
         ↓
 
@@ -1267,7 +1262,7 @@ GigaChat API при этом остаётся первым работающим 
 
 # 31. Необходимая синхронизация документации
 
-После принятия этого архитектурного решения необходимо отдельно синхронизировать существующую документацию проекта.
+После реализации MM.1–MM.4 документация синхронизирована с текущим состоянием; дальнейшие изменения проходят Documentation Workflow из `08_Старт.md`.
 
 В частности, новая ветка должна быть отражена там, где фиксируются:
 
@@ -1280,9 +1275,7 @@ GigaChat API при этом остаётся первым работающим 
 - точка входа для нового чата / агента;
 - связанные архитектурные решения.
 
-Эта синхронизация является отдельной задачей.
-
-Текущий документ фиксирует само архитектурное решение и является источником для последующего обновления остальных документов.
+Этот документ владеет подробностями мультимодельной подсистемы; `01` хранит краткий статус, `04` и `05` — план и статусы задач.
 
 ---
 
