@@ -17,6 +17,20 @@ import ultra_ui
 import verifier_runtime
 
 
+SAFE_ALLOW_DECLARED_TARGET_TASK = (
+    "Работай только с файлом:\n\n"
+    "Документация/SAFE_ALLOW_TEST.md\n\n"
+    "Текущее ожидаемое содержимое файла:\n\nTEST_2\n\n"
+    "Нужно выполнить реальное изменение файла.\n\n"
+    "Замени ТОЧНО:\n\nTEST_2\n\nна:\n\nTEST_3\n\n"
+    "Не используй write_file.\n\n"
+    "Не изменяй никакие другие файлы.\n"
+    "Не изменяй Python runtime.\n"
+    "Не изменяй tests.\n\n"
+    "git_diff / git_status — только optional read-only diagnostics."
+)
+
+
 def verifier_result(
     verdict: str = "PASS",
     *,
@@ -476,6 +490,62 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(server._classify_mutation_intent(task)["mutation_intent"], expected)
         classified = server._classify_mutation_intent(cases[-1][0])
         self.assertTrue(any("13_архитектура" in reason for reason in classified["reasons"]))
+
+    def test_mutation_intent_uses_only_explicit_declared_target_for_distant_edit(self) -> None:
+        cases = (
+            (SAFE_ALLOW_DECLARED_TARGET_TASK, "LIKELY_MUTATION", "safe_allow_test.md"),
+            ("Работай только с файлом:\nfoo.md\n\nОписание.\nЕщё контекст.\nЗамени A на B.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Работай только с файлом:\nfoo.md\nПроанализируй содержимое. Ничего не меняй.",
+             "UNKNOWN", None),
+            ("Работай только с файлом:\nfoo.md\nНе изменяй этот файл.",
+             "UNKNOWN", None),
+            ("Работай только с файлом:\nfoo.md\nНе изменяй server.py.\nЗамени A на B.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Работай только с файлом:\nfoo.md\nЗамени A на B.\n"
+             "git_diff / git_status — optional read-only diagnostics.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Изменять можно только один файл: foo.md\nВставь новый блок.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Целевой файл:\nfoo.md\nСоздай новый блок.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Target file: foo.md\nReplace A with B.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Work only with file:\nfoo.md\nReplace A with B.",
+             "LIKELY_MUTATION", "foo.md"),
+            ("Работай с файлом:\nfoo.md\nНе изменяй его.",
+             "UNKNOWN", None),
+        )
+        for task, expected, target in cases:
+            with self.subTest(task=task[:80]):
+                result = server._classify_mutation_intent(task)
+                self.assertEqual(result["mutation_intent"], expected)
+                if target:
+                    self.assertTrue(any(target in reason for reason in result["reasons"]))
+                    self.assertIn("target_source:declared", result["reasons"])
+                    self.assertNotIn("target:server.py", result["reasons"])
+
+    async def test_declared_safe_allow_target_zero_tool_report_gets_self_check(self) -> None:
+        client = FakeClient([
+            FakeResponse("Файл изменён: TEST_2 заменён на TEST_3 через replace_text."),
+            FakeResponse("Нужно проверить состояние файла."),
+        ])
+        result, verifier, _ = await self.run_case([
+            verifier_result("PASS", check_type="CONSISTENCY"),
+            verifier_result("PASS"),
+        ], fake_client=client, task=SAFE_ALLOW_DECLARED_TARGET_TASK)
+        self.assertEqual(result, "Нужно проверить состояние файла.")
+        classified = next(item for item in self.events if item["event"] == "mutation_intent_classified")
+        self.assertEqual(classified["mutation_intent"], "LIKELY_MUTATION")
+        self.assertIn("target_source:declared", classified["reasons"])
+        self.assertTrue(any("safe_allow_test.md" in reason for reason in classified["reasons"]))
+        names = [item["event"] for item in self.events]
+        self.assertLess(names.index("execution_consistency_detected"), names.index("final_audit_started"))
+        self.assertLess(names.index("execution_consistency_feedback_delivered"), names.index("final_audit_started"))
+        self.assertEqual([call.kwargs["check_type"] for call in verifier.await_args_list],
+                         ["CONSISTENCY", "FINAL"])
+        self.assertEqual(client.post_count, 2)
+        self.assertIn("execution_consistency.feedback", str(client.bodies[1]["messages"]))
 
     async def test_live_document_13_fabricated_report_enters_consistency_before_final(self) -> None:
         task = (

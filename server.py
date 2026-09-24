@@ -172,8 +172,31 @@ def _classify_mutation_intent(task: str) -> dict:
     target_pattern = re.compile(
         r"\b(?:файл\w*|документ\w*|код|конфигураци\w*|file\w*|document\w*|code|config\w*)\b"
     )
+    declaration_pattern = re.compile(
+        r"^\s*(?:работай(?:те)?\s+(?:только\s+)?с\s+файлом|"
+        r"изменять\s+можно\s+только\s+один\s+файл|целевой\s+файл|"
+        r"target\s+file|work\s+(?:only\s+)?with\s+(?:the\s+)?file)\s*:\s*(.*)$"
+    )
+    declared_paths = []
+    lines = task.casefold().splitlines()
+    for index, line in enumerate(lines):
+        declaration = declaration_pattern.match(line)
+        if declaration is None:
+            continue
+        candidate = declaration.group(1).strip()
+        if not candidate:
+            for following in lines[index + 1:index + 4]:
+                if following.strip():
+                    candidate = following.strip()
+                    break
+        path = path_pattern.search(candidate)
+        if path is not None:
+            declared_paths.append(path.group().strip())
+    declared_target = declared_paths[0] if len(set(declared_paths)) == 1 else None
     saw_negation = False
     for index, clause in enumerate(clauses):
+        if declaration_pattern.match(clause):
+            continue  # A working-file declaration alone does not request a mutation.
         target = path_pattern.search(clause) or target_pattern.search(clause)
         for action in action_pattern.finditer(clause):
             prefix = clause[:action.start()]
@@ -182,13 +205,21 @@ def _classify_mutation_intent(task: str) -> dict:
                 continue
             local_target = path_pattern.search(clause)
             if local_target is None and index + 1 < len(clauses):
-                local_target = path_pattern.search(clauses[index + 1])
+                following = clauses[index + 1]
+                if not re.search(r"\b(?:не|not|don't|do not)\b", following):
+                    local_target = path_pattern.search(following)
             if local_target is None:
                 local_target = target
             if local_target is not None:
                 return {
                     "mutation_intent": "LIKELY_MUTATION",
                     "reasons": [f"action:{action.group()}", f"target:{local_target.group()[:120]}"],
+                }
+            if declared_target is not None:
+                return {
+                    "mutation_intent": "LIKELY_MUTATION",
+                    "reasons": [f"action:{action.group()}", f"target:{declared_target[:120]}",
+                                "target_source:declared"],
                 }
     return {
         "mutation_intent": "UNKNOWN",
