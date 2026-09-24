@@ -158,20 +158,42 @@ MUTATION_TOOL_NAMES = TEXT_MUTATION_TOOL_NAMES | {"delete_file"}
 
 def _classify_mutation_intent(task: str) -> dict:
     """Only a high-confidence hint; it never requires a write."""
-    lowered = task.casefold()
-    if re.search(r"\b(?:ничего\s+не\s+меняй|не\s+(?:изменяй|меняй|редактируй|удаляй|создавай)|do\s+not\s+(?:edit|modify|change|write|delete|create)|don't\s+(?:edit|modify|change|write|delete|create)|read.only)\b", lowered):
-        return {"mutation_intent": "UNKNOWN", "reasons": ["explicit_read_only_or_negation"]}
-    action = re.search(
-        r"\b(?:измен(?:и|ить)|обнов(?:и|ить)|исправ(?:ь|ить)|добав(?:ь|ить)|встав(?:ь|ить)|замен(?:и|ить)|удал(?:и|ить)|созда(?:й|ть)|созд(?:ай|ать)|перепиш(?:и|ите)|edit|update|modify|fix|add|insert|replace|delete|create|write)\b",
-        lowered,
+    clauses = re.split(r"(?<=[.!?;,])\s+|[\r\n]+", task.casefold())
+    action_pattern = re.compile(
+        r"\b(?:измен(?:и|ить|ять|яй)|обнов(?:и|ить|лять|ляй)|исправ(?:ь|ить)|"
+        r"добав(?:ь|ить)|встав(?:ь|ить)|замен(?:и|ить)|удал(?:и|ить)|"
+        r"созда(?:й|ть)|созд(?:ай|ать)|перепиш(?:и|ите)|"
+        r"edit|update|modify|fix|add|insert|replace|delete|create|write)\b"
     )
-    target = re.search(
-        r"(?:[\wА-Яа-яЁё .-]+[/\\])?[^\s\"'<>:;]+\.(?:md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml)\b|\b(?:файл|документ|код|конфигураци\w*|file|document|code|config\w*)\b",
-        lowered,
+    path_pattern = re.compile(
+        r"(?:[\wА-Яа-яЁё .-]+[/\\][\wА-Яа-яЁё .-]+|[^\s\"'<>:;]+)"
+        r"\.(?:md|mdx|txt|py|json|yaml|yml|toml|ini|cfg|js|jsx|ts|tsx|html|css|csv|xml)\b"
     )
-    if action and target:
-        return {"mutation_intent": "LIKELY_MUTATION", "reasons": [f"action:{action.group()}", f"target:{target.group()[:120]}"]}
-    return {"mutation_intent": "UNKNOWN", "reasons": ["no_unambiguous_action_target_pair"]}
+    target_pattern = re.compile(
+        r"\b(?:файл\w*|документ\w*|код|конфигураци\w*|file\w*|document\w*|code|config\w*)\b"
+    )
+    saw_negation = False
+    for index, clause in enumerate(clauses):
+        target = path_pattern.search(clause) or target_pattern.search(clause)
+        for action in action_pattern.finditer(clause):
+            prefix = clause[:action.start()]
+            if re.search(r"\b(?:не|not|don't|do not)\b(?:\s+\w+){0,2}\s*$", prefix):
+                saw_negation = True
+                continue
+            local_target = path_pattern.search(clause)
+            if local_target is None and index + 1 < len(clauses):
+                local_target = path_pattern.search(clauses[index + 1])
+            if local_target is None:
+                local_target = target
+            if local_target is not None:
+                return {
+                    "mutation_intent": "LIKELY_MUTATION",
+                    "reasons": [f"action:{action.group()}", f"target:{local_target.group()[:120]}"],
+                }
+    return {
+        "mutation_intent": "UNKNOWN",
+        "reasons": ["negated_mutation_instruction" if saw_negation else "no_unambiguous_action_target_pair"],
+    }
 
 
 def _consistency_target_paths(task: str) -> list[str]:
@@ -2111,6 +2133,64 @@ def _clip_final_audit_text(text: str, limit: int) -> tuple[str, bool, int]:
     return clipped + marker.decode("ascii"), True, original_bytes
 
 
+def _candidate_fact_conflicts(
+    candidate: str, *, tool_call_count: int, write_revision: int,
+    run_owned_state: dict, mutation_facts: dict, observed_tool_names: set[str],
+) -> list[str]:
+    """Flag only explicit current-RUN completion claims contradicted by server facts."""
+    lowered = candidate.casefold()
+    completion_pattern = re.compile(
+        r"\b(?:выполнен\w*|использован\w*|применен\w*|применён\w*|"
+        r"вызван\w*|сделан\w*|измен[её]н\w*|обновл[её]н\w*|"
+        r"completed|performed|executed|used|called|modified|updated)\b"
+    )
+    denial_pattern = re.compile(
+        r"\b(?:не\s+выполнен\w*|не\s+использован\w*|"
+        r"no\s+tools?\s+(?:were\s+)?(?:used|called|executed))\b"
+    )
+    tool_pattern = re.compile(
+        r"\b(?:read_file(?:_range)?|find_text|list_dir|replace_text|insert_before|"
+        r"insert_after|write_file|delete_file|python_compile|git_diff|git_status|ui_smoke_test)\b"
+    )
+    claimed_names = set()
+    for clause in re.split(r"[.!?;]+", lowered):
+        if completion_pattern.search(clause) and not denial_pattern.search(clause):
+            claimed_names.update(tool_pattern.findall(clause))
+    conflicts = []
+    unobserved = claimed_names - observed_tool_names
+    if unobserved:
+        conflicts.append("candidate_claims_unobserved_tools:" + ",".join(sorted(unobserved)))
+    physical_claim = re.search(
+        r"\b(?:файл|документ|workspace|file|document)\b[^\n.!?]{0,60}"
+        r"\b(?:измен[её]н\w*|обновл[её]н\w*|создан\w*|удал[её]н\w*|modified|updated|created|deleted)\b"
+        r"|\b(?:изменил\w*|обновил\w*|создал\w*|удалил\w*|modified|updated|created|deleted)\b"
+        r"[^\n.!?]{0,40}\b(?:файл|документ|file|document)\b"
+        r"|\b(?:выполнен\w*|completed|performed)\b[^\n.!?]{0,40}"
+        r"\b\d+\s+(?:successful\s+)?(?:precise\s+)?mutations\b",
+        lowered,
+    )
+    no_mutation = (
+        write_revision == 0 and not run_owned_state
+        and not any(mutation_facts.values())
+    )
+    physical_denial = (
+        physical_claim is not None and re.search(
+            r"\b(?:не|not)\s+(?:был\s+)?(?:измен[её]н\w*|обновл[её]н\w*|"
+            r"создан\w*|удал[её]н\w*|modified|updated|created|deleted)\b",
+            physical_claim.group(),
+        )
+    )
+    prior_state = (
+        physical_claim is not None and re.search(
+            r"\b(?:ранее|раньше|уже|previously|already|до\s+запуска)\b",
+            physical_claim.group(),
+        )
+    )
+    if no_mutation and physical_claim and not physical_denial and not prior_state:
+        conflicts.append("candidate_claims_unobserved_physical_mutation")
+    return conflicts
+
+
 def _collect_final_audit_evidence(
     *,
     root: Path,
@@ -2122,6 +2202,7 @@ def _collect_final_audit_evidence(
     verification_state: dict,
     backup_session: dict | None,
     run_owned_state: dict[str, dict[str, str]] | None = None,
+    tool_facts: list[dict] | None = None,
 ) -> tuple[str, dict]:
     """Build a bounded FINAL context only from server-observed facts."""
     mutation_manifest = (
@@ -2134,6 +2215,15 @@ def _collect_final_audit_evidence(
         "new_files": sorted(set(mutation_manifest.get("new_files") or [])),
         "deleted_files": sorted(set(mutation_manifest.get("deleted_files") or [])),
     }
+    observed_tool_names = {
+        str(item.get("tool")) for item in (tool_facts or []) if item.get("tool")
+    }
+    candidate_conflicts = _candidate_fact_conflicts(
+        candidate_final, tool_call_count=tool_call_count,
+        write_revision=verification_state.get("write_revision", 0),
+        run_owned_state=run_owned_state or {}, mutation_facts=mutation_facts,
+        observed_tool_names=observed_tool_names,
+    )
     is_mutating_run = verification_state.get("write_revision", 0) > 0
     incomplete_reasons: list[str] = []
     mutation_evidence_incomplete_reasons: list[str] = []
@@ -2253,6 +2343,7 @@ def _collect_final_audit_evidence(
                 mutation_evidence_incomplete_reasons or filesystem_mismatches
             )
         ),
+        "candidate_fact_conflicts": candidate_conflicts,
     }
     evidence = {
         "check_type": "FINAL",
@@ -2278,6 +2369,10 @@ def _collect_final_audit_evidence(
             "git_attribution_rule": (
                 "Do not attribute a Git change to the current RUN unless it is "
                 "corroborated by mutation_facts."
+            ),
+            "candidate_fact_conflict_rule": (
+                "A claim that current-RUN tools or physical mutations occurred "
+                "cannot be accepted when server-observed facts contradict it."
             ),
         },
         "candidate_final_response": {
@@ -2306,6 +2401,11 @@ def _collect_final_audit_evidence(
             ),
         },
         "mutation_facts": mutation_facts,
+        "observed_executor_tools": {
+            "tool_call_count": tool_call_count,
+            "names": sorted(observed_tool_names),
+            "summary_complete": tool_facts is not None,
+        },
         "run_owned_filesystem_evidence": run_owned_filesystem_evidence,
         "fresh_git_status": fresh_status,
         "fresh_git_diff": fresh_diff,
@@ -2593,6 +2693,10 @@ async def run_agent_task(
             "provider_model_id": selected_model.provider_model_id,
         },
     )
+    _emit("mutation_intent_classified", {
+        "mutation_intent": mutation_intent["mutation_intent"],
+        "reasons": list(mutation_intent["reasons"]),
+    })
     if chat_id:
         _emit(
             "chat_context_loaded",
@@ -3767,6 +3871,7 @@ async def run_agent_task(
                         verification_state=verification_state,
                         backup_session=backup_session,
                         run_owned_state=final_audit_retry_state["run_owned_state"],
+                        tool_facts=consistency_tool_facts,
                     )
                 )
                 if evidence_completeness.get("critical_for_success"):
@@ -3788,6 +3893,12 @@ async def run_agent_task(
                     verification_context=verification_context,
                     task_id=run_id,
                 )
+                if (audit_result.verdict == "PASS"
+                        and evidence_completeness.get("candidate_fact_conflicts")):
+                    raise FinalAuditEvidenceError(
+                        "Final Verifier PASS contradicted authoritative Server facts: "
+                        + ", ".join(evidence_completeness["candidate_fact_conflicts"])
+                    )
 
                 if audit_result.verdict == "FAIL":
                     final_audit_retry_state["semantic_fail_count"] += 1

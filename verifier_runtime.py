@@ -91,6 +91,22 @@ def _build_verifier_messages(
         "and required_action must be strings. PASS means the supplied evidence "
         "satisfies this check; FAIL means it does not."
     )
+    if check_type == "FINAL":
+        system_prompt += (
+            " HARD EVIDENCE RULE: Authoritative server-observed RUN facts override the "
+            "Candidate Final Response, which is only a claim. Return FAIL if the Candidate "
+            "claims current-RUN tool calls, mutations, file writes/deletes, verification, "
+            "readback, or Git checks that authoritative evidence does not show. In particular, "
+            "tool_call_count=0 cannot corroborate a claim that named tools ran. "
+            "write_revision=0 together with empty RUN-owned mutation state and empty "
+            "server-observed mutation facts cannot corroborate a claim that this RUN "
+            "physically changed the workspace. Use observed_executor_tools and "
+            "candidate_fact_conflicts in the context. Git status/diff may include external "
+            "or pre-existing changes and cannot establish RUN ownership alone. Zero tools "
+            "or zero writes by themselves are not a failure; a truthful read-only or "
+            "explanatory answer may PASS. A direct Candidate-versus-Server contradiction "
+            "must FAIL with the conflict in reason, violations, and required_action."
+        )
     if check_type == "CONSISTENCY":
         system_prompt += (
             " This is a repeated execution inconsistency: the RAW TASK appears to request "

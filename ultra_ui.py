@@ -3758,7 +3758,7 @@ class UltraApp(tk.Tk):
         if run_id and binding and binding["audit_available"]:
             ttk.Button(
                 frame, text="Разбор",
-                command=lambda tid=task_id: self._select_task_block(tid, reveal=True),
+                command=lambda tid=task_id: self._select_task_block(tid, reveal=True, force=True),
             ).pack(side="left", padx=(4, 0))
         elif run_id:
             ttk.Button(
@@ -3803,7 +3803,7 @@ class UltraApp(tk.Tk):
             return
         ttk.Button(
             frame, text="Разбор",
-            command=lambda tid=task_id: self._select_task_block(tid, reveal=True),
+            command=lambda tid=task_id: self._select_task_block(tid, reveal=True, force=True),
         ).pack(side="left", padx=(4, 0))
 
     def _begin_context_operation(self, message_id: str, status: str) -> None:
@@ -4461,6 +4461,13 @@ class UltraApp(tk.Tk):
             return (
                 f"[{time_str}] TOOL #{seq} {func} -> ERROR{path_str} "
                 f"({error.get('type', '')}): {str(error.get('message', ''))[:300]}"
+            )
+
+        if event_type == "mutation_intent_classified":
+            reasons = "; ".join(str(item)[:140] for item in (event.get("reasons") or [])[:3])
+            return (
+                f"[{time_str}] MUTATION INTENT | {event.get('mutation_intent')} | "
+                f"RUN {run_id} | {reasons}"
             )
 
         if event_type.startswith("execution_consistency_"):

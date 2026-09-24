@@ -460,6 +460,50 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             "Обнови только файл:\nДокументация/09_Обязательный регламент Ultra.md"
         )["mutation_intent"], "LIKELY_MUTATION")
 
+    def test_mutation_intent_respects_local_negation_and_read_only_diagnostics(self) -> None:
+        cases = (
+            ("Проанализируй server.py. Ничего не меняй.", "UNKNOWN"),
+            ("Не изменяй файл server.py.", "UNKNOWN"),
+            ("Как дела?", "UNKNOWN"),
+            ("Analyze server.py; do not modify anything.", "UNKNOWN"),
+            ("Обнови только файл:\nДокументация/09_Обязательный регламент Ultra.md", "LIKELY_MUTATION"),
+            ("Обнови только файл:\nДокументация/13_Архитектура оперативной верификации и контроля выполнения задач.md\nНе изменяй другие файлы.", "LIKELY_MUTATION"),
+            ("Обнови document.md.\ngit_diff / git_status — только optional read-only diagnostics.", "LIKELY_MUTATION"),
+            ("ИЗМЕНЯТЬ МОЖНО ТОЛЬКО ОДИН ФАЙЛ:\nДокументация/13_Архитектура оперативной верификации и контроля выполнения задач.md\nEDIT 1–8\nreplace_text\ninsert_before\nНЕ изменять Python runtime\nread-only diagnostics", "LIKELY_MUTATION"),
+        )
+        for task, expected in cases:
+            with self.subTest(task=task[:55]):
+                self.assertEqual(server._classify_mutation_intent(task)["mutation_intent"], expected)
+        classified = server._classify_mutation_intent(cases[-1][0])
+        self.assertTrue(any("13_архитектура" in reason for reason in classified["reasons"]))
+
+    async def test_live_document_13_fabricated_report_enters_consistency_before_final(self) -> None:
+        task = (
+            "ИЗМЕНЯТЬ МОЖНО ТОЛЬКО ОДИН ФАЙЛ:\n"
+            "Документация/13_Архитектура оперативной верификации и контроля выполнения задач.md\n"
+            "EDIT 1–8. Используй replace_text и insert_before.\n"
+            "НЕ изменять Python runtime. Не изменяй другие файлы.\n"
+            "git_diff / git_status — optional read-only diagnostics."
+        )
+        client = FakeClient([
+            FakeResponse("Выполнено 8 precise mutations: replace_text, insert_before; readback выполнен."),
+            FakeResponse("Нужно проверить целевой файл фактически."),
+        ])
+        result, verifier, _ = await self.run_case([
+            verifier_result("PASS", check_type="CONSISTENCY"),
+            verifier_result("PASS"),
+        ], fake_client=client, task=task)
+        self.assertEqual(result, "Нужно проверить целевой файл фактически.")
+        names = [item["event"] for item in self.events]
+        self.assertLess(names.index("execution_consistency_detected"), names.index("final_audit_started"))
+        self.assertLess(names.index("execution_consistency_feedback_delivered"), names.index("final_audit_started"))
+        self.assertEqual(client.post_count, 2)
+        self.assertEqual(verifier.await_args_list[0].kwargs["check_type"], "CONSISTENCY")
+        classified = next(item for item in self.events if item["event"] == "mutation_intent_classified")
+        self.assertEqual(classified["mutation_intent"], "LIKELY_MUTATION")
+        self.assertEqual(classified["run_id"], self.events[0]["run_id"])
+        self.assertIn("execution_consistency.feedback", str(client.bodies[1]["messages"]))
+
     async def test_read_only_zero_tool_task_uses_only_final(self) -> None:
         _result, verifier, client = await self.run_case(verifier_result("PASS"),
             task="Проанализируй server.py. Ничего не меняй.")
@@ -1413,6 +1457,60 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(context["fresh_git_status"]["stdout"], " M server.py")
         self.assertEqual(context["fresh_git_diff"]["stdout"], " M server.py")
+
+    async def test_final_fact_conflict_blocks_fabricated_zero_tool_pass(self) -> None:
+        client = FakeClient([FakeResponse(
+            "Файл изменён через replace_text; read_file выполнен; readback выполнен."
+        )])
+        with self.assertRaisesRegex(RuntimeError, "FINAL AUDIT ERROR"):
+            await self.run_case(verifier_result("PASS"), fake_client=client,
+                                task="Explain the architecture")
+        verifier = self.last_verifier
+        verifier.assert_awaited_once()
+        context = json.loads(verifier.await_args.kwargs["verification_context"])
+        self.assertEqual(context["run_facts"]["tool_call_count"], 0)
+        self.assertEqual(context["run_facts"]["write_revision"], 0)
+        self.assertEqual(context["mutation_facts"],
+                         {"changed_files": [], "new_files": [], "deleted_files": []})
+        self.assertEqual(context["run_owned_filesystem_evidence"], [])
+        self.assertEqual(context["observed_executor_tools"]["names"], [])
+        self.assertIn("candidate_claims_unobserved_physical_mutation",
+                      context["evidence_completeness"]["candidate_fact_conflicts"])
+        self.assertIn("candidate_claims_unobserved_tools:read_file,replace_text",
+                      context["evidence_completeness"]["candidate_fact_conflicts"])
+        self.assertEqual(self.events[-1]["reason"], "final_audit_evidence_incomplete")
+
+    async def test_final_zero_tool_truthful_answer_can_pass(self) -> None:
+        client = FakeClient([FakeResponse("Архитектура использует независимый verifier.")])
+        result, verifier, _ = await self.run_case(verifier_result("PASS"),
+            fake_client=client, task="Объясни архитектуру")
+        self.assertIn("verifier", result)
+        context = json.loads(verifier.await_args.kwargs["verification_context"])
+        self.assertEqual(context["evidence_completeness"]["candidate_fact_conflicts"], [])
+
+    def test_final_fact_conflict_detector_does_not_treat_negation_as_a_write(self) -> None:
+        facts = dict(tool_call_count=0, write_revision=0, run_owned_state={},
+                     mutation_facts={"changed_files": [], "new_files": [], "deleted_files": []},
+                     observed_tool_names=set())
+        for candidate in ("Файл не изменён.", "Файл уже изменён до этого RUN.",
+                          "Completed explanation. replace_text is an available tool."):
+            with self.subTest(candidate=candidate):
+                self.assertEqual(server._candidate_fact_conflicts(candidate, **facts), [])
+
+    async def test_final_actual_mutation_report_has_no_fact_conflict(self) -> None:
+        self.permissions.update(allow_write=True, allow_verify=True)
+        client = FakeClient([
+            FakeResponse("", finish_reason="function_call", function_call={
+                "name": "write_file", "arguments": {"path": "result.txt", "content": "done"},
+            }),
+            FakeResponse("Файл result.txt изменён; write_file выполнен."),
+        ])
+        result, verifier, _ = await self.run_case(verifier_result("PASS"),
+            fake_client=client, task="Update file result.txt")
+        self.assertIn("изменён", result)
+        context = json.loads(verifier.await_args.kwargs["verification_context"])
+        self.assertEqual(context["observed_executor_tools"]["names"], ["write_file"])
+        self.assertEqual(context["evidence_completeness"]["candidate_fact_conflicts"], [])
 
     async def test_evidence_semantics_separates_run_mutations_from_git_state(self) -> None:
         _result, verifier, _client = await self.run_case(verifier_result("PASS"))

@@ -205,6 +205,28 @@ class VerifierRuntimeTests(unittest.IsolatedAsyncioTestCase):
                                     check_type="CONSISTENCY")
         self.assertEqual(passed.verdict, "PASS")
 
+    async def test_final_prompt_requires_fail_on_candidate_server_fact_conflict(self) -> None:
+        result, request = await self.call(
+            verifier_json(check_type="FINAL", result="FAIL",
+                          violations=["Claimed replace_text was not observed"],
+                          reason="Candidate conflicts with server facts",
+                          required_action="Correct the report"),
+            raw_task="Измени file.md",
+            verification_context=json.dumps({
+                "run_facts": {"tool_call_count": 0, "write_revision": 0},
+                "mutation_facts": {"changed_files": [], "new_files": [], "deleted_files": []},
+                "run_owned_filesystem_evidence": [],
+                "candidate_final_response": {"content": "Файл изменён через replace_text"},
+            }, ensure_ascii=False),
+        )
+        prompt = request.await_args.args[0]["messages"][0]["content"]
+        self.assertEqual(result.verdict, "FAIL")
+        self.assertIn("HARD EVIDENCE RULE", prompt)
+        self.assertIn("tool_call_count=0", prompt)
+        self.assertIn("write_revision=0", prompt)
+        self.assertIn("direct Candidate-versus-Server contradiction", prompt)
+        self.assertIn("Zero tools or zero writes by themselves are not a failure", prompt)
+
     async def test_invalid_violations_type_is_rejected(self) -> None:
         for invalid in ("none", ["valid", 7], {"problem": "x"}):
             with self.subTest(invalid=invalid):

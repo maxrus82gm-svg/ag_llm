@@ -339,6 +339,27 @@ class TaskBlockUiTests(unittest.TestCase):
         self.assertEqual(self.app._selected_audit_run_id, "run_b")
         self.assertEqual(before, {path.name: path.read_bytes() for path in message_dir.glob("*.json")})
 
+    def test_explicit_audit_button_rereads_same_selected_run_from_disk(self):
+        self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
+                         (self.task_b, "run_b"))
+        self.assertIn("Wrong", self.app.audit_text.get("1.0", "end"))
+        thread = audit_storage.load_audit_thread(
+            self.workspace, self.workspace_info["workspace_id"], self.chat_id, "run_b"
+        )
+        thread["issues"][0]["reason"] = "FRESH DISK REASON"
+        audit_storage._save_audit_thread(
+            audit_storage.audit_thread_path(self.workspace, self.chat_id, "run_b"), thread
+        )
+        self.assertNotIn("FRESH DISK REASON", self.app.audit_text.get("1.0", "end"))
+        frame = self.app._message_action_widgets[2]
+        button = next(widget for widget in frame.winfo_children()
+                      if isinstance(widget, ultra_ui.ttk.Button)
+                      and widget.cget("text") == "Разбор")
+        button.invoke()
+        self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
+                         (self.task_b, "run_b"))
+        self.assertIn("FRESH DISK REASON", self.app.audit_text.get("1.0", "end"))
+
     def test_send_creates_one_id_and_worker_persists_it_on_assistant(self):
         captured = {}
         class FakeThread:
@@ -457,6 +478,16 @@ class TaskBlockUiTests(unittest.TestCase):
 
 
 class TraceAndUiStateTests(unittest.TestCase):
+    def test_mutation_intent_classification_is_visible_in_live_trace(self):
+        fake = SimpleNamespace(_compact_event_arguments=ultra_ui.UltraApp._compact_event_arguments)
+        line = ultra_ui.UltraApp._format_event(fake, {
+            "event": "mutation_intent_classified", "run_id": "run_test",
+            "mutation_intent": "LIKELY_MUTATION",
+            "reasons": ["action:обнови", "target:Документация/13_Архитектура.md"],
+        })
+        self.assertIn("MUTATION INTENT | LIKELY_MUTATION", line)
+        self.assertIn("13_Архитектура.md", line)
+
     def test_final_audit_lifecycle_formatting_and_non_error_tags(self):
         samples = (
             ("final_audit_started", {"model_id": "verifier", "write_revision": 2}, "ДРЕДД — START"),
