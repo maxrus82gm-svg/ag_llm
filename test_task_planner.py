@@ -103,6 +103,8 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         async def nonideal_planner(**kw):
             if kw["mode"] == "INITIAL":
                 return plan()
+            self.assertEqual(kw["context"]["open_persistence_obligations"], ["result"])
+            self.assertNotIn("unresolved_requirements", kw["context"])
             return {"status": "READY_TO_PERSIST", "reason": "document material is ready",
                     "unresolved_requirements": [], "next_action": "WRITE_FILE", "candidate_ids": []}
         real_dispatch = server._execute_agent_function
@@ -221,12 +223,15 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         async def premature(**kw):
             if kw["mode"] == "INITIAL":
                 return plan()
+            self.assertEqual(kw["context"]["open_persistence_obligations"], ["result"])
             result = ready(kw["context"])
-            result["unresolved_requirements"] = ["unknown content"]
+            result["unresolved_requirements"] = ["missing source"]
             return result
         result, audit, _ = await self.run_v6(planner_effect=premature,
             responses=[legacy.FakeResponse(json.dumps({"candidates": [write()]}))] * 4)
         self.assertIn("BLOCKED", result)
+        self.assertIn("ready_with_unresolved_requirements",
+                      [e.get("reason_code") for e in self.events])
         self.assertNotIn("persistence_required", self.event_names())
         self.assertFalse((self.workspace / "result.md").exists())
         audit.assert_not_awaited()
@@ -412,7 +417,12 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_preflight_continuation_has_no_tool_runtime_events(self):
         async def not_ready(**kw):
-            return plan() if kw["mode"] == "INITIAL" else continuation()
+            if kw["mode"] == "INITIAL":
+                return plan()
+            self.assertEqual(kw["context"]["open_persistence_obligations"], ["result"])
+            return {"status": "CONTINUE", "reason": "source missing",
+                    "unresolved_requirements": ["missing source"],
+                    "next_action": "obtain source"}
         real_dispatch = server._execute_agent_function
         with patch.object(server, "_execute_agent_function", wraps=real_dispatch) as dispatch:
             result, audit, _ = await self.run_v6(planner_effect=not_ready,
@@ -589,6 +599,14 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(body["function_call"], "none")
         with self.assertRaises(planner_runtime.PlannerError):
             planner_runtime.build_planner_body("INITIAL", "x" * 150000, {}, "gigachat_ultra")
+
+    def test_readiness_prompt_distinguishes_open_obligations_from_blockers(self):
+        body = planner_runtime.build_planner_body("READINESS", "TASK", {}, "gigachat_ultra")
+        prompt = body["messages"][0]["content"]
+        self.assertIn("open_persistence_obligations", prompt)
+        self.assertIn("not unresolved requirements", prompt)
+        self.assertIn("READY_TO_PERSIST and unresolved_requirements=[]", prompt)
+        self.assertIn("CONTINUE only for a real semantic or material blocker", prompt)
 
     def test_strict_json(self):
         for text in ['```json\n{}\n```', '{"a":1,"a":2}', '[]', '{"a":NaN}']:

@@ -30,7 +30,7 @@ from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
 from audit_storage import AuditThreadRecorder
-from planner_runtime import DEFAULT_PLANNER_MODEL_ID, readiness_diagnostic_emit, run_planner
+from planner_runtime import DEFAULT_PLANNER_MODEL_ID, run_planner
 from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated, PersistencePreflightRejected
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
@@ -3112,11 +3112,7 @@ async def _run_agent_task_impl(
     pending_persistence_call = None
     if planner_enabled:
         async def planner_call(**kwargs):
-            token = readiness_diagnostic_emit.set(_emit)
-            try:
-                return await run_planner(planner_model_id=planner_model_id, **kwargs)
-            finally:
-                readiness_diagnostic_emit.reset(token)
+            return await run_planner(planner_model_id=planner_model_id, **kwargs)
 
         lifecycle = TaskLifecycle(
             path=runtime_log_dir / "task_plans" / f"{run_id}.json", run_id=run_id,

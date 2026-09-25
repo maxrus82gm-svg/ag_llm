@@ -244,7 +244,7 @@ class TaskLifecycle:
         else:
             response = await self.ask("READINESS", {
                 "plan_version": self.state["plan_version"], "stage": self.stage,
-                "executor_result": result[:12000], "unresolved_requirements": [
+                "executor_result": result[:12000], "open_persistence_obligations": [
                     aid for aid, ob in state["obligations"].items() if ob["status"] == "OPEN"],
                 "candidates": [self.candidate_summary(c, material=True) for c in candidates],
                 "server_facts": self.facts(),
