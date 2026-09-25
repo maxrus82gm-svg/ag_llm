@@ -1,6 +1,7 @@
 """Bounded, tool-free Planner role. No Executor or Verifier session is reused."""
 from __future__ import annotations
 
+from contextvars import ContextVar
 import json
 
 import httpx
@@ -14,6 +15,7 @@ MAX_PLANNER_RESPONSE_BYTES = 96 * 1024
 PLANNER_TIMEOUT_SECONDS = 90
 MAX_PLAN_STAGES = 8
 MAX_PLAN_ARTIFACTS = 16
+readiness_diagnostic_emit = ContextVar("readiness_diagnostic_emit", default=None)
 
 
 class PlannerError(RuntimeError):
@@ -150,6 +152,27 @@ def validate_readiness(value: dict) -> dict:
     return value
 
 
+def log_readiness_diagnostic(emit, phase: str, value: dict) -> None:
+    """Temporary trace of the Planner readiness fields, without coercing their values."""
+    if emit is None:
+        return
+    unresolved = value.get("unresolved_requirements")
+    payload = {
+        "label": f"{phase} PLANNER READINESS",
+        "status": value.get("status"),
+        "action": value.get("action"),
+        "unresolved_requirements": unresolved,
+        "unresolved_requirements_present": "unresolved_requirements" in value,
+        "unresolved_requirements_type": type(unresolved).__name__,
+        "candidate_ids": value.get("candidate_ids"),
+        "candidate_ids_present": "candidate_ids" in value,
+    }
+    if isinstance(unresolved, list):
+        payload["unresolved_requirements_count"] = len(unresolved)
+        payload["unresolved_requirements_items"] = unresolved
+    emit(f"{phase.lower()}_planner_readiness", payload)
+
+
 PLAN_FORMAT = {
     "stages": [{"stage_id": "stage_1", "goal": "specific requested outcome",
                 "stage_type": "produce_artifact", "persistence_required": True,
@@ -226,7 +249,12 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
         if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
             raise PlannerError("Invalid Planner response size")
         value = strict_json(content)
-        return validate_readiness(value) if mode == "READINESS" else validate_plan(value)
+        if mode == "READINESS":
+            log_readiness_diagnostic(readiness_diagnostic_emit.get(), "RAW", value)
+            result = validate_readiness(value)
+            log_readiness_diagnostic(readiness_diagnostic_emit.get(), "NORMALIZED", result)
+            return result
+        return validate_plan(value)
     except PlannerError:
         raise
     except Exception as exc:
