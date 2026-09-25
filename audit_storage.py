@@ -15,6 +15,14 @@ from context_storage import validate_task_block_id
 
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+PLANNER_EVENTS = {
+    "planner_started", "planner_completed", "planner_failed", "plan_created", "plan_revised",
+    "stage_started", "stage_status_changed", "stage_satisfied", "stage_blocked",
+    "planner_readiness_started", "planner_readiness_result", "persistence_required",
+    "persistence_unsatisfied", "persistence_satisfied", "persistence_recovery_started",
+    "persistence_recovery_exhausted", "replan_started", "replan_completed",
+    "final_audit_routed_execution_defect", "final_audit_routed_plan_defect", "persistence_dispatch",
+}
 _AUDIT_EVENTS = {
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
     "audit_diagnostic_error", "tool_finished", "tool_error",
@@ -28,7 +36,7 @@ _AUDIT_EVENTS = {
     "permission_review_passed", "permission_review_failed",
     "permission_user_prompted", "permission_granted", "permission_user_denied",
     "permission_escalation_terminal",
-}
+} | PLANNER_EVENTS
 _TEXT_LIMIT = 2000
 
 
@@ -119,7 +127,17 @@ class AuditThreadRecorder:
         if kind not in _AUDIT_EVENTS:
             return
         issues = self.thread["issues"]
-        if kind.startswith("permission_"):
+        if kind in PLANNER_EVENTS:
+            lifecycle = self.thread.setdefault("task_lifecycle", {"events": []})
+            for key in ("plan_id", "plan_version", "stage_id"):
+                if event.get(key) is not None:
+                    lifecycle[key] = event[key]
+            lifecycle["events"].append({"event": kind, **{
+                key: (_short(event[key]) if isinstance(event[key], str) else event[key])
+                for key in ("plan_version", "stage_id", "status", "reason", "path", "outcome", "attempt", "route")
+                if key in event and isinstance(event[key], (str, int, bool))}})
+            del lifecycle["events"][:-128]
+        elif kind.startswith("permission_"):
             capability = event.get("capability") or "UNKNOWN"
             permission = self.thread.setdefault("permission_escalations", {}).setdefault(capability, {
                 "capability": None, "status": "PENDING", "attempts": [],
@@ -234,4 +252,6 @@ class AuditThreadRecorder:
                 consistency["status"] = "UNRESOLVED"
         elif kind == "run_finished":
             self.thread["run_status"] = _short(event.get("status")) or "FINISHED"
+            if event.get("status") == "BLOCKED" and self.thread["final_audit"] == "PENDING":
+                self.thread["final_audit"] = "NOT_RUN"
         _save_audit_thread(self.path, self.thread)

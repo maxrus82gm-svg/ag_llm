@@ -30,6 +30,8 @@ from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
 from audit_storage import AuditThreadRecorder
+from planner_runtime import DEFAULT_PLANNER_MODEL_ID, run_planner
+from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
     VerifierProtocolError,
@@ -2555,7 +2557,87 @@ async def _request_audit_diagnostic(
     return answer.strip()[:600]
 
 
+def _planner_target_snapshot(root: Path, path_text: str, policy: dict) -> dict:
+    path = _require_operation_permission(root, path_text, "read", policy)
+    if path.exists() and not path.is_file():
+        raise ValueError("Persistence target is not a regular file")
+    if not path.exists():
+        return {"exists": False, "sha256": None, "content": ""}
+    _require_text_suffix(path)
+    content = _read_logical_text(path)
+    return {"exists": True, "sha256": _sha256_utf8(content), "content": content}
+
+
+def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, policy: dict, repair=False) -> dict:
+    name, args = call.get("name"), call.get("arguments")
+    if name not in MUTATION_TOOL_NAMES or not isinstance(args, dict):
+        raise ValueError("Unsupported persistence operation")
+    expected_keys = {
+        "write_file": {"path", "content"}, "delete_file": {"path"},
+        "replace_text": {"path", "old_text", "new_text", "expected_content_sha256"},
+        "insert_before": {"path", "marker", "content", "expected_content_sha256"},
+        "insert_after": {"path", "marker", "content", "expected_content_sha256"},
+    }[name]
+    if set(args) != expected_keys or args["path"] != artifact["path"]:
+        raise ValueError("Candidate arguments do not match the artifact")
+    operation = "delete" if name == "delete_file" else "write"
+    target = _require_operation_permission(root, args["path"], operation, policy)
+    _require_text_suffix(target)
+    before = _planner_target_snapshot(root, args["path"], policy)
+    contract_op = artifact["operation"]
+    if (contract_op == "delete") != (name == "delete_file"):
+        raise ValueError("Candidate operation does not match the contract")
+    if contract_op == "create" and before["exists"] and not repair:
+        raise PlanInvalidated({"reason": "create_target_already_exists", "path": args["path"],
+                               "observed_sha256": before["sha256"]})
+    if contract_op in {"update", "delete"} and not before["exists"]:
+        raise PlanInvalidated({"reason": "required_target_missing", "path": args["path"]})
+    if name == "delete_file":
+        expected = {"exists": False, "sha256": None}
+    else:
+        if name == "write_file":
+            content = args["content"]
+        else:
+            if args["expected_content_sha256"] != before["sha256"]:
+                raise PlanInvalidated({"reason": "candidate_hash_stale", "path": args["path"],
+                                       "observed_sha256": before["sha256"]})
+            marker = args["old_text"] if name == "replace_text" else args["marker"]
+            replacement = args["new_text"] if name == "replace_text" else args["content"]
+            if not isinstance(marker, str) or not marker or before["content"].count(marker) != 1:
+                raise ValueError("Candidate anchor must be unique")
+            if not isinstance(replacement, str):
+                raise ValueError("Candidate payload must be text")
+            insertion = (replacement if name == "replace_text" else
+                         replacement + marker if name == "insert_before" else marker + replacement)
+            content = before["content"].replace(marker, insertion, 1)
+        if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
+            raise ValueError("Invalid candidate content")
+        if before["exists"] and content == before["content"]:
+            raise ValueError("No logical mutation; verify ALREADY_SATISFIED instead")
+        expected = {"exists": True, "sha256": _sha256_utf8(content)}
+    return {"before": {k: before[k] for k in ("exists", "sha256")}, "expected": expected}
+
+
 async def run_agent_task(
+    task: str, workspace_root: str, *, on_event=None, permissions: dict | None = None,
+    chat_id: str | None = None, model_id: str | None = None,
+    verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID, task_block_id: str | None = None,
+    permission_request_callback=None, planner_enabled: bool = False,
+    planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
+) -> str:
+    """Legacy direct callers opt in; normal UI explicitly enables the V6 contract."""
+    try:
+        return await _run_agent_task_impl(
+            task, workspace_root, on_event=on_event, permissions=permissions, chat_id=chat_id,
+            model_id=model_id, verifier_model_id=verifier_model_id, task_block_id=task_block_id,
+            permission_request_callback=permission_request_callback,
+            planner_enabled=planner_enabled, planner_model_id=planner_model_id,
+        )
+    except LifecycleBlocked as exc:
+        return f"RUN STATUS: BLOCKED\nreason: {exc}"
+
+
+async def _run_agent_task_impl(
     task: str,
     workspace_root: str,
     *,
@@ -2566,6 +2648,8 @@ async def run_agent_task(
     verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
     task_block_id: str | None = None,
     permission_request_callback=None,
+    planner_enabled: bool = False,
+    planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
     if not isinstance(task, str) or not task.strip():
@@ -3024,10 +3108,48 @@ async def run_agent_task(
         "interventions": 0,
     }
 
+    lifecycle = None
+    pending_persistence_call = None
+    if planner_enabled:
+        async def planner_call(**kwargs):
+            return await run_planner(planner_model_id=planner_model_id, **kwargs)
+
+        lifecycle = TaskLifecycle(
+            path=runtime_log_dir / "task_plans" / f"{run_id}.json", run_id=run_id,
+            task_block_id=task_block_id, raw_task=task, planner_call=planner_call, emit=_emit,
+            snapshot=lambda path: _planner_target_snapshot(root, path, policy),
+            prepare=lambda call, artifact, repair: _prepare_persistence_candidate(root, call, artifact, policy, repair),
+        )
+        await lifecycle.initialize({
+            "permissions": _policy_summary(policy),
+            "tools": [{"name": f["name"], "capability": CAPABILITY_BY_TOOL.get(f["name"], "READ")}
+                      for f in available_functions],
+            "project_context": project_context[:12000],
+            "recent_working_context": [{"role": m["role"], "content": m["content"][-2000:]}
+                                       for m in active_chat_messages[-5:-1]],
+            "context_limits": {"project_context_truncated": len(project_context) > 12000,
+                               "working_history_is_bounded_excerpt": True},
+        })
+    else:
+        _emit("planner_disabled_compatibility", {"reason": "direct_caller_did_not_enable_planner"})
+
+    executor_base_messages = copy.deepcopy(messages)
+
+    def stage_context(reset=False):
+        if not lifecycle:
+            return
+        if reset:
+            messages[:] = copy.deepcopy(executor_base_messages)
+        messages.append({"role": "user", "content": _context_message("task.stage", {})
+                         + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                         + json.dumps(lifecycle.executor_context(), ensure_ascii=False)})
+
+    stage_context()
+
     async with httpx.AsyncClient(timeout=180.0) as client:
         while True:
-            api_request_count += 1
-            _emit("api_request", {"api_request_number": api_request_count})
+            if lifecycle:
+                lifecycle.tick("EXECUTOR_OR_DISPATCH")
 
             body = {
                 "model": run_model,
@@ -3040,11 +3162,30 @@ async def run_agent_task(
                 body["functions"] = available_functions
                 body["function_call"] = "auto"
 
-            request_start = time.time()
-            response = await client.post(CHAT_URL, headers=headers, json=body)
-            request_duration = time.time() - request_start
-            response.raise_for_status()
-            data = response.json()
+            if pending_persistence_call is not None:
+                # Reuse the ordinary permission/guard/backup/tool path with a prepared payload.
+                # This is server dispatch, not an invented model API response or forced call.
+                dispatched_call = pending_persistence_call
+                pending_persistence_call = None
+                _emit("persistence_dispatch", {**lifecycle.facts(), "function": dispatched_call["name"]})
+                data = {"choices": [{"message": {"content": "", "function_call": dispatched_call},
+                                     "finish_reason": "function_call"}]}
+                response_status, request_duration = None, 0.0
+                server_dispatched = True
+            else:
+                api_request_count += 1
+                _emit("api_request", {"api_request_number": api_request_count,
+                    "exposed_tool_count": len(available_functions),
+                    "exposed_tool_names": [f["name"] for f in available_functions],
+                    "function_call_mode": "auto" if available_functions else "none",
+                    **(lifecycle.facts() if lifecycle else {})})
+                request_start = time.time()
+                response = await client.post(CHAT_URL, headers=headers, json=body)
+                request_duration = time.time() - request_start
+                response.raise_for_status()
+                response_status = response.status_code
+                data = response.json()
+                server_dispatched = False
 
             try:
                 choice = data["choices"][0]
@@ -3053,7 +3194,7 @@ async def run_agent_task(
             except (KeyError, IndexError, TypeError) as exc:
                 _emit("api_response", {
                     "api_request_number": api_request_count,
-                    "http_status": response.status_code,
+                    "http_status": response_status,
                     "duration": request_duration,
                     "error": "Malformed response",
                 })
@@ -3065,9 +3206,9 @@ async def run_agent_task(
                 })
                 raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
 
-            _emit("api_response", {
+            _emit("persistence_dispatch_ready" if server_dispatched else "api_response", {
                 "api_request_number": api_request_count,
-                "http_status": response.status_code,
+                "http_status": response_status,
                 "finish_reason": finish_reason,
                 "duration": request_duration,
             })
@@ -3347,7 +3488,15 @@ async def run_agent_task(
                         continue
 
                 permission_denied = False
+                candidate_id = None
+                plan_invalidated = None
                 try:
+                    if lifecycle and function_name in MUTATION_TOOL_NAMES:
+                        # Permission denial still goes through the existing permission lifecycle.
+                        _require_operation_permission(root, safe_args.get("path"),
+                            "delete" if function_name == "delete_file" else "write", policy)
+                        candidate_id = await lifecycle.before_mutation({"name": function_name,
+                            "arguments": _parse_agent_arguments(function_name, function_call.get("arguments"))})
                     result = _execute_agent_function(
                         root, function_call, policy, backup_session
                     )
@@ -3369,7 +3518,11 @@ async def run_agent_task(
                     else:
                         tool_ok = True
                         tool_error = None
+                except LifecycleBlocked:
+                    raise
                 except Exception as exc:
+                    if isinstance(exc, PlanInvalidated):
+                        plan_invalidated = exc.fact
                     permission_denied = isinstance(exc, PermissionError)
                     error_type = (
                         "STALE_FILE_STATE" if isinstance(exc, StaleFileStateError)
@@ -3454,6 +3607,12 @@ async def run_agent_task(
                         run_owned_state=final_audit_retry_state["run_owned_state"],
                         verification_state=verification_state,
                     )
+                    if lifecycle:
+                        lifecycle.after_mutation(candidate_id, result)
+                        try:
+                            pending_persistence_call = lifecycle.next_prepared_call()
+                        except PlanInvalidated as exc:
+                            plan_invalidated = exc.fact
 
                 if tool_ok and function_name == "python_compile":
                     python_revision = verification_state["python_write_revision"]
@@ -3664,6 +3823,10 @@ async def run_agent_task(
                         "content": json.dumps(result_for_model, ensure_ascii=False),
                     }
                 )
+                if lifecycle and plan_invalidated is not None:
+                    await lifecycle.replan(plan_invalidated)
+                    stage_context(reset=True)
+                    continue
                 if permission_denied and function_name in MUTATION_TOOL_NAMES:
                     capability = CAPABILITY_BY_TOOL[function_name]
                     path_text = safe_args.get("path")
@@ -3708,6 +3871,8 @@ async def run_agent_task(
                                 "scope": policy[f"{capability.lower()}_scope"],
                             })
                             try:
+                                if lifecycle:
+                                    lifecycle.tick("PERMISSION_VERIFIER")
                                 review = await run_verifier_check(
                                     verifier_model_id=verifier_model_id,
                                     check_type="PERMISSION", raw_task=task,
@@ -3720,6 +3885,8 @@ async def run_agent_task(
                                         available_functions=available_functions,
                                     ), task_id=run_id,
                                 )
+                            except LifecycleBlocked:
+                                raise
                             except Exception as exc:
                                 _emit("permission_review_failed", {
                                     "capability": capability, "reason": f"{type(exc).__name__}: {exc}",
@@ -3809,6 +3976,40 @@ async def run_agent_task(
                     "Агент GigaChat завершён нештатно. "
                     f"finish_reason={finish_reason!r}."
                 )
+
+            if lifecycle:
+                candidate_content = message.get("content") or ""
+                if not isinstance(candidate_content, str):
+                    lifecycle.block("invalid_executor_stage_result")
+                try:
+                    stage_decision = await lifecycle.on_stop(candidate_content)
+                except PlanInvalidated as exc:
+                    await lifecycle.replan(exc.fact)
+                    stage_context(reset=True)
+                    continue
+                except PermissionError:
+                    # A prepared but unauthorized operation follows the existing denied-call
+                    # review path; it does not acquire the latch or receive a forced API call.
+                    try:
+                        proposed = json.loads(candidate_content)["candidates"][0]
+                        if not isinstance(proposed, dict) or proposed.get("name") not in MUTATION_TOOL_NAMES:
+                            raise ValueError("Invalid operation")
+                    except (ValueError, KeyError, IndexError, TypeError):
+                        lifecycle.block("persistence_permission_or_scope_unavailable")
+                    stage_decision = {"action": "dispatch", "call": proposed}
+                except (ValueError, TypeError) as exc:
+                    stage_decision = {"action": "continue", "reason": str(exc)[:1000]}
+                if stage_decision["action"] != "final":
+                    if stage_decision["action"] == "dispatch":
+                        pending_persistence_call = stage_decision["call"]
+                    if stage_decision["action"] == "next_stage":
+                        stage_context(reset=True)
+                    else:
+                        messages.append({"role": "assistant", "content": candidate_content})
+                        messages.append({"role": "user", "content": _context_message("persistence.required", {})
+                            + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                            + json.dumps({**lifecycle.executor_context(), "next_action": stage_decision.get("reason", "Apply prepared operation")}, ensure_ascii=False)})
+                    continue
 
             missing_verification = _verification_missing_requirements(
                 verification_state
@@ -3949,6 +4150,13 @@ async def run_agent_task(
                         tool_facts=consistency_tool_facts,
                     )
                 )
+                if lifecycle:
+                    lifecycle.assert_satisfied()
+                    context_data = json.loads(verification_context)
+                    context_data["task_plan"] = lifecycle.evidence()
+                    verification_context = json.dumps(context_data, ensure_ascii=False)
+                    if len(verification_context.encode("utf-8")) > MAX_FINAL_AUDIT_CONTEXT_BYTES:
+                        raise FinalAuditEvidenceError("Task Plan evidence exceeds Final Audit context limit")
                 if evidence_completeness.get("critical_for_success"):
                     raise FinalAuditEvidenceError(
                         "Критические доказательства для SUCCESS неполны: "
@@ -3961,6 +4169,8 @@ async def run_agent_task(
                 audit_attempt = final_audit_retry_state[
                     "final_audit_attempt_count"
                 ]
+                if lifecycle:
+                    lifecycle.tick("FINAL_VERIFIER")
                 audit_result = await run_verifier_check(
                     verifier_model_id=verifier_model_id,
                     check_type="FINAL",
@@ -3976,6 +4186,24 @@ async def run_agent_task(
                     )
 
                 if audit_result.verdict == "FAIL":
+                    if lifecycle:
+                        route = getattr(audit_result, "route", "UNKNOWN")
+                        if route not in {"EXECUTION_DEFECT", "PLAN_DEFECT", "UNKNOWN"}:
+                            lifecycle.block("invalid_final_audit_route")
+                        if route == "PLAN_DEFECT":
+                            _emit("final_audit_failed", {
+                                "verifier_run_id": audit_result.verifier_run_id, "audit_attempt": audit_attempt,
+                                "reason": audit_result.reason, "violations": list(audit_result.violations),
+                                "required_action": audit_result.required_action, "route": route,
+                            })
+                            lifecycle.event("final_audit_routed_plan_defect", reason=audit_result.reason)
+                            await lifecycle.replan({"reason": "final_audit_plan_defect", "finding": {
+                                "verifier_run_id": audit_result.verifier_run_id,
+                                "reason": audit_result.reason, "violations": list(audit_result.violations),
+                                "required_action": audit_result.required_action}})
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.event("final_audit_routed_execution_defect", route=route, reason=audit_result.reason)
                     final_audit_retry_state["semantic_fail_count"] += 1
                     semantic_fail_count = final_audit_retry_state[
                         "semantic_fail_count"
@@ -4186,6 +4414,9 @@ async def run_agent_task(
                         )
 
                     if correction_cycle is not None:
+                        if lifecycle:
+                            lifecycle.execution_defect(getattr(audit_result, "affected_stage_ids", ()))
+                            stage_context(reset=True)
                         diagnostic_question = (
                             "Судья Дредд отклонил результат. Его замечания:\n"
                             f"REASON:\n{audit_result.reason}\n\n"
@@ -4205,10 +4436,14 @@ async def run_agent_task(
                             },
                         )
                         try:
+                            if lifecycle:
+                                lifecycle.tick("AUDIT_DIAGNOSTIC")
                             diagnostic_answer = await _request_audit_diagnostic(
                                 client, headers, run_model, messages, content,
                                 diagnostic_question,
                             )
+                        except LifecycleBlocked:
+                            raise
                         except Exception as exc:
                             _emit(
                                 "audit_diagnostic_error",
@@ -4385,6 +4620,14 @@ async def run_agent_task(
                         "duration": time.time() - final_audit_started_at,
                     },
                 )
+            except LifecycleBlocked:
+                raise
+            except PlanInvalidated as exc:
+                if lifecycle:
+                    await lifecycle.replan(exc.fact)
+                    stage_context(reset=True)
+                    continue
+                raise
             except FinalAuditSemanticError:
                 raise
             except (FinalAuditEvidenceError, VerifierRuntimeError) as exc:
@@ -4469,6 +4712,8 @@ async def run_agent_task(
                     f"Reason: {exc}"
                 ) from exc
 
+            if lifecycle:
+                lifecycle.assert_satisfied()
             _emit("run_finished", {
                 "status": "SUCCESS",
                 "api_requests": api_request_count,

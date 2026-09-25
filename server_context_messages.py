@@ -460,6 +460,23 @@ register_server_context_event(
 )
 
 register_server_context_event(
+    "task.stage", "Текущий этап серверного Task Plan.",
+    "Выполняй текущий stage по RAW TASK и SERVER FACTS. Сохраняй ограничения TASK. "
+    "Для persistence stage подготовь конкретный материал и используй разрешённый file tool. "
+    "Если завершаешь анализ до записи, верни JSON с candidates: массив объектов "
+    "name и arguments существующих file tools. Полные content/replacement должны быть в arguments. "
+    "Пустое заявление о сохранении не закрывает обязательство. Не раскрывай внутренние рассуждения.",
+)
+register_server_context_event(
+    "persistence.required", "Обязательный результат этапа ещё не зафиксирован.",
+    "SERVER: persistence obligation остаётся открытым. Следуй next_action и текущему stage. "
+    "Подготовь конкретный payload и выполни нужную разрешённую операцию. "
+    "Можно вернуть JSON с candidates: массив объектов name/arguments для существующих tools. "
+    "Не подменяй требуемый результат мутацией другого файла. stop и текстовое утверждение "
+    "не являются доказательством записи. Права и scope остаются серверными.",
+)
+
+register_server_context_event(
     "permission.review_not_required", "Расширение прав не подтверждено.",
     "Необходимость {capability} не подтверждена. Capability остаётся OFF; "
     "запрещённый вызов не выполнен. Продолжи или заверши задачу с текущими правами.",

@@ -46,6 +46,8 @@ class VerifierResult:
     task_id: str | None
     checkpoint_id: str | None
     operation_id: str | None
+    route: str = "UNKNOWN"
+    affected_stage_ids: tuple[str, ...] = ()
 
 
 def _validate_nonempty_text(value: object, label: str) -> str:
@@ -84,8 +86,8 @@ def _build_verifier_messages(
         "You are an independent one-shot verifier. Evaluate only the RAW TASK "
         "and VERIFICATION CONTEXT supplied in this request. Do not assume any "
         "chat history, tools, files, or external facts. Return exactly one JSON "
-        "object and no prose or markdown fence. The object must contain exactly "
-        "these semantic fields: result, check_type, violations, reason, "
+        "object and no prose or markdown fence. The object must contain "
+        "these required semantic fields: result, check_type, violations, reason, "
         "required_action. result must be PASS or FAIL. check_type must equal the "
         "requested check type. violations must be an array of strings. reason "
         "and required_action must be strings. PASS means the supplied evidence "
@@ -93,6 +95,14 @@ def _build_verifier_messages(
     )
     if check_type == "FINAL":
         system_prompt += (
+            " FINAL protocol extension: also return route and affected_stage_ids. "
+            "route is NONE for PASS; for FAIL it is EXECUTION_DEFECT, PLAN_DEFECT or UNKNOWN. "
+            "Use PLAN_DEFECT when RAW TASK requires an outcome missing from task_plan, "
+            "the plan targets the wrong artifact, or authoritative facts invalidate the plan. "
+            "Use EXECUTION_DEFECT when the plan is adequate but execution/result is defective. "
+            "affected_stage_ids lists existing stage IDs requiring repair, or [] if unknown. "
+            "Do not create or rewrite plans. Put the finding in reason/violations/required_action. "
+            "Server determines routing; no hidden Planner reasoning is supplied. "
             " HARD EVIDENCE RULE: Authoritative server-observed RUN facts override the "
             "Candidate Final Response, which is only a claim. Return FAIL if the Candidate "
             "claims current-RUN tool calls, mutations, file writes/deletes, verification, "
@@ -256,6 +266,18 @@ def _parse_verifier_response(content: str, requested_check_type: str) -> dict[st
         raise VerifierProtocolError("Verifier reason должен быть строкой.")
     if not isinstance(payload["required_action"], str):
         raise VerifierProtocolError("Verifier required_action должен быть строкой.")
+    if "route" in payload or "affected_stage_ids" in payload:
+        if requested_check_type != "FINAL":
+            raise VerifierProtocolError("Routing fields are FINAL-only")
+        route = payload.get("route", "UNKNOWN")
+        allowed_routes = {"NONE"} if verdict == "PASS" else {"EXECUTION_DEFECT", "PLAN_DEFECT", "UNKNOWN"}
+        if not isinstance(route, str) or route not in allowed_routes:
+            raise VerifierProtocolError("Invalid FINAL route")
+        stages = payload.get("affected_stage_ids", [])
+        if not isinstance(stages, list) or len(stages) > 8 or any(
+            not isinstance(s, str) or not s or len(s) > 80 for s in stages
+        ):
+            raise VerifierProtocolError("Invalid affected_stage_ids")
     return payload
 
 
@@ -353,6 +375,8 @@ async def run_verifier_check(
             task_id=task_id,
             checkpoint_id=checkpoint_id,
             operation_id=operation_id,
+            route=payload.get("route", "NONE" if payload["result"] == "PASS" else "UNKNOWN"),
+            affected_stage_ids=tuple(payload.get("affected_stage_ids", [])),
         )
         _write_log_event(
             verifier_run_id,

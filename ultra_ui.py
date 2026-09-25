@@ -39,7 +39,7 @@ from context_storage import (
 )
 from ui_state import load_ui_state, save_ui_state
 from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
-from audit_storage import list_chat_audit_threads, load_audit_thread
+from audit_storage import PLANNER_EVENTS, list_chat_audit_threads, load_audit_thread
 from workspace_runtime_settings import (
     load_workspace_runtime_settings,
     save_workspace_runtime_settings,
@@ -4208,6 +4208,14 @@ class UltraApp(tk.Tk):
         if thread is None:
             segments.append(("metadata", "Для этого RUN нет событий разбора.\n"))
             return segments
+        lifecycle = thread.get("task_lifecycle")
+        if lifecycle:
+            segments.append(("metadata", f"TASK PLAN: {lifecycle.get('plan_id')} / v{lifecycle.get('plan_version')}\n"))
+            for event in lifecycle.get("events", []):
+                tag = "dredd_fail" if event["event"] in {"planner_failed", "stage_blocked", "persistence_recovery_exhausted"} else "audit"
+                segments.append((tag, f"v{event.get('plan_version', '')} {event.get('stage_id') or ''} "
+                                 f"{event['event']} {event.get('status', '')} {event.get('reason', '')}\n"))
+            segments.append(("metadata", "\n"))
         permissions = thread.get("permission_escalations") or {}
         if not permissions and thread.get("permission_escalation"):
             permissions = {"legacy": thread["permission_escalation"]}
@@ -4446,6 +4454,9 @@ class UltraApp(tk.Tk):
                     f"capability={event.get('capability')} | "
                     f"reason={str(event.get('reason') or event.get('verifier_reason') or '')[:200]}")
 
+        if event_type in PLANNER_EVENTS:
+            return (f"[{time_str}] {event_type} | plan v{event.get('plan_version')} | "
+                    f"stage={event.get('stage_id')} | {event.get('status', '')} {event.get('reason', '')}")
         if event_type == "api_request":
             return f"[{time_str}] API #{event.get('api_request_number')}"
 
@@ -4884,6 +4895,7 @@ class UltraApp(tk.Tk):
                     verifier_model_id=verifier_model_id,
                     task_block_id=task_block_id,
                     permission_request_callback=permission_request_callback,
+                    planner_enabled=True,
                 )
             )
             if not run_started_seen and provenance_warning is None:
@@ -5053,7 +5065,7 @@ class UltraApp(tk.Tk):
                         else:
                             self._selected_audit_run_id = self._active_audit_run_id
                             self._render_audit_thread()
-                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in {
+                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",

@@ -9,11 +9,13 @@
 Фактически сейчас:
 
 - Model Registry и GigaChat multi-model transport реализованы;
-- MAIN CHAT, COMPRESSOR и VERIFIER имеют отдельные model assignments; Verifier default — `gigachat_3_pro`;
+- MAIN CHAT, COMPRESSOR, PLANNER и VERIFIER имеют отдельные model assignments; Verifier default — `gigachat_3_pro`, Planner default — `gigachat_ultra`;
 - Compressor выполняет отдельный model call, а Main Chat использует назначенную модель и Working Representation;
 - универсальный Provider Adapter, Local Provider, per-Chat assignment, Agent Profiles / Context Policy и Coordinator остаются будущими.
 
 MM.0–MM.4 реализованы в коде и покрыты tests. Будущие роли и провайдеры ниже помечены как целевая архитектура.
+
+V.6 V1 добавляет отдельную one-shot tool-free роль Planner в `planner_runtime.py`: INITIAL / READINESS / REPLAN. `planner_model_id` независимо разрешается через Model Registry; совпадение default-модели с Executor не объединяет роли. Planner получает только RAW TASK и bounded Planning Context, без Executor conversation и hidden Verifier prompt. Executor получает текущий stage и нужные результаты; Final Audit — план и authoritative evidence без Planner reasoning. Lifecycle и persistence принадлежат `13`. Normal UI включает V6; legacy direct callers могут явно включить его через `planner_enabled=True`. Automated tests и UI smoke пройдены; live GigaChat RUN ещё требуется. UI выбора Planner пока не добавлен.
 
 Этот документ фиксирует работающий выбор модели через Registry и Assignment, а также следующие расширения проекта `ag_llm / GigaChat Ultra Local Agent`.
 
@@ -235,13 +237,15 @@ MODEL ASSIGNMENT отвечает на вопрос:
 
     COMPRESSION MODEL
 
-Позже могут появиться:
+Дополнительно уже реализованы:
 
     VERIFICATION MODEL
 
-    FINALIZATION MODEL
-
     PLANNER MODEL
+
+Позже могут появиться:
+
+    FINALIZATION MODEL
 
     CODE AGENT MODEL
 
@@ -1106,7 +1110,7 @@ Coordinator сможет:
 
     текущий Active Chat Context из RAW / SUMMARY Working Representation выбранного Chat
 
-    MODEL REGISTRY и назначения MAIN CHAT / COMPRESSOR / VERIFIER
+    MODEL REGISTRY и назначения MAIN CHAT / COMPRESSOR / PLANNER / VERIFIER
 
     Context Variants и управляемый Compressor Proposal
 
