@@ -475,6 +475,12 @@ register_server_context_event(
     "Не подменяй требуемый результат мутацией другого файла. stop и текстовое утверждение "
     "не являются доказательством записи. Права и scope остаются серверными.",
 )
+register_server_context_event(
+    "persistence.preflight_rejected", "Сервер отклонил подготовленную операцию до запуска file tool.",
+    "File tool {tool_name} не запускался: {error_type}: {error_message}. "
+    "Сохрани RAW TASK и текущий stage. Исправь конкретный candidate или выполни next_action; "
+    "отказ preflight не является результатом записи.",
+)
 
 register_server_context_event(
     "permission.review_not_required", "Расширение прав не подтверждено.",

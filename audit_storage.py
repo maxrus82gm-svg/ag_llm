@@ -22,6 +22,7 @@ PLANNER_EVENTS = {
     "persistence_unsatisfied", "persistence_satisfied", "persistence_recovery_started",
     "persistence_recovery_exhausted", "replan_started", "replan_completed",
     "final_audit_routed_execution_defect", "final_audit_routed_plan_defect", "persistence_dispatch",
+    "planner_readiness_rejected", "mutation_preflight_rejected",
 }
 _AUDIT_EVENTS = {
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
@@ -134,7 +135,7 @@ class AuditThreadRecorder:
                     lifecycle[key] = event[key]
             lifecycle["events"].append({"event": kind, **{
                 key: (_short(event[key]) if isinstance(event[key], str) else event[key])
-                for key in ("plan_version", "stage_id", "status", "reason", "path", "outcome", "attempt", "route")
+                for key in ("plan_version", "stage_id", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route")
                 if key in event and isinstance(event[key], (str, int, bool))}})
             del lifecycle["events"][:-128]
         elif kind.startswith("permission_"):

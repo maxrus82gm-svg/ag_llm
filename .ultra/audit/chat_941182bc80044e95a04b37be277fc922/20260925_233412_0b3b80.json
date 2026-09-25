@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "task_block_id": "tb_28eac11b101443a4ae5f0e007b005eac",
+  "run_id": "20260925_233412_0b3b80",
+  "issues": [],
+  "final_audit": "NOT_RUN",
+  "run_status": "BLOCKED",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_completed",
+        "plan_version": 0,
+        "status": "VALID",
+        "reason": ""
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "plan_created",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      }
+    ],
+    "plan_id": "plan_1df628d39efb4bcaae1962fae97f0e62",
+    "plan_version": 1,
+    "stage_id": "stage_1"
+  },
+  "permission_escalations": {
+    "WRITE": {
+      "capability": "WRITE",
+      "status": "BLOCKED",
+      "attempts": [
+        {
+          "attempt": 1,
+          "tool": "write_file",
+          "path": "sandbox_verify/V6_LIVE_PERSISTENCE_TEST.md",
+          "executed": false
+        }
+      ],
+      "verifier_run_id": null,
+      "verifier_reason": null,
+      "required_action": null,
+      "user_decision": null,
+      "scope": "Документация",
+      "terminal_reason": "permission_scope_blocked"
+    }
+  },
+  "permission_escalation": {
+    "capability": "WRITE",
+    "status": "BLOCKED",
+    "attempts": [
+      {
+        "attempt": 1,
+        "tool": "write_file",
+        "path": "sandbox_verify/V6_LIVE_PERSISTENCE_TEST.md",
+        "executed": false
+      }
+    ],
+    "verifier_run_id": null,
+    "verifier_reason": null,
+    "required_action": null,
+    "user_decision": null,
+    "scope": "Документация",
+    "terminal_reason": "permission_scope_blocked"
+  }
+}

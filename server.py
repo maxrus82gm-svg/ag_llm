@@ -31,7 +31,7 @@ from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
 from audit_storage import AuditThreadRecorder
 from planner_runtime import DEFAULT_PLANNER_MODEL_ID, run_planner
-from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated
+from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated, PersistencePreflightRejected
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
     VerifierProtocolError,
@@ -3490,6 +3490,7 @@ async def _run_agent_task_impl(
                 permission_denied = False
                 candidate_id = None
                 plan_invalidated = None
+                dispatcher_started = False
                 try:
                     if lifecycle and function_name in MUTATION_TOOL_NAMES:
                         # Permission denial still goes through the existing permission lifecycle.
@@ -3497,6 +3498,13 @@ async def _run_agent_task_impl(
                             "delete" if function_name == "delete_file" else "write", policy)
                         candidate_id = await lifecycle.before_mutation({"name": function_name,
                             "arguments": _parse_agent_arguments(function_name, function_call.get("arguments"))})
+                    dispatcher_started = True
+                    _emit("tool_started", {
+                        "tool_sequence": last_tool_sequence + 1,
+                        "function": function_name,
+                        "arguments": safe_args,
+                        "timestamp": time.time(),
+                    })
                     result = _execute_agent_function(
                         root, function_call, policy, backup_session
                     )
@@ -3518,11 +3526,33 @@ async def _run_agent_task_impl(
                     else:
                         tool_ok = True
                         tool_error = None
-                except LifecycleBlocked:
+                except LifecycleBlocked as exc:
+                    if lifecycle and function_name in MUTATION_TOOL_NAMES and not dispatcher_started:
+                        _emit("mutation_preflight_rejected", {
+                            "function": function_name, "path": safe_args.get("path"),
+                            "reason_code": str(exc)[:120], "executed": False,
+                            "stage_id": lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                            **lifecycle.facts(),
+                        })
                     raise
                 except Exception as exc:
                     if isinstance(exc, PlanInvalidated):
                         plan_invalidated = exc.fact
+                    preflight_rejected = bool(lifecycle and function_name in MUTATION_TOOL_NAMES
+                                              and not dispatcher_started)
+                    if preflight_rejected:
+                        reason_code = (
+                            exc.reason_code if isinstance(exc, PersistencePreflightRejected)
+                            else exc.fact["reason"] if isinstance(exc, PlanInvalidated)
+                            else "permission_denied" if isinstance(exc, PermissionError)
+                            else "candidate_preparation_failed"
+                        )
+                        _emit("mutation_preflight_rejected", {
+                            "function": function_name, "path": safe_args.get("path"),
+                            "reason_code": reason_code, "executed": False,
+                            "stage_id": lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                            **lifecycle.facts(),
+                        })
                     permission_denied = isinstance(exc, PermissionError)
                     error_type = (
                         "STALE_FILE_STATE" if isinstance(exc, StaleFileStateError)
@@ -3534,6 +3564,8 @@ async def _run_agent_task_impl(
                     )
                     if permission_denied:
                         context_event_id = "permission.denied"
+                    elif preflight_rejected:
+                        context_event_id = "persistence.preflight_rejected"
                     else:
                         context_event_id = "tool.error"
                     context_variables = {
@@ -3549,6 +3581,8 @@ async def _run_agent_task_impl(
                     )
                     result = {
                         "ok": False,
+                        "executed": False if preflight_rejected else dispatcher_started,
+                        "reason_code": reason_code if preflight_rejected else None,
                         "error_type": error_type,
                         "error": error_message,
                         "instruction": context_text,
@@ -3641,7 +3675,7 @@ async def _run_agent_task_impl(
                 last_tool_name = function_name
                 last_tool_args = safe_args
                 last_tool_error = tool_error
-                last_tool_status = "OK" if tool_ok else "ERROR"
+                last_tool_status = "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED"
                 last_tool_result_summary = (
                     _safe_tool_result_summary(
                         function_name,
@@ -3659,7 +3693,8 @@ async def _run_agent_task_impl(
                     "sequence": last_tool_sequence,
                     "tool": function_name,
                     "path": str(safe_args.get("path", ""))[:300],
-                    "status": "OK" if tool_ok else "ERROR",
+                    "status": "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED",
+                    "executed": dispatcher_started,
                     "summary": str(last_tool_result_summary)[:1000],
                     "error": (str(tool_error.get("message", ""))[:300]
                               if isinstance(tool_error, dict) else None),
@@ -3675,13 +3710,6 @@ async def _run_agent_task_impl(
                         if tool_ok and function_name == "list_dir" and isinstance(result, dict)
                         else None
                     ),
-                })
-
-                _emit("tool_started", {
-                    "tool_sequence": last_tool_sequence,
-                    "function": function_name,
-                    "arguments": safe_args,
-                    "timestamp": time.time(),
                 })
 
                 if permission_denied:
@@ -3759,12 +3787,13 @@ async def _run_agent_task_impl(
                         "result": result,
                     })
                 else:
-                    _emit("tool_error", {
-                        "tool_sequence": last_tool_sequence,
-                        "function": function_name,
-                        "arguments": safe_args,
-                        "error": tool_error,
-                    })
+                    if dispatcher_started:
+                        _emit("tool_error", {
+                            "tool_sequence": last_tool_sequence,
+                            "function": function_name,
+                            "arguments": safe_args,
+                            "error": tool_error,
+                        })
 
                     signature = (
                         function_name,

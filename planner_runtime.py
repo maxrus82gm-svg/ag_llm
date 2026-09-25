@@ -135,12 +135,14 @@ def validate_plan(value: dict) -> dict:
 
 
 def validate_readiness(value: dict) -> dict:
-    keys(value, {"status", "reason", "unresolved_requirements", "next_action", "candidate_ids"})
+    keys(value, {"status", "reason", "unresolved_requirements", "next_action"}, {"candidate_ids"})
     if value["status"] not in {"CONTINUE", "READY_TO_PERSIST", "BLOCKED"}:
         raise PlannerError("Invalid readiness status")
     text_field(value["reason"], "reason")
     string_list(value["unresolved_requirements"], "unresolved requirements")
-    string_list(value["candidate_ids"], "candidate ids")
+    if "candidate_ids" in value:
+        # Legacy advisory metadata. Candidate identity and authorization belong to Server.
+        string_list(value["candidate_ids"], "candidate ids")
     if not isinstance(value["next_action"], str):
         raise PlannerError("Invalid next_action")
     if value["status"] == "CONTINUE" and (not value["unresolved_requirements"] or not value["next_action"].strip()):
@@ -180,12 +182,12 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
     if mode == "READINESS":
         system += (
             'Return {"status":"CONTINUE|READY_TO_PERSIST|BLOCKED","reason":"short rationale",'
-            '"unresolved_requirements":[],"next_action":"","candidate_ids":[]}. '
+            '"unresolved_requirements":[],"next_action":""}. '
             "CONTINUE must name a missing material prerequisite and the action to obtain it. "
             "READY_TO_PERSIST requires no unresolved requirements and supplied material candidates "
-            "for a persistence stage; select their exact candidate_ids. Never invent payload references. "
+            "for a persistence stage. Server binds the concrete candidates and owns their identities. "
             "For a non-persistence stage READY_TO_PERSIST means its text result is ready for stage "
-            "completion, with no file write and no candidate_ids. BLOCKED names an unavailable prerequisite. "
+            "completion, with no file write. BLOCKED names an unavailable prerequisite. "
             "Ask whether further analysis could materially change the prepared result, not whether the "
             "Executor feels confident. An assertion 'saved' without material is not ready."
         )

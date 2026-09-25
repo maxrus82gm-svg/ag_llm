@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "message_id": "msg_1ad918e700cf4a6cab2ced9e03eb8af7",
+  "context_variant_id": "ctxv_44ab2261f4da43bbb28a0f63d9a14c15",
+  "created_at": "2026-09-25T18:49:35.164047+00:00",
+  "text": "Задача: изменить файл Документация/SAFE_ALLOW_TEST.md, заменив TEST_3 на TEST_4.\n\nОбязательный workflow:\n1. read_file для проверки исходного содержимого (должно быть TEST_3).\n2. replace_text: TEST_3 → TEST_4.\n3. Финальный read_file для подтверждения результата (должно стать TEST_4).\n\nОграничения:\n- Не использовать write_file и не менять другие файлы/Python/tests.\n- Git mutations запрещены; git_diff/git_status — только опционально в режиме чтения.\n\nВ отчёте указать фактические шаги (первый read_file, replace_text, финальный read_file), итоговое содержимое файла, число выполненных tool calls и подтвердить отсутствие изменений в других файлах.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260925_234930_543f96",
+    "model_id": "gigachat_ultra",
+    "model_display_name": "GigaChat 3 Ultra",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Ultra",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 51.71,
+    "source_chars": 1342,
+    "output_chars": 648,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

@@ -21,6 +21,13 @@ class LifecycleBlocked(RuntimeError):
     pass
 
 
+class PersistencePreflightRejected(RuntimeError):
+    def __init__(self, reason_code: str, next_action: str):
+        self.reason_code = reason_code
+        self.next_action = next_action
+        super().__init__(next_action)
+
+
 class PlanInvalidated(RuntimeError):
     def __init__(self, fact: dict):
         self.fact = fact
@@ -190,7 +197,7 @@ class TaskLifecycle:
         return None
 
     def candidate_summary(self, candidate, *, material=False):
-        summary = {key: candidate[key] for key in ("candidate_id", "run_id", "plan_id", "plan_version",
+        summary = {key: candidate[key] for key in ("run_id", "plan_id", "plan_version",
                                                   "stage_id", "artifact_id", "path", "operation", "expected")}
         summary["function_name"] = candidate["call"]["name"]
         if material:
@@ -214,7 +221,8 @@ class TaskLifecycle:
                      "authorized": False}
         # Bounded by the shared lifecycle/tool budgets, with no duplicate material on retries.
         for old in self.state["candidates"].values():
-            if not old.get("superseded") and all(old.get(k) == candidate[k] for k in ("plan_version", "stage_id", "call", "before")):
+            if not old.get("superseded") and not old.get("executed") and all(
+                    old.get(k) == candidate[k] for k in ("plan_version", "stage_id", "call", "before")):
                 return old
         self.state["candidates"][cid] = candidate
         self.save()
@@ -243,38 +251,68 @@ class TaskLifecycle:
             })
         if response["status"] == "BLOCKED":
             self.block(response["reason"])
-        selected = {c["candidate_id"]: c for c in candidates}
-        valid = (not response["unresolved_requirements"]
-                 and set(response["candidate_ids"]).issubset(selected)
-                 and (not self.stage["persistence_required"] or bool(response["candidate_ids"])))
-        if response["status"] != "READY_TO_PERSIST" or not valid:
-            key = f'{self.state["plan_version"]}:{self.stage["stage_id"]}'
-            count = self.state["readiness_attempts"].get(key, 0) + 1
-            self.state["readiness_attempts"][key] = count
-            self.save()
-            if count > READINESS_CONTINUE_LIMIT:
-                self.block("readiness_no_progress")
-            return {"action": "continue", "reason": response["next_action"] or "Provide material candidate and resolve requirements."}
+        if response["status"] != "READY_TO_PERSIST":
+            return self.readiness_continue("planner_continue", response["next_action"])
+        if response["unresolved_requirements"]:
+            return self.readiness_continue("ready_with_unresolved_requirements",
+                                           "Resolve the listed stage requirements before persistence.")
+        if self.stage["persistence_required"] and not candidates:
+            return self.readiness_continue("candidate_missing", "Prepare a concrete file operation.")
+
+        # The model's optional legacy candidate_ids are deliberately ignored. Bind only
+        # the concrete objects supplied by Server to this exact readiness call.
+        selected = {}
+        artifacts = {a["artifact_id"]: a for a in self.stage["artifacts"]}
+        for candidate in candidates:
+            aid = candidate.get("artifact_id")
+            artifact = artifacts.get(aid)
+            if (candidate.get("run_id") != self.state["run_id"]
+                    or candidate.get("plan_id") != self.state["plan_id"]
+                    or candidate.get("plan_version") != self.state["plan_version"]
+                    or candidate.get("stage_id") != self.stage["stage_id"]
+                    or artifact is None or candidate.get("path") != artifact["path"]
+                    or candidate.get("operation") != artifact["operation"]
+                    or candidate.get("superseded") or candidate.get("executed")
+                    or (state["obligations"][aid]["status"] != "OPEN" and not state.get("repair"))):
+                return self.readiness_continue("candidate_binding_invalid",
+                                               "Prepare a candidate for an open obligation in the active stage.")
+            prior = selected.get(aid)
+            if prior is not None and prior["candidate_id"] != candidate["candidate_id"]:
+                return self.readiness_continue("candidate_ambiguous",
+                                               "Provide one concrete operation per artifact obligation.")
+            selected[aid] = candidate
+
+        selected_ids = [c["candidate_id"] for c in selected.values()]
         if self.stage["persistence_required"]:
             # Prepare again immediately before acquiring the latch: no stale capability/state.
-            for cid in response["candidate_ids"]:
-                candidate = selected[cid]
-                artifact = self.artifact(candidate["path"])
+            for candidate in selected.values():
+                artifact = artifacts[candidate["artifact_id"]]
                 refreshed = self.prepare(candidate["call"], artifact, self.can_update_created_target(artifact, state))
-                if refreshed["before"] != candidate["before"]:
+                if refreshed["before"] != candidate["before"] or refreshed["expected"] != candidate["expected"]:
                     raise PlanInvalidated({"reason": "candidate_precondition_changed", "path": candidate["path"]})
                 candidate["authorized"] = True
             self.set_status("READY_TO_PERSIST")
             self.set_status("PERSIST_REQUIRED")
-            self.event("persistence_required", candidate_ids=response["candidate_ids"])
-        return {"action": "ready", "candidate_ids": response["candidate_ids"]}
+            self.event("persistence_required", candidate_ids=selected_ids)
+        return {"action": "ready", "candidate_ids": selected_ids}
+
+    def readiness_continue(self, reason_code, next_action):
+        if self.stage:
+            key = f'{self.state["plan_version"]}:{self.stage["stage_id"]}'
+            count = self.state["readiness_attempts"].get(key, 0) + 1
+            self.state["readiness_attempts"][key] = count
+            self.save()
+            self.event("planner_readiness_rejected", reason_code=reason_code, executed=False)
+            if count > READINESS_CONTINUE_LIMIT:
+                self.block("readiness_no_progress")
+        return {"action": "continue", "reason_code": reason_code, "reason": next_action}
 
     async def before_mutation(self, call):
         candidate = self.new_candidate(call)
         if not candidate["authorized"]:
             decision = await self.readiness("Proposed concrete tool operation", [candidate])
             if decision["action"] != "ready":
-                raise ValueError(decision["reason"])
+                raise PersistencePreflightRejected(decision["reason_code"], decision["reason"])
         # The caller must still run its ordinary permission/backup/tool dispatcher.
         return candidate["candidate_id"]
 

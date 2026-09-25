@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_268113db968a4bba91343544c9387612",
+  "task_block_id": "tb_cb8ced6ae8a4418c91a1d2a0716ac4b2",
+  "run_id": "20260925_235244_983dd2",
+  "issues": [],
+  "final_audit": "NOT_RUN",
+  "run_status": "BLOCKED",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_completed",
+        "plan_version": 0,
+        "status": "VALID",
+        "reason": ""
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "plan_created",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST",
+        "reason": "Документ готов к созданию: все обязательные разделы и пометка 'FUTURE / NOT IMPLEMENTED' для Cross-Chat Context Broker включены. Нет изменений других файлов. Требуется только запись одного файла doc17."
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST",
+        "reason": "Документ подготовлен, все обязательные разделы и пометка FUTURE / NOT IMPLEMENTED для Cross-Chat Context Broker включены. Нет незакрытых требований кроме записи файла; кандидат на запись предоставлен."
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "CONTINUE",
+        "reason": "Необходимо создать целевой документ Документация/17_Архитектура межчатового контекста и Cross-Chat Context Broker.md. Требуется выполнить операцию записи файла с полным содержимым, после чего проверить его наличие и пометку FUTURE / NOT IMPLEMENTED для Cross-Chat Context Broker."
+      },
+      {
+        "event": "stage_blocked",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason": "readiness_no_progress"
+      }
+    ],
+    "plan_id": "plan_799e535b13d740c8bb00fcd72d95afa8",
+    "plan_version": 1,
+    "stage_id": "stage_1"
+  }
+}

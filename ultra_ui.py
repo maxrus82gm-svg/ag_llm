@@ -4214,7 +4214,8 @@ class UltraApp(tk.Tk):
             for event in lifecycle.get("events", []):
                 tag = "dredd_fail" if event["event"] in {"planner_failed", "stage_blocked", "persistence_recovery_exhausted"} else "audit"
                 segments.append((tag, f"v{event.get('plan_version', '')} {event.get('stage_id') or ''} "
-                                 f"{event['event']} {event.get('status', '')} {event.get('reason', '')}\n"))
+                                 f"{event['event']} {event.get('status', '')} "
+                                 f"{event.get('reason_code') or event.get('reason', '')}\n"))
             segments.append(("metadata", "\n"))
         permissions = thread.get("permission_escalations") or {}
         if not permissions and thread.get("permission_escalation"):
@@ -4455,6 +4456,13 @@ class UltraApp(tk.Tk):
                     f"reason={str(event.get('reason') or event.get('verifier_reason') or '')[:200]}")
 
         if event_type in PLANNER_EVENTS:
+            if event_type == "mutation_preflight_rejected":
+                return (f"[{time_str}] MUTATION PREFLIGHT REJECTED | "
+                        f"tool={event.get('function')} | path={event.get('path')} | "
+                        f"code={event.get('reason_code')} | executed=false")
+            if event_type == "planner_readiness_rejected":
+                return (f"[{time_str}] READINESS CONTINUE | "
+                        f"stage={event.get('stage_id')} | code={event.get('reason_code')}")
             return (f"[{time_str}] {event_type} | plan v{event.get('plan_version')} | "
                     f"stage={event.get('stage_id')} | {event.get('status', '')} {event.get('reason', '')}")
         if event_type == "api_request":

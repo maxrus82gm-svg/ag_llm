@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "task_block_id": "tb_346a827a39c34cf591fac015315995ef",
+  "run_id": "20260925_233750_38c5dc",
+  "issues": [],
+  "final_audit": "PASS",
+  "run_status": "SUCCESS",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_completed",
+        "plan_version": 0,
+        "status": "VALID",
+        "reason": ""
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "plan_created",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST",
+        "reason": "Файл готов к записи; все требования соблюдены, кандидаты предоставлены."
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "PERSIST_REQUIRED"
+      },
+      {
+        "event": "persistence_required",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "persistence_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "path": "sandbox_verify/V6_LIVE_PERSISTENCE_TEST.md",
+        "outcome": "MUTATED"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "SATISFIED"
+      },
+      {
+        "event": "stage_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "READY_TO_PERSIST",
+        "reason": "Verification complete: file exists, physical write confirmed, content matches exactly."
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "SATISFIED"
+      },
+      {
+        "event": "stage_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      }
+    ],
+    "plan_id": "plan_448e81119c244122bf58564830d002e0",
+    "plan_version": 1,
+    "stage_id": "stage_2"
+  }
+}

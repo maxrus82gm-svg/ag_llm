@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_941182bc80044e95a04b37be277fc922",
+  "message_id": "msg_cb178d5d06814f3b95a0c3d6bee73577",
+  "context_variant_id": "ctxv_62a70c003f2c4442ba322fdf3c6b9a93",
+  "created_at": "2026-09-25T18:47:57.941621+00:00",
+  "text": "Задача: выполнить live-тест на файле Документация/SAFE_ALLOW_TEST.md.\n\nТребуется заменить TEST_3 на TEST_4 через replace_text, без использования write_file и изменения других файлов/Git. Обязательный workflow: read_file → замена (только если исходное значение TEST_3) → финальный read_file для подтверждения результата TEST_4.\n\nВ отчёте указать только факты из trace: был ли первый read_file; была ли замена; был ли итоговый read_file; конечное содержимое файла; число tool calls; изменялись ли другие файлы.",
+  "source": "llm_compression",
+  "parent_variant_id": null,
+  "manually_edited": false,
+  "compression": {
+    "role_id": "compressor",
+    "run_id": "cmp_20260925_234752_d8162a",
+    "model_id": "gigachat_ultra",
+    "model_display_name": "GigaChat 3 Ultra",
+    "provider": "gigachat",
+    "provider_model_id": "GigaChat-3-Ultra",
+    "target_reduction_percent": 50,
+    "actual_reduction_percent": 62.15,
+    "source_chars": 1342,
+    "output_chars": 508,
+    "attempts": 1,
+    "final_check_enabled": true
+  }
+}

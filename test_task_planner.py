@@ -30,8 +30,7 @@ def plan(persistence=True, *, operation="create", already=False, path="result.md
 
 def ready(context):
     return {"status": "READY_TO_PERSIST", "reason": "material ready",
-            "unresolved_requirements": [], "next_action": "",
-            "candidate_ids": [c["candidate_id"] for c in context.get("candidates", [])]}
+            "unresolved_requirements": [], "next_action": ""}
 
 
 def continuation():
@@ -100,6 +99,56 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(client.bodies[0]["function_call"], "auto")
         self.assertIsNone(self.stored()["active_stage_id"])
 
+    async def test_live_readiness_ready_without_uuid_executes_concrete_write(self):
+        async def nonideal_planner(**kw):
+            if kw["mode"] == "INITIAL":
+                return plan()
+            return {"status": "READY_TO_PERSIST", "reason": "document material is ready",
+                    "unresolved_requirements": [], "next_action": "WRITE_FILE", "candidate_ids": []}
+        real_dispatch = server._execute_agent_function
+        with patch.object(server, "_execute_agent_function", wraps=real_dispatch) as dispatch:
+            result, audit, _ = await self.run_v6(planner_effect=nonideal_planner,
+                responses=[tool(write()), legacy.FakeResponse("Finished")])
+        self.assertGreater(dispatch.call_count, 0)
+        self.assertEqual(result, "Finished")
+        self.assertEqual((self.workspace / "result.md").read_text(), "done")
+        self.assertTrue(any(c.args[1]["name"] == "write_file" for c in dispatch.call_args_list))
+        events = self.event_names()
+        self.assertLess(events.index("persistence_required"), events.index("tool_started"))
+        self.assertLess(events.index("persistence_satisfied"), events.index("final_audit_started"))
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_invented_legacy_uuid_cannot_redirect_single_candidate(self):
+        async def invented(**kw):
+            if kw["mode"] == "INITIAL":
+                return plan()
+            return {**ready(kw["context"]), "candidate_ids": ["candidate_invented_other_target"]}
+        result, audit, _ = await self.run_v6(planner_effect=invented,
+            responses=[tool(write()), legacy.FakeResponse("Finished")])
+        self.assertEqual(result, "Finished")
+        self.assertEqual((self.workspace / "result.md").read_text(), "done")
+        self.assertEqual(self.stored()["receipts"][0]["path"], "result.md")
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_readiness_without_legacy_uuid_field(self):
+        result, audit, _ = await self.run_v6(responses=[tool(write()), legacy.FakeResponse("Finished")])
+        self.assertEqual(result, "Finished")
+        self.assertEqual(audit.await_count, 1)
+        self.assertTrue(all("candidate_id" not in candidate
+                            for c in self.planner.await_args_list if c.kwargs["mode"] == "READINESS"
+                            for candidate in c.kwargs["context"]["candidates"]))
+
+    async def test_legacy_correct_uuid_is_advisory(self):
+        async def legacy_echo(**kw):
+            if kw["mode"] == "INITIAL":
+                return plan()
+            return {**ready(kw["context"]), "candidate_ids": [
+                next(iter(self.stored()["candidates"]))]}
+        result, audit, _ = await self.run_v6(planner_effect=legacy_echo,
+            responses=[tool(write()), legacy.FakeResponse("Finished")])
+        self.assertEqual(result, "Finished")
+        self.assertEqual(audit.await_count, 1)
+
     async def test_zero_tools_false_completion_never_reaches_audit(self):
         result, audit, _ = await self.run_v6(responses=[legacy.FakeResponse("Файл создан, git diff выполнен.")] * 4)
         self.assertIn("BLOCKED", result)
@@ -163,6 +212,10 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         audit.assert_not_awaited()
         self.assertFalse((self.workspace / "result.md").exists())
         self.assertTrue(all(b["function_call"] == "auto" for b in client.bodies))
+        rejected = [e for e in self.events if e["event"] == "mutation_preflight_rejected"]
+        self.assertTrue(rejected)
+        self.assertTrue(all(e["executed"] is False for e in rejected))
+        self.assertNotIn("tool_started", self.event_names())
 
     async def test_ready_with_unresolved_requirements_is_rejected(self):
         async def premature(**kw):
@@ -344,6 +397,62 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(self.stored()["receipts"]), 4)
         self.assertEqual(audit.await_count, 1)
 
+    async def test_ambiguous_operations_same_artifact_never_dispatch(self):
+        proposals = json.dumps({"candidates": [write(content="done"), write(content="different")]})
+        real_dispatch = server._execute_agent_function
+        with patch.object(server, "_execute_agent_function", wraps=real_dispatch) as dispatch:
+            result, audit, _ = await self.run_v6(responses=[legacy.FakeResponse(proposals)]
+                + [legacy.FakeResponse("Still ready") for _ in range(4)])
+        self.assertIn("BLOCKED", result)
+        self.assertEqual(dispatch.call_count, 0)
+        self.assertFalse((self.workspace / "result.md").exists())
+        self.assertNotIn("persistence_required", self.event_names())
+        self.assertIn("candidate_ambiguous", [e.get("reason_code") for e in self.events])
+        audit.assert_not_awaited()
+
+    async def test_preflight_continuation_has_no_tool_runtime_events(self):
+        async def not_ready(**kw):
+            return plan() if kw["mode"] == "INITIAL" else continuation()
+        real_dispatch = server._execute_agent_function
+        with patch.object(server, "_execute_agent_function", wraps=real_dispatch) as dispatch:
+            result, audit, _ = await self.run_v6(planner_effect=not_ready,
+                responses=[tool(write())] + [legacy.FakeResponse("Later") for _ in range(4)])
+        self.assertIn("BLOCKED", result)
+        self.assertEqual(dispatch.call_count, 0)
+        self.assertNotIn("tool_started", self.event_names())
+        self.assertNotIn("tool_error", self.event_names())
+        rejected = next(e for e in self.events if e["event"] == "mutation_preflight_rejected")
+        self.assertEqual(rejected["reason_code"], "planner_continue")
+        self.assertIs(rejected["executed"], False)
+        self.assertEqual(rejected["stage_id"], "main")
+        self.assertEqual(rejected["plan_version"], 1)
+        state = self.stored()
+        thread = audit_storage.load_audit_thread(self.workspace, "ws_test", None, state["run_id"])
+        stored_event = next(e for e in thread["task_lifecycle"]["events"]
+                            if e["event"] == "mutation_preflight_rejected")
+        self.assertIs(stored_event["executed"], False)
+        self.assertEqual(stored_event["reason_code"], "planner_continue")
+        audit.assert_not_awaited()
+
+    async def test_real_dispatch_error_has_tool_started_then_tool_error(self):
+        real_dispatch = server._execute_agent_function
+        calls = 0
+        def first_write_fails(*args, **kwargs):
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise ValueError("real dispatcher failure")
+            return real_dispatch(*args, **kwargs)
+        with patch.object(server, "_execute_agent_function", side_effect=first_write_fails):
+            result, audit, _ = await self.run_v6(responses=[tool(write()),
+                legacy.FakeResponse("Retry"), legacy.FakeResponse("Finished")])
+        self.assertEqual(result, "Finished")
+        self.assertEqual(calls, 2)
+        names = self.event_names()
+        self.assertLess(names.index("tool_started"), names.index("tool_error"))
+        self.assertNotIn("mutation_preflight_rejected", names)
+        self.assertEqual(audit.await_count, 1)
+
 
 class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
@@ -396,6 +505,16 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
             await lc.before_mutation(write())
         self.assertEqual(lc.state["stage_states"]["main"]["status"], "WORKING")
         self.assertEqual((self.root / "result.md").read_text(), "external")
+
+    async def test_server_binding_rejects_candidate_from_other_plan_version(self):
+        lc = self.controller(plan())
+        await lc.initialize({})
+        candidate = lc.new_candidate(write())
+        candidate["plan_version"] = 999
+        decision = await lc.readiness("material ready", [candidate])
+        self.assertEqual(decision["reason_code"], "candidate_binding_invalid")
+        self.assertEqual(lc.state["stage_states"]["main"]["status"], "WORKING")
+        self.assertEqual(lc.state["receipts"], [])
 
     async def test_replan_cannot_silently_drop_obligation(self):
         async def effect(**kw):
