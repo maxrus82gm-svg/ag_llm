@@ -1,0 +1,175 @@
+{
+  "contexts": {
+    "execution_consistency.correction": {
+      "allowed_variables": [
+        "reason",
+        "violations_lines",
+        "required_action"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Verifier запросил одну коррекцию после повторного несоответствия исполнения.",
+      "factory_text": "SERVER CONSISTENCY FEEDBACK.\nПричина: {reason}\nНарушения:\n{violations_lines}\nТребуемое действие: {required_action}\nЕсли есть реальный blocker, укажи его и подтверди tool evidence. Если blocker отсутствует, выполни требуемую часть RAW TASK доступными tools. Если требуемое состояние уже существует, проверь и покажи это фактически. Не меняй Workspace только ради проверки. RAW TASK остаётся источником истины; это не новая USER TASK.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "execution_consistency.feedback": {
+      "allowed_variables": [],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Server запросил однократную перепроверку исполнения исходной TASK.",
+      "factory_text": "SERVER EXECUTION SELF-CHECK. Перепроверь исходную RAW TASK, текущее состояние целевого объекта и доступные инструменты. В этом RUN пока нет физических изменений, хотя TASK выглядит предполагающей изменение. Если изменение действительно требуется, продолжи с разрешёнными tools. Если оно не требуется, уже выполнено, невозможно, неоднозначно или небезопасно, проверь это фактически и объясни подтверждённую причину. Не меняй Workspace только ради прохождения проверки. Это серверная обратная связь, а не новая USER TASK.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "final_audit.feedback": {
+      "allowed_variables": [
+        "verdict",
+        "reason",
+        "violations_lines",
+        "required_action",
+        "correction_cycle",
+        "correction_limit",
+        "remaining_corrections"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Final Audit заблокировал SUCCESS и запросил ограниченную коррекцию RUN.",
+      "factory_text": "SERVER FINAL VERIFIER FEEDBACK — SUCCESS ЗАБЛОКИРОВАН.\n\nРЕЗУЛЬТАТ:\n{verdict}\n\nПРИЧИНА:\n{reason}\n\nНАРУШЕНИЯ:\n{violations_lines}\n\nТРЕБУЕМОЕ ДЕЙСТВИЕ:\n{required_action}\n\nЦИКЛ КОРРЕКЦИИ: {correction_cycle} из {correction_limit}.\nОСТАЛОСЬ КОРРЕКЦИЙ: {remaining_corrections}.\n\nЭто серверная обратная связь Final Verifier по исходной RAW TASK, а НЕ новая пользовательская задача. RAW TASK остаётся источником истины и имеет приоритет. Исправь фактический результат задачи, выполни необходимые реальные проверки и снова заверши RUN.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "guard.repeat": {
+      "allowed_variables": [],
+      "apply_scope": "NEXT_EVENT",
+      "description": "GUARD P1 остановил механический повтор успешного read/list.",
+      "factory_text": "SUPERVISOR CHECK — этот же успешный tool с теми же arguments уже выполнялся несколько раз, а релевантное состояние не изменилось. Вызов сейчас НЕ выполнен. Снова сопоставь действие с исходной TASK и используй уже полученный результат. Если повтор действительно нужен, измени план/состояние; не продолжай механически повторять тот же вызов.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "guard.suspicious_create": {
+      "allowed_variables": [],
+      "apply_scope": "NEXT_EVENT",
+      "description": "GUARD P1 обнаружил создание файла, похожего на существующий.",
+      "factory_text": "SUPERVISOR CHECK — ты собираешься СОЗДАТЬ новый файл, очень похожий на существующий. Новый файл пока НЕ создан. Снова сопоставь действие с исходной TASK: действительно нужен новый документ или следовало изменить существующий? Если после самопроверки создание действительно нужно, повтори тот же write_file: повторный осознанный запрос в этом RUN будет разрешён.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "permission.denied": {
+      "allowed_variables": [
+        "capability",
+        "tool_name"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Сервер отказал в доступе к capability для вызванного инструмента.",
+      "factory_text": "Capability {capability} отключена в текущем RUN. Tool {tool_name} не выполнен. Не повторяй вызов механически: перепроверь RAW TASK. Если capability действительно необходима, повторный запрос приведёт к серверной проверке разрешения.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "permission.granted": {
+      "allowed_variables": [
+        "capability"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Разрешение выдано для текущего RUN.",
+      "factory_text": "Capability {capability} теперь разрешена в текущем RUN и прежнем scope. Предыдущий запрещённый вызов не выполнен. Если действие ещё нужно, запроси tool заново с актуальным состоянием файла.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "permission.review_not_required": {
+      "allowed_variables": [
+        "capability"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Расширение прав не подтверждено.",
+      "factory_text": "Необходимость {capability} не подтверждена. Capability остаётся OFF; запрещённый вызов не выполнен. Продолжи или заверши задачу с текущими правами.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "permission.scope_blocked": {
+      "allowed_variables": [
+        "path",
+        "capability"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Путь вне разрешённой области.",
+      "factory_text": "Путь {path} находится вне настроенного scope для {capability}. Scope не расширен, вызов не выполнен.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "permission.user_denied": {
+      "allowed_variables": [
+        "capability"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Разрешение не выдано.",
+      "factory_text": "Capability {capability} не разрешена. Запрещённые операции не выполнялись.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "persistence.preflight_rejected": {
+      "allowed_variables": [
+        "tool_name",
+        "error_type",
+        "error_message"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Сервер отклонил подготовленную операцию до запуска file tool.",
+      "factory_text": "File tool {tool_name} не запускался: {error_type}: {error_message}. Сохрани RAW TASK и текущий stage. Исправь конкретный candidate или выполни next_action; отказ preflight не является результатом записи.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "persistence.required": {
+      "allowed_variables": [],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Обязательный результат этапа ещё не зафиксирован.",
+      "factory_text": "SERVER: persistence obligation остаётся открытым. Следуй next_action и текущему stage. Подготовь конкретный payload и выполни нужную разрешённую операцию. Можно вернуть JSON с candidates: массив объектов name/arguments для существующих tools. Не подменяй требуемый результат мутацией другого файла. stop и текстовое утверждение не являются доказательством записи. Права и scope остаются серверными.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "task.stage": {
+      "allowed_variables": [],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Текущий этап серверного Task Plan.",
+      "factory_text": "Выполняй текущий stage по RAW TASK и SERVER FACTS. Сохраняй ограничения TASK. Для persistence stage подготовь конкретный материал и используй разрешённый file tool. Если завершаешь анализ до записи, верни JSON с candidates: массив объектов name и arguments существующих file tools. Полные content/replacement должны быть в arguments. Пустое заявление о сохранении не закрывает обязательство. Не раскрывай внутренние рассуждения.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "tool.error": {
+      "allowed_variables": [
+        "tool_name",
+        "error_type",
+        "error_message"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Вызов инструмента завершился ошибкой.",
+      "factory_text": "Tool {tool_name} завершился ошибкой {error_type}: {error_message}. Исправь причину ошибки и повтори необходимую проверку или вызов. Для путей используй только относительные пути внутри workspace; корень обозначается '.'.",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    },
+    "verification.required": {
+      "allowed_variables": [
+        "missing_lines",
+        "verification_state"
+      ],
+      "apply_scope": "NEXT_EVENT",
+      "description": "Verification Gate заблокировал SUCCESS до обязательных проверок.",
+      "factory_text": "SERVER VERIFICATION GATE — SUCCESS BLOCKED.\nТы попытался завершить RUN, но сервер физически запрещает SUCCESS, пока реальные проверки после последних изменений не завершены.\nНе объявляй задачу завершённой и не утверждай, что код исправен, пока ниже остаются пункты.\n\nОБЯЗАТЕЛЬНО ВЫПОЛНИ:\n{missing_lines}\n\nЕсли проверка падает из-за изменённого тобой кода — исправь код в разрешённом scope и повтори проверки. Любая новая запись снова делает git_diff/git_status устаревшими, а новая Python-запись — python_compile; изменение server.py/ultra_ui.py — ui_smoke_test.\nЕсли исправление невозможно в текущих разрешениях, сообщи о блокере, но SUCCESS всё равно запрещён.\n\nТекущее verification state:\n{verification_state}",
+      "group_id": "server_events",
+      "group_name": "Серверные события",
+      "runtime_owner": "server_context_messages.py"
+    }
+  },
+  "schema_version": 1
+}
