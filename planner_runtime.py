@@ -46,8 +46,27 @@ def text_field(value, label, limit=2000):
 
 
 def keys(value, required, optional=()):
-    if not isinstance(value, dict) or set(value) - set(required) - set(optional) or set(required) - set(value):
-        raise PlannerError("Invalid structured fields")
+    if not isinstance(value, dict):
+        raise PlannerError("Invalid structured fields: expected object")
+
+    actual = set(value)
+    required = set(required)
+    optional = set(optional)
+
+    missing = sorted(required - actual)
+    extra = sorted(actual - required - optional)
+
+    if missing or extra:
+        parts = []
+        if missing:
+            parts.append(f"missing={missing[:8]!r}")
+        if extra:
+            parts.append(f"extra={extra[:8]!r}")
+
+        message = "Invalid structured fields: " + ", ".join(parts)
+        if len(message) > 240:
+            message = message[:237] + "..."
+        raise PlannerError(message)
 
 
 def string_list(value, label, limit=16):
@@ -73,7 +92,10 @@ def validate_plan(value: dict) -> dict:
         ids.add(sid)
         text_field(stage["goal"], "goal")
         if stage["stage_type"] not in {"analysis", "produce_artifact", "verification"}:
-            raise PlannerError("Invalid stage_type")
+            received = repr(stage["stage_type"])
+            if len(received) > 80:
+                received = received[:77] + "..."
+            raise PlannerError(f"Invalid stage_type: {received}")
         if type(stage["persistence_required"]) is not bool:
             raise PlannerError("persistence_required must be boolean")
         caps = string_list(stage["allowed_capabilities"], "capabilities", 4)
@@ -196,14 +218,26 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
             "Executor feels confident. An assertion 'saved' without material is not ready."
         )
     else:
-        system += (
+       system += (
             "Return the following shape (example only, choose actual stages from RAW TASK): "
-            + json.dumps(PLAN_FORMAT) + ". stage_type: analysis|produce_artifact|verification; "
+            + json.dumps(PLAN_FORMAT) + ". "
+            "stage_type: analysis|produce_artifact|verification. "
+            "stage_type is a semantic workflow phase, NOT an Executor tool name, "
+            "and MUST be exactly analysis|produce_artifact|verification. "
+            "For any stage whose purpose is to create or modify a requested artifact, "
+            "including point edits, use stage_type=produce_artifact. "
+            "Never use write_file, replace_text, insert_before, insert_after, "
+            "or any other tool name as stage_type. "
             "capabilities: READ|WRITE|DELETE|VERIFY. Non-persistence stages have artifacts=[]. "
             "Replan must preserve completed stages/ids unchanged when still valid. For every removed "
             "or changed artifact give obligation_changes entry with old_artifact_id, action "
             "replace|cancel, replacement_ids, reason, fact_id referring to supplied authoritative facts. "
-            "Never silently drop obligations. Use operation update for an existing target needing repair. "
+            "Never silently drop obligations. "
+            "artifact.operation is a semantic persistence operation, NOT an Executor tool name, "
+            "and MUST be exactly create|update|delete. "
+            "For any existing file that must be changed, including point edits, use operation=update. "
+            "Never use write_file, replace_text, insert_before, insert_after, or any other tool name "
+            "as artifact.operation. The concrete mutation tool is selected later by the Executor. "
             "Do not put payloads or reasoning in the plan. Server supplies identities and version."
         )
     serialized = json.dumps({"mode": mode, "raw_task": raw_task, "context": context}, ensure_ascii=False)

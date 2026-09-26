@@ -8,7 +8,7 @@ from pathlib import Path
 import time
 import uuid
 
-from planner_runtime import validate_plan, validate_readiness
+from planner_runtime import PlannerError, validate_plan, validate_readiness
 
 PERSISTENCE_RECOVERY_LIMIT = 2
 READINESS_CONTINUE_LIMIT = 2
@@ -117,7 +117,11 @@ class TaskLifecycle:
             result = await self.planner_call(mode=mode, raw_task=self.raw_task, context=context)
             result = validate_readiness(result) if mode == "READINESS" else validate_plan(result)
         except Exception as exc:
-            self.event("planner_failed", mode=mode, reason=type(exc).__name__)
+            error_type = type(exc).__name__
+            failure = {"mode": mode, "reason": error_type, "error_type": error_type}
+            if isinstance(exc, PlannerError):
+                failure["error_message"] = str(exc)
+            self.event("planner_failed", **failure)
             self.block("planner_protocol_or_runtime_error")
         self.event("planner_readiness_result" if mode == "READINESS" else "planner_completed",
                    mode=mode, status=result.get("status", "VALID"), reason=result.get("reason", ""))

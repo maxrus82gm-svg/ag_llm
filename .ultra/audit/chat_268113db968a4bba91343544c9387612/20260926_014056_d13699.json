@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_268113db968a4bba91343544c9387612",
+  "task_block_id": "tb_89c4800727084b94a3b4ab45f414df07",
+  "run_id": "20260926_014056_d13699",
+  "issues": [],
+  "final_audit": "NOT_RUN",
+  "run_status": "BLOCKED",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_completed",
+        "plan_version": 0,
+        "status": "VALID",
+        "reason": ""
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "plan_created",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "candidate_preparation_failed",
+        "path": "Документация/17_Архитектура межчатового контекста и Cross-Chat Context Broker.md",
+        "function": "replace_text",
+        "executed": false
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "CONTINUE",
+        "reason": "Требуется выполнить первую точечную замену в документе 17 (раздел A). Операция replace_text подготовлена, но ещё не применена. После её применения нужно перейти к исправлениям B и C в том же файле, затем зарегистрировать документ в 08_Старт.md и 00_Главная - карта проекта.md."
+      },
+      {
+        "event": "planner_readiness_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "planner_continue",
+        "executed": false
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "planner_continue",
+        "path": "Документация/17_Архитектура межчатового контекста и Cross-Chat Context Broker.md",
+        "function": "replace_text",
+        "executed": false
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "candidate_preparation_failed",
+        "path": "Документация/08_Старт.md",
+        "function": "insert_after",
+        "executed": false
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "candidate_preparation_failed",
+        "path": "Документация/00_Главная - карта проекта.md",
+        "function": "insert_after",
+        "executed": false
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "CONTINUE",
+        "reason": "Необходимо выполнить первую точечную замену в документе 17 (раздел A), для которой уже подготовлен кандидат операции replace_text. После подтверждения этой мутации можно переходить к следующим исправлениям и регистрациям."
+      },
+      {
+        "event": "planner_readiness_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "planner_continue",
+        "executed": false
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason_code": "planner_continue",
+        "path": "Документация/17_Архитектура межчатового контекста и Cross-Chat Context Broker.md",
+        "function": "replace_text",
+        "executed": false
+      },
+      {
+        "event": "persistence_unsatisfied",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "persistence_recovery_started",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "attempt": 1
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_failed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason": "PlannerError",
+        "error_type": "PlannerError",
+        "error_message": "Invalid unresolved requirements"
+      },
+      {
+        "event": "stage_blocked",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "reason": "planner_protocol_or_runtime_error"
+      }
+    ],
+    "plan_id": "plan_179bbd62fbcd473fa46c2ed72bfbece1",
+    "plan_version": 1,
+    "stage_id": "stage_1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_268113db968a4bba91343544c9387612",
+  "task_block_id": "tb_5cb4ecdc001d4b488f55a7daed9c3912",
+  "run_id": "20260926_010332_2984de",
+  "issues": [],
+  "final_audit": "NOT_RUN",
+  "run_status": "BLOCKED",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_failed",
+        "plan_version": 0,
+        "reason": "PlannerError",
+        "error_type": "PlannerError",
+        "error_message": "Invalid stage_type"
+      },
+      {
+        "event": "stage_blocked",
+        "plan_version": 0,
+        "reason": "planner_protocol_or_runtime_error"
+      }
+    ],
+    "plan_id": "plan_6562db03705747f7aad85020f990b85e",
+    "plan_version": 0
+  }
+}

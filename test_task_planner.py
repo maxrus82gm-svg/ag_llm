@@ -315,10 +315,17 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_planner_failure_never_falls_back(self):
         async def broken(**kw):
-            raise planner_runtime.PlannerError("bad JSON")
+            raise planner_runtime.PlannerError("Invalid operation")
         result, audit, client = await self.run_v6(planner_effect=broken)
         self.assertIn("BLOCKED", result)
         self.assertEqual(client.post_count, 0)
+        failure = next(e for e in self.events if e["event"] == "planner_failed")
+        self.assertEqual(failure["error_type"], "PlannerError")
+        self.assertEqual(failure["error_message"], "Invalid operation")
+        state = self.stored()
+        thread = audit_storage.load_audit_thread(self.workspace, "ws_test", None, state["run_id"])
+        traced = next(e for e in thread["task_lifecycle"]["events"] if e["event"] == "planner_failed")
+        self.assertEqual(traced["error_message"], "Invalid operation")
         audit.assert_not_awaited()
 
     async def test_previous_stage_mutation_does_not_close_later_obligation(self):
@@ -584,6 +591,16 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
 
 
 class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
+    def test_invalid_stage_type_reports_bounded_received_value(self):
+        value = plan()
+        value["stages"][0]["stage_type"] = "edit"
+        with self.assertRaisesRegex(planner_runtime.PlannerError, "Invalid stage_type: 'edit'"):
+            planner_runtime.validate_plan(value)
+        value["stages"][0]["stage_type"] = "x" * 200
+        with self.assertRaises(planner_runtime.PlannerError) as caught:
+            planner_runtime.validate_plan(value)
+        self.assertLessEqual(len(str(caught.exception)), len("Invalid stage_type: ") + 80)
+
     def test_schema_rejects_untyped_or_empty_contract(self):
         for mutation in [lambda p: p["stages"][0].update(persistence_required="true"),
                          lambda p: p["stages"][0].update(artifacts=[]),

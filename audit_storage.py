@@ -133,10 +133,16 @@ class AuditThreadRecorder:
             for key in ("plan_id", "plan_version", "stage_id"):
                 if event.get(key) is not None:
                     lifecycle[key] = event[key]
-            lifecycle["events"].append({"event": kind, **{
+            recorded = {"event": kind, **{
                 key: (_short(event[key]) if isinstance(event[key], str) else event[key])
                 for key in ("plan_version", "stage_id", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route")
-                if key in event and isinstance(event[key], (str, int, bool))}})
+                if key in event and isinstance(event[key], (str, int, bool))}}
+            if kind == "planner_failed":
+                if isinstance(event.get("error_type"), str):
+                    recorded["error_type"] = _short(event["error_type"])
+                if event.get("error_type") == "PlannerError" and isinstance(event.get("error_message"), str):
+                    recorded["error_message"] = _short(event["error_message"])
+            lifecycle["events"].append(recorded)
             del lifecycle["events"][:-128]
         elif kind.startswith("permission_"):
             capability = event.get("capability") or "UNKNOWN"
