@@ -1,4 +1,6 @@
 import asyncio
+import msvcrt
+import os
 import queue
 import threading
 import time
@@ -70,6 +72,14 @@ from planner_runtime import DEFAULT_PLANNER_MODEL_ID
 
 APP_TITLE = "GigaChat Ultra Local Agent"
 
+_RUNTIME_DIR = (
+    Path(os.getenv("LOCALAPPDATA") or Path.home())
+    / "GigaChatUltra"
+    / "runtime"
+)
+
+_INSTANCE_LOCK_PATH = _RUNTIME_DIR / "ultra_ui.lock"
+
 VERIFY_TOOLS_TOOLTIP = (
     "Даёт Исполнителю инструменты технической самопроверки во время работы: "
     "проверку Python-кода, smoke-тесты, Git diff/status и другие доступные "
@@ -91,6 +101,78 @@ FINAL_AUDIT_TOOLTIP = (
     "обязательных серверных проверок. Анализирует итог работы и при обнаружении "
     "проблемы может потребовать исправление."
 )
+
+
+class _SingleInstanceLock:
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        self._handle = None
+
+    def acquire(self) -> bool:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+
+        handle = self.path.open("a+b")
+
+        try:
+            handle.seek(0, 2)
+            if handle.tell() == 0:
+                handle.write(b"0")
+                handle.flush()
+
+            handle.seek(0)
+
+            msvcrt.locking(
+                handle.fileno(),
+                msvcrt.LK_NBLCK,
+                1,
+            )
+        except OSError:
+            handle.close()
+            return False
+
+        # PID здесь только диагностическая информация.
+        # Источником истины является Windows file lock.
+        handle.seek(0)
+        handle.truncate()
+        handle.write(str(os.getpid()).encode("ascii"))
+        handle.flush()
+        handle.seek(0)
+
+        self._handle = handle
+        return True
+
+    def release(self) -> None:
+        handle = self._handle
+        if handle is None:
+            return
+
+        self._handle = None
+
+        try:
+            handle.seek(0)
+            msvcrt.locking(
+                handle.fileno(),
+                msvcrt.LK_UNLCK,
+                1,
+            )
+        except OSError:
+            pass
+        finally:
+            handle.close()
+
+
+def _show_already_running_message() -> None:
+    root = tk.Tk()
+    root.withdraw()
+    try:
+        messagebox.showinfo(
+            APP_TITLE,
+            "AG LLM Ultra уже запущен.\n\n"
+            "Одновременно разрешён только один экземпляр.",
+            parent=root,
+        )
+    finally:
+        root.destroy()
 
 
 def get_message_display_text(message: dict, resolved: dict | None = None) -> str:
@@ -4941,5 +5023,13 @@ class UltraApp(tk.Tk):
 
 
 if __name__ == "__main__":
-    app = UltraApp()
-    app.mainloop()
+    instance_lock = _SingleInstanceLock(_INSTANCE_LOCK_PATH)
+
+    if not instance_lock.acquire():
+        _show_already_running_message()
+    else:
+        try:
+            app = UltraApp()
+            app.mainloop()
+        finally:
+            instance_lock.release()
