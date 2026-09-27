@@ -41,7 +41,11 @@ from context_storage import (
     save_project_context,
 )
 from ui_state import load_ui_state, save_ui_state
-from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
+from ui_state import (
+    DEFAULT_CHAT_AUDIT_RATIOS,
+    DEFAULT_CENTRAL_VERTICAL_RATIOS,
+    DEFAULT_LEFT_VERTICAL_RATIOS,
+)
 from audit_storage import (
     EXECUTOR_DIAGNOSTIC_EVENTS,
     PLANNER_DIAGNOSTIC_EVENTS,
@@ -630,7 +634,7 @@ class UltraApp(tk.Tk):
         }
 
         self.configure(bg=bg)
-        for name in ("main_paned", "central_vertical_paned", "chat_audit_paned"):
+        for name in ("main_paned", "central_vertical_paned", "chat_audit_paned", "left_vertical_paned"):
             paned = getattr(self, name, None)
             if paned is not None:
                 try:
@@ -689,7 +693,7 @@ class UltraApp(tk.Tk):
             foreground=[("disabled", muted), ("!disabled", fg)],
         )
 
-        for name in ("trace_log", "chat", "audit_text", "input_box"):
+        for name in ("trace_log", "planner_chat_text", "chat", "audit_text", "input_box"):
             widget = getattr(self, name, None)
             if widget is not None:
                 widget.configure(
@@ -764,6 +768,14 @@ class UltraApp(tk.Tk):
             audit_text.tag_configure("ultra", foreground=self.assistant_text_color_var.get())
             audit_text.tag_configure("resolved", foreground=self.log_text_color_var.get())
             audit_text.tag_configure("metadata", foreground=self._theme_colors.get("muted", "#888888"))
+
+        planner_chat = getattr(self, "planner_chat_text", None)
+        if planner_chat is not None:
+            planner_chat.tag_configure("task", foreground=self.user_text_color_var.get())
+            planner_chat.tag_configure("planner", foreground=self.assistant_text_color_var.get())
+            planner_chat.tag_configure("server", foreground=self.log_text_color_var.get())
+            planner_chat.tag_configure("dredd", foreground=self.error_log_color_var.get())
+            planner_chat.tag_configure("metadata", foreground=self._theme_colors.get("muted", "#888888"))
 
         chat = getattr(self, "chat", None)
         if chat is not None:
@@ -898,15 +910,26 @@ class UltraApp(tk.Tk):
             self._on_sash_release,
         )
 
-        # Левая панель — наблюдаемый trace.
+        # Левая панель — trace и отдельный Planning Session conversation view.
         left_frame = ttk.Frame(self.main_paned, width=360)
         self.main_paned.add(left_frame, minsize=240)
 
-        ttk.Label(left_frame, text="ЛОГ ДЕЙСТВИЙ").pack(
+        self.left_vertical_paned = tk.PanedWindow(
+            left_frame, orient="vertical", sashwidth=6, showhandle=False,
+            bd=0, relief="flat", sashrelief="flat", bg="#2b2d30",
+        )
+        self.left_vertical_paned.pack(fill="both", expand=True)
+        self.left_vertical_paned.bind("<ButtonRelease-1>", self._on_sash_release)
+        trace_pane = ttk.Frame(self.left_vertical_paned)
+        planner_chat_pane = ttk.Frame(self.left_vertical_paned)
+        self.left_vertical_paned.add(trace_pane, minsize=120, stretch="always")
+        self.left_vertical_paned.add(planner_chat_pane, minsize=120)
+
+        ttk.Label(trace_pane, text="ЛОГ ДЕЙСТВИЙ").pack(
             anchor="w", pady=(0, 6)
         )
         self.trace_log = scrolledtext.ScrolledText(
-            left_frame,
+            trace_pane,
             wrap="word",
             state="disabled",
             font=("Consolas", 9),
@@ -917,6 +940,18 @@ class UltraApp(tk.Tk):
             foreground=self.log_text_color_var.get(),
             font=("Consolas", 9),
         )
+
+        ttk.Label(planner_chat_pane, text="PLANNER / CONTROL CHAT").pack(
+            anchor="w", pady=(0, 3)
+        )
+        self.planner_chat_status_var = tk.StringVar(value="TASK BLOCK: — · SESSION: —")
+        ttk.Label(planner_chat_pane, textvariable=self.planner_chat_status_var).pack(
+            anchor="w", pady=(0, 4)
+        )
+        self.planner_chat_text = scrolledtext.ScrolledText(
+            planner_chat_pane, wrap="word", state="disabled", font=("Consolas", 9),
+        )
+        self.planner_chat_text.pack(fill="both", expand=True)
 
         # Центральная панель — текущий чат и верхняя системная зона.
         right_frame = ttk.Frame(self.main_paned)
@@ -1981,6 +2016,7 @@ class UltraApp(tk.Tk):
         for name, key, dimension, visible in (
             ("chat_audit_paned", "chat_audit_ratios", "width", self.audit_visible_var.get()),
             ("central_vertical_paned", "central_vertical_ratios", "height", True),
+            ("left_vertical_paned", "left_vertical_ratios", "height", True),
         ):
             paned = getattr(self, name, None)
             if paned is None or not visible:
@@ -1998,6 +2034,7 @@ class UltraApp(tk.Tk):
         for name, key, dimension, minimum in (
             ("chat_audit_paned", "chat_audit_ratios", "width", 180),
             ("central_vertical_paned", "central_vertical_ratios", "height", 210),
+            ("left_vertical_paned", "left_vertical_ratios", "height", 120),
         ):
             paned = getattr(self, name, None)
             if paned is None:
@@ -2124,6 +2161,7 @@ class UltraApp(tk.Tk):
         }
         self._ui_state["chat_audit_ratios"] = dict(DEFAULT_CHAT_AUDIT_RATIOS)
         self._ui_state["central_vertical_ratios"] = dict(DEFAULT_CENTRAL_VERTICAL_RATIOS)
+        self._ui_state["left_vertical_ratios"] = dict(DEFAULT_LEFT_VERTICAL_RATIOS)
         self.audit_visible_var.set(True)
         self._toggle_audit_panel(save=False)
         self._apply_panel_ratios(self._window_mode())
@@ -2805,12 +2843,21 @@ class UltraApp(tk.Tk):
         if self._loaded_workspace_root != resolved or not self.current_chat_id:
             raise RuntimeError("Workspace/Chat не удалось активировать.")
 
-    def _assistant_label(self, producer: object) -> str:
+    @staticmethod
+    def _short_task_id(task_block_id: object) -> str | None:
+        if not isinstance(task_block_id, str) or not task_block_id:
+            return None
+        value = task_block_id[3:] if task_block_id.startswith("tb_") else task_block_id
+        return value[:8]
+
+    def _assistant_label(self, producer: object, task_block_id: object = None) -> str:
+        label = "АССИСТЕНТ"
         if isinstance(producer, dict):
             display_name = producer.get("model_display_name")
             if isinstance(display_name, str) and display_name.strip():
-                return f"АССИСТЕНТ · {display_name}"
-        return "АССИСТЕНТ"
+                label = f"АССИСТЕНТ · {display_name}"
+        short_id = self._short_task_id(task_block_id)
+        return f"{label} · TASK {short_id}" if short_id else label
 
     @staticmethod
     def _build_task_block_index(
@@ -2887,7 +2934,8 @@ class UltraApp(tk.Tk):
         self._chat_audit_sync_after = None
         if not self._task_block_order:
             return
-        reference = self.chat.index("@0,0")
+        height = max(self.chat.winfo_height(), 1) if hasattr(self.chat, "winfo_height") else 1
+        reference = self.chat.index(f"@0,{height // 2}")
         task_id = self._task_block_for_viewport(
             self._task_block_order, self._task_block_index,
             lambda mark: self.chat.compare(mark, "<=", reference),
@@ -2979,11 +3027,13 @@ class UltraApp(tk.Tk):
                     self.chat.mark_set(mark, "end-1c")
                     self.chat.mark_gravity(mark, "left")
                     self.chat.configure(state="disabled")
-                self._append_chat("ТЫ", text, "user")
+                short_id = self._short_task_id(task_id)
+                label = f"ТЫ · TASK {short_id}" if short_id else "ТЫ"
+                self._append_chat(label, text, "user")
             elif role == "assistant":
                 latest_audit_run_id = get_assistant_audit_run_id(message) or latest_audit_run_id
                 self._append_chat(
-                    self._assistant_label(message.get("producer")),
+                    self._assistant_label(message.get("producer"), message.get("task_block_id")),
                     text,
                     "assistant",
                 )
@@ -4804,6 +4854,67 @@ class UltraApp(tk.Tk):
             widget.see("end")
         finally:
             widget.configure(state="disabled")
+        render_planner = getattr(self, "_render_planner_chat", None)
+        if render_planner is not None:
+            render_planner(thread)
+
+    @staticmethod
+    def _planner_session_segments(
+        thread: dict | None, task_block_id: str | None = None,
+    ) -> list[tuple[str, str]]:
+        session = (thread or {}).get("planner_session") or {}
+        task_id = task_block_id or (thread or {}).get("task_block_id") or "—"
+        session_id = session.get("session_id") or "—"
+        status = session.get("status") or ("ACTIVE" if session else "—")
+        segments = [("metadata", (
+            f"TASK BLOCK: {task_id}\nPLANNING SESSION: {session_id}\nSTATUS: {status}\n\n"
+        ))]
+        dredd = session.get("dredd_review") or {}
+        for message in session.get("messages") or []:
+            speaker = message.get("speaker") or "SERVER"
+            model = message.get("model_display_name")
+            if speaker == "DREDD" and not model:
+                model = dredd.get("model_display_name") or dredd.get("model_id")
+            heading = speaker
+            if speaker == "PLANNER" and model:
+                heading = f"PLANNER · {model}"
+            elif speaker == "DREDD" and model:
+                heading = f"DREDD · {model}"
+            tag = {"TASK": "task", "PLANNER": "planner", "SERVER": "server",
+                   "DREDD": "dredd"}.get(speaker, "metadata")
+            segments.append((tag, f"{heading}\n{message.get('text') or ''}\n\n"))
+        return segments
+
+    def _render_planner_chat(self, thread: dict | None = None) -> None:
+        widget = getattr(self, "planner_chat_text", None)
+        if widget is None:
+            return
+        if thread is None:
+            run_id = getattr(self, "_selected_audit_run_id", None)
+            if run_id and self.current_workspace_id and self.current_chat_id:
+                try:
+                    thread = load_audit_thread(
+                        self.workspace_var.get(), self.current_workspace_id,
+                        self.current_chat_id, run_id,
+                    )
+                except Exception:
+                    thread = None
+        segments = self._planner_session_segments(
+            thread, getattr(self, "_selected_task_block_id", None),
+        )
+        session = (thread or {}).get("planner_session") or {}
+        task_id = getattr(self, "_selected_task_block_id", None) or (thread or {}).get("task_block_id") or "—"
+        self.planner_chat_status_var.set(
+            f"TASK BLOCK: {task_id} · SESSION: {session.get('session_id') or '—'}"
+        )
+        widget.configure(state="normal")
+        try:
+            widget.delete("1.0", "end")
+            for tag, text in segments:
+                widget.insert("end", text, tag)
+            widget.see("end")
+        finally:
+            widget.configure(state="disabled")
 
     def _append_trace(self, line: str, tag: str = "trace") -> None:
         self.trace_log.configure(state="normal")
@@ -5458,6 +5569,7 @@ class UltraApp(tk.Tk):
                         "producer": stored_message.get("producer"),
                         "provenance_warning": provenance_warning,
                         "run_status": final_run_status,
+                        "task_block_id": task_block_id,
                     },
                 )
             )
@@ -5523,6 +5635,10 @@ class UltraApp(tk.Tk):
                         provenance_warning = None
                     run_status = payload.get("run_status") if isinstance(payload, dict) else "SUCCESS"
                     self._finish_run("Готово" if run_status != "BLOCKED" else "BLOCKED")
+                    if isinstance(payload, dict):
+                        task_id = payload.get("task_block_id")
+                        if task_id and hasattr(self, "_select_task_block"):
+                            self._select_task_block(task_id, force=True)
                     if provenance_warning:
                         self._append_chat(
                             "СИСТЕМА",
@@ -5611,6 +5727,10 @@ class UltraApp(tk.Tk):
                         else:
                             self._selected_audit_run_id = self._active_audit_run_id
                             self._render_audit_thread()
+                    elif (self._selected_audit_run_id
+                          and event.get("run_id") == self._selected_audit_run_id
+                          and event_type.startswith("planner_session_")):
+                        self._render_planner_chat()
                     elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",

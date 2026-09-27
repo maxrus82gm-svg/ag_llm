@@ -34,6 +34,32 @@ class PlanInvalidated(RuntimeError):
         super().__init__(fact["reason"])
 
 
+def validate_replan_against_fact(previous_plan: dict, candidate: dict, fact: dict) -> None:
+    """Reject a candidate plan that demonstrably preserves a server-known conflict."""
+    if fact.get("reason") != "create_target_already_exists":
+        return
+    path = fact.get("path")
+    if not isinstance(path, str) or not path:
+        return
+    old_conflicts = {
+        artifact["artifact_id"]
+        for stage in previous_plan["stages"]
+        for artifact in stage["artifacts"]
+        if artifact["path"] == path and artifact["operation"] == "create"
+    }
+    if not old_conflicts:
+        return
+    for stage in candidate["stages"]:
+        for artifact in stage["artifacts"]:
+            if (artifact["path"] == path
+                    and artifact["operation"] == "create"
+                    and artifact["allow_already_satisfied"] is False):
+                raise PlannerError(
+                    "Replan did not resolve authoritative fact: "
+                    f"create_target_already_exists for {path}"
+                )
+
+
 def postcondition_holds(artifact: dict, snapshot: dict) -> bool:
     post = artifact["postcondition"]
     kind, value = post["kind"], post["value"]
@@ -65,10 +91,18 @@ def atomic_state(path: Path, data: dict) -> None:
 
 class TaskLifecycle:
     def __init__(self, *, path: Path, run_id: str, task_block_id: str | None,
-                 raw_task: str, planner_call, emit, snapshot, prepare):
+                 raw_task: str, planner_call, emit, snapshot, prepare,
+                 planner_session_id: str | None = None, planner_feedback=None,
+                 planner_review=None, dredd_enabled: bool = True):
         self.path, self.raw_task = path, raw_task
         self.planner_call, self.emit = planner_call, emit
         self.snapshot, self.prepare = snapshot, prepare
+        self.planner_session_id = planner_session_id or "ps_" + uuid.uuid4().hex
+        self.planner_feedback = planner_feedback
+        self.planner_review = planner_review
+        self.dredd_enabled = dredd_enabled
+        self._planner_session_started = False
+        self._planner_session_terminal = False
         self.started = time.monotonic()
         self.state = {"schema_version": 1, "run_id": run_id, "task_block_id": task_block_id,
                       "plan_id": "plan_" + uuid.uuid4().hex, "plan_version": 0,
@@ -105,34 +139,103 @@ class TaskLifecycle:
             self.state["stage_states"][self.stage["stage_id"]]["status"] = "BLOCKED"
         self.state["terminal_reason"] = reason
         self.save()
+        if not self._planner_session_terminal:
+            self._planner_session_terminal = True
+            self.event("planner_session_blocked", session_id=self.planner_session_id,
+                       task_block_id=self.state["task_block_id"], reason=reason)
         self.event("stage_blocked", reason=reason)
         self.emit("run_finished", {"status": "BLOCKED", "reason": reason})
         raise LifecycleBlocked(reason)
 
-    async def ask(self, mode, context):
-        self.tick("PLANNER")
+    def _session_feedback(self, *, speaker, mode, attempt, text):
+        if self.planner_feedback is not None:
+            self.planner_feedback(speaker=speaker, mode=mode, attempt=attempt, text=text)
+
+    async def ask(self, mode, context, candidate_validator=None):
         name = "planner_readiness_started" if mode == "READINESS" else "planner_started"
         self.event(name, mode=mode)
-        try:
-            result = await self.planner_call(mode=mode, raw_task=self.raw_task, context=context)
-            result = validate_readiness(result) if mode == "READINESS" else validate_plan(result)
-        except Exception as exc:
-            error_type = type(exc).__name__
-            failure = {"mode": mode, "reason": error_type, "error_type": error_type}
-            if isinstance(exc, PlannerError):
-                failure["error_message"] = str(exc)
-            self.event("planner_failed", **failure)
-            self.block("planner_protocol_or_runtime_error")
-        self.event("planner_readiness_result" if mode == "READINESS" else "planner_completed",
-                   mode=mode, status=result.get("status", "VALID"), reason=result.get("reason", ""))
-        return result
+        max_attempts = 3 if self.dredd_enabled and self.planner_review is not None else 2
+        for attempt in range(1, max_attempts + 1):
+            self.tick("PLANNER")
+            try:
+                result = await self.planner_call(
+                    mode=mode, raw_task=self.raw_task, context=context, attempt=attempt,
+                )
+                result = validate_readiness(result) if mode == "READINESS" else validate_plan(result)
+                if candidate_validator is not None:
+                    candidate_validator(result)
+            except Exception as exc:
+                error_type = type(exc).__name__
+                error_message = str(exc) if isinstance(exc, PlannerError) else error_type
+                self.event("planner_attempt_rejected", session_id=self.planner_session_id,
+                           task_block_id=self.state["task_block_id"], mode=mode,
+                           attempt=attempt, error_type=error_type,
+                           error_message=error_message)
+                if attempt == 1:
+                    self._session_feedback(
+                        speaker="SERVER", mode=mode, attempt=attempt,
+                        text=("SERVER VALIDATION\n\nPrevious Planner response is invalid.\n"
+                              f"Mode: {mode}\nValidation error: {error_message}\n\n"
+                              "Correct the previous response.\n"
+                              "Return the FULL corrected structured response required for this mode.\n"
+                              "Do not omit required fields.\n"
+                              "Do not return prose outside the required JSON."),
+                    )
+                    continue
+                if attempt == 2 and max_attempts == 3:
+                    self.event("planner_dredd_review_started", session_id=self.planner_session_id,
+                               task_block_id=self.state["task_block_id"], mode=mode)
+                    try:
+                        review = await self.planner_review(mode=mode, validation_error=error_message)
+                    except Exception as review_exc:
+                        failure = {"mode": mode, "reason": error_type,
+                                   "error_type": error_type}
+                        if isinstance(exc, PlannerError):
+                            failure["error_message"] = str(exc)
+                        self.event("planner_failed", **failure)
+                        self.block("planner_protocol_or_runtime_error")
+                    review_payload = (review if isinstance(review, dict)
+                                      else {key: getattr(review, key) for key in (
+                                          "diagnosis", "required_action", "verifier_run_id",
+                                          "model_id", "model_display_name", "provider_model_id")})
+                    self.event("planner_dredd_review_completed",
+                               session_id=self.planner_session_id,
+                               task_block_id=self.state["task_block_id"], mode=mode,
+                               **review_payload)
+                    self._session_feedback(
+                        speaker="DREDD", mode=mode, attempt=attempt,
+                        text=("DREDD REVIEW\n\nDiagnosis:\n"
+                              f"{review_payload['diagnosis']}\n\nRequired action:\n"
+                              f"{review_payload['required_action']}\n\n"
+                              "This is the final Planner retry.\n"
+                              f"Return the FULL corrected structured response for mode {mode}."),
+                    )
+                    continue
+                failure = {"mode": mode, "reason": error_type, "error_type": error_type}
+                if isinstance(exc, PlannerError):
+                    failure["error_message"] = str(exc)
+                self.event("planner_failed", **failure)
+                self.block("planner_protocol_or_runtime_error")
+            self.event("planner_readiness_result" if mode == "READINESS" else "planner_completed",
+                       mode=mode, status=result.get("status", "VALID"), reason=result.get("reason", ""))
+            return result
+        raise AssertionError("unreachable Planner attempt loop")
 
     async def initialize(self, context):
-        result = await self.ask("INITIAL", context)
-        if result["obligation_changes"]:
-            self.block("initial_plan_cannot_change_obligations")
+        if not self._planner_session_started:
+            self._planner_session_started = True
+            self.event("planner_session_started", session_id=self.planner_session_id,
+                       task_block_id=self.state["task_block_id"], status="ACTIVE")
+        def validate_initial(result):
+            if result["obligation_changes"]:
+                raise PlannerError(
+                    "INITIAL plan must return obligation_changes=[] because no previous plan exists."
+                )
+        result = await self.ask("INITIAL", context, validate_initial)
         self.install(result)
         self.event("plan_created", stages_count=len(self.plan["stages"]))
+        self._session_feedback(speaker="SERVER", mode="INITIAL", attempt=None,
+                               text=f"PLAN VALID · v{self.state['plan_version']}")
 
     def install(self, result):
         previous = self.plan if self.state["plans"] else None
@@ -452,13 +555,24 @@ class TaskLifecycle:
                 self.state["active_stage_id"] = stage["stage_id"]
                 self.block("open_obligations_before_final")
 
+    def complete_planner_session(self):
+        if not self._planner_session_terminal:
+            self._planner_session_terminal = True
+            self.event("planner_session_completed", session_id=self.planner_session_id,
+                       task_block_id=self.state["task_block_id"], status="VALID")
+
     async def replan(self, fact):
         if len(self.state["replans"]) >= REPLAN_LIMIT:
             self.block("replan_budget_exhausted")
         fact = {**fact, "fact_id": "fact_" + uuid.uuid4().hex[:12]}
         self.event("replan_started", reason=fact["reason"], fact_id=fact["fact_id"])
-        response = await self.ask("REPLAN", {"current_plan": self.plan,
-            "stage_states": self.state["stage_states"], "authoritative_facts": [fact]})
+        previous_plan = self.plan
+        response = await self.ask(
+            "REPLAN", {"current_plan": previous_plan,
+                       "stage_states": self.state["stage_states"],
+                       "authoritative_facts": [fact]},
+            lambda candidate: validate_replan_against_fact(previous_plan, candidate, fact),
+        )
         old = {a["artifact_id"]: a for s in self.plan["stages"] for a in s["artifacts"]}
         new = {a["artifact_id"]: a for s in response["stages"] for a in s["artifacts"]}
         changes = {c["old_artifact_id"]: c for c in response["obligation_changes"]}
@@ -476,6 +590,8 @@ class TaskLifecycle:
                                       "fact": fact, "obligation_changes": response["obligation_changes"],
                                       "prior_stage_states": copy.deepcopy(self.state["stage_states"])})
         self.install(response)
+        self._session_feedback(speaker="SERVER", mode="REPLAN", attempt=None,
+                               text=f"PLAN VALID · v{self.state['plan_version']}")
         self.event("plan_revised", fact_id=fact["fact_id"])
         self.event("replan_completed")
 

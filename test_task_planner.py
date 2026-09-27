@@ -314,7 +314,7 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
             {
                 key: value
                 for key, value in call.kwargs.items()
-                if key != "diagnostic_callback"
+                if key not in {"diagnostic_callback", "session"}
             }
             for call in self.planner.await_args_list
         ])
@@ -322,6 +322,15 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
             callable(call.kwargs.get("diagnostic_callback"))
             for call in self.planner.await_args_list
         ))
+        initial_context = next(
+            call.kwargs["context"] for call in self.planner.await_args_list
+            if call.kwargs["mode"] == "INITIAL"
+        )
+        self.assertIn("permissions", initial_context)
+        self.assertIn("tools", initial_context)
+        self.assertNotIn("project_context", initial_context)
+        self.assertNotIn("recent_working_context", initial_context)
+        self.assertNotIn("context_limits", initial_context)
         self.assertNotIn("audit_diagnostic", planner_context)
         self.assertNotIn("Independent Final", planner_context)
         request = next(e for e in self.events if e["event"] == "api_request")

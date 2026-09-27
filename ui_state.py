@@ -20,6 +20,7 @@ DEFAULT_PANEL_RATIOS = {
 }
 DEFAULT_CHAT_AUDIT_RATIOS = {"normal": 0.64, "zoomed": 0.64}
 DEFAULT_CENTRAL_VERTICAL_RATIOS = {"normal": 0.58, "zoomed": 0.58}
+DEFAULT_LEFT_VERTICAL_RATIOS = {"normal": 0.55, "zoomed": 0.55}
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
@@ -59,6 +60,7 @@ def default_ui_state() -> dict[str, Any]:
         },
         "chat_audit_ratios": dict(DEFAULT_CHAT_AUDIT_RATIOS),
         "central_vertical_ratios": dict(DEFAULT_CENTRAL_VERTICAL_RATIOS),
+        "left_vertical_ratios": dict(DEFAULT_LEFT_VERTICAL_RATIOS),
         "audit_visible": True,
         "workspaces": [],
         "active_workspace_id": None,
@@ -132,12 +134,13 @@ def load_ui_state() -> dict[str, Any]:
                 if clean is not None:
                     state["panel_ratios"][mode] = clean
 
-        for key in ("chat_audit_ratios", "central_vertical_ratios"):
+        for key in ("chat_audit_ratios", "central_vertical_ratios", "left_vertical_ratios"):
             values = loaded.get(key)
             if isinstance(values, dict):
                 for mode in ("normal", "zoomed"):
                     value = values.get(mode)
-                    if isinstance(value, (int, float)) and not isinstance(value, bool) and 0.2 <= value <= 0.85:
+                    upper = 0.8 if key == "left_vertical_ratios" else 0.85
+                    if isinstance(value, (int, float)) and not isinstance(value, bool) and 0.2 <= value <= upper:
                         state[key][mode] = float(value)
 
         if isinstance(loaded.get("audit_visible"), bool):

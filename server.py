@@ -30,12 +30,13 @@ from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
 from audit_storage import AuditThreadRecorder
-from planner_runtime import DEFAULT_PLANNER_MODEL_ID, run_planner
+from planner_runtime import DEFAULT_PLANNER_MODEL_ID, PlannerSession, run_planner
 from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated, PersistencePreflightRejected
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
     VerifierProtocolError,
     VerifierRuntimeError,
+    run_planner_dredd_review,
     run_verifier_check,
 )
 
@@ -3127,11 +3128,48 @@ async def _run_agent_task_impl(
             facts = lifecycle.facts() if lifecycle is not None else {}
             _emit(event_name, {**facts, **payload})
 
+        planner_model = get_model_spec(planner_model_id)
+
+        def planner_session_message(speaker, mode, attempt, text):
+            payload = {
+                "session_id": planner_session.session_id,
+                "task_block_id": task_block_id,
+                "mode": mode,
+                "speaker": speaker,
+                "attempt": attempt,
+                "text": text,
+            }
+            if speaker == "PLANNER":
+                payload.update({
+                    "model_id": planner_model.model_id,
+                    "model_display_name": planner_model.display_name,
+                    "provider_model_id": planner_model.provider_model_id,
+                })
+            _emit("planner_session_message", payload)
+
+        planner_session = PlannerSession(
+            raw_task=task,
+            planner_model_id=planner_model_id,
+            diagnostic_callback=planner_diagnostic,
+            message_callback=planner_session_message,
+        )
+
         async def planner_call(**kwargs):
             return await run_planner(
                 planner_model_id=planner_model_id,
                 diagnostic_callback=planner_diagnostic,
+                session=planner_session,
                 **kwargs,
+            )
+
+        async def planner_review(*, mode, validation_error):
+            return await run_planner_dredd_review(
+                verifier_model_id=verifier_model_id,
+                raw_task=task,
+                planner_session_transcript=planner_session.transcript(),
+                mode=mode,
+                validation_error=validation_error,
+                task_block_id=task_block_id,
             )
 
         lifecycle = TaskLifecycle(
@@ -3139,16 +3177,15 @@ async def _run_agent_task_impl(
             task_block_id=task_block_id, raw_task=task, planner_call=planner_call, emit=_emit,
             snapshot=lambda path: _planner_target_snapshot(root, path, policy),
             prepare=lambda call, artifact, repair: _prepare_persistence_candidate(root, call, artifact, policy, repair),
+            planner_session_id=planner_session.session_id,
+            planner_feedback=planner_session.add_control_message,
+            planner_review=planner_review,
+            dredd_enabled=final_audit_enabled,
         )
         await lifecycle.initialize({
             "permissions": _policy_summary(policy),
             "tools": [{"name": f["name"], "capability": CAPABILITY_BY_TOOL.get(f["name"], "READ")}
                       for f in available_functions],
-            "project_context": project_context[:12000],
-            "recent_working_context": [{"role": m["role"], "content": m["content"][-2000:]}
-                                       for m in active_chat_messages[-5:-1]],
-            "context_limits": {"project_context_truncated": len(project_context) > 12000,
-                               "working_history_is_bounded_excerpt": True},
         })
     else:
         _emit("planner_disabled_compatibility", {"reason": "direct_caller_did_not_enable_planner"})
@@ -4275,6 +4312,7 @@ async def _run_agent_task_impl(
             if not final_audit_enabled:
                 if lifecycle:
                     lifecycle.assert_satisfied()
+                    lifecycle.complete_planner_session()
 
                 _emit(
                     "final_audit_skipped",
@@ -4889,6 +4927,7 @@ async def _run_agent_task_impl(
 
             if lifecycle:
                 lifecycle.assert_satisfied()
+                lifecycle.complete_planner_session()
             _emit("run_finished", {
                 "status": "SUCCESS",
                 "api_requests": api_request_count,

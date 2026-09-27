@@ -23,6 +23,9 @@ PLANNER_EVENTS = {
     "persistence_recovery_exhausted", "replan_started", "replan_completed",
     "final_audit_routed_execution_defect", "final_audit_routed_plan_defect", "persistence_dispatch",
     "planner_readiness_rejected", "mutation_preflight_rejected",
+    "planner_session_started", "planner_session_message", "planner_attempt_rejected",
+    "planner_dredd_review_started", "planner_dredd_review_completed",
+    "planner_session_completed", "planner_session_blocked",
 }
 PLANNER_DIAGNOSTIC_EVENTS = {
     "planner_diagnostic_request", "planner_diagnostic_context",
@@ -48,6 +51,7 @@ _AUDIT_EVENTS = {
     "permission_escalation_terminal",
 } | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS
 _TEXT_LIMIT = 2000
+_PLANNER_SESSION_TEXT_LIMIT = 32768
 
 
 def _safe_identifier(value: str | None, label: str) -> str:
@@ -210,13 +214,50 @@ class AuditThreadRecorder:
             diagnostics.append(recorded)
             del diagnostics[:-64]
         elif kind in PLANNER_EVENTS:
+            if kind == "planner_session_started":
+                self.thread["planner_session"] = {
+                    "session_id": _short(event.get("session_id")),
+                    "status": "ACTIVE",
+                    "messages": [],
+                }
+            elif kind == "planner_session_message":
+                session = self.thread.setdefault("planner_session", {
+                    "session_id": _short(event.get("session_id")),
+                    "status": "ACTIVE", "messages": [],
+                })
+                message = {
+                    key: event[key]
+                    for key in ("mode", "speaker", "attempt", "model_id",
+                                "model_display_name", "provider_model_id")
+                    if event.get(key) is not None
+                }
+                message["text"] = str(event.get("text") or "")[:_PLANNER_SESSION_TEXT_LIMIT]
+                session["messages"].append(message)
+                del session["messages"][:-32]
+            elif kind == "planner_dredd_review_completed":
+                session = self.thread.setdefault("planner_session", {
+                    "session_id": _short(event.get("session_id")),
+                    "status": "ACTIVE", "messages": [],
+                })
+                session["dredd_review"] = {
+                    key: (_short(event[key]) if isinstance(event[key], str) else event[key])
+                    for key in ("verifier_run_id", "model_id", "model_display_name",
+                                "provider_model_id", "mode", "diagnosis", "required_action")
+                    if event.get(key) is not None
+                }
+            elif kind in {"planner_session_completed", "planner_session_blocked"}:
+                session = self.thread.setdefault("planner_session", {
+                    "session_id": _short(event.get("session_id")),
+                    "messages": [],
+                })
+                session["status"] = "VALID" if kind == "planner_session_completed" else "BLOCKED"
             lifecycle = self.thread.setdefault("task_lifecycle", {"events": []})
             for key in ("plan_id", "plan_version", "stage_id"):
                 if event.get(key) is not None:
                     lifecycle[key] = event[key]
             recorded = {"event": kind, **{
                 key: (_short(event[key]) if isinstance(event[key], str) else event[key])
-                for key in ("plan_version", "stage_id", "mode", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route")
+                for key in ("plan_version", "stage_id", "mode", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route", "session_id", "speaker", "error_type", "error_message")
                 if key in event and isinstance(event[key], (str, int, bool))}}
             if kind == "planner_failed":
                 if isinstance(event.get("error_type"), str):

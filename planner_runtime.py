@@ -1,7 +1,9 @@
 """Bounded, tool-free Planner role. No Executor or Verifier session is reused."""
 from __future__ import annotations
 
+import copy
 import json
+import uuid
 
 import httpx
 
@@ -209,9 +211,156 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
         "temperature": 0.0, "max_tokens": 8192, "stream": False, "function_call": "none"}
 
 
+def _planner_session_system() -> str:
+    plan_variables = {"plan_format": json.dumps(PLAN_FORMAT)}
+    parts = [
+        resolve_context_text("planner.base").strip(),
+        "===== INITIAL PROTOCOL =====\n"
+        + resolve_context_text("planner.initial", plan_variables).strip(),
+        "===== READINESS PROTOCOL =====\n"
+        + resolve_context_text("planner.readiness").strip(),
+        "===== REPLAN PROTOCOL =====\n"
+        + resolve_context_text("planner.replan", plan_variables).strip(),
+    ]
+    return "\n\n".join(parts)
+
+
+class PlannerSession:
+    """One bounded, local, stateless-provider conversation for one task RUN."""
+
+    MAX_MESSAGES = 32
+
+    def __init__(self, *, raw_task: str,
+                 planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
+                 diagnostic_callback=None, message_callback=None) -> None:
+        self.session_id = "ps_" + uuid.uuid4().hex
+        self.raw_task = raw_task
+        self.planner_model_id = planner_model_id
+        self.diagnostic_callback = diagnostic_callback
+        self.message_callback = message_callback
+        self.turn_count = 0
+        self._initial_added = False
+        self.messages = [{"role": "system", "content": _planner_session_system()}]
+        self._check_bounds()
+
+    def _diagnostic(self, kind: str, payload: dict) -> None:
+        if self.diagnostic_callback is None:
+            return
+        try:
+            self.diagnostic_callback(kind, payload)
+        except Exception:
+            pass
+
+    def _notify(self, speaker: str, mode: str, attempt: int | None,
+                text: str) -> None:
+        if self.message_callback is None:
+            return
+        try:
+            self.message_callback(speaker, mode, attempt, text)
+        except Exception:
+            pass
+
+    def _check_bounds(self) -> None:
+        if len(self.messages) > self.MAX_MESSAGES:
+            raise PlannerError("Planner session exceeds bounded limit")
+        serialized = json.dumps(self.messages, ensure_ascii=False)
+        if len(serialized.encode("utf-8")) > MAX_PLANNING_CONTEXT_BYTES:
+            raise PlannerError("Planner session exceeds bounded limit")
+
+    def transcript(self) -> list[dict]:
+        return copy.deepcopy(self.messages)
+
+    def add_control_message(self, *, speaker: str, mode: str,
+                            attempt: int | None, text: str) -> None:
+        self.messages.append({"role": "user", "content": text})
+        self._check_bounds()
+        self._notify(speaker, mode, attempt, text)
+
+    async def call(self, *, mode: str, raw_task: str, context: dict,
+                   attempt: int = 1) -> dict:
+        if raw_task != self.raw_task:
+            raise PlannerError("Planner session raw_task mismatch")
+        if mode not in {"INITIAL", "READINESS", "REPLAN"}:
+            raise PlannerError("Unknown Planner mode")
+        user_text = ""
+        if attempt == 1:
+            if mode == "INITIAL" and not self._initial_added:
+                payload = {"mode": mode, "raw_task": self.raw_task, "context": context}
+                speaker = "TASK"
+                self._initial_added = True
+            else:
+                payload = {"source": "SERVER", "mode": mode, "context": context}
+                speaker = "SERVER"
+            user_text = json.dumps(payload, ensure_ascii=False)
+            self.messages.append({"role": "user", "content": user_text})
+            self._check_bounds()
+            self._notify(speaker, mode, attempt,
+                         self.raw_task if speaker == "TASK" else user_text)
+
+        model = get_model_spec(self.planner_model_id)
+        if model.provider != "gigachat":
+            raise PlannerError("Unsupported Planner provider")
+        body = {
+            "model": model.provider_model_id,
+            "messages": copy.deepcopy(self.messages),
+            "temperature": 0.0,
+            "max_tokens": 8192,
+            "stream": False,
+            "function_call": "none",
+        }
+        self._diagnostic("request", {
+            "mode": mode, "planner_model_id": self.planner_model_id,
+            "provider_model_id": body["model"], "temperature": body["temperature"],
+            "max_tokens": body["max_tokens"], "function_call": body["function_call"],
+        })
+        self._diagnostic("context", {
+            "mode": mode, "system": body["messages"][0]["content"],
+            "user": user_text or body["messages"][-1]["content"],
+        })
+        try:
+            token = await get_access_token()
+            async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
+                response = await client.post(
+                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
+                )
+                response.raise_for_status()
+            choice = response.json()["choices"][0]
+            message = choice["message"]
+            content = message.get("content")
+            raw_text = content if isinstance(content, str) else json.dumps(message, ensure_ascii=False)
+            self.messages.append({"role": "assistant", "content": raw_text})
+            self.turn_count += 1
+            self._check_bounds()
+            self._notify("PLANNER", mode, attempt, raw_text)
+            self._diagnostic("response", {
+                "mode": mode, "finish_reason": choice.get("finish_reason"),
+                "content": content, "function_call": message.get("function_call"),
+            })
+            if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
+                raise PlannerError("Planner returned an unexpected finish/tool call")
+            if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
+                raise PlannerError("Invalid Planner response size")
+            value = strict_json(content)
+            return validate_readiness(value) if mode == "READINESS" else validate_plan(value)
+        except PlannerError as exc:
+            self._diagnostic("error", {"mode": mode, "error_type": type(exc).__name__,
+                                       "error_message": str(exc)})
+            raise
+        except Exception as exc:
+            message = f"Planner call failed: {type(exc).__name__}"
+            self._diagnostic("error", {"mode": mode, "error_type": "PlannerError",
+                                       "error_message": message})
+            raise PlannerError(message) from exc
+
+
 async def run_planner(*, mode: str, raw_task: str, context: dict,
                       planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
-                      diagnostic_callback=None) -> dict:
+                      diagnostic_callback=None, session: PlannerSession | None = None,
+                      attempt: int = 1) -> dict:
+    if session is not None:
+        return await session.call(
+            mode=mode, raw_task=raw_task, context=context, attempt=attempt,
+        )
     def diagnostic(kind: str, payload: dict) -> None:
         if diagnostic_callback is None:
             return

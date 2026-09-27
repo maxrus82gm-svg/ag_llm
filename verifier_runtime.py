@@ -50,6 +50,16 @@ class VerifierResult:
     affected_stage_ids: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True)
+class PlannerReviewResult:
+    diagnosis: str
+    required_action: str
+    verifier_run_id: str
+    model_id: str
+    model_display_name: str
+    provider_model_id: str
+
+
 def _validate_nonempty_text(value: object, label: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{label} должен быть непустой строкой.")
@@ -409,3 +419,69 @@ async def run_verifier_check(
         if isinstance(exc, VerifierRuntimeError):
             raise
         raise VerifierRuntimeError("Verifier runtime завершился ошибкой.") from exc
+
+
+async def run_planner_dredd_review(
+    *, verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
+    raw_task: str, planner_session_transcript: list[dict], mode: str,
+    validation_error: str, task_block_id: str | None,
+) -> PlannerReviewResult:
+    raw_task = _validate_nonempty_text(raw_task, "raw_task")
+    validation_error = _validate_nonempty_text(validation_error, "validation_error")
+    if mode not in {"INITIAL", "READINESS", "REPLAN"}:
+        raise ValueError("Invalid Planner review mode")
+    if not isinstance(planner_session_transcript, list):
+        raise ValueError("planner_session_transcript must be a list")
+    transcript = json.dumps(planner_session_transcript, ensure_ascii=False)
+    if len(transcript.encode("utf-8")) > 128 * 1024:
+        raise VerifierRuntimeError("Planner review transcript exceeds bounded limit")
+    try:
+        model = get_model_spec(verifier_model_id)
+    except (KeyError, RuntimeError, ValueError) as exc:
+        raise VerifierRuntimeError(
+            f"Verifier model недоступна: {verifier_model_id!r}."
+        ) from exc
+    if model.provider != "gigachat":
+        raise VerifierRuntimeError(
+            f"Verifier provider не поддерживается: {model.provider!r}."
+        )
+    verifier_run_id = _new_verifier_run_id()
+    system = (
+        "You are Judge Dredd reviewing a failed Planner conversation. "
+        "You do not execute the user task and do not create a plan yourself. "
+        "Inspect RAW TASK, the complete supplied Planner Session transcript, "
+        "and the latest deterministic server validation error. "
+        "Explain exactly what the Planner must correct on its final retry. "
+        "Treat server validation errors as authoritative. Return exactly one JSON object: "
+        '{"diagnosis":"...","required_action":"..."}. No prose outside JSON. '
+        "Do not invent files, tools or facts."
+    )
+    user = json.dumps({
+        "raw_task": raw_task, "mode": mode,
+        "validation_error": validation_error,
+        "planner_session_transcript": planner_session_transcript,
+        "task_block_id": task_block_id,
+    }, ensure_ascii=False)
+    body = {
+        "model": model.provider_model_id,
+        "messages": [{"role": "system", "content": system},
+                     {"role": "user", "content": user}],
+        "temperature": VERIFIER_TEMPERATURE,
+        "max_tokens": VERIFIER_MAX_TOKENS,
+        "stream": False,
+    }
+    content = await _request_gigachat(body)
+    try:
+        payload = json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise VerifierProtocolError("Planner Dredd review returned malformed JSON.") from exc
+    if not isinstance(payload, dict) or set(payload) != {"diagnosis", "required_action"}:
+        raise VerifierProtocolError("Planner Dredd review must contain diagnosis and required_action only.")
+    diagnosis = _validate_nonempty_text(payload["diagnosis"], "diagnosis")
+    required_action = _validate_nonempty_text(payload["required_action"], "required_action")
+    return PlannerReviewResult(
+        diagnosis=diagnosis, required_action=required_action,
+        verifier_run_id=verifier_run_id, model_id=model.model_id,
+        model_display_name=model.display_name,
+        provider_model_id=model.provider_model_id,
+    )
