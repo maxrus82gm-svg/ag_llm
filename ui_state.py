@@ -65,6 +65,7 @@ def default_ui_state() -> dict[str, Any]:
         "registry_initialized": False,
         "main_chat_model_id": "gigachat_ultra",
         "compressor_model_id": "gigachat_3_pro",
+        "planner_model_id": "gigachat_ultra",
         "verifier_model_id": "gigachat_3_pro",
         "planner_enabled": True,
         "final_audit_enabled": True,
@@ -183,6 +184,9 @@ def load_ui_state() -> dict[str, Any]:
 
     if isinstance(loaded.get("compressor_model_id"), str):
         state["compressor_model_id"] = loaded["compressor_model_id"]
+
+    if isinstance(loaded.get("planner_model_id"), str):
+        state["planner_model_id"] = loaded["planner_model_id"]
 
     if isinstance(loaded.get("verifier_model_id"), str):
         state["verifier_model_id"] = loaded["verifier_model_id"]

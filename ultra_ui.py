@@ -65,9 +65,32 @@ from compressor_settings import (
     save_message_compression_template,
 )
 from context_editor_ui import open_context_editor
+from planner_runtime import DEFAULT_PLANNER_MODEL_ID
 
 
 APP_TITLE = "GigaChat Ultra Local Agent"
+
+VERIFY_TOOLS_TOOLTIP = (
+    "Даёт Исполнителю инструменты технической самопроверки во время работы: "
+    "проверку Python-кода, smoke-тесты, Git diff/status и другие доступные "
+    "verification-инструменты. Помогает Исполнителю проверить собственную "
+    "работу до итоговой проверки Судьёй Дреддом."
+)
+GUARD_P1_TOOLTIP = (
+    "Серверная защита действий Исполнителя. Отслеживает механические повторы, "
+    "подозрительные повторные операции и некоторые очевидно ошибочные действия "
+    "ещё во время выполнения задачи. Внутренний механизм: GUARD P1."
+)
+PLANNER_TOOLTIP = (
+    "Перед выполнением задачи строит план и разбивает работу на стадии. "
+    "Исполнитель работает по этому плану, а жизненный цикл задачи "
+    "контролируется до завершения обязательных этапов."
+)
+FINAL_AUDIT_TOOLTIP = (
+    "Финальная независимая LLM-проверка результата после выполнения задачи и "
+    "обязательных серверных проверок. Анализирует итог работы и при обнаружении "
+    "проблемы может потребовать исправление."
+)
 
 
 def get_message_display_text(message: dict, resolved: dict | None = None) -> str:
@@ -131,6 +154,57 @@ def bind_edit_shortcuts(widget) -> None:
         widget.bind(sequence, select_all)
 
 
+class _DelayedTooltip:
+    def __init__(self, widget: tk.Widget, text: str, delay_ms: int = 500) -> None:
+        self.widget = widget
+        self.text = text
+        self.delay_ms = delay_ms
+        self._after_id: str | None = None
+        self._window: tk.Toplevel | None = None
+        widget.bind("<Enter>", self._schedule, add="+")
+        widget.bind("<Leave>", self._hide, add="+")
+        widget.bind("<ButtonPress>", self._hide, add="+")
+
+    def _schedule(self, _event=None) -> None:
+        self._cancel_scheduled()
+        self._after_id = self.widget.after(self.delay_ms, self._show)
+
+    def _cancel_scheduled(self) -> None:
+        if self._after_id is not None:
+            self.widget.after_cancel(self._after_id)
+            self._after_id = None
+
+    def _show(self) -> None:
+        self._after_id = None
+        if self._window is not None or not self.widget.winfo_exists():
+            return
+        x = self.widget.winfo_rootx() + 12
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 4
+        window = tk.Toplevel(self.widget)
+        window.wm_overrideredirect(True)
+        window.wm_attributes("-topmost", True)
+        window.wm_geometry(f"+{x}+{y}")
+        tk.Label(
+            window,
+            text=self.text,
+            justify="left",
+            wraplength=440,
+            padx=8,
+            pady=6,
+            relief="solid",
+            borderwidth=1,
+            background="#ffffe0",
+            foreground="#202020",
+        ).pack()
+        self._window = window
+
+    def _hide(self, _event=None) -> None:
+        self._cancel_scheduled()
+        if self._window is not None:
+            self._window.destroy()
+            self._window = None
+
+
 class UltraApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
@@ -192,6 +266,22 @@ class UltraApp(tk.Tk):
         )
         self.verifier_model_display_var = tk.StringVar(
             value=verifier_model.display_name
+        )
+
+        saved_planner_model_id = self._ui_state.get(
+            "planner_model_id",
+            DEFAULT_PLANNER_MODEL_ID,
+        )
+        try:
+            planner_model = get_model_spec(saved_planner_model_id)
+        except (KeyError, RuntimeError, ValueError):
+            planner_model = get_model_spec(DEFAULT_PLANNER_MODEL_ID)
+        self._ui_state["planner_model_id"] = planner_model.model_id
+        self.planner_model_id_var = tk.StringVar(
+            value=planner_model.model_id
+        )
+        self.planner_model_display_var = tk.StringVar(
+            value=planner_model.display_name
         )
 
         self.compressor_reduction_percent_var = tk.StringVar(
@@ -273,6 +363,7 @@ class UltraApp(tk.Tk):
         self._record_initial_mtimes()
 
         self._security_widgets: list[tk.Widget] = []
+        self._security_tooltips: dict[str, _DelayedTooltip] = {}
         self._compressor_widgets: list[tk.Widget] = []
         self._message_action_widgets: list[tk.Widget] = []
         self._message_action_frames: dict[str, tk.Widget] = {}
@@ -684,6 +775,23 @@ class UltraApp(tk.Tk):
         )
         main_context_button.pack(side="left")
 
+        planner_model_frame = ttk.LabelFrame(
+            right_frame,
+            text="Модель, используемая Планировщиком",
+            padding=(8, 5),
+        )
+        planner_model_frame.pack(fill="x", pady=(0, 8))
+        planner_model_button = ttk.Button(
+            planner_model_frame,
+            text="Модель",
+            command=lambda: self._open_model_registry("planner"),
+        )
+        planner_model_button.pack(side="left")
+        ttk.Label(
+            planner_model_frame,
+            textvariable=self.planner_model_display_var,
+        ).pack(side="left", padx=(8, 16))
+
         verifier_model_frame = ttk.LabelFrame(
             right_frame,
             text="Модель, используемая Судьёй Дреддом",
@@ -730,14 +838,14 @@ class UltraApp(tk.Tk):
 
         verify_check = ttk.Checkbutton(
             security_top,
-            text="Инструменты проверки",
+            text="Надзиратель исполнителя",
             variable=self.allow_verify_var,
         )
         verify_check.pack(side="left", padx=(0, 18))
 
         guard_p1_check = ttk.Checkbutton(
             security_top,
-            text="Защита GUARD P1",
+            text="Страж порядка",
             variable=self.allow_guard_p1_var,
         )
         guard_p1_check.pack(side="left")
@@ -755,6 +863,13 @@ class UltraApp(tk.Tk):
             variable=self.final_audit_enabled_var,
         )
         dredd_check.pack(side="left", padx=(18, 0))
+
+        self._security_tooltips = {
+            "verify": _DelayedTooltip(verify_check, VERIFY_TOOLS_TOOLTIP),
+            "guard_p1": _DelayedTooltip(guard_p1_check, GUARD_P1_TOOLTIP),
+            "planner": _DelayedTooltip(planner_check, PLANNER_TOOLTIP),
+            "final_audit": _DelayedTooltip(dredd_check, FINAL_AUDIT_TOOLTIP),
+        }
 
         context_messages_button = ttk.Button(
             security_service,
@@ -964,6 +1079,7 @@ class UltraApp(tk.Tk):
                 dredd_check,
                 context_messages_button,
                 model_registry_button,
+                planner_model_button,
                 verifier_model_button,
                 main_context_button,
                 tool_limit_spin,
@@ -1266,6 +1382,16 @@ class UltraApp(tk.Tk):
         self.verifier_model_display_var.set(model.display_name)
         self._ui_state["verifier_model_id"] = model.model_id
 
+    def _set_planner_model(self, model_id: str) -> None:
+        try:
+            model = get_model_spec(model_id)
+        except (KeyError, RuntimeError, ValueError):
+            model = get_model_spec(DEFAULT_PLANNER_MODEL_ID)
+
+        self.planner_model_id_var.set(model.model_id)
+        self.planner_model_display_var.set(model.display_name)
+        self._ui_state["planner_model_id"] = model.model_id
+
     def _open_model_registry(self, assignment: str = "main_chat") -> None:
         if assignment == "main_chat":
             assignment_title = "Модель, используемая в чате Workspace"
@@ -1275,6 +1401,10 @@ class UltraApp(tk.Tk):
             assignment_title = "COMPRESSOR MODEL"
             current_model_id = self.compressor_model_id_var.get()
             apply_model = self._set_compressor_model
+        elif assignment == "planner":
+            assignment_title = "Модель, используемая Планировщиком"
+            current_model_id = self.planner_model_id_var.get()
+            apply_model = self._set_planner_model
         elif assignment == "verifier":
             assignment_title = "Модель, используемая Судьёй Дреддом"
             current_model_id = self.verifier_model_id_var.get()
@@ -1700,6 +1830,9 @@ class UltraApp(tk.Tk):
             )
             self._ui_state["verifier_model_id"] = (
                 self.verifier_model_id_var.get()
+            )
+            self._ui_state["planner_model_id"] = (
+                self.planner_model_id_var.get()
             )
             self._ui_state["planner_enabled"] = self.planner_enabled_var.get()
             self._ui_state["final_audit_enabled"] = (
@@ -4365,11 +4498,13 @@ class UltraApp(tk.Tk):
         }
 
         model_id = self.main_chat_model_id_var.get()
+        planner_model_id = self.planner_model_id_var.get()
         verifier_model_id = self.verifier_model_id_var.get()
         planner_enabled = bool(self.planner_enabled_var.get())
         final_audit_enabled = bool(self.final_audit_enabled_var.get())
         try:
             selected_model = get_model_spec(model_id)
+            get_model_spec(planner_model_id)
             get_model_spec(verifier_model_id)
         except (KeyError, RuntimeError, ValueError) as exc:
             messagebox.showerror(APP_TITLE, str(exc))
@@ -4434,6 +4569,7 @@ class UltraApp(tk.Tk):
                 permissions,
                 self.current_chat_id,
                 model_id,
+                planner_model_id,
                 verifier_model_id,
                 planner_enabled,
                 final_audit_enabled,
@@ -4476,6 +4612,7 @@ class UltraApp(tk.Tk):
         permissions: dict,
         chat_id: str,
         model_id: str,
+        planner_model_id: str,
         verifier_model_id: str,
         planner_enabled: bool,
         final_audit_enabled: bool,
@@ -4550,6 +4687,7 @@ class UltraApp(tk.Tk):
                     permissions=permissions,
                     chat_id=chat_id,
                     model_id=model_id,
+                    planner_model_id=planner_model_id,
                     verifier_model_id=verifier_model_id,
                     task_block_id=task_block_id,
                     permission_request_callback=permission_request_callback,

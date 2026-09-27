@@ -268,15 +268,45 @@ class CompactLayoutTests(unittest.TestCase):
         self.assertEqual(top.grid_info()["columnspan"], 4)
         self.assertEqual([w.cget("text") for w in top.winfo_children()
                           if isinstance(w, ultra_ui.ttk.Checkbutton)], [
-                              "Инструменты проверки",
-                              "Защита GUARD P1",
+                              "Надзиратель исполнителя",
+                              "Страж порядка",
                               "Планировщик",
                               "Судья Дредд",
                           ])
+        expected_tooltips = {
+            "verify": (app.allow_verify_var, ultra_ui.VERIFY_TOOLS_TOOLTIP),
+            "guard_p1": (app.allow_guard_p1_var, ultra_ui.GUARD_P1_TOOLTIP),
+            "planner": (app.planner_enabled_var, ultra_ui.PLANNER_TOOLTIP),
+            "final_audit": (
+                app.final_audit_enabled_var,
+                ultra_ui.FINAL_AUDIT_TOOLTIP,
+            ),
+        }
+        self.assertEqual(set(app._security_tooltips), set(expected_tooltips))
+        for key, (runtime_var, text) in expected_tooltips.items():
+            tooltip = app._security_tooltips[key]
+            self.assertEqual(tooltip.text, text)
+            self.assertEqual(str(tooltip.widget.cget("variable")), str(runtime_var))
+            self.assertEqual(tooltip.delay_ms, 500)
+            self.assertTrue(tooltip.widget.bind("<Enter>"))
+            tooltip._show()
+            app.update_idletasks()
+            self.assertTrue(tooltip._window.wm_overrideredirect())
+            tooltip._hide()
         self.assertTrue(app.planner_enabled_var.get())
         self.assertTrue(app.final_audit_enabled_var.get())
         self.assertIsNotNone(titled("Модель, используемая в чате Workspace"))
+        self.assertIsNotNone(titled("Модель, используемая Планировщиком"))
         self.assertIsNotNone(titled("Модель, используемая Судьёй Дреддом"))
+        self.assertEqual(app.planner_model_id_var.get(), "gigachat_ultra")
+        self.assertEqual(app.planner_model_display_var.get(), "GigaChat 3 Ultra")
+        main_before = app.main_chat_model_id_var.get()
+        verifier_before = app.verifier_model_id_var.get()
+        app._set_planner_model("gigachat_3_pro")
+        self.assertEqual(app.planner_model_id_var.get(), "gigachat_3_pro")
+        self.assertEqual(app.planner_model_display_var.get(), "GigaChat 3 Pro")
+        self.assertEqual(app.main_chat_model_id_var.get(), main_before)
+        self.assertEqual(app.verifier_model_id_var.get(), verifier_before)
         scope_rows = [int(w.grid_info()["row"]) for w in controls.winfo_children()
                       if isinstance(w, ultra_ui.ttk.Entry)]
         self.assertEqual(scope_rows, [1, 2, 3])
@@ -439,6 +469,7 @@ class TaskBlockUiTests(unittest.TestCase):
         self.assertNotEqual(task_id, user_c["message_id"])
         async def fake_run(_task, _workspace, **kwargs):
             self.assertEqual(kwargs["task_block_id"], task_id)
+            self.assertEqual(kwargs["planner_model_id"], "gigachat_ultra")
             self.assertTrue(kwargs["planner_enabled"])
             self.assertTrue(kwargs["final_audit_enabled"])
             self.assertNotIn("planner_enabled", kwargs["permissions"])
@@ -565,7 +596,7 @@ class TraceAndUiStateTests(unittest.TestCase):
               patch.object(ultra_ui, "append_raw_message", return_value={"producer": None})):
             worker = threading.Thread(target=ultra_ui.UltraApp._worker,
                 args=(fake, "task", "workspace", {}, "chat", "gigachat_ultra",
-                      "gigachat_3_pro", True, True))
+                      "gigachat_ultra", "gigachat_3_pro", True, True))
             worker.start()
             for _ in range(100):
                 ultra_ui.UltraApp._poll_events(fake)
@@ -834,6 +865,7 @@ class TraceAndUiStateTests(unittest.TestCase):
             state["audit_visible"] = False
             state["planner_enabled"] = False
             state["final_audit_enabled"] = False
+            state["planner_model_id"] = "gigachat_3_pro"
             with patch.object(ui_state, "STATE_PATH", state_path):
                 ui_state.save_ui_state(state)
                 loaded = ui_state.load_ui_state()
@@ -844,6 +876,18 @@ class TraceAndUiStateTests(unittest.TestCase):
         self.assertFalse(loaded["audit_visible"])
         self.assertFalse(loaded["planner_enabled"])
         self.assertFalse(loaded["final_audit_enabled"])
+        self.assertEqual(loaded["planner_model_id"], "gigachat_3_pro")
+
+        with patch.object(ultra_ui, "load_ui_state", return_value=loaded), \
+             patch.object(ultra_ui.UltraApp, "_initialize_workspace_registry"):
+            restarted = ultra_ui.UltraApp()
+        self.addCleanup(restarted.destroy)
+        restarted.withdraw()
+        self.assertEqual(restarted.planner_model_id_var.get(), "gigachat_3_pro")
+        self.assertEqual(
+            restarted.planner_model_display_var.get(),
+            "GigaChat 3 Pro",
+        )
 
     def test_error_and_audit_colors_apply_to_distinct_tags(self):
         class ColorVar:

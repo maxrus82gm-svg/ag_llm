@@ -61,6 +61,7 @@ class CompressorPureTests(unittest.TestCase):
                 {
                     "main_chat_model_id": "gigachat_ultra",
                     "compressor_model_id": "gigachat_3_pro",
+                    "planner_model_id": "gigachat_3_lightning",
                     "compressor_reduction_percent": 50,
                     "compressor_final_check_enabled": True,
                 }
@@ -71,6 +72,10 @@ class CompressorPureTests(unittest.TestCase):
 
             self.assertEqual(loaded["main_chat_model_id"], "gigachat_ultra")
             self.assertEqual(loaded["compressor_model_id"], "gigachat_3_pro")
+            self.assertEqual(
+                loaded["planner_model_id"],
+                "gigachat_3_lightning",
+            )
             self.assertEqual(loaded["compressor_reduction_percent"], 50)
             self.assertIs(loaded["compressor_final_check_enabled"], True)
 

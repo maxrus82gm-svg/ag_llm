@@ -1805,10 +1805,15 @@ class FinalAuditUiFlowTests(unittest.TestCase):
                 {},
                 "chat-1",
                 "gigachat_ultra",
+                "gigachat_3_pro",
                 "gigachat_3_lightning",
                 False,
                 False,
             )
+        self.assertEqual(
+            run.await_args.kwargs["planner_model_id"],
+            "gigachat_3_pro",
+        )
         self.assertEqual(
             run.await_args.kwargs["verifier_model_id"],
             "gigachat_3_lightning",
@@ -1818,6 +1823,9 @@ class FinalAuditUiFlowTests(unittest.TestCase):
 
     def test_send_captures_current_verifier_selection(self) -> None:
         source = inspect.getsource(ultra_ui.UltraApp._send)
+        self.assertIn("self.planner_model_id_var.get()", source)
+        self.assertIn("get_model_spec(planner_model_id)", source)
+        self.assertIn("planner_model_id", source)
         self.assertIn("self.verifier_model_id_var.get()", source)
         self.assertIn("get_model_spec(verifier_model_id)", source)
         self.assertIn("verifier_model_id", source)
