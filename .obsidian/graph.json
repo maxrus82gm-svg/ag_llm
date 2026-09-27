@@ -8,10 +8,17 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "",
+      "query": "file:\"AG LLM Connect\"",
       "color": {
         "a": 1,
-        "rgb": 14701138
+        "rgb": 16726832
+      }
+    },
+    {
+      "query": "file:\"AG LLM Unreal\" OR file:\"AG LLM Godot\" OR file:\"AG LLM Blender\"",
+      "color": {
+        "a": 1,
+        "rgb": 3113197
       }
     }
   ],
@@ -21,10 +28,10 @@
   "nodeSizeMultiplier": 1.2368,
   "lineSizeMultiplier": 3.13369756097561,
   "collapse-forces": false,
-  "centerStrength": 0.232,
-  "repelStrength": 12.1640648913376,
-  "linkStrength": 0.438048780487805,
-  "linkDistance": 157,
-  "scale": 0.5087618855792543,
+  "centerStrength": 0,
+  "repelStrength": 9.38536585365854,
+  "linkStrength": 0.350634146341463,
+  "linkDistance": 223,
+  "scale": 0.3628873693012077,
   "close": false
 }
