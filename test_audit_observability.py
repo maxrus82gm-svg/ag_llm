@@ -295,9 +295,15 @@ class CompactLayoutTests(unittest.TestCase):
             tooltip._hide()
         self.assertTrue(app.planner_enabled_var.get())
         self.assertTrue(app.final_audit_enabled_var.get())
-        self.assertIsNotNone(titled("Модель, используемая в чате Workspace"))
-        self.assertIsNotNone(titled("Модель, используемая Планировщиком"))
-        self.assertIsNotNone(titled("Модель, используемая Судьёй Дреддом"))
+        models = titled("МОДЕЛИ LLM")
+        model_labels = {
+            w.cget("text")
+            for w in descendants(models)
+            if isinstance(w, ultra_ui.ttk.Label)
+        }
+        self.assertIn("MAIN CHAT", model_labels)
+        self.assertIn("ПЛАНИРОВЩИК", model_labels)
+        self.assertIn("СУДЬЯ ДРЕДД", model_labels)
         self.assertEqual(app.planner_model_id_var.get(), "gigachat_ultra")
         self.assertEqual(app.planner_model_display_var.get(), "GigaChat 3 Ultra")
         main_before = app.main_chat_model_id_var.get()
@@ -324,16 +330,57 @@ class CompactLayoutTests(unittest.TestCase):
         self.assertEqual(len(app._color_swatches), 6)
 
         upper, lower = app.central_vertical_paned.panes()
-        self.assertEqual(str(app.chat_audit_paned.master), str(upper))
-        self.assertEqual(str(titled("КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR").master), str(upper))
+
+        self.assertEqual(
+            str(app.chat_audit_paned.master),
+            str(upper),
+        )
+
+        self.assertEqual(
+            str(app.lower_vertical_paned.master),
+            str(lower),
+        )
+
+        compressor_pane, message_pane = app.lower_vertical_paned.panes()
+
+        compressor = titled("КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR")
+        self.assertEqual(
+            str(compressor.master),
+            str(compressor_pane),
+        )
+
         message = titled("Сообщение")
-        self.assertEqual(str(message.master), str(lower))
-        self.assertEqual(message.pack_info()["fill"], "both")
-        self.assertEqual(int(message.pack_info()["expand"]), 1)
-        self.assertEqual(app.input_box.pack_info()["fill"], "both")
-        self.assertEqual(int(app.input_box.pack_info()["expand"]), 1)
-        self.assertEqual(str(app.send_button.master.master), str(lower))
-        self.assertEqual(app.send_button.master.pack_info()["side"], "bottom")
+        self.assertEqual(
+            str(message.master),
+            str(message_pane),
+        )
+
+        self.assertEqual(
+            message.pack_info()["fill"],
+            "both",
+        )
+        self.assertEqual(
+            int(message.pack_info()["expand"]),
+            1,
+        )
+
+        self.assertEqual(
+            app.input_box.pack_info()["fill"],
+            "both",
+        )
+        self.assertEqual(
+            int(app.input_box.pack_info()["expand"]),
+            1,
+        )
+
+        self.assertEqual(
+            str(app.send_button.master.master),
+            str(message_pane),
+        )
+        self.assertEqual(
+            app.send_button.master.pack_info()["side"],
+            "bottom",
+        )
 
 
 class TaskBlockUiTests(unittest.TestCase):
