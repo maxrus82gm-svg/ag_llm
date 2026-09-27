@@ -639,10 +639,17 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
             generation["value"] = "third"
             replan = planner_runtime.build_planner_body("REPLAN", "TASK", {}, "gigachat_ultra")
 
-        self.assertIn("first:planner.base:", initial["messages"][0]["content"])
-        self.assertIn("first:planner.initial:", initial["messages"][0]["content"])
-        self.assertIn("second:planner.readiness:", readiness["messages"][0]["content"])
-        self.assertIn("third:planner.replan:", replan["messages"][0]["content"])
+        prompts = [item["messages"][0]["content"] for item in (initial, readiness, replan)]
+        boundaries = [
+            ("first:planner.base:", "first:planner.initial:"),
+            ("second:planner.base:", "second:planner.readiness:"),
+            ("third:planner.base:", "third:planner.replan:"),
+        ]
+        for prompt, (base_text, mode_prefix) in zip(prompts, boundaries):
+            self.assertTrue(prompt.startswith(base_text + " " + mode_prefix))
+            separator_start = len(base_text)
+            self.assertEqual(prompt[separator_start:separator_start + 1], " ")
+            self.assertNotEqual(prompt[separator_start + 1:separator_start + 2], " ")
         self.assertEqual(
             [item.args[0] for item in resolver.call_args_list],
             ["planner.base", "planner.initial", "planner.base", "planner.readiness",

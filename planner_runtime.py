@@ -198,10 +198,9 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
     }[mode]
     variables = ({"plan_format": json.dumps(PLAN_FORMAT)}
                  if mode in {"INITIAL", "REPLAN"} else None)
-    system = (
-        resolve_context_text("planner.base")
-        + resolve_context_text(mode_context_id, variables)
-    )
+    base_context = resolve_context_text("planner.base")
+    mode_context = resolve_context_text(mode_context_id, variables)
+    system = base_context.rstrip() + " " + mode_context.lstrip()
     serialized = json.dumps({"mode": mode, "raw_task": raw_task, "context": context}, ensure_ascii=False)
     if len(serialized.encode("utf-8")) > MAX_PLANNING_CONTEXT_BYTES:
         raise PlannerError("Planning context exceeds bounded limit")
