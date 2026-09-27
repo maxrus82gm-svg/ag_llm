@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_268113db968a4bba91343544c9387612",
+  "task_block_id": "tb_27b938696af54e3f8ed932e5a22ca0e2",
+  "run_id": "20260927_141152_1f50e2",
+  "issues": [],
+  "final_audit": "PASS",
+  "run_status": "SUCCESS",
+  "task_lifecycle": {
+    "events": [
+      {
+        "event": "planner_started",
+        "plan_version": 0
+      },
+      {
+        "event": "planner_completed",
+        "plan_version": 0,
+        "status": "VALID",
+        "reason": ""
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "plan_created",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST",
+        "reason": "Candidate write_file operation prepared; no unresolved requirements. Proceed to persist the update and then verify by reading back the file content."
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "READY_TO_PERSIST"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "PERSIST_REQUIRED"
+      },
+      {
+        "event": "persistence_required",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "persistence_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "path": "planner_runtime_probe_001.txt",
+        "outcome": "MUTATED"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_1",
+        "status": "SATISFIED"
+      },
+      {
+        "event": "stage_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_1"
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "WORKING"
+      },
+      {
+        "event": "stage_started",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      },
+      {
+        "event": "mutation_preflight_rejected",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "reason_code": "candidate_preparation_failed",
+        "path": "planner_runtime_probe_001.txt",
+        "function": "write_file",
+        "executed": false
+      },
+      {
+        "event": "planner_readiness_started",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      },
+      {
+        "event": "planner_readiness_result",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "READY_TO_PERSIST",
+        "reason": "Файл существует и его содержимое подтверждено как PLANNER_RUNTIME_UPDATED; верификация пройдена, дополнительных действий не требуется."
+      },
+      {
+        "event": "stage_status_changed",
+        "plan_version": 1,
+        "stage_id": "stage_2",
+        "status": "SATISFIED"
+      },
+      {
+        "event": "stage_satisfied",
+        "plan_version": 1,
+        "stage_id": "stage_2"
+      }
+    ],
+    "plan_id": "plan_37da2ff2a07844a8b773cc54bef8b69c",
+    "plan_version": 1,
+    "stage_id": "stage_2"
+  }
+}

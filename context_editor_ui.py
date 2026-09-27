@@ -20,6 +20,10 @@ _SCOPE_TEXT = {
     "NEXT_RUN": "применяется к следующему RUN",
 }
 
+_GROUP_UI_LABELS = {
+    "planner": "Планировщик задач",
+}
+
 
 def open_context_editor(
     parent,
@@ -618,8 +622,11 @@ def open_context_editor(
     group_values: list[str] = []
 
     for group in groups:
+        group_label = _GROUP_UI_LABELS.get(
+            group["group_id"], group["group_name"]
+        )
         display = (
-            f"{group['group_name']}  [{group['group_id']}]"
+            f"{group_label}  [{group['group_id']}]"
         )
         group_values.append(display)
         group_display_to_id[display] = group["group_id"]

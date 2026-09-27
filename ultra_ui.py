@@ -680,7 +680,7 @@ class UltraApp(tk.Tk):
 
         verifier_model_frame = ttk.LabelFrame(
             right_frame,
-            text="VERIFIER MODEL",
+            text="Судья Дредд",
             padding=(8, 5),
         )
         verifier_model_frame.pack(fill="x", pady=(0, 8))
@@ -1254,7 +1254,7 @@ class UltraApp(tk.Tk):
             current_model_id = self.compressor_model_id_var.get()
             apply_model = self._set_compressor_model
         elif assignment == "verifier":
-            assignment_title = "VERIFIER MODEL"
+            assignment_title = "Судья Дредд"
             current_model_id = self.verifier_model_id_var.get()
             apply_model = self._set_verifier_model
         else:
