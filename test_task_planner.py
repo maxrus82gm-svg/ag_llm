@@ -625,6 +625,30 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("READY_TO_PERSIST and unresolved_requirements=[]", prompt)
         self.assertIn("CONTINUE only for a real semantic or material blocker", prompt)
 
+    def test_planner_resolves_base_and_mode_context_for_each_call(self):
+        generation = {"value": "first"}
+
+        def resolve(context_id, variables=None):
+            suffix = variables["plan_format"] if variables else ""
+            return f"{generation['value']}:{context_id}:{suffix}"
+
+        with patch.object(planner_runtime, "resolve_context_text", side_effect=resolve) as resolver:
+            initial = planner_runtime.build_planner_body("INITIAL", "TASK", {}, "gigachat_ultra")
+            generation["value"] = "second"
+            readiness = planner_runtime.build_planner_body("READINESS", "TASK", {}, "gigachat_ultra")
+            generation["value"] = "third"
+            replan = planner_runtime.build_planner_body("REPLAN", "TASK", {}, "gigachat_ultra")
+
+        self.assertIn("first:planner.base:", initial["messages"][0]["content"])
+        self.assertIn("first:planner.initial:", initial["messages"][0]["content"])
+        self.assertIn("second:planner.readiness:", readiness["messages"][0]["content"])
+        self.assertIn("third:planner.replan:", replan["messages"][0]["content"])
+        self.assertEqual(
+            [item.args[0] for item in resolver.call_args_list],
+            ["planner.base", "planner.initial", "planner.base", "planner.readiness",
+             "planner.base", "planner.replan"],
+        )
+
     def test_strict_json(self):
         for text in ['```json\n{}\n```', '{"a":1,"a":2}', '[]', '{"a":NaN}']:
             with self.assertRaises(planner_runtime.PlannerError):

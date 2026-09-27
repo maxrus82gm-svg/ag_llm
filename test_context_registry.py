@@ -29,10 +29,17 @@ class ContextRegistryTests(unittest.TestCase):
             {"group_id": "server_events", "group_name": "Серверные события"},
             groups,
         )
+        self.assertIn(
+            {"group_id": "planner", "group_name": "Planner"},
+            groups,
+        )
         records = list_context_records(state_path=self.state_path)
         ids = {item["context_id"] for item in records}
         self.assertIn("task.stage", ids)
         self.assertIn("permission.denied", ids)
+        self.assertTrue({
+            "planner.base", "planner.initial", "planner.readiness", "planner.replan",
+        }.issubset(ids))
 
     def test_02_factory_default_resolves(self) -> None:
         text = resolve_context_text(
@@ -129,6 +136,52 @@ class ContextRegistryTests(unittest.TestCase):
             state_path=self.state_path,
         )
         self.assertEqual(record["active_variant"], "default")
+
+    def test_07_planner_base_and_each_mode_resolve(self) -> None:
+        base = resolve_context_text("planner.base", state_path=self.state_path)
+        initial = resolve_context_text(
+            "planner.initial", {"plan_format": "INITIAL_FORMAT"},
+            state_path=self.state_path,
+        )
+        readiness = resolve_context_text(
+            "planner.readiness", state_path=self.state_path,
+        )
+        replan = resolve_context_text(
+            "planner.replan", {"plan_format": "REPLAN_FORMAT"},
+            state_path=self.state_path,
+        )
+
+        self.assertIn("separate tool-free Task Planner", base)
+        self.assertIn("INITIAL_FORMAT", initial)
+        self.assertIn("open_persistence_obligations", readiness)
+        self.assertIn("REPLAN_FORMAT", replan)
+
+    def test_08_planner_switches_default_and_custom_without_restart(self) -> None:
+        factory_default = resolve_context_text(
+            "planner.base", state_path=self.state_path,
+        )
+        save_context_variant(
+            "planner.base",
+            "custom",
+            "CUSTOM PLANNER BASE",
+            description="Тестовый Planner context.",
+            state_path=self.state_path,
+        )
+        set_active_variant(
+            "planner.base", "custom", state_path=self.state_path,
+        )
+        self.assertEqual(
+            resolve_context_text("planner.base", state_path=self.state_path),
+            "CUSTOM PLANNER BASE",
+        )
+
+        set_active_variant(
+            "planner.base", "default", state_path=self.state_path,
+        )
+        self.assertEqual(
+            resolve_context_text("planner.base", state_path=self.state_path),
+            factory_default,
+        )
 
 
 if __name__ == "__main__":
