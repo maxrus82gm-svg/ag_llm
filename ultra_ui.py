@@ -881,62 +881,108 @@ class UltraApp(tk.Tk):
             text="НАСТРОЙКИ ИНСТРУМЕНТОВ LLM",
         ).pack(anchor="w", pady=(0, 6))
 
-        model_frame = ttk.LabelFrame(
+        models_frame = ttk.LabelFrame(
             right_frame,
-            text="Модель, используемая в чате Workspace",
+            text="МОДЕЛИ LLM",
             padding=(8, 5),
         )
-        model_frame.pack(fill="x", pady=(0, 8))
+        models_frame.pack(fill="x", pady=(0, 8))
+
+        for column in range(3):
+            models_frame.columnconfigure(column, weight=1)
+
+        # MAIN CHAT
+        main_model_frame = ttk.Frame(models_frame)
+        main_model_frame.grid(
+            row=0,
+            column=0,
+            sticky="nw",
+            padx=(0, 18),
+        )
+
+        ttk.Label(
+            main_model_frame,
+            text="MAIN CHAT",
+        ).pack(anchor="w")
+
+        main_model_row = ttk.Frame(main_model_frame)
+        main_model_row.pack(anchor="w", pady=(3, 0))
+
         model_registry_button = ttk.Button(
-            model_frame,
+            main_model_row,
             text="Модель",
             command=lambda: self._open_model_registry("main_chat"),
         )
         model_registry_button.pack(side="left")
+
         ttk.Label(
-            model_frame,
+            main_model_row,
             textvariable=self.main_chat_model_display_var,
-        ).pack(side="left", padx=(8, 16))
+        ).pack(side="left", padx=(8, 12))
+
         main_context_button = ttk.Button(
-            model_frame,
-            text="Контекст MAIN CHAT...",
+            main_model_row,
+            text="Контекст...",
             command=self._open_global_ultra_context_editor,
         )
         main_context_button.pack(side="left")
 
-        planner_model_frame = ttk.LabelFrame(
-            right_frame,
-            text="Модель, используемая Планировщиком",
-            padding=(8, 5),
+        # PLANNER
+        planner_model_frame = ttk.Frame(models_frame)
+        planner_model_frame.grid(
+            row=0,
+            column=1,
+            sticky="nw",
+            padx=(0, 18),
         )
-        planner_model_frame.pack(fill="x", pady=(0, 8))
-        planner_model_button = ttk.Button(
+
+        ttk.Label(
             planner_model_frame,
+            text="ПЛАНИРОВЩИК",
+        ).pack(anchor="w")
+
+        planner_model_row = ttk.Frame(planner_model_frame)
+        planner_model_row.pack(anchor="w", pady=(3, 0))
+
+        planner_model_button = ttk.Button(
+            planner_model_row,
             text="Модель",
             command=lambda: self._open_model_registry("planner"),
         )
         planner_model_button.pack(side="left")
-        ttk.Label(
-            planner_model_frame,
-            textvariable=self.planner_model_display_var,
-        ).pack(side="left", padx=(8, 16))
 
-        verifier_model_frame = ttk.LabelFrame(
-            right_frame,
-            text="Модель, используемая Судьёй Дреддом",
-            padding=(8, 5),
+        ttk.Label(
+            planner_model_row,
+            textvariable=self.planner_model_display_var,
+        ).pack(side="left", padx=(8, 0))
+
+        # DREDD
+        verifier_model_frame = ttk.Frame(models_frame)
+        verifier_model_frame.grid(
+            row=0,
+            column=2,
+            sticky="nw",
         )
-        verifier_model_frame.pack(fill="x", pady=(0, 8))
-        verifier_model_button = ttk.Button(
+
+        ttk.Label(
             verifier_model_frame,
+            text="СУДЬЯ ДРЕДД",
+        ).pack(anchor="w")
+
+        verifier_model_row = ttk.Frame(verifier_model_frame)
+        verifier_model_row.pack(anchor="w", pady=(3, 0))
+
+        verifier_model_button = ttk.Button(
+            verifier_model_row,
             text="Модель",
             command=lambda: self._open_model_registry("verifier"),
         )
         verifier_model_button.pack(side="left")
+
         ttk.Label(
-            verifier_model_frame,
+            verifier_model_row,
             textvariable=self.verifier_model_display_var,
-        ).pack(side="left", padx=(8, 16))
+        ).pack(side="left", padx=(8, 0))
 
         # Жёсткие серверные ограничения.
         security = ttk.LabelFrame(
@@ -1234,6 +1280,34 @@ class UltraApp(tk.Tk):
         self.central_vertical_paned.add(upper_frame, minsize=180, stretch="always")
         self.central_vertical_paned.add(lower_frame, minsize=210)
 
+        self.lower_vertical_paned = tk.PanedWindow(
+            lower_frame,
+            orient="vertical",
+            sashwidth=6,
+            showhandle=False,
+            bd=0,
+            relief="flat",
+            sashrelief="flat",
+        )
+        self.lower_vertical_paned.pack(fill="both", expand=True)
+        self.lower_vertical_paned.bind(
+            "<ButtonRelease-1>",
+            self._on_sash_release,
+        )
+
+        compressor_pane = ttk.Frame(self.lower_vertical_paned)
+        message_pane = ttk.Frame(self.lower_vertical_paned)
+
+        self.lower_vertical_paned.add(
+            compressor_pane,
+            minsize=95,
+        )
+        self.lower_vertical_paned.add(
+            message_pane,
+            minsize=120,
+            stretch="always",
+        )
+
         self.chat_audit_paned = tk.PanedWindow(
             upper_frame, orient="horizontal", sashwidth=6, showhandle=False,
             bd=0, relief="flat", sashrelief="flat",
@@ -1315,11 +1389,14 @@ class UltraApp(tk.Tk):
         self._render_audit_thread()
 
         compressor_frame = ttk.LabelFrame(
-            upper_frame,
+            compressor_pane,
             text="КОНТЕКСТ СООБЩЕНИЙ / COMPRESSOR",
             padding=(8, 5),
         )
-        compressor_frame.pack(side="bottom", fill="x", pady=(8, 0))
+        compressor_frame.pack(
+            fill="both",
+            expand=True,
+        )
         compressor_frame.columnconfigure(1, minsize=180)
         compressor_frame.columnconfigure(3, weight=1)
 
@@ -1450,7 +1527,7 @@ class UltraApp(tk.Tk):
             ]
         )
 
-        status_frame = ttk.Frame(lower_frame)
+        status_frame = ttk.Frame(message_pane)
         status_frame.pack(fill="x", pady=(0, 8))
         ttk.Label(status_frame, text="Статус:").pack(side="left")
         ttk.Label(status_frame, textvariable=self.status_var).pack(
@@ -1465,7 +1542,7 @@ class UltraApp(tk.Tk):
         self.progress.pack(side="right")
 
         message_section = ttk.LabelFrame(
-            lower_frame,
+            message_pane,
             text="Сообщение",
             padding=4,
         )
@@ -1482,7 +1559,7 @@ class UltraApp(tk.Tk):
         bind_edit_shortcuts(self.input_box)
         self.input_box.bind("<Control-Return>", self._send_from_hotkey)
 
-        buttons = ttk.Frame(lower_frame)
+        buttons = ttk.Frame(message_pane)
         buttons.pack(side="bottom", fill="x")
         self.send_button = ttk.Button(
             buttons,
