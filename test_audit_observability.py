@@ -135,6 +135,15 @@ class AuditStorageTests(unittest.TestCase):
         self.assertEqual(saved["execution_consistency"]["status"], "UNRESOLVED")
         self.assertEqual(saved["final_audit"], "NOT_RUN")
 
+    def test_final_audit_skipped_is_recorded_as_disabled(self):
+        self.recorder.observe({
+            "event": "final_audit_skipped",
+            "reason": "disabled_by_run_setting",
+        })
+        saved = self.load()
+        self.assertEqual(saved["final_audit"], "DISABLED")
+        self.assertEqual(saved["issues"], [])
+
     def test_permission_lifecycle_is_persisted_and_rendered(self):
         for number, tool in ((1, "replace_text"), (2, "insert_after")):
             self.recorder.observe({"event": "permission_denied", "capability": "WRITE",
@@ -258,7 +267,16 @@ class CompactLayoutTests(unittest.TestCase):
         top = controls.winfo_children()[0]
         self.assertEqual(top.grid_info()["columnspan"], 4)
         self.assertEqual([w.cget("text") for w in top.winfo_children()
-                          if isinstance(w, ultra_ui.ttk.Checkbutton)], ["VERIFY", "GUARD P1"])
+                          if isinstance(w, ultra_ui.ttk.Checkbutton)], [
+                              "Инструменты проверки",
+                              "Защита GUARD P1",
+                              "Планировщик",
+                              "Судья Дредд",
+                          ])
+        self.assertTrue(app.planner_enabled_var.get())
+        self.assertTrue(app.final_audit_enabled_var.get())
+        self.assertIsNotNone(titled("Модель, используемая в чате Workspace"))
+        self.assertIsNotNone(titled("Модель, используемая Судьёй Дреддом"))
         scope_rows = [int(w.grid_info()["row"]) for w in controls.winfo_children()
                       if isinstance(w, ultra_ui.ttk.Entry)]
         self.assertEqual(scope_rows, [1, 2, 3])
@@ -421,6 +439,10 @@ class TaskBlockUiTests(unittest.TestCase):
         self.assertNotEqual(task_id, user_c["message_id"])
         async def fake_run(_task, _workspace, **kwargs):
             self.assertEqual(kwargs["task_block_id"], task_id)
+            self.assertTrue(kwargs["planner_enabled"])
+            self.assertTrue(kwargs["final_audit_enabled"])
+            self.assertNotIn("planner_enabled", kwargs["permissions"])
+            self.assertNotIn("final_audit_enabled", kwargs["permissions"])
             kwargs["on_event"]({
                 "event": "run_started", "run_id": "run_c", "task_block_id": task_id,
                 "model_id": kwargs["model_id"], "model_display_name": "Ultra",
@@ -543,7 +565,7 @@ class TraceAndUiStateTests(unittest.TestCase):
               patch.object(ultra_ui, "append_raw_message", return_value={"producer": None})):
             worker = threading.Thread(target=ultra_ui.UltraApp._worker,
                 args=(fake, "task", "workspace", {}, "chat", "gigachat_ultra",
-                      "gigachat_3_pro"))
+                      "gigachat_3_pro", True, True))
             worker.start()
             for _ in range(100):
                 ultra_ui.UltraApp._poll_events(fake)
@@ -583,6 +605,7 @@ class TraceAndUiStateTests(unittest.TestCase):
             ("final_audit_retry_evaluated", {"decision": "CONTINUE", "progress_class": "MATERIAL_PROGRESS", "audit_attempt": 1}, "RETRY POLICY → CONTINUE"),
             ("final_audit_feedback_delivered", {"correction_cycle": 1, "correction_limit": 2}, "DREDD FEEDBACK → EXECUTOR"),
             ("final_audit_correction_started", {"correction_cycle": 1, "correction_limit": 2}, "CORRECTION START"),
+            ("final_audit_skipped", {"reason": "disabled_by_run_setting"}, "СУДЬЯ ДРЕДД — OFF"),
         )
         formatter = SimpleNamespace(_compact_event_arguments=ultra_ui.UltraApp._compact_event_arguments)
         events = queue.Queue()
@@ -602,7 +625,44 @@ class TraceAndUiStateTests(unittest.TestCase):
             after=lambda *_: None,
         )
         ultra_ui.UltraApp._poll_trace_events(fake)
-        self.assertEqual([tag for _line, tag in appended], ["trace"] * 4 + ["trace_error"])
+        self.assertEqual([tag for _line, tag in appended], ["trace"] * 5 + ["trace_error"])
+
+    def test_server_rejections_use_error_tags_in_trace_and_audit(self):
+        rejected = (
+            "mutation_preflight_rejected",
+            "planner_failed",
+            "stage_blocked",
+            "persistence_recovery_exhausted",
+            "planner_readiness_rejected",
+        )
+        events = queue.Queue()
+        for kind in rejected:
+            events.put({"event": kind, "run_id": "run_test"})
+        appended = []
+        fake = SimpleNamespace(
+            trace_events=events,
+            _format_event=lambda event: event["event"],
+            _append_trace=lambda line, tag="trace": appended.append((line, tag)),
+            _run_started_once=False,
+            _selected_audit_run_id=None,
+            _active_audit_run_id=None,
+            current_chat_id=None,
+            _poll_trace_events=lambda: None,
+            after=lambda *_: None,
+        )
+        ultra_ui.UltraApp._poll_trace_events(fake)
+        self.assertEqual([tag for _line, tag in appended], ["trace_error"] * 5)
+
+        thread = {
+            "task_lifecycle": {
+                "events": [{"event": kind} for kind in rejected],
+            },
+            "final_audit": "PENDING",
+            "run_status": "RUNNING",
+        }
+        lifecycle_segments = ultra_ui.UltraApp._audit_segments(thread, "run_test")
+        lifecycle_tags = [tag for tag, text in lifecycle_segments if any(kind in text for kind in rejected)]
+        self.assertEqual(lifecycle_tags, ["dredd_fail"] * 5)
 
     def test_new_color_swatches_refresh(self):
         class Swatch:
@@ -686,7 +746,8 @@ class TraceAndUiStateTests(unittest.TestCase):
         events = queue.Queue()
         for kind in ("run_started", "execution_consistency_detected",
                      "execution_consistency_verifier_failed", "execution_consistency_resolved",
-                     "final_audit_failed", "audit_diagnostic_answer", "final_audit_passed"):
+                     "final_audit_failed", "audit_diagnostic_answer", "final_audit_passed",
+                     "final_audit_skipped"):
             events.put({"event": kind, "run_id": "run_test", "chat_id": "chat_test"})
         refreshed = []
         fake = SimpleNamespace(
@@ -698,7 +759,7 @@ class TraceAndUiStateTests(unittest.TestCase):
         )
         ultra_ui.UltraApp._poll_trace_events(fake)
         self.assertEqual(fake._selected_audit_run_id, "run_test")
-        self.assertEqual(len(refreshed), 7)
+        self.assertEqual(len(refreshed), 8)
 
     def test_precise_arguments_are_compact_and_dredd_label_is_ui_only(self):
         compact = ultra_ui.UltraApp._compact_event_arguments({
@@ -771,6 +832,8 @@ class TraceAndUiStateTests(unittest.TestCase):
             state["chat_audit_ratios"]["normal"] = 0.61
             state["central_vertical_ratios"]["zoomed"] = 0.72
             state["audit_visible"] = False
+            state["planner_enabled"] = False
+            state["final_audit_enabled"] = False
             with patch.object(ui_state, "STATE_PATH", state_path):
                 ui_state.save_ui_state(state)
                 loaded = ui_state.load_ui_state()
@@ -779,6 +842,8 @@ class TraceAndUiStateTests(unittest.TestCase):
         self.assertEqual(loaded["chat_audit_ratios"]["normal"], 0.61)
         self.assertEqual(loaded["central_vertical_ratios"]["zoomed"], 0.72)
         self.assertFalse(loaded["audit_visible"])
+        self.assertFalse(loaded["planner_enabled"])
+        self.assertFalse(loaded["final_audit_enabled"])
 
     def test_error_and_audit_colors_apply_to_distinct_tags(self):
         class ColorVar:

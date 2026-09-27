@@ -21,7 +21,7 @@ _SCOPE_TEXT = {
 }
 
 _GROUP_UI_LABELS = {
-    "planner": "Планировщик задач",
+    "planner": "Планировщик",
 }
 
 

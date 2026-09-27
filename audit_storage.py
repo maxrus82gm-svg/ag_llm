@@ -27,7 +27,7 @@ PLANNER_EVENTS = {
 _AUDIT_EVENTS = {
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
     "audit_diagnostic_error", "tool_finished", "tool_error",
-    "final_audit_passed", "final_audit_error", "run_failed", "run_finished",
+    "final_audit_passed", "final_audit_skipped", "final_audit_error", "run_failed", "run_finished",
     "execution_consistency_detected", "execution_consistency_feedback_delivered",
     "execution_consistency_recheck_started", "execution_consistency_verifier_started",
     "execution_consistency_verifier_passed", "execution_consistency_verifier_failed",
@@ -244,6 +244,8 @@ class AuditThreadRecorder:
             for issue in issues:
                 if issue["result"] == "PENDING":
                     issue["result"] = "RESOLVED"
+        elif kind == "final_audit_skipped":
+            self.thread["final_audit"] = "DISABLED"
         elif kind in {"final_audit_error", "run_failed"}:
             if kind == "final_audit_error" or issues:
                 self.thread["final_audit"] = "FAIL"

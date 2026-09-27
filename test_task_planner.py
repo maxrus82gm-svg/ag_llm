@@ -52,7 +52,8 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
     tearDown = legacy.FinalAuditRuntimeTests.tearDown
 
     async def run_v6(self, initial=None, responses=None, *, planner_effect=None, audits=None,
-                     callback=None, extra_patches=(), allow_write=True):
+                     callback=None, extra_patches=(), allow_write=True,
+                     final_audit_enabled=True):
         self.permissions.update(allow_write=allow_write, allow_verify=True, tool_limit=12)
         initial = initial or plan()
         async def planner(**kwargs):
@@ -64,7 +65,9 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.planner = AsyncMock(side_effect=planner)
         original = server.run_agent_task
         async def enabled(*args, **kwargs):
-            return await original(*args, **kwargs, planner_enabled=True)
+            kwargs["planner_enabled"] = True
+            kwargs["final_audit_enabled"] = final_audit_enabled
+            return await original(*args, **kwargs)
         with patch.object(server, "run_agent_task", enabled), patch.object(server, "run_planner", self.planner):
             return await legacy.FinalAuditRuntimeTests.run_case(
                 self, audits or legacy.verifier_result(), fake_client=legacy.FakeClient(responses),
@@ -86,6 +89,16 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(audit.await_count, 1)
         self.assertNotIn("persistence_required", self.event_names())
         self.assertFalse((self.workspace / "result.md").exists())
+        self.assertEqual(self.stored()["stage_states"]["main"]["status"], "SATISFIED")
+
+    async def test_disabled_final_audit_requires_satisfied_planner_lifecycle(self):
+        result, audit, _ = await self.run_v6(
+            plan(False),
+            final_audit_enabled=False,
+        )
+        self.assertEqual(result, "CANDIDATE FINAL")
+        audit.assert_not_awaited()
+        self.assertIn("final_audit_skipped", self.event_names())
         self.assertEqual(self.stored()["stage_states"]["main"]["status"], "SATISFIED")
 
     async def test_required_create_normal_tool_then_audit(self):

@@ -220,6 +220,12 @@ class UltraApp(tk.Tk):
         self.allow_delete_var = tk.BooleanVar(value=False)
         self.allow_verify_var = tk.BooleanVar(value=True)
         self.allow_guard_p1_var = tk.BooleanVar(value=True)
+        self.planner_enabled_var = tk.BooleanVar(
+            value=bool(self._ui_state.get("planner_enabled", True))
+        )
+        self.final_audit_enabled_var = tk.BooleanVar(
+            value=bool(self._ui_state.get("final_audit_enabled", True))
+        )
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(
             value=bool(self._ui_state.get("dark_theme", True))
@@ -657,7 +663,7 @@ class UltraApp(tk.Tk):
 
         model_frame = ttk.LabelFrame(
             right_frame,
-            text="MAIN CHAT MODEL",
+            text="Модель, используемая в чате Workspace",
             padding=(8, 5),
         )
         model_frame.pack(fill="x", pady=(0, 8))
@@ -680,7 +686,7 @@ class UltraApp(tk.Tk):
 
         verifier_model_frame = ttk.LabelFrame(
             right_frame,
-            text="Судья Дредд",
+            text="Модель, используемая Судьёй Дреддом",
             padding=(8, 5),
         )
         verifier_model_frame.pack(fill="x", pady=(0, 8))
@@ -724,17 +730,31 @@ class UltraApp(tk.Tk):
 
         verify_check = ttk.Checkbutton(
             security_top,
-            text="VERIFY",
+            text="Инструменты проверки",
             variable=self.allow_verify_var,
         )
         verify_check.pack(side="left", padx=(0, 18))
 
         guard_p1_check = ttk.Checkbutton(
             security_top,
-            text="GUARD P1",
+            text="Защита GUARD P1",
             variable=self.allow_guard_p1_var,
         )
         guard_p1_check.pack(side="left")
+
+        planner_check = ttk.Checkbutton(
+            security_top,
+            text="Планировщик",
+            variable=self.planner_enabled_var,
+        )
+        planner_check.pack(side="left", padx=(18, 0))
+
+        dredd_check = ttk.Checkbutton(
+            security_top,
+            text="Судья Дредд",
+            variable=self.final_audit_enabled_var,
+        )
+        dredd_check.pack(side="left", padx=(18, 0))
 
         context_messages_button = ttk.Button(
             security_service,
@@ -940,6 +960,8 @@ class UltraApp(tk.Tk):
                 delete_check,
                 verify_check,
                 guard_p1_check,
+                planner_check,
+                dredd_check,
                 context_messages_button,
                 model_registry_button,
                 verifier_model_button,
@@ -1246,7 +1268,7 @@ class UltraApp(tk.Tk):
 
     def _open_model_registry(self, assignment: str = "main_chat") -> None:
         if assignment == "main_chat":
-            assignment_title = "MAIN CHAT MODEL"
+            assignment_title = "Модель, используемая в чате Workspace"
             current_model_id = self.main_chat_model_id_var.get()
             apply_model = self._set_main_chat_model
         elif assignment == "compressor":
@@ -1254,7 +1276,7 @@ class UltraApp(tk.Tk):
             current_model_id = self.compressor_model_id_var.get()
             apply_model = self._set_compressor_model
         elif assignment == "verifier":
-            assignment_title = "Судья Дредд"
+            assignment_title = "Модель, используемая Судьёй Дреддом"
             current_model_id = self.verifier_model_id_var.get()
             apply_model = self._set_verifier_model
         else:
@@ -1678,6 +1700,10 @@ class UltraApp(tk.Tk):
             )
             self._ui_state["verifier_model_id"] = (
                 self.verifier_model_id_var.get()
+            )
+            self._ui_state["planner_enabled"] = self.planner_enabled_var.get()
+            self._ui_state["final_audit_enabled"] = (
+                self.final_audit_enabled_var.get()
             )
             try:
                 reduction_percent = validate_reduction_percent(
@@ -3816,7 +3842,13 @@ class UltraApp(tk.Tk):
         if lifecycle:
             segments.append(("metadata", f"TASK PLAN: {lifecycle.get('plan_id')} / v{lifecycle.get('plan_version')}\n"))
             for event in lifecycle.get("events", []):
-                tag = "dredd_fail" if event["event"] in {"planner_failed", "stage_blocked", "persistence_recovery_exhausted"} else "audit"
+                tag = "dredd_fail" if event["event"] in {
+                    "planner_failed",
+                    "stage_blocked",
+                    "persistence_recovery_exhausted",
+                    "mutation_preflight_rejected",
+                    "planner_readiness_rejected",
+                } else "audit"
                 segments.append((tag, f"v{event.get('plan_version', '')} {event.get('stage_id') or ''} "
                                  f"{event['event']} {event.get('status', '')} "
                                  f"{event.get('reason_code') or event.get('reason', '')}\n"))
@@ -4173,6 +4205,12 @@ class UltraApp(tk.Tk):
         if event_type == "final_audit_passed":
             return f"[{time_str}] СУДЬЯ ДРЕДД PASS | RUN {run_id} | attempt={event.get('audit_attempt')}"
 
+        if event_type == "final_audit_skipped":
+            return (
+                f"[{time_str}] СУДЬЯ ДРЕДД — OFF | RUN {run_id} | "
+                f"{event.get('reason')}"
+            )
+
         if event_type == "final_audit_error":
             return f"[{time_str}] FINAL AUDIT ERROR | RUN {run_id} | {str(event.get('reason') or '')[:300]}"
 
@@ -4328,6 +4366,8 @@ class UltraApp(tk.Tk):
 
         model_id = self.main_chat_model_id_var.get()
         verifier_model_id = self.verifier_model_id_var.get()
+        planner_enabled = bool(self.planner_enabled_var.get())
+        final_audit_enabled = bool(self.final_audit_enabled_var.get())
         try:
             selected_model = get_model_spec(model_id)
             get_model_spec(verifier_model_id)
@@ -4369,6 +4409,8 @@ class UltraApp(tk.Tk):
                 f"[{delete_scope}], "
                 f"VERIFY={'ON' if permissions['allow_verify'] else 'OFF'}, "
                 f"GUARD_P1={'ON' if permissions['allow_guard_p1'] else 'OFF'}, "
+                f"PLANNER={'ON' if planner_enabled else 'OFF'}, "
+                f"DREDD={'ON' if final_audit_enabled else 'OFF'}, "
                 f"TOOLS={tool_limit}."
             ),
             "system",
@@ -4393,6 +4435,8 @@ class UltraApp(tk.Tk):
                 self.current_chat_id,
                 model_id,
                 verifier_model_id,
+                planner_enabled,
+                final_audit_enabled,
                 task_block_id,
             ),
             daemon=True,
@@ -4433,6 +4477,8 @@ class UltraApp(tk.Tk):
         chat_id: str,
         model_id: str,
         verifier_model_id: str,
+        planner_enabled: bool,
+        final_audit_enabled: bool,
         task_block_id: str | None = None,
     ) -> None:
         producer_snapshot: dict | None = None
@@ -4507,7 +4553,8 @@ class UltraApp(tk.Tk):
                     verifier_model_id=verifier_model_id,
                     task_block_id=task_block_id,
                     permission_request_callback=permission_request_callback,
-                    planner_enabled=True,
+                    planner_enabled=planner_enabled,
+                    final_audit_enabled=final_audit_enabled,
                 )
             )
             if not run_started_seen and provenance_warning is None:
@@ -4649,6 +4696,9 @@ class UltraApp(tk.Tk):
                         "execution_consistency_verifier_failed", "execution_consistency_terminal",
                         "permission_scope_blocked", "permission_review_failed",
                         "permission_user_denied", "permission_escalation_terminal",
+                        "mutation_preflight_rejected", "planner_failed",
+                        "stage_blocked", "persistence_recovery_exhausted",
+                        "planner_readiness_rejected",
                     } else "trace"
                     self._append_trace(self._format_event(event), tag)
                     if event.get("audit_storage_error"):
@@ -4681,6 +4731,7 @@ class UltraApp(tk.Tk):
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",
+                        "final_audit_skipped",
                         "final_audit_error", "run_failed", "run_finished",
                         "permission_denied", "permission_scope_blocked",
                         "permission_review_started", "permission_review_passed",

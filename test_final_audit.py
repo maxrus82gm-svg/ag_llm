@@ -214,6 +214,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         task_block_id: str | None = None,
         task: str = "ORIGINAL RAW TASK",
         permission_request_callback=None,
+        final_audit_enabled: bool = True,
     ):
         client = fake_client or FakeClient()
         if isinstance(verifier_side_effect, BaseException):
@@ -303,6 +304,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
                 verifier_model_id=verifier_model_id,
                 task_block_id=task_block_id,
                 permission_request_callback=permission_request_callback,
+                final_audit_enabled=final_audit_enabled,
             )
         return result, verifier, client
 
@@ -458,6 +460,20 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             [item["event"] for item in self.events],
         )
         self.assertNotIn("run_failed", [item["event"] for item in self.events])
+        self.assertEqual(self.events[-1]["event"], "run_finished")
+        self.assertEqual(self.events[-1]["status"], "SUCCESS")
+
+    async def test_disabled_final_audit_skips_verifier_and_finishes_success(self) -> None:
+        result, verifier, _client = await self.run_case(
+            verifier_result("PASS"),
+            final_audit_enabled=False,
+        )
+        self.assertEqual(result, "CANDIDATE FINAL")
+        verifier.assert_not_awaited()
+        names = [item["event"] for item in self.events]
+        self.assertIn("final_audit_skipped", names)
+        self.assertNotIn("final_audit_started", names)
+        self.assertNotIn("final_audit_passed", names)
         self.assertEqual(self.events[-1]["event"], "run_finished")
         self.assertEqual(self.events[-1]["status"], "SUCCESS")
 
@@ -1498,6 +1514,24 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             "final_audit_started", [item["event"] for item in self.events]
         )
 
+    async def test_disabled_final_audit_does_not_bypass_deterministic_gate(self) -> None:
+        verifier = AsyncMock(return_value=verifier_result("PASS"))
+        missing = [{"tool": "git_status", "reason": "required"}]
+        with (
+            patch.object(server, "_verification_missing_requirements", return_value=missing),
+            patch.object(server, "MAX_VERIFICATION_GATE_RETRIES", 0),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "VERIFICATION GATE STUCK"):
+                await self.run_case(
+                    verifier_result("PASS"),
+                    final_audit_enabled=False,
+                    extra_patches=(patch.object(server, "run_verifier_check", verifier),),
+                )
+        verifier.assert_not_awaited()
+        names = [item["event"] for item in self.events]
+        self.assertIn("verification_required", names)
+        self.assertNotIn("final_audit_skipped", names)
+
     async def test_context_contains_candidate_policy_and_fresh_server_facts(self) -> None:
         _result, verifier, _client = await self.run_case(verifier_result("PASS"))
         context = json.loads(verifier.await_args.kwargs["verification_context"])
@@ -1752,7 +1786,7 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
 
 
 class FinalAuditUiFlowTests(unittest.TestCase):
-    def test_worker_passes_verifier_model_to_run_agent_task(self) -> None:
+    def test_worker_passes_verifier_model_and_run_toggles(self) -> None:
         app = object.__new__(ultra_ui.UltraApp)
         app.trace_events = queue.Queue()
         app.events = queue.Queue()
@@ -1772,11 +1806,15 @@ class FinalAuditUiFlowTests(unittest.TestCase):
                 "chat-1",
                 "gigachat_ultra",
                 "gigachat_3_lightning",
+                False,
+                False,
             )
         self.assertEqual(
             run.await_args.kwargs["verifier_model_id"],
             "gigachat_3_lightning",
         )
+        self.assertFalse(run.await_args.kwargs["planner_enabled"])
+        self.assertFalse(run.await_args.kwargs["final_audit_enabled"])
 
     def test_send_captures_current_verifier_selection(self) -> None:
         source = inspect.getsource(ultra_ui.UltraApp._send)

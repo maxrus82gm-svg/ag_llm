@@ -2623,6 +2623,7 @@ async def run_agent_task(
     chat_id: str | None = None, model_id: str | None = None,
     verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID, task_block_id: str | None = None,
     permission_request_callback=None, planner_enabled: bool = False,
+    final_audit_enabled: bool = True,
     planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
 ) -> str:
     """Legacy direct callers opt in; normal UI explicitly enables the V6 contract."""
@@ -2631,7 +2632,9 @@ async def run_agent_task(
             task, workspace_root, on_event=on_event, permissions=permissions, chat_id=chat_id,
             model_id=model_id, verifier_model_id=verifier_model_id, task_block_id=task_block_id,
             permission_request_callback=permission_request_callback,
-            planner_enabled=planner_enabled, planner_model_id=planner_model_id,
+            planner_enabled=planner_enabled,
+            final_audit_enabled=final_audit_enabled,
+            planner_model_id=planner_model_id,
         )
     except LifecycleBlocked as exc:
         return f"RUN STATUS: BLOCKED\nreason: {exc}"
@@ -2649,6 +2652,7 @@ async def _run_agent_task_impl(
     task_block_id: str | None = None,
     permission_request_callback=None,
     planner_enabled: bool = False,
+    final_audit_enabled: bool = True,
     planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
 ) -> str:
     """Запустить автономный GigaChat file-agent с серверными ограничениями."""
@@ -4154,6 +4158,35 @@ async def _run_agent_task_impl(
                     "duration": time.time() - start_time,
                 })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
+
+            if not final_audit_enabled:
+                if lifecycle:
+                    lifecycle.assert_satisfied()
+
+                _emit(
+                    "final_audit_skipped",
+                    {
+                        "reason": "disabled_by_run_setting",
+                        "model_id": verifier_model_id,
+                    },
+                )
+
+                _emit(
+                    "run_finished",
+                    {
+                        "status": "SUCCESS",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "backup_path": (
+                            str(backup_session["backup_dir"])
+                            if backup_session is not None
+                            else None
+                        ),
+                        "verification_state": verification_state,
+                    },
+                )
+                return content
 
             final_audit_started_at = time.time()
             _emit(
