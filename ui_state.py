@@ -69,6 +69,13 @@ def default_ui_state() -> dict[str, Any]:
         "verifier_model_id": "gigachat_3_pro",
         "planner_enabled": True,
         "final_audit_enabled": True,
+        "planner_diagnostics": {
+            "request": True,
+            "context": True,
+            "response": True,
+            "stages": True,
+            "errors": True,
+        },
         "compressor_reduction_percent": 50,
         "compressor_final_check_enabled": True,
     }
@@ -196,6 +203,12 @@ def load_ui_state() -> dict[str, Any]:
 
     if isinstance(loaded.get("final_audit_enabled"), bool):
         state["final_audit_enabled"] = loaded["final_audit_enabled"]
+
+    planner_diagnostics = loaded.get("planner_diagnostics")
+    if isinstance(planner_diagnostics, dict):
+        for key in ("request", "context", "response", "stages", "errors"):
+            if isinstance(planner_diagnostics.get(key), bool):
+                state["planner_diagnostics"][key] = planner_diagnostics[key]
 
     reduction_percent = loaded.get("compressor_reduction_percent")
     if (

@@ -310,7 +310,18 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_role_isolation_and_safe_request_trace(self):
         result, audit, client = await self.run_v6(plan(False))
-        planner_context = json.dumps([c.kwargs for c in self.planner.await_args_list])
+        planner_context = json.dumps([
+            {
+                key: value
+                for key, value in call.kwargs.items()
+                if key != "diagnostic_callback"
+            }
+            for call in self.planner.await_args_list
+        ])
+        self.assertTrue(all(
+            callable(call.kwargs.get("diagnostic_callback"))
+            for call in self.planner.await_args_list
+        ))
         self.assertNotIn("audit_diagnostic", planner_context)
         self.assertNotIn("Independent Final", planner_context)
         request = next(e for e in self.events if e["event"] == "api_request")

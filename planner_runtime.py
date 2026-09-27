@@ -210,15 +210,43 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
 
 
 async def run_planner(*, mode: str, raw_task: str, context: dict,
-                      planner_model_id: str = DEFAULT_PLANNER_MODEL_ID) -> dict:
-    body = build_planner_body(mode, raw_task, context, planner_model_id)
+                      planner_model_id: str = DEFAULT_PLANNER_MODEL_ID,
+                      diagnostic_callback=None) -> dict:
+    def diagnostic(kind: str, payload: dict) -> None:
+        if diagnostic_callback is None:
+            return
+        try:
+            diagnostic_callback(kind, payload)
+        except Exception:
+            pass
+
     try:
+        body = build_planner_body(mode, raw_task, context, planner_model_id)
+        diagnostic("request", {
+            "mode": mode,
+            "planner_model_id": planner_model_id,
+            "provider_model_id": body["model"],
+            "temperature": body["temperature"],
+            "max_tokens": body["max_tokens"],
+            "function_call": body["function_call"],
+        })
+        diagnostic("context", {
+            "mode": mode,
+            "system": body["messages"][0]["content"],
+            "user": body["messages"][1]["content"],
+        })
         token = await get_access_token()
         async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
             response = await client.post(CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body)
             response.raise_for_status()
         choice = response.json()["choices"][0]
         message = choice["message"]
+        diagnostic("response", {
+            "mode": mode,
+            "finish_reason": choice.get("finish_reason"),
+            "content": message.get("content"),
+            "function_call": message.get("function_call"),
+        })
         if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
             raise PlannerError("Planner returned an unexpected finish/tool call")
         content = message["content"]
@@ -226,8 +254,19 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
             raise PlannerError("Invalid Planner response size")
         value = strict_json(content)
         return validate_readiness(value) if mode == "READINESS" else validate_plan(value)
-    except PlannerError:
+    except PlannerError as exc:
+        diagnostic("error", {
+            "mode": mode,
+            "error_type": type(exc).__name__,
+            "error_message": str(exc),
+        })
         raise
     except Exception as exc:
         # Do not copy HTTP bodies, headers or sensitive prompts into runtime trace.
-        raise PlannerError(f"Planner call failed: {type(exc).__name__}") from exc
+        message = f"Planner call failed: {type(exc).__name__}"
+        diagnostic("error", {
+            "mode": mode,
+            "error_type": "PlannerError",
+            "error_message": message,
+        })
+        raise PlannerError(message) from exc

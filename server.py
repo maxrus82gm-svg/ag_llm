@@ -3115,8 +3115,24 @@ async def _run_agent_task_impl(
     lifecycle = None
     pending_persistence_call = None
     if planner_enabled:
+        def planner_diagnostic(kind, payload):
+            event_name = {
+                "request": "planner_diagnostic_request",
+                "context": "planner_diagnostic_context",
+                "response": "planner_diagnostic_response",
+                "error": "planner_diagnostic_error",
+            }.get(kind)
+            if event_name is None:
+                return
+            facts = lifecycle.facts() if lifecycle is not None else {}
+            _emit(event_name, {**facts, **payload})
+
         async def planner_call(**kwargs):
-            return await run_planner(planner_model_id=planner_model_id, **kwargs)
+            return await run_planner(
+                planner_model_id=planner_model_id,
+                diagnostic_callback=planner_diagnostic,
+                **kwargs,
+            )
 
         lifecycle = TaskLifecycle(
             path=runtime_log_dir / "task_plans" / f"{run_id}.json", run_id=run_id,

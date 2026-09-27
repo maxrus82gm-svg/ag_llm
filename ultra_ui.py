@@ -1,4 +1,5 @@
 import asyncio
+import json
 import msvcrt
 import os
 import queue
@@ -41,7 +42,12 @@ from context_storage import (
 )
 from ui_state import load_ui_state, save_ui_state
 from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
-from audit_storage import PLANNER_EVENTS, list_chat_audit_threads, load_audit_thread
+from audit_storage import (
+    PLANNER_DIAGNOSTIC_EVENTS,
+    PLANNER_EVENTS,
+    list_chat_audit_threads,
+    load_audit_thread,
+)
 from workspace_runtime_settings import (
     load_workspace_runtime_settings,
     save_workspace_runtime_settings,
@@ -101,6 +107,29 @@ FINAL_AUDIT_TOOLTIP = (
     "обязательных серверных проверок. Анализирует итог работы и при обнаружении "
     "проблемы может потребовать исправление."
 )
+PLANNER_DIAGNOSTIC_TOOLTIPS = {
+    "request": (
+        "Показывает обращение к модели Планировщика: режим Planner, выбранную "
+        "модель и основные параметры вызова."
+    ),
+    "context": (
+        "Показывает полный текст инструкций и серверный контекст, реально "
+        "переданные модели Планировщика для этого вызова."
+    ),
+    "response": (
+        "Показывает сырой ответ модели Планировщика до JSON-проверки и других "
+        "protocol validation."
+    ),
+    "stages": (
+        "Показывает события жизненного цикла плана: создание плана, стадии, "
+        "readiness, replan, завершение и блокировки."
+    ),
+    "errors": (
+        "Показывает подробности ошибок Планировщика: тип ошибки, "
+        "protocol/runtime reason и объяснение, почему план или следующий этап "
+        "не был принят."
+    ),
+}
 
 
 class _SingleInstanceLock:
@@ -397,6 +426,24 @@ class UltraApp(tk.Tk):
         )
         self.final_audit_enabled_var = tk.BooleanVar(
             value=bool(self._ui_state.get("final_audit_enabled", True))
+        )
+        saved_planner_diagnostics = (
+            self._ui_state.get("planner_diagnostics") or {}
+        )
+        self.planner_diag_request_var = tk.BooleanVar(
+            value=bool(saved_planner_diagnostics.get("request", True))
+        )
+        self.planner_diag_context_var = tk.BooleanVar(
+            value=bool(saved_planner_diagnostics.get("context", True))
+        )
+        self.planner_diag_response_var = tk.BooleanVar(
+            value=bool(saved_planner_diagnostics.get("response", True))
+        )
+        self.planner_diag_stages_var = tk.BooleanVar(
+            value=bool(saved_planner_diagnostics.get("stages", True))
+        )
+        self.planner_diag_errors_var = tk.BooleanVar(
+            value=bool(saved_planner_diagnostics.get("errors", True))
         )
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(
@@ -1233,6 +1280,31 @@ class UltraApp(tk.Tk):
         self.audit_section = ttk.LabelFrame(
             self.chat_audit_paned, text="РАЗБОР ВЫПОЛНЕНИЯ", padding=4,
         )
+        planner_diag_controls = ttk.Frame(self.audit_section)
+        planner_diag_controls.pack(fill="x", pady=(0, 4))
+        ttk.Label(planner_diag_controls, text="ПОКАЗЫВАТЬ:").grid(
+            row=0, column=0, rowspan=2, sticky="nw", padx=(0, 6), pady=2,
+        )
+        planner_diag_checks = {}
+        for key, label, row, column, variable in (
+            ("request", "Запрос", 0, 1, self.planner_diag_request_var),
+            ("context", "Контекст", 0, 2, self.planner_diag_context_var),
+            ("response", "Ответ", 0, 3, self.planner_diag_response_var),
+            ("stages", "Стадии", 1, 1, self.planner_diag_stages_var),
+            ("errors", "Ошибки", 1, 2, self.planner_diag_errors_var),
+        ):
+            check = ttk.Checkbutton(
+                planner_diag_controls,
+                text=label,
+                variable=variable,
+                command=self._on_planner_diagnostic_filter_changed,
+            )
+            check.grid(row=row, column=column, sticky="w", padx=(0, 8))
+            planner_diag_checks[key] = check
+        self._planner_diag_tooltips = {
+            key: _DelayedTooltip(check, PLANNER_DIAGNOSTIC_TOOLTIPS[key])
+            for key, check in planner_diag_checks.items()
+        }
         self.audit_text = scrolledtext.ScrolledText(
             self.audit_section, wrap="word", state="disabled",
             font=("Segoe UI", 9),
@@ -1882,6 +1954,10 @@ class UltraApp(tk.Tk):
         if save:
             self._save_ui_state(silent=True)
 
+    def _on_planner_diagnostic_filter_changed(self) -> None:
+        self._save_ui_state(silent=True)
+        self._render_audit_thread()
+
     def _save_ui_state(self, _event=None, *, silent: bool = True) -> None:
         try:
             mode = self._window_mode()
@@ -1920,6 +1996,13 @@ class UltraApp(tk.Tk):
             self._ui_state["final_audit_enabled"] = (
                 self.final_audit_enabled_var.get()
             )
+            self._ui_state["planner_diagnostics"] = {
+                "request": self.planner_diag_request_var.get(),
+                "context": self.planner_diag_context_var.get(),
+                "response": self.planner_diag_response_var.get(),
+                "stages": self.planner_diag_stages_var.get(),
+                "errors": self.planner_diag_errors_var.get(),
+            }
             try:
                 reduction_percent = validate_reduction_percent(
                     int(self.compressor_reduction_percent_var.get())
@@ -4037,7 +4120,19 @@ class UltraApp(tk.Tk):
     @staticmethod
     def _audit_segments(
         thread: dict | None, run_id: str | None, task_block_id: str | None = None,
+        planner_filters: dict | None = None,
     ) -> list[tuple[str, str]]:
+        filters = {
+            "request": True,
+            "context": True,
+            "response": True,
+            "stages": True,
+            "errors": True,
+        }
+        if isinstance(planner_filters, dict):
+            for key in filters:
+                if isinstance(planner_filters.get(key), bool):
+                    filters[key] = planner_filters[key]
         task_label = task_block_id or (thread or {}).get("task_block_id") or (
             "LEGACY" if run_id else "—"
         )
@@ -4054,20 +4149,116 @@ class UltraApp(tk.Tk):
             segments.append(("metadata", "Для этого RUN нет событий разбора.\n"))
             return segments
         lifecycle = thread.get("task_lifecycle")
+        lifecycle_events = lifecycle.get("events", []) if lifecycle else []
+        diagnostics = thread.get("planner_diagnostics") or []
+        planner_failed = next(
+            (
+                event for event in lifecycle_events
+                if event.get("event") == "planner_failed"
+            ),
+            None,
+        )
+        plan_created = any(
+            event.get("event") == "plan_created" for event in lifecycle_events
+        )
+        if planner_failed is not None and not plan_created:
+            diagnostic_error = next(
+                (
+                    item for item in diagnostics
+                    if item.get("kind") == "error"
+                    and item.get("mode") == planner_failed.get("mode", "INITIAL")
+                ),
+                None,
+            ) or {}
+            error_type = (
+                diagnostic_error.get("error_type")
+                or planner_failed.get("error_type")
+                or planner_failed.get("reason")
+                or "PlannerError"
+            )
+            segments.append(("dredd_fail", "ПЛАН НЕ СОЗДАН\n"))
+            if filters["errors"]:
+                mode = (
+                    diagnostic_error.get("mode")
+                    or planner_failed.get("mode")
+                    or "INITIAL"
+                )
+                error_message = (
+                    diagnostic_error.get("error_message")
+                    or planner_failed.get("error_message")
+                )
+                segments.append(("audit", f"Режим: {mode}\n"))
+                segments.append(("dredd_fail", f"Причина: {error_type}\n"))
+                if error_message:
+                    segments.append(("dredd_fail", f"Деталь: {error_message}\n"))
+            else:
+                segments.append(("dredd_fail", f"Причина: {error_type}\n"))
+            segments.append(("metadata", "\n"))
+
+        separator = "-" * 50
+        for diagnostic in diagnostics:
+            kind = diagnostic.get("kind")
+            filter_key = "errors" if kind == "error" else kind
+            if filter_key not in filters or not filters[filter_key]:
+                continue
+            if kind == "request":
+                segments.append(("metadata", (
+                    f"{separator}\nPLANNER / REQUEST\n{separator}\n\n"
+                )))
+                segments.append(("audit", (
+                    f"Mode: {diagnostic.get('mode')}\n"
+                    f"Model: {diagnostic.get('planner_model_id')}\n"
+                    f"Provider model: {diagnostic.get('provider_model_id')}\n"
+                    f"Temperature: {diagnostic.get('temperature')}\n"
+                    f"Max tokens: {diagnostic.get('max_tokens')}\n"
+                    f"Function call: {diagnostic.get('function_call')}\n\n"
+                )))
+            elif kind == "context":
+                segments.append(("metadata", (
+                    f"{separator}\nPLANNER / CONTEXT\n{separator}\n\n"
+                )))
+                segments.append(("audit", (
+                    f"SYSTEM:\n\n{diagnostic.get('system', '')}\n\n"
+                    f"USER:\n\n{diagnostic.get('user', '')}\n\n"
+                )))
+            elif kind == "response":
+                function_call = json.dumps(
+                    diagnostic.get("function_call"), ensure_ascii=False,
+                )
+                segments.append(("metadata", (
+                    f"{separator}\nPLANNER / RAW RESPONSE\n{separator}\n\n"
+                )))
+                segments.append(("audit", (
+                    f"Finish reason: {diagnostic.get('finish_reason')}\n"
+                    f"Function call: {function_call}\n\n"
+                    f"{diagnostic.get('content', '')}\n\n"
+                )))
+            elif kind == "error":
+                segments.append(("metadata", (
+                    f"{separator}\nPLANNER / ERROR\n{separator}\n\n"
+                )))
+                segments.append(("dredd_fail", (
+                    f"Type: {diagnostic.get('error_type')}\n"
+                    f"Message: {diagnostic.get('error_message')}\n\n"
+                )))
         if lifecycle:
             segments.append(("metadata", f"TASK PLAN: {lifecycle.get('plan_id')} / v{lifecycle.get('plan_version')}\n"))
-            for event in lifecycle.get("events", []):
-                tag = "dredd_fail" if event["event"] in {
-                    "planner_failed",
-                    "stage_blocked",
-                    "persistence_recovery_exhausted",
-                    "mutation_preflight_rejected",
-                    "planner_readiness_rejected",
-                } else "audit"
-                segments.append((tag, f"v{event.get('plan_version', '')} {event.get('stage_id') or ''} "
-                                 f"{event['event']} {event.get('status', '')} "
-                                 f"{event.get('reason_code') or event.get('reason', '')}\n"))
-            segments.append(("metadata", "\n"))
+            if filters["stages"]:
+                segments.append(("metadata", (
+                    f"{separator}\nPLANNER / LIFECYCLE\n{separator}\n\n"
+                )))
+                for event in lifecycle_events:
+                    tag = "dredd_fail" if event["event"] in {
+                        "planner_failed",
+                        "stage_blocked",
+                        "persistence_recovery_exhausted",
+                        "mutation_preflight_rejected",
+                        "planner_readiness_rejected",
+                    } else "audit"
+                    segments.append((tag, f"v{event.get('plan_version', '')} {event.get('stage_id') or ''} "
+                                     f"{event['event']} {event.get('status', '')} "
+                                     f"{event.get('reason_code') or event.get('reason', '')}\n"))
+                segments.append(("metadata", "\n"))
         permissions = thread.get("permission_escalations") or {}
         if not permissions and thread.get("permission_escalation"):
             permissions = {"legacy": thread["permission_escalation"]}
@@ -4175,7 +4366,36 @@ class UltraApp(tk.Tk):
         try:
             widget.delete("1.0", "end")
             for tag, text in self._audit_segments(
-                thread, run_id, getattr(self, "_selected_task_block_id", None)
+                thread,
+                run_id,
+                getattr(self, "_selected_task_block_id", None),
+                {
+                    "request": getattr(
+                        self, "planner_diag_request_var", None
+                    ).get() if getattr(
+                        self, "planner_diag_request_var", None
+                    ) is not None else True,
+                    "context": getattr(
+                        self, "planner_diag_context_var", None
+                    ).get() if getattr(
+                        self, "planner_diag_context_var", None
+                    ) is not None else True,
+                    "response": getattr(
+                        self, "planner_diag_response_var", None
+                    ).get() if getattr(
+                        self, "planner_diag_response_var", None
+                    ) is not None else True,
+                    "stages": getattr(
+                        self, "planner_diag_stages_var", None
+                    ).get() if getattr(
+                        self, "planner_diag_stages_var", None
+                    ) is not None else True,
+                    "errors": getattr(
+                        self, "planner_diag_errors_var", None
+                    ).get() if getattr(
+                        self, "planner_diag_errors_var", None
+                    ) is not None else True,
+                },
             ):
                 widget.insert("end", text, tag)
             widget.see("end")
@@ -4905,22 +5125,26 @@ class UltraApp(tk.Tk):
                     break
                 try:
                     event_type = event.get("event")
+                    is_planner_diagnostic = (
+                        event_type in PLANNER_DIAGNOSTIC_EVENTS
+                    )
                     if event_type == "run_started":
                         if self._run_started_once:
                             self._insert_run_separator()
                         self._run_started_once = True
-                    tag = "trace_error" if event_type in {
-                        "tool_error", "permission_denied", "run_failed",
-                        "final_audit_failed", "final_audit_error", "guard_blocked",
-                        "audit_diagnostic_error", "audit_storage_error",
-                        "execution_consistency_verifier_failed", "execution_consistency_terminal",
-                        "permission_scope_blocked", "permission_review_failed",
-                        "permission_user_denied", "permission_escalation_terminal",
-                        "mutation_preflight_rejected", "planner_failed",
-                        "stage_blocked", "persistence_recovery_exhausted",
-                        "planner_readiness_rejected",
-                    } else "trace"
-                    self._append_trace(self._format_event(event), tag)
+                    if not is_planner_diagnostic:
+                        tag = "trace_error" if event_type in {
+                            "tool_error", "permission_denied", "run_failed",
+                            "final_audit_failed", "final_audit_error", "guard_blocked",
+                            "audit_diagnostic_error", "audit_storage_error",
+                            "execution_consistency_verifier_failed", "execution_consistency_terminal",
+                            "permission_scope_blocked", "permission_review_failed",
+                            "permission_user_denied", "permission_escalation_terminal",
+                            "mutation_preflight_rejected", "planner_failed",
+                            "stage_blocked", "persistence_recovery_exhausted",
+                            "planner_readiness_rejected",
+                        } else "trace"
+                        self._append_trace(self._format_event(event), tag)
                     if event.get("audit_storage_error"):
                         self._append_trace(
                             f"[AUDIT STORAGE ERROR] {str(event['audit_storage_error'])[:80]}",
@@ -4947,7 +5171,7 @@ class UltraApp(tk.Tk):
                         else:
                             self._selected_audit_run_id = self._active_audit_run_id
                             self._render_audit_thread()
-                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | {
+                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",

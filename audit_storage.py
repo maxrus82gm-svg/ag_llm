@@ -24,6 +24,10 @@ PLANNER_EVENTS = {
     "final_audit_routed_execution_defect", "final_audit_routed_plan_defect", "persistence_dispatch",
     "planner_readiness_rejected", "mutation_preflight_rejected",
 }
+PLANNER_DIAGNOSTIC_EVENTS = {
+    "planner_diagnostic_request", "planner_diagnostic_context",
+    "planner_diagnostic_response", "planner_diagnostic_error",
+}
 _AUDIT_EVENTS = {
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
     "audit_diagnostic_error", "tool_finished", "tool_error",
@@ -37,7 +41,7 @@ _AUDIT_EVENTS = {
     "permission_review_passed", "permission_review_failed",
     "permission_user_prompted", "permission_granted", "permission_user_denied",
     "permission_escalation_terminal",
-} | PLANNER_EVENTS
+} | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS
 _TEXT_LIMIT = 2000
 
 
@@ -128,14 +132,34 @@ class AuditThreadRecorder:
         if kind not in _AUDIT_EVENTS:
             return
         issues = self.thread["issues"]
-        if kind in PLANNER_EVENTS:
+        if kind in PLANNER_DIAGNOSTIC_EVENTS:
+            diagnostic_kind = kind.removeprefix("planner_diagnostic_")
+            fields = {
+                "request": (
+                    "mode", "planner_model_id", "provider_model_id",
+                    "temperature", "max_tokens", "function_call",
+                ),
+                "context": ("mode", "system", "user"),
+                "response": (
+                    "mode", "finish_reason", "content", "function_call",
+                ),
+                "error": ("mode", "error_type", "error_message"),
+            }[diagnostic_kind]
+            recorded = {"kind": diagnostic_kind}
+            for key in fields:
+                if key in event:
+                    recorded[key] = event[key]
+            diagnostics = self.thread.setdefault("planner_diagnostics", [])
+            diagnostics.append(recorded)
+            del diagnostics[:-64]
+        elif kind in PLANNER_EVENTS:
             lifecycle = self.thread.setdefault("task_lifecycle", {"events": []})
             for key in ("plan_id", "plan_version", "stage_id"):
                 if event.get(key) is not None:
                     lifecycle[key] = event[key]
             recorded = {"event": kind, **{
                 key: (_short(event[key]) if isinstance(event[key], str) else event[key])
-                for key in ("plan_version", "stage_id", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route")
+                for key in ("plan_version", "stage_id", "mode", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route")
                 if key in event and isinstance(event[key], (str, int, bool))}}
             if kind == "planner_failed":
                 if isinstance(event.get("error_type"), str):
