@@ -43,6 +43,7 @@ from context_storage import (
 from ui_state import load_ui_state, save_ui_state
 from ui_state import DEFAULT_CHAT_AUDIT_RATIOS, DEFAULT_CENTRAL_VERTICAL_RATIOS
 from audit_storage import (
+    EXECUTOR_DIAGNOSTIC_EVENTS,
     PLANNER_DIAGNOSTIC_EVENTS,
     PLANNER_EVENTS,
     list_chat_audit_threads,
@@ -128,6 +129,22 @@ PLANNER_DIAGNOSTIC_TOOLTIPS = {
         "Показывает подробности ошибок Планировщика: тип ошибки, "
         "protocol/runtime reason и объяснение, почему план или следующий этап "
         "не был принят."
+    ),
+}
+EXECUTOR_DIAGNOSTIC_TOOLTIPS = {
+    "context": (
+        "Показывает полный список messages, реально отправленный "
+        "Исполнителю в конкретном API-вызове. Нужен для проверки, "
+        "какие факты предыдущих действий Исполнитель действительно видел."
+    ),
+    "response": (
+        "Показывает сырой ответ Исполнителя для конкретного API-вызова: "
+        "finish_reason, content и function_call до дальнейшей обработки сервером."
+    ),
+    "reset": (
+        "Показывает сброс рабочего контекста Исполнителя между стадиями Planner: "
+        "сколько messages было до и после reset и какие function/tool сообщения "
+        "исчезли из следующего модельного контекста."
     ),
 }
 
@@ -444,6 +461,40 @@ class UltraApp(tk.Tk):
         )
         self.planner_diag_errors_var = tk.BooleanVar(
             value=bool(saved_planner_diagnostics.get("errors", True))
+        )
+
+        saved_executor_diagnostics = (
+            self._ui_state.get(
+                "executor_diagnostics"
+            )
+            or {}
+        )
+
+        self.executor_diag_context_var = tk.BooleanVar(
+            value=bool(
+                saved_executor_diagnostics.get(
+                    "context",
+                    True,
+                )
+            )
+        )
+
+        self.executor_diag_response_var = tk.BooleanVar(
+            value=bool(
+                saved_executor_diagnostics.get(
+                    "response",
+                    True,
+                )
+            )
+        )
+
+        self.executor_diag_reset_var = tk.BooleanVar(
+            value=bool(
+                saved_executor_diagnostics.get(
+                    "reset",
+                    True,
+                )
+            )
         )
         self.auto_backup_var = tk.BooleanVar(value=True)
         self.dark_theme_var = tk.BooleanVar(
@@ -1379,6 +1430,65 @@ class UltraApp(tk.Tk):
             key: _DelayedTooltip(check, PLANNER_DIAGNOSTIC_TOOLTIPS[key])
             for key, check in planner_diag_checks.items()
         }
+        executor_diag_controls = ttk.Frame(
+            planner_diag_controls
+        )
+        executor_diag_controls.grid(
+            row=2,
+            column=0,
+            columnspan=4,
+            sticky="w",
+            pady=(3, 0),
+        )
+
+        ttk.Label(
+            executor_diag_controls,
+            text="EXECUTOR:",
+        ).pack(
+            side="left",
+            padx=(0, 6),
+        )
+
+        executor_diag_checks = {}
+
+        for key, label, variable in (
+            (
+                "context",
+                "Контекст",
+                self.executor_diag_context_var,
+            ),
+            (
+                "response",
+                "Ответ",
+                self.executor_diag_response_var,
+            ),
+            (
+                "reset",
+                "Reset",
+                self.executor_diag_reset_var,
+            ),
+        ):
+            check = ttk.Checkbutton(
+                executor_diag_controls,
+                text=label,
+                variable=variable,
+                command=(
+                    self._on_executor_diagnostic_filter_changed
+                ),
+            )
+            check.pack(
+                side="left",
+                padx=(0, 8),
+            )
+            executor_diag_checks[key] = check
+
+        self._executor_diag_tooltips = {
+            key: _DelayedTooltip(
+                check,
+                EXECUTOR_DIAGNOSTIC_TOOLTIPS[key],
+            )
+            for key, check in executor_diag_checks.items()
+        }
         self.audit_text = scrolledtext.ScrolledText(
             self.audit_section, wrap="word", state="disabled",
             font=("Segoe UI", 9),
@@ -2035,6 +2145,12 @@ class UltraApp(tk.Tk):
         self._save_ui_state(silent=True)
         self._render_audit_thread()
 
+    def _on_executor_diagnostic_filter_changed(
+        self,
+    ) -> None:
+        self._save_ui_state(silent=True)
+        self._render_audit_thread()
+
     def _save_ui_state(self, _event=None, *, silent: bool = True) -> None:
         try:
             mode = self._window_mode()
@@ -2079,6 +2195,17 @@ class UltraApp(tk.Tk):
                 "response": self.planner_diag_response_var.get(),
                 "stages": self.planner_diag_stages_var.get(),
                 "errors": self.planner_diag_errors_var.get(),
+            }
+            self._ui_state["executor_diagnostics"] = {
+                "context": (
+                    self.executor_diag_context_var.get()
+                ),
+                "response": (
+                    self.executor_diag_response_var.get()
+                ),
+                "reset": (
+                    self.executor_diag_reset_var.get()
+                ),
             }
             try:
                 reduction_percent = validate_reduction_percent(
@@ -4196,8 +4323,11 @@ class UltraApp(tk.Tk):
 
     @staticmethod
     def _audit_segments(
-        thread: dict | None, run_id: str | None, task_block_id: str | None = None,
+        thread: dict | None,
+        run_id: str | None,
+        task_block_id: str | None = None,
         planner_filters: dict | None = None,
+        executor_filters: dict | None = None,
     ) -> list[tuple[str, str]]:
         filters = {
             "request": True,
@@ -4210,6 +4340,21 @@ class UltraApp(tk.Tk):
             for key in filters:
                 if isinstance(planner_filters.get(key), bool):
                     filters[key] = planner_filters[key]
+        executor_filter_state = {
+            "context": True,
+            "response": True,
+            "reset": True,
+        }
+
+        if isinstance(executor_filters, dict):
+            for key in executor_filter_state:
+                if isinstance(
+                    executor_filters.get(key),
+                    bool,
+                ):
+                    executor_filter_state[key] = (
+                        executor_filters[key]
+                    )
         task_label = task_block_id or (thread or {}).get("task_block_id") or (
             "LEGACY" if run_id else "—"
         )
@@ -4228,6 +4373,10 @@ class UltraApp(tk.Tk):
         lifecycle = thread.get("task_lifecycle")
         lifecycle_events = lifecycle.get("events", []) if lifecycle else []
         diagnostics = thread.get("planner_diagnostics") or []
+        executor_diagnostics = (
+            thread.get("executor_diagnostics")
+            or []
+        )
         planner_failed = next(
             (
                 event for event in lifecycle_events
@@ -4336,6 +4485,148 @@ class UltraApp(tk.Tk):
                                      f"{event['event']} {event.get('status', '')} "
                                      f"{event.get('reason_code') or event.get('reason', '')}\n"))
                 segments.append(("metadata", "\n"))
+
+        for diagnostic in executor_diagnostics:
+            kind = diagnostic.get("kind")
+
+            if (
+                kind not in executor_filter_state
+                or not executor_filter_state[kind]
+            ):
+                continue
+
+            if kind == "context":
+                messages_json = json.dumps(
+                    diagnostic.get("messages") or [],
+                    ensure_ascii=False,
+                    indent=2,
+                )
+
+                segments.append(
+                    (
+                        "metadata",
+                        (
+                            f"{separator}\n"
+                            f"EXECUTOR / API "
+                            f"#{diagnostic.get('api_request_number')} "
+                            f"/ CONTEXT\n"
+                            f"{separator}\n\n"
+                        ),
+                    )
+                )
+
+                segments.append(
+                    (
+                        "audit",
+                        (
+                            f"Plan: "
+                            f"{diagnostic.get('plan_id')}\n"
+                            f"Plan version: "
+                            f"{diagnostic.get('plan_version')}\n"
+                            f"Stage: "
+                            f"{diagnostic.get('stage_id')}\n"
+                            f"Model: "
+                            f"{diagnostic.get('model_id')}\n"
+                            f"Provider model: "
+                            f"{diagnostic.get('provider_model_id')}\n"
+                            f"Function call mode: "
+                            f"{diagnostic.get('function_call_mode')}\n"
+                            f"Messages: "
+                            f"{diagnostic.get('message_count')}\n\n"
+                            f"{messages_json}\n\n"
+                        ),
+                    )
+                )
+
+            elif kind == "response":
+                message_json = json.dumps(
+                    diagnostic.get("message") or {},
+                    ensure_ascii=False,
+                    indent=2,
+                )
+
+                segments.append(
+                    (
+                        "metadata",
+                        (
+                            f"{separator}\n"
+                            f"EXECUTOR / API "
+                            f"#{diagnostic.get('api_request_number')} "
+                            f"/ RAW RESPONSE\n"
+                            f"{separator}\n\n"
+                        ),
+                    )
+                )
+
+                segments.append(
+                    (
+                        "audit",
+                        (
+                            f"Plan version: "
+                            f"{diagnostic.get('plan_version')}\n"
+                            f"Stage: "
+                            f"{diagnostic.get('stage_id')}\n"
+                            f"Finish reason: "
+                            f"{diagnostic.get('finish_reason')}\n\n"
+                            f"{message_json}\n\n"
+                        ),
+                    )
+                )
+
+            elif kind == "reset":
+                removed_functions = ", ".join(
+                    str(item)
+                    for item in (
+                        diagnostic.get(
+                            "removed_function_messages"
+                        )
+                        or []
+                    )
+                ) or "—"
+
+                removed_calls = ", ".join(
+                    str(item)
+                    for item in (
+                        diagnostic.get(
+                            "removed_assistant_function_calls"
+                        )
+                        or []
+                    )
+                ) or "—"
+
+                segments.append(
+                    (
+                        "metadata",
+                        (
+                            f"{separator}\n"
+                            f"EXECUTOR / CONTEXT RESET\n"
+                            f"{separator}\n\n"
+                        ),
+                    )
+                )
+
+                segments.append(
+                    (
+                        "audit",
+                        (
+                            f"Plan version: "
+                            f"{diagnostic.get('plan_version')}\n"
+                            f"Next stage: "
+                            f"{diagnostic.get('stage_id')}\n"
+                            f"Messages before: "
+                            f"{diagnostic.get('messages_before')}\n"
+                            f"Messages after: "
+                            f"{diagnostic.get('messages_after')}\n"
+                            f"Removed messages: "
+                            f"{diagnostic.get('removed_messages')}\n"
+                            f"Removed function messages: "
+                            f"{removed_functions}\n"
+                            f"Removed assistant function calls: "
+                            f"{removed_calls}\n\n"
+                        ),
+                    )
+                )
+
         permissions = thread.get("permission_escalations") or {}
         if not permissions and thread.get("permission_escalation"):
             permissions = {"legacy": thread["permission_escalation"]}
@@ -4472,6 +4763,41 @@ class UltraApp(tk.Tk):
                     ).get() if getattr(
                         self, "planner_diag_errors_var", None
                     ) is not None else True,
+                },
+                {
+                    "context": getattr(
+                        self,
+                        "executor_diag_context_var",
+                        None,
+                    ).get()
+                    if getattr(
+                        self,
+                        "executor_diag_context_var",
+                        None,
+                    ) is not None
+                    else True,
+                    "response": getattr(
+                        self,
+                        "executor_diag_response_var",
+                        None,
+                    ).get()
+                    if getattr(
+                        self,
+                        "executor_diag_response_var",
+                        None,
+                    ) is not None
+                    else True,
+                    "reset": getattr(
+                        self,
+                        "executor_diag_reset_var",
+                        None,
+                    ).get()
+                    if getattr(
+                        self,
+                        "executor_diag_reset_var",
+                        None,
+                    ) is not None
+                    else True,
                 },
             ):
                 widget.insert("end", text, tag)
@@ -4613,6 +4939,43 @@ class UltraApp(tk.Tk):
                         f"stage={event.get('stage_id')} | code={event.get('reason_code')}")
             return (f"[{time_str}] {event_type} | plan v{event.get('plan_version')} | "
                     f"stage={event.get('stage_id')} | {event.get('status', '')} {event.get('reason', '')}")
+
+        if event_type == "executor_diagnostic_context":
+            return (
+                f"[{time_str}] EXECUTOR API "
+                f"#{event.get('api_request_number')} CONTEXT | "
+                f"messages={event.get('message_count')} | "
+                f"stage={event.get('stage_id')}"
+            )
+
+        if event_type == "executor_diagnostic_response":
+            return (
+                f"[{time_str}] EXECUTOR API "
+                f"#{event.get('api_request_number')} RESPONSE | "
+                f"finish={event.get('finish_reason')} | "
+                f"stage={event.get('stage_id')}"
+            )
+
+        if event_type == "executor_diagnostic_reset":
+            functions = ", ".join(
+                str(item)
+                for item in (
+                    event.get(
+                        "removed_function_messages"
+                    )
+                    or []
+                )
+            ) or "—"
+
+            return (
+                f"[{time_str}] EXECUTOR CONTEXT RESET | "
+                f"stage={event.get('stage_id')} | "
+                f"messages="
+                f"{event.get('messages_before')}->"
+                f"{event.get('messages_after')} | "
+                f"removed functions={functions}"
+            )
+
         if event_type == "api_request":
             return f"[{time_str}] API #{event.get('api_request_number')}"
 
@@ -5248,7 +5611,7 @@ class UltraApp(tk.Tk):
                         else:
                             self._selected_audit_run_id = self._active_audit_run_id
                             self._render_audit_thread()
-                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | {
+                    elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",
                         "tool_finished", "tool_error", "final_audit_passed",

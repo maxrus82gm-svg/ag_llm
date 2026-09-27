@@ -3153,16 +3153,82 @@ async def _run_agent_task_impl(
     else:
         _emit("planner_disabled_compatibility", {"reason": "direct_caller_did_not_enable_planner"})
 
+    def executor_diagnostic_facts() -> dict:
+        if lifecycle is None:
+            return {}
+
+        facts = lifecycle.facts()
+
+        return {
+            "plan_id": facts.get("plan_id"),
+            "plan_version": facts.get("plan_version"),
+            "stage_id": facts.get("active_stage_id"),
+        }
+
     executor_base_messages = copy.deepcopy(messages)
 
     def stage_context(reset=False):
         if not lifecycle:
             return
+
+        messages_before = len(messages)
+        removed_function_messages = []
+        removed_assistant_function_calls = []
+
         if reset:
-            messages[:] = copy.deepcopy(executor_base_messages)
-        messages.append({"role": "user", "content": _context_message("task.stage", {})
-                         + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
-                         + json.dumps(lifecycle.executor_context(), ensure_ascii=False)})
+            for item in messages:
+                if not isinstance(item, dict):
+                    continue
+
+                if item.get("role") == "function":
+                    name = item.get("name")
+                    if isinstance(name, str):
+                        removed_function_messages.append(name)
+
+                if item.get("role") == "assistant":
+                    function_call = item.get("function_call")
+                    if isinstance(function_call, dict):
+                        name = function_call.get("name")
+                        if isinstance(name, str):
+                            removed_assistant_function_calls.append(name)
+
+            messages[:] = copy.deepcopy(
+                executor_base_messages
+            )
+
+        messages.append(
+            {
+                "role": "user",
+                "content": (
+                    _context_message("task.stage", {})
+                    + "\nSERVER FACTS — NOT TEMPLATE CONTROLLED:\n"
+                    + json.dumps(
+                        lifecycle.executor_context(),
+                        ensure_ascii=False,
+                    )
+                ),
+            }
+        )
+
+        if reset:
+            _emit(
+                "executor_diagnostic_reset",
+                {
+                    **executor_diagnostic_facts(),
+                    "messages_before": messages_before,
+                    "messages_after": len(messages),
+                    "removed_messages": max(
+                        messages_before - len(messages),
+                        0,
+                    ),
+                    "removed_function_messages": (
+                        removed_function_messages
+                    ),
+                    "removed_assistant_function_calls": (
+                        removed_assistant_function_calls
+                    ),
+                },
+            )
 
     stage_context()
 
@@ -3194,6 +3260,26 @@ async def _run_agent_task_impl(
                 server_dispatched = True
             else:
                 api_request_count += 1
+
+                _emit(
+                    "executor_diagnostic_context",
+                    {
+                        **executor_diagnostic_facts(),
+                        "api_request_number": api_request_count,
+                        "model_id": selected_model.model_id,
+                        "provider_model_id": run_model,
+                        "function_call_mode": (
+                            "auto"
+                            if available_functions
+                            else "none"
+                        ),
+                        "message_count": len(body["messages"]),
+                        "messages": copy.deepcopy(
+                            body["messages"]
+                        ),
+                    },
+                )
+
                 _emit("api_request", {"api_request_number": api_request_count,
                     "exposed_tool_count": len(available_functions),
                     "exposed_tool_names": [f["name"] for f in available_functions],
@@ -3232,6 +3318,17 @@ async def _run_agent_task_impl(
                 "finish_reason": finish_reason,
                 "duration": request_duration,
             })
+
+            if not server_dispatched:
+                _emit(
+                    "executor_diagnostic_response",
+                    {
+                        **executor_diagnostic_facts(),
+                        "api_request_number": api_request_count,
+                        "finish_reason": finish_reason,
+                        "message": copy.deepcopy(message),
+                    },
+                )
 
             if finish_reason == "function_call":
                 if tool_iterations >= policy["tool_limit"]:
