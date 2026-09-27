@@ -262,7 +262,7 @@ class CompactLayoutTests(unittest.TestCase):
         scope_rows = [int(w.grid_info()["row"]) for w in controls.winfo_children()
                       if isinstance(w, ultra_ui.ttk.Entry)]
         self.assertEqual(scope_rows, [1, 2, 3])
-        self.assertTrue(any(w.cget("text") == "Контекстные сообщения"
+        self.assertTrue(any(w.cget("text") == "Контексты LLM"
                             for w in service.winfo_children()
                             if isinstance(w, ultra_ui.ttk.Button)))
 
