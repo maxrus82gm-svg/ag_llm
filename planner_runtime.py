@@ -18,8 +18,17 @@ PLANNER_TIMEOUT_SECONDS = 90
 MAX_PLAN_STAGES = 8
 MAX_PLAN_ARTIFACTS = 16
 PLANNER_HARD_PROTOCOL = (
-    "Every stage with stage_type='verification' must include VERIFY in "
-    "allowed_capabilities. Add READ as well only when raw file inspection is required. "
+    "READ-only inspection or rereading is normally a stage with stage_type='analysis' "
+    "and allowed_capabilities=['READ']. Exact deterministic checking is a stage with "
+    "stage_type='verification' and MUST include VERIFY in allowed_capabilities. "
+    "If a task explicitly requests both rereading and final exact verification, use "
+    "separate analysis/READ and verification/VERIFY stages. Every stage object must "
+    "contain all fields: stage_id, goal, stage_type, persistence_required, "
+    "allowed_capabilities, artifacts, completion_criteria. Every stage with "
+    "stage_type='verification' must include VERIFY in allowed_capabilities. "
+    "The INITIAL top-level object must contain stages and obligation_changes, and "
+    "INITIAL obligation_changes must be []. Add READ to a verification stage only "
+    "when raw file inspection is also required. "
     "For exact textual file verification prefer verify_file_content with "
     "equals/contains/sha256 over repeated read_file/find_text when the check can be "
     "expressed by that tool."
@@ -42,6 +51,11 @@ def strict_json(text: str) -> dict:
     try:
         result = json.loads(text, object_pairs_hook=pairs,
                             parse_constant=lambda value: (_ for _ in ()).throw(PlannerError("Non-finite JSON")))
+    except json.JSONDecodeError as exc:
+        detail = exc.msg[:160]
+        raise PlannerError(
+            f"Malformed Planner JSON at line {exc.lineno}, column {exc.colno}: {detail}"
+        ) from exc
     except (ValueError, TypeError) as exc:
         raise PlannerError("Planner must return one JSON object without prose") from exc
     if not isinstance(result, dict):
@@ -191,7 +205,15 @@ PLAN_FORMAT = {
                 "artifacts": [{"artifact_id": "result", "path": "result.md", "operation": "create",
                                "postcondition": {"kind": "contains", "value": "required content"},
                                "allow_already_satisfied": False}],
-                "completion_criteria": ["requested result physically exists"]}],
+                "completion_criteria": ["requested result physically exists"]},
+               {"stage_id": "stage_2", "goal": "inspect result",
+                "stage_type": "analysis", "persistence_required": False,
+                "allowed_capabilities": ["READ"], "artifacts": [],
+                "completion_criteria": ["inspection completed"]},
+               {"stage_id": "stage_3", "goal": "verify exact result",
+                "stage_type": "verification", "persistence_required": False,
+                "allowed_capabilities": ["VERIFY"], "artifacts": [],
+                "completion_criteria": ["deterministic verification passed"]}],
     "obligation_changes": [],
 }
 

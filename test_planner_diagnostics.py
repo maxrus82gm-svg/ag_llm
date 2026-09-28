@@ -112,7 +112,7 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         ):
             with self.assertRaisesRegex(
                 planner_runtime.PlannerError,
-                "Planner must return one JSON object without prose",
+                r"Malformed Planner JSON at line 1, column 1: Expecting value",
             ):
                 await planner_runtime.run_planner(
                     mode="INITIAL",
@@ -130,7 +130,7 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(diagnostics[3][1]["error_type"], "PlannerError")
         self.assertEqual(
             diagnostics[3][1]["error_message"],
-            "Planner must return one JSON object without prose",
+            "Malformed Planner JSON at line 1, column 1: Expecting value",
         )
 
     async def test_diagnostic_callback_failure_does_not_change_planner_result(self):

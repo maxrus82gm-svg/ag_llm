@@ -43,6 +43,7 @@ PLANNER_EVENTS = {
     "planner_readiness_rejected", "mutation_preflight_rejected",
     "planner_session_started", "planner_session_message", "planner_attempt_rejected",
     "planner_dredd_review_started", "planner_dredd_review_completed",
+    "planner_dredd_review_failed",
     "planner_session_completed", "planner_session_blocked",
 }
 PLANNER_DIAGNOSTIC_EVENTS = {
@@ -55,6 +56,7 @@ PLANNER_OWNED_EVENTS = PLANNER_DIAGNOSTIC_EVENTS | {
 }
 PLANNER_DREDD_EVENTS = {
     "planner_dredd_review_started", "planner_dredd_review_completed",
+    "planner_dredd_review_failed",
 }
 EXECUTOR_DIAGNOSTIC_EVENTS = {
     "executor_diagnostic_context",
@@ -493,7 +495,7 @@ class AuditThreadRecorder:
                     lifecycle[key] = event[key]
             recorded = {"event": kind, **{
                 key: (_short(event[key]) if isinstance(event[key], str) else event[key])
-                for key in ("plan_version", "stage_id", "mode", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route", "session_id", "speaker", "error_type", "error_message")
+                for key in ("plan_version", "stage_id", "mode", "status", "reason", "reason_code", "path", "function", "executed", "outcome", "attempt", "route", "session_id", "speaker", "task_block_id", "error_type", "error_message", "planner_validation_error", "review_error_type", "review_error_message", "planner_error_type", "planner_error_message")
                 if key in event and isinstance(event[key], (str, int, bool))}}
             if kind == "planner_failed":
                 if isinstance(event.get("error_type"), str):

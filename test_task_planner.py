@@ -353,12 +353,18 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("BLOCKED", result)
         self.assertEqual(client.post_count, 0)
         failure = next(e for e in self.events if e["event"] == "planner_failed")
-        self.assertEqual(failure["error_type"], "PlannerError")
-        self.assertEqual(failure["error_message"], "Invalid operation")
+        self.assertEqual(failure["reason"], "planner_dredd_review_error")
+        self.assertEqual(failure["error_type"], "VerifierRuntimeError")
+        self.assertEqual(failure["planner_error_type"], "PlannerError")
+        self.assertEqual(failure["planner_error_message"], "Invalid operation")
+        review_failure = next(
+            e for e in self.events if e["event"] == "planner_dredd_review_failed"
+        )
+        self.assertEqual(review_failure["planner_validation_error"], "Invalid operation")
         state = self.stored()
         thread = audit_storage.load_audit_thread(self.workspace, "ws_test", None, state["run_id"])
         traced = next(e for e in thread["task_lifecycle"]["events"] if e["event"] == "planner_failed")
-        self.assertEqual(traced["error_message"], "Invalid operation")
+        self.assertEqual(traced["planner_error_message"], "Invalid operation")
         audit.assert_not_awaited()
 
     async def test_previous_stage_mutation_does_not_close_later_obligation(self):
@@ -650,6 +656,34 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         planner_runtime.validate_plan(verification(["READ", "VERIFY"]))
         planner_runtime.validate_plan(plan(False))
 
+    def test_complete_stage_and_initial_top_level_fields_are_required(self):
+        analysis = plan(False)
+        analysis["stages"][0]["allowed_capabilities"] = ["READ"]
+        planner_runtime.validate_plan(analysis)
+
+        verification = copy.deepcopy(analysis)
+        verification["stages"][0]["stage_type"] = "verification"
+        verification["stages"][0]["allowed_capabilities"] = ["VERIFY"]
+        planner_runtime.validate_plan(verification)
+
+        for field in (
+            "stage_id", "goal", "stage_type", "persistence_required",
+            "allowed_capabilities", "artifacts", "completion_criteria",
+        ):
+            incomplete = copy.deepcopy(analysis)
+            del incomplete["stages"][0][field]
+            with self.subTest(field=field), self.assertRaises(planner_runtime.PlannerError):
+                planner_runtime.validate_plan(incomplete)
+
+        missing_changes = copy.deepcopy(analysis)
+        del missing_changes["obligation_changes"]
+        with self.assertRaises(planner_runtime.PlannerError):
+            planner_runtime.validate_plan(missing_changes)
+
+        self.assertEqual(planner_runtime.PLAN_FORMAT["obligation_changes"], [])
+        self.assertEqual(planner_runtime.PLAN_FORMAT["stages"][1]["allowed_capabilities"], ["READ"])
+        self.assertEqual(planner_runtime.PLAN_FORMAT["stages"][2]["allowed_capabilities"], ["VERIFY"])
+
     def test_schema_rejects_untyped_or_empty_contract(self):
         for mutation in [lambda p: p["stages"][0].update(persistence_required="true"),
                          lambda p: p["stages"][0].update(artifacts=[]),
@@ -716,7 +750,22 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         )
 
     def test_strict_json(self):
-        for text in ['```json\n{}\n```', '{"a":1,"a":2}', '[]', '{"a":NaN}']:
+        self.assertEqual(planner_runtime.strict_json('{"a":1}'), {"a": 1})
+        with self.assertRaises(planner_runtime.PlannerError) as malformed:
+            planner_runtime.strict_json('{"a": 1]')
+        self.assertEqual(
+            str(malformed.exception),
+            "Malformed Planner JSON at line 1, column 8: Expecting ',' delimiter",
+        )
+        self.assertLess(len(str(malformed.exception)), 240)
+        for text in ['before {"a":1}', '{"a":1} after']:
+            with self.subTest(text=text), self.assertRaisesRegex(
+                planner_runtime.PlannerError, r"^Malformed Planner JSON at line \d+, column \d+:",
+            ):
+                planner_runtime.strict_json(text)
+        with self.assertRaisesRegex(planner_runtime.PlannerError, "Duplicate JSON key"):
+            planner_runtime.strict_json('{"a":1,"a":2}')
+        for text in ['[]', '{"a":NaN}']:
             with self.assertRaises(planner_runtime.PlannerError):
                 planner_runtime.strict_json(text)
 

@@ -40,6 +40,7 @@ def test_event_sources_reflect_record_ownership(tmp_path: Path):
         'planner_diagnostic_response': 'PLANNER',
         'planner_session_message': 'PLANNER',
         'planner_dredd_review_completed': 'DREDD',
+        'planner_dredd_review_failed': 'DREDD',
         'stage_status_changed': 'SERVER',
         'persistence_satisfied': 'SERVER',
         'mutation_preflight_rejected': 'SERVER',

@@ -142,6 +142,37 @@ class PlannerSessionRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.required_action, "return the field")
         self.assertEqual(body["model"], "GigaChat-3-Pro")
 
+    async def test_dredd_review_runtime_logs_protocol_failure_with_usage(self):
+        transcript = [{"role": "assistant", "content": "invalid"}]
+        with tempfile.TemporaryDirectory() as temp_dir, patch.object(
+            verifier_runtime, "VERIFIER_LOG_ROOT", Path(temp_dir)
+        ), patch.object(
+            verifier_runtime, "_request_gigachat",
+            AsyncMock(return_value=("not json", {"total_tokens": 17})),
+        ):
+            with self.assertRaises(verifier_runtime.VerifierProtocolError):
+                await verifier_runtime.run_planner_dredd_review(
+                    raw_task="RAW SECRET", planner_session_transcript=transcript,
+                    mode="INITIAL", validation_error="missing field",
+                    task_block_id="tb_test",
+                )
+            records = [
+                json.loads(line)
+                for path in Path(temp_dir).glob("*.jsonl")
+                for line in path.read_text(encoding="utf-8").splitlines()
+            ]
+        self.assertEqual(
+            [record["event"] for record in records],
+            ["planner_review_started", "planner_review_failed"],
+        )
+        failed = records[-1]
+        self.assertEqual(failed["error_type"], "VerifierProtocolError")
+        self.assertEqual(failed["usage"], {"total_tokens": 17})
+        self.assertEqual(failed["transcript_chars"], len(json.dumps(transcript, ensure_ascii=False)))
+        self.assertIn("transcript_bytes", failed)
+        self.assertEqual(failed["validation_error_chars"], len("missing field"))
+        self.assertNotIn("RAW SECRET", json.dumps(records))
+
 
 class PlannerRepairLifecycleTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
@@ -202,6 +233,33 @@ class PlannerRepairLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(planner.await_count, 3)
         self.assertEqual(review.await_count, 1)
         self.assertEqual(lifecycle.state["terminal_reason"], "planner_protocol_or_runtime_error")
+
+    async def test_dredd_review_failure_preserves_review_and_planner_errors(self):
+        planner = AsyncMock(side_effect=PlannerError("missing obligation_changes"))
+        review = AsyncMock(side_effect=verifier_runtime.VerifierProtocolError("bad review json"))
+        lifecycle = self.lifecycle(planner, review=review)
+        with self.assertRaisesRegex(LifecycleBlocked, "planner_protocol_or_runtime_error"):
+            await lifecycle.initialize({})
+
+        names = [event["event"] for event in self.events]
+        for name in (
+            "planner_dredd_review_started", "planner_dredd_review_failed",
+            "planner_failed", "planner_session_blocked",
+        ):
+            self.assertIn(name, names)
+        review_failure = next(
+            event for event in self.events
+            if event["event"] == "planner_dredd_review_failed"
+        )
+        self.assertEqual(review_failure["planner_validation_error"], "missing obligation_changes")
+        self.assertEqual(review_failure["review_error_type"], "VerifierProtocolError")
+        self.assertEqual(review_failure["review_error_message"], "bad review json")
+        failure = next(event for event in self.events if event["event"] == "planner_failed")
+        self.assertEqual(failure["reason"], "planner_dredd_review_error")
+        self.assertEqual(failure["error_type"], "VerifierProtocolError")
+        self.assertEqual(failure["error_message"], "bad review json")
+        self.assertEqual(failure["planner_error_type"], "PlannerError")
+        self.assertEqual(failure["planner_error_message"], "missing obligation_changes")
 
     async def test_dredd_disabled_blocks_after_second_invalid(self):
         planner = AsyncMock(side_effect=PlannerError("invalid"))

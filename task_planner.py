@@ -188,11 +188,26 @@ class TaskLifecycle:
                     try:
                         review = await self.planner_review(mode=mode, validation_error=error_message)
                     except Exception as review_exc:
-                        failure = {"mode": mode, "reason": error_type,
-                                   "error_type": error_type}
-                        if isinstance(exc, PlannerError):
-                            failure["error_message"] = str(exc)
-                        self.event("planner_failed", **failure)
+                        review_error_message = str(review_exc)[:1000]
+                        planner_error_message = error_message
+                        self.event(
+                            "planner_dredd_review_failed",
+                            session_id=self.planner_session_id,
+                            task_block_id=self.state["task_block_id"],
+                            mode=mode,
+                            planner_validation_error=planner_error_message,
+                            review_error_type=type(review_exc).__name__,
+                            review_error_message=review_error_message,
+                        )
+                        self.event(
+                            "planner_failed",
+                            mode=mode,
+                            reason="planner_dredd_review_error",
+                            error_type=type(review_exc).__name__,
+                            error_message=review_error_message,
+                            planner_error_type=error_type,
+                            planner_error_message=planner_error_message,
+                        )
                         self.block("planner_protocol_or_runtime_error")
                     review_payload = (review if isinstance(review, dict)
                                       else {key: getattr(review, key) for key in (
