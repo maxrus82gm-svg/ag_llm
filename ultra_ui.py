@@ -661,6 +661,34 @@ class UltraApp(tk.Tk):
         style.configure("TEntry", fieldbackground=field, foreground=fg)
         style.configure("TSpinbox", fieldbackground=field, foreground=fg)
         style.configure(
+            "Audit.Treeview",
+            background=field,
+            fieldbackground=field,
+            foreground=fg,
+            bordercolor=border,
+            lightcolor=border,
+            darkcolor=border,
+            rowheight=22,
+        )
+        style.configure(
+            "Audit.Treeview.Heading",
+            background=button_bg,
+            foreground=fg,
+            bordercolor=border,
+            lightcolor=border,
+            darkcolor=border,
+        )
+        style.map(
+            "Audit.Treeview",
+            background=[("selected", select_bg)],
+            foreground=[("selected", fg)],
+        )
+        style.map(
+            "Audit.Treeview.Heading",
+            background=[("active", button_bg)],
+            foreground=[("active", fg)],
+        )
+        style.configure(
             "TLabelframe",
             background=panel,
             foreground=fg,
@@ -1538,10 +1566,22 @@ class UltraApp(tk.Tk):
         ttk.Label(self.audit_section, textvariable=self.audit_summary_var).pack(
             fill="x", pady=(0, 4),
         )
+        audit_export_controls = ttk.Frame(self.audit_section)
+        audit_export_controls.pack(fill="x", pady=(0, 4))
+        ttk.Button(
+            audit_export_controls,
+            text="Копировать разбор",
+            command=self._copy_selected_run_export,
+        ).pack(side="left", padx=(0, 6))
+        ttk.Button(
+            audit_export_controls,
+            text="Сохранить TXT...",
+            command=self._save_selected_run_export,
+        ).pack(side="left")
         self.audit_records = ttk.Treeview(
             self.audit_section,
             columns=("sequence", "source", "event", "stage", "status"),
-            show="headings", height=7,
+            show="headings", height=7, style="Audit.Treeview",
         )
         for column, title, width in (
             ("sequence", "#", 45), ("source", "SOURCE", 80),
@@ -4823,6 +4863,150 @@ class UltraApp(tk.Tk):
             f"DREDD: {shown('dredd')}   TOTAL: {shown('total')}"
         )
 
+    def _audit_filter_flags(self) -> dict[str, bool]:
+        def flag(name: str, default: bool = True) -> bool:
+            variable = getattr(self, name, None)
+            return bool(variable.get()) if variable is not None else default
+        return {
+            "planner_request": flag("planner_diag_request_var"),
+            "planner_context": flag("planner_diag_context_var"),
+            "planner_response": flag("planner_diag_response_var"),
+            "planner_stages": flag("planner_diag_stages_var"),
+            "planner_errors": flag("planner_diag_errors_var"),
+            "executor_context": flag("executor_diag_context_var"),
+            "executor_response": flag("executor_diag_response_var"),
+            "executor_reset": flag("executor_diag_reset_var"),
+        }
+
+    @staticmethod
+    def _planner_record_is_error(event: str) -> bool:
+        return (
+            any(marker in event for marker in (
+                "failed", "error", "rejected", "blocked", "unsatisfied", "exhausted",
+            ))
+            or event == "mutation_preflight_rejected"
+        )
+
+    def _audit_record_visible(self, index_record: dict) -> bool:
+        event = str(index_record.get("event") or "")
+        flags = self._audit_filter_flags()
+        direct = {
+            "planner_diagnostic_request": "planner_request",
+            "planner_diagnostic_context": "planner_context",
+            "planner_diagnostic_response": "planner_response",
+            "planner_diagnostic_error": "planner_errors",
+            "executor_diagnostic_context": "executor_context",
+            "executor_diagnostic_response": "executor_response",
+            "executor_diagnostic_reset": "executor_reset",
+        }
+        if event in direct:
+            return flags[direct[event]]
+        if event in PLANNER_EVENTS:
+            if self._planner_record_is_error(event) and not flags["planner_errors"]:
+                return False
+            return flags["planner_stages"]
+        return True
+
+    @staticmethod
+    def _export_usage_value(summary: dict, role: str) -> str:
+        bucket = (summary.get("usage") or {}).get(role) or {}
+        value = bucket.get("total_tokens")
+        if value is None:
+            return "—"
+        return f"{value}{'' if bucket.get('complete', False) else ' (partial)'}"
+
+    def _build_selected_run_export_text(self) -> str:
+        run_id = getattr(self, "_selected_audit_run_id", None)
+        if not run_id:
+            raise ValueError("Выберите RUN для экспорта разбора.")
+        workspace = self.workspace_var.get()
+        summary = load_run_summary(workspace, run_id, self.current_chat_id)
+        if summary is None:
+            raise ValueError("Экспорт доступен только для выбранного RUN Store v2.")
+        flags = self._audit_filter_flags()
+        on_off = lambda key: "ON" if flags[key] else "OFF"
+        separator = "=" * 60
+        lines = [
+            separator, "RUN DIAGNOSTIC EXPORT", separator, "",
+            f"TASK: {summary.get('task_display_id') or '—'}",
+            f"RUN: {summary.get('run_display_id') or '—'}", "",
+            f"TASK BLOCK ID: {summary.get('task_block_id') or '—'}",
+            f"RUN ID: {summary.get('run_id') or run_id}", "",
+            f"STATUS: {summary.get('run_status') or '—'}",
+            f"FINAL AUDIT: {summary.get('final_audit') or '—'}",
+            f"API: {summary.get('api_requests', 0)}",
+            f"TOOLS: {summary.get('tool_calls', 0)}", "",
+            "TOKENS",
+            f"PLANNER: {self._export_usage_value(summary, 'planner')}",
+            f"EXECUTOR: {self._export_usage_value(summary, 'executor')}",
+            f"DREDD: {self._export_usage_value(summary, 'dredd')}",
+            f"TOTAL: {self._export_usage_value(summary, 'total')}", "",
+            "FILTERS",
+            f"Planner Request: {on_off('planner_request')}",
+            f"Planner Context: {on_off('planner_context')}",
+            f"Planner Response: {on_off('planner_response')}",
+            f"Planner Stages: {on_off('planner_stages')}",
+            f"Planner Errors: {on_off('planner_errors')}",
+            f"Executor Context: {on_off('executor_context')}",
+            f"Executor Response: {on_off('executor_response')}",
+            f"Executor Reset: {on_off('executor_reset')}", "",
+        ]
+        for item in list_run_records(workspace, run_id):
+            if not self._audit_record_visible(item):
+                continue
+            record = load_run_record(workspace, run_id, item["record_id"])
+            if record is None:
+                continue
+            lines.extend([
+                separator,
+                f"#{int(item.get('sequence', 0)):03d} {item.get('source') or '—'} | {item.get('event') or '—'}",
+                separator,
+                json.dumps(record.get("payload") or {}, ensure_ascii=False, indent=2),
+                "",
+            ])
+        return "\n".join(lines).rstrip() + "\n"
+
+    def _copy_selected_run_export(self) -> None:
+        try:
+            text = self._build_selected_run_export_text()
+        except ValueError as exc:
+            self.status_var.set(str(exc))
+            return
+        self.clipboard_clear()
+        self.clipboard_append(text)
+        self.update_idletasks()
+        summary = load_run_summary(
+            self.workspace_var.get(), self._selected_audit_run_id, self.current_chat_id,
+        ) or {}
+        self.status_var.set(
+            f"Разбор {summary.get('task_display_id') or 'T-—'} / "
+            f"{summary.get('run_display_id') or 'R-—'} скопирован в буфер"
+        )
+
+    def _save_selected_run_export(self) -> None:
+        try:
+            text = self._build_selected_run_export_text()
+        except ValueError as exc:
+            self.status_var.set(str(exc))
+            return
+        summary = load_run_summary(
+            self.workspace_var.get(), self._selected_audit_run_id, self.current_chat_id,
+        ) or {}
+        suggested = (
+            f"audit_{summary.get('task_display_id') or 'T'}_"
+            f"{summary.get('run_display_id') or 'R'}.txt"
+        )
+        selected = filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt")],
+            initialfile=suggested,
+        )
+        if not selected:
+            return
+        with Path(selected).open("w", encoding="utf-8", newline="\n") as stream:
+            stream.write(text)
+        self.status_var.set(f"Разбор сохранён: {selected}")
+
     def _render_audit_thread(self) -> None:
         widget = getattr(self, "audit_text", None)
         tree = getattr(self, "audit_records", None)
@@ -4868,6 +5052,8 @@ class UltraApp(tk.Tk):
             summary_var.set(self._audit_summary_text(summary))
         if tree is not None:
             for item in list_run_records(workspace, run_id):
+                if not self._audit_record_visible(item):
+                    continue
                 stage = item.get("stage_id") or (
                     f"API #{item.get('api_request_number')}" if item.get("api_request_number") else ""
                 )
@@ -4973,6 +5159,8 @@ class UltraApp(tk.Tk):
         known = set(tree.get_children())
         for item in list_run_records(self.workspace_var.get(), run_id):
             if item["record_id"] in known:
+                continue
+            if not self._audit_record_visible(item):
                 continue
             stage = item.get("stage_id") or (
                 f"API #{item.get('api_request_number')}"

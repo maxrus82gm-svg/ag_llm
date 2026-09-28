@@ -634,6 +634,22 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
             planner_runtime.validate_plan(value)
         self.assertLessEqual(len(str(caught.exception)), len("Invalid stage_type: ") + 80)
 
+    def test_verification_stage_requires_explicit_verify_capability(self):
+        def verification(caps):
+            value = plan(False)
+            value["stages"][0]["stage_type"] = "verification"
+            value["stages"][0]["allowed_capabilities"] = caps
+            return value
+
+        with self.assertRaisesRegex(
+            planner_runtime.PlannerError,
+            "verification stage requires VERIFY capability",
+        ):
+            planner_runtime.validate_plan(verification(["READ"]))
+        planner_runtime.validate_plan(verification(["VERIFY"]))
+        planner_runtime.validate_plan(verification(["READ", "VERIFY"]))
+        planner_runtime.validate_plan(plan(False))
+
     def test_schema_rejects_untyped_or_empty_contract(self):
         for mutation in [lambda p: p["stages"][0].update(persistence_required="true"),
                          lambda p: p["stages"][0].update(artifacts=[]),
@@ -647,6 +663,12 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         body = planner_runtime.build_planner_body("INITIAL", "TASK", {"permissions": {}}, "gigachat_ultra")
         self.assertNotIn("functions", body)
         self.assertEqual(body["function_call"], "none")
+        system = body["messages"][0]["content"]
+        self.assertIn(
+            "Every stage with stage_type='verification' must include VERIFY",
+            system,
+        )
+        self.assertIn("prefer verify_file_content", system)
         with self.assertRaises(planner_runtime.PlannerError):
             planner_runtime.build_planner_body("INITIAL", "x" * 150000, {}, "gigachat_ultra")
 
@@ -679,10 +701,14 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
             ("third:planner.base:", "third:planner.replan:"),
         ]
         for prompt, (base_text, mode_prefix) in zip(prompts, boundaries):
-            self.assertTrue(prompt.startswith(base_text + " " + mode_prefix))
+            hard = planner_runtime.PLANNER_HARD_PROTOCOL
+            self.assertTrue(prompt.startswith(base_text + " " + hard + " " + mode_prefix))
             separator_start = len(base_text)
             self.assertEqual(prompt[separator_start:separator_start + 1], " ")
             self.assertNotEqual(prompt[separator_start + 1:separator_start + 2], " ")
+            mode_start = separator_start + 1 + len(hard)
+            self.assertEqual(prompt[mode_start:mode_start + 1], " ")
+            self.assertNotEqual(prompt[mode_start + 1:mode_start + 2], " ")
         self.assertEqual(
             [item.args[0] for item in resolver.call_args_list],
             ["planner.base", "planner.initial", "planner.base", "planner.readiness",

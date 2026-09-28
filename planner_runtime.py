@@ -17,6 +17,13 @@ MAX_PLANNER_RESPONSE_BYTES = 96 * 1024
 PLANNER_TIMEOUT_SECONDS = 90
 MAX_PLAN_STAGES = 8
 MAX_PLAN_ARTIFACTS = 16
+PLANNER_HARD_PROTOCOL = (
+    "Every stage with stage_type='verification' must include VERIFY in "
+    "allowed_capabilities. Add READ as well only when raw file inspection is required. "
+    "For exact textual file verification prefer verify_file_content with "
+    "equals/contains/sha256 over repeated read_file/find_text when the check can be "
+    "expressed by that tool."
+)
 
 
 class PlannerError(RuntimeError):
@@ -104,6 +111,8 @@ def validate_plan(value: dict) -> dict:
         caps = string_list(stage["allowed_capabilities"], "capabilities", 4)
         if set(caps) - {"READ", "WRITE", "DELETE", "VERIFY"} or len(caps) != len(set(caps)):
             raise PlannerError("Invalid capabilities")
+        if stage["stage_type"] == "verification" and "VERIFY" not in caps:
+            raise PlannerError("verification stage requires VERIFY capability")
         if not string_list(stage["completion_criteria"], "completion criteria"):
             raise PlannerError("Completion criteria required")
         if not isinstance(stage["artifacts"], list):
@@ -202,7 +211,10 @@ def build_planner_body(mode: str, raw_task: str, context: dict, model_id: str) -
                  if mode in {"INITIAL", "REPLAN"} else None)
     base_context = resolve_context_text("planner.base")
     mode_context = resolve_context_text(mode_context_id, variables)
-    system = base_context.rstrip() + " " + mode_context.lstrip()
+    system = (
+        base_context.rstrip() + " " + PLANNER_HARD_PROTOCOL + " "
+        + mode_context.lstrip()
+    )
     serialized = json.dumps({"mode": mode, "raw_task": raw_task, "context": context}, ensure_ascii=False)
     if len(serialized.encode("utf-8")) > MAX_PLANNING_CONTEXT_BYTES:
         raise PlannerError("Planning context exceeds bounded limit")
@@ -215,6 +227,7 @@ def _planner_session_system() -> str:
     plan_variables = {"plan_format": json.dumps(PLAN_FORMAT)}
     parts = [
         resolve_context_text("planner.base").strip(),
+        PLANNER_HARD_PROTOCOL,
         "===== INITIAL PROTOCOL =====\n"
         + resolve_context_text("planner.initial", plan_variables).strip(),
         "===== READINESS PROTOCOL =====\n"
