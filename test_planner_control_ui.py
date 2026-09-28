@@ -128,5 +128,5 @@ def test_short_task_id_is_shared_by_user_and_assistant_labels():
     label = ultra_ui.UltraApp._assistant_label(
         fake, {"model_display_name": "GigaChat 3 Ultra"}, task_id,
     )
-    assert label == "АССИСТЕНТ · GigaChat 3 Ultra · TASK c99a94b8"
+    assert label == "АССИСТЕНТ · GigaChat 3 Ultra"
 

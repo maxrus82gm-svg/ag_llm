@@ -50,8 +50,17 @@ from audit_storage import (
     EXECUTOR_DIAGNOSTIC_EVENTS,
     PLANNER_DIAGNOSTIC_EVENTS,
     PLANNER_EVENTS,
-    list_chat_audit_threads,
     load_audit_thread,
+)
+from run_store import (
+    audit_exists,
+    get_run_index_entry,
+    get_task_index_entry,
+    list_run_records,
+    load_run_record,
+    load_run_summary,
+    load_stream_records,
+    load_workspace_run_index,
 )
 from workspace_runtime_settings import (
     load_workspace_runtime_settings,
@@ -82,6 +91,7 @@ from planner_runtime import DEFAULT_PLANNER_MODEL_ID
 
 
 APP_TITLE = "GigaChat Ultra Local Agent"
+MAX_TRACE_WIDGET_LINES = 500
 
 _RUNTIME_DIR = (
     Path(os.getenv("LOCALAPPDATA") or Path.home())
@@ -1524,6 +1534,24 @@ class UltraApp(tk.Tk):
             )
             for key, check in executor_diag_checks.items()
         }
+        self.audit_summary_var = tk.StringVar(value="T-— / R-—")
+        ttk.Label(self.audit_section, textvariable=self.audit_summary_var).pack(
+            fill="x", pady=(0, 4),
+        )
+        self.audit_records = ttk.Treeview(
+            self.audit_section,
+            columns=("sequence", "source", "event", "stage", "status"),
+            show="headings", height=7,
+        )
+        for column, title, width in (
+            ("sequence", "#", 45), ("source", "SOURCE", 80),
+            ("event", "EVENT", 210), ("stage", "STAGE/API", 90),
+            ("status", "STATUS", 80),
+        ):
+            self.audit_records.heading(column, text=title)
+            self.audit_records.column(column, width=width, stretch=column == "event")
+        self.audit_records.pack(fill="x", pady=(0, 4))
+        self.audit_records.bind("<<TreeviewSelect>>", self._on_audit_record_selected)
         self.audit_text = scrolledtext.ScrolledText(
             self.audit_section, wrap="word", state="disabled",
             font=("Segoe UI", 9),
@@ -2856,8 +2884,11 @@ class UltraApp(tk.Tk):
             display_name = producer.get("model_display_name")
             if isinstance(display_name, str) and display_name.strip():
                 label = f"АССИСТЕНТ · {display_name}"
-        short_id = self._short_task_id(task_block_id)
-        return f"{label} · TASK {short_id}" if short_id else label
+        binding = getattr(self, "_task_block_index", {}).get(task_block_id, {})
+        task_display = binding.get("task_display_id")
+        run_display = binding.get("run_display_id")
+        suffix = " · ".join(value for value in (task_display, run_display) if value)
+        return f"{label} · {suffix}" if suffix else label
 
     @staticmethod
     def _build_task_block_index(
@@ -2975,15 +3006,24 @@ class UltraApp(tk.Tk):
 
         workspace = self._workspace_path_from_ui()
         messages = load_chat_messages(workspace, self.current_chat_id)
-        threads = list_chat_audit_threads(
-            workspace, self.current_workspace_id, self.current_chat_id
-        ) if self.current_workspace_id else []
+        run_index = load_workspace_run_index(workspace) if self.current_workspace_id else {"runs": {}}
+        threads = [entry for entry in run_index.get("runs", {}).values()
+                   if entry.get("chat_id") == self.current_chat_id]
         previous_task_id = self._selected_task_block_id
         for binding in self._task_block_index.values():
             self.chat.mark_unset(binding["ui_start_mark"])
         self._task_block_index, self._task_block_order, self._message_task_block_ids = (
             self._build_task_block_index(messages, threads, self.current_chat_id)
         )
+        for task_id, binding in self._task_block_index.items():
+            task_entry = get_task_index_entry(workspace, task_id) or {}
+            binding["task_display_id"] = task_entry.get("display_id")
+            run_id = binding.get("run_id")
+            run_entry = get_run_index_entry(workspace, run_id) if run_id else None
+            binding["run_display_id"] = (run_entry or {}).get("display_id")
+            binding["audit_available"] = bool(
+                run_id and audit_exists(workspace, self.current_chat_id, run_id)
+            )
 
         for widget in self._message_action_widgets:
             try:
@@ -3027,8 +3067,8 @@ class UltraApp(tk.Tk):
                     self.chat.mark_set(mark, "end-1c")
                     self.chat.mark_gravity(mark, "left")
                     self.chat.configure(state="disabled")
-                short_id = self._short_task_id(task_id)
-                label = f"ТЫ · TASK {short_id}" if short_id else "ТЫ"
+                display_id = self._task_block_index.get(task_id, {}).get("task_display_id")
+                label = f"ТЫ · {display_id}" if display_id else "ТЫ"
                 self._append_chat(label, text, "user")
             elif role == "assistant":
                 latest_audit_run_id = get_assistant_audit_run_id(message) or latest_audit_run_id
@@ -4766,97 +4806,97 @@ class UltraApp(tk.Tk):
         segments.append(("resolved" if final == "PASS" else "metadata", f"Final Audit: {final}\n"))
         return segments
 
+    def _audit_summary_text(self, summary: dict) -> str:
+        usage = summary.get("usage") or {}
+        def shown(role):
+            bucket = usage.get(role) or {}
+            value = bucket.get("total_tokens")
+            suffix = "" if bucket.get("complete", False) else " (partial)"
+            return f"{value if value is not None else '—'}{suffix}"
+        return (
+            f"{summary.get('task_display_id') or 'T-—'} / "
+            f"{summary.get('run_display_id') or 'R-—'}   "
+            f"STATUS: {summary.get('run_status') or '—'}   "
+            f"FINAL AUDIT: {summary.get('final_audit') or '—'}   "
+            f"API: {summary.get('api_requests', 0)}   TOOLS: {summary.get('tool_calls', 0)}\n"
+            f"TOKENS  PLANNER: {shown('planner')}   EXECUTOR: {shown('executor')}   "
+            f"DREDD: {shown('dredd')}   TOTAL: {shown('total')}"
+        )
+
     def _render_audit_thread(self) -> None:
         widget = getattr(self, "audit_text", None)
+        tree = getattr(self, "audit_records", None)
         if widget is None:
             return
-        run_id = self._selected_audit_run_id
-        thread = None
-        if run_id and self.current_workspace_id and self.current_chat_id:
-            try:
-                thread = load_audit_thread(
-                    self.workspace_var.get(), self.current_workspace_id,
-                    self.current_chat_id, run_id,
-                )
-            except Exception:
-                thread = None
         widget.configure(state="normal")
-        try:
-            widget.delete("1.0", "end")
-            for tag, text in self._audit_segments(
-                thread,
-                run_id,
-                getattr(self, "_selected_task_block_id", None),
-                {
-                    "request": getattr(
-                        self, "planner_diag_request_var", None
-                    ).get() if getattr(
-                        self, "planner_diag_request_var", None
-                    ) is not None else True,
-                    "context": getattr(
-                        self, "planner_diag_context_var", None
-                    ).get() if getattr(
-                        self, "planner_diag_context_var", None
-                    ) is not None else True,
-                    "response": getattr(
-                        self, "planner_diag_response_var", None
-                    ).get() if getattr(
-                        self, "planner_diag_response_var", None
-                    ) is not None else True,
-                    "stages": getattr(
-                        self, "planner_diag_stages_var", None
-                    ).get() if getattr(
-                        self, "planner_diag_stages_var", None
-                    ) is not None else True,
-                    "errors": getattr(
-                        self, "planner_diag_errors_var", None
-                    ).get() if getattr(
-                        self, "planner_diag_errors_var", None
-                    ) is not None else True,
-                },
-                {
-                    "context": getattr(
-                        self,
-                        "executor_diag_context_var",
-                        None,
-                    ).get()
-                    if getattr(
-                        self,
-                        "executor_diag_context_var",
-                        None,
-                    ) is not None
-                    else True,
-                    "response": getattr(
-                        self,
-                        "executor_diag_response_var",
-                        None,
-                    ).get()
-                    if getattr(
-                        self,
-                        "executor_diag_response_var",
-                        None,
-                    ) is not None
-                    else True,
-                    "reset": getattr(
-                        self,
-                        "executor_diag_reset_var",
-                        None,
-                    ).get()
-                    if getattr(
-                        self,
-                        "executor_diag_reset_var",
-                        None,
-                    ) is not None
-                    else True,
-                },
-            ):
-                widget.insert("end", text, tag)
-            widget.see("end")
-        finally:
-            widget.configure(state="disabled")
+        widget.delete("1.0", "end")
+        widget.configure(state="disabled")
+        if tree is not None:
+            for item in tree.get_children():
+                tree.delete(item)
+        run_id = getattr(self, "_selected_audit_run_id", None)
+        workspace = self.workspace_var.get()
+        summary = load_run_summary(workspace, run_id, self.current_chat_id) if run_id else None
+        if summary is None:
+            # Explicit selection of one old RUN is the only legacy full-load path.
+            thread = None
+            if run_id and self.current_workspace_id and self.current_chat_id:
+                try:
+                    thread = load_audit_thread(
+                        workspace, self.current_workspace_id, self.current_chat_id, run_id,
+                    )
+                except Exception:
+                    thread = None
+            summary_var = getattr(self, "audit_summary_var", None)
+            if summary_var is not None:
+                summary_var.set(
+                    f"TASK BLOCK: {getattr(self, '_selected_task_block_id', None) or '—'} · RUN: {run_id or '—'}"
+                )
+            if thread:
+                widget.configure(state="normal")
+                for tag, text in self._audit_segments(
+                    thread, run_id, getattr(self, "_selected_task_block_id", None),
+                ):
+                    widget.insert("end", text, tag)
+                widget.configure(state="disabled")
+            render_planner = getattr(self, "_render_planner_chat", None)
+            if render_planner is not None:
+                render_planner(thread)
+            return
+        summary_var = getattr(self, "audit_summary_var", None)
+        if summary_var is not None:
+            summary_var.set(self._audit_summary_text(summary))
+        if tree is not None:
+            for item in list_run_records(workspace, run_id):
+                stage = item.get("stage_id") or (
+                    f"API #{item.get('api_request_number')}" if item.get("api_request_number") else ""
+                )
+                tree.insert("", "end", iid=item["record_id"], values=(
+                    f"{int(item.get('sequence', 0)):03d}", item.get("source") or "",
+                    item.get("event") or "", stage, item.get("status") or "",
+                ))
         render_planner = getattr(self, "_render_planner_chat", None)
         if render_planner is not None:
-            render_planner(thread)
+            render_planner()
+
+    def _on_audit_record_selected(self, _event=None) -> None:
+        tree = getattr(self, "audit_records", None)
+        widget = getattr(self, "audit_text", None)
+        run_id = getattr(self, "_selected_audit_run_id", None)
+        if tree is None or widget is None or not run_id:
+            return
+        selected = tree.selection()
+        if not selected:
+            return
+        try:
+            record = load_run_record(self.workspace_var.get(), run_id, selected[0])
+        except Exception:
+            record = None
+        widget.configure(state="normal")
+        widget.delete("1.0", "end")
+        if record is not None:
+            widget.insert("end", json.dumps(record, ensure_ascii=False, indent=2), "audit")
+        widget.configure(state="disabled")
 
     @staticmethod
     def _planner_session_segments(
@@ -4889,37 +4929,69 @@ class UltraApp(tk.Tk):
         widget = getattr(self, "planner_chat_text", None)
         if widget is None:
             return
-        if thread is None:
-            run_id = getattr(self, "_selected_audit_run_id", None)
-            if run_id and self.current_workspace_id and self.current_chat_id:
-                try:
-                    thread = load_audit_thread(
-                        self.workspace_var.get(), self.current_workspace_id,
-                        self.current_chat_id, run_id,
-                    )
-                except Exception:
-                    thread = None
-        segments = self._planner_session_segments(
-            thread, getattr(self, "_selected_task_block_id", None),
-        )
-        session = (thread or {}).get("planner_session") or {}
-        task_id = getattr(self, "_selected_task_block_id", None) or (thread or {}).get("task_block_id") or "—"
+        run_id = getattr(self, "_selected_audit_run_id", None)
+        messages = []
+        session_id = None
+        if run_id:
+            try:
+                records = load_stream_records(self.workspace_var.get(), run_id, "PLANNER")
+            except Exception:
+                records = []
+            for record in records:
+                payload = record.get("payload") or {}
+                if record.get("event") == "planner_session_message":
+                    messages.append(payload)
+                    session_id = payload.get("session_id") or session_id
+        if not messages and thread is not None:
+            session = thread.get("planner_session") or {}
+            messages = session.get("messages") or []
+            session_id = session.get("session_id")
+        task_id = getattr(self, "_selected_task_block_id", None) or "—"
         self.planner_chat_status_var.set(
-            f"TASK BLOCK: {task_id} · SESSION: {session.get('session_id') or '—'}"
+            f"TASK BLOCK: {task_id} · SESSION: {session_id or '—'}"
         )
         widget.configure(state="normal")
-        try:
-            widget.delete("1.0", "end")
-            for tag, text in segments:
-                widget.insert("end", text, tag)
-            widget.see("end")
-        finally:
-            widget.configure(state="disabled")
+        widget.delete("1.0", "end")
+        for message in messages:
+            speaker = message.get("speaker") or "SERVER"
+            model = message.get("model_display_name")
+            heading = f"{speaker} · {model}" if model and speaker in {"PLANNER", "DREDD"} else speaker
+            tag = {"TASK": "task", "PLANNER": "planner", "SERVER": "server", "DREDD": "dredd"}.get(speaker, "metadata")
+            widget.insert("end", f"{heading}\n{message.get('text') or ''}\n\n", tag)
+        widget.configure(state="disabled")
+
+    def _refresh_selected_run_index(self) -> None:
+        run_id = getattr(self, "_selected_audit_run_id", None)
+        tree = getattr(self, "audit_records", None)
+        if not run_id or tree is None:
+            return
+        summary = load_run_summary(
+            self.workspace_var.get(), run_id, self.current_chat_id,
+        )
+        if summary is not None:
+            self.audit_summary_var.set(self._audit_summary_text(summary))
+        known = set(tree.get_children())
+        for item in list_run_records(self.workspace_var.get(), run_id):
+            if item["record_id"] in known:
+                continue
+            stage = item.get("stage_id") or (
+                f"API #{item.get('api_request_number')}"
+                if item.get("api_request_number") else ""
+            )
+            tree.insert("", "end", iid=item["record_id"], values=(
+                f"{int(item.get('sequence', 0)):03d}", item.get("source") or "",
+                item.get("event") or "", stage, item.get("status") or "",
+            ))
 
     def _append_trace(self, line: str, tag: str = "trace") -> None:
         self.trace_log.configure(state="normal")
         try:
             self.trace_log.insert("end", f"{line}\n", tag)
+            line_count = int(self.trace_log.index("end-1c").split(".")[0])
+            if line_count > MAX_TRACE_WIDGET_LINES:
+                self.trace_log.delete(
+                    "1.0", f"{line_count - MAX_TRACE_WIDGET_LINES + 1}.0",
+                )
             self.trace_log.see("end")
         finally:
             self.trace_log.configure(state="disabled")
@@ -5712,15 +5784,9 @@ class UltraApp(tk.Tk):
                         binding = getattr(self, "_task_block_index", {}).get(task_id)
                         if binding:
                             binding["run_id"] = self._active_audit_run_id
-                            try:
-                                thread = load_audit_thread(
-                                    self.workspace_var.get(), self.current_workspace_id,
-                                    self.current_chat_id, self._active_audit_run_id,
-                                )
-                            except Exception:
-                                thread = None
-                            binding["audit_available"] = bool(
-                                thread and thread.get("task_block_id") == task_id
+                            binding["audit_available"] = audit_exists(
+                                self.workspace_var.get(), self.current_chat_id,
+                                self._active_audit_run_id,
                             )
                             self._ensure_task_audit_button(task_id)
                             self._select_task_block(task_id, force=True)
@@ -5729,8 +5795,12 @@ class UltraApp(tk.Tk):
                             self._render_audit_thread()
                     elif (self._selected_audit_run_id
                           and event.get("run_id") == self._selected_audit_run_id
-                          and event_type.startswith("planner_session_")):
+                          and (event_type.startswith("planner_session_")
+                               or event_type.startswith("planner_dredd_review_"))):
                         self._render_planner_chat()
+                        refresh = getattr(self, "_refresh_selected_run_index", None)
+                        if refresh is not None:
+                            refresh()
                     elif self._selected_audit_run_id and event.get("run_id") == self._selected_audit_run_id and event_type in PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | {
                         "final_audit_failed", "audit_diagnostic_question",
                         "audit_diagnostic_answer", "audit_diagnostic_error",
@@ -5748,7 +5818,9 @@ class UltraApp(tk.Tk):
                         "execution_consistency_correction_started", "execution_consistency_resolved",
                         "execution_consistency_terminal",
                     }:
-                        self._render_audit_thread()
+                        refresh = getattr(self, "_refresh_selected_run_index", None)
+                        if refresh is not None:
+                            refresh()
                     if event_type in {"run_failed", "run_finished"} and event.get("run_id") == self._active_audit_run_id:
                         self._active_audit_run_id = None
                 except Exception as exc:

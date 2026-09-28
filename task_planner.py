@@ -197,7 +197,8 @@ class TaskLifecycle:
                     review_payload = (review if isinstance(review, dict)
                                       else {key: getattr(review, key) for key in (
                                           "diagnosis", "required_action", "verifier_run_id",
-                                          "model_id", "model_display_name", "provider_model_id")})
+                                          "model_id", "model_display_name", "provider_model_id",
+                                          "usage")})
                     self.event("planner_dredd_review_completed",
                                session_id=self.planner_session_id,
                                task_block_id=self.state["task_block_id"], mode=mode,

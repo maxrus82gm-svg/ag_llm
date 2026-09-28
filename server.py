@@ -28,7 +28,7 @@ from workspace_runtime_settings import ensure_workspace_runtime_dirs
 from agent_global_context import load_agent_global_context
 from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
-from gigachat_transport import CHAT_URL, OAUTH_URL, get_access_token
+from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
 from audit_storage import AuditThreadRecorder
 from planner_runtime import DEFAULT_PLANNER_MODEL_ID, PlannerSession, run_planner
 from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated, PersistencePreflightRejected
@@ -147,6 +147,7 @@ GUARD_P1_CREATE_SCORE_THRESHOLD = 75
 GUARD_P1_REPEAT_TOOL_NAMES = {"read_file", "list_dir"}
 
 VERIFICATION_TOOL_NAMES = {
+    "verify_file_content",
     "python_compile",
     "git_status",
     "git_diff",
@@ -440,6 +441,25 @@ AGENT_FUNCTIONS = [
         },
     },
 
+    {
+        "name": "verify_file_content",
+        "description": (
+            "Server-side read-only verification текстового файла. "
+            "Проверяет exists/absent/equals/contains/sha256 без запуска shell/Python. "
+            "Используй для точной проверки .txt/.md/.json и других текстовых файлов."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "kind": {"type": "string", "enum": [
+                    "exists", "absent", "equals", "contains", "sha256",
+                ]},
+                "value": {"type": "string"},
+            },
+            "required": ["path", "kind", "value"],
+        },
+    },
     {
         "name": "python_compile",
         "description": (
@@ -755,7 +775,9 @@ def _require_operation_permission(
         )
     return path
 
-def _functions_for_policy(policy: dict) -> list[dict]:
+def _functions_for_policy(
+    policy: dict, allowed_capabilities: set[str] | None = None,
+) -> list[dict]:
     allowed_names = set()
     if policy["allow_read"]:
         allowed_names.update(READ_TOOL_NAMES)
@@ -768,10 +790,12 @@ def _functions_for_policy(policy: dict) -> list[dict]:
         allowed_names.update(VERIFICATION_TOOL_NAMES)
     functions = []
     for item in AGENT_FUNCTIONS:
+        capability = CAPABILITY_BY_TOOL.get(item["name"])
+        if allowed_capabilities is not None and capability not in allowed_capabilities:
+            continue
         if item["name"] not in allowed_names:
             continue
         exposed = dict(item)
-        capability = CAPABILITY_BY_TOOL.get(item["name"])
         if capability in {"WRITE", "DELETE"} and not policy[f"allow_{capability.lower()}"]:
             exposed["description"] += (
                 f" Schema доступна, но {capability} выключена: сервер отклонит "
@@ -1054,6 +1078,46 @@ def _read_logical_text(path: Path) -> str:
     if len(content.encode("utf-8")) > MAX_AGENT_FILE_BYTES:
         raise ValueError(f"Logical content превышает лимит: {MAX_AGENT_FILE_BYTES} байт.")
     return content
+
+
+def _agent_verify_file_content(
+    root: Path, path_text: str, kind: str, value: str, policy: dict,
+) -> dict:
+    _require_verify_enabled(policy)
+    if kind not in {"exists", "absent", "equals", "contains", "sha256"}:
+        raise ValueError(f"Неизвестный kind проверки: {kind!r}.")
+    if not isinstance(value, str):
+        raise ValueError("value должен быть строкой.")
+    if kind in {"exists", "absent"} and value != "":
+        raise ValueError(f"Для {kind} value должен быть пустой строкой.")
+    if kind == "sha256" and not re.fullmatch(r"[0-9a-f]{64}", value):
+        raise ValueError("Для sha256 value должен быть lowercase SHA-256 hex.")
+
+    path = _require_operation_permission(root, path_text, "read", policy)
+    _require_text_suffix(path)
+    exists = path.is_file()
+    actual_sha256 = None
+    if kind == "exists":
+        passed = exists
+    elif kind == "absent":
+        passed = not path.exists()
+    else:
+        if not exists:
+            raise FileNotFoundError(f"Файл не найден: {path_text}")
+        content = _read_logical_text(path)
+        actual_sha256 = _sha256_utf8(content)
+        passed = {
+            "equals": content == value,
+            "contains": value in content,
+            "sha256": actual_sha256 == value,
+        }[kind]
+    return {
+        "path": path.relative_to(root).as_posix(),
+        "kind": kind,
+        "passed": passed,
+        "exists": exists,
+        "actual_sha256": actual_sha256,
+    }
 
 
 def _write_logical_text(path: Path, content: str) -> int:
@@ -2088,6 +2152,7 @@ def _execute_agent_function(
         "insert_before": {"path", "marker", "content", "expected_content_sha256"},
         "insert_after": {"path", "marker", "content", "expected_content_sha256"},
         "delete_file": {"path"},
+        "verify_file_content": {"path", "kind", "value"},
         "python_compile": {"paths"},
         "git_status": set(),
         "git_diff": {"paths"},
@@ -2133,6 +2198,10 @@ def _execute_agent_function(
         )
     if name == "python_compile":
         return _agent_python_compile(root, arguments["paths"], policy)
+    if name == "verify_file_content":
+        return _agent_verify_file_content(
+            root, arguments["path"], arguments["kind"], arguments["value"], policy,
+        )
     if name == "git_status":
         return _agent_git_status(root, policy)
     if name == "git_diff":
@@ -2756,7 +2825,7 @@ async def _run_agent_task_impl(
     try:
         audit_recorder = AuditThreadRecorder(
             root, workspace_info["workspace_id"], chat_id, run_id,
-            task_block_id=task_block_id,
+            task_block_id=task_block_id, raw_task=task,
         )
     except Exception as exc:
         # Audit observability is not allowed to veto the Executor RUN.
@@ -2993,8 +3062,9 @@ async def _run_agent_task_impl(
         "или создание нового файла, очень похожего на существующий. "
         "Это мягкая самопроверка, а не автоматическое доказательство ошибки.\n"
         f"Автобэкап: {'ВКЛЮЧЁН' if policy['auto_backup'] else 'ВЫКЛЮЧЕН'}\n"
-        "VERIFY использует только белый список: python_compile, git_status, "
-        "git_diff, ui_smoke_test. Произвольного terminal/shell нет.\n"
+        "VERIFY использует только белый список: verify_file_content, "
+        "python_compile, git_status, git_diff, ui_smoke_test. "
+        "Произвольного terminal/shell нет.\n"
         "Если в RUN изменён .py, после ПОСЛЕДНЕЙ Python-записи обязательно "
         "успешно проверь ВСЕ изменённые существующие .py через python_compile. "
         "Если изменён server.py или ultra_ui.py — дополнительно ui_smoke_test. "
@@ -3273,6 +3343,14 @@ async def _run_agent_task_impl(
         while True:
             if lifecycle:
                 lifecycle.tick("EXECUTOR_OR_DISPATCH")
+                active_stage = lifecycle.stage
+                stage_capabilities = (
+                    set(active_stage.get("allowed_capabilities") or [])
+                    if active_stage else set()
+                )
+                available_functions = _functions_for_policy(
+                    policy, stage_capabilities,
+                )
 
             body = {
                 "model": run_model,
@@ -3284,6 +3362,13 @@ async def _run_agent_task_impl(
             if available_functions:
                 body["functions"] = available_functions
                 body["function_call"] = "auto"
+            request_message_chars = len(json.dumps(
+                body["messages"], ensure_ascii=False, separators=(",", ":"),
+            ))
+            request_functions_chars = len(json.dumps(
+                available_functions, ensure_ascii=False, separators=(",", ":"),
+            ))
+            request_total_chars = request_message_chars + request_functions_chars
 
             if pending_persistence_call is not None:
                 # Reuse the ordinary permission/guard/backup/tool path with a prepared payload.
@@ -3295,6 +3380,7 @@ async def _run_agent_task_impl(
                                      "finish_reason": "function_call"}]}
                 response_status, request_duration = None, 0.0
                 server_dispatched = True
+                usage = None
             else:
                 api_request_count += 1
 
@@ -3311,6 +3397,9 @@ async def _run_agent_task_impl(
                             else "none"
                         ),
                         "message_count": len(body["messages"]),
+                        "request_message_chars": request_message_chars,
+                        "request_functions_chars": request_functions_chars,
+                        "request_total_chars": request_total_chars,
                         "messages": copy.deepcopy(
                             body["messages"]
                         ),
@@ -3321,6 +3410,9 @@ async def _run_agent_task_impl(
                     "exposed_tool_count": len(available_functions),
                     "exposed_tool_names": [f["name"] for f in available_functions],
                     "function_call_mode": "auto" if available_functions else "none",
+                    "request_message_chars": request_message_chars,
+                    "request_functions_chars": request_functions_chars,
+                    "request_total_chars": request_total_chars,
                     **(lifecycle.facts() if lifecycle else {})})
                 request_start = time.time()
                 response = await client.post(CHAT_URL, headers=headers, json=body)
@@ -3328,6 +3420,7 @@ async def _run_agent_task_impl(
                 response.raise_for_status()
                 response_status = response.status_code
                 data = response.json()
+                usage = extract_usage(data)
                 server_dispatched = False
 
             try:
@@ -3340,6 +3433,7 @@ async def _run_agent_task_impl(
                     "http_status": response_status,
                     "duration": request_duration,
                     "error": "Malformed response",
+                    "usage": usage,
                 })
                 _emit("run_failed", {
                     "reason": "malformed_response",
@@ -3354,6 +3448,7 @@ async def _run_agent_task_impl(
                 "http_status": response_status,
                 "finish_reason": finish_reason,
                 "duration": request_duration,
+                "usage": usage,
             })
 
             if not server_dispatched:
@@ -3364,6 +3459,10 @@ async def _run_agent_task_impl(
                         "api_request_number": api_request_count,
                         "finish_reason": finish_reason,
                         "message": copy.deepcopy(message),
+                        "usage": usage,
+                        "request_message_chars": request_message_chars,
+                        "request_functions_chars": request_functions_chars,
+                        "request_total_chars": request_total_chars,
                     },
                 )
 
@@ -4408,6 +4507,7 @@ async def _run_agent_task_impl(
                                 "verifier_run_id": audit_result.verifier_run_id, "audit_attempt": audit_attempt,
                                 "reason": audit_result.reason, "violations": list(audit_result.violations),
                                 "required_action": audit_result.required_action, "route": route,
+                                "usage": audit_result.usage,
                             })
                             lifecycle.event("final_audit_routed_plan_defect", reason=audit_result.reason)
                             await lifecycle.replan({"reason": "final_audit_plan_defect", "finding": {
@@ -4543,6 +4643,7 @@ async def _run_agent_task_impl(
                             "violations": list(audit_result.violations),
                             "reason": audit_result.reason,
                             "required_action": audit_result.required_action,
+                            "usage": audit_result.usage,
                             "audit_attempt": audit_attempt,
                             "semantic_fail_count": semantic_fail_count,
                             "correction_count": correction_count,
@@ -4820,6 +4921,7 @@ async def _run_agent_task_impl(
                         "verdict": audit_result.verdict,
                         "violations_count": len(audit_result.violations),
                         "reason": audit_result.reason,
+                        "usage": audit_result.usage,
                         "audit_attempt": audit_attempt,
                         "semantic_fail_count": final_audit_retry_state[
                             "semantic_fail_count"

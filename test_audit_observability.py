@@ -14,6 +14,7 @@ import context_storage
 import server
 import ui_state
 import ultra_ui
+import run_store
 
 
 class AuditStorageTests(unittest.TestCase):
@@ -50,9 +51,9 @@ class AuditStorageTests(unittest.TestCase):
         threads = audit_storage.list_chat_audit_threads(
             self.workspace, self.workspace_id, self.chat_id
         )
-        self.assertEqual([item["run_id"] for item in threads], ["run_linked", "run_test"])
-        self.assertEqual(threads[0]["task_block_id"], task_id)
-        self.assertIsNone(threads[1]["task_block_id"])
+        self.assertEqual([item["run_id"] for item in threads], ["run_test", "run_linked"])
+        self.assertIsNone(threads[0]["task_block_id"])
+        self.assertEqual(threads[1]["task_block_id"], task_id)
         self.assertNotEqual(task_id, linked.thread["run_id"])
         other_chat = "chat_other"
         self.assertEqual(audit_storage.list_chat_audit_threads(
@@ -62,12 +63,15 @@ class AuditStorageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             audit_storage.list_chat_audit_threads(self.workspace, "wrong_workspace", self.chat_id)
         # Older records without this key remain readable and are not rewritten.
-        legacy_path = audit_storage.audit_thread_path(self.workspace, self.chat_id, self.run_id)
-        legacy = json.loads(legacy_path.read_text(encoding="utf-8"))
-        legacy.pop("task_block_id")
+        legacy_run = "legacy_without_task"
+        legacy_path = audit_storage.audit_thread_path(self.workspace, self.chat_id, legacy_run)
+        legacy = {"workspace_id": self.workspace_id, "chat_id": self.chat_id,
+                  "run_id": legacy_run, "issues": [], "final_audit": "PASS",
+                  "run_status": "SUCCESS"}
+        legacy_path.parent.mkdir(parents=True, exist_ok=True)
         legacy_path.write_text(json.dumps(legacy), encoding="utf-8")
         self.assertNotIn("task_block_id", audit_storage.load_audit_thread(
-            self.workspace, self.workspace_id, self.chat_id, self.run_id
+            self.workspace, self.workspace_id, self.chat_id, legacy_run
         ))
 
     def test_issue_diagnostic_tool_activity_pass_and_reload(self):
@@ -95,8 +99,9 @@ class AuditStorageTests(unittest.TestCase):
         self.assertEqual(issue["result"], "RESOLVED")
         self.assertEqual(saved["final_audit"], "PASS")
         self.assertNotIn("SECRET", json.dumps(saved))
-        # A fresh loader after the recorder is gone reads the portable file.
-        self.assertTrue(audit_storage.audit_thread_path(self.workspace, self.chat_id, self.run_id).is_file())
+        # New RUNs use the v2 directory and never create a legacy monolith.
+        self.assertTrue(run_store.run_component_path(self.workspace, self.run_id, "summary.json").is_file())
+        self.assertFalse(audit_storage.audit_thread_path(self.workspace, self.chat_id, self.run_id).exists())
 
     def test_consistency_lifecycle_persists_and_renders_without_changing_final_issues(self):
         self.recorder.observe({"event": "execution_consistency_detected", "attempt": 1,
@@ -435,8 +440,8 @@ class TaskBlockUiTests(unittest.TestCase):
         self.assertIsNone(app._task_block_index[self.task_b]["assistant_message_id"])
         self.assertEqual(app._selected_task_block_id, self.task_b)
         self.assertEqual(app._selected_audit_run_id, "run_b")
-        self.assertIn("RUN STATUS: FAILED", app.audit_text.get("1.0", "end"))
-        self.assertIn(f"TASK BLOCK: {self.task_b}", app.audit_text.get("1.0", "end"))
+        self.assertIn("STATUS: FAILED", app.audit_summary_var.get())
+        self.assertIn("T-002", app.audit_summary_var.get())
         self.assertTrue(app.chat.mark_names().count(f"task_block_{self.task_a}"))
         self.assertTrue(app.chat.mark_names().count(f"task_block_{self.task_b}"))
         app._render_current_chat()
@@ -480,15 +485,8 @@ class TaskBlockUiTests(unittest.TestCase):
     def test_explicit_audit_button_rereads_same_selected_run_from_disk(self):
         self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
                          (self.task_b, "run_b"))
-        self.assertIn("Wrong", self.app.audit_text.get("1.0", "end"))
-        thread = audit_storage.load_audit_thread(
-            self.workspace, self.workspace_info["workspace_id"], self.chat_id, "run_b"
-        )
-        thread["issues"][0]["reason"] = "FRESH DISK REASON"
-        audit_storage._save_audit_thread(
-            audit_storage.audit_thread_path(self.workspace, self.chat_id, "run_b"), thread
-        )
-        self.assertNotIn("FRESH DISK REASON", self.app.audit_text.get("1.0", "end"))
+        self.assertIn("STATUS: FAILED", self.app.audit_summary_var.get())
+        run_store.update_run_summary_index(self.workspace, "run_b", {"run_status": "BLOCKED"})
         frame = self.app._message_action_widgets[2]
         button = next(widget for widget in frame.winfo_children()
                       if isinstance(widget, ultra_ui.ttk.Button)
@@ -496,7 +494,7 @@ class TaskBlockUiTests(unittest.TestCase):
         button.invoke()
         self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
                          (self.task_b, "run_b"))
-        self.assertIn("FRESH DISK REASON", self.app.audit_text.get("1.0", "end"))
+        self.assertIn("STATUS: BLOCKED", self.app.audit_summary_var.get())
 
     def test_send_creates_one_id_and_worker_persists_it_on_assistant(self):
         captured = {}
@@ -552,7 +550,7 @@ class TaskBlockUiTests(unittest.TestCase):
                       if isinstance(w, ultra_ui.ttk.Button) and w.cget("text") == "Разбор")
         button.invoke()
         self.assertEqual(self.app._selected_audit_run_id, "run_legacy")
-        self.assertIn("TASK BLOCK: LEGACY", self.app.audit_text.get("1.0", "end"))
+        self.assertIn("R-003", self.app.audit_summary_var.get())
 
     def test_running_task_gets_audit_button_when_run_started_is_observed(self):
         task_id = context_storage.new_task_block_id()
@@ -576,7 +574,7 @@ class TaskBlockUiTests(unittest.TestCase):
                             if isinstance(w, ultra_ui.ttk.Button)))
         self.assertEqual((self.app._selected_task_block_id, self.app._selected_audit_run_id),
                          (task_id, "run_running"))
-        self.assertIn("RUN STATUS: RUNNING", self.app.audit_text.get("1.0", "end"))
+        self.assertIn("STATUS: RUNNING", self.app.audit_summary_var.get())
 
     def test_scroll_resolver_and_debounce_do_not_rerender_same_block(self):
         order = ["A", "B", "C"]
@@ -833,11 +831,13 @@ class TraceAndUiStateTests(unittest.TestCase):
             _append_trace=lambda *_: None, _run_started_once=False,
             _selected_audit_run_id=None, _active_audit_run_id=None,
             current_chat_id="chat_test", _render_audit_thread=lambda: refreshed.append(True),
+            _refresh_selected_run_index=lambda: refreshed.append("index"),
             _poll_trace_events=lambda: None, after=lambda *_: None,
         )
         ultra_ui.UltraApp._poll_trace_events(fake)
         self.assertEqual(fake._selected_audit_run_id, "run_test")
-        self.assertEqual(len(refreshed), 8)
+        self.assertEqual(refreshed.count(True), 1)
+        self.assertEqual(refreshed.count("index"), 7)
 
     def test_precise_arguments_are_compact_and_dredd_label_is_ui_only(self):
         compact = ultra_ui.UltraApp._compact_event_arguments({
@@ -899,7 +899,7 @@ class TraceAndUiStateTests(unittest.TestCase):
         with patch.object(ultra_ui, "load_audit_thread", return_value=None):
             ultra_ui.UltraApp._render_audit_thread(fake)
         self.assertEqual(widget.state, "disabled")
-        self.assertIn("нет событий", "".join(text for text, _tag in widget.calls))
+        self.assertEqual(widget.calls, [])
 
     def test_ui_state_persists_colors_ratios_visibility(self):
         with tempfile.TemporaryDirectory() as directory:

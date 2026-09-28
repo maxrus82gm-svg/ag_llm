@@ -8,7 +8,7 @@ import uuid
 import httpx
 
 from context_registry import resolve_context_text
-from gigachat_transport import CHAT_URL, get_access_token
+from gigachat_transport import CHAT_URL, extract_usage, get_access_token
 from model_registry import get_model_spec
 
 DEFAULT_PLANNER_MODEL_ID = "gigachat_ultra"
@@ -324,7 +324,9 @@ class PlannerSession:
                     CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
                 )
                 response.raise_for_status()
-            choice = response.json()["choices"][0]
+            data = response.json()
+            usage = extract_usage(data)
+            choice = data["choices"][0]
             message = choice["message"]
             content = message.get("content")
             raw_text = content if isinstance(content, str) else json.dumps(message, ensure_ascii=False)
@@ -335,6 +337,7 @@ class PlannerSession:
             self._diagnostic("response", {
                 "mode": mode, "finish_reason": choice.get("finish_reason"),
                 "content": content, "function_call": message.get("function_call"),
+                "usage": usage,
             })
             if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
                 raise PlannerError("Planner returned an unexpected finish/tool call")
@@ -388,13 +391,16 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
         async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
             response = await client.post(CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body)
             response.raise_for_status()
-        choice = response.json()["choices"][0]
+        data = response.json()
+        usage = extract_usage(data)
+        choice = data["choices"][0]
         message = choice["message"]
         diagnostic("response", {
             "mode": mode,
             "finish_reason": choice.get("finish_reason"),
             "content": message.get("content"),
             "function_call": message.get("function_call"),
+            "usage": usage,
         })
         if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
             raise PlannerError("Planner returned an unexpected finish/tool call")

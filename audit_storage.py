@@ -5,6 +5,8 @@ These records are deliberately separate from RAW chat and working context.
 
 from __future__ import annotations
 
+import copy
+import hashlib
 import json
 import os
 import re
@@ -12,6 +14,22 @@ import uuid
 from pathlib import Path
 
 from context_storage import validate_task_block_id
+from run_store import (
+    append_run_record,
+    audit_exists as run_audit_exists,
+    audit_root,
+    create_run_summary,
+    get_run_index_entry,
+    get_task_index_entry,
+    list_run_records,
+    load_run_record,
+    load_run_summary,
+    load_stream_records,
+    record_usage,
+    reconstruct_executor_context,
+    run_component_path,
+    update_run_summary_index,
+)
 
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
@@ -37,6 +55,8 @@ EXECUTOR_DIAGNOSTIC_EVENTS = {
     "executor_diagnostic_reset",
 }
 _AUDIT_EVENTS = {
+    "run_started", "api_request", "api_response", "tool_started",
+    "final_audit_started",
     "final_audit_failed", "audit_diagnostic_question", "audit_diagnostic_answer",
     "audit_diagnostic_error", "tool_finished", "tool_error",
     "final_audit_passed", "final_audit_skipped", "final_audit_error", "run_failed", "run_finished",
@@ -70,6 +90,49 @@ def audit_thread_path(workspace_root: str | Path, chat_id: str | None, run_id: s
 def load_audit_thread(
     workspace_root: str | Path, workspace_id: str, chat_id: str | None, run_id: str
 ) -> dict | None:
+    v2 = get_run_index_entry(workspace_root, run_id)
+    if v2 is not None:
+        summary = load_run_summary(workspace_root, run_id, chat_id)
+        if summary is None or summary.get("workspace_id") != workspace_id:
+            raise ValueError("Audit Thread identity mismatch.")
+        recorder = AuditThreadRecorder.__new__(AuditThreadRecorder)
+        recorder.workspace_root = Path(workspace_root).resolve()
+        recorder.workspace_id = workspace_id
+        recorder.chat_id = chat_id
+        recorder.run_id = run_id
+        recorder.task_block_id = summary.get("task_block_id")
+        recorder.thread = recorder._empty_legacy_thread()
+        recorder._previous_executor_messages = None
+        for item in list_run_records(workspace_root, run_id):
+            record = load_run_record(workspace_root, run_id, item["record_id"])
+            if record is None:
+                continue
+            payload = dict(record.get("payload") or {})
+            delta = payload.pop("context_delta", None)
+            context_base = payload.get("context_base")
+            if isinstance(context_base, dict):
+                try:
+                    payload["messages"] = reconstruct_executor_context(
+                        workspace_root, run_id, int(context_base["api_request_number"])
+                    )
+                except Exception:
+                    payload["messages"] = []
+            if isinstance(delta, dict):
+                try:
+                    payload["messages"] = reconstruct_executor_context(
+                        workspace_root, run_id, int(delta["api_request_number"])
+                    )
+                except Exception:
+                    payload["messages"] = []
+            event = {"event": record.get("event"), "run_id": run_id,
+                     "timestamp": record.get("timestamp"), **payload}
+            recorder.observe(event, persist=False)
+        recorder.thread["run_status"] = summary.get("run_status", recorder.thread["run_status"])
+        recorder.thread["final_audit"] = summary.get("final_audit", recorder.thread["final_audit"])
+        recorder.thread["task_display_id"] = summary.get("task_display_id")
+        recorder.thread["run_display_id"] = summary.get("run_display_id")
+        recorder.thread["usage"] = summary.get("usage")
+        return recorder.thread
     path = audit_thread_path(workspace_root, chat_id, run_id)
     if not path.is_file():
         return None
@@ -93,11 +156,41 @@ def list_chat_audit_threads(
     if not audit_dir.is_dir():
         return []
     threads = []
+    indexed_run_ids = set()
+    index_path = audit_root(workspace_root) / "index.json"
+    if index_path.is_file():
+        from run_store import load_workspace_run_index
+        index = load_workspace_run_index(workspace_root)
+        for entry in index["runs"].values():
+            if entry.get("chat_id") != chat_id:
+                continue
+            indexed_run_ids.add(entry["run_id"])
+            thread = load_audit_thread(workspace_root, workspace_id, chat_id, entry["run_id"])
+            if thread is not None:
+                threads.append(thread)
     for path in sorted(audit_dir.glob("*.json"), key=lambda item: item.name):
+        if path.stem in indexed_run_ids:
+            continue
         thread = load_audit_thread(workspace_root, workspace_id, chat_id, path.stem)
         if thread is not None:
             threads.append(thread)
     return threads
+
+
+def list_chat_audit_summaries(
+    workspace_root: str | Path, workspace_id: str, chat_id: str,
+) -> list[dict]:
+    """Lightweight v2 summaries only; never parses legacy full JSON files."""
+    from run_store import load_workspace_run_index
+    index = load_workspace_run_index(workspace_root)
+    result = []
+    for entry in index["runs"].values():
+        if entry.get("chat_id") != chat_id:
+            continue
+        summary = load_run_summary(workspace_root, entry["run_id"], chat_id)
+        if summary is not None and summary.get("workspace_id") == workspace_id:
+            result.append(summary)
+    return result
 
 
 def _save_audit_thread(path: Path, thread: dict) -> None:
@@ -122,24 +215,153 @@ class AuditThreadRecorder:
     def __init__(
         self, workspace_root: str | Path, workspace_id: str,
         chat_id: str | None, run_id: str, task_block_id: str | None = None,
+        raw_task: str | None = None,
     ) -> None:
-        self.path = audit_thread_path(workspace_root, chat_id, run_id)
-        self.thread = {
+        self.workspace_root = Path(workspace_root).resolve()
+        self.workspace_id = _safe_identifier(workspace_id, "workspace_id")
+        self.chat_id = chat_id
+        self.run_id = run_id
+        original_task_block_id = task_block_id
+        if task_block_id is None:
+            seed = f"{self.workspace_id}:{chat_id or 'direct'}:{run_id}".encode("utf-8")
+            task_block_id = "tb_" + hashlib.md5(seed).hexdigest()
+        self._store_task_block_id = validate_task_block_id(task_block_id)
+        self.task_block_id = (
+            validate_task_block_id(original_task_block_id)
+            if original_task_block_id is not None else None
+        )
+        self.path = run_component_path(
+            self.workspace_root, run_id, "summary.json"
+        ) if get_run_index_entry(self.workspace_root, run_id) else None
+        create_run_summary(
+            self.workspace_root, self.workspace_id, chat_id, self._store_task_block_id, run_id,
+        )
+        if self.task_block_id is None:
+            update_run_summary_index(
+                self.workspace_root, run_id, {"task_block_id": None},
+            )
+        self.path = run_component_path(self.workspace_root, run_id, "summary.json")
+        task_entry = get_task_index_entry(self.workspace_root, self._store_task_block_id) or {}
+        task_payload = {"schema_version": 2, "workspace_id": self.workspace_id,
+                        "chat_id": chat_id, "task_block_id": self.task_block_id,
+                        "task_display_id": task_entry.get("display_id"),
+                        "raw_task": raw_task}
+        _save_audit_thread(run_component_path(self.workspace_root, run_id, "task.json"), task_payload)
+        self.thread = self._empty_legacy_thread()
+        self._previous_executor_messages = None
+
+    def _empty_legacy_thread(self) -> dict:
+        return {
             "schema_version": 1,
-            "workspace_id": _safe_identifier(workspace_id, "workspace_id"),
-            "chat_id": chat_id,
-            "task_block_id": validate_task_block_id(task_block_id) if task_block_id is not None else None,
-            "run_id": run_id,
+            "workspace_id": self.workspace_id,
+            "chat_id": self.chat_id,
+            "task_block_id": self.task_block_id,
+            "run_id": self.run_id,
             "issues": [],
             "final_audit": "PENDING",
             "run_status": "RUNNING",
         }
-        _save_audit_thread(self.path, self.thread)
 
-    def observe(self, event: dict) -> None:
+    def _source_for_event(self, event: dict) -> str:
+        kind = str(event.get("event") or "")
+        if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
+            return "EXECUTOR"
+        if kind in PLANNER_DIAGNOSTIC_EVENTS or kind in PLANNER_EVENTS:
+            if kind.startswith("planner_dredd_review_"):
+                return "DREDD"
+            return "PLANNER"
+        if kind.startswith("final_audit_") or kind.startswith("audit_diagnostic_"):
+            return "DREDD"
+        return "SERVER"
+
+    @staticmethod
+    def _context_delta(previous: list[dict], current: list[dict], api_number: int,
+                       stage_id: object) -> dict:
+        common = 0
+        limit = min(len(previous), len(current))
+        while common < limit and previous[common] == current[common]:
+            common += 1
+        return {"kind": "context_delta", "api_request_number": api_number,
+                "stage_id": stage_id, "previous_message_count": len(previous),
+                "message_count": len(current), "common_prefix": common,
+                "removed_suffix_count": len(previous) - common,
+                "added_messages": copy.deepcopy(current[common:])}
+
+    def _persist_event(self, event: dict) -> None:
+        kind = event["event"]
+        source = self._source_for_event(event)
+        payload = {key: copy.deepcopy(value) for key, value in event.items()
+                   if key not in {"event", "timestamp", "run_id"}}
+        if kind == "executor_diagnostic_context" and isinstance(payload.get("messages"), list):
+            messages = payload.pop("messages")
+            api_number = int(payload.get("api_request_number") or 1)
+            if self._previous_executor_messages is None:
+                base = {"schema_version": 2, "run_id": self.run_id,
+                        "api_request_number": api_number,
+                        "model_id": payload.get("model_id"),
+                        "provider_model_id": payload.get("provider_model_id"),
+                        "base_context_hash": __import__("hashlib").sha256(
+                            json.dumps(messages, ensure_ascii=False,
+                                       separators=(",", ":")).encode("utf-8")
+                        ).hexdigest(), "messages": copy.deepcopy(messages)}
+                _save_audit_thread(
+                    run_component_path(self.workspace_root, self.run_id, "executor_base.json"), base,
+                )
+                payload["context_base"] = {key: value for key, value in base.items()
+                                           if key != "messages"}
+            else:
+                payload["context_delta"] = self._context_delta(
+                    self._previous_executor_messages, messages, api_number,
+                    payload.get("stage_id"),
+                )
+            self._previous_executor_messages = copy.deepcopy(messages)
+        append_run_record(
+            self.workspace_root, self.run_id, source=source, event=kind,
+            payload=payload, timestamp=float(event.get("timestamp") or 0.0),
+        )
+        summary = load_run_summary(self.workspace_root, self.run_id) or {}
+        changed = False
+        if kind == "api_request":
+            summary["api_requests"] = max(int(summary.get("api_requests") or 0),
+                                          int(event.get("api_request_number") or 0))
+            changed = True
+        if kind == "tool_started":
+            summary["tool_calls"] = max(int(summary.get("tool_calls") or 0),
+                                        int(event.get("tool_sequence") or 0))
+            changed = True
+        if kind == "final_audit_passed":
+            summary["final_audit"] = "PASS"; changed = True
+        elif kind == "final_audit_failed":
+            summary["final_audit"] = "FAIL"; changed = True
+        elif kind == "final_audit_error":
+            summary["final_audit"] = "ERROR"; changed = True
+        elif kind == "final_audit_skipped":
+            summary["final_audit"] = "DISABLED"; changed = True
+        if kind == "run_failed":
+            summary["run_status"] = "FAILED"
+            if summary.get("final_audit") == "PENDING":
+                summary["final_audit"] = "NOT_RUN"
+            changed = True
+        elif kind == "run_finished":
+            summary["run_status"] = event.get("status") or "FINISHED"; changed = True
+        usage = event.get("usage")
+        if kind == "executor_diagnostic_response":
+            record_usage(summary, "executor", usage); changed = True
+        elif kind == "planner_diagnostic_response":
+            record_usage(summary, "planner", usage); changed = True
+        elif source == "DREDD" and kind in {
+            "planner_dredd_review_completed", "final_audit_passed", "final_audit_failed",
+        }:
+            record_usage(summary, "dredd", usage); changed = True
+        if changed:
+            update_run_summary_index(self.workspace_root, self.run_id, summary)
+
+    def observe(self, event: dict, *, persist: bool = True) -> None:
         kind = event.get("event")
         if kind not in _AUDIT_EVENTS:
             return
+        if persist:
+            self._persist_event(event)
         issues = self.thread["issues"]
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             diagnostic_kind = kind.removeprefix(
@@ -157,6 +379,9 @@ class AuditThreadRecorder:
                     "function_call_mode",
                     "message_count",
                     "messages",
+                    "request_message_chars",
+                    "request_functions_chars",
+                    "request_total_chars",
                 ),
                 "response": (
                     "api_request_number",
@@ -165,6 +390,10 @@ class AuditThreadRecorder:
                     "stage_id",
                     "finish_reason",
                     "message",
+                    "usage",
+                    "request_message_chars",
+                    "request_functions_chars",
+                    "request_total_chars",
                 ),
                 "reset": (
                     "plan_id",
@@ -202,7 +431,7 @@ class AuditThreadRecorder:
                 ),
                 "context": ("mode", "system", "user"),
                 "response": (
-                    "mode", "finish_reason", "content", "function_call",
+                    "mode", "finish_reason", "content", "function_call", "usage",
                 ),
                 "error": ("mode", "error_type", "error_message"),
             }[diagnostic_kind]
@@ -385,4 +614,3 @@ class AuditThreadRecorder:
             self.thread["run_status"] = _short(event.get("status")) or "FINISHED"
             if event.get("status") == "BLOCKED" and self.thread["final_audit"] == "PENDING":
                 self.thread["final_audit"] = "NOT_RUN"
-        _save_audit_thread(self.path, self.thread)

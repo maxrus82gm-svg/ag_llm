@@ -275,8 +275,12 @@ class PlannerDiagnosticUiTests(unittest.TestCase):
         app.withdraw()
         app.update_idletasks()
 
-        controls, audit_container = app.audit_section.winfo_children()[:2]
-        self.assertEqual(str(app.audit_text.master), str(audit_container))
+        controls = app.audit_section.winfo_children()[0]
+        self.assertIn(
+            str(app.audit_text.master),
+            [str(child) for child in app.audit_section.winfo_children()],
+        )
+        self.assertIsInstance(app.audit_records, ultra_ui.ttk.Treeview)
         self.assertEqual(app.audit_text.pack_info()["fill"], "both")
         self.assertEqual(int(app.audit_text.pack_info()["expand"]), 1)
         checks = [
@@ -404,13 +408,14 @@ class PlannerDiagnosticUiTests(unittest.TestCase):
         fake._append_trace = lambda *args: appended.append(args)
         fake._format_event = lambda event: event["event"]
         fake._render_audit_thread = lambda: rendered.append(True)
+        fake._refresh_selected_run_index = lambda: rendered.append("index")
         fake._poll_trace_events = lambda: None
         fake.after = lambda *_args: None
 
         ultra_ui.UltraApp._poll_trace_events(fake)
 
         self.assertEqual(appended, [])
-        self.assertEqual(rendered, [True])
+        self.assertEqual(rendered, ["index"])
 
 
 if __name__ == "__main__":

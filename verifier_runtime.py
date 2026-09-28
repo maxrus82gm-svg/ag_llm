@@ -9,7 +9,7 @@ from typing import Any
 import httpx
 
 from agent_global_context import APP_DATA_ROOT
-from gigachat_transport import CHAT_URL, get_access_token
+from gigachat_transport import CHAT_URL, extract_usage, get_access_token
 from model_registry import get_model_spec
 
 
@@ -48,6 +48,7 @@ class VerifierResult:
     operation_id: str | None
     route: str = "UNKNOWN"
     affected_stage_ids: tuple[str, ...] = ()
+    usage: dict | None = None
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,7 @@ class PlannerReviewResult:
     model_id: str
     model_display_name: str
     provider_model_id: str
+    usage: dict | None = None
 
 
 def _validate_nonempty_text(value: object, label: str) -> str:
@@ -186,7 +188,7 @@ def _build_verifier_request_body(
     }
 
 
-async def _request_gigachat(body: dict[str, Any]) -> str:
+async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
     try:
         token = await get_access_token()
     except Exception as exc:
@@ -226,7 +228,14 @@ async def _request_gigachat(body: dict[str, Any]) -> str:
         raise VerifierProtocolError(
             f"Verifier завершился нештатно: finish_reason={finish_reason!r}."
         )
-    return content
+    return content, extract_usage(data)
+
+
+def _content_and_usage(result: object) -> tuple[str, dict]:
+    """Keep tests/custom callers that mock the old internal string result working."""
+    if isinstance(result, tuple) and len(result) == 2:
+        return result[0], result[1]
+    return result, extract_usage(None)
 
 
 def _parse_verifier_response(content: str, requested_check_type: str) -> dict[str, Any]:
@@ -364,7 +373,7 @@ async def run_verifier_check(
             verification_context=verification_context,
         )
         try:
-            content = await _request_gigachat(body)
+            content, usage = _content_and_usage(await _request_gigachat(body))
         except VerifierRuntimeError:
             raise
         except Exception as exc:
@@ -387,6 +396,7 @@ async def run_verifier_check(
             operation_id=operation_id,
             route=payload.get("route", "NONE" if payload["result"] == "PASS" else "UNKNOWN"),
             affected_stage_ids=tuple(payload.get("affected_stage_ids", [])),
+            usage=usage,
         )
         _write_log_event(
             verifier_run_id,
@@ -396,6 +406,7 @@ async def run_verifier_check(
                 "duration": time.time() - started_at,
                 "verdict": result.verdict,
                 "violations_count": len(result.violations),
+                "usage": usage,
             },
         )
         return result
@@ -470,7 +481,7 @@ async def run_planner_dredd_review(
         "max_tokens": VERIFIER_MAX_TOKENS,
         "stream": False,
     }
-    content = await _request_gigachat(body)
+    content, usage = _content_and_usage(await _request_gigachat(body))
     try:
         payload = json.loads(content)
     except json.JSONDecodeError as exc:
@@ -484,4 +495,5 @@ async def run_planner_dredd_review(
         verifier_run_id=verifier_run_id, model_id=model.model_id,
         model_display_name=model.display_name,
         provider_model_id=model.provider_model_id,
+        usage=usage,
     )

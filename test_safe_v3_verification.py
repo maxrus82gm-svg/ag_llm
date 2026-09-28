@@ -8,7 +8,9 @@ import server
 
 
 ROOT = Path(__file__).resolve().parent
-VERIFY_TOOLS = {"python_compile", "git_status", "git_diff", "ui_smoke_test"}
+VERIFY_TOOLS = {
+    "verify_file_content", "python_compile", "git_status", "git_diff", "ui_smoke_test",
+}
 
 
 def check(condition: bool, message: str) -> None:
