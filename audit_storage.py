@@ -49,6 +49,13 @@ PLANNER_DIAGNOSTIC_EVENTS = {
     "planner_diagnostic_request", "planner_diagnostic_context",
     "planner_diagnostic_response", "planner_diagnostic_error",
 }
+PLANNER_OWNED_EVENTS = PLANNER_DIAGNOSTIC_EVENTS | {
+    "planner_session_started", "planner_session_message", "planner_attempt_rejected",
+    "planner_session_completed", "planner_session_blocked",
+}
+PLANNER_DREDD_EVENTS = {
+    "planner_dredd_review_started", "planner_dredd_review_completed",
+}
 EXECUTOR_DIAGNOSTIC_EVENTS = {
     "executor_diagnostic_context",
     "executor_diagnostic_response",
@@ -266,9 +273,9 @@ class AuditThreadRecorder:
         kind = str(event.get("event") or "")
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             return "EXECUTOR"
-        if kind in PLANNER_DIAGNOSTIC_EVENTS or kind in PLANNER_EVENTS:
-            if kind.startswith("planner_dredd_review_"):
-                return "DREDD"
+        if kind in PLANNER_DREDD_EVENTS:
+            return "DREDD"
+        if kind in PLANNER_OWNED_EVENTS:
             return "PLANNER"
         if kind.startswith("final_audit_") or kind.startswith("audit_diagnostic_"):
             return "DREDD"

@@ -16,15 +16,31 @@ def call(root,path,kind,value,p=None):
 
 def test_verify_file_content_all_kinds_and_read_only(tmp_path: Path):
     f=tmp_path/'a.txt'; f.write_bytes('hello\nмир'.encode('utf-8')); before=f.read_bytes()
-    assert call(tmp_path,'a.txt','exists','')['passed']
-    assert call(tmp_path,'missing.txt','absent','')['passed']
-    assert call(tmp_path,'a.txt','equals','hello\nмир')['passed']
-    assert not call(tmp_path,'a.txt','equals','wrong')['passed']
-    assert call(tmp_path,'a.txt','contains','мир')['passed']
-    assert not call(tmp_path,'a.txt','contains','нет')['passed']
+    for result in (
+        call(tmp_path,'a.txt','exists',''),
+        call(tmp_path,'missing.txt','absent',''),
+        call(tmp_path,'a.txt','equals','hello\nмир'),
+        call(tmp_path,'a.txt','contains','мир'),
+    ):
+        assert result['ok'] is True
+        assert result['passed'] is True
+        assert result['matched'] is True
+        assert result['check'] == 'verify_file_content'
+    for result in (
+        call(tmp_path,'a.txt','equals','wrong'),
+        call(tmp_path,'a.txt','contains','нет'),
+    ):
+        assert result['ok'] is False
+        assert result['passed'] is False
+        assert result['matched'] is False
     digest=hashlib.sha256('hello\nмир'.encode()).hexdigest()
-    assert call(tmp_path,'a.txt','sha256',digest)['passed']
-    assert not call(tmp_path,'a.txt','sha256','0'*64)['passed']
+    matched=call(tmp_path,'a.txt','sha256',digest)
+    mismatch=call(tmp_path,'a.txt','sha256','0'*64)
+    assert (matched['ok'], matched['passed'], matched['matched']) == (True, True, True)
+    assert (mismatch['ok'], mismatch['passed'], mismatch['matched']) == (False, False, False)
+    assert call(tmp_path,'a.txt','equals','hello\nмир')['expected_sha256'] == digest
+    assert call(tmp_path,'a.txt','contains','мир')['expected_chars'] == 3
+    assert matched['expected_sha256'] == digest
     assert f.read_bytes()==before
 
 

@@ -31,3 +31,22 @@ def test_new_recorder_has_directory_not_monolith(tmp_path: Path):
     AuditThreadRecorder(tmp_path,'ws','chat','run',task_block_id=task,raw_task='raw')
     assert run_component_path(tmp_path,'run','summary.json').is_file()
     assert not (tmp_path/'.ultra/audit/chat/run.json').exists()
+
+
+def test_event_sources_reflect_record_ownership(tmp_path: Path):
+    task='tb_'+'b'*32
+    recorder=AuditThreadRecorder(tmp_path,'ws','chat','run',task_block_id=task)
+    expected = {
+        'planner_diagnostic_response': 'PLANNER',
+        'planner_session_message': 'PLANNER',
+        'planner_dredd_review_completed': 'DREDD',
+        'stage_status_changed': 'SERVER',
+        'persistence_satisfied': 'SERVER',
+        'mutation_preflight_rejected': 'SERVER',
+        'final_audit_passed': 'DREDD',
+        'executor_diagnostic_response': 'EXECUTOR',
+    }
+    for sequence, event in enumerate(expected, 1):
+        recorder._persist_event({'event': event, 'timestamp': sequence})
+    recorded = {item['event']: item['source'] for item in list_run_records(tmp_path, 'run')}
+    assert recorded == expected

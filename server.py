@@ -1111,13 +1111,24 @@ def _agent_verify_file_content(
             "contains": value in content,
             "sha256": actual_sha256 == value,
         }[kind]
-    return {
+    result = {
+        "ok": passed,
+        "check": "verify_file_content",
         "path": path.relative_to(root).as_posix(),
         "kind": kind,
         "passed": passed,
+        "matched": passed,
         "exists": exists,
         "actual_sha256": actual_sha256,
     }
+    if kind == "equals":
+        result["expected_sha256"] = _sha256_utf8(value)
+    elif kind == "contains":
+        result["expected_chars"] = len(value)
+        result["needle_sha256"] = _sha256_utf8(value)
+    elif kind == "sha256":
+        result["expected_sha256"] = value
+    return result
 
 
 def _write_logical_text(path: Path, content: str) -> int:
