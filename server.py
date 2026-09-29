@@ -2699,6 +2699,17 @@ def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, polic
     return {"before": {k: before[k] for k in ("exists", "sha256")}, "expected": expected}
 
 
+def _select_executor_seed_messages(
+    task: str,
+    active_chat_messages: list[dict],
+    *,
+    planner_enabled: bool,
+) -> list[dict]:
+    if planner_enabled:
+        return [{"role": "user", "content": task}]
+    return copy.deepcopy(active_chat_messages)
+
+
 async def run_agent_task(
     task: str, workspace_root: str, *, on_event=None, permissions: dict | None = None,
     chat_id: str | None = None, model_id: str | None = None,
@@ -2933,6 +2944,12 @@ async def _run_agent_task_impl(
     else:
         active_chat_messages = [{"role": "user", "content": task}]
 
+    executor_seed_messages = _select_executor_seed_messages(
+        task,
+        active_chat_messages,
+        planner_enabled=planner_enabled,
+    )
+
     _emit(
         "run_started",
         {
@@ -2975,6 +2992,36 @@ async def _run_agent_task_impl(
                 "project_context_created"
             ],
             "project_context_chars": len(project_context),
+        },
+    )
+    _emit(
+        "executor_context_compiled",
+        {
+            "policy": (
+                "task_scoped_v1"
+                if planner_enabled
+                else "chat_working_history"
+            ),
+            "included_chat_messages": len(executor_seed_messages),
+            "excluded_chat_messages": max(
+                len(active_chat_messages) - len(executor_seed_messages),
+                0,
+            ),
+            "included_chat_chars": sum(
+                len(item.get("content") or "")
+                for item in executor_seed_messages
+            ),
+            "excluded_chat_chars": max(
+                sum(
+                    len(item.get("content") or "")
+                    for item in active_chat_messages
+                )
+                - sum(
+                    len(item.get("content") or "")
+                    for item in executor_seed_messages
+                ),
+                0,
+            ),
         },
     )
 
@@ -3133,7 +3180,7 @@ async def _run_agent_task_impl(
                 f"{project_context_block}"
             ),
         },
-        *active_chat_messages,
+        *executor_seed_messages,
     ]
 
     available_functions = _functions_for_policy(policy)
@@ -3754,6 +3801,7 @@ async def _run_agent_task_impl(
                 permission_denied = False
                 candidate_id = None
                 plan_invalidated = None
+                post_mutation_stage_decision = None
                 dispatcher_started = False
                 try:
                     if lifecycle and function_name in MUTATION_TOOL_NAMES:
@@ -3906,11 +3954,12 @@ async def _run_agent_task_impl(
                         verification_state=verification_state,
                     )
                     if lifecycle:
-                        lifecycle.after_mutation(candidate_id, result)
-                        try:
-                            pending_persistence_call = lifecycle.next_prepared_call()
-                        except PlanInvalidated as exc:
-                            plan_invalidated = exc.fact
+                        post_mutation_stage_decision = lifecycle.after_mutation(candidate_id, result)
+                        if post_mutation_stage_decision is None:
+                            try:
+                                pending_persistence_call = lifecycle.next_prepared_call()
+                            except PlanInvalidated as exc:
+                                plan_invalidated = exc.fact
 
                 if tool_ok and function_name == "python_compile":
                     python_revision = verification_state["python_write_revision"]
@@ -4120,6 +4169,10 @@ async def _run_agent_task_impl(
                     await lifecycle.replan(plan_invalidated)
                     stage_context(reset=True)
                     continue
+                if post_mutation_stage_decision is not None:
+                    if post_mutation_stage_decision.get("action") in {"next_stage", "final"}:
+                        stage_context(reset=True)
+                        continue
                 if permission_denied and function_name in MUTATION_TOOL_NAMES:
                     capability = CAPABILITY_BY_TOOL[function_name]
                     path_text = safe_args.get("path")

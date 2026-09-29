@@ -47,6 +47,40 @@ def tool(call):
     return legacy.FakeResponse("", finish_reason="function_call", function_call=call)
 
 
+class ExecutorContextPolicyTests(unittest.TestCase):
+    def test_planner_enabled_executor_seed_is_current_task_only(self):
+        history = [
+            {"role": "user", "content": "OLD TASK"},
+            {"role": "assistant", "content": "OLD RESULT"},
+            {"role": "user", "content": "CURRENT TASK"},
+        ]
+        selected = server._select_executor_seed_messages(
+            "CURRENT TASK",
+            history,
+            planner_enabled=True,
+        )
+        self.assertEqual(
+            selected,
+            [{"role": "user", "content": "CURRENT TASK"}],
+        )
+        self.assertNotIn("OLD TASK", json.dumps(selected))
+        self.assertNotIn("OLD RESULT", json.dumps(selected))
+
+    def test_legacy_executor_seed_preserves_working_chat_history(self):
+        history = [
+            {"role": "user", "content": "OLD TASK"},
+            {"role": "assistant", "content": "OLD RESULT"},
+            {"role": "user", "content": "CURRENT TASK"},
+        ]
+        selected = server._select_executor_seed_messages(
+            "CURRENT TASK",
+            history,
+            planner_enabled=False,
+        )
+        self.assertEqual(selected, history)
+        self.assertIsNot(selected, history)
+
+
 class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
     setUp = legacy.FinalAuditRuntimeTests.setUp
     tearDown = legacy.FinalAuditRuntimeTests.tearDown
@@ -111,6 +145,29 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(evidence["stage_states"]["main"]["obligations"]["result"]["status"], "SATISFIED")
         self.assertEqual(client.bodies[0]["function_call"], "auto")
         self.assertIsNone(self.stored()["active_stage_id"])
+
+    async def test_successful_persistence_advances_before_executor_can_repeat_write(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+        second = plan(False)["stages"][0]
+        second["stage_id"] = "inspect_stage"
+        second["allowed_capabilities"] = ["READ"]
+        contract = {"stages": [first, second], "obligation_changes": []}
+
+        result, audit, client = await self.run_v6(
+            contract,
+            responses=[tool(write()), legacy.FakeResponse("Inspection complete")],
+        )
+
+        self.assertEqual(result, "Inspection complete")
+        self.assertEqual(client.post_count, 2)
+        self.assertEqual((self.workspace / "result.md").read_text(), "done")
+        state = self.stored()
+        self.assertEqual(state["stage_states"]["write_stage"]["status"], "SATISFIED")
+        self.assertEqual(state["stage_states"]["inspect_stage"]["status"], "SATISFIED")
+        self.assertEqual(len(state["receipts"]), 1)
+        self.assertIn("executor_diagnostic_reset", self.event_names())
+        self.assertEqual(audit.await_count, 1)
 
     async def test_live_readiness_ready_without_uuid_executes_concrete_write(self):
         async def nonideal_planner(**kw):
@@ -607,7 +664,7 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
         lc.after_mutation(cid, {"path": "result.md", "content_sha256": server._sha256_utf8("done")})
         (self.root / "result.md").write_text("external")
         with self.assertRaises(task_planner.PlanInvalidated):
-            lc.check_obligations()
+            lc.check_obligations(lc.plan["stages"][0])
 
     async def test_latched_stop_reuses_material_without_readiness_call(self):
         lc = self.controller(plan())

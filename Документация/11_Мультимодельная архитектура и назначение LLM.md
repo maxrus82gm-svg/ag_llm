@@ -10,12 +10,12 @@
 
 - Model Registry и GigaChat multi-model transport реализованы;
 - MAIN CHAT, COMPRESSOR, PLANNER и VERIFIER имеют отдельные model assignments; Verifier default — `gigachat_3_pro`, Planner default — `gigachat_ultra`;
-- Compressor выполняет отдельный model call, а Main Chat использует назначенную модель и Working Representation;
+- Compressor выполняет отдельный model call; Chat хранит Working Representation, а normal Planner-enabled Executor после TASK 139 получает task-scoped role context вместо автоматической полной Chat history;
 - универсальный Provider Adapter, Local Provider, per-Chat assignment, Agent Profiles / Context Policy и Coordinator остаются будущими.
 
 MM.0–MM.4 реализованы в коде и покрыты tests. Будущие роли и провайдеры ниже помечены как целевая архитектура.
 
-V.6 V1 использует отдельную tool-free роль Planner в `planner_runtime.py`: одна bounded local Planning Session на TASK/RUN обслуживает INITIAL / READINESS / REPLAN и при каждом stateless API-вызове передаёт полную локальную историю. `planner_model_id` независимо разрешается через Model Registry; selector Planner уже доступен в UI. Planner получает RAW TASK один раз, Role Context, permissions/scopes/capabilities и server-owned stage/replan facts по мере lifecycle. Project Context, Working Chat Context, Executor conversation и hidden Final Audit reasoning ему не передаются. После первой validation error Server добавляет точный feedback, после второй отдельный one-shot Dredd на `verifier_model_id` проверяет разговор и рекомендует исправление; третья попытка последняя. Dredd не исполняет TASK и не устанавливает Plan: authority остаётся у Server. Executor получает текущий stage и нужные результаты; Final Audit — план и authoritative evidence. Lifecycle и persistence принадлежат `13`. Automated tests и UI smoke пройдены; live Planner RUN уже выполнялись.
+V.6 V1 использует отдельную tool-free роль Planner в `planner_runtime.py`: одна bounded local Planning Session на TASK/RUN обслуживает INITIAL / READINESS / REPLAN и при каждом stateless API-вызове передаёт полную локальную историю Planner Session. `planner_model_id` независимо разрешается через Model Registry; selector Planner уже доступен в UI. Planner получает RAW TASK один раз, Role Context, permissions/scopes/capabilities и server-owned stage/replan facts по мере lifecycle. Project Context, Working Chat Context, Executor conversation и hidden Final Audit reasoning ему не передаются. После первой validation error Server добавляет точный feedback, после второй отдельный one-shot Dredd на `verifier_model_id` проверяет разговор и рекомендует исправление; третья попытка последняя. Dredd не исполняет TASK и не устанавливает Plan: authority остаётся у Server. После TASK 139 normal Planner-enabled Executor получает task-scoped seed из текущей RAW TASK вместо полной старой истории Chat, затем current stage и bounded completed results; Global Ultra Context и Project Context остаются подключёнными. Final Audit получает план и authoritative evidence. Lifecycle и persistence принадлежат `13`, storage/context compilation — `03`. Automated tests и UI smoke пройдены; live token regression TASK 139 ещё требуется.
 
 ### CURRENT ROLE ISOLATION
 
@@ -30,7 +30,7 @@ Dredd / Verifier
 Server является orchestrator / authority, а не LLM role. CURRENT provider для этих путей — GigaChat. Изоляция является server-assembled logical context architecture даже при stateless provider API:
 
 - Planner не получает Project Context, Working Chat Context, Executor conversation, hidden Dredd prompt или Audit Thread;
-- Executor не получает Planner/Dredd conversation как свою model history;
+- Executor не получает Planner/Dredd conversation как свою model history; normal Planner-enabled Executor также не получает автоматически полную историю предыдущих Chat TASK — его seed task-scoped, а прошлые факты должны подключаться отдельной bounded policy;
 - Dredd получает bounded evidence/facts без hidden Planner/Executor reasoning;
 - смена model/provider не передаёт роли physical authority, permissions, scopes или state.
 

@@ -333,7 +333,7 @@ RAW HISTORY является исходной историей Chat.
 
 Не объявлять реализованными функции, которых ещё нет.
 
-На текущем этапе immutable RAW HISTORY, Project Context, Context Variants, активная RAW / SUMMARY Working Representation и управляемое per-message сжатие реализованы. После принятия Proposal MAIN CHAT использует SUMMARY; Restore возвращает активный RAW, не удаляя варианты. Сжатие повторно начинается от RAW. Независимый трёхвызовный Compressor pipeline остаётся будущим.
+На текущем этапе immutable RAW HISTORY, Project Context, Context Variants, активная RAW / SUMMARY Working Representation и управляемое per-message сжатие реализованы. После принятия Proposal SUMMARY становится активной Working Representation данного message; Restore возвращает активный RAW, не удаляя варианты. Конкретная runtime role получает Chat representation только если её context policy это включает. После TASK 139 normal Planner-enabled Executor task-scoped и не получает автоматически старые Chat messages, даже если для них активен SUMMARY. Сжатие повторно начинается от RAW. Независимый трёхвызовный Compressor pipeline и bounded relevant-prior-facts layer остаются будущими.
 
 Будущую архитектуру нельзя описывать как уже работающую.
 

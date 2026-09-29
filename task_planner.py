@@ -464,6 +464,9 @@ class TaskLifecycle:
         self.save()
         self.event("persistence_satisfied" if satisfied else "persistence_unsatisfied", artifact_id=artifact["artifact_id"], path=artifact["path"],
                    content_sha256=actual["sha256"], outcome="MUTATED")
+        if satisfied and self.check_obligations():
+            return self.complete("Persistence obligations satisfied by server readback.")
+        return None
 
     def check_obligations(self, stage=None):
         stage = stage or self.stage
