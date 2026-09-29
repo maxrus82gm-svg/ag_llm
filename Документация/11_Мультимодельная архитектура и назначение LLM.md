@@ -17,6 +17,47 @@ MM.0–MM.4 реализованы в коде и покрыты tests. Буду
 
 V.6 V1 использует отдельную tool-free роль Planner в `planner_runtime.py`: одна bounded local Planning Session на TASK/RUN обслуживает INITIAL / READINESS / REPLAN и при каждом stateless API-вызове передаёт полную локальную историю. `planner_model_id` независимо разрешается через Model Registry; selector Planner уже доступен в UI. Planner получает RAW TASK один раз, Role Context, permissions/scopes/capabilities и server-owned stage/replan facts по мере lifecycle. Project Context, Working Chat Context, Executor conversation и hidden Final Audit reasoning ему не передаются. После первой validation error Server добавляет точный feedback, после второй отдельный one-shot Dredd на `verifier_model_id` проверяет разговор и рекомендует исправление; третья попытка последняя. Dredd не исполняет TASK и не устанавливает Plan: authority остаётся у Server. Executor получает текущий stage и нужные результаты; Final Audit — план и authoritative evidence. Lifecycle и persistence принадлежат `13`. Automated tests и UI smoke пройдены; live Planner RUN уже выполнялись.
 
+### CURRENT ROLE ISOLATION
+
+Основные logical runtime roles сейчас:
+
+```text
+Planner
+Executor / Main
+Dredd / Verifier
+```
+
+Server является orchestrator / authority, а не LLM role. CURRENT provider для этих путей — GigaChat. Изоляция является server-assembled logical context architecture даже при stateless provider API:
+
+- Planner не получает Project Context, Working Chat Context, Executor conversation, hidden Dredd prompt или Audit Thread;
+- Executor не получает Planner/Dredd conversation как свою model history;
+- Dredd получает bounded evidence/facts без hidden Planner/Executor reasoning;
+- смена model/provider не передаёт роли physical authority, permissions, scopes или state.
+
+### FUTURE — CODEX CLI AS PLANNER BACKEND
+
+Planner provider/backend в будущем может быть заменён через adapter:
+
+```text
+Ultra Runtime
+↓
+Planner Adapter
+↓
+local Codex CLI
+↓
+selected Codex model
+↓
+structured Planner result
+↓
+same deterministic Server validation
+↓
+TaskLifecycle
+```
+
+Замена Planner LLM не заменяет TaskLifecycle, Server validation, Persistence Contract, permissions, scopes, Dredd или Verification Gate. Целевая UI-модель: `Planner backend: GigaChat / Codex / Off`; при Codex adapter может показывать model и reasoning/effort, если установленная версия CLI это поддерживает. Конкретные Codex model IDs не являются стабильным contract: нужен discovery/config layer.
+
+Этот раздел владеет ролью и Model Assignment. Transport, subprocess lifecycle и отдельное направление внешнего ChatGPT → Ultra принадлежат `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`. ChatGPT plugin/MCP не является Model Assignment.
+
 Этот документ фиксирует работающий выбор модели через Registry и Assignment, а также следующие расширения проекта `ag_llm / GigaChat Ultra Local Agent`.
 
 На текущем этапе существующий рабочий runtime, инструменты, Workspace, Chat, Project Context, RAW HISTORY, SAFE Mode, Backup, Verification, Trace и другие уже реализованные механизмы сохраняются.
