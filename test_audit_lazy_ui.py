@@ -79,6 +79,23 @@ def test_trace_limit_constant():
     assert ultra_ui.MAX_TRACE_WIDGET_LINES==500
 
 
+def test_missing_selected_run_storage_is_explicit_in_audit_and_planner():
+    app=fake()
+    app.planner_chat_text=Text()
+    app.planner_chat_status_var=Var()
+    app._render_planner_chat=lambda thread=None: ultra_ui.UltraApp._render_planner_chat(app,thread)
+    with patch.object(ultra_ui,'load_run_summary',return_value=None), \
+         patch.object(ultra_ui,'load_audit_thread',return_value=None), \
+         patch.object(ultra_ui,'load_stream_records',return_value=[]):
+        ultra_ui.UltraApp._render_audit_thread(app)
+    assert 'AUDIT: НЕДОСТУПЕН' in app.audit_summary_var.get()
+    assert 'Разбор недоступен' in app.audit_text.value
+    assert 'Данные Planner' in app.planner_chat_text.value
+    assert app.audit_text.value
+    assert app.planner_chat_text.value
+
+
+
 
 def bind_audit_methods(app):
     app._audit_filter_flags=lambda: ultra_ui.UltraApp._audit_filter_flags(app)

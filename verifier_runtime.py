@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 import uuid
@@ -11,6 +12,12 @@ import httpx
 from agent_global_context import APP_DATA_ROOT
 from gigachat_transport import CHAT_URL, extract_usage, get_access_token
 from model_registry import get_model_spec
+from provider_accounting import (
+    build_provider_attempt_started,
+    build_provider_attempt_terminal,
+    measure_json_block,
+    measure_text_block,
+)
 
 
 DEFAULT_VERIFIER_MODEL_ID = "gigachat_3_pro"
@@ -29,6 +36,12 @@ class VerifierRuntimeError(RuntimeError):
 
 class VerifierProtocolError(VerifierRuntimeError):
     pass
+
+
+def _provider_call_error(message: str, outcome: str) -> VerifierRuntimeError:
+    error = VerifierRuntimeError(message)
+    error.provider_outcome = outcome
+    return error
 
 
 @dataclass(frozen=True)
@@ -192,7 +205,10 @@ async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
     try:
         token = await get_access_token()
     except Exception as exc:
-        raise VerifierRuntimeError("Не удалось получить GigaChat access token.") from exc
+        raise _provider_call_error(
+            "Не удалось получить GigaChat access token.",
+            "transport_error",
+        ) from exc
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -202,8 +218,28 @@ async def _request_gigachat(body: dict[str, Any]) -> tuple[str, dict]:
         async with httpx.AsyncClient(timeout=VERIFIER_TIMEOUT_SECONDS) as client:
             response = await client.post(CHAT_URL, headers=headers, json=body)
             response.raise_for_status()
+    except asyncio.CancelledError:
+        raise
+    except httpx.TimeoutException as exc:
+        raise _provider_call_error(
+            "Таймаут HTTP-запроса Verifier к GigaChat.",
+            "timeout",
+        ) from exc
+    except httpx.HTTPStatusError as exc:
+        raise _provider_call_error(
+            "Provider отклонил HTTP-запрос Verifier.",
+            "provider_error",
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise _provider_call_error(
+            "Транспортная ошибка HTTP-запроса Verifier к GigaChat.",
+            "transport_error",
+        ) from exc
     except Exception as exc:
-        raise VerifierRuntimeError("Ошибка HTTP-запроса Verifier к GigaChat.") from exc
+        raise _provider_call_error(
+            "Ошибка HTTP-запроса Verifier к GigaChat.",
+            "transport_error",
+        ) from exc
 
     try:
         data = response.json()
@@ -236,6 +272,33 @@ def _content_and_usage(result: object) -> tuple[str, dict]:
     if isinstance(result, tuple) and len(result) == 2:
         return result[0], result[1]
     return result, extract_usage(None)
+
+
+def _provider_message_blocks(messages: list[dict], prefix: str) -> list[dict]:
+    blocks = []
+    for index, message in enumerate(messages):
+        content = message.get("content")
+        if not isinstance(content, str):
+            content = json.dumps(message, ensure_ascii=False, separators=(",", ":"))
+        role = str(message.get("role") or "unknown")
+        blocks.append(
+            measure_text_block(
+                f"message_{index}_{role}",
+                content,
+                source_ref=f"{prefix}:message:{index}:{role}",
+                kind="provider_message",
+            )
+        )
+    return blocks
+
+
+def _notify_provider_accounting(callback, event_name: str, payload: dict) -> None:
+    if callback is None:
+        return
+    try:
+        callback(event_name, payload)
+    except Exception:
+        pass
 
 
 def _parse_verifier_response(content: str, requested_check_type: str) -> dict[str, Any]:
@@ -325,6 +388,7 @@ async def run_verifier_check(
     task_id: str | None = None,
     checkpoint_id: str | None = None,
     operation_id: str | None = None,
+    diagnostic_callback=None,
 ) -> VerifierResult:
     check_type = _validate_check_type(check_type)
     raw_task = _validate_nonempty_text(raw_task, "raw_task")
@@ -372,13 +436,70 @@ async def run_verifier_check(
             raw_task=raw_task,
             verification_context=verification_context,
         )
+        provider_started = build_provider_attempt_started(
+            role="dredd",
+            mode=check_type,
+            provider=model.provider,
+            model_id=model.model_id,
+            provider_model_id=model.provider_model_id,
+            body=body,
+            blocks=_provider_message_blocks(
+                body["messages"], f"dredd:{check_type.lower()}"
+            ),
+            source_references=[
+                f"raw_task:{task_id or 'direct'}",
+                f"verification_context:{check_type}",
+            ],
+        )
+        provider_started_at = time.time()
+        provider_usage = None
+        provider_terminal_emitted = False
+
+        def finish_provider_attempt(outcome: str, error_type: str | None = None) -> None:
+            nonlocal provider_terminal_emitted
+            if provider_terminal_emitted:
+                return
+            provider_terminal_emitted = True
+            _notify_provider_accounting(
+                diagnostic_callback,
+                "provider_attempt_terminal",
+                build_provider_attempt_terminal(
+                    provider_started,
+                    outcome=outcome,
+                    provider_usage=provider_usage,
+                    duration=max(time.time() - provider_started_at, 0.0),
+                    error_type=error_type,
+                ),
+            )
+
+        _notify_provider_accounting(
+            diagnostic_callback, "provider_attempt_started", provider_started
+        )
         try:
-            content, usage = _content_and_usage(await _request_gigachat(body))
-        except VerifierRuntimeError:
+            content, provider_usage = _content_and_usage(
+                await _request_gigachat(body)
+            )
+        except asyncio.CancelledError:
+            finish_provider_attempt("cancelled", "CancelledError")
+            raise
+        except VerifierProtocolError as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            raise
+        except VerifierRuntimeError as exc:
+            finish_provider_attempt(
+                getattr(exc, "provider_outcome", "transport_error"),
+                type(exc).__name__,
+            )
             raise
         except Exception as exc:
+            finish_provider_attempt("transport_error", type(exc).__name__)
             raise VerifierRuntimeError("Verifier model call завершился ошибкой.") from exc
-        payload = _parse_verifier_response(content, check_type)
+        try:
+            payload = _parse_verifier_response(content, check_type)
+        except VerifierProtocolError as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            raise
+        finish_provider_attempt("completed")
 
         result = VerifierResult(
             verdict=payload["result"],
@@ -396,7 +517,7 @@ async def run_verifier_check(
             operation_id=operation_id,
             route=payload.get("route", "NONE" if payload["result"] == "PASS" else "UNKNOWN"),
             affected_stage_ids=tuple(payload.get("affected_stage_ids", [])),
-            usage=usage,
+            usage=provider_usage,
         )
         _write_log_event(
             verifier_run_id,
@@ -406,7 +527,7 @@ async def run_verifier_check(
                 "duration": time.time() - started_at,
                 "verdict": result.verdict,
                 "violations_count": len(result.violations),
-                "usage": usage,
+                "usage": provider_usage,
             },
         )
         return result
@@ -436,6 +557,7 @@ async def run_planner_dredd_review(
     *, verifier_model_id: str = DEFAULT_VERIFIER_MODEL_ID,
     raw_task: str, planner_session_transcript: list[dict], mode: str,
     validation_error: str, task_block_id: str | None,
+    diagnostic_callback=None,
 ) -> PlannerReviewResult:
     raw_task = _validate_nonempty_text(raw_task, "raw_task")
     validation_error = _validate_nonempty_text(validation_error, "validation_error")
@@ -503,15 +625,78 @@ async def run_planner_dredd_review(
             "max_tokens": VERIFIER_MAX_TOKENS,
             "stream": False,
         }
-        content, usage = _content_and_usage(await _request_gigachat(body))
+        provider_started = build_provider_attempt_started(
+            role="dredd",
+            mode=f"PLANNER_REVIEW:{mode}",
+            provider=model.provider,
+            model_id=model.model_id,
+            provider_model_id=model.provider_model_id,
+            body=body,
+            blocks=_provider_message_blocks(
+                body["messages"], f"dredd:planner_review:{mode.lower()}"
+            ),
+            source_references=[
+                f"raw_task:{task_block_id or 'direct'}",
+                f"planner_session_transcript:{mode}",
+                "planner_validation_error",
+            ],
+        )
+        provider_started_at = time.time()
+        provider_terminal_emitted = False
+
+        def finish_provider_attempt(outcome: str, error_type: str | None = None) -> None:
+            nonlocal provider_terminal_emitted
+            if provider_terminal_emitted:
+                return
+            provider_terminal_emitted = True
+            _notify_provider_accounting(
+                diagnostic_callback,
+                "provider_attempt_terminal",
+                build_provider_attempt_terminal(
+                    provider_started,
+                    outcome=outcome,
+                    provider_usage=usage,
+                    duration=max(time.time() - provider_started_at, 0.0),
+                    error_type=error_type,
+                ),
+            )
+
+        _notify_provider_accounting(
+            diagnostic_callback, "provider_attempt_started", provider_started
+        )
+        try:
+            content, usage = _content_and_usage(await _request_gigachat(body))
+        except asyncio.CancelledError:
+            finish_provider_attempt("cancelled", "CancelledError")
+            raise
+        except VerifierProtocolError as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            raise
+        except VerifierRuntimeError as exc:
+            finish_provider_attempt(
+                getattr(exc, "provider_outcome", "transport_error"),
+                type(exc).__name__,
+            )
+            raise
+        except Exception as exc:
+            finish_provider_attempt("transport_error", type(exc).__name__)
+            raise
         try:
             payload = json.loads(content)
-        except json.JSONDecodeError as exc:
-            raise VerifierProtocolError("Planner Dredd review returned malformed JSON.") from exc
-        if not isinstance(payload, dict) or set(payload) != {"diagnosis", "required_action"}:
-            raise VerifierProtocolError("Planner Dredd review must contain diagnosis and required_action only.")
-        diagnosis = _validate_nonempty_text(payload["diagnosis"], "diagnosis")
-        required_action = _validate_nonempty_text(payload["required_action"], "required_action")
+            if not isinstance(payload, dict) or set(payload) != {"diagnosis", "required_action"}:
+                raise VerifierProtocolError(
+                    "Planner Dredd review must contain diagnosis and required_action only."
+                )
+            diagnosis = _validate_nonempty_text(payload["diagnosis"], "diagnosis")
+            required_action = _validate_nonempty_text(payload["required_action"], "required_action")
+        except (json.JSONDecodeError, VerifierProtocolError, ValueError) as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            if isinstance(exc, json.JSONDecodeError):
+                raise VerifierProtocolError(
+                    "Planner Dredd review returned malformed JSON."
+                ) from exc
+            raise
+        finish_provider_attempt("completed")
         result = PlannerReviewResult(
             diagnosis=diagnosis, required_action=required_action,
             verifier_run_id=verifier_run_id, model_id=model.model_id,

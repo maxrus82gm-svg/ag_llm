@@ -281,6 +281,43 @@ class FileEditingToolboxTests(unittest.TestCase):
         self.assertEqual(path.read_text(encoding="utf-8"), "new text")
         self.assertEqual(self.session["manifest"]["changed_files"], ["text.txt"])
 
+    def test_windows_entry_script_replace_lock_falls_back_in_place(self):
+        for filename in ("live.py", "events.jsonl"):
+            with self.subTest(filename=filename):
+                path = self.root / filename
+                encoding = "utf-16" if filename.endswith(".jsonl") else "utf-8"
+                path.write_text("old\n", encoding=encoding, newline="")
+                with (
+                    patch.object(server.os, "replace", side_effect=PermissionError(5, "locked")),
+                    patch.object(
+                        server,
+                        "_can_use_windows_entry_script_write_fallback",
+                        return_value=True,
+                    ),
+                ):
+                    written = server._write_logical_text(path, "new\n")
+                self.assertEqual(written, len("new\n".encode("utf-8")))
+                self.assertEqual(server._read_logical_text(path), "new\n")
+                self.assertEqual(list(self.root.glob(f".{filename}.*.tmp")), [])
+                if filename.endswith(".jsonl"):
+                    self.assertTrue(path.read_bytes().startswith(b"\xff\xfe"))
+
+    def test_non_entry_replace_permission_error_stays_fail_closed(self):
+        path = self.root / "stable.py"
+        path.write_text("old\n", encoding="utf-8", newline="")
+        with (
+            patch.object(server.os, "replace", side_effect=PermissionError(5, "locked")),
+            patch.object(
+                server,
+                "_can_use_windows_entry_script_write_fallback",
+                return_value=False,
+            ),
+            self.assertRaises(PermissionError),
+        ):
+            server._write_logical_text(path, "new\n")
+        self.assertEqual(path.read_text(encoding="utf-8"), "old\n")
+        self.assertEqual(list(self.root.glob(".stable.py.*.tmp")), [])
+
     def test_mutation_bookkeeping_and_final_audit_evidence(self):
         (self.root / "module.py").write_text("VALUE = 1\n", encoding="utf-8")
         expected = self.call("read_file", path="module.py")["content_sha256"]
@@ -323,6 +360,61 @@ class FileEditingToolboxTests(unittest.TestCase):
                 self.assertTrue(local_state["ui_smoke_required"])
                 self.assertEqual({item["tool"] for item in server._verification_missing_requirements(local_state)},
                                  {"python_compile", "ui_smoke_test"})
+
+    def test_explicit_raw_task_no_mutation_policy_is_fail_closed(self):
+        target = self.root / "stable.txt"
+        target.write_text("stable", encoding="utf-8")
+        policy = self.make_policy()
+        policy["_raw_task_forbids_file_mutation"] = True
+
+        names = {item["name"] for item in server._functions_for_policy(policy)}
+        self.assertNotIn("write_file", names)
+        self.assertNotIn("replace_text", names)
+        self.assertNotIn("delete_file", names)
+
+        with self.assertRaisesRegex(PermissionError, "RAW TASK"):
+            server._execute_agent_function(
+                self.root,
+                {"name": "write_file", "arguments": {
+                    "path": "stable.txt", "content": "changed",
+                }},
+                policy,
+                self.session,
+            )
+        self.assertEqual(target.read_text(encoding="utf-8"), "stable")
+
+        with self.assertRaisesRegex(PermissionError, "RAW TASK"):
+            server._execute_agent_function(
+                self.root,
+                {"name": "delete_file", "arguments": {"path": "stable.txt"}},
+                policy,
+                self.session,
+            )
+        self.assertTrue(target.exists())
+
+        state = {
+            "write_revision": 1, "python_write_revision": None,
+            "python_verified_revision": None, "python_verified_paths": [],
+            "git_status_revision": None, "git_diff_revision": None,
+            "ui_smoke_required": False, "ui_smoke_write_revision": None,
+            "ui_smoke_verified_revision": None,
+            "changed_python_paths": [], "deleted_python_paths": [],
+        }
+        _, metadata = server._collect_final_audit_evidence(
+            root=self.root, candidate_final="Done", policy=policy,
+            run_id="forbidden_mutation_test", api_request_count=1,
+            tool_call_count=1, verification_state=state,
+            backup_session=self.session, run_owned_state={},
+        )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertIn(
+            "raw_task_forbids_file_mutation_but_mutation_observed",
+            metadata["critical_reasons"],
+        )
+        self.assertEqual(
+            metadata["policy_conflicts"],
+            ["raw_task_forbids_file_mutation_but_mutation_observed"],
+        )
 
     def test_permission_scope_denial_and_tool_exposure(self):
         (self.root / "inside").mkdir()

@@ -1,0 +1,8 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_5a8a94b7bfdc4fcdba98f2b6f4f350ca",
+  "chat_id": "chat_b36a4eba7fdf47f98b1d71507bc2938d",
+  "task_block_id": "tb_2032f4d74f7a4c5781df664d6575ec6d",
+  "task_display_id": "T-026",
+  "raw_task": "Выполни безопасный тестовый change для benchmark B1.\n\nВ `ultra_ui.py` добавь один нейтральный комментарий сразу после блока `import`:\n\n`# TASK151A_B1_PROVIDER_ACCOUNTING_PROBE`\n\nПосле изменения обязательно:\n\n1. Перечитай изменённый участок файла и убедись, что комментарий записан ровно один раз.\n2. Выполни `python_compile` для `ultra_ui.py` и `server.py`.\n3. Выполни `ui_smoke_test`.\n4. Покажи `git diff` по изменению.\n5. Если какая-либо проверка упала — исправь проблему и повтори проверки.\n6. Не изменяй другие файлы без необходимости.\n7. Не делай commit и push.\n\nСообщи `SUCCESS` только если изменение реально записано и все проверки прошли."
+}

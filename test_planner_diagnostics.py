@@ -20,6 +20,8 @@ def valid_plan() -> dict:
             "persistence_required": False,
             "allowed_capabilities": ["READ"],
             "artifacts": [],
+            "completion_mode": "model_result",
+            "evidence_requirements": [],
             "completion_criteria": ["Workspace inspected"],
         }],
         "obligation_changes": [],
@@ -85,7 +87,8 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result, valid_plan())
         self.assertEqual([kind for kind, _payload in diagnostics], [
-            "request", "context", "response",
+            "request", "context", "provider_attempt_started", "response",
+            "provider_attempt_terminal",
         ])
         request = diagnostics[0][1]
         self.assertEqual(request["mode"], "INITIAL")
@@ -97,7 +100,13 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
         context = diagnostics[1][1]
         self.assertEqual(context["system"], client.body["messages"][0]["content"])
         self.assertEqual(context["user"], client.body["messages"][1]["content"])
-        self.assertEqual(diagnostics[2][1]["content"], content)
+        self.assertEqual(diagnostics[3][1]["content"], content)
+        started = diagnostics[2][1]
+        terminal = diagnostics[4][1]
+        self.assertEqual(started["role"], "planner")
+        self.assertEqual(started["mode"], "INITIAL")
+        self.assertEqual(terminal["provider_attempt_id"], started["provider_attempt_id"])
+        self.assertEqual(terminal["outcome"], "completed")
         self.assertNotIn("Authorization", request)
         self.assertNotIn("secret", json.dumps(diagnostics, ensure_ascii=False))
 
@@ -124,12 +133,14 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
                 )
 
         self.assertEqual([kind for kind, _payload in diagnostics], [
-            "request", "context", "response", "error",
+            "request", "context", "provider_attempt_started", "response",
+            "provider_attempt_terminal", "error",
         ])
-        self.assertEqual(diagnostics[2][1]["content"], content)
-        self.assertEqual(diagnostics[3][1]["error_type"], "PlannerError")
+        self.assertEqual(diagnostics[3][1]["content"], content)
+        self.assertEqual(diagnostics[4][1]["outcome"], "parse_error")
+        self.assertEqual(diagnostics[5][1]["error_type"], "PlannerError")
         self.assertEqual(
-            diagnostics[3][1]["error_message"],
+            diagnostics[5][1]["error_message"],
             "Malformed Planner JSON at line 1, column 1: Expecting value",
         )
 
@@ -174,8 +185,10 @@ class PlannerRuntimeDiagnosticTests(unittest.IsolatedAsyncioTestCase):
                     ),
                 )
         self.assertEqual([kind for kind, _payload in diagnostics], [
-            "request", "context", "error",
+            "request", "context", "provider_attempt_started",
+            "provider_attempt_terminal", "error",
         ])
+        self.assertEqual(diagnostics[-2][1]["outcome"], "transport_error")
         self.assertEqual(diagnostics[-1][1], {
             "mode": "INITIAL",
             "error_type": "PlannerError",
@@ -389,6 +402,21 @@ class PlannerDiagnosticUiTests(unittest.TestCase):
             )
         )
         self.assertIn("RUN: old_run", legacy_text)
+
+    def test_missing_run_store_entry_rerenders_explicit_fallback(self):
+        fake = type("FakeUi", (), {})()
+        fake._selected_audit_run_id = "missing_run"
+        fake.audit_records = object()
+        fake.current_chat_id = "chat"
+        fake.workspace_var = type("Var", (), {"get": lambda self: "workspace"})()
+        rendered = []
+        fake._render_audit_thread = lambda: rendered.append("fallback")
+
+        with patch.object(ultra_ui, "get_run_index_entry", return_value=None), \
+             patch.object(ultra_ui, "list_run_records", side_effect=AssertionError("must not load missing run")):
+            ultra_ui.UltraApp._refresh_selected_run_index(fake)
+
+        self.assertEqual(rendered, ["fallback"])
 
     def test_diagnostics_refresh_audit_without_entering_action_log(self):
         events = queue.Queue()

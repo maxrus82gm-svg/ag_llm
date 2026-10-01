@@ -30,8 +30,26 @@ from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
 from audit_storage import AuditThreadRecorder
-from planner_runtime import DEFAULT_PLANNER_MODEL_ID, PlannerSession, run_planner
-from task_planner import TaskLifecycle, LifecycleBlocked, PlanInvalidated, PersistencePreflightRejected
+from planner_runtime import (
+    DEFAULT_PLANNER_MODEL_ID,
+    PlannerSession,
+    raw_task_explicitly_forbids_file_mutation,
+    run_planner,
+)
+from provider_accounting import (
+    build_provider_attempt_started,
+    build_provider_attempt_terminal,
+    measure_json_block,
+    measure_text_block,
+)
+from task_planner import (
+    TaskLifecycle,
+    LifecycleBlocked,
+    PlanInvalidated,
+    PersistencePreflightRejected,
+    evidence_arguments_fingerprint,
+    postcondition_holds,
+)
 from verifier_runtime import (
     DEFAULT_VERIFIER_MODEL_ID,
     VerifierProtocolError,
@@ -145,6 +163,9 @@ GUARD_P1_REPEAT_MAX_INTERVENTIONS = 2
 GUARD_P1_MAX_INTERVENTIONS_PER_RUN = 8
 GUARD_P1_CREATE_SCORE_THRESHOLD = 75
 GUARD_P1_REPEAT_TOOL_NAMES = {"read_file", "list_dir"}
+TOOL_RESERVE_MAX_INTERVENTIONS = 3
+EVIDENCE_GATE_MAX_INTERVENTIONS = 3
+FINAL_RESPONSE_REPAIR_LIMIT = 1
 
 VERIFICATION_TOOL_NAMES = {
     "verify_file_content",
@@ -751,6 +772,14 @@ def _require_operation_permission(
     _deny_backup_area(path)
     _deny_context_storage_area(root, path)
 
+    if (
+        operation in {"write", "delete"}
+        and policy.get("_raw_task_forbids_file_mutation")
+    ):
+        raise PermissionError(
+            "RAW TASK явно запрещает изменения файлов для этого RUN."
+        )
+
     if operation in {"list", "read"}:
         if not policy["allow_read"]:
             raise PermissionError("Чтение отключено для этого запуска.")
@@ -781,9 +810,10 @@ def _functions_for_policy(
     allowed_names = set()
     if policy["allow_read"]:
         allowed_names.update(READ_TOOL_NAMES)
-    # Schemas are visible for permission review; execution remains gated by
-    # _require_operation_permission, including path scopes.
-    allowed_names.update(MUTATION_TOOL_NAMES)
+    # Schemas are visible for permission review unless RAW TASK explicitly
+    # forbids every file mutation. In that case no escalation can make mutation valid.
+    if not policy.get("_raw_task_forbids_file_mutation"):
+        allowed_names.update(MUTATION_TOOL_NAMES)
     # VERIFY не является обходом READ: инструменты проверки получают код/дифф
     # только когда физически разрешено чтение.
     if policy["allow_verify"] and policy["allow_read"]:
@@ -1131,6 +1161,28 @@ def _agent_verify_file_content(
     return result
 
 
+def _can_use_windows_entry_script_write_fallback(path: Path) -> bool:
+    if os.name != "nt" or not path.exists():
+        return False
+    try:
+        entry = Path(sys.argv[0])
+        if not entry.is_absolute():
+            entry = Path.cwd() / entry
+        return path.resolve() == entry.resolve()
+    except (OSError, RuntimeError, ValueError):
+        return False
+
+
+def _rewrite_existing_logical_text_in_place(path: Path, content: str) -> None:
+    payload = content.encode(_logical_text_encoding(path))
+    with path.open("r+b") as stream:
+        stream.seek(0)
+        stream.write(payload)
+        stream.truncate()
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
 def _write_logical_text(path: Path, content: str) -> int:
     if not isinstance(content, str):
         raise ValueError("content должен быть строкой.")
@@ -1143,7 +1195,12 @@ def _write_logical_text(path: Path, content: str) -> int:
     try:
         with os.fdopen(fd, "w", encoding=_logical_text_encoding(path), newline="") as stream:
             stream.write(content)
-        os.replace(temporary_name, path)
+        try:
+            os.replace(temporary_name, path)
+        except PermissionError:
+            if not _can_use_windows_entry_script_write_fallback(path):
+                raise
+            _rewrite_existing_logical_text_in_place(path, content)
     finally:
         if os.path.exists(temporary_name):
             os.unlink(temporary_name)
@@ -2400,6 +2457,15 @@ def _collect_final_audit_evidence(
     )
     incomplete_reasons.extend(filesystem_mismatches)
     critical_reasons.extend(filesystem_mismatches)
+    policy_conflicts: list[str] = []
+    if (
+        policy.get("_raw_task_forbids_file_mutation")
+        and (is_mutating_run or any(mutation_facts.values()))
+    ):
+        policy_conflicts.append(
+            "raw_task_forbids_file_mutation_but_mutation_observed"
+        )
+        critical_reasons.extend(policy_conflicts)
 
     candidate_text, candidate_truncated, candidate_bytes = (
         _clip_final_audit_text(candidate_final, MAX_VERIFY_OUTPUT_BYTES)
@@ -2509,6 +2575,7 @@ def _collect_final_audit_evidence(
                 mutation_evidence_incomplete_reasons or filesystem_mismatches
             )
         ),
+        "policy_conflicts": policy_conflicts,
         "candidate_fact_conflicts": candidate_conflicts,
     }
     evidence = {
@@ -2610,7 +2677,11 @@ def _collect_final_audit_evidence(
 
 async def _request_audit_diagnostic(
     client, headers: dict, run_model: str, messages: list[dict],
-    rejected_candidate: str, question: str,
+    rejected_candidate: str, question: str, *,
+    model_id: str | None = None,
+    provider: str = "gigachat",
+    diagnostic_callback=None,
+    source_references: list[str] | tuple[str, ...] = (),
 ) -> str:
     """One bounded, tool-free call on an isolated copy of Executor context."""
     fork = copy.deepcopy(messages)
@@ -2623,18 +2694,106 @@ async def _request_audit_diagnostic(
         "max_tokens": MAX_AUDIT_DIAGNOSTIC_TOKENS,
         "stream": False,
     }
-    response = await asyncio.wait_for(
-        client.post(CHAT_URL, headers=headers, json=body),
-        timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
+    provider_started = build_provider_attempt_started(
+        role="executor",
+        mode="AUDIT_DIAGNOSTIC",
+        provider=provider,
+        model_id=model_id or run_model,
+        provider_model_id=run_model,
+        body=body,
+        blocks=[
+            measure_json_block(
+                "executor_context",
+                messages,
+                source_ref="executor_context:audit_diagnostic",
+            ),
+            measure_text_block(
+                "rejected_candidate",
+                rejected_candidate,
+                source_ref="audit_diagnostic:rejected_candidate",
+            ),
+            measure_text_block(
+                "diagnostic_question",
+                question,
+                source_ref="audit_diagnostic:question",
+            ),
+        ],
+        source_references=source_references,
     )
-    response.raise_for_status()
-    data = response.json()
+    provider_started_at = time.time()
+    provider_usage = None
+    provider_http_status = None
+    provider_terminal_emitted = False
+
+    def notify(kind: str, payload: dict) -> None:
+        if diagnostic_callback is None:
+            return
+        try:
+            diagnostic_callback(kind, payload)
+        except Exception:
+            pass
+
+    def finish_provider_attempt(
+        outcome: str, error_type: str | None = None
+    ) -> None:
+        nonlocal provider_terminal_emitted
+        if provider_terminal_emitted:
+            return
+        provider_terminal_emitted = True
+        notify(
+            "provider_attempt_terminal",
+            build_provider_attempt_terminal(
+                provider_started,
+                outcome=outcome,
+                provider_usage=provider_usage,
+                duration=max(time.time() - provider_started_at, 0.0),
+                http_status=provider_http_status,
+                error_type=error_type,
+            ),
+        )
+
+    notify("provider_attempt_started", provider_started)
+    try:
+        response = await asyncio.wait_for(
+            client.post(CHAT_URL, headers=headers, json=body),
+            timeout=AUDIT_DIAGNOSTIC_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        provider_http_status = getattr(response, "status_code", None)
+    except asyncio.CancelledError:
+        finish_provider_attempt("cancelled", "CancelledError")
+        raise
+    except (asyncio.TimeoutError, httpx.TimeoutException) as exc:
+        finish_provider_attempt("timeout", type(exc).__name__)
+        raise
+    except httpx.HTTPStatusError as exc:
+        provider_http_status = (
+            exc.response.status_code if exc.response is not None else None
+        )
+        finish_provider_attempt("provider_error", type(exc).__name__)
+        raise
+    except httpx.HTTPError as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+    except Exception as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+
+    try:
+        data = response.json()
+    except Exception as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
+        raise ValueError("Malformed diagnostic transport response") from exc
+    provider_usage = extract_usage(data)
     try:
         answer = data["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
         raise ValueError("Malformed diagnostic response") from exc
     if not isinstance(answer, str) or not answer.strip():
+        finish_provider_attempt("parse_error", "ValueError")
         raise ValueError("Empty diagnostic response")
+    finish_provider_attempt("completed")
     return answer.strip()[:600]
 
 
@@ -2669,8 +2828,12 @@ def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, polic
     if (contract_op == "delete") != (name == "delete_file"):
         raise ValueError("Candidate operation does not match the contract")
     if contract_op == "create" and before["exists"] and not repair:
-        raise PlanInvalidated({"reason": "create_target_already_exists", "path": args["path"],
-                               "observed_sha256": before["sha256"]})
+        raise PlanInvalidated({
+            "reason": "create_target_already_exists",
+            "path": args["path"],
+            "observed_sha256": before["sha256"],
+            "postcondition_holds": postcondition_holds(artifact, before),
+        })
     if contract_op in {"update", "delete"} and not before["exists"]:
         raise PlanInvalidated({"reason": "required_target_missing", "path": args["path"]})
     if name == "delete_file":
@@ -2767,6 +2930,9 @@ async def _run_agent_task_impl(
     api_request_count = 0
     tool_call_count = 0
     policy = _normalize_permissions(permissions)
+    policy["_raw_task_forbids_file_mutation"] = (
+        raw_task_explicitly_forbids_file_mutation(task)
+    )
     # DIAGNOSTIC ONLY — NOT A CONTROL GATE.
     mutation_intent = _classify_mutation_intent(task)
 
@@ -3092,7 +3258,24 @@ async def _run_agent_task_impl(
             "core_files": len(backup_session["manifest"]["core_files"]),
         })
 
-    token = await get_access_token()
+    try:
+        token = await get_access_token()
+    except Exception as exc:
+        _emit(
+            "run_failed",
+            {
+                "reason": "provider_auth_error",
+                "api_requests": api_request_count,
+                "tool_calls": tool_call_count,
+                "duration": time.time() - start_time,
+                "error": str(exc),
+                "trace_path": str(runtime_log_path),
+            },
+        )
+        raise RuntimeError(
+            "Не удалось получить токен GigaChat до обращения к модели."
+        ) from exc
+
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
@@ -3165,19 +3348,23 @@ async def _run_agent_task_impl(
         "===== PROJECT CONTEXT END =====\n"
     )
 
+    executor_system_core = (
+        "Ты работаешь как локальный file-agent внутри workspace. "
+        "Для всех file tools используй ТОЛЬКО относительные пути. "
+        "Корень workspace обозначай точкой '.'. "
+        "Никогда не передавай абсолютные Windows-пути в list_dir, "
+        "read_file, find_text, read_file_range, write_file, "
+        "replace_text, insert_before, insert_after или delete_file."
+    )
+
     messages = [
         {
             "role": "system",
             "content": (
-                "Ты работаешь как локальный file-agent внутри workspace. "
-                "Для всех file tools используй ТОЛЬКО относительные пути. "
-                "Корень workspace обозначай точкой '.'. "
-                "Никогда не передавай абсолютные Windows-пути в list_dir, "
-                "read_file, find_text, read_file_range, write_file, "
-                "replace_text, insert_before, insert_after или delete_file."
-                f"{permission_text}"
-                f"{global_agent_context_block}"
-                f"{project_context_block}"
+                executor_system_core
+                + permission_text
+                + global_agent_context_block
+                + project_context_block
             ),
         },
         *executor_seed_messages,
@@ -3219,6 +3406,15 @@ async def _run_agent_task_impl(
     consistency_tool_facts: list[dict] = []
     permission_attempts: dict[str, list[dict]] = {"WRITE": [], "DELETE": []}
     permission_review_failed: set[str] = set()
+    tool_reserve_state = {
+        "signature": None,
+        "interventions": 0,
+    }
+    evidence_gate_state = {
+        "signature": None,
+        "interventions": 0,
+    }
+    final_response_repair_count = 0
 
     def _permission_blocked(reason: str, capability: str, detail: str) -> str:
         _emit("permission_escalation_terminal", {
@@ -3243,6 +3439,11 @@ async def _run_agent_task_impl(
 
     lifecycle = None
     pending_persistence_call = None
+
+    def provider_accounting_diagnostic(event_name: str, payload: dict) -> None:
+        facts = lifecycle.facts() if lifecycle is not None else {}
+        _emit(event_name, {**facts, **payload})
+
     if planner_enabled:
         def planner_diagnostic(kind, payload):
             event_name = {
@@ -3250,6 +3451,8 @@ async def _run_agent_task_impl(
                 "context": "planner_diagnostic_context",
                 "response": "planner_diagnostic_response",
                 "error": "planner_diagnostic_error",
+                "provider_attempt_started": "provider_attempt_started",
+                "provider_attempt_terminal": "provider_attempt_terminal",
             }.get(kind)
             if event_name is None:
                 return
@@ -3298,6 +3501,7 @@ async def _run_agent_task_impl(
                 mode=mode,
                 validation_error=validation_error,
                 task_block_id=task_block_id,
+                diagnostic_callback=provider_accounting_diagnostic,
             )
 
         lifecycle = TaskLifecycle(
@@ -3329,6 +3533,81 @@ async def _run_agent_task_impl(
             "plan_version": facts.get("plan_version"),
             "stage_id": facts.get("active_stage_id"),
         }
+
+    def executor_accounting_blocks(
+        request_messages: list[dict], request_functions: list[dict]
+    ) -> list[dict]:
+        blocks = [
+            measure_text_block(
+                "system_core",
+                executor_system_core,
+                source_ref="server:executor_system_core",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "permission_policy",
+                permission_text,
+                source_ref=f"run_policy:{run_id}",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "global_context",
+                global_agent_context_block,
+                source_ref="agent_global_context:ultra",
+                kind="executor_system",
+            ),
+            measure_text_block(
+                "project_context",
+                project_context_block,
+                source_ref=f"project_context:{workspace_info['workspace_id']}",
+                kind="executor_system",
+            ),
+        ]
+        stage_id = executor_diagnostic_facts().get("stage_id")
+        for index, message in enumerate(request_messages[1:], start=1):
+            role = str(message.get("role") or "unknown")
+            content = message.get("content")
+            if (
+                planner_enabled
+                and index == 1
+                and role == "user"
+                and isinstance(content, str)
+                and content == task
+            ):
+                source_ref = f"raw_task:{task_block_id or run_id}"
+            elif (
+                role == "user"
+                and isinstance(content, str)
+                and "SERVER FACTS — NOT TEMPLATE CONTROLLED:" in content
+            ):
+                source_ref = f"stage_context:{stage_id or 'unknown'}"
+            elif role == "function":
+                source_ref = f"tool_result:{message.get('name') or 'unknown'}"
+            elif role == "assistant" and isinstance(message.get("function_call"), dict):
+                source_ref = "executor_function_call_history"
+            else:
+                source_ref = f"executor_transcript:{index}:{role}"
+            blocks.append(
+                measure_json_block(
+                    f"message_{index}_{role}",
+                    message,
+                    source_ref=source_ref,
+                    kind="executor_message",
+                )
+            )
+        if request_functions:
+            blocks.append(
+                measure_json_block(
+                    "tool_schemas",
+                    request_functions,
+                    source_ref="tool_schema:"
+                    + ",".join(
+                        str(item.get("name") or "?") for item in request_functions
+                    ),
+                    kind="tool_schema",
+                )
+            )
+        return blocks
 
     executor_base_messages = copy.deepcopy(messages)
 
@@ -3410,6 +3689,122 @@ async def _run_agent_task_impl(
                     policy, stage_capabilities,
                 )
 
+            evidence_gate_active = False
+            evidence_gate_requirements: list[dict] = []
+            evidence_gate_allowed_names: set[str] = set()
+            if (
+                lifecycle
+                and lifecycle.stage
+                and not lifecycle.stage["persistence_required"]
+                and lifecycle.stage.get("completion_mode") == "server_evidence"
+            ):
+                evidence_gate_requirements = (
+                    lifecycle.remaining_evidence_requirements_for_stage(
+                        lifecycle.stage,
+                        consistency_tool_facts,
+                    )
+                )
+                if evidence_gate_requirements:
+                    evidence_gate_active = True
+                    evidence_gate_allowed_names = {
+                        requirement["tool"]
+                        for requirement in evidence_gate_requirements
+                    }
+                    available_functions = [
+                        item
+                        for item in available_functions
+                        if item["name"] in evidence_gate_allowed_names
+                    ]
+                    evidence_signature = (
+                        lifecycle.stage["stage_id"],
+                        tuple(
+                            (
+                                requirement["evidence_id"],
+                                requirement["tool"],
+                                evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ),
+                            )
+                            for requirement in evidence_gate_requirements
+                        ),
+                    )
+                    if evidence_signature != evidence_gate_state["signature"]:
+                        evidence_gate_state["signature"] = evidence_signature
+                        evidence_gate_state["interventions"] = 0
+                        _emit(
+                            "server_evidence_gate_activated",
+                            {
+                                **lifecycle.facts(),
+                                "allowed_tool_names": sorted(
+                                    evidence_gate_allowed_names
+                                ),
+                                "evidence_ids": [
+                                    requirement["evidence_id"]
+                                    for requirement in evidence_gate_requirements
+                                ],
+                            },
+                        )
+                else:
+                    evidence_gate_state["signature"] = None
+                    evidence_gate_state["interventions"] = 0
+            else:
+                evidence_gate_state["signature"] = None
+                evidence_gate_state["interventions"] = 0
+
+            tool_reserve_active = False
+            tool_reserve_required = 0
+            tool_reserve_allowed_names: set[str] = set()
+            tool_reserve_requirements: list[dict] = []
+            if lifecycle:
+                remaining_slots = max(
+                    policy["tool_limit"] - tool_iterations,
+                    0,
+                )
+                tool_reserve_required = lifecycle.minimum_remaining_tool_calls(
+                    consistency_tool_facts
+                )
+                if remaining_slots < tool_reserve_required:
+                    lifecycle.block("mandatory_tool_budget_exhausted")
+                if tool_reserve_required and remaining_slots == tool_reserve_required:
+                    tool_reserve_active = True
+                    tool_reserve_allowed_names = lifecycle.current_reserved_tool_names(
+                        consistency_tool_facts
+                    )
+                    if lifecycle.stage and not lifecycle.stage["persistence_required"]:
+                        tool_reserve_requirements = (
+                            lifecycle.remaining_evidence_requirements_for_stage(
+                                lifecycle.stage,
+                                consistency_tool_facts,
+                            )
+                        )
+                    available_functions = [
+                        item
+                        for item in available_functions
+                        if item["name"] in tool_reserve_allowed_names
+                    ]
+                    signature = (
+                        lifecycle.stage["stage_id"] if lifecycle.stage else None,
+                        tool_reserve_required,
+                        tuple(sorted(tool_reserve_allowed_names)),
+                    )
+                    if signature != tool_reserve_state["signature"]:
+                        tool_reserve_state["signature"] = signature
+                        tool_reserve_state["interventions"] = 0
+                        _emit(
+                            "tool_budget_reserve_activated",
+                            {
+                                **lifecycle.facts(),
+                                "remaining_tool_slots": remaining_slots,
+                                "mandatory_tool_reserve": tool_reserve_required,
+                                "allowed_tool_names": sorted(
+                                    tool_reserve_allowed_names
+                                ),
+                            },
+                        )
+                else:
+                    tool_reserve_state["signature"] = None
+                    tool_reserve_state["interventions"] = 0
+
             body = {
                 "model": run_model,
                 "messages": messages,
@@ -3427,6 +3822,34 @@ async def _run_agent_task_impl(
                 available_functions, ensure_ascii=False, separators=(",", ":"),
             ))
             request_total_chars = request_message_chars + request_functions_chars
+            provider_started = None
+            provider_started_at = None
+            provider_usage = None
+            provider_http_status = None
+            provider_terminal_emitted = False
+
+            def finish_executor_provider_attempt(
+                outcome: str, error_type: str | None = None
+            ) -> None:
+                nonlocal provider_terminal_emitted
+                if provider_started is None or provider_terminal_emitted:
+                    return
+                provider_terminal_emitted = True
+                _emit(
+                    "provider_attempt_terminal",
+                    build_provider_attempt_terminal(
+                        provider_started,
+                        outcome=outcome,
+                        provider_usage=provider_usage,
+                        duration=max(
+                            time.time()
+                            - float(provider_started_at or time.time()),
+                            0.0,
+                        ),
+                        http_status=provider_http_status,
+                        error_type=error_type,
+                    ),
+                )
 
             if pending_persistence_call is not None:
                 # Reuse the ordinary permission/guard/backup/tool path with a prepared payload.
@@ -3472,13 +3895,80 @@ async def _run_agent_task_impl(
                     "request_functions_chars": request_functions_chars,
                     "request_total_chars": request_total_chars,
                     **(lifecycle.facts() if lifecycle else {})})
+                provider_started = build_provider_attempt_started(
+                    role="executor",
+                    mode=(
+                        f"STAGE:{executor_diagnostic_facts().get('stage_id')}"
+                        if lifecycle is not None
+                        else "DIRECT"
+                    ),
+                    provider=selected_model.provider,
+                    model_id=selected_model.model_id,
+                    provider_model_id=run_model,
+                    body=body,
+                    blocks=executor_accounting_blocks(
+                        body["messages"], available_functions
+                    ),
+                    source_references=[
+                        f"run:{run_id}",
+                        f"task_block:{task_block_id or 'direct'}",
+                    ],
+                )
+                provider_started_at = time.time()
+                _emit("provider_attempt_started", provider_started)
                 request_start = time.time()
-                response = await client.post(CHAT_URL, headers=headers, json=body)
-                request_duration = time.time() - request_start
-                response.raise_for_status()
-                response_status = response.status_code
-                data = response.json()
-                usage = extract_usage(data)
+                try:
+                    response = await client.post(
+                        CHAT_URL, headers=headers, json=body
+                    )
+                    request_duration = time.time() - request_start
+                    response.raise_for_status()
+                    provider_http_status = response.status_code
+                    response_status = response.status_code
+                except asyncio.CancelledError:
+                    finish_executor_provider_attempt(
+                        "cancelled", "CancelledError"
+                    )
+                    raise
+                except httpx.TimeoutException as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "timeout", type(exc).__name__
+                    )
+                    raise
+                except httpx.HTTPStatusError as exc:
+                    request_duration = time.time() - request_start
+                    provider_http_status = (
+                        exc.response.status_code
+                        if exc.response is not None
+                        else None
+                    )
+                    response_status = provider_http_status
+                    finish_executor_provider_attempt(
+                        "provider_error", type(exc).__name__
+                    )
+                    raise
+                except httpx.HTTPError as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "transport_error", type(exc).__name__
+                    )
+                    raise
+                except Exception as exc:
+                    request_duration = time.time() - request_start
+                    finish_executor_provider_attempt(
+                        "transport_error", type(exc).__name__
+                    )
+                    raise
+                try:
+                    data = response.json()
+                except Exception as exc:
+                    finish_executor_provider_attempt(
+                        "parse_error", type(exc).__name__
+                    )
+                    raise
+                provider_usage = extract_usage(data)
+                usage = provider_usage
                 server_dispatched = False
 
             try:
@@ -3486,6 +3976,10 @@ async def _run_agent_task_impl(
                 message = choice["message"]
                 finish_reason = choice.get("finish_reason")
             except (KeyError, IndexError, TypeError) as exc:
+                if not server_dispatched:
+                    finish_executor_provider_attempt(
+                        "parse_error", type(exc).__name__
+                    )
                 _emit("api_response", {
                     "api_request_number": api_request_count,
                     "http_status": response_status,
@@ -3500,6 +3994,9 @@ async def _run_agent_task_impl(
                     "duration": time.time() - start_time,
                 })
                 raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
+
+            if not server_dispatched:
+                finish_executor_provider_attempt("completed")
 
             _emit("persistence_dispatch_ready" if server_dispatched else "api_response", {
                 "api_request_number": api_request_count,
@@ -3571,6 +4068,13 @@ async def _run_agent_task_impl(
                     if isinstance(function_call, dict)
                     else {}
                 )
+                try:
+                    parsed_tool_args = _parse_agent_arguments(
+                        function_name,
+                        raw_args,
+                    )
+                except (TypeError, ValueError):
+                    parsed_tool_args = None
                 if isinstance(raw_args, dict):
                     safe_args = dict(raw_args)
                 else:
@@ -3578,6 +4082,163 @@ async def _run_agent_task_impl(
                 for field in ("content", "new_text", "old_text", "marker", "text"):
                     if field in safe_args:
                         safe_args[field] = f"<{len(str(safe_args[field]))} chars>"
+
+                if evidence_gate_active:
+                    evidence_call_allowed = (
+                        function_name in evidence_gate_allowed_names
+                    )
+                    if evidence_call_allowed:
+                        if parsed_tool_args is None:
+                            evidence_call_allowed = False
+                        else:
+                            actual_fingerprint = evidence_arguments_fingerprint(
+                                parsed_tool_args
+                            )
+                            evidence_call_allowed = any(
+                                requirement["tool"] == function_name
+                                and evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ) == actual_fingerprint
+                                for requirement in evidence_gate_requirements
+                            )
+                    if not evidence_call_allowed:
+                        evidence_gate_state["interventions"] += 1
+                        _emit(
+                            "server_evidence_gate_intervention",
+                            {
+                                **(lifecycle.facts() if lifecycle else {}),
+                                "function": function_name,
+                                "arguments": safe_args,
+                                "allowed_tool_names": sorted(
+                                    evidence_gate_allowed_names
+                                ),
+                                "evidence_ids": [
+                                    requirement["evidence_id"]
+                                    for requirement in evidence_gate_requirements
+                                ],
+                                "intervention": evidence_gate_state[
+                                    "interventions"
+                                ],
+                                "executed": False,
+                            },
+                        )
+                        if (
+                            evidence_gate_state["interventions"]
+                            > EVIDENCE_GATE_MAX_INTERVENTIONS
+                        ):
+                            lifecycle.block("server_evidence_gate_violation")
+                        evidence_gate_result = {
+                            "ok": False,
+                            "executed": False,
+                            "server_evidence_gate": True,
+                            "instruction": (
+                                "SERVER EVIDENCE GATE: этот вызов не выполнен и "
+                                "не списал tool budget. Текущий stage закрывается "
+                                "только exact evidence requirement; вызови один из "
+                                "указанных tools с точными arguments."
+                            ),
+                            "requirements": copy.deepcopy(
+                                evidence_gate_requirements
+                            ),
+                            "_tool_budget": {
+                                "limit": policy["tool_limit"],
+                                "used": tool_iterations,
+                                "remaining": max(
+                                    policy["tool_limit"] - tool_iterations,
+                                    0,
+                                ),
+                            },
+                        }
+                        messages.append(
+                            {
+                                "role": "function",
+                                "name": function_name,
+                                "content": json.dumps(
+                                    evidence_gate_result,
+                                    ensure_ascii=False,
+                                ),
+                            }
+                        )
+                        continue
+
+                if tool_reserve_active:
+                    reserve_call_allowed = (
+                        function_name in tool_reserve_allowed_names
+                    )
+                    if reserve_call_allowed and tool_reserve_requirements:
+                        if parsed_tool_args is None:
+                            reserve_call_allowed = False
+                        else:
+                            actual_fingerprint = evidence_arguments_fingerprint(
+                                parsed_tool_args
+                            )
+                            reserve_call_allowed = any(
+                                requirement["tool"] == function_name
+                                and evidence_arguments_fingerprint(
+                                    requirement["arguments"]
+                                ) == actual_fingerprint
+                                for requirement in tool_reserve_requirements
+                            )
+                    if not reserve_call_allowed:
+                        tool_reserve_state["interventions"] += 1
+                        _emit(
+                            "tool_budget_reserve_intervention",
+                            {
+                                **(lifecycle.facts() if lifecycle else {}),
+                                "function": function_name,
+                                "arguments": safe_args,
+                                "mandatory_tool_reserve": tool_reserve_required,
+                                "allowed_tool_names": sorted(
+                                    tool_reserve_allowed_names
+                                ),
+                                "intervention": tool_reserve_state[
+                                    "interventions"
+                                ],
+                                "executed": False,
+                            },
+                        )
+                        if (
+                            tool_reserve_state["interventions"]
+                            > TOOL_RESERVE_MAX_INTERVENTIONS
+                        ):
+                            lifecycle.block("tool_budget_reserve_violation")
+                        reserve_result = {
+                            "ok": False,
+                            "executed": False,
+                            "tool_budget_reserve": True,
+                            "instruction": (
+                                "SERVER TOOL RESERVE: этот вызов не выполнен и "
+                                "не списал tool budget. Используй только обязательный "
+                                "вызов текущего stage с точными arguments либо заверши "
+                                "текущий model_result stage без дополнительных tools."
+                            ),
+                            "allowed_tool_names": sorted(
+                                tool_reserve_allowed_names
+                            ),
+                            "requirements": copy.deepcopy(
+                                tool_reserve_requirements
+                            ),
+                            "_tool_budget": {
+                                "limit": policy["tool_limit"],
+                                "used": tool_iterations,
+                                "remaining": max(
+                                    policy["tool_limit"] - tool_iterations,
+                                    0,
+                                ),
+                                "mandatory_reserve": tool_reserve_required,
+                            },
+                        }
+                        messages.append(
+                            {
+                                "role": "function",
+                                "name": function_name,
+                                "content": json.dumps(
+                                    reserve_result,
+                                    ensure_ascii=False,
+                                ),
+                            }
+                        )
+                        continue
 
                 # GUARD P1 — supervisor BEFORE actual tool execution.
                 # Interventions do not consume tool budget because the
@@ -3802,6 +4463,11 @@ async def _run_agent_task_impl(
                 candidate_id = None
                 plan_invalidated = None
                 post_mutation_stage_decision = None
+                tool_stage_id = (
+                    lifecycle.stage["stage_id"]
+                    if lifecycle is not None and lifecycle.stage is not None
+                    else None
+                )
                 dispatcher_started = False
                 try:
                     if lifecycle and function_name in MUTATION_TOOL_NAMES:
@@ -4006,8 +4672,15 @@ async def _run_agent_task_impl(
                     "sequence": last_tool_sequence,
                     "tool": function_name,
                     "path": str(safe_args.get("path", ""))[:300],
+                    "stage_id": tool_stage_id,
+                    "capability": CAPABILITY_BY_TOOL.get(function_name, "UNKNOWN"),
                     "status": "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED",
                     "executed": dispatcher_started,
+                    "arguments_sha256": (
+                        evidence_arguments_fingerprint(parsed_tool_args)
+                        if isinstance(parsed_tool_args, dict)
+                        else None
+                    ),
                     "summary": str(last_tool_result_summary)[:1000],
                     "error": (str(tool_error.get("message", ""))[:300]
                               if isinstance(tool_error, dict) else None),
@@ -4146,6 +4819,39 @@ async def _run_agent_task_impl(
                         )
 
                 tool_iterations += 1
+
+                if (
+                    lifecycle
+                    and tool_ok
+                    and function_name not in MUTATION_TOOL_NAMES
+                    and tool_stage_id is not None
+                ):
+                    stage_evidence = [
+                        fact
+                        for fact in consistency_tool_facts
+                        if fact.get("stage_id") == tool_stage_id
+                    ]
+                    evidence_stage_decision = (
+                        lifecycle.after_non_persistence_evidence(stage_evidence)
+                    )
+                    if evidence_stage_decision is not None:
+                        if evidence_stage_decision["action"] == "next_stage":
+                            stage_context(reset=True)
+                            continue
+                        if evidence_stage_decision["action"] == "final":
+                            messages[:] = copy.deepcopy(executor_base_messages)
+                            messages.append(
+                                {
+                                    "role": "user",
+                                    "content": (
+                                        "SERVER FACTS — ALL TASK PLAN STAGES ARE SATISFIED.\n"
+                                        "Return the concise final response for the RAW TASK now. "
+                                        "Do not request more tools or repeat completed checks."
+                                    ),
+                                }
+                            )
+                            continue
+
                 result_for_model = dict(result)
                 result_for_model["_verification_state"] = dict(verification_state)
                 remaining_tools = max(policy["tool_limit"] - tool_iterations, 0)
@@ -4230,6 +4936,7 @@ async def _run_agent_task_impl(
                                         run_owned_state=final_audit_retry_state["run_owned_state"],
                                         available_functions=available_functions,
                                     ), task_id=run_id,
+                                    diagnostic_callback=provider_accounting_diagnostic,
                                 )
                             except LifecycleBlocked:
                                 raise
@@ -4328,7 +5035,18 @@ async def _run_agent_task_impl(
                 if not isinstance(candidate_content, str):
                     lifecycle.block("invalid_executor_stage_result")
                 try:
-                    stage_decision = await lifecycle.on_stop(candidate_content)
+                    active_stage_id = (
+                        lifecycle.stage["stage_id"]
+                        if lifecycle.stage is not None else None
+                    )
+                    stage_evidence = [
+                        fact for fact in consistency_tool_facts
+                        if fact.get("stage_id") == active_stage_id
+                    ]
+                    stage_decision = await lifecycle.on_stop(
+                        candidate_content,
+                        stage_evidence=stage_evidence,
+                    )
                 except PlanInvalidated as exc:
                     await lifecycle.replan(exc.fact)
                     stage_context(reset=True)
@@ -4350,6 +5068,31 @@ async def _run_agent_task_impl(
                         pending_persistence_call = stage_decision["call"]
                     if stage_decision["action"] == "next_stage":
                         stage_context(reset=True)
+                    elif stage_decision["action"] == "evidence_required":
+                        if candidate_content:
+                            messages.append(
+                                {"role": "assistant", "content": candidate_content}
+                            )
+                        messages.append(
+                            {
+                                "role": "user",
+                                "content": (
+                                    "SERVER EVIDENCE REQUIRED — stage is not complete.\n"
+                                    "Execute the exact evidence requirement(s) below. "
+                                    "A different tool or different arguments do not satisfy them.\n"
+                                    + json.dumps(
+                                        {
+                                            "requirements": stage_decision.get(
+                                                "requirements", []
+                                            ),
+                                            "reason": stage_decision.get("reason", ""),
+                                            **lifecycle.executor_context(),
+                                        },
+                                        ensure_ascii=False,
+                                    )
+                                ),
+                            }
+                        )
                     else:
                         messages.append({"role": "assistant", "content": candidate_content})
                         messages.append({"role": "user", "content": _context_message("persistence.required", {})
@@ -4472,6 +5215,60 @@ async def _run_agent_task_impl(
                 })
                 raise RuntimeError(f"GigaChat вернул пустой финальный ответ: {data}")
 
+            stripped_content = content.strip()
+            final_response_problem = None
+            if not any(character.isalnum() for character in content):
+                final_response_problem = "non_human_readable_final_content"
+            elif (
+                stripped_content.startswith("<tool_calls>")
+                or (
+                    stripped_content.startswith("<invoke")
+                    and "</invoke>" in stripped_content
+                )
+            ):
+                final_response_problem = "tool_call_markup_final_content"
+
+            if final_response_problem is not None:
+                if final_response_repair_count < FINAL_RESPONSE_REPAIR_LIMIT:
+                    final_response_repair_count += 1
+                    _emit(
+                        "final_response_repair_requested",
+                        {
+                            "attempt": final_response_repair_count,
+                            "reason": final_response_problem,
+                            "content_preview": content[:160],
+                            "executed": False,
+                        },
+                    )
+                    messages[:] = copy.deepcopy(executor_base_messages)
+                    messages.append(
+                        {
+                            "role": "user",
+                            "content": (
+                                "SERVER RESPONSE FORMAT CORRECTION.\n"
+                                "All required task stages are already satisfied. "
+                                "Your previous final response was not human-readable. "
+                                "Return a concise user-facing summary in normal prose now. "
+                                "Do not request tools and do not output punctuation-only text "
+                                "or serialized tool-call markup."
+                            ),
+                        }
+                    )
+                    continue
+                _emit(
+                    "run_failed",
+                    {
+                        "reason": "invalid_final_content",
+                        "api_requests": api_request_count,
+                        "tool_calls": tool_call_count,
+                        "duration": time.time() - start_time,
+                        "content_preview": content[:160],
+                    },
+                )
+                raise RuntimeError(
+                    "GigaChat повторно вернул нечитаемый финальный ответ."
+                )
+
             if not final_audit_enabled:
                 if lifecycle:
                     lifecycle.assert_satisfied()
@@ -4553,6 +5350,7 @@ async def _run_agent_task_impl(
                     raw_task=task,
                     verification_context=verification_context,
                     task_id=run_id,
+                    diagnostic_callback=provider_accounting_diagnostic,
                 )
                 if (audit_result.verdict == "PASS"
                         and evidence_completeness.get("candidate_fact_conflicts")):
@@ -4817,8 +5615,20 @@ async def _run_agent_task_impl(
                             if lifecycle:
                                 lifecycle.tick("AUDIT_DIAGNOSTIC")
                             diagnostic_answer = await _request_audit_diagnostic(
-                                client, headers, run_model, messages, content,
+                                client,
+                                headers,
+                                run_model,
+                                messages,
+                                content,
                                 diagnostic_question,
+                                model_id=selected_model.model_id,
+                                provider=selected_model.provider,
+                                diagnostic_callback=_emit,
+                                source_references=[
+                                    f"run:{run_id}",
+                                    f"task_block:{task_block_id or 'direct'}",
+                                    f"final_audit_attempt:{audit_attempt}",
+                                ],
                             )
                         except LifecycleBlocked:
                             raise

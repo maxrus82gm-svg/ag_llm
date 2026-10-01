@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -34,6 +35,16 @@ class PlanInvalidated(RuntimeError):
         super().__init__(fact["reason"])
 
 
+def evidence_arguments_fingerprint(arguments: dict) -> str:
+    encoded = json.dumps(
+        arguments,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def validate_replan_against_fact(previous_plan: dict, candidate: dict, fact: dict) -> None:
     """Reject a candidate plan that demonstrably preserves a server-known conflict."""
     if fact.get("reason") != "create_target_already_exists":
@@ -41,23 +52,71 @@ def validate_replan_against_fact(previous_plan: dict, candidate: dict, fact: dic
     path = fact.get("path")
     if not isinstance(path, str) or not path:
         return
-    old_conflicts = {
-        artifact["artifact_id"]
+    old_conflicts = [
+        artifact
         for stage in previous_plan["stages"]
         for artifact in stage["artifacts"]
         if artifact["path"] == path and artifact["operation"] == "create"
-    }
+    ]
     if not old_conflicts:
         return
     for stage in candidate["stages"]:
         for artifact in stage["artifacts"]:
-            if (artifact["path"] == path
-                    and artifact["operation"] == "create"
+            if artifact["path"] != path:
+                continue
+            if (artifact["operation"] == "create"
                     and artifact["allow_already_satisfied"] is False):
                 raise PlannerError(
                     "Replan did not resolve authoritative fact: "
                     f"create_target_already_exists for {path}"
                 )
+            if (fact.get("postcondition_holds") is True
+                    and any(
+                        artifact["postcondition"] == old["postcondition"]
+                        for old in old_conflicts
+                    )
+                    and artifact["allow_already_satisfied"] is False):
+                raise PlannerError(
+                    "Existing target already satisfies the unchanged postcondition; "
+                    "REPLAN must explicitly set allow_already_satisfied=true "
+                    "or define a genuinely different required state."
+                )
+
+
+def validate_replan_transition(previous_plan: dict, candidate: dict, fact: dict) -> None:
+    validate_replan_against_fact(previous_plan, candidate, fact)
+    old = {
+        artifact["artifact_id"]: artifact
+        for stage in previous_plan["stages"]
+        for artifact in stage["artifacts"]
+    }
+    new = {
+        artifact["artifact_id"]: artifact
+        for stage in candidate["stages"]
+        for artifact in stage["artifacts"]
+    }
+    changes_list = candidate["obligation_changes"]
+    changes = {change["old_artifact_id"]: change for change in changes_list}
+    if len(changes) != len(changes_list):
+        raise PlannerError("REPLAN contains duplicate obligation_changes old_artifact_id")
+    for artifact_id, artifact in old.items():
+        if new.get(artifact_id) != artifact and artifact_id not in changes:
+            raise PlannerError(
+                f"REPLAN changed or dropped obligation {artifact_id!r} without obligation_changes"
+            )
+    unknown = set(changes) - set(old)
+    if unknown:
+        raise PlannerError(
+            "REPLAN obligation_changes reference unknown old_artifact_id: "
+            + ", ".join(sorted(unknown))
+        )
+    if any(change["fact_id"] != fact["fact_id"] for change in changes.values()):
+        raise PlannerError("REPLAN obligation_changes must reference the supplied authoritative fact_id")
+    for artifact_id, change in changes.items():
+        if change["action"] == "cancel" and artifact_id in new:
+            raise PlannerError(
+                f"REPLAN cannot cancel obligation {artifact_id!r} while keeping it in the new plan"
+            )
 
 
 def postcondition_holds(artifact: dict, snapshot: dict) -> bool:
@@ -101,6 +160,7 @@ class TaskLifecycle:
         self.planner_feedback = planner_feedback
         self.planner_review = planner_review
         self.dredd_enabled = dredd_enabled
+        self.available_tools: set[str] | None = None
         self._planner_session_started = False
         self._planner_session_terminal = False
         self.started = time.monotonic()
@@ -151,6 +211,17 @@ class TaskLifecycle:
         if self.planner_feedback is not None:
             self.planner_feedback(speaker=speaker, mode=mode, attempt=attempt, text=text)
 
+    def validate_evidence_tools_available(self, result: dict) -> None:
+        if self.available_tools is None:
+            return
+        for stage in result["stages"]:
+            for requirement in stage.get("evidence_requirements") or []:
+                if requirement["tool"] not in self.available_tools:
+                    raise PlannerError(
+                        "Evidence requirement uses unavailable tool: "
+                        f"{requirement['tool']}"
+                    )
+
     async def ask(self, mode, context, candidate_validator=None):
         name = "planner_readiness_started" if mode == "READINESS" else "planner_started"
         self.event(name, mode=mode)
@@ -161,7 +232,11 @@ class TaskLifecycle:
                 result = await self.planner_call(
                     mode=mode, raw_task=self.raw_task, context=context, attempt=attempt,
                 )
-                result = validate_readiness(result) if mode == "READINESS" else validate_plan(result)
+                result = (
+                    validate_readiness(result)
+                    if mode == "READINESS"
+                    else validate_plan(result, raw_task=self.raw_task)
+                )
                 if candidate_validator is not None:
                     candidate_validator(result)
             except Exception as exc:
@@ -238,6 +313,12 @@ class TaskLifecycle:
         raise AssertionError("unreachable Planner attempt loop")
 
     async def initialize(self, context):
+        if "tools" in context:
+            self.available_tools = {
+                item["name"]
+                for item in (context.get("tools") or [])
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
         if not self._planner_session_started:
             self._planner_session_started = True
             self.event("planner_session_started", session_id=self.planner_session_id,
@@ -247,6 +328,7 @@ class TaskLifecycle:
                 raise PlannerError(
                     "INITIAL plan must return obligation_changes=[] because no previous plan exists."
                 )
+            self.validate_evidence_tools_available(result)
         result = await self.ask("INITIAL", context, validate_initial)
         self.install(result)
         self.event("plan_created", stages_count=len(self.plan["stages"]))
@@ -293,6 +375,14 @@ class TaskLifecycle:
                         "postcondition_holds": postcondition_holds(artifact, observed)}
             self.set_status("WORKING")
             self.event("stage_started", goal=stage["goal"])
+            if (stage["persistence_required"]
+                    and not state.get("repair")
+                    and self.check_obligations(stage)):
+                state["result"] = "Persistence obligations already satisfied at stage baseline."
+                self.save()
+                self.set_status("SATISFIED")
+                self.event("stage_satisfied")
+                return self.advance()
         self.save()
 
     def set_status(self, status):
@@ -519,7 +609,153 @@ class TaskLifecycle:
             return copy.deepcopy(candidate["call"])
         return None
 
-    async def on_stop(self, content):
+    def _matched_evidence_requirement_ids_for_stage(
+        self,
+        stage: dict,
+        stage_evidence,
+    ):
+        if stage["persistence_required"]:
+            return []
+        matched = []
+        facts = [
+            item
+            for item in (stage_evidence or [])
+            if item.get("stage_id") == stage["stage_id"]
+            and item.get("status") == "OK"
+            and item.get("executed") is True
+        ]
+        for requirement in stage.get("evidence_requirements") or []:
+            expected_fingerprint = evidence_arguments_fingerprint(
+                requirement["arguments"]
+            )
+            if any(
+                item.get("tool") == requirement["tool"]
+                and item.get("arguments_sha256") == expected_fingerprint
+                for item in facts
+            ):
+                matched.append(requirement["evidence_id"])
+        return matched
+
+    def matched_evidence_requirement_ids(self, stage_evidence):
+        if not self.stage:
+            return []
+        return self._matched_evidence_requirement_ids_for_stage(
+            self.stage,
+            stage_evidence,
+        )
+
+    def remaining_evidence_requirements_for_stage(
+        self,
+        stage: dict,
+        stage_evidence,
+    ) -> list[dict]:
+        matched = set(
+            self._matched_evidence_requirement_ids_for_stage(
+                stage,
+                stage_evidence,
+            )
+        )
+        return [
+            copy.deepcopy(requirement)
+            for requirement in stage.get("evidence_requirements") or []
+            if requirement["evidence_id"] not in matched
+        ]
+
+    def minimum_remaining_tool_calls(self, stage_evidence) -> int:
+        minimum = 0
+        for stage in self.plan["stages"]:
+            state = self.state["stage_states"][stage["stage_id"]]
+            if state["status"] == "SATISFIED":
+                continue
+            if stage["persistence_required"]:
+                minimum += sum(
+                    obligation["status"] == "OPEN"
+                    for obligation in state["obligations"].values()
+                )
+            else:
+                minimum += len(
+                    self.remaining_evidence_requirements_for_stage(
+                        stage,
+                        stage_evidence,
+                    )
+                )
+        return minimum
+
+    def current_reserved_tool_names(self, stage_evidence) -> set[str]:
+        if not self.stage:
+            return set()
+        state = self.state["stage_states"][self.stage["stage_id"]]
+        if self.stage["persistence_required"]:
+            names = set()
+            artifacts = {
+                artifact["artifact_id"]: artifact
+                for artifact in self.stage["artifacts"]
+            }
+            for artifact_id, obligation in state["obligations"].items():
+                if obligation["status"] != "OPEN":
+                    continue
+                operation = artifacts[artifact_id]["operation"]
+                if operation == "delete":
+                    names.add("delete_file")
+                elif operation == "create":
+                    names.add("write_file")
+                else:
+                    names.update({
+                        "write_file",
+                        "replace_text",
+                        "insert_before",
+                        "insert_after",
+                    })
+            return names
+        return {
+            requirement["tool"]
+            for requirement in self.remaining_evidence_requirements_for_stage(
+                self.stage,
+                stage_evidence,
+            )
+        }
+
+    def non_persistence_evidence_satisfied(self, stage_evidence):
+        if not self.stage or self.stage["persistence_required"]:
+            return False
+        requirements = self.stage.get("evidence_requirements") or []
+        if not requirements:
+            return False
+        matched = set(self.matched_evidence_requirement_ids(stage_evidence))
+        return all(item["evidence_id"] in matched for item in requirements)
+
+    def _complete_server_evidence_stage(self, stage_evidence):
+        requirements = self.stage.get("evidence_requirements") or []
+        evidence_ids = self.matched_evidence_requirement_ids(stage_evidence)
+        self.event(
+            "non_persistence_evidence_satisfied",
+            completion_mode="server_evidence",
+            evidence_ids=evidence_ids,
+            tools=[item["tool"] for item in requirements],
+            evidence_count=len(stage_evidence or []),
+        )
+        result = json.dumps(
+            {
+                "completion": "server_evidence",
+                "evidence_ids": evidence_ids,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        return self.complete(result)
+
+    def after_non_persistence_evidence(self, stage_evidence):
+        if (
+            not self.stage
+            or self.stage["persistence_required"]
+            or self.stage.get("completion_mode") != "server_evidence"
+        ):
+            return None
+        if not self.non_persistence_evidence_satisfied(stage_evidence):
+            return None
+        return self._complete_server_evidence_stage(stage_evidence)
+
+    async def on_stop(self, content, stage_evidence=None):
         if not self.stage:
             self.assert_satisfied()
             return {"action": "final"}
@@ -550,6 +786,25 @@ class TaskLifecycle:
             if response["action"] == "ready":
                 return {"action": "dispatch", "call": self.state["candidates"][response["candidate_ids"][0]]["call"]}
             return response
+        if self.stage.get("completion_mode") == "server_evidence":
+            if self.non_persistence_evidence_satisfied(stage_evidence):
+                return self._complete_server_evidence_stage(stage_evidence)
+            return {
+                "action": "evidence_required",
+                "reason": "Exact server evidence requirements are not yet satisfied.",
+                "requirements": copy.deepcopy(
+                    self.stage.get("evidence_requirements") or []
+                ),
+            }
+
+        requirements = self.stage.get("evidence_requirements") or []
+        if requirements and not self.non_persistence_evidence_satisfied(stage_evidence):
+            return {
+                "action": "evidence_required",
+                "reason": "Required server evidence must be collected before model result completion.",
+                "requirements": copy.deepcopy(requirements),
+            }
+
         response = await self.readiness(content, [])
         if response["action"] == "ready":
             if not content.strip():
@@ -586,25 +841,16 @@ class TaskLifecycle:
         fact = {**fact, "fact_id": "fact_" + uuid.uuid4().hex[:12]}
         self.event("replan_started", reason=fact["reason"], fact_id=fact["fact_id"])
         previous_plan = self.plan
+        def validate_replan_candidate(candidate):
+            validate_replan_transition(previous_plan, candidate, fact)
+            self.validate_evidence_tools_available(candidate)
+
         response = await self.ask(
             "REPLAN", {"current_plan": previous_plan,
                        "stage_states": self.state["stage_states"],
                        "authoritative_facts": [fact]},
-            lambda candidate: validate_replan_against_fact(previous_plan, candidate, fact),
+            validate_replan_candidate,
         )
-        old = {a["artifact_id"]: a for s in self.plan["stages"] for a in s["artifacts"]}
-        new = {a["artifact_id"]: a for s in response["stages"] for a in s["artifacts"]}
-        changes = {c["old_artifact_id"]: c for c in response["obligation_changes"]}
-        if len(changes) != len(response["obligation_changes"]):
-            self.block("duplicate_obligation_change")
-        for aid, artifact in old.items():
-            if new.get(aid) != artifact and aid not in changes:
-                self.block("replan_dropped_obligation")
-        if set(changes) - set(old) or any(c["fact_id"] != fact["fact_id"] for c in changes.values()):
-            self.block("replan_unproven_obligation_change")
-        for aid, change in changes.items():
-            if change["action"] == "cancel" and aid in new:
-                self.block("cancelled_obligation_still_in_plan")
         self.state["replans"].append({"from_version": self.state["plan_version"],
                                       "fact": fact, "obligation_changes": response["obligation_changes"],
                                       "prior_stage_states": copy.deepcopy(self.state["stage_states"])})

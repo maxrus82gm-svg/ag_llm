@@ -1,0 +1,8 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_2551e4836514455a93b9fec8271f69bc",
+  "chat_id": null,
+  "task_block_id": "tb_70f5600112f548dcb06b7dfc8aa953db",
+  "task_display_id": "T-001",
+  "raw_task": "Benchmark B3-semantic.\nAnalyze only the facts below; do not use tools or external information.\n\nFacts:\n1. A service is stable before a configuration reload.\n2. In repeated observations, failures begin immediately after that reload.\n3. Rolling back the configuration stops the failures.\n4. CPU and memory remain within their normal ranges during the failures.\n5. The exact defective configuration field is not yet known.\n\nProduce a concise technical assessment with:\n- exactly two statements that are direct facts from the input;\n- exactly one clearly labeled inference about the most plausible failure class, without claiming certainty;\n- exactly two non-destructive checks that could distinguish configuration error from resource exhaustion.\nDo not invent measurements or claim the root cause is proven."
+}

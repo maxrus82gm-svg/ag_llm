@@ -5,6 +5,7 @@ import copy
 import json
 import os
 import re
+import time
 import uuid
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,19 @@ STREAM_BY_SOURCE = {
     "DREDD": "dredd.jsonl",
 }
 USAGE_ROLES = ("planner", "executor", "dredd")
+_ATOMIC_REPLACE_RETRY_DELAYS = (0.02, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 2.0)
+_INDEX_GENERATION_DIRNAME = "index_generations"
+
+
+def _replace_with_retry(source: Path, destination: Path) -> None:
+    for delay in (*_ATOMIC_REPLACE_RETRY_DELAYS, None):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError:
+            if delay is None:
+                raise
+            time.sleep(delay)
 
 
 def _safe(value: str | None, fallback: str = "direct") -> str:
@@ -35,7 +49,11 @@ def workspace_index_path(workspace_root: str | Path) -> Path:
     return audit_root(workspace_root) / "index.json"
 
 
-def _atomic_json(path: Path, value: dict) -> None:
+def _index_generation_dir(workspace_root: str | Path) -> Path:
+    return audit_root(workspace_root) / _INDEX_GENERATION_DIRNAME
+
+
+def _atomic_json(path: Path, value: dict, *, retry_replace: bool = True) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
     try:
@@ -44,31 +62,86 @@ def _atomic_json(path: Path, value: dict) -> None:
             stream.write("\n")
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, path)
+        if retry_replace:
+            _replace_with_retry(temporary, path)
+        else:
+            os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
 
 
 def _empty_index() -> dict:
-    return {"schema_version": 2, "next_task_number": 1, "next_run_number": 1,
-            "tasks": {}, "runs": {}}
+    return {"schema_version": 2, "revision": 0, "next_task_number": 1,
+            "next_run_number": 1, "tasks": {}, "runs": {}}
 
 
-def load_workspace_run_index(workspace_root: str | Path) -> dict:
-    path = workspace_index_path(workspace_root)
-    if not path.is_file():
-        return _empty_index()
-    value = json.loads(path.read_text(encoding="utf-8"))
+def _validate_index(value: object) -> dict:
     if not isinstance(value, dict) or value.get("schema_version") != 2:
         raise ValueError("Invalid Run Store index")
     for key in ("tasks", "runs"):
         if not isinstance(value.get(key), dict):
             raise ValueError("Invalid Run Store index")
-    return value
+    revision = value.get("revision", 0)
+    if not isinstance(revision, int) or isinstance(revision, bool) or revision < 0:
+        raise ValueError("Invalid Run Store index revision")
+    result = copy.deepcopy(value)
+    result["revision"] = revision
+    return result
+
+
+def _load_index_file(path: Path) -> dict:
+    return _validate_index(json.loads(path.read_text(encoding="utf-8")))
+
+
+def _generation_paths(workspace_root: str | Path) -> list[Path]:
+    directory = _index_generation_dir(workspace_root)
+    if not directory.is_dir():
+        return []
+    return sorted(directory.glob("index-*.json"), key=lambda item: item.name)
+
+
+def load_workspace_run_index(workspace_root: str | Path) -> dict:
+    canonical = workspace_index_path(workspace_root)
+    candidates: list[tuple[int, bool, dict]] = []
+    if canonical.is_file():
+        value = _load_index_file(canonical)
+        candidates.append((int(value["revision"]), True, value))
+    for path in _generation_paths(workspace_root):
+        value = _load_index_file(path)
+        candidates.append((int(value["revision"]), False, value))
+    if not candidates:
+        return _empty_index()
+    # At equal revision prefer canonical index.json.
+    return max(candidates, key=lambda item: (item[0], item[1]))[2]
+
+
+def _cleanup_index_generations(workspace_root: str | Path,
+                               canonical_revision: int) -> None:
+    for path in _generation_paths(workspace_root):
+        try:
+            value = _load_index_file(path)
+            if int(value["revision"]) <= canonical_revision:
+                path.unlink(missing_ok=True)
+        except PermissionError:
+            continue
 
 
 def _save_index(workspace_root: str | Path, index: dict) -> None:
-    _atomic_json(workspace_index_path(workspace_root), index)
+    snapshot = copy.deepcopy(index)
+    revision = int(snapshot.get("revision", 0)) + 1
+    snapshot["revision"] = revision
+    canonical = workspace_index_path(workspace_root)
+    fallback_active = bool(_generation_paths(workspace_root))
+    try:
+        _atomic_json(canonical, snapshot, retry_replace=not fallback_active)
+    except PermissionError:
+        directory = _index_generation_dir(workspace_root)
+        directory.mkdir(parents=True, exist_ok=True)
+        generation = directory / f"index-{revision:020d}-{uuid.uuid4().hex}.json"
+        _atomic_json(generation, snapshot)
+    else:
+        _cleanup_index_generations(workspace_root, revision)
+    index["revision"] = revision
 
 
 def ensure_task_index_entry(workspace_root: str | Path, task_block_id: str,
@@ -131,14 +204,85 @@ def get_run_index_entry(workspace_root: str | Path, run_id: str) -> dict | None:
 
 
 def _empty_usage_bucket() -> dict:
-    return {"calls": 0, "prompt_tokens": None, "completion_tokens": None,
-            "total_tokens": None, "complete": True}
+    return {
+        "calls": 0,
+        "attempts_started": 0,
+        "attempts_terminal": 0,
+        "unknown_usage_calls": 0,
+        "known_prompt_tokens": 0,
+        "known_completion_tokens": 0,
+        "known_total_tokens": 0,
+        "prompt_tokens": None,
+        "completion_tokens": None,
+        "total_tokens": None,
+        "complete": True,
+    }
 
 
 def empty_usage_summary() -> dict:
     result = {role: _empty_usage_bucket() for role in USAGE_ROLES}
     result["total"] = _empty_usage_bucket()
     return result
+
+
+def empty_provider_accounting_summary() -> dict:
+    return {
+        "schema_version": 1,
+        "started_ids": [],
+        "terminal_ids": [],
+        "orphan_terminal_ids": [],
+        "duplicate_terminal_ids": [],
+        "complete": True,
+    }
+
+
+def _usage_known(usage: dict | None) -> bool:
+    return isinstance(usage, dict) and all(
+        isinstance(usage.get(key), int) and not isinstance(usage.get(key), bool)
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+    )
+
+
+def _refresh_usage_bucket(bucket: dict) -> None:
+    bucket["complete"] = (
+        int(bucket.get("attempts_started") or 0)
+        == int(bucket.get("attempts_terminal") or 0)
+        and int(bucket.get("unknown_usage_calls") or 0) == 0
+    )
+    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+        known_key = "known_" + key
+        bucket[key] = (
+            int(bucket.get(known_key) or 0)
+            if bucket["complete"] and int(bucket.get("calls") or 0) > 0
+            else None
+        )
+
+
+def _refresh_total_usage(summary: dict) -> None:
+    total = _empty_usage_bucket()
+    role_buckets = [summary["usage"][role] for role in USAGE_ROLES]
+    for field in (
+        "calls", "attempts_started", "attempts_terminal", "unknown_usage_calls",
+        "known_prompt_tokens", "known_completion_tokens", "known_total_tokens",
+    ):
+        total[field] = sum(int(bucket.get(field) or 0) for bucket in role_buckets)
+    total["complete"] = all(
+        bucket.get("complete", False)
+        for bucket in role_buckets
+        if int(bucket.get("attempts_started") or 0)
+        or int(bucket.get("attempts_terminal") or 0)
+        or int(bucket.get("calls") or 0)
+    )
+    accounting = summary.get("provider_accounting") or {}
+    if accounting and not accounting.get("complete", False):
+        total["complete"] = False
+    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+        total[key] = (
+            int(total.get("known_" + key) or 0)
+            if total["complete"] and total["calls"] > 0
+            else None
+        )
+    summary["usage"]["total"] = total
 
 
 def create_run_summary(workspace_root: str | Path, workspace_id: str,
@@ -150,7 +294,8 @@ def create_run_summary(workspace_root: str | Path, workspace_id: str,
                "task_display_id": task["display_id"], "run_id": run_id,
                "run_display_id": run["display_id"], "run_status": "RUNNING",
                "final_audit": "PENDING", "api_requests": 0, "tool_calls": 0,
-               "usage": empty_usage_summary()}
+               "usage": empty_usage_summary(),
+               "provider_accounting": empty_provider_accounting_summary()}
     _atomic_json(run_storage_dir(workspace_root, chat_id, run_id) / "summary.json", summary)
     return summary
 
@@ -178,10 +323,13 @@ def update_run_summary_index(workspace_root: str | Path, run_id: str,
     summary.update(copy.deepcopy(updates))
     _atomic_json(summary_path, summary)
     index = load_workspace_run_index(workspace_root)
+    index_changed = False
     for key in ("run_status", "final_audit"):
-        if key in updates:
+        if key in updates and index["runs"][run_id].get(key) != updates[key]:
             index["runs"][run_id][key] = updates[key]
-    _save_index(workspace_root, index)
+            index_changed = True
+    if index_changed:
+        _save_index(workspace_root, index)
     return summary
 
 
@@ -282,29 +430,80 @@ def load_stream_records(workspace_root: str | Path, run_id: str,
             if line.strip()]
 
 
+def _apply_terminal_usage(bucket: dict, usage: dict | None) -> None:
+    bucket["calls"] = int(bucket.get("calls") or 0) + 1
+    bucket["attempts_terminal"] = int(bucket.get("attempts_terminal") or 0) + 1
+    if _usage_known(usage):
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            known_key = "known_" + key
+            bucket[known_key] = int(bucket.get(known_key) or 0) + int(usage[key])
+    else:
+        bucket["unknown_usage_calls"] = int(bucket.get("unknown_usage_calls") or 0) + 1
+    _refresh_usage_bucket(bucket)
+
+
 def record_usage(summary: dict, role: str, usage: dict | None) -> dict:
+    """Compatibility helper for callers that only have a terminal usage record."""
     if role not in USAGE_ROLES:
         raise ValueError("Unknown usage role")
     bucket = summary["usage"][role]
-    bucket["calls"] += 1
-    known = isinstance(usage, dict) and all(
-        isinstance(usage.get(key), int) and not isinstance(usage.get(key), bool)
-        for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+    bucket["attempts_started"] = int(bucket.get("attempts_started") or 0) + 1
+    _apply_terminal_usage(bucket, usage)
+    _refresh_total_usage(summary)
+    return summary
+
+
+def record_provider_attempt_started(
+    summary: dict, role: str, provider_attempt_id: str
+) -> dict:
+    if role not in USAGE_ROLES:
+        raise ValueError("Unknown usage role")
+    accounting = summary.setdefault(
+        "provider_accounting", empty_provider_accounting_summary()
     )
-    if not known:
-        bucket["complete"] = False
+    started = accounting.setdefault("started_ids", [])
+    if provider_attempt_id not in started:
+        started.append(provider_attempt_id)
+        bucket = summary["usage"][role]
+        bucket["attempts_started"] = int(bucket.get("attempts_started") or 0) + 1
+        _refresh_usage_bucket(bucket)
+    accounting["complete"] = (
+        len(accounting.get("started_ids", []))
+        == len(accounting.get("terminal_ids", []))
+        and not accounting.get("orphan_terminal_ids")
+        and not accounting.get("duplicate_terminal_ids")
+    )
+    _refresh_total_usage(summary)
+    return summary
+
+
+def record_provider_attempt_terminal(
+    summary: dict, role: str, provider_attempt_id: str, usage: dict | None
+) -> dict:
+    if role not in USAGE_ROLES:
+        raise ValueError("Unknown usage role")
+    accounting = summary.setdefault(
+        "provider_accounting", empty_provider_accounting_summary()
+    )
+    started = accounting.setdefault("started_ids", [])
+    terminal = accounting.setdefault("terminal_ids", [])
+    if provider_attempt_id in terminal:
+        duplicates = accounting.setdefault("duplicate_terminal_ids", [])
+        if provider_attempt_id not in duplicates:
+            duplicates.append(provider_attempt_id)
     else:
-        for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
-            bucket[key] = (bucket[key] or 0) + usage[key]
-    total = _empty_usage_bucket()
-    total["calls"] = sum(summary["usage"][item]["calls"] for item in USAGE_ROLES)
-    total["complete"] = all(summary["usage"][item]["complete"] for item in USAGE_ROLES
-                            if summary["usage"][item]["calls"])
-    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
-        values = [summary["usage"][item][key] for item in USAGE_ROLES
-                  if summary["usage"][item][key] is not None]
-        total[key] = sum(values) if values else None
-    summary["usage"]["total"] = total
+        terminal.append(provider_attempt_id)
+        if provider_attempt_id not in started:
+            orphans = accounting.setdefault("orphan_terminal_ids", [])
+            if provider_attempt_id not in orphans:
+                orphans.append(provider_attempt_id)
+        _apply_terminal_usage(summary["usage"][role], usage)
+    accounting["complete"] = (
+        len(started) == len(terminal)
+        and not accounting.get("orphan_terminal_ids")
+        and not accounting.get("duplicate_terminal_ids")
+    )
+    _refresh_total_usage(summary)
     return summary
 
 

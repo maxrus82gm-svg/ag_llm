@@ -1,0 +1,87 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_f8ee3d22926240c89ddd0053f7734421",
+  "chat_id": null,
+  "task_block_id": "tb_44f8fab8757b40b8814ecc8b763798a4",
+  "task_display_id": "T-001",
+  "run_id": "20261001_005720_8e5145",
+  "run_display_id": "R-001",
+  "run_status": "SUCCESS",
+  "final_audit": "PASS",
+  "api_requests": 1,
+  "tool_calls": 0,
+  "usage": {
+    "planner": {
+      "calls": 3,
+      "attempts_started": 3,
+      "attempts_terminal": 3,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 8809,
+      "known_completion_tokens": 286,
+      "known_total_tokens": 9095,
+      "prompt_tokens": 8809,
+      "completion_tokens": 286,
+      "total_tokens": 9095,
+      "complete": true
+    },
+    "executor": {
+      "calls": 1,
+      "attempts_started": 1,
+      "attempts_terminal": 1,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 4127,
+      "known_completion_tokens": 103,
+      "known_total_tokens": 4230,
+      "prompt_tokens": 4127,
+      "completion_tokens": 103,
+      "total_tokens": 4230,
+      "complete": true
+    },
+    "dredd": {
+      "calls": 1,
+      "attempts_started": 1,
+      "attempts_terminal": 1,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 1647,
+      "known_completion_tokens": 99,
+      "known_total_tokens": 1746,
+      "prompt_tokens": 1647,
+      "completion_tokens": 99,
+      "total_tokens": 1746,
+      "complete": true
+    },
+    "total": {
+      "calls": 5,
+      "attempts_started": 5,
+      "attempts_terminal": 5,
+      "unknown_usage_calls": 0,
+      "known_prompt_tokens": 14583,
+      "known_completion_tokens": 488,
+      "known_total_tokens": 15071,
+      "prompt_tokens": 14583,
+      "completion_tokens": 488,
+      "total_tokens": 15071,
+      "complete": true
+    }
+  },
+  "provider_accounting": {
+    "schema_version": 1,
+    "started_ids": [
+      "pa_dc89f0c935db4614b84637fe4233cf20",
+      "pa_e661a4fbd5294594b5ca0e2453d87dd3",
+      "pa_1b840b68bb854b6bba5bf9b6e155ba22",
+      "pa_8d1540529b21430e98e0b057ce11809d",
+      "pa_62026919307f42e39761c533cf8b67a1"
+    ],
+    "terminal_ids": [
+      "pa_dc89f0c935db4614b84637fe4233cf20",
+      "pa_e661a4fbd5294594b5ca0e2453d87dd3",
+      "pa_1b840b68bb854b6bba5bf9b6e155ba22",
+      "pa_8d1540529b21430e98e0b057ce11809d",
+      "pa_62026919307f42e39761c533cf8b67a1"
+    ],
+    "orphan_terminal_ids": [],
+    "duplicate_terminal_ids": [],
+    "complete": true
+  }
+}

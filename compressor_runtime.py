@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import time
 import uuid
@@ -21,7 +22,15 @@ from context_storage import (
     load_raw_message,
     probe_existing_workspace,
 )
+from gigachat_transport import extract_usage
 from model_registry import get_model_spec
+from provider_accounting import (
+    build_provider_attempt_started,
+    build_provider_attempt_terminal,
+    measure_json_block,
+    measure_text_block,
+    new_logical_call_id,
+)
 from server import CHAT_URL, MAX_TOKENS, TEMPERATURE, get_access_token
 
 
@@ -272,29 +281,132 @@ def build_compressor_request_body(model_id: str, prompt: str) -> dict[str, Any]:
     }
 
 
-async def _request_gigachat(body: dict[str, Any]) -> str:
-    token = await get_access_token()
+async def _request_gigachat(
+    body: dict[str, Any],
+    *,
+    model_id: str | None = None,
+    provider: str = "gigachat",
+    mode: str = "COMPRESS",
+    request_blocks: list[dict] | None = None,
+    source_references: tuple[str, ...] | list[str] = (),
+    logical_call_id: str | None = None,
+    diagnostic_callback=None,
+) -> str:
+    provider_model_id = str(body.get("model") or "")
+    provider_started = build_provider_attempt_started(
+        role=COMPRESSOR_ROLE_ID,
+        mode=mode,
+        provider=provider,
+        model_id=model_id or provider_model_id,
+        provider_model_id=provider_model_id,
+        body=body,
+        blocks=(
+            request_blocks
+            if request_blocks is not None
+            else [
+                measure_json_block(
+                    "messages",
+                    body.get("messages", []),
+                    source_ref="compressor:messages",
+                )
+            ]
+        ),
+        logical_call_id=logical_call_id,
+        source_references=source_references,
+    )
+    provider_started_at = time.time()
+    provider_usage = None
+    provider_http_status = None
+    provider_terminal_emitted = False
+
+    def notify(kind: str, payload: dict) -> None:
+        if diagnostic_callback is None:
+            return
+        try:
+            diagnostic_callback(kind, payload)
+        except Exception:
+            pass
+
+    def finish_provider_attempt(
+        outcome: str, error_type: str | None = None
+    ) -> None:
+        nonlocal provider_terminal_emitted
+        if provider_terminal_emitted:
+            return
+        provider_terminal_emitted = True
+        notify(
+            "provider_attempt_terminal",
+            build_provider_attempt_terminal(
+                provider_started,
+                outcome=outcome,
+                provider_usage=provider_usage,
+                duration=max(time.time() - provider_started_at, 0.0),
+                http_status=provider_http_status,
+                error_type=error_type,
+            ),
+        )
+
+    notify("provider_attempt_started", provider_started)
+    try:
+        token = await get_access_token()
+    except asyncio.CancelledError:
+        finish_provider_attempt("cancelled", "CancelledError")
+        raise
+    except Exception as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+
     headers = {
         "Authorization": f"Bearer {token}",
         "Accept": "application/json",
     }
-    async with httpx.AsyncClient(timeout=180.0) as client:
-        response = await client.post(CHAT_URL, headers=headers, json=body)
-        response.raise_for_status()
-    data = response.json()
+    try:
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            response = await client.post(CHAT_URL, headers=headers, json=body)
+            response.raise_for_status()
+            provider_http_status = getattr(response, "status_code", None)
+    except asyncio.CancelledError:
+        finish_provider_attempt("cancelled", "CancelledError")
+        raise
+    except httpx.TimeoutException as exc:
+        finish_provider_attempt("timeout", type(exc).__name__)
+        raise
+    except httpx.HTTPStatusError as exc:
+        provider_http_status = (
+            exc.response.status_code if exc.response is not None else None
+        )
+        finish_provider_attempt("provider_error", type(exc).__name__)
+        raise
+    except httpx.HTTPError as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+    except Exception as exc:
+        finish_provider_attempt("transport_error", type(exc).__name__)
+        raise
+
+    try:
+        data = response.json()
+    except Exception as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
+        raise RuntimeError("GigaChat вернул невалидный JSON.") from exc
+    provider_usage = extract_usage(data)
     try:
         choice = data["choices"][0]
         content = choice["message"]["content"]
         finish_reason = choice.get("finish_reason")
     except (KeyError, IndexError, TypeError) as exc:
+        finish_provider_attempt("parse_error", type(exc).__name__)
         raise RuntimeError(f"Неожиданный ответ GigaChat: {data}") from exc
     if not isinstance(content, str):
+        finish_provider_attempt("parse_error", "RuntimeError")
         raise RuntimeError(f"GigaChat вернул не-текстовый ответ: {data}")
     if finish_reason and finish_reason not in ("stop", "eos"):
+        finish_provider_attempt("parse_error", "RuntimeError")
         raise RuntimeError(
             "Ответ GigaChat завершён нештатно. "
             f"finish_reason={finish_reason}."
         )
+    finish_provider_attempt("completed")
     return content
 
 
@@ -400,6 +512,9 @@ async def run_compressor_task_detailed(
         "actual_reduction_percent": 100.0,
     }
     last_guard_status = GUARD_REJECT_EMPTY
+    compressor_logical_call_id = new_logical_call_id(
+        COMPRESSOR_ROLE_ID, "COMPRESS"
+    )
 
     for attempt in range(1, MAX_COMPRESSOR_ATTEMPTS + 1):
         prompt = render_compressor_prompt(
@@ -407,7 +522,38 @@ async def run_compressor_task_detailed(
             corrective_instruction=corrective_instruction,
         )
         body = build_compressor_request_body(selected_model.model_id, prompt)
-        last_result = (await _request_gigachat(body)).strip()
+        accounting_blocks = [
+            measure_text_block(
+                f"compressor_{block['id']}",
+                block["content"],
+                source_ref=f"compressor_block:{block['id']}",
+            )
+            for block in blocks
+        ]
+        if corrective_instruction:
+            accounting_blocks.append(
+                measure_text_block(
+                    "corrective_instruction",
+                    corrective_instruction,
+                    source_ref=f"compressor_corrective:{attempt}",
+                )
+            )
+        last_result = (
+            await _request_gigachat(
+                body,
+                model_id=selected_model.model_id,
+                provider=selected_model.provider,
+                mode=f"COMPRESS:{attempt}",
+                request_blocks=accounting_blocks,
+                source_references=[
+                    f"compressor_run:{run_id}",
+                    f"workspace:{workspace_id}",
+                    f"compressor_attempt:{attempt}",
+                ],
+                logical_call_id=compressor_logical_call_id,
+                diagnostic_callback=emit,
+            )
+        ).strip()
         last_metrics = measure_compression(source_text, last_result)
         last_guard_status = evaluate_compression_guard(source_text, last_result)
         emit(

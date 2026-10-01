@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -413,6 +414,14 @@ def _chat_root(root: Path, chat_id: str) -> Path:
     return root / ULTRA_DIRNAME / "chats" / chat_id
 
 
+def _chat_staging_root(root: Path) -> Path:
+    return root / ULTRA_DIRNAME / "chat_staging"
+
+
+def _publish_chat_directory(staging_dir: Path, chat_dir: Path) -> None:
+    os.replace(staging_dir, chat_dir)
+
+
 def _load_chat_metadata(path: Path) -> dict[str, Any]:
     data = _read_json_object(path, "chat metadata")
     chat_id = data.get("chat_id")
@@ -503,9 +512,10 @@ def create_chat(
 
     chat_id = f"chat_{uuid.uuid4().hex}"
     chat_dir = _chat_root(root, chat_id)
-    chat_dir.mkdir(parents=True, exist_ok=False)
-    (chat_dir / "messages").mkdir(parents=True, exist_ok=True)
-    (chat_dir / "summaries").mkdir(parents=True, exist_ok=True)
+    staging_root = _chat_staging_root(root)
+    staging_root.mkdir(parents=True, exist_ok=True)
+    staging_dir = staging_root / f"{chat_id}.{uuid.uuid4().hex}.tmp"
+    staging_dir.mkdir(parents=False, exist_ok=False)
 
     metadata = {
         "schema_version": SCHEMA_VERSION,
@@ -514,7 +524,18 @@ def create_chat(
         "title": clean_title,
         "created_at": _utc_now_iso(),
     }
-    _atomic_write_json(chat_dir / "metadata.json", metadata)
+    try:
+        (staging_dir / "messages").mkdir(parents=False, exist_ok=False)
+        (staging_dir / "summaries").mkdir(parents=False, exist_ok=False)
+        _atomic_write_json(staging_dir / "metadata.json", metadata)
+        _publish_chat_directory(staging_dir, chat_dir)
+    finally:
+        if staging_dir.exists():
+            shutil.rmtree(staging_dir)
+        try:
+            staging_root.rmdir()
+        except OSError:
+            pass
     return metadata
 
 

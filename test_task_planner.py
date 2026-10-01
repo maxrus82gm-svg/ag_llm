@@ -21,7 +21,10 @@ def plan(persistence=True, *, operation="create", already=False, path="result.md
     return {"stages": [{"stage_id": "main", "goal": "requested result",
         "stage_type": "produce_artifact" if persistence else "analysis",
         "persistence_required": persistence,
-        "allowed_capabilities": ["READ", "WRITE"], "completion_criteria": ["requested outcome"],
+        "allowed_capabilities": ["READ", "WRITE"],
+        "completion_mode": "persistence" if persistence else "model_result",
+        "evidence_requirements": [],
+        "completion_criteria": ["requested outcome"],
         "artifacts": [{"artifact_id": "result", "path": path, "operation": operation,
                        "allow_already_satisfied": already,
                        "postcondition": {"kind": "equals", "value": value}}] if persistence else []}],
@@ -87,8 +90,12 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
 
     async def run_v6(self, initial=None, responses=None, *, planner_effect=None, audits=None,
                      callback=None, extra_patches=(), allow_write=True,
-                     final_audit_enabled=True):
-        self.permissions.update(allow_write=allow_write, allow_verify=True, tool_limit=12)
+                     final_audit_enabled=True, tool_limit=12):
+        self.permissions.update(
+            allow_write=allow_write,
+            allow_verify=True,
+            tool_limit=tool_limit,
+        )
         initial = initial or plan()
         async def planner(**kwargs):
             if planner_effect:
@@ -168,6 +175,418 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(state["receipts"]), 1)
         self.assertIn("executor_diagnostic_reset", self.event_names())
         self.assertEqual(audit.await_count, 1)
+
+    async def test_read_stage_completes_from_server_owned_tool_evidence(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+        second = plan(False)["stages"][0]
+        second["stage_id"] = "inspect_stage"
+        second["allowed_capabilities"] = ["READ"]
+        second["completion_mode"] = "server_evidence"
+        second["evidence_requirements"] = [{
+            "evidence_id": "readback",
+            "tool": "read_file",
+            "arguments": {"path": "result.md"},
+        }]
+        contract = {"stages": [first, second], "obligation_changes": []}
+
+        async def planner(**kw):
+            if kw["mode"] == "INITIAL":
+                return copy.deepcopy(contract)
+            if kw["context"]["stage"]["stage_id"] == "inspect_stage":
+                self.fail("READ stage with successful stage-local evidence must not ask Planner readiness")
+            return ready(kw["context"])
+
+        result, audit, client = await self.run_v6(
+            contract,
+            planner_effect=planner,
+            responses=[
+                tool(write()),
+                tool({"name": "read_file", "arguments": {"path": "result.md"}}),
+                legacy.FakeResponse("Inspection complete"),
+            ],
+        )
+
+        self.assertEqual(result, "Inspection complete")
+        self.assertEqual(client.post_count, 3)
+        state = self.stored()
+        self.assertEqual(state["stage_states"]["inspect_stage"]["status"], "SATISFIED")
+        self.assertIn("non_persistence_evidence_satisfied", self.event_names())
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_verify_stage_completes_from_successful_verify_evidence(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+        second = plan(False)["stages"][0]
+        second.update(
+            stage_id="verify_stage",
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            goal="verify result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                },
+            }],
+            completion_criteria=["deterministic verification passed"],
+        )
+        contract = {"stages": [first, second], "obligation_changes": []}
+
+        async def planner(**kw):
+            if kw["mode"] == "INITIAL":
+                return copy.deepcopy(contract)
+            if kw["context"]["stage"]["stage_id"] == "verify_stage":
+                self.fail("VERIFY stage with successful stage-local evidence must not ask Planner readiness")
+            return ready(kw["context"])
+
+        result, audit, client = await self.run_v6(
+            contract,
+            planner_effect=planner,
+            responses=[
+                tool(write()),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                }}),
+                legacy.FakeResponse("Verification complete"),
+            ],
+        )
+
+        self.assertEqual(result, "Verification complete")
+        self.assertEqual(client.post_count, 3)
+        state = self.stored()
+        self.assertEqual(state["stage_states"]["verify_stage"]["status"], "SATISFIED")
+        self.assertIn("non_persistence_evidence_satisfied", self.event_names())
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_wrong_successful_verify_does_not_close_exact_evidence_stage(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+        second = plan(False)["stages"][0]
+        second.update(
+            stage_id="verify_stage",
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            goal="verify exact result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                },
+            }],
+            completion_criteria=["exact equals verification passed"],
+        )
+        contract = {"stages": [first, second], "obligation_changes": []}
+
+        result, audit, client = await self.run_v6(
+            contract,
+            responses=[
+                tool(write()),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "contains", "value": "done",
+                }}),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                }}),
+                legacy.FakeResponse("Verification complete"),
+            ],
+        )
+
+        self.assertEqual(result, "Verification complete")
+        self.assertEqual(client.post_count, 4)
+        satisfied = [
+            event for event in self.events
+            if event["event"] == "non_persistence_evidence_satisfied"
+        ]
+        self.assertEqual(len(satisfied), 1)
+        self.assertEqual(satisfied[0]["evidence_ids"], ["exact_verify"])
+        self.assertEqual(
+            self.stored()["stage_states"]["verify_stage"]["status"],
+            "SATISFIED",
+        )
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_server_evidence_gate_blocks_non_contract_calls_without_tool_budget(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+
+        second = plan(False)["stages"][0]
+        second.update(
+            stage_id="read_stage",
+            allowed_capabilities=["READ"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+            completion_criteria=["exact target read"],
+        )
+
+        third = plan(False)["stages"][0]
+        third.update(
+            stage_id="verify_stage",
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            goal="verify exact result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                },
+            }],
+            completion_criteria=["exact equals verification passed"],
+        )
+        contract = {
+            "stages": [first, second, third],
+            "obligation_changes": [],
+        }
+
+        result, audit, client = await self.run_v6(
+            contract,
+            tool_limit=20,
+            responses=[
+                tool(write()),
+                tool({"name": "list_dir", "arguments": {"path": "."}}),
+                tool({"name": "read_file", "arguments": {"path": "other.md"}}),
+                tool({"name": "read_file", "arguments": {"path": "result.md"}}),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "exists", "value": "",
+                }}),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                }}),
+                legacy.FakeResponse("All required stages complete"),
+            ],
+        )
+
+        self.assertEqual(result, "All required stages complete")
+        self.assertEqual(client.post_count, 7)
+        started = [
+            event["function"]
+            for event in self.events
+            if event["event"] == "tool_started"
+        ]
+        self.assertEqual(
+            started,
+            ["write_file", "read_file", "verify_file_content"],
+        )
+        interventions = [
+            event for event in self.events
+            if event["event"] == "server_evidence_gate_intervention"
+        ]
+        self.assertEqual(len(interventions), 3)
+        self.assertTrue(all(event["executed"] is False for event in interventions))
+        self.assertEqual(
+            self.event_names().count("non_persistence_evidence_satisfied"),
+            2,
+        )
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_punctuation_only_final_response_gets_one_bounded_repair(self):
+        result, audit, client = await self.run_v6(
+            responses=[
+                tool(write()),
+                legacy.FakeResponse("<"),
+                legacy.FakeResponse("Готово. Файл создан и проверен."),
+            ],
+        )
+
+        self.assertEqual(result, "Готово. Файл создан и проверен.")
+        self.assertEqual(client.post_count, 3)
+        repairs = [
+            event for event in self.events
+            if event["event"] == "final_response_repair_requested"
+        ]
+        self.assertEqual(len(repairs), 1)
+        self.assertEqual(
+            repairs[0]["reason"],
+            "non_human_readable_final_content",
+        )
+        self.assertEqual(audit.await_count, 1)
+        final_context = json.loads(
+            audit.await_args.kwargs["verification_context"]
+        )
+        self.assertEqual(
+            final_context["candidate_final_response"]["content"],
+            "Готово. Файл создан и проверен.",
+        )
+
+    async def test_tool_call_markup_final_response_gets_one_bounded_repair(self):
+        markup = (
+            '<tool_calls>\n'
+            '<invoke name="write_file">\n'
+            '<parameter name="path" string="true">result.md</parameter>\n'
+            '<parameter name="content" string="true">done</parameter>\n'
+            '</invoke>\n'
+            '</tool_calls>'
+        )
+        result, audit, client = await self.run_v6(
+            responses=[
+                tool(write()),
+                legacy.FakeResponse(markup),
+                legacy.FakeResponse("Готово. Файл создан и проверен."),
+            ],
+        )
+
+        self.assertEqual(result, "Готово. Файл создан и проверен.")
+        self.assertEqual(client.post_count, 3)
+        repairs = [
+            event for event in self.events
+            if event["event"] == "final_response_repair_requested"
+        ]
+        self.assertEqual(len(repairs), 1)
+        self.assertEqual(
+            repairs[0]["reason"],
+            "tool_call_markup_final_content",
+        )
+        self.assertEqual(audit.await_count, 1)
+        final_context = json.loads(
+            audit.await_args.kwargs["verification_context"]
+        )
+        self.assertEqual(
+            final_context["candidate_final_response"]["content"],
+            "Готово. Файл создан и проверен.",
+        )
+
+    async def test_tool_reserve_preserves_mandatory_write_read_verify_calls(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+
+        second = plan(False)["stages"][0]
+        second.update(
+            stage_id="read_stage",
+            allowed_capabilities=["READ"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+            completion_criteria=["exact target read"],
+        )
+
+        third = plan(False)["stages"][0]
+        third.update(
+            stage_id="verify_stage",
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            goal="verify exact result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                },
+            }],
+            completion_criteria=["exact equals verification passed"],
+        )
+        contract = {
+            "stages": [first, second, third],
+            "obligation_changes": [],
+        }
+
+        result, audit, client = await self.run_v6(
+            contract,
+            tool_limit=3,
+            responses=[
+                tool({"name": "read_file", "arguments": {"path": "result.md"}}),
+                tool(write()),
+                tool({"name": "find_text", "arguments": {
+                    "path": "result.md", "text": "done",
+                }}),
+                tool({"name": "read_file", "arguments": {"path": "result.md"}}),
+                tool({"name": "verify_file_content", "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                }}),
+                legacy.FakeResponse("All required stages complete"),
+            ],
+        )
+
+        self.assertEqual(result, "All required stages complete")
+        self.assertEqual(client.post_count, 6)
+        self.assertEqual((self.workspace / "result.md").read_text(), "done")
+        interventions = [
+            event for event in self.events
+            if event["event"] == "tool_budget_reserve_intervention"
+        ]
+        self.assertEqual(len(interventions), 1)
+        self.assertTrue(all(event["executed"] is False for event in interventions))
+        evidence_interventions = [
+            event for event in self.events
+            if event["event"] == "server_evidence_gate_intervention"
+        ]
+        self.assertEqual(len(evidence_interventions), 1)
+        self.assertTrue(
+            all(event["executed"] is False for event in evidence_interventions)
+        )
+        started = [
+            event["function"]
+            for event in self.events
+            if event["event"] == "tool_started"
+        ]
+        self.assertEqual(
+            started,
+            ["write_file", "read_file", "verify_file_content"],
+        )
+        self.assertGreaterEqual(
+            self.event_names().count("tool_budget_reserve_activated"),
+            3,
+        )
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_tool_reserve_blocks_impossible_plan_before_executor_api(self):
+        first = plan()["stages"][0]
+        first["stage_id"] = "write_stage"
+
+        second = plan(False)["stages"][0]
+        second.update(
+            stage_id="read_stage",
+            allowed_capabilities=["READ"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+        )
+
+        third = plan(False)["stages"][0]
+        third.update(
+            stage_id="verify_stage",
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "equals", "value": "done",
+                },
+            }],
+        )
+        contract = {
+            "stages": [first, second, third],
+            "obligation_changes": [],
+        }
+
+        result, audit, client = await self.run_v6(
+            contract,
+            tool_limit=2,
+            responses=[],
+        )
+
+        self.assertIn("BLOCKED", result)
+        self.assertIn("mandatory_tool_budget_exhausted", result)
+        self.assertEqual(client.post_count, 0)
+        audit.assert_not_awaited()
 
     async def test_live_readiness_ready_without_uuid_executes_concrete_write(self):
         async def nonideal_planner(**kw):
@@ -325,6 +744,100 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([p["plan_version"] for p in state["plans"]], [1, 2])
         self.assertEqual(state["plans"][0]["stages"][0]["artifacts"][0]["operation"], "create")
         self.assertIn("plan_revised", self.event_names())
+
+    async def test_existing_exact_create_target_replans_to_already_satisfied_without_write(self):
+        (self.workspace / "result.md").write_text("done")
+        replan_calls = 0
+
+        async def replanner(**kw):
+            nonlocal replan_calls
+            if kw["mode"] == "INITIAL":
+                return plan()
+            if kw["mode"] == "REPLAN":
+                replan_calls += 1
+                fact = kw["context"]["authoritative_facts"][0]
+                self.assertIs(fact["postcondition_holds"], True)
+                new = plan(
+                    operation="update",
+                    already=(replan_calls > 1),
+                )
+                new["obligation_changes"] = [{
+                    "old_artifact_id": "result",
+                    "action": "replace",
+                    "replacement_ids": ["result"],
+                    "reason": "existing target already matches",
+                    "fact_id": fact["fact_id"],
+                }]
+                return new
+            return ready(kw["context"])
+
+        real_dispatch = server._execute_agent_function
+        with patch.object(server, "_execute_agent_function", wraps=real_dispatch) as dispatch:
+            result, audit, client = await self.run_v6(
+                planner_effect=replanner,
+                responses=[tool(write()), legacy.FakeResponse("Finished")],
+            )
+
+        self.assertEqual(result, "Finished")
+        self.assertEqual(replan_calls, 2)
+        self.assertEqual(client.post_count, 2)
+        self.assertIn("planner_attempt_rejected", self.event_names())
+        self.assertEqual(dispatch.call_count, 0)
+        state = self.stored()
+        self.assertEqual(state["receipts"], [])
+        self.assertEqual(
+            state["stage_states"]["main"]["obligations"]["result"]["status"],
+            "ALREADY_SATISFIED",
+        )
+        self.assertIn("persistence_satisfied", self.event_names())
+        self.assertIn("stage_satisfied", self.event_names())
+        self.assertNotIn("tool_started", self.event_names())
+        self.assertEqual(audit.await_count, 1)
+
+    async def test_invalid_replan_transition_is_repaired_before_plan_acceptance(self):
+        (self.workspace / "result.md").write_text("before")
+        replan_attempts = 0
+
+        async def replanner(**kw):
+            nonlocal replan_attempts
+            if kw["mode"] == "INITIAL":
+                return plan()
+            if kw["mode"] == "REPLAN":
+                replan_attempts += 1
+                new = plan(operation="update")
+                fact_id = kw["context"]["authoritative_facts"][0]["fact_id"]
+                if replan_attempts == 1:
+                    new["obligation_changes"] = [{
+                        "old_artifact_id": "result",
+                        "action": "cancel",
+                        "replacement_ids": [],
+                        "reason": "target exists",
+                        "fact_id": fact_id,
+                    }]
+                else:
+                    new["obligation_changes"] = [{
+                        "old_artifact_id": "result",
+                        "action": "replace",
+                        "replacement_ids": ["result"],
+                        "reason": "target exists",
+                        "fact_id": fact_id,
+                    }]
+                return new
+            return ready(kw["context"])
+
+        result, audit, _ = await self.run_v6(
+            planner_effect=replanner,
+            responses=[tool(write()), tool(write()), legacy.FakeResponse("Finished")],
+        )
+
+        self.assertEqual(result, "Finished")
+        self.assertEqual(replan_attempts, 2)
+        self.assertEqual(self.stored()["plan_version"], 2)
+        names = self.event_names()
+        self.assertIn("planner_attempt_rejected", names)
+        self.assertIn("plan_revised", names)
+        self.assertNotIn("stage_blocked", names)
+        self.assertEqual(audit.await_count, 1)
 
     async def test_dredd_execution_defect_does_not_call_planner_again(self):
         failed = replace(legacy.fail_result("A"), route="EXECUTION_DEFECT", affected_stage_ids=("main",))
@@ -577,16 +1090,40 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
         self.policy = server._prepare_policy_for_workspace(self.root, server._normalize_permissions({
             "allow_read": True, "allow_write": True, "allow_verify": True, "auto_backup": False}))
 
-    def controller(self, contract, effect=None):
+    def controller(self, contract, effect=None, raw_task="TASK"):
         async def planner(**kw):
             if effect:
                 return await effect(**kw)
             return copy.deepcopy(contract) if kw["mode"] != "READINESS" else ready(kw["context"])
         return task_planner.TaskLifecycle(path=Path(self.temp.name) / "state.json", run_id="run1",
-            task_block_id=None, raw_task="TASK", planner_call=planner,
+            task_block_id=None, raw_task=raw_task, planner_call=planner,
             emit=lambda name, data: self.events.append({"event": name, **data}),
             snapshot=lambda p: server._planner_target_snapshot(self.root, p, self.policy),
             prepare=lambda c, a, repair: server._prepare_persistence_candidate(self.root, c, a, self.policy, repair))
+
+    async def test_lifecycle_passes_raw_task_into_plan_validation(self):
+        lc = self.controller(
+            plan(),
+            raw_task="Проанализируй provider_accounting.py. Не изменяй никакие файлы.",
+        )
+        with self.assertRaisesRegex(
+            task_planner.LifecycleBlocked,
+            "planner_protocol_or_runtime_error",
+        ):
+            await lc.initialize({})
+        rejected = [
+            event for event in self.events
+            if event["event"] == "planner_attempt_rejected"
+        ]
+        self.assertEqual(len(rejected), 2)
+        self.assertTrue(
+            all(
+                "RAW TASK explicitly forbids file mutations"
+                in event["error_message"]
+                for event in rejected
+            )
+        )
+        self.assertEqual(lc.state["plans"], [])
 
     async def test_noop_write_is_not_mutation_evidence(self):
         (self.root / "result.md").write_text("done")
@@ -634,8 +1171,15 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
             return plan() if kw["mode"] == "INITIAL" else plan(False)
         lc = self.controller(plan(), effect)
         await lc.initialize({})
-        with self.assertRaisesRegex(task_planner.LifecycleBlocked, "dropped_obligation"):
+        with self.assertRaisesRegex(task_planner.LifecycleBlocked, "planner_protocol_or_runtime_error"):
             await lc.replan({"reason": "target_changed"})
+        rejected = [
+            event for event in self.events
+            if event["event"] == "planner_attempt_rejected"
+            and event.get("mode") == "REPLAN"
+        ]
+        self.assertEqual(len(rejected), 2)
+        self.assertTrue(all("dropped obligation" in event["error_message"] for event in rejected))
         self.assertEqual(lc.state["plan_version"], 1)
 
     async def test_shared_call_budget_applies_across_roles(self):
@@ -687,6 +1231,34 @@ class PersistenceStateTests(unittest.IsolatedAsyncioTestCase):
 
 
 class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
+    def test_explicit_no_file_mutation_rejects_mutating_plan(self):
+        for raw_task in (
+            "Проанализируй provider_accounting.py. Не изменяй никакие файлы.",
+            "Analyze provider_accounting.py. Do not modify any files.",
+            "Проведи анализ без изменения файлов.",
+        ):
+            with self.subTest(raw_task=raw_task), self.assertRaisesRegex(
+                planner_runtime.PlannerError,
+                "RAW TASK explicitly forbids file mutations",
+            ):
+                planner_runtime.validate_plan(plan(), raw_task=raw_task)
+
+            read_only = plan(False)
+            read_only["stages"][0]["allowed_capabilities"] = ["READ"]
+            planner_runtime.validate_plan(read_only, raw_task=raw_task)
+
+        for non_global in (
+            "Не изменяй никакие файлы кроме result.md.",
+            "Не изменяй никакие файлы без необходимости.",
+            "Do not modify any files unless necessary.",
+        ):
+            with self.subTest(non_global=non_global):
+                self.assertFalse(
+                    planner_runtime.raw_task_explicitly_forbids_file_mutation(
+                        non_global
+                    )
+                )
+
     def test_invalid_stage_type_reports_bounded_received_value(self):
         value = plan()
         value["stages"][0]["stage_type"] = "edit"
@@ -700,8 +1272,17 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
     def test_verification_stage_requires_explicit_verify_capability(self):
         def verification(caps):
             value = plan(False)
-            value["stages"][0]["stage_type"] = "verification"
-            value["stages"][0]["allowed_capabilities"] = caps
+            stage = value["stages"][0]
+            stage["stage_type"] = "verification"
+            stage["allowed_capabilities"] = caps
+            stage["completion_mode"] = "server_evidence"
+            stage["evidence_requirements"] = [{
+                "evidence_id": "verify_exists",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md", "kind": "exists", "value": "",
+                },
+            }]
             return value
 
         with self.assertRaisesRegex(
@@ -721,11 +1302,18 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         verification = copy.deepcopy(analysis)
         verification["stages"][0]["stage_type"] = "verification"
         verification["stages"][0]["allowed_capabilities"] = ["VERIFY"]
+        verification["stages"][0]["completion_mode"] = "server_evidence"
+        verification["stages"][0]["evidence_requirements"] = [{
+            "evidence_id": "verify_exists",
+            "tool": "verify_file_content",
+            "arguments": {"path": "result.md", "kind": "exists", "value": ""},
+        }]
         planner_runtime.validate_plan(verification)
 
         for field in (
             "stage_id", "goal", "stage_type", "persistence_required",
-            "allowed_capabilities", "artifacts", "completion_criteria",
+            "allowed_capabilities", "artifacts", "completion_mode",
+            "evidence_requirements", "completion_criteria",
         ):
             incomplete = copy.deepcopy(analysis)
             del incomplete["stages"][0][field]
@@ -756,9 +1344,10 @@ class PlannerProtocolTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(body["function_call"], "none")
         system = body["messages"][0]["content"]
         self.assertIn(
-            "Every stage with stage_type='verification' must include VERIFY",
+            "Every verification stage MUST use",
             system,
         )
+        self.assertIn("exact VERIFY tool call", system)
         self.assertIn("prefer verify_file_content", system)
         with self.assertRaises(planner_runtime.PlannerError):
             planner_runtime.build_planner_body("INITIAL", "x" * 150000, {}, "gigachat_ultra")

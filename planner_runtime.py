@@ -1,8 +1,11 @@
 """Bounded, tool-free Planner role. No Executor or Verifier session is reused."""
 from __future__ import annotations
 
+import asyncio
 import copy
 import json
+import re
+import time
 import uuid
 
 import httpx
@@ -10,6 +13,11 @@ import httpx
 from context_registry import resolve_context_text
 from gigachat_transport import CHAT_URL, extract_usage, get_access_token
 from model_registry import get_model_spec
+from provider_accounting import (
+    build_provider_attempt_started,
+    build_provider_attempt_terminal,
+    measure_text_block,
+)
 
 DEFAULT_PLANNER_MODEL_ID = "gigachat_ultra"
 MAX_PLANNING_CONTEXT_BYTES = 128 * 1024
@@ -17,6 +25,18 @@ MAX_PLANNER_RESPONSE_BYTES = 96 * 1024
 PLANNER_TIMEOUT_SECONDS = 90
 MAX_PLAN_STAGES = 8
 MAX_PLAN_ARTIFACTS = 16
+MAX_STAGE_EVIDENCE_REQUIREMENTS = 8
+EVIDENCE_TOOL_CAPABILITIES = {
+    "list_dir": "READ",
+    "read_file": "READ",
+    "find_text": "READ",
+    "read_file_range": "READ",
+    "verify_file_content": "VERIFY",
+    "python_compile": "VERIFY",
+    "git_status": "VERIFY",
+    "git_diff": "VERIFY",
+    "ui_smoke_test": "VERIFY",
+}
 PLANNER_HARD_PROTOCOL = (
     "READ-only inspection or rereading is normally a stage with stage_type='analysis' "
     "and allowed_capabilities=['READ']. Exact deterministic checking is a stage with "
@@ -24,19 +44,80 @@ PLANNER_HARD_PROTOCOL = (
     "If a task explicitly requests both rereading and final exact verification, use "
     "separate analysis/READ and verification/VERIFY stages. Every stage object must "
     "contain all fields: stage_id, goal, stage_type, persistence_required, "
-    "allowed_capabilities, artifacts, completion_criteria. Every stage with "
-    "stage_type='verification' must include VERIFY in allowed_capabilities. "
+    "allowed_capabilities, artifacts, completion_mode, evidence_requirements, "
+    "completion_criteria. completion_mode is persistence|model_result|server_evidence. "
+    "Persistence stages use completion_mode='persistence' and evidence_requirements=[]. "
+    "A pure reread/check stage that needs no model synthesis should use "
+    "completion_mode='server_evidence' with exact evidence_requirements containing "
+    "evidence_id, tool and exact arguments. Analysis that requires interpretation after "
+    "tools uses completion_mode='model_result'; its evidence_requirements are prerequisites, "
+    "not automatic completion. Every verification stage MUST use "
+    "completion_mode='server_evidence', include VERIFY in allowed_capabilities and declare "
+    "the exact VERIFY tool call that proves completion. "
     "The INITIAL top-level object must contain stages and obligation_changes, and "
     "INITIAL obligation_changes must be []. Add READ to a verification stage only "
     "when raw file inspection is also required. "
     "For exact textual file verification prefer verify_file_content with "
     "equals/contains/sha256 over repeated read_file/find_text when the check can be "
-    "expressed by that tool."
+    "expressed by that tool. "
+    "Evidence tool argument contracts are exact: list_dir/read_file use {'path': '...'}; "
+    "find_text uses {'path': '...', 'text': '...'}; read_file_range uses "
+    "{'path': '...', 'start_line': 1, 'end_line': 2}; verify_file_content uses "
+    "{'path': '...', 'kind': 'exists|absent|equals|contains|sha256', 'value': '...'}; "
+    "python_compile uses {'paths': ['file.py']}; git_diff uses {'paths': ['file.py']} "
+    "(an empty paths list is allowed only when whole-workspace diff is intended); "
+    "git_status and ui_smoke_test use {}. Never invent aliases such as file/files "
+    "for required paths. "
+    "Do not double-escape JSON control sequences in exact text values. After JSON "
+    "parsing, a requested newline/tab/carriage-return must be the real control "
+    "character, not literal backslash+n/backslash+t/backslash+r text, unless the RAW "
+    "TASK explicitly requests those literal backslash sequences."
 )
 
 
 class PlannerError(RuntimeError):
     pass
+
+
+def raw_task_explicitly_forbids_file_mutation(raw_task: str | None) -> bool:
+    """Return True only for an explicit global no-file-mutation instruction."""
+    if not isinstance(raw_task, str) or not raw_task.strip():
+        return False
+    clauses = re.split(r"(?<=[.!?;])\s+|[\r\n]+", raw_task.casefold())
+    exception_pattern = re.compile(
+        r"\b(?:кроме|за\s+исключением|без\s+необходимости|по\s+необходимости|"
+        r"except|other\s+than|unless|if\s+(?:needed|necessary))\b"
+    )
+    patterns = (
+        re.compile(
+            r"\bне\s+(?:изменяй|изменять|изменить|редактируй|редактировать|"
+            r"меняй|менять)\s+(?:никакие|никаких|какие-либо|каких-либо)\s+"
+            r"файл\w*\b"
+        ),
+        re.compile(
+            r"\bничего\s+не\s+(?:изменяй|изменять|меняй|менять|"
+            r"редактируй|редактировать)\b"
+        ),
+        re.compile(
+            r"\bбез\s+(?:изменения|изменений|редактирования)\s+"
+            r"(?:(?:каких-либо|любых)\s+)?файл\w*\b"
+        ),
+        re.compile(
+            r"\b(?:do\s+not|don't)\s+(?:modify|change|edit|write|create|delete)\s+"
+            r"(?:any\s+)?files?\b"
+        ),
+        re.compile(
+            r"\bwithout\s+(?:modifying|changing|editing|writing|creating|deleting)\s+"
+            r"(?:any\s+)?files?\b"
+        ),
+        re.compile(r"\bmake\s+no\s+(?:file\s+)?changes?\b"),
+    )
+    for clause in clauses:
+        if exception_pattern.search(clause):
+            continue
+        if any(pattern.search(clause) for pattern in patterns):
+            return True
+    return False
 
 
 def strict_json(text: str) -> dict:
@@ -101,15 +182,148 @@ def string_list(value, label, limit=16):
     return value
 
 
-def validate_plan(value: dict) -> dict:
+def _evidence_path(value, label, *, allow_dot=False):
+    if not isinstance(value, str) or not value or len(value) > 512:
+        raise PlannerError(f"Invalid {label}")
+    if allow_dot and value == ".":
+        return value
+    if "\\" in value or ":" in value or value.startswith("/") or any(
+        part in {"", ".", ".."} for part in value.split("/")
+    ):
+        raise PlannerError(f"{label} must be canonical workspace-relative")
+    return value
+
+
+def _validate_evidence_arguments(tool: str, arguments: object) -> None:
+    if not isinstance(arguments, dict):
+        raise PlannerError("Evidence arguments must be an object")
+    if tool == "list_dir":
+        keys(arguments, {"path"})
+        _evidence_path(arguments["path"], "evidence path", allow_dot=True)
+    elif tool == "read_file":
+        keys(arguments, {"path"})
+        _evidence_path(arguments["path"], "evidence path")
+    elif tool == "find_text":
+        keys(arguments, {"path", "text"})
+        _evidence_path(arguments["path"], "evidence path")
+        text_field(arguments["text"], "evidence search text", 8000)
+    elif tool == "read_file_range":
+        keys(arguments, {"path", "start_line", "end_line"})
+        _evidence_path(arguments["path"], "evidence path")
+        start, end = arguments["start_line"], arguments["end_line"]
+        if (type(start) is not int or type(end) is not int
+                or start < 1 or end < start or end > 1_000_000):
+            raise PlannerError("Invalid evidence line range")
+    elif tool == "verify_file_content":
+        keys(arguments, {"path", "kind", "value"})
+        _evidence_path(arguments["path"], "evidence path")
+        kind, value = arguments["kind"], arguments["value"]
+        if kind not in {"exists", "absent", "equals", "contains", "sha256"}:
+            raise PlannerError("Invalid evidence verification kind")
+        if not isinstance(value, str) or len(value) > 8000:
+            raise PlannerError("Invalid evidence verification value")
+        if kind in {"exists", "absent"} and value:
+            raise PlannerError("Existence evidence requires empty value")
+        if kind in {"contains", "sha256"} and not value:
+            raise PlannerError("Content evidence requires nonempty value")
+        if kind == "sha256" and (
+            len(value) != 64 or any(c not in "0123456789abcdef" for c in value)
+        ):
+            raise PlannerError("Invalid evidence SHA-256")
+    elif tool == "python_compile":
+        keys(arguments, {"paths"})
+        paths = arguments["paths"]
+        if not isinstance(paths, list) or not 1 <= len(paths) <= 16:
+            raise PlannerError("Invalid evidence compile paths")
+        for path in paths:
+            _evidence_path(path, "evidence compile path")
+    elif tool == "git_diff":
+        keys(arguments, {"paths"})
+        paths = arguments["paths"]
+        if not isinstance(paths, list) or len(paths) > 16:
+            raise PlannerError("Invalid evidence diff paths")
+        for path in paths:
+            _evidence_path(path, "evidence diff path", allow_dot=True)
+    elif tool in {"git_status", "ui_smoke_test"}:
+        keys(arguments, set())
+    else:
+        raise PlannerError("Unsupported evidence tool")
+    serialized = json.dumps(arguments, ensure_ascii=False, sort_keys=True)
+    if len(serialized.encode("utf-8")) > 32 * 1024:
+        raise PlannerError("Evidence arguments too large")
+
+
+def _validate_stage_evidence_contract(stage: dict, caps: list[str]) -> None:
+    mode = stage["completion_mode"]
+    if mode not in {"persistence", "model_result", "server_evidence"}:
+        raise PlannerError("Invalid completion_mode")
+    requirements = stage["evidence_requirements"]
+    if not isinstance(requirements, list) or len(requirements) > MAX_STAGE_EVIDENCE_REQUIREMENTS:
+        raise PlannerError("Invalid evidence requirements")
+    ids = set()
+    for requirement in requirements:
+        keys(requirement, {"evidence_id", "tool", "arguments"})
+        evidence_id = text_field(requirement["evidence_id"], "evidence_id", 80)
+        if evidence_id in ids:
+            raise PlannerError("Duplicate evidence_id")
+        ids.add(evidence_id)
+        tool = text_field(requirement["tool"], "evidence tool", 80)
+        capability = EVIDENCE_TOOL_CAPABILITIES.get(tool)
+        if capability is None:
+            raise PlannerError("Unsupported evidence tool")
+        if capability not in caps:
+            raise PlannerError("Evidence tool capability is not allowed by stage")
+        try:
+            _validate_evidence_arguments(tool, requirement["arguments"])
+        except PlannerError as exc:
+            raise PlannerError(
+                f"Invalid evidence arguments for {tool}: {exc}"
+            ) from exc
+    if stage["persistence_required"]:
+        if mode != "persistence" or requirements:
+            raise PlannerError(
+                "Persistence stage must use completion_mode=persistence and no evidence requirements"
+            )
+    else:
+        if mode == "persistence":
+            raise PlannerError("Non-persistence stage cannot use completion_mode=persistence")
+        if mode == "server_evidence" and not requirements:
+            raise PlannerError("server_evidence stage requires evidence requirements")
+    if stage["stage_type"] == "verification":
+        if mode != "server_evidence":
+            raise PlannerError("Verification stage requires server_evidence completion")
+        if not any(
+            EVIDENCE_TOOL_CAPABILITIES[item["tool"]] == "VERIFY"
+            for item in requirements
+        ):
+            raise PlannerError("Verification stage requires exact VERIFY evidence")
+
+
+def _reject_unrequested_literal_control_escapes(
+    value: str, *, raw_task: str | None, label: str,
+) -> None:
+    if raw_task is None:
+        return
+    for escaped, name in (("\\n", "newline"), ("\\r", "carriage return"), ("\\t", "tab")):
+        if escaped in value and escaped not in raw_task:
+            raise PlannerError(
+                f"{label} appears double-escaped: literal {escaped!r} is not present "
+                f"in RAW TASK. Encode requested {name} as a real JSON control "
+                "character after parsing."
+            )
+
+
+def validate_plan(value: dict, *, raw_task: str | None = None) -> dict:
     keys(value, {"stages", "obligation_changes"})
     stages = value["stages"]
     if not isinstance(stages, list) or not 1 <= len(stages) <= MAX_PLAN_STAGES:
         raise PlannerError("Invalid stages count")
     ids, artifacts = set(), set()
+    plan_requests_mutation = False
     for stage in stages:
         keys(stage, {"stage_id", "goal", "stage_type", "persistence_required",
-                     "allowed_capabilities", "artifacts", "completion_criteria"})
+                     "allowed_capabilities", "artifacts", "completion_mode",
+                     "evidence_requirements", "completion_criteria"})
         sid = text_field(stage["stage_id"], "stage_id", 80)
         if sid in ids:
             raise PlannerError("Duplicate stage_id")
@@ -125,8 +339,20 @@ def validate_plan(value: dict) -> dict:
         caps = string_list(stage["allowed_capabilities"], "capabilities", 4)
         if set(caps) - {"READ", "WRITE", "DELETE", "VERIFY"} or len(caps) != len(set(caps)):
             raise PlannerError("Invalid capabilities")
+        if stage["persistence_required"] or {"WRITE", "DELETE"} & set(caps):
+            plan_requests_mutation = True
         if stage["stage_type"] == "verification" and "VERIFY" not in caps:
             raise PlannerError("verification stage requires VERIFY capability")
+        _validate_stage_evidence_contract(stage, caps)
+        for requirement in stage["evidence_requirements"]:
+            if requirement["tool"] == "verify_file_content":
+                arguments = requirement["arguments"]
+                if arguments.get("kind") in {"equals", "contains"}:
+                    _reject_unrequested_literal_control_escapes(
+                        arguments.get("value", ""),
+                        raw_task=raw_task,
+                        label=f"Evidence {requirement['evidence_id']!r} value",
+                    )
         if not string_list(stage["completion_criteria"], "completion criteria"):
             raise PlannerError("Completion criteria required")
         if not isinstance(stage["artifacts"], list):
@@ -161,6 +387,11 @@ def validate_plan(value: dict) -> dict:
                 raise PlannerError("Invalid SHA-256 postcondition")
             if post["kind"] in {"exists", "absent"} and post["value"]:
                 raise PlannerError("Existence postconditions have an empty value")
+            if post["kind"] in {"equals", "contains"}:
+                _reject_unrequested_literal_control_escapes(
+                    post["value"], raw_task=raw_task,
+                    label=f"Artifact {aid!r} postcondition",
+                )
             if (artifact["operation"] == "delete") != (post["kind"] == "absent"):
                 raise PlannerError("Operation/postcondition mismatch")
     if len(artifacts) > MAX_PLAN_ARTIFACTS:
@@ -179,6 +410,14 @@ def validate_plan(value: dict) -> dict:
             raise PlannerError("Replacement ids required only for replacement")
         if set(change["replacement_ids"]) - artifacts:
             raise PlannerError("Unknown replacement obligation")
+    if (
+        plan_requests_mutation
+        and raw_task_explicitly_forbids_file_mutation(raw_task)
+    ):
+        raise PlannerError(
+            "RAW TASK explicitly forbids file mutations; "
+            "plan cannot request persistence, WRITE, or DELETE."
+        )
     return value
 
 
@@ -205,14 +444,24 @@ PLAN_FORMAT = {
                 "artifacts": [{"artifact_id": "result", "path": "result.md", "operation": "create",
                                "postcondition": {"kind": "contains", "value": "required content"},
                                "allow_already_satisfied": False}],
+                "completion_mode": "persistence", "evidence_requirements": [],
                 "completion_criteria": ["requested result physically exists"]},
                {"stage_id": "stage_2", "goal": "inspect result",
                 "stage_type": "analysis", "persistence_required": False,
                 "allowed_capabilities": ["READ"], "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "readback", "tool": "read_file",
+                    "arguments": {"path": "result.md"}}],
                 "completion_criteria": ["inspection completed"]},
                {"stage_id": "stage_3", "goal": "verify exact result",
                 "stage_type": "verification", "persistence_required": False,
                 "allowed_capabilities": ["VERIFY"], "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "exact_verify", "tool": "verify_file_content",
+                    "arguments": {"path": "result.md", "kind": "contains",
+                                  "value": "required content"}}],
                 "completion_criteria": ["deterministic verification passed"]}],
     "obligation_changes": [],
 }
@@ -258,6 +507,29 @@ def _planner_session_system() -> str:
         + resolve_context_text("planner.replan", plan_variables).strip(),
     ]
     return "\n\n".join(parts)
+
+
+def _planner_request_blocks(messages: list[dict], mode: str) -> list[dict]:
+    blocks = []
+    for index, message in enumerate(messages):
+        content = message.get("content")
+        if not isinstance(content, str):
+            content = json.dumps(message, ensure_ascii=False, separators=(",", ":"))
+        role = str(message.get("role") or "unknown")
+        source_ref = (
+            "planner_protocol_system"
+            if index == 0 and role == "system"
+            else f"planner_session:{mode}:message:{index}:{role}"
+        )
+        blocks.append(
+            measure_text_block(
+                f"message_{index}_{role}",
+                content,
+                source_ref=source_ref,
+                kind="planner_message",
+            )
+        )
+    return blocks
 
 
 class PlannerSession:
@@ -352,39 +624,109 @@ class PlannerSession:
             "mode": mode, "system": body["messages"][0]["content"],
             "user": user_text or body["messages"][-1]["content"],
         })
+        provider_started = None
+        provider_started_at = None
+        provider_usage = None
+        provider_http_status = None
+        provider_terminal_emitted = False
+
+        def finish_provider_attempt(outcome: str, error_type: str | None = None) -> None:
+            nonlocal provider_terminal_emitted
+            if provider_started is None or provider_terminal_emitted:
+                return
+            provider_terminal_emitted = True
+            self._diagnostic(
+                "provider_attempt_terminal",
+                build_provider_attempt_terminal(
+                    provider_started,
+                    outcome=outcome,
+                    provider_usage=provider_usage,
+                    duration=max(time.time() - float(provider_started_at or time.time()), 0.0),
+                    http_status=provider_http_status,
+                    error_type=error_type,
+                ),
+            )
+
         try:
             token = await get_access_token()
             async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
-                response = await client.post(
-                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
+                provider_started = build_provider_attempt_started(
+                    role="planner",
+                    mode=mode,
+                    provider=model.provider,
+                    model_id=model.model_id,
+                    provider_model_id=model.provider_model_id,
+                    body=body,
+                    blocks=_planner_request_blocks(body["messages"], mode),
+                    source_references=[
+                        f"planner_session:{self.session_id}",
+                        f"raw_task:{mode}",
+                    ],
                 )
-                response.raise_for_status()
-            data = response.json()
-            usage = extract_usage(data)
-            choice = data["choices"][0]
-            message = choice["message"]
-            content = message.get("content")
-            raw_text = content if isinstance(content, str) else json.dumps(message, ensure_ascii=False)
-            self.messages.append({"role": "assistant", "content": raw_text})
-            self.turn_count += 1
-            self._check_bounds()
-            self._notify("PLANNER", mode, attempt, raw_text)
-            self._diagnostic("response", {
-                "mode": mode, "finish_reason": choice.get("finish_reason"),
-                "content": content, "function_call": message.get("function_call"),
-                "usage": usage,
-            })
-            if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
-                raise PlannerError("Planner returned an unexpected finish/tool call")
-            if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
-                raise PlannerError("Invalid Planner response size")
-            value = strict_json(content)
-            return validate_readiness(value) if mode == "READINESS" else validate_plan(value)
+                provider_started_at = time.time()
+                self._diagnostic("provider_attempt_started", provider_started)
+                try:
+                    response = await client.post(
+                        CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body,
+                    )
+                    response.raise_for_status()
+                    provider_http_status = getattr(response, "status_code", None)
+                except asyncio.CancelledError:
+                    finish_provider_attempt("cancelled", "CancelledError")
+                    raise
+                except httpx.TimeoutException as exc:
+                    finish_provider_attempt("timeout", type(exc).__name__)
+                    raise
+                except httpx.HTTPStatusError as exc:
+                    provider_http_status = exc.response.status_code if exc.response is not None else None
+                    finish_provider_attempt("provider_error", type(exc).__name__)
+                    raise
+                except httpx.HTTPError as exc:
+                    finish_provider_attempt("transport_error", type(exc).__name__)
+                    raise
+            try:
+                data = response.json()
+                provider_usage = extract_usage(data)
+                choice = data["choices"][0]
+                message = choice["message"]
+                content = message.get("content")
+                raw_text = content if isinstance(content, str) else json.dumps(message, ensure_ascii=False)
+                self.messages.append({"role": "assistant", "content": raw_text})
+                self.turn_count += 1
+                self._check_bounds()
+                self._notify("PLANNER", mode, attempt, raw_text)
+                self._diagnostic("response", {
+                    "mode": mode, "finish_reason": choice.get("finish_reason"),
+                    "content": content, "function_call": message.get("function_call"),
+                    "usage": provider_usage,
+                })
+                if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
+                    raise PlannerError("Planner returned an unexpected finish/tool call")
+                if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
+                    raise PlannerError("Invalid Planner response size")
+                value = strict_json(content)
+                result = (
+                    validate_readiness(value)
+                    if mode == "READINESS"
+                    else validate_plan(value, raw_task=self.raw_task)
+                )
+            except PlannerError as exc:
+                finish_provider_attempt("parse_error", type(exc).__name__)
+                raise
+            except Exception as exc:
+                finish_provider_attempt("parse_error", type(exc).__name__)
+                raise
+            finish_provider_attempt("completed")
+            return result
         except PlannerError as exc:
             self._diagnostic("error", {"mode": mode, "error_type": type(exc).__name__,
                                        "error_message": str(exc)})
             raise
+        except asyncio.CancelledError:
+            raise
         except Exception as exc:
+            if provider_started is not None and not provider_terminal_emitted:
+                finish_provider_attempt("transport_error", type(exc).__name__)
             message = f"Planner call failed: {type(exc).__name__}"
             self._diagnostic("error", {"mode": mode, "error_type": "PlannerError",
                                        "error_message": message})
@@ -423,27 +765,93 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
             "user": body["messages"][1]["content"],
         })
         token = await get_access_token()
+        model = get_model_spec(planner_model_id)
+        provider_started = None
+        provider_started_at = None
+        provider_usage = None
+        provider_http_status = None
+        provider_terminal_emitted = False
+
+        def finish_provider_attempt(outcome: str, error_type: str | None = None) -> None:
+            nonlocal provider_terminal_emitted
+            if provider_started is None or provider_terminal_emitted:
+                return
+            provider_terminal_emitted = True
+            diagnostic(
+                "provider_attempt_terminal",
+                build_provider_attempt_terminal(
+                    provider_started,
+                    outcome=outcome,
+                    provider_usage=provider_usage,
+                    duration=max(time.time() - float(provider_started_at or time.time()), 0.0),
+                    http_status=provider_http_status,
+                    error_type=error_type,
+                ),
+            )
+
         async with httpx.AsyncClient(timeout=PLANNER_TIMEOUT_SECONDS) as client:
-            response = await client.post(CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body)
-            response.raise_for_status()
-        data = response.json()
-        usage = extract_usage(data)
-        choice = data["choices"][0]
-        message = choice["message"]
-        diagnostic("response", {
-            "mode": mode,
-            "finish_reason": choice.get("finish_reason"),
-            "content": message.get("content"),
-            "function_call": message.get("function_call"),
-            "usage": usage,
-        })
-        if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
-            raise PlannerError("Planner returned an unexpected finish/tool call")
-        content = message["content"]
-        if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
-            raise PlannerError("Invalid Planner response size")
-        value = strict_json(content)
-        return validate_readiness(value) if mode == "READINESS" else validate_plan(value)
+            provider_started = build_provider_attempt_started(
+                role="planner",
+                mode=mode,
+                provider=model.provider,
+                model_id=model.model_id,
+                provider_model_id=model.provider_model_id,
+                body=body,
+                blocks=_planner_request_blocks(body["messages"], mode),
+                source_references=[f"raw_task:{mode}", "planner_direct_call"],
+            )
+            provider_started_at = time.time()
+            diagnostic("provider_attempt_started", provider_started)
+            try:
+                response = await client.post(
+                    CHAT_URL, headers={"Authorization": f"Bearer {token}"}, json=body
+                )
+                response.raise_for_status()
+                provider_http_status = getattr(response, "status_code", None)
+            except asyncio.CancelledError:
+                finish_provider_attempt("cancelled", "CancelledError")
+                raise
+            except httpx.TimeoutException as exc:
+                finish_provider_attempt("timeout", type(exc).__name__)
+                raise
+            except httpx.HTTPStatusError as exc:
+                provider_http_status = exc.response.status_code if exc.response is not None else None
+                finish_provider_attempt("provider_error", type(exc).__name__)
+                raise
+            except httpx.HTTPError as exc:
+                finish_provider_attempt("transport_error", type(exc).__name__)
+                raise
+        try:
+            data = response.json()
+            provider_usage = extract_usage(data)
+            choice = data["choices"][0]
+            message = choice["message"]
+            diagnostic("response", {
+                "mode": mode,
+                "finish_reason": choice.get("finish_reason"),
+                "content": message.get("content"),
+                "function_call": message.get("function_call"),
+                "usage": provider_usage,
+            })
+            if choice.get("finish_reason") not in {"stop", "eos"} or message.get("function_call"):
+                raise PlannerError("Planner returned an unexpected finish/tool call")
+            content = message["content"]
+            if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_PLANNER_RESPONSE_BYTES:
+                raise PlannerError("Invalid Planner response size")
+            value = strict_json(content)
+            result = (
+                validate_readiness(value)
+                if mode == "READINESS"
+                else validate_plan(value, raw_task=raw_task)
+            )
+        except PlannerError as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            raise
+        except Exception as exc:
+            finish_provider_attempt("parse_error", type(exc).__name__)
+            raise
+        finish_provider_attempt("completed")
+        return result
     except PlannerError as exc:
         diagnostic("error", {
             "mode": mode,
@@ -452,6 +860,12 @@ async def run_planner(*, mode: str, raw_task: str, context: dict,
         })
         raise
     except Exception as exc:
+        if (
+            "provider_started" in locals()
+            and provider_started is not None
+            and not provider_terminal_emitted
+        ):
+            finish_provider_attempt("transport_error", type(exc).__name__)
         # Do not copy HTTP bodies, headers or sensitive prompts into runtime trace.
         message = f"Planner call failed: {type(exc).__name__}"
         diagnostic("error", {

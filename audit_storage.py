@@ -25,6 +25,8 @@ from run_store import (
     load_run_record,
     load_run_summary,
     load_stream_records,
+    record_provider_attempt_started,
+    record_provider_attempt_terminal,
     record_usage,
     reconstruct_executor_context,
     run_component_path,
@@ -45,6 +47,7 @@ PLANNER_EVENTS = {
     "planner_dredd_review_started", "planner_dredd_review_completed",
     "planner_dredd_review_failed",
     "planner_session_completed", "planner_session_blocked",
+    "non_persistence_evidence_satisfied",
 }
 PLANNER_DIAGNOSTIC_EVENTS = {
     "planner_diagnostic_request", "planner_diagnostic_context",
@@ -63,6 +66,10 @@ EXECUTOR_DIAGNOSTIC_EVENTS = {
     "executor_diagnostic_response",
     "executor_diagnostic_reset",
 }
+PROVIDER_ACCOUNTING_EVENTS = {
+    "provider_attempt_started",
+    "provider_attempt_terminal",
+}
 _AUDIT_EVENTS = {
     "run_started", "api_request", "api_response", "tool_started",
     "final_audit_started",
@@ -78,7 +85,10 @@ _AUDIT_EVENTS = {
     "permission_review_passed", "permission_review_failed",
     "permission_user_prompted", "permission_granted", "permission_user_denied",
     "permission_escalation_terminal",
-} | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS
+    "tool_budget_reserve_activated", "tool_budget_reserve_intervention",
+    "server_evidence_gate_activated", "server_evidence_gate_intervention",
+    "final_response_repair_requested",
+} | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | PROVIDER_ACCOUNTING_EVENTS
 _TEXT_LIMIT = 2000
 _PLANNER_SESSION_TEXT_LIMIT = 32768
 
@@ -273,6 +283,13 @@ class AuditThreadRecorder:
 
     def _source_for_event(self, event: dict) -> str:
         kind = str(event.get("event") or "")
+        if kind in PROVIDER_ACCOUNTING_EVENTS:
+            role = str(event.get("role") or "").lower()
+            return {
+                "planner": "PLANNER",
+                "executor": "EXECUTOR",
+                "dredd": "DREDD",
+            }.get(role, "SERVER")
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             return "EXECUTOR"
         if kind in PLANNER_DREDD_EVENTS:
@@ -353,15 +370,21 @@ class AuditThreadRecorder:
             changed = True
         elif kind == "run_finished":
             summary["run_status"] = event.get("status") or "FINISHED"; changed = True
-        usage = event.get("usage")
-        if kind == "executor_diagnostic_response":
-            record_usage(summary, "executor", usage); changed = True
-        elif kind == "planner_diagnostic_response":
-            record_usage(summary, "planner", usage); changed = True
-        elif source == "DREDD" and kind in {
-            "planner_dredd_review_completed", "final_audit_passed", "final_audit_failed",
-        }:
-            record_usage(summary, "dredd", usage); changed = True
+        if kind == "provider_attempt_started":
+            record_provider_attempt_started(
+                summary,
+                str(event.get("role") or ""),
+                str(event.get("provider_attempt_id") or ""),
+            )
+            changed = True
+        elif kind == "provider_attempt_terminal":
+            record_provider_attempt_terminal(
+                summary,
+                str(event.get("role") or ""),
+                str(event.get("provider_attempt_id") or ""),
+                event.get("provider_usage"),
+            )
+            changed = True
         if changed:
             update_run_summary_index(self.workspace_root, self.run_id, summary)
 

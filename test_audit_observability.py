@@ -882,7 +882,7 @@ class TraceAndUiStateTests(unittest.TestCase):
         self.assertIn("Исправлено: 1", rendered)
         self.assertIn("Final Audit: PASS", rendered)
 
-    def test_audit_panel_widget_renders_read_only_and_absence_is_neutral(self):
+    def test_audit_panel_widget_renders_read_only_and_missing_storage_is_explicit(self):
         class Widget:
             def __init__(self): self.calls = []; self.state = "disabled"
             def configure(self, **options): self.state = options["state"]
@@ -899,7 +899,9 @@ class TraceAndUiStateTests(unittest.TestCase):
         with patch.object(ultra_ui, "load_audit_thread", return_value=None):
             ultra_ui.UltraApp._render_audit_thread(fake)
         self.assertEqual(widget.state, "disabled")
-        self.assertEqual(widget.calls, [])
+        self.assertEqual(len(widget.calls), 1)
+        self.assertIn("Разбор недоступен", widget.calls[0][0])
+        self.assertEqual(widget.calls[0][1], "metadata")
 
     def test_ui_state_persists_colors_ratios_visibility(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -163,6 +163,10 @@ EXECUTOR_DIAGNOSTIC_TOOLTIPS = {
 }
 
 
+def _format_terminal_worker_failure(exc: Exception) -> str:
+    return f"RUN STATUS: FAILED\n{type(exc).__name__}: {exc}"
+
+
 class _SingleInstanceLock:
     def __init__(self, path: Path) -> None:
         self.path = path
@@ -5043,6 +5047,20 @@ class UltraApp(tk.Tk):
                 ):
                     widget.insert("end", text, tag)
                 widget.configure(state="disabled")
+            elif run_id:
+                if summary_var is not None:
+                    summary_var.set(
+                        f"TASK BLOCK: {getattr(self, '_selected_task_block_id', None) or '—'} · "
+                        f"RUN: {run_id} · AUDIT: НЕДОСТУПЕН"
+                    )
+                widget.configure(state="normal")
+                widget.insert(
+                    "end",
+                    "Разбор недоступен: для выбранного RUN нет данных "
+                    "Run Store v2 и legacy Audit.\n",
+                    "metadata",
+                )
+                widget.configure(state="disabled")
             render_planner = getattr(self, "_render_planner_chat", None)
             if render_planner is not None:
                 render_planner(thread)
@@ -5138,6 +5156,12 @@ class UltraApp(tk.Tk):
         )
         widget.configure(state="normal")
         widget.delete("1.0", "end")
+        if run_id and not messages:
+            widget.insert(
+                "end",
+                "Данные Planner для выбранного RUN недоступны.\n",
+                "metadata",
+            )
         for message in messages:
             speaker = message.get("speaker") or "SERVER"
             model = message.get("model_display_name")
@@ -5151,8 +5175,14 @@ class UltraApp(tk.Tk):
         tree = getattr(self, "audit_records", None)
         if not run_id or tree is None:
             return
+        workspace = self.workspace_var.get()
+        if get_run_index_entry(workspace, run_id) is None:
+            render = getattr(self, "_render_audit_thread", None)
+            if render is not None:
+                render()
+            return
         summary = load_run_summary(
-            self.workspace_var.get(), run_id, self.current_chat_id,
+            workspace, run_id, self.current_chat_id,
         )
         if summary is not None:
             self.audit_summary_var.set(self._audit_summary_text(summary))
@@ -5834,7 +5864,40 @@ class UltraApp(tk.Tk):
                 )
             )
         except Exception as exc:
-            self.events.put(("error", f"{type(exc).__name__}: {exc}"))
+            failure_text = _format_terminal_worker_failure(exc)
+            terminal_persisted = False
+            terminal_storage_error: str | None = None
+            if not run_started_seen and provenance_warning is None:
+                provenance_warning = (
+                    "Provenance не сохранена: событие run_started не получено."
+                )
+            try:
+                append_raw_message(
+                    workspace,
+                    chat_id,
+                    "assistant",
+                    failure_text,
+                    producer=producer_snapshot,
+                    task_block_id=task_block_id,
+                )
+                terminal_persisted = True
+            except Exception as storage_exc:
+                terminal_storage_error = (
+                    "Не удалось сохранить terminal ASSISTANT RAW: "
+                    f"{type(storage_exc).__name__}: {storage_exc}"
+                )
+            self.events.put(
+                (
+                    "error",
+                    {
+                        "text": failure_text,
+                        "terminal_persisted": terminal_persisted,
+                        "terminal_storage_error": terminal_storage_error,
+                        "provenance_warning": provenance_warning,
+                        "task_block_id": task_block_id,
+                    },
+                )
+            )
 
     def _open_permission_request(self, request: dict) -> None:
         """Called only by Tk's event poller, never by the worker thread."""
@@ -5907,7 +5970,30 @@ class UltraApp(tk.Tk):
                         )
                 elif event_type == "error":
                     self._finish_run("Ошибка")
-                    self._append_chat("ОШИБКА", payload, "system")
+                    if isinstance(payload, dict):
+                        task_id = payload.get("task_block_id")
+                        if task_id and hasattr(self, "_select_task_block"):
+                            self._select_task_block(task_id, force=True)
+                        if not payload.get("terminal_persisted"):
+                            self._append_chat(
+                                "ОШИБКА",
+                                str(payload.get("text") or ""),
+                                "system",
+                            )
+                        if payload.get("terminal_storage_error"):
+                            self._append_chat(
+                                "ОШИБКА",
+                                str(payload["terminal_storage_error"]),
+                                "system",
+                            )
+                        if payload.get("provenance_warning"):
+                            self._append_chat(
+                                "СИСТЕМА",
+                                str(payload["provenance_warning"]),
+                                "system",
+                            )
+                    else:
+                        self._append_chat("ОШИБКА", payload, "system")
                 elif event_type == "permission_request":
                     try:
                         self._open_permission_request(payload)

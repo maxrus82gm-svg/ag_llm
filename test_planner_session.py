@@ -18,7 +18,8 @@ def analysis_plan(changes=None):
         "stages": [{
             "stage_id": "main", "goal": "answer task", "stage_type": "analysis",
             "persistence_required": False, "allowed_capabilities": ["READ"],
-            "artifacts": [], "completion_criteria": ["answer is complete"],
+            "artifacts": [], "completion_mode": "model_result",
+            "evidence_requirements": [], "completion_criteria": ["answer is complete"],
         }],
         "obligation_changes": list(changes or []),
     }
@@ -34,6 +35,7 @@ def create_plan(*, operation="create", artifact_id="result", changes=None):
                 "allow_already_satisfied": False,
                 "postcondition": {"kind": "equals", "value": "done"},
             }],
+            "completion_mode": "persistence", "evidence_requirements": [],
             "completion_criteria": ["result exists"],
         }],
         "obligation_changes": list(changes or []),
@@ -110,6 +112,98 @@ class PlannerSessionRuntimeTests(unittest.IsolatedAsyncioTestCase):
             await session.call(mode="INITIAL", raw_task="task", context={}, attempt=2)
         self.assertTrue(any(item["role"] == "assistant" and item["content"] == "not json"
                             for item in session.messages))
+
+    def test_validate_plan_rejects_double_escaped_exact_text_not_requested_literally(self):
+        contract = create_plan()
+        contract["stages"][0]["artifacts"][0]["postcondition"]["value"] = (
+            "line1\\nline2\\n"
+        )
+        with self.assertRaisesRegex(PlannerError, "double-escaped"):
+            planner_runtime.validate_plan(
+                contract,
+                raw_task="Create exact text:\nline1\nline2\n",
+            )
+
+    def test_validate_plan_allows_literal_backslash_escape_when_raw_task_requests_it(self):
+        contract = create_plan()
+        contract["stages"][0]["artifacts"][0]["postcondition"]["value"] = (
+            "line1\\nline2\\n"
+        )
+        result = planner_runtime.validate_plan(
+            contract,
+            raw_task=r"Create literal text: line1\nline2\n",
+        )
+        self.assertEqual(
+            result["stages"][0]["artifacts"][0]["postcondition"]["value"],
+            r"line1\nline2\n",
+        )
+
+    def test_validate_plan_rejects_double_escaped_verify_value(self):
+        contract = analysis_plan()
+        stage = contract["stages"][0]
+        stage.update(
+            stage_type="verification",
+            allowed_capabilities=["VERIFY"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "exact_verify",
+                "tool": "verify_file_content",
+                "arguments": {
+                    "path": "result.md",
+                    "kind": "equals",
+                    "value": "line1\\nline2\\n",
+                },
+            }],
+        )
+        with self.assertRaisesRegex(PlannerError, "double-escaped"):
+            planner_runtime.validate_plan(
+                contract,
+                raw_task="Verify exact text:\nline1\nline2\n",
+            )
+
+    async def test_planner_session_uses_raw_task_escape_validation_and_can_repair(self):
+        bad = create_plan()
+        bad["stages"][0]["artifacts"][0]["postcondition"]["value"] = (
+            "line1\\nline2\\n"
+        )
+        good = create_plan()
+        good["stages"][0]["artifacts"][0]["postcondition"]["value"] = (
+            "line1\nline2\n"
+        )
+        outputs = [json.dumps(bad), json.dumps(good)]
+        session = PlannerSession(raw_task="Create exact text:\nline1\nline2\n")
+        with (
+            patch.object(
+                planner_runtime, "get_access_token",
+                AsyncMock(return_value="token"),
+            ),
+            patch.object(
+                planner_runtime.httpx, "AsyncClient",
+                side_effect=lambda **_kwargs: _Client(outputs, []),
+            ),
+        ):
+            with self.assertRaisesRegex(PlannerError, "double-escaped"):
+                await session.call(
+                    mode="INITIAL",
+                    raw_task="Create exact text:\nline1\nline2\n",
+                    context={},
+                )
+            session.add_control_message(
+                speaker="SERVER",
+                mode="INITIAL",
+                attempt=1,
+                text="SERVER VALIDATION: exact text was double-escaped.",
+            )
+            repaired = await session.call(
+                mode="INITIAL",
+                raw_task="Create exact text:\nline1\nline2\n",
+                context={},
+                attempt=2,
+            )
+        self.assertEqual(
+            repaired["stages"][0]["artifacts"][0]["postcondition"]["value"],
+            "line1\nline2\n",
+        )
 
     def test_session_message_limit_fails_closed(self):
         session = PlannerSession(raw_task="task")
@@ -324,3 +418,65 @@ class PlannerRepairLifecycleTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(lifecycle.state["plan_version"], 1)
         self.assertEqual(review.await_count, 1)
 
+
+
+class PlannerEvidenceContractTests(unittest.TestCase):
+    def test_hard_protocol_declares_exact_evidence_argument_contracts(self):
+        protocol = planner_runtime.PLANNER_HARD_PROTOCOL
+        self.assertIn("python_compile uses {'paths': ['file.py']}", protocol)
+        self.assertIn("git_diff uses {'paths': ['file.py']}", protocol)
+        self.assertIn("git_status and ui_smoke_test use {}", protocol)
+
+    def test_compile_and_diff_exact_argument_contract_is_valid(self):
+        plan = {
+            "stages": [{
+                "stage_id": "verify",
+                "goal": "verify compile and diff",
+                "stage_type": "verification",
+                "persistence_required": False,
+                "allowed_capabilities": ["VERIFY"],
+                "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [
+                    {
+                        "evidence_id": "compile",
+                        "tool": "python_compile",
+                        "arguments": {"paths": ["ultra_ui.py", "server.py"]},
+                    },
+                    {
+                        "evidence_id": "diff",
+                        "tool": "git_diff",
+                        "arguments": {"paths": ["ultra_ui.py"]},
+                    },
+                ],
+                "completion_criteria": ["checks pass"],
+            }],
+            "obligation_changes": [],
+        }
+        validated = planner_runtime.validate_plan(plan, raw_task="verify")
+        self.assertEqual(validated["stages"][0]["stage_id"], "verify")
+
+    def test_invalid_diff_arguments_name_the_tool(self):
+        plan = {
+            "stages": [{
+                "stage_id": "verify",
+                "goal": "show diff",
+                "stage_type": "verification",
+                "persistence_required": False,
+                "allowed_capabilities": ["VERIFY"],
+                "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "diff",
+                    "tool": "git_diff",
+                    "arguments": {},
+                }],
+                "completion_criteria": ["diff shown"],
+            }],
+            "obligation_changes": [],
+        }
+        with self.assertRaisesRegex(
+            PlannerError,
+            r"Invalid evidence arguments for git_diff: .*missing=.*paths",
+        ):
+            planner_runtime.validate_plan(plan, raw_task="show diff")
