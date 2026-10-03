@@ -1,0 +1,37 @@
+filters:
+  and:
+    - file.ext == "md"
+views:
+  - type: base-graph
+    name: Global clustered graph
+    order:
+      - file.name
+      - graph_cluster
+    clusterBy: note.graph_cluster
+    clusterOutlines: true
+    depth: 0
+    showOrphans: true
+    centerForce: 0.10
+    repelForce: 10
+    linkForce: 1
+    linkDistance: 100
+    clusterForce: 1.00
+    clusterRepelForce: 0.65
+  - type: base-graph
+    name: Analytics branch
+    filters:
+      and:
+        - graph_cluster == "architecture-analysis"
+    order:
+      - file.name
+      - graph_cluster
+    clusterBy: note.graph_cluster
+    clusterOutlines: true
+    depth: 1
+    direction: both
+    centerForce: 0.15
+    repelForce: 7
+    linkForce: 1
+    linkDistance: 80
+    clusterForce: 1.00
+    clusterRepelForce: 0.75
