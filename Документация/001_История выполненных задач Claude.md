@@ -22,7 +22,7 @@
 
 ## 2026-10-04 — CLAUDE-WA-002 — RC-0: Baseline и normalization policy
 - **Сделано:** снят baseline (197/197 OK), изучена реальность Git и переводов строк, измерены 3 из 4 метрик, сформулированы policy байтов / хешей и ограничения для снимков; отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`.
-- **Итог:** блокеров для RC-1 нет; предложен FOLLOW-UP `.gitattributes`. Ожидает независимой проверки.
+- **Итог:** DONE / VERIFIED 2026-10-04; ключевые baseline/manifest/Remote-call факты независимо воспроизведены ChatGPT. `.gitattributes` FOLLOW-UP отложен; RC-1 разрешён.
 
 ## 2026-10-03 — CLAUDE-WA-001 — Preflight плана EP-RT001-001
 - **Сделано:** read-only сверка утверждённого RT-001 и плана `33` с кодом, тестами и storage WEB-02; отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-001/preflight_report.md`.

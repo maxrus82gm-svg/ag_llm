@@ -2,9 +2,9 @@
 
 ## Статус документа
 
-**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RT-001 RECOVERY CLOSURE APPROVED FOR EXECUTION.**
+**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RC-0 DONE / VERIFIED; RC-1 NEXT.**
 
-WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Следующий канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. Runtime этого маршрута ещё не реализован.
+WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. RC-0 завершён и независимо проверен; следующий этап — RC-1. Runtime-мутации Recovery Closure ещё не начаты.
 
 Этот документ является каноническим владельцем архитектуры Web Alarm Workspace. Его нужно проверять и обновлять при любом подтверждённом изменении протокола, state machine, структуры TASK/микрозадач, snapshot/recovery-механики, правил replay protection, хранения или роли Web Alarm Server.
 
@@ -515,6 +515,9 @@ Recovery Report хранится restart-safe в machine-local Web Alarm storage
 28. WEB-02 владеет workflow state и significant tracked mutations зарегистрированного workflow. Desktop Commander остаётся транспортом и инструментом для чтения, shell/GUI и действий вне tracked workflow; tracked mutation не обходят control plane после strict rollout.
 29. Canonical Windows target identity, line endings, multi-file/non-file mutations, snapshot secrets/scope/retention и Obsidian как внешний писатель являются обязательными cross-cutting constraints до strict rollout.
 30. Точная новая state machine, storage backend, lease/heartbeat model и MCP topology не фиксируются этим решением и остаются отдельными deferred design questions.
+31. Для файлового состояния authority — физические байты на диске: SHA-256 по точным bytes + размер. Git blob/index, `core.autocrlf`, `.gitattributes` и иная line-ending normalization не являются proof состояния target; Git-операция, переписавшая bytes, считается внешним писателем и требует обычной reconciliation.
+32. Сравнение после нормализации CRLF/LF или BOM допускается только как диагностика (`EOL_ONLY_DRIFT` или эквивалент): оно не разрешает автоматический ADOPT/RETRY и при byte mismatch ведёт к fail-closed / manual review.
+33. Snapshot и будущий durable payload для tracked mutation хранятся в machine-local storage вне репозитория/vault, проверяются hash+size, имеют явный scope/secret/size/retention policy; содержимое snapshot/payload не должно попадать в обычные events/reports/logs. Legacy `Alarm/` не является production snapshot storage.
 
 ## 23. Точка развития
 

@@ -22,101 +22,79 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. Runtime, `.gitattributes` и переводы строк не менялись.
-**TASK:** CLAUDE-WA-002 — RC-0: Baseline и normalization policy.
+**Статус:** READY / NOT STARTED.
+**TASK:** CLAUDE-WA-003 — RC-1: Durable Operation Contract + backward compatibility.
 **Дата постановки:** 2026-10-04.
 **Модель:** Claude Opus 5.5.
 
-**Источник:** RT-001 / `EP-RT001-001` уже получил USER PLAN APPROVAL; P00 = DONE / VERIFIED. Канонический маршрут теперь хранится в `23/24/25`. RC-0 — следующий обязательный этап перед RC-1.
+**Источник:** RC-0 / CLAUDE-WA-002 независимо проверен ChatGPT и закрыт DONE / VERIFIED. Каноническая byte/hash policy перенесена в `23/24`: authority = физические bytes + размер; Git normalization — внешний writer. `.gitattributes` FOLLOW-UP отложен и RC-1 не блокирует.
 
-**Цель:** до изменения storage/recovery contracts зафиксировать честный baseline и однозначные политики, от которых будет зависеть RC-1+: regression baseline, byte/hash/line-ending policy, роль `.gitattributes`, измерительные operational metrics и ограничения snapshot secret/scope/retention.
+**Цель:** сделать Operation Contract самодостаточным, durable и restart-safe до появления Resolver/Executor: новая операция должна после нового process/Chat восстанавливаться с точным target, pre/post contract, payload/ref, fingerprint, provenance и revision без внешней памяти исполнителя.
 
-**Обязательный контекст перед работой:**
-1. `08_Старт.md` и `000_Задачи для агента.md`.
-2. `23_Архитектура Web Alarm Workspace.md` — инварианты.
-3. `24_План реализации Web Alarm Workspace.md` — канонический порядок и acceptance; раздел RC-0.
+**Обязательный контекст:**
+1. `08_Старт.md`, `000_Задачи для агента.md`, этот файл.
+2. `23_Архитектура Web Alarm Workspace.md` — инварианты 23–33.
+3. `24_План реализации Web Alarm Workspace.md` — RC-1 exit proof и границы.
 4. `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`.
-5. `33_Круглый стол - план исполнения.md` — только planning/rationale history; после P00 не рабочий source of truth.
+5. Отчёты `TASK_CLAUDE-WA-001/preflight_report.md` и `TASK_CLAUDE-WA-002_RC0/rc0_report.md` — evidence/rationale, не отдельный authority.
 
-**Что сделать:**
-- снять полный текущий regression baseline Web Alarm и зафиксировать точные команды/результаты;
-- зафиксировать текущую Git/byte/hash/line-ending reality, не нормализуя файлы по дороге;
-- проверить, существует ли `.gitattributes`, какие правила уже действуют и какие line-ending warnings реально воспроизводятся;
-- сформулировать однозначную рекомендуемую policy для bytes/hash/line endings и точную роль `.gitattributes`;
-- измерить отдельно, без превращения в correctness-blockers: Remote calls per logical mutation, actions to safe resume, untracked mutation ratio, manual status sync count — только где метрика реально воспроизводимо извлекается из evidence; недоступное пометить `NOT MEASURED`;
-- зафиксировать snapshot secret/scope/retention constraints как требования следующих этапов;
-- проверить, не выявляет ли baseline correctness-дефект, который реально блокирует RC-1.
+**Что реализовать:**
+- отдельную version/revision operation-contract схему; не поднимать глобальную `SCHEMA_VERSION` всех хранилищ;
+- backward-compatible чтение существующих legacy OperationRecord без обязательной перезаписи; legacy record не должен внезапно получить право на unsafe replay;
+- единый canonical target identity для Windows path/case/spelling, используемый Operation Contract последовательно;
+- durable expected pre-state и expected post-state для файлового target по physical bytes: exists/size/SHA-256; EOL/BOM — только diagnostic metadata;
+- durable mutation payload или immutable payload reference в machine-local WEB-02 storage вне repo/vault; hash+size verification, explicit scope/secret/size/retention checks;
+- стабильный request fingerprint/idempotency identity для одного logical operation;
+- provenance/agent identity, contract/schema version, timestamps/revision и persistent result/receipt fields, достаточные для следующего RC-2;
+- минимальную межпроцессную сериализацию записи Operation Store/revision, чтобы два process не теряли revision/record. Это защита storage integrity, **не** RC-3 conflict gate по physical target;
+- fresh-process reopen: новый process без памяти старого исполнителя читает тот же operation contract/payload identity/revision.
 
-**Важная граница по `.gitattributes`:**
-- в этой TASK **не создавать и не изменять `.gitattributes`**;
-- разрешено только read-only изучение текущего состояния и подготовка точной рекомендуемой политики/patch proposal;
-- если изменение `.gitattributes` действительно нужно, оформить его как отдельное `DECISION / FOLLOW-UP` с ожидаемым влиянием на репозиторий;
-- никакой массовой нормализации line endings в RC-0.
+**Инженерная граница:**
+- не раздувать `server.py`: новую contract/payload/locking логику держать в узких модулях с одной ответственностью; server integration — только минимальная, если реально нужна для тестируемого контракта;
+- не реализовывать Resolver decisions/ADOPT/ROLLBACK/RETRY execution — это RC-2;
+- не реализовывать canonical-target conflict admission / mutation CAS / ownership reservation — это RC-3;
+- не выполнять физическую project mutation из operation contract — authoritative executor только WA4-E;
+- не менять UI;
+- не менять `.gitattributes` и не нормализовать line endings;
+- не делать commit / push.
 
-**Разрешено:**
-- read-only исследование кода, Git и persistent Web Alarm state;
-- безопасные baseline/tests/verification команды;
-- создание task-session отчёта в `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/`;
-- documentation closeout собственной TASK по правилам этого файла: `000_Задачи Claude`, `001_История выполненных задач Claude`, `06`, профильный `25` — с честным статусом `RESULT READY / AWAITING INDEPENDENT VERIFICATION` до проверки.
+**Совместимость и безопасность:**
+- текущие 2 legacy operation records должны оставаться читаемыми после fresh process;
+- новый contract не должен требовать миграции всех 8 storage schemas;
+- payload/snapshot content не писать в events/reports/logs — только metadata/hash/size/path-id;
+- secret-like target/payload scope fail-closed по policy RC-0;
+- при неизвестной/повреждённой версии contract или payload hash mismatch — fail-closed, без угадывания.
 
-**Не делать:**
-- не менять runtime/code `web_alarm` в RC-0;
-- не менять `.gitattributes`;
-- не делать массовую конверсию CRLF/LF или перезапись файлов ради «чистоты»;
-- не менять архитектурные решения `23/24` по собственной инициативе;
-- не начинать RC-1;
-- не делать commit / push;
-- не объявлять `DONE / VERIFIED` до независимой проверки.
+**Проверка:**
+1. focused tests для operation contract, legacy read, payload integrity, canonical identity, revision serialization;
+2. отдельный multiprocess/race test именно на storage integrity: concurrent writers не теряют record/revision;
+3. fresh-process reopen test;
+4. negative tests: unknown contract version, corrupted payload, forbidden secret scope, duplicate fingerprint mismatch;
+5. полный Web Alarm regression;
+6. `python -B -m compileall -q web_alarm`;
+7. `git diff --check`;
+8. подтвердить, что `.gitattributes`, UI и tracked project targets вне scope не менялись.
 
-**Критерии результата RC-0:**
-1. regression baseline воспроизводим и записан;
-2. byte/hash/line-ending policy сформулирована однозначно и отделяет физические bytes от Git working-tree normalization;
-3. роль `.gitattributes` определена как рекомендация без фактического изменения файла;
-4. blocking correctness facts отделены от измерительных метрик;
-5. все измеренные метрики имеют источник/evidence, отсутствующие честно помечены;
-6. snapshot secret/scope/retention constraints зафиксированы;
-7. runtime/code не изменён;
-8. `git diff --check` выполнен и результат описан с учётом уже существующего baseline/предыдущего diff;
-9. дан ровно один `NEXT SAFE ACTION`: либо независимая проверка RC-0, либо конкретный blocker/decision required.
+**Критерий RC-1 PASS:** persisted operation содержит достаточный durable contract; legacy state читается безопасно; payload/ref проверяем; canonical target стабилен; concurrent Operation Store writes не теряются; fresh process восстанавливает тот же contract/revision; physical mutation ещё отсутствует.
 
-**Формат отчёта:**
-1. `BASELINE`
-2. `BYTE / HASH / LINE-ENDING POLICY`
-3. `.GITATTRIBUTES RECOMMENDATION`
-4. `MEASURED METRICS`
-5. `CORRECTNESS BLOCKERS`
-6. `SNAPSHOT / SECRET / RETENTION CONSTRAINTS`
-7. `DOCUMENTATION CLOSEOUT`
-8. `NEXT SAFE ACTION`
+**Closeout:** отчёт сохранить в `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-003_RC1/`; обновить `000_Задачи Claude`, `001`, `06`, `25` только по фактическому результату. До независимой проверки статус только `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
 
-**Результат (2026-10-04, HEAD `dc246b9`):** отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`.
-- **Baseline:** 197/197 OK, два воспроизводимых прогона; runtime не менялся.
-- **Git:** `core.autocrlf=true`, `.gitattributes` нет; индекс целиком LF; в рабочем дереве 46 файлов CRLF и 9 смешанных.
-- **Измерено:** из 121 хеша в ручных manifest `Alarm/` после свежего checkout сойдётся только 1.
-- **Policy:** authority — только физические байты (SHA-256 + размер); git и нормализация — не доказательство; нормализованное сравнение — только диагностика (`EOL_ONLY_DRIFT` → MANUAL_REVIEW).
-- **`.gitattributes`:** не создан; предложен FOLLOW-UP — полный вариант (`* text=auto eol=lf`, `*.cmd eol=crlf`, `Alarm/** -text`, binary) или минимальный.
-- **Метрики:**
-  - Remote-вызовов на мутацию: 11,7 (WA-3.6) и 7,0 (WA-3.7);
-  - мутаций мимо OperationStore: 100% и 89%;
-  - ручная синхронизация статуса: 9 канонических документов на closeout;
-  - число действий до безопасного продолжения: NOT MEASURED; вход WEB-02 сейчас отвечает `no active TASK`.
-- **Блокеров для RC-1 нет.** Ограничения scope / secret / size / retention для снимков зафиксированы.
-
-**NEXT SAFE ACTION:** независимая проверка RC-0 и решение по FOLLOW-UP `.gitattributes`: полный вариант, минимальный или отложить. RC-1 не начинать до проверки.
+**NEXT SAFE ACTION сейчас:** выполнить только CLAUDE-WA-003 / RC-1. RC-2 не начинать.
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ЗАВЕРШЁННАЯ ЗАДАЧА
 ---
 
-**TASK:** CLAUDE-WA-001 — Independent preflight review RT-001 / EP-RT001-001.
+**TASK:** CLAUDE-WA-002 — RC-0: Baseline и normalization policy.
 **Статус:** DONE / VERIFIED — 2026-10-04.
 **Модель:** Claude Opus 5.5.
 
-**Что было сделано:** read-only preflight утверждённого направления RT-001 и execution plan против фактического кода, тестов и persistent storage WEB-02. Baseline: HEAD `dc246b9`, Web Alarm regression 197/197 PASS, runtime не изменялся. Полный отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-001/preflight_report.md`.
+**Результат:** независимая проверка ChatGPT подтвердила RC-0. Повторный Web Alarm regression на текущем HEAD `8029a69` — 197/197 PASS. Manifest-аудит воспроизведён точно: 121 записи, 115 текущих byte-hash совпадений, 6 missing snapshots; simulated fresh checkout при `core.autocrlf=true` сохраняет только 1 hash. Remote-call metrics также воспроизведены: WA-3.6 = 375/32 = 11,7; WA-3.7 = 126/18 = 7,0.
 
-**Ключевой результат:** выявлены и независимо подтверждены D1–D3: семантика RETRY до executor, ранняя защита записи Operation Store/revision и обязательное сопоставление старых WA-4.1–WA-4.7 с новым маршрутом. По результату исправлены planning/canonical docs; PLAN APPROVAL получен, P00 выполнен и проверен.
+**Принято:** file-state authority = physical bytes SHA-256 + size; Git/EOL normalization не authority; normalized-EOL comparison только diagnostic/manual review. `.gitattributes` не меняется сейчас — отдельный FOLLOW-UP отложен и RC-1 не блокирует. Snapshot/payload constraints перенесены в каноническую архитектуру.
 
-**Постоянная история:** CLAUDE-WA-001 уже зафиксирована в `001_История выполненных задач Claude.md`, `06_Журнал выполнения и отчёты.md` и профильном `25`. Более старая CLAUDE-TEST-001 остаётся в постоянной истории и потому может быть вытеснена из БЛОКА 2.
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`. Постоянная история остаётся в `001`, `06`, `25`.
+
 ## Правило круговорота
 
 1. Новую активную задачу записывать в БЛОК 1 до исполнения; при необходимости её постановка дополнительно фиксируется в обычном Chat.

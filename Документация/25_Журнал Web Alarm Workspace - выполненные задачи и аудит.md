@@ -779,7 +779,7 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 
 ### CLAUDE-WA-002 — RC-0: Baseline и normalization policy
 
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. Runtime, `.gitattributes` и переводы строк не менялись.
+**Статус:** DONE / VERIFIED — 2026-10-04. Runtime, `.gitattributes` и переводы строк в рамках RC-0 не менялись.
 
 **Baseline:** HEAD `dc246b9`; `python -B -m unittest test_web_alarm_*.py` — 197/197 OK (25 модулей, два прогона); storage WEB-02: 1,5 МБ, 136 файлов, 29 снимков, 2 терминальные операции.
 
@@ -791,4 +791,8 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 
 Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`.
 
-**Next:** независимая проверка RC-0; решение по `.gitattributes`; затем RC-1.
+**Independent verification:** на HEAD `8029a69` повторно 197/197 PASS; manifest-аудит подтверждён 121 total / 115 match / 6 missing / 1 simulated fresh-checkout match; Remote-call metrics подтверждены 375/32 = 11,7 и 126/18 = 7,0. Byte/hash policy принята и перенесена в `23/24`.
+
+**Decision:** `.gitattributes` FOLLOW-UP отложен как отдельная maintenance-задача; он не блокирует RC-1.
+
+**Next:** RC-1 — Durable Operation Contract + backward compatibility (`CLAUDE-WA-003`).
