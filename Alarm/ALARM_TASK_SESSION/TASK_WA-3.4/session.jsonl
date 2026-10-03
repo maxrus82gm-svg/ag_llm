@@ -1,0 +1,15 @@
+{"ts":"2026-10-02T14:07:00+05:00","type":"BOOTSTRAP","task":"WA-3.4","status":"ACTIVE_PREP"}
+{"ts":"2026-10-02T14:07:01+05:00","type":"RECOVERY","incident_id":"INC-REMOTE-012","result":"Transition call failed after WA334-D close and WA-3.4 initial_v1 manifest/snapshots had persisted, but before context/session creation. Manifest was reread and SHA256-reverified; no snapshot replay performed."}
+{"ts":"2026-10-02T14:07:02+05:00","type":"VERIFIED","operation_id":"WA34-PREP-001","result":"Immutable/versioned initial_v1 restore point reverified PASS; test file recorded absent."}
+{"ts":"2026-10-02T14:07:03+05:00","type":"RECOVERY_SESSION_START","session_id":"WA34-A","result":"Case A: Chat restart while Server remains alive."}
+{"ts":"2026-10-02T14:08:00+05:00","type":"INTENT","operation_id":"WA34-A-TEST-001","action":"run_chat_restart_live_server_test","target":"test_web_alarm_restart_recovery.py"}
+{"ts":"2026-10-02T14:09:00+05:00","type":"RECOVERY_SESSION_VERIFIED","session_id":"WA34-A","result":"New Chat subprocess read the same live Server HTTP context: checkpoint/reconciliation decision/fingerprint/NEXT SAFE ACTION matched; Workspace unchanged; 1/1 PASS."}
+{"ts":"2026-10-02T14:09:01+05:00","type":"RECOVERY_SESSION_CLOSED","session_id":"WA34-A","next_session":"WA34-B"}
+{"ts":"2026-10-02T14:10:00+05:00","type":"RECOVERY_SESSION_START","session_id":"WA34-B","result":"Case B: new Chat + new Server/Python process from the same persistent disk state; versioned session_b_v1 snapshot verified."}
+{"ts":"2026-10-02T14:10:01+05:00","type":"INTENT","operation_id":"WA34-B-TEST-001","action":"run_chat_and_server_restart_process_test","target":"test_web_alarm_restart_recovery.py"}
+{"ts":"2026-10-02T14:11:00+05:00","type":"RECOVERY_SESSION_VERIFIED","session_id":"WA34-B","result":"Process-level restart suite 2/2 PASS: live Server + new Chat and repeated new Chat+new Server process recovered identical persistent checkpoint/reconciliation state; Workspace unchanged."}
+{"ts":"2026-10-02T14:11:01+05:00","type":"RECOVERY_SESSION_CLOSED","session_id":"WA34-B","next_session":"WA34-C"}
+{"ts":"2026-10-02T14:11:02+05:00","type":"RECOVERY_SESSION_START","session_id":"WA34-C","result":"Fresh final verification session."}
+{"ts":"2026-10-02T14:12:00+05:00","type":"RECOVERY_SESSION_VERIFIED","session_id":"WA34-C","result":"Full WA regression 135/135 PASS; py_compile + restart-test diff-check PASS; no runtime code changes required."}
+{"ts":"2026-10-02T15:16:00+05:00","type":"REMOTE_INCIDENT","incident_id":"INC-REMOTE-013","result":"Chat UI reported message delivery timeout after Remote workflow had continued. Disk reconciliation confirmed WA-3.3.4 closed and WA-3.4 DONE_VERIFIED; Desktop Commander process PIDs/CreationDate unchanged. No replay performed."}
+{"ts":"2026-10-02T15:16:01+05:00","type":"RECOVERY_SESSION_VERIFIED","session_id":"WA34-POST-UI-TIMEOUT","result":"Authoritative disk state: WA-3.4 DONE_VERIFIED -> next WA-3.5. UI delivery failure did not invalidate persisted workflow state."}

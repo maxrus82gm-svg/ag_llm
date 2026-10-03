@@ -1,0 +1,31 @@
+# WA-3.5 history
+
+- Full WA-3.5 task was published in ordinary Chat before Remote work.
+- Previous documentation gate DOC-WA-REMOTE-CONCLUSIONS-001 was fresh-reopened as DONE / VERIFIED with next=WA-3.5.
+- Versioned docs_bootstrap_v1 snapshot created for 000/05/06/23/24/25/26 and SHA256-verified.
+- WA-3.5 is being documented before any runtime/code mutation.
+- Implementation split fixed as A/B/C/D + fresh reopen gate.
+- Next: activate documentation state, then inspect exact code scope for WA-3.5.A only.
+- WA-3.5 task statement synchronized to 000/01/04/05/24/25.
+- 24 owns the full implementation plan; 06 intentionally remains completion-only; 23 already contains authority invariants from the incident-conclusions task.
+- Documentation markers PASS; git diff --check PASS (only LF→CRLF warnings on 01/04/05).
+- WA-3.5 remains PREPARED / CODE NOT STARTED. Next safe action is read-only code/interface inspection for WA-3.5.A, followed by an immutable/versioned code-scope restore point.
+- WA-3.5.A implemented `transport_event_store.py` + focused tests + package export.
+- Focused transport store suite 10/10 PASS; full Web Alarm regression 145/145 PASS; py_compile/diff-check PASS.
+- Documentation synchronized across 000/01/04/05/06/24/25 under versioned closeout_a_docs_v1 snapshot.
+- WA-3.5.A closed DONE / VERIFIED. WA-3.5.B remains NOT ACTIVATED until fresh-process reopen of A.
+- WA-3.5.B added GET/POST `/transport/events` to WebAlarmApi with filters and evidence-only response contract.
+- Focused B suite 7/7 PASS; full Web Alarm regression 152/152 PASS; diff-check PASS.
+- Safety test proved transport ingestion does not mutate TASK directory, checkpoint or Workspace.
+- B documentation synchronized under closeout_b_docs_v1. WA-3.5.C remains NOT ACTIVATED until fresh-process reopen B.
+- WA-3.5.C test-first run 3/5 exposed duplicate transport event_id identity gap.
+- Under separate repair_c_store_v1 snapshot, same-ID/same-evidence replay became idempotent and same-ID/different-evidence fail-closed.
+- C + A/B transport suites 22/22 PASS; full Web Alarm regression 157/157 PASS; pycompile/diff-check PASS.
+- C documentation synchronized under closeout_c_docs_v1. WA-3.5.D remains NOT ACTIVATED until fresh-process reopen C.
+- Fresh-process reopen C PASS: new process independently reread session/context/000/05 as A+B+C DONE / VERIFIED and D NOT ACTIVATED.
+- Created immutable/versioned `docs_fresh_reopen_c_v1` snapshot before final documentation closure.
+- Updated 000/01/04/05/06/24/25 to record fresh reopen C PASS and D NOT ACTIVATED.
+- Documentation closeout C completed; next step remains WA-3.5.D only after its own separate versioned scope.
+- WA-3.5.D verified: focused 7/7; transport 29/29; full Web Alarm 164/164 PASS.
+- D docs closeout snapshot verified; 000/01/04/05/06/24/25 synchronized.
+- WA-3.5 is DONE / VERIFIED. Fresh reopen is required before WA-3.6.

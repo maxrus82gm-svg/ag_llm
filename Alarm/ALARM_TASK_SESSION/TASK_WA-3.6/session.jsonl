@@ -1,0 +1,122 @@
+{"ts":"2026-10-02T19:52:44+05:00","type":"BOOTSTRAP","task":"WA-3.6","status":"CHAT_FORMULATION_COMPLETE_TASK_FILL_ONLY"}
+{"ts":"2026-10-02T19:52:45+05:00","type":"RECONCILIATION","result":"WA-3.5 DONE_VERIFIED; fresh reopen PASS; TASK_WA-3.6 absent in Remote task-session root; machine-local Web Alarm storage has no workspace registration and no active/completed TASK."}
+{"ts":"2026-10-02T19:52:46+05:00","type":"INTENT","operation_id":"WA36-FILL-001","action":"write_task_definition_files","targets":["context.md","history.md","raw_task.md"]}
+{"ts":"2026-10-02T19:52:47+05:00","type":"INTENT","operation_id":"WA36-FILL-002","action":"register_ag_llm_workspace_if_missing","target":"machine-local WebAlarmWorkspace/workspaces"}
+{"ts":"2026-10-02T19:52:48+05:00","type":"TASK_STATUS","task":"WA-3.6","status":"FILLING_ONLY","next_safe_action":"Populate TASK and microtask plan only; do not prepare snapshots, set READY/ACTIVE, or start implementation before user review."}
+{"ts":"2026-10-02T19:54:00+05:00","type":"DONE","operation_id":"WA36-FILL-001","result":"context.md, history.md and canonical raw_task.md written."}
+{"ts":"2026-10-02T19:54:01+05:00","type":"VERIFIED","operation_id":"WA36-FILL-001","result":"Independent reread PASS; raw_task.md = 89 lines; implementation explicitly gated pending user review."}
+{"ts":"2026-10-02T19:54:16+05:00","type":"DONE","operation_id":"WA36-FILL-002","result":"Registered workspace ws_ag_llm for M:\\GitHub\\ag_llm."}
+{"ts":"2026-10-02T19:54:17+05:00","type":"VERIFIED","operation_id":"WA36-FILL-002","result":"Workspace registry record reread from machine-local storage; root/id match expected values."}
+{"ts":"2026-10-02T19:54:18+05:00","type":"INTENT","operation_id":"WA36-FILL-003","action":"create_web_alarm_task","target":"WA-3.6","constraint":"PLANNED only; no implementation start"}
+{"ts":"2026-10-02T19:55:00+05:00","type":"RECOVERY","operation_id":"WA36-FILL-003","result":"Task creation command raised console UnicodeEncodeError only while printing result. Disk reconciliation found active/WA-3.6 with complete task.json, task.md and plan.json; create was not replayed."}
+{"ts":"2026-10-02T19:55:01+05:00","type":"DONE","operation_id":"WA36-FILL-003","result":"Web Alarm TASK WA-3.6 exists in active storage with status PLANNED and canonical 89-line RAW TASK."}
+{"ts":"2026-10-02T19:55:02+05:00","type":"VERIFIED","operation_id":"WA36-FILL-003","result":"task.json/task.md/plan.json reread; RAW TASK matches; plan revision 1 has zero microtasks before population."}
+{"ts":"2026-10-02T19:55:03+05:00","type":"INTENT","operation_id":"WA36-FILL-004","action":"create_planned_microtask","target":"WA36-M001"}
+{"ts":"2026-10-02T19:55:47+05:00","type":"DONE","operation_id":"WA36-FILL-004","result":"Created planned microtask WA36-M001."}
+{"ts":"2026-10-02T19:55:48+05:00","type":"VERIFIED","operation_id":"WA36-FILL-004","result":"M001 reread as sequence 1, status PLANNED; plan revision 2 contains only WA36-M001."}
+{"ts":"2026-10-02T19:55:49+05:00","type":"INTENT","operation_id":"WA36-FILL-005","action":"create_planned_microtask","target":"WA36-M002"}
+{"ts":"2026-10-02T19:56:37+05:00","type":"DONE","operation_id":"WA36-FILL-005","result":"Created planned microtask WA36-M002."}
+{"ts":"2026-10-02T19:56:38+05:00","type":"VERIFIED","operation_id":"WA36-FILL-005","result":"M002 reread as sequence 2, status PLANNED."}
+{"ts":"2026-10-02T19:56:39+05:00","type":"INTENT","operation_id":"WA36-FILL-006","action":"create_planned_microtask","target":"WA36-M003"}
+{"ts":"2026-10-02T19:57:00+05:00","type":"DONE","operation_id":"WA36-FILL-006","result":"Created planned microtask WA36-M003."}
+{"ts":"2026-10-02T19:57:01+05:00","type":"VERIFIED","operation_id":"WA36-FILL-006","result":"M003 reread as sequence 3, status PLANNED."}
+{"ts":"2026-10-02T19:57:02+05:00","type":"INTENT","operation_id":"WA36-FILL-007","action":"create_planned_microtask","target":"WA36-M004"}
+{"ts":"2026-10-02T19:57:18+05:00","type":"DONE","operation_id":"WA36-FILL-007","result":"Created planned microtask WA36-M004."}
+{"ts":"2026-10-02T19:57:19+05:00","type":"VERIFIED","operation_id":"WA36-FILL-007","result":"M004 reread as sequence 4, status PLANNED; plan revision 5 contains M001-M004 in order."}
+{"ts":"2026-10-02T19:57:20+05:00","type":"INTENT","operation_id":"WA36-FILL-008","action":"set_current_microtask_for_review","target":"WA36-M001","constraint":"remain PLANNED"}
+{"ts":"2026-10-02T19:57:59+05:00","type":"DONE","operation_id":"WA36-FILL-008","result":"Set plan current_microtask_id to WA36-M001."}
+{"ts":"2026-10-02T19:58:00+05:00","type":"VERIFIED","operation_id":"WA36-FILL-008","result":"plan.json reread; current_microtask_id=WA36-M001; all microtasks remain PLANNED."}
+{"ts":"2026-10-02T19:58:01+05:00","type":"INTENT","operation_id":"WA36-FILL-009","action":"write_review_gate_checkpoint","target":"WA-3.6 checkpoint","constraint":"PLANNED + NOT_PREPARED + USER_REVIEW_REQUIRED"}
+{"ts":"2026-10-02T19:58:36+05:00","type":"DONE","operation_id":"WA36-FILL-009","result":"Review-gate checkpoint written for WA-3.6."}
+{"ts":"2026-10-02T19:58:37+05:00","type":"VERIFIED","operation_id":"WA36-FILL-009","result":"Checkpoint reread: current=WA36-M001, status=PLANNED, snapshot=NOT_PREPARED, last_operation_id=null, next_safe_action=USER_REVIEW_REQUIRED."}
+{"ts":"2026-10-02T19:58:38+05:00","type":"INTENT","operation_id":"WA36-FILL-010","action":"close_task_population_metadata","targets":["context.md","history.md"]}
+{"ts":"2026-10-02T19:58:39+05:00","type":"INTENT","operation_id":"WA36-FILL-011","action":"sync_canonical_000_to_populated_review_state","target":"Документация/000_Задачи для агента.md"}
+{"ts":"2026-10-02T19:59:00+05:00","type":"DONE","operation_id":"WA36-FILL-010","result":"Remote task-session context/history closed to POPULATED / USER_REVIEW_REQUIRED; implementation remains not started."}
+{"ts":"2026-10-02T19:59:01+05:00","type":"VERIFIED","operation_id":"WA36-FILL-010","result":"context.md/history.md reread; Web Alarm state and recovery-on-task-create incident recorded."}
+{"ts":"2026-10-02T19:59:02+05:00","type":"INTENT","operation_id":"WA36-FILL-012","action":"sync_status_docs_to_populated_review_state","targets":["Документация/01_Архитектура и текущее состояние.md","Документация/04_Дорожная карта разработки.md","Документация/05_Реестр задач.md","Документация/24_План реализации Web Alarm Workspace.md"]}
+{"ts":"2026-10-02T20:00:10+05:00","type":"DONE","operation_id":"WA36-FILL-011","result":"Canonical 000 synced to WA-3.6 populated review state."}
+{"ts":"2026-10-02T20:00:11+05:00","type":"DONE","operation_id":"WA36-FILL-012","result":"Status docs 01/04/05/24 synced to WA-3.6 populated review state."}
+{"ts":"2026-10-02T20:00:12+05:00","type":"VERIFIED","operation_id":"WA36-FILL-011","result":"000 reread/search confirms WA-3.6 POPULATED and USER REVIEW REQUIRED."}
+{"ts":"2026-10-02T20:00:13+05:00","type":"VERIFIED","operation_id":"WA36-FILL-012","result":"01/04/05/24 search confirms USER REVIEW REQUIRED markers; no implementation state was advanced."}
+{"ts":"2026-10-02T20:00:14+05:00","type":"INTENT","operation_id":"WA36-FILL-013","action":"update_profile_status","target":"25"}
+{"ts":"2026-10-02T20:00:30+05:00","type":"DONE","operation_id":"WA36-FILL-013","result":"Doc25 synced and reread."}
+{"ts":"2026-10-02T20:00:31+05:00","type":"VERIFIED","operation_id":"WA36-FILL-013","result":"Doc25 population entry present."}
+{"ts":"2026-10-02T21:02:00+05:00","type":"SESSION_START","session_id":"WA-3.6.M001","result":"User approved implementation start; reconciliation PASS; exact M001 scope declared."}
+{"ts":"2026-10-02T21:02:01+05:00","type":"INTENT","operation_id":"WA36-M001-PREP-001","action":"prepare_verified_restore_point","targets":["web_alarm/recovery_report_store.py","test_web_alarm_recovery_report_store.py","web_alarm/__init__.py"]}
+{"ts":"2026-10-02T21:03:00+05:00","type":"DONE","operation_id":"WA36-M001-PREP-001","result":"Verified restore point prepared for exactly 3 M001 targets; M001 status BACKUP_VERIFIED."}
+{"ts":"2026-10-02T21:03:01+05:00","type":"VERIFIED","operation_id":"WA36-M001-PREP-001","result":"snapshot verify PASS; checkpoint synchronized to BACKUP_VERIFIED / VERIFIED."}
+{"ts":"2026-10-02T21:03:02+05:00","type":"INTENT","operation_id":"WA36-M001-TEST-001","action":"create_focused_recovery_report_store_tests","target":"test_web_alarm_recovery_report_store.py"}
+{"ts":"2026-10-02T21:04:00+05:00","type":"DONE","operation_id":"WA36-M001-TEST-001","result":"Created focused M001 recovery report store test suite."}
+{"ts":"2026-10-02T21:04:01+05:00","type":"INTENT","operation_id":"WA36-M001-VERIFY-RED-001","action":"run_focused_tests_before_implementation","target":"test_web_alarm_recovery_report_store.py"}
+{"ts":"2026-10-02T21:04:30+05:00","type":"FAILED","operation_id":"WA36-M001-VERIFY-RED-001","result":"Expected test-first RED: ModuleNotFoundError for web_alarm.recovery_report_store; implementation does not exist yet."}
+{"ts":"2026-10-02T21:04:31+05:00","type":"INTENT","operation_id":"WA36-M001-CODE-001","action":"implement_recovery_report_contract_and_store","target":"web_alarm/recovery_report_store.py"}
+{"ts":"2026-10-02T21:09:00+05:00","type":"DONE","operation_id":"WA36-M001-CODE-001","result":"Implemented RecoveryReportRecord/RecoveryTargetSummary/SideEffectScope and conflict-safe restart-safe RecoveryReportStore."}
+{"ts":"2026-10-02T21:09:01+05:00","type":"VERIFIED","operation_id":"WA36-M001-CODE-001","result":"Focused direct-module suite 9/9 PASS; Web Alarm microtask/checkpoint synchronized to ACTIVE with verified restore point."}
+{"ts":"2026-10-02T21:09:02+05:00","type":"INTENT","operation_id":"WA36-M001-CODE-002","action":"export_recovery_report_api","target":"web_alarm/__init__.py"}
+{"ts":"2026-10-02T21:10:00+05:00","type":"DONE","operation_id":"WA36-M001-CODE-002","result":"Recovery Report M001 API exported from web_alarm package."}
+{"ts":"2026-10-02T21:10:01+05:00","type":"INTENT","operation_id":"WA36-M001-VERIFY-001","action":"run_focused_compile_export_and_diff_checks","targets":["web_alarm/recovery_report_store.py","web_alarm/__init__.py","test_web_alarm_recovery_report_store.py"]}
+{"ts":"2026-10-02T21:11:00+05:00","type":"VERIFIED","operation_id":"WA36-M001-VERIFY-001","result":"Focused 9/9 PASS; py_compile PASS; package export import PASS; task-scoped git diff --check PASS."}
+{"ts":"2026-10-02T21:11:01+05:00","type":"INTENT","operation_id":"WA36-M001-VERIFY-002","action":"run_full_web_alarm_regression","target":"test_web_alarm*.py"}
+{"ts":"2026-10-02T21:12:00+05:00","type":"VERIFIED","operation_id":"WA36-M001-VERIFY-002","result":"Full Web Alarm regression 173/173 PASS."}
+{"ts":"2026-10-02T21:12:01+05:00","type":"INTENT","operation_id":"WA36-M001-CLOSE-001","action":"transition_M001_DONE_then_VERIFIED","target":"WA36-M001"}
+{"ts":"2026-10-02T21:13:00+05:00","type":"DONE","operation_id":"WA36-M001-CLOSE-001","result":"M001 transitioned ACTIVE -> DONE -> VERIFIED through ServerStateMachine."}
+{"ts":"2026-10-02T21:13:01+05:00","type":"VERIFIED","operation_id":"WA36-M001-CLOSE-001","result":"M001 VERIFIED; next safe action = prepare WA36-M002."}
+{"ts":"2026-10-02T21:13:02+05:00","type":"SESSION_START","session_id":"WA-3.6.M002","result":"Exact scope: new recovery_report_builder.py + focused test + package export only."}
+{"ts":"2026-10-02T21:13:03+05:00","type":"INTENT","operation_id":"WA36-M002-PREP-001","action":"prepare_verified_restore_point","targets":["web_alarm/recovery_report_builder.py","test_web_alarm_recovery_report_builder.py","web_alarm/__init__.py"]}
+{"ts":"2026-10-02T21:14:00+05:00","type":"DONE","operation_id":"WA36-M002-PREP-001","result":"M002 restore point VERIFIED for builder/test/__init__; lifecycle advanced BACKUP_VERIFIED -> READY -> ACTIVE."}
+{"ts":"2026-10-02T21:14:01+05:00","type":"VERIFIED","operation_id":"WA36-M002-PREP-001","result":"M002 ACTIVE with verified snapshot and previous M001 VERIFIED."}
+{"ts":"2026-10-02T21:14:02+05:00","type":"INTENT","operation_id":"WA36-M002-TEST-001","action":"create_focused_recovery_report_builder_tests","target":"test_web_alarm_recovery_report_builder.py"}
+{"ts":"2026-10-02T21:15:00+05:00","type":"DONE","operation_id":"WA36-M002-TEST-001","result":"Created focused pure-builder tests for side-effect classification, decision/evidence binding and no-authority action facts."}
+{"ts":"2026-10-02T21:15:01+05:00","type":"INTENT","operation_id":"WA36-M002-VERIFY-RED-001","action":"run_focused_builder_tests_before_implementation","target":"test_web_alarm_recovery_report_builder.py"}
+{"ts":"2026-10-02T21:15:30+05:00","type":"FAILED","operation_id":"WA36-M002-VERIFY-RED-001","result":"Expected test-first RED: ModuleNotFoundError for recovery_report_builder."}
+{"ts":"2026-10-02T21:15:31+05:00","type":"INTENT","operation_id":"WA36-M002-CODE-001","action":"implement_pure_recovery_report_builder","target":"web_alarm/recovery_report_builder.py"}
+{"ts":"2026-10-02T21:16:00+05:00","type":"DONE","operation_id":"WA36-M002-CODE-001","result":"Implemented pure RecoveryReportBuilder with deterministic side-effect classification, evidence/decision binding and no-action inference."}
+{"ts":"2026-10-02T21:16:01+05:00","type":"VERIFIED","operation_id":"WA36-M002-CODE-001","result":"Focused builder suite 8/8 PASS."}
+{"ts":"2026-10-02T21:16:02+05:00","type":"INTENT","operation_id":"WA36-M002-CODE-002","action":"export_recovery_report_builder_api","target":"web_alarm/__init__.py"}
+{"ts":"2026-10-02T21:17:00+05:00","type":"VERIFIED","operation_id":"WA36-M002-VERIFY-001","result":"M001+M002 focused 17/17 PASS; full Web Alarm 181/181 PASS; py_compile/export/diff-check PASS."}
+{"ts":"2026-10-02T21:17:01+05:00","type":"INTENT","operation_id":"WA36-M002-CLOSE-001","action":"transition_M002_DONE_then_VERIFIED","target":"WA36-M002"}
+{"ts":"2026-10-02T21:18:00+05:00","type":"DONE","operation_id":"WA36-M002-CLOSE-001","result":"M002 transitioned DONE -> VERIFIED through ServerStateMachine."}
+{"ts":"2026-10-02T21:18:01+05:00","type":"VERIFIED","operation_id":"WA36-M002-CLOSE-001","result":"M002 VERIFIED; next safe action = prepare WA36-M003."}
+{"ts":"2026-10-02T21:18:02+05:00","type":"SESSION_START","session_id":"WA-3.6.M003","result":"Scope: new recovery_report_service.py; new focused integration test; server.py read/write endpoint; context_pack.py latest report exposure; package export."}
+{"ts":"2026-10-02T21:18:03+05:00","type":"INTENT","operation_id":"WA36-M003-PREP-001","action":"prepare_verified_restore_point","targets":["web_alarm/recovery_report_service.py","test_web_alarm_recovery_report_integration.py","web_alarm/server.py","web_alarm/context_pack.py","web_alarm/__init__.py"]}
+{"ts":"2026-10-02T21:21:00+05:00","type":"DONE","operation_id":"WA36-M003-PREP-001","result":"M003 restore point VERIFIED and lifecycle BACKUP_VERIFIED -> READY -> ACTIVE."}
+{"ts":"2026-10-02T21:21:01+05:00","type":"INTENT","operation_id":"WA36-M003-TEST-001","action":"create_and_run_integration_tests_before_implementation","target":"test_web_alarm_recovery_report_integration.py"}
+{"ts":"2026-10-02T21:22:00+05:00","type":"FAILED","operation_id":"WA36-M003-TEST-001","result":"Expected test-first RED: RecoveryReportService module absent."}
+{"ts":"2026-10-02T21:22:01+05:00","type":"INTENT","operation_id":"WA36-M003-CODE-001","action":"implement_recovery_report_service","target":"web_alarm/recovery_report_service.py"}
+{"ts":"2026-10-02T21:23:00+05:00","type":"FAILED","operation_id":"WA36-M003-VERIFY-001","result":"Intermediate M003: 3/6 PASS. Service persistence + fresh process PASS; missing Server endpoint/capability and Context Pack exposure fail as expected."}
+{"ts":"2026-10-02T21:23:01+05:00","type":"INTENT","operation_id":"WA36-M003-CODE-002","action":"wire_server_context_and_package_export","targets":["web_alarm/server.py","web_alarm/context_pack.py","web_alarm/__init__.py"]}
+{"ts":"2026-10-02T21:24:00+05:00","type":"DONE","operation_id":"WA36-M003-CODE-001","result":"Implemented RecoveryReportService; service persists report from reconciliation/checkpoint/transport evidence without workflow mutation."}
+{"ts":"2026-10-02T21:24:01+05:00","type":"DONE","operation_id":"WA36-M003-CODE-002","result":"Server GET/POST recovery-reports, capability, Context Pack latest report and package export wired."}
+{"ts":"2026-10-02T21:24:02+05:00","type":"VERIFIED","operation_id":"WA36-M003-VERIFY-002","result":"Focused M003 integration 6/6 PASS including fresh Python process and new API instance persistence."}
+{"ts":"2026-10-02T21:24:03+05:00","type":"INTENT","operation_id":"WA36-M003-VERIFY-003","action":"run_recovery_report_and_full_web_alarm_regressions","target":"WA-3.6 M001-M003"}
+{"ts":"2026-10-02T21:25:00+05:00","type":"VERIFIED","operation_id":"WA36-M003-VERIFY-003","result":"Recovery Report M001-M003 regression 23/23 PASS; full Web Alarm 187/187 PASS; py_compile and task-scoped diff-check PASS."}
+{"ts":"2026-10-02T21:25:01+05:00","type":"INTENT","operation_id":"WA36-M003-CLOSE-001","action":"transition_M003_DONE_then_VERIFIED","target":"WA36-M003"}
+{"ts":"2026-10-02T21:26:00+05:00","type":"DONE","operation_id":"WA36-M003-CLOSE-001","result":"M003 transitioned DONE -> VERIFIED through ServerStateMachine."}
+{"ts":"2026-10-02T21:26:01+05:00","type":"VERIFIED","operation_id":"WA36-M003-CLOSE-001","result":"M003 VERIFIED; next safe action = prepare WA36-M004."}
+{"ts":"2026-10-02T21:26:02+05:00","type":"SESSION_START","session_id":"WA-3.6.M004","result":"Final scope fixed: new adversarial acceptance test plus documentation closeout 000/01/04/05/06/23/24/25/26. No runtime files in initial M004 scope."}
+{"ts":"2026-10-02T21:26:03+05:00","type":"INTENT","operation_id":"WA36-M004-PREP-001","action":"prepare_verified_restore_point","targets":["test_web_alarm_recovery_report_acceptance.py","Документация/000_Задачи для агента.md","Документация/01_Архитектура и текущее состояние.md","Документация/04_Дорожная карта разработки.md","Документация/05_Реестр задач.md","Документация/06_Журнал выполнения и отчёты.md","Документация/23_Архитектура Web Alarm Workspace.md","Документация/24_План реализации Web Alarm Workspace.md","Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md","Документация/26_Журнал наблюдений Remote - обрывы, transport и recovery evidence.md"]}
+{"ts":"2026-10-02T21:32:00+05:00","type":"DONE","operation_id":"WA36-M004-PREP-001","result":"M004 restore point VERIFIED for adversarial test + 000/01/04/05/06/23/24/25/26; lifecycle BACKUP_VERIFIED -> READY -> ACTIVE."}
+{"ts":"2026-10-02T21:32:01+05:00","type":"INTENT","operation_id":"WA36-M004-TEST-001","action":"create_final_adversarial_recovery_report_matrix","target":"test_web_alarm_recovery_report_acceptance.py"}
+{"ts":"2026-10-02T21:34:00+05:00","type":"DONE","operation_id":"WA36-M004-TEST-001","result":"Final adversarial Recovery Report acceptance matrix created; interrupted composite write reconciled and resumed from first missing chunk only."}
+{"ts":"2026-10-02T21:34:01+05:00","type":"INTENT","operation_id":"WA36-M004-VERIFY-001","action":"run_final_adversarial_acceptance_matrix","target":"test_web_alarm_recovery_report_acceptance.py"}
+{"ts":"2026-10-02T21:36:00+05:00","type":"VERIFIED","operation_id":"WA36-M004-VERIFY-001","result":"Final adversarial Recovery Report acceptance matrix 10/10 PASS; no runtime defect or scope extension required."}
+{"ts":"2026-10-02T21:36:01+05:00","type":"ACCEPTANCE_GATE","task":"WA-3","result":"WA-3.6 can close, but WA-3 overall remains IN_PROGRESS because documented real controlled Remote transport-disconnect test is still unmet; process restart/result-storage failures do not replace it."}
+{"ts":"2026-10-02T21:36:02+05:00","type":"INTENT","operation_id":"WA36-M004-VERIFY-002","action":"run_final_combined_and_full_regression","target":"WA-3.6 final code state"}
+{"ts":"2026-10-02T21:38:00+05:00","type":"VERIFIED","operation_id":"WA36-M004-VERIFY-002","result":"Recovery Report combined 33/33 PASS; full Web Alarm 197/197 PASS; py_compile and code diff-check PASS."}
+{"ts":"2026-10-02T21:38:01+05:00","type":"INTENT","operation_id":"WA36-M004-DOCS-001","action":"documentation_closeout","targets":["000","01","04","05","06","23","24","25","26"]}
+{"ts":"2026-10-02T21:46:03+05:00","type":"INTENT","operation_id":"WA36-RECOVERY-LIVE-001","action":"record_transport_evidence_and_reconcile_open_docs_closeout","target":"WA36-M004-DOCS-001"}
+{"ts":"2026-10-02T21:48:00+05:00","type":"RECOVERY","operation_id":"WA36-M004-DOCS-001","result":"Live MESSAGE_DELIVERY_TIMEOUT -> REMOTE_OFFLINE -> REMOTE_RECOVERED reconciled. M004 code/tests were already VERIFIED. Docs closeout side effect is PARTIAL: 000 changed correctly; 01/04/05/06/23/24/25/26 remain exact pre-state. 000 will not be replayed; continue only missing eight docs."}
+{"ts":"2026-10-02T21:48:01+05:00","type":"VERIFIED","operation_id":"WA36-RECOVERY-LIVE-001","result":"Transport evidence persisted with fixed event_ids; restore-point hash reconciliation proved partial docs execution and no code replay required."}
+{"ts":"2026-10-02T21:50:00+05:00","type":"DONE","operation_id":"WA36-M004-DOCS-001","result":"Documentation closeout completed after recovery: 000 accepted as already done; missing 01/04/05/06/23/24/25/26 applied. M004 target audit 10/10 changed from pre-state; git diff --check PASS."}
+{"ts":"2026-10-02T21:50:01+05:00","type":"VERIFIED","operation_id":"WA36-M004-DOCS-001","result":"Closeout verification PASS; no runtime/code replay after transport incident."}
+{"ts":"2026-10-02T21:50:02+05:00","type":"INTENT","operation_id":"WA36-M004-CLOSE-001","action":"transition_M004_DONE_then_VERIFIED","target":"WA36-M004"}
+{"ts":"2026-10-02T21:51:00+05:00","type":"DONE","operation_id":"WA36-M004-CLOSE-001","result":"M004 transitioned ACTIVE -> DONE -> VERIFIED through ServerStateMachine."}
+{"ts":"2026-10-02T21:51:01+05:00","type":"VERIFIED","operation_id":"WA36-M004-CLOSE-001","result":"M004 VERIFIED; checkpoint last_verified=WA36-M004; next_safe_action=complete TASK or create next planned microtask."}
+{"ts":"2026-10-02T21:51:02+05:00","type":"INTENT","operation_id":"WA36-TASK-COMPLETE-001","action":"complete_task","target":"WA-3.6"}
+{"ts":"2026-10-02T21:56:30+05:00","type":"DONE","operation_id":"WA36-TASK-COMPLETE-001","result":"WA-3.6 moved to COMPLETED after M001-M004 VERIFIED."}
+{"ts":"2026-10-02T21:56:31+05:00","type":"INTENT","operation_id":"WA36-FRESH-REOPEN-001","action":"fresh_process_reopen","target":"WA-3.6 completed persistent state"}
+{"ts":"2026-10-02T21:57:00+05:00","type":"VERIFIED","operation_id":"WA36-FRESH-REOPEN-001","result":"Fresh Python process reopened completed WA-3.6: TASK=COMPLETED; M001-M004=VERIFIED; checkpoint M004/VERIFIED; bound transport evidence order MESSAGE_DELIVERY_TIMEOUT,REMOTE_OFFLINE,REMOTE_RECOVERED. PASS."}
+{"ts":"2026-10-02T21:57:01+05:00","type":"INTENT","operation_id":"WA36-FINAL-DOCS-001","action":"sync_fresh_reopen_pass_status","targets":["context.md","history.md","000","05","06","24","25"]}
+{"ts":"2026-10-02T21:59:00+05:00","type":"DONE","operation_id":"WA36-FINAL-DOCS-001","result":"Fresh-reopen PASS synchronized to context/history/000/05/06/24/25; current architecture/roadmap already reflected WA-3.6 DONE state. No WA-3.6 PENDING markers remain."}
+{"ts":"2026-10-02T21:59:01+05:00","type":"VERIFIED","operation_id":"WA36-FINAL-DOCS-001","result":"Scoped git diff --check PASS for WA-3.6 session + closeout docs. Repo-wide diff-check has unrelated pre-existing trailing whitespace in Документация/22_Техническая информация.md:69; not modified by this TASK."}
+{"ts":"2026-10-02T21:59:02+05:00","type":"TASK_STATUS","task":"WA-3.6","status":"CLOSED_AFTER_FRESH_REOPEN","next_safe_action":"Formulate intentionally controlled real Remote transport-disconnect acceptance gate for WA-3 in ordinary Chat before new Remote execution. Do not start WA-4 automatically."}

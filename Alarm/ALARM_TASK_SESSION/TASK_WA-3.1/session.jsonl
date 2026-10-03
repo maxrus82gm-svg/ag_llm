@@ -1,0 +1,18 @@
+{"ts":"2026-10-02T08:55:00+05:00","type":"BOOTSTRAP","task":"WA-3.1","status":"ACTIVE_PREP","note":"Automatically started after WA-2 DONE/VERIFIED."}
+{"ts":"2026-10-02T08:55:01+05:00","type":"VERIFIED","operation_id":"WA31-PREP-001","result":"Initial Remote-entry scope restore point created and SHA256-verified; remote_entry/test files recorded absent."}
+{"ts":"2026-10-02T10:59:00+05:00","type":"RECOVERY","operation_id":"WA31-RECOVER-001","result":"After transport/chat reset, disk reconciliation confirmed initial WA-3.1 restore point intact: existing scope files still match captured hashes, new remote_entry/test files remain absent, and 000 still shows WA-3.1 not activated. Safe continuation point = activate WA-3.1; no prior implementation mutation to replay."}
+{"ts":"2026-10-02T10:59:01+05:00","type":"INTENT","operation_id":"WA31-ACTIVATE-001","action":"activate_WA_3_1_in_operational_handoff","target":"Документация/000_Задачи для агента.md"}
+{"ts":"2026-10-02T11:00:00+05:00","type":"DONE","operation_id":"WA31-ACTIVATE-001","result":"000 activated for WA-3.1 after recovery reconciliation."}
+{"ts":"2026-10-02T11:00:01+05:00","type":"INTENT","operation_id":"WA31-CODE-001","action":"create_canonical_remote_entry_resolver","target":"web_alarm/remote_entry.py","pre_state":"did_not_exist"}
+{"ts":"2026-10-02T11:00:30+05:00","type":"DONE","operation_id":"WA31-CODE-001","result":"web_alarm/remote_entry.py created with fail-closed active TASK resolution and recovery-aware read-only entry result."}
+{"ts":"2026-10-02T11:00:31+05:00","type":"INTENT","operation_id":"WA31-CODE-002","action":"integrate_remote_entry_into_cli","target":"web_alarm/cli.py"}
+{"ts":"2026-10-02T11:01:00+05:00","type":"DONE","operation_id":"WA31-CODE-002","result":"CLI now exposes `enter [--task-id]` and `status --active`; explicit `status --task-id` behavior preserved."}
+{"ts":"2026-10-02T11:01:01+05:00","type":"INTENT","operation_id":"WA31-TEST-001","action":"create_remote_entry_and_cli_tests","targets":["test_web_alarm_remote_entry.py","test_web_alarm_cli.py"]}
+{"ts":"2026-10-02T11:01:30+05:00","type":"DONE","operation_id":"WA31-TEST-001","result":"Focused Remote-entry tests created and CLI tests extended for `enter` and `status --active`."}
+{"ts":"2026-10-02T11:01:31+05:00","type":"INTENT","operation_id":"WA31-VERIFY-001","action":"run_remote_entry_and_full_wa_regression","targets":["web_alarm/remote_entry.py","web_alarm/cli.py","test_web_alarm_remote_entry.py","test_web_alarm_cli.py","WA regression suite"]}
+{"ts":"2026-10-02T11:02:00+05:00","type":"DONE","operation_id":"WA31-VERIFY-001","result":"82/82 WA focused tests PASS."}
+{"ts":"2026-10-02T11:02:01+05:00","type":"VERIFIED","operation_id":"WA31-VERIFY-001","result":"Remote-entry/CLI diff-check PASS."}
+{"ts":"2026-10-02T11:02:02+05:00","type":"SCOPE_EXTEND","operation_id":"WA31-PREP-002","action":"add_closeout_documentation_before_edit","targets":["Документация/01_Архитектура и текущее состояние.md","Документация/04_Дорожная карта разработки.md","Документация/05_Реестр задач.md","Документация/06_Журнал выполнения и отчёты.md","Документация/23_Архитектура Web Alarm Workspace.md","Документация/24_План реализации Web Alarm Workspace.md","Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md"]}
+{"ts":"2026-10-02T11:03:00+05:00","type":"DONE","operation_id":"WA31-DOC-CLOSEOUT-001","result":"000/01/04/05/06/23/24/25 synchronized."}
+{"ts":"2026-10-02T11:03:01+05:00","type":"VERIFIED","operation_id":"WA31-DOC-CLOSEOUT-001","result":"Final 82/82 regression PASS and code/documentation diff-check PASS after closeout."}
+{"ts":"2026-10-02T11:03:02+05:00","type":"TASK_STATUS","task":"WA-3.1","status":"DONE_VERIFIED","next":"WA-3.2"}

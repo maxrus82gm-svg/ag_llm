@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import audit_storage
 import planner_runtime
@@ -153,6 +153,107 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(client.bodies[0]["function_call"], "auto")
         self.assertIsNone(self.stored()["active_stage_id"])
 
+    async def test_151c_planner_final_audit_git_is_task_scoped(self):
+        status = Mock(return_value={
+            "ok": True,
+            "stdout": "?? result.md",
+            "stderr": "",
+            "truncated": False,
+            "stdout_bytes": 12,
+            "stderr_bytes": 0,
+        })
+        diff = Mock(return_value={
+            "ok": True,
+            "stdout": "",
+            "stderr": "",
+            "truncated": False,
+            "stdout_bytes": 0,
+            "stderr_bytes": 0,
+        })
+        result, audit, _client = await self.run_v6(
+            responses=[tool(write()), legacy.FakeResponse("Finished")],
+            extra_patches=(
+                patch.object(server, "_agent_git_status", status),
+                patch.object(server, "_agent_git_diff", diff),
+            ),
+        )
+        self.assertEqual(result, "Finished")
+        context = json.loads(audit.await_args.kwargs["verification_context"])
+        self.assertEqual(context["task_scope"]["mode"], "task_scoped_v1")
+        self.assertEqual(context["task_scope"]["paths"], ["result.md"])
+        self.assertTrue(context["requirement_coverage"]["complete"])
+        self.assertEqual(status.call_args.args[2], ["result.md"])
+        self.assertEqual(diff.call_args.args[1], ["result.md"])
+
+    async def test_151c_incomplete_requirement_coverage_blocks_before_dredd(self):
+        stage = plan(False)["stages"][0]
+        stage.update(
+            stage_id="read_stage",
+            goal="read current result",
+            allowed_capabilities=["READ"],
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+            completion_criteria=["current target read"],
+        )
+        contract = {"stages": [stage], "obligation_changes": []}
+        (self.workspace / "result.md").write_text("value", encoding="utf-8")
+
+        def missing_source_snapshot(lifecycle_self, _stage_evidence):
+            return {
+                "task_block_id": lifecycle_self.state["task_block_id"],
+                "run_id": lifecycle_self.state["run_id"],
+                "plan_id": lifecycle_self.state["plan_id"],
+                "plan_version": lifecycle_self.state["plan_version"],
+                "stages": [{
+                    "stage_id": "read_stage",
+                    "persistence_required": False,
+                    "evidence_generation": lifecycle_self.state["stage_states"][
+                        "read_stage"
+                    ].get("evidence_generation", 0),
+                    "requirements": [{
+                        "evidence_id": "readback",
+                        "tool": "read_file",
+                        "arguments_sha256": task_planner.evidence_arguments_fingerprint(
+                            {"path": "result.md"}
+                        ),
+                        "target_identity": ["result.md"],
+                        "target_state_sha256": "state-current",
+                        "source_records": [],
+                    }],
+                }],
+            }
+
+        verifier = AsyncMock(return_value=legacy.verifier_result("PASS"))
+        with self.assertRaisesRegex(RuntimeError, "FINAL AUDIT ERROR"):
+            await self.run_v6(
+                contract,
+                responses=[
+                    tool({
+                        "name": "read_file",
+                        "arguments": {"path": "result.md"},
+                    }),
+                    legacy.FakeResponse("Finished"),
+                ],
+                extra_patches=(
+                    patch.object(
+                        task_planner.TaskLifecycle,
+                        "evidence_freshness_snapshot",
+                        missing_source_snapshot,
+                    ),
+                    patch.object(server, "run_verifier_check", verifier),
+                ),
+            )
+        verifier.assert_not_awaited()
+        failure = next(
+            item for item in self.events
+            if item["event"] == "run_failed"
+        )
+        self.assertEqual(failure["reason"], "final_audit_evidence_incomplete")
+
     async def test_successful_persistence_advances_before_executor_can_repeat_write(self):
         first = plan()["stages"][0]
         first["stage_id"] = "write_stage"
@@ -260,6 +361,176 @@ class PlannerIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(state["stage_states"]["verify_stage"]["status"], "SATISFIED")
         self.assertIn("non_persistence_evidence_satisfied", self.event_names())
         self.assertEqual(audit.await_count, 1)
+
+    async def test_151c_state_change_during_packet_collection_blocks_dredd_until_fresh(self):
+        (self.workspace / "result.md").write_text(
+            "before", encoding="utf-8"
+        )
+        stage = plan(False)["stages"][0]
+        stage.update(
+            stage_id="read_stage",
+            allowed_capabilities=["READ"],
+            goal="read current result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+            completion_criteria=["current target read"],
+        )
+        contract = {"stages": [stage], "obligation_changes": []}
+
+        async def planner(**kw):
+            if kw["mode"] == "INITIAL":
+                return copy.deepcopy(contract)
+            self.fail(
+                "fresh server-evidence stage must not ask Planner readiness"
+            )
+
+        real_collect = server._collect_final_audit_evidence
+        collect_calls = 0
+
+        def collect_then_drift(*args, **kwargs):
+            nonlocal collect_calls
+            collect_calls += 1
+            result = real_collect(*args, **kwargs)
+            if collect_calls == 1:
+                (self.workspace / "result.md").write_text(
+                    "changed-during-packet", encoding="utf-8"
+                )
+            return result
+
+        fresh_verifier = AsyncMock(return_value=legacy.verifier_result("PASS"))
+        result, _audit, client = await self.run_v6(
+            contract,
+            planner_effect=planner,
+            responses=[
+                tool({
+                    "name": "read_file",
+                    "arguments": {"path": "result.md"},
+                }),
+                legacy.FakeResponse("Initial final"),
+                tool({
+                    "name": "read_file",
+                    "arguments": {"path": "result.md"},
+                }),
+                legacy.FakeResponse("Fresh final"),
+            ],
+            extra_patches=(
+                patch.object(
+                    server,
+                    "_collect_final_audit_evidence",
+                    side_effect=collect_then_drift,
+                ),
+                patch.object(
+                    server,
+                    "run_verifier_check",
+                    fresh_verifier,
+                ),
+            ),
+        )
+
+        self.assertEqual(result, "Fresh final")
+        self.assertEqual(client.post_count, 4)
+        self.assertEqual(collect_calls, 2)
+        self.assertEqual(fresh_verifier.await_count, 1)
+        stale_events = [
+            event
+            for event in self.events
+            if event["event"] == "final_audit_evidence_snapshot_stale"
+        ]
+        self.assertTrue(
+            any(
+                event.get("phase") == "after_packet_before_final_audit"
+                for event in stale_events
+            )
+        )
+
+    async def test_state_change_during_final_audit_reopens_evidence_and_requires_fresh_read(self):
+        (self.workspace / "result.md").write_text(
+            "before", encoding="utf-8"
+        )
+        stage = plan(False)["stages"][0]
+        stage.update(
+            stage_id="read_stage",
+            allowed_capabilities=["READ"],
+            goal="read current result",
+            completion_mode="server_evidence",
+            evidence_requirements=[{
+                "evidence_id": "readback",
+                "tool": "read_file",
+                "arguments": {"path": "result.md"},
+            }],
+            completion_criteria=["current target read"],
+        )
+        contract = {"stages": [stage], "obligation_changes": []}
+
+        async def planner(**kw):
+            if kw["mode"] == "INITIAL":
+                return copy.deepcopy(contract)
+            self.fail(
+                "fresh server-evidence stage must not ask Planner readiness"
+            )
+
+        audit_calls = 0
+
+        async def verifier_side_effect(**_kwargs):
+            nonlocal audit_calls
+            audit_calls += 1
+            if audit_calls == 1:
+                (self.workspace / "result.md").write_text(
+                    "changed-during-audit", encoding="utf-8"
+                )
+            return legacy.verifier_result("PASS")
+
+        fresh_verifier = AsyncMock(side_effect=verifier_side_effect)
+        result, _audit, client = await self.run_v6(
+            contract,
+            planner_effect=planner,
+            responses=[
+                tool({
+                    "name": "read_file",
+                    "arguments": {"path": "result.md"},
+                }),
+                legacy.FakeResponse("Initial final"),
+                tool({
+                    "name": "read_file",
+                    "arguments": {"path": "result.md"},
+                }),
+                legacy.FakeResponse("Fresh final"),
+            ],
+            extra_patches=(
+                patch.object(
+                    server,
+                    "run_verifier_check",
+                    fresh_verifier,
+                ),
+            ),
+        )
+
+        self.assertEqual(result, "Fresh final")
+        self.assertEqual(client.post_count, 4)
+        self.assertEqual(fresh_verifier.await_count, 2)
+        self.assertIn(
+            "final_audit_evidence_snapshot_stale",
+            self.event_names(),
+        )
+        passed = [
+            event
+            for event in self.events
+            if event["event"] == "final_audit_passed"
+        ]
+        self.assertEqual(len(passed), 1)
+        self.assertIsInstance(
+            passed[0].get("evidence_snapshot_sha256"), str
+        )
+        self.assertEqual(
+            self.stored()["stage_states"]["read_stage"][
+                "evidence_generation"
+            ],
+            1,
+        )
 
     async def test_wrong_successful_verify_does_not_close_exact_evidence_stage(self):
         first = plan()["stages"][0]

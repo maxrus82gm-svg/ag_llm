@@ -48,6 +48,8 @@ from task_planner import (
     PlanInvalidated,
     PersistencePreflightRejected,
     evidence_arguments_fingerprint,
+    evidence_dependency_state_fingerprint,
+    evidence_dependency_targets,
     postcondition_holds,
 )
 from verifier_runtime import (
@@ -146,6 +148,8 @@ MAX_CONFIGURABLE_TOOL_ITERATIONS = 200
 MAX_VERIFY_OUTPUT_BYTES = 128 * 1024
 MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
 MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
+MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES = 8 * 1024
+MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES = 32 * 1024
 FINAL_AUDIT_CORRECTION_LIMIT = 2
 EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT = 1
 EXECUTION_CONSISTENCY_CORRECTION_LIMIT = 1
@@ -1507,6 +1511,8 @@ def _validate_verify_paths(
     *,
     python_only: bool = False,
     allow_empty: bool = False,
+    allow_missing: bool = False,
+    allow_directory: bool = False,
 ) -> list[tuple[str, Path]]:
     _require_verify_enabled(policy)
     if not isinstance(paths, list):
@@ -1523,7 +1529,10 @@ def _validate_verify_paths(
         if python_only and path.suffix.lower() != ".py":
             raise ValueError(f"python_compile принимает только .py: {item}")
         if not path.is_file():
-            raise FileNotFoundError(f"Файл не найден: {item}")
+            directory_ok = allow_directory and path.is_dir()
+            missing_ok = allow_missing and not path.exists()
+            if not (directory_ok or missing_ok):
+                raise FileNotFoundError(f"Файл не найден: {item}")
         rel = path.relative_to(root).as_posix()
         if rel not in seen:
             result.append((rel, path))
@@ -1578,12 +1587,51 @@ def _git_path_in_read_scope(root: Path, path_text: str, policy: dict) -> bool:
     return _is_within(path, policy["_read_root"])
 
 
-def _agent_git_status(root: Path, policy: dict) -> dict:
+def _agent_git_status(
+    root: Path,
+    policy: dict,
+    paths: object | None = None,
+) -> dict:
     _require_verify_enabled(policy)
-    result = _run_verify_process(
-        ["git", "-c", "core.quotepath=false", "--no-pager", "status", "--porcelain=v1", "--untracked-files=all"],
-        cwd=root,
-    )
+    checked = None
+    if paths is not None:
+        checked = _validate_verify_paths(
+            root,
+            paths,
+            policy,
+            python_only=False,
+            allow_empty=True,
+            allow_missing=True,
+            allow_directory=True,
+        )
+        if not checked:
+            return {
+                "ok": True,
+                "exit_code": 0,
+                "stdout": "",
+                "stderr": "",
+                "truncated": False,
+                "stdout_bytes": 0,
+                "stderr_bytes": 0,
+                "paths": [],
+                "check": "git_status",
+                "read_scope": policy["read_scope"],
+                "not_applicable": True,
+                "reason": "no_task_scoped_paths",
+            }
+
+    command = [
+        "git",
+        "-c",
+        "core.quotepath=false",
+        "--no-pager",
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=all",
+    ]
+    if checked is not None:
+        command.extend(["--", *[rel for rel, _ in checked]])
+    result = _run_verify_process(command, cwd=root)
     if result["ok"]:
         filtered = []
         for line in result["stdout"].splitlines():
@@ -1591,12 +1639,19 @@ def _agent_git_status(root: Path, policy: dict) -> dict:
             if path_text and _git_path_in_read_scope(root, path_text, policy):
                 filtered.append(line)
         result["stdout"] = "\n".join(filtered)
+    result["paths"] = [rel for rel, _ in checked] if checked is not None else None
     result["check"] = "git_status"
     result["read_scope"] = policy["read_scope"]
     return result
 
 
-def _agent_git_diff(root: Path, paths: object, policy: dict) -> dict:
+def _agent_git_diff(
+    root: Path,
+    paths: object,
+    policy: dict,
+    *,
+    allow_missing: bool = False,
+) -> dict:
     _require_verify_enabled(policy)
     checked = _validate_verify_paths(
         root,
@@ -1604,6 +1659,8 @@ def _agent_git_diff(root: Path, paths: object, policy: dict) -> dict:
         policy,
         python_only=False,
         allow_empty=True,
+        allow_missing=allow_missing,
+        allow_directory=allow_missing,
     )
     if checked:
         pathspecs = [rel for rel, _ in checked]
@@ -2356,6 +2413,61 @@ def _clip_final_audit_text(text: str, limit: int) -> tuple[str, bool, int]:
     return clipped + marker.decode("ascii"), True, original_bytes
 
 
+def _final_audit_tool_material_preview(
+    function_name: str,
+    result: object,
+) -> dict | None:
+    """Keep bounded semantic material while full tool output stays in Run Store."""
+    if not isinstance(result, dict):
+        text = str(result)
+    elif function_name in {"read_file", "read_file_range"}:
+        content = result.get("content")
+        if not isinstance(content, str):
+            return None
+        text = content
+    elif function_name in {
+        "find_text",
+        "list_dir",
+        "verify_file_content",
+    }:
+        text = json.dumps(result, ensure_ascii=False, sort_keys=True)
+    elif function_name in {
+        "git_status",
+        "git_diff",
+        "python_compile",
+        "ui_smoke_test",
+    }:
+        text = json.dumps(
+            {
+                key: result.get(key)
+                for key in (
+                    "ok",
+                    "check",
+                    "paths",
+                    "target",
+                    "stdout",
+                    "stderr",
+                    "truncated",
+                )
+                if key in result
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+    else:
+        return None
+
+    clipped, truncated, original_bytes = _clip_final_audit_text(
+        text,
+        MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+    )
+    return {
+        "content": clipped,
+        "truncated": truncated,
+        "original_bytes": original_bytes,
+    }
+
+
 def _candidate_fact_conflicts(
     candidate: str, *, tool_call_count: int, write_revision: int,
     run_owned_state: dict, mutation_facts: dict, observed_tool_names: set[str],
@@ -2414,6 +2526,291 @@ def _candidate_fact_conflicts(
     return conflicts
 
 
+def _collect_final_audit_task_paths(
+    *,
+    root: Path,
+    policy: dict,
+    task_plan_evidence: dict | None,
+    mutation_facts: dict,
+    run_owned_state: dict,
+    verification_state: dict,
+    tool_facts: list[dict],
+) -> tuple[list[str], list[str]]:
+    """Build deterministic task-scoped paths for Final Audit observations."""
+    candidates: list[object] = []
+
+    if isinstance(task_plan_evidence, dict):
+        for stage in task_plan_evidence.get("stages") or []:
+            if not isinstance(stage, dict):
+                continue
+            for artifact in stage.get("artifacts") or []:
+                if isinstance(artifact, dict):
+                    candidates.append(artifact.get("path"))
+            for requirement in stage.get("evidence_requirements") or []:
+                if not isinstance(requirement, dict):
+                    continue
+                arguments = requirement.get("arguments")
+                if not isinstance(arguments, dict):
+                    continue
+                if "path" in arguments:
+                    candidates.append(arguments.get("path"))
+                if isinstance(arguments.get("paths"), list):
+                    candidates.extend(arguments["paths"])
+
+    for key in ("changed_files", "new_files", "deleted_files"):
+        candidates.extend(mutation_facts.get(key) or [])
+    candidates.extend((run_owned_state or {}).keys())
+    candidates.extend(verification_state.get("changed_python_paths") or [])
+    candidates.extend(verification_state.get("deleted_python_paths") or [])
+
+    # Arbitrary exploratory tool calls do not expand task scope. Relevant
+    # dependencies must be present in the accepted contract/evidence targets;
+    # actual mutations/run-owned state are added separately above.
+
+    paths: list[str] = []
+    invalid: list[str] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        if not isinstance(candidate, str) or not candidate.strip():
+            continue
+        try:
+            resolved = _require_operation_permission(
+                root, candidate.strip(), "read", policy
+            )
+            relative = resolved.relative_to(root).as_posix()
+        except Exception:
+            invalid.append(str(candidate)[:300])
+            continue
+        if relative not in seen:
+            seen.add(relative)
+            paths.append(relative)
+    return sorted(paths), sorted(set(invalid))
+
+
+def _compact_final_audit_literal(value: object) -> object:
+    if not isinstance(value, str):
+        return copy.deepcopy(value)
+    encoded = value.encode("utf-8", errors="replace")
+    if len(encoded) <= 512:
+        return value
+    return {
+        "omitted": True,
+        "utf8_bytes": len(encoded),
+        "sha256": hashlib.sha256(encoded).hexdigest(),
+    }
+
+
+def _compact_final_audit_task_plan(
+    task_plan_evidence: dict | None,
+) -> dict | None:
+    """Project the accepted contract without replaying large exact literals."""
+    if not isinstance(task_plan_evidence, dict):
+        return None
+
+    compact_stages = []
+    for stage in task_plan_evidence.get("stages") or []:
+        if not isinstance(stage, dict):
+            continue
+        compact_stage = {
+            "stage_id": stage.get("stage_id"),
+            "goal": stage.get("goal"),
+            "stage_type": stage.get("stage_type"),
+            "persistence_required": stage.get("persistence_required"),
+            "allowed_capabilities": copy.deepcopy(
+                stage.get("allowed_capabilities") or []
+            ),
+            "completion_mode": stage.get("completion_mode"),
+            "completion_criteria": copy.deepcopy(
+                stage.get("completion_criteria") or []
+            ),
+            "artifacts": [],
+            "evidence_requirements": [],
+        }
+        for artifact in stage.get("artifacts") or []:
+            if not isinstance(artifact, dict):
+                continue
+            post = artifact.get("postcondition") or {}
+            compact_stage["artifacts"].append({
+                "artifact_id": artifact.get("artifact_id"),
+                "path": artifact.get("path"),
+                "operation": artifact.get("operation"),
+                "allow_already_satisfied": artifact.get(
+                    "allow_already_satisfied"
+                ),
+                "postcondition": {
+                    "kind": post.get("kind"),
+                    "value": _compact_final_audit_literal(post.get("value")),
+                },
+            })
+        for requirement in stage.get("evidence_requirements") or []:
+            if not isinstance(requirement, dict):
+                continue
+            arguments = requirement.get("arguments") or {}
+            compact_arguments = {
+                key: (
+                    [_compact_final_audit_literal(item) for item in value]
+                    if isinstance(value, list)
+                    else _compact_final_audit_literal(value)
+                )
+                for key, value in arguments.items()
+            }
+            compact_stage["evidence_requirements"].append({
+                "evidence_id": requirement.get("evidence_id"),
+                "tool": requirement.get("tool"),
+                "arguments": compact_arguments,
+                "arguments_sha256": evidence_arguments_fingerprint(arguments),
+            })
+        compact_stages.append(compact_stage)
+
+    compact_states = {}
+    for stage_id, state in (task_plan_evidence.get("stage_states") or {}).items():
+        if not isinstance(state, dict):
+            continue
+        compact_states[str(stage_id)] = {
+            "status": state.get("status"),
+            "result": str(state.get("result") or "")[:2000],
+            "evidence_generation": int(state.get("evidence_generation", 0)),
+            "repair": bool(state.get("repair", False)),
+            "obligations": copy.deepcopy(state.get("obligations") or {}),
+        }
+
+    return {
+        "task_block_id": task_plan_evidence.get("task_block_id"),
+        "run_id": task_plan_evidence.get("run_id"),
+        "plan_id": task_plan_evidence.get("plan_id"),
+        "plan_version": task_plan_evidence.get("plan_version"),
+        "stages": compact_stages,
+        "stage_states": compact_states,
+        "replan_count": len(task_plan_evidence.get("replans") or []),
+    }
+
+
+def _final_audit_requirement_coverage(
+    task_plan_evidence: dict | None,
+    freshness_snapshot: dict | None,
+) -> dict:
+    """Map accepted contract requirements to authoritative current evidence."""
+    if not isinstance(task_plan_evidence, dict):
+        return {
+            "required": False,
+            "complete": True,
+            "requirements": [],
+            "missing": [],
+        }
+
+    stage_states = task_plan_evidence.get("stage_states") or {}
+    snapshot_stages = {
+        str(item.get("stage_id")): item
+        for item in (freshness_snapshot or {}).get("stages", [])
+        if isinstance(item, dict) and item.get("stage_id")
+    }
+    requirements: list[dict] = []
+    missing: list[str] = []
+
+    def append_requirement(item: dict) -> None:
+        requirements.append(item)
+        if not item.get("covered"):
+            missing.append(str(item.get("requirement_id")))
+
+    for stage in task_plan_evidence.get("stages") or []:
+        if not isinstance(stage, dict):
+            continue
+        stage_id = str(stage.get("stage_id") or "")
+        state = stage_states.get(stage_id) or {}
+        stage_status = state.get("status")
+        append_requirement({
+            "requirement_id": f"stage:{stage_id}:satisfied",
+            "stage_id": stage_id,
+            "kind": "stage_completion",
+            "covered": stage_status == "SATISFIED",
+            "source": {"stage_status": stage_status},
+        })
+
+        snapshot_stage = snapshot_stages.get(stage_id) or {}
+        artifact_snapshot = {
+            str(item.get("artifact_id")): item
+            for item in snapshot_stage.get("artifacts", [])
+            if isinstance(item, dict) and item.get("artifact_id")
+        }
+        for artifact in stage.get("artifacts") or []:
+            if not isinstance(artifact, dict):
+                continue
+            artifact_id = str(artifact.get("artifact_id") or "")
+            obligation = (state.get("obligations") or {}).get(artifact_id) or {}
+            current = artifact_snapshot.get(artifact_id)
+            status = obligation.get("status")
+            covered = (
+                stage_status == "SATISFIED"
+                and status in {"SATISFIED", "ALREADY_SATISFIED"}
+                and isinstance(current, dict)
+                and current.get("observed_state_sha256") is not None
+            )
+            append_requirement({
+                "requirement_id": f"artifact:{stage_id}:{artifact_id}",
+                "stage_id": stage_id,
+                "kind": "persistence",
+                "artifact_id": artifact_id,
+                "path": artifact.get("path"),
+                "operation": artifact.get("operation"),
+                "covered": covered,
+                "obligation_status": status,
+                "source": copy.deepcopy(
+                    obligation.get("receipt")
+                    or obligation.get("observed")
+                    or current
+                ),
+            })
+
+        evidence_snapshot = {
+            str(item.get("evidence_id")): item
+            for item in snapshot_stage.get("requirements", [])
+            if isinstance(item, dict) and item.get("evidence_id")
+        }
+        for requirement in stage.get("evidence_requirements") or []:
+            if not isinstance(requirement, dict):
+                continue
+            evidence_id = str(requirement.get("evidence_id") or "")
+            current = evidence_snapshot.get(evidence_id)
+            source_records = (
+                current.get("source_records") if isinstance(current, dict) else []
+            ) or []
+            covered = (
+                stage_status == "SATISFIED"
+                and isinstance(current, dict)
+                and current.get("target_state_sha256") != "UNRESOLVED"
+                and bool(source_records)
+            )
+            append_requirement({
+                "requirement_id": f"evidence:{stage_id}:{evidence_id}",
+                "stage_id": stage_id,
+                "kind": "server_evidence",
+                "evidence_id": evidence_id,
+                "tool": requirement.get("tool"),
+                "arguments_sha256": (
+                    evidence_arguments_fingerprint(requirement.get("arguments") or {})
+                ),
+                "covered": covered,
+                "source_records": copy.deepcopy(source_records),
+                "target_identity": (
+                    copy.deepcopy(current.get("target_identity"))
+                    if isinstance(current, dict)
+                    else []
+                ),
+                "target_state_sha256": (
+                    current.get("target_state_sha256")
+                    if isinstance(current, dict)
+                    else None
+                ),
+            })
+
+    return {
+        "required": True,
+        "complete": not missing,
+        "requirements": requirements,
+        "missing": missing,
+    }
+
+
 def _collect_final_audit_evidence(
     *,
     root: Path,
@@ -2426,6 +2823,8 @@ def _collect_final_audit_evidence(
     backup_session: dict | None,
     run_owned_state: dict[str, dict[str, str]] | None = None,
     tool_facts: list[dict] | None = None,
+    task_plan_evidence: dict | None = None,
+    freshness_snapshot: dict | None = None,
 ) -> tuple[str, dict]:
     """Build a bounded FINAL context only from server-observed facts."""
     mutation_manifest = (
@@ -2441,6 +2840,20 @@ def _collect_final_audit_evidence(
     observed_tool_names = {
         str(item.get("tool")) for item in (tool_facts or []) if item.get("tool")
     }
+    task_scoped = isinstance(task_plan_evidence, dict)
+    task_paths, invalid_task_paths = _collect_final_audit_task_paths(
+        root=root,
+        policy=policy,
+        task_plan_evidence=task_plan_evidence,
+        mutation_facts=mutation_facts,
+        run_owned_state=run_owned_state or {},
+        verification_state=verification_state,
+        tool_facts=tool_facts or [],
+    )
+    requirement_coverage = _final_audit_requirement_coverage(
+        task_plan_evidence,
+        freshness_snapshot,
+    )
     candidate_conflicts = _candidate_fact_conflicts(
         candidate_final, tool_call_count=tool_call_count,
         write_revision=verification_state.get("write_revision", 0),
@@ -2452,6 +2865,21 @@ def _collect_final_audit_evidence(
     mutation_evidence_incomplete_reasons: list[str] = []
     critical_reasons: list[str] = []
     any_truncated = False
+
+    if task_scoped and not isinstance(freshness_snapshot, dict):
+        reason = "task_plan_freshness_snapshot_missing"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
+    if invalid_task_paths:
+        reason = "task_scope_contains_unreadable_or_out_of_scope_paths"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
+    if requirement_coverage.get("required") and not requirement_coverage.get("complete"):
+        for requirement_id in requirement_coverage.get("missing") or []:
+            reason = f"requirement_evidence_missing:{requirement_id}"
+            incomplete_reasons.append(reason)
+            critical_reasons.append(reason)
+
     run_owned_filesystem_evidence, filesystem_mismatches = (
         _verify_run_owned_filesystem(root, run_owned_state or {})
     )
@@ -2482,12 +2910,37 @@ def _collect_final_audit_evidence(
         audit_policy = dict(policy)
         audit_policy["allow_verify"] = True
         try:
-            status_result = _agent_git_status(root, audit_policy)
+            if task_scoped:
+                status_result = _agent_git_status(
+                    root, audit_policy, task_paths
+                )
+            else:
+                status_result = _agent_git_status(root, audit_policy)
             fresh_status = {"available": bool(status_result.get("ok")), **status_result}
         except Exception as exc:
             fresh_status = {"available": False, "reason": type(exc).__name__}
         try:
-            diff_result = _agent_git_diff(root, [], audit_policy)
+            if task_scoped and not task_paths:
+                diff_result = {
+                    "ok": True,
+                    "exit_code": 0,
+                    "stdout": "",
+                    "stderr": "",
+                    "truncated": False,
+                    "stdout_bytes": 0,
+                    "stderr_bytes": 0,
+                    "paths": [],
+                    "check": "git_diff",
+                    "not_applicable": True,
+                    "reason": "no_task_scoped_paths",
+                }
+            else:
+                diff_result = _agent_git_diff(
+                    root,
+                    task_paths if task_scoped else [],
+                    audit_policy,
+                    allow_missing=task_scoped,
+                )
             fresh_diff = {"available": bool(diff_result.get("ok")), **diff_result}
         except Exception as exc:
             fresh_diff = {"available": False, "reason": type(exc).__name__}
@@ -2498,7 +2951,11 @@ def _collect_final_audit_evidence(
             if not evidence.get("ok"):
                 evidence.setdefault("reason", f"{label}_unavailable")
             if evidence.get("truncated"):
-                evidence.setdefault("reason", f"{label}_truncated")
+                truncated_reason = f"{label}_truncated"
+                evidence.setdefault("reason", truncated_reason)
+                if task_scoped:
+                    incomplete_reasons.append(truncated_reason)
+                    critical_reasons.append(truncated_reason)
     else:
         unavailable = {
             "available": False,
@@ -2561,8 +3018,136 @@ def _collect_final_audit_evidence(
             mutation_evidence_incomplete_reasons.append(reason)
         new_file_evidence.append(item)
 
+    unattributed_git_status = []
+    if task_scoped and fresh_status.get("ok"):
+        run_owned_mutation_paths = set().union(
+            mutation_facts["changed_files"],
+            mutation_facts["new_files"],
+            mutation_facts["deleted_files"],
+        )
+        for line in str(fresh_status.get("stdout") or "").splitlines():
+            path_text = line[3:] if len(line) >= 4 else ""
+            path_text = path_text.strip().strip('"')
+            if " -> " in path_text:
+                path_text = path_text.rsplit(" -> ", 1)[-1].strip().strip('"')
+            if path_text and path_text not in run_owned_mutation_paths:
+                unattributed_git_status.append(line)
+
+    freshness_snapshot_sha256 = None
+    if isinstance(freshness_snapshot, dict):
+        freshness_snapshot_sha256 = hashlib.sha256(
+            json.dumps(
+                freshness_snapshot,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+
+    compact_tool_evidence = []
+    remaining_tool_material_bytes = MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES
+    task_material_included_bytes = 0
+    task_material_truncated = False
+    task_material_deduplicated = 0
+    seen_material: set[tuple[str, str, str]] = set()
+    material_required_tools = {
+        "read_file",
+        "read_file_range",
+        "find_text",
+        "list_dir",
+    }
+
+    for fact in tool_facts or []:
+        if not isinstance(fact, dict):
+            continue
+        item = {
+            key: copy.deepcopy(fact.get(key))
+            for key in (
+                "sequence",
+                "source_record_id",
+                "source_run_store_record_id",
+                "task_block_id",
+                "run_id",
+                "plan_version",
+                "stage_id",
+                "evidence_generation",
+                "requirement_ids",
+                "target_identity",
+                "tool",
+                "path",
+                "capability",
+                "status",
+                "executed",
+                "arguments_sha256",
+                "observed_state_sha256",
+                "result",
+            )
+            if key in fact
+        }
+        preview = fact.get("material_preview")
+        result_sha256 = str((fact.get("result") or {}).get("sha256") or "")
+        material_key = (
+            str(fact.get("tool") or ""),
+            str(fact.get("path") or ""),
+            result_sha256,
+        )
+        if isinstance(preview, dict) and isinstance(preview.get("content"), str):
+            if result_sha256 and material_key in seen_material:
+                item["material_deduplicated"] = True
+                task_material_deduplicated += 1
+            elif remaining_tool_material_bytes > 0:
+                seen_material.add(material_key)
+                clipped, total_truncated, _original_bytes = _clip_final_audit_text(
+                    preview["content"],
+                    remaining_tool_material_bytes,
+                )
+                consumed = len(clipped.encode("utf-8", errors="replace"))
+                remaining_tool_material_bytes = max(
+                    remaining_tool_material_bytes - consumed,
+                    0,
+                )
+                task_material_included_bytes += consumed
+                material_truncated = bool(
+                    preview.get("truncated") or total_truncated
+                )
+                item["material_preview"] = {
+                    "content": clipped,
+                    "truncated": material_truncated,
+                    "original_bytes": int(preview.get("original_bytes") or consumed),
+                }
+                if material_truncated:
+                    task_material_truncated = True
+                    if (
+                        fact.get("tool") in material_required_tools
+                        and fact.get("requirement_ids")
+                    ):
+                        for requirement_id in fact.get("requirement_ids") or []:
+                            reason = (
+                                "requirement_material_truncated:"
+                                f"{fact.get('stage_id')}:{requirement_id}"
+                            )
+                            incomplete_reasons.append(reason)
+                            critical_reasons.append(reason)
+            else:
+                item["material_omitted_due_to_budget"] = True
+                task_material_truncated = True
+                if (
+                    fact.get("tool") in material_required_tools
+                    and fact.get("requirement_ids")
+                ):
+                    for requirement_id in fact.get("requirement_ids") or []:
+                        reason = (
+                            "requirement_material_budget_exhausted:"
+                            f"{fact.get('stage_id')}:{requirement_id}"
+                        )
+                        incomplete_reasons.append(reason)
+                        critical_reasons.append(reason)
+        compact_tool_evidence.append(item)
+
     if is_mutating_run:
         critical_reasons.extend(mutation_evidence_incomplete_reasons)
+    any_truncated = any_truncated or task_material_truncated
+    incomplete_reasons = list(dict.fromkeys(incomplete_reasons))
     critical_reasons = list(dict.fromkeys(critical_reasons))
     completeness = {
         "complete": not incomplete_reasons,
@@ -2596,8 +3181,9 @@ def _collect_final_audit_evidence(
                 "and logical content hashes; no file content is included."
             ),
             "fresh_git_state": (
-                "Workspace-wide observation that may include pre-existing or "
-                "external changes."
+                "Task-scoped observation for Planner-enabled RUNs; legacy direct "
+                "RUNs may retain workspace-scope compatibility. Git may include "
+                "pre-existing or external changes."
             ),
             "git_attribution_rule": (
                 "Do not attribute a Git change to the current RUN unless it is "
@@ -2633,11 +3219,32 @@ def _collect_final_audit_evidence(
                 verification_state
             ),
         },
+        "task_plan": _compact_final_audit_task_plan(task_plan_evidence),
+        "requirement_coverage": requirement_coverage,
+        "evidence_freshness": {
+            "snapshot_sha256": freshness_snapshot_sha256,
+            "snapshot": copy.deepcopy(freshness_snapshot),
+        },
+        "task_scope": {
+            "mode": "task_scoped_v1" if task_scoped else "legacy_workspace_compat",
+            "paths": task_paths,
+            "invalid_paths": invalid_task_paths,
+            "unattributed_git_status": unattributed_git_status,
+        },
         "mutation_facts": mutation_facts,
         "observed_executor_tools": {
             "tool_call_count": tool_call_count,
             "names": sorted(observed_tool_names),
             "summary_complete": tool_facts is not None,
+        },
+        "authoritative_tool_evidence": compact_tool_evidence,
+        "task_material": {
+            "item_limit_bytes": MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+            "total_limit_bytes": MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES,
+            "included_bytes": task_material_included_bytes,
+            "remaining_bytes": remaining_tool_material_bytes,
+            "truncated": task_material_truncated,
+            "deduplicated_count": task_material_deduplicated,
         },
         "run_owned_filesystem_evidence": run_owned_filesystem_evidence,
         "fresh_git_status": fresh_status,
@@ -2954,9 +3561,10 @@ async def _run_agent_task_impl(
             "timestamp": time.time(),
             **payload,
         }
+        persisted_record = None
         if audit_recorder is not None:
             try:
-                audit_recorder.observe(event)
+                persisted_record = audit_recorder.observe(event)
             except Exception as exc:
                 event["audit_storage_error"] = type(exc).__name__
         if on_event:
@@ -2971,6 +3579,7 @@ async def _run_agent_task_impl(
                 f.write(json.dumps(event, ensure_ascii=False) + "\n")
         except Exception:
             pass
+        return persisted_record
 
     def _context_message(
         event_id: str,
@@ -4468,7 +5077,60 @@ async def _run_agent_task_impl(
                     if lifecycle is not None and lifecycle.stage is not None
                     else None
                 )
+                tool_run_id = (
+                    lifecycle.state["run_id"]
+                    if lifecycle is not None
+                    else run_id
+                )
+                tool_plan_version = (
+                    lifecycle.state["plan_version"]
+                    if lifecycle is not None
+                    else None
+                )
+                tool_evidence_generation = (
+                    int(
+                        lifecycle.state["stage_states"]
+                        .get(tool_stage_id, {})
+                        .get("evidence_generation", 0)
+                    )
+                    if lifecycle is not None and tool_stage_id is not None
+                    else None
+                )
+                tool_task_block_id = (
+                    lifecycle.state.get("task_block_id")
+                    if lifecycle is not None
+                    else task_block_id
+                )
+                tool_dependency_identities = (
+                    evidence_dependency_targets(
+                        function_name,
+                        parsed_tool_args,
+                    )
+                    if isinstance(parsed_tool_args, dict)
+                    else []
+                )
+                tool_requirement_ids = []
+                if (
+                    lifecycle is not None
+                    and lifecycle.stage is not None
+                    and isinstance(parsed_tool_args, dict)
+                ):
+                    actual_fingerprint = evidence_arguments_fingerprint(
+                        parsed_tool_args
+                    )
+                    tool_requirement_ids = [
+                        requirement["evidence_id"]
+                        for requirement in (
+                            lifecycle.stage.get("evidence_requirements") or []
+                        )
+                        if requirement["tool"] == function_name
+                        and evidence_arguments_fingerprint(
+                            requirement["arguments"]
+                        ) == actual_fingerprint
+                    ]
                 dispatcher_started = False
+                tool_evidence_record_id = "evidence_" + uuid.uuid4().hex
+                tool_started_record = None
                 try:
                     if lifecycle and function_name in MUTATION_TOOL_NAMES:
                         # Permission denial still goes through the existing permission lifecycle.
@@ -4477,8 +5139,9 @@ async def _run_agent_task_impl(
                         candidate_id = await lifecycle.before_mutation({"name": function_name,
                             "arguments": _parse_agent_arguments(function_name, function_call.get("arguments"))})
                     dispatcher_started = True
-                    _emit("tool_started", {
+                    tool_started_record = _emit("tool_started", {
                         "tool_sequence": last_tool_sequence + 1,
+                        "evidence_record_id": tool_evidence_record_id,
                         "function": function_name,
                         "arguments": safe_args,
                         "timestamp": time.time(),
@@ -4668,17 +5331,80 @@ async def _run_agent_task_impl(
                         else str(tool_error)
                     )
                 )
+                result_identity = {
+                    "sha256": hashlib.sha256(
+                        json.dumps(
+                            result,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                            default=str,
+                        ).encode("utf-8")
+                    ).hexdigest(),
+                    "ok": (
+                        result.get("ok")
+                        if isinstance(result, dict)
+                        else tool_ok
+                    ),
+                    "exit_code": (
+                        result.get("exit_code")
+                        if isinstance(result, dict)
+                        else None
+                    ),
+                    "truncated": (
+                        result.get("truncated")
+                        if isinstance(result, dict)
+                        else None
+                    ),
+                }
+                observed_state_sha256 = None
+                if (
+                    tool_ok
+                    and lifecycle is not None
+                    and isinstance(parsed_tool_args, dict)
+                    and tool_dependency_identities
+                ):
+                    try:
+                        observed_state_sha256 = (
+                            evidence_dependency_state_fingerprint(
+                                lifecycle.snapshot,
+                                function_name,
+                                parsed_tool_args,
+                            )
+                        )
+                    except (PermissionError, ValueError, OSError):
+                        observed_state_sha256 = None
+
                 consistency_tool_facts.append({
                     "sequence": last_tool_sequence,
+                    "source_record_id": tool_evidence_record_id,
+                    "source_run_store_record_id": (
+                        tool_started_record.get("record_id")
+                        if isinstance(tool_started_record, dict)
+                        else None
+                    ),
+                    "task_block_id": tool_task_block_id,
+                    "run_id": tool_run_id,
+                    "plan_version": tool_plan_version,
+                    "stage_id": tool_stage_id,
+                    "evidence_generation": tool_evidence_generation,
+                    "requirement_ids": list(tool_requirement_ids),
+                    "target_identity": list(tool_dependency_identities),
                     "tool": function_name,
                     "path": str(safe_args.get("path", ""))[:300],
-                    "stage_id": tool_stage_id,
                     "capability": CAPABILITY_BY_TOOL.get(function_name, "UNKNOWN"),
                     "status": "OK" if tool_ok else "ERROR" if dispatcher_started else "PREFLIGHT_REJECTED",
                     "executed": dispatcher_started,
                     "arguments_sha256": (
                         evidence_arguments_fingerprint(parsed_tool_args)
                         if isinstance(parsed_tool_args, dict)
+                        else None
+                    ),
+                    "observed_state_sha256": observed_state_sha256,
+                    "result": result_identity,
+                    "material_preview": (
+                        _final_audit_tool_material_preview(function_name, result)
+                        if tool_ok
                         else None
                     ),
                     "summary": str(last_tool_result_summary)[:1000],
@@ -4765,17 +5491,27 @@ async def _run_agent_task_impl(
                                 "repeat_success_count"
                             ] = 1
 
-                    _emit("tool_finished", {
+                    tool_result_record = _emit("tool_finished", {
                         "tool_sequence": last_tool_sequence,
+                        "evidence_record_id": tool_evidence_record_id,
                         "function": function_name,
                         "arguments": safe_args,
                         "duration": None,
                         "result": result,
                     })
+                    if consistency_tool_facts:
+                        consistency_tool_facts[-1][
+                            "source_run_store_record_id"
+                        ] = (
+                            tool_result_record.get("record_id")
+                            if isinstance(tool_result_record, dict)
+                            else None
+                        )
                 else:
                     if dispatcher_started:
                         _emit("tool_error", {
                             "tool_sequence": last_tool_sequence,
+                            "evidence_record_id": tool_evidence_record_id,
                             "function": function_name,
                             "arguments": safe_args,
                             "error": tool_error,
@@ -5271,6 +6007,20 @@ async def _run_agent_task_impl(
 
             if not final_audit_enabled:
                 if lifecycle:
+                    stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                        consistency_tool_facts
+                    )
+                    if stale_stage_ids:
+                        _emit(
+                            "terminal_evidence_freshness_blocked",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "pre_success_without_final_audit",
+                            },
+                        )
+                        stage_context(reset=True)
+                        continue
                     lifecycle.assert_satisfied()
                     lifecycle.complete_planner_session()
 
@@ -5300,6 +6050,7 @@ async def _run_agent_task_impl(
                 return content
 
             final_audit_started_at = time.time()
+            final_audit_evidence_snapshot_sha256 = None
             _emit(
                 "final_audit_started",
                 {
@@ -5309,6 +6060,43 @@ async def _run_agent_task_impl(
                 },
             )
             try:
+                task_plan_evidence = None
+                freshness_snapshot = None
+                if lifecycle:
+                    stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                        consistency_tool_facts
+                    )
+                    if stale_stage_ids:
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "before_final_audit",
+                            },
+                        )
+                        stage_context(reset=True)
+                        continue
+                    lifecycle.assert_satisfied()
+                    task_plan_evidence = lifecycle.evidence()
+                    freshness_snapshot = lifecycle.evidence_freshness_snapshot(
+                        consistency_tool_facts
+                    )
+                    final_audit_evidence_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    _emit(
+                        "final_audit_evidence_snapshot_bound",
+                        {
+                            **lifecycle.facts(),
+                            "evidence_snapshot_sha256": (
+                                final_audit_evidence_snapshot_sha256
+                            ),
+                        },
+                    )
+
                 verification_context, evidence_completeness = (
                     _collect_final_audit_evidence(
                         root=root,
@@ -5321,15 +6109,10 @@ async def _run_agent_task_impl(
                         backup_session=backup_session,
                         run_owned_state=final_audit_retry_state["run_owned_state"],
                         tool_facts=consistency_tool_facts,
+                        task_plan_evidence=task_plan_evidence,
+                        freshness_snapshot=freshness_snapshot,
                     )
                 )
-                if lifecycle:
-                    lifecycle.assert_satisfied()
-                    context_data = json.loads(verification_context)
-                    context_data["task_plan"] = lifecycle.evidence()
-                    verification_context = json.dumps(context_data, ensure_ascii=False)
-                    if len(verification_context.encode("utf-8")) > MAX_FINAL_AUDIT_CONTEXT_BYTES:
-                        raise FinalAuditEvidenceError("Task Plan evidence exceeds Final Audit context limit")
                 if evidence_completeness.get("critical_for_success"):
                     raise FinalAuditEvidenceError(
                         "Критические доказательства для SUCCESS неполны: "
@@ -5337,6 +6120,44 @@ async def _run_agent_task_impl(
                             evidence_completeness.get("critical_reasons") or []
                         )
                     )
+
+                if lifecycle:
+                    pre_verifier_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    if (
+                        pre_verifier_snapshot_sha256
+                        != final_audit_evidence_snapshot_sha256
+                    ):
+                        stale_stage_ids = (
+                            lifecycle.invalidate_stale_satisfied_evidence(
+                                consistency_tool_facts
+                            )
+                        )
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "after_packet_before_final_audit",
+                                "bound_snapshot_sha256": (
+                                    final_audit_evidence_snapshot_sha256
+                                ),
+                                "current_snapshot_sha256": (
+                                    pre_verifier_snapshot_sha256
+                                ),
+                            },
+                        )
+                        if stale_stage_ids:
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.assert_satisfied()
+                        raise FinalAuditEvidenceError(
+                            "Final Audit evidence snapshot changed during packet "
+                            "collection without a resolvable freshness repair."
+                        )
 
                 final_audit_retry_state["final_audit_attempt_count"] += 1
                 audit_attempt = final_audit_retry_state[
@@ -5785,6 +6606,45 @@ async def _run_agent_task_impl(
                         f"{audit_result.verdict!r}."
                     )
 
+                if lifecycle:
+                    current_evidence_snapshot_sha256 = (
+                        lifecycle.evidence_freshness_snapshot_sha256(
+                            consistency_tool_facts
+                        )
+                    )
+                    if (
+                        current_evidence_snapshot_sha256
+                        != final_audit_evidence_snapshot_sha256
+                    ):
+                        stale_stage_ids = (
+                            lifecycle.invalidate_stale_satisfied_evidence(
+                                consistency_tool_facts
+                            )
+                        )
+                        _emit(
+                            "final_audit_evidence_snapshot_stale",
+                            {
+                                **lifecycle.facts(),
+                                "stale_stage_ids": stale_stage_ids,
+                                "phase": "after_final_audit",
+                                "verifier_run_id": audit_result.verifier_run_id,
+                                "bound_snapshot_sha256": (
+                                    final_audit_evidence_snapshot_sha256
+                                ),
+                                "current_snapshot_sha256": (
+                                    current_evidence_snapshot_sha256
+                                ),
+                            },
+                        )
+                        if stale_stage_ids:
+                            stage_context(reset=True)
+                            continue
+                        lifecycle.assert_satisfied()
+                        raise FinalAuditEvidenceError(
+                            "Final Audit evidence snapshot changed without "
+                            "a resolvable current-stage freshness repair."
+                        )
+
                 _emit(
                     "final_audit_passed",
                     {
@@ -5796,6 +6656,9 @@ async def _run_agent_task_impl(
                         "violations_count": len(audit_result.violations),
                         "reason": audit_result.reason,
                         "usage": audit_result.usage,
+                        "evidence_snapshot_sha256": (
+                            final_audit_evidence_snapshot_sha256
+                        ),
                         "audit_attempt": audit_attempt,
                         "semantic_fail_count": final_audit_retry_state[
                             "semantic_fail_count"
@@ -5902,6 +6765,20 @@ async def _run_agent_task_impl(
                 ) from exc
 
             if lifecycle:
+                stale_stage_ids = lifecycle.invalidate_stale_satisfied_evidence(
+                    consistency_tool_facts
+                )
+                if stale_stage_ids:
+                    _emit(
+                        "terminal_evidence_freshness_blocked",
+                        {
+                            **lifecycle.facts(),
+                            "stale_stage_ids": stale_stage_ids,
+                            "phase": "terminal_success_gate",
+                        },
+                    )
+                    stage_context(reset=True)
+                    continue
                 lifecycle.assert_satisfied()
                 lifecycle.complete_planner_session()
             _emit("run_finished", {

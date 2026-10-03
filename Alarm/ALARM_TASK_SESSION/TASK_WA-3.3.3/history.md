@@ -1,0 +1,5 @@
+- Recovery Session A independently verified WA-3.3.3 in fresh process: focused 7/7, full WA 123/123, compile/diff-check PASS.
+- Recovery Session B reopened persistent state in fresh process and verified restart semantics 3/3 PASS.
+- Documentation Session C used immutable/versioned closeout_v1 snapshot and synchronized 000/01/04/05/06/23/24/25/26.
+- OBSIDIAN runtime filters were separately fixed; recovery snapshots retained.
+- WA-3.3.3 closed DONE / VERIFIED. Next: WA-3.3.4 recovery scenarios / final verification.

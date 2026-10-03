@@ -1,0 +1,8 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_6273b21876ff4377a525a3e4651ff6a0",
+  "chat_id": null,
+  "task_block_id": "tb_d1eec41569a54740aea76c7cb4520ef4",
+  "task_display_id": "T-001",
+  "raw_task": "ASK 151A — B3 ANALYTICAL BENCHMARK\n\nПроанализируй файл:\n\nprovider_accounting.py\n\nНе изменяй никакие файлы.\n\nНужно по фактическому коду кратко объяснить:\n\n1. Что считается отдельным provider attempt.\n2. Какие идентификаторы связывают физическую попытку с логическим model call.\n3. Какие данные о request context сохраняются и измеряются.\n4. Как учитывается provider usage, если точное usage отсутствует.\n5. Какие terminal outcomes предусмотрены и зачем они нужны.\n\nИспользуй содержимое provider_accounting.py как основной источник.\nНе делай commit и push.\n\nВ финальном ответе дай краткий структурированный вывод только по фактам, которые реально следуют из кода.\n"
+}

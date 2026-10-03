@@ -1,0 +1,20 @@
+Benchmark B2-bounded.
+In the existing code file b2_logic.py change exactly:
+STATUS_PREFIX = "PENDING"
+to:
+STATUS_PREFIX = "READY"
+Do not change any other line or any other file.
+
+Use one existing-code mutation stage with READ+WRITE. Inside that stage, use at most one find_text on b2_logic.py only if needed to obtain the current content SHA for precise edit; do not model that lookup as a separate completion/evidence requirement.
+Then perform exactly one replace_text for that line and do not modify any other file.
+After the change, run exactly one python_compile with paths:
+["b2_logic.py", "b2_contract_test.py", "ultra_ui.py"]
+Then run exactly one verify_file_content on b2_logic.py with kind=equals and this full exact expected content:
+STATUS_PREFIX = "READY"
+
+def status_label(name: str) -> str:
+    return f"{STATUS_PREFIX}: {name.strip().upper()}"
+
+Finally run exactly one ui_smoke_test. The smoke imports b2_contract_test and must fail unless status_label("bench") returns exactly "READY: BENCH".
+Do not inspect or modify any other user file. Do not use git. Do not add extra READ/VERIFY calls.
+Return SUCCESS only if the existing-code mutation, compile, exact source verification, contract check and UI smoke all succeed.

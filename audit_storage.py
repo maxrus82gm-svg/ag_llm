@@ -70,6 +70,12 @@ PROVIDER_ACCOUNTING_EVENTS = {
     "provider_attempt_started",
     "provider_attempt_terminal",
 }
+FRESHNESS_SERVER_EVENTS = {
+    "evidence_invalidated",
+    "final_audit_evidence_snapshot_bound",
+    "final_audit_evidence_snapshot_stale",
+    "terminal_evidence_freshness_blocked",
+}
 _AUDIT_EVENTS = {
     "run_started", "api_request", "api_response", "tool_started",
     "final_audit_started",
@@ -88,7 +94,7 @@ _AUDIT_EVENTS = {
     "tool_budget_reserve_activated", "tool_budget_reserve_intervention",
     "server_evidence_gate_activated", "server_evidence_gate_intervention",
     "final_response_repair_requested",
-} | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | PROVIDER_ACCOUNTING_EVENTS
+} | PLANNER_EVENTS | PLANNER_DIAGNOSTIC_EVENTS | EXECUTOR_DIAGNOSTIC_EVENTS | PROVIDER_ACCOUNTING_EVENTS | FRESHNESS_SERVER_EVENTS
 _TEXT_LIMIT = 2000
 _PLANNER_SESSION_TEXT_LIMIT = 32768
 
@@ -290,6 +296,8 @@ class AuditThreadRecorder:
                 "executor": "EXECUTOR",
                 "dredd": "DREDD",
             }.get(role, "SERVER")
+        if kind in FRESHNESS_SERVER_EVENTS:
+            return "SERVER"
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             return "EXECUTOR"
         if kind in PLANNER_DREDD_EVENTS:
@@ -313,7 +321,7 @@ class AuditThreadRecorder:
                 "removed_suffix_count": len(previous) - common,
                 "added_messages": copy.deepcopy(current[common:])}
 
-    def _persist_event(self, event: dict) -> None:
+    def _persist_event(self, event: dict) -> dict:
         kind = event["event"]
         source = self._source_for_event(event)
         payload = {key: copy.deepcopy(value) for key, value in event.items()
@@ -341,7 +349,7 @@ class AuditThreadRecorder:
                     payload.get("stage_id"),
                 )
             self._previous_executor_messages = copy.deepcopy(messages)
-        append_run_record(
+        record = append_run_record(
             self.workspace_root, self.run_id, source=source, event=kind,
             payload=payload, timestamp=float(event.get("timestamp") or 0.0),
         )
@@ -387,13 +395,13 @@ class AuditThreadRecorder:
             changed = True
         if changed:
             update_run_summary_index(self.workspace_root, self.run_id, summary)
+        return record
 
-    def observe(self, event: dict, *, persist: bool = True) -> None:
+    def observe(self, event: dict, *, persist: bool = True) -> dict | None:
         kind = event.get("event")
         if kind not in _AUDIT_EVENTS:
-            return
-        if persist:
-            self._persist_event(event)
+            return None
+        persisted_record = self._persist_event(event) if persist else None
         issues = self.thread["issues"]
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             diagnostic_kind = kind.removeprefix(
@@ -646,3 +654,4 @@ class AuditThreadRecorder:
             self.thread["run_status"] = _short(event.get("status")) or "FINISHED"
             if event.get("status") == "BLOCKED" and self.thread["final_audit"] == "PENDING":
                 self.thread["final_audit"] = "NOT_RUN"
+        return persisted_record

@@ -1,0 +1,60 @@
+# Задачи для агента
+
+**Назначение:** оперативный handoff-документ проекта. Это краеугольная точка непрерывности между Chat / Agent / Remote-сессиями: здесь должно быть видно, что уже доказано, что нельзя повторять вслепую и что агент делает следующим.
+
+**Канонический вход:** сначала открыть `08_Старт.md`; уже внутри Start-маршрута этот `000` обязателен до начала любой значимой TASK. Затем читать `18_Регламент сопровождения документации.md`, `01_Архитектура и текущее состояние.md` и только нужный профиль активной ветки.
+
+**Обязательное правило:** если в блоке «Текущая задача» есть запись, сначала сверить её с фактическим состоянием проекта, recovery-журналом и live evidence. Не повторять незавершённое действие только потому, что Chat потерял контекст.
+
+## 1. Текущая задача
+
+**Статус:** ОЖИДАЕТСЯ ЗАДАЧА.
+
+TASK 151G-DIAG-R031 завершена как diagnostic/documentation audit без runtime mutation.
+
+Следующий канонический implementation stage программы — **TASK 151C: Compact Final Audit Packet + Task-scoped Git Evidence / КТ-3**.
+
+Перед началом 151C заново определить technical scope, ARCH CLASS / PRIMARY PROFILE и отдельный Documentation Block. Findings R-031 являются обязательным входом/negative regression для будущей 151G, но сама 151G этим аудитом не запускалась.
+
+## 2. Последняя завершённая задача
+
+**Дата:** 2026-10-01  
+**Задача:** TASK 151G-DIAG-R031 — Executor Context / Token Explosion Audit.
+
+**Что подтверждено:**
+- R-031 `20261001_182057_e90f93`: BLOCKED, Final Audit PENDING, TOTAL 668 898 tokens; Executor 665 505, Planner 3 393, Dredd 0;
+- request context вырос примерно 27k → 319k → 604k chars после двух full `read_file(ultra_ui.py)`; каждый serialized result ~279 325 chars;
+- `server.py` повторно передаёт полный in-stage tool transcript до stage reset; `read_file` допускает large full-file material;
+- stage tool visibility capability-scoped, но не target-scoped; Guard P1 и tool reserve не являются context-budget gates;
+- Run Store delta compression относится только к storage и не уменьшает stateless provider prompt;
+- test task имел отдельные defects: dirty B2 fixture, короткие paths и неверный equals-contract для presence check;
+- R-027 + R-031 закреплены как обязательные stress/negative inputs для будущей 151G;
+- runtime code не изменялся; Context library impact = NO.
+
+**Результат:** проблема подтверждена и отражена в `01/03/05/06/13/20/21`. Следующий канонический implementation stage — TASK 151C.
+
+## 3. Мини-реестр последних 10 значимых TASK
+
+Этот блок — только ориентир 20–30% детализации. Полная история остаётся в `06`, статус — в `05`, детали quality-transition — в `21`.
+
+| TASK | Статус | Короткий результат |
+|---|---|---|
+| 151G-DIAG-R031 | DONE / DIAGNOSTIC | R-031 context explosion root cause proven: 668 898 tokens, two ~279k-char full reads repeatedly resent; runtime unchanged; future 151G acceptance hardened |
+| 151B | DONE / КТ-2 DONE | Evidence freshness/revision binding: stale PASS после replan/repair/state drift не применяется; Final Audit snapshot recheck; live B1/B2/B3 green |
+| 151A | DONE / КТ-1 DONE | Accounting и четыре canonical five-positive series закрыты; medians/ranges и retained negative/outlier evidence зафиксированы |
+| 151 | DONE / КТ-0 DONE | STABLE BASELINE S1: T-022 SUCCESS/PASS, 3 physical tools, 72 594 tokens |
+| 150A | DONE | Missing Audit Storage UX и stale-panel fallback стали явными вместо пустых панелей |
+| 150 | DONE | Chat → Task Block → RUN → Planner/Audit identity/binding проверены, modern mismatches = 0 |
+| 149F | DONE | Serialized tool-markup final идёт в bounded repair path |
+| 149E | DONE | Planner exact-text double-escape guard до Executor |
+| 149D | DONE | Final Response Sanity Gate ловит non-human/punctuation-only final |
+| 149C | DONE | Exact Evidence Gate блокирует неверные READ/VERIFY до dispatcher |
+
+## 4. Правило круговорота задач
+
+1. До начала значимой работы проверить и при необходимости обновить блок 1.
+2. Выполнить TASK и независимо проверить фактический результат.
+3. После завершения перенести итог в блок 2.
+4. В блок 1 сразу записать следующий подтверждённый NEXT либо вернуть его в **ОЖИДАЕТСЯ ЗАДАЧА**.
+5. Мини-реестр держать максимум на 10 последних значимых TASK, старые вытеснять вниз в каноническую историю.
+6. Долговременные факты синхронизировать в `05`, `06` и профильный журнал — `000` их не заменяет.

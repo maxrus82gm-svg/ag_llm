@@ -1,0 +1,7 @@
+- Session A: core four-way recovery matrix 4/4 PASS.
+- Session B: extended recovery matrix 10/10 PASS; no runtime repair needed.
+- Session C: fresh full WA regression 133/133 PASS; py_compile + diff-check PASS.
+- Versioned snapshots initial_v1/session_b_v1/closeout_v1 verified.
+- 000/01/04/05/06/23/24/25/26 synchronized.
+- WA-3.3.4 closed DONE / VERIFIED; WA-3.3 Reconciliation closed DONE / VERIFIED.
+- Next: WA-3.4 Recovery after restart Chat/Server.

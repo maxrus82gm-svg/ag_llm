@@ -1,0 +1,11 @@
+Benchmark B1-clean.
+Create file b1_probe.txt with exact logical UTF-8 content:
+TASK151A_B1_CLEAN
+write=passed
+read=passed
+verify=passed
+
+The file must end with exactly one terminal newline.
+After the write, perform exactly one read_file of b1_probe.txt and exactly one verify_file_content with kind=equals and the full exact content above.
+Do not inspect or modify any other user file. Do not use git. Do not add extra READ/VERIFY calls.
+Return SUCCESS only if WRITE -> exact READ -> exact EQUALS all succeeded.

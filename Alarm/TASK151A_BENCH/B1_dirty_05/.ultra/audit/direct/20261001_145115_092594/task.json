@@ -1,0 +1,8 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_87840260bca446749bd2969a8c8057c3",
+  "chat_id": null,
+  "task_block_id": "tb_2743fe61b99b4102a09932629da1d6d8",
+  "task_display_id": "T-001",
+  "raw_task": "Benchmark B1-clean.\nCreate file b1_probe.txt with exact logical UTF-8 content:\nTASK151A_B1_CLEAN\nwrite=passed\nread=passed\nverify=passed\n\nThe file must end with exactly one terminal newline.\nAfter the write, perform exactly one read_file of b1_probe.txt and exactly one verify_file_content with kind=equals and the full exact content above.\nDo not inspect or modify any other user file. Do not use git. Do not add extra READ/VERIFY calls.\nReturn SUCCESS only if WRITE -> exact READ -> exact EQUALS all succeeded."
+}

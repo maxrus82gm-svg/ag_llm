@@ -1785,6 +1785,702 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         )
 
 
+    def _task_scoped_packet_fixture(self):
+        (self.workspace / "result.txt").write_text("done", encoding="utf-8")
+        task_plan = {
+            "task_block_id": "tb_" + "1" * 32,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "edit",
+                "goal": "keep result current",
+                "stage_type": "analysis",
+                "persistence_required": True,
+                "allowed_capabilities": ["READ", "WRITE"],
+                "artifacts": [{
+                    "artifact_id": "result",
+                    "path": "result.txt",
+                    "operation": "update",
+                    "allow_already_satisfied": True,
+                    "postcondition": {"kind": "equals", "value": "done"},
+                }],
+                "completion_mode": "model_result",
+                "evidence_requirements": [],
+                "completion_criteria": ["result is current"],
+            }],
+            "stage_states": {
+                "edit": {
+                    "status": "SATISFIED",
+                    "obligations": {
+                        "result": {
+                            "status": "ALREADY_SATISFIED",
+                            "observed": {
+                                "exists": True,
+                                "sha256": server._sha256_utf8("done"),
+                            },
+                        }
+                    },
+                    "result": "done",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        freshness = {
+            "task_block_id": task_plan["task_block_id"],
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "edit",
+                "persistence_required": True,
+                "artifacts": [{
+                    "artifact_id": "result",
+                    "path": "result.txt",
+                    "operation": "update",
+                    "obligation_status": "ALREADY_SATISFIED",
+                    "observed_state_sha256": "state-current",
+                }],
+            }],
+        }
+        return task_plan, freshness
+
+    def test_151c_final_audit_git_is_task_scoped_for_planner_packet(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        task_plan, freshness = self._task_scoped_packet_fixture()
+        status = Mock(return_value={
+            "ok": True, "stdout": " M result.txt", "stderr": "",
+            "truncated": False, "stdout_bytes": 13, "stderr_bytes": 0,
+        })
+        diff = Mock(return_value={
+            "ok": True, "stdout": "diff -- result.txt", "stderr": "",
+            "truncated": False, "stdout_bytes": 18, "stderr_bytes": 0,
+        })
+        with (
+            patch.object(server, "_agent_git_status", status),
+            patch.object(server, "_agent_git_diff", diff),
+        ):
+            context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=0,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
+        payload = json.loads(context)
+        self.assertEqual(payload["task_scope"]["mode"], "task_scoped_v1")
+        self.assertEqual(payload["task_scope"]["paths"], ["result.txt"])
+        self.assertTrue(payload["requirement_coverage"]["complete"])
+        self.assertFalse(metadata["critical_for_success"])
+        self.assertEqual(status.call_args.args[2], ["result.txt"])
+        self.assertEqual(diff.call_args.args[1], ["result.txt"])
+
+    def test_151c_no_task_paths_is_explicit_not_applicable(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        task_plan = {
+            "task_block_id": "tb_" + "2" * 32,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "explain",
+                "goal": "explain",
+                "stage_type": "analysis",
+                "persistence_required": False,
+                "allowed_capabilities": [],
+                "artifacts": [],
+                "completion_mode": "model_result",
+                "evidence_requirements": [],
+                "completion_criteria": ["explanation complete"],
+            }],
+            "stage_states": {
+                "explain": {
+                    "status": "SATISFIED",
+                    "obligations": {},
+                    "result": "explained",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        freshness = {
+            "task_block_id": task_plan["task_block_id"],
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [],
+        }
+        context, metadata = server._collect_final_audit_evidence(
+            root=self.workspace,
+            candidate_final="Explained",
+            policy=policy,
+            run_id="run-test",
+            api_request_count=1,
+            tool_call_count=0,
+            verification_state={"write_revision": 0},
+            backup_session=None,
+            task_plan_evidence=task_plan,
+            freshness_snapshot=freshness,
+        )
+        payload = json.loads(context)
+        self.assertEqual(payload["task_scope"]["paths"], [])
+        self.assertTrue(payload["fresh_git_status"]["not_applicable"])
+        self.assertTrue(payload["fresh_git_diff"]["not_applicable"])
+        self.assertEqual(
+            payload["fresh_git_diff"]["reason"], "no_task_scoped_paths"
+        )
+        self.assertFalse(metadata["critical_for_success"])
+
+    def test_151c_missing_requirement_source_is_mechanically_critical(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        (self.workspace / "result.txt").write_text("done", encoding="utf-8")
+        args = {"path": "result.txt"}
+        task_plan = {
+            "task_block_id": "tb_" + "3" * 32,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "verify",
+                "goal": "read result",
+                "stage_type": "analysis",
+                "persistence_required": False,
+                "allowed_capabilities": ["READ"],
+                "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "readback",
+                    "tool": "read_file",
+                    "arguments": args,
+                }],
+                "completion_criteria": ["readback exists"],
+            }],
+            "stage_states": {
+                "verify": {
+                    "status": "SATISFIED",
+                    "obligations": {},
+                    "result": "server evidence",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        freshness = {
+            "task_block_id": task_plan["task_block_id"],
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "verify",
+                "persistence_required": False,
+                "evidence_generation": 0,
+                "requirements": [{
+                    "evidence_id": "readback",
+                    "tool": "read_file",
+                    "arguments_sha256": server.evidence_arguments_fingerprint(args),
+                    "target_identity": ["result.txt"],
+                    "target_state_sha256": "state-current",
+                    "source_records": [],
+                }],
+            }],
+        }
+        _context, metadata = server._collect_final_audit_evidence(
+            root=self.workspace,
+            candidate_final="Done",
+            policy=policy,
+            run_id="run-test",
+            api_request_count=1,
+            tool_call_count=1,
+            verification_state={"write_revision": 0},
+            backup_session=None,
+            task_plan_evidence=task_plan,
+            freshness_snapshot=freshness,
+        )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertIn(
+            "requirement_evidence_missing:evidence:verify:readback",
+            metadata["critical_reasons"],
+        )
+
+    def test_151c_unattributed_task_target_change_is_explicit_negative_fact(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        task_plan, freshness = self._task_scoped_packet_fixture()
+        git_result = {
+            "ok": True, "stdout": " M result.txt", "stderr": "",
+            "truncated": False, "stdout_bytes": 13, "stderr_bytes": 0,
+        }
+        with (
+            patch.object(server, "_agent_git_status", return_value=dict(git_result)),
+            patch.object(server, "_agent_git_diff", return_value=dict(git_result)),
+        ):
+            context, _metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=0,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
+        payload = json.loads(context)
+        self.assertEqual(
+            payload["task_scope"]["unattributed_git_status"],
+            [" M result.txt"],
+        )
+        expected_hash = __import__("hashlib").sha256(
+            json.dumps(
+                freshness,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        ).hexdigest()
+        self.assertEqual(
+            payload["evidence_freshness"]["snapshot_sha256"],
+            expected_hash,
+        )
+
+
+    def test_151c_duplicate_tool_material_is_deduplicated(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        preview = server._final_audit_tool_material_preview(
+            "read_file",
+            {"path": "result.txt", "content": "same material"},
+        )
+        fact = {
+            "sequence": 1,
+            "source_record_id": "rec-1",
+            "source_run_store_record_id": "rec-store-1",
+            "task_block_id": None,
+            "run_id": "run-test",
+            "plan_version": None,
+            "stage_id": None,
+            "evidence_generation": None,
+            "requirement_ids": [],
+            "target_identity": [],
+            "tool": "read_file",
+            "path": "result.txt",
+            "capability": "READ",
+            "status": "OK",
+            "executed": True,
+            "arguments_sha256": "args",
+            "observed_state_sha256": None,
+            "result": {"sha256": "same-result"},
+            "material_preview": preview,
+        }
+        git_result = {
+            "ok": True, "stdout": "", "stderr": "", "truncated": False
+        }
+        with (
+            patch.object(server, "_agent_git_status", return_value=dict(git_result)),
+            patch.object(server, "_agent_git_diff", return_value=dict(git_result)),
+        ):
+            context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=2,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                tool_facts=[fact, {**copy.deepcopy(fact), "sequence": 2}],
+            )
+        payload = json.loads(context)
+        evidence = payload["authoritative_tool_evidence"]
+        self.assertIn("material_preview", evidence[0])
+        self.assertTrue(evidence[1]["material_deduplicated"])
+        self.assertEqual(payload["task_material"]["deduplicated_count"], 1)
+        self.assertFalse(payload["task_material"]["truncated"])
+        self.assertFalse(metadata["critical_for_success"])
+
+    def test_151c_truncated_required_read_material_is_fail_closed(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        (self.workspace / "result.txt").write_text("x", encoding="utf-8")
+        args = {"path": "result.txt"}
+        args_sha = server.evidence_arguments_fingerprint(args)
+        task_block_id = "tb_" + "4" * 32
+        task_plan = {
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "read_stage",
+                "goal": "read material",
+                "stage_type": "analysis",
+                "persistence_required": False,
+                "allowed_capabilities": ["READ"],
+                "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "readback",
+                    "tool": "read_file",
+                    "arguments": args,
+                }],
+                "completion_criteria": ["material read"],
+            }],
+            "stage_states": {
+                "read_stage": {
+                    "status": "SATISFIED",
+                    "obligations": {},
+                    "result": "server evidence",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        freshness = {
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "read_stage",
+                "persistence_required": False,
+                "evidence_generation": 0,
+                "requirements": [{
+                    "evidence_id": "readback",
+                    "tool": "read_file",
+                    "arguments_sha256": args_sha,
+                    "target_identity": ["result.txt"],
+                    "target_state_sha256": "state-current",
+                    "source_records": [{
+                        "source_record_id": "evidence-1",
+                        "sequence": 1,
+                        "result_sha256": "large-result",
+                        "observed_state_sha256": "state-current",
+                    }],
+                }],
+            }],
+        }
+        preview = server._final_audit_tool_material_preview(
+            "read_file",
+            {"path": "result.txt", "content": "x" * 9000},
+        )
+        self.assertTrue(preview["truncated"])
+        tool_fact = {
+            "sequence": 1,
+            "source_record_id": "evidence-1",
+            "source_run_store_record_id": "rec-store-1",
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_version": 1,
+            "stage_id": "read_stage",
+            "evidence_generation": 0,
+            "requirement_ids": ["readback"],
+            "target_identity": ["result.txt"],
+            "tool": "read_file",
+            "path": "result.txt",
+            "capability": "READ",
+            "status": "OK",
+            "executed": True,
+            "arguments_sha256": args_sha,
+            "observed_state_sha256": "state-current",
+            "result": {"sha256": "large-result"},
+            "material_preview": preview,
+        }
+        git_result = {
+            "ok": True, "stdout": "", "stderr": "", "truncated": False
+        }
+        with (
+            patch.object(server, "_agent_git_status", return_value=dict(git_result)),
+            patch.object(server, "_agent_git_diff", return_value=dict(git_result)),
+        ):
+            _context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=1,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                tool_facts=[tool_fact],
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertIn(
+            "requirement_material_truncated:read_stage:readback",
+            metadata["critical_reasons"],
+        )
+
+
+    def test_151c_large_contract_literal_is_hash_compacted(self) -> None:
+        large_value = "Z" * 6000
+        task_plan = {
+            "task_block_id": "tb_" + "5" * 32,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "write",
+                "goal": "write exact content",
+                "stage_type": "produce_artifact",
+                "persistence_required": True,
+                "allowed_capabilities": ["READ", "WRITE"],
+                "artifacts": [{
+                    "artifact_id": "result",
+                    "path": "result.txt",
+                    "operation": "update",
+                    "allow_already_satisfied": False,
+                    "postcondition": {"kind": "equals", "value": large_value},
+                }],
+                "completion_mode": "persistence",
+                "evidence_requirements": [],
+                "completion_criteria": ["exact content written"],
+            }],
+            "stage_states": {
+                "write": {
+                    "status": "SATISFIED",
+                    "obligations": {},
+                    "result": "done",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        compact = server._compact_final_audit_task_plan(task_plan)
+        value = compact["stages"][0]["artifacts"][0]["postcondition"]["value"]
+        self.assertIsInstance(value, dict)
+        self.assertTrue(value["omitted"])
+        self.assertEqual(value["utf8_bytes"], 6000)
+        self.assertEqual(value["sha256"], server._sha256_utf8(large_value))
+        self.assertNotIn(large_value, json.dumps(compact, ensure_ascii=False))
+
+
+    def test_151c_truncated_task_scoped_git_is_fail_closed(self) -> None:
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(self.permissions)
+        )
+        task_plan, freshness = self._task_scoped_packet_fixture()
+        truncated_git = {
+            "ok": True,
+            "stdout": " M result.txt",
+            "stderr": "",
+            "truncated": True,
+            "stdout_bytes": 13,
+            "stderr_bytes": 0,
+        }
+        with (
+            patch.object(
+                server, "_agent_git_status", return_value=dict(truncated_git)
+            ),
+            patch.object(
+                server, "_agent_git_diff", return_value=dict(truncated_git)
+            ),
+        ):
+            _context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=0,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertIn(
+            "fresh_git_status_truncated",
+            metadata["critical_reasons"],
+        )
+        self.assertIn(
+            "fresh_git_diff_truncated",
+            metadata["critical_reasons"],
+        )
+
+
+    def test_151c_internal_git_scope_accepts_directory_dependency(self) -> None:
+        (self.workspace / "pkg").mkdir()
+        permissions = dict(self.permissions, allow_verify=True)
+        policy = server._prepare_policy_for_workspace(
+            self.workspace, server._normalize_permissions(permissions)
+        )
+        process_result = {
+            "ok": True,
+            "exit_code": 0,
+            "stdout": "",
+            "stderr": "",
+            "truncated": False,
+            "stdout_bytes": 0,
+            "stderr_bytes": 0,
+        }
+        with patch.object(
+            server, "_run_verify_process", return_value=dict(process_result)
+        ) as run:
+            status = server._agent_git_status(
+                self.workspace, policy, ["pkg"]
+            )
+            diff = server._agent_git_diff(
+                self.workspace, ["pkg"], policy, allow_missing=True
+            )
+        self.assertEqual(status["paths"], ["pkg"])
+        self.assertEqual(diff["paths"], ["pkg"])
+        self.assertIn("pkg", run.call_args_list[0].args[0])
+        self.assertIn("pkg", run.call_args_list[1].args[0])
+        with self.assertRaises(FileNotFoundError):
+            server._agent_git_diff(
+                self.workspace, ["pkg"], policy
+            )
+
+
+    def test_151c_truncated_list_dir_requirement_is_fail_closed(self) -> None:
+        (self.workspace / "pkg").mkdir()
+        policy = server._prepare_policy_for_workspace(
+            self.workspace,
+            server._normalize_permissions(
+                dict(self.permissions, allow_verify=True)
+            ),
+        )
+        args = {"path": "pkg"}
+        args_sha = server.evidence_arguments_fingerprint(args)
+        task_block_id = "tb_" + "6" * 32
+        task_plan = {
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "inspect",
+                "goal": "inspect package directory",
+                "stage_type": "analysis",
+                "persistence_required": False,
+                "allowed_capabilities": ["READ"],
+                "artifacts": [],
+                "completion_mode": "server_evidence",
+                "evidence_requirements": [{
+                    "evidence_id": "listing",
+                    "tool": "list_dir",
+                    "arguments": args,
+                }],
+                "completion_criteria": ["directory listing inspected"],
+            }],
+            "stage_states": {
+                "inspect": {
+                    "status": "SATISFIED",
+                    "obligations": {},
+                    "result": "server evidence",
+                    "evidence_generation": 0,
+                }
+            },
+            "replans": [],
+        }
+        freshness = {
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_id": "plan-test",
+            "plan_version": 1,
+            "stages": [{
+                "stage_id": "inspect",
+                "persistence_required": False,
+                "evidence_generation": 0,
+                "requirements": [{
+                    "evidence_id": "listing",
+                    "tool": "list_dir",
+                    "arguments_sha256": args_sha,
+                    "target_identity": ["pkg"],
+                    "target_state_sha256": "state-current",
+                    "source_records": [{
+                        "source_record_id": "evidence-listing",
+                        "sequence": 1,
+                        "result_sha256": "listing-result",
+                        "observed_state_sha256": "state-current",
+                    }],
+                }],
+            }],
+        }
+        preview = server._final_audit_tool_material_preview(
+            "list_dir",
+            {
+                "path": "pkg",
+                "entries": [
+                    {"name": f"entry_{index:04d}.txt", "type": "file"}
+                    for index in range(1000)
+                ],
+                "truncated": False,
+            },
+        )
+        self.assertTrue(preview["truncated"])
+        fact = {
+            "sequence": 1,
+            "source_record_id": "evidence-listing",
+            "source_run_store_record_id": "rec-store-listing",
+            "task_block_id": task_block_id,
+            "run_id": "run-test",
+            "plan_version": 1,
+            "stage_id": "inspect",
+            "evidence_generation": 0,
+            "requirement_ids": ["listing"],
+            "target_identity": ["pkg"],
+            "tool": "list_dir",
+            "path": "pkg",
+            "capability": "READ",
+            "status": "OK",
+            "executed": True,
+            "arguments_sha256": args_sha,
+            "observed_state_sha256": "state-current",
+            "result": {"sha256": "listing-result"},
+            "material_preview": preview,
+        }
+        git_result = {
+            "ok": True,
+            "stdout": "",
+            "stderr": "",
+            "truncated": False,
+        }
+        with (
+            patch.object(
+                server, "_agent_git_status", return_value=dict(git_result)
+            ),
+            patch.object(
+                server, "_agent_git_diff", return_value=dict(git_result)
+            ),
+        ):
+            _context, metadata = server._collect_final_audit_evidence(
+                root=self.workspace,
+                candidate_final="Done",
+                policy=policy,
+                run_id="run-test",
+                api_request_count=1,
+                tool_call_count=1,
+                verification_state={"write_revision": 0},
+                backup_session=None,
+                tool_facts=[fact],
+                task_plan_evidence=task_plan,
+                freshness_snapshot=freshness,
+            )
+        self.assertTrue(metadata["critical_for_success"])
+        self.assertIn(
+            "requirement_material_truncated:inspect:listing",
+            metadata["critical_reasons"],
+        )
+
+
 class FinalAuditUiFlowTests(unittest.TestCase):
     def test_worker_passes_verifier_model_and_run_toggles(self) -> None:
         app = object.__new__(ultra_ui.UltraApp)

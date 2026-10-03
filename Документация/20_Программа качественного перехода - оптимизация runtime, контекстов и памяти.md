@@ -128,7 +128,7 @@ Server не спрашивает модель о действии, если пр
 - **151F — Modular Global Context.**
   CORE + применимые policy modules вместо повторной передачи всего Global Context.
 - **151G — Stage Context Compiler.**
-  Working set текущей stage вместо бесконечного function/tool transcript.
+  Working set текущей stage вместо бесконечного function/tool transcript. R-027 и R-031 являются обязательными stress/negative inputs: full tool outputs должны сохраняться в Run Store, но не бесконечно повторяться в каждом stateless provider request. Compiler обязан удерживать bounded in-stage material, выбирать stage-relevant facts/results, отдельно обрабатывать большие read outputs и не терять RAW TASK, authoritative Server facts, negative evidence, requirement/freshness identity. Regression должен доказывать, что повторный large `read_file` не раздувает каждый следующий Executor request на сотни тысяч символов.
 - **151H — Planner Prompt Optimization.**
   COMMON CORE + INITIAL / READINESS / REPLAN projections.
 - **151I — Role Budgets.**

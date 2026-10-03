@@ -1,0 +1,8 @@
+{"ts":"2026-10-02T12:05:00+05:00","type":"BOOTSTRAP","task":"DOC-WA-REMOTE-OBS-001","status":"ACTIVE_PREP"}
+{"ts":"2026-10-02T12:05:01+05:00","type":"VERIFIED","operation_id":"DOCREMOTE-PREP-001","result":"Documentation scope restore point created and SHA256-verified; document 26 recorded absent before task."}
+{"ts":"2026-10-02T12:08:00+05:00","type":"DIAGNOSTIC","operation_id":"DOCREMOTE-DIAG-001","result":"Desktop Commander 0.2.52 process chain has remained alive since ~08:17; matched node processes still have established TCP connections; no matching Windows Application Error crash events found in last 6h."}
+{"ts":"2026-10-02T12:08:01+05:00","type":"DIAGNOSTIC","operation_id":"DOCREMOTE-DIAG-002","result":"Installed remote-channel source confirms durable mcp_remote_calls queue + realtime doorbell, pending->executing claim before dispatch, reconnect pending recovery, explicit half-open WebSocket handling, and separate terminal result write."}
+{"ts":"2026-10-02T12:08:02+05:00","type":"INTENT","operation_id":"DOCREMOTE-WRITE-001","action":"create_remote_transport_observation_journal","target":"Документация/26_Журнал наблюдений Remote - обрывы, transport и recovery evidence.md"}
+{"ts":"2026-10-02T12:10:00+05:00","type":"DONE","operation_id":"DOCREMOTE-WRITE-001","result":"Document 26 created and linked only from architecture document 23."}
+{"ts":"2026-10-02T12:10:01+05:00","type":"VERIFIED","operation_id":"DOCREMOTE-VERIFY-001","result":"Document reread PASS; exact Wiki Link search = one match in 23; documentation git diff --check PASS."}
+{"ts":"2026-10-02T12:10:02+05:00","type":"TASK_STATUS","task":"DOC-WA-REMOTE-OBS-001","status":"DONE_VERIFIED","next":"WA-3.3.1"}

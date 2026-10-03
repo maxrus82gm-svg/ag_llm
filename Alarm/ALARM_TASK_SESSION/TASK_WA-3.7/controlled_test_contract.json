@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "task_id": "WA-3.7",
+  "preparation_microtask_id": "WA37-M001",
+  "controlled_microtask_id": "WA37-M002",
+  "operation_id": "WA37-CTRL-001",
+  "action": "create_file",
+  "target": "Alarm/ALARM_TASK_SESSION/TASK_WA-3.7/controlled_disconnect_target.txt",
+  "pre_state": {
+    "exists": false,
+    "sha256": null
+  },
+  "expected_post": {
+    "exists": true,
+    "content_utf8": "WA-3.7 CONTROLLED REMOTE DISCONNECT PROOF\noperation=WA37-CTRL-001\n",
+    "size_bytes": 66,
+    "sha256": "7bd3b6c6c6e7a4745cb03157e9fb0c0f4d89d43898bc9b1c2d0a05d649b3673e"
+  },
+  "request_payload": {
+    "content_utf8": "WA-3.7 CONTROLLED REMOTE DISCONNECT PROOF\noperation=WA37-CTRL-001\n",
+    "expected_post_sha256": "7bd3b6c6c6e7a4745cb03157e9fb0c0f4d89d43898bc9b1c2d0a05d649b3673e"
+  },
+  "expected_precondition_sha256": null,
+  "disconnect_window": "After WA37-M002 OperationStore INTENT->STARTED is persisted and mutation is submitted, but before Chat treats any result as authoritative.",
+  "recovery_rule": "After reconnect: read persistent task/microtask/checkpoint/operation/transport/manifest/current target; never replay blindly; reconcile against absent pre-state and exact expected-post hash.",
+  "safety": {
+    "runtime_dependency": false,
+    "documentation_dependency": false,
+    "user_asset": false,
+    "rollback": "If target exists, delete it using verified M002 restore semantics for an originally absent file."
+  },
+  "preparation_constraints": {
+    "m001_must_not_create_target": true,
+    "m001_must_not_create_operation_record": true,
+    "m001_must_not_disconnect_remote": true,
+    "m002_owns_target_snapshot_and_operation_lifecycle": true
+  }
+}

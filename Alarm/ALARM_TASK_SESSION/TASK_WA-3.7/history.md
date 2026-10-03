@@ -1,0 +1,29 @@
+# WA-3.7 history
+
+- 2026-10-02: full WA-3.7 formulation was fixed first in ordinary Chat without Remote execution.
+- Reconciliation confirmed WA-3.6 = DONE / VERIFIED / FRESH REOPEN PASS; active Web Alarm task storage is empty; WA-3.6 is in completed storage.
+- TASK_WA-3.7 did not exist before this population stage.
+- WA-3.7 exists to close the one remaining WA-3 acceptance gate: an intentionally controlled real Remote transport disconnect during a safe persistent operation.
+- The previous unplanned WA-3.6 timeout/offline incident remains valuable live evidence but is explicitly not treated as a substitute for this controlled test.
+- This stage is documentation/task population only. No snapshot, runtime code, fixture mutation, operation STARTED state, or deliberate disconnect is permitted until user review.
+- Web Alarm TASK `WA-3.7` created as PLANNED; plan contains `WA37-M001`…`WA37-M003`, all PLANNED, with current=M001 for review only.
+- Review checkpoint persisted: PLANNED / NOT_PREPARED / USER_REVIEW_REQUIRED / last_operation_id=null.
+- Documentation synchronized: 000/01/04/05/24/25/26 now identify WA-3.7 as the final open WA-3 controlled-disconnect acceptance gate. Document 23 required no architecture change; document 06 remains an execution journal and was intentionally not given a fake completion entry before implementation.
+- Population boundary preserved: no snapshot, fixture mutation, OperationStore STARTED record, intentional disconnect, runtime change, or WA-4 activation occurred.
+- M001 runtime audit found a sequencing issue in the Chat-level split: a controlled operation created under M001 could not honestly be executed/reconciled under M002 after M001 VERIFIED. Scope was corrected before the controlled target or OperationStore record existed.
+- Authoritative split: M001 freezes/verifies the contract only; M002 owns the actual target restore point + OperationStore INTENT/STARTED + controlled disconnect/recovery. Acceptance criteria are unchanged.
+- Fixed future operation contract: `WA37-CTRL-001`, target `Alarm/ALARM_TASK_SESSION/TASK_WA-3.7/controlled_disconnect_target.txt`, pre-state absent, expected post SHA-256 `7bd3b6c6c6e7a4745cb03157e9fb0c0f4d89d43898bc9b1c2d0a05d649b3673e`.
+- WA37-M001 closed VERIFIED after contract/hash/absence/unused-operation checks and scoped diff-check PASS.
+- WA37-M002 prepared with a VERIFIED restore point for the actual controlled target; M002 is ACTIVE.
+- `WA37-CTRL-001` created in OperationStore as INTENT with fingerprint `286db8c7a19ebc781de00cd9e6a533992936afb2c9c93ec3b071c83cd2991a96`.
+- Pre-disconnect reconciliation gate PASS after correcting read-only expected-post key to canonical manifest source_path. Target remains PRE_STATE/absent. Next action is INTENT->STARTED followed by delayed safe write and intentional real Remote disconnect.
+- First controlled attempt `WA37-CTRL-001` produced FULL expected-post state but no real disconnect; it was preserved as non-acceptance evidence and closed VERIFIED without being misreported as a PASS.
+- The target was restored to absent pre-state through the verified M002 restore point. Retest used a new operation identity `WA37-CTRL-002` with the same immutable request fingerprint.
+- For `WA37-CTRL-002`, OperationStore reached STARTED before the user intentionally stopped Desktop Commander Remote. After user-reported reconnect, bound transport evidence recorded REMOTE_OFFLINE -> REMOTE_RECOVERED.
+- Reconciliation after reconnect proved exact PRE_STATE, expected post not reached, side_effect_scope=none and authoritative `RETRY_SAFE / PRE_STATE_AND_POST_NOT_REACHED`. No blind replay occurred and `actually_retried=[]`.
+- Recovery Report `report_wa37_ctrl002` / incident `INC-WA37-CTRL-002` persisted these facts. A fresh Python process independently reopened the same STARTED+PRE_STATE+RETRY_SAFE result and the persisted report; both PASS.
+- The non-executed controlled operation was then closed FAILED with explicit result summary only after authoritative reconciliation; retry remained intentionally not performed. WA37-M002 = VERIFIED.
+- WA37-M003 regression gate: focused Recovery Report/reconciliation/transport 95/95 PASS; full Web Alarm 197/197 PASS; `python -m compileall -q web_alarm` PASS.
+- WA-3.7 fresh-process reopen PASS: TASK=COMPLETED, M001–M003=VERIFIED, checkpoint=M003/VERIFIED, persistent Report/transport evidence reopened unchanged.
+- Final WA-3 reconciliation found one stricter combined gate still open: FULL local change and real Remote disconnect must occur in the same incident, with disconnect after post-state but before Chat receives result. Therefore WA-3.7 closes successfully, but WA-3 overall remains IN PROGRESS.
+- Final WA-3.7 documentation sync completed; scoped git diff --check PASS. Next follow-up TASK must first be formulated in ordinary Chat. WA-4 is not activated.

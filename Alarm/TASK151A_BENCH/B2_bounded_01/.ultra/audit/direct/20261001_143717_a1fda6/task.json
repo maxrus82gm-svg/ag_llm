@@ -1,0 +1,8 @@
+{
+  "schema_version": 2,
+  "workspace_id": "ws_6970a55cec944c32aa38ae7ae3afac2e",
+  "chat_id": null,
+  "task_block_id": "tb_157aee52a10949d8a624e02be40f8d7f",
+  "task_display_id": "T-001",
+  "raw_task": "Benchmark B2-bounded.\nIn the existing code file b2_logic.py change exactly:\nSTATUS_PREFIX = \"PENDING\"\nto:\nSTATUS_PREFIX = \"READY\"\nDo not change any other line or any other file.\n\nFirst use exactly one find_text on b2_logic.py for the exact old line so the precise edit has the current content SHA.\nThen perform exactly one replace_text for that line.\nAfter the change, run exactly one python_compile with paths:\n[\"b2_logic.py\", \"b2_contract_test.py\", \"ultra_ui.py\"]\nThen run exactly one verify_file_content on b2_logic.py with kind=equals and this full exact expected content:\nSTATUS_PREFIX = \"READY\"\n\ndef status_label(name: str) -> str:\n    return f\"{STATUS_PREFIX}: {name.strip().upper()}\"\n\nFinally run exactly one ui_smoke_test. The smoke imports b2_contract_test and must fail unless status_label(\"bench\") returns exactly \"READY: BENCH\".\nDo not inspect or modify any other user file. Do not use git. Do not add extra READ/VERIFY calls.\nReturn SUCCESS only if the existing-code mutation, compile, exact source verification, contract check and UI smoke all succeed."
+}

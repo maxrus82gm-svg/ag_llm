@@ -45,6 +45,61 @@ def evidence_arguments_fingerprint(arguments: dict) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def evidence_target_state_fingerprint(snapshot: dict) -> str:
+    payload = {
+        "exists": bool(snapshot.get("exists")),
+        "sha256": snapshot.get("sha256"),
+    }
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def evidence_dependency_targets(tool: str, arguments: dict) -> list[str]:
+    targets = []
+    path = arguments.get("path")
+    if isinstance(path, str) and path:
+        targets.append(path)
+    paths = arguments.get("paths")
+    if isinstance(paths, list):
+        targets.extend(
+            item for item in paths
+            if isinstance(item, str) and item
+        )
+    if tool == "ui_smoke_test":
+        targets.append("ultra_ui.py")
+    return list(dict.fromkeys(targets))
+
+
+def evidence_dependency_state_fingerprint(
+    snapshot_fn,
+    tool: str,
+    arguments: dict,
+) -> str | None:
+    targets = evidence_dependency_targets(tool, arguments)
+    if not targets:
+        return None
+    payload = []
+    for target in targets:
+        snapshot = snapshot_fn(target)
+        payload.append({
+            "target": target,
+            "exists": bool(snapshot.get("exists")),
+            "sha256": snapshot.get("sha256"),
+        })
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def validate_replan_against_fact(previous_plan: dict, candidate: dict, fact: dict) -> None:
     """Reject a candidate plan that demonstrably preserves a server-known conflict."""
     if fact.get("reason") != "create_target_already_exists":
@@ -347,11 +402,28 @@ class TaskLifecycle:
         old_stages = {s["stage_id"]: s for s in previous["stages"]} if previous else {}
         for stage in plan["stages"]:
             sid = stage["stage_id"]
-            if old_stages.get(sid) == stage and old_states.get(sid, {}).get("status") == "SATISFIED":
-                states[sid] = old_states[sid]
+            old_state = old_states.get(sid, {})
+            can_preserve = (
+                stage["persistence_required"]
+                and old_stages.get(sid) == stage
+                and old_state.get("status") == "SATISFIED"
+            )
+            if can_preserve:
+                states[sid] = old_state
+                states[sid].setdefault("evidence_generation", 0)
             else:
-                states[sid] = {"status": "PENDING", "obligations": {
-                    a["artifact_id"]: {"status": "OPEN"} for a in stage["artifacts"]}, "result": ""}
+                prior_generation = int(old_state.get("evidence_generation", 0))
+                states[sid] = {
+                    "status": "PENDING",
+                    "obligations": {
+                        a["artifact_id"]: {"status": "OPEN"}
+                        for a in stage["artifacts"]
+                    },
+                    "result": "",
+                    "evidence_generation": (
+                        prior_generation + 1 if previous is not None else 0
+                    ),
+                }
         self.state["stage_states"] = states
         self.state["active_stage_id"] = None
         self.advance()
@@ -617,10 +689,18 @@ class TaskLifecycle:
         if stage["persistence_required"]:
             return []
         matched = []
+        state = self.state["stage_states"][stage["stage_id"]]
+        current_generation = int(state.get("evidence_generation", 0))
         facts = [
             item
             for item in (stage_evidence or [])
-            if item.get("stage_id") == stage["stage_id"]
+            if item.get("task_block_id") == self.state["task_block_id"]
+            and item.get("run_id") == self.state["run_id"]
+            and item.get("plan_version") == self.state["plan_version"]
+            and item.get("stage_id") == stage["stage_id"]
+            and int(item.get("evidence_generation", -1)) == current_generation
+            and isinstance(item.get("source_record_id"), str)
+            and item.get("source_record_id")
             and item.get("status") == "OK"
             and item.get("executed") is True
         ]
@@ -628,9 +708,36 @@ class TaskLifecycle:
             expected_fingerprint = evidence_arguments_fingerprint(
                 requirement["arguments"]
             )
+            dependency_targets = evidence_dependency_targets(
+                requirement["tool"],
+                requirement["arguments"],
+            )
+            current_state_fingerprint = None
+            if dependency_targets:
+                try:
+                    current_state_fingerprint = (
+                        evidence_dependency_state_fingerprint(
+                            self.snapshot,
+                            requirement["tool"],
+                            requirement["arguments"],
+                        )
+                    )
+                except (PermissionError, ValueError, OSError):
+                    current_state_fingerprint = None
             if any(
                 item.get("tool") == requirement["tool"]
                 and item.get("arguments_sha256") == expected_fingerprint
+                and requirement["evidence_id"] in (
+                    item.get("requirement_ids") or []
+                )
+                and (
+                    not dependency_targets
+                    or (
+                        current_state_fingerprint is not None
+                        and item.get("observed_state_sha256")
+                        == current_state_fingerprint
+                    )
+                )
                 for item in facts
             ):
                 matched.append(requirement["evidence_id"])
@@ -660,6 +767,165 @@ class TaskLifecycle:
             for requirement in stage.get("evidence_requirements") or []
             if requirement["evidence_id"] not in matched
         ]
+
+    def invalidate_stale_satisfied_evidence(self, stage_evidence) -> list[str]:
+        stale = []
+        for stage in self.plan["stages"]:
+            state = self.state["stage_states"][stage["stage_id"]]
+            requirements = stage.get("evidence_requirements") or []
+            if (
+                state.get("status") != "SATISFIED"
+                or stage["persistence_required"]
+                or not requirements
+            ):
+                continue
+            matched = set(
+                self._matched_evidence_requirement_ids_for_stage(
+                    stage,
+                    stage_evidence,
+                )
+            )
+            required = {
+                item["evidence_id"]
+                for item in requirements
+            }
+            if required.issubset(matched):
+                continue
+            state["status"] = "PENDING"
+            state["repair"] = True
+            state["result"] = ""
+            state["evidence_generation"] = int(
+                state.get("evidence_generation", 0)
+            ) + 1
+            stale.append(stage["stage_id"])
+            self.event(
+                "evidence_invalidated",
+                stale_stage_id=stage["stage_id"],
+                previous_generation=state["evidence_generation"] - 1,
+                new_generation=state["evidence_generation"],
+                reason="evidence_snapshot_or_identity_stale",
+            )
+        if stale:
+            self.state["active_stage_id"] = None
+            self.advance()
+            self.save()
+        return stale
+
+    def evidence_freshness_snapshot(self, stage_evidence) -> dict:
+        """Return the authoritative identity/coverage payload used by freshness binding."""
+        stages = []
+        for stage in self.plan["stages"]:
+            state = self.state["stage_states"][stage["stage_id"]]
+            if stage["persistence_required"]:
+                artifacts = []
+                for artifact in stage["artifacts"]:
+                    snapshot = self.snapshot(artifact["path"])
+                    obligation = state["obligations"][
+                        artifact["artifact_id"]
+                    ]
+                    artifacts.append({
+                        "artifact_id": artifact["artifact_id"],
+                        "path": artifact["path"],
+                        "operation": artifact["operation"],
+                        "obligation_status": obligation["status"],
+                        "observed_state_sha256": (
+                            evidence_target_state_fingerprint(snapshot)
+                        ),
+                    })
+                stages.append({
+                    "stage_id": stage["stage_id"],
+                    "persistence_required": True,
+                    "artifacts": artifacts,
+                })
+                continue
+            requirements = stage.get("evidence_requirements") or []
+            if not requirements:
+                continue
+            stage_item = {
+                "stage_id": stage["stage_id"],
+                "persistence_required": False,
+                "evidence_generation": int(
+                    state.get("evidence_generation", 0)
+                ),
+                "requirements": [],
+            }
+            for requirement in requirements:
+                dependency_targets = evidence_dependency_targets(
+                    requirement["tool"],
+                    requirement["arguments"],
+                )
+                target_state = None
+                if dependency_targets:
+                    try:
+                        target_state = evidence_dependency_state_fingerprint(
+                            self.snapshot,
+                            requirement["tool"],
+                            requirement["arguments"],
+                        )
+                    except (PermissionError, ValueError, OSError):
+                        target_state = "UNRESOLVED"
+                expected_args = evidence_arguments_fingerprint(
+                    requirement["arguments"]
+                )
+                source_records = sorted(
+                    [
+                        {
+                            "source_record_id": item["source_record_id"],
+                            "sequence": item.get("sequence"),
+                            "result_sha256": (
+                                item.get("result") or {}
+                            ).get("sha256"),
+                            "observed_state_sha256": item.get(
+                                "observed_state_sha256"
+                            ),
+                        }
+                        for item in (stage_evidence or [])
+                        if item.get("task_block_id")
+                        == self.state["task_block_id"]
+                        and item.get("run_id") == self.state["run_id"]
+                        and item.get("plan_version")
+                        == self.state["plan_version"]
+                        and item.get("stage_id") == stage["stage_id"]
+                        and int(item.get("evidence_generation", -1))
+                        == int(state.get("evidence_generation", 0))
+                        and requirement["evidence_id"] in (
+                            item.get("requirement_ids") or []
+                        )
+                        and item.get("tool") == requirement["tool"]
+                        and item.get("arguments_sha256") == expected_args
+                        and item.get("status") == "OK"
+                        and item.get("executed") is True
+                        and isinstance(item.get("source_record_id"), str)
+                        and item.get("source_record_id")
+                    ],
+                    key=lambda item: item["source_record_id"],
+                )
+                stage_item["requirements"].append({
+                    "evidence_id": requirement["evidence_id"],
+                    "tool": requirement["tool"],
+                    "arguments_sha256": expected_args,
+                    "target_identity": list(dependency_targets),
+                    "target_state_sha256": target_state,
+                    "source_records": source_records,
+                })
+            stages.append(stage_item)
+        return {
+            "task_block_id": self.state["task_block_id"],
+            "run_id": self.state["run_id"],
+            "plan_id": self.state["plan_id"],
+            "plan_version": self.state["plan_version"],
+            "stages": stages,
+        }
+
+    def evidence_freshness_snapshot_sha256(self, stage_evidence) -> str:
+        payload = self.evidence_freshness_snapshot(stage_evidence)
+        encoded = json.dumps(
+            payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
 
     def minimum_remaining_tool_calls(self, stage_evidence) -> int:
         minimum = 0
@@ -872,10 +1138,15 @@ class TaskLifecycle:
             state = self.state["stage_states"][sid]
             state["status"] = "PENDING"
             state["repair"] = True
+            state["evidence_generation"] = int(
+                state.get("evidence_generation", 0)
+            ) + 1
+            state["result"] = ""
             # Reopen the stage, retaining verified persistence receipts. The defect may
             # concern only one artifact, verification, or the final response. Requiring
             # every artifact to mutate again would manufacture meaningless writes.
             # Repaired targets receive new receipts; all targets are rechecked on stop.
+            # Non-persistence evidence from an older repair generation is stale.
         for candidate in self.state["candidates"].values():
             if candidate["stage_id"] in ids:
                 candidate["authorized"] = False
