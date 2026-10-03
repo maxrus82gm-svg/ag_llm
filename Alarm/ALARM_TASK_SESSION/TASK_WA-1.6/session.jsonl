@@ -1,7 +1,0 @@
-{"ts":"2026-10-02T08:25:00+05:00","type":"BOOTSTRAP","task":"WA-1.6","status":"ACTIVE_PREP"}
-{"ts":"2026-10-02T08:25:01+05:00","type":"VERIFIED","operation_id":"WA16-PREP-001","result":"Initial scope restore point created and SHA256-verified; CLI files recorded absent before task."}
-{"ts":"2026-10-02T08:27:00+05:00","type":"DONE","operation_id":"WA16-VERIFY-001","result":"47/47 WA focused tests PASS; CLI module entrypoint smoke PASS."}
-{"ts":"2026-10-02T08:27:01+05:00","type":"VERIFIED","operation_id":"WA16-VERIFY-001","result":"CLI diff-check PASS."}
-{"ts":"2026-10-02T08:27:02+05:00","type":"SCOPE_EXTEND","operation_id":"WA16-PREP-002","action":"add_closeout_documentation_before_edit","targets":["Документация/01_Архитектура и текущее состояние.md","Документация/04_Дорожная карта разработки.md","Документация/05_Реестр задач.md","Документация/06_Журнал выполнения и отчёты.md","Документация/23_Архитектура Web Alarm Workspace.md","Документация/24_План реализации Web Alarm Workspace.md","Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md"],"note":"No closeout doc mutation until snapshots verify."}
-{"ts":"2026-10-02T08:28:20+05:00","type":"DONE","operation_id":"WA16-DOC-CLOSEOUT-001","result":"000/01/04/05/06/23/24/25 synchronized; WA-1 marked DONE/VERIFIED."}
-{"ts":"2026-10-02T08:28:21+05:00","type":"TASK_STATUS","task":"WA-1.6","status":"DONE_VERIFIED","big_task":"WA-1_DONE_VERIFIED","next":"WA-2.1"}

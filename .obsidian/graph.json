@@ -1,7 +1,7 @@
 {
   "collapse-filter": false,
-  "search": "-path:Alarm -path:.venv -path:.pytest_cache -path:.ultra -path:sandbox_verify -path:_ultra_agent_test",
-  "showTags": false,
+  "search": "-path:\"Alarm/\" -path:.venv -path:.pytest_cache -path:.ultra -path:sandbox_verify -path:_ultra_agent_test",
+  "showTags": true,
   "showAttachments": false,
   "hideUnresolved": false,
   "showOrphans": true,
@@ -43,17 +43,10 @@
       }
     },
     {
-      "query": "file:\"28_Вопросы и проблемы, требующие решения\" OR file:\"29_Независимая аналитика Claude\" OR file:\"30_Независимая аналитика GPT\" OR file:\"31_Общая идея и согласованное решение\" OR file:\"32_Заключительный вердикт для внесения в документацию\"",
+      "query": "file:\"Круглый стол\"",
       "color": {
         "a": 1,
-        "rgb": 3003583
-      }
-    },
-    {
-      "query": "file:\"33_Вопросы и проблемы WEB-02, требующие решения\" OR file:\"34_Независимая аналитика Claude WEB-02\" OR file:\"35_Независимая аналитика GPT WEB-02\" OR file:\"36_Общая идея и согласованное решение WEB-02\" OR file:\"37_Заключительный вердикт WEB-02\"",
-      "color": {
-        "a": 1,
-        "rgb": 6737151
+        "rgb": 16761856
       }
     },
     {
@@ -70,10 +63,10 @@
   "nodeSizeMultiplier": 0.961443902439024,
   "lineSizeMultiplier": 1.02263414634146,
   "collapse-forces": false,
-  "centerStrength": 0.431804878048781,
+  "centerStrength": 0.350634146341463,
   "repelStrength": 13.339455157637,
   "linkStrength": 0.756487804878049,
   "linkDistance": 275,
-  "scale": 0.713275462622412,
+  "scale": 0.5087618855792287,
   "close": false
 }

@@ -11,17 +11,17 @@ views:
     clusterOutlines: true
     depth: 0
     showOrphans: true
-    centerForce: 0.10
+    centerForce: 0.1
     repelForce: 10
     linkForce: 1
     linkDistance: 100
-    clusterForce: 1.00
+    clusterForce: 1
     clusterRepelForce: 0.65
   - type: base-graph
     name: Analytics branch
     filters:
       and:
-        - graph_cluster == "architecture-analysis"
+        - graph_cluster == "round-table"
     order:
       - file.name
       - graph_cluster
@@ -33,5 +33,5 @@ views:
     repelForce: 7
     linkForce: 1
     linkDistance: 80
-    clusterForce: 1.00
+    clusterForce: 1
     clusterRepelForce: 0.75
