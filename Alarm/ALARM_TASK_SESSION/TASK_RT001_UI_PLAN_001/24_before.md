@@ -2,11 +2,11 @@
 
 ## Статус документа
 
-**IMPLEMENTATION PLAN / ACTIVE — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RT-001 RECOVERY CLOSURE ROUTE APPROVED.**
+**IMPLEMENTATION PLAN / ACTIVE — WA-1 IN PROGRESS.**
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил следующий correctness-first маршрут перед strict rollout; runtime этого маршрута ещё не начат. Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
+Реализация начата с WA-1. Статус меняется только после предусмотренной проверки конкретной микрозадачи; незапущенные этапы остаются `PLANNED`.
 
 ## Краткая карта реализации
 
@@ -18,48 +18,6 @@ WA-2 — Локальный Web Alarm Server и простой UI
 WA-3 — Remote recovery и replay protection
 WA-4 — Строгий mutation gateway и hardening
 ```
-
-### Канонический маршрут после RT-001 / PLAN APPROVAL `EP-RT001-001`
-
-```text
-RC-0 — Baseline + normalization policy
-↓
-RC-1 — Durable Operation Contract + backward compatibility
-↓
-RC-2 — Tracked Resolver / evidence revision
-↓
-RC-3 — Canonical-target conflict gate + CAS
-↓
-RC-4 — Tracked safe rollback
-↓
-RC-5 — Projection correctness + pure inspection
-↓
-RC-6 — Minimal project-level resume
-↓
-WA4-E — Authoritative Mutation Executor / Gateway
-↓
-WA4-A — Deterministic lost-response acceptance
-↓
-WA4-O — UX / operational layer
-↓
-WA4-R — Strict rollout + final audit
-```
-
-Этот маршрут является каноническим порядком исполнения. Подробная planning-история и rationale остаются в `33`; здесь хранятся только порядок, границы и acceptance. Старые WA-4.1–WA-4.7 ниже сохраняются как требования: WA-4.1/4.2 → `WA4-E`; WA-4.3 → RC-1/RC-3 с точной lease/heartbeat моделью deferred по V17; WA-4.4/4.5 — cross-cutting retention/security constraints; WA-4.6 → `WA4-O`; WA-4.7 → `WA4-R`.
-
-| Boundary | Канонический результат / exit proof |
-| --- | --- |
-| RC-0 | regression/bytes/hash baseline зафиксирован отдельно от вспомогательных метрик; line-ending policy однозначна |
-| RC-1 | durable operation contract restart-safe; legacy records читаются совместимо; запись Operation Store/revision межпроцессно защищена |
-| RC-2 | ADOPT/RETRY/ROLLBACK/ABORT — persistent tracked transitions; `RETRY` только re-arm, без physical mutation до `WA4-E` |
-| RC-3 | canonical-target conflict gate + mutation-boundary CAS; конфликтующие process не проходят параллельно; race tests PASS |
-| RC-4 | rollback tracked; current drift сохранён до destructive restore; intent/receipt/post verification persistent |
-| RC-5 | checkpoint rebuildable/validated projection; inspect/verify pure; stale projection fail-closed |
-| RC-6 | одна read-only resume-команда возвращает project/stage, blockers, open operations и один `NEXT SAFE ACTION` |
-| WA4-E | server-owned snapshot→CAS→mutation→post-proof→receipt; replay того же contract не создаёт второй side effect |
-| WA4-A | deterministic lost-response fault injection + fresh process возвращает тот же receipt без второй mutation |
-| WA4-O | authoritative progress/situation UI без собственного выдуманного execution status |
-| WA4-R | OBSERVE→WARN→GATEWAY REQUIRED→STRICT только после полного regression/final audit |
 
 Коротко по смыслу:
 
@@ -556,13 +514,13 @@ Recovery report не должен считать последнюю видиму
 
 #### WA-3.7 — Controlled real Remote transport-disconnect acceptance gate
 
-**Статус: DONE / VERIFIED; FRESH REOPEN PASS. Parent WA-3 закрыт решением RT-001: stricter combined post-change disconnect criterion = SUPERSEDED / DEFERRED, не PASS; его смысл перенесён в `WA4-A`.**
+**Статус: DONE / VERIFIED; FRESH REOPEN PASS. WA-3 overall остаётся IN PROGRESS из-за одного stricter combined post-change disconnect gate.**
 
 WA-3.7 закрывает последний отдельный acceptance gate WA-3. Тест обязан использовать реальный намеренный разрыв Chat ↔ Desktop Commander Remote во время безопасной изолированной mutation с заранее persistent `operation_id`, verified restore point и известными pre/expected-post состояниями. Timeout/offline сам по себе не считается failure и не получает recovery authority.
 
 **Execution split:** `WA37-M001` = VERIFIED; `WA37-M002` = VERIFIED; `WA37-M003` = VERIFIED. TASK WA-3.7 = COMPLETED; fresh-process reopen PASS.
 
-**Final WA-3 reconciliation:** WA-3.7 закрыта и restart-safe: `CTRL-001` доказал FULL local mutation без required disconnect; `CTRL-002` доказал real `REMOTE_OFFLINE → REMOTE_RECOVERED`, exact PRE_STATE, RETRY_SAFE, side_effect none, no replay, persistent Recovery Report/fresh-process PASS. Focused 95/95, full WA 197/197, compileall + scoped diff-check PASS. Более строгая temporal composition `post-state reached → transport lost → Chat result unavailable` не была доказана в одном incident и **не получает PASS задним числом**. RT-001 закрыл literal criterion как `SUPERSEDED / DEFERRED` и перенёс его смысл в deterministic lost-response acceptance `WA4-A` после authoritative executor.
+**Final WA-3 reconciliation:** WA-3.7 закрыта и restart-safe: `CTRL-001` доказал FULL local mutation без required disconnect; `CTRL-002` доказал real `REMOTE_OFFLINE → REMOTE_RECOVERED`, exact PRE_STATE, RETRY_SAFE, side_effect none, no replay, persistent Recovery Report/fresh-process PASS. Focused 95/95, full WA 197/197, compileall + scoped diff-check PASS. Однако обязательный WA-3 criterion ниже требует в одном controlled incident: local change уже произошёл, затем Remote disconnect до получения результата Chat. Этот combined incident ещё не доказан. WA-3 остаётся IN PROGRESS; следующая follow-up TASK сначала формулируется в обычном Chat. WA-4 не активировать.
 
 #### WA-3 — Критерии приёмки
 
@@ -594,9 +552,7 @@ WA-3 считается завершённой, если доказаны сце
 
 **Статус: PLANNED**
 
-**Корректировка по итогам independent preflight `CLAUDE-WA-001` (2026-10-04):** текущие подпункты WA-4 сохранены как смысловые требования, но их исполнение сопоставляется с новым маршрутом RT-001: WA-4.1/4.2 → будущий authoritative `WA4-E` после RC-0…RC-6; WA-4.3 → базовая serialization/CAS через RC-1/RC-3, а точная lease/heartbeat model **DEFERRED по V17**; WA-4.4 retention и WA-4.5 security остаются cross-cutting constraints; WA-4.6 → `WA4-O`; WA-4.7 → `WA4-R`. Эта корректировка не означает PLAN APPROVAL и не запускает runtime-исполнение.
-
-WA-4 выполняется только после того, как WA-1–WA-3 доказали корректность хранения и recovery и закрыт предшествующий Recovery Closure route RT-001.
+WA-4 выполняется только после того, как WA-1–WA-3 доказали корректность хранения и recovery.
 
 Цель — превратить рекомендательный протокол в настоящее узкое горло для изменяющих операций, не запрещая обычное чтение, анализ и тестирование проекта.
 #### WA-4.1 — Mutation Gateway
@@ -639,13 +595,18 @@ RECOVERY_REQUIRED
 ```
 
 Это защищает и от параллельного ручного редактирования, и от второго Chat, и от повторной доставки уже частично выполненной composite sequence.
-#### WA-4.3 — Conflict serialization и ownership boundary
+#### WA-4.3 — Task ownership и защита от двух исполнителей
 
-Требование этого этапа — не допустить одновременное конфликтующее исполнение по одному canonical physical target. Минимальная межпроцессная сериализация persistent Operation Store/revision вводится раньше, в RC-1; полноценный conflict gate, canonical-target admission и mutation-boundary CAS — в RC-3.
+Для active TASK нужен простой lease/lock.
 
-Точная lease/heartbeat модель **не фиксируется сейчас**: по V17 она отложена до доказанной базовой serialization + revision/CAS. До отдельного решения система не должна вводить скрытый lease protocol или считать heartbeat источником authority.
+Система должна различать:
 
-После RC-3 ownership reservation может использоваться только как явно определённый механизм защиты конфликтующих mutation scopes; recovery ownership должен оставаться fail-closed и проверяемым.
+- кто открыл TASK;
+- существует ли уже активная mutation session;
+- когда был последний heartbeat;
+- можно ли безопасно передать ownership новому Chat после timeout/recovery.
+
+Lock не должен навечно блокировать TASK после падения процесса. Нужен контролируемый recovery ownership.
 
 #### WA-4.4 — Retention, physical storage и очистка
 
@@ -668,24 +629,7 @@ Production state/snapshot root поэтому должен по возможно
 Web Alarm Server по умолчанию работает локально и не публикует API наружу.
 
 Workspace root должен быть явно зарегистрирован, а path validation не должен позволять выход за разрешённые roots через `..`, symlink/junction или некорректную нормализацию пути.
-#### WA-4.6 — Расширенный Task Progress UI / UX-Ops
-
-**Статус: BLOCKED / PLANNED. Не начинать до закрытия correctness/recovery-контура RT-001: Recovery Closure, authoritative Mutation Executor / Gateway и lost-response acceptance должны быть DONE / VERIFIED.**
-
-После доказанной надёжности recovery и исполнения Web Alarm Workspace обязан перейти к отдельному этапу развития операторского интерфейса. Это не замена уже существующего минимального UI WA-2.3, а следующий полноценный слой наблюдаемости над авторитетным persistent state.
-
-Минимальный обязательный результат этапа:
-
-- текущая TASK показывается как последовательность этапов;
-- виден активный этап и текущая операция;
-- завершённые этапы различаются как минимум по `SUCCESS / FAILED / RECOVERY / WAITING`;
-- видны заблокированные зависимости и оставшиеся этапы;
-- отображаются `NEXT SAFE ACTION`, причина ошибки/recovery и доступное evidence без необходимости читать большой raw log;
-- UI только отображает authoritative server-owned state и не придумывает собственный статус исполнения.
-
-Этот этап является **обязательным перед переходом к полноценному strict rollout**, но прямо сейчас не активируется.
-
-#### WA-4.7 — Rollout
+#### WA-4.6 — Rollout
 
 Переход на строгий режим выполняется ступенчато:
 
@@ -714,12 +658,11 @@ WA-4 считается завершённой, если:
 - отсутствующий snapshot блокирует mutation;
 - stale precondition/hash переводит этап в recovery, а не перезаписывает файл;
 - повтор `operation_id` идемпотентен;
-- две конфликтующие mutation session не могут одновременно пройти admission для одного canonical physical target;
-- restart сервера не теряет persistent serialization/recovery semantics; точная lease/heartbeat модель остаётся отдельным deferred design decision;
+- две mutation session не могут одновременно владеть одной TASK;
+- restart сервера не теряет lock/recovery semantics;
 - completed TASK можно открыть и прочитать спустя перезапуск;
 - multi-workspace сценарий работает минимум с двумя реальными проектами;
 - rollback текущей микрозадачи доказан на create/edit/delete;
-- расширенный Task Progress UI показывает authoritative состояние TASK, текущий/завершённые/ожидающие этапы, recovery/error и `NEXT SAFE ACTION` без ручного дублирования статуса;
 - документация синхронизирована с реально работающим поведением.
 ---
 
@@ -805,13 +748,12 @@ reconcile
 | --- | --- |
 | WA-1 — Фундамент состояния и файловое ядро | DONE / VERIFIED — WA-1.1–WA-1.6 complete |
 | WA-2 — Local Web Alarm Server + UI | DONE / VERIFIED — WA-2.1–WA-2.4 complete |
-| WA-3 — Remote recovery + replay protection | DONE / VERIFIED — WA-3.1–WA-3.7 complete; old stricter combined criterion SUPERSEDED / DEFERRED by RT-001, not PASS |
-| Recovery Closure RC-0…RC-6 | APPROVED / NOT STARTED — canonical next route |
-| WA-4 — Strict mutation gateway + hardening | PLANNED AFTER RC-0…RC-6 |
+| WA-3 — Remote recovery + replay protection | IN PROGRESS — WA-3.1–WA-3.7 DONE / VERIFIED; WA-3.7 fresh reopen PASS; один combined post-change controlled-disconnect gate ещё открыт |
+| WA-4 — Strict mutation gateway + hardening | PLANNED |
 
-**CURRENT:** WA-1, WA-2 и WA-3 = DONE / VERIFIED. RT-001 / `EP-RT001-001` получил PLAN APPROVAL 2026-10-04; канонический следующий этап — RC-0, затем RC-1…RC-6, `WA4-E`, `WA4-A`, `WA4-O`, `WA4-R`. Старый stricter combined criterion WA-3 не объявлен пройденным: он `SUPERSEDED / DEFERRED`, а его смысл перенесён в `WA4-A`.
+**CURRENT:** WA-1 и WA-2 = DONE / VERIFIED. WA-3.1–WA-3.7 = DONE / VERIFIED; WA-3.6 и WA-3.7 fresh reopen PASS. Final WA-3 reconciliation выявила один оставшийся combined criterion: фактическое local change и затем real Remote disconnect до Chat-result должны быть доказаны в одном controlled incident. Следующая follow-up TASK сначала формулируется в обычном Chat. WA-4 автоматически не начинать.
 
-Текущий production runtime Ultra не переключён на strict Web Alarm mutation control: persistent recovery одинаково восстанавливается при новом Chat и новом Server process; resolver retry/rollback/adopt execution пока не выполняется автоматически, authoritative executor ещё не реализован.
+Текущий production runtime Ultra не переключён на Web Alarm Workspace: persistent recovery одинаково восстанавливается при новом Chat и новом Server process; retry/rollback/adopt execution по-прежнему не исполняются автоматически.
 
 ## Итоговый маршрут
 
@@ -823,13 +765,10 @@ WA-2
 Локальный Server и понятный интерфейс
         ↓
 WA-3
-Реальный Remote recovery и replay protection — DONE / VERIFIED
+Реальный Remote recovery и replay protection
         ↓
-RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6
-Recovery Closure
-        ↓
-WA4-E → WA4-A → WA4-O → WA4-R
-Executor → lost-response acceptance → UX/Ops → strict rollout
+WA-4
+Строгий mutation gateway и hardening
         ↓
 WEB ALARM WORKSPACE READY FOR REGULAR USE
 ```

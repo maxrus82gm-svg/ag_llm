@@ -747,3 +747,48 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 **M003 regression:** focused recovery/reconciliation/transport 95/95 PASS; full Web Alarm 197/197 PASS; compileall PASS. Финальный docs/diff-check/fresh reopen ещё выполняются.
 
 **Final WA-3 acceptance reconciliation:** WA-3.7 fresh-process reopen PASS, но WA-3 overall остаётся IN PROGRESS. Причина — один недоказанный combined criterion: в одном controlled incident должно быть доказано `local mutation reached post-state -> Remote transport lost -> Chat result unavailable -> reconnect/reconciliation without replay`. Следующий follow-up этап не активируется через Remote до отдельной постановки в обычном Chat.
+
+---
+
+### CLAUDE-WA-001 — Independent preflight RT-001 / EP-RT001-001
+
+**Статус:** DONE / VERIFIED — 2026-10-04. Independent preflight подтверждён ChatGPT; read-only, runtime не изменён.
+
+**Сделано:** вердикт `32` и план `33` сверены с кодом `web_alarm/` (HEAD `dc246b9`), тестами (197/197 OK) и persistent storage (2 legacy-операции WA-3.7, обе терминальные и однофайловые). Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-001/preflight_report.md`.
+
+**Выводы для ветки:**
+- **Совместимость при расширении контракта.** Глобальная `SCHEMA_VERSION = 1` строго проверяется в 8 хранилищах, поэтому RC-1 нужна отдельная версия контракта операции.
+- **Каноническая идентичность target.** Target операции не канонизирован и расходится с манифестом.
+- **Дрейф `24`.** После вердикта добавлен WA-4.6 Task Progress UI; WA-4.3 lease противоречит V17. Сопоставление нужно выполнить в P00.
+
+**Verification 2026-10-04:** фактические замечания preflight подтверждены. D1–D3 приняты как planning corrections и отражены в `33`/`24`; PLAN APPROVAL отдельно ещё не объявлен.
+
+**Next:** USER PLAN REVIEW / PLAN APPROVAL EP-RT001-001.
+
+---
+
+### P00 — Canonical Plan Handoff RT-001 / EP-RT001-001
+
+**Статус:** DONE / VERIFIED — 2026-10-04. Documentation-only; runtime/code не изменялись.
+
+**Result:** после USER PLAN APPROVAL и independent verification CLAUDE-WA-001 утверждённый RT-001 перенесён в канонические документы WEB-02. `23` содержит новые authority/recovery invariants; `24` содержит канонический маршрут `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R` с exit proofs. Старый strict combined WA-3 criterion = `SUPERSEDED / DEFERRED`, не PASS; его смысл перенесён в WA4-A. Старые WA-4.1–WA-4.7 сопоставлены без потери retention/security; exact lease/heartbeat model остаётся deferred по V17.
+
+**Next:** RC-0 — baseline и normalization policy. RC-1 не начинать до RC-0 PASS.
+
+---
+
+### CLAUDE-WA-002 — RC-0: Baseline и normalization policy
+
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. Runtime, `.gitattributes` и переводы строк не менялись.
+
+**Baseline:** HEAD `dc246b9`; `python -B -m unittest test_web_alarm_*.py` — 197/197 OK (25 модулей, два прогона); storage WEB-02: 1,5 МБ, 136 файлов, 29 снимков, 2 терминальные операции.
+
+**Выводы для ветки:**
+- **Policy:** authority — SHA-256 по физическим байтам + размер; git и нормализация переводов строк — внешний писатель, не доказательство; `EOL_ONLY_DRIFT` — только диагностика.
+- **Риск при `autocrlf=true` без `.gitattributes`:** из 121 хеша ручных manifest `Alarm/` после свежего checkout сойдётся 1. Предложен FOLLOW-UP `.gitattributes`.
+- **Метрики:** Remote-вызовов на мутацию — 11,7 / 7,0; мутаций мимо OperationStore — 100% / 89%; ручная синхронизация — 9 документов; число действий до безопасного продолжения — NOT MEASURED.
+- **Ограничения для снимков:** deny-list секретов, хранение только вне репозитория, лимит размера, retention без автоудаления.
+
+Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`.
+
+**Next:** независимая проверка RC-0; решение по `.gitattributes`; затем RC-1.

@@ -2,9 +2,9 @@
 
 ## Статус документа
 
-**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 DONE / VERIFIED; WA-3 IN PROGRESS.**
+**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RT-001 RECOVERY CLOSURE APPROVED FOR EXECUTION.**
 
-WA-1 и WA-2 реализованы и проверены полностью. В WA-3 уже DONE / VERIFIED: WA-3.1 Canonical Remote entry, WA-3.2 Operation ID / replay identity, весь WA-3.3 Reconciliation и WA-3.4 Recovery after restart Chat/Server. Reconciliation доступен read-only через Server endpoint, Context Pack и Canonical Remote Entry, детерминированно возвращает только `ADOPT_CURRENT_STATE`, `RETRY_SAFE`, `ROLLBACK_CURRENT_MICROTASK` или `MANUAL_REVIEW_REQUIRED` и не исполняет recovery mutation автоматически. Process-level проверки доказали одинаковое восстановление persistent state при новом Chat с живым Server и при новом Chat + новом Server process. Следующий этап — WA-3.5 Watchdog как signal, но не authority; затем WA-3.6 и WA-4 strict mutation gateway.
+WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Следующий канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. Runtime этого маршрута ещё не реализован.
 
 Этот документ является каноническим владельцем архитектуры Web Alarm Workspace. Его нужно проверять и обновлять при любом подтверждённом изменении протокола, state machine, структуры TASK/микрозадач, snapshot/recovery-механики, правил replay protection, хранения или роли Web Alarm Server.
 
@@ -507,6 +507,14 @@ Recovery Report хранится restart-safe в machine-local Web Alarm storage
 20. Recovery acceptance включает fresh-process reopen: после независимой verification новый process обязан восстановить тот же checkpoint/decision/NEXT SAFE ACTION без hidden state старого Chat/Server.
 21. Transport/Watchdog evidence является только сигналом. Watchdog не имеет authority выполнять retry/rollback/adopt, менять VERIFIED-state или активировать следующую TASK.
 22. Production Web Alarm state/snapshots предпочтительно хранить физически вне Obsidian vault; если fallback находится внутри vault, runtime directories должны быть исключены из индексации и Graph View.
+23. Durable operation contract обязан переживать новый process/Chat и включать canonical target identity, pre/post-state, durable payload или immutable payload reference, request fingerprint, provenance/agent identity, schema/version и persistent receipt; legacy records читаются backward-compatible без обязательной немедленной перезаписи.
+24. `RETRY` в resolver не является физическим повтором mutation: до authoritative executor это только tracked persistent re-arm, привязанный к текущей evidence revision.
+25. Integrity записи Operation Store/revision должна иметь минимальную межпроцессную сериализацию до появления conflict gate; полноценный canonical-target conflict admission и mutation-boundary CAS являются отдельным следующим boundary.
+26. Rollback является tracked recovery operation; перед destructive restore текущее неизвестное состояние сохраняется как recoverable evidence.
+27. Checkpoint — projection, а не самостоятельный authority: он должен быть rebuildable/validated из authoritative persistent state и fail-closed при stale revision.
+28. WEB-02 владеет workflow state и significant tracked mutations зарегистрированного workflow. Desktop Commander остаётся транспортом и инструментом для чтения, shell/GUI и действий вне tracked workflow; tracked mutation не обходят control plane после strict rollout.
+29. Canonical Windows target identity, line endings, multi-file/non-file mutations, snapshot secrets/scope/retention и Obsidian как внешний писатель являются обязательными cross-cutting constraints до strict rollout.
+30. Точная новая state machine, storage backend, lease/heartbeat model и MCP topology не фиксируются этим решением и остаются отдельными deferred design questions.
 
 ## 23. Точка развития
 
