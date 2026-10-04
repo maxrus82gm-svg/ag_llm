@@ -20,6 +20,10 @@
 
 ---
 
+## 2026-10-04 — CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS
+- **Сделано:** реализован persistent Target Claim / Conflict Gate по canonical physical target: один владелец на цель, interprocess target lock, replay-safe acquire/release, crash-safe ownership и mutation-boundary CAS без physical mutation. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`.
+- **Итог:** DONE / VERIFIED 2026-10-04 на commit 149 `163dfba`; ChatGPT независимо подтвердил focused 20/20, full Web Alarm 286/286, concurrency ещё 5/5 и compileall. Physical identity, release guard и fresh RETRY policy приняты; WA4-E lock-held STARTED-before-write интеграция зафиксирована как future requirement. RC-4 разрешён как следующий этап, но не запущен.
+
 ## 2026-10-04 — CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding
 - **Сделано:** реализован persistent Resolver для ADOPT / RETRY / ROLLBACK / ABORT с binding к evidence fingerprint и operation revision; Recovery Report выводит persistent resolver outcomes и Resolver-authoritative NEXT SAFE ACTION. После первого review исправлены два blocker-а: ABORT больше не даёт RETRY-совет, STALE/REJECTED не теряются в report. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`.
 - **Итог:** DONE / VERIFIED 2026-10-04 на commit 148 `0b7cb7d`; ChatGPT независимо подтвердил focused+concurrency 25/25, full Web Alarm 266/266, дополнительные concurrency 5/5, compileall/diff-check и ручные ABORT/STALE/REJECTED сценарии. Context Pack projection follow-up перенесён в RC-5/RC-6; RC-3 разрешён как следующий этап, но не запущен.

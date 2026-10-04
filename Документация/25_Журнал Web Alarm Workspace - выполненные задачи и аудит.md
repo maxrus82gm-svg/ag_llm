@@ -857,3 +857,36 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`.
 
 **Next:** RC-3 — Canonical-target conflict gate + mutation-boundary CAS. Не запускать автоматически; сначала сформировать и утвердить персональную task-card исполнителя.
+
+---
+
+### CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS
+
+**Статус:** DONE / VERIFIED — 2026-10-04. Финальная независимая проверка выполнена по последнему commit 149 `163dfba219e5b49b822e82070124e23c368cb928`.
+
+**Результат:**
+- добавлен persistent Target Claim / Conflict Gate поверх Operation Contract v2 и Resolver;
+- conflict identity = server-resolved canonical physical target, а не caller path / workspace-relative spelling;
+- один ACTIVE owner на physical target; разные TASK/operations на одной цели конфликтуют, разные цели не блокируют друг друга;
+- claim persistent и переживает process death/restart; TTL/heartbeat/implicit release отсутствуют;
+- acquire/replay/rebase/release fail-closed и replay-safe;
+- mutation authority существует только внутри `mutation_boundary` при одновременно удерживаемых TASK-lock + target-lock;
+- CAS повторно проверяет owner, operation revision, contract, Resolver eligibility и exact physical pre-state; revision/state drift блокируют authority;
+- legacy/incomplete/corrupt contracts, stale/rejected resolver state, ABORT и ROLLBACK request не дают unsafe authority;
+- control-plane RC-3 сам не выполняет physical project mutation.
+
+**Independent verification:** ChatGPT повторно запустил focused RC-3 20/20 PASS, full Web Alarm 286/286 PASS и concurrency suite ещё 5/5 PASS; compileall PASS. Static review подтвердил physical identity, interprocess locking, crash-safe ownership, Resolver ordering и отсутствие bypass через stale claim/revision. Runtime blocker не найден.
+
+**Verifier decisions:**
+- physical resolved-path identity — ACCEPTED;
+- release guard для STARTED / UNKNOWN — ACCEPTED как conservative fail-closed policy;
+- fresh accepted RETRY для non-INTENT — ACCEPTED как продолжение RC-2;
+- старый acquire на уже известном stale basis может вернуть known-state `REPLAYED`, потому что это не mutation authority; текущий mutation-boundary CAS всё равно fail-closed.
+
+**WA4-E integration requirement:** standalone `/authorize` — только evidence. Реальная запись допустима только внутри `mutation_boundary`. Нормальный первый executor должен, уже удерживая TASK-lock внутри boundary, persistent зафиксировать STARTED через lock-held/internal transition path **до первого physical write**. Обычный re-entrant `OperationStore.transition()` внутри boundary использовать нельзя; схема `CAS+write → выйти → STARTED` неприемлема для crash recovery.
+
+**Документационный cleanup:** verifier нормализовал trailing whitespace в пользовательском БЛОКЕ 1 без изменения текста, чтобы текущий tree снова проходил `git diff --check`.
+
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`.
+
+**Next:** RC-4 — Tracked safe rollback. Не запускать автоматически; сначала отдельная утверждённая task-card исполнителя.

@@ -26,81 +26,81 @@
 
 TASK: CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS
 
-Статус:  
+Статус:
 READY / NOT STARTED
 
-Исполнитель:  
+Исполнитель:
 Claude Opus 5.5
 
-Контекст:  
-RC-0 = DONE / VERIFIED  
-RC-1 = DONE / VERIFIED  
+Контекст:
+RC-0 = DONE / VERIFIED
+RC-1 = DONE / VERIFIED
 RC-2 = DONE / VERIFIED
 
-Последний подтверждённый этап:  
+Последний подтверждённый этап:
 CLAUDE-WA-004 / RC-2 — Persistent Resolver + evidence revision binding.
 
 RC-2 независимо принят ChatGPT после repair:
 
 - focused Resolver + concurrency: 25/25 PASS;
-    
+
 - full Web Alarm: 266/266 PASS;
-    
+
 - multiprocess race: дополнительно 5/5 PASS;
-    
+
 - compileall PASS;
-    
+
 - git diff --check PASS.
-    
+
 
 RC-3 — следующий канонический этап маршрута:
 
-RC-3  
-→ RC-4  
-→ RC-5  
-→ RC-6  
-→ WA4-E  
-→ WA4-A  
-→ WA4-O  
+RC-3
+→ RC-4
+→ RC-5
+→ RC-6
+→ WA4-E
+→ WA4-A
+→ WA4-O
 → WA4-R
 
 ==================================================
 
-1. ЦЕЛЬ RC-3  
+1. ЦЕЛЬ RC-3
     ==================================================
-    
+
 
 Не допустить одновременное конфликтующее исполнение нескольких process / TASK / operations по одному и тому же canonical physical target.
 
 RC-1 уже дал:
 
 - canonical target identity;
-    
+
 - Operation Contract v2;
-    
+
 - operation revision;
-    
+
 - physical pre-state;
-    
+
 - durable payload/ref;
-    
+
 - минимальную межпроцессную сериализацию самого Operation Store.
-    
+
 
 Но RC-1 serialization защищает целостность Operation Store и НЕ является conflict gate по physical target.
 
 RC-3 должен добавить:
 
 1. persistent canonical-target conflict admission;
-    
+
 2. ownership/reservation boundary для mutation window;
-    
+
 3. mutation-boundary CAS;
-    
+
 4. fail-closed поведение при target drift / operation revision drift;
-    
+
 5. межпроцессную защиту от одновременного получения mutation authority по одной canonical цели.
-    
+
 
 RC-3 НЕ выполняет саму физическую mutation.
 
@@ -110,8 +110,8 @@ Authoritative write/edit/delete executor появится только в WA4-E.
 
 Пример:
 
-TASK A / op_A  
-и  
+TASK A / op_A
+и
 TASK B / op_B
 
 оба указывают на один canonical physical target.
@@ -120,15 +120,15 @@ TASK B / op_B
 
 Допустимый результат:
 
-ровно один:  
+ровно один:
 ACQUIRED / AUTHORIZED
 
-второй:  
+второй:
 CONFLICT / FAIL-CLOSED
 
 Нельзя:
 
-оба PASS  
+оба PASS
 → оба считают себя владельцами цели.
 
 При этом разные canonical targets не должны без необходимости блокировать друг друга.
@@ -140,13 +140,13 @@ Conflict gate НЕ должен доверять caller-supplied path как ide
 Нужно убедиться, что:
 
 - эквивалентные представления одной цели сходятся к одной conflict identity;
-    
+
 - raw path / display path не создают отдельную authority;
-    
+
 - target identity берётся из проверенного Operation Contract / server-side canonicalization;
-    
+
 - неизвестный / неоднозначный / unsupported target → fail-closed.
-    
+
 
 Legacy v1 или incomplete contract не должны молча получать mutation authority, если из них невозможно доказать canonical target + CAS basis.
 
@@ -157,29 +157,29 @@ Legacy v1 или incomplete contract не должны молча получат
 Минимальная identity должна позволять доказать:
 
 - task_id;
-    
+
 - microtask_id при необходимости;
-    
+
 - operation_id;
-    
+
 - canonical target identity/key;
-    
+
 - claim/reservation identity;
-    
+
 - operation revision;
-    
+
 - pre-state / CAS basis identity;
-    
+
 - created_at;
-    
+
 - status/result;
-    
+
 - provenance, где требуется.
-    
+
 
 Точный формат выбирай минимальный и механически проверяемый.
 
-ВАЖНО:  
+ВАЖНО:
 не вводить скрытую lease/heartbeat систему.
 
 RT-001/V17 специально отложил точную lease/heartbeat model.
@@ -187,60 +187,60 @@ RT-001/V17 специально отложил точную lease/heartbeat mode
 Поэтому в RC-3:
 
 - никакого TTL ownership;
-    
+
 - никакого «если процесс давно молчит — claim свободен»;
-    
+
 - heartbeat не является authority;
-    
+
 - process death сам по себе НЕ разрешает забрать target;
-    
+
 - потеря Remote/Chat НЕ освобождает ownership автоматически.
-    
+
 
 Неизвестность после crash/disconnect должна оставаться fail-closed до persistent reconciliation / explicit safe action.
 
 При запросе ownership/reservation сервер обязан атомарно:
 
 1. загрузить current Operation Contract;
-    
+
 2. проверить operation identity;
-    
+
 3. проверить operation revision;
-    
+
 4. получить canonical target identity;
-    
+
 5. проверить достаточность contract/CAS basis;
-    
+
 6. перечитать authoritative persistent claim state;
-    
+
 7. проверить существующий owner той же canonical цели;
-    
+
 8. только после этого создать/вернуть claim.
-    
+
 
 Семантика:
 
-A. target свободен + basis valid  
+A. target свободен + basis valid
 → claim создаётся.
 
-B. тот же logical operation повторяет тот же запрос  
-→ replay-safe;  
-→ вернуть тот же persistent claim/result;  
+B. тот же logical operation повторяет тот же запрос
+→ replay-safe;
+→ вернуть тот же persistent claim/result;
 → второй claim не создавать.
 
-C. другая operation / TASK уже владеет той же canonical целью  
-→ CONFLICT;  
+C. другая operation / TASK уже владеет той же canonical целью
+→ CONFLICT;
 → никакой mutation authority.
 
-D. operation revision изменилась  
-→ STALE / CAS failure;  
+D. operation revision изменилась
+→ STALE / CAS failure;
 → никакой authority.
 
-E. target physical state изменился относительно разрешённого CAS basis  
-→ STALE / STATE_DRIFT / CAS failure;  
+E. target physical state изменился относительно разрешённого CAS basis
+→ STALE / STATE_DRIFT / CAS failure;
 → никакой authority.
 
-F. contract insufficient / legacy unsafe / target identity ambiguous  
+F. contract insufficient / legacy unsafe / target identity ambiguous
 → FAIL-CLOSED.
 
 Критически важно:
@@ -252,27 +252,27 @@ reservation, созданная раньше, сама по себе НЕ дол
 Минимум:
 
 - claim всё ещё принадлежит этой operation;
-    
+
 - canonical target identity тот же;
-    
+
 - operation revision та же;
-    
+
 - physical target state соответствует ожидаемому pre-state / разрешённому current basis;
-    
+
 - нет conflicting owner;
-    
+
 - claim не был безопасно released/cancelled.
-    
+
 
 Если между acquire и mutation boundary внешний writer изменил target:
 
-ACQUIRE PASS  
-→ внешний change  
+ACQUIRE PASS
+→ внешний change
 → CAS
 
 результат обязан быть:
 
-CAS FAIL / STATE_DRIFT  
+CAS FAIL / STATE_DRIFT
 → NO MUTATION AUTHORITY
 
 Никакой автоматической перезаписи внешнего изменения.
@@ -281,7 +281,7 @@ RC-3 может создать persistent mutation-ready / authorization result,
 
 Если корректная реализация CAS требует крупного нового public lifecycle/state machine, которой нет в утверждённой архитектуре:
 
-STOP  
+STOP
 → DECISION REQUIRED
 
 и объяснить конкретно, какое архитектурное решение нужно.
@@ -291,17 +291,17 @@ STOP
 Обязательные правила:
 
 - release только для доказанного текущего owner / той же logical operation;
-    
+
 - чужая operation не может освободить claim;
-    
+
 - replay release идемпотентен;
-    
+
 - release не выполняет physical mutation;
-    
+
 - timeout / disconnect / heartbeat НЕ являются implicit release;
-    
+
 - после корректного release другая operation может приобрести target при fresh CAS basis.
-    
+
 
 Не вводить автоматический lease expiry.
 
@@ -311,23 +311,23 @@ Conflict gate должен быть реальным межпроцессным,
 
 Обязательный controlled race:
 
-несколько независимых process  
-→ разные TASK/operation_id  
-→ один canonical physical target  
+несколько независимых process
+→ разные TASK/operation_id
+→ один canonical physical target
 → одновременно пытаются acquire
 
 Ожидается:
 
-ровно один active owner;  
-остальные deterministic conflict/fail-closed;  
+ровно один active owner;
+остальные deterministic conflict/fail-closed;
 persistent store остаётся валиден.
 
 Минимум проверить несколько повторов race.
 
 Также проверить:
 
-разные canonical targets  
-→ могут независимо получить claims;  
+разные canonical targets
+→ могут независимо получить claims;
 → глобальная ненужная serialization всех targets не должна становиться архитектурным requirement.
 
 Для lock identity не использовать небезопасный raw path как имя lock-файла; использовать безопасную deterministic identity/hash canonical target.
@@ -336,23 +336,23 @@ RC-3 должен корректно работать поверх уже при
 
 Не ломать:
 
-ADOPT  
-RETRY  
-ROLLBACK  
-ABORT  
-STALE  
+ADOPT
+RETRY
+ROLLBACK
+ABORT
+STALE
 REJECTED
 
 Особенно:
 
 - stale Resolver resolution не может породить ownership authority;
-    
+
 - ABORTed resolver recovery не должен случайно reacquire target;
-    
+
 - RETRY re-arm сам по себе ещё не является mutation authority;
-    
+
 - ROLLBACK request сам по себе ещё не является physical rollback authority.
-    
+
 
 Не переписывать RC-2 без необходимости.
 
@@ -361,13 +361,13 @@ Legacy Operation Contract v1 не имеет права получить unsafe 
 Incomplete v2 также должен fail-closed, если для conflict/CAS authority не хватает:
 
 - canonical target;
-    
+
 - physical pre-state;
-    
+
 - operation revision;
-    
+
 - необходимого mutation/CAS basis.
-    
+
 
 Read compatibility сохранить.
 
@@ -378,45 +378,45 @@ Conflict gate должен быть доступен через узкий serve
 Минимально должны быть доступны операции уровня:
 
 - acquire / reserve;
-    
+
 - inspect/read current claim;
-    
+
 - CAS / authorize mutation boundary;
-    
+
 - release/cancel.
-    
+
 
 Точные route/name выбирай по текущей архитектуре проекта.
 
 Все mutating control-plane endpoints должны быть:
 
 - persistent;
-    
+
 - replay-safe;
-    
+
 - fail-closed;
-    
+
 - server-owned.
-    
+
 
 UI в RC-3 не менять.
 
 Новый process обязан без Chat memory восстановить:
 
 - кто владеет canonical target;
-    
+
 - какая operation является owner;
-    
+
 - на какой operation revision claim создан;
-    
+
 - какой CAS basis был использован;
-    
+
 - был ли claim released;
-    
+
 - можно ли текущей operation пройти mutation-boundary CAS;
-    
+
 - почему конфликтующая operation заблокирована.
-    
+
 
 Fresh-process result должен совпадать с persistent state.
 
@@ -424,69 +424,69 @@ Process restart не должен сам очищать ownership.
 
 Минимальный acceptance RC-3:
 
-1. Basic acquire:  
+1. Basic acquire:
     свободный canonical target → один persistent owner.
-    
-2. Replay:  
-    тот же operation_id + тот же basis → тот же claim/result;  
+
+2. Replay:
+    тот же operation_id + тот же basis → тот же claim/result;
     duplicate effect отсутствует.
-    
-3. Same target conflict:  
+
+3. Same target conflict:
     другая operation той же TASK → conflict.
-    
-4. Cross-TASK conflict:  
+
+4. Cross-TASK conflict:
     другая TASK / operation → тот же canonical physical target → conflict.
-    
-5. Different targets:  
+
+5. Different targets:
     независимые цели не конфликтуют.
-    
-6. Canonical identity:  
+
+6. Canonical identity:
     эквивалентное представление одной physical цели не обходит gate.
-    
-7. Stale operation revision:  
-    acquire/CAS basis N  
-    → operation revision N+1  
+
+7. Stale operation revision:
+    acquire/CAS basis N
+    → operation revision N+1
     → старый claim не получает mutation authority.
-    
-8. Physical target drift:  
-    acquire  
-    → внешний writer меняет bytes  
+
+8. Physical target drift:
+    acquire
+    → внешний writer меняет bytes
     → mutation-boundary CAS fail-closed.
-    
-9. Wrong owner release:  
+
+9. Wrong owner release:
     чужая operation не может release claim.
-    
-10. Release replay:  
+
+10. Release replay:
     release идемпотентен.
-    
-11. After safe release:  
+
+11. After safe release:
     другая operation может acquire только после fresh validation/CAS basis.
-    
-12. Crash/restart:  
-    новый process видит тот же active claim;  
+
+12. Crash/restart:
+    новый process видит тот же active claim;
     ownership не исчезает от process death.
-    
-13. Legacy v1:  
+
+13. Legacy v1:
     unsafe acquire/CAS запрещён.
-    
-14. Incomplete v2:  
+
+14. Incomplete v2:
     unsafe authority запрещена.
-    
-15. Resolver integration:  
+
+15. Resolver integration:
     stale/rejected/aborted recovery state не получает ложную mutation authority.
-    
-16. Multiprocess race:  
-    минимум несколько независимых process одновременно на одной цели;  
+
+16. Multiprocess race:
+    минимум несколько независимых process одновременно на одной цели;
     ровно один owner.
-    
+
 17. Full Web Alarm regression.
-    
+
 18. `python -B -m compileall -q web_alarm`
-    
+
 19. `git diff --check`
-    
+
 20. Проверить, что physical Workspace bytes не изменяются самим RC-3 control-plane.
-    
+
 
 Не расширять public OperationStatus или Microtask lifecycle без необходимости.
 
@@ -495,22 +495,22 @@ Process restart не должен сам очищать ownership.
 Operation Contract
 
 - Resolver
-    
+
 - отдельный минимальный Target Claim / Conflict Gate layer.
-    
+
 
 Если для корректности требуется:
 
 - новая большая глобальная state machine;
-    
-- новый lease/heartbeat protocol;
-    
-- автоматическая orphan-owner policy;
-    
-- изменение архитектурного authority model;
-    
 
-STOP  
+- новый lease/heartbeat protocol;
+
+- автоматическая orphan-owner policy;
+
+- изменение архитектурного authority model;
+
+
+STOP
 → DECISION REQUIRED
 
 До решения пользователя не продолжать архитектурную импровизацию.
@@ -518,98 +518,98 @@ STOP
 НЕ делать:
 
 - physical write/edit/delete;
-    
+
 - authoritative Mutation Executor — это WA4-E;
-    
+
 - destructive rollback — RC-4;
-    
+
 - rollback receipt/post restore verification — RC-4;
-    
+
 - checkpoint rebuild/projection correctness — RC-5;
-    
+
 - Context Pack Resolver-NEXT repair — RC-5/RC-6;
-    
+
 - project-level resume — RC-6;
-    
+
 - lost-response deterministic acceptance — WA4-A;
-    
+
 - UI changes;
-    
+
 - lease/heartbeat/TTL ownership;
-    
+
 - `.gitattributes`;
-    
+
 - line-ending normalization;
-    
+
 - unrelated refactor;
-    
+
 - commit / push;
-    
+
 - автоматический старт RC-4.
-    
+
 
 Перед изменениями:
 
 1. перечитать актуальные:
-    
+
     - `000_Задачи Claude.md`;
-        
+
     - global `000_Задачи для агента.md`;
-        
+
     - `23_Архитектура Web Alarm Workspace.md`;
-        
+
     - `24_План реализации Web Alarm Workspace.md`;
-        
+
     - RC-2 report/history;
-        
+
 2. сверить текущий HEAD и git status;
-    
+
 3. убедиться, что код соответствует принятому RC-2;
-    
-4. создать рабочую папку:  
+
+4. создать рабочую папку:
     `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/`
-    
+
 5. сохранить safety copies только реально изменяемых файлов + baseline/hash.
-    
+
 
 Не откатывать:
 
 - пользовательские изменения;
-    
+
 - изменения ChatGPT;
-    
+
 - Obsidian;
-    
+
 - чужой dirty state.
-    
+
 
 После выполнения:
 
-Отчёт:  
+Отчёт:
 `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`
 
 По новому правилу task routing:
 
 - БЛОК 1 НЕ очищать и НЕ заменять;
-    
+
 - выполненную постановку скопировать в БЛОК 2;
-    
+
 - БЛОК 3 заполнить кратким factual result:
-    
+
     - что реализовано;
-        
+
     - какие файлы изменены/добавлены;
-        
+
     - concurrency/CAS semantics;
-        
+
     - тесты;
-        
+
     - известные ограничения;
-        
+
     - report path;
-        
+
     - итоговый статус.
-        
+
 
 До независимой проверки допустимый статус только:
 
@@ -624,21 +624,21 @@ DONE / VERIFIED
 Не обновлять самостоятельно после исполнения:
 
 - `001_История выполненных задач Claude.md`;
-    
+
 - `06_Журнал выполнения и отчёты.md`;
-    
+
 - `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`;
-    
+
 - финальный canonical DONE/VERIFIED.
-    
+
 
 Это после независимой проверки синхронизирует ChatGPT/verifier.
 
 Не делать commit/push.
 
-NEXT SAFE ACTION:  
-выполнить только CLAUDE-WA-005 / RC-3,  
-остановиться на RESULT READY,  
+NEXT SAFE ACTION:
+выполнить только CLAUDE-WA-005 / RC-3,
+остановиться на RESULT READY,
 RC-4 НЕ начинать.
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
@@ -1269,7 +1269,7 @@ RC-4 НЕ начинать.
 ---
 
 **TASK:** CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS.
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. DONE не объявлен; commit / push не выполнялись; RC-4 не начат.
+**Статус:** DONE / VERIFIED — 2026-10-04. Independent verification PASS на commit 149 `163dfba`; RC-4 не начат.
 
 **Что реализовано:**
 - узкий слой Target Claim / Conflict Gate поверх контракта v2 и Resolver. Identity цели — физический resolved path (`normcase`) по контракту на стороне сервера; файлы и блокировки называются по `sha256`;
@@ -1303,7 +1303,11 @@ RC-4 НЕ начинать.
 - история claims без очистки;
 - после принятия — перезапуск процессов WEB-02.
 
-**На решение проверяющему:** страховка release для STARTED / UNKNOWN (§5.3 отчёта; снимается одной проверкой), физическая identity, правило fresh RETRY.
+**Independent verification ChatGPT:** проверен последний commit 149 `163dfba219e5b49b822e82070124e23c368cb928`; focused RC-3 20/20 PASS; full Web Alarm 286/286 PASS; concurrency suite дополнительно 5/5 PASS; `compileall` PASS. Независимый review подтвердил one-owner gate, canonical physical identity, persistent crash-safe claims, no TTL/heartbeat, fail-closed CAS при revision/state drift и Resolver integration. Runtime blocker не найден.
+
+**Решения verifier:** physical resolved-path identity принята; release guard для STARTED / UNKNOWN принят как консервативный fail-closed; fresh accepted RETRY для non-INTENT принят как продолжение RC-2. Старый acquire на уже известном stale basis может вернуть `REPLAYED`, но не mutation authority; mutation-boundary CAS на текущей revision остаётся fail-closed.
+
+**WA4-E integration note:** standalone `/authorize` — только evidence; реальная запись допустима только внутри `mutation_boundary`. Нормальный первый executor должен под уже удерживаемой TASK-lock зафиксировать STARTED перед physical write через lock-held/internal transition path, а не вызывать обычный re-entrant `OperationStore.transition()`. Это обязательный future integration item, не blocker RC-3.
 
 **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`; safety copies и `baseline.md` — там же.
 

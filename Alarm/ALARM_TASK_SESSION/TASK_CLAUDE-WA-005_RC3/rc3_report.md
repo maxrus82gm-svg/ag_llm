@@ -186,3 +186,37 @@ Safety copies `server.py` и `__init__.py` + `baseline.md` (SHA-256, HEAD) — �
 ## 8. NEXT SAFE ACTION
 
 Независимая проверка RC-3 (ChatGPT / пользователь). RC-4 не начинать.
+
+---
+
+## 9. INDEPENDENT VERIFICATION — PASS
+
+**Verifier:** ChatGPT, 2026-10-04.
+**Проверенный head:** commit 149 `163dfba219e5b49b822e82070124e23c368cb928` — на момент финального review последний commit репозитория.
+
+Независимо подтверждено:
+- focused RC-3 (`test_web_alarm_target_claims.py` + concurrency): **20/20 PASS**;
+- full `test_web_alarm_*.py`: **286/286 PASS**;
+- concurrency suite: дополнительно **5/5 PASS**;
+- `python -B -m compileall -q web_alarm`: PASS;
+- canonical physical identity не обходится alternate spelling / nested workspace;
+- cross-TASK one-target race даёт ровно одного owner;
+- claim переживает process death/restart и не освобождается по timeout/heartbeat;
+- stale operation revision и physical byte drift не получают mutation authority;
+- legacy/incomplete/corrupt contracts fail-closed;
+- stale/rejected/ABORT/ROLLBACK Resolver state не обходят gate;
+- RC-3 control-plane не выполняет physical project mutation.
+
+**Verifier decisions:**
+1. Physical resolved-path identity — ACCEPTED.
+2. Release guard для STARTED / UNKNOWN — ACCEPTED как conservative fail-closed policy.
+3. Fresh accepted RETRY для non-INTENT — ACCEPTED как продолжение RC-2.
+4. Replay старого известного claim на stale revision допустим только как known-state response: он не является mutation authority, а current mutation-boundary CAS остаётся fail-closed.
+
+**WA4-E integration requirement:** standalone `/authorize` — evidence only. Реальная mutation допускается только внутри `mutation_boundary`. Для первой нормальной попытки executor обязан, уже удерживая TASK-lock внутри boundary, persistent зафиксировать STARTED **до physical write** через lock-held/internal transition path. Обычный `OperationStore.transition()` внутри boundary self-deadlock'ится; альтернативный порядок `CAS+write → выйти → STARTED` не принимается, потому что crash после write оставил бы lifecycle в INTENT. Эта интеграция относится к WA4-E и не блокирует RC-3.
+
+**Документационный diff-check:** commit 149 содержал trailing whitespace только в пользовательском тексте БЛОКА 1. Verifier нормализовал эти хвостовые пробелы без изменения содержания; текущий working tree после closeout должен проходить `git diff --check`.
+
+**Verdict:** `CLAUDE-WA-005 / RC-3 = DONE / VERIFIED`.
+
+**NEXT:** RC-4 — Tracked safe rollback. Не начинать автоматически; сначала отдельная утверждённая task-card.
