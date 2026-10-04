@@ -2,9 +2,9 @@
 
 ## Статус документа
 
-**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RC-0 DONE / VERIFIED; RC-1 NEXT.**
+**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RC-0 + RC-1 DONE / VERIFIED; RC-2 NEXT.**
 
-WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. RC-0 завершён и независимо проверен; следующий этап — RC-1. Runtime-мутации Recovery Closure ещё не начаты.
+WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. RC-0 и RC-1 завершены и независимо проверены; следующий этап — RC-2. RC-1 добавил durable Operation Contract v2, backward-compatible legacy read, canonical target identity, durable payload/ref и межпроцессную сериализацию Operation Store/revision. Authoritative physical mutation executor всё ещё не реализован.
 
 Этот документ является каноническим владельцем архитектуры Web Alarm Workspace. Его нужно проверять и обновлять при любом подтверждённом изменении протокола, state machine, структуры TASK/микрозадач, snapshot/recovery-механики, правил replay protection, хранения или роли Web Alarm Server.
 
@@ -48,6 +48,25 @@ Web Alarm Workspace
 ```
 
 Desktop Commander остаётся транспортом и даёт удалённый доступ к компьютеру.
+
+### 2.1. Обязательный адаптер ChatGPT Web / Desktop Commander Remote
+
+Для участника **ChatGPT Web**, работающего в текущем пользовательском чате, Desktop Commander Remote является штатным транспортом связи с Web Alarm Workspace.
+
+Текущий поддерживаемый режим специально разделяет **активацию** и **обмен данными**:
+
+```text
+пользователь в ChatGPT → короткий ручной стартовый импульс
+ChatGPT → Desktop Commander Remote → Web Alarm Workspace
+Web Alarm Workspace → persistent context/task package
+ChatGPT → Desktop Commander Remote → persistent result/contribution
+```
+
+До появления отдельного поддерживаемого inbound-механизма Web Alarm **не обязан и не должен считаться способным самостоятельно «разбудить» конкретный открытый ChatGPT-чат**. Ручным может оставаться только стартовый импульс пользователя в чате: например, команда начать Круглый стол или забрать активный пакет.
+
+После этого пользователь **не должен вручную копировать TASK, контекст, стадии Круглого стола или результат между Web Alarm и ChatGPT**. Web Alarm должен уметь подготовить persistent входной пакет для ChatGPT, а ChatGPT через Desktop Commander Remote — прочитать его и записать persistent выходной пакет/результат обратно. Конкретный формат может быть file bridge или Server/API contract; он должен быть устойчивым, машинно читаемым и независимым от истории текущего Chat.
+
+Это правило относится именно к адаптеру **ChatGPT Web / Desktop Commander Remote**. Другие исполнители Ultra/Claude/локальные модели могут использовать API, MCP, CLI или собственные адаптеры, но для ядра Web Alarm все они должны сводиться к одной логической модели: получить входной пакет → вернуть результат с provenance/status.
 
 Web Alarm Workspace отвечает не за транспорт, а за организацию работы:
 - TASK и её контекст;

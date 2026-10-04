@@ -232,6 +232,12 @@ class OperationRecord:
     schema_version: int = SCHEMA_VERSION
     created_at: str = field(default_factory=utc_now_iso)
     updated_at: str = field(default_factory=utc_now_iso)
+    # RC-1 operation contract; absent in legacy JSON, so defaults mean contract v1.
+    # Validated by operation_contract.validate_record, not by the global schema.
+    contract_version: int = 1
+    revision: int | None = None
+    contract: dict[str, Any] | None = None
+    receipt: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         _require_text("operation_id", self.operation_id)

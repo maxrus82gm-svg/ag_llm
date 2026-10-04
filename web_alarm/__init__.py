@@ -3,12 +3,19 @@
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION
+from .operation_contract import OPERATION_CONTRACT_VERSION
 from .operation_store import (
     OperationConflictError,
+    OperationContractRejected,
+    OperationPayloadIntegrityError,
+    OperationReceiptMismatch,
+    OperationScopeRejected,
     OperationStore,
     OperationStoreError,
     OperationTransitionError,
 )
+from .payload_store import PayloadIntegrityError, PayloadStore, PayloadStoreError
+from .target_identity import CanonicalTarget, TargetIdentityError, canonical_target
 from .reconciliation import (
     ReconciliationEvidence,
     ReconciliationEvidenceCollector,
@@ -52,10 +59,21 @@ __all__ = [
     "ManifestSnapshotStore",
     "ManifestStoreError",
     "SCHEMA_VERSION",
+    "OPERATION_CONTRACT_VERSION",
     "OperationConflictError",
+    "OperationContractRejected",
+    "OperationPayloadIntegrityError",
+    "OperationReceiptMismatch",
+    "OperationScopeRejected",
     "OperationStore",
     "OperationStoreError",
     "OperationTransitionError",
+    "PayloadIntegrityError",
+    "PayloadStore",
+    "PayloadStoreError",
+    "CanonicalTarget",
+    "TargetIdentityError",
+    "canonical_target",
     "ReconciliationEvidence",
     "ReconciliationEvidenceCollector",
     "ReconciliationEvidenceError",

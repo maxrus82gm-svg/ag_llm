@@ -21,8 +21,11 @@ from .context_pack import EntryContextPackBuilder
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION, record_to_dict
+from .operation_contract import decode_payload_spec
 from .operation_store import (
     OperationConflictError,
+    OperationContractRejected,
+    OperationScopeRejected,
     OperationStore,
     OperationStoreError,
     OperationTransitionError,
@@ -526,6 +529,11 @@ class WebAlarmApi:
                     }
                 if method == "POST":
                     data = _require_object(body)
+                    allow_secret_target = data.get("allow_secret_target", False)
+                    if not isinstance(allow_secret_target, bool):
+                        raise ApiError(
+                            400, "invalid_field", "allow_secret_target must be boolean"
+                        )
                     result = self.operations.begin(
                         task_id,
                         _require_text(data, "microtask_id"),
@@ -536,6 +544,12 @@ class WebAlarmApi:
                             data, "expected_precondition_sha256"
                         ),
                         request_payload=data.get("request"),
+                        expected_pre_state=data.get("expected_pre_state"),
+                        expected_post_state=data.get("expected_post_state"),
+                        payload=decode_payload_spec(data.get("payload")),
+                        agent=_optional_text(data, "agent"),
+                        channel=_optional_text(data, "channel"),
+                        allow_secret_target=allow_secret_target,
                     )
                     return (201 if result["created"] else 200), _jsonable(result)
                 raise ApiError(
@@ -559,6 +573,9 @@ class WebAlarmApi:
                 return 200, {
                     "operation": record_to_dict(record),
                     "replay_decision": self.operations.replay_decision(record.status),
+                    "contract_status": self.operations.contract_status(
+                        parts[1], parts[3]
+                    ),
                 }
 
             if (
@@ -698,6 +715,10 @@ class WebAlarmApi:
             raise ApiError(409, "state_machine_error", str(exc)) from exc
         except OperationConflictError as exc:
             raise ApiError(409, "operation_replay_conflict", str(exc)) from exc
+        except OperationScopeRejected as exc:
+            raise ApiError(403, "operation_scope_forbidden", str(exc)) from exc
+        except OperationContractRejected as exc:
+            raise ApiError(400, "operation_contract_rejected", str(exc)) from exc
         except OperationTransitionError as exc:
             raise ApiError(409, "operation_transition_rejected", str(exc)) from exc
         except ReconciliationEvidenceError as exc:

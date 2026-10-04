@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
@@ -11,6 +10,7 @@ from typing import Any, Mapping
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import ManifestEntry, OperationStatus, SnapshotRecord
 from .operation_store import OperationStore, OperationStoreError
+from .target_identity import TargetIdentityError, target_key
 from .task_store import TaskStore, TaskStoreError
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
 
@@ -95,8 +95,18 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _normalized_path(value: str) -> str:
-    return os.path.normcase(os.path.normpath(value))
+def _path_key(value: str) -> str | None:
+    try:
+        return target_key(value)
+    except TargetIdentityError:
+        return None
+
+
+def _contract_post(operation: Any) -> Mapping[str, Any] | None:
+    """Durable expected post-state of an RC-1 contract operation, if declared."""
+    if operation is None or operation.contract_version < 2 or not operation.contract:
+        return None
+    return operation.contract.get("expected_post_state")
 
 
 def _parse_expected_post(
@@ -460,6 +470,14 @@ class ReconciliationEvidenceCollector:
             if path_error is not None:
                 missing.append("current_target_state")
 
+            operation_target = False
+            if operation is not None:
+                entry_key = _path_key(entry.source_path)
+                operation_target = (
+                    entry_key is not None and _path_key(operation.target) == entry_key
+                )
+                any_operation_target = any_operation_target or operation_target
+
             (
                 expected_exists,
                 expected_sha,
@@ -470,6 +488,25 @@ class ReconciliationEvidenceCollector:
                 entry.expected_change,
                 expected_post_state,
             )
+            contract_post = _contract_post(operation) if operation_target else None
+            if contract_post is not None:
+                # RC-1: the persisted contract is authoritative; a caller value may
+                # only repeat it, a contradiction is surfaced and fails closed.
+                if expected_source == "supplied" and (
+                    expected_exists != contract_post["exists"]
+                    or (
+                        expected_sha is not None
+                        and expected_sha != contract_post["sha256"]
+                    )
+                ):
+                    errors.append(
+                        "supplied expected post-state contradicts operation contract: "
+                        f"{entry.source_path}"
+                    )
+                expected_exists = contract_post["exists"]
+                expected_sha = contract_post["sha256"]
+                expected_source = "operation.contract"
+                expected_missing = []
             missing.extend(expected_missing)
 
             matches_pre = self._matches_pre(
@@ -485,14 +522,8 @@ class ReconciliationEvidenceCollector:
                 current_sha256,
             )
 
-            operation_target = False
             precondition_match: bool | None = None
             if operation is not None:
-                operation_target = (
-                    _normalized_path(operation.target)
-                    == _normalized_path(entry.source_path)
-                )
-                any_operation_target = any_operation_target or operation_target
                 if (
                     operation_target
                     and operation.expected_precondition_sha256 is not None

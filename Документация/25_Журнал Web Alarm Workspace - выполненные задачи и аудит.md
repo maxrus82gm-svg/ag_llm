@@ -796,3 +796,34 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 **Decision:** `.gitattributes` FOLLOW-UP отложен как отдельная maintenance-задача; он не блокирует RC-1.
 
 **Next:** RC-1 — Durable Operation Contract + backward compatibility (`CLAUDE-WA-003`).
+
+---
+
+### CLAUDE-WA-003 — RC-1: Durable Operation Contract + backward compatibility
+
+**Статус:** DONE / VERIFIED — 2026-10-04. `.gitattributes`, UI и переводы строк в рамках RC-1 не менялись; физических мутаций проекта нет.
+
+**Результат:**
+- Новые операции сохраняются как Operation Contract v2:
+  - `workspace_id`, `target_key`, `mutation_kind`;
+  - `pre_state`, который сервер читает при INTENT;
+  - `expected_post_state` — из payload или объявленный (pre-commitment);
+  - `payload_ref` — content-addressed blob в каталоге TASK machine-local storage;
+  - claimed `provenance`, `policy`, fingerprint v2;
+  - `revision`;
+  - `receipt` при DONE, который сервер читает сам; при противоречии DONE отклоняется, признак `EOL_ONLY_DRIFT` — диагностика.
+- Legacy v1 (`WA37-CTRL-001/002`) читаются без перезаписи, `rearm_contract_sufficient=false`.
+- Запросы в старом стиле создают v2 с `complete=false`.
+
+**Verification (исполнитель):**
+- полный WA regression 241/241 OK (197 прежних + 44 новых, 1 skip — привилегия symlink);
+- multiprocess-тесты целостности: 8 процессов, 10/10 стабильно; без блокировки падают 5/5;
+- fresh-process reopen и reconcile без входных данных от вызывающего: `RETRY_SAFE` → `ADOPT_CURRENT_STATE`;
+- compileall и `git diff --check` OK;
+- живое storage WEB-02 до и после чтения совпадает: 136 файлов.
+
+**Границы:** Resolver и re-arm — RC-2; conflict gate и CAS по target — RC-3; executor — WA4-E. Нефайловые и многофайловые операции контрактом v2 не представляются.
+
+**Independent verification:** ChatGPT повторно подтвердил full regression 241/241, focused 44/44, 5 последовательных multiprocess concurrency PASS и read-only fresh-process legacy reopen с неизменным storage tree. Blocker не найден; RC-1 принят.
+
+**Next:** RC-2 — Tracked Resolver / evidence revision (`CLAUDE-WA-004`). При запуске WEB-02 использовать новый процесс с принятым RC-1 кодом.

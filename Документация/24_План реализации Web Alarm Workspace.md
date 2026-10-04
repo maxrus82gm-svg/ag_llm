@@ -6,7 +6,7 @@
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0 = DONE / VERIFIED — 2026-10-04; RC-1 = READY / NOT STARTED.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
+WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0 = DONE / VERIFIED; RC-1 = DONE / VERIFIED — 2026-10-04; RC-2 = READY / NOT STARTED.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
 
 ## Краткая карта реализации
 
@@ -806,10 +806,10 @@ reconcile
 | WA-1 — Фундамент состояния и файловое ядро | DONE / VERIFIED — WA-1.1–WA-1.6 complete |
 | WA-2 — Local Web Alarm Server + UI | DONE / VERIFIED — WA-2.1–WA-2.4 complete |
 | WA-3 — Remote recovery + replay protection | DONE / VERIFIED — WA-3.1–WA-3.7 complete; old stricter combined criterion SUPERSEDED / DEFERRED by RT-001, not PASS |
-| Recovery Closure RC-0…RC-6 | IN PROGRESS — RC-0 DONE / VERIFIED; RC-1 READY / NOT STARTED |
+| Recovery Closure RC-0…RC-6 | IN PROGRESS — RC-0 DONE / VERIFIED; RC-1 DONE / VERIFIED; RC-2 READY / NOT STARTED |
 | WA-4 — Strict mutation gateway + hardening | PLANNED AFTER RC-0…RC-6 |
 
-**CURRENT:** WA-1, WA-2 и WA-3 = DONE / VERIFIED. RT-001 / `EP-RT001-001` получил PLAN APPROVAL 2026-10-04; **RC-0 = DONE / VERIFIED**, byte/hash authority зафиксирована как physical bytes + size, `.gitattributes` FOLLOW-UP отложен и RC-1 не блокирует. Канонический следующий этап — RC-1, затем RC-2…RC-6, `WA4-E`, `WA4-A`, `WA4-O`, `WA4-R`. Старый stricter combined criterion WA-3 не объявлен пройденным: он `SUPERSEDED / DEFERRED`, а его смысл перенесён в `WA4-A`.
+**CURRENT:** WA-1, WA-2 и WA-3 = DONE / VERIFIED. RT-001 / `EP-RT001-001` получил PLAN APPROVAL 2026-10-04; **RC-0 и RC-1 = DONE / VERIFIED**. RC-1 ввёл durable Operation Contract v2, backward-compatible legacy read, canonical target identity, durable payload/ref и межпроцессную сериализацию Operation Store/revision. Канонический следующий этап — RC-2, затем RC-3…RC-6, `WA4-E`, `WA4-A`, `WA4-O`, `WA4-R`. `.gitattributes` FOLLOW-UP остаётся отложенным. Старый stricter combined criterion WA-3 не объявлен пройденным: он `SUPERSEDED / DEFERRED`, а его смысл перенесён в `WA4-A`.
 
 Текущий production runtime Ultra не переключён на strict Web Alarm mutation control: persistent recovery одинаково восстанавливается при новом Chat и новом Server process; resolver retry/rollback/adopt execution пока не выполняется автоматически, authoritative executor ещё не реализован.
 

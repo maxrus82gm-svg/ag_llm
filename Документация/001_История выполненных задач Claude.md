@@ -20,6 +20,10 @@
 
 ---
 
+## 2026-10-04 — CLAUDE-WA-003 — RC-1: Durable Operation Contract
+- **Сделано:** реализован Operation Contract v2: каноническая цель, pre-state и receipt, которые сервер читает сам, payload вне репозитория, fingerprint v2, revision. Legacy v1 читается без перезаписи; запись хранилища сериализована между процессами. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-003_RC1/rc1_report.md`.
+- **Итог:** DONE / VERIFIED 2026-10-04; ChatGPT независимо повторил full regression 241/241, focused 44/44, 5 повторов multiprocess concurrency и fresh-process чтение живых legacy WA-3.7 records без изменения storage. RC-2 разрешён.
+
 ## 2026-10-04 — CLAUDE-WA-002 — RC-0: Baseline и normalization policy
 - **Сделано:** снят baseline (197/197 OK), изучена реальность Git и переводов строк, измерены 3 из 4 метрик, сформулированы policy байтов / хешей и ограничения для снимков; отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0/rc0_report.md`.
 - **Итог:** DONE / VERIFIED 2026-10-04; ключевые baseline/manifest/Remote-call факты независимо воспроизведены ChatGPT. `.gitattributes` FOLLOW-UP отложен; RC-1 разрешён.
