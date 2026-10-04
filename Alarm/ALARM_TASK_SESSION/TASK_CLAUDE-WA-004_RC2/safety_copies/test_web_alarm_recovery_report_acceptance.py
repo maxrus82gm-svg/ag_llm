@@ -7,10 +7,8 @@ import unittest
 from pathlib import Path
 
 from web_alarm.operation_store import OperationStore
-from web_alarm.reconciliation_service import ReconciliationService
 from web_alarm.recovery_report_service import RecoveryReportService
 from web_alarm.recovery_report_store import RecoveryReportStore
-from web_alarm.resolver_service import ResolverService
 from web_alarm.server import WebAlarmApi
 from web_alarm.state_machine import ServerStateMachine
 from web_alarm.task_store import TaskStore
@@ -67,7 +65,7 @@ class RecoveryReportAcceptanceTests(unittest.TestCase):
             operation_id="prepare_m1",
         )
 
-    def begin(self, target, before, operation_id, status="INTENT", payload=None):
+    def begin(self, target, before, operation_id, status="INTENT"):
         self.operations.begin(
             "task_acceptance",
             "m1",
@@ -76,7 +74,6 @@ class RecoveryReportAcceptanceTests(unittest.TestCase):
             operation_id=operation_id,
             expected_precondition_sha256=sha256(before),
             request_payload={"case": operation_id},
-            payload=payload,
         )
         if status != "INTENT":
             self.operations.transition(
@@ -84,21 +81,6 @@ class RecoveryReportAcceptanceTests(unittest.TestCase):
                 operation_id,
                 status,
             )
-
-    def adopt(self, operation_id):
-        # RC-2: accepted_as_already_done must come from a tracked ADOPT.
-        decision = ReconciliationService(self.storage).reconcile(
-            "task_acceptance", "m1", operation_id
-        )["DECISION"]
-        result = ResolverService(self.storage).apply(
-            "task_acceptance",
-            "m1",
-            operation_id,
-            "ADOPT",
-            evidence_fingerprint=decision["evidence_fingerprint"],
-            operation_revision=self.operations.get("task_acceptance", operation_id).revision,
-        )
-        self.assertTrue(result["accepted"])
 
     def post_transport(self, event_type, event_id, operation_id, **extra):
         body = {
@@ -184,9 +166,8 @@ class RecoveryReportAcceptanceTests(unittest.TestCase):
     def test_full_lost_result_is_full_and_accepted_without_replay(self):
         before, after = b"before", b"after"
         self.prepare({"file.txt": before})
-        self.begin("file.txt", before, "op_full", status="STARTED", payload=after)
+        self.begin("file.txt", before, "op_full", status="STARTED")
         (self.project / "file.txt").write_bytes(after)
-        self.adopt("op_full")
         self.post_transport(
             "MESSAGE_DELIVERY_TIMEOUT",
             "event_timeout",
@@ -417,9 +398,8 @@ class RecoveryReportAcceptanceTests(unittest.TestCase):
     def test_fresh_process_reads_same_decision_scope_and_next_action(self):
         before, after = b"before", b"after"
         self.prepare({"file.txt": before})
-        self.begin("file.txt", before, "op_process", status="STARTED", payload=after)
+        self.begin("file.txt", before, "op_process", status="STARTED")
         (self.project / "file.txt").write_bytes(after)
-        self.adopt("op_process")
         report = self.service.create_report(
             task_id="task_acceptance",
             microtask_id="m1",

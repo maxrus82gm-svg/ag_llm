@@ -8,10 +8,8 @@ from pathlib import Path
 
 from web_alarm.context_pack import EntryContextPackBuilder
 from web_alarm.operation_store import OperationStore
-from web_alarm.reconciliation_service import ReconciliationService
 from web_alarm.remote_entry import RemoteEntry
 from web_alarm.recovery_report_service import RecoveryReportService
-from web_alarm.resolver_service import ResolverService
 from web_alarm.server import WebAlarmApi
 from web_alarm.state_machine import ServerStateMachine
 from web_alarm.task_store import TaskStore
@@ -69,7 +67,6 @@ class RecoveryReportIntegrationTests(unittest.TestCase):
             operation_id="op_write",
             expected_precondition_sha256=sha256(self.before),
             request_payload={"content": "after"},
-            payload=self.after,
         )
         operations.transition("task_report", "op_write", "STARTED")
         TransportEventStore(self.storage).append(
@@ -83,21 +80,6 @@ class RecoveryReportIntegrationTests(unittest.TestCase):
     def tearDown(self):
         self.tempdir.cleanup()
 
-    def adopt(self):
-        # RC-2: accepted_as_already_done must come from a tracked ADOPT.
-        decision = ReconciliationService(self.storage).reconcile(
-            "task_report", "m1", "op_write"
-        )["DECISION"]
-        result = ResolverService(self.storage).apply(
-            "task_report",
-            "m1",
-            "op_write",
-            "ADOPT",
-            evidence_fingerprint=decision["evidence_fingerprint"],
-            operation_revision=OperationStore(self.storage).get("task_report", "op_write").revision,
-        )
-        self.assertTrue(result["accepted"])
-
     def expected_post(self):
         return {
             "file.txt": {
@@ -107,7 +89,6 @@ class RecoveryReportIntegrationTests(unittest.TestCase):
         }
     def test_service_persists_full_report_without_workflow_mutation(self):
         self.target.write_bytes(self.after)
-        self.adopt()
         before = self.target.read_bytes()
         operation_before = OperationStore(self.storage).get(
             "task_report",
@@ -136,7 +117,6 @@ class RecoveryReportIntegrationTests(unittest.TestCase):
         )
     def test_server_post_and_get_survive_new_api_instance(self):
         self.target.write_bytes(self.after)
-        self.adopt()
         body = {
             "incident_id": "incident_http",
             "microtask_id": "m1",

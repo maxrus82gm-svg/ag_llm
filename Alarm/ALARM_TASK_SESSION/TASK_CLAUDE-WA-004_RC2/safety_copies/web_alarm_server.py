@@ -35,8 +35,6 @@ from .reconciliation_service import ReconciliationService
 from .recovery_report_builder import RecoveryReportBuilderError
 from .recovery_report_service import RecoveryReportService
 from .recovery_report_store import RecoveryReportStoreError
-from .resolution_store import ResolutionConflictError, ResolutionStoreError
-from .resolver_service import ResolverError, ResolverInputError, ResolverService
 from .state_machine import (
     ServerStateMachine,
     ServerStateMachineError,
@@ -161,7 +159,6 @@ class WebAlarmApi:
         self.reconciliation = ReconciliationService(storage_root)
         self.transport_events = TransportEventStore(storage_root)
         self.recovery_reports = RecoveryReportService(storage_root)
-        self.resolver = ResolverService(storage_root)
 
     @property
     def storage_root(self) -> Path:
@@ -323,7 +320,6 @@ class WebAlarmApi:
                         "reconciliation",
                         "transport_evidence",
                         "recovery_reports",
-                        "resolutions",
                         "reports",
                         "recovery_entry",
                     ],
@@ -469,49 +465,6 @@ class WebAlarmApi:
                         "workflow_mutation_performed": False,
                     }
                 raise ApiError(405, "method_not_allowed", "recovery reports support GET and POST")
-
-            if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "resolutions":
-                if method == "GET":
-                    items = self.resolver.store.list(
-                        parts[1], operation_id=_optional_query_text(query, "operation_id")
-                    )
-                    return 200, {
-                        "resolutions": [item.to_dict() for item in items],
-                        "workflow_mutation_performed": False,
-                    }
-                if method != "POST":
-                    raise ApiError(405, "method_not_allowed", "resolutions support GET and POST")
-                data = _require_object(body)
-                result = self.resolver.apply(
-                    parts[1],
-                    _require_text(data, "microtask_id"),
-                    _require_text(data, "operation_id"),
-                    _require_text(data, "action"),
-                    evidence_fingerprint=_require_text(data, "evidence_fingerprint"),
-                    operation_revision=data.get("operation_revision"),
-                    resolution_id=_optional_text(data, "resolution_id"),
-                    agent=_optional_text(data, "agent"),
-                    channel=_optional_text(data, "channel"),
-                )
-                payload = dict(result, resolution=result["resolution"].to_dict())
-                if not result["accepted"]:
-                    raise ApiError(
-                        409,
-                        "resolution_not_accepted",
-                        result["resolution"].result_reason,
-                        details=payload,
-                    )
-                return (201 if result["created"] else 200), payload
-
-            if len(parts) == 4 and parts[0] == "tasks" and parts[2] == "resolutions":
-                if method != "GET":
-                    raise ApiError(405, "method_not_allowed", "resolution record is read-only")
-                record = self.resolver.store.get(parts[1], parts[3])
-                return 200, {
-                    "resolution": record.to_dict(),
-                    "freshness": self.resolver.freshness(record),
-                    "workflow_mutation_performed": False,
-                }
 
             if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "context":
                 if method != "GET":
@@ -762,14 +715,6 @@ class WebAlarmApi:
             raise ApiError(409, "state_machine_error", str(exc)) from exc
         except OperationConflictError as exc:
             raise ApiError(409, "operation_replay_conflict", str(exc)) from exc
-        except ResolutionConflictError as exc:
-            raise ApiError(409, "resolution_conflict", str(exc)) from exc
-        except ResolverInputError as exc:
-            raise ApiError(400, "invalid_resolution", str(exc)) from exc
-        except (ResolverError, ResolutionStoreError) as exc:
-            message = str(exc)
-            status = 404 if "unknown " in message else 409
-            raise ApiError(status, "resolver_error", message) from exc
         except OperationScopeRejected as exc:
             raise ApiError(403, "operation_scope_forbidden", str(exc)) from exc
         except OperationContractRejected as exc:

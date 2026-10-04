@@ -9,23 +9,13 @@ from typing import Any, Mapping, Sequence
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .models import record_to_dict
 from .reconciliation_service import ReconciliationService
-from .recovery_report_builder import RecoveryReportBuilder, RecoveryReportBuilderError
+from .recovery_report_builder import RecoveryReportBuilder
 from .recovery_report_store import RecoveryReportRecord, RecoveryReportStore
-from .resolver_service import ResolverService
 from .transport_event_store import TransportEventRecord, TransportEventStore
 
 
-class RecoveryReportClaimError(RecoveryReportBuilderError):
-    """A caller claimed a recovery action that no tracked resolution backs."""
-
-
 class RecoveryReportService:
-    """Create/read Recovery Reports without executing workflow recovery actions.
-
-    RC-2: recovery action facts (accepted / retried / rolled back) come only
-    from persisted Resolver records. Caller-supplied action lists are kept for
-    API compatibility but may only repeat those facts; anything else fails closed.
-    """
+    """Create/read Recovery Reports without executing workflow recovery actions."""
 
     def __init__(self, storage_root: str | Path | None = None) -> None:
         self.reconciliation = ReconciliationService(storage_root)
@@ -33,15 +23,6 @@ class RecoveryReportService:
         self.transport = TransportEventStore(self.reconciliation.evidence.tasks.storage_root)
         self.builder = RecoveryReportBuilder()
         self.store = RecoveryReportStore(self.reconciliation.evidence.tasks.storage_root)
-        self.resolver = ResolverService(self.reconciliation.evidence.tasks.storage_root)
-
-    @staticmethod
-    def _check_claims(name: str, claimed: Sequence[str], backed: list[str]) -> None:
-        unbacked = [item for item in claimed if item not in backed]
-        if unbacked:
-            raise RecoveryReportClaimError(
-                f"{name} is not backed by a fresh tracked resolution: {unbacked}"
-            )
 
     @staticmethod
     def _transport_to_dict(record: TransportEventRecord) -> dict[str, Any]:
@@ -83,13 +64,6 @@ class RecoveryReportService:
             expected_post_state=expected_post_state,
         )
         decision = self.reconciliation.decisions.decide(evidence)
-        facts = self.resolver.report_facts(task_id, microtask_id, operation_id)
-        for name, claimed in (
-            ("accepted_as_already_done", accepted_as_already_done),
-            ("actually_retried", actually_retried),
-            ("actually_rolled_back", actually_rolled_back),
-        ):
-            self._check_claims(name, claimed, facts[name])
         transport = [
             self._transport_to_dict(item)
             for item in self.transport.list_events(
@@ -107,11 +81,10 @@ class RecoveryReportService:
             process_evidence=process_evidence,
             process_restarted=process_restarted,
             checkpoint_identity=self._checkpoint_identity(task_id),
-            accepted_as_already_done=facts["accepted_as_already_done"],
-            actually_retried=facts["actually_retried"],
-            actually_rolled_back=facts["actually_rolled_back"],
+            accepted_as_already_done=accepted_as_already_done,
+            actually_retried=actually_retried,
+            actually_rolled_back=actually_rolled_back,
             untouched_or_unresolved=untouched_or_unresolved,
-            resolver_actions=facts["resolver_actions"],
             fresh_process_reopen_result=fresh_process_reopen_result,
             report_id=report_id,
         )

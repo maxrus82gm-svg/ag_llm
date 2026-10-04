@@ -170,12 +170,6 @@ class OperationStore:
             finally:
                 lock.release()
 
-    def task_lock(self, task_id: str):
-        """Public TASK lock for components that must not interleave with
-        operation writes (RC-2 Resolver). Not re-entrant across instances:
-        never call begin/transition while holding it."""
-        return self._serialized(task_id)
-
     def _operations_dir(
         self,
         task_id: str,

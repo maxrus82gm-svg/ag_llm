@@ -129,9 +129,6 @@ class RecoveryReportRecord:
     actually_rolled_back: list[str] = field(default_factory=list)
     untouched_or_unresolved: list[str] = field(default_factory=list)
     fresh_process_reopen_result: str | None = None
-    # RC-2: tracked Resolver actions (re-arm / rollback request / abort / adopt)
-    # with basis freshness; absent in pre-RC-2 reports, so it defaults to empty.
-    resolver_actions: list[dict[str, Any]] = field(default_factory=list)
     authority: str = "evidence_only"
     automatic_mutation_authorized: bool = False
     report_version: int = REPORT_VERSION
@@ -228,10 +225,6 @@ class RecoveryReportRecord:
         self.untouched_or_unresolved = _require_text_list(
             "untouched_or_unresolved",
             self.untouched_or_unresolved,
-        )
-        self.resolver_actions = _require_dict_list(
-            "resolver_actions",
-            self.resolver_actions,
         )
         _require_json("Recovery Report", self.to_dict())
 

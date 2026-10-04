@@ -140,7 +140,6 @@ class RecoveryReportBuilder:
         actually_retried: Iterable[str] = (),
         actually_rolled_back: Iterable[str] = (),
         untouched_or_unresolved: Iterable[str] = (),
-        resolver_actions: Iterable[Mapping[str, Any]] = (),
         next_safe_action: str | None = None,
         fresh_process_reopen_result: str | None = None,
         report_id: str | None = None,
@@ -220,10 +219,6 @@ class RecoveryReportBuilder:
             "actually_retried": list(actually_retried),
             "actually_rolled_back": list(actually_rolled_back),
             "untouched_or_unresolved": list(untouched_or_unresolved),
-            "resolver_actions": self._evidence_list(
-                "resolver_actions",
-                resolver_actions,
-            ),
             "next_safe_action": resolved_next_safe_action,
             "fresh_process_reopen_result": fresh_process_reopen_result,
         }
