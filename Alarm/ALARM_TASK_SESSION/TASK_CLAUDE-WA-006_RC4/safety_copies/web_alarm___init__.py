@@ -53,8 +53,6 @@ from .resolution_store import (
     ResolutionStoreError,
 )
 from .resolver_service import ResolverError, ResolverInputError, ResolverService
-from .rollback_service import RollbackError, RollbackInputError, RollbackService
-from .rollback_store import PreservedStateStore, RollbackStore, RollbackStoreError
 from .target_claim_service import TargetClaimError, TargetClaimInputError, TargetClaimService
 from .target_claim_store import TargetClaimStore, TargetClaimStoreError
 from .task_store import TaskStore, TaskStoreError
@@ -116,12 +114,6 @@ __all__ = [
     "ResolverError",
     "ResolverInputError",
     "ResolverService",
-    "PreservedStateStore",
-    "RollbackError",
-    "RollbackInputError",
-    "RollbackService",
-    "RollbackStore",
-    "RollbackStoreError",
     "TargetClaimError",
     "TargetClaimInputError",
     "TargetClaimService",

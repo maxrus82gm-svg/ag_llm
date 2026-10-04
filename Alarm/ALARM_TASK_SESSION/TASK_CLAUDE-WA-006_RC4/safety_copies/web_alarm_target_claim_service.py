@@ -75,7 +75,7 @@ def _provenance(agent: str | None, channel: str | None) -> dict[str, Any]:
 def _owner(claim: dict[str, Any] | None) -> dict[str, Any] | None:
     if claim is None:
         return None
-    summary = {
+    return {
         key: claim[key]
         for key in (
             "claim_id",
@@ -87,18 +87,10 @@ def _owner(claim: dict[str, Any] | None) -> dict[str, Any] | None:
             "created_at",
         )
     }
-    summary["owner"] = claim.get("owner")
-    return summary
 
 
 def _same_operation(claim: dict[str, Any] | None, task_id: str, operation_id: str) -> bool:
-    # A claim held by a tracked rollback (``owner``) is never the operation's own.
-    return (
-        claim is not None
-        and claim.get("owner") is None
-        and claim["task_id"] == task_id
-        and claim["operation_id"] == operation_id
-    )
+    return claim is not None and claim["task_id"] == task_id and claim["operation_id"] == operation_id
 
 
 class TargetClaimService:

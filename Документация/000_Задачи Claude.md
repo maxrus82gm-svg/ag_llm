@@ -25,19 +25,17 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-**Статус:** ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-**TASK:** —
-
-Следующую утверждённую постановку сюда вставляет пользователь/координатор.
+Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+TASK: —
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
-**Статус постановки:** выполнена Claude 2026-10-04; результат и статус — в БЛОКЕ 3. Ниже — постановка из БЛОКА 1 дословно (в fenced-блоке, чтобы сохранить разбивку строк; сняты только хвостовые пробелы markdown-переносов).
+**Статус постановки:** выполнена Claude 2026-10-04; результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк).
 
 ```text
-TASK: CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS
+TASK: CLAUDE-WA-006 — RC-4: Tracked safe rollback + preserved current state + persistent receipts
 
 Статус:
 READY / NOT STARTED
@@ -49,27 +47,41 @@ Claude Opus 5.5
 RC-0 = DONE / VERIFIED
 RC-1 = DONE / VERIFIED
 RC-2 = DONE / VERIFIED
+RC-3 = DONE / VERIFIED
 
 Последний подтверждённый этап:
-CLAUDE-WA-004 / RC-2 — Persistent Resolver + evidence revision binding.
+CLAUDE-WA-005 / RC-3 — Canonical-target conflict gate + mutation-boundary CAS.
 
-RC-2 независимо принят ChatGPT после repair:
+Последний подтверждённый Git baseline перед документационным обновлением:
+commit 150
+0f9e93aac968dd1397e94c6300e828a3acc9c187
 
-- focused Resolver + concurrency: 25/25 PASS;
+RC-3 независимо принят ChatGPT:
 
-- full Web Alarm: 266/266 PASS;
-
-- multiprocess race: дополнительно 5/5 PASS;
-
+- focused RC-3: 20/20 PASS;
+- full Web Alarm: 286/286 PASS;
+- concurrency suite: дополнительно 5/5 PASS;
 - compileall PASS;
+- один persistent owner на canonical physical target;
+- crash/restart claim сохраняется;
+- stale operation revision / physical state drift fail-closed;
+- Resolver state не обходит conflict gate.
 
-- git diff --check PASS.
+Принятые решения RC-3:
 
+- conflict identity = server-resolved canonical physical target;
+- STARTED / UNKNOWN claim не освобождается до безопасного recovery outcome;
+- non-INTENT operation получает новую authority только через fresh accepted RETRY;
+- standalone /authorize является evidence only;
+- mutation authority существует только внутри mutation_boundary.
 
-RC-3 — следующий канонический этап маршрута:
+ВАЖНО ДЛЯ БУДУЩЕГО WA4-E:
+обычный executor должен фиксировать STARTED под уже удерживаемой TASK-lock ДО physical write через lock-held/internal transition path.
+Это не нужно реализовывать как общий normal-mutation executor в RC-4.
 
-RC-3
-→ RC-4
+Канонический маршрут:
+
+RC-4
 → RC-5
 → RC-6
 → WA4-E
@@ -78,629 +90,650 @@ RC-3
 → WA4-R
 
 ==================================================
+1. ЦЕЛЬ RC-4
+==================================================
 
-1. ЦЕЛЬ RC-3
-    ==================================================
+Превратить ROLLBACK из persistent request, который появился в RC-2, в отдельную tracked safe recovery operation.
 
+Сейчас:
 
-Не допустить одновременное конфликтующее исполнение нескольких process / TASK / operations по одному и тому же canonical physical target.
-
-RC-1 уже дал:
-
-- canonical target identity;
-
-- Operation Contract v2;
-
-- operation revision;
-
-- physical pre-state;
-
-- durable payload/ref;
-
-- минимальную межпроцессную сериализацию самого Operation Store.
-
-
-Но RC-1 serialization защищает целостность Operation Store и НЕ является conflict gate по physical target.
-
-RC-3 должен добавить:
-
-1. persistent canonical-target conflict admission;
-
-2. ownership/reservation boundary для mutation window;
-
-3. mutation-boundary CAS;
-
-4. fail-closed поведение при target drift / operation revision drift;
-
-5. межпроцессную защиту от одновременного получения mutation authority по одной canonical цели.
-
-
-RC-3 НЕ выполняет саму физическую mutation.
-
-Authoritative write/edit/delete executor появится только в WA4-E.
-
-Для одного canonical physical target в один момент времени не может существовать две независимые активные mutation authorities.
-
-Пример:
-
-TASK A / op_A
-и
-TASK B / op_B
-
-оба указывают на один canonical physical target.
-
-Оба одновременно пытаются получить право на mutation.
-
-Допустимый результат:
-
-ровно один:
-ACQUIRED / AUTHORIZED
-
-второй:
-CONFLICT / FAIL-CLOSED
-
-Нельзя:
-
-оба PASS
-→ оба считают себя владельцами цели.
-
-При этом разные canonical targets не должны без необходимости блокировать друг друга.
-
-Conflict gate НЕ должен доверять caller-supplied path как identity.
-
-Использовать canonical target identity, уже введённую RC-1.
-
-Нужно убедиться, что:
-
-- эквивалентные представления одной цели сходятся к одной conflict identity;
-
-- raw path / display path не создают отдельную authority;
-
-- target identity берётся из проверенного Operation Contract / server-side canonicalization;
-
-- неизвестный / неоднозначный / unsupported target → fail-closed.
-
-
-Legacy v1 или incomplete contract не должны молча получать mutation authority, если из них невозможно доказать canonical target + CAS basis.
-
-Нужен минимальный persistent record layer для ownership/reservation.
-
-Предпочтительно отдельный узкий record/store поверх Operation Contract, а НЕ расширение глобальной Operation/Microtask state machine.
-
-Минимальная identity должна позволять доказать:
-
-- task_id;
-
-- microtask_id при необходимости;
-
-- operation_id;
-
-- canonical target identity/key;
-
-- claim/reservation identity;
-
-- operation revision;
-
-- pre-state / CAS basis identity;
-
-- created_at;
-
-- status/result;
-
-- provenance, где требуется.
-
-
-Точный формат выбирай минимальный и механически проверяемый.
-
-ВАЖНО:
-не вводить скрытую lease/heartbeat систему.
-
-RT-001/V17 специально отложил точную lease/heartbeat model.
-
-Поэтому в RC-3:
-
-- никакого TTL ownership;
-
-- никакого «если процесс давно молчит — claim свободен»;
-
-- heartbeat не является authority;
-
-- process death сам по себе НЕ разрешает забрать target;
-
-- потеря Remote/Chat НЕ освобождает ownership автоматически.
-
-
-Неизвестность после crash/disconnect должна оставаться fail-closed до persistent reconciliation / explicit safe action.
-
-При запросе ownership/reservation сервер обязан атомарно:
-
-1. загрузить current Operation Contract;
-
-2. проверить operation identity;
-
-3. проверить operation revision;
-
-4. получить canonical target identity;
-
-5. проверить достаточность contract/CAS basis;
-
-6. перечитать authoritative persistent claim state;
-
-7. проверить существующий owner той же canonical цели;
-
-8. только после этого создать/вернуть claim.
-
-
-Семантика:
-
-A. target свободен + basis valid
-→ claim создаётся.
-
-B. тот же logical operation повторяет тот же запрос
-→ replay-safe;
-→ вернуть тот же persistent claim/result;
-→ второй claim не создавать.
-
-C. другая operation / TASK уже владеет той же canonical целью
-→ CONFLICT;
-→ никакой mutation authority.
-
-D. operation revision изменилась
-→ STALE / CAS failure;
-→ никакой authority.
-
-E. target physical state изменился относительно разрешённого CAS basis
-→ STALE / STATE_DRIFT / CAS failure;
-→ никакой authority.
-
-F. contract insufficient / legacy unsafe / target identity ambiguous
-→ FAIL-CLOSED.
-
-Критически важно:
-
-reservation, созданная раньше, сама по себе НЕ должна навсегда доказывать, что mutation всё ещё безопасна.
-
-Перед выдачей финальной mutation authority будущему executor необходимо повторно проверить CAS basis.
-
-Минимум:
-
-- claim всё ещё принадлежит этой operation;
-
-- canonical target identity тот же;
-
-- operation revision та же;
-
-- physical target state соответствует ожидаемому pre-state / разрешённому current basis;
-
-- нет conflicting owner;
-
-- claim не был безопасно released/cancelled.
-
-
-Если между acquire и mutation boundary внешний writer изменил target:
-
-ACQUIRE PASS
-→ внешний change
-→ CAS
-
-результат обязан быть:
-
-CAS FAIL / STATE_DRIFT
-→ NO MUTATION AUTHORITY
-
-Никакой автоматической перезаписи внешнего изменения.
-
-RC-3 может создать persistent mutation-ready / authorization result, но НЕ должен выполнять physical write/edit/delete.
-
-Если корректная реализация CAS требует крупного нового public lifecycle/state machine, которой нет в утверждённой архитектуре:
-
-STOP
-→ DECISION REQUIRED
-
-и объяснить конкретно, какое архитектурное решение нужно.
-
-Нужна минимальная deterministic семантика освобождения claim, достаточная для RC-3 tests и будущего WA4-E.
-
-Обязательные правила:
-
-- release только для доказанного текущего owner / той же logical operation;
-
-- чужая operation не может освободить claim;
-
-- replay release идемпотентен;
-
-- release не выполняет physical mutation;
-
-- timeout / disconnect / heartbeat НЕ являются implicit release;
-
-- после корректного release другая operation может приобрести target при fresh CAS basis.
-
-
-Не вводить автоматический lease expiry.
-
-Если безопасный release невозможно определить без отдельного архитектурного решения — STOP / DECISION REQUIRED, а не придумывать скрытую политику.
-
-Conflict gate должен быть реальным межпроцессным, а не только threading lock внутри одного Python process.
-
-Обязательный controlled race:
-
-несколько независимых process
-→ разные TASK/operation_id
-→ один canonical physical target
-→ одновременно пытаются acquire
-
-Ожидается:
-
-ровно один active owner;
-остальные deterministic conflict/fail-closed;
-persistent store остаётся валиден.
-
-Минимум проверить несколько повторов race.
-
-Также проверить:
-
-разные canonical targets
-→ могут независимо получить claims;
-→ глобальная ненужная serialization всех targets не должна становиться архитектурным requirement.
-
-Для lock identity не использовать небезопасный raw path как имя lock-файла; использовать безопасную deterministic identity/hash canonical target.
-
-RC-3 должен корректно работать поверх уже принятого Resolver.
-
-Не ломать:
-
-ADOPT
-RETRY
+Resolver:
 ROLLBACK
-ABORT
-STALE
-REJECTED
+→ только persistent request
+→ physical restore НЕ выполняется.
 
-Особенно:
+ManifestSnapshotStore:
+restore_microtask()
+→ уже умеет физически восстанавливать snapshot
+→ но это старый прямой destructive restore;
+→ он не является достаточным tracked recovery lifecycle RC-4.
 
-- stale Resolver resolution не может породить ownership authority;
+RC-4 должен дать безопасный путь:
 
-- ABORTed resolver recovery не должен случайно reacquire target;
+accepted fresh ROLLBACK resolution
+→ persistent rollback intent
+→ сохранить current state ДО destructive restore
+→ доказать restore point
+→ получить conflict/CAS authority на все изменяемые physical targets
+→ physical restore
+→ exact post-restore verification
+→ persistent per-target / overall receipt
+→ replay/fresh-process recovery без слепой повторной destructive mutation.
 
-- RETRY re-arm сам по себе ещё не является mutation authority;
+Главный инвариант:
 
-- ROLLBACK request сам по себе ещё не является physical rollback authority.
+НЕИЗВЕСТНОЕ CURRENT STATE НЕЛЬЗЯ УНИЧТОЖИТЬ ROLLBACK-ОМ.
 
+До первого destructive restore фактическое current состояние всех затрагиваемых целей должно быть сохранено как recoverable evidence.
+
+==================================================
+2. СУЩЕСТВУЮЩИЙ КОД, КОТОРЫЙ НУЖНО ИСПОЛЬЗОВАТЬ
+==================================================
 
-Не переписывать RC-2 без необходимости.
+Перед проектированием перечитать минимум:
 
-Legacy Operation Contract v1 не имеет права получить unsafe target ownership только ради совместимости.
+- web_alarm/manifest_store.py
+- web_alarm/reconciliation.py
+- web_alarm/reconciliation_decision.py
+- web_alarm/resolver_service.py
+- web_alarm/resolution_store.py
+- web_alarm/target_claim_store.py
+- web_alarm/target_claim_service.py
+- web_alarm/operation_contract.py
+- web_alarm/operation_store.py
+- web_alarm/recovery_report_service.py
+- web_alarm/recovery_report_builder.py
+- web_alarm/server.py
+- соответствующие tests RC-1 / RC-2 / RC-3.
 
-Incomplete v2 также должен fail-closed, если для conflict/CAS authority не хватает:
+Особенно учесть:
 
-- canonical target;
+ManifestSnapshotStore.restore_microtask()
+уже существует и физически меняет Workspace.
 
-- physical pre-state;
+НЕ создавать второй независимый snapshot/restore мир без необходимости.
 
-- operation revision;
+Но НЕ использовать старый restore_microtask() как готовый authoritative RC-4 executor, если он уничтожает current state без нового tracked lifecycle.
 
-- необходимого mutation/CAS basis.
+Допустимо рефакторить существующий restore слой на:
+- read/plan primitives;
+- verified snapshot access;
+- безопасные atomic file primitives;
 
+если это позволяет RC-4 использовать существующие snapshot bytes без дублирования authority.
 
-Read compatibility сохранить.
+Server сейчас специально НЕ экспонирует destructive restore:
+snapshot endpoint допускает verify only.
 
-Unsafe upgrade/rewrite legacy record не выполнять.
+Не превращать старый endpoint в unrestricted restore.
 
-Conflict gate должен быть доступен через узкий server-owned interface, совместимый с существующим Operation/Resolver API style.
+==================================================
+3. AUTHORITY ДЛЯ ROLLBACK
+==================================================
 
-Минимально должны быть доступны операции уровня:
+Физический rollback допускается только если существует:
 
-- acquire / reserve;
+1. persistent ResolutionAction.ROLLBACK;
+2. result = ACCEPTED;
+3. resolution всё ещё fresh;
+4. resolution относится к тому же task_id / microtask_id / operation_id;
+5. current evidence / operation revision не изменились относительно basis;
+6. restore point существует и проходит integrity verification;
+7. все targets rollback определены сервером из persisted manifest/snapshot, а не caller input.
 
-- inspect/read current claim;
+STALE / REJECTED / ABORT / отсутствующая resolution:
+→ NO RESTORE.
 
-- CAS / authorize mutation boundary;
+Caller не может сам передать список файлов, которые надо восстановить, как authority.
 
-- release/cancel.
+Target set должен происходить из verified manifest текущей microtask.
 
+==================================================
+4. PERSISTENT ROLLBACK IDENTITY
+==================================================
 
-Точные route/name выбирай по текущей архитектуре проекта.
+Нужен отдельный минимальный persistent rollback layer.
 
-Все mutating control-plane endpoints должны быть:
+Не превращать это молча в новую глобальную Operation/Microtask state machine.
 
-- persistent;
+Минимальная rollback identity должна позволять доказать:
 
-- replay-safe;
+- rollback_id;
+- task_id;
+- microtask_id;
+- source operation_id;
+- source resolution_id;
+- evidence fingerprint;
+- source operation revision;
+- restore-point / manifest identity;
+- точный target set;
+- created_at / updated_at;
+- provenance;
+- current-state preservation state;
+- execution status;
+- per-target result;
+- overall result;
+- receipts / verification;
+- next safe action.
 
-- fail-closed;
+Точные internal statuses выбери минимальными и механически проверяемыми.
 
-- server-owned.
+Обязательные смысловые фазы:
 
+INTENT / PREPARED
+→ CURRENT_STATE_PRESERVED
+→ AUTHORIZED
+→ APPLYING
+→ APPLIED / PARTIAL / FAILED / UNKNOWN
+→ VERIFIED
 
-UI в RC-3 не менять.
+Названия можно выбрать другие, если смысл сохраняется.
 
-Новый process обязан без Chat memory восстановить:
+Replay одного rollback_id / того же logical basis:
+→ не создаёт второй независимый rollback.
 
-- кто владеет canonical target;
+==================================================
+5. PRESERVE CURRENT STATE BEFORE RESTORE
+==================================================
 
-- какая operation является owner;
+До ПЕРВОЙ destructive mutation:
 
-- на какой operation revision claim создан;
+для КАЖДОГО target rollback нужно server-side получить current physical state:
 
-- какой CAS basis был использован;
+- exists;
+- exact size;
+- SHA-256 exact bytes;
+- canonical physical identity.
+
+Если файл существует:
+его current bytes должны быть сохранены в machine-local recovery storage ВНЕ repo / Obsidian vault.
 
-- был ли claim released;
+Если target отсутствует:
+persistent evidence должно явно фиксировать absence.
 
-- можно ли текущей operation пройти mutation-boundary CAS;
+Сохранённые current bytes:
+- immutable/content-addressed или эквивалентно устойчивые;
+- hash + size проверяются после записи;
+- не попадают содержимым в event/report/log;
+- obey существующие secret/scope/size constraints;
+- позволяют при необходимости исследовать/восстановить состояние, которое rollback собирался уничтожить.
 
-- почему конфликтующая operation заблокирована.
+Если current-state preservation хотя бы одного target не удалось доказать:
+→ NO destructive restore по всей rollback session.
 
+Не начинать частичную физическую фазу до успешного preservation ВСЕГО target set.
 
-Fresh-process result должен совпадать с persistent state.
+==================================================
+6. CONFLICT GATE / RC-3 INTEGRATION
+==================================================
 
-Process restart не должен сам очищать ownership.
+Rollback НЕ имеет права обходить RC-3 только потому, что это recovery.
 
-Минимальный acceptance RC-3:
+Перед первым physical change rollback должен получить exclusive mutation ownership для ВСЕХ canonical physical targets, которые он собирается менять.
 
-1. Basic acquire:
-    свободный canonical target → один persistent owner.
+Требование:
 
-2. Replay:
-    тот же operation_id + тот же basis → тот же claim/result;
-    duplicate effect отсутствует.
+- target set канонизируется server-side;
+- deterministic ordering target ownership / locks;
+- конфликт хотя бы на одном target
+  → no physical mutation по rollback session;
+- уже полученные reservations безопасно освобождаются/фиксируются;
+- разные независимые targets не должны глобально блокировать друг друга.
 
-3. Same target conflict:
-    другая operation той же TASK → conflict.
+Нельзя создавать параллельный «особый rollback lock», который не конфликтует с обычными RC-3 claims.
 
-4. Cross-TASK conflict:
-    другая TASK / operation → тот же canonical physical target → conflict.
+Если текущий RC-3 claim contract технически не может безопасно представить multi-target rollback ownership:
 
-5. Different targets:
-    независимые цели не конфликтуют.
+STOP → DECISION REQUIRED.
 
-6. Canonical identity:
-    эквивалентное представление одной physical цели не обходит gate.
+В этом случае:
+- ничего destructive не выполнять;
+- описать точный architectural gap;
+- показать минимальные безопасные варианты интеграции;
+- не обходить RC-3 временной лазейкой.
 
-7. Stale operation revision:
-    acquire/CAS basis N
-    → operation revision N+1
-    → старый claim не получает mutation authority.
+Допускается минимальное backward-compatible расширение RC-3 ownership layer, если оно очевидно локально, не создаёт новую глобальную state machine и хорошо покрывается тестами.
 
-8. Physical target drift:
-    acquire
-    → внешний writer меняет bytes
-    → mutation-boundary CAS fail-closed.
+==================================================
+7. PRE-MUTATION CAS
+==================================================
 
-9. Wrong owner release:
-    чужая operation не может release claim.
+После preservation и ownership acquisition, непосредственно перед каждой физической mutation:
 
-10. Release replay:
-    release идемпотентен.
+- перечитать authoritative rollback record;
+- проверить source ROLLBACK resolution freshness;
+- проверить operation revision;
+- проверить ownership;
+- проверить canonical target;
+- сравнить current physical bytes с сохранённым rollback CAS basis.
 
-11. After safe release:
-    другая operation может acquire только после fresh validation/CAS basis.
+Если bytes изменились после preservation:
+→ STATE_DRIFT / STALE;
+→ этот target не перезаписывать;
+→ rollback session не продолжать как будто всё нормально;
+→ persistent state должен позволять fresh-process reconciliation.
 
-12. Crash/restart:
-    новый process видит тот же active claim;
-    ownership не исчезает от process death.
+Нельзя использовать сохранённый час назад hash как безусловное разрешение на restore.
 
-13. Legacy v1:
-    unsafe acquire/CAS запрещён.
+==================================================
+8. RESTORE SEMANTICS
+==================================================
 
-14. Incomplete v2:
-    unsafe authority запрещена.
+Для каждого manifest entry:
 
-15. Resolver integration:
-    stale/rejected/aborted recovery state не получает ложную mutation authority.
+A. target существовал до microtask:
+→ восстановить EXACT snapshot bytes;
+→ atomic write;
+→ post-read;
+→ exact size/hash должны совпасть с original snapshot.
 
-16. Multiprocess race:
-    минимум несколько независимых process одновременно на одной цели;
-    ровно один owner.
+B. target не существовал до microtask:
+→ rollback означает удалить созданный файл;
+→ delete допускается только после current-state CAS;
+→ после действия target обязан быть absent.
 
-17. Full Web Alarm regression.
+C. target уже находится ровно в pre-state:
+→ physical mutation не требуется;
+→ записать persistent NOOP / ALREADY_RESTORED факт;
+→ не переписывать файл бессмысленно.
 
-18. `python -B -m compileall -q web_alarm`
+D. snapshot corrupt / missing / identity mismatch:
+→ fail-closed;
+→ no destructive restore.
 
-19. `git diff --check`
+==================================================
+9. PARTIAL FAILURE
+==================================================
 
-20. Проверить, что physical Workspace bytes не изменяются самим RC-3 control-plane.
+Файловая система не является общей атомарной транзакцией на несколько targets.
 
+Поэтому RC-4 обязан корректно переживать:
 
-Не расширять public OperationStatus или Microtask lifecycle без необходимости.
+target A restored
+→ crash / error
+→ target B ещё не restored.
 
-Предпочтение:
+Нельзя скрывать это как общий SUCCESS.
 
-Operation Contract
+Persistent rollback state должен содержать per-target receipts/status.
 
-- Resolver
+После fresh process система должна различать минимум:
 
-- отдельный минимальный Target Claim / Conflict Gate layer.
+- not started;
+- current-state preserved;
+- restored + post verified;
+- already pre-state;
+- pending;
+- failed / drifted;
+- unknown after interruption.
 
+Повтор после partial/unknown:
+→ сначала inspect/reconcile;
+→ уже доказанно restored target не мутировать второй раз;
+→ target с неизвестным fate не повторять вслепую.
 
-Если для корректности требуется:
+==================================================
+10. PERSISTENT RECEIPT
+==================================================
 
-- новая большая глобальная state machine;
+Для реально restored target receipt минимум содержит:
 
-- новый lease/heartbeat protocol;
+- rollback_id;
+- target identity;
+- action performed (WRITE_RESTORE / DELETE_CREATED / NOOP);
+- pre-rollback preserved state hash/size/exists;
+- expected restore state;
+- observed post state;
+- matches_expected_restore;
+- timestamp;
+- relevant revision / basis identity.
 
-- автоматическая orphan-owner policy;
+Overall rollback receipt/result:
+- строится из per-target persistent facts;
+- не из caller memory;
+- одинаков после fresh process reopen.
 
-- изменение архитектурного authority model;
+SUCCESS допускается только если весь target set доказан как restored/pre-state.
 
+==================================================
+11. RECOVERY REPORT INTEGRATION
+==================================================
 
-STOP
-→ DECISION REQUIRED
+RC-2 оставил:
 
-До решения пользователя не продолжать архитектурную импровизацию.
+actually_rolled_back = []
+
+потому что тогда ROLLBACK был только request.
+
+После RC-4 это должно измениться.
+
+Recovery Report:
+- ROLLBACK_REQUESTED всё ещё не означает physical rollback;
+- `actually_rolled_back` появляется ТОЛЬКО из persistent verified RC-4 receipts;
+- partial rollback отражается как partial/unresolved, а не как full rollback;
+- fresh process строит тот же report из persistence;
+- caller claim без backing receipt отклоняется.
+
+Resolver action и physical rollback receipt должны оставаться разными фактами:
+
+ROLLBACK accepted
+≠
+ROLLBACK physically completed.
+
+==================================================
+12. IDEMPOTENCY / RESTART SAFETY
+==================================================
+
+Обязательные свойства:
+
+- same rollback_id + same basis → known persistent result;
+- same completed rollback replay → NO second physical side effect;
+- fresh process видит тот же rollback session;
+- fresh process видит per-target receipts;
+- crash после preservation, но до restore → project unchanged;
+- crash после physical target restore → fresh process сначала доказывает фактический target state и не делает blind second restore;
+- stale source resolution → no continuation;
+- changed target → fail-closed / new reconciliation.
+
+==================================================
+13. LEGACY / BACKWARD COMPATIBILITY
+==================================================
+
+Нельзя ломать существующие:
+
+- WA-1 manifests/snapshots;
+- legacy WA-3.7 operations;
+- Operation Contract v2;
+- Resolver records RC-2;
+- Target Claim records RC-3;
+- старые Recovery Reports.
+
+Read-only открытие старого machine-local storage:
+→ не должно его переписывать.
+
+Если вводится новая версия rollback/claim record:
+→ явная versioning/backward-compatibility policy.
+
+==================================================
+14. ЧТО RC-4 НЕ ДЕЛАЕТ
+==================================================
 
 НЕ делать:
 
-- physical write/edit/delete;
-
-- authoritative Mutation Executor — это WA4-E;
-
-- destructive rollback — RC-4;
-
-- rollback receipt/post restore verification — RC-4;
-
-- checkpoint rebuild/projection correctness — RC-5;
-
-- Context Pack Resolver-NEXT repair — RC-5/RC-6;
-
-- project-level resume — RC-6;
-
-- lost-response deterministic acceptance — WA4-A;
-
-- UI changes;
-
-- lease/heartbeat/TTL ownership;
-
+- general normal write/edit/delete executor — это WA4-E;
+- общий новый Operation/Microtask lifecycle без отдельного решения;
+- RC-5 checkpoint/projection redesign;
+- RC-6 project-level resume;
+- Context Pack projection repair, кроме минимального поля, без которого RC-4 невозможно корректно отразить;
+- UI;
+- strict rollout;
+- lease/heartbeat;
 - `.gitattributes`;
-
 - line-ending normalization;
-
 - unrelated refactor;
-
 - commit / push;
+- автоматический старт RC-5.
 
-- автоматический старт RC-4.
+Если корректная реализация требует изменения deferred global state machine / lease model / фундаментальной RC-3 ownership model:
 
+STOP → DECISION REQUIRED.
+
+==================================================
+15. ОБЯЗАТЕЛЬНЫЕ TESTS
+==================================================
+
+Минимум:
+
+1. Accepted fresh ROLLBACK:
+   → persistent rollback intent создаётся.
+
+2. No accepted ROLLBACK:
+   → no mutation.
+
+3. STALE ROLLBACK resolution:
+   → no mutation.
+
+4. REJECTED / ABORT:
+   → no mutation.
+
+5. Restore-point integrity failure:
+   → no mutation.
+
+6. Preserve current existing file:
+   → exact current bytes сохранены и verified до restore.
+
+7. Preserve current absence:
+   → absence persistent.
+
+8. Preservation failure одного target:
+   → zero physical rollback по всем targets.
+
+9. Existing-before target:
+   → exact snapshot bytes restored + post hash/size verified.
+
+10. New-file target:
+    → safely deleted + absence verified.
+
+11. Already-pre-state target:
+    → NOOP, без physical rewrite.
+
+12. Target drift after preservation:
+    → CAS fail / no overwrite.
+
+13. Same-target conflict with normal RC-3 owner:
+    → rollback blocked; no mutation.
+
+14. Multi-target acquisition:
+    → конфликт на одном target не допускает начало destructive phase.
+
+15. Different independent targets:
+    → ownership не создаёт ненужный global lock.
+
+16. Replay completed rollback:
+    → same receipt / zero second mutation.
+
+17. Crash/restart after preservation before mutation:
+    → fresh process resumes/inspects safely; bytes unchanged.
+
+18. Crash/restart / lost response after one target restore:
+    → restored target не мутируется повторно вслепую;
+    → partial state persistent.
+
+19. Per-target receipt integrity.
+
+20. Overall SUCCESS только при verified full target set.
+
+21. Recovery Report:
+    - request-only ROLLBACK != actually_rolled_back;
+    - completed verified rollback populates actual facts from persistence;
+    - partial rollback не выдаётся за full;
+    - caller unsupported claim rejected.
+
+22. Fresh-process reopen:
+    → same rollback status / receipts / NEXT SAFE ACTION.
+
+23. Legacy live storage read-only compatibility.
+
+24. RC-1 / RC-2 / RC-3 focused regressions.
+
+25. Real multiprocess conflict/race test.
+
+26. Full Web Alarm regression.
+
+27.
+python -B -m compileall -q web_alarm
+
+28.
+git diff --check
+
+==================================================
+16. ACCEPTANCE RC-4
+==================================================
+
+RC-4 можно отдать на independent verification только если доказано:
+
+- rollback имеет persistent identity;
+- только fresh accepted ROLLBACK resolution может открыть execution path;
+- current state ВСЕХ targets сохранён до destructive phase;
+- preservation проверен hash+size;
+- restore point повторно verified;
+- rollback не обходит RC-3 conflict gate;
+- target set не caller-authoritative;
+- CAS стоит непосредственно на destructive boundary;
+- unknown external drift не перезаписывается;
+- exact original snapshots восстанавливаются корректно;
+- created-by-microtask files удаляются корректно;
+- no-op pre-state не мутируется;
+- partial failure persistent и restart-safe;
+- replay не создаёт second side effect;
+- persistent receipts доказывают фактический rollback;
+- Recovery Report отличает requested rollback от actually completed rollback;
+- fresh process восстанавливает тот же authoritative rollback state;
+- backward compatibility сохранена;
+- full regression PASS;
+- RC-5 не начат.
+
+==================================================
+17. SAFETY / WORKFLOW
+==================================================
 
 Перед изменениями:
 
-1. перечитать актуальные:
+1. перечитать:
+   - Документация/000_Задачи Claude.md;
+   - Документация/000_Задачи для агента.md;
+   - Документация/18_Регламент сопровождения документации.md;
+   - Документация/23_Архитектура Web Alarm Workspace.md;
+   - Документация/24_План реализации Web Alarm Workspace.md;
+   - последние RC-2 / RC-3 reports;
 
-    - `000_Задачи Claude.md`;
+2. сверить фактический Git HEAD и dirty tree;
 
-    - global `000_Задачи для агента.md`;
+3. НЕ считать `.obsidian` своими изменениями;
 
-    - `23_Архитектура Web Alarm Workspace.md`;
+4. создать:
+   Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/
 
-    - `24_План реализации Web Alarm Workspace.md`;
+5. сохранить safety copies всех существующих файлов, которые собираешься менять;
 
-    - RC-2 report/history;
+6. зафиксировать baseline и исходные hashes;
 
-2. сверить текущий HEAD и git status;
+7. не делать destructive test на реальном project data:
+   destructive rollback tests только в isolated temporary Workspace;
+   live storage проверять read-only, если явно не требуется иное.
 
-3. убедиться, что код соответствует принятому RC-2;
+==================================================
+18. ОТЧЁТ
+==================================================
 
-4. создать рабочую папку:
-    `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/`
+Создать:
 
-5. сохранить safety copies только реально изменяемых файлов + baseline/hash.
+Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md
 
+В отчёте обязательно:
 
-Не откатывать:
+- architecture выбранного rollback layer;
+- почему не дублируется старый Manifest/Snapshot authority;
+- identity / persistence;
+- linkage Resolution → Rollback;
+- current-state preservation;
+- conflict/CAS model;
+- multi-target behavior;
+- failure/crash semantics;
+- per-target / overall receipts;
+- Recovery Report integration;
+- changed files;
+- tests;
+- regression;
+- compatibility;
+- unresolved decisions;
+- explicit confirmation:
+  RC-5 NOT STARTED.
 
-- пользовательские изменения;
+==================================================
+19. НОВОЕ ПРАВИЛО РОТАЦИИ ПЕРСОНАЛЬНОЙ КАРТОЧКИ
+==================================================
 
-- изменения ChatGPT;
+После фактического завершения RC-4 Claude сам, без отдельной команды пользователя:
 
-- Obsidian;
+1. СНАЧАЛА копирует ЭТУ ПОЛНУЮ постановку из БЛОКА 1 в БЛОК 2.
 
-- чужой dirty state.
+2. ЗАТЕМ заполняет БЛОК 3 factual closeout:
+   - TASK;
+   - что сделано;
+   - файлы;
+   - tests/results;
+   - ограничения;
+   - report path;
+   - статус:
+     RESULT READY / AWAITING INDEPENDENT VERIFICATION.
 
+3. ТОЛЬКО ПОСЛЕ успешного сохранения БЛОКОВ 2–3 очищает БЛОК 1 и оставляет:
 
-После выполнения:
+   Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+   TASK: —
 
-Отчёт:
-`Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`
+Если запись оборвалась во время ротации:
+→ не повторять вслепую;
+→ перечитать фактический документ;
+→ доказать, что БЛОКИ 2–3 сохранены;
+→ только затем решать, очищать ли БЛОК 1.
 
-По новому правилу task routing:
+Claude НЕ обновляет самостоятельно после исполнения:
+- 001_История выполненных задач Claude.md;
+- 06_Журнал выполнения и отчёты.md;
+- 25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md;
+- canonical DONE / VERIFIED.
 
-- БЛОК 1 НЕ очищать и НЕ заменять;
-
-- выполненную постановку скопировать в БЛОК 2;
-
-- БЛОК 3 заполнить кратким factual result:
-
-    - что реализовано;
-
-    - какие файлы изменены/добавлены;
-
-    - concurrency/CAS semantics;
-
-    - тесты;
-
-    - известные ограничения;
-
-    - report path;
-
-    - итоговый статус.
-
-
-До независимой проверки допустимый статус только:
-
-RESULT READY / AWAITING INDEPENDENT VERIFICATION
-
-Claude самостоятельно НЕ пишет:
-
-DONE / VERIFIED
-
-и не закрывает permanent history.
-
-Не обновлять самостоятельно после исполнения:
-
-- `001_История выполненных задач Claude.md`;
-
-- `06_Журнал выполнения и отчёты.md`;
-
-- `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`;
-
-- финальный canonical DONE/VERIFIED.
-
-
-Это после независимой проверки синхронизирует ChatGPT/verifier.
+Это после independent verification делает ChatGPT/verifier.
 
 Не делать commit/push.
 
 NEXT SAFE ACTION:
-выполнить только CLAUDE-WA-005 / RC-3,
-остановиться на RESULT READY,
-RC-4 НЕ начинать.
+выполнить только CLAUDE-WA-006 / RC-4,
+остановиться на RESULT READY / AWAITING INDEPENDENT VERIFICATION,
+очистить персональный БЛОК 1 по новому регламенту,
+RC-5 НЕ начинать.
 ```
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
 
-**TASK:** CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS.
-**Статус:** DONE / VERIFIED — 2026-10-04. Independent verification PASS на commit 149 `163dfba`; RC-4 не начат.
+**TASK:** CLAUDE-WA-006 — RC-4: Tracked safe rollback + preserved current state + persistent receipts.
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. DONE не объявлен; commit / push не выполнялись; **RC-5 NOT STARTED**.
 
-**Что реализовано:**
-- узкий слой Target Claim / Conflict Gate поверх контракта v2 и Resolver. Identity цели — физический resolved path (`normcase`) по контракту на стороне сервера; файлы и блокировки называются по `sha256`;
-- один атомарный документ на цель (`target_claims/<hash>.json`: `active` + `history`) и своя межпроцессная блокировка на цель; порядок — блокировка TASK → блокировка цели;
-- acquire: ACQUIRED / REPLAYED / REBASED / CONFLICT / STALE (ревизия, дрейф байтов) / REJECTED (legacy, неполный контракт, payload, ABORT, нет fresh RETRY для операции не в INTENT);
-- CAS — `mutation_boundary` под обеими блокировками: владение, ревизии, контракт, допустимость, байты = `cas_basis`. Authority существует только внутри блока, результат сохраняется как evidence;
-- release — только владелец, идемпотентно, без TTL / heartbeat. Для STARTED / UNKNOWN ждёт ADOPT или ABORT от Resolver;
-- inspect — владелец, блокирующий владелец, `cas_preview`;
-- API: `/tasks/<t>/operations/<op>/claim[/authorize|/release]`.
+**Что сделано:**
+- ROLLBACK из запроса RC-2 стал отдельной tracked recovery operation: принятая fresh резолюция ROLLBACK → persistent-сессия (`rollback_id` выводится из резолюции; повтор возвращает ту же сессию);
+- текущее состояние **всех** целей сохраняется до деструктивной фазы (байты content-addressed вне репозитория, проверка hash+size; absence фиксируется явно); сбой хотя бы одной цели → `PRESERVATION_FAILED`, без мутаций;
+- проверенный side-effect-free `restore_plan()` из существующего restore point WA-1 (без второго snapshot-мира);
+- атомарное владение RC-3 всеми изменяемыми целями: конфликт на одной цели блокирует всю фазу;
+- CAS по каждой цели перед мутацией: точные байты snapshot либо удаление созданного файла, post-read, persistent receipt по цели;
+- итог строится из receipts; VERIFIED только при доказанном полном наборе;
+- сбой в середине разбирается по байтам (восстановленное не перезаписывается); повтор VERIFIED не даёт побочных эффектов;
+- Recovery Report: `actually_rolled_back` — только из проверенных receipts; новое поле `rollback_receipts` (PARTIAL виден явно); заявки вызывающего без receipt отклоняются.
 
 **Файлы:**
-- новые: `web_alarm/target_claim_store.py`, `web_alarm/target_claim_service.py`, `test_web_alarm_target_claims.py` (18), `test_web_alarm_target_claims_concurrency.py` (2);
-- изменённые: `web_alarm/server.py` (+60), `web_alarm/__init__.py` (+7);
-- `models.py`, `OperationStatus`, `operation_store.py`, Resolver, контракт и UI не менялись.
-
-**Concurrency / CAS:**
-- 8 процессов из разных TASK на одну цель — ровно 1 ACQUIRED и 7 CONFLICT, 5/5 прогонов; без блокировки цели 4–5 «владельцев»;
-- 8 разных целей — все ACQUIRED;
-- внешний дрейф между acquire и CAS → `STATE_DRIFT`, без перезаписи.
+- новые: `web_alarm/rollback_store.py`, `web_alarm/rollback_service.py`, `test_web_alarm_rollback.py` (25), `test_web_alarm_rollback_concurrency.py` (1 тест, 4 раунда);
+- изменённые: `manifest_store.py` (+68, `restore_plan`), `target_claim_store.py` / `target_claim_service.py` (claim `owner` = ROLLBACK; RC-3 видит его как чужого владельца), `recovery_report_store.py` / `_builder.py` / `_service.py`, `server.py` (+51, `/tasks/<t>/rollbacks[/<id>/apply|close]`), `__init__.py`;
+- `models.py`, `OperationStatus`, `operation_store`, контракт, Resolver, reconciliation и UI не менялись.
 
 **Тесты:**
-- полный Web Alarm — **286/286 OK** (skip 1);
-- compileall OK;
-- `git diff --check` OK для всех изменений RC-3. Срабатывают только хвостовые пробелы в пользовательском тексте БЛОКА 1, его не трогал;
-- байты проекта и живое storage не изменились.
+- полный Web Alarm — **312/312 OK** (skip 1); RC-1/2/3 focused — 115/115;
+- гонка rollback против RC-3 — 5/5 прогонов; без блокировок — «два владельца»;
+- compileall и `git diff --check` OK;
+- живое storage (read-only) не изменилось (136 файлов).
 
-**Известные ограничения:**
-- внешние писатели между CAS и записью ловятся только receipt из RC-1;
-- внутри `mutation_boundary` нельзя вызывать `OperationStore.transition` (та же блокировка TASK) — WA4-E нужен вариант при уже взятой блокировке;
-- orphan-owner policy отложена (V17);
-- история claims без очистки;
+**Ограничения и решения на проверку:**
+- свежесть резолюции проверяется полностью до первой мутации, дальше — «с поправкой на свои изменения»;
+- claim исходной операции переходит к rollback (`SUPERSEDED_BY_ROLLBACK`);
+- PARTIAL / FAILED финальны (`close` + новая reconciliation);
+- лимит preservation 1 МиБ — нужно решение для больших файлов;
+- старый CLI `snapshot restore` остаётся прямым деструктивным путём (предложение на WA4-R);
+- lifecycle и проекция — RC-5;
 - после принятия — перезапуск процессов WEB-02.
 
-**Independent verification ChatGPT:** проверен последний commit 149 `163dfba219e5b49b822e82070124e23c368cb928`; focused RC-3 20/20 PASS; full Web Alarm 286/286 PASS; concurrency suite дополнительно 5/5 PASS; `compileall` PASS. Независимый review подтвердил one-owner gate, canonical physical identity, persistent crash-safe claims, no TTL/heartbeat, fail-closed CAS при revision/state drift и Resolver integration. Runtime blocker не найден.
-
-**Решения verifier:** physical resolved-path identity принята; release guard для STARTED / UNKNOWN принят как консервативный fail-closed; fresh accepted RETRY для non-INTENT принят как продолжение RC-2. Старый acquire на уже известном stale basis может вернуть `REPLAYED`, но не mutation authority; mutation-boundary CAS на текущей revision остаётся fail-closed.
-
-**WA4-E integration note:** standalone `/authorize` — только evidence; реальная запись допустима только внутри `mutation_boundary`. Нормальный первый executor должен под уже удерживаемой TASK-lock зафиксировать STARTED перед physical write через lock-held/internal transition path, а не вызывать обычный re-entrant `OperationStore.transition()`. Это обязательный future integration item, не blocker RC-3.
-
-**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`; safety copies и `baseline.md` — там же.
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md`; safety copies и `baseline.md` — там же.
 
 ## Правило круговорота
 

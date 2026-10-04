@@ -131,25 +131,9 @@ def _check_state(name: str, value: Any) -> None:
         _fail(f"absent {name} must not carry size/sha256")
 
 
-ROLLBACK_OWNER = "ROLLBACK"
-
-
 def validate_claim(claim: Any) -> None:
-    # RC-4 compatible extension: a claim may carry ``owner`` when the holder is
-    # not the operation itself (tracked rollback). Claims without it keep the
-    # RC-3 meaning (owned by the operation); old readers fail closed on it.
-    if not isinstance(claim, dict) or set(claim) not in (_CLAIM_FIELDS, _CLAIM_FIELDS | {"owner"}):
+    if not isinstance(claim, dict) or set(claim) != _CLAIM_FIELDS:
         _fail("claim has unexpected fields")
-    if "owner" in claim:
-        owner = claim["owner"]
-        if (
-            not isinstance(owner, dict)
-            or set(owner) != {"kind", "rollback_id"}
-            or owner["kind"] != ROLLBACK_OWNER
-            or not isinstance(owner["rollback_id"], str)
-            or not owner["rollback_id"].strip()
-        ):
-            _fail("claim.owner must be a ROLLBACK owner with rollback_id")
     for name in (
         "claim_id",
         "task_id",

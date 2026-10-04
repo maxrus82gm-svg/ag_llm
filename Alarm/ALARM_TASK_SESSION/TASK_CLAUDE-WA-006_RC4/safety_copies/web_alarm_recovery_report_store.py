@@ -132,9 +132,6 @@ class RecoveryReportRecord:
     # RC-2: tracked Resolver actions (re-arm / rollback request / abort / adopt)
     # with basis freshness; absent in pre-RC-2 reports, so it defaults to empty.
     resolver_actions: list[dict[str, Any]] = field(default_factory=list)
-    # RC-4: tracked rollback sessions and their verified receipts; absent in
-    # earlier reports, so it defaults to empty.
-    rollback_receipts: list[dict[str, Any]] = field(default_factory=list)
     authority: str = "evidence_only"
     automatic_mutation_authorized: bool = False
     report_version: int = REPORT_VERSION
@@ -235,10 +232,6 @@ class RecoveryReportRecord:
         self.resolver_actions = _require_dict_list(
             "resolver_actions",
             self.resolver_actions,
-        )
-        self.rollback_receipts = _require_dict_list(
-            "rollback_receipts",
-            self.rollback_receipts,
         )
         _require_json("Recovery Report", self.to_dict())
 

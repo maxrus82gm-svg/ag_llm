@@ -39,8 +39,6 @@ from .resolution_store import ResolutionConflictError, ResolutionStoreError
 from .resolver_service import ResolverError, ResolverInputError, ResolverService
 from .target_claim_service import TargetClaimError, TargetClaimInputError, TargetClaimService
 from .target_claim_store import TargetClaimStoreError
-from .rollback_service import RollbackError, RollbackInputError, RollbackService
-from .rollback_store import RollbackStoreError
 from .state_machine import (
     ServerStateMachine,
     ServerStateMachineError,
@@ -167,7 +165,6 @@ class WebAlarmApi:
         self.recovery_reports = RecoveryReportService(storage_root)
         self.resolver = ResolverService(storage_root)
         self.target_claims = TargetClaimService(storage_root)
-        self.rollbacks = RollbackService(storage_root)
 
     @property
     def storage_root(self) -> Path:
@@ -331,7 +328,6 @@ class WebAlarmApi:
                         "recovery_reports",
                         "resolutions",
                         "target_claims",
-                        "rollbacks",
                         "reports",
                         "recovery_entry",
                     ],
@@ -520,47 +516,6 @@ class WebAlarmApi:
                     "freshness": self.resolver.freshness(record),
                     "workflow_mutation_performed": False,
                 }
-
-            if len(parts) in (3, 4, 5) and parts[0] == "tasks" and parts[2] == "rollbacks":
-                task_id = parts[1]
-                if len(parts) == 3 and method == "GET":
-                    items = self.rollbacks.store.list(
-                        task_id, operation_id=_optional_query_text(query, "operation_id")
-                    )
-                    return 200, {"rollbacks": items}
-                if len(parts) == 4 and method == "GET":
-                    return 200, {"rollback": self.rollbacks.inspect(task_id, parts[3])}
-                if len(parts) == 5 and parts[4] not in ("apply", "close"):
-                    raise ApiError(404, "not_found", f"unknown endpoint: {path}")
-                if method != "POST" or len(parts) == 4:
-                    raise ApiError(405, "method_not_allowed", "rollback control-plane requires POST")
-                data = _require_object(body)
-                if len(parts) == 3:
-                    outcome = self.rollbacks.prepare(
-                        task_id,
-                        _require_text(data, "microtask_id"),
-                        _require_text(data, "operation_id"),
-                        _require_text(data, "resolution_id"),
-                        agent=_optional_text(data, "agent"),
-                        channel=_optional_text(data, "channel"),
-                    )
-                    accepted = {"PRESERVED": 201, "REPLAYED": 200}
-                elif parts[4] == "apply":
-                    outcome = self.rollbacks.apply(task_id, parts[3])
-                    accepted = {"VERIFIED": 200, "REPLAYED": 200}
-                else:
-                    outcome = self.rollbacks.close(
-                        task_id, parts[3], reason=_optional_text(data, "reason")
-                    )
-                    accepted = {"CLOSED": 200, "REPLAYED": 200}
-                if outcome["result"] not in accepted:
-                    raise ApiError(
-                        409,
-                        f"rollback_{outcome['result'].lower()}",
-                        outcome["reason"],
-                        details=outcome,
-                    )
-                return accepted[outcome["result"]], outcome
 
             if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "context":
                 if method != "GET":
@@ -861,12 +816,6 @@ class WebAlarmApi:
             raise ApiError(409, "state_machine_error", str(exc)) from exc
         except OperationConflictError as exc:
             raise ApiError(409, "operation_replay_conflict", str(exc)) from exc
-        except RollbackInputError as exc:
-            raise ApiError(400, "invalid_rollback_request", str(exc)) from exc
-        except (RollbackError, RollbackStoreError) as exc:
-            message = str(exc)
-            status = 404 if "unknown " in message else 409
-            raise ApiError(status, "rollback_error", message) from exc
         except TargetClaimInputError as exc:
             raise ApiError(400, "invalid_claim_request", str(exc)) from exc
         except (TargetClaimError, TargetClaimStoreError) as exc:

@@ -12,7 +12,6 @@ from .reconciliation_service import ReconciliationService
 from .recovery_report_builder import RecoveryReportBuilder, RecoveryReportBuilderError
 from .recovery_report_store import RecoveryReportRecord, RecoveryReportStore
 from .resolver_service import ResolverService
-from .rollback_service import RollbackService
 from .transport_event_store import TransportEventRecord, TransportEventStore
 
 
@@ -35,7 +34,6 @@ class RecoveryReportService:
         self.builder = RecoveryReportBuilder()
         self.store = RecoveryReportStore(self.reconciliation.evidence.tasks.storage_root)
         self.resolver = ResolverService(self.reconciliation.evidence.tasks.storage_root)
-        self.rollbacks = RollbackService(self.reconciliation.evidence.tasks.storage_root)
 
     @staticmethod
     def _check_claims(name: str, claimed: Sequence[str], backed: list[str]) -> None:
@@ -86,21 +84,6 @@ class RecoveryReportService:
         )
         decision = self.reconciliation.decisions.decide(evidence)
         facts = self.resolver.report_facts(task_id, microtask_id, operation_id)
-        # RC-4: "actually rolled back" only from persisted verified rollback
-        # receipts; an accepted ROLLBACK resolution alone is still a request.
-        rollback = self.rollbacks.report_facts(task_id, microtask_id, operation_id)
-        facts["actually_rolled_back"] = rollback["actually_rolled_back"]
-        authoritative = facts["next_safe_action"]
-        if authoritative is not None and (
-            authoritative["resolution_id"] in rollback["next_safe_action_by_resolution"]
-        ):
-            facts["next_safe_action"] = {
-                "resolution_id": authoritative["resolution_id"],
-                "next_safe_action": rollback["next_safe_action_by_resolution"][
-                    authoritative["resolution_id"]
-                ],
-                "source": "rollback",
-            }
         for name, claimed in (
             ("accepted_as_already_done", accepted_as_already_done),
             ("actually_retried", actually_retried),
@@ -130,7 +113,6 @@ class RecoveryReportService:
             untouched_or_unresolved=untouched_or_unresolved,
             resolver_actions=facts["resolver_actions"],
             resolver_next_safe_action=facts["next_safe_action"],
-            rollback_receipts=rollback["rollback_receipts"],
             fresh_process_reopen_result=fresh_process_reopen_result,
             report_id=report_id,
         )

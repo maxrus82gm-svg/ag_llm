@@ -142,7 +142,6 @@ class RecoveryReportBuilder:
         untouched_or_unresolved: Iterable[str] = (),
         resolver_actions: Iterable[Mapping[str, Any]] = (),
         resolver_next_safe_action: Mapping[str, Any] | None = None,
-        rollback_receipts: Iterable[Mapping[str, Any]] = (),
         next_safe_action: str | None = None,
         fresh_process_reopen_result: str | None = None,
         report_id: str | None = None,
@@ -194,7 +193,7 @@ class RecoveryReportBuilder:
         if resolver_next_safe_action is not None:
             evidence_identity.update(
                 {
-                    "next_safe_action_source": resolver_next_safe_action.get("source", "resolver"),
+                    "next_safe_action_source": "resolver",
                     "next_safe_action_resolution_id": resolver_next_safe_action[
                         "resolution_id"
                     ],
@@ -240,10 +239,6 @@ class RecoveryReportBuilder:
             "resolver_actions": self._evidence_list(
                 "resolver_actions",
                 resolver_actions,
-            ),
-            "rollback_receipts": self._evidence_list(
-                "rollback_receipts",
-                rollback_receipts,
             ),
             "next_safe_action": resolved_next_safe_action,
             "fresh_process_reopen_result": fresh_process_reopen_result,
