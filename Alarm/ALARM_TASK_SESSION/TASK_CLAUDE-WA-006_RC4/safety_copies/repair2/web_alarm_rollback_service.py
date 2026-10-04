@@ -10,19 +10,14 @@ operation:
    physical state (bytes content-addressed outside the repository) -> PRESERVED.
    Any preservation failure ends the session in PRESERVATION_FAILED: nothing
    destructive ever happens in that session.
-2. ``apply``: under the TASK lock and EVERY target's lock (sorted by target
-   hash), re-prove the basis, acquire RC-3 ownership for every target
-   atomically (owner = this rollback; a conflict anywhere blocks the whole
-   destructive phase), then per target: CAS against the preserved state,
+2. ``apply``: under the TASK lock and every mutated target's lock (sorted by
+   target hash), re-prove the basis, acquire RC-3 ownership for all mutated
+   targets atomically (owner = this rollback; a conflict anywhere blocks the
+   whole destructive phase), then per target: CAS against the preserved state,
    persist APPLYING, restore exact snapshot bytes / delete a created file,
    post-read and persist a receipt. Drift stops the session; nothing is
    overwritten. VERIFIED only when every target is proven restored or already
-   in pre-state; ownership is released only after VERIFIED is persistent.
-
-Physical action and verification ownership are separate: a NOOP target is
-never written, but it is part of the final proof, so it is owned and locked
-exactly like a mutated one. No RC-3 writer can hold authority on any target
-between acquire-all and the persisted VERIFIED result.
+   in pre-state; ownership is then released.
 
 Freshness: the full Resolver fingerprint check is required before the first
 destructive write. Once this session has restored a target, the evidence
@@ -204,24 +199,11 @@ class RollbackService:
         if status == PRESERVED:
             return "current state of every target is preserved; apply the rollback (claims + per-target CAS)"
         if status == AUTHORIZED:
-            return "rollback owns every target; apply continues with per-target CAS and restore"
-        if status == APPLYING and attempt is not None:
-            restored = [t["source_path"] for t in record["targets"] if t["status"] == T_RESTORED]
-            return (
-                f"rollback is blocked mid-session ({attempt['code']}); restored so far: {restored} "
-                "(receipts stay); resolve the blocker and apply again, or close this rollback to "
-                "release its ownership and start a new reconciliation"
-            )
+            return "rollback owns all mutated targets; apply continues with per-target CAS and restore"
         if status == APPLYING:
             return (
                 "rollback was interrupted during a restore; apply again: it first proves each "
                 "in-flight target's real bytes and never repeats a write blindly"
-            )
-        if status == VERIFIED and not record["claims_released"]:
-            return (
-                f"rollback of microtask {record['microtask_id']} restored and verified every target; "
-                "releasing its target ownership was interrupted: apply again (or close) to release "
-                "it; nothing is restored again"
             )
         if status == VERIFIED:
             return (
@@ -520,12 +502,12 @@ class RollbackService:
             "owner": {"kind": ROLLBACK_OWNER, "rollback_id": record["rollback_id"]},
         }
 
-    def _acquire_all(self, record: dict[str, Any], root: Path) -> dict[str, Any] | None:
-        """All-or-nothing RC-3 ownership of EVERY target (NOOP included); caller holds every target lock."""
+    def _acquire_all(self, record: dict[str, Any], root: Path, mutating: list[dict[str, Any]]) -> dict[str, Any] | None:
+        """All-or-nothing RC-3 ownership; caller holds every target lock."""
         op_record = self.operations.get(record["task_id"], record["operation_id"])
         files: dict[str, tuple[dict[str, Any], Any]] = {}
         blocking = []
-        for target in record["targets"]:
+        for target in mutating:
             canonical = self._canonical(root, target)
             physical_key = physical_target_key(canonical.path)
             data = self.claims.load(physical_key)
@@ -551,7 +533,7 @@ class RollbackService:
             return self._attempt(record, "TARGET_CONFLICT", "another owner holds a rollback target; nothing restored",
                                  blocking_owners=blocking)
         now = utc_now_iso()
-        for target in record["targets"]:
+        for target in mutating:
             data, _ = files[target["target_hash"]]
             active = data["active"]
             if active is not None and (active.get("owner") or {}).get("rollback_id") == record["rollback_id"]:
@@ -569,7 +551,7 @@ class RollbackService:
         record["status"] = AUTHORIZED
         record["last_attempt"] = None
         self._persist(record)
-        self._event(record, "ROLLBACK_AUTHORIZED", {"claims": [t["claim_id"] for t in record["targets"]]})
+        self._event(record, "ROLLBACK_AUTHORIZED", {"claims": [t["claim_id"] for t in mutating]})
         return None
 
     def _claim_held(self, root: Path, record: dict[str, Any], target: dict[str, Any]) -> bool:
@@ -625,33 +607,28 @@ class RollbackService:
                 record = self.store.get(task_id, rollback_id)
             except RollbackStoreError as exc:
                 raise RollbackError(str(exc)) from exc
-            if record["status"] == VERIFIED and not record["claims_released"]:
-                return self._complete_release(record)  # interrupted between VERIFIED and the release
             if record["status"] in _DONE:
                 return self._outcome("REPLAYED", f"ROLLBACK_{record['status']}", "known final rollback state", record)
             if record["status"] == PREPARED:
                 return self._outcome(REJECTED, "PRESERVATION_INCOMPLETE", "run prepare first", record)
             root = self._workspace_root(task_id)
             try:
-                plan, plan_error = self.manifests.restore_plan(task_id, record["microtask_id"]), None
-            except ManifestStoreError as exc:  # in-flight targets are still proven first
-                plan, plan_error = None, str(exc)
-            # Every target is locked, NOOP ones included: they are part of the final proof.
+                plan = self.manifests.restore_plan(task_id, record["microtask_id"])
+            except ManifestStoreError as exc:
+                return self._attempt(record, "RESTORE_POINT_INVALID", str(exc))
+            snapshots = {item["manifest_entry_id"]: item["snapshot_bytes"] for item in plan["items"]}
+            mutating = [t for t in record["targets"] if t["planned_action"] != NOOP]
             with ExitStack() as stack:
-                self._lock_targets(stack, record["targets"])
-                return self._apply_locked(record, root, plan, plan_error)
+                for digest in sorted(t["target_hash"] for t in mutating):
+                    lock = InterProcessLock(self.claims.locks / f"{digest}.lock", timeout=self.lock_timeout)
+                    try:
+                        lock.acquire()
+                    except StoreLockTimeout as exc:
+                        raise RollbackError(str(exc)) from exc
+                    stack.callback(lock.release)
+                return self._apply_locked(record, root, plan, snapshots, mutating)
 
-    def _lock_targets(self, stack: ExitStack, targets: list[dict[str, Any]]) -> None:
-        """RC-3 target locks in deterministic target-hash order, held until ``stack`` closes."""
-        for digest in sorted(t["target_hash"] for t in targets):
-            lock = InterProcessLock(self.claims.locks / f"{digest}.lock", timeout=self.lock_timeout)
-            try:
-                lock.acquire()
-            except StoreLockTimeout as exc:
-                raise RollbackError(str(exc)) from exc
-            stack.callback(lock.release)
-
-    def _apply_locked(self, record, root, plan, plan_error) -> dict[str, Any]:
+    def _apply_locked(self, record, root, plan, snapshots, mutating) -> dict[str, Any]:
         # 1. interrupted writes: prove the real bytes, never repeat blindly
         for target in record["targets"]:
             if target["status"] != T_APPLYING:
@@ -678,26 +655,23 @@ class RollbackService:
             self._prove_current(record, root)
         if any(t["status"] in (T_DRIFTED, T_FAILED) for t in record["targets"]):
             return self._finalize(record, root)
-        if plan is None:
-            return self._attempt(record, "RESTORE_POINT_INVALID", plan_error)
-        snapshots = {item["manifest_entry_id"]: item["snapshot_bytes"] for item in plan["items"]}
 
         # 2. re-prove the basis (full freshness before own effects)
         refusal = self._session_basis(record, plan)
         if refusal is not None:
             return self._attempt(record, *refusal)
 
-        # 3. ownership of every target: all-or-nothing before the first destructive step
+        # 3. ownership: all-or-nothing before the first destructive step
         try:
             if record["status"] == PRESERVED:
-                blocked = self._acquire_all(record, root)
+                blocked = self._acquire_all(record, root, mutating)
                 if blocked is not None:
                     return blocked
             else:
-                unowned = [t["source_path"] for t in record["targets"] if not self._claim_held(root, record, t)]
-                if unowned:
-                    return self._attempt(record, "CLAIM_LOST", f"rollback does not own {unowned}")
-                record["last_attempt"] = None  # resumed past every check
+                lost = [t["source_path"] for t in mutating
+                        if t["status"] not in (T_RESTORED,) and not self._claim_held(root, record, t)]
+                if lost:
+                    return self._attempt(record, "CLAIM_LOST", f"rollback no longer owns {lost}")
         except (TargetIdentityError, TargetClaimStoreError, FileStateError) as exc:
             return self._attempt(record, "OWNERSHIP_UNAVAILABLE", str(exc))
 
@@ -758,15 +732,13 @@ class RollbackService:
         return self._finalize(record, root)
 
     def _prove_current(self, record: dict[str, Any], root: Path) -> tuple[list[str], int]:
-        """Prove the CURRENT state of every tracked target (caller holds every target lock).
+        """Prove the CURRENT physical state of every tracked target (caller holds the locks).
 
         A receipt proves what was true when it was written; it is history, not
         proof of the present. RESTORED/NOOP targets must still equal their
-        restore state, PRESERVED (pending) targets their preserved state, and
-        each must still be owned by this rollback (RC-3 claim), so that no other
-        writer can hold authority on it until VERIFIED is persistent. A mismatch
-        marks the target DRIFTED, keeps its historical receipt and is never
-        rewritten here.
+        restore state, PRESERVED (pending) targets their preserved state. A
+        mismatch marks the target DRIFTED, keeps its historical receipt and is
+        never rewritten here.
         """
         drifted: list[str] = []
         checked = 0
@@ -780,19 +752,9 @@ class RollbackService:
             checked += 1
             try:
                 observed = observe_path(self._canonical(root, target).path)
-                owned = self._claim_held(root, record, target)
-            except (TargetIdentityError, FileStateError, TargetClaimStoreError) as exc:
+            except (TargetIdentityError, FileStateError) as exc:
                 target["status"] = T_DRIFTED
                 target["failure"] = {"code": "TARGET_UNOBSERVABLE", "reason": str(exc), "observed": None}
-                drifted.append(target["source_path"])
-                continue
-            if not owned:
-                target["status"] = T_DRIFTED
-                target["failure"] = {
-                    "code": "OWNERSHIP_LOST",
-                    "reason": "this rollback no longer owns the target; its state is not protected",
-                    "observed": _state(observed),
-                }
                 drifted.append(target["source_path"])
                 continue
             if not same_authority(observed, expected):
@@ -809,9 +771,8 @@ class RollbackService:
         return drifted, checked
 
     def _finalize(self, record: dict[str, Any], root: Path) -> dict[str, Any]:
-        # Final full-target verification boundary: under the still-held locks of
-        # every target and before VERIFIED / SUCCESS / returning to the caller.
-        # Ownership is released only after the VERIFIED result is persistent.
+        # Final full-target verification boundary: under the still-held locks and
+        # before VERIFIED / SUCCESS / claim release / returning to the caller.
         _, checked = self._prove_current(record, root)
         targets = record["targets"]
         done = [t for t in targets if t["status"] in (T_RESTORED, T_NOOP)]
@@ -829,6 +790,7 @@ class RollbackService:
         if len(done) == len(targets):
             record["status"] = VERIFIED
             overall = "SUCCESS"
+            self._release_claims(root, record, "ROLLBACK_VERIFIED")
         elif restored:
             record["status"] = PARTIAL
             overall = "PARTIAL"
@@ -848,28 +810,8 @@ class RollbackService:
         }
         self._persist(record)
         self._event(record, f"ROLLBACK_{record['status']}", {"restored": restored, "unresolved": unresolved})
-        if overall == "SUCCESS":  # still under every target lock: no writer gets in before this point
-            try:
-                self._release_claims(root, record, "ROLLBACK_VERIFIED")
-            except (TargetIdentityError, TargetClaimStoreError):
-                pass  # VERIFIED stays true; claims_released=False tells apply/close to finish the release
-            else:
-                self._persist(record)
         result = "VERIFIED" if overall == "SUCCESS" else overall
         return self._outcome(result, f"ROLLBACK_{overall}", "rollback result is persistent", record)
-
-    def _complete_release(self, record: dict[str, Any]) -> dict[str, Any]:
-        """Finish an interrupted release of a persistent VERIFIED rollback (idempotent, nothing restored)."""
-        root = self._workspace_root(record["task_id"])
-        with ExitStack() as stack:
-            self._lock_targets(stack, [t for t in record["targets"] if t["claim_id"]])
-            try:
-                self._release_claims(root, record, "ROLLBACK_VERIFIED")
-            except (TargetIdentityError, TargetClaimStoreError) as exc:
-                raise RollbackError(f"cannot release rollback ownership: {exc}") from exc
-            self._persist(record)
-        self._event(record, "ROLLBACK_OWNERSHIP_RELEASED", {"after": VERIFIED})
-        return self._outcome("REPLAYED", "ROLLBACK_VERIFIED", "verified rollback; its pending ownership release is done", record)
 
     # --- close / read ---------------------------------------------------------------------------------
 
@@ -880,18 +822,21 @@ class RollbackService:
                 record = self.store.get(task_id, rollback_id)
             except RollbackStoreError as exc:
                 raise RollbackError(str(exc)) from exc
-            if record["status"] == VERIFIED and not record["claims_released"]:
-                return self._complete_release(record)
             if record["status"] in (CLOSED, VERIFIED, PRESERVATION_FAILED):
                 return self._outcome("REPLAYED", f"ROLLBACK_{record['status']}", "nothing to close", record)
-            # Only an in-flight target has an unknown fate; a session blocked after own
-            # restores (record still APPLYING) can be closed — its receipts stay history.
-            if any(t["status"] == T_APPLYING for t in record["targets"]):
+            if record["status"] == APPLYING or any(t["status"] == T_APPLYING for t in record["targets"]):
                 return self._outcome(REJECTED, "TARGET_FATE_UNKNOWN",
                                      "apply again first so in-flight targets are proven", record)
             root = self._workspace_root(task_id)
+            digests = sorted(t["target_hash"] for t in record["targets"] if t["claim_id"])
             with ExitStack() as stack:
-                self._lock_targets(stack, [t for t in record["targets"] if t["claim_id"]])
+                for digest in digests:
+                    lock = InterProcessLock(self.claims.locks / f"{digest}.lock", timeout=self.lock_timeout)
+                    try:
+                        lock.acquire()
+                    except StoreLockTimeout as exc:
+                        raise RollbackError(str(exc)) from exc
+                    stack.callback(lock.release)
                 try:
                     self._release_claims(root, record, (reason or "ROLLBACK_CLOSED").strip())
                 except (TargetIdentityError, TargetClaimStoreError) as exc:

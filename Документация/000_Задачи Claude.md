@@ -10,7 +10,10 @@
 - Здесь фиксируются только конкретные задачи, делегированные Claude.
 - Этот файл **не заменяет** `000_Задачи для агента.md`, `05_Реестр задач.md`, `06_Журнал выполнения и отчёты.md` и профильные документы проекта.
 - Если Claude выполняет значимое изменение проекта, итог после проверки должен быть отражён и в канонической документации проекта по обычным правилам.
-- До начала mutation-задачи явно указывать scope, запрещённые действия и критерии проверки.
+- До начала mutation-задачи явно указывать scope, запрещённые действия и критерии проверки. Эти границы ограничивают **самовольные изменения**, но не глубину инженерного анализа.
+- Claude работает как самостоятельный основной инженерный агент, а не только как исполнитель перечисленного чек-листа. Перечисленные tests/acceptance cases — обязательный минимум, не потолок. Перед `RESULT READY` Claude обязан сделать собственный adversarial pass и попытаться опровергнуть решение релевантными race/restart/replay/persistence/ownership/finalization/compatibility сценариями.
+- Если неперечисленная проблема найдена внутри текущего scope — Claude сам её проверяет, исправляет и добавляет regression test. Если исправление выходит за scope/этап или требует архитектурного решения — код за рамками не менять; reproduction/evidence/root cause/impact и предложение обязательно вынести в task-report и БЛОК 3 как `FINDING / PROPOSAL / BLOCKER` для решения verifier/пользователя.
+- Claude имеет право читать соседний релевантный код и делать безопасные isolated probes/tests ради проверки гипотез. Это не даёт права самовольно запускать следующий этап, менять утверждённый план или расширять production mutation-scope.
 - Секреты, токены, cookies, Organization ID и платёжные данные сюда не записываются.
 - Технические наблюдения по моделям, лимитам и сети вести в `27_Claude.md`.
 - БЛОК 1 — входной активный слот. Пользователь/координатор переносит сюда следующую утверждённую постановку. Claude обязан перечитать БЛОК 1 перед стартом.
@@ -32,7 +35,7 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
-**Статус постановки:** выполнена Claude 2026-10-04; после независимой проверки (REPAIR REQUIRED) выполнен Independent Review Repair той же TASK — его постановка дословно ниже исходной. Результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк).
+**Статус постановки:** выполнена Claude 2026-10-04; после независимых проверок (REPAIR REQUIRED) выполнены Independent Review Repair #1 и #2 той же TASK — их постановки дословно ниже исходной, по порядку. Результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк).
 
 ```text
 TASK: CLAUDE-WA-006 — RC-4: Tracked safe rollback + preserved current state + persistent receipts
@@ -1208,35 +1211,509 @@ NEXT SAFE ACTION:
 RC-5 НЕ начинать.
 ```
 
+## Дополнение — Independent Review Repair #2 (постановка из БЛОКА 1, 2026-10-04, дословно)
+
+```text
+TASK: CLAUDE-WA-006 — RC-4 INDEPENDENT REVIEW REPAIR #2:
+Protect the full verification target set from concurrent RC-3 owners
+
+Статус:
+REPAIR REQUIRED / RC-4 NOT VERIFIED
+
+Исполнитель:
+Claude Opus 5.5
+
+Контекст:
+Это продолжение той же CLAUDE-WA-006 / RC-4.
+Это НЕ RC-5.
+
+Проверяемый commit:
+153
+626716436044e649fc7a311400ca42dbfeb2a98a
+
+Первый independent-review blocker
+(receipt history != current final state)
+закрыт правильно.
+
+Independent verification ChatGPT подтвердила:
+
+- новые repair tests A–E проходят;
+- focused RC-4 + concurrency: 31/31 PASS;
+- compileall PASS.
+
+НО найден второй concurrency blocker.
+
+RC-4 пока НЕ DONE / VERIFIED.
+RC-5 НЕ начинать.
+
+==================================================
+1. BLOCKER
+==================================================
+
+Финальная full-target verification RC-4 проверяет также NOOP targets.
+
+Но текущий rollback ownership / target lock acquisition выполняется только для:
+
+mutating = targets where planned_action != NOOP
+
+То есть NOOP target:
+
+- входит в rollback target set;
+- входит в final full-target proof;
+- влияет на VERIFIED / SUCCESS;
+- НО rollback не держит на нём RC-3 ownership;
+- rollback не держит его target-lock в течение final verification → SUCCESS boundary.
+
+Из-за этого другая normal RC-3 operation может легально получить mutation authority на NOOP target во время rollback.
+
+==================================================
+2. INDEPENDENT REPRODUCTION
+==================================================
+
+ChatGPT воспроизвёл следующий сценарий на commit 153:
+
+1. RC-4 rollback имеет:
+   - один mutating target;
+   - один NOOP target.
+
+2. RC-4 выполняет final full-target proof.
+
+3. До окончательного persistence/return VERIFIED,
+   другая TASK создаёт normal Operation Contract v2 на NOOP target.
+
+4. Через обычный RC-3:
+
+   acquire
+   → ACQUIRED
+
+   mutation_boundary
+   → AUTHORIZED
+   → mutation_authority = True
+
+5. Другая operation меняет NOOP target.
+
+6. RC-4 продолжает финализацию.
+
+Фактический результат:
+
+FOREIGN_ACQUIRE ACQUIRED
+FOREIGN_AUTH AUTHORIZED True
+
+RESULT VERIFIED
+STATUS VERIFIED
+OVERALL SUCCESS
+FINAL_VERIFIED True
+
+при этом:
+
+KEEP_CURRENT != KEEP_EXPECTED
+
+То есть RC-4 объявил VERIFIED/SUCCESS,
+хотя один target полного restore set уже изменён другой авторизованной operation.
+
+Это acceptance blocker.
+
+==================================================
+3. ROOT CAUSE
+==================================================
+
+Проверить:
+
+web_alarm/rollback_service.py
+
+В apply():
+
+mutating = [
+    target
+    for target in record["targets"]
+    if target["planned_action"] != NOOP
+]
+
+Target locks берутся только по `mutating`.
+
+`_acquire_all(...)` также получает только `mutating`.
+
+Поэтому NOOP target:
+
+- не получает rollback-owned RC-3 claim;
+- не защищён от другой RC-3 operation;
+- но `_prove_current()` использует его как часть final all-target proof.
+
+Комментарий:
+
+“final full-target verification under the still-held locks”
+
+фактически неверен для NOOP targets:
+их lock не удерживается.
+
+==================================================
+4. REQUIRED INVARIANT
+==================================================
+
+Если target входит в набор, от которого зависит:
+
+rollback.status = VERIFIED
+result.overall = SUCCESS
+
+то его состояние должно быть защищено от конкурентной RC-3 mutation
+на всём final verification → VERIFIED persistence boundary.
+
+Нельзя:
+
+verify target
+→ отпустить/не иметь ownership
+→ другой authorized writer меняет target
+→ записать SUCCESS.
+
+Для cooperative Web Alarm writers финальная proof-boundary должна быть механически защищена RC-3 ownership.
+
+==================================================
+5. EXPECTED DESIGN
+==================================================
+
+Предпочтительный минимальный вариант:
+
+rollback должен получить temporary rollback ownership также для NOOP targets,
+если они участвуют в full-target verification.
+
+То есть разделить:
+
+PHYSICAL ACTION:
+- WRITE_RESTORE
+- DELETE_CREATED
+- NOOP
+
+от:
+
+ROLLBACK VERIFICATION OWNERSHIP:
+- все targets, входящие в restore-point / final success proof.
+
+Rollback не обязан физически писать NOOP target.
+
+Но до final VERIFIED он обязан исключить concurrent RC-3 mutation этого target.
+
+Возможная схема:
+
+all_targets
+→ acquire rollback RC-3 ownership in deterministic target-hash order
+
+mutating_targets
+→ perform physical restore/delete
+
+noop_targets
+→ no physical mutation
+
+all_targets
+→ final exact physical proof
+
+VERIFIED persistence / receipts
+
+all_targets claims
+→ release
+
+Главное:
+не создавать отдельный bypass-lock для NOOP.
+
+Использовать тот же RC-3 canonical physical-target conflict layer.
+
+==================================================
+6. SOURCE OPERATION CLAIM EDGE CASE
+==================================================
+
+Существующая логика takeover source operation claim должна сохраниться.
+
+Если source operation уже владеет target:
+→ rollback может корректно supersede/take over,
+как реализовано RC-4.
+
+Это должно одинаково работать и для target, который в rollback оказался NOOP.
+
+Не создавать два active owners.
+
+==================================================
+7. NO PHYSICAL MUTATION FOR NOOP
+==================================================
+
+Важно:
+
+получение rollback ownership на NOOP target
+НЕ означает, что его надо переписывать.
+
+NOOP остаётся:
+
+- exact current state == expected restore;
+- physical write/delete отсутствует;
+- receipt action = NOOP.
+
+Ownership нужен только как concurrency barrier
+на время tracked rollback verification.
+
+==================================================
+8. FULL FINALIZATION BOUNDARY
+==================================================
+
+Перед VERIFIED:
+
+rollback должен всё ещё удерживать ownership/target-lock для ВСЕХ targets,
+участвующих в success proof.
+
+Порядок:
+
+1. ownership all targets proved;
+2. per-target restore/no-op;
+3. final `_prove_current()` all targets;
+4. persist:
+   VERIFIED / SUCCESS / final_verification=true;
+5. только после этого release all rollback claims;
+6. return VERIFIED.
+
+Не должно существовать окна:
+
+final proof
+→ target becomes writable by another RC-3 owner
+→ SUCCESS persistence.
+
+Если текущий persistence/release ordering технически требует другого порядка,
+решение должно всё равно сохранять этот инвариант.
+
+==================================================
+9. RAW EXTERNAL WRITERS
+==================================================
+
+RC-3 locks не могут остановить произвольный editor / Git / внешний процесс,
+который игнорирует Web Alarm.
+
+RC-4 не обязан обеспечивать filesystem transaction против любого внешнего OS writer.
+
+Но:
+
+- final physical proof обязателен;
+- cooperative Web Alarm / RC-3 writer НЕ должен иметь authority внутри protected finalization window.
+
+Этот repair именно про RC-3-authorized concurrent writer.
+
+Не пытаться строить OS filesystem locking / leases вне текущей архитектуры.
+
+==================================================
+10. REQUIRED TESTS
+==================================================
+
+TEST F — exact blocker reproduction:
+
+Rollback target set:
+- A = mutating target;
+- B = NOOP target.
+
+До/во время finalization другая TASK пытается:
+
+RC-3 acquire B
+→ mutation_boundary
+→ write B.
+
+Нужно доказать:
+
+пока rollback владеет verification window:
+
+foreign acquire/authority НЕ может одновременно победить.
+
+Допустимый deterministic результат:
+
+rollback wins:
+- foreign operation gets CONFLICT/DENIED until rollback completes;
+- final SUCCESS valid;
+
+ИЛИ foreign owner wins BEFORE rollback obtains all-target ownership:
+- rollback blocked before destructive phase;
+- no false SUCCESS.
+
+НЕЛЬЗЯ:
+
+foreign AUTHORIZED
++
+rollback VERIFIED
+на одном temporal window.
+
+TEST G — NOOP target receives rollback claim:
+
+после acquire-all:
+- NOOP target active claim owner.kind = ROLLBACK;
+- rollback_id matches;
+- no physical mutation performed.
+
+TEST H — NOOP source-operation claim takeover:
+
+source op already holds claim on NOOP target;
+rollback safely supersedes/takes it over;
+no duplicate owner.
+
+TEST I — clean rollback:
+
+all-target ownership
+→ final verification PASS
+→ VERIFIED/SUCCESS
+→ all rollback claims released.
+
+TEST J — conflict on NOOP target before destructive phase:
+
+foreign owner already owns NOOP target.
+
+Expected:
+- rollback blocked;
+- zero destructive writes on all other targets;
+- no partial rollback ownership left.
+
+TEST K — multiprocess:
+
+rollback vs normal RC-3 operation competing specifically for a NOOP target.
+
+Invariant:
+never both obtain mutation authority.
+
+==================================================
+11. REGRESSION REQUIREMENTS
+==================================================
+
+After repair run:
+
+- all FinalVerificationRepairTests;
+- all RC-4 tests;
+- RC-4 concurrency;
+- RC-3 focused + concurrency;
+- RC-2 focused;
+- full Web Alarm regression;
+- compileall;
+- git diff --check;
+- fresh-process reopen;
+- live storage read-only compatibility.
+
+==================================================
+12. SCOPE
+==================================================
+
+Do NOT expand into:
+
+- RC-5;
+- RC-6;
+- WA4-E;
+- UI;
+- normal mutation executor;
+- lease/heartbeat;
+- OS-level file locking;
+- `.gitattributes`;
+- line-ending normalization;
+- unrelated refactor.
+
+1 MiB preservation limit:
+still known fail-closed limitation, not blocker here.
+
+Legacy direct snapshot restore:
+still deferred to WA4-R / strict rollout.
+
+==================================================
+13. REPORT
+==================================================
+
+Дополнить тот же:
+
+Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md
+
+разделом:
+
+INDEPENDENT REVIEW REPAIR #2
+
+Зафиксировать:
+
+- reproduction;
+- root cause: NOOP target outside RC-3 ownership set;
+- exact ownership model after repair;
+- lock/claim ordering;
+- new tests F–K;
+- regressions;
+- RC-5 NOT STARTED.
+
+==================================================
+14. CARD ROTATION
+==================================================
+
+Это всё ещё CLAUDE-WA-006 / RC-4.
+
+После repair:
+
+1. БЛОК 2 сохраняет:
+   - исходную RC-4 постановку;
+   - repair #1;
+   - эту repair #2.
+
+2. БЛОК 3 обновляется новым factual result.
+
+3. Статус:
+   RESULT READY / AWAITING INDEPENDENT VERIFICATION
+
+4. Только после подтверждения сохранности БЛОКОВ 2–3:
+   очистить БЛОК 1:
+
+   Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+   TASK: —
+
+5. Не писать DONE / VERIFIED.
+
+6. Не менять:
+   - 001;
+   - 06;
+   - 25;
+   - глобальный 000.
+
+7. Не commit / push.
+
+NEXT SAFE ACTION:
+закрыть только RC-4 repair #2,
+остановиться на RESULT READY / AWAITING INDEPENDENT VERIFICATION,
+RC-5 НЕ начинать.
+```
+
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
 
-**TASK:** CLAUDE-WA-006 — RC-4: Tracked safe rollback (+ Independent Review Repair: final full-target verification).
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04, повторно после repair. DONE не объявлен; commit / push не выполнялись; **RC-5 NOT STARTED**.
+**TASK:** CLAUDE-WA-006 — RC-4: Tracked safe rollback (+ repair #1: final full-target verification; + repair #2: full verification target set under RC-3 ownership).
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04, повторно после repair #2. DONE не объявлен; commit / push не выполнялись; **RC-5 NOT STARTED**.
 
-**Исходный RC-4 (commit 152 `42ce550`):** tracked safe rollback — сохранение текущего состояния всех целей, атомарное владение RC-3, CAS по цели, точное восстановление и удаление, receipts по целям, Recovery Report «requested ≠ actually rolled back».
+**Предыдущие этапы:** исходный RC-4 — commit 152 `42ce550`; repair #1 (receipt ≠ доказательство текущего состояния) — commit 153 `6267164`.
 
-**Repair blocker-а ревью:** multi-target rollback мог объявить `VERIFIED / SUCCESS` после того, как уже восстановленная (или NOOP) цель была изменена извне до конца сессии: старый receipt служил доказательством текущего состояния.
-- **`_prove_current`** — доказательство текущих байтов по каждой цели: RESTORED / NOOP == `expected_restore`, неприменённая == `preserved`. Дрейф → `DRIFTED / POST_RECEIPT_DRIFT`, исторический receipt сохраняется, перезаписи нет.
-- **Финальная граница** — `_finalize` вызывает `_prove_current` до VERIFIED / SUCCESS / снятия claims, под удерживаемыми блокировками. Это единственный путь к VERIFIED.
-- **Resume** при собственных эффектах сначала доказывает текущее состояние всех целей, а не доверяет статусам: дрейф → никаких новых записей.
-- **`result`** дополнен: `historically_restored`, `drifted_after_receipt`, `final_verification`; `restored` = подтверждено сейчас.
-- **Отчёт** разделяет «исторически откатано» и «сейчас полностью проверено»; совет требует reconciliation; claims при неуспехе не снимаются.
+**Blocker repair #2:** NOOP-цель входила в финальное доказательство, но rollback не держал на ней ни target lock, ни RC-3 claim. Чужая RC-3 операция могла получить AUTHORIZED и записать эту цель между финальной проверкой и VERIFIED. Воспроизведено: на commit 153 тест F даёт `ACQUIRED, AUTHORIZED` + `VERIFIED`.
 
-**Файлы repair:** `web_alarm/rollback_service.py` (+89 / −13), `web_alarm/rollback_store.py` (+4 / −2: DRIFTED может хранить исторический receipt), `test_web_alarm_rollback.py` (+5 тестов A–E). Остальные модули не менялись.
+**Что сделано (`web_alarm/rollback_service.py`):**
+- Физическое действие отделено от владения ради проверки. Lock'и всех целей берутся по `target_hash`, RC-3 claims — all-or-nothing на все цели, включая NOOP (NOOP по-прежнему не пишется). Используется тот же слой RC-3, без отдельного bypass-lock.
+- Claim исходной операции на NOOP-цели перехватывается (`SUPERSEDED_BY_ROLLBACK`); второго владельца нет.
+- `_prove_current` доказывает и байты, и владение. `_finalize` сначала записывает VERIFIED и только потом снимает claims (всё под lock'ами всех целей). Прерванное снятие идемпотентно доделывают `apply` / `close`.
+- Adversarial pass, исправлено внутри scope:
+  - сессию, заблокированную после собственных восстановлений, теперь можно закрыть (раньше её claims оставались навсегда);
+  - цель в полёте доказывается по байтам до того, как требуется restore point;
+  - совет NEXT SAFE ACTION для такой сессии.
+
+**Файлы:**
+- `web_alarm/rollback_service.py` (+103 / −48);
+- `test_web_alarm_rollback.py` (+267 / −1: класс `FullTargetOwnershipRepairTests`, 11 тестов);
+- `test_web_alarm_rollback_concurrency.py` (+86 / −8: тест K в реальных процессах).
+
+Формат записей, `rollback_store.py`, RC-3, Resolver, server и report не менялись.
 
 **Тесты:**
-- A–E — 5/5 (до правки: 4 FAIL + 1 ERROR на commit 152);
-- `test_web_alarm_rollback.py` — 30/30; concurrency — 5/5;
-- RC-3 focused — 20/20; RC-2 focused — 41/41;
-- полный Web Alarm — **317/317 OK** (skip 1);
+- F–K и дополнительные — все падали на commit 153, теперь OK;
+- `test_web_alarm_rollback.py` — 41/41; concurrency — 2/2; RC-3 focused — 20/20; RC-2 focused — 41/41;
+- полный Web Alarm — **329/329 OK** (skip 1);
 - compileall и `git diff --check` OK;
-- живое storage (read-only) не изменилось.
+- живое storage (read-only) не изменилось: 136 файлов, rollback-сессий и claim-файлов нет.
 
-**Ограничения (не blocker):** preserved-state 1 МиБ — fail-closed политика; старый CLI `snapshot restore` — follow-up WA4-R; lifecycle и проекция — RC-5.
+**FINDING / PROPOSAL (вне scope, код не менял):**
+- P1: в Recovery Report поля `restored` / `noop` сессии исторические (на момент финализации) — предложено маркировать их `as_of` в проекции RC-5.
+- P2: NOOP-цели теперь заблокированы на всё время `apply`; RC-3 writer ждёт до `lock_timeout` — учесть в WA4-E.
 
-**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md` (§18 — Independent Review Repair); safety copies — `safety_copies/` и `safety_copies/repair/`, хеши — `baseline.md`.
+**Совместимость:** сессии 152/153, прерванные посреди `apply`, вслепую не продолжаются (`CLAIM_LOST` или `PARTIAL`, 0 записей, `close` работает). В живом storage таких сессий нет.
+
+**Ограничения (не blocker):** preserved-state 1 МиБ — fail-closed политика; старый CLI `snapshot restore` — follow-up WA4-R.
+
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md` (§19 — repair #2, §18 — repair #1); safety copies — `safety_copies/repair2/`, хеши — `baseline.md`.
 
 ## Правило круговорота
 

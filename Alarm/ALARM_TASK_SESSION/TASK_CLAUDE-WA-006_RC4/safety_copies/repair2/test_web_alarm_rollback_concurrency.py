@@ -21,8 +21,6 @@ from web_alarm.operation_store import OperationStore
 from web_alarm.reconciliation_service import ReconciliationService
 from web_alarm.resolver_service import ResolverService
 from web_alarm.rollback_service import RollbackService
-from web_alarm.target_claim_store import physical_target_key
-from web_alarm.target_identity import canonical_target
 from web_alarm.task_store import TaskStore
 from web_alarm.workspace_registry import WorkspaceRegistry
 
@@ -55,48 +53,8 @@ print(json.dumps({"mode": mode, "result": outcome["result"]}))
 """
 
 
-NOOP_CHILD = r"""
-import json, random, sys, time
-from pathlib import Path
-import web_alarm.rollback_service as rs
-from web_alarm.target_claim_service import TargetClaimService
-storage, barrier, name, mode, task_id, ident, jitter, project = sys.argv[1:9]
-if mode == "rollback":
-    real = rs.RollbackService._prove_current
-    def widened(self, record, root):  # test-only: hold the final-proof -> VERIFIED window open
-        result = real(self, record, root)
-        time.sleep(0.25)
-        return result
-    rs.RollbackService._prove_current = widened
-    service = rs.RollbackService(storage, lock_timeout=60)
-else:
-    service = TargetClaimService(storage, lock_timeout=60)
-Path(barrier, f"ready_{name}").touch()
-deadline = time.monotonic() + 60
-while not Path(barrier, "go").exists():
-    if time.monotonic() > deadline:
-        raise SystemExit("barrier timeout")
-    time.sleep(0.0005)
-if mode == "rollback":
-    outcome = service.apply(task_id, ident)
-    print(json.dumps({"mode": mode, "result": outcome["result"], "authorized": False}))
-else:
-    if jitter == "1":
-        time.sleep(random.uniform(0, 0.6))
-    acquired = service.acquire(task_id, ident, operation_revision=1)
-    authorized = False
-    if acquired["result"] == "ACQUIRED":
-        with service.mutation_boundary(task_id, ident, operation_revision=1) as gate:
-            authorized = gate["mutation_authority"]
-            if authorized:
-                Path(project, "keep.txt").write_bytes(("foreign " + name + "\n").encode())
-    print(json.dumps({"mode": mode, "result": acquired["result"], "authorized": authorized}))
-"""
-
-
 class RollbackRaceTests(unittest.TestCase):
-    def round(self, root: Path, jitter: bool, *, contested: str = "target.txt",
-              child: str = CHILD) -> tuple[list[dict], dict, bytes, Counter]:
+    def round(self, root: Path, jitter: bool) -> tuple[list[dict], dict, bytes, Counter]:
         storage, project = root / "state", root / "project"
         project.mkdir()
         (project / "target.txt").write_bytes(BEFORE)
@@ -117,16 +75,16 @@ class RollbackRaceTests(unittest.TestCase):
             evidence_fingerprint=decision["evidence_fingerprint"], operation_revision=2)["resolution"]
         rollback_id = RollbackService(storage).prepare(
             "task_rb", "m1", "op_1", resolution.resolution_id)["rollback"]["rollback_id"]
-        for i in range(CLAIMERS):  # foreign operations whose CAS basis is the contested target's current state
-            ops.begin(f"task_c{i}", "m1", "write", contested, operation_id="op_c", payload=b"x\n")
+        for i in range(CLAIMERS):  # foreign operations whose CAS basis is the current AFTER state
+            ops.begin(f"task_c{i}", "m1", "write", "target.txt", operation_id="op_c", payload=b"x\n")
 
         barrier = root / "barrier"
         barrier.mkdir()
         jobs = [(f"rb{i}", "rollback", "task_rb", rollback_id) for i in range(APPLIERS)]
         jobs += [(f"c{i}", "claim", f"task_c{i}", "op_c") for i in range(CLAIMERS)]
         processes = [
-            subprocess.Popen([sys.executable, "-B", "-c", child, str(storage), str(barrier), *job,
-                              "1" if jitter else "0", str(project)],
+            subprocess.Popen([sys.executable, "-B", "-c", CHILD, str(storage), str(barrier), *job,
+                              "1" if jitter else "0"],
                              cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             for job in jobs
         ]
@@ -146,17 +104,15 @@ class RollbackRaceTests(unittest.TestCase):
             for process in processes:
                 if process.poll() is None:
                     process.kill()
-        service = RollbackService(storage)
-        record = service.inspect("task_rb", rollback_id)
+        record = RollbackService(storage).inspect("task_rb", rollback_id)
         events = Counter(e.event_type for e in EventCheckpointStore(storage).read_events("task_rb"))
-        contested_claims = service.claims.load(physical_target_key(canonical_target(project, contested).path))
-        return results, record, (project / "target.txt").read_bytes(), events, contested_claims
+        return results, record, (project / "target.txt").read_bytes(), events
 
     def test_rollback_and_normal_owner_never_both_win(self):
         outcomes = Counter()
         for index in range(ROUNDS):  # even rounds: maximum contention; odd: jittered order
             with tempfile.TemporaryDirectory() as tmp:
-                results, record, final, events, _ = self.round(Path(tmp), jitter=bool(index % 2))
+                results, record, final, events = self.round(Path(tmp), jitter=bool(index % 2))
             acquired = sum(1 for r in results if r["mode"] == "claim" and r["result"] == "ACQUIRED")
             restored = events["ROLLBACK_TARGET_RESTORED"]
             self.assertLessEqual(restored, 1)  # never a second destructive write
@@ -167,40 +123,6 @@ class RollbackRaceTests(unittest.TestCase):
                 outcomes["owner_won"] += 1
                 self.assertEqual(record["status"], "PRESERVED")
                 self.assertEqual((acquired, restored, final), (1, 0, AFTER))
-        self.assertEqual(sum(outcomes.values()), ROUNDS)
-
-    def test_noop_target_is_never_authorized_to_a_normal_owner_inside_the_rollback(self):  # TEST K
-        """keep.txt is a NOOP target of the rollback: never written by it, but part of
-        its final proof. A normal RC-3 owner may win it before the rollback (rollback
-        blocked, nothing restored) or after VERIFIED is persistent — never in between."""
-        outcomes = Counter()
-        for index in range(ROUNDS):
-            with tempfile.TemporaryDirectory() as tmp:
-                results, record, final, events, keep = self.round(
-                    Path(tmp), jitter=bool(index % 2), contested="keep.txt", child=NOOP_CHILD)
-            authorized = [r for r in results if r["mode"] == "claim" and r["authorized"]]
-            foreign = [claim for claim in keep["history"] + [keep["active"]] if claim and claim.get("owner") is None]
-            grants = [(claim, item) for claim in foreign for item in claim["authorizations"]
-                      if item["result"] == "AUTHORIZED"]
-            self.assertLessEqual(len(authorized), 1)
-            self.assertLessEqual(events["ROLLBACK_TARGET_RESTORED"], 1)
-            if record["status"] == "VERIFIED":
-                outcomes["rollback_won_window"] += 1
-                noop = next(t for t in record["targets"] if t["source_path"] == "keep.txt")
-                owned = {claim["claim_id"]: claim for claim in keep["history"]}.get(noop["claim_id"])
-                self.assertIsNotNone(owned, "rollback must own its NOOP target")
-                self.assertEqual((owned["owner"]["rollback_id"], owned["status"]),
-                                 (record["rollback_id"], "RELEASED"))
-                self.assertEqual(final, BEFORE)
-                for claim, grant in grants:  # only after the rollback let go, never inside its window
-                    self.assertGreater(claim["generation"], owned["generation"])
-                    self.assertGreaterEqual(grant["at"], record["result"]["at"])
-            else:
-                outcomes["owner_won_first"] += 1
-                self.assertEqual(record["status"], "PRESERVED")
-                self.assertIn(record["last_attempt"]["code"], ("TARGET_CONFLICT", "STATE_DRIFT"))
-                self.assertEqual((events["ROLLBACK_TARGET_RESTORED"], final), (0, AFTER))
-                self.assertEqual(len(authorized), 1)
         self.assertEqual(sum(outcomes.values()), ROUNDS)
 
 

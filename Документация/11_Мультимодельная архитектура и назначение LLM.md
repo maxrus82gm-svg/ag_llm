@@ -300,6 +300,12 @@ MODEL ASSIGNMENT отвечает на вопрос:
 
 и другие.
 
+### FUTURE — назначение моделей на этапы длительной программы
+
+В будущей многоэтапной orchestration-модели одна родительская TASK/Program может состоять из переменного числа persistent stages (например 10 или 20), а MODEL ASSIGNMENT может работать на уровне отдельного этапа. Это позволит одному stage назначить ChatGPT/основной Executor, другому — Claude/Opus, Codex или специализированную модель, не превращая ни одну LLM в владельца общего lifecycle.
+
+Канонические требования к самой Program/Stage persistence, verification gates, resume и UI масштабирования принадлежат архитектуре Web Alarm (`23_Архитектура Web Alarm Workspace.md`). Этот документ владеет только **выбором исполнителя/модели для stage**. Coordinator в будущем может рекомендовать/назначать исполнителя и replan remaining stages в пределах принятой policy, но Server остаётся authority по state, scopes, ownership, activation и verification.
+
 ---
 
 # 7. MAIN CHAT MODEL

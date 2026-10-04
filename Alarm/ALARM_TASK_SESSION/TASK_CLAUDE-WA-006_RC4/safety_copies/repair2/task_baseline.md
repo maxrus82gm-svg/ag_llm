@@ -24,17 +24,3 @@ HEAD: `42ce55083d0dcf0eb700c6eec0fa2ce463a3e6cd` (commit 152). Копии сня
 | `web_alarm/rollback_service.py` | `safety_copies/repair/web_alarm_rollback_service.py` | 42758 | `1e9db0055d5c5f689b924a1b4f935720732560da443dad9b8e2f531d8e173e04` |
 | `web_alarm/rollback_store.py` | `safety_copies/repair/web_alarm_rollback_store.py` | 13760 | `c82dd31978ae5952ee65ccaa5a789da5da55d60e67ceeef84fc8ab6403506c6c` |
 | `test_web_alarm_rollback.py` | `safety_copies/repair/test_web_alarm_rollback.py` | 29252 | `87433f08a7fd52b50aa03f3bf11f33bec6ce52f67259b17225c2d76d1e77d0b2` |
-
-## Independent Review Repair #2 — baseline
-
-HEAD: `626716436044e649fc7a311400ca42dbfeb2a98a` (commit 153). Код `web_alarm/` и тесты совпадают с HEAD; полный Web Alarm на HEAD — 317/317 OK (skip 1). Dirty tree до старта: `.obsidian/workspace.json` (Obsidian), `000_Задачи Claude.md` / `000_Задачи для агента.md` / `07` / `18` (правки пользователя и ChatGPT: правило самостоятельности + постановка repair #2), неотслеживаемый `CLAUDE_HANDOFF_Web04.md`.
-
-| Файл | Копия | Размер | SHA-256 |
-| --- | --- | --- | --- |
-| `web_alarm/rollback_service.py` | `safety_copies/repair2/web_alarm_rollback_service.py` | 46804 | `eada39897aa6eee9da1ccd185608b8bcc692cb3a300bc79f1d3f8f8bc029b8bc` |
-| `web_alarm/rollback_store.py` | `safety_copies/repair2/web_alarm_rollback_store.py` | 13940 | `103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72` |
-| `test_web_alarm_rollback.py` | `safety_copies/repair2/test_web_alarm_rollback.py` | 36602 | `370818f66ae0198aaf296c140bf908a20556b62070aed18b95aff1273eac812c` |
-| `test_web_alarm_rollback_concurrency.py` | `safety_copies/repair2/test_web_alarm_rollback_concurrency.py` | 6215 | `ccd386772392a484e537edaf2a779418b3b9e0e322223ad419cf4823e44c9482` |
-| `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md` | `safety_copies/repair2/task_rc4_report.md` | 40429 | `8f225693aa0ecbe6f9f1cff98372fb20f27fb631a6062a8932dd644a3e261f1b` |
-| `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/baseline.md` | `safety_copies/repair2/task_baseline.md` | 2738 | `9a1c8bb820434f7eba25c970addcce98cc7239d233e49cd2e048a9101fe9938a` |
-| `Документация/000_Задачи Claude.md` | `safety_copies/repair2/Документация_000_Задачи Claude.md` | 65955 | `5c178a5d0355b3077a8ee9496dfea033284e530a249920a7cf4213b588949a58` |
