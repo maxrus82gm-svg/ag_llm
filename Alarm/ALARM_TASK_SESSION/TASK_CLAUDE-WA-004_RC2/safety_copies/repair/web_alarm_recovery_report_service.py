@@ -112,7 +112,6 @@ class RecoveryReportService:
             actually_rolled_back=facts["actually_rolled_back"],
             untouched_or_unresolved=untouched_or_unresolved,
             resolver_actions=facts["resolver_actions"],
-            resolver_next_safe_action=facts["next_safe_action"],
             fresh_process_reopen_result=fresh_process_reopen_result,
             report_id=report_id,
         )

@@ -370,17 +370,16 @@ class ResolverService:
     ) -> dict[str, Any]:
         """Recovery action facts derived only from persisted resolutions.
 
-        ``resolver_actions`` lists every persisted outcome (ACCEPTED / STALE /
-        REJECTED). Authority stays fail-closed: only an accepted resolution has
-        it (an accepted ABORT keeps it even when its basis aged), and a fresh
-        accepted ADOPT is the only source of ``accepted_as_already_done``.
-        RC-2 never executes a retry or rollback, so those facts stay empty.
+        A fresh accepted ADOPT is the only source of ``accepted_as_already_done``.
+        RC-2 never executes a retry or rollback, so those facts stay empty; the
+        re-arm/request is visible in ``resolver_actions`` instead.
         """
         try:
             resolutions = [
                 item
                 for item in self.store.list(task_id, operation_id=operation_id)
                 if item.microtask_id == microtask_id
+                and item.result is ResolutionResult.ACCEPTED
             ]
         except ResolutionStoreError as exc:
             raise ResolverError(str(exc)) from exc
@@ -405,10 +404,7 @@ class ResolverService:
                 )
             )
             fresh = change is None
-            authority = item.result is ResolutionResult.ACCEPTED and (
-                fresh or item.action is ResolutionAction.ABORT
-            )
-            if authority and fresh and item.action is ResolutionAction.ADOPT:
+            if fresh and item.action is ResolutionAction.ADOPT:
                 accepted.extend(
                     path for path in item.basis["affected_targets"] if path not in accepted
                 )
@@ -417,14 +413,11 @@ class ResolverService:
                     "resolution_id": item.resolution_id,
                     "action": item.action.value,
                     "result": item.result.value,
-                    "result_code": item.result_code,
                     "effect": item.effect,
-                    "authority": authority,
                     "fresh": fresh,
                     "freshness_code": change or "BASIS_UNCHANGED",
                     "evidence_fingerprint": item.basis["evidence_fingerprint"],
                     "operation_revision": item.basis["operation_revision"],
-                    "created_at": item.created_at,
                     "physical_mutation_performed": False,
                 }
             )
@@ -433,61 +426,4 @@ class ResolverService:
             "actually_retried": [],
             "actually_rolled_back": [],
             "resolver_actions": actions,
-            "next_safe_action": self._authoritative_next_action(resolutions, actions),
-        }
-
-    @staticmethod
-    def _authoritative_next_action(
-        resolutions: list[ResolutionRecord],
-        actions: list[dict[str, Any]],
-    ) -> dict[str, str] | None:
-        """NEXT SAFE ACTION implied by persisted Resolver state, or None.
-
-        Precedence: accepted ABORT (recovery closed) > latest fresh accepted
-        resolution (its persisted semantics) > latest outcome: a fresh rejection
-        keeps its persisted advice, anything stale demands a new reconciliation.
-        Without resolutions the deterministic reconciliation advice stays.
-        """
-        pairs = list(zip(resolutions, actions))
-        if not pairs:
-            return None
-        chosen = next(
-            (
-                record
-                for record, _ in pairs
-                if record.action is ResolutionAction.ABORT
-                and record.result is ResolutionResult.ACCEPTED
-            ),
-            None,
-        )
-        if chosen is None:
-            accepted = [
-                record
-                for record, action in pairs
-                if record.result is ResolutionResult.ACCEPTED and action["fresh"]
-            ]
-            if accepted:
-                chosen = accepted[-1]
-        if chosen is None:
-            record, action = pairs[-1]
-            if record.result is ResolutionResult.REJECTED and action["fresh"]:
-                chosen = record
-            else:
-                code = (
-                    record.result_code
-                    if record.result is ResolutionResult.STALE
-                    else action["freshness_code"]
-                )
-                return {
-                    "resolution_id": record.resolution_id,
-                    "next_safe_action": (
-                        f"resolution {record.resolution_id} ({record.action.value} / "
-                        f"{record.result.value}) is not authority: its basis is stale "
-                        f"({code}); run a new reconciliation and resolve on its fresh "
-                        "evidence_fingerprint and operation_revision"
-                    ),
-                }
-        return {
-            "resolution_id": chosen.resolution_id,
-            "next_safe_action": chosen.next_safe_action,
         }

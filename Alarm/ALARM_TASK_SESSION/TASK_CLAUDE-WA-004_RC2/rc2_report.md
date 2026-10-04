@@ -2,7 +2,7 @@
 
 **Исполнитель:** Claude Opus 5.5, Claude Code (desktop), локальный доступ.
 **Дата:** 2026-10-04.
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION (повторно, после Independent Review Repair — см. §9).
 **ARCH CLASS:** Web Alarm Workspace runtime (WEB-02). **PRIMARY PROFILE:** `23`; acceptance — `24`.
 **База:** HEAD `9596187` (RC-1 закоммичен; дрейфа кода после RC-1 нет: рабочее дерево `web_alarm/` и тестов перед стартом чистое, размеры модулей RC-1 совпадают с коммитом).
 **Не менялись:** публичный `OperationStatus` и `models.py`, lifecycle TASK/microtask, `reconciliation.py`, decision engine, `operation_contract.py`, UI, `.gitattributes`, переводы строк. Commit / push не выполнялись. Физических мутаций проекта Resolver не выполняет.
@@ -168,3 +168,80 @@
 - принять или оспорить решения §3.1 и §3.5.
 
 RC-3 до этого не начинать.
+
+---
+
+## 9. INDEPENDENT REVIEW REPAIR (2026-10-04)
+
+**Вход.** Независимая проверка ChatGPT по commit 147 `fe55c99`: RC-2 = REVIEW FAILED / REPAIR REQUIRED. Основная реализация Resolver подтверждена: 19/19, 260/260, гонка 5/5, все свойства stale / replay / no-mutation и др. Найдены **два blocker-а acceptance**. Repair минимальный, только в слое Resolver / Recovery Report. Дрейф перед repair: код в рабочем дереве совпадает с commit 147. Safety copies — `safety_copies/repair/`, хеши — `baseline.md`.
+
+### Blocker 1 — NEXT SAFE ACTION отчёта игнорировал persistent Resolver
+
+- **Воспроизведено** до правки тестом (TEST A). После accepted ABORT на `RETRY_SAFE` отчёт выдавал `retry only through the replay-safe execution path…`, хотя резолюция говорит «recovery closed».
+- **Причина.** `RecoveryReportBuilder` брал `next_safe_action` только из advisory `ReconciliationDecision`.
+- **Исправление.** `ResolverService.report_facts()` теперь возвращает authoritative `next_safe_action` из persistent-резолюций, а builder ставит его выше решения reconciliation. Приоритет:
+  1. **accepted ABORT** — всегда, даже при постаревшем basis, потому что ABORT окончателен. NEXT SAFE ACTION = сохранённый текст ABORT («recovery … is closed»);
+  2. **последняя fresh accepted** резолюция — её сохранённая семантика:
+     - RETRY: re-armed, nothing was executed;
+     - ROLLBACK: request only, nothing was restored;
+     - ADOPT: existing state accepted;
+  3. иначе **последний исход**:
+     - fresh REJECTED — его сохранённый совет. При несоответствии действия и решения это совет того же решения; при legacy, неполном контракте или повреждённом payload — manual review, а не RETRY;
+     - любой stale (STALE-результат или постаревший basis) — «resolution … is not authority: its basis is stale (…); run a new reconciliation and resolve on its fresh evidence_fingerprint and operation_revision»;
+  4. **резолюций нет** — прежнее поведение, совет reconciliation.
+- **Аудит источника.** В `evidence_identity` отчёта добавляются `next_safe_action_source="resolver"` и `next_safe_action_resolution_id` — только когда совет пришёл от Resolver. Отчёты без резолюций не меняются.
+
+### Blocker 2 — STALE / REJECTED исходы не попадали в отчёт
+
+- **Воспроизведено** до правки тестом (TEST B). В хранилище 1 STALE-резолюция, а `resolver_actions = []`.
+- **Причина.** `report_facts()` фильтровал записи по `result == ACCEPTED`.
+- **Исправление.** `resolver_actions` содержит **все** persistent-исходы операции (ACCEPTED / STALE / REJECTED) в порядке создания. Поля:
+  - `resolution_id`, `action`, `result`, `result_code`, `effect`;
+  - `authority`, `fresh`, `freshness_code`;
+  - `evidence_fingerprint`, `operation_revision`, `created_at`;
+  - `physical_mutation_performed=false`.
+- **Authority по-прежнему fail-closed:**
+  - `authority = ACCEPTED and (fresh or ABORT)`;
+  - `accepted_as_already_done` берётся только из FRESH + ACCEPTED + ADOPT;
+  - `actually_retried` и `actually_rolled_back` всегда `[]`;
+  - STALE и REJECTED authority не дают.
+
+### Изменения repair
+
+- `web_alarm/resolver_service.py`: `report_facts` и новый `_authoritative_next_action`;
+- `web_alarm/recovery_report_builder.py`: параметр `resolver_next_safe_action`; ключи источника в `evidence_identity`;
+- `web_alarm/recovery_report_service.py`: +1 строка;
+- `test_web_alarm_resolver.py`: 6 новых тестов, NEXT SAFE ACTION в выводе свежего процесса, 2 дополнительные проверки в существующих тестах отчёта.
+
+Итого +211 / −7 строк. **Не менялись:** `models.py` и `OperationStatus` (`INTENT, STARTED, DONE, VERIFIED, FAILED, UNKNOWN_AFTER_DISCONNECT` — как до RC-2), `resolution_store.py`, `server.py`, `REPORT_VERSION`, lifecycle, UI, `.gitattributes`.
+
+### Новые тесты
+
+| Тест | Что доказывает |
+| --- | --- |
+| `test_accepted_abort_drives_report_next_safe_action` (**TEST A**) | `RETRY_SAFE` → accepted ABORT → отчёт **в свежем процессе**: ABORT persistent и fresh, в `resolver_actions` с `authority=true`, NEXT SAFE ACTION равен сохранённому тексту ABORT и не равен совету RETRY, источник `resolver`, хеши проекта не изменились |
+| `test_stale_outcome_survives_report_and_fresh_process` (**TEST B**) | basis → изменение Workspace → STALE / `EVIDENCE_FINGERPRINT_CHANGED` → отчёт в свежем процессе: запись есть, `result` / `result_code` сохранены, `authority=false`, `effect=null`, все `actually_*` пустые, NEXT SAFE ACTION требует новой reconciliation |
+| `test_rejected_outcomes_are_reported_without_authority` | REJECTED / `ACTION_DECISION_MISMATCH` в отчёте без authority; совет остаётся детерминированным |
+| `test_rejected_rearm_is_not_recommended_as_retry` | RETRY отклонён (`CONTRACT_INSUFFICIENT`) → отчёт не советует RETRY |
+| `test_report_next_action_follows_fresh_accepted_semantics` | RETRY → совет «re-armed, nothing was executed»; затем ADOPT → совет ADOPT; устаревший RETRY без authority |
+| `test_report_without_resolutions_keeps_decision_next_action` | без резолюций поведение прежнее, источник не добавляется |
+
+### Verification repair
+
+| № | Проверка | Результат |
+| --- | --- | --- |
+| 1 | Новые тесты на оба blocker-а: до правки воспроизводили дефект (4 FAIL + 3 ERROR), после — PASS | PASS |
+| 2 | Весь `test_web_alarm_resolver.py` | 24/24 OK |
+| 3 | `test_web_alarm_resolver_concurrency.py` | 5/5 прогонов OK |
+| 4 | Полный `python -B -m unittest test_web_alarm_*.py` | **266/266 OK** (skip 1), 29,8 с |
+| 5 | `python -B -m compileall -q web_alarm` | OK |
+| 6 | `git diff --check` | OK; изменённые файлы `i/lf w/lf` |
+| 7 | Нет физической мутации Workspace | хеши проекта до и после apply / отчёта совпадают (TEST A и тесты действий); живое storage WEB-02 (read-only, свежий процесс): дерево `88fc4f99…4149`, 136 файлов — без изменений |
+| 8 | Fresh-process reopen | TEST A / TEST B создают отчёт и читают резолюции в отдельном процессе |
+| 9 | `OperationStatus` / `models.py` не расширены | `git diff` пуст и относительно HEAD, и относительно `9596187` (до RC-2) |
+
+### Оставшийся разрыв вне repair-scope (PROPOSAL, на решение)
+
+Context Pack / Remote entry при нужной reconciliation по-прежнему берут `NEXT_SAFE_ACTION` из advisory-решения (`context_pack.py:166`). Блок `LATEST_RECOVERY_REPORT` уже несёт совет Resolver, но верхнее поле — нет. Это projection / resume (RC-5 / RC-6), а repair-задача ограничила работу слоем Resolver / Recovery Report, поэтому не трогал. Исправление готово к переиспользованию: `ResolverService.report_facts(...)["next_safe_action"]` можно наложить в Context Pack так же, как в отчёте (~5 строк). Нужно решение: сделать сейчас в RC-2 или в RC-5.
+
+**NEXT SAFE ACTION:** повторная независимая проверка RC-2. RC-3 не начинать.

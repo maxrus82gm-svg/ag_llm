@@ -141,7 +141,6 @@ class RecoveryReportBuilder:
         actually_rolled_back: Iterable[str] = (),
         untouched_or_unresolved: Iterable[str] = (),
         resolver_actions: Iterable[Mapping[str, Any]] = (),
-        resolver_next_safe_action: Mapping[str, Any] | None = None,
         next_safe_action: str | None = None,
         fresh_process_reopen_result: str | None = None,
         report_id: str | None = None,
@@ -153,25 +152,19 @@ class RecoveryReportBuilder:
             )
 
         fingerprint = ReconciliationDecisionEngine.evidence_fingerprint(evidence)
-        authoritative_next: str | None = None
         if decision is not None:
             if not isinstance(decision, ReconciliationDecision):
                 raise RecoveryReportBuilderError(
                     "decision must be ReconciliationDecision or None"
                 )
             fingerprint = self._validate_decision(evidence, decision)
-            authoritative_next = decision.next_safe_action
-        if resolver_next_safe_action is not None:
-            # RC-2: persisted Resolver outcome outranks advisory reconciliation.
-            authoritative_next = resolver_next_safe_action["next_safe_action"]
-        if authoritative_next is not None:
             if next_safe_action is not None and (
-                next_safe_action.strip() != authoritative_next
+                next_safe_action.strip() != decision.next_safe_action
             ):
                 raise RecoveryReportBuilderError(
                     "next_safe_action conflicts with authoritative decision"
                 )
-            resolved_next_safe_action = authoritative_next
+            resolved_next_safe_action = decision.next_safe_action
         else:
             if not isinstance(next_safe_action, str) or not next_safe_action.strip():
                 raise RecoveryReportBuilderError(
@@ -188,15 +181,6 @@ class RecoveryReportBuilder:
                 {
                     "decision_version": decision.decision_version,
                     "reason_code": decision.reason_code,
-                }
-            )
-        if resolver_next_safe_action is not None:
-            evidence_identity.update(
-                {
-                    "next_safe_action_source": "resolver",
-                    "next_safe_action_resolution_id": resolver_next_safe_action[
-                        "resolution_id"
-                    ],
                 }
             )
 

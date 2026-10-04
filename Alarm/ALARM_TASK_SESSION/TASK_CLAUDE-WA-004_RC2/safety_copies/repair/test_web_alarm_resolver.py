@@ -40,8 +40,6 @@ print(json.dumps({
     "resolutions": [item.to_dict() for item in items],
     "freshness": [resolver.freshness(item) for item in items],
     "report": {
-        "next_safe_action": report.next_safe_action,
-        "evidence_identity": report.evidence_identity,
         "accepted_as_already_done": report.accepted_as_already_done,
         "actually_retried": report.actually_retried,
         "actually_rolled_back": report.actually_rolled_back,
@@ -427,7 +425,6 @@ class ResolverRecoveryReportTests(ResolverFixture):
 
         self.assertEqual(report.actually_rolled_back, [])
         self.assertEqual(report.resolver_actions[0]["effect"], "ROLLBACK_REQUESTED")
-        self.assertIn("nothing was restored", report.next_safe_action)
 
     def test_stale_adopt_is_not_authority(self):
         self.prepare()
@@ -440,127 +437,7 @@ class ResolverRecoveryReportTests(ResolverFixture):
 
         self.assertEqual(report.accepted_as_already_done, [])
         self.assertFalse(report.resolver_actions[0]["fresh"])
-        self.assertFalse(report.resolver_actions[0]["authority"])
         self.assertEqual(report.resolver_actions[0]["freshness_code"], "EVIDENCE_FINGERPRINT_CHANGED")
-        self.assertIn("run a new reconciliation", report.next_safe_action)
-
-    # --- Independent Review Repair (RC-2 blockers 1 and 2) -------------------
-
-    def test_accepted_abort_drives_report_next_safe_action(self):
-        """TEST A: after accepted ABORT the report must not recommend RETRY."""
-        self.prepare()
-        self.begin()
-        decision, _ = self.basis()
-        self.assertEqual(decision["decision"], "RETRY_SAFE")
-        digest = self.project_digest()
-        aborted = self.apply("ABORT")["resolution"]
-
-        fresh = self.fresh()
-        report = fresh["report"]
-
-        self.assertTrue(fresh["freshness"][0]["fresh"])
-        self.assertEqual(fresh["resolutions"], [aborted.to_dict()])
-        self.assertEqual(report["next_safe_action"], aborted.next_safe_action)
-        self.assertNotEqual(report["next_safe_action"], decision["next_safe_action"])
-        self.assertNotIn("retry only through", report["next_safe_action"])
-        self.assertIn("is closed", report["next_safe_action"])
-        self.assertEqual(report["evidence_identity"]["next_safe_action_source"], "resolver")
-        self.assertEqual(
-            report["evidence_identity"]["next_safe_action_resolution_id"], aborted.resolution_id
-        )
-        action = report["resolver_actions"][0]
-        self.assertEqual(
-            (action["action"], action["result"], action["effect"], action["authority"]),
-            ("ABORT", "ACCEPTED", "RECOVERY_ABORTED", True),
-        )
-        self.assertEqual(report["accepted_as_already_done"], [])
-        self.assertEqual(report["actually_retried"], [])
-        self.assertEqual(self.project_digest(), digest)
-
-    def test_stale_outcome_survives_report_and_fresh_process(self):
-        """TEST B: a persisted STALE result is reported, without authority."""
-        self.prepare()
-        self.begin()
-        old = self.basis()
-        self.target.write_bytes(b"changed by someone\n")
-        stale = self.apply("RETRY", basis=old)["resolution"]
-        self.assertEqual(stale.result.value, "STALE")
-
-        fresh = self.fresh()
-        report = fresh["report"]
-
-        self.assertEqual(fresh["resolutions"], [stale.to_dict()])
-        self.assertEqual(len(report["resolver_actions"]), 1)
-        action = report["resolver_actions"][0]
-        self.assertEqual(action["resolution_id"], stale.resolution_id)
-        self.assertEqual(action["result"], "STALE")
-        self.assertEqual(action["result_code"], "EVIDENCE_FINGERPRINT_CHANGED")
-        self.assertIsNone(action["effect"])
-        self.assertFalse(action["authority"])
-        self.assertFalse(action["physical_mutation_performed"])
-        self.assertEqual(report["accepted_as_already_done"], [])
-        self.assertEqual(report["actually_retried"], [])
-        self.assertEqual(report["actually_rolled_back"], [])
-        self.assertIn("run a new reconciliation", report["next_safe_action"])
-        self.assertEqual(report["evidence_identity"]["next_safe_action_source"], "resolver")
-        self.assertEqual(self.target.read_bytes(), b"changed by someone\n")
-
-    def test_rejected_outcomes_are_reported_without_authority(self):
-        self.prepare()
-        self.begin()  # RETRY_SAFE
-        decision, _ = self.basis()
-        rejected = self.apply("ADOPT")["resolution"]
-
-        report = self.report()
-
-        action = report.resolver_actions[0]
-        self.assertEqual((action["result"], action["result_code"]), ("REJECTED", "ACTION_DECISION_MISMATCH"))
-        self.assertFalse(action["authority"])
-        self.assertEqual(report.accepted_as_already_done, [])
-        # a fresh rejection of the wrong action leaves the deterministic advice in force
-        self.assertEqual(report.next_safe_action, rejected.next_safe_action)
-        self.assertEqual(report.next_safe_action, decision["next_safe_action"])
-
-    def test_rejected_rearm_is_not_recommended_as_retry(self):
-        self.prepare()
-        self.begin(payload=None, expected_post_state={
-            "exists": True, "size": len(AFTER), "sha256": sha256(AFTER),
-        })
-        decision, _ = self.basis()
-        self.assertEqual(decision["decision"], "RETRY_SAFE")
-        rejected = self.apply("RETRY")["resolution"]
-
-        report = self.report()
-
-        self.assertEqual(report.resolver_actions[0]["result_code"], "CONTRACT_INSUFFICIENT")
-        self.assertEqual(report.next_safe_action, rejected.next_safe_action)
-        self.assertNotEqual(report.next_safe_action, decision["next_safe_action"])
-
-    def test_report_next_action_follows_fresh_accepted_semantics(self):
-        self.prepare()
-        self.begin()
-        retry = self.apply("RETRY")["resolution"]
-        self.assertEqual(self.report().next_safe_action, retry.next_safe_action)
-        self.assertIn("nothing was executed", retry.next_safe_action)
-
-        self.target.write_bytes(AFTER)
-        adopt = self.apply("ADOPT")["resolution"]
-        report = self.report()
-        self.assertEqual(report.next_safe_action, adopt.next_safe_action)
-        self.assertEqual(report.accepted_as_already_done, ["target.txt"])
-        authorities = {a["action"]: a["authority"] for a in report.resolver_actions}
-        self.assertEqual(authorities, {"RETRY": False, "ADOPT": True})
-
-    def test_report_without_resolutions_keeps_decision_next_action(self):
-        self.prepare()
-        self.begin()
-        decision, _ = self.basis()
-
-        report = self.report()
-
-        self.assertEqual(report.resolver_actions, [])
-        self.assertEqual(report.next_safe_action, decision["next_safe_action"])
-        self.assertNotIn("next_safe_action_source", report.evidence_identity)
 
 
 class ResolverServerTests(ResolverFixture):

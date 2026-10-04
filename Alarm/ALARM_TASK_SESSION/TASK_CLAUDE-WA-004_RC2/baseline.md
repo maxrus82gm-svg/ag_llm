@@ -19,3 +19,14 @@ HEAD: `9596187451fbe6fff3b2494c79613bea18ea434d`; рабочее дерево `w
 | --- | --- | --- | --- |
 | `web_alarm/recovery_report_builder.py` | `safety_copies/web_alarm_recovery_report_builder.py` | 9273 | `e429d0e0b5d82f68e8232db3a8edc6e281354ee71232437c1bce500f7ffb8eef` |
 | `web_alarm/operation_store.py` | `safety_copies/web_alarm_operation_store.py` | 26475 | `81b2287e90a21866bf1212590adb6fcbe8f6d95c2f4b8181e523ad05f3e5a3ce` |
+
+## Independent Review Repair — baseline
+
+HEAD: `fe55c99db2c2493f99db807a95ba6bd8a668b4fe` (commit 147). Копии сняты с диска перед repair-правкой; побайтно совпадают с HEAD.
+
+| Файл | Копия | Размер | SHA-256 |
+| --- | --- | --- | --- |
+| `web_alarm/resolver_service.py` | `safety_copies/repair/web_alarm_resolver_service.py` | 17829 | `b4f1a966f27b849e975d2b3e4586d09881f61685d6eab5be062617c7ffd369d8` |
+| `web_alarm/recovery_report_builder.py` | `safety_copies/repair/web_alarm_recovery_report_builder.py` | 9471 | `f8b2d66ca92af20393cede94b6c04e8d504d2788074a2ae08ed3a9c08c07394c` |
+| `web_alarm/recovery_report_service.py` | `safety_copies/repair/web_alarm_recovery_report_service.py` | 5318 | `2ab93002421f8781e3cba287def03203c55092d8e52fa04047e1c0cef1eddb2f` |
+| `test_web_alarm_resolver.py` | `safety_copies/repair/test_web_alarm_resolver.py` | 21517 | `7d5b4dd70721ee6efa0d82ecb882e8690d6d830010ca525a4b1245af70c33f61` |

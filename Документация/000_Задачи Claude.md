@@ -270,7 +270,7 @@ RC-2 считается готовым к независимой проверк�
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
-**Статус постановки:** выполнена Claude 2026-10-04; результат и статус проверки — в БЛОКЕ 3. Ниже — постановка из БЛОКА 1 без изменений (опущены только строки статуса слота и его NEXT SAFE ACTION).
+**Статус постановки:** выполнена Claude 2026-10-04; после независимой проверки (REVIEW FAILED, 2 blocker-а) выполнен Independent Review Repair той же TASK — его постановка дословно ниже исходной. Результат и статус — в БЛОКЕ 3. Исходная постановка из БЛОКА 1 приведена без изменений (опущены только строки статуса слота и его NEXT SAFE ACTION).
 
 **TASK:** CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding.
 **Дата постановки:** 2026-10-04.
@@ -513,46 +513,233 @@ RC-2 считается готовым к независимой проверк�
 - не делать commit/push;
 - RC-3 не начинать.
 
+## Дополнение — Independent Review Repair (постановка из Chat, 2026-10-04, дословно)
+
+```text
+TASK: CLAUDE-WA-004 / RC-2 — INDEPENDENT REVIEW REPAIR
+Статус:
+RC-2 = REVIEW FAILED / REPAIR REQUIRED
+Не DONE.
+RC-3 НЕ начинать.
+Независимая проверка выполнена ChatGPT по последнему коммиту репозитория:
+Commit 147
+fe55c99db2c2493f99db807a95ba6bd8a668b4fe
+Основная реализация Resolver подтверждена и НЕ требует переписывания.
+Независимо PASS:
+
+* focused Resolver: 19/19;
+* full Web Alarm regression: 260/260;
+* multiprocess duplicate apply: дополнительно 5/5 PASS;
+* compileall PASS;
+* git diff --check PASS;
+* stale evidence fail-closed работает;
+* stale operation revision fail-closed работает;
+* RETRY не выполняет physical mutation;
+* ROLLBACK остаётся tracked request only;
+* ADOPT не меняет OperationStatus;
+* legacy RETRY блокируется;
+* payload integrity проверяется;
+* replay resolution идемпотентен;
+* новая глобальная state machine не введена.
+
+Найдены ДВА blocker-а acceptance RC-2.
+Независимо воспроизведено:
+Исходная reconciliation:
+decision = RETRY_SAFE
+После accepted ABORT Resolver persistent хранит:
+RESOLUTION_NEXT:
+Resolver-level recovery of operation op1 is closed;
+no further ADOPT/RETRY/ROLLBACK will be accepted for it
+Но новый Recovery Report на том же persistent state выдаёт:
+REPORT_NEXT:
+retry only through the replay-safe execution path using the same operation_id
+То есть persistent Resolver говорит ABORT / recovery closed,
+а fresh Recovery Report одновременно рекомендует RETRY.
+Это нарушает RC-2 requirement:
+NEXT SAFE ACTION после resolution/reopen должен выводиться
+из persistent authoritative state.
+Причина по review:
+RecoveryReportBuilder всё ещё получает next_safe_action
+из текущего ReconciliationDecision и не учитывает authoritative Resolver outcome.
+ТРЕБУЕТСЯ:
+
+1. После persistent Resolver outcome Recovery Report / reopen должен выводить
+NEXT SAFE ACTION с учётом Resolver state.
+2. Accepted ABORT должен иметь приоритет над advisory reconciliation:
+после accepted ABORT Recovery Report не может рекомендовать
+ADOPT / RETRY / ROLLBACK по той же операции.
+3. Для других accepted resolutions NEXT SAFE ACTION должен отражать
+фактическую persistent Resolver semantics:
+   * RETRY = re-armed request only, ничего не выполнено;
+   * ROLLBACK = tracked rollback request only;
+   * ADOPT = accepted existing state;
+   * ABORT = recovery closed.
+4. Не вводить новую public Operation/Microtask state machine.
+Решение должно оставаться внутри узкого Resolver/Recovery Report layer.
+5. Если resolution stale, он не должен становиться authority.
+В таком случае NEXT SAFE ACTION должен требовать новую reconciliation /
+fresh resolution, а не продолжать старое действие.
+
+Независимо воспроизведено:
+Persistent Resolver записал:
+RESOLUTION_RESULT = STALE
+result_code = EVIDENCE_FINGERPRINT_CHANGED
+Resolution физически присутствует в Resolver store:
+STORE_COUNT = 1
+Но fresh Recovery Report выдаёт:
+resolver_actions = []
+Причина по review:
+ResolverService.report_facts() фильтрует records только по:
+result == ACCEPTED
+В результате persistent STALE / REJECTED resolution/result
+не попадают в Recovery Report вообще.
+Это нарушает requirement RC-2:
+Recovery Report должен строиться/обновляться
+из persistent resolver records/events,
+а fresh process должен получать тот же resolution/result.
+ТРЕБУЕТСЯ:
+
+1. Recovery Report `resolver_actions` должен отражать persistent
+Resolver records всех релевантных результатов:
+   * ACCEPTED;
+   * STALE;
+   * REJECTED.
+2. При этом authority-effects должны остаться fail-closed:
+   * `accepted_as_already_done` только из FRESH + ACCEPTED + ADOPT;
+   * RETRY re-arm НЕ становится `actually_retried`;
+   * ROLLBACK request НЕ становится `actually_rolled_back`;
+   * STALE / REJECTED не дают authority на действие.
+3. Для каждого `resolver_actions` желательно сохранить как минимум:
+   * resolution_id;
+   * action;
+   * result;
+   * result_code;
+   * effect;
+   * freshness/freshness_code;
+   * evidence_fingerprint;
+   * operation_revision;
+   * physical_mutation_performed.
+4. Fresh process должен видеть тот же persistent outcome,
+включая STALE / REJECTED.
+
+Добавить минимум два focused regression test.
+TEST A — ABORT authoritative NEXT SAFE ACTION
+Сценарий:
+
+* operation имеет RETRY_SAFE;
+* создать accepted ABORT;
+* создать Recovery Report новым service/process;
+* доказать:
+   * Resolver ABORT остаётся persistent/fresh;
+   * Recovery Report содержит ABORT в resolver_actions;
+   * Recovery Report NEXT SAFE ACTION НЕ рекомендует RETRY;
+   * NEXT SAFE ACTION соответствует persistent ABORT semantics.
+
+TEST B — STALE outcome survives Recovery Report / fresh process
+Сценарий:
+
+* получить reconciliation basis;
+* изменить Workspace evidence;
+* apply старого resolution → STALE / EVIDENCE_FINGERPRINT_CHANGED;
+* создать Recovery Report новым service/process;
+* доказать:
+   * resolution существует;
+   * resolver_actions содержит этот STALE record;
+   * result/result_code сохранены;
+   * никакой authority-effect не возникает;
+   * NEXT SAFE ACTION требует fresh reconciliation/resolution.
+
+Желательно также проверить REJECTED record аналогично,
+если это не требует существенного расширения scope.
+НЕ делать:
+
+* RC-3 conflict gate;
+* ownership reservation;
+* mutation-boundary CAS;
+* physical rollback;
+* authoritative write/edit/delete executor;
+* новую глобальную Operation/Microtask state machine;
+* UI changes;
+* .gitattributes;
+* line-ending normalization;
+* unrelated refactor;
+* commit / push;
+* RC-3 после repair.
+
+Не переписывать уже работающий Resolver без необходимости.
+Сделать минимальный repair двух обнаруженных acceptance gaps.
+После repair обязательно:
+
+1. новые focused tests на оба blocker-а;
+2. весь `test_web_alarm_resolver.py`;
+3. `test_web_alarm_resolver_concurrency.py`;
+4. полный Web Alarm regression;
+5. `python -B -m compileall -q web_alarm`;
+6. `git diff --check`;
+7. подтвердить отсутствие physical Workspace mutation;
+8. fresh-process reopen;
+9. проверить, что public OperationStatus/models.py не расширены.
+
+После repair статус остаётся только:
+RESULT READY / AWAITING INDEPENDENT VERIFICATION
+DONE / VERIFIED самостоятельно не объявлять.
+БЛОК 1 `000_Задачи Claude.md` НЕ менять и НЕ заменять:
+это всё ещё та же CLAUDE-WA-004 / RC-2.
+После repair обновить:
+
+* БЛОК 2 — если требуется отразить актуальную постановку той же TASK без потери исходного смысла;
+* БЛОК 3 — фактический результат repair и повторных тестов;
+* `rc2_report.md` — добавить раздел Independent Review Repair с найденными blocker-ами, исправлением и verification.
+
+`001`, `06`, `25` не обновлять:
+их синхронизирует ChatGPT после независимого PASS.
+NEXT SAFE ACTION:
+исправить только два blocker-а RC-2,
+повторить verification,
+остановиться и вернуть RESULT READY.
+RC-3 НЕ начинать.
+```
+
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
 
-**TASK:** CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding.
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. DONE не объявлен; commit / push не выполнялись.
+**TASK:** CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding (+ Independent Review Repair).
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04, повторно после repair. DONE не объявлен; commit / push не выполнялись; RC-3 не начат.
 
-**Кратко сделано:**
-- Добавлен узкий persistent Resolver (`resolution_store.py` + `resolver_service.py`).
-- ADOPT / RETRY / ROLLBACK / ABORT — write-once tracked records, привязанные к `evidence_fingerprint` и `operation_revision`.
-- Перед записью Resolver под блокировкой TASK перечитывает операцию, заново собирает evidence (только persistent: контракт / manifest, без post-state от вызывающего) и сверяет basis.
-- Устаревший basis → STALE; несоответствие действия и решения, legacy, неполный контракт, повреждённый payload → REJECTED; оба исхода сохраняются.
-- RETRY — только re-arm, ROLLBACK — только запрос, ADOPT и ABORT не меняют `OperationStatus`.
-- Recovery Report берёт факты о действиях только из fresh accepted резолюций (новое поле `resolver_actions`). Заявки вызывающего без резолюции → fail-closed.
+**Исходный RC-2 (commit 147 `fe55c99`):**
+- узкий persistent Resolver (`resolution_store.py`, `resolver_service.py`): ADOPT / RETRY / ROLLBACK / ABORT — write-once tracked records, привязанные к `evidence_fingerprint` и `operation_revision`;
+- stale → STALE; несоответствие действия и решения, legacy, неполный контракт, повреждённый payload → REJECTED;
+- RETRY — только re-arm, ROLLBACK — только запрос, ADOPT и ABORT не меняют `OperationStatus`;
+- Recovery Report не принимает заявки вызывающего без резолюции.
 
-**Затронутые файлы:**
-- новые: `web_alarm/resolution_store.py`, `web_alarm/resolver_service.py`, `test_web_alarm_resolver.py` (18), `test_web_alarm_resolver_concurrency.py` (1);
-- изменённые: `operation_store.py` (+6, публичный `task_lock`), `recovery_report_store.py`, `recovery_report_builder.py`, `recovery_report_service.py`, `server.py` (+55, `/resolutions`), `__init__.py`;
-- старые тесты: `test_web_alarm_recovery_report_acceptance.py` и `test_web_alarm_recovery_report_integration.py` — 4 теста опирались на заявку вызывающего. Добавлены payload и tracked ADOPT; проверки не менялись.
+Проверяющий подтвердил основную реализацию (19/19, 260/260, гонка 5/5).
 
-**Проверка:**
-- 260/260 OK (241 + 19, 1 skip);
-- гонка 8 процессов 5/5, без блокировки падает 5/5;
-- свежий процесс видит ту же резолюцию и тот же отчёт;
-- хеши проекта и `OperationRecord` до и после apply совпадают;
+**Repair двух blocker-ов ревью:**
+1. **NEXT SAFE ACTION отчёта** теперь выводится из persistent состояния Resolver: `report_facts` → `_authoritative_next_action`. Приоритет:
+   - accepted ABORT → «recovery closed»;
+   - последняя fresh accepted резолюция → её сохранённая семантика (re-armed / request only / adopted);
+   - fresh REJECTED → его совет;
+   - любой stale → нужна новая reconciliation;
+   - резолюций нет → совет reconciliation.
+
+   Builder ставит этот совет выше advisory-решения; источник пишется в `evidence_identity`.
+2. **`resolver_actions`** теперь содержит все persistent-исходы (ACCEPTED / STALE / REJECTED) с полями `result_code`, `authority`, `freshness` и прочими. Authority по-прежнему fail-closed: `accepted_as_already_done` только из FRESH + ACCEPTED + ADOPT, `actually_*` пустые, STALE и REJECTED authority не дают.
+
+**Затронутые файлы repair:** `web_alarm/resolver_service.py`, `web_alarm/recovery_report_builder.py`, `web_alarm/recovery_report_service.py` (+1 строка), `test_web_alarm_resolver.py` (+6 тестов, включая TEST A и TEST B). Итого +211 / −7. `models.py`, `OperationStatus`, `server.py`, `resolution_store.py`, UI, `.gitattributes` не менялись.
+
+**Проверка repair:**
+- новые тесты до правки воспроизводили оба дефекта, после — PASS;
+- `test_web_alarm_resolver.py` — 24/24; concurrency — 5/5;
+- полный Web Alarm — **266/266 OK** (skip 1);
 - compileall и `git diff --check` OK;
-- живое storage читается новым кодом, дерево не изменилось (136 файлов).
+- хеши проекта не меняются; живое storage не изменилось (136 файлов);
+- свежий процесс видит ABORT и STALE в отчёте;
+- `OperationStatus` прежний.
 
-**Вне scope / открыто:**
-- CAS (RC-3): executor обязан перепроверить freshness;
-- projection резолюций в checkpoint / Context Pack (RC-5 / RC-6);
-- lifecycle после ADOPT / ABORT (V15);
-- после принятия — перезапуск процессов WEB-02.
+**Вне scope / на решение:** Context Pack / Remote entry при нужной reconciliation всё ещё показывают в верхнем `NEXT_SAFE_ACTION` совет reconciliation (`context_pack.py:166`); `LATEST_RECOVERY_REPORT` уже несёт совет Resolver. Это projection (RC-5). Готовое переиспользование — `report_facts(...)["next_safe_action"]`, около 5 строк. Нужно решение: в RC-2 или в RC-5. Остальное как в исходном RC-2: CAS — RC-3; lifecycle после ADOPT / ABORT — V15; после принятия — перезапуск процессов WEB-02.
 
-**На внимание проверяющему:**
-- Resolver принципиально не принимает post-state от вызывающего: ADOPT / RETRY возможны только для операций с post-state в контракте v2 или manifest;
-- ABORT окончателен для операции;
-- изменены 4 старых теста.
-
-**Подробный отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`; safety copies и `baseline.md` — там же.
+**Подробный отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`, §9 — Independent Review Repair. Safety copies — `safety_copies/` и `safety_copies/repair/`, хеши — `baseline.md`.
 
 ## Правило круговорота
 
