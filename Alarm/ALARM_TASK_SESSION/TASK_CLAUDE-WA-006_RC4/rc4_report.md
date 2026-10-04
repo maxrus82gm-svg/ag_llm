@@ -2,7 +2,7 @@
 
 **Исполнитель:** Claude Opus 5.5, Claude Code (desktop), локальный доступ.
 **Дата:** 2026-10-04.
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION (повторно, после Independent Review Repair — см. §18).
 **ARCH CLASS:** Web Alarm Workspace runtime (WEB-02). **PRIMARY PROFILE:** `23` (инвариант 26, а также 25, 29, 31–33); acceptance — `24`.
 **База:** HEAD `072fcdc` (commit 151; RC-3 DONE / VERIFIED). Код `web_alarm/` и тесты перед стартом совпадали с HEAD; dirty tree — только `.obsidian/workspace.json` (Obsidian) и БЛОК 1 карточки.
 
@@ -276,3 +276,91 @@ Safety copies 8 изменённых файлов + `baseline.md` (SHA-256, HEAD
 ## 17. NEXT SAFE ACTION
 
 Независимая проверка RC-4 (ChatGPT / пользователь). RC-5 не начинать.
+
+
+---
+
+## 18. INDEPENDENT REVIEW REPAIR (2026-10-04)
+
+**Вход.** Независимая проверка ChatGPT на commit 152 `42ce550`: штатные focused-тесты RC-4 26/26, compileall и diff-check — PASS, но найден **acceptance blocker**. RC-4 = REPAIR REQUIRED. Repair выполнен в той же TASK CLAUDE-WA-006, без расширения scope. Дрейф перед repair: код совпадает с commit 152. Safety copies — `safety_copies/repair/`, хеши — `baseline.md`.
+
+### Blocker
+
+Rollback из нескольких целей: цель A восстановлена, post-read PASS, receipt записан → внешний писатель меняет A → B восстановлена → сессия объявлялась `VERIFIED / SUCCESS`, хотя A уже не в restore state. Воспроизведено проверяющим и до правки моим TEST A (`'VERIFIED' == 'VERIFIED'`). Тем же дефектом объясняются ещё три случая:
+- дрейф NOOP-цели после её проверки (TEST B);
+- resume, который после дрейфа восстановленной цели продолжал запись следующей (TEST D — `['target.txt'] != []`);
+- `SUCCESS` в Recovery Report (TEST E).
+
+### Root cause
+
+`_finalize()` решал `SUCCESS` по сохранённым статусам `RESTORED / NOOP` и их receipts, без финальной физической проверки. `_apply_locked()` пропускал такие цели. После собственных изменений `_session_basis()` законно отказывался от проверки полного fingerprint, но замены по каждой цели не было. В итоге старый receipt служил доказательством **текущего** состояния, хотя доказывает только состояние в момент записи.
+
+### Exact repair (только `rollback_service.py`, `rollback_store.py`)
+
+1. **`_prove_current(record, root)`** — доказательство текущего физического состояния по каждой цели под удерживаемыми блокировками:
+   - `RESTORED` / `NOOP` → точная authority (exists / size / SHA-256) == `expected_restore`;
+   - `PRESERVED` (ещё не применённая) → == `preserved`;
+   - несовпадение → цель `DRIFTED` с `failure.code = POST_RECEIPT_DRIFT` (или `STATE_DRIFT` для неприменённой цели), наблюдённое состояние в `failure.observed`, **исторический receipt сохраняется**, файл **не перезаписывается**, событие `ROLLBACK_CURRENT_DRIFT` (только метаданные).
+2. **Финальная граница проверки всего набора целей** — `_finalize()` первым делом вызывает `_prove_current`, то есть **до** `status = VERIFIED`, `overall = SUCCESS`, снятия владения и возврата `VERIFIED`, пока блокировки ещё удерживаются. `_finalize` — единственное место, где ставится VERIFIED и снимаются claims, поэтому обойти проверку нельзя.
+3. **Resume:** если у сессии есть собственные эффекты (`RESTORED` / `DRIFTED` / `FAILED`), после разбора `APPLYING`-целей перед любым продолжением выполняется `_prove_current`. Дрейф → finalize без новых записей. Доверия к значениям статусов нет: именно это заменяет буквальную проверку evidence fingerprint.
+4. **`result`** дополнен:
+   - `historically_restored` — receipt-backed физические восстановления;
+   - `drifted_after_receipt`;
+   - `final_verification = {at, checked, verified}`.
+
+   `restored` теперь означает «подтверждено сейчас».
+5. **Совет NEXT SAFE ACTION** для PARTIAL / FAILED: «rollback is NOT verified …; nothing was overwritten after a drift; … drifted after their historical receipt …; a new reconciliation / recovery decision is required, then close». Подсказку «apply again» убрал: для PARTIAL / FAILED `apply` финален.
+6. **Схема:** `DRIFTED`-цель может хранить исторический receipt — единственное ослабление валидации; RESTORED / NOOP по-прежнему обязаны иметь совпадающий receipt. `ROLLBACK_VERSION` остаётся 1: формат совместим, новые ключи `result` — внутри свободного объекта.
+
+### Historical receipt vs current verification
+
+| Факт | Где | Смысл |
+| --- | --- | --- |
+| ROLLBACK requested | резолюция RC-2, `resolver_actions` (`ROLLBACK_REQUESTED`) | решение, ничего физически не сделано |
+| Historically restored | `targets[].receipt` (`WRITE_RESTORE` / `DELETE_CREATED`, `matches_expected_restore=true`); `result.historically_restored`; в отчёте `actually_rolled_back` и `rollback_receipts[].historically_restored` | rollback реально восстановил цель, и немедленная проверка прошла — факт истории |
+| Currently verified completion | `status = VERIFIED`, `result.overall = SUCCESS`, `result.final_verification.verified = true`, `result.restored` | весь набор целей доказан по байтам в момент финала |
+| Drifted after receipt | `status = DRIFTED` + `failure.code = POST_RECEIPT_DRIFT` + сохранённый receipt; `drifted_after_receipt` | история верна, текущего состояния нет: unresolved, нужна reconciliation |
+
+Recovery Report:
+- `actually_rolled_back` сохраняет исторический физический факт (backed by receipt);
+- `rollback_receipts[].overall` (PARTIAL / FAILED), `drifted_after_receipt` и `unresolved` не позволяют выдать сессию за полный успех;
+- совет NEXT SAFE ACTION приходит от сессии и требует reconciliation;
+- заявка вызывающего без receipt по-прежнему отклоняется (NOOP не считается rollback).
+
+Claims при неуспехе **не** снимаются.
+
+### Новые тесты (`FinalVerificationRepairTests`, все падали на commit 152)
+
+| Тест | Что доказывает |
+| --- | --- |
+| **A** `test_restored_target_drifting_before_completion_is_not_success` | A восстановлена и получила receipt → внешний писатель меняет A перед восстановлением B → итог `PARTIAL`, не VERIFIED / SUCCESS; байты A остаются чужими; A записана ровно один раз; A = `DRIFTED / POST_RECEIPT_DRIFT` с историческим receipt; `final_verification.verified=false`; claims не сняты; совет требует reconciliation; повтор → `REPLAYED`, A не переписывается |
+| **B** `test_noop_target_drifting_after_its_check_is_not_success` | NOOP-цель (её имя подобрано так, чтобы по hash она шла раньше) проверена, затем изменена извне во время восстановления другой цели → не VERIFIED; NOOP = `DRIFTED / POST_RECEIPT_DRIFT` с receipt NOOP; дрейф не перезаписан |
+| **C** `test_clean_multi_target_rollback_passes_final_verification` | без дрейфа → `VERIFIED / SUCCESS`, `final_verification.verified=true`, `checked` = все цели, claims сняты |
+| **D** `test_resume_never_trusts_an_old_receipt` | отдельный процесс: A восстановлена с receipt, `os._exit` перед записью B → внешний писатель меняет A → resume: **ноль записей** (ни повторной записи A, ни продолжения на B), не SUCCESS, A = `DRIFTED` с receipt; состояние persistent |
+| **E** `test_report_separates_historical_restore_from_verified_completion` | отчёт в свежем процессе: `overall=PARTIAL`, `drifted_after_receipt=[A]`, `restored=[B]` (подтверждено сейчас), `historically_restored=[A,B]`, A в `unresolved`, совет из rollback требует reconciliation; заявка на NOOP-цель отклоняется |
+
+### Verification repair
+
+| № §11 | Проверка | Результат |
+| --- | --- | --- |
+| 1 | Новые тесты A–E | 5/5 OK (до правки: 4 FAIL + 1 ERROR) |
+| 2 | Весь `test_web_alarm_rollback.py` | **30/30 OK** (25 прежних + 5) |
+| 3 | `test_web_alarm_rollback_concurrency.py` | 5/5 прогонов OK |
+| 4 | RC-3 focused (`target_claims` + concurrency) | 20/20 OK |
+| 5 | RC-2 focused (resolver + concurrency + Recovery Report acceptance / integration) | 41/41 OK |
+| 6 | Полный `python -B -m unittest test_web_alarm_*.py` | **317/317 OK** (skip 1), 48,7 с |
+| 7 | `python -B -m compileall -q web_alarm` | OK |
+| 8 | `git diff --check` | OK |
+| 9 | Fresh-process reopen исправленных сценариев | TEST D (сбой в отдельном процессе + resume), TEST E (отчёт в свежем процессе) |
+| 10 | Живое storage, read-only | `report_wa37_ctrl002` читается, фактов rollback нет; дерево `88fc4f99…4149`, 136 файлов — без изменений |
+
+Diff repair: `rollback_service.py` +89 / −13, `rollback_store.py` +4 / −2, `test_web_alarm_rollback.py` +141 / −5. Остальные модули, включая RC-2 / RC-3, manifest, server и report service, не менялись.
+
+### Known limitations (не blocker, по постановке repair)
+
+- **Preserved-state 1 МиБ** — консервативная fail-closed политика: если текущие байты нельзя сохранить из-за лимита → `PRESERVATION_FAILED`, ноль деструктивных мутаций. Будущее решение о политике лимита.
+- **Старый прямой CLI `snapshot restore`** (`restore_microtask`, WA-1) не менялся; закрытие этого обхода — follow-up для strict rollout / WA4-R.
+
+**RC-5 NOT STARTED.**
+
+**NEXT SAFE ACTION:** повторная независимая проверка RC-4. RC-5 не начинать.

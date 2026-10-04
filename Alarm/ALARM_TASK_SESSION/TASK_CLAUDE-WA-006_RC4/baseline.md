@@ -14,3 +14,13 @@ HEAD: `072fcdc5837d0de90a9bcebad50b9dea59cc7bbd` (commit 151; RC-3 DONE / VERIFI
 | `web_alarm/recovery_report_service.py` | `safety_copies/web_alarm_recovery_report_service.py` | 5383 | `7c109e55cf799f2bdc4aa2f89e5c6d6f5dad8d41938244bdfe8230c6f6027385` |
 | `web_alarm/server.py` | `safety_copies/web_alarm_server.py` | 44370 | `cffa02f7194daa46e8448a5235afcc351cda64e69181b66c9242bd66bf06f6bc` |
 | `web_alarm/__init__.py` | `safety_copies/web_alarm___init__.py` | 3917 | `2985536589e899ca5855a5c9d442e35bd3dcba65dc4126273a69ec45c056e0f3` |
+
+## Independent Review Repair — baseline
+
+HEAD: `42ce55083d0dcf0eb700c6eec0fa2ce463a3e6cd` (commit 152). Копии сняты перед repair; побайтно совпадают с HEAD.
+
+| Файл | Копия | Размер | SHA-256 |
+| --- | --- | --- | --- |
+| `web_alarm/rollback_service.py` | `safety_copies/repair/web_alarm_rollback_service.py` | 42758 | `1e9db0055d5c5f689b924a1b4f935720732560da443dad9b8e2f531d8e173e04` |
+| `web_alarm/rollback_store.py` | `safety_copies/repair/web_alarm_rollback_store.py` | 13760 | `c82dd31978ae5952ee65ccaa5a789da5da55d60e67ceeef84fc8ab6403506c6c` |
+| `test_web_alarm_rollback.py` | `safety_copies/repair/test_web_alarm_rollback.py` | 29252 | `87433f08a7fd52b50aa03f3bf11f33bec6ce52f67259b17225c2d76d1e77d0b2` |

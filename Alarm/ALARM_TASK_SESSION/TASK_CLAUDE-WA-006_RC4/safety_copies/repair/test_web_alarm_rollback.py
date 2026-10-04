@@ -28,11 +28,7 @@ import os, sys
 import web_alarm.rollback_service as rs
 storage, task_id, rollback_id, mode = sys.argv[1:5]
 real = rs._write_restored_bytes
-calls = []
 def crash(path, data):
-    calls.append(1)
-    if mode == "second_before_write" and len(calls) == 1:
-        return real(path, data)
     if mode == "after_write":
         real(path, data)
     os._exit(17)
@@ -69,7 +65,6 @@ print(json.dumps({"record": record, "report": {
     "actually_rolled_back": report.actually_rolled_back,
     "rollback_receipts": report.rollback_receipts,
     "next_safe_action": report.next_safe_action,
-    "evidence_identity": report.evidence_identity,
 }}))
 """
 
@@ -120,18 +115,18 @@ class RollbackFixture(unittest.TestCase):
             operation_revision=self.ops.get(task, operation_id).revision,
         )
 
-    def scenario(self, kind="write", keep="keep.txt"):
+    def scenario(self, kind="write"):
         """Accepted fresh ROLLBACK for op_1; returns the resolution id."""
-        self.write(keep, KEEP)
+        self.write("keep.txt", KEEP)
         if kind == "write":
             self.write("target.txt", BEFORE)
-            specs = [("target.txt", "edit"), (keep, "delete")]
+            specs = [("target.txt", "edit"), ("keep.txt", "delete")]
         elif kind == "two":
             self.write("target.txt", BEFORE)
             self.write("gone.txt", GONE)
-            specs = [("target.txt", "edit"), ("gone.txt", "delete"), (keep, "delete")]
+            specs = [("target.txt", "edit"), ("gone.txt", "delete"), ("keep.txt", "delete")]
         else:
-            specs = [("new.txt", "create"), (keep, "delete")]
+            specs = [("new.txt", "create"), ("keep.txt", "delete")]
         ManifestSnapshotStore(self.storage).prepare_microtask(TASK, "m1", specs)
         if kind == "new":
             self.ops.begin(TASK, "m1", "create_file", "new.txt", operation_id="op_1", payload=NEW)
@@ -559,137 +554,6 @@ class RollbackReportTests(RollbackFixture):
         self.assertIn("restored and verified", report.next_safe_action)
         with self.assertRaises(RecoveryReportClaimError):
             self.report(actually_rolled_back=["keep.txt"])  # NOOP is not a rollback
-
-
-class FinalVerificationRepairTests(RollbackFixture):
-    """Independent review repair: a receipt is history, not proof of the current state."""
-
-    def name_sorting_before(self, other):
-        from web_alarm.target_claim_store import physical_target_key, target_hash
-        from web_alarm.target_identity import canonical_target
-
-        def digest(name):
-            return target_hash(physical_target_key(canonical_target(self.project, name).path))
-
-        return next(f"keep_{i}.txt" for i in range(1000) if digest(f"keep_{i}.txt") < digest(other))
-
-    def apply_with(self, rollback_id, hook):
-        writes = []
-        real = rs._write_restored_bytes
-
-        def spy(path, data):
-            writes.append(Path(path).name)
-            hook(len(writes))
-            real(path, data)
-
-        with mock.patch.object(rs, "_write_restored_bytes", spy):
-            return self.rollbacks.apply(TASK, rollback_id), writes
-
-    def test_restored_target_drifting_before_completion_is_not_success(self):  # TEST A
-        resolution_id = self.scenario("two")
-        record = self.prepare(resolution_id)["rollback"]
-        order = [t["source_path"] for t in record["targets"] if t["planned_action"] == "WRITE_RESTORE"]
-        drift = b"external-after-first-receipt\n"
-
-        def external_writer(call):
-            if call == 2:  # A is restored and receipted; B is about to be restored
-                self.write(order[0], drift)
-
-        outcome, writes = self.apply_with(record["rollback_id"], external_writer)
-        record = outcome["rollback"]
-        first, second = self.target(record, order[0]), self.target(record, order[1])
-
-        self.assertNotEqual(record["status"], "VERIFIED")
-        self.assertNotEqual(record["result"]["overall"], "SUCCESS")
-        self.assertEqual(record["status"], "PARTIAL")
-        self.assertEqual(self.path(order[0]).read_bytes(), drift)  # not rewritten
-        self.assertEqual(writes, order)  # A written exactly once
-        self.assertEqual((first["status"], first["failure"]["code"]), ("DRIFTED", "POST_RECEIPT_DRIFT"))
-        self.assertTrue(first["receipt"]["matches_expected_restore"])  # historical receipt kept
-        self.assertEqual(first["failure"]["observed"]["sha256"], sha256(drift))
-        self.assertEqual(second["status"], "RESTORED")
-        self.assertEqual(record["result"]["drifted_after_receipt"], [order[0]])
-        self.assertFalse(record["result"]["final_verification"]["verified"])
-        self.assertFalse(record["claims_released"])
-        self.assertIn("reconciliation", record["next_safe_action"])
-        replay = self.rollbacks.apply(TASK, record["rollback_id"])
-        self.assertEqual((replay["result"], self.path(order[0]).read_bytes()), ("REPLAYED", drift))
-
-    def test_noop_target_drifting_after_its_check_is_not_success(self):  # TEST B
-        keep = self.name_sorting_before("target.txt")
-        resolution_id = self.scenario("write", keep=keep)
-        record = self.prepare(resolution_id)["rollback"]
-        self.assertEqual([t["source_path"] for t in record["targets"]], [keep, "target.txt"])
-
-        def external_writer(call):
-            self.write(keep, b"external noop drift\n")  # after the NOOP proof, during the restore
-
-        outcome, writes = self.apply_with(record["rollback_id"], external_writer)
-        record = outcome["rollback"]
-        noop = self.target(record, keep)
-
-        self.assertNotEqual(record["status"], "VERIFIED")
-        self.assertEqual((noop["status"], noop["failure"]["code"]), ("DRIFTED", "POST_RECEIPT_DRIFT"))
-        self.assertEqual(noop["receipt"]["action"], "NOOP")
-        self.assertEqual(self.path(keep).read_bytes(), b"external noop drift\n")
-        self.assertEqual(writes, ["target.txt"])
-
-    def test_clean_multi_target_rollback_passes_final_verification(self):  # TEST C
-        resolution_id = self.scenario("two")
-        record = self.prepare(resolution_id)["rollback"]
-
-        outcome = self.rollbacks.apply(TASK, record["rollback_id"])
-        record = outcome["rollback"]
-
-        self.assertEqual((record["status"], record["result"]["overall"]), ("VERIFIED", "SUCCESS"))
-        self.assertTrue(record["result"]["final_verification"]["verified"])
-        self.assertEqual(record["result"]["final_verification"]["checked"], len(record["targets"]))
-        self.assertTrue(record["claims_released"])
-        self.assertEqual(record["result"]["drifted_after_receipt"], [])
-
-    def test_resume_never_trusts_an_old_receipt(self):  # TEST D
-        resolution_id = self.scenario("two")
-        record = self.prepare(resolution_id)["rollback"]
-        crashed = self.fresh(APPLY_WITH_CRASH, TASK, record["rollback_id"], "second_before_write")
-        self.assertEqual(crashed.returncode, 17)
-        interrupted = self.rollbacks.inspect(TASK, record["rollback_id"])
-        restored = [t["source_path"] for t in interrupted["targets"] if t["status"] == "RESTORED"]
-        self.assertEqual(len(restored), 1)
-        self.write(restored[0], b"changed after its receipt\n")
-
-        outcome, writes = self.apply_with(record["rollback_id"], lambda call: None)
-        record = outcome["rollback"]
-        first = self.target(record, restored[0])
-
-        self.assertEqual(writes, [])  # no blind second restore, no continuation past the drift
-        self.assertNotEqual(record["status"], "VERIFIED")
-        self.assertNotEqual(record["result"]["overall"], "SUCCESS")
-        self.assertEqual((first["status"], first["failure"]["code"]), ("DRIFTED", "POST_RECEIPT_DRIFT"))
-        self.assertIsNotNone(first["receipt"])
-        self.assertEqual(self.path(restored[0]).read_bytes(), b"changed after its receipt\n")
-        self.assertEqual(self.rollbacks.inspect(TASK, record["rollback_id"]), record)  # persistent
-
-    def test_report_separates_historical_restore_from_verified_completion(self):  # TEST E
-        resolution_id = self.scenario("two")
-        record = self.prepare(resolution_id)["rollback"]
-        order = [t["source_path"] for t in record["targets"] if t["planned_action"] == "WRITE_RESTORE"]
-        self.apply_with(record["rollback_id"], lambda call: call == 2 and self.write(order[0], b"external\n"))
-
-        view = json.loads(self.fresh(FRESH_VIEW, TASK, record["rollback_id"], "op_1").stdout)
-        receipt = view["report"]["rollback_receipts"][0]
-
-        self.assertEqual(receipt["overall"], "PARTIAL")
-        self.assertEqual(receipt["drifted_after_receipt"], [order[0]])
-        self.assertEqual(receipt["restored"], [order[1]])  # currently verified
-        self.assertEqual(sorted(receipt["historically_restored"]), sorted(order))
-        self.assertIn(order[0], receipt["unresolved"])
-        self.assertIn("reconciliation", view["report"]["next_safe_action"])
-        self.assertEqual(view["report"]["evidence_identity"]["next_safe_action_source"], "rollback")
-        self.assertEqual(view["record"]["status"], "PARTIAL")
-        with self.assertRaises(RecoveryReportClaimError):
-            RecoveryReportService(self.storage).create_report(
-                task_id=TASK, microtask_id="m1", operation_id="op_1", incident_id="claim",
-                actually_rolled_back=["keep.txt"])
 
 
 class RollbackServerTests(RollbackFixture):

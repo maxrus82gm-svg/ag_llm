@@ -32,7 +32,7 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
-**Статус постановки:** выполнена Claude 2026-10-04; результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк).
+**Статус постановки:** выполнена Claude 2026-10-04; после независимой проверки (REPAIR REQUIRED) выполнен Independent Review Repair той же TASK — его постановка дословно ниже исходной. Результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк).
 
 ```text
 TASK: CLAUDE-WA-006 — RC-4: Tracked safe rollback + preserved current state + persistent receipts
@@ -696,44 +696,547 @@ NEXT SAFE ACTION:
 RC-5 НЕ начинать.
 ```
 
+## Дополнение — Independent Review Repair (постановка из БЛОКА 1, 2026-10-04, дословно)
+
+```text
+TASK: CLAUDE-WA-006 — RC-4 INDEPENDENT REVIEW REPAIR:
+Final full-target verification before VERIFIED/SUCCESS
+
+Статус:
+REPAIR REQUIRED / RC-4 NOT VERIFIED
+
+Исполнитель:
+Claude Opus 5.5
+
+Контекст:
+CLAUDE-WA-006 / RC-4 реализован на commit 152:
+
+42ce55083d0dcf0eb700c6eec0fa2ce463a3e6cd
+
+Independent review ChatGPT подтвердил:
+
+- штатные focused RC-4 tests: 26/26 PASS;
+- compileall PASS;
+- git diff --check PASS;
+
+НО обнаружен acceptance blocker, которого нет в текущей test matrix.
+
+RC-4 НЕ является DONE / VERIFIED.
+RC-5 НЕ начинать.
+
+==================================================
+1. BLOCKER
+==================================================
+
+В multi-target rollback возможен сценарий:
+
+target A
+→ restored
+→ immediate post-read PASS
+→ persistent receipt записан
+
+затем до завершения всей rollback-session внешний writer меняет A
+
+затем:
+
+target B
+→ restored
+→ immediate post-read PASS
+
+Текущий код может после этого объявить:
+
+rollback.status = VERIFIED
+result.overall = SUCCESS
+
+несмотря на то, что фактический current state target A уже НЕ соответствует expected restore state.
+
+Independent probe ChatGPT воспроизвёл это на commit 152:
+
+RESULT VERIFIED
+STATUS VERIFIED
+FIRST_RECORDED_STATUS RESTORED
+FIRST_RECEIPT_MATCH True
+
+при этом фактические bytes первого target:
+
+external-after-first-receipt
+
+OVERALL:
+SUCCESS
+
+Это acceptance blocker.
+
+==================================================
+2. ПРИЧИНА
+==================================================
+
+Проверить в первую очередь:
+
+web_alarm/rollback_service.py
+
+Текущая логика имеет три связанных свойства:
+
+1. `_session_basis()`:
+
+после появления собственного effect (`RESTORED / APPLYING / FAILED`)
+больше не проверяет полный Resolver evidence fingerprint.
+
+Само по себе это допустимо, потому что rollback изменяет evidence своими действиями.
+
+НО вместо полного fingerprint требуется доказать current state каждого target относительно tracked rollback facts.
+
+2. `_apply_locked()`:
+
+targets со status:
+
+RESTORED
+NOOP
+
+в основном per-target цикле пропускаются.
+
+Их фактические bytes перед финальным SUCCESS повторно не доказываются.
+
+3. `_finalize()`:
+
+определяет SUCCESS по persistent target statuses / receipts:
+
+RESTORED
+NOOP
+
+но не выполняет final physical verification всего target set.
+
+Таким образом старый receipt фактически превращается в доказательство текущего состояния, хотя он доказывает только состояние В МОМЕНТ своей записи.
+
+==================================================
+3. ОБЯЗАТЕЛЬНЫЙ ИНВАРИАНТ REPAIR
+==================================================
+
+Перед переходом rollback session в:
+
+VERIFIED
+/
+SUCCESS
+
+система ОБЯЗАНА под текущими rollback locks повторно доказать весь target set по физическому Workspace.
+
+Для КАЖДОГО target:
+
+current physical state
+==
+expected_restore
+
+по exact authority:
+
+exists
+size
+SHA-256 exact bytes.
+
+Нельзя считать старый receipt proof текущего состояния.
+
+Receipt = историческое доказательство выполненного действия.
+
+Final verification = доказательство текущего состояния всего rollback target set.
+
+Это разные факты.
+
+==================================================
+4. FINAL FULL-TARGET VERIFICATION
+==================================================
+
+Добавить отдельный явный final verification boundary.
+
+Он должен выполняться:
+
+- после всех per-target restore/no-op действий;
+- ДО:
+  - `record["status"] = VERIFIED`;
+  - overall SUCCESS;
+  - release rollback claims;
+  - возврата VERIFIED вызывающему.
+
+Пока target locks ещё удерживаются.
+
+Для каждого target:
+
+A. expected_restore.exists = true
+
+→ target обязан существовать как file;
+→ exact size совпадает;
+→ exact SHA-256 совпадает.
+
+B. expected_restore.exists = false
+
+→ target обязан отсутствовать.
+
+Если хотя бы один target больше не совпадает:
+
+→ НЕЛЬЗЯ ставить VERIFIED/SUCCESS;
+→ НЕЛЬЗЯ выдавать full rollback;
+→ persistent session должна показать drift/unresolved/partial-or-failed state;
+→ внешний current state НЕ перезаписывать автоматически.
+
+Особенно:
+
+ранее RESTORED target
+→ external drift
+→ не делать второй restore только потому, что receipt когда-то был PASS.
+
+Нужна новая reconciliation/recovery decision.
+
+==================================================
+5. RECEIPT SEMANTICS
+==================================================
+
+Не уничтожать исторический факт:
+
+target действительно мог быть физически restored ранее.
+
+Поэтому различить:
+
+1. historical action receipt:
+   rollback реально восстановил target и immediate post-check был PASS;
+
+2. current/final verification:
+   target всё ещё находится в restore state на момент overall completion.
+
+Если target после valid restore receipt позже drifted:
+
+- historical receipt сохраняется;
+- overall rollback НЕ SUCCESS;
+- target считается unresolved/currently drifted;
+- Recovery Report не должен ложно говорить, что весь rollback успешно завершён.
+
+Выбери минимальное schema-compatible решение.
+
+Допустимый вариант:
+
+- target переводится в FAILED/DRIFTED current status;
+- historical receipt сохраняется;
+- failure содержит код вроде:
+  POST_RECEIPT_DRIFT
+  /
+  FINAL_VERIFICATION_DRIFT;
+- report logic отдельно различает:
+  historical physical rollback
+  и
+  current verified completion.
+
+Если для этого нужно минимально расширить target status / receipt schema — допустимо.
+
+НЕ вводить новую глобальную Operation/Microtask state machine.
+
+==================================================
+6. NOOP TARGETS
+==================================================
+
+Final full-target proof обязателен также для NOOP targets.
+
+NOOP означает:
+
+в момент проверки physical mutation не требовалась.
+
+Он НЕ означает:
+
+этот target можно больше не проверять.
+
+Сценарий:
+
+NOOP target PASS
+→ другой target восстанавливается
+→ внешний writer меняет NOOP target
+→ overall SUCCESS
+
+тоже должен fail-closed.
+
+Добавить отдельный regression test.
+
+==================================================
+7. RESUME / INTERRUPTION
+==================================================
+
+После interrupted rollback:
+
+RESTORED target с receipt
+не должен автоматически считаться current-good только потому, что receipt существует.
+
+При resume:
+
+- APPLYING target по-прежнему reconcile по current bytes;
+- ранее RESTORED/NOOP target тоже должен быть проверен относительно expected_restore перед eventual VERIFIED;
+- drift → no blind rewrite.
+
+То есть собственные прошлые effects разрешают не использовать старый full evidence fingerprint буквально,
+НО заменой должна быть target-by-target current proof,
+а не доверие status enum.
+
+==================================================
+8. RECOVERY REPORT
+==================================================
+
+Проверить semantics после repair.
+
+Требование:
+
+ROLLBACK_REQUESTED
+≠
+historically restored target
+≠
+fully VERIFIED rollback.
+
+Если target был restored, получил receipt, а затем drifted:
+
+Recovery Report может сохранять доказанный исторический факт physical rollback,
+НО:
+
+- overall rollback_receipt не SUCCESS;
+- target должен быть виден как unresolved/drifted;
+- NEXT SAFE ACTION требует reconciliation/manual recovery;
+- report не должен утверждать full successful rollback.
+
+Caller claims без backing persistent evidence по-прежнему reject.
+
+==================================================
+9. ОБЯЗАТЕЛЬНЫЕ НОВЫЕ TESTS
+==================================================
+
+TEST A — главный blocker reproduction:
+
+multi-target rollback:
+
+A restored
+→ receipt persisted
+
+перед restore B:
+external writer меняет A
+
+B restored successfully
+
+Ожидание:
+
+- overall != SUCCESS;
+- status != VERIFIED;
+- A current bytes остаются external bytes;
+- A НЕ переписывается второй раз;
+- persistent state показывает A drift/unresolved;
+- historical receipt A не теряется;
+- NEXT SAFE ACTION требует reconciliation;
+- claims не освобождаются как successful verified rollback.
+
+Этот тест ДО repair обязан падать на commit 152.
+
+TEST B — NOOP final drift:
+
+A = NOOP / pre-state
+→ NOOP receipt/status сформирован
+
+пока выполняется другой target:
+external writer меняет A
+
+Ожидание:
+
+- no VERIFIED/SUCCESS;
+- внешний drift не перезаписывается;
+- A unresolved/drifted.
+
+TEST C — clean multi-target success:
+
+без внешнего drift:
+
+- final full-target verification PASS;
+- VERIFIED;
+- SUCCESS;
+- claims released.
+
+TEST D — resume:
+
+один target уже имеет RESTORED receipt,
+process/retry/resume происходит,
+target после receipt изменён внешним writer.
+
+Ожидание:
+
+- no blind second restore;
+- no SUCCESS;
+- drift persistent.
+
+TEST E — Recovery Report:
+
+receipt existed historically,
+но final drift произошёл.
+
+Ожидание:
+
+- report не выдаёт rollback session за SUCCESS;
+- unresolved/drift виден;
+- authoritative NEXT требует reconciliation.
+
+==================================================
+10. НЕ РАСШИРЯТЬ SCOPE
+==================================================
+
+В рамках repair НЕ делать:
+
+- RC-5;
+- projection redesign;
+- RC-6;
+- WA4-E;
+- normal mutation executor;
+- UI;
+- strict rollout;
+- lease/heartbeat;
+- `.gitattributes`;
+- line-ending normalization;
+- unrelated refactor.
+
+Лимит preserved-state 1 MiB:
+
+НЕ blocker этого repair.
+
+Пока оставить как conservative fail-closed policy:
+
+если current bytes нельзя сохранить из-за лимита
+→ PRESERVATION_FAILED
+→ zero destructive mutation.
+
+Зафиксировать как known limitation / future policy decision.
+
+Legacy direct CLI `snapshot restore`:
+
+НЕ blocker этого repair.
+
+Не менять сейчас.
+Оставить follow-up для strict rollout / WA4-R, где legacy bypass должен быть закрыт принятой политикой.
+
+==================================================
+11. VERIFICATION ПОСЛЕ REPAIR
+==================================================
+
+Обязательно:
+
+1. новые blocker tests A–E;
+
+2. весь:
+   test_web_alarm_rollback.py
+
+3.:
+   test_web_alarm_rollback_concurrency.py
+
+4. RC-3 focused regressions;
+
+5. RC-2 focused regressions;
+
+6. full Web Alarm regression;
+
+7.
+python -B -m compileall -q web_alarm
+
+8.
+git diff --check
+
+9. fresh-process reopen repaired scenarios;
+
+10. live storage read-only compatibility;
+    никаких изменений live storage.
+
+==================================================
+12. REPORT
+==================================================
+
+Дополнить существующий:
+
+Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md
+
+новым разделом:
+
+INDEPENDENT REVIEW REPAIR
+
+В нём указать:
+
+- blocker;
+- root cause;
+- exact repair;
+- final full-target verification model;
+- historical receipt vs current verification semantics;
+- новые tests;
+- результаты regressions;
+- known limitation 1 MiB;
+- legacy direct restore deferred to WA4-R;
+- RC-5 NOT STARTED.
+
+==================================================
+13. ПЕРСОНАЛЬНАЯ КАРТОЧКА
+==================================================
+
+Это repair той же:
+
+CLAUDE-WA-006 / RC-4
+
+а НЕ новая RC-5 TASK.
+
+После repair:
+
+1. БЛОК 2 должен сохранить исходную полную CLAUDE-WA-006 постановку
+   и добавить/сохранить эту repair-постановку как продолжение той же TASK.
+   Не потерять исходный RC-4 assignment.
+
+2. БЛОК 3 обновить фактическим результатом repair.
+
+3. Статус:
+   RESULT READY / AWAITING INDEPENDENT VERIFICATION
+
+4. После подтверждения БЛОКОВ 2–3:
+   БЛОК 1 снова очистить до:
+
+   Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+   TASK: —
+
+5. Не писать DONE / VERIFIED.
+
+6. Не менять:
+   - 001;
+   - 06;
+   - 25;
+   - глобальный 000.
+
+Их синхронизирует ChatGPT только после independent PASS.
+
+Не commit / push.
+
+NEXT SAFE ACTION:
+закрыть только этот RC-4 blocker,
+остановиться на RESULT READY / AWAITING INDEPENDENT VERIFICATION,
+RC-5 НЕ начинать.
+```
+
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
 
-**TASK:** CLAUDE-WA-006 — RC-4: Tracked safe rollback + preserved current state + persistent receipts.
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. DONE не объявлен; commit / push не выполнялись; **RC-5 NOT STARTED**.
+**TASK:** CLAUDE-WA-006 — RC-4: Tracked safe rollback (+ Independent Review Repair: final full-target verification).
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04, повторно после repair. DONE не объявлен; commit / push не выполнялись; **RC-5 NOT STARTED**.
 
-**Что сделано:**
-- ROLLBACK из запроса RC-2 стал отдельной tracked recovery operation: принятая fresh резолюция ROLLBACK → persistent-сессия (`rollback_id` выводится из резолюции; повтор возвращает ту же сессию);
-- текущее состояние **всех** целей сохраняется до деструктивной фазы (байты content-addressed вне репозитория, проверка hash+size; absence фиксируется явно); сбой хотя бы одной цели → `PRESERVATION_FAILED`, без мутаций;
-- проверенный side-effect-free `restore_plan()` из существующего restore point WA-1 (без второго snapshot-мира);
-- атомарное владение RC-3 всеми изменяемыми целями: конфликт на одной цели блокирует всю фазу;
-- CAS по каждой цели перед мутацией: точные байты snapshot либо удаление созданного файла, post-read, persistent receipt по цели;
-- итог строится из receipts; VERIFIED только при доказанном полном наборе;
-- сбой в середине разбирается по байтам (восстановленное не перезаписывается); повтор VERIFIED не даёт побочных эффектов;
-- Recovery Report: `actually_rolled_back` — только из проверенных receipts; новое поле `rollback_receipts` (PARTIAL виден явно); заявки вызывающего без receipt отклоняются.
+**Исходный RC-4 (commit 152 `42ce550`):** tracked safe rollback — сохранение текущего состояния всех целей, атомарное владение RC-3, CAS по цели, точное восстановление и удаление, receipts по целям, Recovery Report «requested ≠ actually rolled back».
 
-**Файлы:**
-- новые: `web_alarm/rollback_store.py`, `web_alarm/rollback_service.py`, `test_web_alarm_rollback.py` (25), `test_web_alarm_rollback_concurrency.py` (1 тест, 4 раунда);
-- изменённые: `manifest_store.py` (+68, `restore_plan`), `target_claim_store.py` / `target_claim_service.py` (claim `owner` = ROLLBACK; RC-3 видит его как чужого владельца), `recovery_report_store.py` / `_builder.py` / `_service.py`, `server.py` (+51, `/tasks/<t>/rollbacks[/<id>/apply|close]`), `__init__.py`;
-- `models.py`, `OperationStatus`, `operation_store`, контракт, Resolver, reconciliation и UI не менялись.
+**Repair blocker-а ревью:** multi-target rollback мог объявить `VERIFIED / SUCCESS` после того, как уже восстановленная (или NOOP) цель была изменена извне до конца сессии: старый receipt служил доказательством текущего состояния.
+- **`_prove_current`** — доказательство текущих байтов по каждой цели: RESTORED / NOOP == `expected_restore`, неприменённая == `preserved`. Дрейф → `DRIFTED / POST_RECEIPT_DRIFT`, исторический receipt сохраняется, перезаписи нет.
+- **Финальная граница** — `_finalize` вызывает `_prove_current` до VERIFIED / SUCCESS / снятия claims, под удерживаемыми блокировками. Это единственный путь к VERIFIED.
+- **Resume** при собственных эффектах сначала доказывает текущее состояние всех целей, а не доверяет статусам: дрейф → никаких новых записей.
+- **`result`** дополнен: `historically_restored`, `drifted_after_receipt`, `final_verification`; `restored` = подтверждено сейчас.
+- **Отчёт** разделяет «исторически откатано» и «сейчас полностью проверено»; совет требует reconciliation; claims при неуспехе не снимаются.
+
+**Файлы repair:** `web_alarm/rollback_service.py` (+89 / −13), `web_alarm/rollback_store.py` (+4 / −2: DRIFTED может хранить исторический receipt), `test_web_alarm_rollback.py` (+5 тестов A–E). Остальные модули не менялись.
 
 **Тесты:**
-- полный Web Alarm — **312/312 OK** (skip 1); RC-1/2/3 focused — 115/115;
-- гонка rollback против RC-3 — 5/5 прогонов; без блокировок — «два владельца»;
+- A–E — 5/5 (до правки: 4 FAIL + 1 ERROR на commit 152);
+- `test_web_alarm_rollback.py` — 30/30; concurrency — 5/5;
+- RC-3 focused — 20/20; RC-2 focused — 41/41;
+- полный Web Alarm — **317/317 OK** (skip 1);
 - compileall и `git diff --check` OK;
-- живое storage (read-only) не изменилось (136 файлов).
+- живое storage (read-only) не изменилось.
 
-**Ограничения и решения на проверку:**
-- свежесть резолюции проверяется полностью до первой мутации, дальше — «с поправкой на свои изменения»;
-- claim исходной операции переходит к rollback (`SUPERSEDED_BY_ROLLBACK`);
-- PARTIAL / FAILED финальны (`close` + новая reconciliation);
-- лимит preservation 1 МиБ — нужно решение для больших файлов;
-- старый CLI `snapshot restore` остаётся прямым деструктивным путём (предложение на WA4-R);
-- lifecycle и проекция — RC-5;
-- после принятия — перезапуск процессов WEB-02.
+**Ограничения (не blocker):** preserved-state 1 МиБ — fail-closed политика; старый CLI `snapshot restore` — follow-up WA4-R; lifecycle и проекция — RC-5.
 
-**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md`; safety copies и `baseline.md` — там же.
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4/rc4_report.md` (§18 — Independent Review Repair); safety copies — `safety_copies/` и `safety_copies/repair/`, хеши — `baseline.md`.
 
 ## Правило круговорота
 

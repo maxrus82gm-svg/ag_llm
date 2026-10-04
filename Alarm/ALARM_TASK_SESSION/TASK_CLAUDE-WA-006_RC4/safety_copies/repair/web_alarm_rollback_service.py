@@ -212,13 +212,9 @@ class RollbackService:
             )
         if status in (PARTIAL, FAILED):
             unresolved = [t["source_path"] for t in record["targets"] if t["status"] not in (T_RESTORED, T_NOOP)]
-            drifted = [t["source_path"] for t in record["targets"]
-                       if t["status"] == T_DRIFTED and t["receipt"] is not None]
             return (
-                f"rollback is NOT verified ({status}); nothing was overwritten after a drift; "
-                f"unresolved: {unresolved}"
-                + (f"; drifted after their historical receipt: {drifted}" if drifted else "")
-                + "; a new reconciliation / recovery decision is required, then close this "
+                f"rollback stopped ({status}); verified receipts exist only for restored targets; "
+                f"unresolved: {unresolved}; inspect/reconcile them, then apply again or close the "
                 "rollback to release its ownership"
             )
         return "rollback is closed; its ownership is released; start a new reconciliation if needed"
@@ -649,10 +645,6 @@ class RollbackService:
             else:
                 self._stop(record, target, T_DRIFTED, "UNKNOWN_AFTER_INTERRUPTION",
                            "bytes match neither the restore state nor the preserved state", observed)
-        # Own effects replace the literal evidence fingerprint, but only by a
-        # target-by-target current proof — never by trusting stored statuses.
-        if any(t["status"] in (T_RESTORED, T_DRIFTED, T_FAILED) for t in record["targets"]):
-            self._prove_current(record, root)
         if any(t["status"] in (T_DRIFTED, T_FAILED) for t in record["targets"]):
             return self._finalize(record, root)
 
@@ -731,62 +723,11 @@ class RollbackService:
                 break
         return self._finalize(record, root)
 
-    def _prove_current(self, record: dict[str, Any], root: Path) -> tuple[list[str], int]:
-        """Prove the CURRENT physical state of every tracked target (caller holds the locks).
-
-        A receipt proves what was true when it was written; it is history, not
-        proof of the present. RESTORED/NOOP targets must still equal their
-        restore state, PRESERVED (pending) targets their preserved state. A
-        mismatch marks the target DRIFTED, keeps its historical receipt and is
-        never rewritten here.
-        """
-        drifted: list[str] = []
-        checked = 0
-        for target in record["targets"]:
-            if target["status"] in (T_RESTORED, T_NOOP):
-                expected, code = target["expected_restore"], "POST_RECEIPT_DRIFT"
-            elif target["status"] == T_PRESERVED:
-                expected, code = target["preserved"], "STATE_DRIFT"
-            else:
-                continue
-            checked += 1
-            try:
-                observed = observe_path(self._canonical(root, target).path)
-            except (TargetIdentityError, FileStateError) as exc:
-                target["status"] = T_DRIFTED
-                target["failure"] = {"code": "TARGET_UNOBSERVABLE", "reason": str(exc), "observed": None}
-                drifted.append(target["source_path"])
-                continue
-            if not same_authority(observed, expected):
-                target["status"] = T_DRIFTED
-                target["failure"] = {
-                    "code": code,
-                    "reason": "current bytes no longer match the tracked state; not overwritten",
-                    "observed": _state(observed),
-                }
-                drifted.append(target["source_path"])
-        if drifted:
-            self._persist(record)
-            self._event(record, "ROLLBACK_CURRENT_DRIFT", {"targets": drifted})
-        return drifted, checked
-
     def _finalize(self, record: dict[str, Any], root: Path) -> dict[str, Any]:
-        # Final full-target verification boundary: under the still-held locks and
-        # before VERIFIED / SUCCESS / claim release / returning to the caller.
-        _, checked = self._prove_current(record, root)
         targets = record["targets"]
         done = [t for t in targets if t["status"] in (T_RESTORED, T_NOOP)]
         restored = [t["source_path"] for t in targets if t["status"] == T_RESTORED]
         unresolved = [t["source_path"] for t in targets if t["status"] not in (T_RESTORED, T_NOOP)]
-        historically_restored = [
-            t["source_path"] for t in targets
-            if t["receipt"] is not None
-            and t["receipt"]["action"] in (WRITE_RESTORE, DELETE_CREATED)
-            and t["receipt"]["matches_expected_restore"]
-        ]
-        drifted_after_receipt = [
-            t["source_path"] for t in targets if t["status"] == T_DRIFTED and t["receipt"] is not None
-        ]
         if len(done) == len(targets):
             record["status"] = VERIFIED
             overall = "SUCCESS"
@@ -797,16 +738,12 @@ class RollbackService:
         else:
             record["status"] = FAILED
             overall = "FAILED"
-        now = utc_now_iso()
         record["result"] = {
             "overall": overall,
-            "restored": restored,  # currently verified
+            "restored": restored,
             "noop": [t["source_path"] for t in targets if t["status"] == T_NOOP],
             "unresolved": unresolved,
-            "historically_restored": historically_restored,
-            "drifted_after_receipt": drifted_after_receipt,
-            "final_verification": {"at": now, "checked": checked, "verified": overall == "SUCCESS"},
-            "at": now,
+            "at": utc_now_iso(),
         }
         self._persist(record)
         self._event(record, f"ROLLBACK_{record['status']}", {"restored": restored, "unresolved": unresolved})
@@ -853,13 +790,7 @@ class RollbackService:
             raise RollbackError(str(exc)) from exc
 
     def report_facts(self, task_id: str, microtask_id: str, operation_id: str) -> dict[str, Any]:
-        """Rollback facts for Recovery Report, only from persisted receipts.
-
-        ``actually_rolled_back`` lists historically performed, receipt-backed
-        restores (a physical fact even if the target drifted later). Whether the
-        rollback is complete NOW is a separate fact: ``restored`` (currently
-        verified), ``drifted_after_receipt``, ``unresolved`` and ``overall``.
-        """
+        """Rollback facts for Recovery Report, only from persisted verified receipts."""
         try:
             sessions = [
                 item for item in self.store.list(task_id, operation_id=operation_id)
@@ -871,28 +802,21 @@ class RollbackService:
         receipts = []
         by_resolution = {}
         for session in sessions:
-            targets = session["targets"]
-            historical = [
-                t["source_path"] for t in targets
-                if t["receipt"] is not None
-                and t["receipt"]["action"] in (WRITE_RESTORE, DELETE_CREATED)
-                and t["receipt"]["matches_expected_restore"]
+            restored = [
+                t["source_path"] for t in session["targets"]
+                if t["status"] == T_RESTORED and t["receipt"] and t["receipt"]["matches_expected_restore"]
             ]
-            rolled_back.extend(path for path in historical if path not in rolled_back)
+            rolled_back.extend(path for path in restored if path not in rolled_back)
             receipts.append({
                 "rollback_id": session["rollback_id"],
                 "resolution_id": session["resolution_id"],
                 "status": session["status"],
                 "overall": (session["result"] or {}).get("overall"),
-                "restored": [t["source_path"] for t in targets if t["status"] == T_RESTORED],
-                "historically_restored": historical,
-                "drifted_after_receipt": [
-                    t["source_path"] for t in targets if t["status"] == T_DRIFTED and t["receipt"] is not None
-                ],
-                "noop": [t["source_path"] for t in targets if t["status"] == T_NOOP],
-                "unresolved": [t["source_path"] for t in targets if t["status"] not in (T_RESTORED, T_NOOP)],
+                "restored": restored,
+                "noop": [t["source_path"] for t in session["targets"] if t["status"] == T_NOOP],
+                "unresolved": [t["source_path"] for t in session["targets"] if t["status"] not in (T_RESTORED, T_NOOP)],
                 "claims_released": session["claims_released"],
-                "physical_mutation_performed": bool(historical),
+                "physical_mutation_performed": bool(restored),
             })
             by_resolution[session["resolution_id"]] = session["next_safe_action"]
         return {

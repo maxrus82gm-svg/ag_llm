@@ -171,10 +171,8 @@ def _check_target(target: Any, rollback_id: str) -> None:
     receipt = target["receipt"]
     if target["status"] in (T_RESTORED, T_NOOP) and receipt is None:
         _fail("receipt must exist for RESTORED/NOOP targets")
-    # DRIFTED may keep the historical receipt of a restore/no-op that was true
-    # when written; the drift itself is in ``failure`` (e.g. POST_RECEIPT_DRIFT).
-    if target["status"] not in (T_RESTORED, T_NOOP, T_FAILED, T_DRIFTED) and receipt is not None:
-        _fail("only RESTORED/NOOP/FAILED/DRIFTED targets carry a receipt")
+    if target["status"] not in (T_RESTORED, T_NOOP, T_FAILED) and receipt is not None:
+        _fail("only RESTORED/NOOP/FAILED targets carry a receipt")
     if receipt is not None:
         if not isinstance(receipt, dict) or set(receipt) != _RECEIPT_FIELDS:
             _fail("receipt has unexpected fields")
