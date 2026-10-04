@@ -1,16 +1,18 @@
-"""Compact read-only Entry Context Pack for Web Alarm Workspace WA-2.4."""
+"""Compact read-only Entry Context Pack for Web Alarm Workspace WA-2.4.
+
+RC-5: every current fact (CURRENT_MICROTASK / CURRENT_STATUS / NEXT_SAFE_ACTION
+and the rest) comes from the canonical projection over the authoritative stores.
+The persisted checkpoint is shown only as a validated diagnostic and is never
+read as truth. The pack stays bounded and never reads the event history.
+"""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
-from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
-from .manifest_store import ManifestSnapshotStore, ManifestStoreError
-from .models import MicrotaskStatus
-from .reconciliation_service import ReconciliationService
+from .projection import ProjectionService
 from .recovery_report_store import RecoveryReportStore
-from .state_machine import ServerStateMachine
 from .task_store import TaskStore
 from .workspace_registry import WorkspaceRegistry
 
@@ -34,99 +36,19 @@ class EntryContextPackBuilder:
     def __init__(self, storage_root: str | Path | None = None) -> None:
         self.tasks = TaskStore(storage_root)
         self.registry = WorkspaceRegistry(self.tasks.storage_root)
-        self.state = EventCheckpointStore(self.tasks.storage_root)
-        self.manifests = ManifestSnapshotStore(self.tasks.storage_root)
-        self.machine = ServerStateMachine(self.tasks.storage_root)
-        self.reconciliation = ReconciliationService(self.tasks.storage_root)
+        self.projection = ProjectionService(self.tasks.storage_root)
+        self.reconciliation = self.projection.reconciliation
         self.recovery_reports = RecoveryReportStore(self.tasks.storage_root)
-
-    def _last_verified(self, task_id: str) -> str | None:
-        last: str | None = None
-        for micro in self.tasks.list_microtasks(task_id):
-            if micro.status == MicrotaskStatus.VERIFIED:
-                last = micro.microtask_id
-            else:
-                break
-        return last
-
-    def _current_microtask(self, task_id: str) -> str | None:
-        plan = self.tasks.open_plan(task_id)
-        if plan.current_microtask_id is not None:
-            return plan.current_microtask_id
-        microtasks = self.tasks.list_microtasks(task_id)
-        for micro in microtasks:
-            if micro.status != MicrotaskStatus.VERIFIED:
-                return micro.microtask_id
-        return microtasks[-1].microtask_id if microtasks else None
-
-    def _snapshot_status(self, task_id: str, microtask_id: str | None) -> str:
-        if microtask_id is None:
-            return "NOT_APPLICABLE"
-        try:
-            self.manifests.verify_restore_point(task_id, microtask_id)
-        except ManifestStoreError:
-            return "NOT_VERIFIED"
-        return "VERIFIED"
 
     def build(self, task_id: str) -> dict[str, Any]:
         task = self.tasks.open_task(task_id)
         workspace = self.registry.get(task.workspace_id)
-        plan = self.tasks.open_plan(task_id)
-        microtasks = self.tasks.list_microtasks(task_id)
+        projection = self.projection.build(task_id)
+        validation = self.projection.validate_checkpoint(task_id, projection)
+        position = projection["position"]
+        recovery = projection["recovery"]
 
-        checkpoint = None
-        try:
-            checkpoint = self.state.read_checkpoint(task_id)
-        except EventCheckpointStoreError as exc:
-            if "checkpoint is missing" not in str(exc):
-                raise
-
-        current_id = (
-            checkpoint.current_microtask_id
-            if checkpoint is not None and checkpoint.current_microtask_id is not None
-            else self._current_microtask(task_id)
-        )
-        current = (
-            self.tasks.open_microtask(task_id, current_id)
-            if current_id is not None
-            else None
-        )
-
-        last_verified = (
-            checkpoint.last_verified_microtask_id
-            if checkpoint is not None
-            else self._last_verified(task_id)
-        )
-        current_status = (
-            checkpoint.current_status.value
-            if checkpoint is not None
-            else (current.status.value if current is not None else "NO_MICROTASK")
-        )
-        snapshot_status = (
-            checkpoint.snapshot_status
-            if checkpoint is not None
-            else self._snapshot_status(task_id, current_id)
-        )
-        last_operation = (
-            checkpoint.last_operation_id if checkpoint is not None else None
-        )
-        if checkpoint is not None:
-            next_safe_action = checkpoint.next_safe_action
-        elif current_id is not None:
-            next_safe_action = self.machine.next_safe_action(task_id, current_id)
-        else:
-            next_safe_action = "create a microtask and define the TASK plan"
-
-        plan_summary = [
-            {
-                "sequence": item.sequence,
-                "microtask_id": item.microtask_id,
-                "title": item.title,
-                "status": item.status.value,
-            }
-            for item in microtasks
-        ]
-
+        snapshot = projection["restore_point"]["status"]
         pack: dict[str, Any] = {
             "PACK_VERSION": PACK_VERSION,
             "TASK": {
@@ -141,29 +63,51 @@ class EntryContextPackBuilder:
                 "workspace_root": workspace.workspace_root,
             },
             "GOAL": task.goal,
-            "PLAN_SUMMARY": plan_summary,
-            "LAST_VERIFIED": last_verified,
-            "CURRENT_MICROTASK": current_id,
-            "CURRENT_STATUS": current_status,
-            "SNAPSHOT_STATUS": snapshot_status,
-            "LAST_OPERATION": last_operation,
-            "NEXT_SAFE_ACTION": next_safe_action,
+            "PLAN_SUMMARY": [
+                {
+                    "sequence": item["sequence"],
+                    "microtask_id": item["microtask_id"],
+                    "title": item["title"],
+                    "status": item["status"],
+                }
+                for item in position["microtasks"]
+            ],
+            "LAST_VERIFIED": position["last_verified"],
+            "CURRENT_MICROTASK": position["current_microtask_id"],
+            "CURRENT_STATUS": position["current_status"],
+            "SNAPSHOT_STATUS": snapshot if snapshot in ("VERIFIED", "NOT_APPLICABLE") else "NOT_VERIFIED",
+            "LAST_OPERATION": projection["last_operation_id"],
+            "NEXT_SAFE_ACTION": projection["next_safe_action"],
+            "AUTHORITY_SOURCE": projection["authority_source"],
+            "RECOVERY": {
+                key: recovery.get(key)
+                for key in ("state", "source", "operation_id", "resolution_id", "rollback_id", "decision", "attention")
+            },
+            "BLOCKERS": [{"code": item["code"], "reason": item["reason"]} for item in projection["blockers"]],
+            "CHECKPOINT": {
+                "status": validation["status"],
+                "authoritative": False,
+                "reasons": validation["reasons"],
+            },
+            "PROJECTION": {
+                "projection_version": projection["projection_version"],
+                "source_fingerprint": projection["source_fingerprint"],
+                "projection_fingerprint": projection["projection_fingerprint"],
+            },
             "PROTOCOL_RULES": list(PROTOCOL_RULES),
         }
         reports = self.recovery_reports.list_reports(task_id)
         pack["LATEST_RECOVERY_REPORT"] = (
             reports[-1].to_dict() if reports else None
         )
-        reconciliation = self.reconciliation.reconcile_if_needed(
-            task_id,
-            current_id,
-            last_operation,
-            current_status,
-        )
+        reconciliation = None
+        if projection["authority_source"] == "reconciliation" and recovery["operation_id"] is not None:
+            # the very calculation behind NEXT (no second, possibly diverging read)
+            reconciliation = projection["advisory_reconciliation"].get(recovery["operation_id"])
         pack["RECONCILIATION"] = reconciliation
         if reconciliation is not None:
-            pack["CHECKPOINT_NEXT_SAFE_ACTION"] = next_safe_action
-            pack["NEXT_SAFE_ACTION"] = reconciliation["NEXT_SAFE_ACTION"]
+            # diagnostic only: what the persisted (never authoritative) checkpoint said
+            pack["CHECKPOINT_NEXT_SAFE_ACTION"] = (validation["persisted"] or {}).get("next_safe_action")
         pack["CONTEXT_TEXT"] = self.render_text(pack)
         return pack
 
@@ -184,6 +128,13 @@ class EntryContextPackBuilder:
                 f"RECONCILIATION DECISION: {decision['decision']}",
                 f"RECONCILIATION REASON: {decision['reason_code']} — {decision['reason']}",
             ]
+        blocker_lines = [f"BLOCKER: {item['code']} — {item['reason']}" for item in pack.get("BLOCKERS", [])]
+        recovery = pack.get("RECOVERY") or {}
+        recovery_lines = (
+            [f"RECOVERY: {recovery.get('state')} (operation {recovery.get('operation_id') or '-'})"]
+            if recovery.get("state") not in (None, "NORMAL")
+            else []
+        )
         return "\n".join(
             [
                 "WEB ALARM ENTRY CONTEXT PACK",
@@ -198,8 +149,12 @@ class EntryContextPackBuilder:
                 f"CURRENT STATUS: {pack['CURRENT_STATUS']}",
                 f"SNAPSHOT STATUS: {pack['SNAPSHOT_STATUS']}",
                 f"LAST OPERATION: {pack['LAST_OPERATION'] or '-'}",
+                *recovery_lines,
                 *reconciliation_lines,
+                *blocker_lines,
                 f"NEXT SAFE ACTION: {pack['NEXT_SAFE_ACTION']}",
+                f"NEXT SOURCE: {pack.get('AUTHORITY_SOURCE', '-')} (projection from authoritative state)",
+                f"CHECKPOINT: {(pack.get('CHECKPOINT') or {}).get('status', '-')} (never authority)",
                 "PROTOCOL RULES:",
                 *rules,
                 "RAW TASK:",

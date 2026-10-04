@@ -79,7 +79,7 @@ class EntryContextPackTests(unittest.TestCase):
         self.assertNotIn("recent_events", pack)
         self.assertEqual(self.marker.read_bytes(), before)
 
-    def test_pack_tracks_verified_then_current_microtask_from_authoritative_state(self):
+    def test_pack_tracks_verified_then_current_microtask_from_checkpoint(self):
         machine = ServerStateMachine(self.storage)
         machine.prepare_microtask(
             self.task.task_id,
@@ -113,11 +113,8 @@ class EntryContextPackTests(unittest.TestCase):
         self.assertEqual(pack["CURRENT_MICROTASK"], "m2")
         self.assertEqual(pack["CURRENT_STATUS"], "BACKUP_VERIFIED")
         self.assertEqual(pack["SNAPSHOT_STATUS"], "VERIFIED")
-        # RC-5: state-machine call labels are history (events), not tracked operations
-        self.assertIsNone(pack["LAST_OPERATION"])
+        self.assertEqual(pack["LAST_OPERATION"], "op_prepare_2")
         self.assertIn("READY", pack["NEXT_SAFE_ACTION"])
-        self.assertEqual(pack["AUTHORITY_SOURCE"], "lifecycle")
-        self.assertEqual(pack["CHECKPOINT"]["status"], "VALID")
 
     def test_pack_survives_new_builder_instance_with_same_authoritative_state(self):
         first = self.builder.build(self.task.task_id)

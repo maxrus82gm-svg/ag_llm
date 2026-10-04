@@ -5,11 +5,9 @@ from __future__ import annotations
 import json
 import os
 import shutil
-from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import Any, Iterable
 
-from .store_lock import DEFAULT_LOCK_TIMEOUT_SECONDS, InterProcessLock, StoreLockTimeout
 from .models import (
     SCHEMA_VERSION,
     MicrotaskRecord,
@@ -86,46 +84,17 @@ def _atomic_write_text(path: Path, text: str) -> None:
 
 
 class TaskStore:
-    """Disk-backed lifecycle storage for TASK and ordered microtasks.
+    """Disk-backed lifecycle storage for TASK and ordered microtasks."""
 
-    RC-5: every plan/microtask mutation and the completion of a TASK hold the
-    per-TASK mutation lock, so the closeout gate can prove "nothing open" and
-    complete without a new microtask/status change slipping in between. The
-    lock is not re-entrant; ``*_locked`` variants serve a caller that holds it.
-    """
-
-    def __init__(
-        self,
-        storage_root: str | os.PathLike[str] | None = None,
-        *,
-        lock_timeout: float = DEFAULT_LOCK_TIMEOUT_SECONDS,
-    ) -> None:
+    def __init__(self, storage_root: str | os.PathLike[str] | None = None) -> None:
         root = Path(storage_root) if storage_root is not None else default_storage_root()
         self.storage_root = root.expanduser().resolve(strict=False)
         self.tasks_root = self.storage_root / "tasks"
         self.active_dir = self.tasks_root / "active"
         self.completed_dir = self.tasks_root / "completed"
         self.staging_dir = self.tasks_root / ".staging"
-        self.lock_timeout = lock_timeout
         for path in (self.active_dir, self.completed_dir, self.staging_dir):
             path.mkdir(parents=True, exist_ok=True)
-
-    @contextmanager
-    def mutation_lock(self, task_id: str) -> Iterator[None]:
-        """Per-TASK lock for plan/microtask writes and completion (not re-entrant)."""
-        task_id = _safe_id("task_id", task_id)
-        lock = InterProcessLock(
-            self.storage_root / "locks" / "tasks" / f"{task_id}.lock",
-            timeout=self.lock_timeout,
-        )
-        try:
-            lock.acquire()
-        except StoreLockTimeout as exc:
-            raise TaskStoreError(str(exc)) from exc
-        try:
-            yield
-        finally:
-            lock.release()
 
     def _task_path(self, task_id: str, *, active_only: bool = False) -> Path:
         task_id = _safe_id("task_id", task_id)
@@ -272,14 +241,13 @@ class TaskStore:
     def set_microtask_status(
         self, task_id: str, microtask_id: str, status: MicrotaskStatus
     ) -> MicrotaskRecord:
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            self._require_mutable(task_dir)
-            microtask = self._load_microtask_from(task_dir, microtask_id)
-            microtask.status = MicrotaskStatus(status)
-            microtask.updated_at = utc_now_iso()
-            self._write_microtask(task_dir, microtask)
-            return microtask
+        task_dir = self._task_path(task_id, active_only=True)
+        self._require_mutable(task_dir)
+        microtask = self._load_microtask_from(task_dir, microtask_id)
+        microtask.status = MicrotaskStatus(status)
+        microtask.updated_at = utc_now_iso()
+        self._write_microtask(task_dir, microtask)
+        return microtask
 
     def list_microtasks(self, task_id: str) -> list[MicrotaskRecord]:
         task_dir = self._task_path(task_id)
@@ -298,110 +266,94 @@ class TaskStore:
         *,
         microtask_id: str | None = None,
     ) -> MicrotaskRecord:
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            task = self._require_mutable(task_dir)
-            plan = self._load_plan_from(task_dir)
-            chosen_id = (
-                _safe_id("microtask_id", microtask_id)
-                if microtask_id
-                else new_id("micro")
-            )
-            path = self._microtask_path(task_dir, chosen_id)
-            work_dir = self._microtask_dir_path(task_dir, chosen_id)
-            if path.exists() or work_dir.exists():
-                raise TaskStoreError(f"microtask_id already exists: {chosen_id}")
+        task_dir = self._task_path(task_id, active_only=True)
+        task = self._require_mutable(task_dir)
+        plan = self._load_plan_from(task_dir)
+        chosen_id = (
+            _safe_id("microtask_id", microtask_id)
+            if microtask_id
+            else new_id("micro")
+        )
+        path = self._microtask_path(task_dir, chosen_id)
+        work_dir = self._microtask_dir_path(task_dir, chosen_id)
+        if path.exists() or work_dir.exists():
+            raise TaskStoreError(f"microtask_id already exists: {chosen_id}")
 
-            record = MicrotaskRecord(
-                microtask_id=chosen_id,
-                task_id=task_id,
-                sequence=len(plan.microtask_ids) + 1,
-                title=title,
-                goal=goal,
-            )
-            try:
-                work_dir.mkdir(parents=False, exist_ok=False)
-                self._write_microtask(task_dir, record)
-            except (OSError, TaskStoreError) as exc:
-                path.unlink(missing_ok=True)
-                shutil.rmtree(work_dir, ignore_errors=True)
-                raise TaskStoreError(f"cannot create microtask: {chosen_id}") from exc
-            plan.microtask_ids.append(chosen_id)
-            plan.revision += 1
-            plan.updated_at = utc_now_iso()
-            task.plan_revision = plan.revision
-            task.updated_at = utc_now_iso()
-            self._write_plan(task_dir, plan)
-            self._write_task(task_dir, task)
-            return record
+        record = MicrotaskRecord(
+            microtask_id=chosen_id,
+            task_id=task_id,
+            sequence=len(plan.microtask_ids) + 1,
+            title=title,
+            goal=goal,
+        )
+        try:
+            work_dir.mkdir(parents=False, exist_ok=False)
+            self._write_microtask(task_dir, record)
+        except (OSError, TaskStoreError) as exc:
+            path.unlink(missing_ok=True)
+            shutil.rmtree(work_dir, ignore_errors=True)
+            raise TaskStoreError(f"cannot create microtask: {chosen_id}") from exc
+        plan.microtask_ids.append(chosen_id)
+        plan.revision += 1
+        plan.updated_at = utc_now_iso()
+        task.plan_revision = plan.revision
+        task.updated_at = utc_now_iso()
+        self._write_plan(task_dir, plan)
+        self._write_task(task_dir, task)
+        return record
 
     def set_plan(self, task_id: str, microtask_ids: Iterable[str]) -> TaskPlanRecord:
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            task = self._require_mutable(task_dir)
-            plan = self._load_plan_from(task_dir)
-            ordered = [_safe_id("microtask_id", value) for value in microtask_ids]
-            if len(ordered) != len(set(ordered)):
-                raise TaskStoreError("plan must not contain duplicate microtask IDs")
-            if set(ordered) != set(plan.microtask_ids):
-                raise TaskStoreError("plan must contain exactly the task's microtasks")
+        task_dir = self._task_path(task_id, active_only=True)
+        task = self._require_mutable(task_dir)
+        plan = self._load_plan_from(task_dir)
+        ordered = [_safe_id("microtask_id", value) for value in microtask_ids]
+        if len(ordered) != len(set(ordered)):
+            raise TaskStoreError("plan must not contain duplicate microtask IDs")
+        if set(ordered) != set(plan.microtask_ids):
+            raise TaskStoreError("plan must contain exactly the task's microtasks")
 
-            for sequence, microtask_id in enumerate(ordered, start=1):
-                micro = self._load_microtask_from(task_dir, microtask_id)
-                micro.sequence = sequence
-                micro.updated_at = utc_now_iso()
-                self._write_microtask(task_dir, micro)
+        for sequence, microtask_id in enumerate(ordered, start=1):
+            micro = self._load_microtask_from(task_dir, microtask_id)
+            micro.sequence = sequence
+            micro.updated_at = utc_now_iso()
+            self._write_microtask(task_dir, micro)
 
-            plan.microtask_ids = ordered
-            plan.revision += 1
-            plan.updated_at = utc_now_iso()
-            task.plan_revision = plan.revision
-            task.updated_at = utc_now_iso()
-            self._write_plan(task_dir, plan)
-            self._write_task(task_dir, task)
-            return plan
+        plan.microtask_ids = ordered
+        plan.revision += 1
+        plan.updated_at = utc_now_iso()
+        task.plan_revision = plan.revision
+        task.updated_at = utc_now_iso()
+        self._write_plan(task_dir, plan)
+        self._write_task(task_dir, task)
+        return plan
 
     def set_current_microtask(
         self, task_id: str, microtask_id: str
     ) -> TaskPlanRecord:
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            self._require_mutable(task_dir)
-            plan = self._load_plan_from(task_dir)
-            microtask_id = _safe_id("microtask_id", microtask_id)
-            if microtask_id not in plan.microtask_ids:
-                raise TaskStoreError("current microtask must belong to the task plan")
-            self._load_microtask_from(task_dir, microtask_id)
-            plan.current_microtask_id = microtask_id
-            plan.updated_at = utc_now_iso()
-            self._write_plan(task_dir, plan)
-            return plan
+        task_dir = self._task_path(task_id, active_only=True)
+        self._require_mutable(task_dir)
+        plan = self._load_plan_from(task_dir)
+        microtask_id = _safe_id("microtask_id", microtask_id)
+        if microtask_id not in plan.microtask_ids:
+            raise TaskStoreError("current microtask must belong to the task plan")
+        self._load_microtask_from(task_dir, microtask_id)
+        plan.current_microtask_id = microtask_id
+        plan.updated_at = utc_now_iso()
+        self._write_plan(task_dir, plan)
+        return plan
 
     def complete_task(self, task_id: str) -> TaskRecord:
-        """Storage primitive: no closeout gate. Public workflows use CloseoutService."""
-        with self.mutation_lock(task_id):
-            return self.complete_task_locked(task_id)
-
-    def complete_task_locked(self, task_id: str) -> TaskRecord:
-        """``complete_task`` for a caller that already holds ``mutation_lock``.
-
-        A failed move restores the previous status: the TASK stays active and
-        mutable, never half completed.
-        """
         task_dir = self._task_path(task_id, active_only=True)
         task = self._require_mutable(task_dir)
         destination = self.completed_dir / task.task_id
         if destination.exists():
             raise TaskStoreError(f"completed task already exists: {task.task_id}")
-        previous = (task.status, task.updated_at)
         task.status = TaskStatus.COMPLETED
         task.updated_at = utc_now_iso()
         self._write_task(task_dir, task)
         try:
             os.replace(task_dir, destination)
         except OSError as exc:
-            task.status, task.updated_at = previous
-            self._write_task(task_dir, task)
             raise TaskStoreError(f"cannot move task to completed: {task.task_id}") from exc
         return self._load_task_from(destination)
 

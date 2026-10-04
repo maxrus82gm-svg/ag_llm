@@ -43,3 +43,21 @@
 ## 2026-10-03 — CLAUDE-TEST-001 — Read-only анализ репозитория
 - **Сделано:** Claude изучил реальный `ag_llm`, описал архитектуру, ключевые точки входа, зависимости и несколько рискованных мест без изменения файлов.
 - **Итог:** задача завершена; пользователь подтвердил выполнение.
+
+## 2026-10-04 — CLAUDE-WA-006 / RC-4 — DONE / VERIFIED
+
+**Исполнитель:** Claude Opus 5.5.
+**Independent verifier:** ChatGPT.
+**Accepted commit:** `c46bee7f60ff8354be956881d30de916d5264891` (154).
+
+Tracked safe rollback закрыт после двух independent-review repair:
+- repair #1: historical receipt перестал считаться proof текущего состояния; перед SUCCESS выполняется final full-target byte proof;
+- repair #2: весь restore target set, включая NOOP, находится под тем же RC-3 ownership/target-lock до persistence VERIFIED; claims снимаются после VERIFIED.
+
+Adversarial pass Claude дополнительно исправил liveness/recovery: pending release после crash идемпотентно завершается без повторной mutation; BLOCKED/PARTIAL session с доказанным fate можно закрыть без вечных claims; in-flight target доказывается по bytes до зависимости от restore-point integrity.
+
+Independent verification: RC-4 focused 43/43 PASS; RC-2/RC-3/RC-4 focused 88/88 PASS; full Web Alarm 329/329 PASS; compileall + diff-check PASS; отдельный NOOP-race probe подтвердил `LOCKED_OUT / authority=false` для foreign RC-3 writer внутри final-proof window и нормальный `ACQUIRED` после release.
+
+FINDINGS перенесены дальше: P1 → RC-5 (`as_of` semantics projection/report), P2 → WA4-E/UX (ожидание RC-3 writer на NOOP-target до lock timeout).
+
+**NEXT:** RC-5 — Projection correctness + pure inspection. RC-5 не запущен.

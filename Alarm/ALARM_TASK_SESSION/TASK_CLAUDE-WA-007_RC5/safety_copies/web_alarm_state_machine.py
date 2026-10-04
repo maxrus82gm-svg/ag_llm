@@ -38,16 +38,6 @@ class ServerStateMachineError(RuntimeError):
     """Raised when authoritative state cannot be read or persisted."""
 
 
-class SnapshotNotVerified(ServerStateMachineError):
-    """Pure snapshot verification found the restore point not intact (nothing was written)."""
-
-    def __init__(self, task_id: str, microtask_id: str, reason: str) -> None:
-        super().__init__(f"restore point of {task_id}/{microtask_id} is not verified: {reason}")
-        self.task_id = task_id
-        self.microtask_id = microtask_id
-        self.reason = reason
-
-
 class ServerStateMachine:
     """Authoritative WA-2.2 policy for Server-side microtask transitions."""
 
@@ -80,8 +70,6 @@ class ServerStateMachine:
         self.tasks = TaskStore(storage_root)
         self.manifests = ManifestSnapshotStore(storage_root)
         self.state = EventCheckpointStore(storage_root)
-        self._projection = None
-        self.last_checkpoint_error: str | None = None
 
     def next_safe_action(
         self,
@@ -123,44 +111,72 @@ class ServerStateMachine:
             return "fix the current microtask from its verified restore point, then transition to ACTIVE"
         raise ServerStateMachineError(f"unsupported microtask status: {current}")
 
+    def _snapshot_status(self, task_id: str, microtask_id: str) -> str:
+        try:
+            self.manifests.verify_restore_point(task_id, microtask_id)
+        except (ManifestStoreError, TaskStoreError):
+            return "NOT_VERIFIED"
+        return "VERIFIED"
+    def _last_verified_microtask(self, task_id: str) -> str | None:
+        last: str | None = None
+        for micro in self.tasks.list_microtasks(task_id):
+            if micro.status == MicrotaskStatus.VERIFIED:
+                last = micro.microtask_id
+            else:
+                break
+        return last
+
     def _write_checkpoint(
         self,
         task_id: str,
         microtask_id: str,
         *,
         last_operation_id: str | None = None,
-    ) -> CheckpointRecord | None:
-        """RC-5: authoritative state first, projection second.
-
-        The checkpoint is rebuilt from the canonical projection; the caller's
-        ``microtask_id`` / ``last_operation_id`` labels are history (events),
-        never checkpoint content. A projection write failure does not undo the
-        state change already persisted: it leaves the old checkpoint, which then
-        validates as STALE, and is reported in ``last_checkpoint_error``.
-        """
-        from .projection import ProjectionError, ProjectionService
-
-        if self._projection is None:
-            self._projection = ProjectionService(self.tasks.storage_root)
+    ) -> CheckpointRecord:
+        task = self.tasks.open_task(task_id)
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        existing: CheckpointRecord | None = None
         try:
-            checkpoint = self._projection.rebuild_checkpoint(task_id)["checkpoint"]
-        except ProjectionError as exc:
-            self.last_checkpoint_error = str(exc)
-            return None
-        self.last_checkpoint_error = None
-        return checkpoint
+            existing = self.state.read_checkpoint(task_id)
+        except EventCheckpointStoreError as exc:
+            if "checkpoint is missing" not in str(exc):
+                raise ServerStateMachineError(str(exc)) from exc
 
-    def _transition_result(self, microtask: MicrotaskRecord, checkpoint: CheckpointRecord | None) -> dict[str, object]:
-        result: dict[str, object] = {"microtask": microtask, "checkpoint": checkpoint}
-        if checkpoint is not None:
-            result["next_safe_action"] = checkpoint.next_safe_action
-        else:
-            result["next_safe_action"] = (
-                "the state change is persistent but its checkpoint projection was not refreshed "
-                f"({self.last_checkpoint_error}); rebuild the checkpoint, then re-read the projection"
-            )
-            result["checkpoint_error"] = self.last_checkpoint_error
-        return result
+        checkpoint = CheckpointRecord(
+            checkpoint_id=(
+                existing.checkpoint_id if existing is not None else None
+            ) or CheckpointRecord(
+                task_id=task_id,
+                workspace_id=task.workspace_id,
+                next_safe_action="bootstrap",
+            ).checkpoint_id,
+            task_id=task_id,
+            workspace_id=task.workspace_id,
+            last_verified_microtask_id=self._last_verified_microtask(task_id),
+            current_microtask_id=microtask_id,
+            current_status=micro.status,
+            snapshot_status=self._snapshot_status(task_id, microtask_id),
+            last_operation_id=(
+                last_operation_id
+                if last_operation_id is not None
+                else (existing.last_operation_id if existing is not None else None)
+            ),
+            next_safe_action=self.next_safe_action(
+                task_id,
+                microtask_id,
+                status=micro.status,
+            ),
+            created_at=(
+                existing.created_at
+                if existing is not None
+                else CheckpointRecord(
+                    task_id=task_id,
+                    workspace_id=task.workspace_id,
+                    next_safe_action="bootstrap",
+                ).created_at
+            ),
+        )
+        return self.state.write_checkpoint(checkpoint)
 
     def _reject(
         self,
@@ -317,14 +333,11 @@ class ServerStateMachine:
             microtask_id,
             last_operation_id=operation_id,
         )
-        result: dict[str, object] = {
+        return {
             "manifest": manifest,
             "microtask": micro,
             "checkpoint": checkpoint,
         }
-        if checkpoint is None:
-            result["checkpoint_error"] = self.last_checkpoint_error
-        return result
 
     def verify_snapshot(
         self,
@@ -333,30 +346,22 @@ class ServerStateMachine:
         *,
         operation_id: str | None = None,
     ) -> dict[str, object]:
-        """Pure restore-point integrity verification (RC-5).
-
-        Success or failure, nothing is written: no event, no checkpoint, no
-        manifest/microtask status change (a corrupt snapshot is reported, not
-        turned into BLOCKED_PREPARE). The transition path keeps blocking state
-        when a real workflow step meets a broken restore point. ``operation_id``
-        is accepted for API compatibility only.
-        """
+        manifest = self._require_verified_snapshot(
+            task_id,
+            microtask_id,
+            self.tasks.open_microtask(task_id, microtask_id).status,
+            operation_id=operation_id,
+        )
         micro = self.tasks.open_microtask(task_id, microtask_id)
-        try:
-            manifest = self.manifests.verify_restore_point(task_id, microtask_id)
-        except (ManifestStoreError, TaskStoreError) as exc:
-            raise SnapshotNotVerified(task_id, microtask_id, str(exc)) from exc
-        checkpoint = None
-        try:
-            checkpoint = self.state.read_checkpoint(task_id)
-        except EventCheckpointStoreError:
-            checkpoint = None  # persisted projection is only shown, never needed here
+        checkpoint = self._write_checkpoint(
+            task_id,
+            microtask_id,
+            last_operation_id=operation_id,
+        )
         return {
             "manifest": manifest,
             "microtask": micro,
             "checkpoint": checkpoint,
-            "integrity": "VERIFIED",
-            "workflow_mutation_performed": False,
         }
     def transition(
         self,
@@ -468,4 +473,8 @@ class ServerStateMachine:
             microtask_id,
             last_operation_id=operation_id,
         )
-        return self._transition_result(updated, checkpoint)
+        return {
+            "microtask": updated,
+            "checkpoint": checkpoint,
+            "next_safe_action": checkpoint.next_safe_action,
+        }

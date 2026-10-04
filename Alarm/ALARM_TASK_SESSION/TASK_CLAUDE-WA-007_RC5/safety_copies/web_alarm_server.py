@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 from urllib.parse import parse_qs, urlsplit
 
-from .closeout import CloseoutError, CloseoutService
 from .context_pack import EntryContextPackBuilder
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
@@ -31,7 +30,6 @@ from .operation_store import (
     OperationStoreError,
     OperationTransitionError,
 )
-from .projection import ProjectionError, ProjectionService
 from .reconciliation import ReconciliationEvidenceError
 from .reconciliation_service import ReconciliationService
 from .recovery_report_builder import RecoveryReportBuilderError
@@ -46,7 +44,6 @@ from .rollback_store import RollbackStoreError
 from .state_machine import (
     ServerStateMachine,
     ServerStateMachineError,
-    SnapshotNotVerified,
     TransitionRejected,
 )
 from .task_store import TaskStore, TaskStoreError
@@ -171,41 +168,44 @@ class WebAlarmApi:
         self.resolver = ResolverService(storage_root)
         self.target_claims = TargetClaimService(storage_root)
         self.rollbacks = RollbackService(storage_root)
-        self.projection = ProjectionService(storage_root)
-        self.closeout = CloseoutService(storage_root)
 
     @property
     def storage_root(self) -> Path:
         return self.tasks.storage_root
 
-    def _persisted_checkpoint(self, task_id: str) -> dict[str, Any] | None:
-        try:
-            return record_to_dict(self.state.read_checkpoint(task_id))
-        except EventCheckpointStoreError:
-            return None  # missing or corrupt: the validation states which
-
-    def _task_bundle(self, task_id: str, projection: dict[str, Any] | None = None) -> dict[str, Any]:
-        """RC-5: persisted checkpoint is shown, but current truth is the projection."""
+    def _task_bundle(self, task_id: str) -> dict[str, Any]:
         task = self.tasks.open_task(task_id)
         plan = self.tasks.open_plan(task_id)
         microtasks = self.tasks.list_microtasks(task_id)
-        projection = projection or self.projection.build(task_id)
+        checkpoint = None
+        try:
+            checkpoint = self.state.read_checkpoint(task_id)
+        except EventCheckpointStoreError as exc:
+            if "checkpoint is missing" not in str(exc):
+                raise
         return {
             "task": record_to_dict(task),
             "plan": record_to_dict(plan),
             "microtasks": [record_to_dict(item) for item in microtasks],
-            "checkpoint": self._persisted_checkpoint(task_id),
-            "checkpoint_validation": self.projection.validate_checkpoint(task_id, projection),
-            "projection": projection,
-            "authority_source": projection["authority_source"],
+            "checkpoint": record_to_dict(checkpoint) if checkpoint is not None else None,
         }
 
     def _ui_task_view(self, task_id: str) -> dict[str, Any]:
-        projection = self.projection.build(task_id)
-        bundle = self._task_bundle(task_id, projection)
+        bundle = self._task_bundle(task_id)
         task = self.tasks.open_task(task_id)
         workspace = self.registry.get(task.workspace_id)
-        current_id = projection["position"]["current_microtask_id"]
+        plan = self.tasks.open_plan(task_id)
+        checkpoint = bundle["checkpoint"]
+        current_id = (
+            checkpoint["current_microtask_id"]
+            if checkpoint is not None
+            else plan.current_microtask_id
+        )
+        if current_id is None:
+            for micro in self.tasks.list_microtasks(task_id):
+                if micro.status.value != "VERIFIED":
+                    current_id = micro.microtask_id
+                    break
 
         manifest_view: dict[str, Any] | None = None
         if current_id is not None:
@@ -231,21 +231,38 @@ class WebAlarmApi:
             for item in events
             if item.event_type == "REPORT"
         ]
-        current_status = projection["position"]["current_status"]
+        current_status = (
+            checkpoint["current_status"]
+            if checkpoint is not None
+            else (
+                self.tasks.open_microtask(task_id, current_id).status.value
+                if current_id is not None
+                else "NO_MICROTASK"
+            )
+        )
         recovery_states = {
             "BLOCKED_PREPARE",
             "UNKNOWN_AFTER_DISCONNECT",
             "RECOVERY_REQUIRED",
             "FAILED_VERIFICATION",
         }
-        recovery_state = projection["recovery"]["state"]
-        if recovery_state == "NORMAL" and current_status in recovery_states:
-            recovery_state = current_status
-        restore_point = projection["restore_point"]["status"]
-        snapshot_status = {
-            "VERIFIED": "VERIFIED",
-            "NOT_VERIFIED": "NOT_VERIFIED",
-        }.get(restore_point, "NOT_PREPARED")
+        recovery_state = (
+            current_status if current_status in recovery_states else "NORMAL"
+        )
+        if checkpoint is not None:
+            next_action = checkpoint["next_safe_action"]
+            snapshot_status = checkpoint["snapshot_status"]
+        elif current_id is not None:
+            next_action = self.machine.next_safe_action(task_id, current_id)
+            snapshot_status = (
+                "VERIFIED"
+                if manifest_view
+                and manifest_view.get("record", {}).get("status") == "VERIFIED"
+                else "NOT_PREPARED"
+            )
+        else:
+            next_action = "create a microtask and define the TASK plan"
+            snapshot_status = "NOT_PREPARED"
 
         return {
             "workspace": record_to_dict(workspace),
@@ -256,9 +273,7 @@ class WebAlarmApi:
             "recent_events": [record_to_dict(item) for item in events[-20:]],
             "recovery_state": recovery_state,
             "snapshot_status": snapshot_status,
-            "next_safe_action": projection["next_safe_action"],
-            "authority_source": projection["authority_source"],
-            "checkpoint_validation": bundle["checkpoint_validation"],
+            "next_safe_action": next_action,
         }
 
     def _list_tasks(self) -> dict[str, list[dict[str, Any]]]:
@@ -319,8 +334,6 @@ class WebAlarmApi:
                         "rollbacks",
                         "reports",
                         "recovery_entry",
-                        "projection",
-                        "closeout",
                     ],
                 }
 
@@ -416,47 +429,6 @@ class WebAlarmApi:
                 if method != "GET":
                     raise ApiError(405, "method_not_allowed", "UI task view is read-only")
                 return 200, self._ui_task_view(parts[1])
-
-            if len(parts) == 3 and parts[0] == "tasks" and parts[2] in ("projection", "closeout"):
-                if method != "GET":
-                    raise ApiError(405, "method_not_allowed", f"{parts[2]} inspection is read-only")
-                if parts[2] == "closeout":
-                    return 200, self.closeout.inspect(parts[1])
-                projection = self.projection.build(parts[1])
-                return 200, {
-                    "projection": projection,
-                    "checkpoint_validation": self.projection.validate_checkpoint(parts[1], projection),
-                    "workflow_mutation_performed": False,
-                }
-
-            if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "checkpoint":
-                if method != "GET":
-                    raise ApiError(405, "method_not_allowed", "use POST /tasks/{id}/checkpoint/rebuild to write")
-                return 200, {
-                    "checkpoint": self._persisted_checkpoint(parts[1]),
-                    "validation": self.projection.validate_checkpoint(parts[1]),
-                    "workflow_mutation_performed": False,
-                }
-
-            if len(parts) == 4 and parts[0] == "tasks" and parts[2] == "checkpoint" and parts[3] == "rebuild":
-                if method != "POST":
-                    raise ApiError(405, "method_not_allowed", "checkpoint rebuild requires POST")
-                rebuilt = self.projection.rebuild_checkpoint(parts[1])
-                return 200, {
-                    "checkpoint": rebuilt["checkpoint"],
-                    "validation": rebuilt["validation"],
-                    "projection_write_performed": True,
-                    "workflow_mutation_performed": False,
-                }
-
-            if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "complete":
-                if method != "POST":
-                    raise ApiError(405, "method_not_allowed", "TASK completion requires POST")
-                outcome = self.closeout.complete(parts[1])
-                if not outcome["completed"]:
-                    raise ApiError(409, "closeout_rejected", outcome["closeout"]["next_safe_action"],
-                                   details=outcome["closeout"])
-                return 200, _jsonable(outcome)
 
             if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "recovery-reports":
                 task_id = parts[1]
@@ -853,6 +825,7 @@ class WebAlarmApi:
                 task_id = parts[1]
                 bundle = self._task_bundle(task_id)
                 events = self.state.read_events(task_id)
+                checkpoint = bundle["checkpoint"]
                 return 200, {
                     "mode": "advisory_only",
                     "mutation_performed": False,
@@ -861,8 +834,11 @@ class WebAlarmApi:
                     "recent_events": [
                         record_to_dict(item) for item in events[-20:]
                     ],
-                    "next_safe_action": bundle["projection"]["next_safe_action"],
-                    "authority_source": bundle["authority_source"],
+                    "next_safe_action": (
+                        checkpoint["next_safe_action"]
+                        if checkpoint is not None
+                        else "create or refresh checkpoint before recovery decisions"
+                    ),
                 }
 
             raise ApiError(404, "not_found", f"unknown endpoint: {path}")
@@ -881,19 +857,8 @@ class WebAlarmApi:
                     "next_safe_action": exc.next_safe_action,
                 },
             ) from exc
-        except SnapshotNotVerified as exc:
-            raise ApiError(
-                409,
-                "snapshot_not_verified",
-                str(exc),
-                details={"reason": exc.reason, "workflow_mutation_performed": False},
-            ) from exc
         except ServerStateMachineError as exc:
             raise ApiError(409, "state_machine_error", str(exc)) from exc
-        except ProjectionError as exc:
-            raise ApiError(409, "projection_error", str(exc)) from exc
-        except CloseoutError as exc:
-            raise ApiError(409, "closeout_error", str(exc)) from exc
         except OperationConflictError as exc:
             raise ApiError(409, "operation_replay_conflict", str(exc)) from exc
         except RollbackInputError as exc:

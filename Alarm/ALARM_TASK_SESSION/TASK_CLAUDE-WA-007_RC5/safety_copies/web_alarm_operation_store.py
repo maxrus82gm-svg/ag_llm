@@ -48,7 +48,7 @@ from .payload_store import (
 from .storage_policy import MAX_PAYLOAD_BYTES, secret_pattern_for
 from .store_lock import DEFAULT_LOCK_TIMEOUT_SECONDS, InterProcessLock, StoreLockTimeout
 from .target_identity import TargetIdentityError, canonical_target
-from .task_store import TaskStore, TaskStoreError
+from .task_store import TaskStore
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
 
 
@@ -254,19 +254,17 @@ class OperationStore:
         return "RETURN_EXISTING_INTENT"
 
     def _touch_checkpoint(self, task_id: str, operation_id: str) -> None:
-        """RC-5: refresh an existing checkpoint as a projection (caller holds the TASK lock).
-
-        The operation record is already persistent: a projection failure never
-        undoes or fails it. The old checkpoint then simply validates as STALE.
-        """
-        from .projection import ProjectionError, ProjectionService
-
-        if not (self.tasks.task_directory(task_id) / "checkpoint.json").is_file():
-            return
         try:
-            ProjectionService(self.tasks.storage_root).rebuild_checkpoint_locked(task_id)
-        except (ProjectionError, EventCheckpointStoreError, TaskStoreError, OperationStoreError):
-            return
+            checkpoint = self.events.read_checkpoint(task_id)
+        except EventCheckpointStoreError as exc:
+            if "checkpoint is missing" in str(exc):
+                return
+            raise OperationStoreError(str(exc)) from exc
+        checkpoint.last_operation_id = operation_id
+        try:
+            self.events.write_checkpoint(checkpoint)
+        except EventCheckpointStoreError as exc:
+            raise OperationStoreError(str(exc)) from exc
 
     def _workspace(self, workspace_id: str) -> Path:
         try:

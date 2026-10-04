@@ -65,10 +65,7 @@ class ServerStateMachineTests(unittest.TestCase):
         )
         checkpoint = self.machine.state.read_checkpoint(self.task.task_id)
         self.assertEqual(checkpoint.current_status, MicrotaskStatus.PLANNED)
-        # RC-5: the caller's label is history, never checkpoint content
-        self.assertIsNone(checkpoint.last_operation_id)
-        rejected = self.machine.state.read_events(self.task.task_id)[-1]
-        self.assertEqual((rejected.event_type, rejected.operation_id), ("MICROTASK_TRANSITION_REJECTED", "op_bad"))
+        self.assertEqual(checkpoint.last_operation_id, "op_bad")
 
     def test_prepare_creates_backup_verified_checkpoint_and_event(self):
         result = self._prepare_m1()
@@ -136,8 +133,7 @@ class ServerStateMachineTests(unittest.TestCase):
         checkpoint = self.machine.state.read_checkpoint(self.task.task_id)
         self.assertEqual(checkpoint.last_verified_microtask_id, "m1")
         self.assertEqual(checkpoint.current_status, MicrotaskStatus.VERIFIED)
-        self.assertIsNone(checkpoint.last_operation_id)  # RC-5: no tracked operation exists
-        self.assertEqual(self.machine.state.read_events(self.task.task_id)[-1].operation_id, "op_verified")
+        self.assertEqual(checkpoint.last_operation_id, "op_verified")
 
     def test_second_microtask_cannot_prepare_before_previous_verified(self):
         tasks = TaskStore(self.storage)

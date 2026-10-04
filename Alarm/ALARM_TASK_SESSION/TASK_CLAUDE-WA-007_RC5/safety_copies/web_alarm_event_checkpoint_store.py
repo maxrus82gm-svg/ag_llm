@@ -157,26 +157,8 @@ class EventCheckpointStore:
             raise EventCheckpointStoreError("checkpoint workspace_id mismatch")
         return record
 
-    def checkpoint_markdown(self, task_id: str) -> str | None:
-        """Read checkpoint.md as written (None when absent); pure."""
-        path = self._checkpoint_md_path(task_id)
-        if not path.is_file():
-            return None
-        try:
-            return path.read_bytes().decode("utf-8")
-        except (OSError, UnicodeDecodeError) as exc:
-            raise EventCheckpointStoreError(f"cannot read checkpoint markdown: {path}") from exc
-
     @staticmethod
     def render_checkpoint_md(record: CheckpointRecord) -> str:
-        projection = ""
-        if record.projection is not None:
-            meta = record.projection
-            projection = (
-                f"- PROJECTION: v{meta.get('projection_version')} rebuilt from authoritative state "
-                f"(source {meta.get('source_fingerprint')}, projection {meta.get('projection_fingerprint')})\n"
-                f"- NEXT SOURCE: {meta.get('authority_source')}\n"
-            )
         return (
             f"# Web Alarm Checkpoint\n\n"
             f"- TASK: {record.task_id}\n"
@@ -186,7 +168,6 @@ class EventCheckpointStore:
             f"- CURRENT STATUS: {record.current_status.value}\n"
             f"- SNAPSHOT STATUS: {record.snapshot_status}\n"
             f"- LAST OPERATION: {record.last_operation_id or '-'}\n"
-            f"- UPDATED AT: {record.updated_at}\n"
-            f"{projection}\n"
+            f"- UPDATED AT: {record.updated_at}\n\n"
             f"## NEXT SAFE ACTION\n\n{record.next_safe_action}\n"
         )

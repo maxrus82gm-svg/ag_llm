@@ -64,19 +64,7 @@ class RemoteEntry:
         pack = self.context.build(resolved)
         current_status = str(pack["CURRENT_STATUS"])
         reconciliation = pack.get("RECONCILIATION")
-        source = pack.get("AUTHORITY_SOURCE")
-        if source == "projection_blocker":
-            recovery_decision = "PROJECTION_BLOCKED"
-            entry_state = "PROJECTION_BLOCKED"
-            recovery_required = True
-            mutation_decision = "REPAIR_PERSISTENT_STATE_BEFORE_MUTATION"
-        elif source in ("rollback", "resolver", "resolver_stale"):
-            # RC-5: a persistent Resolver / RC-4 rollback fact outranks advisory reconciliation
-            recovery_decision = pack["RECOVERY"]["state"]
-            entry_state = "RECOVERY_AUTHORITY_READY"
-            recovery_required = True
-            mutation_decision = "FOLLOW_RECOVERY_AUTHORITY_NEXT_SAFE_ACTION"
-        elif reconciliation is not None:
+        if reconciliation is not None:
             recovery_decision = reconciliation["DECISION"]["decision"]
             entry_state = "RECONCILIATION_READY"
             recovery_required = recovery_decision == "MANUAL_REVIEW_REQUIRED"
@@ -103,7 +91,6 @@ class RemoteEntry:
             "RECOVERY_DECISION": recovery_decision,
             "MUTATION_DECISION": mutation_decision,
             "READ_ONLY": True,
-            "AUTHORITY_SOURCE": source,
             "RECONCILIATION": reconciliation,
             "CONTEXT_PACK": pack,
         }

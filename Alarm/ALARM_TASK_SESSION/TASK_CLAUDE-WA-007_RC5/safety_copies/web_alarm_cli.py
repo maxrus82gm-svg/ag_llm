@@ -8,11 +8,9 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from .closeout import CloseoutError, CloseoutService
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
-from .models import MicrotaskStatus, record_to_dict
-from .projection import ProjectionError, ProjectionService
+from .models import CheckpointRecord, MicrotaskStatus, record_to_dict
 from .remote_entry import RemoteEntry, RemoteEntryError
 from .task_store import TaskStore, TaskStoreError
 from .workspace_registry import WorkspaceRegistryError
@@ -49,11 +47,8 @@ def build_parser() -> argparse.ArgumentParser:
     open_p = task_sub.add_parser("open")
     open_p.add_argument("--task-id", required=True)
 
-    complete = task_sub.add_parser("complete", help="complete a TASK through the RC-5 closeout gate")
+    complete = task_sub.add_parser("complete")
     complete.add_argument("--task-id", required=True)
-
-    closeout = task_sub.add_parser("closeout", help="pure closeout inspection (eligibility + blockers)")
-    closeout.add_argument("--task-id", required=True)
 
     micro = root.add_parser("microtask")
     micro_sub = micro.add_subparsers(dest="micro_command", required=True)
@@ -79,9 +74,7 @@ def build_parser() -> argparse.ArgumentParser:
     checkpoint = root.add_parser("checkpoint")
     checkpoint_sub = checkpoint.add_subparsers(dest="checkpoint_command", required=True)
 
-    # RC-5: retired. Kept in the parser only to fail with an explicit message:
-    # a caller can no longer write checkpoint "truth" (use `checkpoint rebuild`).
-    cp_write = checkpoint_sub.add_parser("write", help="retired in RC-5: use `checkpoint rebuild`")
+    cp_write = checkpoint_sub.add_parser("write")
     cp_write.add_argument("--task-id", required=True)
     cp_write.add_argument("--current-microtask")
     cp_write.add_argument("--last-verified-microtask")
@@ -96,12 +89,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     cp_show = checkpoint_sub.add_parser("show")
     cp_show.add_argument("--task-id", required=True)
-
-    cp_validate = checkpoint_sub.add_parser("validate", help="pure: persisted checkpoint vs current projection")
-    cp_validate.add_argument("--task-id", required=True)
-
-    cp_rebuild = checkpoint_sub.add_parser("rebuild", help="rebuild checkpoint.json/.md from authoritative state")
-    cp_rebuild.add_argument("--task-id", required=True)
 
     enter = root.add_parser("enter")
     enter.add_argument("--task-id")
@@ -143,15 +130,7 @@ def _handle(args: argparse.Namespace) -> int:
             _json(record_to_dict(tasks.open_task(args.task_id)))
             return 0
         if args.task_command == "complete":
-            outcome = CloseoutService(args.storage_root).complete(args.task_id)
-            _json({
-                "result": outcome["result"],
-                "task": record_to_dict(outcome["task"]) if outcome["task"] is not None else None,
-                "closeout": outcome["closeout"],
-            })
-            return 0 if outcome["completed"] else 3
-        if args.task_command == "closeout":
-            _json(CloseoutService(args.storage_root).inspect(args.task_id))
+            _json(record_to_dict(tasks.complete_task(args.task_id)))
             return 0
 
     if args.command == "microtask":
@@ -183,21 +162,21 @@ def _handle(args: argparse.Namespace) -> int:
 
     if args.command == "checkpoint":
         if args.checkpoint_command == "write":
-            print(
-                "ERROR: `checkpoint write` is retired (RC-5): a checkpoint is a projection of "
-                "authoritative state, never caller-supplied truth; use `checkpoint rebuild`",
-                file=sys.stderr,
+            task = tasks.open_task(args.task_id)
+            record = CheckpointRecord(
+                task_id=task.task_id,
+                workspace_id=task.workspace_id,
+                last_verified_microtask_id=args.last_verified_microtask,
+                current_microtask_id=args.current_microtask,
+                current_status=MicrotaskStatus(args.current_status),
+                snapshot_status=args.snapshot_status,
+                last_operation_id=args.last_operation_id,
+                next_safe_action=args.next_safe_action,
             )
-            return 2
+            _json(record_to_dict(state.write_checkpoint(record)))
+            return 0
         if args.checkpoint_command == "show":
             _json(record_to_dict(state.read_checkpoint(args.task_id)))
-            return 0
-        if args.checkpoint_command == "validate":
-            _json(ProjectionService(args.storage_root).validate_checkpoint(args.task_id))
-            return 0
-        if args.checkpoint_command == "rebuild":
-            rebuilt = ProjectionService(args.storage_root).rebuild_checkpoint(args.task_id)
-            _json({"checkpoint": record_to_dict(rebuilt["checkpoint"]), "validation": rebuilt["validation"]})
             return 0
 
     if args.command == "enter":
@@ -210,41 +189,38 @@ def _handle(args: argparse.Namespace) -> int:
             return 0
         task = tasks.open_task(args.task_id)
         plan = tasks.open_plan(args.task_id)
-        projections = ProjectionService(args.storage_root)
-        projection = projections.build(args.task_id)
         payload = {
             "task": record_to_dict(task),
             "plan": record_to_dict(plan),
             "microtasks": [record_to_dict(item) for item in tasks.list_microtasks(args.task_id)],
             "checkpoint": None,
-            "checkpoint_validation": projections.validate_checkpoint(args.task_id, projection),
-            "projection": projection,
         }
         try:
             payload["checkpoint"] = record_to_dict(state.read_checkpoint(args.task_id))
         except EventCheckpointStoreError as exc:
             if "checkpoint is missing" not in str(exc):
-                payload["checkpoint"] = None  # corrupt: reported by checkpoint_validation
+                raise
         _json(payload)
         return 0
 
     if args.command == "report":
         task = tasks.open_task(args.task_id)
         plan = tasks.open_plan(args.task_id)
-        projections = ProjectionService(args.storage_root)
-        projection = projections.build(args.task_id)
-        validation = projections.validate_checkpoint(args.task_id, projection)
-        position = projection["position"]
         print(f"TASK: {task.task_id}")
         print(f"STATUS: {task.status.value}")
         print(f"WORKSPACE: {task.workspace_id}")
         print(f"MICROTASKS: {len(plan.microtask_ids)}")
-        print(f"CURRENT MICROTASK: {position['current_microtask_id'] or '-'}")
-        print(f"CURRENT STATUS: {position['current_status']}")
-        print(f"SNAPSHOT STATUS: {projection['restore_point']['status']}")
-        print(f"CHECKPOINT: {validation['status']} (never authority)")
-        print(f"NEXT SAFE ACTION: {projection['next_safe_action']}")
-        print(f"NEXT SOURCE: {projection['authority_source']}")
+        print(f"CURRENT MICROTASK: {plan.current_microtask_id or '-'}")
+        try:
+            checkpoint = state.read_checkpoint(args.task_id)
+        except EventCheckpointStoreError as exc:
+            if "checkpoint is missing" in str(exc):
+                print("CHECKPOINT: MISSING")
+                return 0
+            raise
+        print(f"CHECKPOINT STATUS: {checkpoint.current_status.value}")
+        print(f"SNAPSHOT STATUS: {checkpoint.snapshot_status}")
+        print(f"NEXT SAFE ACTION: {checkpoint.next_safe_action}")
         return 0
 
     raise RuntimeError("unreachable CLI branch")
@@ -261,8 +237,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         EventCheckpointStoreError,
         WorkspaceRegistryError,
         RemoteEntryError,
-        ProjectionError,
-        CloseoutError,
         ValueError,
         OSError,
     ) as exc:

@@ -101,51 +101,6 @@ BLOCKED = "BLOCKED"
 _DONE = (VERIFIED, CLOSED, PRESERVATION_FAILED, PARTIAL, FAILED)
 
 
-_SESSION_ONLY = ("revision", "updated_at", "next_safe_action")
-
-
-def rollback_session_facts(session: dict[str, Any]) -> dict[str, Any]:
-    """Facts of one persisted rollback session, for reports and projections.
-
-    ``restored`` / ``noop`` / ``historically_restored`` come from persisted
-    receipts and describe the targets as of ``facts_as_of`` (the session's
-    final verification). After VERIFIED the session releases ownership, so a
-    later legitimate writer may change any target: these facts never assert
-    the current physical state (``current_physical_state_asserted`` is false).
-    """
-    targets = session["targets"]
-    historical = [
-        t["source_path"] for t in targets
-        if t["receipt"] is not None
-        and t["receipt"]["action"] in (WRITE_RESTORE, DELETE_CREATED)
-        and t["receipt"]["matches_expected_restore"]
-    ]
-    result = session["result"] or {}
-    final = result.get("final_verification") or {}
-    return {
-        "rollback_id": session["rollback_id"],
-        "resolution_id": session["resolution_id"],
-        "status": session["status"],
-        "overall": result.get("overall"),
-        "restored": [t["source_path"] for t in targets if t["status"] == T_RESTORED],
-        "historically_restored": historical,
-        "drifted_after_receipt": [
-            t["source_path"] for t in targets if t["status"] == T_DRIFTED and t["receipt"] is not None
-        ],
-        "noop": [t["source_path"] for t in targets if t["status"] == T_NOOP],
-        "unresolved": [t["source_path"] for t in targets if t["status"] not in (T_RESTORED, T_NOOP)],
-        "claims_released": session["claims_released"],
-        "physical_mutation_performed": bool(historical),
-        "facts_source": "rollback_receipt",
-        "facts_as_of": result.get("at"),
-        "verified_at": final.get("at") if final.get("verified") else None,
-        "current_physical_state_asserted": False,
-        "revision": session["revision"],
-        "updated_at": session["updated_at"],
-        "next_safe_action": session["next_safe_action"],
-    }
-
-
 class RollbackError(RuntimeError):
     """Authoritative rollback state cannot be read or persisted safely."""
 
@@ -971,9 +926,29 @@ class RollbackService:
         receipts = []
         by_resolution = {}
         for session in sessions:
-            facts = rollback_session_facts(session)
-            rolled_back.extend(path for path in facts["historically_restored"] if path not in rolled_back)
-            receipts.append({key: value for key, value in facts.items() if key not in _SESSION_ONLY})
+            targets = session["targets"]
+            historical = [
+                t["source_path"] for t in targets
+                if t["receipt"] is not None
+                and t["receipt"]["action"] in (WRITE_RESTORE, DELETE_CREATED)
+                and t["receipt"]["matches_expected_restore"]
+            ]
+            rolled_back.extend(path for path in historical if path not in rolled_back)
+            receipts.append({
+                "rollback_id": session["rollback_id"],
+                "resolution_id": session["resolution_id"],
+                "status": session["status"],
+                "overall": (session["result"] or {}).get("overall"),
+                "restored": [t["source_path"] for t in targets if t["status"] == T_RESTORED],
+                "historically_restored": historical,
+                "drifted_after_receipt": [
+                    t["source_path"] for t in targets if t["status"] == T_DRIFTED and t["receipt"] is not None
+                ],
+                "noop": [t["source_path"] for t in targets if t["status"] == T_NOOP],
+                "unresolved": [t["source_path"] for t in targets if t["status"] not in (T_RESTORED, T_NOOP)],
+                "claims_released": session["claims_released"],
+                "physical_mutation_performed": bool(historical),
+            })
             by_resolution[session["resolution_id"]] = session["next_safe_action"]
         return {
             "actually_rolled_back": rolled_back,

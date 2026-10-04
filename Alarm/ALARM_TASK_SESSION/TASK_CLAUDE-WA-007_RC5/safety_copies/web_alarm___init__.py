@@ -1,6 +1,5 @@
 """Web Alarm Workspace core package."""
 
-from .closeout import CloseoutError, CloseoutService
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION
@@ -16,7 +15,6 @@ from .operation_store import (
     OperationTransitionError,
 )
 from .payload_store import PayloadIntegrityError, PayloadStore, PayloadStoreError
-from .projection import PROJECTION_VERSION, ProjectionError, ProjectionService
 from .target_identity import CanonicalTarget, TargetIdentityError, canonical_target
 from .reconciliation import (
     ReconciliationEvidence,
@@ -69,8 +67,6 @@ from .transport_event_store import (
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
 
 __all__ = [
-    "CloseoutError",
-    "CloseoutService",
     "EventCheckpointStore",
     "EventCheckpointStoreError",
     "ManifestSnapshotStore",
@@ -88,9 +84,6 @@ __all__ = [
     "PayloadIntegrityError",
     "PayloadStore",
     "PayloadStoreError",
-    "PROJECTION_VERSION",
-    "ProjectionError",
-    "ProjectionService",
     "CanonicalTarget",
     "TargetIdentityError",
     "canonical_target",

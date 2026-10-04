@@ -46,14 +46,9 @@ class WebAlarmCliTests(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(json.loads(out)["raw_task"], "RAW")
 
-        # RC-5: public completion goes through the closeout gate; an empty plan is not done
         code, out, err = self.run_cli("task", "complete", "--task-id", "task_cli")
-        self.assertEqual(code, 3, err)
-        payload = json.loads(out)
-        self.assertEqual((payload["result"], payload["task"]), ("REJECTED", None))
-        self.assertIn("NO_MICROTASKS", [item["code"] for item in payload["closeout"]["blockers"]])
-        code, out, err = self.run_cli("task", "open", "--task-id", "task_cli")
-        self.assertEqual(json.loads(out)["status"], "PLANNED")  # still active, nothing moved
+        self.assertEqual(code, 0, err)
+        self.assertEqual(json.loads(out)["status"], "COMPLETED")
 
     def test_microtask_prepare_checkpoint_status_and_report(self):
         self.run_cli(
@@ -84,7 +79,6 @@ class WebAlarmCliTests(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(json.loads(out)["status"], "VERIFIED")
 
-        # RC-5: a caller can no longer write checkpoint "truth"
         code, out, err = self.run_cli(
             "checkpoint", "write",
             "--task-id", "task_cli",
@@ -95,27 +89,17 @@ class WebAlarmCliTests(unittest.TestCase):
             "--last-operation-id", "op_1",
             "--next-safe-action", "continue",
         )
-        self.assertEqual(code, 2)
-        self.assertIn("retired", err)
-        self.assertFalse((self.storage / "tasks" / "active" / "task_cli" / "checkpoint.json").exists())
-
-        code, out, err = self.run_cli("checkpoint", "rebuild", "--task-id", "task_cli")
         self.assertEqual(code, 0, err)
-        rebuilt = json.loads(out)
-        self.assertEqual(rebuilt["validation"]["status"], "VALID")
-        self.assertIn("READY", rebuilt["checkpoint"]["next_safe_action"])
+        self.assertEqual(json.loads(out)["next_safe_action"], "continue")
 
         code, out, err = self.run_cli("status", "--task-id", "task_cli")
         self.assertEqual(code, 0, err)
         payload = json.loads(out)
         self.assertEqual(payload["checkpoint"]["snapshot_status"], "VERIFIED")
-        self.assertEqual(payload["checkpoint_validation"]["status"], "VALID")
-        self.assertEqual(payload["projection"]["position"]["current_microtask_id"], "m1")
 
         code, out, err = self.run_cli("report", "--task-id", "task_cli")
         self.assertEqual(code, 0, err)
-        self.assertIn("NEXT SAFE ACTION: transition m1 to READY", out)
-        self.assertIn("CHECKPOINT: VALID", out)
+        self.assertIn("NEXT SAFE ACTION: continue", out)
 
     def test_snapshot_restore_and_verify(self):
         self.run_cli(

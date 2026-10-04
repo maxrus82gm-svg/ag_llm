@@ -282,10 +282,6 @@ class CheckpointRecord:
     schema_version: int = SCHEMA_VERSION
     created_at: str = field(default_factory=utc_now_iso)
     updated_at: str = field(default_factory=utc_now_iso)
-    # RC-5: basis of the projection this checkpoint was rebuilt from (version,
-    # source/projection fingerprints). Absent in legacy JSON -> None, and a
-    # checkpoint without it is never authority (LEGACY_UNVALIDATED).
-    projection: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         _require_text("checkpoint_id", self.checkpoint_id)

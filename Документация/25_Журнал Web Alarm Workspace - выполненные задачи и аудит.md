@@ -890,3 +890,52 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`.
 
 **Next:** RC-4 — Tracked safe rollback. Не запускать автоматически; сначала отдельная утверждённая task-card исполнителя.
+
+## RC-4 / CLAUDE-WA-006 — Tracked safe rollback — DONE / VERIFIED — 2026-10-04
+
+**Accepted commit:** `c46bee7f60ff8354be956881d30de916d5264891` (154).
+**Executor:** Claude Opus 5.5. **Independent verifier:** ChatGPT.
+
+### Подтверждённая архитектура
+
+- accepted fresh RC-2 ROLLBACK создаёт отдельную persistent rollback-session; target set выводится сервером из verified restore point;
+- до destructive phase current bytes/absence каждого target сохраняются как recoverable evidence и проверяются hash+size;
+- RC-3 ownership/target-lock берётся all-or-nothing для **всего** restore target set, включая NOOP; NOOP при этом физически не переписывается;
+- per-target CAS защищает physical restore/delete; immediate receipts persistent;
+- historical receipt и current proof разделены: перед общим SUCCESS выполняется exact final full-target proof по физическим bytes и rollback ownership;
+- `VERIFIED / SUCCESS` persistence происходит под target locks/claims; только после него rollback освобождает claims;
+- crash/release failure после persistent VERIFIED оставляет `claims_released=false`; replay/close дозавершает release без второго physical effect;
+- partial/interrupted/blocked session сохраняет per-target fate/receipts; неизвестный effect не повторяется вслепую; доказанно завершённую/заблокированную session можно закрыть без вечных claims;
+- Recovery Report различает ROLLBACK request, historical physical rollback и verified completion.
+
+### Independent-review repairs
+
+**Repair #1:** воспроизведён ложный SUCCESS, когда target A был restored+receipted, затем внешний writer изменял A во время restore B. Исправление: final full-target physical proof; historical receipt больше не является current proof.
+
+**Repair #2:** воспроизведён cooperative RC-3 race: NOOP-target участвовал в final proof, но не имел rollback ownership, поэтому foreign operation могла получить AUTHORIZED и изменить target до SUCCESS. Исправление: all-target lock/claim ownership включая NOOP, deterministic target-hash ordering, persistence VERIFIED перед claim release.
+
+### Adversarial findings Claude внутри RC-4
+
+- исправлена потенциальная вечная блокировка claims у session, заблокированной после собственных effects;
+- in-flight target reconcile выполняется по фактическим bytes до требования исправного restore point;
+- pending release VERIFIED-session идемпотентно завершается через apply/close без повторной mutation;
+- stale `last_attempt` очищается после успешного resume-check.
+
+### Verification evidence
+
+- RC-4 focused: **43/43 PASS**;
+- RC-2/RC-3/RC-4 focused: **88/88 PASS**;
+- full Web Alarm: **329/329 PASS** (1 environment skip symlink);
+- `python -B -m compileall -q web_alarm`: PASS;
+- `git diff --check`: PASS;
+- independent NOOP race probe: during protected final-proof window foreign RC-3 writer = `LOCKED_OUT / authority=false`; rollback = `VERIFIED / SUCCESS`; after release foreign writer = `ACQUIRED`;
+- live storage read-only evidence from executor: unchanged tree, 136 files, no active rollback/claim records.
+
+### Follow-up inputs
+
+- **P1 → RC-5:** projection/report fields such as rollback `restored/noop` need explicit historical/`as_of` semantics; current physical state is a separate proof.
+- **P2 → WA4-E / WA4-O:** normal RC-3 writer may wait until `lock_timeout` while rollback owns a NOOP target; executor retry/UX should surface this clearly.
+- preserved-state 1 MiB remains conservative fail-closed policy;
+- legacy direct CLI `snapshot restore` bypass remains deferred to WA4-R / strict rollout.
+
+**NEXT SAFE ACTION:** formulate/approve RC-5 task in Chat. RC-5 not started.

@@ -6,7 +6,7 @@
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0, RC-1, RC-2 и RC-3 = DONE / VERIFIED — 2026-10-04; RC-4 = следующий разрешённый этап, ещё не запущен.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
+WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0, RC-1, RC-2, RC-3 и RC-4 = DONE / VERIFIED — 2026-10-04; RC-5 = следующий разрешённый этап, ещё не запущен.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
 
 ## Краткая карта реализации
 
@@ -53,7 +53,7 @@ WA4-R — Strict rollout + final audit
 | RC-1 | durable operation contract restart-safe; legacy records читаются совместимо; запись Operation Store/revision межпроцессно защищена |
 | RC-2 | ADOPT/RETRY/ROLLBACK/ABORT — persistent tracked resolutions, bound to evidence fingerprint + operation revision; `RETRY` только re-arm; stale/rejected fail-closed; Recovery Report/NEXT reproducible from persisted Resolver state; без physical mutation до `WA4-E` |
 | RC-3 | persistent canonical-target claim/conflict gate + mutation-boundary CAS; один active owner на physical target; crash/restart ownership сохраняется; stale revision/state drift fail-closed; race tests PASS; standalone authorization не является переносимой mutation authority |
-| RC-4 | rollback tracked; current drift сохранён до destructive restore; intent/receipt/post verification persistent |
+| RC-4 | tracked rollback persistent; current state сохранён до destructive restore; fresh accepted ROLLBACK + server-derived target set; all-target RC-3 ownership incl. NOOP; per-target CAS/receipts; final full-target byte proof precedes persistent VERIFIED; partial/restart-safe recovery and crash-safe pending claim release |
 | RC-5 | checkpoint rebuildable/validated projection; inspect/verify pure; stale projection fail-closed; Resolver-authoritative recovery/NEXT projection не должна перезаписываться advisory reconciliation |
 | RC-6 | одна read-only resume-команда возвращает project/stage, blockers, open operations и один authoritative `NEXT SAFE ACTION`, включая persistent Resolver/Recovery Report state |
 | WA4-E | server-owned snapshot→claim/CAS boundary→lock-held STARTED transition→mutation→post-proof→receipt; STARTED фиксируется под уже удерживаемой TASK-lock до первого write; replay того же contract не создаёт второй side effect |
