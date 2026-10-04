@@ -53,8 +53,6 @@ from .resolution_store import (
     ResolutionStoreError,
 )
 from .resolver_service import ResolverError, ResolverInputError, ResolverService
-from .target_claim_service import TargetClaimError, TargetClaimInputError, TargetClaimService
-from .target_claim_store import TargetClaimStore, TargetClaimStoreError
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import (
     TransportEventRecord,
@@ -114,11 +112,6 @@ __all__ = [
     "ResolverError",
     "ResolverInputError",
     "ResolverService",
-    "TargetClaimError",
-    "TargetClaimInputError",
-    "TargetClaimService",
-    "TargetClaimStore",
-    "TargetClaimStoreError",
     "TaskStore",
     "TaskStoreError",
     "TransportEventRecord",

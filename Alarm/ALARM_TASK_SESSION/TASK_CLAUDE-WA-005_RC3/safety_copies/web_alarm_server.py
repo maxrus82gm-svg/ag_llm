@@ -37,8 +37,6 @@ from .recovery_report_service import RecoveryReportService
 from .recovery_report_store import RecoveryReportStoreError
 from .resolution_store import ResolutionConflictError, ResolutionStoreError
 from .resolver_service import ResolverError, ResolverInputError, ResolverService
-from .target_claim_service import TargetClaimError, TargetClaimInputError, TargetClaimService
-from .target_claim_store import TargetClaimStoreError
 from .state_machine import (
     ServerStateMachine,
     ServerStateMachineError,
@@ -164,7 +162,6 @@ class WebAlarmApi:
         self.transport_events = TransportEventStore(storage_root)
         self.recovery_reports = RecoveryReportService(storage_root)
         self.resolver = ResolverService(storage_root)
-        self.target_claims = TargetClaimService(storage_root)
 
     @property
     def storage_root(self) -> Path:
@@ -327,7 +324,6 @@ class WebAlarmApi:
                         "transport_evidence",
                         "recovery_reports",
                         "resolutions",
-                        "target_claims",
                         "reports",
                         "recovery_entry",
                     ],
@@ -650,56 +646,6 @@ class WebAlarmApi:
                 )
                 return 200, _jsonable(result)
 
-            if (
-                len(parts) in (5, 6)
-                and parts[0] == "tasks"
-                and parts[2] == "operations"
-                and parts[4] == "claim"
-            ):
-                task_id, operation_id = parts[1], parts[3]
-                if len(parts) == 6 and parts[5] not in ("authorize", "release"):
-                    raise ApiError(404, "not_found", f"unknown endpoint: {path}")
-                if len(parts) == 5 and method == "GET":
-                    return 200, self.target_claims.inspect(task_id, operation_id)
-                if method != "POST":
-                    raise ApiError(405, "method_not_allowed", "claim control-plane requires POST")
-                data = _require_object(body)
-                if len(parts) == 5:
-                    outcome = self.target_claims.acquire(
-                        task_id,
-                        operation_id,
-                        operation_revision=data.get("operation_revision"),
-                        agent=_optional_text(data, "agent"),
-                        channel=_optional_text(data, "channel"),
-                    )
-                    accepted = {"ACQUIRED": 201, "REBASED": 201, "REPLAYED": 200}
-                elif parts[5] == "authorize":
-                    outcome = self.target_claims.authorize(
-                        task_id,
-                        operation_id,
-                        operation_revision=data.get("operation_revision"),
-                        claim_id=_optional_text(data, "claim_id"),
-                    )
-                    accepted = {"AUTHORIZED": 200}
-                else:
-                    outcome = self.target_claims.release(
-                        task_id,
-                        operation_id,
-                        claim_id=_optional_text(data, "claim_id"),
-                        reason=_optional_text(data, "reason"),
-                        agent=_optional_text(data, "agent"),
-                        channel=_optional_text(data, "channel"),
-                    )
-                    accepted = {"RELEASED": 200, "REPLAYED": 200}
-                if outcome["result"] not in accepted:
-                    raise ApiError(
-                        409,
-                        f"claim_{outcome['result'].lower()}",
-                        outcome["reason"],
-                        details=outcome,
-                    )
-                return accepted[outcome["result"]], outcome
-
             if len(parts) == 3 and parts[0] == "microtasks" and parts[2] == "prepare":
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "prepare endpoint requires POST")
@@ -816,12 +762,6 @@ class WebAlarmApi:
             raise ApiError(409, "state_machine_error", str(exc)) from exc
         except OperationConflictError as exc:
             raise ApiError(409, "operation_replay_conflict", str(exc)) from exc
-        except TargetClaimInputError as exc:
-            raise ApiError(400, "invalid_claim_request", str(exc)) from exc
-        except (TargetClaimError, TargetClaimStoreError) as exc:
-            message = str(exc)
-            status = 404 if "unknown " in message else 409
-            raise ApiError(status, "target_claim_error", message) from exc
         except ResolutionConflictError as exc:
             raise ApiError(409, "resolution_conflict", str(exc)) from exc
         except ResolverInputError as exc:
