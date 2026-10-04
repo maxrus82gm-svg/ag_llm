@@ -705,7 +705,7 @@ RC-3 НЕ начинать.
 ---
 
 **TASK:** CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding (+ Independent Review Repair).
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04, повторно после repair. DONE не объявлен; commit / push не выполнялись; RC-3 не начат.
+**Статус:** DONE / VERIFIED — 2026-10-04. Independent verification PASS на commit 148 `0b7cb7d`; RC-3 не начат.
 
 **Исходный RC-2 (commit 147 `fe55c99`):**
 - узкий persistent Resolver (`resolution_store.py`, `resolver_service.py`): ADOPT / RETRY / ROLLBACK / ABORT — write-once tracked records, привязанные к `evidence_fingerprint` и `operation_revision`;
@@ -737,7 +737,9 @@ RC-3 НЕ начинать.
 - свежий процесс видит ABORT и STALE в отчёте;
 - `OperationStatus` прежний.
 
-**Вне scope / на решение:** Context Pack / Remote entry при нужной reconciliation всё ещё показывают в верхнем `NEXT_SAFE_ACTION` совет reconciliation (`context_pack.py:166`); `LATEST_RECOVERY_REPORT` уже несёт совет Resolver. Это projection (RC-5). Готовое переиспользование — `report_facts(...)["next_safe_action"]`, около 5 строк. Нужно решение: в RC-2 или в RC-5. Остальное как в исходном RC-2: CAS — RC-3; lifecycle после ADOPT / ABORT — V15; после принятия — перезапуск процессов WEB-02.
+**Independent verification ChatGPT:** проверен последний commit 148 `0b7cb7deae8220d1f2e0f432293b0edc784b7b6d`; focused Resolver + concurrency 25/25 PASS; full Web Alarm 266/266 PASS; concurrency дополнительно 5/5 PASS; `compileall` и `git diff --check` PASS. Независимо воспроизведены ABORT → resolver-authoritative NEXT SAFE ACTION, STALE → persistent report без authority и REJECTED/CONTRACT_INSUFFICIENT → manual-review NEXT. Blocker после repair не найден.
+
+**Deferred follow-up:** верхний `Context Pack / Remote entry NEXT_SAFE_ACTION` всё ещё может быть перезаписан advisory reconciliation, хотя `LATEST_RECOVERY_REPORT` уже содержит Resolver-authoritative NEXT. Это признано projection/resume boundary и переносится в RC-5/RC-6; RC-2 не блокирует. Остальное как в исходном RC-2: CAS — RC-3; lifecycle после ADOPT / ABORT — V15; после принятия — перезапуск процессов WEB-02.
 
 **Подробный отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`, §9 — Independent Review Repair. Safety copies — `safety_copies/` и `safety_copies/repair/`, хеши — `baseline.md`.
 

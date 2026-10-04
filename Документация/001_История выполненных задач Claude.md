@@ -6,11 +6,11 @@
 
 ## Правило
 
-- После завершения своей TASK Claude **сам** добавляет сюда краткую запись.
+- Claude после выполнения обновляет свой оперативный handoff (`000_Задачи Claude.md`, БЛОКИ 2–3) и task-report, но **не закрывает здесь TASK самостоятельно**.
+- Запись в эту историю добавляет независимый verifier/ChatGPT только после PASS и канонического `DONE / VERIFIED`.
 - Писать максимально лаконично: без копирования постановки, длинных отчётов и технической хроники.
-- Обычно достаточно: дата, TASK, что сделано, итог.
-- Вручную этот журнал без необходимости не редактируем; при сомнениях результат всегда можно отдельно проверить.
-- Здесь хранится именно история работ Claude, а не общий журнал проекта.
+- Обычно достаточно: дата, TASK, что сделано, итог независимой проверки.
+- Здесь хранится именно подтверждённая история работ Claude, а не общий журнал проекта.
 
 ## Формат
 
@@ -19,6 +19,10 @@
 - **Итог:** краткий подтверждённый результат.
 
 ---
+
+## 2026-10-04 — CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding
+- **Сделано:** реализован persistent Resolver для ADOPT / RETRY / ROLLBACK / ABORT с binding к evidence fingerprint и operation revision; Recovery Report выводит persistent resolver outcomes и Resolver-authoritative NEXT SAFE ACTION. После первого review исправлены два blocker-а: ABORT больше не даёт RETRY-совет, STALE/REJECTED не теряются в report. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`.
+- **Итог:** DONE / VERIFIED 2026-10-04 на commit 148 `0b7cb7d`; ChatGPT независимо подтвердил focused+concurrency 25/25, full Web Alarm 266/266, дополнительные concurrency 5/5, compileall/diff-check и ручные ABORT/STALE/REJECTED сценарии. Context Pack projection follow-up перенесён в RC-5/RC-6; RC-3 разрешён как следующий этап, но не запущен.
 
 ## 2026-10-04 — CLAUDE-WA-003 — RC-1: Durable Operation Contract
 - **Сделано:** реализован Operation Contract v2: каноническая цель, pre-state и receipt, которые сервер читает сам, payload вне репозитория, fingerprint v2, revision. Legacy v1 читается без перезаписи; запись хранилища сериализована между процессами. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-003_RC1/rc1_report.md`.

@@ -245,3 +245,27 @@ RC-3 до этого не начинать.
 Context Pack / Remote entry при нужной reconciliation по-прежнему берут `NEXT_SAFE_ACTION` из advisory-решения (`context_pack.py:166`). Блок `LATEST_RECOVERY_REPORT` уже несёт совет Resolver, но верхнее поле — нет. Это projection / resume (RC-5 / RC-6), а repair-задача ограничила работу слоем Resolver / Recovery Report, поэтому не трогал. Исправление готово к переиспользованию: `ResolverService.report_facts(...)["next_safe_action"]` можно наложить в Context Pack так же, как в отчёте (~5 строк). Нужно решение: сделать сейчас в RC-2 или в RC-5.
 
 **NEXT SAFE ACTION:** повторная независимая проверка RC-2. RC-3 не начинать.
+
+---
+
+## 10. INDEPENDENT VERIFICATION — PASS
+
+**Verifier:** ChatGPT, 2026-10-04.
+**Проверенный head:** commit 148 `0b7cb7deae8220d1f2e0f432293b0edc784b7b6d` — на момент финального review оставался последним commit репозитория.
+
+Независимо подтверждено:
+- `test_web_alarm_resolver.py` + concurrency: **25/25 PASS**;
+- full `test_web_alarm_*.py`: **266/266 PASS**;
+- multiprocess Resolver race: дополнительно **5/5 PASS**;
+- `python -B -m compileall -q web_alarm`: PASS;
+- `git diff --check`: PASS;
+- ручной ABORT scenario: advisory `RETRY_SAFE` больше не переопределяет persistent ABORT; report NEXT = recovery closed;
+- ручной STALE scenario: persistent STALE остаётся в `resolver_actions` без authority, NEXT требует fresh reconciliation;
+- ручной REJECTED/`CONTRACT_INSUFFICIENT` scenario: report не рекомендует retry, NEXT = manual review;
+- новая public Operation/Microtask state machine не введена; RC-3/RC-4/WA4-E scope не захвачен.
+
+**Verdict:** `CLAUDE-WA-004 / RC-2 = DONE / VERIFIED`.
+
+**Decision по Context Pack:** верхний `Context Pack / Remote entry NEXT_SAFE_ACTION` относится к projection/resume boundary. Его расхождение с Resolver-aware `LATEST_RECOVERY_REPORT` не блокирует RC-2 и переносится как обязательный follow-up в RC-5/RC-6. До их закрытия этот верхний projection не должен считаться stronger authority, чем persistent Resolver/Recovery Report state.
+
+**NEXT:** RC-3 — Canonical-target conflict gate + mutation-boundary CAS. Не начинать автоматически; сначала отдельная утверждённая task-card.

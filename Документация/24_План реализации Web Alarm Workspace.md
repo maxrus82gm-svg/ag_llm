@@ -6,7 +6,7 @@
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0 = DONE / VERIFIED; RC-1 = DONE / VERIFIED — 2026-10-04; RC-2 = READY / NOT STARTED.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
+WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0, RC-1 и RC-2 = DONE / VERIFIED — 2026-10-04; RC-3 = следующий разрешённый этап, ещё не запущен.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
 
 ## Краткая карта реализации
 
@@ -51,11 +51,11 @@ WA4-R — Strict rollout + final audit
 | --- | --- |
 | RC-0 | regression/bytes/hash baseline зафиксирован отдельно от вспомогательных метрик; line-ending policy однозначна |
 | RC-1 | durable operation contract restart-safe; legacy records читаются совместимо; запись Operation Store/revision межпроцессно защищена |
-| RC-2 | ADOPT/RETRY/ROLLBACK/ABORT — persistent tracked transitions; `RETRY` только re-arm, без physical mutation до `WA4-E` |
+| RC-2 | ADOPT/RETRY/ROLLBACK/ABORT — persistent tracked resolutions, bound to evidence fingerprint + operation revision; `RETRY` только re-arm; stale/rejected fail-closed; Recovery Report/NEXT reproducible from persisted Resolver state; без physical mutation до `WA4-E` |
 | RC-3 | canonical-target conflict gate + mutation-boundary CAS; конфликтующие process не проходят параллельно; race tests PASS |
 | RC-4 | rollback tracked; current drift сохранён до destructive restore; intent/receipt/post verification persistent |
-| RC-5 | checkpoint rebuildable/validated projection; inspect/verify pure; stale projection fail-closed |
-| RC-6 | одна read-only resume-команда возвращает project/stage, blockers, open operations и один `NEXT SAFE ACTION` |
+| RC-5 | checkpoint rebuildable/validated projection; inspect/verify pure; stale projection fail-closed; Resolver-authoritative recovery/NEXT projection не должна перезаписываться advisory reconciliation |
+| RC-6 | одна read-only resume-команда возвращает project/stage, blockers, open operations и один authoritative `NEXT SAFE ACTION`, включая persistent Resolver/Recovery Report state |
 | WA4-E | server-owned snapshot→CAS→mutation→post-proof→receipt; replay того же contract не создаёт второй side effect |
 | WA4-A | deterministic lost-response fault injection + fresh process возвращает тот же receipt без второй mutation |
 | WA4-O | authoritative progress/situation UI без собственного выдуманного execution status |
@@ -806,10 +806,10 @@ reconcile
 | WA-1 — Фундамент состояния и файловое ядро | DONE / VERIFIED — WA-1.1–WA-1.6 complete |
 | WA-2 — Local Web Alarm Server + UI | DONE / VERIFIED — WA-2.1–WA-2.4 complete |
 | WA-3 — Remote recovery + replay protection | DONE / VERIFIED — WA-3.1–WA-3.7 complete; old stricter combined criterion SUPERSEDED / DEFERRED by RT-001, not PASS |
-| Recovery Closure RC-0…RC-6 | IN PROGRESS — RC-0 DONE / VERIFIED; RC-1 DONE / VERIFIED; RC-2 READY / NOT STARTED |
+| Recovery Closure RC-0…RC-6 | IN PROGRESS — RC-0, RC-1, RC-2 DONE / VERIFIED; RC-3 next / not started |
 | WA-4 — Strict mutation gateway + hardening | PLANNED AFTER RC-0…RC-6 |
 
-**CURRENT:** WA-1, WA-2 и WA-3 = DONE / VERIFIED. RT-001 / `EP-RT001-001` получил PLAN APPROVAL 2026-10-04; **RC-0 и RC-1 = DONE / VERIFIED**. RC-1 ввёл durable Operation Contract v2, backward-compatible legacy read, canonical target identity, durable payload/ref и межпроцессную сериализацию Operation Store/revision. Канонический следующий этап — RC-2, затем RC-3…RC-6, `WA4-E`, `WA4-A`, `WA4-O`, `WA4-R`. `.gitattributes` FOLLOW-UP остаётся отложенным. Старый stricter combined criterion WA-3 не объявлен пройденным: он `SUPERSEDED / DEFERRED`, а его смысл перенесён в `WA4-A`.
+**CURRENT:** WA-1, WA-2 и WA-3 = DONE / VERIFIED. RT-001 / `EP-RT001-001` получил PLAN APPROVAL 2026-10-04; **RC-0, RC-1 и RC-2 = DONE / VERIFIED**. RC-1 ввёл durable Operation Contract v2; RC-2 добавил persistent Resolver с evidence/revision binding, fail-closed stale/rejected outcomes и Resolver-derived Recovery Report/NEXT SAFE ACTION. Канонический следующий этап — RC-3, затем RC-4…RC-6, `WA4-E`, `WA4-A`, `WA4-O`, `WA4-R`. Обнаруженный при RC-2 review разрыв верхнего `Context Pack NEXT_SAFE_ACTION` не является blocker RC-2 и закреплён как обязательный projection/resume follow-up для RC-5/RC-6. `.gitattributes` FOLLOW-UP остаётся отложенным. Старый stricter combined criterion WA-3 не объявлен пройденным: он `SUPERSEDED / DEFERRED`, а его смысл перенесён в `WA4-A`.
 
 Текущий production runtime Ultra не переключён на strict Web Alarm mutation control: persistent recovery одинаково восстанавливается при новом Chat и новом Server process; resolver retry/rollback/adopt execution пока не выполняется автоматически, authoritative executor ещё не реализован.
 

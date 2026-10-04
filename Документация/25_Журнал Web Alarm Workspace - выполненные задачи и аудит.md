@@ -827,3 +827,33 @@ Plan: `WA37-M001` — safe fixture + pre/post contract + verified restore point 
 **Independent verification:** ChatGPT повторно подтвердил full regression 241/241, focused 44/44, 5 последовательных multiprocess concurrency PASS и read-only fresh-process legacy reopen с неизменным storage tree. Blocker не найден; RC-1 принят.
 
 **Next:** RC-2 — Tracked Resolver / evidence revision (`CLAUDE-WA-004`). При запуске WEB-02 использовать новый процесс с принятым RC-1 кодом.
+
+---
+
+### CLAUDE-WA-004 — RC-2: Persistent Resolver + evidence revision binding
+
+**Статус:** DONE / VERIFIED — 2026-10-04. Финальная независимая проверка выполнена по последнему commit 148 `0b7cb7deae8220d1f2e0f432293b0edc784b7b6d`.
+
+**Результат:**
+- введён отдельный persistent Resolver layer без новой public Operation/Microtask state machine;
+- ADOPT / RETRY / ROLLBACK / ABORT имеют persistent identity и binding к evidence fingerprint + operation revision;
+- stale basis и stale revision fail-closed; STALE / REJECTED сохраняются как tracked outcomes;
+- RETRY только re-arm того же `operation_id`; physical mutation не выполняется;
+- ROLLBACK только tracked recovery request; physical restore остаётся RC-4;
+- ADOPT фиксирует уже достигнутый post-state без project mutation; ABORT persistent/replay-safe;
+- duplicate/replay одного logical resolution идемпотентен; конфликт identity/action/basis отклоняется;
+- Recovery Report выводит resolver outcomes, authority и NEXT SAFE ACTION из persisted Resolver state; caller claims не имеют самостоятельной authority;
+- legacy v1/incomplete/corrupt contracts не получают unsafe RETRY re-arm.
+
+**Independent review + repair:** первая проверка commit 147 `fe55c99` нашла два blocker-а: accepted ABORT не подавлял advisory RETRY в Recovery Report, а persistent STALE/REJECTED records не попадали в `resolver_actions`. Repair в commit 148 исправил оба дефекта и добавил regression tests.
+
+**Independent verification:** focused Resolver + concurrency 25/25 PASS; full Web Alarm 266/266 PASS; multiprocess race дополнительно 5/5 PASS; compileall и `git diff --check` PASS. Независимые ручные сценарии подтвердили:
+- accepted ABORT → report NEXT = recovery closed, source = Resolver;
+- STALE / `EVIDENCE_FINGERPRINT_CHANGED` остаётся persistent и видимым без authority, NEXT требует fresh reconciliation;
+- REJECTED / `CONTRACT_INSUFFICIENT` не рекомендует RETRY и переводит в manual review.
+
+**Deferred projection follow-up:** `context_pack.py` всё ещё может перезаписать верхний `NEXT_SAFE_ACTION` advisory reconciliation, хотя `LATEST_RECOVERY_REPORT` уже содержит Resolver-authoritative NEXT. Это не blocker RC-2: интеграция закреплена как обязательный exit item RC-5/RC-6 (projection correctness / minimal resume).
+
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2/rc2_report.md`.
+
+**Next:** RC-3 — Canonical-target conflict gate + mutation-boundary CAS. Не запускать автоматически; сначала сформировать и утвердить персональную task-card исполнителя.
