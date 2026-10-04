@@ -48,7 +48,7 @@ from .reconciliation_service import ReconciliationService
 from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
 from .resolver_service import ResolverError, ResolverService
 from .rollback_service import rollback_session_facts
-from .rollback_store import CLOSED, PRESERVATION_FAILED, T_APPLYING, VERIFIED, RollbackStore, RollbackStoreError
+from .rollback_store import CLOSED, PRESERVATION_FAILED, VERIFIED, RollbackStore, RollbackStoreError
 from .state_machine import ServerStateMachine
 from .target_claim_store import TargetClaimStore, TargetClaimStoreError
 from .task_store import TaskStore, TaskStoreError
@@ -242,229 +242,20 @@ class ProjectionService:
             return active, f"target claim store unreadable: {exc}"
         return active, None
 
-    @staticmethod
-    def _rollback_settled(session: dict[str, Any]) -> bool:
-        """A tracked rollback no longer needs operational attention."""
-        return session["status"] in _ROLLBACK_SETTLED or (
-            session["status"] == VERIFIED and session["claims_released"]
-        )
-
-    @staticmethod
-    def _aborted_rollback_recovery(session: dict[str, Any], abort_record) -> dict[str, Any]:
-        """Composite authority: Resolver ABORT + a still-open RC-4 session.
-
-        ABORT revokes destructive continuation but does not erase the tracked
-        rollback lifecycle.  The session must still reach a safe terminal
-        state.  An interrupted physical write is reconciled through RC-4's
-        existing apply path before close; otherwise close is the next action.
-        """
-        rollback_id = session["rollback_id"]
-        in_flight = list(session.get("in_flight") or [])
-        if in_flight:
-            state = "ROLLBACK_ABORTED_IN_FLIGHT"
-            next_action = (
-                f"rollback {rollback_id} is still open, but Resolver recovery was ABORTED by "
-                f"{abort_record.resolution_id}; do not continue destructive restore. "
-                f"Reconcile the interrupted target fate through RC-4 apply once ({in_flight}); "
-                "RC-4 will refuse further destructive continuation under ABORT, then close the "
-                "tracked rollback session to release any remaining ownership"
-            )
-        else:
-            state = "ROLLBACK_ABORTED_OPEN"
-            next_action = (
-                f"rollback {rollback_id} is still open, but Resolver recovery was ABORTED by "
-                f"{abort_record.resolution_id}; do not apply destructive restore. Close the tracked "
-                "rollback session to release any remaining ownership; after it is terminal, the "
-                "accepted ABORT may become the top-level recovery state"
-            )
-        return {
-            "state": state,
-            "source": "rollback",
-            "resolution_id": abort_record.resolution_id,
-            "rollback_id": rollback_id,
-            "rollback_resolution_id": session["resolution_id"],
-            "next_safe_action": next_action,
-        }
-
-    @staticmethod
-    def _superseded_rollback_recovery(session: dict[str, Any], current_record) -> dict[str, Any]:
-        """A newer accepted Resolver action superseded the basis of an open rollback."""
-        rollback_id = session["rollback_id"]
-        action = current_record.action.value
-        in_flight = list(session.get("in_flight") or [])
-        if in_flight:
-            state = "ROLLBACK_SUPERSEDED_IN_FLIGHT"
-            next_action = (
-                f"rollback {rollback_id} is still open with interrupted target fate {in_flight}, while "
-                f"newer accepted {action} resolution {current_record.resolution_id} superseded its recovery "
-                "basis. Do not continue the old rollback, do not execute the newer action, and do not call "
-                "rollback apply/close blindly: manual review of the interrupted target and RC-4 session is "
-                f"required before the old session can be made terminal and {action} may be followed"
-            )
-        else:
-            state = f"ROLLBACK_SUPERSEDED_BY_{action}"
-            next_action = (
-                f"rollback {rollback_id} is still open, but newer accepted {action} resolution "
-                f"{current_record.resolution_id} superseded its recovery basis. Do not apply the old "
-                "rollback. Close the tracked rollback session first; after it is terminal, follow the "
-                f"accepted {action} resolution"
-            )
-        return {
-            "state": state,
-            "source": "rollback",
-            "resolution_id": current_record.resolution_id,
-            "rollback_id": rollback_id,
-            "rollback_resolution_id": session["resolution_id"],
-            "next_safe_action": next_action,
-        }
-
-    @staticmethod
-    def _stale_rollback_recovery(session: dict[str, Any]) -> dict[str, Any]:
-        """An open rollback whose original Resolver basis is no longer fresh."""
-        rollback_id = session["rollback_id"]
-        in_flight = list(session.get("in_flight") or [])
-        if in_flight:
-            state = "ROLLBACK_STALE_IN_FLIGHT"
-            next_action = (
-                f"rollback {rollback_id} is still open with interrupted target fate {in_flight}, and its "
-                "Resolver basis is stale. Do not continue destructive restore and do not call rollback "
-                "apply/close blindly: manual review of the interrupted target and RC-4 session is required "
-                "before the session can be made terminal; then run a new reconciliation"
-            )
-        else:
-            state = "ROLLBACK_STALE_OPEN"
-            next_action = (
-                f"rollback {rollback_id} is still open but its Resolver basis is stale. Do not apply the "
-                "rollback. Close the tracked rollback session, then run a new reconciliation before any "
-                "new recovery mutation"
-            )
-        return {
-            "state": state,
-            "source": "rollback",
-            "resolution_id": session["resolution_id"],
-            "rollback_id": rollback_id,
-            "rollback_resolution_id": session["resolution_id"],
-            "next_safe_action": next_action,
-        }
-
-    @staticmethod
-    def _multiple_open_rollbacks_recovery(op, sessions, current_record) -> dict[str, Any]:
-        """Fail closed if more than one tracked rollback for one operation is open."""
-        ordered = sorted(sessions, key=lambda s: (s["updated_at"], s["rollback_id"]))
-        chosen = ordered[-1]
-        ids = [s["rollback_id"] for s in ordered]
-        in_flight = sorted({target for s in ordered for target in (s.get("in_flight") or [])})
-        current = (
-            f"current Resolver action is accepted {current_record.action.value} "
-            f"({current_record.resolution_id}); "
-            if current_record is not None and current_record.result is ResolutionResult.ACCEPTED
-            else ""
-        )
-        interrupt = (
-            f"in-flight target fate exists ({in_flight}); manual review is required before any apply/close; "
-            if in_flight
-            else ""
-        )
-        return {
-            "state": "ROLLBACK_MULTIPLE_OPEN",
-            "source": "rollback",
-            "resolution_id": (
-                current_record.resolution_id
-                if current_record is not None
-                else chosen["resolution_id"]
-            ),
-            "rollback_id": chosen["rollback_id"],
-            "open_rollback_ids": ids,
-            "next_safe_action": (
-                f"multiple tracked rollback sessions are still open for operation {op.operation_id}: {ids}; "
-                f"{current}{interrupt}inspect and close each superseded/open session before following any "
-                "new recovery action"
-            ),
-        }
-
     def _operation_recovery(self, op, records, actions, authoritative, sessions) -> dict[str, Any] | None:
-        """Recovery authority of one operation, by the precedence in the module docstring.
-
-        A nonterminal RC-4 session is operational state in its own right.  It
-        therefore stays visible even if the Resolver later records another
-        action.  Accepted ABORT is special: it changes what is safe to do with
-        the open session (cleanup/reconcile, never destructive continuation)
-        but does not make that session disappear.
-        """
-        open_sessions = [s for s in sessions if not self._rollback_settled(s)]
-        authoritative_record = None
+        """Recovery authority of one operation, by the precedence in the module docstring."""
         if authoritative is not None:
             rid = authoritative["resolution_id"]
-            authoritative_record = next((r for r in records if r.resolution_id == rid), None)
-
-        if open_sessions:
-            # Prefer the session of the Resolver action still considered current;
-            # otherwise the latest open tracked session is the recovery work that
-            # must be made terminal before it can disappear from top-level NEXT.
-            by_resolution = {s["resolution_id"]: s for s in open_sessions}
-            session = (
-                by_resolution.get(authoritative["resolution_id"])
-                if authoritative is not None
-                else None
-            )
-            if session is None:
-                session = max(open_sessions, key=lambda s: (s["updated_at"], s["rollback_id"]))
-
-            if len(open_sessions) > 1:
-                return self._multiple_open_rollbacks_recovery(op, open_sessions, authoritative_record)
-
-            # A later accepted action cannot erase the old tracked session.  It
-            # supersedes what may safely happen next: clean up the old session
-            # first, then expose/follow the newer Resolver authority.
-            if (
-                authoritative_record is not None
-                and authoritative_record.result is ResolutionResult.ACCEPTED
-                and authoritative_record.resolution_id != session["resolution_id"]
-            ):
-                if authoritative_record.action is ResolutionAction.ABORT:
-                    return self._aborted_rollback_recovery(session, authoritative_record)
-                return self._superseded_rollback_recovery(session, authoritative_record)
-
-            session_action = next(
-                (a for a in actions if a["resolution_id"] == session["resolution_id"]),
-                None,
-            )
-            if session_action is None or not session_action["fresh"]:
-                return self._stale_rollback_recovery(session)
-
-            return {
-                "state": "ROLLBACK_" + session["status"],
-                "source": "rollback",
-                "resolution_id": session["resolution_id"],
-                "rollback_id": session["rollback_id"],
-                "next_safe_action": session["next_safe_action"],
-            }
-
-        if authoritative is not None:
-            rid = authoritative["resolution_id"]
-
-            # A terminal RC-4 session remains the historical outcome of its own
-            # Resolver ROLLBACK.  It no longer blocks a *newer* accepted action,
-            # because that action has a different resolution_id, but when the
-            # Resolver still points at this same ROLLBACK we surface the tracked
-            # outcome rather than degrading it to RESOLUTION_STALE after its own
-            # physical effects changed the evidence fingerprint.
-            settled = next(
-                (
-                    session for session in sessions
-                    if session["resolution_id"] == rid and self._rollback_settled(session)
-                ),
-                None,
-            )
-            if settled is not None:
+            by_session = {s["resolution_id"]: s for s in sessions}
+            if rid in by_session:
+                session = by_session[rid]
                 return {
-                    "state": "ROLLBACK_" + settled["status"],
+                    "state": "ROLLBACK_" + session["status"],
                     "source": "rollback",
-                    "resolution_id": settled["resolution_id"],
-                    "rollback_id": settled["rollback_id"],
-                    "next_safe_action": settled["next_safe_action"],
+                    "resolution_id": rid,
+                    "rollback_id": session["rollback_id"],
+                    "next_safe_action": session["next_safe_action"],
                 }
-
             record = next(r for r in records if r.resolution_id == rid)
             action = next(a for a in actions if a["resolution_id"] == rid)
             if record.result is ResolutionResult.ACCEPTED and (action["fresh"] or record.action is ResolutionAction.ABORT):
@@ -544,16 +335,7 @@ class ProjectionService:
             blockers.append(_item("RESOLUTIONS_UNREADABLE", str(exc)))
         try:
             stored = self.rollbacks.list(task_id)
-            sessions = []
-            for item in stored:
-                facts = rollback_session_facts(item)
-                # Projection-only operational detail.  Receipts stay historical,
-                # while an APPLYING target means close() cannot yet prove its fate.
-                facts["in_flight"] = [
-                    target["source_path"] for target in item["targets"]
-                    if target["status"] == T_APPLYING
-                ]
-                sessions.append(facts)
+            sessions = [rollback_session_facts(item) for item in stored]
             session_ops = {item["rollback_id"]: item["operation_id"] for item in stored}
         except RollbackStoreError as exc:
             sessions, session_ops = [], {}
@@ -696,17 +478,13 @@ class ProjectionService:
             "attention": [view["operation_id"] for view in attention],
         }
         if focus is not None:
-            # Preserve projection diagnostics such as rollback_resolution_id
-            # and open_rollback_ids.  NEXT stays top-level to avoid two copies
-            # of operational advice drifting apart.
             recovery.update(
-                {
-                    key: value
-                    for key, value in focus["recovery"].items()
-                    if key != "next_safe_action"
-                }
+                state=focus["recovery"]["state"],
+                source=focus["recovery"]["source"],
+                operation_id=focus["operation_id"],
+                resolution_id=focus["recovery"]["resolution_id"],
+                rollback_id=focus["recovery"]["rollback_id"],
             )
-            recovery["operation_id"] = focus["operation_id"]
         if projection["blockers"]:
             first = projection["blockers"][0]
             next_action = (
