@@ -273,24 +273,13 @@ class TaskStore:
         self, task_id: str, microtask_id: str, status: MicrotaskStatus
     ) -> MicrotaskRecord:
         with self.mutation_lock(task_id):
-            return self.set_microtask_status_locked(task_id, microtask_id, status)
-
-    def set_microtask_status_locked(
-        self, task_id: str, microtask_id: str, status: MicrotaskStatus
-    ) -> MicrotaskRecord:
-        """Storage primitive for a caller already holding ``mutation_lock``.
-
-        The caller owns lifecycle policy. This method performs the same
-        fail-closed active-TASK write as ``set_microtask_status`` without
-        acquiring the non-reentrant TASK lock again.
-        """
-        task_dir = self._task_path(task_id, active_only=True)
-        self._require_mutable(task_dir)
-        microtask = self._load_microtask_from(task_dir, microtask_id)
-        microtask.status = MicrotaskStatus(status)
-        microtask.updated_at = utc_now_iso()
-        self._write_microtask(task_dir, microtask)
-        return microtask
+            task_dir = self._task_path(task_id, active_only=True)
+            self._require_mutable(task_dir)
+            microtask = self._load_microtask_from(task_dir, microtask_id)
+            microtask.status = MicrotaskStatus(status)
+            microtask.updated_at = utc_now_iso()
+            self._write_microtask(task_dir, microtask)
+            return microtask
 
     def list_microtasks(self, task_id: str) -> list[MicrotaskRecord]:
         task_dir = self._task_path(task_id)

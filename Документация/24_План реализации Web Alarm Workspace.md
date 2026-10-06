@@ -6,7 +6,7 @@
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0, RC-1, RC-2, RC-3 и RC-4 = DONE / VERIFIED — 2026-10-04; RC-5 = следующий разрешённый этап, ещё не запущен.** Статус меняется только после предусмотренной проверки конкретной TASK; незапущенные этапы остаются `PLANNED`.
+WA-1, WA-2 и WA-3 закрыты как DONE / VERIFIED. RT-001 утвердил correctness-first маршрут перед strict rollout. **RC-0, RC-1, RC-2, RC-3 и RC-4 = DONE / VERIFIED — 2026-10-04; RC-5 implementation + independent-review repair = RESULT READY, отдельная независимая приёмка отложена явным решением пользователя; RC-6 = ACTIVE / IN PROGRESS по утверждённой Chat TASK `CHATGPT-WA-008`.** Это осознанное исключение из обычного правила «следующий correctness boundary только после PASS»; оно не означает `RC-5 DONE / VERIFIED`. WA4-E остаётся запрещён до closeout RC-6.
 
 ## Краткая карта реализации
 
@@ -34,7 +34,7 @@ RC-4 — Tracked safe rollback
 ↓
 RC-5 — Projection correctness + pure inspection
 ↓
-RC-6 — Minimal project-level resume
+RC-6 — Project-level Recovery Closure / bounded resume coordinator
 ↓
 WA4-E — Authoritative Mutation Executor / Gateway
 ↓
@@ -55,7 +55,7 @@ WA4-R — Strict rollout + final audit
 | RC-3 | persistent canonical-target claim/conflict gate + mutation-boundary CAS; один active owner на physical target; crash/restart ownership сохраняется; stale revision/state drift fail-closed; race tests PASS; standalone authorization не является переносимой mutation authority |
 | RC-4 | tracked rollback persistent; current state сохранён до destructive restore; fresh accepted ROLLBACK + server-derived target set; all-target RC-3 ownership incl. NOOP; per-target CAS/receipts; final full-target byte proof precedes persistent VERIFIED; partial/restart-safe recovery and crash-safe pending claim release |
 | RC-5 | checkpoint rebuildable/validated projection; inspect/verify pure; stale projection fail-closed; Resolver-authoritative recovery/NEXT projection не должна перезаписываться advisory reconciliation |
-| RC-6 | одна read-only resume-команда возвращает project/stage, blockers, open operations и один authoritative `NEXT SAFE ACTION`, включая persistent Resolver/Recovery Report state |
+| RC-6 | одна canonical `recover/resume` команда строится поверх RC-5 Projection, возвращает project/stage/blockers/open operations/NEXT и bounded выполняет только уже разрешённые safe recovery/administrative steps до `READY_FOR_EXECUTION`; normal physical mutation остаётся строго WA4-E |
 | WA4-E | server-owned snapshot→claim/CAS boundary→lock-held STARTED transition→mutation→post-proof→receipt; STARTED фиксируется под уже удерживаемой TASK-lock до первого write; replay того же contract не создаёт второй side effect |
 | WA4-A | deterministic lost-response fault injection + fresh process возвращает тот же receipt без второй mutation |
 | WA4-O | authoritative progress/situation UI без собственного выдуманного execution status |

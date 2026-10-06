@@ -1,0 +1,912 @@
+﻿
+===== projection.closeout_blockers =====
+def closeout_blockers(projection: dict[str, Any]) -> list[dict[str, Any]]:
+    """Why this TASK may not be completed now (conservative; empty list = eligible).
+
+    Operation rule (existing RC-2/RC-3 contracts, nothing new is invented):
+    - an accepted ABORT closes Resolver-level recovery of its operation;
+    - STARTED / UNKNOWN_AFTER_DISCONNECT have an open mutation fate until an
+      accepted ABORT or a fresh accepted ADOPT (the RC-3 release rule);
+    - INTENT is a pending declared mutation; DONE is not VERIFIED;
+    - VERIFIED and FAILED are terminal operation outcomes (an older resolution
+      that went stale does not reopen them);
+    - a fresh accepted RETRY is a pending future execution;
+    - an authoritative ROLLBACK without a VERIFIED rollback whose ownership is
+      released has no terminal safe outcome.
+    """
+    blockers: list[dict[str, Any]] = []
+    task = projection["task"]
+    position = projection["position"]
+
+    def add(code: str, reason: str, next_action: str, **extra: Any) -> None:
+        blockers.append(dict(_item(code, reason, **extra), next=next_action))
+
+    if task["location"] != "active" or task["status"] in (TaskStatus.COMPLETED.value, TaskStatus.ARCHIVED.value):
+        add("TASK_NOT_ACTIVE", f"TASK is {task['status']} ({task['location']})", "nothing to complete")
+    for item in projection["blockers"]:
+        add("PROJECTION_" + item["code"], item["reason"], "repair the persistent plan/state by manual review")
+    for item in projection["diagnostics"]:
+        if item["code"] in ("ORPHAN_MICROTASKS", "CLAIMS_UNREADABLE"):
+            add(item["code"], item["reason"], "repair the persistent state by manual review")
+    if not position["microtasks"]:
+        add("NO_MICROTASKS", "the TASK plan has no microtask; nothing was verified", "create and verify microtasks")
+    for micro in position["microtasks"]:
+        if micro["status"] != MicrotaskStatus.VERIFIED.value:
+            add("MICROTASK_NOT_VERIFIED", f"{micro['microtask_id']} is {micro['status']}",
+                f"bring {micro['microtask_id']} to VERIFIED through the server state machine",
+                microtask_id=micro["microtask_id"])
+    for view in projection["operations"]:
+        op_id, status = view["operation_id"], view["status"]
+        actions = view["resolutions"]
+        accepted = [a for a in actions if a["result"] == ResolutionResult.ACCEPTED.value]
+        aborted = any(a["action"] == ResolutionAction.ABORT.value for a in accepted)
+        fresh_adopt = any(a["action"] == ResolutionAction.ADOPT.value and a["fresh"] for a in accepted)
+        recovery = view["recovery"]
+        if not aborted:
+            if status == OperationStatus.INTENT.value:
+                add("OPERATION_OPEN", f"{op_id} is INTENT (declared, not executed)",
+                    f"transition {op_id} to FAILED or record an accepted ABORT", operation_id=op_id)
+            elif status in (OperationStatus.STARTED.value, OperationStatus.UNKNOWN_AFTER_DISCONNECT.value) and not fresh_adopt:
+                if recovery is not None and recovery["state"] == "ROLLBACK_" + VERIFIED:
+                    advice = (
+                        f"its microtask was rolled back and verified, but {op_id} itself stays {status}: "
+                        "the operation lifecycle after a rollback is not defined yet; close its recovery "
+                        "with an accepted ABORT"
+                    )
+                else:
+                    advice = (recovery or {}).get("next_safe_action") or (
+                        f"reconcile {op_id}, then record a fresh accepted ADOPT or an accepted ABORT"
+                    )
+                add("OPERATION_UNRESOLVED", f"{op_id} is {status}: its mutation fate is open", advice,
+                    operation_id=op_id)
+            elif status == OperationStatus.DONE.value:
+                add("OPERATION_NOT_VERIFIED", f"{op_id} is DONE, not VERIFIED",
+                    f"verify {op_id} and transition it DONE -> VERIFIED", operation_id=op_id)
+        if recovery is not None and recovery["state"] == "RETRY_ACCEPTED":
+            add("RETRY_PENDING", f"{op_id} has a fresh accepted RETRY: a future execution is pending",
+                recovery["next_safe_action"], operation_id=op_id, resolution_id=recovery["resolution_id"])
+        if recovery is not None and recovery["state"] == "ROLLBACK_ACCEPTED":
+            add("ROLLBACK_PENDING", f"{op_id}: accepted ROLLBACK has no tracked rollback outcome yet",
+                recovery["next_safe_action"], operation_id=op_id, resolution_id=recovery["resolution_id"])
+    for session in projection["rollbacks"]:
+        status = session["status"]
+        if status == VERIFIED and not session["claims_released"]:
+            add("ROLLBACK_RELEASE_PENDING", f"rollback {session['rollback_id']} is VERIFIED but its ownership "
+                "release is incomplete", session["next_safe_action"], rollback_id=session["rollback_id"])
+        elif status != VERIFIED and status not in _ROLLBACK_SETTLED:
+            add("ROLLBACK_OPEN", f"rollback {session['rollback_id']} is {status}", session["next_safe_action"],
+                rollback_id=session["rollback_id"])
+    for claim in projection["ownership"]["active_claims"]:
+        add("ACTIVE_CLAIM", f"target {claim['target']} is owned by {claim['owner']['kind']} "
+            f"({claim['operation_id']}, {claim['claim_id']})",
+            "finish or release the owning operation / rollback first", claim_id=claim["claim_id"])
+    return blockers
+
+
+===== CloseoutService.inspect =====
+    def inspect(self, task_id: str) -> dict[str, Any]:
+        """Pure closeout inspection: eligibility, blockers, facts and NEXT."""
+        return self.verdict(self.projection.build(task_id))
+
+
+===== CloseoutService.complete =====
+    def complete(self, task_id: str) -> dict[str, Any]:
+        """Complete the TASK only if a fresh inspection under the TASK locks is clean."""
+        try:
+            with self.operations.task_lock(task_id):
+                with self.tasks.mutation_lock(task_id):
+                    verdict = self.verdict(self.projection.build(task_id))
+                    if not verdict["eligible"]:
+                        return {"result": "REJECTED", "completed": False, "task": None, "closeout": verdict}
+                    task = self.tasks.complete_task_locked(task_id)
+        except (OperationStoreError, TaskStoreError) as exc:
+            raise CloseoutError(str(exc)) from exc
+        recorded = True
+        try:  # history only: the completion itself is already authoritative
+            self.events.append_event(
+                task_id,
+                "TASK_COMPLETED",
+                payload={"gate": "RC5_CLOSEOUT", "source_fingerprint": verdict["source_fingerprint"]},
+            )
+        except EventCheckpointStoreError:
+            recorded = False
+        return {
+            "result": "COMPLETED",
+            "completed": True,
+            "task": task,
+            "closeout": dict(verdict, workflow_mutation_performed=True),
+            "event_recorded": recorded,
+        }
+
+
+===== ResolverService.current_basis =====
+    def current_basis(
+        self,
+        task_id: str,
+        microtask_id: str,
+        operation_id: str,
+    ) -> tuple[dict[str, Any], ReconciliationDecision]:
+        try:
+            record = self.operations.get(task_id, operation_id)
+        except OperationStoreError as exc:
+            raise ResolverError(f"operation state unavailable: {exc}") from exc
+        if record.microtask_id != microtask_id:
+            raise ResolverInputError("operation does not belong to the requested microtask")
+        try:
+            evidence = self.collector.collect(
+                task_id, microtask_id, operation_id=operation_id
+            )
+        except ReconciliationEvidenceError as exc:
+            raise ResolverError(f"reconciliation evidence unavailable: {exc}") from exc
+        decision = self.engine.decide(evidence)
+        basis = {
+            "evidence_version": evidence.evidence_version,
+            "evidence_fingerprint": decision.evidence_fingerprint,
+            "decision_version": decision.decision_version,
+            "decision": decision.decision,
+            "reason_code": decision.reason_code,
+            "operation_status": record.status.value,
+            "operation_contract_version": record.contract_version,
+            "operation_revision": record.revision,
+            "operation_request_fingerprint": record.request_fingerprint,
+            "affected_targets": list(decision.affected_targets),
+        }
+        return basis, decision
+
+
+===== ResolverService.freshness =====
+    def freshness(self, resolution: ResolutionRecord) -> dict[str, Any]:
+        """Is the resolution's evaluated basis still the current authoritative basis?"""
+        try:
+            basis, _ = self.current_basis(
+                resolution.task_id, resolution.microtask_id, resolution.operation_id
+            )
+        except ResolverError as exc:
+            return {"fresh": False, "code": "BASIS_UNAVAILABLE", "reason": str(exc)}
+        change = self._basis_change(
+            {
+                "evidence_fingerprint": resolution.basis["evidence_fingerprint"],
+                "operation_revision": resolution.basis["operation_revision"],
+            },
+            basis,
+        )
+        if change is not None:
+            return {"fresh": False, "code": change, "reason": "basis changed since resolution"}
+        return {"fresh": True, "code": "BASIS_UNCHANGED", "reason": "basis is current"}
+
+
+===== ResolverService.apply =====
+    def apply(
+        self,
+        task_id: str,
+        microtask_id: str,
+        operation_id: str,
+        action: ResolutionAction | str,
+        *,
+        evidence_fingerprint: str,
+        operation_revision: int | None,
+        resolution_id: str | None = None,
+        agent: str | None = None,
+        channel: str | None = None,
+    ) -> dict[str, Any]:
+        try:
+            action = ResolutionAction(action)
+            requested = requested_basis(evidence_fingerprint, operation_revision)
+        except ValueError as exc:
+            raise ResolverInputError(str(exc)) from exc
+        for name, value in (
+            ("task_id", task_id),
+            ("microtask_id", microtask_id),
+            ("operation_id", operation_id),
+        ):
+            if not isinstance(value, str) or not value.strip():
+                raise ResolverInputError(f"{name} must be a non-empty string")
+        for name, value in (("agent", agent), ("channel", channel)):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ResolverInputError(f"{name} must be a non-empty string when provided")
+        identity = logical_identity(task_id, microtask_id, operation_id, action, requested)
+        chosen_id = resolution_id or logical_resolution_id(identity)
+
+        with self.operations.task_lock(task_id):
+            try:
+                existing = self.store.find(task_id, chosen_id)
+                if existing is not None:
+                    if existing.logical_identity() != identity:
+                        raise ResolutionConflictError(
+                            "resolution_id already exists with a different action or basis"
+                        )
+                    return self._result(existing, created=False)
+                prior = self.store.list(task_id, operation_id=operation_id)
+            except ResolutionStoreError as exc:
+                if isinstance(exc, ResolutionConflictError):
+                    raise
+                raise ResolverError(str(exc)) from exc
+            for other in prior:
+                if other.logical_identity() == identity:
+                    raise ResolutionConflictError(
+                        f"logical resolution is already recorded as {other.resolution_id}"
+                    )
+            aborted_by = next(
+                (
+                    item
+                    for item in prior
+                    if item.action is ResolutionAction.ABORT
+                    and item.result is ResolutionResult.ACCEPTED
+                ),
+                None,
+            )
+
+            basis, decision = self.current_basis(task_id, microtask_id, operation_id)
+            result, code, reason, payload_verified, next_action = self._evaluate(
+                action, requested, basis, decision, aborted_by, task_id, operation_id
+            )
+            record = ResolutionRecord(
+                resolution_id=chosen_id,
+                task_id=task_id,
+                microtask_id=microtask_id,
+                operation_id=operation_id,
+                action=action,
+                requested_basis=requested,
+                basis=basis,
+                result=result,
+                result_code=code,
+                result_reason=reason,
+                effect=EFFECTS[action] if result is ResolutionResult.ACCEPTED else None,
+                next_safe_action=next_action,
+                provenance={
+                    "agent": agent.strip() if agent else None,
+                    "channel": channel.strip() if channel else None,
+                    "authority": "claimed",
+                },
+                payload_verified=payload_verified,
+                created_at=utc_now_iso(),
+            )
+            try:
+                self.store.write_new(record)
+            except ResolutionStoreError as exc:
+                raise ResolverError(str(exc)) from exc
+            self.events.append_event(
+                task_id,
+                f"RESOLUTION_{result.value}",
+                microtask_id=microtask_id,
+                operation_id=operation_id,
+                payload={
+                    "resolution_id": chosen_id,
+                    "action": action.value,
+                    "result_code": code,
+                    "effect": record.effect,
+                    "evidence_fingerprint": basis["evidence_fingerprint"],
+                    "operation_revision": basis["operation_revision"],
+                    "decision": basis["decision"],
+                    "physical_mutation_performed": False,
+                },
+            )
+            return self._result(record, created=True)
+
+
+===== RollbackService.inspect =====
+    def inspect(self, task_id: str, rollback_id: str) -> dict[str, Any]:
+        try:
+            return self.store.get(task_id, rollback_id)
+        except RollbackStoreError as exc:
+            raise RollbackError(str(exc)) from exc
+
+
+===== RollbackService.prepare =====
+    def prepare(
+        self,
+        task_id: str,
+        microtask_id: str,
+        operation_id: str,
+        resolution_id: str,
+        *,
+        agent: str | None = None,
+        channel: str | None = None,
+    ) -> dict[str, Any]:
+        for name, value in (("task_id", task_id), ("microtask_id", microtask_id),
+                            ("operation_id", operation_id), ("resolution_id", resolution_id)):
+            if not isinstance(value, str) or not value.strip():
+                raise RollbackInputError(f"{name} must be a non-empty string")
+        for name, value in (("agent", agent), ("channel", channel)):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise RollbackInputError(f"{name} must be a non-empty string when provided")
+        rollback_id = rollback_identity(task_id, resolution_id)
+        with self.operations.task_lock(task_id):
+            try:
+                record = self.store.find(task_id, rollback_id)
+            except RollbackStoreError as exc:
+                raise RollbackError(str(exc)) from exc
+            if record is not None:
+                if (record["microtask_id"], record["operation_id"]) != (microtask_id, operation_id):
+                    raise RollbackError("rollback_id already exists for another microtask/operation")
+                if record["status"] != PREPARED:
+                    return self._outcome("REPLAYED", "KNOWN_SESSION", "rollback session already exists", record)
+                root = self._workspace_root(task_id)
+                try:
+                    op_record = self.operations.get(task_id, operation_id)
+                except OperationStoreError as exc:
+                    raise RollbackError(f"operation state unavailable: {exc}") from exc
+            else:
+                resolution, op_record, refusal = self._authority(task_id, microtask_id, operation_id, resolution_id)
+                plan = None
+                if refusal is None:  # restore point first: a corrupt snapshot also ages the evidence
+                    try:
+                        plan = self.manifests.restore_plan(task_id, microtask_id)
+                    except ManifestStoreError as exc:
+                        refusal = ("RESTORE_POINT_INVALID", str(exc))
+                if refusal is None:
+                    refusal = self._fresh(resolution)
+                root = self._workspace_root(task_id)
+                targets: list[dict[str, Any]] = []
+                if refusal is None:
+                    for item in plan["items"]:
+                        try:
+                            canonical = canonical_target(root, item["source_path"])
+                        except TargetIdentityError as exc:
+                            refusal = ("TARGET_IDENTITY_INVALID", str(exc))
+                            break
+                        targets.append(
+                            {
+                                "manifest_entry_id": item["manifest_entry_id"],
+                                "snapshot_id": item["snapshot_id"],
+                                "source_path": item["source_path"],
+                                "target": canonical.relative,
+                                "target_key": canonical.key,
+                                "target_hash": target_hash(physical_target_key(canonical.path)),
+                                "expected_restore": {
+                                    "exists": item["exists_before"],
+                                    "size": item["size_before"],
+                                    "sha256": item["sha256_before"],
+                                },
+                                "preserved": None,
+                                "planned_action": None,
+                                "claim_id": None,
+                                "status": T_PENDING,
+                                "receipt": None,
+                                "failure": None,
+                            }
+                        )
+                    if refusal is None and len({t["target_hash"] for t in targets}) != len(targets):
+                        refusal = ("TARGET_IDENTITY_INVALID", "two manifest entries name one physical target")
+                if refusal is not None:
+                    self.events.append_event(
+                        task_id, "ROLLBACK_REJECTED", microtask_id=microtask_id, operation_id=operation_id,
+                        payload={"resolution_id": resolution_id, "result_code": refusal[0]},
+                    )
+                    return self._outcome(REJECTED, refusal[0], refusal[1], None)
+                now = utc_now_iso()
+                record = {
+                    "rollback_version": 1,
+                    "schema_version": 1,
+                    "rollback_id": rollback_id,
+                    "task_id": task_id,
+                    "microtask_id": microtask_id,
+                    "operation_id": operation_id,
+                    "resolution_id": resolution_id,
+                    "basis": {
+                        "evidence_fingerprint": resolution.basis["evidence_fingerprint"],
+                        "operation_revision": op_record.revision,
+                        "operation_request_fingerprint": op_record.request_fingerprint,
+                        "manifest_id": plan["manifest_id"],
+                        "restore_point_fingerprint": plan["restore_point_fingerprint"],
+                    },
+                    "status": PREPARED,
+                    "revision": 0,
+                    "created_at": now,
+                    "updated_at": now,
+                    "provenance": {
+                        "agent": agent.strip() if agent else None,
+                        "channel": channel.strip() if channel else None,
+                        "authority": "claimed",
+                    },
+                    "targets": sorted(targets, key=lambda t: t["target_hash"]),
+                    "last_attempt": None,
+                    "result": None,
+                    "claims_released": False,
+                    "next_safe_action": "-",
+                }
+                self._persist(record)
+                self._event(record, "ROLLBACK_PREPARED", {"resolution_id": resolution_id, "targets": len(targets)})
+
+            # preserve every target's current physical state before anything destructive
+            for target in record["targets"]:
+                if target["status"] != T_PENDING:
+                    continue
+                failure = self._preserve(task_id, root, op_record, target)
+                if failure is not None:
+                    target["failure"] = {"code": failure[0], "reason": failure[1], "observed": None}
+                    record["status"] = PRESERVATION_FAILED
+                    record["result"] = {"overall": "NOT_STARTED", "code": failure[0], "at": utc_now_iso()}
+                    self._persist(record)
+                    self._event(record, "ROLLBACK_PRESERVATION_FAILED",
+                                {"target": target["source_path"], "result_code": failure[0]})
+                    return self._outcome(PRESERVATION_FAILED, failure[0], failure[1], record)
+                self._persist(record)
+            record["status"] = PRESERVED
+            self._persist(record)
+            self._event(record, "ROLLBACK_PRESERVED", {
+                "targets": [{"target": t["source_path"], "preserved": _state(t["preserved"]),
+                             "planned_action": t["planned_action"]} for t in record["targets"]],
+            })
+            return self._outcome(PRESERVED, "CURRENT_STATE_PRESERVED", "every target's current state is preserved", record)
+
+
+===== RollbackService.apply =====
+    def apply(self, task_id: str, rollback_id: str) -> dict[str, Any]:
+        with self.operations.task_lock(task_id):
+            try:
+                record = self.store.get(task_id, rollback_id)
+            except RollbackStoreError as exc:
+                raise RollbackError(str(exc)) from exc
+            if record["status"] == VERIFIED and not record["claims_released"]:
+                return self._complete_release(record)  # interrupted between VERIFIED and the release
+            if record["status"] in _DONE:
+                return self._outcome("REPLAYED", f"ROLLBACK_{record['status']}", "known final rollback state", record)
+            if record["status"] == PREPARED:
+                return self._outcome(REJECTED, "PRESERVATION_INCOMPLETE", "run prepare first", record)
+            root = self._workspace_root(task_id)
+            try:
+                plan, plan_error = self.manifests.restore_plan(task_id, record["microtask_id"]), None
+            except ManifestStoreError as exc:  # in-flight targets are still proven first
+                plan, plan_error = None, str(exc)
+            # Every target is locked, NOOP ones included: they are part of the final proof.
+            with ExitStack() as stack:
+                self._lock_targets(stack, record["targets"])
+                return self._apply_locked(record, root, plan, plan_error)
+
+
+===== RollbackService.close =====
+    def close(self, task_id: str, rollback_id: str, *, reason: str | None = None) -> dict[str, Any]:
+        """Release a non-verified session's ownership once no target fate is open."""
+        with self.operations.task_lock(task_id):
+            try:
+                record = self.store.get(task_id, rollback_id)
+            except RollbackStoreError as exc:
+                raise RollbackError(str(exc)) from exc
+            if record["status"] == VERIFIED and not record["claims_released"]:
+                return self._complete_release(record)
+            if record["status"] in (CLOSED, VERIFIED, PRESERVATION_FAILED):
+                return self._outcome("REPLAYED", f"ROLLBACK_{record['status']}", "nothing to close", record)
+            # Only an in-flight target has an unknown fate; a session blocked after own
+            # restores (record still APPLYING) can be closed Ч its receipts stay history.
+            if any(t["status"] == T_APPLYING for t in record["targets"]):
+                return self._outcome(REJECTED, "TARGET_FATE_UNKNOWN",
+                                     "apply again first so in-flight targets are proven", record)
+            root = self._workspace_root(task_id)
+            with ExitStack() as stack:
+                self._lock_targets(stack, [t for t in record["targets"] if t["claim_id"]])
+                try:
+                    self._release_claims(root, record, (reason or "ROLLBACK_CLOSED").strip())
+                except (TargetIdentityError, TargetClaimStoreError) as exc:
+                    raise RollbackError(f"cannot release rollback ownership: {exc}") from exc
+            record["status"] = CLOSED
+            self._persist(record)
+            self._event(record, "ROLLBACK_CLOSED", {"reason": reason})
+            return self._outcome(CLOSED, "ROLLBACK_CLOSED", "rollback ownership released", record)
+
+
+===== OperationStore.task_lock =====
+    def task_lock(self, task_id: str):
+        """Public TASK lock for components that must not interleave with
+        operation writes (RC-2 Resolver). Not re-entrant across instances:
+        never call begin/transition while holding it."""
+        return self._serialized(task_id)
+
+
+===== OperationStore.begin =====
+    def begin(
+        self,
+        task_id: str,
+        microtask_id: str,
+        action: str,
+        target: str,
+        *,
+        operation_id: str | None = None,
+        expected_precondition_sha256: str | None = None,
+        request_payload: Any = None,
+        expected_pre_state: Any = None,
+        expected_post_state: Any = None,
+        payload: bytes | None = None,
+        agent: str | None = None,
+        channel: str | None = None,
+        allow_secret_target: bool = False,
+    ) -> dict[str, Any]:
+        task_id = _safe_component("task_id", task_id)
+        microtask_id = _safe_component("microtask_id", microtask_id)
+        action = action.strip() if isinstance(action, str) else ""
+        target = target.strip() if isinstance(target, str) else ""
+        if not action:
+            raise OperationStoreError("action must be a non-empty string")
+        if not target:
+            raise OperationStoreError("target must be a non-empty string")
+        self.tasks.open_microtask(task_id, microtask_id)
+        self.tasks.task_directory(task_id, active_only=True)
+        chosen_id = _safe_component(
+            "operation_id",
+            operation_id or new_id("op"),
+        )
+        prepare_args = dict(
+            expected_precondition_sha256=expected_precondition_sha256,
+            request_payload=request_payload,
+            expected_pre_state=expected_pre_state,
+            expected_post_state=expected_post_state,
+            payload=payload,
+            agent=agent,
+            channel=channel,
+            allow_secret_target=allow_secret_target,
+        )
+
+        with self._serialized(task_id):
+            path = self._path(task_id, chosen_id, active_only=True)
+            if path.exists():
+                existing = self._load_path(path, task_id, chosen_id)
+                if existing.contract_version == LEGACY_CONTRACT_VERSION:
+                    legacy_fingerprint = fingerprint_v1(
+                        task_id=task_id,
+                        microtask_id=microtask_id,
+                        action=action,
+                        target=target,
+                        expected_precondition_sha256=expected_precondition_sha256,
+                        request_payload=request_payload,
+                    )
+                    immutable_match = (
+                        existing.microtask_id == microtask_id
+                        and existing.action == action
+                        and existing.target == target
+                        and existing.request_fingerprint == legacy_fingerprint
+                        and existing.expected_precondition_sha256
+                        == expected_precondition_sha256
+                        and payload is None
+                        and expected_pre_state is None
+                        and expected_post_state is None
+                    )
+                else:
+                    _, _, request = self._prepare(
+                        task_id, microtask_id, action, target, **prepare_args
+                    )
+                    immutable_match = existing.request_fingerprint == request.fingerprint
+                if not immutable_match:
+                    self.events.append_event(
+                        task_id,
+                        "OPERATION_REPLAY_CONFLICT",
+                        microtask_id=microtask_id,
+                        operation_id=chosen_id,
+                        payload={"existing_status": existing.status.value},
+                    )
+                    raise OperationConflictError(
+                        "operation_id already exists with a different request fingerprint"
+                    )
+                self.events.append_event(
+                    task_id,
+                    "OPERATION_REPLAY",
+                    microtask_id=microtask_id,
+                    operation_id=chosen_id,
+                    payload={
+                        "status": existing.status.value,
+                        "decision": self.replay_decision(existing.status),
+                    },
+                )
+                self._touch_checkpoint(task_id, chosen_id)
+                return {
+                    "operation": existing,
+                    "created": False,
+                    "replayed": True,
+                    "replay_decision": self.replay_decision(existing.status),
+                    "contract_status": assess(existing),
+                }
+
+            workspace_id, workspace_root, request = self._prepare(
+                task_id, microtask_id, action, target, **prepare_args
+            )
+            observed_at = utc_now_iso()
+            try:
+                observed_pre = observe_path(request.target.path)
+            except FileStateError as exc:
+                raise OperationContractRejected(str(exc)) from exc
+            planned_ref = (
+                PayloadStore.reference(
+                    request.payload_identity["sha256"],
+                    request.payload_identity["size"],
+                )
+                if request.payload_identity is not None
+                else None
+            )
+            try:
+                contract = finalize_contract(
+                    request,
+                    workspace_id=workspace_id,
+                    observed_pre=observed_pre,
+                    observed_at=observed_at,
+                    payload_ref=planned_ref,
+                    max_payload_bytes=self.max_payload_bytes,
+                )
+            except OperationContractError as exc:
+                raise OperationContractRejected(str(exc)) from exc
+            if request.payload is not None:
+                try:
+                    stored_ref = self.payloads.put(
+                        task_id,
+                        request.payload,
+                        forbidden_roots=[workspace_root],
+                    )
+                except PayloadScopeError as exc:
+                    raise OperationScopeRejected(str(exc)) from exc
+                except PayloadIntegrityError as exc:
+                    raise OperationPayloadIntegrityError(str(exc)) from exc
+                except PayloadStoreError as exc:
+                    raise OperationStoreError(str(exc)) from exc
+                if stored_ref != planned_ref:
+                    raise OperationStoreError("stored payload reference differs from contract")
+
+            record = OperationRecord(
+                operation_id=chosen_id,
+                task_id=task_id,
+                microtask_id=microtask_id,
+                action=action,
+                target=request.target.relative,
+                status=OperationStatus.INTENT,
+                request_fingerprint=request.fingerprint,
+                expected_precondition_sha256=expected_precondition_sha256,
+                created_at=observed_at,
+                updated_at=observed_at,
+                contract_version=OPERATION_CONTRACT_VERSION,
+                revision=1,
+                contract=contract,
+            )
+            _persist_record(path, record)
+            self.events.append_event(
+                task_id,
+                "OPERATION_INTENT",
+                microtask_id=microtask_id,
+                operation_id=chosen_id,
+                payload={
+                    "action": action,
+                    "target": record.target,
+                    "request_fingerprint": request.fingerprint,
+                    "contract_version": OPERATION_CONTRACT_VERSION,
+                    "revision": record.revision,
+                    "target_key": contract["target_key"],
+                    "pre_state": authority_of(contract["pre_state"]),
+                    "expected_post_state": authority_of(contract["expected_post_state"]),
+                    "payload": (
+                        {"sha256": planned_ref["sha256"], "size": planned_ref["size"]}
+                        if planned_ref is not None
+                        else None
+                    ),
+                    "contract_complete": contract["complete"],
+                },
+            )
+            self._touch_checkpoint(task_id, chosen_id)
+            return {
+                "operation": record,
+                "created": True,
+                "replayed": False,
+                "replay_decision": self.replay_decision(record.status),
+                "contract_status": assess(record),
+            }
+
+
+===== OperationStore.transition =====
+    def transition(
+        self,
+        task_id: str,
+        operation_id: str,
+        requested_status: OperationStatus | str,
+        *,
+        result_summary: str | None = None,
+    ) -> dict[str, Any]:
+        requested = OperationStatus(requested_status)
+        operation_id = _safe_component("operation_id", operation_id)
+        with self._serialized(task_id):
+            path = self._path(task_id, operation_id, active_only=True)
+            record = self._load_path(path, task_id, operation_id)
+            current = record.status
+
+            if requested == current:
+                self.events.append_event(
+                    task_id,
+                    "OPERATION_TRANSITION_REPLAY",
+                    microtask_id=record.microtask_id,
+                    operation_id=operation_id,
+                    payload={"status": current.value},
+                )
+                self._touch_checkpoint(task_id, operation_id)
+                return {
+                    "operation": record,
+                    "changed": False,
+                    "replayed": True,
+                    "replay_decision": self.replay_decision(record.status),
+                    "contract_status": assess(record),
+                }
+
+            if requested not in self._ALLOWED.get(current, set()):
+                raise OperationTransitionError(
+                    f"{current.value} -> {requested.value} is not allowed"
+                )
+            if result_summary is not None and (
+                not isinstance(result_summary, str) or not result_summary.strip()
+            ):
+                raise OperationStoreError(
+                    "result_summary must be a non-empty string when provided"
+                )
+
+            is_contract = record.contract_version != LEGACY_CONTRACT_VERSION
+            receipt = None
+            if is_contract and requested == OperationStatus.DONE:
+                receipt = self._done_receipt(record, record.revision + 1)
+                if receipt["matches_expected_post"] is False:
+                    self.events.append_event(
+                        task_id,
+                        "OPERATION_RECEIPT_MISMATCH",
+                        microtask_id=record.microtask_id,
+                        operation_id=operation_id,
+                        payload={
+                            "expected_post_state": authority_of(
+                                record.contract["expected_post_state"]
+                            ),
+                            "observed": authority_of(receipt),
+                            "eol_only_drift": receipt["eol_only_drift"],
+                        },
+                    )
+                    raise OperationReceiptMismatch(
+                        "server-observed target does not match expected post-state; "
+                        "DONE refused, reconciliation required"
+                        + (" (EOL_ONLY_DRIFT)" if receipt["eol_only_drift"] else "")
+                    )
+
+            record.status = requested
+            if result_summary is not None:
+                record.result_summary = result_summary.strip()
+            record.updated_at = utc_now_iso()
+            if is_contract:
+                record.revision += 1
+                if receipt is not None:
+                    record.receipt = receipt
+            _persist_record(path, record)
+            event_payload: dict[str, Any] = {
+                "from": current.value,
+                "to": requested.value,
+                "result_summary": record.result_summary,
+            }
+            if is_contract:
+                event_payload["revision"] = record.revision
+            if receipt is not None:
+                event_payload["receipt"] = dict(
+                    authority_of(receipt),
+                    matches_expected_post=receipt["matches_expected_post"],
+                )
+            self.events.append_event(
+                task_id,
+                "OPERATION_TRANSITION",
+                microtask_id=record.microtask_id,
+                operation_id=operation_id,
+                payload=event_payload,
+            )
+            self._touch_checkpoint(task_id, operation_id)
+            return {
+                "operation": record,
+                "changed": True,
+                "replayed": False,
+                "replay_decision": self.replay_decision(record.status),
+                "contract_status": assess(record),
+            }
+
+
+===== ServerStateMachine.transition =====
+    def transition(
+        self,
+        task_id: str,
+        microtask_id: str,
+        requested_status: MicrotaskStatus | str,
+        *,
+        verification_evidence: str | None = None,
+        operation_id: str | None = None,
+    ) -> dict[str, object]:
+        requested = MicrotaskStatus(requested_status)
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        current = micro.status
+
+        if requested == current:
+            self._reject(
+                task_id,
+                microtask_id,
+                requested,
+                "requested status is already current",
+                operation_id=operation_id,
+            )
+
+        if requested not in self._ALLOWED.get(current, set()):
+            self._reject(
+                task_id,
+                microtask_id,
+                requested,
+                "transition is not allowed by the server state machine",
+                operation_id=operation_id,
+            )
+
+        if requested in {
+            MicrotaskStatus.PREPARING,
+            MicrotaskStatus.BACKUP_VERIFIED,
+            MicrotaskStatus.READY,
+            MicrotaskStatus.ACTIVE,
+        }:
+            self._require_previous_verified(
+                task_id,
+                microtask_id,
+                requested,
+                operation_id=operation_id,
+            )
+
+        if requested in {
+            MicrotaskStatus.BACKUP_VERIFIED,
+            MicrotaskStatus.READY,
+            MicrotaskStatus.ACTIVE,
+        }:
+            self._require_verified_snapshot(
+                task_id,
+                microtask_id,
+                requested,
+                operation_id=operation_id,
+            )
+
+        if requested == MicrotaskStatus.ACTIVE:
+            for other in self.tasks.list_microtasks(task_id):
+                if (
+                    other.microtask_id != microtask_id
+                    and other.status == MicrotaskStatus.ACTIVE
+                ):
+                    self._reject(
+                        task_id,
+                        microtask_id,
+                        requested,
+                        f"another microtask {other.microtask_id} is already ACTIVE",
+                        operation_id=operation_id,
+                    )
+            self.tasks.set_current_microtask(task_id, microtask_id)
+
+        if requested == MicrotaskStatus.VERIFIED:
+            if (
+                not isinstance(verification_evidence, str)
+                or not verification_evidence.strip()
+            ):
+                self._reject(
+                    task_id,
+                    microtask_id,
+                    requested,
+                    "verification_evidence is required for VERIFIED",
+                    operation_id=operation_id,
+                )
+
+        updated = self.tasks.set_microtask_status(
+            task_id,
+            microtask_id,
+            requested,
+        )
+        self.state.append_event(
+            task_id,
+            "MICROTASK_TRANSITION",
+            microtask_id=microtask_id,
+            operation_id=operation_id,
+            payload={
+                "from": current.value,
+                "to": requested.value,
+                "verification_evidence": (
+                    verification_evidence.strip()
+                    if isinstance(verification_evidence, str)
+                    and verification_evidence.strip()
+                    else None
+                ),
+            },
+        )
+        checkpoint = self._write_checkpoint(
+            task_id,
+            microtask_id,
+            last_operation_id=operation_id,
+        )
+        return self._transition_result(updated, checkpoint)
+
+
+===== ENUMS =====
+OperationStatus ['INTENT', 'STARTED', 'DONE', 'VERIFIED', 'FAILED', 'UNKNOWN_AFTER_DISCONNECT']
+MicrotaskStatus ['PLANNED', 'PREPARING', 'BACKUP_VERIFIED', 'READY', 'ACTIVE', 'DONE', 'VERIFIED', 'BLOCKED_PREPARE', 'UNKNOWN_AFTER_DISCONNECT', 'RECOVERY_REQUIRED', 'FAILED_VERIFICATION']
+TaskStatus ['PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED']

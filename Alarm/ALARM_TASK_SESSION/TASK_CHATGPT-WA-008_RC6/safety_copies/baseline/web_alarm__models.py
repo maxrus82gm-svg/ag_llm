@@ -238,11 +238,6 @@ class OperationRecord:
     revision: int | None = None
     contract: dict[str, Any] | None = None
     receipt: dict[str, Any] | None = None
-    # RC-6: durable administrative outcome of an accepted recovery decision.
-    # Missing in legacy/current records -> None. It does not replace the
-    # forensic execution status; ADOPT is the only settlement that may also
-    # make the operation VERIFIED after exact post-state proof.
-    recovery_settlement: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         _require_text("operation_id", self.operation_id)

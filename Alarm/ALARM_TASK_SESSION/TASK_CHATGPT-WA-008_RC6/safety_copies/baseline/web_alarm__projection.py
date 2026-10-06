@@ -440,35 +440,6 @@ class ProjectionService:
                 "next_safe_action": session["next_safe_action"],
             }
 
-        settlement = op.recovery_settlement
-        if settlement is not None and (
-            authoritative is None or authoritative["resolution_id"] == settlement["resolution_id"]
-        ):
-            action = settlement["action"]
-            if action == "ADOPT":
-                next_action = (
-                    f"operation {op.operation_id} was adopted after exact post-state proof; "
-                    "the physical effect is not repeated; finish/verify the microtask through normal verification"
-                )
-            elif action == "ROLLBACK":
-                next_action = (
-                    f"operation {op.operation_id} has a verified rollback settlement; its old attempt was undone; "
-                    "run a fresh reconciliation before any future execution"
-                )
-            else:
-                next_action = (
-                    f"operation {op.operation_id} recovery is durably ABORTED; do not retry the old recovery; "
-                    "manual project-level review or a new operation is required"
-                )
-            return {
-                "state": action + "_SETTLED",
-                "source": "recovery_settlement",
-                "resolution_id": settlement["resolution_id"],
-                "rollback_id": None,
-                "settled_at": settlement["settled_at"],
-                "next_safe_action": next_action,
-            }
-
         if authoritative is not None:
             rid = authoritative["resolution_id"]
 
@@ -559,7 +530,7 @@ class ProjectionService:
             operations = self.operations.list(task_id)
             basis["operations"] = [
                 [op.operation_id, op.microtask_id, op.status.value, op.revision, op.contract_version,
-                 op.request_fingerprint, op.recovery_settlement, op.updated_at]
+                 op.request_fingerprint, op.updated_at]
                 for op in operations
             ]
         except (OperationStoreError, TaskStoreError) as exc:
@@ -642,7 +613,6 @@ class ProjectionService:
                 "revision": op.revision,
                 "contract_version": op.contract_version,
                 "updated_at": op.updated_at,
-                "recovery_settlement": (dict(op.recovery_settlement) if op.recovery_settlement else None),
                 "resolutions": actions,
                 "rollback_ids": [s["rollback_id"] for s in op_sessions],
                 "recovery": recovery,

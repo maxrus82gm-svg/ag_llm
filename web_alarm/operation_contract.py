@@ -45,7 +45,7 @@ SUPPORTED_CONTRACT_VERSIONS = (LEGACY_CONTRACT_VERSION, OPERATION_CONTRACT_VERSI
 LEGACY_FINGERPRINT_VERSION = 1
 FINGERPRINT_VERSION = 2
 
-V2_RECORD_FIELDS = ("contract_version", "revision", "contract", "receipt")
+V2_RECORD_FIELDS = ("contract_version", "revision", "contract", "receipt", "recovery_settlement")
 PRE_STATE_SOURCE = "server_observed_at_intent"
 RECEIPT_SOURCE = "server_observed_at_done"
 POST_STATE_SOURCES = ("payload", "declared", "mutation_kind")
@@ -484,7 +484,7 @@ def validate_record(record: OperationRecord) -> None:
     if version == LEGACY_CONTRACT_VERSION:
         if any(
             getattr(record, field) is not None
-            for field in ("revision", "contract", "receipt")
+            for field in ("revision", "contract", "receipt", "recovery_settlement")
         ):
             raise OperationContractError("legacy record carries contract v2 fields")
         return
@@ -594,6 +594,21 @@ def validate_record(record: OperationRecord) -> None:
             raise OperationContractError("receipt exists before DONE")
     elif record.status in {OperationStatus.DONE, OperationStatus.VERIFIED}:
         raise OperationContractError("DONE/VERIFIED v2 operation has no receipt")
+
+    settlement = record.recovery_settlement
+    if settlement is not None:
+        if not isinstance(settlement, Mapping) or set(settlement) != {
+            "action", "resolution_id", "basis_operation_revision", "settled_at"
+        }:
+            raise OperationContractError("recovery_settlement has unexpected fields")
+        if settlement["action"] not in {"ADOPT", "ABORT", "ROLLBACK"}:
+            raise OperationContractError("recovery_settlement.action is invalid")
+        _check_text("recovery_settlement.resolution_id", settlement["resolution_id"])
+        _check_size("recovery_settlement.basis_operation_revision", settlement["basis_operation_revision"])
+        _check_text("recovery_settlement.settled_at", settlement["settled_at"])
+        if settlement["action"] == "ADOPT":
+            if record.status is not OperationStatus.VERIFIED or record.receipt is None:
+                raise OperationContractError("ADOPT settlement requires VERIFIED operation with receipt")
 
 
 def record_for_storage(record: OperationRecord) -> dict[str, Any]:
