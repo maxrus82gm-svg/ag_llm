@@ -35,6 +35,239 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+**Статус постановки:** выполнена Claude 2026-10-06 (независимая проверка RC-6; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Постановка CLAUDE-WA-007 / RC-5 сохранена следом без изменений: RC-5 ещё не прошёл независимую приёмку и не имеет записи в `001`, поэтому по правилу карточки не перезаписывается.
+
+```text
+TASK: RC-6 INDEPENDENT VERIFICATION
+CHATGPT-WA-008 — Project-level Recovery Closure
+
+Статус:
+READY / NOT STARTED
+
+Роль:
+независимый verifier / adversarial reviewer.
+Не продолжать WA4-E.
+Не доверять отчёту исполнителя без собственной проверки.
+
+==================================================
+1. СНАЧАЛА ФАКТИЧЕСКИЙ BASELINE
+==================================================
+
+2. Определить настоящий latest GitHub HEAD.
+3. Сверить local HEAD с GitHub.
+4. Проверить dirty tree.
+5. Не доверять SHA из task/report без проверки.
+6. Не трогать пользовательские .obsidian/*.
+
+Проверять только самый свежий commit пользователя,
+содержащий RC-6.
+
+==================================================
+2. ПРОЧИТАТЬ
+==================================================
+
+Обязательно:
+
+- Документация/08_Старт.md
+- Документация/000_Задачи для агента.md
+- Документация/000_Задачи ChatGPT.md
+- Документация/18_Регламент сопровождения документации.md
+- Документация/23_Архитектура Web Alarm Workspace.md
+- Документация/24_План реализации Web Alarm Workspace.md
+- Документация/33_Круглый стол - план исполнения.md
+
+RC-6:
+
+- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/task.md
+- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/rc6_report.md
+- final_regression_v2.txt
+
+Не считать report доказательством сам по себе.
+
+==================================================
+3. КРИТИЧЕСКИЕ ФАЙЛЫ
+==================================================
+
+Проверить минимум:
+
+- web_alarm/recovery_coordinator.py
+- web_alarm/models.py
+- web_alarm/operation_contract.py
+- web_alarm/operation_store.py
+- web_alarm/projection.py
+- web_alarm/task_store.py
+- web_alarm/target_claim_service.py
+- web_alarm/rollback_service.py
+- web_alarm/resolver_service.py
+- web_alarm/server.py
+- web_alarm/cli.py
+
+Tests:
+
+- test_web_alarm_recovery_coordinator.py
+- test_web_alarm_recovery_coordinator_concurrency.py
+- test_web_alarm_recovery_coordinator_adversarial.py
+- test_web_alarm_projection.py
+- test_web_alarm_resolver.py
+- test_web_alarm_rollback.py
+- test_web_alarm_rollback_concurrency.py
+- test_web_alarm_server.py
+- test_web_alarm_cli.py
+
+==================================================
+4. ГЛАВНЫЙ ВОПРОС
+==================================================
+
+Доказать или опровергнуть:
+
+один RecoveryCoordinator может безопасно
+довести persistent recovery одной TASK
+до правильной границы:
+
+READY_FOR_EXECUTION /
+READY_FOR_VERIFICATION /
+MANUAL_DECISION_REQUIRED /
+RECOVERY_BLOCKED /
+FAIL_CLOSED /
+TASK_READY_TO_CLOSE /
+TASK_COMPLETED,
+
+не выполняя normal physical mutation,
+которая принадлежит будущему WA4-E.
+
+==================================================
+5. ОСОБО АТАКОВАТЬ
+==================================================
+
+Не ограничиваться существующими тестами.
+
+Попытаться сломать:
+
+1. stale Resolver authority;
+2. old RETRY → newer ABORT;
+3. ADOPT между proof и settlement;
+4. foreign claim на primary target;
+5. foreign claim на secondary affected target;
+6. recover vs recover;
+7. recover vs new Resolver action;
+8. recover vs new operation;
+9. open rollback + ABORT;
+10. open rollback + RETRY;
+11. open rollback + ADOPT;
+12. stale open rollback;
+13. ABORT + T_APPLYING;
+14. superseded/stale + T_APPLYING;
+15. multiple open rollback sessions;
+16. rollback VERIFIED but claims release interrupted;
+17. crash/lost response after settlement before cleanup;
+18. corrupt/stale checkpoint;
+19. stale Recovery Report;
+20. projection contradiction / false READY;
+21. completed TASK;
+22. closeout-eligible TASK;
+23. bounded-loop exhaustion/replay;
+24. process restart between meaningful phases.
+
+Проверить, что:
+- no duplicate physical effect;
+- no unauthorized claim release;
+- no silent rollback selection;
+- no stale action execution;
+- no false READY.
+
+==================================================
+6. ВАЖНЫЕ SEMANTICS
+==================================================
+
+RETRY:
+- только administrative re-arm;
+- zero normal Workspace mutation;
+- actual effect остаётся WA4-E.
+
+ADOPT:
+- exact post-state proof;
+- full affected-target protection;
+- durable settlement;
+- Operation VERIFIED + receipt;
+- Microtask DONE;
+- no repeated effect.
+
+ABORT:
+- durable settlement;
+- forensic operation status не стирается;
+- Microtask не становится VERIFIED.
+
+ROLLBACK:
+- только существующий RC-4;
+- никакого второго restore engine;
+- verified rollback ≠ normal operation success.
+
+==================================================
+7. ПРОВЕРКИ
+==================================================
+
+Обязательно независимо запустить:
+
+- RC-6 focused integration;
+- RC-6 adversarial;
+- RC-6 concurrency;
+- Resolver focused;
+- RC-3/RC-4 relevant regression;
+- Server/CLI;
+- полный явный набор test_web_alarm_*.py;
+- python -B -m compileall -q web_alarm;
+- git diff --check.
+
+Mutation/race tests:
+только isolated temp storage.
+
+Live WEB-02:
+read-only.
+
+==================================================
+8. РЕЖИМ НЕЗАВИСИМОЙ ПРОВЕРКИ
+==================================================
+
+Сначала REVIEW ONLY.
+
+Не исправлять код молча.
+
+Если найден blocker:
+- зафиксировать точный reproduction;
+- объяснить root cause;
+- указать минимальный repair scope;
+- статус: VERIFICATION FAILED / REPAIR REQUIRED;
+- WA4-E не начинать.
+
+Если blocker не найден:
+- статус: RC-6 DONE / VERIFIED;
+- обновить предусмотренные verifier'ом
+  permanent closeout/history документы;
+- глобальный router перевести на следующий stage;
+- NEXT = WA4-E, но сам WA4-E не запускать.
+
+==================================================
+9. ОТЧЁТ
+==================================================
+
+Нужен независимый отчёт:
+
+- actual HEAD;
+- inspected architecture;
+- собственные findings;
+- новые adversarial probes;
+- focused/full test counts;
+- live-storage read-only evidence;
+- PASS или FAIL;
+- почему вывод независим от executor report.
+
+Не commit / push.
+
+Не начинать WA4-E.
+```
+
+### Предыдущая постановка — CLAUDE-WA-007 / RC-5 (сохранена)
+
 **Статус постановки:** выполнена Claude 2026-10-04. Результат и статус — в БЛОКЕ 3. Ниже — полная постановка из БЛОКА 1 дословно (fenced-блок сохраняет разбивку строк; хвостовые пробелы сняты).
 
 ```text
@@ -1388,6 +1621,49 @@ RC-6 НЕ НАЧИНАТЬ.
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
+
+**TASK:** RC-6 INDEPENDENT VERIFICATION — CHATGPT-WA-008 (Project-level Recovery Closure). Роль Claude — независимый verifier.
+**Статус:** RESULT READY — вердикт **VERIFICATION FAILED / REPAIR REQUIRED** (2026-10-06). **WA4-E NOT STARTED.** Commit / push не выполнялись; permanent history и глобальный router не менялись (по постановке они обновляются только при PASS).
+
+**Baseline:** GitHub `main` = локальный HEAD = commit 158 `5d40e49`; runtime-код совпадает с HEAD.
+
+**Независимые проверки:**
+- RC-6 focused + adversarial + concurrency — 35/35;
+- Resolver — 25/25;
+- RC-3/RC-4 — 63/63;
+- Server/CLI — 19/19;
+- Projection — 50/50;
+- **полный набор — 416/416 OK** (skip 1);
+- compileall и `git diff --check` OK;
+- живое storage только на чтение: `recover` на WA-3.6/3.7 → `TASK_COMPLETED` без шагов, хеш дерева до и после одинаковый.
+
+**Блокеры** — собственные probe на временном storage, в тестах исполнителя не покрыты:
+- **B1** — settled-операция навсегда остаётся фокусом. После штатного ADOPT → verify m1 → m2 ACTIVE `recover` всегда FAIL_CLOSED (пытается вернуть VERIFIED m1 в DONE), NEXT застревает, `TASK_READY_TO_CLOSE` недостижим.
+- **B2** — ложный READY при повторе: чужая TASK взяла claim на основную цель после re-arm, а `recover` всё равно даёт `READY_FOR_EXECUTION`.
+- **B3** — решения по microtask принимаются по lifecycle-current, а не по microtask операции:
+  - ложный READY для RETRY операции уже VERIFIED microtask;
+  - ABORT такой операции сначала записывает settlement, потом падает → вечный FAIL_CLOSED.
+- **B4** — прерванный собственный RC-4 rollback считается «stale»:
+  - без цели в полёте координатор закрывает откат на полпути (одна цель не восстановлена);
+  - с целью в полёте — `RECOVERY_BLOCKED`;
+  - штатный resume RC-4 недостижим.
+- **B5** — ложный READY при испорченном restore point под ACTIVE microtask (нарушен инвариант 4).
+
+**FINDINGS (не блокеры):**
+- F1 — ABORT ведёт в тупик: у RECOVERY_REQUIRED нет выходов → **DECISION REQUIRED**.
+- F2 — авто-close PARTIAL/stale-сессий снимает claims до решения человека → нужна policy.
+- F3 — часть исключений выходит из `recover` как есть; неизвестная TASK → 409.
+- F4 — самоотчёт: в RC-5 lifecycle NEXT не учитывает испорченный restore point (та же дыра, что B5).
+
+**Подтверждено без замечаний:** RETRY без физической записи; гонка «старый RETRY → новый ABORT»; чужой claim при первом re-arm / ADOPT; multiple-open / superseded in-flight → блок; прерванный release после VERIFIED; идемпотентность settlement; бюджет шагов; corrupt checkpoint и stale Recovery Report.
+
+**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RC6-VERIFY/rc6_independent_verification.md`. Воспроизведения — `probes/` (скрипты и выводы), полная регрессия — `full_regression.txt`.
+
+**NEXT:** repair RC-6 (B1–B5 с regression-тестами) исполнителем RC-6 → повторная независимая проверка; решения по F1/F2.
+
+---
+
+### Предыдущий результат — CLAUDE-WA-007 / RC-5 (сохранён: независимая приёмка RC-5 отложена пользователем, записи в `001` нет)
 
 **TASK:** CLAUDE-WA-007 — RC-5: Projection correctness + pure inspection + safe TASK closeout.
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — 2026-10-04. DONE не объявлен; commit / push не выполнялись; **RC-6 NOT STARTED**.

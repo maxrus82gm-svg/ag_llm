@@ -1,0 +1,89 @@
+
+### P1 ADOPT settled -> microtask verified -> next microtask: does recover keep working?
+  recover#1: state=READY_FOR_VERIFICATION recovery=ADOPT_SETTLED steps=['SETTLE_ADOPT']
+  m1 = DONE
+  projection after m2 ACTIVE: authority= recovery_settlement | recovery= ADOPT_SETTLED | NEXT= operation op_1 was adopted after exact post-state proof; the physical effect is not repeated; finish
+  recover#2 (m2 ACTIVE, expected READY_FOR_EXECUTION): state=FAIL_CLOSED recovery=ADOPT_SETTLED steps=[]
+     error=RecoveryCoordinatorError reason=FINISH_SETTLEMENT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to DONE
+  m1 = VERIFIED m2 = ACTIVE
+
+### P2 restore point corrupted under an ACTIVE microtask: false READY?
+  restore point: NOT_VERIFIED
+  recover: state=READY_FOR_EXECUTION recovery=NORMAL steps=[]
+
+### P3 RETRY accepted, then snapshot corrupted before re-arm: re-armed anyway?
+  recover: state=MANUAL_DECISION_REQUIRED recovery=RESOLUTION_STALE steps=[]
+  m1 = UNKNOWN_AFTER_DISCONNECT
+
+### P4 RETRY re-armed (READY), then a foreign TASK claims the primary target: replay still READY?
+  recover#1: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=['REARM_RETRY']
+  foreign acquire: ACQUIRED
+  recover#2 (foreign owner holds one.txt): state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=[]
+
+### P5 RETRY for an operation of a VERIFIED microtask while the next microtask is ACTIVE
+  recovery focus: RETRY_ACCEPTED op_1 | lifecycle current: m2 ACTIVE
+  recover: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=[]
+
+### P6 ABORT for an operation of a VERIFIED microtask: persisted half-settlement?
+  recover#1: state=FAIL_CLOSED recovery=ABORT_SETTLED steps=[]
+     error=RecoveryCoordinatorError reason=SETTLE_ABORT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to RECOVERY_REQUIRED
+  op settlement: ABORT | m1 = VERIFIED
+  recover#2: state=FAIL_CLOSED recovery=ABORT_SETTLED steps=[]
+     error=RecoveryCoordinatorError reason=FINISH_SETTLEMENT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to RECOVERY_REQUIRED
+
+### P7 ABORT settled: is there any lifecycle way forward for the microtask?
+  recover: state=MANUAL_DECISION_REQUIRED recovery=ABORT_SETTLED steps=['SETTLE_ABORT']
+  m1 = RECOVERY_REQUIRED | state-machine exits from RECOVERY_REQUIRED: []
+
+### P8 two coordinators decide SETTLE_ADOPT from the same projection (lost race)
+  fast: state=READY_FOR_VERIFICATION recovery=ADOPT_SETTLED steps=['SETTLE_ADOPT']
+  slow step on stale projection raised: RecoveryCoordinatorError ADOPT resolution is stale (OPERATION_REVISION_CHANGED)
+  op status: VERIFIED | m1 = DONE
+
+### P9 ROLLBACK settled, then a fresh RETRY: does recover re-arm?
+  recover#1: state=MANUAL_DECISION_REQUIRED recovery=ROLLBACK_SETTLED steps=['PREPARE_ROLLBACK', 'APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  one.txt restored: True | m1 = RECOVERY_REQUIRED
+  recover#2 after fresh RETRY: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=['REARM_RETRY']
+  m1 = ACTIVE
+
+### P1b same as P1, carried to the end: closeout-eligible task vs recover
+  closeout eligible: True
+  recover (expected TASK_READY_TO_CLOSE): state=FAIL_CLOSED recovery=ADOPT_SETTLED steps=[]
+     error=RecoveryCoordinatorError reason=FINISH_SETTLEMENT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to DONE
+
+### P14 rollback VERIFIED but claim release interrupted -> recover
+  session: VERIFIED released: False
+  recover: state=MANUAL_DECISION_REQUIRED recovery=ROLLBACK_SETTLED steps=['CLOSE_ROLLBACK', 'SETTLE_ROLLBACK']
+  released now: True | restores in events: 1
+
+### P18 public entry input validation (server / CLI)
+  server {'max_recovery_steps': 0} -> 400 invalid_field
+  server {'max_recovery_steps': True} -> 400 invalid_field
+  server {'max_recovery_steps': '3'} -> 400 invalid_field
+  server {'max_recovery_steps': 1000000000} -> 200 NO_ACTION_REQUIRED
+  cli task recover -> 0 {   "state": "NO_ACTION_REQUIRED",   "reason": "declare targets and prepare rest
+  server unknown task -> 409 recovery_coordinator_error
+
+### crash after first restore, before the second target started
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 18 | session: APPLYING ['RESTORED', 'PRESERVED', 'PRESERVED']
+  projection recovery: ROLLBACK_STALE_OPEN
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=MANUAL_DECISION_REQUIRED recovery=ROLLBACK_CLOSED steps=['CLOSE_ROLLBACK']
+  session after recover: CLOSED ['RESTORED', 'PRESERVED', 'PRESERVED'] | a.txt restored: False | b.txt restored: True | restore events: 1
+
+### crash inside the second write (T_APPLYING, write landed)
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 17 | session: APPLYING ['RESTORED', 'APPLYING', 'PRESERVED']
+  projection recovery: ROLLBACK_STALE_IN_FLIGHT
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_STALE_IN_FLIGHT steps=[]
+  session after recover: APPLYING ['RESTORED', 'APPLYING', 'PRESERVED'] | a.txt restored: True | b.txt restored: True | restore events: 1
+
+### crash inside the second write (T_APPLYING, write not landed)
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 17 | session: APPLYING ['RESTORED', 'APPLYING', 'PRESERVED']
+  projection recovery: ROLLBACK_STALE_IN_FLIGHT
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_STALE_IN_FLIGHT steps=[]
+  session after recover: APPLYING ['RESTORED', 'APPLYING', 'PRESERVED'] | a.txt restored: False | b.txt restored: True | restore events: 1
