@@ -12,18 +12,15 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-**Статус:** RESULT READY / AWAITING RE-VERIFICATION.
-**TASK:** CHATGPT-WA-008 / RC-6 — REPAIR #1.
+**Статус:** REPAIR REQUIRED / ACTIVE REPAIR.
+**TASK:** `CHATGPT-WA-008 / RC-6 — REPAIR #1`.
 **Исполнитель:** ChatGPT / GPT-5.6 Sol.
-**Baseline:** commit 159 / 26111c9e39f8b9de90f1b91b6a75b74bd0412e6d.
-**Основание:** independent verification RC-6 обнаружила B1–B5; Repair #1 фактически выполнен.
-**Персональная карточка:** 000_Задачи ChatGPT, БЛОКИ 2–3.
-**Repair report:** Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/rc6_repair1_report.md.
-**Final executor evidence:** Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/final_verification_v3.md.
+**Baseline:** commit 159 `26111c9e39f8b9de90f1b91b6a75b74bd0412e6d`.
+**Основание:** независимый verifier Claude подтвердил B1–B5; отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RC6-VERIFY/rc6_independent_verification.md`.
+**Персональная карточка:** [[000_Задачи ChatGPT]], БЛОК 1.
+**Repair session:** `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/`.
 
-**Factual executor result:** B1–B5 repaired; F1 truthful manual boundary; F2 preserves ownership; additional persisted-DRIFTED crash edge repaired. Repair 21/21, core focused 176/176, public 55/55, original verifier probes exit 0/0, full Web Alarm 439 OK (1 skip), compileall/diff-check PASS, live storage hash unchanged.
-
-**NEXT SAFE ACTION:** пользователь commit/push -> независимый verifier проверяет freshest GitHub commit. Только после independent PASS verifier/координатор может закрыть RC-6 как DONE / VERIFIED и открыть WA4-E.
+**NEXT SAFE ACTION:** исправить только RC-6 Repair #1, прогнать full/adversarial, затем user commit/push и независимая re-verification.
 
 **WA4-E:** НЕ НАЧИНАТЬ до independent PASS RC-6.
 **Deferred TASK 151C:** БЛОК 3 не трогать.

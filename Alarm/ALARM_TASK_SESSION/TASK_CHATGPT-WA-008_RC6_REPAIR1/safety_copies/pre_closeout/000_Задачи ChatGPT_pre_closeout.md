@@ -15,30 +15,16 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-**Статус:** ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
-**TASK:** —
-
-RC-6 Repair #1 фактически выполнен исполнителем и перенесён в БЛОКИ 2–3.
-
-Текущий статус RC-6:
-**RESULT READY / AWAITING RE-VERIFICATION**.
-
-До независимого PASS:
-- не считать RC-6 DONE / VERIFIED;
-- WA4-E не начинать.
-
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
-
-**Статус постановки:** выполнена ChatGPT 2026-10-06; ожидает независимой re-verification.
+**Статус:** ACTIVE / IN PROGRESS.
 **TASK:** CHATGPT-WA-008 / RC-6 — REPAIR #1.
-**Baseline:** commit 159 / 26111c9e39f8b9de90f1b91b6a75b74bd0412e6d.
-**Report:** Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/rc6_repair1_report.md.
+**Baseline:** commit 159 `26111c9e39f8b9de90f1b91b6a75b74bd0412e6d`.
+**Причина:** independent verification RC-6 = VERIFICATION FAILED / REPAIR REQUIRED; подтверждены B1–B5.
+**Task session:** `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/`.
+**WA4-E:** NOT STARTED.
 
 # CHATGPT-WA-008 / RC-6 — REPAIR #1
 
-**Status:** RESULT READY / AWAITING RE-VERIFICATION
+**Status:** ACTIVE / IN PROGRESS
 **Executor:** ChatGPT / GPT-5.6 Sol
 **Baseline at start:** commit 159 `26111c9e39f8b9de90f1b91b6a75b74bd0412e6d` (GitHub == local, clean tree).
 **Independent verifier:** Claude Opus 5.5.
@@ -155,10 +141,7 @@ After factual completion: Repair #1 task -> ChatGPT Block 2; factual result -> B
 Do not write DONE/VERIFIED. Do not commit/push. WA4-E not started.
 
 ---
-### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD
-Ниже сохранён предыдущий executor record до Repair #1. Он исторический и не подменяет текущий Repair result.
-
-## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
 **Статус постановки:** выполнена ChatGPT 2026-10-06; ожидает независимой проверки.
@@ -278,76 +261,7 @@ A clean task; B unresolved/no auto-choice; C accepted RETRY no physical write; D
 После выполнения: полная постановка→БЛОК 2 `000_Задачи ChatGPT.md`; factual result→БЛОК 3; затем БЛОК 1 ожидание. Global 000 только router/status. Не уничтожать deferred 151C. RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не писать DONE/VERIFIED, не commit/push, WA4-E не начинать.
 
 ---
-
----
 # БЛОК 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ
----
-
-**Статус:** RESULT READY / AWAITING RE-VERIFICATION.
-**Дата:** 2026-10-06.
-**TASK:** CHATGPT-WA-008 / RC-6 — REPAIR #1.
-**Baseline:** commit 159 / 26111c9e39f8b9de90f1b91b6a75b74bd0412e6d.
-**WA4-E:** NOT STARTED.
-
-### Исправлено
-
-- B1: completed settlement больше не захватывает top-level recovery focus; ADOPT history не мешает следующей microtask/closeout.
-- B2: final READY proof читает authoritative global RC-3 ownership по affected target set; foreign primary/secondary owner блокирует READY.
-- B3: recovery управляет lifecycle только operation.microtask_id; settlement preflight выполняется до persistent settlement write; half-settlement устранён.
-- B4: Projection выровнена с RC-4 restart semantics; own effects / in-flight / persisted DRIFTED-before-finalize / release-pending идут через RC-4, а не stale cleanup.
-- B5: ACTIVE без VERIFIED restore point никогда не READY.
-- F1: ABORT остаётся truthful MANUAL boundary в RECOVERY_REQUIRED; новый global transition не изобретён.
-- F2: PARTIAL/FAILED rollback не auto-close и не release; ownership сохраняется до explicit disposition.
-
-### Дополнительный adversarial finding исполнителя
-
-Найден и исправлен соседний crash window:
-T_APPLYING -> T_DRIFTED persisted -> crash before RC-4 finalize.
-
-Он теперь:
-- не превращается в ROLLBACK_STALE_OPEN;
-- дозавершается через RC-4;
-- при later ABORT финализирует только already-persisted outcome;
-- не продолжает untouched restore;
-- после FAILED/PARTIAL сохраняет claims и возвращает RECOVERY_BLOCKED.
-
-### Проверки
-
-- Repair #1 permanent regressions: **21/21 PASS**.
-- Core RC-3/4/5/6 focused: **176/176 PASS**.
-- Public Server/CLI + Coordinator/Repair: **55/55 PASS**.
-- Original Claude verifier probes без изменения скриптов: **exit 0 / exit 0**.
-- Full explicit test_web_alarm_*.py: **439 tests OK, skipped=1**.
-- compileall: PASS.
-- git diff --check: PASS.
-- Live storage before/after: **136 files / 41 dirs / SHA-256 a9cf87815774d5abdfb8a433af8aca13002d292a2866aa2b27a8901f24c9bff3 unchanged**.
-
-### Evidence
-
-- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/rc6_repair1_report.md
-- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/final_verification_v3.md
-- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/claude_probes_replay.txt
-- Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1/safety_copies/
-
-### Scope
-
-Не реализованы и не начаты:
-- WA4-E;
-- WA4-A;
-- WA4-O;
-- WA4-R;
-- Program/Stage scheduler;
-- новый global Microtask lifecycle.
-
-Known in-scope correctness blocker после executor adversarial pass: **none**.
-
-**NEXT SAFE ACTION:** пользователь commit/push текущего Repair #1 worktree, затем независимый verifier повторно проверяет freshest GitHub commit. До PASS — RC-6 не DONE/VERIFIED и WA4-E не запускать.
-
----
-### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD
-Ниже сохранён предыдущий executor result до Repair #1. Независимая проверка обнаружила в нём B1–B5; текущий Repair result выше является актуальным executor result.
-
-## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ
 ---
 
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.

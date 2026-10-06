@@ -285,10 +285,6 @@ class RecoveryCoordinatorAdversarialTests(unittest.TestCase):
         self.assertEqual((self.project / "target.txt").read_bytes(), AFTER)
 
     def test_corrupt_checkpoint_cannot_steer_recover(self):
-        self.write("target.txt", BEFORE)
-        ManifestSnapshotStore(self.storage).prepare_microtask(
-            TASK, MICRO, [("target.txt", "edit")]
-        )
         self.set_micro(MicrotaskStatus.ACTIVE)
         task_dir = self.tasks.task_directory(TASK)
         (task_dir / "checkpoint.json").write_text("{broken", encoding="utf-8")

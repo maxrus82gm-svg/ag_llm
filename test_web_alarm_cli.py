@@ -8,6 +8,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 from web_alarm.cli import main
+from web_alarm.manifest_store import ManifestSnapshotStore
 from web_alarm.models import MicrotaskStatus
 from web_alarm.task_store import TaskStore
 from web_alarm.workspace_registry import WorkspaceRegistry
@@ -72,6 +73,11 @@ class WebAlarmCliTests(unittest.TestCase):
             "--title", "M1",
             "--goal", "Execute",
             "--microtask-id", "m1",
+        )
+        target = self.project / "recover.txt"
+        target.write_text("before", encoding="utf-8")
+        ManifestSnapshotStore(self.storage).prepare_microtask(
+            "task_cli_recover", "m1", [("recover.txt", "edit")]
         )
         TaskStore(self.storage).set_microtask_status(
             "task_cli_recover", "m1", MicrotaskStatus.ACTIVE

@@ -23,7 +23,6 @@ from web_alarm.workspace_registry import WorkspaceRegistry
 
 REPO_ROOT = Path(__file__).resolve().parent
 TASK = "task_rc6_concurrency"
-OTHER = "task_rc6_foreign"
 MICRO = "m1"
 OP = "op_1"
 BEFORE = b"before\n"
@@ -106,44 +105,6 @@ print(json.dumps({
 }))
 """
 
-PAUSED_READY_CHILD = r"""
-import json, sys, time
-from pathlib import Path
-from web_alarm.recovery_coordinator import RecoveryCoordinator
-storage, task_id, barrier = sys.argv[1:4]
-barrier = Path(barrier)
-coord = RecoveryCoordinator(storage, lock_timeout=30)
-real = coord._prove_retry_ready
-def paused(task_id_arg, projection):
-    (barrier / "proof_waiting").touch()
-    deadline = time.monotonic() + 60
-    while not (barrier / "foreign_done").exists():
-        if time.monotonic() > deadline:
-            raise RuntimeError("foreign claim barrier timeout")
-        time.sleep(0.001)
-    return real(task_id_arg, projection)
-coord._prove_retry_ready = paused
-out = coord.recover(task_id)
-print(json.dumps({
-    "state": out["state"],
-    "error": out["error"],
-    "reason": out["reason"],
-}))
-"""
-
-FOREIGN_CLAIM_CHILD = r"""
-import json, sys
-from web_alarm.target_claim_service import TargetClaimService
-storage, task_id, operation_id = sys.argv[1:4]
-out = TargetClaimService(storage).acquire(
-    task_id, operation_id, operation_revision=1, channel="foreign-race"
-)
-print(json.dumps({
-    "result": out["result"],
-    "result_code": out["result_code"],
-}))
-"""
-
 ABORT_CHILD = r"""
 import json, sys
 from web_alarm.operation_store import OperationStore
@@ -182,10 +143,6 @@ class RecoveryCoordinatorConcurrencyTests(unittest.TestCase):
             "ws_rc6_concurrency", "RC6", "RAW TASK", "Recovery", task_id=TASK
         )
         self.tasks.create_microtask(TASK, "M1", "Recovery step", microtask_id=MICRO)
-        self.tasks.create_task(
-            "ws_rc6_concurrency", "Foreign", "RAW TASK", "Foreign", task_id=OTHER
-        )
-        self.tasks.create_microtask(OTHER, "F1", "Foreign", microtask_id="f1")
         self.ops = OperationStore(self.storage)
         self.resolver = ResolverService(self.storage)
 
@@ -217,8 +174,8 @@ class RecoveryCoordinatorConcurrencyTests(unittest.TestCase):
             agent="race-test", channel="multiprocess",
         )
 
-    def retry_case(self, specs=(("target.txt", "edit"),)):
-        self.prepare(specs)
+    def retry_case(self):
+        self.prepare()
         self.tasks.set_microtask_status(TASK, MICRO, MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
         self.begin_started()
         result = self.resolve("RETRY")
@@ -382,72 +339,6 @@ class RecoveryCoordinatorConcurrencyTests(unittest.TestCase):
         self.assertEqual(self.target.read_bytes(), before)
         owner = TargetClaimService(self.storage).inspect(TASK, OP)
         self.assertTrue(owner["owned_by_operation"])
-
-    def _foreign_claim_during_final_ready_proof(self, *, target, specs):
-        if target == "extra.txt":
-            self.extra.write_bytes(b"keep\n")
-        self.retry_case(specs)
-        first = RecoveryCoordinator(self.storage).recover(TASK)
-        self.assertEqual(first["state"], READY_FOR_EXECUTION)
-
-        foreign_op = "op_foreign_" + target.replace(".", "_")
-        self.ops.begin(
-            OTHER, "f1", "write", target,
-            operation_id=foreign_op, payload=b"foreign\n",
-            request_payload={"case": foreign_op},
-        )
-
-        barrier = self.root / ("foreign_ready_" + target.replace(".", "_"))
-        barrier.mkdir()
-        recover = subprocess.Popen(
-            [
-                sys.executable, "-B", "-c", PAUSED_READY_CHILD,
-                str(self.storage), TASK, str(barrier),
-            ],
-            cwd=REPO_ROOT,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        deadline = time.monotonic() + 30
-        while not (barrier / "proof_waiting").exists():
-            if time.monotonic() > deadline:
-                recover.kill()
-                self.fail("recover child did not reach final READY proof")
-            time.sleep(0.002)
-
-        foreign = subprocess.run(
-            [
-                sys.executable, "-B", "-c", FOREIGN_CLAIM_CHILD,
-                str(self.storage), OTHER, foreign_op,
-            ],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        self.assertEqual(foreign.returncode, 0, foreign.stderr)
-        claimed = json.loads(foreign.stdout)
-        self.assertEqual(claimed["result"], "ACQUIRED")
-        (barrier / "foreign_done").touch()
-
-        stdout, stderr = recover.communicate(timeout=60)
-        self.assertEqual(recover.returncode, 0, stderr)
-        result = json.loads(stdout)
-        self.assertEqual(result["state"], "RECOVERY_BLOCKED")
-        self.assertIn("owned by another operation", result["reason"])
-
-    def test_foreign_primary_claim_wins_before_final_retry_ready_proof(self):
-        self._foreign_claim_during_final_ready_proof(
-            target="target.txt",
-            specs=(("target.txt", "edit"),),
-        )
-
-    def test_foreign_secondary_claim_wins_before_final_retry_ready_proof(self):
-        self._foreign_claim_during_final_ready_proof(
-            target="extra.txt",
-            specs=(("target.txt", "edit"), ("extra.txt", "delete")),
-        )
 
     def test_two_recover_processes_share_one_tracked_rollback(self):
         self.rollback_case()

@@ -104,36 +104,6 @@ _DONE = (VERIFIED, CLOSED, PRESERVATION_FAILED, PARTIAL, FAILED)
 _SESSION_ONLY = ("revision", "updated_at", "next_safe_action")
 
 
-def rollback_own_effects_started(session: dict[str, Any]) -> bool:
-    """Exact RC-4 _session_basis rule for consumed literal freshness."""
-    return any(
-        target["status"] in (T_RESTORED, T_APPLYING, T_FAILED)
-        for target in session["targets"]
-    )
-
-
-def rollback_needs_rc4_finalize(session: dict[str, Any]) -> bool:
-    """A crash left a persisted target outcome that RC-4 must finalize first."""
-    return (
-        session["status"] == APPLYING
-        and any(
-            target["status"] in (T_DRIFTED, T_FAILED)
-            for target in session["targets"]
-        )
-    )
-
-
-def rollback_resume_via_rc4_required(session: dict[str, Any]) -> bool:
-    """Projection must route back through RC-4 before generic stale cleanup.
-
-    This includes own effects/in-flight work and the narrow crash window where
-    DRIFTED was persisted but _finalize had not yet made PARTIAL/FAILED
-    durable. RC-4 handles those states from receipts/current bytes without
-    blindly repeating a destructive effect.
-    """
-    return rollback_own_effects_started(session) or rollback_needs_rc4_finalize(session)
-
-
 def rollback_session_facts(session: dict[str, Any]) -> dict[str, Any]:
     """Facts of one persisted rollback session, for reports and projections.
 
@@ -166,13 +136,6 @@ def rollback_session_facts(session: dict[str, Any]) -> dict[str, Any]:
         "unresolved": [t["source_path"] for t in targets if t["status"] not in (T_RESTORED, T_NOOP)],
         "claims_released": session["claims_released"],
         "physical_mutation_performed": bool(historical),
-        # RC-6 repair: once RC-4 has entered a per-target destructive/reconcile
-        # phase, its own receipts/current-byte proof replace literal Resolver
-        # evidence freshness.  Projection must not call that session stale just
-        # because rollback itself changed the evidence fingerprint.
-        "own_effects_started": rollback_own_effects_started(session),
-        "needs_rc4_finalize": rollback_needs_rc4_finalize(session),
-        "resume_via_rc4_required": rollback_resume_via_rc4_required(session),
         "facts_source": "rollback_receipt",
         "facts_as_of": result.get("at"),
         "verified_at": final.get("at") if final.get("verified") else None,
@@ -556,7 +519,7 @@ class RollbackService:
             return "OPERATION_IDENTITY_CHANGED", "operation request fingerprint changed"
         if plan is None or plan["restore_point_fingerprint"] != basis["restore_point_fingerprint"]:
             return "RESTORE_POINT_CHANGED", "restore point differs from the rollback basis"
-        touched = rollback_own_effects_started(record)
+        touched = any(t["status"] in (T_RESTORED, T_APPLYING, T_FAILED) for t in record["targets"])
         if not touched:
             # name a physical drift precisely before the generic stale fingerprint
             for target in record["targets"]:

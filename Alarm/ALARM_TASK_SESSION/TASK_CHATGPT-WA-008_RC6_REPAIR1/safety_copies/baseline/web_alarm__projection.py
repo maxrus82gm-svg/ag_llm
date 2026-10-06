@@ -48,7 +48,7 @@ from .reconciliation_service import ReconciliationService
 from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
 from .resolver_service import ResolverError, ResolverService
 from .rollback_service import rollback_session_facts
-from .rollback_store import APPLYING, CLOSED, FAILED, PARTIAL, PRESERVATION_FAILED, T_APPLYING, VERIFIED, RollbackStore, RollbackStoreError
+from .rollback_store import CLOSED, PRESERVATION_FAILED, T_APPLYING, VERIFIED, RollbackStore, RollbackStoreError
 from .state_machine import ServerStateMachine
 from .target_claim_store import TargetClaimStore, TargetClaimStoreError
 from .task_store import TaskStore, TaskStoreError
@@ -260,54 +260,22 @@ class ProjectionService:
         """
         rollback_id = session["rollback_id"]
         in_flight = list(session.get("in_flight") or [])
-        own_effects = bool(session.get("own_effects_started"))
-        needs_finalize = bool(session.get("needs_rc4_finalize"))
-        release_pending = session["status"] == VERIFIED and not session["claims_released"]
-        unsafe_final = session["status"] in {PARTIAL, FAILED}
-        if release_pending:
-            state = "ROLLBACK_ABORTED_RELEASE_PENDING"
-            next_action = (
-                f"rollback {rollback_id} is VERIFIED but ownership release was interrupted before ABORT "
-                f"{abort_record.resolution_id}. Finish RC-4 release only; do not repeat any restore effect"
-            )
-        elif in_flight:
+        if in_flight:
             state = "ROLLBACK_ABORTED_IN_FLIGHT"
             next_action = (
                 f"rollback {rollback_id} is still open, but Resolver recovery was ABORTED by "
-                f"{abort_record.resolution_id}; do not continue untouched destructive restore. "
-                f"Reconcile only the already-interrupted target fate through RC-4 apply once ({in_flight}); "
-                "RC-4 will refuse further destructive continuation under ABORT. Close the tracked session "
-                "only if reconciliation proves no rollback effect landed; otherwise preserve its ownership "
-                "for manual disposition"
-            )
-        elif needs_finalize:
-            state = "ROLLBACK_ABORTED_NEEDS_FINALIZE"
-            next_action = (
-                f"rollback {rollback_id} has a persisted DRIFTED/FAILED target from an interrupted RC-4 "
-                f"step and was then ABORTED by {abort_record.resolution_id}. Run RC-4 apply only to "
-                "finalize the already-persisted outcome; do not continue untouched restore targets"
-            )
-        elif unsafe_final:
-            state = "ROLLBACK_ABORTED_UNSAFE_FINAL"
-            next_action = (
-                f"rollback {rollback_id} is {session['status']} after a non-verified rollback outcome and "
-                f"Resolver recovery is ABORTED by {abort_record.resolution_id}. Keep ownership; manual "
-                "project-level disposition is required before close/release"
-            )
-        elif own_effects:
-            state = "ROLLBACK_ABORTED_AFTER_EFFECTS"
-            next_action = (
-                f"rollback {rollback_id} already has persistent own restore effects, while Resolver recovery "
-                f"was ABORTED by {abort_record.resolution_id}. Do not continue untouched restore and do not "
-                "close/release ownership automatically; manual project-level disposition is required"
+                f"{abort_record.resolution_id}; do not continue destructive restore. "
+                f"Reconcile the interrupted target fate through RC-4 apply once ({in_flight}); "
+                "RC-4 will refuse further destructive continuation under ABORT, then close the "
+                "tracked rollback session to release any remaining ownership"
             )
         else:
             state = "ROLLBACK_ABORTED_OPEN"
             next_action = (
                 f"rollback {rollback_id} is still open, but Resolver recovery was ABORTED by "
-                f"{abort_record.resolution_id}; no rollback effect has started. Close the tracked "
-                "rollback session to release recovery ownership; after it is terminal, the accepted "
-                "ABORT may become the top-level recovery state"
+                f"{abort_record.resolution_id}; do not apply destructive restore. Close the tracked "
+                "rollback session to release any remaining ownership; after it is terminal, the "
+                "accepted ABORT may become the top-level recovery state"
             )
         return {
             "state": state,
@@ -324,18 +292,7 @@ class ProjectionService:
         rollback_id = session["rollback_id"]
         action = current_record.action.value
         in_flight = list(session.get("in_flight") or [])
-        own_effects = bool(session.get("own_effects_started"))
-        needs_finalize = bool(session.get("needs_rc4_finalize"))
-        release_pending = session["status"] == VERIFIED and not session["claims_released"]
-        unsafe_final = session["status"] in {PARTIAL, FAILED}
-        if release_pending:
-            state = "ROLLBACK_SUPERSEDED_RELEASE_PENDING"
-            next_action = (
-                f"rollback {rollback_id} is VERIFIED but ownership release was interrupted before newer "
-                f"{action} resolution {current_record.resolution_id}. Finish RC-4 release only; do not "
-                "repeat any restore effect before following the newer resolution"
-            )
-        elif in_flight:
+        if in_flight:
             state = "ROLLBACK_SUPERSEDED_IN_FLIGHT"
             next_action = (
                 f"rollback {rollback_id} is still open with interrupted target fate {in_flight}, while "
@@ -344,35 +301,12 @@ class ProjectionService:
                 "rollback apply/close blindly: manual review of the interrupted target and RC-4 session is "
                 f"required before the old session can be made terminal and {action} may be followed"
             )
-        elif needs_finalize:
-            state = "ROLLBACK_SUPERSEDED_NEEDS_FINALIZE"
-            next_action = (
-                f"rollback {rollback_id} has a persisted DRIFTED/FAILED target from an interrupted RC-4 "
-                f"step and was superseded by accepted {action} resolution {current_record.resolution_id}. "
-                "Run RC-4 apply only to finalize the already-persisted outcome; do not continue untouched "
-                "restore targets"
-            )
-        elif unsafe_final:
-            state = "ROLLBACK_SUPERSEDED_UNSAFE_FINAL"
-            next_action = (
-                f"rollback {rollback_id} is {session['status']} after a non-verified rollback outcome and "
-                f"was superseded by accepted {action} resolution {current_record.resolution_id}. Keep "
-                f"ownership; manual disposition is required before {action} or close/release"
-            )
-        elif own_effects:
-            state = "ROLLBACK_SUPERSEDED_AFTER_EFFECTS"
-            next_action = (
-                f"rollback {rollback_id} already has persistent own restore effects and was superseded by "
-                f"accepted {action} resolution {current_record.resolution_id}. Do not continue the old "
-                "rollback and do not close/release ownership automatically; manual disposition is required "
-                f"before {action} may be followed"
-            )
         else:
             state = f"ROLLBACK_SUPERSEDED_BY_{action}"
             next_action = (
                 f"rollback {rollback_id} is still open, but newer accepted {action} resolution "
-                f"{current_record.resolution_id} superseded its recovery basis before any rollback effect. "
-                "Close the tracked rollback session first; after it is terminal, follow the "
+                f"{current_record.resolution_id} superseded its recovery basis. Do not apply the old "
+                "rollback. Close the tracked rollback session first; after it is terminal, follow the "
                 f"accepted {action} resolution"
             )
         return {
@@ -448,17 +382,7 @@ class ProjectionService:
             ),
         }
 
-    def _operation_recovery(
-        self,
-        op,
-        records,
-        actions,
-        authoritative,
-        sessions,
-        *,
-        microtask_status: str,
-        own_claim_open: bool,
-    ) -> dict[str, Any] | None:
+    def _operation_recovery(self, op, records, actions, authoritative, sessions) -> dict[str, Any] | None:
         """Recovery authority of one operation, by the precedence in the module docstring.
 
         A nonterminal RC-4 session is operational state in its own right.  It
@@ -506,18 +430,7 @@ class ProjectionService:
                 None,
             )
             if session_action is None or not session_action["fresh"]:
-                # RC-4 can be in a persisted restart/finalize phase whose
-                # authority is receipts/current bytes rather than the literal
-                # pre-rollback evidence fingerprint. Projection must mirror
-                # that full resume rule, including DRIFTED-before-finalize.
-                # PARTIAL/FAILED are persistent non-verified final outcomes:
-                # they require explicit manual disposition and must never be
-                # downgraded to stale cleanup that auto-releases ownership.
-                if (
-                    session["status"] not in {PARTIAL, FAILED}
-                    and not session.get("resume_via_rc4_required")
-                ):
-                    return self._stale_rollback_recovery(session)
+                return self._stale_rollback_recovery(session)
 
             return {
                 "state": "ROLLBACK_" + session["status"],
@@ -533,49 +446,26 @@ class ProjectionService:
         ):
             action = settlement["action"]
             if action == "ADOPT":
-                administrative_complete = (
-                    microtask_status in {
-                        MicrotaskStatus.DONE.value,
-                        MicrotaskStatus.VERIFIED.value,
-                    }
-                    and not own_claim_open
-                )
                 next_action = (
                     f"operation {op.operation_id} was adopted after exact post-state proof; "
-                    "the physical effect is not repeated; finish/verify the operation's microtask"
+                    "the physical effect is not repeated; finish/verify the microtask through normal verification"
                 )
             elif action == "ROLLBACK":
-                administrative_complete = (
-                    microtask_status == MicrotaskStatus.RECOVERY_REQUIRED.value
-                    and not own_claim_open
-                )
                 next_action = (
                     f"operation {op.operation_id} has a verified rollback settlement; its old attempt was undone; "
-                    "the microtask remains RECOVERY_REQUIRED pending an explicit new recovery/lifecycle decision"
+                    "run a fresh reconciliation before any future execution"
                 )
             else:
-                administrative_complete = (
-                    microtask_status == MicrotaskStatus.RECOVERY_REQUIRED.value
-                    and not own_claim_open
-                )
                 next_action = (
-                    f"operation {op.operation_id} recovery is durably ABORTED; the microtask remains "
-                    "RECOVERY_REQUIRED and normal mutation is forbidden until an explicit lifecycle/replan decision"
+                    f"operation {op.operation_id} recovery is durably ABORTED; do not retry the old recovery; "
+                    "manual project-level review or a new operation is required"
                 )
-
-            # A completed settlement is durable history, not perpetual recovery
-            # attention.  Suppress its matching consumed Resolver action here;
-            # a later *different* accepted resolution still falls through below.
-            if administrative_complete:
-                return None
-
             return {
                 "state": action + "_SETTLED",
                 "source": "recovery_settlement",
                 "resolution_id": settlement["resolution_id"],
                 "rollback_id": None,
                 "settled_at": settlement["settled_at"],
-                "pending_admin": True,
                 "next_safe_action": next_action,
             }
 
@@ -657,7 +547,6 @@ class ProjectionService:
             records = []
             basis["microtasks"] = ["UNREADABLE", str(exc)]
             blockers.append(_item("MICROTASKS_UNREADABLE", str(exc)))
-        microtask_status = {m.microtask_id: m.status.value for m in records}
         on_disk = sorted(path.stem for path in (task_dir / "microtasks").glob("*.json"))
         orphans = [mid for mid in on_disk if mid not in plan.microtask_ids]
         basis["orphan_microtasks"] = orphans
@@ -665,21 +554,6 @@ class ProjectionService:
             diagnostics.append(_item("ORPHAN_MICROTASKS", f"microtask records outside the plan: {orphans}"))
         position = self._position(plan, records, blockers, diagnostics)
         restore_point, basis["restore_point"] = self._restore_point(task_id, position["current_microtask_id"])
-        if (
-            position["current_status"] == MicrotaskStatus.ACTIVE.value
-            and restore_point["status"] != "VERIFIED"
-        ):
-            blockers.append(
-                _item(
-                    "RESTORE_POINT_NOT_VERIFIED",
-                    (
-                        f"ACTIVE microtask {position['current_microtask_id']} has restore point "
-                        f"{restore_point['status']}: "
-                        f"{restore_point['reason'] or 'verified restore evidence is unavailable'}"
-                    ),
-                    microtask_id=position["current_microtask_id"],
-                )
-            )
 
         try:
             operations = self.operations.list(task_id)
@@ -744,21 +618,7 @@ class ProjectionService:
                  a["operation_revision"], a["fresh"], a["freshness_code"]]
                 for a in actions
             )
-            op_micro_status = microtask_status.get(op.microtask_id, "MISSING")
-            own_claim_open = any(
-                claim["operation_id"] == op.operation_id
-                and (claim.get("owner") or {}).get("kind") != "ROLLBACK"
-                for claim in claims
-            )
-            recovery = self._operation_recovery(
-                op,
-                records_for_op,
-                actions,
-                authoritative,
-                op_sessions,
-                microtask_status=op_micro_status,
-                own_claim_open=own_claim_open,
-            )
+            recovery = self._operation_recovery(op, records_for_op, actions, authoritative, op_sessions)
             if recovery is not None and recovery["source"] == "reconciliation":
                 advice, error = self.advise(task_id, op.microtask_id, op.operation_id)
                 if advice is None:
@@ -778,7 +638,6 @@ class ProjectionService:
             views.append({
                 "operation_id": op.operation_id,
                 "microtask_id": op.microtask_id,
-                "microtask_status": op_micro_status,
                 "status": op.status.value,
                 "revision": op.revision,
                 "contract_version": op.contract_version,
@@ -897,21 +756,6 @@ class ProjectionService:
                 source = "task_status"
             elif current is None:
                 next_action = "create a microtask and define the TASK plan"
-                source = "lifecycle"
-            elif (
-                MicrotaskStatus(status) is MicrotaskStatus.RECOVERY_REQUIRED
-                and any(
-                    view["microtask_id"] == current
-                    and view["recovery_settlement"] is not None
-                    and view["recovery_settlement"]["action"] in {"ABORT", "ROLLBACK"}
-                    for view in projection["operations"]
-                )
-            ):
-                next_action = (
-                    f"microtask {current} is RECOVERY_REQUIRED after a durable recovery settlement; "
-                    "normal mutation is forbidden. An explicit project-level replan/lifecycle decision "
-                    "is required before this microtask can continue"
-                )
                 source = "lifecycle"
             elif MicrotaskStatus(status) in _RECOVERY_MICROTASK_STATUSES and any(
                 view["microtask_id"] == current for view in projection["operations"]

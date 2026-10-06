@@ -215,7 +215,6 @@ class RecoveryCoordinatorIntegrationTests(unittest.TestCase):
         )
 
     def test_clean_active_task_is_ready_without_writes(self):
-        self.prepare()
         self.set_micro(MicrotaskStatus.ACTIVE)
         before = self.target.read_bytes()
 
