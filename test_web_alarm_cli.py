@@ -8,6 +8,8 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 from web_alarm.cli import main
+from web_alarm.models import MicrotaskStatus
+from web_alarm.task_store import TaskStore
 from web_alarm.workspace_registry import WorkspaceRegistry
 
 
@@ -54,6 +56,36 @@ class WebAlarmCliTests(unittest.TestCase):
         self.assertIn("NO_MICROTASKS", [item["code"] for item in payload["closeout"]["blockers"]])
         code, out, err = self.run_cli("task", "open", "--task-id", "task_cli")
         self.assertEqual(json.loads(out)["status"], "PLANNED")  # still active, nothing moved
+
+    def test_task_recover_cli_uses_rc6_coordinator(self):
+        self.run_cli(
+            "task", "create",
+            "--workspace-id", self.workspace.workspace_id,
+            "--title", "Task",
+            "--raw-task", "RAW",
+            "--goal", "Goal",
+            "--task-id", "task_cli_recover",
+        )
+        self.run_cli(
+            "microtask", "create",
+            "--task-id", "task_cli_recover",
+            "--title", "M1",
+            "--goal", "Execute",
+            "--microtask-id", "m1",
+        )
+        TaskStore(self.storage).set_microtask_status(
+            "task_cli_recover", "m1", MicrotaskStatus.ACTIVE
+        )
+
+        code, out, err = self.run_cli(
+            "task", "recover", "--task-id", "task_cli_recover"
+        )
+
+        self.assertEqual(code, 0, err)
+        payload = json.loads(out)
+        self.assertEqual(payload["state"], "READY_FOR_EXECUTION")
+        self.assertTrue(payload["ready_for_execution"])
+        self.assertEqual(payload["performed_steps"], [])
 
     def test_microtask_prepare_checkpoint_status_and_report(self):
         self.run_cli(

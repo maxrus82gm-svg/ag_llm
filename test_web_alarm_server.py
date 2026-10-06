@@ -238,10 +238,24 @@ class WebAlarmServerApiTests(unittest.TestCase):
             {},
         )
         self.assertEqual(status, 200)
-        self.assertEqual(payload["mode"], "advisory_only")
-        self.assertFalse(payload["mutation_performed"])
-        self.assertEqual(payload["recovery_engine"], "WA-3_NOT_IMPLEMENTED")
-        self.assertEqual(payload["recent_events"][-1]["event_type"], "REPORT")
+        self.assertEqual(payload["state"], "NO_ACTION_REQUIRED")
+        self.assertFalse(payload["ready_for_execution"])
+        self.assertEqual(payload["performed_steps"], [])
+        self.assertEqual(payload["task_id"], task["task_id"])
+        self.assertEqual(payload["authority_source"], "lifecycle")
+        self.assertIn("projection", payload)
+
+    def test_recover_rejects_invalid_step_budget(self):
+        task = self._create_task()
+        self._create_microtask()
+        with self.assertRaises(ApiError) as caught:
+            self.api.dispatch(
+                "POST",
+                f"/tasks/{task['task_id']}/recover",
+                {"max_recovery_steps": 0},
+            )
+        self.assertEqual(caught.exception.status, 400)
+        self.assertEqual(caught.exception.code, "invalid_field")
 
     def test_task_creation_requires_registered_workspace(self):
         with self.assertRaises(ApiError) as caught:

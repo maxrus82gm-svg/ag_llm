@@ -15,23 +15,24 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-**Статус:** ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
-**TASK:** —
+Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+TASK: —
 
-RC-6 фактически выполнен исполнителем и перенесён в БЛОКИ 2–3.
-Статус RC-6: **RESULT READY / AWAITING INDEPENDENT VERIFICATION**.
+Последняя исполнительная работа:
+CHATGPT-WA-008 / RC-6 → RESULT READY / AWAITING INDEPENDENT VERIFICATION.
 
-До независимого PASS:
-- не считать RC-6 DONE / VERIFIED;
-- WA4-E не начинать.
+NEXT SAFE ACTION:
+пользователь commit/push → независимая проверка свежего commit вторым агентом/verifier.
+WA4-E до independent PASS не начинать.
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
-**Статус постановки:** выполнена ChatGPT 2026-10-06; ожидает независимой проверки.
-**Связь:** полный factual result — БЛОК 3; детальный report — `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/rc6_report.md`.
+**Статус постановки:** фактически выполнена ChatGPT; независимая проверка ещё не выполнена.
+**TASK:** CHATGPT-WA-008 / RC-6.
 
+~~~text
 TASK: CHATGPT-WA-008 — RC-6
 Project-level Recovery Closure: bounded one-command recovery / resume orchestration
 
@@ -144,6 +145,7 @@ A clean task; B unresolved/no auto-choice; C accepted RETRY no physical write; D
 
 30. Card rotation
 После выполнения: полная постановка→БЛОК 2 `000_Задачи ChatGPT.md`; factual result→БЛОК 3; затем БЛОК 1 ожидание. Global 000 только router/status. Не уничтожать deferred 151C. RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не писать DONE/VERIFIED, не commit/push, WA4-E не начинать.
+~~~
 
 ---
 # БЛОК 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ
@@ -152,85 +154,73 @@ A clean task; B unresolved/no auto-choice; C accepted RETRY no physical write; D
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.
 **Дата:** 2026-10-06.
 **TASK:** CHATGPT-WA-008 / RC-6 — Project-level Recovery Closure.
-**Стартовый baseline:** commit 156 `897d724b74843740ce2b936fcb6671106bb2dee0`.
-**Промежуточный user commit:** commit 157 `6042033180e26235234389dcf81e4068cdfd440b` — M1 settlement/projection + activation docs.
-**Текущий M2/M3:** незакоммиченный worktree поверх commit 157; commit/push делает пользователь.
+**WA4-E:** NOT STARTED.
+**Commit / push ChatGPT:** не выполнялись.
 
 ### Фактический результат
 
-- добавлен bounded `RecoveryCoordinator.recover(task_id)`;
-- один coordinator использует fresh RC-5 Projection как canonical read model и не создаёт competing truth;
-- normal physical execution не выполняется: `RETRY` только re-arm → `READY_FOR_EXECUTION`; WA4-E не начат;
-- ADOPT получил durable settlement: full affected-target locking, fresh-authority recheck, exact server-observed post-state receipt, Operation VERIFIED, Microtask DONE, own claim cleanup, затем `READY_FOR_VERIFICATION`;
-- ABORT получил durable settlement без стирания forensic execution status; Microtask → RECOVERY_REQUIRED;
-- ROLLBACK использует существующий RC-4 prepare/apply/reconcile/release и затем durable ROLLBACK settlement;
-- open/stale/superseded rollback cleanup не скрывается; superseded/stale in-flight и multiple-open fail-closed/manual;
-- RETRY/ADOPT блокируются чужим RC-3 claim на любом target из Resolver basis, включая secondary target;
-- найден и закрыт race `old RETRY -> newer ABORT`: перед действием и под target locks exact resolution_id повторно доказывается как текущая Resolver authority;
-- Server `POST /tasks/{id}/recover` переведён с advisory stub на RC-6 coordinator;
-- CLI: `task recover`;
-- TASK completion остаётся отдельным Closeout gate.
+- Добавлен bounded RecoveryCoordinator.recover(task_id) поверх RC-5 Projection, RC-2 Resolver, RC-3 ownership и RC-4 rollback.
+- Existing POST /tasks/{task_id}/recover переведён со старого advisory_only stub на canonical RC-6 coordinator.
+- Добавлен CLI task recover.
+- RETRY только административно re-arm'ит Microtask и возвращает READY_FOR_EXECUTION; normal physical write не выполняется.
+- ADOPT получает durable recovery_settlement, exact post-state receipt, Operation=VERIFIED, Microtask=DONE, затем READY_FOR_VERIFICATION.
+- ABORT сохраняет forensic Operation status, записывает durable settlement, переводит Microtask в RECOVERY_REQUIRED, не подделывает успех.
+- Verified RC-4 rollback получает durable ROLLBACK settlement; source attempt не считается успешно выполненным.
+- Open/stale/superseded rollback sessions не теряются; unsafe in-flight/multiple-open состояния fail-closed.
+- Coordinator bounded/restart/replay safe; checkpoint и Recovery Report не являются authority.
+- Completed TASK не мутируется; closeout-eligible TASK не закрывается автоматически.
 
-### Concurrency / restart
+### Ownership / concurrency
 
-Доказано отдельными процессами:
+- RETRY и ADOPT защищают весь persistent Resolver affected-target set, а не только основной operation target.
+- Target locks берутся в deterministic physical-key order.
+- Foreign RC-3 owner на любом affected target → RECOVERY_BLOCKED; чужой claim не снимается.
+- Resolver authority перепроверяется под TASK lock; старый fresh RETRY не может продолжить после более нового accepted ABORT.
+- Реальные multiprocess tests: recover vs recover; recover vs newer Resolver ABORT; two recover on one rollback; recover vs new operation.
 
-- recover vs recover (RETRY) → единый READY, без physical write;
-- recover vs recover (ROLLBACK) → одна tracked rollback session, no duplicate restore;
-- recover vs newer Resolver ABORT → старый RETRY fail-closed;
-- recover vs new operation → новый claim CONFLICT / authority=false, старый owner не потерян;
-- fresh process после ADOPT settlement до Microtask/claim cleanup дозавершает administrative closure без повторного effect;
-- bounded step interruption → последующий recover безопасно продолжает persistent lifecycle.
+### Adversarial findings, найденные и исправленные в RC-6
 
-### Adversarial
-
-Проверены:
-
-- ABORT/open rollback;
-- RETRY/ADOPT superseding open rollback;
-- stale open rollback;
-- ABORT + T_APPLYING;
-- superseded in-flight rollback;
-- multiple open rollback sessions;
-- corrupt checkpoint;
-- stale Recovery Report;
-- foreign primary/secondary target claims;
-- projection contradiction;
-- completed TASK;
-- closeout-eligible TASK;
-- false READY;
-- step-budget exhaustion/replay.
+1. Old RETRY → newer ABORT: freshness старого RETRY могла оставаться true. Исправлено authoritative-resolution recheck.
+2. Foreign-owner readiness race: bytes могли быть свежими при уже занятом RC-3 target. Исправлено ownership barrier.
+3. Secondary-target TOCTOU: Resolver basis может зависеть от нескольких manifest targets. ADOPT/RETRY теперь lock + re-proof всего affected-target set.
+4. Lost response после durable ADOPT settlement, но до microtask/claim cleanup, безопасно дозавершается fresh process.
 
 ### Проверки
 
-- baseline full Web Alarm: **379/379 PASS**;
-- RC-6 integration/concurrency/adversarial final focused: **35/35 PASS**;
-- финальный full Web Alarm: **416 tests, OK, skipped=1, 0 failures/errors**;
-- `python -B -m compileall -q web_alarm`: PASS;
-- `git diff --check`: PASS;
-- live WEB-02 storage before/after: **136 files / 41 dirs, SHA-256 `b22a803d9f9405cc1b8a99f567fb8c26a708f131ff6aa0a8803e48294068aa14` unchanged**.
+- initial full baseline: 379/379 PASS;
+- M1 / operation / projection related: 82/82 PASS;
+- coordinator + Resolver/Projection focused: 86/86 PASS;
+- RC-6 public focused intermediate: 52/52 PASS;
+- multiprocess race suite: 4/4 PASS;
+- adversarial matrix intermediate: 14/14 PASS;
+- RC-6 coordinator/adversarial/concurrency after final all-target repair: 35/35 PASS;
+- final full Web Alarm after last code change: 416 tests — OK, 1 skip;
+- compileall: PASS;
+- git diff --check: PASS.
+
+### Live storage
+
+%LOCALAPPDATA%\WebAlarmWorkspace только чтение:
+
+- before: 136 files / 41 directories;
+- after: 136 files / 41 directories;
+- exact file-tree hash before/after:
+  b22a803d9f9405cc1b8a99f567fb8c26a708f131ff6aa0a8803e48294068aa14;
+- hash совпадает с RC-5 baseline.
+
+Live storage RC-6 не менял.
 
 ### Evidence
 
-- Report: `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/rc6_report.md`
-- Task: `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/task.md`
-- Full final regression: `final_regression_v2.txt`
-- Safety: `safety_copies/baseline/`, `safety_copies/m2_pre/`, `safety_copies/pre_closeout/`
+- Report: Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/rc6_report.md.
+- Canonical final regression: final_regression_v2.txt.
+- Safety copies: safety_copies/baseline/, safety_copies/m2_pre/, safety_copies/rotation_pre/.
 
-### Findings / deferred
+### Findings / proposals для следующего boundary
 
-Known in-scope RC-6 correctness blocker after adversarial/full regression: **none**.
+- WA4-E обязан заново доказать basis/revision/ownership непосредственно под physical mutation boundary; RC-6 READY — readiness point, не lease.
+- Plain ACTIVE + заранее удерживаемый own claim сейчас обрабатывается консервативно; WA4-E должен явно определить adopt/rebase semantics.
+- Для WA4-O можно сделать compact operator view поверх coordinator result; full Projection сейчас оставлена как evidence/debug detail.
+- Перед reliance на новые semantics после будущего commit нужно перезапустить resident WEB-02 processes.
 
-Deferred exactly by scope:
-- WA4-E authoritative physical Executor;
-- STARTED-before-write integration;
-- WA4-A normal-executor lost-response injection;
-- UI/HTML WA4-O;
-- scheduler/multi-model Program;
-- strict rollout WA4-R.
-
-Existing P2 remains future WA4-E/UX input: legitimate rollback target locks can make a normal writer wait/timeout.
-
-**WA4-E:** NOT STARTED.
-
-**NEXT SAFE ACTION:** пользователь commit/push текущего RC-6 worktree → другой agent/model независимо проверяет freshest commit. До independent PASS не писать DONE/VERIFIED и не начинать WA4-E.
+**NEXT SAFE ACTION:** пользователь commit/push → второй независимый агент/verifier проверяет свежий commit. При blocker repair остаётся внутри RC-6. Только после independent PASS допускается RC-6 DONE / VERIFIED и формирование WA4-E.

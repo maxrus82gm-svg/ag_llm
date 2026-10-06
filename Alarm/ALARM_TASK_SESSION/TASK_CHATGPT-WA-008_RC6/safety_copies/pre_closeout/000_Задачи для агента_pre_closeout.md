@@ -13,20 +13,20 @@
 ---
 
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.
-**TASK:** `CHATGPT-WA-008 / RC-6 — Project-level Recovery Closure`.
-**Исполнитель:** ChatGPT / GPT-5.6 Sol.
+**TASK:** CHATGPT-WA-008 / RC-6 — Project-level Recovery Closure.
+**Исполнитель:** ChatGPT / GPT-5.6 Sol (implementation complete; no commit/push by executor).
 **Персональная карточка:** [[000_Задачи ChatGPT]], БЛОКИ 2–3.
-**Task session / report:** `Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/rc6_report.md`.
-**Стартовый baseline:** commit 156 `897d724b74843740ce2b936fcb6671106bb2dee0`.
-**Промежуточный user commit:** commit 157 `6042033180e26235234389dcf81e4068cdfd440b`.
-**Текущий код после commit 157:** RC-6 M2/M3 worktree ожидает user commit/push.
+**Task session:** Alarm/ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6/.
+**Initial baseline:** commit 156 897d724b74843740ce2b936fcb6671106bb2dee0.
+**Resume baseline after disconnect:** commit 157 6042033180e26235234389dcf81e4068cdfd440b (clean; RC-6 M1 already present).
 
-**Factual executor result:** bounded one-command Recovery Coordinator реализован; durable ADOPT/ABORT/ROLLBACK settlement, RETRY re-arm без physical effect, RC-4 integration, target/claim authority checks, replay/restart и multiprocess races. Final full suite: 416 tests OK (1 skip), compileall PASS, diff-check PASS; live storage hash unchanged.
+**Result summary:** bounded canonical Recovery Coordinator implemented; RETRY/ADOPT/ABORT/ROLLBACK lifecycle, restart/replay and multiprocess ownership races covered; final full Web Alarm = 416 tests OK (1 skip); live storage exact hash unchanged.
 
-**NEXT SAFE ACTION:** пользователь commit/push → независимый verifier проверяет freshest commit. Только после PASS verifier/координатор переносит RC-6 в глобальный БЛОК 2 / permanent history и открывает следующий stage.
+**WA4-E:** NOT STARTED.
 
-**WA4-E:** НЕ НАЧИНАТЬ до independent PASS RC-6.
-**Deferred TASK 151C:** БЛОК 3 не трогать.
+**NEXT SAFE ACTION:** пользователь commit/push текущего RC-6 diff → независимый verifier/второй агент проверяет самый свежий commit. При blocker repair остаётся внутри RC-6. Только после independent PASS verifier обновляет global БЛОК 2 / permanent history и разрешает WA4-E.
+
+Deferred TASK 151C в БЛОКЕ 3 не трогать.
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ЗАВЕРШЁННАЯ ЗАДАЧА

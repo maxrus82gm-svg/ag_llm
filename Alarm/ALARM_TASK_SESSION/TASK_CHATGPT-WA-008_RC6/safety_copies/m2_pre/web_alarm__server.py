@@ -1,9 +1,8 @@
-"""Local typed HTTP API for Web Alarm Workspace.
+"""Local typed HTTP API for Web Alarm Workspace WA-2.1.
 
-The API exposes persistent Web Alarm control-plane state over loopback HTTP.
-Normal project mutation is still not exposed before WA4-E; RC-6 ``recover``
-may perform only tracked recovery/administrative actions through the existing
-Resolver, RC-3 ownership and RC-4 rollback contracts.
+This layer exposes WA-1 state operations over loopback HTTP. It does not own
+state-transition policy yet (WA-2.2) and does not perform hidden mutations of
+the registered real Workspace.
 """
 
 from __future__ import annotations
@@ -35,7 +34,6 @@ from .operation_store import (
 from .projection import ProjectionError, ProjectionService
 from .reconciliation import ReconciliationEvidenceError
 from .reconciliation_service import ReconciliationService
-from .recovery_coordinator import RecoveryCoordinator, RecoveryCoordinatorError
 from .recovery_report_builder import RecoveryReportBuilderError
 from .recovery_report_service import RecoveryReportService
 from .recovery_report_store import RecoveryReportStoreError
@@ -169,7 +167,6 @@ class WebAlarmApi:
         self.operations = OperationStore(storage_root)
         self.reconciliation = ReconciliationService(storage_root)
         self.transport_events = TransportEventStore(storage_root)
-        self.recovery = RecoveryCoordinator(storage_root)
         self.recovery_reports = RecoveryReportService(storage_root)
         self.resolver = ResolverService(storage_root)
         self.target_claims = TargetClaimService(storage_root)
@@ -853,21 +850,20 @@ class WebAlarmApi:
             if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "recover":
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "recover endpoint requires POST")
-                data = _require_object(body)
-                limit = data.get("max_recovery_steps")
-                if limit is not None and (
-                    isinstance(limit, bool) or not isinstance(limit, int) or limit < 1
-                ):
-                    raise ApiError(
-                        400,
-                        "invalid_field",
-                        "max_recovery_steps must be a positive integer when provided",
-                    )
-                outcome = self.recovery.recover(
-                    parts[1],
-                    max_recovery_steps=limit,
-                )
-                return 200, _jsonable(outcome)
+                task_id = parts[1]
+                bundle = self._task_bundle(task_id)
+                events = self.state.read_events(task_id)
+                return 200, {
+                    "mode": "advisory_only",
+                    "mutation_performed": False,
+                    "recovery_engine": "WA-3_NOT_IMPLEMENTED",
+                    "task_state": bundle,
+                    "recent_events": [
+                        record_to_dict(item) for item in events[-20:]
+                    ],
+                    "next_safe_action": bundle["projection"]["next_safe_action"],
+                    "authority_source": bundle["authority_source"],
+                }
 
             raise ApiError(404, "not_found", f"unknown endpoint: {path}")
 
@@ -942,8 +938,6 @@ class WebAlarmApi:
             raise ApiError(status, "state_error", message) from exc
         except TransportEventStoreError as exc:
             raise ApiError(409, "transport_evidence_error", str(exc)) from exc
-        except RecoveryCoordinatorError as exc:
-            raise ApiError(409, "recovery_coordinator_error", str(exc)) from exc
         except (RecoveryReportStoreError, RecoveryReportBuilderError) as exc:
             raise ApiError(409, "recovery_report_error", str(exc)) from exc
         except ValueError as exc:

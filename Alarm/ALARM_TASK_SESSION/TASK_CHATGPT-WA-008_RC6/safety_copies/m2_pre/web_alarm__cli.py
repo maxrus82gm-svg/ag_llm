@@ -13,12 +13,6 @@ from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreEr
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import MicrotaskStatus, record_to_dict
 from .projection import ProjectionError, ProjectionService
-from .recovery_coordinator import (
-    FAIL_CLOSED,
-    RECOVERY_BLOCKED,
-    RecoveryCoordinator,
-    RecoveryCoordinatorError,
-)
 from .remote_entry import RemoteEntry, RemoteEntryError
 from .task_store import TaskStore, TaskStoreError
 from .workspace_registry import WorkspaceRegistryError
@@ -60,10 +54,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     closeout = task_sub.add_parser("closeout", help="pure closeout inspection (eligibility + blockers)")
     closeout.add_argument("--task-id", required=True)
-
-    recover = task_sub.add_parser("recover", help="RC-6 bounded project-level recovery/resume")
-    recover.add_argument("--task-id", required=True)
-    recover.add_argument("--max-recovery-steps", type=int)
 
     micro = root.add_parser("microtask")
     micro_sub = micro.add_subparsers(dest="micro_command", required=True)
@@ -163,13 +153,6 @@ def _handle(args: argparse.Namespace) -> int:
         if args.task_command == "closeout":
             _json(CloseoutService(args.storage_root).inspect(args.task_id))
             return 0
-        if args.task_command == "recover":
-            outcome = RecoveryCoordinator(args.storage_root).recover(
-                args.task_id,
-                max_recovery_steps=args.max_recovery_steps,
-            )
-            _json(outcome)
-            return 3 if outcome["state"] in {FAIL_CLOSED, RECOVERY_BLOCKED} else 0
 
     if args.command == "microtask":
         if args.micro_command == "create":
@@ -279,7 +262,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         WorkspaceRegistryError,
         RemoteEntryError,
         ProjectionError,
-        RecoveryCoordinatorError,
         CloseoutError,
         ValueError,
         OSError,

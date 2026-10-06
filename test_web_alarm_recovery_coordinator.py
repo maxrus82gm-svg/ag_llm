@@ -4,8 +4,15 @@ import unittest
 from pathlib import Path
 
 from web_alarm.event_checkpoint_store import EventCheckpointStore
+from web_alarm.manifest_store import ManifestSnapshotStore
 from web_alarm.models import MicrotaskStatus, OperationStatus
 from web_alarm.operation_store import OperationStore, OperationTransitionError
+from web_alarm.reconciliation_service import ReconciliationService
+from web_alarm.recovery_coordinator import (
+    FAIL_CLOSED, MANUAL_DECISION_REQUIRED, READY_FOR_EXECUTION,
+    READY_FOR_VERIFICATION, RecoveryCoordinator,
+)
+from web_alarm.resolver_service import ResolverService
 from web_alarm.task_store import TaskStore
 from web_alarm.workspace_registry import WorkspaceRegistry
 
@@ -155,6 +162,178 @@ class RecoverySettlementPrimitiveTests(unittest.TestCase):
             )
         self.assertEqual(record.status, MicrotaskStatus.RECOVERY_REQUIRED)
         self.assertEqual(self.tasks.open_microtask(TASK, MICRO).status, MicrotaskStatus.RECOVERY_REQUIRED)
+
+
+class RecoveryCoordinatorIntegrationTests(unittest.TestCase):
+    def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.root = Path(self.tempdir.name)
+        self.storage = self.root / "state"
+        self.project = self.root / "project"
+        self.project.mkdir()
+        self.target = self.project / "target.txt"
+        self.extra = self.project / "extra.txt"
+        self.target.write_bytes(BEFORE)
+        WorkspaceRegistry(self.storage).register("RC6", self.project, workspace_id="ws_rc6")
+        self.tasks = TaskStore(self.storage)
+        self.tasks.create_task("ws_rc6", "RC6", "RAW TASK", "Recovery", task_id=TASK)
+        self.tasks.create_microtask(TASK, "M1", "Recovery step", microtask_id=MICRO)
+        self.ops = OperationStore(self.storage)
+        self.resolver = ResolverService(self.storage)
+
+    def tearDown(self):
+        self.tempdir.cleanup()
+
+    def prepare(self, specs=(("target.txt", "edit"),)):
+        ManifestSnapshotStore(self.storage).prepare_microtask(TASK, MICRO, list(specs))
+
+    def set_micro(self, status):
+        self.tasks.set_microtask_status(TASK, MICRO, status)
+
+    def begin_started(self):
+        self.ops.begin(
+            TASK, MICRO, "write", "target.txt",
+            operation_id=OP,
+            payload=AFTER,
+            request_payload={"case": OP},
+        )
+        self.ops.transition(TASK, OP, OperationStatus.STARTED)
+        return self.ops.get(TASK, OP)
+
+    def resolve(self, action):
+        decision = ReconciliationService(self.storage).reconcile(TASK, MICRO, OP)["DECISION"]
+        record = self.ops.get(TASK, OP)
+        return self.resolver.apply(
+            TASK,
+            MICRO,
+            OP,
+            action,
+            evidence_fingerprint=decision["evidence_fingerprint"],
+            operation_revision=record.revision,
+            agent="rc6-test",
+            channel="test",
+        )
+
+    def test_clean_active_task_is_ready_without_writes(self):
+        self.set_micro(MicrotaskStatus.ACTIVE)
+        before = self.target.read_bytes()
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], READY_FOR_EXECUTION)
+        self.assertTrue(result["ready_for_execution"])
+        self.assertEqual(result["performed_steps"], [])
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def test_unresolved_operation_requires_manual_decision(self):
+        self.prepare()
+        self.set_micro(MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
+        self.begin_started()
+        before = self.target.read_bytes()
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], MANUAL_DECISION_REQUIRED)
+        self.assertTrue(result["requires_human"])
+        self.assertEqual(result["performed_steps"], [])
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def test_retry_rearms_microtask_but_performs_no_physical_write(self):
+        self.prepare()
+        self.set_micro(MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
+        self.begin_started()
+        accepted = self.resolve("RETRY")
+        self.assertTrue(accepted["accepted"])
+        before = self.target.read_bytes()
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], READY_FOR_EXECUTION)
+        self.assertEqual(self.tasks.open_microtask(TASK, MICRO).status, MicrotaskStatus.ACTIVE)
+        self.assertEqual(self.ops.get(TASK, OP).status, OperationStatus.STARTED)
+        self.assertEqual(self.target.read_bytes(), before)
+        self.assertEqual([s["action"] for s in result["performed_steps"]], ["REARM_RETRY"])
+
+    def test_adopt_settles_durably_and_stops_at_verification_boundary(self):
+        self.prepare()
+        self.set_micro(MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
+        self.begin_started()
+        self.target.write_bytes(AFTER)
+        accepted = self.resolve("ADOPT")
+        self.assertTrue(accepted["accepted"])
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], READY_FOR_VERIFICATION)
+        op = self.ops.get(TASK, OP)
+        self.assertEqual(op.status, OperationStatus.VERIFIED)
+        self.assertEqual(op.recovery_settlement["action"], "ADOPT")
+        self.assertTrue(op.receipt["matches_expected_post"])
+        self.assertEqual(self.tasks.open_microtask(TASK, MICRO).status, MicrotaskStatus.DONE)
+        self.assertEqual(self.target.read_bytes(), AFTER)
+
+        replay = RecoveryCoordinator(self.storage).recover(TASK)
+        self.assertEqual(replay["state"], READY_FOR_VERIFICATION)
+        self.assertEqual(replay["performed_steps"], [])
+
+    def test_abort_settles_without_erasing_forensic_operation_status(self):
+        self.prepare()
+        self.set_micro(MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
+        self.begin_started()
+        self.target.write_bytes(b"drift\n")
+        accepted = self.resolve("ABORT")
+        self.assertTrue(accepted["accepted"])
+        before = self.target.read_bytes()
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], MANUAL_DECISION_REQUIRED)
+        op = self.ops.get(TASK, OP)
+        self.assertEqual(op.status, OperationStatus.STARTED)
+        self.assertEqual(op.recovery_settlement["action"], "ABORT")
+        self.assertEqual(self.tasks.open_microtask(TASK, MICRO).status, MicrotaskStatus.RECOVERY_REQUIRED)
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def _rollback_case(self):
+        self.extra.write_bytes(b"keep\n")
+        self.prepare((("target.txt", "edit"), ("extra.txt", "delete")))
+        self.set_micro(MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT)
+        self.begin_started()
+        self.target.write_bytes(AFTER)
+        accepted = self.resolve("ROLLBACK")
+        self.assertTrue(accepted["accepted"])
+        return accepted
+
+    def test_one_command_rollback_uses_rc4_then_stops_for_new_decision(self):
+        self._rollback_case()
+
+        result = RecoveryCoordinator(self.storage).recover(TASK)
+
+        self.assertEqual(result["state"], MANUAL_DECISION_REQUIRED)
+        self.assertEqual(self.target.read_bytes(), BEFORE)
+        self.assertEqual(self.extra.read_bytes(), b"keep\n")
+        op = self.ops.get(TASK, OP)
+        self.assertEqual(op.status, OperationStatus.STARTED)
+        self.assertEqual(op.recovery_settlement["action"], "ROLLBACK")
+        self.assertEqual(self.tasks.open_microtask(TASK, MICRO).status, MicrotaskStatus.RECOVERY_REQUIRED)
+        actions = [step["action"] for step in result["performed_steps"]]
+        self.assertIn("PREPARE_ROLLBACK", actions)
+        self.assertIn("APPLY_ROLLBACK", actions)
+        self.assertIn("SETTLE_ROLLBACK", actions)
+
+    def test_step_budget_fails_closed_without_infinite_loop_and_resume_is_safe(self):
+        self._rollback_case()
+
+        first = RecoveryCoordinator(self.storage).recover(TASK, max_recovery_steps=1)
+
+        self.assertEqual(first["state"], FAIL_CLOSED)
+        self.assertEqual(first["error"], "RECOVERY_STEP_BUDGET_EXHAUSTED")
+        self.assertEqual(len(first["performed_steps"]), 1)
+
+        resumed = RecoveryCoordinator(self.storage).recover(TASK)
+        self.assertEqual(resumed["state"], MANUAL_DECISION_REQUIRED)
+        self.assertEqual(self.target.read_bytes(), BEFORE)
+        self.assertEqual(self.ops.get(TASK, OP).recovery_settlement["action"], "ROLLBACK")
 
 
 if __name__ == "__main__":
