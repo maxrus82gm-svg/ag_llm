@@ -28,16 +28,6 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
-
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
-
-**Статус постановки:** выполнена Claude 2026-10-06 (повторная независимая проверка RC-6 после Repair #1; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
-
-```text
 TASK: CLAUDE-RC6-REVERIFY
 RC-6 — INDEPENDENT RE-VERIFICATION AFTER REPAIR #1
 
@@ -986,9 +976,10 @@ TASK только зафиксирована в Chat.
 -> перенести TASK в Claude БЛОК 1;
 -> создать verifier task-session;
 -> начать independent re-verification.
-```
 
-### Предыдущая постановка — RC-6 INDEPENDENT VERIFICATION (сохранена)
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+---
 
 **Статус постановки:** выполнена Claude 2026-10-06 (независимая проверка RC-6; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Постановка CLAUDE-WA-007 / RC-5 сохранена следом без изменений: RC-5 ещё не прошёл независимую приёмку и не имеет записи в `001`, поэтому по правилу карточки не перезаписывается.
 
@@ -2576,45 +2567,6 @@ RC-6 НЕ НАЧИНАТЬ.
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
-
-**TASK:** CLAUDE-RC6-REVERIFY — повторная независимая проверка RC-6 после Repair #1 (CHATGPT-WA-008). Роль Claude — независимый verifier.
-**Статус:** RESULT READY — вердикт **VERIFICATION FAILED / REPAIR REQUIRED** (2026-10-06). **WA4-E NOT STARTED.** Commit / push не выполнялись; permanent history и глобальный router не менялись (по постановке — только при PASS).
-
-**Baseline:** GitHub `main` = локальный HEAD = commit 160 `07c4667`; runtime-код совпадает с HEAD; diff 159 → 160 прочитан полностью.
-
-**Независимые проверки:**
-- Repair #1 — 21/21; фокусно (RC-6, projection, Resolver, RC-3, RC-4, state machine, server, CLI) — 221/221;
-- полный набор — **439 OK** (skip 1);
-- compileall и `git diff --check` OK;
-- исходные probe без изменений — exit 0 / exit 0;
-- 23 новых probe, часть — на реальных процессах и с `os._exit`;
-- живое storage только на чтение: 136 / 41, хеш до и после одинаковый; `recover` на WA-3.6 / 3.7 → `TASK_COMPLETED` без шагов.
-
-**B1–B5:**
-- B1, B2, B4, B5 в исходных сценариях устранены;
-- B3 исправлен для RETRY / ABORT / ADOPT, но не для ROLLBACK (см. R1);
-- F1 — формулировка правдива, но механически не обеспечена; F2 — безопасно.
-
-**Новые блокеры:**
-- **R1** — `recover` физически откатывает уже VERIFIED-этап. Accepted ROLLBACK для старой операции m1 при ACTIVE m2 → RC-4 восстанавливает файлы m1; settlement отказывает только после этого. Нарушен инвариант 5. Причина: для ROLLBACK нет проверки статуса microtask до PREPARE / APPLY.
-- **R2** — две операции одной microtask с settlement ADOPT и ABORT: `recover` бесконечно переключает её DONE ↔ RECOVERY_REQUIRED (до 8 записей за вызов), итог FAIL_CLOSED по бюджету; ABORT-microtask может остаться DONE.
-- **R3** — READY возвращается для microtask, по которой защищённая проверка не выполнялась (узкая гонка, воспроизведена двумя процессами).
-
-**FINDINGS (не блокеры):**
-- F-A — переход state machine без CAS затирает RECOVERY_REQUIRED после ABORT (давний F2 из RC-5);
-- F-B — поздний ABORT по уже закрытой операции навсегда заклинивает TASK (fail-closed) → **DECISION**;
-- F-C — запрет мутации после ABORT не обеспечен: новая операция получает claim и `mutation_authority` → вход для WA4-E / **DECISION**;
-- F-D — разный порядок блокировок целей в RC-6 и RC-4 → взаимная блокировка двух TASK до таймаута (самокоррекция прошлого отчёта);
-- F-E — BLOCKED от RC-4 не останавливает цикл: 8 повторов за вызов;
-- F-F — `PROJECTION_VERSION` не поднят; F-G — 409 и перезапуск WEB-02 (перенесено).
-
-**Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RC6-REVERIFY/rc6_reverification.md`. Probe и выводы — `probes/`, регрессия — `full_regression.txt` и `focused_regression.txt`, baseline — `baseline.md`.
-
-**NEXT:** RC-6 Repair #2 (R1–R3, плюс F-D / F-E) исполнителем RC-6 → повторная независимая проверка; решения по F-A, F-B, F-C.
-
----
-
-### Предыдущий результат — RC-6 INDEPENDENT VERIFICATION (сохранён: проверка завершилась FAIL, в `001` не переносилась)
 
 **TASK:** RC-6 INDEPENDENT VERIFICATION — CHATGPT-WA-008 (Project-level Recovery Closure). Роль Claude — независимый verifier.
 **Статус:** RESULT READY — вердикт **VERIFICATION FAILED / REPAIR REQUIRED** (2026-10-06). **WA4-E NOT STARTED.** Commit / push не выполнялись; permanent history и глобальный router не менялись (по постановке они обновляются только при PASS).
