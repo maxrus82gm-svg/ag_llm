@@ -832,8 +832,6 @@ class WebAlarmApi:
                     _require_text(data, "target_status"),
                     verification_evidence=_optional_text(data, "verification_evidence"),
                     operation_id=_optional_text(data, "operation_id"),
-                    # optional observed basis: a stale request is refused (409), never applied
-                    expected_status=_optional_text(data, "expected_status"),
                 )
                 return 200, _jsonable(result)
 

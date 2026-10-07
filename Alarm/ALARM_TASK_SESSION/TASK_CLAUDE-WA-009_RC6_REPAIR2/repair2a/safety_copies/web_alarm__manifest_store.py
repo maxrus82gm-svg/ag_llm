@@ -28,10 +28,6 @@ class ManifestStoreError(RuntimeError):
     """Raised when a restore point cannot be prepared, verified or restored."""
 
 
-# statuses a restore point may be prepared from (the server state machine rule)
-_PREPARE_FROM = frozenset({MicrotaskStatus.PLANNED, MicrotaskStatus.BLOCKED_PREPARE})
-
-
 def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -170,21 +166,10 @@ class ManifestSnapshotStore:
         _atomic_write_json(self._manifest_path(restore_dir), record_to_dict(record))
 
     def _best_effort_microtask_status(
-        self,
-        task_id: str,
-        microtask_id: str,
-        status: MicrotaskStatus,
-        *,
-        expected: Iterable[MicrotaskStatus] | MicrotaskStatus | None = None,
+        self, task_id: str, microtask_id: str, status: MicrotaskStatus
     ) -> None:
-        """Best-effort status write; with ``expected`` it never overwrites a newer status."""
         try:
-            if expected is None:
-                self.task_store.set_microtask_status(task_id, microtask_id, status)
-            else:
-                self.task_store.compare_and_set_microtask_status(
-                    task_id, microtask_id, expected=expected, status=status
-                )
+            self.task_store.set_microtask_status(task_id, microtask_id, status)
         except (TaskStoreError, ValueError):
             pass
 
@@ -253,12 +238,7 @@ class ManifestSnapshotStore:
         return records
 
     def _block_restore_point(
-        self,
-        task_id: str,
-        microtask_id: str,
-        restore_dir: Path,
-        *,
-        expected_status: MicrotaskStatus | None = None,
+        self, task_id: str, microtask_id: str, restore_dir: Path
     ) -> None:
         try:
             manifest = self.open_manifest(task_id, microtask_id)
@@ -268,7 +248,7 @@ class ManifestSnapshotStore:
         except ManifestStoreError:
             pass
         self._best_effort_microtask_status(
-            task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE, expected=expected_status
+            task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE
         )
 
     def prepare_microtask(
@@ -276,8 +256,6 @@ class ManifestSnapshotStore:
         task_id: str,
         microtask_id: str,
         targets: Iterable[tuple[str, str]],
-        *,
-        expected_status: MicrotaskStatus | None = None,
     ) -> ManifestRecord:
         work_dir = self._work_dir(task_id, microtask_id)
         final_dir = work_dir / self.RESTORE_DIR
@@ -298,21 +276,9 @@ class ManifestSnapshotStore:
             microtask_id=microtask_id,
             status=ManifestStatus.PREPARING,
         )
-        if expected_status is None:
-            # storage primitive (fixtures, legacy callers): unchanged best effort
-            self._best_effort_microtask_status(
-                task_id, microtask_id, MicrotaskStatus.PREPARING
-            )
-        else:
-            # Repair #2A: the state-machine path starts only from the status it
-            # decided on; a late duplicate never rewinds a prepared microtask.
-            try:
-                self.task_store.compare_and_set_microtask_status(
-                    task_id, microtask_id, expected=expected_status, status=MicrotaskStatus.PREPARING
-                )
-            except TaskStoreError as exc:
-                shutil.rmtree(stage_dir, ignore_errors=True)
-                raise ManifestStoreError(f"prepare refused: {exc}") from exc
+        self._best_effort_microtask_status(
+            task_id, microtask_id, MicrotaskStatus.PREPARING
+        )
         seen_paths: set[str] = set()
 
         try:
@@ -402,8 +368,7 @@ class ManifestSnapshotStore:
         except Exception as exc:
             shutil.rmtree(stage_dir, ignore_errors=True)
             self._best_effort_microtask_status(
-                task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE,
-                expected=_PREPARE_FROM | {MicrotaskStatus.PREPARING},
+                task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE
             )
             if isinstance(exc, ManifestStoreError):
                 raise
@@ -440,12 +405,7 @@ class ManifestSnapshotStore:
         return manifest, pairs, restore_dir
 
     def verify_restore_point(
-        self,
-        task_id: str,
-        microtask_id: str,
-        *,
-        active_only: bool = False,
-        expected_status: MicrotaskStatus | None = None,
+        self, task_id: str, microtask_id: str, *, active_only: bool = False
     ) -> ManifestRecord:
         try:
             manifest, pairs, restore_dir = self._load_paired_records(
@@ -494,7 +454,7 @@ class ManifestSnapshotStore:
                         task_id, microtask_id, active_only=True
                     )
                     self._block_restore_point(
-                        task_id, microtask_id, restore_dir, expected_status=expected_status
+                        task_id, microtask_id, restore_dir
                     )
                 except (ManifestStoreError, TaskStoreError):
                     pass

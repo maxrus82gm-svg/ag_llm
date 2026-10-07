@@ -21,7 +21,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .models import SCHEMA_VERSION, new_id
 
@@ -96,20 +96,6 @@ def physical_target_key(path: Path) -> str:
 
 def target_hash(physical_key: str) -> str:
     return hashlib.sha256(physical_key.encode("utf-8")).hexdigest()
-
-
-# The one cross-subsystem order for holding several target locks at once
-# (RC-4 rollback, RC-6 recovery proofs): ascending target_hash.  The lock file
-# of a target is named by its target_hash, so every multi-target locker that
-# follows this order takes shared locks in the same sequence and cannot form a
-# wait cycle with another.  Duplicates are dropped: a lock is never taken twice.
-def ordered_target_hashes(digests: Iterable[str]) -> list[str]:
-    return sorted(set(digests))
-
-
-def target_lock_order(physical_keys: Iterable[str]) -> list[str]:
-    """Physical keys in the canonical multi-target lock order (see above)."""
-    return sorted(set(physical_keys), key=target_hash)
 
 
 def claim_identity(target_digest: str, generation: int, task_id: str, operation_id: str, revision: int) -> str:

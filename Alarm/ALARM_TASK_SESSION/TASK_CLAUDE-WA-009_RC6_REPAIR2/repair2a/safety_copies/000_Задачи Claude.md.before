@@ -28,8 +28,125 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
+TASK: CLAUDE-WA-009 / RC-6 — REPAIR #2A
+F-A CAS / lifecycle race closure
+
+Статус:
+READY / NOT STARTED
+
+Это продолжение Repair #2.
+Не новая major TASK.
+WA4-E не начинать.
+
+Цель:
+закрыть остаточное окно R1, которое сам исполнитель
+зафиксировал после Repair #2.
+
+Проблема:
+
+ServerStateMachine.transition читает текущий status,
+затем позже под mutation_lock пишет новый status,
+не перепроверяя, что status не изменился между чтением и записью.
+
+Из-за этого возможна гонка:
+
+RC-6 проверил:
+operation.microtask_id всё ещё допустима для rollback;
+
+параллельно state machine:
+microtask -> VERIFIED;
+
+RC-6 начинает RC-4 rollback уже VERIFIED stage.
+
+Это оставляет R1 неполностью закрытым.
+
+Требование:
+
+не менять transition graph;
+не добавлять новый lifecycle status;
+не менять semantics допустимых переходов.
+
+Добавить механический stale-write guard / CAS:
+
+1. transition получает observed current status;
+2. под существующим mutation_lock
+   перечитывает authoritative current status;
+3. если он уже отличается от observed basis:
+   не перезаписывать его;
+   fail closed / stale transition;
+4. только если basis всё ещё совпадает —
+   применять существующий разрешённый transition.
+
+Обязательно проверить всех callers transition(),
+чтобы новый stale failure обрабатывался корректно
+и не создавал partial side effect.
+
+Ключевой invariant:
+
+ни один stale transition не может затереть
+более новый RECOVERY_REQUIRED / VERIFIED /
+другой authoritative lifecycle state.
+
+Regression минимум:
+
+A.
+RC-6 rollback preflight vs concurrent
+microtask -> VERIFIED.
+
+Ожидается:
+- VERIFIED сохраняется;
+- destructive rollback не начинается;
+- zero Workspace mutation.
+
+B.
+ABORT settlement -> RECOVERY_REQUIRED
+vs concurrent stale verification transition.
+
+Ожидается:
+- RECOVERY_REQUIRED не затирается.
+
+C.
+два concurrent normal transitions
+с одним observed source status.
+
+Допустим только один,
+второй получает stale/conflict.
+
+D.
+restart/replay:
+stale transition после process delay
+не переписывает новый persistent status.
+
+E.
+все существующие state-machine tests
+и RC-6/RC-4 concurrency tests остаются зелёными.
+
+После fix:
+
+- Repair #2 tests;
+- state machine;
+- RC-6;
+- concurrency;
+- RC-4;
+- full test_web_alarm_*.py;
+- compileall;
+- git diff --check;
+- adversarial race;
+- live storage read-only hash before/after.
+
+F-B и F-C:
+НЕ исправлять в этой подзадаче.
+Оставить findings/proposals отдельно.
+
+После успешного F-A closure:
+
+статус всего Repair #2:
+RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+
+Не commit / push.
+
+Только после этого пользователь commit/push,
+а ChatGPT выполняет независимую verification.
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
@@ -994,132 +1111,6 @@ TASK зафиксирована только в Chat.
 -> task-session;
 -> baseline;
 -> implementation Repair #2.
-```
-
-#### Дополнение к постановке — REPAIR #2A (2026-10-07)
-
-Выполнено Claude 2026-10-07 как продолжение той же TASK; результат — дополнением в БЛОКЕ 3. Постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
-
-```text
-TASK: CLAUDE-WA-009 / RC-6 — REPAIR #2A
-F-A CAS / lifecycle race closure
-
-Статус:
-READY / NOT STARTED
-
-Это продолжение Repair #2.
-Не новая major TASK.
-WA4-E не начинать.
-
-Цель:
-закрыть остаточное окно R1, которое сам исполнитель
-зафиксировал после Repair #2.
-
-Проблема:
-
-ServerStateMachine.transition читает текущий status,
-затем позже под mutation_lock пишет новый status,
-не перепроверяя, что status не изменился между чтением и записью.
-
-Из-за этого возможна гонка:
-
-RC-6 проверил:
-operation.microtask_id всё ещё допустима для rollback;
-
-параллельно state machine:
-microtask -> VERIFIED;
-
-RC-6 начинает RC-4 rollback уже VERIFIED stage.
-
-Это оставляет R1 неполностью закрытым.
-
-Требование:
-
-не менять transition graph;
-не добавлять новый lifecycle status;
-не менять semantics допустимых переходов.
-
-Добавить механический stale-write guard / CAS:
-
-1. transition получает observed current status;
-2. под существующим mutation_lock
-   перечитывает authoritative current status;
-3. если он уже отличается от observed basis:
-   не перезаписывать его;
-   fail closed / stale transition;
-4. только если basis всё ещё совпадает —
-   применять существующий разрешённый transition.
-
-Обязательно проверить всех callers transition(),
-чтобы новый stale failure обрабатывался корректно
-и не создавал partial side effect.
-
-Ключевой invariant:
-
-ни один stale transition не может затереть
-более новый RECOVERY_REQUIRED / VERIFIED /
-другой authoritative lifecycle state.
-
-Regression минимум:
-
-A.
-RC-6 rollback preflight vs concurrent
-microtask -> VERIFIED.
-
-Ожидается:
-- VERIFIED сохраняется;
-- destructive rollback не начинается;
-- zero Workspace mutation.
-
-B.
-ABORT settlement -> RECOVERY_REQUIRED
-vs concurrent stale verification transition.
-
-Ожидается:
-- RECOVERY_REQUIRED не затирается.
-
-C.
-два concurrent normal transitions
-с одним observed source status.
-
-Допустим только один,
-второй получает stale/conflict.
-
-D.
-restart/replay:
-stale transition после process delay
-не переписывает новый persistent status.
-
-E.
-все существующие state-machine tests
-и RC-6/RC-4 concurrency tests остаются зелёными.
-
-После fix:
-
-- Repair #2 tests;
-- state machine;
-- RC-6;
-- concurrency;
-- RC-4;
-- full test_web_alarm_*.py;
-- compileall;
-- git diff --check;
-- adversarial race;
-- live storage read-only hash before/after.
-
-F-B и F-C:
-НЕ исправлять в этой подзадаче.
-Оставить findings/proposals отдельно.
-
-После успешного F-A closure:
-
-статус всего Repair #2:
-RESULT READY / AWAITING INDEPENDENT VERIFICATION.
-
-Не commit / push.
-
-Только после этого пользователь commit/push,
-а ChatGPT выполняет независимую verification.
 ```
 
 ### Предыдущая постановка — CLAUDE-RC6-REVERIFY (сохранена)
@@ -3698,22 +3689,6 @@ RC-6 НЕ НАЧИНАТЬ.
 **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-009_RC6_REPAIR2/rc6_repair2_report.md`. Baseline — `baseline.md`, копии — `safety_copies/`, probe — `probes/`.
 
 **NEXT:** commit / push пользователем → независимая проверка ChatGPT → только после PASS RC-6 = DONE / VERIFIED и NEXT = WA4-E.
-
-**Дополнение — REPAIR #2A (2026-10-07), F-A CAS / закрытие окна R1:**
-- **Статус всего Repair #2 (с #2A):** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE. **WA4-E NOT STARTED.** Commit / push не выполнялись; Repair #2 тоже ещё не закоммичен (HEAD = 161).
-- **Почему одного CAS мало.** Гонка «RC-6 проверил этап → state machine перевёл его в VERIFIED → RC-4 откатил» — не устаревшая запись: статус DONE не менялся, и CAS бы её пропустил. Поэтому закрытие из двух частей, без новых статусов и переходов:
-  1. все переходы state machine стали compare-and-set: новый `TaskStore.compare_and_set_microtask_status` под `mutation_lock`; устаревший переход → обычный `TransitionRejected` / 409, ничего не пишется; добавлен необязательный `expected_status` (библиотека и сервер); активация переносит указатель текущей microtask в той же блокировке; BLOCKED_PREPARE при испорченном snapshot и подготовка через state machine тоже идут через CAS;
-  2. перед разрушительным apply координатор в том же защищённом участке, где доказывает этап, переводит microtask в RECOVERY_REQUIRED (её статус после ROLLBACK settlement). Выходов из него у state machine нет, а устаревший `DONE → VERIFIED` отклоняется — во время отката этап не может стать VERIFIED.
-- **Файлы:** `task_store.py`, `state_machine.py`, `manifest_store.py`, `recovery_coordinator.py`, `server.py`; новый `test_web_alarm_state_machine_cas.py` (12 тестов). Граф переходов и ожидания существующих тестов не менялись.
-- **Проверки:**
-  - CAS — 12/12 (на коде до #2A 11 из 12 падают); фокусно — 278/278; финальный полный набор — **475 OK** (skip 1); compileall и `git diff --check` OK;
-  - adversarial #2A — 5/5; adversarial Repair #2 — 8/8; исходные probe — exit 0 / 0;
-  - живое storage только на чтение, хеш не изменился.
-- **Честно:**
-  - два предыдущих полных прогона дали по одному разному редкому падению старых race-тестов (RC-4 FAILED, RC-5 `CloseoutError`). Это sharing violation при `os.replace` на Windows — безопасный третий исход, который тесты не учитывают; диагностика 40 + 24 раунда чистая, пути не затронуты #2A → FINDING / proposal;
-  - probe n02 / n02b перехватывают старую слепую запись и гонку больше не воспроизводят — её покрывают постоянные тесты A2 и B.
-- **Вне scope:** F-B, F-C (не менялись); legacy CLI `snapshot prepare` / `restore` — WA4-R.
-- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-009_RC6_REPAIR2/repair2a/rc6_repair2a_report.md`.
 
 ---
 

@@ -15,7 +15,7 @@ from .models import (
     MicrotaskStatus,
     record_to_dict,
 )
-from .task_store import MicrotaskStatusConflict, TaskStore, TaskStoreError
+from .task_store import TaskStore, TaskStoreError
 
 
 @dataclass(slots=True)
@@ -236,16 +236,12 @@ class ServerStateMachine:
         requested: MicrotaskStatus,
         *,
         operation_id: str | None = None,
-        observed: MicrotaskStatus | None = None,
     ) -> ManifestRecord:
         try:
             return self.manifests.verify_restore_point(
                 task_id,
                 microtask_id,
                 active_only=True,
-                # an integrity failure blocks the microtask only if its status is
-                # still the one this transition decided on (Repair #2A)
-                expected_status=observed,
             )
         except (ManifestStoreError, TaskStoreError) as exc:
             self._reject(
@@ -288,8 +284,6 @@ class ServerStateMachine:
                 task_id,
                 microtask_id,
                 targets,
-                # Repair #2A: start only from the status checked above
-                expected_status=micro.status,
             )
         except (ManifestStoreError, TaskStoreError) as exc:
             self.state.append_event(
@@ -372,32 +366,10 @@ class ServerStateMachine:
         *,
         verification_evidence: str | None = None,
         operation_id: str | None = None,
-        expected_status: MicrotaskStatus | str | None = None,
     ) -> dict[str, object]:
-        """Apply one allowed transition as a compare-and-set (Repair #2A).
-
-        The status read here is the basis of every check below; the final
-        write re-reads it under the per-TASK mutation lock and is refused if
-        it changed meanwhile, so a delayed or concurrent transition can never
-        overwrite a newer authoritative status (RECOVERY_REQUIRED from a
-        recovery settlement, VERIFIED, ...). ``expected_status`` lets a caller
-        that decided on an earlier observation pin that basis explicitly.
-        """
         requested = MicrotaskStatus(requested_status)
         micro = self.tasks.open_microtask(task_id, microtask_id)
         current = micro.status
-
-        if expected_status is not None and MicrotaskStatus(expected_status) is not current:
-            self._reject(
-                task_id,
-                microtask_id,
-                requested,
-                (
-                    f"stale transition: the caller observed {MicrotaskStatus(expected_status).value}, "
-                    f"but the microtask is {current.value}; nothing was written"
-                ),
-                operation_id=operation_id,
-            )
 
         if requested == current:
             self._reject(
@@ -440,7 +412,6 @@ class ServerStateMachine:
                 microtask_id,
                 requested,
                 operation_id=operation_id,
-                observed=current,
             )
 
         if requested == MicrotaskStatus.ACTIVE:
@@ -456,7 +427,7 @@ class ServerStateMachine:
                         f"another microtask {other.microtask_id} is already ACTIVE",
                         operation_id=operation_id,
                     )
-            # the current pointer moves inside the locked compare-and-set below
+            self.tasks.set_current_microtask(task_id, microtask_id)
 
         if requested == MicrotaskStatus.VERIFIED:
             if (
@@ -471,25 +442,11 @@ class ServerStateMachine:
                     operation_id=operation_id,
                 )
 
-        try:
-            updated = self.tasks.compare_and_set_microtask_status(
-                task_id,
-                microtask_id,
-                expected=current,
-                status=requested,
-                activate=requested == MicrotaskStatus.ACTIVE,
-            )
-        except MicrotaskStatusConflict as exc:
-            self._reject(
-                task_id,
-                microtask_id,
-                requested,
-                (
-                    f"stale transition: {current.value} -> {requested.value} was decided on "
-                    f"{current.value}, but {exc}"
-                ),
-                operation_id=operation_id,
-            )
+        updated = self.tasks.set_microtask_status(
+            task_id,
+            microtask_id,
+            requested,
+        )
         self.state.append_event(
             task_id,
             "MICROTASK_TRANSITION",

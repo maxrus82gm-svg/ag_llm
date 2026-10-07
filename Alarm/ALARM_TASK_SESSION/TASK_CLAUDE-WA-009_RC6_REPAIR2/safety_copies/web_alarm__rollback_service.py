@@ -87,7 +87,6 @@ from .target_claim_store import (
     TargetClaimStore,
     TargetClaimStoreError,
     claim_identity,
-    ordered_target_hashes,
     physical_target_key,
     target_hash,
 )
@@ -725,8 +724,8 @@ class RollbackService:
                 return self._apply_locked(record, root, plan, plan_error)
 
     def _lock_targets(self, stack: ExitStack, targets: list[dict[str, Any]]) -> None:
-        """RC-3 target locks in the canonical target-hash order, held until ``stack`` closes."""
-        for digest in ordered_target_hashes(t["target_hash"] for t in targets):
+        """RC-3 target locks in deterministic target-hash order, held until ``stack`` closes."""
+        for digest in sorted(t["target_hash"] for t in targets):
             lock = InterProcessLock(self.claims.locks / f"{digest}.lock", timeout=self.lock_timeout)
             try:
                 lock.acquire()

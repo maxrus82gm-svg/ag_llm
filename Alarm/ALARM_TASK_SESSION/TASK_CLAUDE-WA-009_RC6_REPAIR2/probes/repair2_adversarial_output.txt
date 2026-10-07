@@ -1,0 +1,47 @@
+
+### a03: new Resolver action on a sibling while the old settlement cleanup is pending (own claim not released)
+  after crash: m1 = DONE | claims: [('task_v', 'op_a', None)]
+  recover#1: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT', 'FINISH_SETTLEMENT']
+  recover#2: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=[]
+  m1 = RECOVERY_REQUIRED | claims: [] | settlements: {'op_a': 'ADOPT', 'op_b': 'ABORT'} | recover#2 wrote: False
+  VERDICT: OK — pending cleanup + sibling ABORT converge once, claim released
+
+### a04: current microtask changes twice during READY proofs (m1 -> m2 -> m3)
+  recover: state=READY_FOR_EXECUTION recovery=NORMAL current=m3 steps=[]
+  proofs: ['m1', 'm2', 'm3'] | ready_proof: m3
+  VERDICT: OK — READY only for the last, separately proved microtask
+
+### a04b: basis keeps changing after every proof: bounded, never READY
+  recover: state=FAIL_CLOSED recovery=NORMAL current=m1 steps=[]
+     error=RECOVERY_LOOP_INTERNAL reason=recovery loop bound reached without a terminal state or a stable READY basis
+  proofs run: 4
+  VERDICT: OK — livelock is bounded by the loop and fails closed
+
+### a05: closeout after mixed settlement history
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT']
+  closeout eligible: False | blockers: ['MICROTASK_NOT_VERIFIED']
+  VERDICT: OK — mixed ADOPT/ABORT microtask is never closeout-eligible
+
+### a06: crash between the ROLLBACK stage preflight and RC-4 prepare, then replay
+  storage changed by the crashed attempt: False | sessions: 0
+  replay: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['PREPARE_ROLLBACK', 'APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  a = b'a-before\n' | b = b'b-before\n' | m1 = RECOVERY_REQUIRED
+  VERDICT: OK — preflight is read-only; replay completes the legit rollback once
+
+### a10: historical VERIFIED operation + each newer recovery action
+  RETRY: ('RECOVERY_BLOCKED', 'RETRY_ACCEPTED', [], 'no-write', 'VERIFIED')
+  ADOPT: ('FAIL_CLOSED', 'ADOPT_ACCEPTED', [], 'no-write', 'VERIFIED')
+  ABORT: ('FAIL_CLOSED', 'ABORT_ACCEPTED', [], 'no-write', 'VERIFIED')
+  ROLLBACK: ('RECOVERY_BLOCKED', 'ROLLBACK_STAGE_PROTECTED', [], 'no-write', 'VERIFIED')
+  VERDICT: OK — no READY, no write, VERIFIED stage untouched for any newer action
+
+### a11: ABORT-in-flight rollback flow still reconciles and closes (F-E must not stop a progressing step)
+  session: APPLYING ['NOOP', 'APPLYING', 'PRESERVED']
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['APPLY_ROLLBACK', 'CLOSE_ROLLBACK', 'SETTLE_ABORT']
+  session after: CLOSED | a = b'a-after\n' | claims: []
+  VERDICT: OK — apply reconciles the in-flight target (BLOCKED under ABORT), then close; nothing restored
+
+### a12: P9 preserved: verified rollback settled, then a fresh RETRY of the same operation re-arms
+  recover#1: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['PREPARE_ROLLBACK', 'APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  recover#2: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  VERDICT: OK — a settlement superseded by a newer action of the same operation does not count for the disposition

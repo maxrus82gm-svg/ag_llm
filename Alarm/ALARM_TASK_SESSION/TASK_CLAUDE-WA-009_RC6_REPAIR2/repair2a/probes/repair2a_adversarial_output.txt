@@ -1,0 +1,27 @@
+
+### b01: RETRY re-arm vs a stale manual UNKNOWN -> RECOVERY_REQUIRED decided before the re-arm (real processes)
+  recover: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  stale manual transition: {'result': 'REJECTED', 'reason': 'stale transition: UNKNOWN_AFTER_DISCONNECT -> RECOVERY_REQUIRED was decided on UNKNOWN_AFTER_DISCONNECT, but microtask task_v/m1 is ACTIVE, not UNKNOWN_AFTER_DISCONNECT; the newer status was not overwritten'} | m1 = ACTIVE
+  recover again: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=[]
+  VERDICT: OK — a manual decision taken on UNKNOWN never overwrites the re-armed ACTIVE
+
+### b02: ADOPT settlement vs a stale UNKNOWN -> RECOVERY_REQUIRED (real processes)
+  recover: state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=['SETTLE_ADOPT']
+  stale manual transition: {'result': 'REJECTED', 'reason': 'stale transition: UNKNOWN_AFTER_DISCONNECT -> RECOVERY_REQUIRED was decided on UNKNOWN_AFTER_DISCONNECT, but microtask task_v/m1 is DONE, not UNKNOWN_AFTER_DISCONNECT; the newer status was not overwritten'} | m1 = DONE
+  recover again: state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=[]
+  VERDICT: OK — ADOPT's DONE is not overwritten; no FINISH_SETTLEMENT churn afterwards
+
+### b03: destructive apply refused by RC-4 after the RECOVERY_REQUIRED mark: nothing restored, manual, one attempt
+  after crash: m1 = DONE | session: APPLYING
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_APPLYING current=m1 steps=['APPLY_ROLLBACK']
+     error=RECOVERY_STEP_REFUSED reason=APPLY_ROLLBACK was refused by RC-4 in this recover call (RESTORE_POINT_INVALID: snapshot integrity failure: a.txt); it is not repeated: resolve the blocker, then call recover again
+  m1 = RECOVERY_REQUIRED | restore events 1 -> 1
+  VERDICT: OK — stage put at the manual boundary, no further restore, the refused apply is not repeated
+
+### b04: two concurrent activations of the same READY microtask (real processes)
+  results: ['APPLIED', 'REJECTED'] | m1 = ACTIVE | plan current: m1
+  VERDICT: OK — exactly one activation applies
+
+### b05: in-process stale request via expected_status is refused without any status write
+   REJECTED (stale transition: the caller observed READY, but the microtask is ACTIVE; nothin) | microtask record unchanged: True
+  VERDICT: OK — stale basis refused, nothing written

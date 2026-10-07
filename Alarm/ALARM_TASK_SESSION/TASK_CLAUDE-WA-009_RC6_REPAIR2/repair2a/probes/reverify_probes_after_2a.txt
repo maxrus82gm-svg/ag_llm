@@ -1,0 +1,185 @@
+
+### n01: READY identity drift: proof for m1, lifecycle advanced to m2 (foreign-owned target) before the fresh projection
+  foreign acquire two.txt (before recover): ACQUIRED
+  recover: state=RECOVERY_BLOCKED recovery=NORMAL current=m2 steps=[]
+     error=RecoveryCoordinatorBlocked reason=NORMAL_READY blocked: execution target is already owned: two.txt -> task_foreign/op_f2
+  protected READY proofs actually executed for: ['m1']
+  direct protected proof for the returned microtask m2: BLOCKED (execution target is already owned: two.txt -> task_foreign/op_f2)
+  recover again (no interleaving): state=RECOVERY_BLOCKED recovery=NORMAL current=m2 steps=[]
+     error=RecoveryCoordinatorBlocked reason=NORMAL_READY blocked: execution target is already owned: two.txt -> task_foreign/op_f2
+  VERDICT: OK — READY must only be returned for the microtask whose protected proof ran
+
+### n01b: READY identity drift across REAL processes (barrier right after the protected proof)
+  foreign acquire two.txt: ACQUIRED
+  child proved: 
+  child result: {"state": "RECOVERY_BLOCKED", "current": "m2"} 
+  VERDICT: OK — two processes: READY returned for m2 while only m1 was proved and two.txt is foreign-owned
+
+### n02: ServerStateMachine blind write vs ABORT settlement (DONE -> VERIFIED overwrites RECOVERY_REQUIRED)
+  after race: m1 = VERIFIED | op status = STARTED | settlement = None
+  recover#2: state=FAIL_CLOSED recovery=ABORT_ACCEPTED current=m2 steps=[]
+     error=RecoveryCoordinatorError reason=SETTLE_ABORT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to RECOVERY_REQUIRED
+  recover#3 (m2 ACTIVE): state=FAIL_CLOSED recovery=ABORT_ACCEPTED current=m2 steps=[]
+     error=RecoveryCoordinatorError reason=SETTLE_ABORT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to RECOVERY_REQUIRED
+  closeout eligible: False
+  VERDICT: DEFECT — ABORT-settled microtask must not end VERIFIED (pre-existing non-CAS state-machine write; RC-6 fails closed)
+
+### n02b: ServerStateMachine blind write vs ABORT settlement across REAL processes
+  child did not reach the barrier: ('machine wrote VERIFIED\n', '')
+
+### n03: Later Resolver ABORT after a historical ADOPT settlement
+  recover#1: state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=['SETTLE_ADOPT']
+  later ABORT on adopted op: ACCEPTED BASIS_FRESH_ACTION_ALLOWED
+  recover#2: state=FAIL_CLOSED recovery=ABORT_ACCEPTED current=m1 steps=[]
+     error=OperationTransitionError reason=SETTLE_ABORT failed closed: operation already has recovery settlement ADOPT via res_25698c6da668ea190b4e3fe373c41d97; cannot settle it as ABORT
+  m1 = DONE | op = VERIFIED | settlement = ADOPT | writes by recover#2: False
+  recover#3 (m1 VERIFIED, m2 ACTIVE): state=FAIL_CLOSED recovery=ABORT_ACCEPTED current=m2 steps=[]
+     error=RecoveryCoordinatorError reason=SETTLE_ABORT failed closed: microtask m1 is VERIFIED; cannot recovery-set it to RECOVERY_REQUIRED
+  projection focus: ABORT_ACCEPTED op_1 | NEXT: Resolver-level recovery of operation op_1 is closed; no further ADOPT/RETRY/ROLLBACK will be accepted for it
+  VERDICT: OK — no overwrite of ADOPT settlement, no false READY (liveness of the TASK is a separate question)
+
+### n04: ADOPT: crash after settlement + micro DONE, before own claim release; then normal verify + next microtask
+  crashed inside SETTLE_ADOPT before claim release
+  m1 = DONE | claims: [('task_v', 'op_1', None)]
+  fresh recover: state=READY_FOR_EXECUTION recovery=NORMAL current=m2 steps=['FINISH_SETTLEMENT']
+  claims after: [] | m1 = VERIFIED
+  VERDICT: OK — release-only replay, VERIFIED never moved backwards, next microtask READY
+
+### n05: B2 alias: foreign claim under a different spelling of the same physical file
+  recover#1: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  foreign acquire attempts: {'ONE.TXT': 'ACQUIRED'}
+  recover#2: state=RECOVERY_BLOCKED recovery=RETRY_ACCEPTED current=m1 steps=[]
+     error=RecoveryCoordinatorBlocked reason=RETRY_READY blocked: recovery target is owned by another operation: one.txt -> task_foreign/op_fa
+  VERDICT: OK — alias spelling must resolve to the same physical owner
+
+### n06: Foreign ROLLBACK-kind owner on the RETRY target and on a normal ACTIVE target
+  recover#1: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  foreign acquire: ACQUIRED
+  recover#2 (foreign rollback owner): state=RECOVERY_BLOCKED recovery=RETRY_ACCEPTED current=m1 steps=[]
+     error=RecoveryCoordinatorBlocked reason=RETRY_READY blocked: recovery target is owned by another operation: one.txt -> task_foreign/op_fr
+  VERDICT: OK — foreign rollback owner blocks READY
+
+### n07: B5 variants: missing snapshot / corrupt manifest / restore point changed inside or after the READY proof
+   {'missing_snapshot': 'FAIL_CLOSED', 'corrupt_manifest': 'FAIL_CLOSED', 'restored_baseline': 'READY_FOR_EXECUTION', 'changed_before_proof': 'RECOVERY_BLOCKED', 'changed_after_proof': 'FAIL_CLOSED'}
+  VERDICT: OK — never READY with an invalid restore point {}
+
+### n07b: B5 for RETRY: restore point corrupted inside the RETRY READY proof window
+  recover#1: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  recover#2 (snapshot tampered under the target locks): state=FAIL_CLOSED recovery=PROJECTION_BLOCKED current=m1 steps=[]
+     error=RecoveryCoordinatorError reason=RETRY_READY failed closed: RETRY resolution is stale (EVIDENCE_FINGERPRINT_CHANGED)
+  VERDICT: OK — restore point re-proved at the RETRY READY boundary
+
+### n08: ABORT with own claim: crash after RECOVERY_REQUIRED, before claim release -> replay
+  crashed inside SETTLE_ABORT before claim release
+  m1 = RECOVERY_REQUIRED | op = STARTED | settlement = ABORT | claims: [('task_v', 'op_1', None)]
+  fresh recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['FINISH_SETTLEMENT']
+  claims after: [] | op = STARTED | m1 = RECOVERY_REQUIRED
+  NEXT: microtask m1 is RECOVERY_REQUIRED after a durable recovery settlement; normal mutation is forbidden. An explicit project-level replan/lifecycle decision is required before this microtask can continue
+  recover again: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=[]
+  VERDICT: OK — release-only replay, forensic op status kept, idempotent
+
+### n09: ADOPT settlement vs concurrent normal verification in REAL processes
+  parent: m1 = DONE -> normal verification in this process
+  child: {"state": "NO_ACTION_REQUIRED", "steps": ["SETTLE_ADOPT"], "error": null} 
+  recover (m2 ACTIVE): state=READY_FOR_EXECUTION recovery=NORMAL current=m2 steps=[]
+  claims: [] | m1 = VERIFIED
+  VERDICT: OK — verification racing the ADOPT settlement converges
+
+### n10: Rollback VERIFIED with release pending, then a newer reachable RETRY
+  session: VERIFIED released: False | one.txt = b'before\n'
+  newer RETRY: ACCEPTED BASIS_FRESH_ACTION_ALLOWED
+  projection: ROLLBACK_SUPERSEDED_RELEASE_PENDING
+  recover: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['APPLY_ROLLBACK', 'REARM_RETRY']
+  session after: VERIFIED released: True | restore events 1 -> 1 | claims: []
+  VERDICT: OK — release-only before following the newer authority; no second restore
+
+### n11: READY recover is pure: repeated READY recover performs zero persistent writes
+  recover#1: state=READY_FOR_EXECUTION recovery=NORMAL current=m1 steps=[]
+  recover#2: state=READY_FOR_EXECUTION recovery=NORMAL current=m1 steps=[]
+  storage+workspace digest: 3cc8e3ddd3c5d344 -> 3cc8e3ddd3c5d344
+  VERDICT: OK — READY proof writes nothing
+
+### n12: F1: after durable ABORT — is the manual boundary truthful and enforced?
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT']
+  NEXT: microtask m1 is RECOVERY_REQUIRED after a durable recovery settlement; normal mutation is forbidden. An explicit project-level replan/lifecycle decision is required before this microtask can continue
+  later RETRY: REJECTED RECOVERY_ABORTED
+  later ROLLBACK: REJECTED RECOVERY_ABORTED
+  later ADOPT: REJECTED RECOVERY_ABORTED
+  new operation in RECOVERY_REQUIRED m1: begin = INTENT recorded | acquire = ACQUIRED
+  state-machine exits from RECOVERY_REQUIRED: []
+  closeout: False
+  VERDICT: OK — manual boundary reported (see facts for enforcement)
+
+### n13: One microtask, sequential ops: ADOPT(op_a) settled (m1 DONE), then op_b begun in m1 and ABORTed
+  recover#1 (ADOPT op_a): state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=['SETTLE_ADOPT']
+     m1 = DONE
+  op_b begun+STARTED in DONE m1: allowed | decision op_b: {'op_b': 'MANUAL_REVIEW_REQUIRED'}
+  ABORT op_b: ACCEPTED BASIS_FRESH_ACTION_ALLOWED
+  recover#2: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT']
+     m1 = RECOVERY_REQUIRED | settlements: {'op_a': 'ADOPT', 'op_b': 'ABORT'}
+  recover#3: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=[]
+     m1 = RECOVERY_REQUIRED | settlements: {'op_a': 'ADOPT', 'op_b': 'ABORT'}
+  m1 after each recover: ['RECOVERY_REQUIRED', 'RECOVERY_REQUIRED']
+  VERDICT: OK — two settlements of one microtask must not ping-pong its lifecycle until the step budget is exhausted
+
+### n13b: One microtask, sequential ops: ABORT(op_a) settled (m1 RECOVERY_REQUIRED), then op_b begun, landed, ADOPTed
+  recover#1 (ABORT op_a): state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT']
+     m1 = RECOVERY_REQUIRED
+  op_b begun+STARTED+landed in RECOVERY_REQUIRED m1 | decision op_b: {'op_b': 'ADOPT_CURRENT_STATE'}
+  ADOPT op_b: ACCEPTED BASIS_FRESH_ACTION_ALLOWED
+  recover#2 (budget 3): state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ADOPT']
+     m1 = RECOVERY_REQUIRED | settlements: {'op_a': 'ABORT', 'op_b': 'ADOPT'}
+  recover#3 (budget 3): state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=[]
+     m1 = RECOVERY_REQUIRED | settlements: {'op_a': 'ABORT', 'op_b': 'ADOPT'}
+  m1 after each recover: ['RECOVERY_REQUIRED', 'RECOVERY_REQUIRED']
+  VERDICT: OK — an ABORT-settled microtask must not be flipped back to DONE by a sibling ADOPT
+
+### n14: RC-3 enforcement of the F1 boundary: new operation + claim + mutation_boundary in RECOVERY_REQUIRED m1
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL current=m1 steps=['SETTLE_ABORT']
+  acquire: ACQUIRED
+  mutation_boundary outcome: mutation_authority = True | code = CAS_BASIS_HOLDS
+  m1 = RECOVERY_REQUIRED
+  VERDICT: OK — facts only: lifecycle enforcement belongs to the future WA4-E executor
+
+### n15: Lock order: RC-6 READY proof (physical-key order) vs RC-4 apply of another TASK (hash order), REAL processes
+  shared targets t0.txt, t1.txt: key order ['t0.txt', 't1.txt'], hash order ['t1.txt', 't0.txt']
+   A coordinator: FAIL_CLOSED | NORMAL_READY failed closed: store lock timeout: C:\Users\REX\AppData\Local\Temp\tmpeisxxku9\state\locks\targets\aaf3f6a3ffe3ca878f50b67d3ef844d7588802b174f3b889 | 10.0s 
+    barrier timeout
+  first locks taken: A -> None | B -> aaf3f6a3ffe3ca878f50b67d3ef844d7588802b174f3b8891520d87aad39f3cb.lock
+  foreign rollback after: PRESERVED | x = b'after\n' | claims: []
+  VERDICT: DEFECT — opposite target-lock orders between RC-6 and RC-4 deadlock until lock timeout
+
+### n16: F2: PARTIAL via external drift after own restore -> recover keeps ownership; later ABORT too
+  RC-4: PARTIAL | session: PARTIAL ['NOOP', 'RESTORED', 'DRIFTED'] | claims: 3
+  recover (no new action): state=RECOVERY_BLOCKED recovery=ROLLBACK_PARTIAL current=m1 steps=[]
+  later ABORT: ACCEPTED
+  recover (after ABORT): state=RECOVERY_BLOCKED recovery=ROLLBACK_ABORTED_UNSAFE_FINAL current=m1 steps=[]
+  session: PARTIAL | claims: 3 -> 3 | op settlement: None
+  VERDICT: OK — no auto close/release of an unsafe final rollback
+
+### n17: B4: real os._exit after a target is persisted DRIFTED, before RC-4 finalize (own hook point)
+  crash exit: 23  | session: APPLYING ['RESTORED', 'RESTORED', 'DRIFTED']
+  projection recovery: ROLLBACK_APPLYING
+  fresh recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_PARTIAL current=m1 steps=['APPLY_ROLLBACK']
+  session after: PARTIAL ['RESTORED', 'RESTORED', 'DRIFTED'] | restore events 2 -> 2 | claims: 3
+  VERDICT: OK — RC-4 finalizes the persisted outcome once, ownership kept
+
+### n18: RC-4 apply returns BLOCKED for an own-effect session (restore point broken mid-rollback): does recover stop?
+  after crash: APPLYING ['RESTORED', 'PRESERVED', 'PRESERVED']
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_APPLYING current=m1 steps=['APPLY_ROLLBACK']
+     error=RECOVERY_STEP_REFUSED reason=APPLY_ROLLBACK was refused by RC-4 in this recover call (RESTORE_POINT_INVALID: snapshot integrity failure: a.txt); it is not repeated: resolve the blocker, then call recover again
+  ROLLBACK_BLOCKED events: 0 -> 1 | step outcomes: ['RESTORE_POINT_INVALID'] ... | writes: True
+  recover again: state=RECOVERY_BLOCKED recovery=ROLLBACK_APPLYING current=m1 steps=['APPLY_ROLLBACK']
+     error=RECOVERY_STEP_REFUSED reason=APPLY_ROLLBACK was refused by RC-4 in this recover call (RESTORE_POINT_INVALID: snapshot integrity failure: a.txt); it is not repeated: resolve the blocker, then call recover again
+  ROLLBACK_BLOCKED events now: 2
+  VERDICT: OK — a BLOCKED RC-4 outcome should stop the loop instead of exhausting the budget
+
+### n19: B3 for ROLLBACK: accepted ROLLBACK for an operation of an already VERIFIED microtask while m2 is ACTIVE
+  m1 = VERIFIED | m2 = ACTIVE
+  reconciliation for op_1: ROLLBACK_CURRENT_MICROTASK PARTIAL_KNOWN_STATE
+  ROLLBACK op_1: ACCEPTED BASIS_FRESH_ACTION_ALLOWED
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_STAGE_PROTECTED current=m2 steps=[]
+  workspace before: {'a.txt': b'a-after\n', 'b.txt': None, 'two.txt': b'm2 work\n'}
+  workspace after:  {'a.txt': b'a-after\n', 'b.txt': None, 'two.txt': b'm2 work\n'}
+  m1 = VERIFIED | m2 = ACTIVE
+  VERDICT: OK — a VERIFIED microtask must never be rolled back because of its historical operation (invariant 5)

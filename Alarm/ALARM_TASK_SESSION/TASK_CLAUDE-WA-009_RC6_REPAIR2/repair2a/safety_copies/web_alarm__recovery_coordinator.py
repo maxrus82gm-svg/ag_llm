@@ -643,13 +643,6 @@ class RecoveryCoordinator:
         step. Steps in which RC-4 restores nothing (release-only of a VERIFIED
         session, finalize of a persisted DRIFTED/FAILED outcome, apply under an
         accepted ABORT which RC-4 refuses to continue) are not destructive.
-
-        Repair #2A: before a destructive apply the microtask is put at the
-        RECOVERY_REQUIRED boundary in this same locked section (the status the
-        ROLLBACK settlement gives it anyway).  The state machine has no exit
-        from RECOVERY_REQUIRED and its transitions are compare-and-set, so a
-        verification decided on the earlier status can no longer land while
-        RC-4 restores: no VERIFIED stage is ever rolled back by RC-6.
         """
         if action == "APPLY_ROLLBACK" and rollback_id is None:
             raise RecoveryCoordinatorError("rollback action has no rollback_id")
@@ -674,25 +667,12 @@ class RecoveryCoordinator:
                 operation = self.operations.get(task_id, operation_id)
                 micro = self.tasks.open_microtask(task_id, operation.microtask_id)
                 current = self._current_microtask_locked(task_id)
-                if rollback_stage_protected(operation.microtask_id, micro.status.value, current):
-                    raise RecoveryCoordinatorBlocked(
-                        f"{action} refused before any rollback step: operation {operation_id} belongs to "
-                        f"microtask {operation.microtask_id} ({micro.status.value}), not to the current "
-                        f"stage ({current}); a VERIFIED or non-current stage is never rolled back"
-                    )
-                if action == "APPLY_ROLLBACK":
-                    if micro.status not in _TO_RECOVERY_REQUIRED_FROM:
-                        raise RecoveryCoordinatorBlocked(
-                            f"{action} refused before any rollback step: microtask {operation.microtask_id} "
-                            f"is {micro.status.value}; a destructive rollback runs only for a microtask that "
-                            "can be put at the RECOVERY_REQUIRED boundary first"
-                        )
-                    self._set_micro_locked(
-                        task_id,
-                        operation.microtask_id,
-                        MicrotaskStatus.RECOVERY_REQUIRED,
-                        allowed_from=_TO_RECOVERY_REQUIRED_FROM,
-                    )
+        if rollback_stage_protected(operation.microtask_id, micro.status.value, current):
+            raise RecoveryCoordinatorBlocked(
+                f"{action} refused before any rollback step: operation {operation_id} belongs to "
+                f"microtask {operation.microtask_id} ({micro.status.value}), not to the current stage "
+                f"({current}); a VERIFIED or non-current stage is never rolled back"
+            )
 
     def _settle_resolution(
         self,

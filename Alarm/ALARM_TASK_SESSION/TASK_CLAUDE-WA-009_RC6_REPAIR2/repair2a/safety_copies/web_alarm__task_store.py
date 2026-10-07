@@ -28,30 +28,6 @@ class TaskStoreError(RuntimeError):
     """Raised when persisted TASK state is missing, inconsistent or unsafe."""
 
 
-class MicrotaskStatusConflict(TaskStoreError):
-    """A compare-and-set lifecycle write found another current status; nothing was written."""
-
-    def __init__(
-        self,
-        task_id: str,
-        microtask_id: str,
-        expected: Iterable[MicrotaskStatus],
-        actual: MicrotaskStatus,
-        reason: str | None = None,
-    ) -> None:
-        self.task_id = task_id
-        self.microtask_id = microtask_id
-        self.expected = tuple(sorted(status.value for status in expected))
-        self.actual = actual
-        super().__init__(
-            reason
-            or (
-                f"microtask {task_id}/{microtask_id} is {actual.value}, not "
-                f"{' / '.join(self.expected)}; the newer status was not overwritten"
-            )
-        )
-
-
 def _safe_id(name: str, value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise TaskStoreError(f"{name} must be a non-empty string")
@@ -315,59 +291,6 @@ class TaskStore:
         microtask.updated_at = utc_now_iso()
         self._write_microtask(task_dir, microtask)
         return microtask
-
-    def compare_and_set_microtask_status(
-        self,
-        task_id: str,
-        microtask_id: str,
-        *,
-        expected: MicrotaskStatus | str | Iterable[MicrotaskStatus | str],
-        status: MicrotaskStatus | str,
-        activate: bool = False,
-    ) -> MicrotaskRecord:
-        """Lifecycle write that never overwrites a status it did not observe.
-
-        Under the per-TASK mutation lock the authoritative status is re-read;
-        unless it is still one of ``expected`` (the basis the caller decided
-        on) nothing is written and MicrotaskStatusConflict is raised. With
-        ``activate`` the "no other ACTIVE microtask" rule and the plan's
-        current pointer are handled inside the same locked section, so an
-        activation is all-or-nothing against concurrent writers.
-        """
-        if isinstance(expected, (str, MicrotaskStatus)):
-            expected_set = {MicrotaskStatus(expected)}
-        else:
-            expected_set = {MicrotaskStatus(item) for item in expected}
-        target = MicrotaskStatus(status)
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            self._require_mutable(task_dir)
-            microtask = self._load_microtask_from(task_dir, microtask_id)
-            if microtask.status not in expected_set:
-                raise MicrotaskStatusConflict(task_id, microtask_id, expected_set, microtask.status)
-            if activate:
-                plan = self._load_plan_from(task_dir)
-                if microtask_id not in plan.microtask_ids:
-                    raise TaskStoreError("current microtask must belong to the task plan")
-                for other_id in plan.microtask_ids:
-                    if other_id == microtask_id:
-                        continue
-                    other = self._load_microtask_from(task_dir, other_id)
-                    if other.status is MicrotaskStatus.ACTIVE:
-                        raise MicrotaskStatusConflict(
-                            task_id,
-                            microtask_id,
-                            expected_set,
-                            microtask.status,
-                            reason=f"another microtask {other_id} is already ACTIVE; nothing was written",
-                        )
-                plan.current_microtask_id = microtask_id
-                plan.updated_at = utc_now_iso()
-                self._write_plan(task_dir, plan)
-            microtask.status = target
-            microtask.updated_at = utc_now_iso()
-            self._write_microtask(task_dir, microtask)
-            return microtask
 
     def list_microtasks(self, task_id: str) -> list[MicrotaskRecord]:
         task_dir = self._task_path(task_id)

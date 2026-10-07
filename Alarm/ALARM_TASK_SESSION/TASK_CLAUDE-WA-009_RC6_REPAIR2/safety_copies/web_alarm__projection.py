@@ -30,11 +30,6 @@ NEXT SAFE ACTION precedence (one deterministic rule):
 5. normal state -> canonical microtask lifecycle (or the closeout gate once
    every microtask is VERIFIED).
 Recovery Reports stay evidence/history and never override this order.
-
-RC-6 refinements: a step that would advance a destructive rollback of a
-VERIFIED or non-current stage is reported as ROLLBACK_STAGE_PROTECTED (R1),
-and recovery settlements are judged against one aggregated disposition per
-microtask (``settlement_lifecycle_target``), never one settlement alone (R2).
 """
 
 from __future__ import annotations
@@ -42,7 +37,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
@@ -77,76 +72,6 @@ _RECOVERY_MICROTASK_STATUSES = {
 _MUTATION_FATE_OPEN = {OperationStatus.STARTED, OperationStatus.UNKNOWN_AFTER_DISCONNECT}
 # a rollback session in one of these states needs no further rollback step
 _ROLLBACK_SETTLED = {CLOSED, PRESERVATION_FAILED}
-
-# RC-6 Repair #2 (R1): a tracked rollback may make destructive progress only for
-# an operation of the *current* stage (the first non-VERIFIED microtask in plan
-# order).  A VERIFIED stage is protected history (doc 23 §11, invariant 5): no
-# procedure authorizes rolling back an accepted stage, and a stage after the
-# current one has not started.
-def rollback_stage_protected(microtask_id: str, microtask_status: str, current_microtask_id: str | None) -> bool:
-    return (
-        microtask_status == MicrotaskStatus.VERIFIED.value
-        or microtask_id != current_microtask_id
-    )
-
-
-# recovery states whose next coordinator step can advance a destructive restore
-# (prepare, then apply with per-target restore); finalize/release-only and
-# close paths are not among them
-ROLLBACK_DESTRUCTIVE_STATES = frozenset({
-    "ROLLBACK_ACCEPTED",
-    "ROLLBACK_PREPARED",
-    "ROLLBACK_PRESERVED",
-    "ROLLBACK_AUTHORIZED",
-    "ROLLBACK_APPLYING",
-})
-
-
-def settlement_lifecycle_target(actions: Iterable[str]) -> MicrotaskStatus | None:
-    """RC-6 Repair #2 (R2): one recovery disposition per microtask.
-
-    The recovery settlements of *all* operations of a microtask are aggregated
-    instead of each one steering the shared microtask status on its own. An
-    ABORT or ROLLBACK settlement means part of the microtask's work was not (or
-    no longer is) carried out as planned: the microtask belongs at the manual
-    RECOVERY_REQUIRED boundary. ADOPT alone means the effect is accepted: DONE
-    (VERIFIED once normally verified). The conservative disposition wins
-    regardless of order, so two settlements never ask for opposite statuses
-    and an ADOPT never lifts a microtask out of the RECOVERY_REQUIRED boundary
-    that another operation's ABORT/ROLLBACK put it at.
-    """
-    actions = list(actions)
-    if any(action in ("ABORT", "ROLLBACK") for action in actions):
-        return MicrotaskStatus.RECOVERY_REQUIRED
-    if actions:
-        return MicrotaskStatus.DONE
-    return None
-
-
-def current_settlements_by_microtask(pairs) -> dict[str, list[str]]:
-    """Settlement actions per microtask that still speak for their operation.
-
-    ``pairs`` yields (operation record, Resolver authoritative action or None).
-    A settlement counts while its own resolution is still the operation's
-    authority; a newer authoritative action of that operation (e.g. a fresh
-    RETRY after a verified rollback) supersedes it for the disposition.
-    """
-    result: dict[str, list[str]] = {}
-    for op, authoritative in pairs:
-        settlement = op.recovery_settlement
-        if not settlement:
-            continue
-        if authoritative is not None and authoritative["resolution_id"] != settlement["resolution_id"]:
-            continue
-        result.setdefault(op.microtask_id, []).append(settlement["action"])
-    return result
-
-
-def settlement_lifecycle_satisfied(target: MicrotaskStatus, status: str) -> bool:
-    """Is the microtask already at the disposition its settlements require?"""
-    if target is MicrotaskStatus.DONE:
-        return status in (MicrotaskStatus.DONE.value, MicrotaskStatus.VERIFIED.value)
-    return status == target.value
 
 
 class ProjectionError(RuntimeError):
@@ -523,47 +448,6 @@ class ProjectionService:
             ),
         }
 
-    @staticmethod
-    def _protect_stage(
-        op,
-        recovery: dict[str, Any] | None,
-        sessions: list[dict[str, Any]],
-        *,
-        microtask_status: str,
-        current_microtask_id: str | None,
-    ) -> dict[str, Any] | None:
-        """R1: never advance a destructive rollback of a VERIFIED / non-current stage.
-
-        Only an operation of the current stage may get a rollback prepare/apply
-        as its next step. Finalize-only of an already persisted RC-4 outcome
-        restores nothing and stays allowed, like release-only and close.
-        """
-        if recovery is None or recovery["state"] not in ROLLBACK_DESTRUCTIVE_STATES:
-            return recovery
-        if recovery["state"] == "ROLLBACK_APPLYING":
-            session = next(
-                (s for s in sessions if s["rollback_id"] == recovery.get("rollback_id")),
-                None,
-            )
-            if session is not None and session.get("needs_rc4_finalize"):
-                return recovery
-        if not rollback_stage_protected(op.microtask_id, microtask_status, current_microtask_id):
-            return recovery
-        target = recovery.get("rollback_id") or recovery.get("resolution_id")
-        protected = dict(recovery)
-        protected.update(
-            state="ROLLBACK_STAGE_PROTECTED",
-            protected_state=recovery["state"],
-            next_safe_action=(
-                f"operation {op.operation_id} belongs to microtask {op.microtask_id} ({microtask_status}), "
-                f"not to the current stage ({current_microtask_id}). A VERIFIED or non-current stage is "
-                "protected history: RC-6 never prepares, continues or applies a destructive rollback of it "
-                f"({recovery['state']}, {target}). Do not run rollback prepare/apply; an explicit "
-                "project-level decision is required"
-            ),
-        )
-        return protected
-
     def _operation_recovery(
         self,
         op,
@@ -574,7 +458,6 @@ class ProjectionService:
         *,
         microtask_status: str,
         own_claim_open: bool,
-        microtask_settlements: list[str] | None = None,
     ) -> dict[str, Any] | None:
         """Recovery authority of one operation, by the precedence in the module docstring.
 
@@ -649,45 +532,32 @@ class ProjectionService:
             authoritative is None or authoritative["resolution_id"] == settlement["resolution_id"]
         ):
             action = settlement["action"]
-            # R2: the administrative lifecycle part of a settlement is judged
-            # against the microtask's single aggregated disposition, never
-            # against what this one settlement alone would want.
-            target = settlement_lifecycle_target(microtask_settlements or [action])
-            if target is MicrotaskStatus.RECOVERY_REQUIRED and microtask_status == MicrotaskStatus.VERIFIED.value:
-                return {
-                    "state": "SETTLEMENT_CONTRADICTION",
-                    "source": "recovery_settlement",
-                    "resolution_id": settlement["resolution_id"],
-                    "rollback_id": None,
-                    "settled_at": settlement["settled_at"],
-                    "lifecycle_target": target.value,
-                    "next_safe_action": (
-                        f"microtask {op.microtask_id} is VERIFIED, but its operations carry an ABORT/ROLLBACK "
-                        f"recovery settlement (operation {op.operation_id}: {action}) that requires "
-                        "RECOVERY_REQUIRED; RC-6 never moves a VERIFIED stage. Manual project-level review of "
-                        "this contradiction is required before any recovery step"
-                    ),
-                }
-            administrative_complete = (
-                settlement_lifecycle_satisfied(target, microtask_status) and not own_claim_open
-            )
-            if action == "ADOPT" and target is MicrotaskStatus.RECOVERY_REQUIRED:
-                next_action = (
-                    f"operation {op.operation_id} was adopted after exact post-state proof, but another "
-                    f"operation of microtask {op.microtask_id} carries an ABORT/ROLLBACK settlement: the "
-                    "microtask stays RECOVERY_REQUIRED; finish the administrative settlement cleanup only"
+            if action == "ADOPT":
+                administrative_complete = (
+                    microtask_status in {
+                        MicrotaskStatus.DONE.value,
+                        MicrotaskStatus.VERIFIED.value,
+                    }
+                    and not own_claim_open
                 )
-            elif action == "ADOPT":
                 next_action = (
                     f"operation {op.operation_id} was adopted after exact post-state proof; "
                     "the physical effect is not repeated; finish/verify the operation's microtask"
                 )
             elif action == "ROLLBACK":
+                administrative_complete = (
+                    microtask_status == MicrotaskStatus.RECOVERY_REQUIRED.value
+                    and not own_claim_open
+                )
                 next_action = (
                     f"operation {op.operation_id} has a verified rollback settlement; its old attempt was undone; "
                     "the microtask remains RECOVERY_REQUIRED pending an explicit new recovery/lifecycle decision"
                 )
             else:
+                administrative_complete = (
+                    microtask_status == MicrotaskStatus.RECOVERY_REQUIRED.value
+                    and not own_claim_open
+                )
                 next_action = (
                     f"operation {op.operation_id} recovery is durably ABORTED; the microtask remains "
                     "RECOVERY_REQUIRED and normal mutation is forbidden until an explicit lifecycle/replan decision"
@@ -706,7 +576,6 @@ class ProjectionService:
                 "rollback_id": None,
                 "settled_at": settlement["settled_at"],
                 "pending_admin": True,
-                "lifecycle_target": target.value,
                 "next_safe_action": next_action,
             }
 
@@ -859,9 +728,9 @@ class ProjectionService:
         basis_resolutions: list[Any] = []
         advisories: dict[str, Any] = {}
         advice_by_op: dict[str, Any] = {}
-        resolved_ops = []
         for op in operations:
             records_for_op = [r for r in resolutions if r.operation_id == op.operation_id]
+            op_sessions = [s for s in sessions if session_ops[s["rollback_id"]] == op.operation_id]
             actions: list[dict[str, Any]] = []
             authoritative = None
             if records_for_op:
@@ -875,15 +744,6 @@ class ProjectionService:
                  a["operation_revision"], a["fresh"], a["freshness_code"]]
                 for a in actions
             )
-            resolved_ops.append((op, records_for_op, actions, authoritative))
-        # R2: one recovery disposition per microtask, from every *current*
-        # settlement of its operations (a settlement whose operation has a newer
-        # authoritative Resolver action no longer speaks for that operation).
-        settlements_by_microtask = current_settlements_by_microtask(
-            (op, authoritative) for op, _, _, authoritative in resolved_ops
-        )
-        for op, records_for_op, actions, authoritative in resolved_ops:
-            op_sessions = [s for s in sessions if session_ops[s["rollback_id"]] == op.operation_id]
             op_micro_status = microtask_status.get(op.microtask_id, "MISSING")
             own_claim_open = any(
                 claim["operation_id"] == op.operation_id
@@ -898,14 +758,6 @@ class ProjectionService:
                 op_sessions,
                 microtask_status=op_micro_status,
                 own_claim_open=own_claim_open,
-                microtask_settlements=settlements_by_microtask.get(op.microtask_id),
-            )
-            recovery = self._protect_stage(
-                op,
-                recovery,
-                op_sessions,
-                microtask_status=op_micro_status,
-                current_microtask_id=position["current_microtask_id"],
             )
             if recovery is not None and recovery["source"] == "reconciliation":
                 advice, error = self.advise(task_id, op.microtask_id, op.operation_id)
@@ -923,12 +775,10 @@ class ProjectionService:
                         advice["DECISION"]["reason_code"],
                     ]
                     advice_by_op[op.operation_id] = advice
-            disposition = settlement_lifecycle_target(settlements_by_microtask.get(op.microtask_id, []))
             views.append({
                 "operation_id": op.operation_id,
                 "microtask_id": op.microtask_id,
                 "microtask_status": op_micro_status,
-                "microtask_disposition": disposition.value if disposition is not None else None,
                 "status": op.status.value,
                 "revision": op.revision,
                 "contract_version": op.contract_version,
@@ -1052,7 +902,8 @@ class ProjectionService:
                 MicrotaskStatus(status) is MicrotaskStatus.RECOVERY_REQUIRED
                 and any(
                     view["microtask_id"] == current
-                    and view["microtask_disposition"] == MicrotaskStatus.RECOVERY_REQUIRED.value
+                    and view["recovery_settlement"] is not None
+                    and view["recovery_settlement"]["action"] in {"ABORT", "ROLLBACK"}
                     for view in projection["operations"]
                 )
             ):
