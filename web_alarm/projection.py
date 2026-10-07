@@ -35,6 +35,10 @@ RC-6 refinements: a step that would advance a destructive rollback of a
 VERIFIED or non-current stage is reported as ROLLBACK_STAGE_PROTECTED (R1),
 and recovery settlements are judged against one aggregated disposition per
 microtask (``settlement_lifecycle_target``), never one settlement alone (R2).
+Repair #3 (F-B): a non-destructive settlement (ADOPT, ABORT) of an operation
+whose microtask is already VERIFIED is administrative only; VERIFIED is its
+disposition (``effective_settlement_target``). Only a ROLLBACK settlement on a
+VERIFIED microtask is a SETTLEMENT_CONTRADICTION.
 """
 
 from __future__ import annotations
@@ -42,10 +46,17 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
+from .microtask_gate import (  # noqa: F401  (R2 rules live there since Repair #3; re-exported)
+    authoritative_action,
+    current_settlements_by_microtask,
+    effective_settlement_target,
+    settlement_lifecycle_satisfied,
+    settlement_lifecycle_target,
+)
 from .models import CheckpointRecord, MicrotaskStatus, OperationStatus, TaskStatus, utc_now_iso
 from .operation_store import OperationStore, OperationStoreError
 from .reconciliation import ReconciliationEvidenceError
@@ -100,53 +111,6 @@ ROLLBACK_DESTRUCTIVE_STATES = frozenset({
     "ROLLBACK_AUTHORIZED",
     "ROLLBACK_APPLYING",
 })
-
-
-def settlement_lifecycle_target(actions: Iterable[str]) -> MicrotaskStatus | None:
-    """RC-6 Repair #2 (R2): one recovery disposition per microtask.
-
-    The recovery settlements of *all* operations of a microtask are aggregated
-    instead of each one steering the shared microtask status on its own. An
-    ABORT or ROLLBACK settlement means part of the microtask's work was not (or
-    no longer is) carried out as planned: the microtask belongs at the manual
-    RECOVERY_REQUIRED boundary. ADOPT alone means the effect is accepted: DONE
-    (VERIFIED once normally verified). The conservative disposition wins
-    regardless of order, so two settlements never ask for opposite statuses
-    and an ADOPT never lifts a microtask out of the RECOVERY_REQUIRED boundary
-    that another operation's ABORT/ROLLBACK put it at.
-    """
-    actions = list(actions)
-    if any(action in ("ABORT", "ROLLBACK") for action in actions):
-        return MicrotaskStatus.RECOVERY_REQUIRED
-    if actions:
-        return MicrotaskStatus.DONE
-    return None
-
-
-def current_settlements_by_microtask(pairs) -> dict[str, list[str]]:
-    """Settlement actions per microtask that still speak for their operation.
-
-    ``pairs`` yields (operation record, Resolver authoritative action or None).
-    A settlement counts while its own resolution is still the operation's
-    authority; a newer authoritative action of that operation (e.g. a fresh
-    RETRY after a verified rollback) supersedes it for the disposition.
-    """
-    result: dict[str, list[str]] = {}
-    for op, authoritative in pairs:
-        settlement = op.recovery_settlement
-        if not settlement:
-            continue
-        if authoritative is not None and authoritative["resolution_id"] != settlement["resolution_id"]:
-            continue
-        result.setdefault(op.microtask_id, []).append(settlement["action"])
-    return result
-
-
-def settlement_lifecycle_satisfied(target: MicrotaskStatus, status: str) -> bool:
-    """Is the microtask already at the disposition its settlements require?"""
-    if target is MicrotaskStatus.DONE:
-        return status in (MicrotaskStatus.DONE.value, MicrotaskStatus.VERIFIED.value)
-    return status == target.value
 
 
 class ProjectionError(RuntimeError):
@@ -651,8 +615,9 @@ class ProjectionService:
             action = settlement["action"]
             # R2: the administrative lifecycle part of a settlement is judged
             # against the microtask's single aggregated disposition, never
-            # against what this one settlement alone would want.
-            target = settlement_lifecycle_target(microtask_settlements or [action])
+            # against what this one settlement alone would want. Repair #3:
+            # a VERIFIED microtask absorbs a non-destructive disposition.
+            target = effective_settlement_target(microtask_settlements or [action], microtask_status)
             if target is MicrotaskStatus.RECOVERY_REQUIRED and microtask_status == MicrotaskStatus.VERIFIED.value:
                 return {
                     "state": "SETTLEMENT_CONTRADICTION",
@@ -662,16 +627,22 @@ class ProjectionService:
                     "settled_at": settlement["settled_at"],
                     "lifecycle_target": target.value,
                     "next_safe_action": (
-                        f"microtask {op.microtask_id} is VERIFIED, but its operations carry an ABORT/ROLLBACK "
-                        f"recovery settlement (operation {op.operation_id}: {action}) that requires "
-                        "RECOVERY_REQUIRED; RC-6 never moves a VERIFIED stage. Manual project-level review of "
-                        "this contradiction is required before any recovery step"
+                        f"microtask {op.microtask_id} is VERIFIED, but its operations carry a ROLLBACK "
+                        f"recovery settlement (this operation {op.operation_id}: {action}): a rollback physically "
+                        "undid work of a verified stage; RC-6 never moves a VERIFIED stage. Manual "
+                        "project-level review of this contradiction is required before any recovery step"
                     ),
                 }
             administrative_complete = (
                 settlement_lifecycle_satisfied(target, microtask_status) and not own_claim_open
             )
-            if action == "ADOPT" and target is MicrotaskStatus.RECOVERY_REQUIRED:
+            if target is MicrotaskStatus.VERIFIED:
+                next_action = (
+                    f"operation {op.operation_id} recovery is settled by {action} after its microtask "
+                    f"{op.microtask_id} was VERIFIED: the settlement is administrative only and the verified "
+                    "stage is unchanged; finish the ownership cleanup"
+                )
+            elif action == "ADOPT" and target is MicrotaskStatus.RECOVERY_REQUIRED:
                 next_action = (
                     f"operation {op.operation_id} was adopted after exact post-state proof, but another "
                     f"operation of microtask {op.microtask_id} carries an ABORT/ROLLBACK settlement: the "
@@ -708,6 +679,47 @@ class ProjectionService:
                 "pending_admin": True,
                 "lifecycle_target": target.value,
                 "next_safe_action": next_action,
+            }
+
+        if (
+            settlement is not None
+            and authoritative_record is not None
+            and authoritative_record.action is ResolutionAction.ABORT
+            and authoritative_record.result is ResolutionResult.ACCEPTED
+        ):
+            # Repair #3 (F-B): an ABORT accepted after this operation was already
+            # settled. The settlement stays its immutable record; the ABORT is
+            # completed administratively by the microtask disposition alone.
+            target = effective_settlement_target(microtask_settlements or ["ABORT"], microtask_status)
+            if target is MicrotaskStatus.RECOVERY_REQUIRED and microtask_status == MicrotaskStatus.VERIFIED.value:
+                return {
+                    "state": "SETTLEMENT_CONTRADICTION",
+                    "source": "recovery_settlement",
+                    "resolution_id": authoritative_record.resolution_id,
+                    "rollback_id": None,
+                    "settled_at": settlement["settled_at"],
+                    "lifecycle_target": target.value,
+                    "next_safe_action": (
+                        f"microtask {op.microtask_id} is VERIFIED, but its operations carry a ROLLBACK recovery "
+                        "settlement: RC-6 never moves a VERIFIED stage. Manual project-level review of this "
+                        "contradiction is required before any recovery step"
+                    ),
+                }
+            if settlement_lifecycle_satisfied(target, microtask_status) and not own_claim_open:
+                return None
+            return {
+                "state": "ABORT_OVER_SETTLEMENT",
+                "source": "recovery_settlement",
+                "resolution_id": authoritative_record.resolution_id,
+                "rollback_id": None,
+                "settled_at": settlement["settled_at"],
+                "pending_admin": True,
+                "lifecycle_target": target.value,
+                "next_safe_action": (
+                    f"operation {op.operation_id} was already settled by {settlement['action']}; the later "
+                    f"accepted ABORT {authoritative_record.resolution_id} closes its recovery administratively: "
+                    f"microtask {op.microtask_id} goes to {target.value} and the operation's ownership is released"
+                ),
             }
 
         if authoritative is not None:
@@ -880,7 +892,8 @@ class ProjectionService:
         # settlement of its operations (a settlement whose operation has a newer
         # authoritative Resolver action no longer speaks for that operation).
         settlements_by_microtask = current_settlements_by_microtask(
-            (op, authoritative) for op, _, _, authoritative in resolved_ops
+            (op, authoritative_action({"next_safe_action": authoritative, "resolver_actions": actions}))
+            for op, _, actions, authoritative in resolved_ops
         )
         for op, records_for_op, actions, authoritative in resolved_ops:
             op_sessions = [s for s in sessions if session_ops[s["rollback_id"]] == op.operation_id]

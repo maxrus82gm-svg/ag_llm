@@ -10,6 +10,7 @@ from pathlib import Path
 
 from web_alarm.event_checkpoint_store import EventCheckpointStore
 from web_alarm.manifest_store import ManifestSnapshotStore
+from web_alarm.models import MicrotaskStatus
 from web_alarm.operation_contract import fingerprint_v1
 from web_alarm.operation_store import OperationStore
 from web_alarm.reconciliation_service import ReconciliationService
@@ -61,6 +62,8 @@ class ClaimFixture(unittest.TestCase):
         for task in ("task_a", "task_b"):
             self.tasks.create_task("ws_claim", task, "RAW TASK", "Claims", task_id=task)
             self.tasks.create_microtask(task, "M1", "Claim step", microtask_id="m1")
+            # Repair #3 (F-C): mutation authority needs an ACTIVE microtask
+            self.tasks.set_microtask_status(task, "m1", MicrotaskStatus.ACTIVE)
         self.ops = OperationStore(self.storage)
         self.claims = TargetClaimService(self.storage)
 
@@ -105,6 +108,8 @@ class ClaimFixture(unittest.TestCase):
 
     def prepare(self, task="task_a", specs=(("shared.txt", "edit"),)):
         ManifestSnapshotStore(self.storage).prepare_microtask(task, "m1", list(specs))
+        # the storage primitive leaves BACKUP_VERIFIED; authority needs ACTIVE (Repair #3)
+        self.tasks.set_microtask_status(task, "m1", MicrotaskStatus.ACTIVE)
 
     def resolve(self, task, operation_id, action):
         decision = ReconciliationService(self.storage).reconcile(task, "m1", operation_id)["DECISION"]

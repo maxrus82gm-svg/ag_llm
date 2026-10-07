@@ -330,44 +330,78 @@ class TaskStore:
         Under the per-TASK mutation lock the authoritative status is re-read;
         unless it is still one of ``expected`` (the basis the caller decided
         on) nothing is written and MicrotaskStatusConflict is raised. With
-        ``activate`` the "no other ACTIVE microtask" rule and the plan's
-        current pointer are handled inside the same locked section, so an
-        activation is all-or-nothing against concurrent writers.
+        ``activate`` the "every earlier microtask is VERIFIED" and "no other
+        ACTIVE microtask" rules and the plan's current pointer are handled
+        inside the same locked section, so an activation is all-or-nothing
+        against concurrent writers.
+        """
+        with self.mutation_lock(task_id):
+            return self.compare_and_set_microtask_status_locked(
+                task_id, microtask_id, expected=expected, status=status, activate=activate
+            )
+
+    def compare_and_set_microtask_status_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        *,
+        expected: MicrotaskStatus | str | Iterable[MicrotaskStatus | str],
+        status: MicrotaskStatus | str,
+        activate: bool = False,
+    ) -> MicrotaskRecord:
+        """``compare_and_set_microtask_status`` for a caller holding ``mutation_lock``.
+
+        Activation crash semantics (Repair #3): the plan pointer is written
+        before the status. A crash between the two leaves the pointer on the
+        microtask that is still READY: the pointer is never authority (RC-5
+        lifecycle is), it corroborates the lifecycle-current microtask, and
+        repeating the activation completes it idempotently.
         """
         if isinstance(expected, (str, MicrotaskStatus)):
             expected_set = {MicrotaskStatus(expected)}
         else:
             expected_set = {MicrotaskStatus(item) for item in expected}
         target = MicrotaskStatus(status)
-        with self.mutation_lock(task_id):
-            task_dir = self._task_path(task_id, active_only=True)
-            self._require_mutable(task_dir)
-            microtask = self._load_microtask_from(task_dir, microtask_id)
-            if microtask.status not in expected_set:
-                raise MicrotaskStatusConflict(task_id, microtask_id, expected_set, microtask.status)
-            if activate:
-                plan = self._load_plan_from(task_dir)
-                if microtask_id not in plan.microtask_ids:
-                    raise TaskStoreError("current microtask must belong to the task plan")
-                for other_id in plan.microtask_ids:
-                    if other_id == microtask_id:
-                        continue
-                    other = self._load_microtask_from(task_dir, other_id)
-                    if other.status is MicrotaskStatus.ACTIVE:
-                        raise MicrotaskStatusConflict(
-                            task_id,
-                            microtask_id,
-                            expected_set,
-                            microtask.status,
-                            reason=f"another microtask {other_id} is already ACTIVE; nothing was written",
-                        )
-                plan.current_microtask_id = microtask_id
-                plan.updated_at = utc_now_iso()
-                self._write_plan(task_dir, plan)
-            microtask.status = target
-            microtask.updated_at = utc_now_iso()
-            self._write_microtask(task_dir, microtask)
-            return microtask
+        task_dir = self._task_path(task_id, active_only=True)
+        self._require_mutable(task_dir)
+        microtask = self._load_microtask_from(task_dir, microtask_id)
+        if microtask.status not in expected_set:
+            raise MicrotaskStatusConflict(task_id, microtask_id, expected_set, microtask.status)
+        if activate:
+            plan = self._load_plan_from(task_dir)
+            if microtask_id not in plan.microtask_ids:
+                raise TaskStoreError("current microtask must belong to the task plan")
+            index = plan.microtask_ids.index(microtask_id)
+            for position, other_id in enumerate(plan.microtask_ids):
+                if other_id == microtask_id:
+                    continue
+                other = self._load_microtask_from(task_dir, other_id)
+                if position < index and other.status is not MicrotaskStatus.VERIFIED:
+                    raise MicrotaskStatusConflict(
+                        task_id,
+                        microtask_id,
+                        expected_set,
+                        microtask.status,
+                        reason=(
+                            f"previous microtask {other_id} is {other.status.value}, not VERIFIED; "
+                            "nothing was written"
+                        ),
+                    )
+                if other.status is MicrotaskStatus.ACTIVE:
+                    raise MicrotaskStatusConflict(
+                        task_id,
+                        microtask_id,
+                        expected_set,
+                        microtask.status,
+                        reason=f"another microtask {other_id} is already ACTIVE; nothing was written",
+                    )
+            plan.current_microtask_id = microtask_id
+            plan.updated_at = utc_now_iso()
+            self._write_plan(task_dir, plan)
+        microtask.status = target
+        microtask.updated_at = utc_now_iso()
+        self._write_microtask(task_dir, microtask)
+        return microtask
 
     def list_microtasks(self, task_id: str) -> list[MicrotaskRecord]:
         task_dir = self._task_path(task_id)

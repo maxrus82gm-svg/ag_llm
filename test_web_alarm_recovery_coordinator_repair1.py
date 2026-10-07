@@ -179,15 +179,21 @@ class RecoveryCoordinatorRepair1Tests(unittest.TestCase):
 
         self.assertEqual(result["state"], RECOVERY_BLOCKED)
 
+    def legacy_verify_m1(self):
+        """M1 VERIFIED despite its still STARTED operation.
+
+        Since Repair #3 (F-B) the state machine refuses this verification; the
+        shape stays reachable through the blind storage primitive (data written
+        before Repair #3 or by a legacy WA-1 writer).
+        """
+        self.machine.transition(TASK, M1, MicrotaskStatus.DONE)
+        self.tasks.set_microtask_status(TASK, M1, MicrotaskStatus.VERIFIED)
+
     def test_b3_retry_for_operation_of_verified_microtask_never_uses_later_active_status(self):
         self.write("one.txt", BEFORE)
         self.activate(M1, [("one.txt", "edit")])
         self.start_op(landed=False)
-        self.machine.transition(TASK, M1, MicrotaskStatus.DONE)
-        self.machine.transition(
-            TASK, M1, MicrotaskStatus.VERIFIED,
-            verification_evidence="verified despite old operation",
-        )
+        self.legacy_verify_m1()
         self.resolve("RETRY")
         self.write("two.txt", BEFORE)
         self.activate(M2, [("two.txt", "edit")])
@@ -200,27 +206,32 @@ class RecoveryCoordinatorRepair1Tests(unittest.TestCase):
             MicrotaskStatus.VERIFIED,
         )
 
-    def test_b3_abort_verified_microtask_fails_before_persisting_settlement(self):
+    def test_b3_abort_verified_microtask_settles_administratively_without_moving_it(self):
+        # Formerly test_b3_abort_verified_microtask_fails_before_persisting_settlement:
+        # it pinned a FAIL_CLOSED that repeated forever (finding F-B). Repair #3
+        # takes the B3 option "settlement without changing the microtask": the
+        # ABORT is settled in full (no half settlement), M1 stays VERIFIED, and
+        # only then does M2, the current stage, get its own READY proof.
         self.write("one.txt", BEFORE)
         self.activate(M1, [("one.txt", "edit")])
         self.start_op(landed=False)
-        self.machine.transition(TASK, M1, MicrotaskStatus.DONE)
-        self.machine.transition(
-            TASK, M1, MicrotaskStatus.VERIFIED,
-            verification_evidence="verified despite old operation",
-        )
+        self.legacy_verify_m1()
         self.resolve("ABORT")
         self.write("two.txt", BEFORE)
         self.activate(M2, [("two.txt", "edit")])
 
         result = RecoveryCoordinator(self.storage).recover(TASK)
 
-        self.assertNotEqual(result["state"], READY_FOR_EXECUTION)
-        self.assertIsNone(self.ops.get(TASK, OP).recovery_settlement)
+        self.assertEqual([s["action"] for s in result["performed_steps"]], ["SETTLE_ABORT"])
+        self.assertEqual(self.ops.get(TASK, OP).recovery_settlement["action"], "ABORT")
         self.assertEqual(
             self.tasks.open_microtask(TASK, M1).status,
             MicrotaskStatus.VERIFIED,
         )
+        self.assertEqual(result["state"], READY_FOR_EXECUTION)
+        self.assertEqual(result["ready_proof"]["microtask_id"], M2)
+        again = RecoveryCoordinator(self.storage).recover(TASK)
+        self.assertEqual((again["state"], again["performed_steps"]), (READY_FOR_EXECUTION, []))
 
     def _prepare_interrupted_rollback(self):
         for name, data in (

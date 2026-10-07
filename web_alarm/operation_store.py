@@ -695,13 +695,16 @@ class OperationStore:
                 )
             record.status = OperationStatus.VERIFIED
             record.receipt = receipt
-        elif record.status not in {
+        elif action == "ROLLBACK" and record.status not in {
             OperationStatus.INTENT,
             OperationStatus.STARTED,
             OperationStatus.DONE,
             OperationStatus.UNKNOWN_AFTER_DISCONNECT,
         }:
             raise OperationTransitionError(f"{record.status.value} cannot be settled by {action}")
+        # Repair #3: ABORT never changes the operation status, so it settles an
+        # operation in any status; an accepted ABORT of an already FAILED or
+        # VERIFIED operation is no longer an endless FAIL_CLOSED loop.
 
         now = utc_now_iso()
         record.recovery_settlement = {

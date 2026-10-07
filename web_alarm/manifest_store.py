@@ -260,6 +260,36 @@ class ManifestSnapshotStore:
         *,
         expected_status: MicrotaskStatus | None = None,
     ) -> None:
+        """Persist a failed restore-point verification (manifest + microtask BLOCKED_PREPARE).
+
+        Repair #3: with ``expected_status`` (the state-machine path) both
+        writes happen in one section under the per-TASK mutation lock, and only
+        while the microtask still has the status the failing verification was
+        decided on. A stale verification never touches the restore point of a
+        microtask that moved on (pure verification keeps reporting a real
+        integrity failure anyway). A crash between the two writes leaves the
+        manifest BLOCKED_PREPARE and the microtask at that status: the restore
+        point is NOT_VERIFIED in every projection and the next transition that
+        needs it repeats this block and completes it.
+        """
+        if expected_status is None:
+            # storage primitive (legacy restore path): unchanged best effort
+            self._write_blocked_manifest(task_id, microtask_id, restore_dir)
+            self._best_effort_microtask_status(task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE)
+            return
+        try:
+            with self.task_store.mutation_lock(task_id):
+                current = self.task_store.open_microtask(task_id, microtask_id)
+                if current.status is not MicrotaskStatus(expected_status):
+                    return
+                self._write_blocked_manifest(task_id, microtask_id, restore_dir)
+                self.task_store.compare_and_set_microtask_status_locked(
+                    task_id, microtask_id, expected=expected_status, status=MicrotaskStatus.BLOCKED_PREPARE
+                )
+        except (TaskStoreError, ValueError):
+            pass
+
+    def _write_blocked_manifest(self, task_id: str, microtask_id: str, restore_dir: Path) -> None:
         try:
             manifest = self.open_manifest(task_id, microtask_id)
             manifest.status = ManifestStatus.BLOCKED_PREPARE
@@ -267,9 +297,6 @@ class ManifestSnapshotStore:
             self._write_manifest(restore_dir, manifest)
         except ManifestStoreError:
             pass
-        self._best_effort_microtask_status(
-            task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE, expected=expected_status
-        )
 
     def prepare_microtask(
         self,

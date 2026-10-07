@@ -17,6 +17,7 @@ from pathlib import Path
 
 from web_alarm.event_checkpoint_store import EventCheckpointStore
 from web_alarm.manifest_store import ManifestSnapshotStore
+from web_alarm.models import MicrotaskStatus
 from web_alarm.operation_store import OperationStore
 from web_alarm.reconciliation_service import ReconciliationService
 from web_alarm.resolver_service import ResolverService
@@ -106,6 +107,8 @@ class RollbackRaceTests(unittest.TestCase):
         for task in ["task_rb"] + [f"task_c{i}" for i in range(CLAIMERS)]:
             tasks.create_task("ws", task, "RAW TASK", "Race", task_id=task)
             tasks.create_microtask(task, "M1", "Step", microtask_id="m1")
+            if task != "task_rb":  # Repair #3 (F-C): normal RC-3 writers work in an ACTIVE microtask
+                tasks.set_microtask_status(task, "m1", MicrotaskStatus.ACTIVE)
         ManifestSnapshotStore(storage).prepare_microtask(
             "task_rb", "m1", [("target.txt", "edit"), ("keep.txt", "delete")])
         ops.begin("task_rb", "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)

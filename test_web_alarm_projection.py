@@ -543,6 +543,8 @@ class PrecedenceTests(ProjectionFixture):
         record = rollbacks.prepare(TASK, "m1", "op_1", resolution.resolution_id)["rollback"]
         rollbacks.apply(TASK, record["rollback_id"])
         self.ops.begin("task_other", "m1", "write", "target.txt", operation_id="op_later", payload=b"later\n")
+        # Repair #3 (F-C): a legitimate writer's microtask is ACTIVE
+        self.tasks.set_microtask_status("task_other", "m1", MicrotaskStatus.ACTIVE)
         claims = TargetClaimService(self.storage)
         claims.acquire("task_other", "op_later", operation_revision=1)
         with claims.mutation_boundary("task_other", "op_later", operation_revision=1) as gate:
@@ -897,9 +899,10 @@ class CloseoutTests(ProjectionFixture):
         self.assertIn("OPERATION_UNRESOLVED", self.blockers())
         for status in ("READY", "ACTIVE", "DONE"):
             self.machine.transition(TASK, "m2", status)
-        self.machine.transition(TASK, "m2", "VERIFIED", verification_evidence="ok")
         self.write("two.txt", AFTER)  # DONE needs the server-observed expected post-state
         self.ops.transition(TASK, "op_open", "DONE")
+        # Repair #3 (F-B): VERIFIED is admitted only once the operation's mutation fate is closed
+        self.machine.transition(TASK, "m2", "VERIFIED", verification_evidence="ok")
         self.assertEqual(self.blockers(), ["OPERATION_NOT_VERIFIED"])
         self.ops.transition(TASK, "op_open", "VERIFIED")
         self.assertEqual(self.blockers(), [])

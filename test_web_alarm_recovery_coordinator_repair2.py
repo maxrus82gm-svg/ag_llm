@@ -93,6 +93,18 @@ class Repair2Fixture(unittest.TestCase):
         self.machine.transition(TASK, mid, MicrotaskStatus.DONE)
         self.machine.transition(TASK, mid, MicrotaskStatus.VERIFIED, verification_evidence="ok")
 
+    def legacy_verify(self, mid):
+        """VERIFIED despite an open recovery of its operation.
+
+        Since Repair #3 the state machine refuses it (F-B); the shape stays
+        reachable through the blind storage primitive, i.e. data written before
+        Repair #3 or by a legacy WA-1 writer, so R1 keeps its defense-in-depth
+        coverage.
+        """
+        if self.micro(mid) is not MicrotaskStatus.DONE:
+            self.machine.transition(TASK, mid, MicrotaskStatus.DONE)
+        self.tasks.set_microtask_status(TASK, mid, MicrotaskStatus.VERIFIED)
+
     def start(self, mid, target, op, *, landed, payload=AFTER, task=TASK):
         self.ops.begin(task, mid, "write", target, operation_id=op, payload=payload)
         self.ops.transition(task, op, OperationStatus.STARTED)
@@ -172,7 +184,7 @@ class VerifiedStageProtectionTests(Repair2Fixture):
         self.activate("m1", specs=[("a.txt", "edit"), ("b.txt", "delete"), ("c.txt", "delete")])
         self.start("m1", "a.txt", "op_1", landed=True, payload=b"a-after\n")
         (self.project / "b.txt").unlink()
-        self.verify("m1")  # the state machine verifies m1 although op_1 was never settled
+        self.legacy_verify("m1")  # m1 VERIFIED although op_1 was never settled (pre-Repair-#3 shape)
         for mid in later:
             target = f"{mid}.txt"
             self.activate(mid, target)
@@ -231,7 +243,7 @@ class VerifiedStageProtectionTests(Repair2Fixture):
         resolution = self.resolve("ROLLBACK", "op_1")
         record = RollbackService(self.storage).prepare(TASK, "m1", "op_1", resolution.resolution_id)["rollback"]
         self.assertEqual(record["status"], "PRESERVED")
-        self.machine.transition(TASK, "m1", MicrotaskStatus.VERIFIED, verification_evidence="ok")
+        self.legacy_verify("m1")  # the state machine itself refuses it since Repair #3 (F-B)
         self.activate("m2", "m2.txt")
 
         result = self.recover()
@@ -382,18 +394,42 @@ class MicrotaskDispositionTests(Repair2Fixture):
 
         self.assertIn("ABORT/ROLLBACK recovery settlement", first["reason"])
 
-    def test_r2_abort_settled_microtask_found_verified_is_a_zero_write_contradiction(self):
+    def test_r2_abort_settled_microtask_found_verified_is_absorbed_without_writes(self):
+        # Repair #3 (F-B) changed this expectation: until Repair #2 this shape was a
+        # SETTLEMENT_CONTRADICTION; an ABORT settlement is non-destructive, so a
+        # VERIFIED microtask is its disposition (administrative only, zero writes)
         self.activate("m1", "a.txt")
         self.start("m1", "a.txt", "op_a", landed=False)
         self.machine.transition(TASK, "m1", MicrotaskStatus.DONE)
         self.resolve("ABORT", "op_a")
         self.assertEqual(self.recover()["state"], MANUAL_DECISION_REQUIRED)
-        # the non-CAS state-machine write (finding F-A) can leave this shape behind
+        # a legacy blind write (pre-#2A F-A) can leave this shape behind
         self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.VERIFIED)
         before = self.digest()
 
         result = self.recover()
 
+        self.assertEqual(result["recovery_state"], "NORMAL")
+        self.assertNotEqual(result["state"], READY_FOR_EXECUTION)  # m2 is only PLANNED
+        self.assertEqual(result["performed_steps"], [])
+        self.assertEqual(self.micro("m1"), MicrotaskStatus.VERIFIED)
+        self.assertEqual(self.digest(), before)
+
+    def test_r2_rollback_settlement_found_verified_stays_a_zero_write_contradiction(self):
+        for name, data in (("a.txt", b"a-before\n"), ("b.txt", b"b-before\n"), ("c.txt", b"c-keep\n")):
+            self.write(name, data)
+        self.activate("m1", specs=[("a.txt", "edit"), ("b.txt", "delete"), ("c.txt", "delete")])
+        self.start("m1", "a.txt", "op_1", landed=True, payload=b"a-after\n")
+        self.machine.transition(TASK, "m1", MicrotaskStatus.DONE)
+        self.resolve("ROLLBACK", "op_1")
+        self.assertEqual(self.recover()["state"], MANUAL_DECISION_REQUIRED)
+        self.assertEqual(self.settlements("op_1"), {"op_1": "ROLLBACK"})
+        self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.VERIFIED)  # legacy blind write
+        before = self.digest()
+
+        result = self.recover()
+
+        # a rollback physically undid verified work: never absorbed (R1 / F-B)
         self.assertEqual((result["state"], result["recovery_state"]), (RECOVERY_BLOCKED, "SETTLEMENT_CONTRADICTION"))
         self.assertEqual(result["performed_steps"], [])
         self.assertEqual(self.digest(), before)

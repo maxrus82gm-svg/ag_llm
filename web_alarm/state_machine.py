@@ -364,6 +364,53 @@ class ServerStateMachine:
             "integrity": "VERIFIED",
             "workflow_mutation_performed": False,
         }
+    @staticmethod
+    def _stale_reason(current: MicrotaskStatus, requested: MicrotaskStatus, exc: Exception) -> str:
+        return (
+            f"stale transition: {current.value} -> {requested.value} was decided on "
+            f"{current.value}, but {exc}"
+        )
+
+    def _admit_verified(
+        self,
+        task_id: str,
+        microtask_id: str,
+        current: MicrotaskStatus,
+    ) -> tuple[str | None, MicrotaskRecord | None]:
+        """Repair #3 (F-B): VERIFIED only for a microtask without open recovery.
+
+        The recovery picture is the canonical projection built while holding
+        the operation TASK lock (Resolver acceptance, RC-6 settlement, operation
+        lifecycle) and the mutation lock (microtask lifecycle), and the
+        compare-and-set happens in that same section: an accepted recovery
+        action and the verification of the same microtask can no longer race.
+        Returns (refusal reason, None) or (None, updated record); the caller
+        rejects only after the locks are released (``_reject`` rebuilds the
+        checkpoint under the TASK lock).
+        """
+        from .microtask_gate import verification_refusal
+        from .projection import ProjectionService
+
+        if self._projection is None:
+            self._projection = ProjectionService(self.tasks.storage_root)
+        service = self._projection
+        with service.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                try:
+                    projection = service.build(task_id)
+                except Exception as exc:  # unprovable recovery picture: fail closed
+                    return f"recovery facts are unavailable: {type(exc).__name__}: {exc}", None
+                refusal = verification_refusal(projection, microtask_id)
+                if refusal is not None:
+                    return f"open recovery blocks VERIFIED ({refusal[0]}): {refusal[1]}", None
+                try:
+                    updated = self.tasks.compare_and_set_microtask_status_locked(
+                        task_id, microtask_id, expected=current, status=MicrotaskStatus.VERIFIED
+                    )
+                except MicrotaskStatusConflict as exc:
+                    return self._stale_reason(current, MicrotaskStatus.VERIFIED, exc), None
+        return None, updated
+
     def transition(
         self,
         task_id: str,
@@ -382,6 +429,8 @@ class ServerStateMachine:
         overwrite a newer authoritative status (RECOVERY_REQUIRED from a
         recovery settlement, VERIFIED, ...). ``expected_status`` lets a caller
         that decided on an earlier observation pin that basis explicitly.
+        VERIFIED is additionally admitted only while no operation of the
+        microtask has an open recovery (Repair #3, ``_admit_verified``).
         """
         requested = MicrotaskStatus(requested_status)
         micro = self.tasks.open_microtask(task_id, microtask_id)
@@ -470,26 +519,26 @@ class ServerStateMachine:
                     "verification_evidence is required for VERIFIED",
                     operation_id=operation_id,
                 )
-
-        try:
-            updated = self.tasks.compare_and_set_microtask_status(
-                task_id,
-                microtask_id,
-                expected=current,
-                status=requested,
-                activate=requested == MicrotaskStatus.ACTIVE,
-            )
-        except MicrotaskStatusConflict as exc:
-            self._reject(
-                task_id,
-                microtask_id,
-                requested,
-                (
-                    f"stale transition: {current.value} -> {requested.value} was decided on "
-                    f"{current.value}, but {exc}"
-                ),
-                operation_id=operation_id,
-            )
+            refusal, updated = self._admit_verified(task_id, microtask_id, current)
+            if refusal is not None:
+                self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
+        else:
+            try:
+                updated = self.tasks.compare_and_set_microtask_status(
+                    task_id,
+                    microtask_id,
+                    expected=current,
+                    status=requested,
+                    activate=requested == MicrotaskStatus.ACTIVE,
+                )
+            except MicrotaskStatusConflict as exc:
+                self._reject(
+                    task_id,
+                    microtask_id,
+                    requested,
+                    self._stale_reason(current, requested, exc),
+                    operation_id=operation_id,
+                )
         self.state.append_event(
             task_id,
             "MICROTASK_TRANSITION",

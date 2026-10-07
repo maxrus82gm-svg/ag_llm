@@ -9,6 +9,15 @@ boundary; RC-3 itself never writes, edits or deletes a project file.
 Lock order is always TASK lock (OperationStore.task_lock) -> target lock, and no
 code path waits for a TASK lock while holding a target lock, so independent
 TASKs cannot deadlock. Different physical targets use different target locks.
+``mutation_boundary`` also holds the per-TASK mutation lock between the two
+(the global order TASK lock -> mutation lock -> target locks).
+
+Repair #3 (F-C): authority additionally needs the microtask-level lifecycle /
+recovery gate (``microtask_gate.execution_refusal``, the rule RC-6 READY uses):
+an ACTIVE microtask without an ABORT/ROLLBACK recovery disposition. Holding the
+mutation lock keeps that answer true for the whole boundary: no lifecycle
+write of the TASK can land while authority is held. A claim (ownership) stays
+grantable as before; it never was authority.
 
 Ownership belongs to the logical operation, not to a process: a crash, restart
 or lost Remote/Chat neither releases a claim nor transfers it (no lease/TTL,
@@ -22,11 +31,13 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from .file_state import FileStateError, authority_of, eol_only_drift, observe_path, same_authority
+from .microtask_gate import execution_refusal
 from .models import OperationRecord, OperationStatus, utc_now_iso
 from .operation_contract import LEGACY_CONTRACT_VERSION
 from .operation_store import OperationStore, OperationStoreError
 from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
 from .resolver_service import ResolverService
+from .rollback_store import RollbackStore
 from .store_lock import DEFAULT_LOCK_TIMEOUT_SECONDS, InterProcessLock, StoreLockTimeout
 from .target_claim_store import (
     ACTIVE,
@@ -40,6 +51,7 @@ from .target_claim_store import (
     physical_target_key,
 )
 from .target_identity import CanonicalTarget, TargetIdentityError, canonical_target
+from .task_store import TaskStore, TaskStoreError
 from .workspace_registry import WorkspaceRegistryError
 
 ACQUIRED = "ACQUIRED"
@@ -112,6 +124,8 @@ class TargetClaimService:
         root = self.operations.tasks.storage_root
         self.resolver = ResolverService(root)
         self.claims = TargetClaimStore(root)
+        self.rollbacks = RollbackStore(root)
+        self.tasks = TaskStore(root, lock_timeout=lock_timeout)
         self.events = self.operations.events
         self.lock_timeout = lock_timeout
 
@@ -128,6 +142,19 @@ class TargetClaimService:
             yield
         finally:
             lock.release()
+
+    @contextmanager
+    def _mutation_lock(self, task_id: str) -> Iterator[None]:
+        """Per-TASK lifecycle lock (between the TASK lock and target locks)."""
+        lock = self.tasks.mutation_lock(task_id)
+        try:
+            lock.__enter__()
+        except TaskStoreError as exc:
+            raise TargetClaimError(str(exc)) from exc
+        try:
+            yield
+        finally:
+            lock.__exit__(None, None, None)
 
     def _record(self, task_id: str, operation_id: str) -> OperationRecord:
         for name, value in (("task_id", task_id), ("operation_id", operation_id)):
@@ -386,6 +413,16 @@ class TargetClaimService:
         refusal = self._eligibility(task_id, record)
         if refusal is not None:
             return own, refusal[0], refusal[1], None, False
+        refusal = execution_refusal(
+            task_id,
+            record.microtask_id,
+            tasks=self.tasks,
+            operations=self.operations,
+            resolver=self.resolver,
+            rollbacks=self.rollbacks,
+        )
+        if refusal is not None:
+            return own, refusal[0], refusal[1], None, False
         try:
             observed = observe_path(canonical.path).authority()
         except FileStateError as exc:
@@ -403,11 +440,13 @@ class TargetClaimService:
         operation_revision: int | None,
         claim_id: str | None = None,
     ) -> Iterator[dict[str, Any]]:
-        """Hold TASK + target locks and yield the CAS outcome.
+        """Hold TASK + mutation + target locks and yield the CAS outcome.
 
         Mutation authority exists only inside this block and only when
         ``outcome["mutation_authority"]`` is true. RC-3 callers do nothing inside;
-        WA4-E performs its single write here.
+        WA4-E performs its single write here. The TASK's lifecycle cannot change
+        while the block is held (Repair #3), so no lifecycle/state-machine write
+        of this TASK may be attempted from inside it.
         """
         with self.operations.task_lock(task_id):
             record = self._record(task_id, operation_id)
@@ -417,7 +456,7 @@ class TargetClaimService:
                 yield self._outcome(DENIED, "LEGACY_CONTRACT", "legacy contract v1 has no CAS basis")
                 return
             canonical, physical_key = self._target(record)
-            with self._target_lock(physical_key):
+            with self._mutation_lock(task_id), self._target_lock(physical_key):
                 data = self.claims.load(physical_key)
                 own, code, reason, observed, authorized = self._cas(
                     task_id, record, canonical, data, revision, claim_id

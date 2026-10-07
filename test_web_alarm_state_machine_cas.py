@@ -24,16 +24,21 @@ SM_CHILD = """
     from web_alarm.task_store import TaskStore
     from web_alarm.state_machine import ServerStateMachine, TransitionRejected
     flags = pathlib.Path({flags!r})
-    real = TaskStore.compare_and_set_microtask_status
-    def gated(self, *args, **kwargs):
-        (flags / {read_flag!r}).write_text("1")
-        deadline = time.time() + 60
-        while not (flags / {go_flag!r}).exists():
-            if time.time() > deadline:
-                raise SystemExit("barrier timeout")
-            time.sleep(0.01)
-        return real(self, *args, **kwargs)
-    TaskStore.compare_and_set_microtask_status = gated
+    def barrier(real):
+        # pause once the transition has decided on its observed status, before
+        # its locked write: the compare-and-set itself, or (VERIFIED, Repair #3)
+        # the locked admission section that ends in that compare-and-set
+        def gated(self, *args, **kwargs):
+            (flags / {read_flag!r}).write_text("1")
+            deadline = time.time() + 60
+            while not (flags / {go_flag!r}).exists():
+                if time.time() > deadline:
+                    raise SystemExit("barrier timeout")
+                time.sleep(0.01)
+            return real(self, *args, **kwargs)
+        return gated
+    TaskStore.compare_and_set_microtask_status = barrier(TaskStore.compare_and_set_microtask_status)
+    ServerStateMachine._admit_verified = barrier(ServerStateMachine._admit_verified)
     try:
         ServerStateMachine({storage!r}).transition({task!r}, "m1", {target!r}, verification_evidence="looked fine")
         print(json.dumps({{"result": "APPLIED"}}))
@@ -107,11 +112,31 @@ class CasFixture(Repair2Fixture):
 class RollbackVersusVerificationTests(CasFixture):
     """A: RC-6 rollback of the current stage vs a concurrent DONE -> VERIFIED."""
 
-    def test_a1_verification_that_lands_first_keeps_the_stage_and_blocks_the_rollback(self):
+    def test_a1_verification_during_a_pending_rollback_is_refused_and_the_rollback_proceeds(self):
+        # Repair #3 (F-B) changed A1: "the verification lands first" is no longer
+        # possible while the stage has an open recovery (accepted ROLLBACK, open
+        # RC-4 session, STARTED operation); the rollback of the current stage runs.
         self.done_m1_with_partial_effect()
         coordinator = self.coordinator_child(before=True)
         self.wait_flag("preflight_entered", coordinator)
-        self.machine.transition(TASK, "m1", MicrotaskStatus.VERIFIED, verification_evidence="ok")
+        with self.assertRaises(TransitionRejected) as refused:
+            self.machine.transition(TASK, "m1", MicrotaskStatus.VERIFIED, verification_evidence="ok")
+        (self.flags / "coord_go").write_text("1")
+
+        result = self.finish(coordinator)
+
+        self.assertIn("open recovery blocks VERIFIED", refused.exception.reason)
+        self.assertEqual(result["state"], MANUAL_DECISION_REQUIRED)
+        self.assertEqual(self.micro("m1"), MicrotaskStatus.RECOVERY_REQUIRED)
+        self.assertEqual((self.read("a.txt"), self.read("b.txt")), (b"a-before\n", b"b-before\n"))
+
+    def test_a1_legacy_verified_shape_still_blocks_the_rollback(self):
+        # the pre-Repair-#3 shape (VERIFIED written by a blind legacy writer) keeps
+        # the #2A / R1 protection: no restore of a VERIFIED stage
+        self.done_m1_with_partial_effect()
+        coordinator = self.coordinator_child(before=True)
+        self.wait_flag("preflight_entered", coordinator)
+        self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.VERIFIED)
         (self.flags / "coord_go").write_text("1")
 
         result = self.finish(coordinator)
@@ -133,7 +158,9 @@ class RollbackVersusVerificationTests(CasFixture):
         result = self.finish(coordinator)
 
         self.assertEqual(verdict["result"], "REJECTED")
-        self.assertIn("stale transition", verdict["reason"])
+        # since Repair #3 the locked admission sees the open recovery first; a
+        # recovery-free stale basis would fail the compare-and-set instead
+        self.assertRegex(verdict["reason"], "stale transition|open recovery blocks VERIFIED")
         self.assertEqual(result["state"], MANUAL_DECISION_REQUIRED)
         self.assertEqual(result["steps"], ["APPLY_ROLLBACK", "SETTLE_ROLLBACK"])
         self.assertEqual(self.micro("m1"), MicrotaskStatus.RECOVERY_REQUIRED)  # never VERIFIED

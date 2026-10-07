@@ -9,6 +9,7 @@ from unittest import mock
 
 import web_alarm.rollback_service as rs
 from web_alarm.manifest_store import ManifestSnapshotStore
+from web_alarm.models import MicrotaskStatus
 from web_alarm.operation_store import OperationStore
 from web_alarm.reconciliation_service import ReconciliationService
 from web_alarm.recovery_report_service import RecoveryReportClaimError, RecoveryReportService
@@ -108,6 +109,8 @@ class RollbackFixture(unittest.TestCase):
         for task in (TASK, "task_b"):
             self.tasks.create_task("ws_rb", task, "RAW TASK", "Rollback", task_id=task)
             self.tasks.create_microtask(task, "M1", "Step", microtask_id="m1")
+        # Repair #3 (F-C): the foreign cooperative RC-3 writer works in an ACTIVE microtask
+        self.tasks.set_microtask_status("task_b", "m1", MicrotaskStatus.ACTIVE)
         self.ops = OperationStore(self.storage)
         self.rollbacks = RollbackService(self.storage)
 

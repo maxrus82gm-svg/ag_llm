@@ -35,6 +35,210 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #3; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты), вместе с вводными словами координатора. Предыдущие постановки — RC-6 Repair #2 (+ #2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
+
+```text
+Да, именно так и делаем: **задачу сначала фиксируем здесь в чате**, потом уже отдаём Claude. И я бы сейчас не дробил её на микрокоманды: даём ему найденные нами проблемы, обязательные инварианты и критерии приёмки, а **архитектурный способ исправления оставляем ему**. Это как раз наш нормальный сценарий.
+
+Я бы зафиксировал следующую задачу так:
+
+> **TASK: CLAUDE-WA-010 / RC-6 — REPAIR #3 / FINAL SAFETY CLOSURE**
+>
+> **Контекст**
+>
+> Продолжаем RC-6 после Repair #2 / #2A, baseline — GitHub `main`, commit `162` (`2f1f8780367fd5a2a2c44d10182002197f64e9bb`).
+>
+> Independent verification ChatGPT после commit 162 завершилась **FAIL**: основные исправления Repair #2/#2A действительно присутствуют и большая их часть выглядит корректно, но обнаружены оставшиеся safety / liveness / crash-consistency gaps.
+>
+> **WA4-E пока НЕ начинать.** Цель этой задачи — довести RC-6 до состояния, которое можно снова отдавать на независимую verification перед разрешением WA4-E. Это соответствует принятому протоколу проекта.
+>
+> ---
+>
+> **Главная цель**
+>
+> Закрыть оставшиеся подтверждённые проблемы RC-6 так, чтобы:
+>
+> - серверный mutation authority никогда не разрешал физическую mutation, когда lifecycle/recovery состояние microtask её запрещает;
+> - recovery не мог необратимо застрять из-за гонки между `VERIFIED` и поздним recovery settlement;
+> - `READY_FOR_EXECUTION` был привязан именно к полностью доказанному protected basis;
+> - crash/IO interruption между связанными persistent writes не оставлял систему в состоянии, которое невозможно автоматически распознать и безопасно восстановить;
+> - все изменения оставались fail-closed и не ослабляли уже работающие R1/R2/F-A/F-D/F-E.
+>
+> ---
+>
+> **Finding 1 — F-C / CRITICAL: mutation authority after ABORT**
+>
+> Подтверждён authority gap.
+>
+> После accepted `ABORT` / aggregate recovery disposition microtask может находиться в `RECOVERY_REQUIRED`, и Projection/NEXT запрещают normal mutation.
+>
+> Однако новая operation той же microtask потенциально может пройти цепочку:
+>
+> `OperationStore.begin()`
+> → `TargetClaimService.acquire()`
+> → `mutation_boundary()`
+> → получить `AUTHORIZED`
+>
+> потому что mutation-authority path в основном проверяет состояние самой operation/claim/contract, но не обеспечивает эквивалентный **microtask-level lifecycle/recovery gate**.
+>
+> Это особенно критично перед WA4-E, поскольку будущий executor должен доверять именно `mutation_boundary`.
+>
+> **Обязательный инвариант:** если microtask находится в состоянии/disposition, где normal physical mutation запрещена, ни новая, ни старая operation не должна получить mutation authority до явного допустимого lifecycle/recovery решения.
+>
+> Не привязываемся к конкретной реализации gate — выбери архитектурно правильное место и способ, желательно с одним authoritative правилом, а не с несколькими расходящимися проверками.
+>
+> F-C изначально был известен как открытый gap: после ABORT NEXT запрещает mutation, но server authority всё ещё мог выдать claim новой operation.
+>
+> ---
+>
+> **Finding 2 — F-B / late ABORT vs VERIFIED**
+>
+> Repair #2A закрыл stale transition, когда recovery успевает первой.
+>
+> Но остаётся обратный порядок:
+>
+> 1. operation имеет accepted ABORT;
+> 2. microtask ещё находится в статусе, из которого возможен `VERIFIED`;
+> 3. `VERIFIED` успевает зафиксироваться раньше settlement lifecycle update;
+> 4. ABORT settlement затем требует `RECOVERY_REQUIRED`;
+> 5. система обнаруживает contradiction и fail-closes, но автоматического пути к согласованному состоянию нет.
+>
+> Уже существующий `SETTLEMENT_CONTRADICTION` полезен как safety barrier, но сам по себе не является recovery mechanism.
+>
+> **Цель:** определить и реализовать корректную семантику этой гонки. Нельзя откатывать VERIFIED stage физически или молча разрушать verification. Но система не должна попадать в бесконечно неразрешимое состояние только из-за порядка двух допустимых событий.
+>
+> Здесь особенно важен архитектурный анализ: возможно, правильное решение находится раньше — на момент допуска `VERIFIED`, на момент принятия settlement либо через дополнительный CAS/authority condition.
+>
+> ---
+>
+> **Finding 3 — R3 / READY proof basis incomplete**
+>
+> `RecoveryCoordinator._proof()` сохраняет в том числе:
+>
+> - `microtask_updated_at`;
+> - `manifest_id`;
+> - `restore_point_fingerprint`;
+> - `target_set_fingerprint`;
+> - operation/revision/resolution identity.
+>
+> Но independent review показал, что `_proof_matches()` напрямую не сравнивает весь сохранённый proof basis, в частности `restore_point_fingerprint` и `target_set_fingerprint`.
+>
+> Дополнительная проверка `source_fingerprint` существует, однако нужно доказать, что она действительно включает **весь смысловой basis**, который protected proof зафиксировал, а не только видимые идентификаторы вроде `manifest_id`.
+>
+> **Обязательный инвариант:** `READY_FOR_EXECUTION` должен возвращаться только для точно того restore point + affected target set + lifecycle/operation/resolution basis, которые были защищены target locks во время proof.
+>
+> Проверить также ABA-сценарий: состояние изменилось между proof и final classification, а затем вернулось к тем же поверхностным значениям.
+>
+> Этот вопрос специально оставался в independent checklist: соответствуют ли fingerprints реально locked target set и участвуют ли они в freshness.
+>
+> ---
+>
+> **Finding 4 — crash consistency A / activation**
+>
+> В `compare_and_set_microtask_status(..., activate=True)` связанное изменение persistent state выполняется несколькими записями:
+>
+> сначала `plan.current_microtask_id`,
+> затем status microtask.
+>
+> При process/IO crash между этими writes возможно состояние:
+>
+> `plan.current_microtask_id = m2`,
+> но `m2 != ACTIVE`.
+>
+> Projection сейчас рассматривает lifecycle как более authoritative, чем plan pointer, поэтому это не обязательно immediate corruption, но атомарность операции фактически не гарантирована.
+>
+> **Нужно решить:** является ли такое состояние допустимой crash state с детерминированным restart recovery либо activation должна иметь более сильную transactional/recoverable семантику.
+>
+> Не ограничиваем решение требованием «сделать обе записи одной атомарной операцией» — важен конечный invariant после crash/restart.
+>
+> Этот crash-window был отдельно обнаружен в independent review.
+>
+> ---
+>
+> **Finding 5 — crash/race consistency B / restore-point blocking**
+>
+> `_block_restore_point()` сначала может записать:
+>
+> `manifest.status = BLOCKED_PREPARE`
+>
+> а затем только попытаться conditional CAS microtask status.
+>
+> Если CAS отказывается из-за concurrent transition, manifest уже изменён.
+>
+> Возможен persistent mismatch вроде:
+>
+> `microtask = VERIFIED`
+> `manifest = BLOCKED_PREPARE`.
+>
+> Repair #2A tests подтверждают, что stale transition не должен переписать новый microtask status, но этого недостаточно: нужно проверить и парную консистентность manifest/lifecycle state.
+>
+> **Цель:** stale/failing snapshot verification не должна портить restore point уже продвинувшейся/accepted microtask. При crash или race система либо сохраняет старый authoritative restore point, либо получает явно recoverable persistent state.
+>
+> Этот кандидат также был отдельно отмечен independent verification.
+>
+> ---
+>
+> **Что уже считается рабочим и не должно быть сломано**
+>
+> Repair #2/#2A уже дал существенные исправления:
+>
+> - historical/VERIFIED rollback protection;
+> - single aggregated settlement disposition;
+> - state-machine CAS против stale transition;
+> - `RECOVERY_REQUIRED` перед destructive rollback APPLY;
+> - общий multi-target lock ordering;
+> - прекращение повторения одного `BLOCKED/REJECTED` RC-4 step в одном `recover()`.
+>
+> Сохрани эти свойства и добавь regression coverage на них.
+>
+> ---
+>
+> **Ожидаемая работа**
+>
+> Сначала самостоятельно перепроверь каждый finding на актуальном baseline и зафиксируй reproduction/root cause. Если какой-либо finding после более глубокого анализа окажется неверным — не исправляй его искусственно; объясни, какой существующий invariant уже его закрывает, и докажи это тестом/кодом.
+>
+> Затем спроектируй минимально достаточный Repair #3. Не нужно механически выполнять предложенные выше способы — важнее цель и единая архитектурная семантика.
+>
+> Добавь targeted regressions для каждого подтверждённого finding, включая adversarial/concurrency/crash-boundary cases там, где это практично.
+>
+> После repair:
+>
+> - focused tests;
+> - все новые Repair #3 tests;
+> - предыдущие Repair #2/#2A adversarial tests;
+> - полный test suite;
+> - разумные stress/repeat прогоны для race-тестов;
+> - подтвердить, что live storage / реальные project files не были затронуты.
+>
+> Если найдёшь дополнительный blocker во время работы — не маскируй его ради зелёного suite; зафиксируй и либо включи в repair, если это небольшой связанный дефект, либо вынеси отдельным finding.
+>
+> ---
+>
+> **Артефакты / отчёт**
+>
+> Подготовить обычный AGENT REPORT с:
+>
+> - baseline commit;
+> - reproduction каждого finding;
+> - root cause;
+> - выбранная архитектурная семантика;
+> - changed files;
+> - новые tests;
+> - результаты focused/full/adversarial/stress прогонов;
+> - safety/live-storage statement;
+> - какие finding закрыты;
+> - известные остаточные риски;
+> - final recommendation: готов ли RC-6 снова к independent verification.
+>
+> Закоммитить изменения в GitHub обычным проектным способом.
+>
+> **Не объявлять RC-6 VERIFIED самостоятельно.**
+>
+> После твоего repair independent verification снова выполнит ChatGPT по GitHub. Только после independent PASS будет разрешён переход к WA4-E.
+```
+
+### Предыдущая постановка — CLAUDE-WA-009 / RC-6 Repair #2 (+ #2A) (сохранена)
+
 **Статус постановки:** выполнена Claude 2026-10-06 (RC-6 Repair #2; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
 
 ```text
@@ -3665,6 +3869,60 @@ RC-6 НЕ НАЧИНАТЬ.
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
+
+**TASK:** CLAUDE-WA-010 / RC-6 — REPAIR #3 / FINAL SAFETY CLOSURE (исполнитель Claude; независимый verifier — ChatGPT по GitHub).
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.**
+- **Commit / push не выполнялись.** В постановке сказано «закоммитить обычным проектным способом»; по регламенту commit и push делает пользователь.
+- **Baseline:** GitHub `main`, commit 162 = `2f1f8780367fd5a2a2c44d10182002197f64e9bb`; полный набор на baseline — 475 OK, skip 1.
+- **Воспроизведение на 162:**
+  - F1a–d — authority у новой, старой и соседней операции при RECOVERY_REQUIRED / отложенном ABORT / VERIFIED;
+  - F2a/b — вечный FAIL_CLOSED в обоих порядках;
+  - F3 — READY с proof `7abac391…` при фактическом `9e91d6ef…`;
+  - F5 — microtask VERIFIED + manifest BLOCKED_PREPARE;
+  - F4 — окно есть, но состояние уже восстановимо.
+- **Семантика (граф переходов, статусы, модель Resolver и схемы записей не менялись):**
+  - **F-C — один gate.** Новый `web_alarm/microtask_gate.execution_refusal`: мутация только для ACTIVE microtask, которая является текущим этапом и не несёт disposition ABORT/ROLLBACK (settled, принятого или открытой сессии RC-4). Gate общий для RC-3 `mutation_boundary` и READY / re-arm RC-6. Boundary держит TASK-lock → `mutation_lock` → target-lock, так что пока authority выдана, жизненный цикл заморожен.
+  - **F-B.** VERIFIED допускается только без открытого recovery операций microtask: projection строится под TASK-lock + `mutation_lock`, CAS — в той же секции. Так приём ABORT и VERIFIED сериализованы. Решение после VERIFIED:
+    - ADOPT/ABORT — административный settlement, этап остаётся VERIFIED;
+    - ROLLBACK/RETRY — явная ручная граница, её закрывает явный ABORT.
+  - **R3.** `_confirm_ready` под теми же блокировками заново выводит весь proof (fingerprint содержимого restore point, защищённое множество целей, microtask, ревизия, resolution) и строит финальную projection. READY только при полном совпадении, иначе новый проход классификации.
+  - **F4.** Порядок «указатель, затем статус» — допустимое восстановимое состояние после краша (указатель не authority, повторная активация завершает). Плюс перепроверка «все предыдущие VERIFIED» под блокировкой.
+  - **F5.** Блокировка restore point — проверка и запись под `mutation_lock`; устаревшая проверка его не трогает; краш между записями восстановим.
+- **Найдено и закрыто попутно:**
+  - **C1** — ABORT по FAILED/VERIFIED-операции давал вечный FAIL_CLOSED;
+  - **n03** — поздний ABORT поверх существующего settlement давал вечный FAIL_CLOSED, теперь он завершается через `ABORT_OVER_SETTLEMENT` → RECOVERY_REQUIRED.
+- **Файлы:**
+  - новый `web_alarm/microtask_gate.py`;
+  - изменены `target_claim_service.py`, `state_machine.py`, `recovery_coordinator.py`, `projection.py`, `task_store.py`, `manifest_store.py`, `operation_store.py`;
+  - новый `test_web_alarm_recovery_coordinator_repair3.py` (34 теста).
+- **Изменения существующих тестов:**
+  - фикстуры authority теперь с ACTIVE microtask (RC-3, RC-4 ×2, projection) — ожидания те же;
+  - фикстура «легаси-VERIFIED» для R1/B3;
+  - ожидания изменены сознательно (новая семантика F-B) в трёх тестах: repair1 B3-ABORT, repair2 R2-противоречие для ABORT, CAS A1/A2. Подробно — §6.2 отчёта.
+- **Проверки:**
+  - Repair #3 — 34/34; на 162 падают 28 из 34;
+  - фокусно 21 модуль — 322/322;
+  - полный набор (44 модуля) — **511 OK, skip 1**, дважды;
+  - стресс-повторы гоночных модулей — 21/21;
+  - adversarial Repair #3 — 4/4 (в том числе 24 раунда «VERIFIED ↔ ABORT» на реальных процессах, оба порядка);
+  - adversarial #2A — 5/5;
+  - Repair #2 — 7 OK + a10 на легаси-форме 4/4;
+  - исходные пробы RC-6 — exit 0 / 0;
+  - compileall и `git diff --check` — OK.
+- **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`).
+- **Дополнительно / остаточное:**
+  - **FINDING (не исправлен, DECISION REQUIRED):** краш при подготовке restore point оставляет microtask PREPARING без выхода в workflow. Это безопасно (мутации нет), но выход только ручной. Proposal — путь «возобновить подготовку»;
+  - поздний ADOPT/ROLLBACK поверх существующего settlement (одно поле settlement) — дизайн WA4-E;
+  - целостности restore point в gate RC-3 нет (её доказывает READY RC-6; proposal для WA4-E);
+  - legacy CLI WA-1 — WA4-R;
+  - исторические пробы n02 / n03 / n19 / a10 падают на своей фикстуре, которую теперь отклоняет state machine; инварианты соблюдены.
+- **Рекомендация:** RC-6 готов снова к независимой проверке. NEXT — commit / push пользователем → проверка ChatGPT → только после PASS RC-6 = DONE / VERIFIED → WA4-E.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-010_RC6_REPAIR3/rc6_repair3_report.md`.
+
+---
+
+### Предыдущий результат — CLAUDE-WA-009 / RC-6 Repair #2 (+ #2A) (сохранён: независимая проверка ChatGPT после commit 162 завершилась FAIL, в `001` не переносился)
 
 **TASK:** CLAUDE-WA-009 / RC-6 — REPAIR #2 (исполнитель Claude; независимый verifier — ChatGPT).
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION (2026-10-06). Не DONE / VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
