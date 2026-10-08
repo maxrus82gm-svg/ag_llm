@@ -1,0 +1,7 @@
+{"ts":"2026-10-08","task":"CHATGPT-WORKFLOW-20261008","status":"INTENT","target":"Документация/000_Задачи ChatGPT.md","action":"Add ChatGPT-only GitHub-first independent verification and Alarm-on-local-mutation workflow. No Codex/Claude rule changes; no commit/push.","baseline":"main 6176d66; git status short clean"}
+{"ts":"2026-10-08","status":"INTENT","target":"TASK_CHATGPT-WORKFLOW-20261008/context.md;history.md","action":"Create compact recoverable task context and history before editing card"}
+{"ts":"2026-10-08","status":"DONE","target":"context.md;history.md","action":"Recovery context and task history written"}
+{"ts":"2026-10-08","status":"DONE","target":"Документация/000_Задачи ChatGPT.md","action":"Inserted ChatGPT-only GitHub-first review + Alarm-before-remote-mutations workflow"}
+{"ts":"2026-10-08","status":"INTENT","target":"context.md;history.md","action":"Finalize continuity notes after successful card patch and git diff review"}
+{"ts":"2026-10-08","status":"DONE","target":"context.md;history.md","action":"Finalized concise recovery handoff"}
+{"ts":"2026-10-08","status":"CHECKED","target":"Документация/000_Задачи ChatGPT.md","check":"Git diff: +11/-0 (only chatgpt card); diff --check no whitespace errors; other agent docs untouched; no runtime tests"}
