@@ -16,12 +16,10 @@ from typing import Any
 
 from .manifest_store import ManifestStoreError
 from .microtask_gate import (
-    PRE_EXECUTION_STATUSES,
     authoritative_action,
     disposition_actions,
     effective_settlement_target,
     execution_refusal,
-    pre_execution_next_action,
 )
 from .models import MicrotaskStatus, TaskStatus
 from .operation_store import OperationStore, OperationStoreError, OperationTransitionError
@@ -94,16 +92,6 @@ _ROLLBACK_RESTORE_PHASES = {PRESERVED, AUTHORIZED, APPLYING}
 _STEP_BLOCKED_RESULTS = {BLOCKED, REJECTED}
 # Repair #4: how long recover waits for a running restore-point preparation
 _PREPARE_LOCK_WAIT_SECONDS = 1.0
-# RC-6 Repair #4A: a microtask that has never been ACTIVE (microtask_gate)
-_PRE_EXECUTION = PRE_EXECUTION_STATUSES
-# sources from which an ABORT-only disposition may set RECOVERY_REQUIRED besides
-# _TO_RECOVERY_REQUIRED_FROM (never PREPARING: that preparation is reconciled first)
-_ABORT_FROM_PRE_EXECUTION = {
-    MicrotaskStatus.PLANNED,
-    MicrotaskStatus.BACKUP_VERIFIED,
-    MicrotaskStatus.READY,
-    MicrotaskStatus.BLOCKED_PREPARE,
-}
 
 
 def _digest(value: Any) -> str:
@@ -669,14 +657,6 @@ class RecoveryCoordinator:
         microtask_id: str,
         pending: str | None = None,
     ) -> MicrotaskStatus:
-        return self._settlement_disposition_locked(task_id, microtask_id, pending)[0]
-
-    def _settlement_disposition_locked(
-        self,
-        task_id: str,
-        microtask_id: str,
-        pending: str | None = None,
-    ) -> tuple[MicrotaskStatus, list[str]]:
         """R2: the one disposition all settlements of this microtask require.
 
         Read from the persistent operation and Resolver records under the
@@ -696,7 +676,7 @@ class RecoveryCoordinator:
             raise RecoveryCoordinatorError(
                 f"microtask {microtask_id} has no recovery settlement to apply"
             )
-        return target, actions
+        return target
 
     def _require_no_manual_disposition_locked(self, task_id: str, microtask_id: str, what: str) -> None:
         """R2: an ABORT/ROLLBACK disposition keeps its microtask at the manual boundary.
@@ -723,25 +703,6 @@ class RecoveryCoordinator:
                 "RECOVERY_REQUIRED boundary until an explicit project-level decision"
             )
 
-    def _deferred_by_preparation_locked(self, task_id: str, microtask_id: str, action: str) -> dict[str, Any] | None:
-        """Repair #4A: a settlement never starts over a PREPARING microtask.
-
-        Between the projection that chose the step and this locked section a
-        concurrent restore-point preparation may have moved the microtask to
-        PREPARING. Nothing is written; the loop re-projects, and the
-        preparation is reconciled first (or stops recover as in progress).
-        """
-        if self.tasks.open_microtask(task_id, microtask_id).status is MicrotaskStatus.PREPARING:
-            return {
-                "result": "DEFERRED_BY_PREPARATION",
-                "reason": (
-                    f"microtask {microtask_id} became PREPARING; its preparation is reconciled before "
-                    f"the {action} settlement"
-                ),
-                "physical_mutation_performed": False,
-            }
-        return None
-
     def _current_settlements_locked(self, task_id: str, microtask_id: str) -> list[str]:
         pairs = []
         for record in self.operations.list(task_id):
@@ -755,23 +716,8 @@ class RecoveryCoordinator:
         return current_settlements_by_microtask(pairs).get(microtask_id, [])
 
     @staticmethod
-    def _settlement_rule(
-        target: MicrotaskStatus,
-        *,
-        finishing: bool,
-        actions: tuple[str, ...] | list[str] = (),
-    ) -> dict[str, Any]:
-        """allowed_from / additionally_satisfied for applying a settlement disposition.
-
-        Repair #4A: an ABORT-only RECOVERY_REQUIRED disposition may also start
-        from a microtask that never executed (``_ABORT_FROM_PRE_EXECUTION``).
-        Such a microtask can have no operation effect (no mutation authority
-        before ACTIVE), RECOVERY_REQUIRED is the stricter manual boundary, and
-        without it an accepted ABORT would have no completion path. PREPARING
-        is never a source: an interrupted preparation is reconciled first. A
-        disposition that includes ROLLBACK keeps the old sources (RC-6 never
-        rolls back a stage that never executed).
-        """
+    def _settlement_rule(target: MicrotaskStatus, *, finishing: bool) -> dict[str, Any]:
+        """allowed_from / additionally_satisfied for applying a settlement disposition."""
         if target is MicrotaskStatus.VERIFIED:
             # absorbed by a VERIFIED microtask (effective_settlement_target): nothing to write
             return {"allowed_from": set(), "additionally_satisfied": None}
@@ -784,10 +730,7 @@ class RecoveryCoordinator:
                 # VERIFIED target instead (Repair #3, never a DONE write).
                 "additionally_satisfied": {MicrotaskStatus.VERIFIED} if finishing else None,
             }
-        allowed = set(_TO_RECOVERY_REQUIRED_FROM)
-        if actions and all(action == "ABORT" for action in actions):
-            allowed |= _ABORT_FROM_PRE_EXECUTION
-        return {"allowed_from": allowed, "additionally_satisfied": None}
+        return {"allowed_from": _TO_RECOVERY_REQUIRED_FROM, "additionally_satisfied": None}
 
     def _apply_settlement_lifecycle_locked(
         self,
@@ -797,9 +740,8 @@ class RecoveryCoordinator:
         *,
         finishing: bool,
         preflight_only: bool = False,
-        actions: tuple[str, ...] | list[str] = (),
     ):
-        rule = self._settlement_rule(target, finishing=finishing, actions=actions)
+        rule = self._settlement_rule(target, finishing=finishing)
         if preflight_only:
             return self._preflight_micro_locked(task_id, microtask_id, target, **rule)
         return self._set_micro_locked(task_id, microtask_id, target, **rule)
@@ -898,21 +840,17 @@ class RecoveryCoordinator:
                     require_fresh=(action is ResolutionAction.ADOPT),
                 )
                 self._no_open_rollback_locked(task_id, operation_id)
-                deferred = self._deferred_by_preparation_locked(task_id, view["microtask_id"], action.value)
-                if deferred is not None:
-                    return deferred
 
                 # Prove the operation's own microtask lifecycle before the
                 # durable settlement write.  A later/current TASK microtask is
                 # never a substitute for the operation's microtask, and the
                 # status written is the microtask's single aggregated
                 # disposition including this settlement (R2).
-                target, actions = self._settlement_disposition_locked(
+                target = self._settlement_target_locked(
                     task_id, view["microtask_id"], pending=action.value
                 )
                 self._apply_settlement_lifecycle_locked(
-                    task_id, view["microtask_id"], target, finishing=False, preflight_only=True,
-                    actions=actions,
+                    task_id, view["microtask_id"], target, finishing=False, preflight_only=True
                 )
                 if action is ResolutionAction.ADOPT:
                     with ExitStack() as target_stack:
@@ -936,7 +874,7 @@ class RecoveryCoordinator:
                             expected_revision=resolution.basis["operation_revision"],
                         )
                         micro = self._apply_settlement_lifecycle_locked(
-                            task_id, view["microtask_id"], target, finishing=False, actions=actions
+                            task_id, view["microtask_id"], target, finishing=False
                         )
                 else:
                     outcome = self.operations._settle_recovery_locked(
@@ -947,7 +885,7 @@ class RecoveryCoordinator:
                         expected_revision=resolution.basis["operation_revision"],
                     )
                     micro = self._apply_settlement_lifecycle_locked(
-                        task_id, view["microtask_id"], target, finishing=False, actions=actions
+                        task_id, view["microtask_id"], target, finishing=False
                     )
         release = self.claims.release(
             task_id,
@@ -981,14 +919,11 @@ class RecoveryCoordinator:
                 settlement = current.recovery_settlement
                 if settlement is None or settlement["action"] != action:
                     raise RecoveryCoordinatorError("recovery settlement changed while finishing it")
-                deferred = self._deferred_by_preparation_locked(task_id, view["microtask_id"], action)
-                if deferred is not None:
-                    return deferred
                 # R2: finish towards the microtask's one aggregated disposition,
                 # so sibling settlements can never steer it back and forth.
-                target, actions = self._settlement_disposition_locked(task_id, view["microtask_id"])
+                target = self._settlement_target_locked(task_id, view["microtask_id"])
                 micro = self._apply_settlement_lifecycle_locked(
-                    task_id, view["microtask_id"], target, finishing=True, actions=actions
+                    task_id, view["microtask_id"], target, finishing=True
                 )
         if recovery["state"] == "ABORT_OVER_SETTLEMENT":
             action = "ABORT_OVER_" + action  # Repair #3: a later ABORT completed administratively
@@ -1075,11 +1010,7 @@ class RecoveryCoordinator:
         gate refuses normal mutation throughout. The outcome is recorded as an
         event so a discarded capture is never silent.
         """
-        focus = self._view(projection, projection["recovery"].get("operation_id"))
-        if focus is not None and focus["microtask_status"] == MicrotaskStatus.PREPARING.value:
-            microtask_id = focus["microtask_id"]  # Repair #4A: the focused operation's microtask
-        else:
-            microtask_id = projection["position"]["current_microtask_id"]
+        microtask_id = projection["position"]["current_microtask_id"]
         if microtask_id is None:
             raise RecoveryCoordinatorError("preparation reconcile has no current microtask")
         try:
@@ -1215,18 +1146,6 @@ class RecoveryCoordinator:
                 "requires_human": True,
             }
 
-        focus = self._view(projection, recovery.get("operation_id"))
-        if (
-            state != "NORMAL"
-            and focus is not None
-            and focus["microtask_status"] == MicrotaskStatus.PREPARING.value
-        ):
-            # Repair #4A: a recovery decision about an operation whose microtask
-            # is PREPARING first needs that preparation reconciled (W1 / W2):
-            # no settlement starts from PREPARING, and a running preparation
-            # stops recover with RECOVERY_IN_PROGRESS instead
-            return {"step": "RECONCILE_PREPARATION"}
-
         if state == "RETRY_ACCEPTED":
             view = self._view(projection, recovery["operation_id"])
             if view is None:
@@ -1271,12 +1190,6 @@ class RecoveryCoordinator:
                         "requires_human": True,
                     }
                 return {"step": "REARM_RETRY"}
-            if op_micro_status in _PRE_EXECUTION:
-                return {
-                    "stop": RECOVERY_BLOCKED,
-                    "reason": self._not_executed_reason(view, "RETRY"),
-                    "requires_human": True,
-                }
             return {
                 "stop": RECOVERY_BLOCKED,
                 "reason": (
@@ -1286,19 +1199,6 @@ class RecoveryCoordinator:
                 "requires_human": True,
             }
 
-        if state in {"ADOPT_ACCEPTED", "ROLLBACK_ACCEPTED"} and focus is not None and (
-            focus["microtask_status"] in _PRE_EXECUTION
-        ):
-            # Repair #4A: an ADOPT / ROLLBACK of an operation whose microtask has
-            # never been ACTIVE cannot be settled now (no DONE without
-            # execution; RC-6 never rolls back a stage that never executed)
-            # but stays completable: an explicit manual boundary, not a step
-            # that fails closed forever
-            return {
-                "stop": MANUAL_DECISION_REQUIRED,
-                "reason": self._not_executed_reason(focus, state.split("_")[0]),
-                "requires_human": True,
-            }
         if state == "ADOPT_ACCEPTED":
             return {"step": "SETTLE_ADOPT"}
         if state == "ABORT_ACCEPTED":
@@ -1471,12 +1371,6 @@ class RecoveryCoordinator:
                 "requires_human": True,
             }
         return {"stop": NO_ACTION_REQUIRED, "reason": projection["next_safe_action"]}
-
-    @staticmethod
-    def _not_executed_reason(view: dict[str, Any], action: str) -> str:
-        return pre_execution_next_action(
-            view["operation_id"], view["microtask_id"], view["microtask_status"], action
-        )
 
     @staticmethod
     def _result(

@@ -1,0 +1,6 @@
+Y1 ADOPT settlement vs concurrent late ROLLBACK | OK | 12 rounds, outcomes {('ACTION_DECISION_MISMATCH', 'ADOPT', 'READY_FOR_VERIFICATION'): 9, ('RECOVERY_ALREADY_SETTLED', 'ADOPT', 'READY_FOR_VERIFICATION'): 3}
+Y2 two concurrent recovers after a W2 crash | OK | outs=[['NO_ACTION_REQUIRED', ['PREPARATION_COMPLETED']], ['NO_ACTION_REQUIRED', ['NOT_INTERRUPTED']]] status=BACKUP_VERIFIED reconcile_events=1
+Y2 two concurrent recovers after a W1 crash | OK | outs=[['NO_ACTION_REQUIRED', ['NOT_INTERRUPTED']], ['NO_ACTION_REQUIRED', ['PREPARATION_DISCARDED']]] status=BLOCKED_PREPARE reconcile_events=1
+Y3 legacy accepted ROLLBACK over a ROLLBACK settlement | OK | RC-4 prepare REJECTED/RECOVERY_ALREADY_SETTLED; recover=['MANUAL_DECISION_REQUIRED', 'MANUAL_DECISION_REQUIRED'] restored 2->2 a=b'after\n'
+Y4 recover never touches a live preparation | OK | 12 recovers -> {'RECOVERY_IN_PROGRESS'}; after release: BACKUP_VERIFIED
+ALL OK

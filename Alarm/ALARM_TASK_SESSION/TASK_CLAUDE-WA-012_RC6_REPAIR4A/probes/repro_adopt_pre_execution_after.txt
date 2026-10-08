@@ -1,0 +1,9 @@
+BACKUP_VERIFIED ACCEPTED/BASIS_FRESH_ACTION_ALLOWED (decision ADOPT_CURRENT_STATE) -> MANUAL_DECISION_REQUIRED [] | again MANUAL_DECISION_REQUIRED [] | micro BACKUP_VERIFIED
+   reason: accepted ADOPT of operation op_1 cannot be completed while its microtask m1 is BACKUP_VERIFIED: the microtask has never been ACTIVE, so no operation of it can have had a server-authorized effect. Eith
+   after activation: READY_FOR_VERIFICATION ['SETTLE_ADOPT'] micro DONE op VERIFIED
+READY ACCEPTED/BASIS_FRESH_ACTION_ALLOWED (decision ADOPT_CURRENT_STATE) -> MANUAL_DECISION_REQUIRED [] | again MANUAL_DECISION_REQUIRED [] | micro READY
+   reason: accepted ADOPT of operation op_1 cannot be completed while its microtask m1 is READY: the microtask has never been ACTIVE, so no operation of it can have had a server-authorized effect. Either activat
+   after activation: READY_FOR_VERIFICATION ['SETTLE_ADOPT'] micro DONE op VERIFIED
+W2 ACCEPTED/BASIS_FRESH_ACTION_ALLOWED (decision ADOPT_CURRENT_STATE) -> MANUAL_DECISION_REQUIRED ['RECONCILE_PREPARATION'] | again MANUAL_DECISION_REQUIRED [] | micro BACKUP_VERIFIED
+   reason: accepted ADOPT of operation op_1 cannot be completed while its microtask m1 is BACKUP_VERIFIED: the microtask has never been ACTIVE, so no operation of it can have had a server-authorized effect. Eith
+   after activation: READY_FOR_VERIFICATION ['SETTLE_ADOPT'] micro DONE op VERIFIED

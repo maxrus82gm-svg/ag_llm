@@ -45,35 +45,6 @@ _FACTS_UNREADABLE = {
 }
 
 
-# Repair #4A: lifecycle statuses of a microtask that has never been ACTIVE (the
-# state machine reaches them only before the first ACTIVE): none of its
-# operations can have had mutation authority (execution_refusal)
-PRE_EXECUTION_STATUSES = frozenset({
-    MicrotaskStatus.PLANNED.value,
-    MicrotaskStatus.PREPARING.value,
-    MicrotaskStatus.BACKUP_VERIFIED.value,
-    MicrotaskStatus.READY.value,
-    MicrotaskStatus.BLOCKED_PREPARE.value,
-})
-
-
-def pre_execution_next_action(operation_id: str, microtask_id: str, microtask_status: str, action: str) -> str:
-    """Manual boundary of an accepted ADOPT / ROLLBACK / RETRY whose microtask never executed.
-
-    It cannot be completed now (no DONE without execution, no rollback of a
-    stage that never ran, no re-arm before activation) but stays completable:
-    activate the microtask normally, or close the operation with ABORT (which
-    RC-6 settles to RECOVERY_REQUIRED).
-    """
-    return (
-        f"accepted {action} of operation {operation_id} cannot be completed while its microtask "
-        f"{microtask_id} is {microtask_status}: the microtask has never been ACTIVE, so no operation of it "
-        "can have had a server-authorized effect. Either activate the microtask through the state machine "
-        f"(then recover completes the accepted {action}) or record ABORT for the operation (settled to the "
-        "RECOVERY_REQUIRED boundary)"
-    )
-
-
 def settlement_lifecycle_target(actions: Iterable[str]) -> MicrotaskStatus | None:
     """RC-6 Repair #2 (R2): one recovery disposition per microtask.
 
