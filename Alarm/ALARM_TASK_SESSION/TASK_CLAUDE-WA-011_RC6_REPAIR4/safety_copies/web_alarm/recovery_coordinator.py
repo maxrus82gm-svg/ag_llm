@@ -90,8 +90,6 @@ _TO_RECOVERY_REQUIRED_FROM = {
 _ROLLBACK_RESTORE_PHASES = {PRESERVED, AUTHORIZED, APPLYING}
 # RC-4 step outcomes that are terminal for the current recover invocation
 _STEP_BLOCKED_RESULTS = {BLOCKED, REJECTED}
-# Repair #4: how long recover waits for a running restore-point preparation
-_PREPARE_LOCK_WAIT_SECONDS = 1.0
 
 
 def _digest(value: Any) -> str:
@@ -1000,34 +998,6 @@ class RecoveryCoordinator:
             "physical_mutation_performed": False,
         }
 
-    def _reconcile_preparation(self, task_id: str, projection: dict[str, Any]) -> dict[str, Any]:
-        """Repair #4: finish or discard a restore-point preparation that died.
-
-        ManifestSnapshotStore decides from persistent evidence under the
-        preparation lock (W2 published -> re-verified -> BACKUP_VERIFIED or
-        fail-closed BLOCKED_PREPARE; W1 unpublished -> BLOCKED_PREPARE, to be
-        prepared again). The microtask is never ACTIVE here, so the execution
-        gate refuses normal mutation throughout. The outcome is recorded as an
-        event so a discarded capture is never silent.
-        """
-        microtask_id = projection["position"]["current_microtask_id"]
-        if microtask_id is None:
-            raise RecoveryCoordinatorError("preparation reconcile has no current microtask")
-        try:
-            outcome = self.projection.manifests.reconcile_interrupted_preparation(
-                task_id, microtask_id, lock_timeout=_PREPARE_LOCK_WAIT_SECONDS
-            )
-        except ManifestStoreError as exc:
-            raise RecoveryCoordinatorError(f"preparation reconcile failed: {exc}") from exc
-        if outcome["result"] in {"PREPARATION_COMPLETED", "PREPARATION_DISCARDED", "PREPARATION_BLOCKED"}:
-            self.operations.events.append_event(
-                task_id,
-                "RESTORE_POINT_PREPARATION_RECONCILED",
-                microtask_id=microtask_id,
-                payload=dict(outcome),
-            )
-        return outcome
-
     def _settle_verified_rollback(
         self,
         task_id: str,
@@ -1092,8 +1062,6 @@ class RecoveryCoordinator:
             return self._finish_settlement(task_id, projection)
         if action == "REARM_RETRY":
             return self._rearm_retry(task_id, projection)
-        if action == "RECONCILE_PREPARATION":
-            return self._reconcile_preparation(task_id, projection)
         if action == "PREPARE_ROLLBACK":
             view = self._view(projection, recovery["operation_id"])
             if view is None:
@@ -1350,21 +1318,6 @@ class RecoveryCoordinator:
         if status == MicrotaskStatus.DONE.value:
             return {"stop": READY_FOR_VERIFICATION, "reason": projection["next_safe_action"]}
         if status in _RECOVERY_MICRO:
-            return {
-                "stop": MANUAL_DECISION_REQUIRED,
-                "reason": projection["next_safe_action"],
-                "requires_human": True,
-            }
-        if status == MicrotaskStatus.PREPARING.value:
-            # Repair #4: a running preparation holds its lock; an interrupted one
-            # is reconciled from persistent evidence
-            return {"step": "RECONCILE_PREPARATION"}
-        if (
-            status == MicrotaskStatus.BLOCKED_PREPARE.value
-            and projection["restore_point"]["status"] != "NOT_PREPARED"
-        ):
-            # a blocked restore point is kept as evidence: prepare is refused
-            # while it exists, only a manual repair can continue
             return {
                 "stop": MANUAL_DECISION_REQUIRED,
                 "reason": projection["next_safe_action"],
@@ -1629,18 +1582,6 @@ class RecoveryCoordinator:
             )
             if isinstance(outcome, dict) and outcome.get("result") in _STEP_BLOCKED_RESULTS:
                 refused[step_key] = outcome
-            if isinstance(outcome, dict) and outcome.get("result") == "PREPARATION_IN_PROGRESS":
-                return self._result(
-                    initial,
-                    current,
-                    state=RECOVERY_IN_PROGRESS,
-                    reason=(
-                        f"restore-point preparation of {outcome.get('microtask_id')} is running in another "
-                        "process (its preparation lock is held); nothing was changed: call recover again "
-                        "after it finishes"
-                    ),
-                    steps=steps,
-                )
 
         return self._result(
             initial,

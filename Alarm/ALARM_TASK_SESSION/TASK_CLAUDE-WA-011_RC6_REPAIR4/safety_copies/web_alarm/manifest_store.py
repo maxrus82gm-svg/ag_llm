@@ -20,7 +20,6 @@ from .models import (
     record_to_dict,
     utc_now_iso,
 )
-from .store_lock import DEFAULT_LOCK_TIMEOUT_SECONDS, InterProcessLock, StoreLockTimeout
 from .task_store import TaskStore, TaskStoreError
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
 
@@ -299,32 +298,6 @@ class ManifestSnapshotStore:
         except ManifestStoreError:
             pass
 
-    # --- preparation (Repair #4: restart-safe) ------------------------------------------
-
-    STAGE_PREFIX = ".restore."
-
-    def _prepare_lock(self, task_id: str, microtask_id: str, *, timeout: float) -> InterProcessLock:
-        """Held for a whole preparation; the OS releases it when its process dies.
-
-        While it is free, a PREPARING microtask is an interrupted preparation,
-        never a running one (Repair #4).
-        """
-        task_id = _safe_component("task_id", task_id)
-        microtask_id = _safe_component("microtask_id", microtask_id)
-        return InterProcessLock(
-            self.task_store.storage_root / "locks" / "prepare" / task_id / f"{microtask_id}.lock",
-            timeout=timeout,
-        )
-
-    def _discard_stages(self, work_dir: Path) -> int:
-        """Remove unpublished stage directories (never authoritative); the caller holds the lock."""
-        discarded = 0
-        for stage in sorted(work_dir.glob(self.STAGE_PREFIX + "*")):
-            if stage.is_dir():
-                shutil.rmtree(stage, ignore_errors=True)
-                discarded += 0 if stage.exists() else 1
-        return discarded
-
     def prepare_microtask(
         self,
         task_id: str,
@@ -332,36 +305,6 @@ class ManifestSnapshotStore:
         targets: Iterable[tuple[str, str]],
         *,
         expected_status: MicrotaskStatus | None = None,
-        lock_timeout: float = DEFAULT_LOCK_TIMEOUT_SECONDS,
-    ) -> ManifestRecord:
-        """Capture, verify and publish the restore point of one microtask.
-
-        Repair #4: the whole preparation holds the microtask's preparation lock.
-        Persistent evidence of a preparation that died is unambiguous:
-        - W1: PREPARING without a published ``restore_point`` (at most stage
-          directories, which are never authoritative);
-        - W2: PREPARING with a published ``restore_point``.
-        ``reconcile_interrupted_preparation`` resolves both after a restart.
-        Once the restore point is published it is the authority: a later
-        failure never blocks the microtask blindly; it stays PREPARING (W2).
-        """
-        try:
-            lock = self._prepare_lock(task_id, microtask_id, timeout=lock_timeout)
-            lock.acquire()
-        except StoreLockTimeout as exc:
-            raise ManifestStoreError(f"restore-point preparation is already running: {exc}") from exc
-        try:
-            return self._prepare_locked(task_id, microtask_id, list(targets), expected_status=expected_status)
-        finally:
-            lock.release()
-
-    def _prepare_locked(
-        self,
-        task_id: str,
-        microtask_id: str,
-        target_specs: list[tuple[str, str]],
-        *,
-        expected_status: MicrotaskStatus | None,
     ) -> ManifestRecord:
         work_dir = self._work_dir(task_id, microtask_id)
         final_dir = work_dir / self.RESTORE_DIR
@@ -369,12 +312,12 @@ class ManifestSnapshotStore:
             raise ManifestStoreError(
                 "restore point already exists; original pre-state will not be overwritten"
             )
+        target_specs = list(targets)
         if not target_specs:
             raise ManifestStoreError("manifest must contain at least one target")
 
         workspace_root = self._workspace_root(task_id)
-        self._discard_stages(work_dir)  # leftovers of an attempt that died before publication
-        stage_dir = work_dir / f"{self.STAGE_PREFIX}{new_id('stage')}"
+        stage_dir = work_dir / f".restore.{new_id('stage')}"
         (stage_dir / "manifest_entries").mkdir(parents=True, exist_ok=False)
         (stage_dir / "snapshots").mkdir(parents=True, exist_ok=False)
         manifest = ManifestRecord(
@@ -398,7 +341,6 @@ class ManifestSnapshotStore:
                 shutil.rmtree(stage_dir, ignore_errors=True)
                 raise ManifestStoreError(f"prepare refused: {exc}") from exc
         seen_paths: set[str] = set()
-        published = False
 
         try:
             for source_path, expected_change in target_specs:
@@ -479,117 +421,22 @@ class ManifestSnapshotStore:
             manifest.updated_at = utc_now_iso()
             self._write_manifest(stage_dir, manifest)
             os.replace(stage_dir, final_dir)
-            published = True
-            if expected_status is None:
-                self.task_store.set_microtask_status(
-                    task_id, microtask_id, MicrotaskStatus.BACKUP_VERIFIED
-                )
-            else:
-                self.task_store.compare_and_set_microtask_status(
-                    task_id, microtask_id, expected=MicrotaskStatus.PREPARING,
-                    status=MicrotaskStatus.BACKUP_VERIFIED,
-                )
+            self.task_store.set_microtask_status(
+                task_id, microtask_id, MicrotaskStatus.BACKUP_VERIFIED
+            )
             self.verify_restore_point(task_id, microtask_id)
             return self.open_manifest(task_id, microtask_id)
         except Exception as exc:
-            if not published:
-                shutil.rmtree(stage_dir, ignore_errors=True)
-                self._best_effort_microtask_status(
-                    task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE,
-                    expected=_PREPARE_FROM | {MicrotaskStatus.PREPARING},
-                )
-            # published: the restore point is the authority now. A failed status
-            # write leaves PREPARING (W2, reconciled after re-verification); a
-            # failed verification of a just written BACKUP_VERIFIED blocks it the
-            # usual way (manifest + microtask, under the mutation lock).
-            elif self.task_store.open_microtask(task_id, microtask_id).status is MicrotaskStatus.BACKUP_VERIFIED:
-                self._block_restore_point(
-                    task_id, microtask_id, final_dir, expected_status=MicrotaskStatus.BACKUP_VERIFIED
-                )
+            shutil.rmtree(stage_dir, ignore_errors=True)
+            self._best_effort_microtask_status(
+                task_id, microtask_id, MicrotaskStatus.BLOCKED_PREPARE,
+                expected=_PREPARE_FROM | {MicrotaskStatus.PREPARING},
+            )
             if isinstance(exc, ManifestStoreError):
                 raise
             raise ManifestStoreError(
                 f"cannot prepare restore point for {task_id}/{microtask_id}"
             ) from exc
-
-    def reconcile_interrupted_preparation(
-        self,
-        task_id: str,
-        microtask_id: str,
-        *,
-        lock_timeout: float = 1.0,
-    ) -> dict:
-        """Repair #4: deterministic restart recovery of a preparation that died.
-
-        Decided from persistent evidence only, under the preparation lock (a
-        running preparation is never touched: PREPARATION_IN_PROGRESS):
-        - W2, a published restore point: re-verified (pure); intact ->
-          BACKUP_VERIFIED (the captured original pre-state is kept, never
-          recaptured); corrupt or unreadable -> fail-closed BLOCKED_PREPARE,
-          the restore point stays as evidence;
-        - W1, nothing published: the unpublished stage directories are
-          discarded and the microtask becomes BLOCKED_PREPARE, from which the
-          state machine prepares again (the microtask was never ACTIVE, so no
-          normal mutation could have changed its pre-state through the server).
-        Idempotent: a microtask that is no longer PREPARING is left as it is.
-        """
-        try:
-            lock = self._prepare_lock(task_id, microtask_id, timeout=lock_timeout)
-            lock.acquire()
-        except StoreLockTimeout:
-            return {
-                "result": "PREPARATION_IN_PROGRESS",
-                "microtask_id": microtask_id,
-                "physical_mutation_performed": False,
-            }
-        try:
-            micro = self.task_store.open_microtask(task_id, microtask_id)
-            outcome = {"microtask_id": microtask_id, "physical_mutation_performed": False}
-            if micro.status is not MicrotaskStatus.PREPARING:
-                return dict(outcome, result="NOT_INTERRUPTED", microtask_status=micro.status.value)
-            work_dir = self._work_dir(task_id, microtask_id)
-            final_dir = work_dir / self.RESTORE_DIR
-            discarded = self._discard_stages(work_dir)
-            if final_dir.exists():
-                try:
-                    manifest = self.verify_restore_point(task_id, microtask_id)
-                except ManifestStoreError as exc:
-                    self._block_restore_point(
-                        task_id, microtask_id, final_dir, expected_status=MicrotaskStatus.PREPARING
-                    )
-                    return dict(
-                        outcome,
-                        result="PREPARATION_BLOCKED",
-                        evidence="PUBLISHED_RESTORE_POINT_INVALID",
-                        reason=str(exc),
-                        discarded_stages=discarded,
-                        microtask_status=self.task_store.open_microtask(task_id, microtask_id).status.value,
-                    )
-                self.task_store.compare_and_set_microtask_status(
-                    task_id, microtask_id, expected=MicrotaskStatus.PREPARING,
-                    status=MicrotaskStatus.BACKUP_VERIFIED,
-                )
-                return dict(
-                    outcome,
-                    result="PREPARATION_COMPLETED",
-                    evidence="PUBLISHED_RESTORE_POINT",
-                    manifest_id=manifest.manifest_id,
-                    discarded_stages=discarded,
-                    microtask_status=MicrotaskStatus.BACKUP_VERIFIED.value,
-                )
-            self.task_store.compare_and_set_microtask_status(
-                task_id, microtask_id, expected=MicrotaskStatus.PREPARING,
-                status=MicrotaskStatus.BLOCKED_PREPARE,
-            )
-            return dict(
-                outcome,
-                result="PREPARATION_DISCARDED",
-                evidence="NO_PUBLISHED_RESTORE_POINT",
-                discarded_stages=discarded,
-                microtask_status=MicrotaskStatus.BLOCKED_PREPARE.value,
-            )
-        finally:
-            lock.release()
 
     def _load_paired_records(
         self, task_id: str, microtask_id: str, *, active_only: bool = False

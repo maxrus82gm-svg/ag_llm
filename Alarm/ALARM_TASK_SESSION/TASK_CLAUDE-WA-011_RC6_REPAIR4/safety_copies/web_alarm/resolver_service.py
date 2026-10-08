@@ -54,24 +54,6 @@ _REQUIRED_DECISION = {
     ResolutionAction.ABORT: None,
 }
 
-# RC-6 Repair #4: the one settlement-supersession policy. An operation keeps a
-# single durable recovery settlement (immutable history); after it, only the
-# actions RC-6 can still carry out for that operation may become authority:
-# - ABORT after ADOPT / ROLLBACK: the late ABORT of Repair #3 (lifecycle-only);
-# - RETRY after ROLLBACK: re-arm of the rolled-back operation (no new settlement).
-# A second ADOPT or ROLLBACK (a second settlement, a second physical restore)
-# and RETRY over an adopted or aborted operation are refused before acceptance.
-SETTLEMENT_ADMITS = {
-    "ADOPT": frozenset({"ABORT"}),
-    "ABORT": frozenset(),
-    "ROLLBACK": frozenset({"ABORT", "RETRY"}),
-}
-
-
-def settlement_admits(settlement_action: str, action: str) -> bool:
-    """May ``action`` follow a recovery settlement ``settlement_action`` of the same operation?"""
-    return action in SETTLEMENT_ADMITS.get(settlement_action, frozenset())
-
 
 class ResolverError(RuntimeError):
     """Authoritative state needed by the Resolver cannot be read safely."""
@@ -163,7 +145,6 @@ class ResolverService:
         aborted_by: ResolutionRecord | None,
         task_id: str,
         operation_id: str,
-        settlement: dict[str, Any] | None = None,
     ) -> tuple[ResolutionResult, str, str, bool | None, str]:
         if aborted_by is not None:
             code = (
@@ -177,23 +158,6 @@ class ResolverService:
                 f"recovery of this operation was aborted by {aborted_by.resolution_id}",
                 None,
                 "recovery was aborted; manual review or a new operation is required",
-            )
-        if settlement is not None and not settlement_admits(settlement["action"], action.value):
-            allowed = sorted(SETTLEMENT_ADMITS.get(settlement["action"], ()))
-            return (
-                ResolutionResult.REJECTED,
-                "RECOVERY_ALREADY_SETTLED",
-                f"recovery of this operation is already settled by {settlement['action']} via "
-                f"{settlement['resolution_id']}; a later {action.value} cannot be carried out for it "
-                f"(admitted after {settlement['action']}: {', '.join(allowed) or 'nothing'})",
-                None,
-                f"the {settlement['action']} settlement of operation {operation_id} stays its recovery "
-                "outcome; nothing changes. "
-                + (
-                    "To stop its microtask instead, record ABORT"
-                    if "ABORT" in allowed
-                    else "Continue through the microtask lifecycle"
-                ),
             )
         change = self._basis_change(requested, basis)
         if change is not None:
@@ -340,13 +304,8 @@ class ResolverService:
             )
 
             basis, decision = self.current_basis(task_id, microtask_id, operation_id)
-            try:
-                settlement = self.operations.get(task_id, operation_id).recovery_settlement
-            except OperationStoreError as exc:
-                raise ResolverError(f"operation state unavailable: {exc}") from exc
             result, code, reason, payload_verified, next_action = self._evaluate(
-                action, requested, basis, decision, aborted_by, task_id, operation_id,
-                settlement=settlement,
+                action, requested, basis, decision, aborted_by, task_id, operation_id
             )
             record = ResolutionRecord(
                 resolution_id=chosen_id,
@@ -426,28 +385,14 @@ class ResolverService:
         except ResolutionStoreError as exc:
             raise ResolverError(str(exc)) from exc
         current: dict[str, Any] | None = None
-        settlement: dict[str, Any] | None = None
         if resolutions:
             try:
                 current, _ = self.current_basis(task_id, microtask_id, operation_id)
             except ResolverError:
                 current = None
-            try:
-                settlement = self.operations.get(task_id, operation_id).recovery_settlement
-            except OperationStoreError:
-                settlement = None
-        # Repair #4: after a settlement only the actions it admits can be authority
-        settled_at_index = next(
-            (
-                index
-                for index, item in enumerate(resolutions)
-                if settlement is not None and item.resolution_id == settlement["resolution_id"]
-            ),
-            None,
-        )
         accepted: list[str] = []
         actions: list[dict[str, Any]] = []
-        for index, item in enumerate(resolutions):
+        for item in resolutions:
             change = (
                 "BASIS_UNAVAILABLE"
                 if current is None
@@ -460,12 +405,7 @@ class ResolverService:
                 )
             )
             fresh = change is None
-            admissible = (
-                settled_at_index is None
-                or index <= settled_at_index
-                or settlement_admits(settlement["action"], item.action.value)
-            )
-            authority = admissible and item.result is ResolutionResult.ACCEPTED and (
+            authority = item.result is ResolutionResult.ACCEPTED and (
                 fresh or item.action is ResolutionAction.ABORT
             )
             if authority and fresh and item.action is ResolutionAction.ADOPT:
@@ -493,31 +433,13 @@ class ResolverService:
             "actually_retried": [],
             "actually_rolled_back": [],
             "resolver_actions": actions,
-            "next_safe_action": self._authoritative_next_action(
-                resolutions, actions, settled_at_index=settled_at_index, settlement=settlement
-            ),
+            "next_safe_action": self._authoritative_next_action(resolutions, actions),
         }
 
     @staticmethod
-    def _stale_advice(record: ResolutionRecord, code: str) -> dict[str, str]:
-        return {
-            "resolution_id": record.resolution_id,
-            "next_safe_action": (
-                f"resolution {record.resolution_id} ({record.action.value} / "
-                f"{record.result.value}) is not authority: its basis is stale "
-                f"({code}); run a new reconciliation and resolve on its fresh "
-                "evidence_fingerprint and operation_revision"
-            ),
-        }
-
-    @classmethod
     def _authoritative_next_action(
-        cls,
         resolutions: list[ResolutionRecord],
         actions: list[dict[str, Any]],
-        *,
-        settled_at_index: int | None = None,
-        settlement: dict[str, Any] | None = None,
     ) -> dict[str, str] | None:
         """NEXT SAFE ACTION implied by persisted Resolver state, or None.
 
@@ -525,13 +447,6 @@ class ResolverService:
         resolution (its persisted semantics) > latest outcome: a fresh rejection
         keeps its persisted advice, anything stale demands a new reconciliation.
         Without resolutions the deterministic reconciliation advice stays.
-
-        Repair #4: once the operation has a recovery settlement, the authority
-        is an accepted ABORT, else the latest accepted resolution among the
-        settlement's own one and later ones the settlement admits
-        (``settlement_admits``), fresh first. A later rejected or stale outcome
-        and an action the settlement does not admit (legacy data) are history
-        only: they never become recovery attention over a settled operation.
         """
         pairs = list(zip(resolutions, actions))
         if not pairs:
@@ -545,22 +460,6 @@ class ResolverService:
             ),
             None,
         )
-        if chosen is None and settled_at_index is not None:
-            candidates = [
-                (record, action)
-                for index, (record, action) in enumerate(pairs)
-                if record.result is ResolutionResult.ACCEPTED
-                and (
-                    index == settled_at_index
-                    or (index > settled_at_index and settlement_admits(settlement["action"], record.action.value))
-                )
-            ]
-            fresh = [pair for pair in candidates if pair[1]["fresh"]]
-            if candidates:  # the settlement's own resolution is accepted; else fall back below
-                record, action = fresh[-1] if fresh else candidates[-1]
-                if action["fresh"]:
-                    return {"resolution_id": record.resolution_id, "next_safe_action": record.next_safe_action}
-                return cls._stale_advice(record, action["freshness_code"])
         if chosen is None:
             accepted = [
                 record
@@ -579,7 +478,15 @@ class ResolverService:
                     if record.result is ResolutionResult.STALE
                     else action["freshness_code"]
                 )
-                return cls._stale_advice(record, code)
+                return {
+                    "resolution_id": record.resolution_id,
+                    "next_safe_action": (
+                        f"resolution {record.resolution_id} ({record.action.value} / "
+                        f"{record.result.value}) is not authority: its basis is stale "
+                        f"({code}); run a new reconciliation and resolve on its fresh "
+                        "evidence_fingerprint and operation_revision"
+                    ),
+                }
         return {
             "resolution_id": chosen.resolution_id,
             "next_safe_action": chosen.next_safe_action,

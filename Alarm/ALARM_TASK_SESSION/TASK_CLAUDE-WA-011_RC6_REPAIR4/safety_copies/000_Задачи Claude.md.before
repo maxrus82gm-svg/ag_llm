@@ -28,16 +28,6 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
-
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
-
-**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #4; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — RC-6 Repair #3, Repair #2 (+ #2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
-
-```text
 TASK: CLAUDE-WA-011 / RC-6 — REPAIR #4 / FINAL RECOVERY LIVENESS CLOSEOUT
 
 STATUS: APPROVED FOR EXECUTION
@@ -330,9 +320,10 @@ Permanent project closeout и перевод RC-6 в DONE/VERIFIED выполн�
 - WA4-E не начат.
 
 После этого остановиться и ждать independent verification.
-```
 
-### Предыдущая постановка — CLAUDE-WA-010 / RC-6 Repair #3 (сохранена)
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+---
 
 **Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #3; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты), вместе с вводными словами координатора. Предыдущие постановки — RC-6 Repair #2 (+ #2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
 
@@ -4168,54 +4159,6 @@ RC-6 НЕ НАЧИНАТЬ.
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
 ---
-
-**TASK:** CLAUDE-WA-011 / RC-6 — REPAIR #4 / FINAL RECOVERY LIVENESS CLOSEOUT (исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Closure; PRIMARY `23`, SECONDARY `24`.
-
-- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись (по постановке).
-- **Baseline:** commit 163 = `ce5e1799ab4a08157c779680711bebaf29d686dd`; полный набор на baseline — 511 OK, skip 1.
-- **Воспроизведение на 163** (`probes/repro_blockers.py`):
-  - **A:** краш реального процесса в W1 (stage, не опубликован) и W2 (опубликован, без BACKUP_VERIFIED) → PREPARING навсегда: `recover` NO_ACTION, prepare отклонён, NEXT неисполним;
-  - **B:** ADOPT → ADOPT и ROLLBACK → ADOPT приняты → вечный FAIL_CLOSED; ROLLBACK → ROLLBACK принят → **второй физический откат** + вечный FAIL_CLOSED; отклонённое после settlement решение → вечный MANUAL (`*_REJECTED`).
-- **Дизайн A — блокировка подготовки + reconcile из evidence:**
-  - `prepare_microtask` держит блокировку подготовки microtask на всю подготовку (ОС снимает её при смерти процесса) и отбрасывает старые неопубликованные stage;
-  - после публикации сбой не блокирует microtask вслепую — она остаётся W2;
-  - новый шаг RC-6 `RECONCILE_PREPARATION` (`ManifestSnapshotStore.reconcile_interrupted_preparation`): W2 → перепроверка → BACKUP_VERIFIED без переснятия (испорчен — fail-closed BLOCKED_PREPARE, evidence сохраняется); W1 → stage отбрасывается → BLOCKED_PREPARE → штатная повторная подготовка;
-  - идущая подготовка не трогается (RECOVERY_IN_PROGRESS); итог пишется событием;
-  - NEXT для PREPARING и BLOCKED_PREPARE указывает реально доступное действие;
-  - граф state machine и предусловия prepare не менялись.
-- **Дизайн B — направление A (отказ до ACCEPTED):**
-  - одна таблица `resolver_service.SETTLEMENT_ADMITS`: ADOPT → {ABORT}, ABORT → {}, ROLLBACK → {ABORT, RETRY};
-  - Resolver отклоняет остальное (`RECOVERY_ALREADY_SETTLED`) под TASK-lock;
-  - authority в `report_facts` (общая для Projection, RC-6 и гейта) учитывает settlement: отклонённые и устаревшие решения, недопустимые легаси-ACCEPTED — только история;
-  - RC-4 `_authority` подчиняется той же политике — второго физического отката нет даже через прямой API;
-  - поздний ABORT (Repair #3), RETRY после отката, неизменность settlement, VERIFIED и R1 сохранены.
-- **Файлы:**
-  - изменены `manifest_store.py`, `recovery_coordinator.py`, `state_machine.py`, `resolver_service.py`, `rollback_service.py`;
-  - новый `test_web_alarm_recovery_coordinator_repair4.py` (20 тестов);
-  - существующие тесты не менялись.
-- **Проверки:**
-  - Repair #4 — 20/20, на 163 падают 17 из 20;
-  - воспроизведение после — 14/14 закрыто;
-  - фокусно 22 модуля — 342/342;
-  - полный набор (45 модулей) — **531 OK, skip 1**, дважды;
-  - стресс-повторы — 24/24;
-  - adversarial Repair #4 — 5/5: гонка settlement и позднего ROLLBACK на реальных процессах; два конкурентных recover; легаси-ROLLBACK у RC-4; recover при живой подготовке;
-  - adversarial Repair #3 — 4/4, #2A — 5/5, Repair #2 — 7 OK (a10 — как раньше);
-  - исходные пробы RC-6 — exit 0 / 0;
-  - compileall и `git diff --check` — OK.
-- **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`).
-- **Findings / proposals:**
-  - W1 переснимает pre-state после отбрасывания неопубликованного stage; изменения вне сервера неотличимы от обычной задержки. PROPOSAL: сохранять отброшенный stage как forensic;
-  - **FINDING для WA4-E:** жизненный цикл повторно исполненной операции после RETRY-после-отката — поздний ADOPT поверх ROLLBACK settlement по политике отклоняется; нужен дизайн (история settlement / settlement исполнения);
-  - испорченный сохранённый restore point (BLOCKED_PREPARE) — только ручной ремонт, нужен отдельный инструмент (решение пользователя);
-  - legacy CLI WA-1 — WA4-R.
-- **Documentation Impact:** ARCHITECTURE IMPACT YES (владелец `23`: PREPARING восстанавливается через recover; политика settlement). Синхронизация `23` / `24` / `25` / `05` / `06` / `001` — verifier после PASS.
-- **Рекомендация:** RC-6 готов к независимой проверке. NEXT — commit / push пользователем → проверка ChatGPT → только после PASS RC-6 = DONE / VERIFIED → WA4-E.
-- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-011_RC6_REPAIR4/rc6_repair4_report.md`.
-
----
-
-### Предыдущий результат — CLAUDE-WA-010 / RC-6 Repair #3 (сохранён: независимая проверка ChatGPT после commit 163 подтвердила целевые исправления, но RC-6 PASS не получил; в `001` не переносился)
 
 **TASK:** CLAUDE-WA-010 / RC-6 — REPAIR #3 / FINAL SAFETY CLOSURE (исполнитель Claude; независимый verifier — ChatGPT по GitHub).
 

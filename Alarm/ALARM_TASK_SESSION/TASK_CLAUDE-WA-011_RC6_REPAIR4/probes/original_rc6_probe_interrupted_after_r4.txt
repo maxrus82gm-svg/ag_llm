@@ -1,0 +1,103 @@
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 91, in wrap
+    fn(world)
+    ~~^^^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 155, in p5
+    w.verify("m1")
+    ~~~~~~~~^^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 56, in verify
+    self.machine.transition(TASK, mid, "VERIFIED", verification_evidence="ok")
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm.state_machine.TransitionRejected: DONE -> VERIFIED rejected: open recovery blocks VERIFIED (OPERATION_FATE_OPEN): operation op_1 is STARTED: its mutation fate is open; reconcile it and settle its recovery before the microtask is verified
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 91, in wrap
+    fn(world)
+    ~~^^^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 168, in p6
+    w.verify("m1")
+    ~~~~~~~~^^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-VERIFY\probes\rc6_probes.py", line 56, in verify
+    self.machine.transition(TASK, mid, "VERIFIED", verification_evidence="ok")
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+web_alarm.state_machine.TransitionRejected: DONE -> VERIFIED rejected: open recovery blocks VERIFIED (OPERATION_FATE_OPEN): operation op_1 is STARTED: its mutation fate is open; reconcile it and settle its recovery before the microtask is verified
+
+### P1 ADOPT settled -> microtask verified -> next microtask: does recover keep working?
+  recover#1: state=READY_FOR_VERIFICATION recovery=NORMAL steps=['SETTLE_ADOPT']
+  m1 = DONE
+  projection after m2 ACTIVE: authority= lifecycle | recovery= NORMAL | NEXT= perform scoped implementation for m2, then transition to DONE
+  recover#2 (m2 ACTIVE, expected READY_FOR_EXECUTION): state=READY_FOR_EXECUTION recovery=NORMAL steps=[]
+  m1 = VERIFIED m2 = ACTIVE
+
+### P2 restore point corrupted under an ACTIVE microtask: false READY?
+  restore point: NOT_VERIFIED
+  recover: state=FAIL_CLOSED recovery=PROJECTION_BLOCKED steps=[]
+
+### P3 RETRY accepted, then snapshot corrupted before re-arm: re-armed anyway?
+  recover: state=MANUAL_DECISION_REQUIRED recovery=RESOLUTION_STALE steps=[]
+  m1 = UNKNOWN_AFTER_DISCONNECT
+
+### P4 RETRY re-armed (READY), then a foreign TASK claims the primary target: replay still READY?
+  recover#1: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=['REARM_RETRY']
+  foreign acquire: ACQUIRED
+  recover#2 (foreign owner holds one.txt): state=RECOVERY_BLOCKED recovery=RETRY_ACCEPTED steps=[]
+     error=RecoveryCoordinatorBlocked reason=RETRY_READY blocked: recovery target is owned by another operation: one.txt -> task_foreign/op_f
+
+### P5 RETRY for an operation of a VERIFIED microtask while the next microtask is ACTIVE
+
+### P6 ABORT for an operation of a VERIFIED microtask: persisted half-settlement?
+
+### P7 ABORT settled: is there any lifecycle way forward for the microtask?
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['SETTLE_ABORT']
+  m1 = RECOVERY_REQUIRED | state-machine exits from RECOVERY_REQUIRED: []
+
+### P8 two coordinators decide SETTLE_ADOPT from the same projection (lost race)
+  fast: state=READY_FOR_VERIFICATION recovery=NORMAL steps=['SETTLE_ADOPT']
+  slow step on stale projection raised: RecoveryCoordinatorError ADOPT resolution is stale (OPERATION_REVISION_CHANGED)
+  op status: VERIFIED | m1 = DONE
+
+### P9 ROLLBACK settled, then a fresh RETRY: does recover re-arm?
+  recover#1: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['PREPARE_ROLLBACK', 'APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  one.txt restored: True | m1 = RECOVERY_REQUIRED
+  recover#2 after fresh RETRY: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED steps=['REARM_RETRY']
+  m1 = ACTIVE
+
+### P1b same as P1, carried to the end: closeout-eligible task vs recover
+  closeout eligible: True
+  recover (expected TASK_READY_TO_CLOSE): state=TASK_READY_TO_CLOSE recovery=NORMAL steps=[]
+
+### P14 rollback VERIFIED but claim release interrupted -> recover
+  session: VERIFIED released: False
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  released now: True | restores in events: 1
+
+### P18 public entry input validation (server / CLI)
+  server {'max_recovery_steps': 0} -> 400 invalid_field
+  server {'max_recovery_steps': True} -> 400 invalid_field
+  server {'max_recovery_steps': '3'} -> 400 invalid_field
+  server {'max_recovery_steps': 1000000000} -> 200 NO_ACTION_REQUIRED
+  cli task recover -> 0 {   "state": "NO_ACTION_REQUIRED",   "reason": "declare targets and prepare rest
+  server unknown task -> 409 recovery_coordinator_error
+
+### crash after first restore, before the second target started
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 18 | session: APPLYING ['NOOP', 'RESTORED', 'PRESERVED']
+  projection recovery: ROLLBACK_APPLYING
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  session after recover: VERIFIED ['NOOP', 'RESTORED', 'RESTORED'] | a.txt restored: True | b.txt restored: True | restore events: 2
+
+### crash inside the second write (T_APPLYING, write landed)
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 17 | session: APPLYING ['NOOP', 'RESTORED', 'APPLYING']
+  projection recovery: ROLLBACK_APPLYING
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  session after recover: VERIFIED ['NOOP', 'RESTORED', 'RESTORED'] | a.txt restored: True | b.txt restored: True | restore events: 2
+
+### crash inside the second write (T_APPLYING, write not landed)
+  decision before rollback: ROLLBACK_CURRENT_MICROTASK (PARTIAL_KNOWN_STATE)
+  crash exit: 17 | session: APPLYING ['RESTORED', 'APPLYING', 'PRESERVED']
+  projection recovery: ROLLBACK_APPLYING
+  RC-4 itself could resume? -> yes (apply re-proves modulo own receipts)
+  recover: state=MANUAL_DECISION_REQUIRED recovery=NORMAL steps=['APPLY_ROLLBACK', 'SETTLE_ROLLBACK']
+  session after recover: VERIFIED ['RESTORED', 'RESTORED', 'NOOP'] | a.txt restored: True | b.txt restored: True | restore events: 2

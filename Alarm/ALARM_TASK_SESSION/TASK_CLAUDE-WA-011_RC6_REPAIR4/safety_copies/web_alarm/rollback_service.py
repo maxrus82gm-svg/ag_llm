@@ -51,7 +51,7 @@ from .operation_contract import LEGACY_CONTRACT_VERSION
 from .operation_store import OperationStore, OperationStoreError
 from .payload_store import PayloadIntegrityError, PayloadScopeError, PayloadStoreError
 from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
-from .resolver_service import ResolverService, settlement_admits
+from .resolver_service import ResolverService
 from .rollback_store import (
     APPLYING,
     AUTHORIZED,
@@ -354,20 +354,6 @@ class RollbackService:
             raise RollbackError(f"operation state unavailable: {exc}") from exc
         if record.contract_version == LEGACY_CONTRACT_VERSION:
             return None, None, ("LEGACY_CONTRACT", "legacy contract v1 cannot own rollback targets")
-        settlement = record.recovery_settlement
-        if (
-            settlement is not None
-            and settlement["resolution_id"] != resolution.resolution_id
-            and not settlement_admits(settlement["action"], ResolutionAction.ROLLBACK.value)
-        ):
-            # Repair #4: the Resolver's settlement policy binds the physical
-            # executor too (e.g. a ROLLBACK accepted before Repair #4 over an
-            # existing settlement): never a second rollback of a settled operation
-            return None, None, (
-                "RECOVERY_ALREADY_SETTLED",
-                f"operation recovery is already settled by {settlement['action']} via "
-                f"{settlement['resolution_id']}; no further rollback of it is carried out",
-            )
         return resolution, record, None
 
     def _fresh(self, resolution) -> tuple[str, str] | None:

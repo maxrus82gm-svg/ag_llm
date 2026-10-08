@@ -95,13 +95,7 @@ class ServerStateMachine:
         if current == MicrotaskStatus.PLANNED:
             return f"declare targets and prepare restore point for {microtask_id}"
         if current == MicrotaskStatus.PREPARING:
-            return (
-                f"restore-point preparation of {microtask_id} is running or was interrupted; real Workspace "
-                "mutation is not allowed. Run recover: an interrupted preparation is reconciled from persistent "
-                "evidence (a published restore point is re-verified and completed to BACKUP_VERIFIED; without "
-                "one, the unpublished capture is discarded and the microtask becomes BLOCKED_PREPARE to be "
-                "prepared again)"
-            )
+            return "finish restore-point preparation; real Workspace mutation is not allowed"
         if current == MicrotaskStatus.BACKUP_VERIFIED:
             return f"transition {microtask_id} to READY"
         if current == MicrotaskStatus.READY:
@@ -120,13 +114,6 @@ class ServerStateMachine:
                 return f"prepare next microtask {plan.microtask_ids[index + 1]}"
             return "complete TASK or create the next planned microtask"
         if current == MicrotaskStatus.BLOCKED_PREPARE:
-            if self._restore_point_exists(task_id, microtask_id):
-                # Repair #4: prepare is refused while a (blocked) restore point exists
-                return (
-                    f"the restore point of {microtask_id} failed verification and is kept as evidence "
-                    "(BLOCKED_PREPARE); prepare is refused while it exists: manual review and repair of "
-                    "the restore point is required"
-                )
             return "repair preparation blocker, then prepare the restore point again"
         if current == MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT:
             return "reconcile disk state; do not repeat the last operation"
@@ -135,13 +122,6 @@ class ServerStateMachine:
         if current == MicrotaskStatus.FAILED_VERIFICATION:
             return "fix the current microtask from its verified restore point, then transition to ACTIVE"
         raise ServerStateMachineError(f"unsupported microtask status: {current}")
-
-    def _restore_point_exists(self, task_id: str, microtask_id: str) -> bool:
-        try:
-            work_dir = self.tasks.microtask_directory(task_id, microtask_id)
-        except TaskStoreError:
-            return False
-        return (work_dir / ManifestSnapshotStore.RESTORE_DIR).exists()
 
     def _write_checkpoint(
         self,

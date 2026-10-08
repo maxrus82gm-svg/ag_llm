@@ -1,0 +1,5 @@
+RETRY: admission refused: open recovery blocks VERIFIED (OPERATION_FATE_OPEN); recover ('RECOVERY_BLOCKED', 'RETRY_ACCEPTED', [], 'no-project-write', 'VERIFIED', None) -> OK
+ADOPT: admission refused: open recovery blocks VERIFIED (OPERATION_FATE_OPEN); recover ('READY_FOR_EXECUTION', 'NORMAL', ['SETTLE_ADOPT'], 'no-project-write', 'VERIFIED', 'm2') -> OK
+ABORT: admission refused: open recovery blocks VERIFIED (OPERATION_FATE_OPEN); recover ('READY_FOR_EXECUTION', 'NORMAL', ['SETTLE_ABORT'], 'no-project-write', 'VERIFIED', 'm2') -> OK
+ROLLBACK: admission refused: open recovery blocks VERIFIED (OPERATION_FATE_OPEN); recover ('RECOVERY_BLOCKED', 'ROLLBACK_STAGE_PROTECTED', [], 'no-project-write', 'VERIFIED', None) -> OK
+VERDICT: OK
