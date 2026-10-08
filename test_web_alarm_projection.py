@@ -21,6 +21,7 @@ from web_alarm.models import CheckpointRecord, MicrotaskStatus
 from web_alarm.operation_store import OperationStore
 from web_alarm.projection import ProjectionError, ProjectionService
 from web_alarm.reconciliation_service import ReconciliationService
+from web_alarm.recovery_coordinator import RecoveryCoordinator
 from web_alarm.recovery_report_service import RecoveryReportService
 from web_alarm.remote_entry import RemoteEntry
 from web_alarm.resolver_service import ResolverService
@@ -975,7 +976,9 @@ class CloseoutTests(ProjectionFixture):
         self.assertEqual(replay["result"], "REJECTED")
         self.assertIn("TASK_NOT_ACTIVE", [b["code"] for b in replay["closeout"]["blockers"]])
 
-    def test_aborted_operation_no_longer_blocks(self):  # conservative ABORT rule
+    def test_aborted_operation_blocks_until_rc6_settles_it(self):
+        # RC-5 Repair #2 (CLAUDE-WA-016) changed this expectation: an accepted ABORT alone used
+        # to close the operation for the gate; with RC-6 its settlement completes the recovery
         self.clean_task()
         self.ops.begin(TASK, "m2", "write", "two.txt", operation_id="op_1", payload=AFTER)
         self.ops.transition(TASK, "op_1", "STARTED")
@@ -985,6 +988,9 @@ class CloseoutTests(ProjectionFixture):
             TASK, "m2", "op_1", "ABORT", evidence_fingerprint=decision["evidence_fingerprint"],
             operation_revision=self.ops.get(TASK, "op_1").revision)
         self.assertTrue(aborted["accepted"])
+        self.assertEqual(self.blockers(), ["RECOVERY_SETTLEMENT_PENDING"])
+        self.assertEqual(RecoveryCoordinator(self.storage).recover(TASK)["state"], "TASK_READY_TO_CLOSE")
+        self.assertEqual(self.ops.get(TASK, "op_1").recovery_settlement["action"], "ABORT")
         self.assertEqual(self.blockers(), [])
 
 

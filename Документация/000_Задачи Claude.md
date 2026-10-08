@@ -36,6 +36,41 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+### CLAUDE-WA-016 — RC-5 Repair #2 / Closeout consistency
+
+**Статус постановки:** БЛОК 1 («DRAFT — требует утверждения пользователя перед запуском»), утверждена пользователем в чате («подтверждаю!»), выполнена Claude 2026-10-09; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
+**TASK: CLAUDE-WA-016 — RC-5 Repair #2 / Closeout consistency**
+
+**Статус:** DRAFT — требует утверждения пользователя перед запуском.
+
+**Основание:** независимая проверка CLAUDE-WA-015 на GitHub HEAD `257d571`, вердикт FAIL / CONFIRMED BLOCKER.
+
+**Решение:** принять полный ремонт A-I + A-II + B. Новая семантика closeout: принятая ABORT/ADOPT resolution сама по себе не означает окончательного завершения recovery. Требуется предусмотренное RC-6 settlement.
+
+**Scope:** `web_alarm/projection.py` и адресные regression tests. Без смены persisted schema, без переработки RC-4/RC-6, без запуска WA4-E.
+
+**Обязательная работа:**
+
+1. A-I: вернуть `ROLLBACK_PENDING` при protected `ROLLBACK_ACCEPTED`, чтобы VERIFIED-этап не мог быть закрыт с неразрешённым ROLLBACK.
+
+2. A-II: блокировать closeout при принятой, но не оформленной ABORT/ADOPT и при незавершённом recovery settlement. Противоречивые settlement-состояния должны блокировать закрытие. Пересмотреть `test_aborted_operation_no_longer_blocks`, сохранить позитивный случай после RC-6 settlement.
+
+3. B: для COMPLETED/ARCHIVED показывать read-only NEXT и `authority_source=task_status` независимо от оставшихся recovery-фактов. Факты сохранять как диагностику.
+
+4. Проверить сценарии WA-015 A1/A5/A7b, B1–B5, положительные контроли, конкурентное завершение, рестарт, совместимость RC-4 и RC-6.
+
+5. Прогнать targeted, полный regression дважды, adversarial, compileall и git diff --check.
+
+
+**Границы:** все разрушающие испытания только во временном storage; live storage — read-only. Не создавать избыточные safety copies. F-1 RC-4 оставить отдельным finding, код RC-4 в этой задаче не менять. Не изменять канонические статусы RC-5/RC-6. Без commit/push.
+
+**Результат:** один технический отчёт, ротация БЛОКОВ 1–3 персональной карточки Claude и итог одним блоком `text`.
+
+**NEXT:** push пользователя → независимая GitHub-проверка ChatGPT → при PASS закрытие RC-5 в документации.
+```
+
 ### CLAUDE-WA-015 — RC-5 Independent Final Verification
 
 **Статус постановки:** БЛОК 1 («APPROVED FOR USER HANDOFF / READY TO EXECUTE»), передана пользователем в чате («Задача для Claude — финальная независимая проверка RC-5»), выполнена Claude 2026-10-08 (REVIEW ONLY; вердикт FAIL / CONFIRMED BLOCKER); результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
@@ -5034,6 +5069,53 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA-016 — RC-5 Repair #2 / Closeout consistency — результат
+
+**TASK:** CLAUDE-WA-016 (БЛОК 1, статус DRAFT; утверждена пользователем в чате словом «подтверждаю!»). Исполнитель Claude; независимый verifier — ChatGPT по GitHub. Основание — вердикт CLAUDE-WA-015 (FAIL / CONFIRMED BLOCKER).
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE / VERIFIED. Статусы RC-5 / RC-6 не менялись. **WA4-E NOT STARTED.** Commit / push не выполнялись.
+- **Baseline:** HEAD = `origin/main` = `257d5719d3eba07a784450925fc8909ef2311941` (172); полный набор — 580 OK, skip 1.
+- **Сделано** (только `web_alarm/projection.py`, +63 / −7; схема, RC-4, RC-6, state machine не менялись):
+  - **A-I:** `ROLLBACK_PENDING` и при `protected_state == ROLLBACK_ACCEPTED` (регрессия commit 162 закрыта);
+  - **A-II:**
+    - `RECOVERY_SETTLEMENT_PENDING` для принятых, но не оформленных RC-6 ABORT / ADOPT и незавершённой администрации settlement;
+    - `SETTLEMENT_CONTRADICTION`;
+    - fail-closed `RECOVERY_OPEN` для любого другого не-advisory recovery-состояния (REJECTED / STALE терминальной операции по-прежнему не блокируют);
+  - **B:** закрытая TASK (COMPLETED / ARCHIVED или каталог вне `active/`) → NEXT read-only, `authority_source=task_status`; recovery-факты сохранены как диагностика.
+- **Контракт:** `test_aborted_operation_no_longer_blocks` → `test_aborted_operation_blocks_until_rc6_settles_it` (ABORT → `RECOVERY_SETTLEMENT_PENDING` → `recover` → `[]`).
+- **Тесты:** новый `test_web_alarm_projection_repair2.py` — 13 тестов:
+  - A-I в естественном порядке и после VERIFIED, выход через ABORT;
+  - A-II: ABORT для STARTED / UNKNOWN / INTENT / VERIFIED, ADOPT, прерванный settlement + свежий процесс;
+  - правило на синтетике;
+  - B1–B5 + ABORT на legacy-фикстурах, ARCHIVED;
+  - 2 гонки в реальных процессах.
+
+  На коде до исправления падают 10 из 13 (21 subTest), все — проявления дефекта.
+- **Проверки:**
+  - новый модуль + `test_web_alarm_projection` — 60 / 60;
+  - фокусно 26 модулей — 388 OK;
+  - полный набор (593): прогоны 2 и 3 — **593 OK, skip 1**; прогон 1 — 1 ERROR в существующем тесте гонки X (`checkpoint is missing`), разобран: rebuild-процесс не записал checkpoint, ложного VALID нет; 140 целевых раундов и стресс — 0 повторов; к правке не относится → F-6;
+  - стресс гонок 8 / 8;
+  - пробы WA-015 после ремонта: A1 / A1u / A1i / A5 / A6 / A7 / A7b → 409, контроли без изменений, B1–B5 read-only;
+  - adversarial D1–D3;
+  - compileall, `git diff --check`, LF — OK;
+  - живое storage только на чтение: 136 / 41, хеш до = после (`5961c00c…7cd2`), WA-3.6 / 3.7 без изменений.
+- **FINDINGS вне scope:**
+  - F-1 — RC-4 `close` на закрытой TASK снимает claims (как в постановке, не менялось);
+  - F-3 — REJECTED / STALE против RC-6 MANUAL (оставлено);
+  - F-5 — окно краша `TaskStore.complete_task_locked`: статус COMPLETED записан до переноса каталога, при смерти процесса TASK застревает в `active/`, RemoteEntry считает её активной, `OperationStore.begin` в неё пишет;
+  - F-6 — тест RC-5 X не допускает неудачный rebuild (Windows).
+- **Совместимость:** checkpoint, собранный кодом до исправления для затронутой активной TASK, валидируется как INCONSISTENT (без authority) до rebuild. Процессы WEB-02 нужно перезапустить.
+- **Файлы:**
+  - `web_alarm/projection.py`, `test_web_alarm_projection.py`;
+  - новые: `test_web_alarm_projection_repair2.py`, `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-016_RC5_REPAIR2/` (отчёт + `probes/wa016_adversarial.py`);
+  - ротация этой карточки.
+- **Documentation impact:** ARCHITECTURE IMPACT — YES после PASS: `23` (инвариант закрытия RC-5 / RC-6, read-only история), `24`, `25`; обновляет verifier.
+- **NEXT:** push пользователя → независимая GitHub-проверка ChatGPT → при PASS закрытие RC-5 в документации → согласование WA4-E.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-016_RC5_REPAIR2/rc5_repair2_report.md`.
+
 ---
 
 ### CLAUDE-WA-015 — RC-5 Independent Final Verification — результат

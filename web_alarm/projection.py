@@ -17,6 +17,8 @@ compared with a freshly built projection (``validate_checkpoint``); an explicit
 change) is the only normal writer of checkpoint.json / checkpoint.md.
 
 NEXT SAFE ACTION precedence (one deterministic rule):
+-. a COMPLETED / ARCHIVED (or moved) TASK -> read-only history; the recovery
+   facts it may still carry stay diagnostics, never a NEXT (RC-5 Repair #2);
 0. structural projection blocker (impossible plan state, unreadable store)
    -> fail-closed manual repair;
 1. tracked RC-4 rollback session of the operation's authoritative ROLLBACK
@@ -89,6 +91,16 @@ _RECOVERY_MICROTASK_STATUSES = {
 _MUTATION_FATE_OPEN = {OperationStatus.STARTED, OperationStatus.UNKNOWN_AFTER_DISCONNECT}
 # a rollback session in one of these states needs no further rollback step
 _ROLLBACK_SETTLED = {CLOSED, PRESERVATION_FAILED}
+# RC-5 Repair #2: operation recovery states in which RC-6 still has to settle an
+# accepted decision (administrative: lifecycle disposition, ownership release)
+_SETTLEMENT_PENDING = frozenset({
+    "ABORT_ACCEPTED",
+    "ADOPT_ACCEPTED",
+    "ABORT_OVER_SETTLEMENT",
+    "ADOPT_SETTLED",
+    "ABORT_SETTLED",
+    "ROLLBACK_SETTLED",
+})
 
 # RC-6 Repair #2 (R1): a tracked rollback may make destructive progress only for
 # an operation of the *current* stage (the first non-VERIFIED microtask in plan
@@ -1037,7 +1049,23 @@ class ProjectionService:
                 }
             )
             recovery["operation_id"] = focus["operation_id"]
-        if projection["blockers"]:
+        closed = (
+            task.status in (TaskStatus.COMPLETED, TaskStatus.ARCHIVED)
+            or projection["task"]["location"] != "active"
+        )
+        if closed:
+            # RC-5 Repair #2 (B): history comes first. No recovery step can run on a
+            # closed TASK (its stores refuse writes, RC-6 stops at TASK_COMPLETED), so
+            # the recovery facts it still carries are diagnostics, not a NEXT.
+            next_action = f"TASK is {task.status.value}; its state is read-only history"
+            if attention or projection["blockers"]:
+                next_action += (
+                    "; the recovery facts it still carries "
+                    f"({[view['operation_id'] for view in attention]}) are historical evidence only: "
+                    "no recovery action applies to a closed TASK (manual project-level review if they matter)"
+                )
+            source = "task_status"
+        elif projection["blockers"]:
             first = projection["blockers"][0]
             next_action = (
                 f"projection is blocked ({first['code']}: {first['reason']}); persistent state is "
@@ -1051,10 +1079,7 @@ class ProjectionService:
         else:
             current = position["current_microtask_id"]
             status = position["current_status"]
-            if task.status in (TaskStatus.COMPLETED, TaskStatus.ARCHIVED):
-                next_action = f"TASK is {task.status.value}; its state is read-only history"
-                source = "task_status"
-            elif current is None:
+            if current is None:
                 next_action = "create a microtask and define the TASK plan"
                 source = "lifecycle"
             elif (
@@ -1231,7 +1256,17 @@ def closeout_blockers(projection: dict[str, Any]) -> list[dict[str, Any]]:
       that went stale does not reopen them);
     - a fresh accepted RETRY is a pending future execution;
     - an authoritative ROLLBACK without a VERIFIED rollback whose ownership is
-      released has no terminal safe outcome.
+      released has no terminal safe outcome (also when RC-6 R1 reports it as
+      ROLLBACK_STAGE_PROTECTED: protected_state keeps ROLLBACK_ACCEPTED).
+
+    RC-5 Repair #2 — with RC-6 the gate is judged on the operation's recovery
+    view, the one RC-6 acts on:
+    - an accepted ABORT / ADOPT is complete only once RC-6 has settled it and
+      finished the settlement administration (RECOVERY_SETTLEMENT_PENDING);
+    - a settlement that contradicts a VERIFIED stage blocks (manual review);
+    - any other recovery state not reported by a more specific blocker blocks
+      as RECOVERY_OPEN (fail-closed for states this rule does not know), except
+      advice only: a fresh rejection or a stale, non-authoritative resolution.
     """
     blockers: list[dict[str, Any]] = []
     task = projection["task"]
@@ -1284,8 +1319,17 @@ def closeout_blockers(projection: dict[str, Any]) -> list[dict[str, Any]]:
         if recovery is not None and recovery["state"] == "RETRY_ACCEPTED":
             add("RETRY_PENDING", f"{op_id} has a fresh accepted RETRY: a future execution is pending",
                 recovery["next_safe_action"], operation_id=op_id, resolution_id=recovery["resolution_id"])
-        if recovery is not None and recovery["state"] == "ROLLBACK_ACCEPTED":
+        if recovery is not None and "ROLLBACK_ACCEPTED" in (recovery["state"], recovery.get("protected_state")):
             add("ROLLBACK_PENDING", f"{op_id}: accepted ROLLBACK has no tracked rollback outcome yet",
+                recovery["next_safe_action"], operation_id=op_id, resolution_id=recovery["resolution_id"])
+        if recovery is not None and recovery["state"] in _SETTLEMENT_PENDING:
+            add("RECOVERY_SETTLEMENT_PENDING",
+                f"{op_id}: {recovery['state']} is not settled by RC-6 recover yet",
+                "run recover: it settles the accepted recovery decision (administrative: lifecycle "
+                "disposition and ownership release, no physical mutation)",
+                operation_id=op_id, resolution_id=recovery["resolution_id"])
+        if recovery is not None and recovery["state"] == "SETTLEMENT_CONTRADICTION":
+            add("SETTLEMENT_CONTRADICTION", f"{op_id}: its recovery settlement contradicts a VERIFIED stage",
                 recovery["next_safe_action"], operation_id=op_id, resolution_id=recovery["resolution_id"])
     for session in projection["rollbacks"]:
         status = session["status"]
@@ -1299,4 +1343,16 @@ def closeout_blockers(projection: dict[str, Any]) -> list[dict[str, Any]]:
         add("ACTIVE_CLAIM", f"target {claim['target']} is owned by {claim['owner']['kind']} "
             f"({claim['operation_id']}, {claim['claim_id']})",
             "finish or release the owning operation / rollback first", claim_id=claim["claim_id"])
+    # Repair #2: fail closed for every other recovery state (one a later stage may add)
+    for view in projection["operations"]:
+        recovery = view["recovery"]
+        if recovery is None or recovery["state"].endswith("_REJECTED") or recovery["state"] == "RESOLUTION_STALE":
+            continue
+        rollback_ids = set(view.get("rollback_ids") or [])
+        if any(item.get("operation_id") == view["operation_id"] or item.get("rollback_id") in rollback_ids
+               for item in blockers):
+            continue
+        add("RECOVERY_OPEN", f"{view['operation_id']} has an open recovery ({recovery['state']})",
+            recovery["next_safe_action"] or "finish its recovery through recover",
+            operation_id=view["operation_id"])
     return blockers
