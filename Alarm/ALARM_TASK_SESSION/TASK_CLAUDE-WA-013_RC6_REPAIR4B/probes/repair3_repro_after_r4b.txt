@@ -1,0 +1,11 @@
+F1a new op on RECOVERY_REQUIRED microtask after ABORT | recover=MANUAL_DECISION_REQUIRED micro=RECOVERY_REQUIRED acquire=ACQUIRED authorize=DENIED/MICROTASK_NOT_ACTIVE | closed
+F1b old sibling op (claim before ABORT) | micro=RECOVERY_REQUIRED acquire(before)=ACQUIRED authorize=DENIED/MICROTASK_NOT_ACTIVE | closed
+F1c sibling while accepted ABORT is not yet settled | micro=ACTIVE authorize=DENIED/MICROTASK_RECOVERY_REQUIRED | closed
+F1d new op on VERIFIED microtask | micro=VERIFIED authorize=DENIED/MICROTASK_NOT_ACTIVE | closed
+F1e op of PLANNED microtask (no claim yet -> owner check first) | micro=PLANNED authorize=DENIED/NOT_OWNER | closed
+F2a accepted ABORT, then VERIFIED, then settlement | VERIFIED rejected (open recovery blocks VERIFIED (OPERATION_FATE_OPEN): operati); recover x3=['MANUAL_DECISION_REQUIRED', 'MANUAL_DECISION_REQUIRED', 'MANUAL_DECISION_REQUIRED']; micro=RECOVERY_REQUIRED | closed
+F2b VERIFIED first, ABORT accepted later | recover x3=['NO_ACTION_REQUIRED', 'NO_ACTION_REQUIRED', 'NO_ACTION_REQUIRED']; micro=VERIFIED | closed
+F3 restore point/target set changed after proof, surface ids unchanged | state=READY_FOR_EXECUTION proof_rpf=df65d6fe5d24 now_rpf=df65d6fe5d24 | closed
+F4 crash between plan pointer and ACTIVE write | exit=17 plan.current=m1 micro_after_crash=READY? pointer_state=CORROBORATED blockers=[] recover=NO_ACTION_REQUIRED reactivate->micro=ACTIVE | closed
+F5 stale failing verification vs advanced microtask | stale transition rejected; micro=VERIFIED manifest=VERIFIED | closed
+C1 accepted ABORT for a FAILED (terminal) operation | recover x2=['MANUAL_DECISION_REQUIRED', 'MANUAL_DECISION_REQUIRED']; micro=RECOVERY_REQUIRED | closed

@@ -35,6 +35,210 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP
+
+**Статус постановки:** прямой Chat-handoff пользователя (подтверждён его словами «вот тебе еще одна задача»; по постановке БЛОК 1 не используется и не ротируется), выполнена Claude 2026-10-08; результат — отдельной записью в БЛОКЕ 3. Продолжение CLAUDE-WA-012 / Repair #4A; его постановка и постановка Repair #4 сохранены ниже без изменений. Полная постановка дословно (хвостовые пробелы сняты):
+
+```text
+TASK: CLAUDE-WA-013
+RC-6 REPAIR #4B — PRE-EXECUTION ABORT × SIBLING ROLLBACK
+STATUS: APPROVED FOR EXECUTION — DIRECT CHAT HANDOFF
+ARCH CLASS: Web Alarm Workspace / Recovery Safety
+PRIMARY PROFILE: `23_Архитектура Web Alarm Workspace.md`
+SECONDARY PROFILE: `24_План реализации Web Alarm Workspace.md`
+Baseline: GitHub `main`, commit 165
+`32bdf9635afcf81a9e6f1090a3bcba54b907c126`
+Previous TASK: `CLAUDE-WA-012 / RC-6 Repair #4A`
+0. ВАЖНО — ЗАДАЧА ПЕРЕДАНА В CHAT
+Это прямое задание от пользователя через ChatGPT.
+Не искать постановку в БЛОКЕ 1 документа `000_Задачи Claude.md`. Не записывать её туда, не очищать БЛОК 1 и не требовать предварительного переноса.
+Авторитетный источник этой TASK — настоящее сообщение в чате.
+Обычный проектный протокол сохраняется:
+
+* `08_Старт.md` → `18_Регламент сопровождения документации.md` → глобальный `000_Задачи для агента.md` → `01` → профиль `23/24`.
+* Использовать предыдущие отчёты Repair #3, #4 и #4A.
+* Следовать инструкциям `Alarm/ALARM_TASK_SESSION/00_INSTRUCTION.md`.
+* Перед изменением существующих файлов создавать safety copies.
+* Все испытания выполнять исключительно в изолированном временном storage.
+* Выполнить собственный adversarial pass.
+
+Фиксация в персональной карточке:
+В БЛОК 2 добавить отдельную последовательную FOLLOW-UP запись `CLAUDE-WA-013 / Repair #4B` с полной постановкой из чата. Сохранить все предыдущие записи Repair #4 и #4A без потерь.
+После фактического выполнения добавить самостоятельный factual result в БЛОК 3, сохранив старые результаты.
+Обычная ротация через БЛОК 1 для этой TASK не применяется.
+1. Основание независимой проверки
+ChatGPT выполнил независимый GitHub-only review коммита 165.
+Основные исправления Repair #4A прошли статическую проверку по заявленным сценариям:
+
+* W1/W2 + accepted ABORT;
+* восстановление PREPARING перед settlement;
+* устранение постоянного FAIL_CLOSED в проверенных pre-execution состояниях;
+* ручная граница для ADOPT/ROLLBACK/RETRY.
+
+Однако обнаружен дополнительный потенциальный safety-блокер, связанный с несколькими операциями одной microtask.
+Статус находки: STATIC FINDING / RUNTIME REPRODUCTION REQUIRED.
+Реальное нарушение ещё не подтверждено экспериментом. Твоя первая задача — попытаться воспроизвести его либо доказать невозможность.
+2. Подозреваемый дефект
+Repair #4A разрешил settlement ABORT для microtask, которая никогда не была ACTIVE.
+При этом RC-6 переводит её:
+`PLANNED / BACKUP_VERIFIED / READY / BLOCKED_PREPARE → RECOVERY_REQUIRED`
+Это защищённая ручная граница.
+Но старый механизм RC-4 рассматривает `RECOVERY_REQUIRED` как статус, из которого разрешена подготовка к физическому rollback.
+Возникает вопрос: не позволяет ли новая семантика ABORT ошибочно считать никогда не исполнявшуюся microtask пригодной для физического отката?
+Проверяемая последовательность
+
+1. Создать microtask `m1`, которая ещё никогда не переходила в `ACTIVE`.
+2. Подготовить её restore point штатным способом.
+3. Создать две операции одной microtask:
+   * `op1`;
+   * `op2`.
+4. Принять `ABORT` для `op1`.
+5. Через `RecoveryCoordinator.recover()` завершить его settlement.
+6. Подтвердить, что `m1` стала `RECOVERY_REQUIRED`, хотя ни разу не была `ACTIVE`.
+7. Для `op2` создать достижимое reconciliation evidence, позволяющее Resolver принять `ROLLBACK`. Для этого проверить реальный partial-known-state сценарий с несколькими targets.
+8. Попытаться выполнить ROLLBACK по `op2`.
+9. Проверить, не проходят ли RC-6 preflight, RC-4 prepare/apply и физическое восстановление файлов без доказательства предыдущей активации microtask.
+
+Почему возникло подозрение
+В commit 165:
+
+* `RecoveryCoordinator._settlement_rule()` разрешает pre-execution ABORT → RECOVERY_REQUIRED.
+* `_rollback_stage_preflight()` считает RECOVERY_REQUIRED допустимым исходным статусом для rollback apply.
+* `Projection.rollback_stage_protected()` защищает VERIFIED и не-текущие microtasks, но не проверяет факт предыдущего ACTIVE.
+* `RollbackService` располагает механизмом физического restore по VERIFIED restore point.
+
+Следовательно, возможна потеря различия между:
+A. Microtask действительно исполнялась, затем потребовала recovery.
+B. Microtask никогда не исполнялась, но получила RECOVERY_REQUIRED из-за pre-execution ABORT.
+Нужно проверить, достаточно ли других инвариантов, чтобы эту ситуацию безопасно исключить.
+3. Исследование ДО изменения кода
+На неизменённом baseline 165:
+
+1. Построить воспроизведение с двумя операциями одной microtask.
+2. Проверить достижимость accepted ROLLBACK после settlement ABORT другой операции.
+3. Проверить обычный путь `RecoveryCoordinator.recover()`.
+4. Отдельно проверить прямой публичный вход RC-4 `prepare/apply`, не обходя необходимые штатные проверки.
+5. Зафиксировать состояние физических файлов до и после.
+6. Проверить изменения target claims, rollback sessions, Resolver authority и recovery settlement.
+7. Повторить после restart в свежем процессе.
+
+Обязательно различать:
+
+* изменения, произведённые авторизованным исполнителем;
+* внешние изменения файла;
+* изменение операции только в persisted lifecycle без реального авторизованного physical effect.
+
+Если сценарий невозможен — доказать, какой конкретный механизм его предотвращает. Представить отрицательный тест, а не искусственно внедрять исправление.
+Если сценарий подтверждён — записать baseline reproduction и root cause, затем приступать к минимальному исправлению.
+4. Требования к исправлению
+При подтверждении дефекта исправить возможность ошибочного rollback для microtask без доказанного права на предыдущую физическую mutation.
+Не считать один лишь статус RECOVERY_REQUIRED доказательством предыдущего ACTIVE.
+Особенно важно:
+Нельзя просто добавить или убрать разрешённые статусы, сломав настоящий recovery для ранее исполнявшихся microtasks.
+Исследовать, можно ли использовать уже существующее достоверное persisted evidence об истории активации и операции. Если его недостаточно — сформулировать минимальный вариант решения, сохраняющий crash/restart correctness.
+Любой новый механизм должен быть устойчив к:
+
+* рестарту процесса;
+* гонкам;
+* повторному recover;
+* устаревшему Resolver basis;
+* историческим операциям;
+* старым restore points;
+* прямому вызову RC-4.
+
+Не ослаблять проверку snapshot integrity, CAS, ownership, target locks, operation revision или replay protection.
+Никакого автоматического восстановительного действия при недостатке доказательств.
+Если для полноценного исправления требуется новая модель persistent authority или изменение утверждённой архитектуры за пределами scope, зафиксировать `BLOCKER / PROPOSAL` и остановиться, не выполняя архитектурную миграцию самостоятельно.
+5. Обязательные инварианты
+
+1. Никогда не исполнявшаяся microtask не должна получить право на destructive rollback только благодаря pre-execution ABORT.
+2. Нормальная mutation authority существует только для соответствующей ACTIVE microtask в текущем этапе.
+3. Корректный RC-4 rollback для действительно исполнявшейся microtask должен продолжить работать.
+4. VERIFIED microtask не откатывается.
+5. Pre-execution ABORT остаётся безопасным, достижимым и не возвращает прежний вечный FAIL_CLOSED.
+6. Repair #4 W1/W2 сохраняет восстановимость подготовки.
+7. Settlement policy Repair #4 сохраняется: второй rollback по той же settled operation запрещён.
+8. Late ABORT, RETRY, ADOPT, rollback finalize и claims release не деградируют.
+9. Persisted rollback receipts не заменяют проверку действительного текущего состояния файлов.
+10. Любое сомнение в полномочиях или сохранности pre-state приводит к безопасному отказу, а не к destructive mutation.
+
+6. Минимальные проверки
+Создать regression tests на:
+
+* B1: Pre-execution ABORT (`op1`) → accepted ROLLBACK (`op2`) одной microtask.
+* B2: Тот же сценарий с прямым входом RC-4.
+* B3: Корректный rollback после настоящего ACTIVE → UNKNOWN/RECOVERY_REQUIRED.
+* B4: Повторный recover и fresh-process restart.
+* B5: W1/W2 + ABORT + последующий sibling ROLLBACK.
+* B6: Stale resolution, повторный rollback, settlement supersession.
+* B7: Конкурентный ABORT/ROLLBACK/recover.
+* B8: Проверка фактических байтов до и после; отсутствие неразрешённой физической мутации.
+* B9: Сохранение всех ранее исправленных сценариев Repair #2/#2A/#3/#4/#4A.
+
+Проверить разные targets: WRITE/RESTORE, DELETE и NOOP там, где это имеет значение.
+Затем выполнить:
+
+* новые тесты;
+* sensitivity against baseline 165;
+* focused regression;
+* полный Web Alarm test suite ×2;
+* adversarial pass;
+* стресс-повторы гонок;
+* compileall;
+* git diff --check.
+
+Все изменения и тестовые аварии — только в изолированном storage. Живые пользовательские данные не менять.
+7. Documentation и continuity
+Создать сессию:
+`Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-013_RC6_REPAIR4B/`
+Основной отчёт:
+`rc6_repair4b_report.md`
+В отчёте указать:
+
+* baseline и commit SHA;
+* исходный finding независимого verifier;
+* reproduction / negative proof;
+* root cause;
+* выбранное исправление или доказательство его ненужности;
+* все изменённые файлы;
+* тесты и точные результаты;
+* собственный adversarial review;
+* residual risks;
+* влияние на прежние RC-6 Repairs;
+* ограничения и блокеры перед WA4-E.
+
+Оформить Documentation Impact Check по документу `18`.
+Сверить затрагиваемые документы `23`, `24`, `25`, `05`, `06`, `001`, глобальный `000` и START `08`, но не выполнять преждевременный permanent closeout.
+Важное решение пользователя: после независимого PASS RC-6 ChatGPT лично займётся полной синхронизацией постоянной документации, включая историю WEB_03, изменения RC-5/RC-6 и новый протокол GitHub-first / Desktop-for-actions.
+Поэтому сейчас:
+
+* веди оперативные записи TASK;
+* сохрани evidence и отчёт;
+* подготовь точный documentation delta;
+* постоянные статусы `DONE / VERIFIED` не устанавливай;
+* канонические исторические документы самостоятельно не переписывай.
+
+8. Границы и завершение
+Это целевая работа Repair #4B, а не новая реализация RC-6 или WA4-E.
+Не менять соседние подсистемы без подтверждённой необходимости.
+Не начинать WA4-E, WA4-A, WA4-O или WA4-R.
+Не делать commit/push — это выполняет пользователь, если не дано отдельного прямого разрешения.
+После завершения:
+
+1. Сохранить полный factual report.
+2. Заполнить БЛОК 2 и БЛОК 3 как отдельный FOLLOW-UP, не трогая БЛОК 1 и прежние результаты.
+3. Сообщить, подтвердился ли дефект.
+4. Указать, происходил ли реально destructive rollback.
+5. Сообщить результаты новых, регрессионных и adversarial тестов.
+6. Перечислить изменённые файлы.
+7. Указать, остались ли блокеры RC-6.
+
+Финальный статус:
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+Не ставить `DONE / VERIFIED` самостоятельно.
+NEXT: пользователь commit/push → независимая GitHub-only проверка ChatGPT → только после PASS синхронизация постоянной документации и решение о WA4-E.
+```
+
 ### CLAUDE-WA-012 — RC-6 Repair #4A — FOLLOW-UP
 
 **Статус постановки:** прямой Chat-handoff пользователя (по постановке БЛОК 1 не используется и не ротируется), выполнена Claude 2026-10-08; результат — отдельной записью в БЛОКЕ 3. Продолжение CLAUDE-WA-011 / Repair #4; его постановка сохранена ниже без изменений. Полная постановка дословно (хвостовые пробелы сняты):
@@ -4609,6 +4813,50 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP — результат
+
+**TASK:** CLAUDE-WA-013 / RC-6 — REPAIR #4B / PRE-EXECUTION ABORT × SIBLING ROLLBACK (прямой Chat-handoff, подтверждён пользователем; БЛОК 1 не использовался; исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Safety; PRIMARY `23`, SECONDARY `24`. Продолжение CLAUDE-WA-012 / Repair #4A.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
+- **Baseline:** commit 165 = `32bdf9635afcf81a9e6f1090a3bcba54b907c126`; полный набор на baseline — 547 OK, skip 1.
+- **Static finding verifier — ПОДТВЕРЖДЁН экспериментом и шире** (только временное storage; файлы меняла сама проба «извне», авторизованного исполнителя не было; `op2` STARTED — только запись lifecycle):
+  - **RC-6 (регрессия Repair #4A):** ABORT `op1` у microtask, ни разу не бывшей ACTIVE (BACKUP_VERIFIED / READY / W2) → RECOVERY_REQUIRED → принятый ROLLBACK `op2` → `recover` выполнял PREPARE / APPLY / SETTLE и **физически восстанавливал файлы** (WRITE / удалённый файл / созданный файл). На 164 этого пути не было;
+  - **прямой вход RC-4 (`RollbackService` и HTTP API) — пробел со времён приёмки RC-4 (commit 154):** откатывал microtask без исполнения (и без соседнего ABORT) и **VERIFIED-этап**, в том числе не текущий; R1 был только в RC-6.
+- **Root cause:** RECOVERY_REQUIRED после #4A перестал означать «исполнялась», а RC-6 preflight и ручная граница смотрели только на статус; RC-4 не проверял жизненный цикл вовсе; persisted факта «RR из-за ABORT до исполнения» не было.
+- **Решение:**
+  1. одно правило `microtask_gate.rollback_refusal` — откат только текущего этапа, который был ACTIVE. Отказ при: нечитаемых фактах; VERIFIED / не текущем этапе (R1); settlement, записанном до первого ACTIVE; статусе, не доказывающем исполнение (RR со старым ABORT settlement без факта — `MICROTASK_EXECUTION_UNPROVEN`);
+  2. применяют RC-4 `_authority` (создание сессии → REJECTED, API 409; каждый destructive apply → BLOCKED; finalize / release-only не затронуты) и RC-6 `_rollback_stage_preflight`; RC-6 `_classify` останавливает такой ROLLBACK на MANUAL_DECISION_REQUIRED;
+  3. новый persisted факт `recovery_settlement.microtask_status` — статус, наблюдённый RC-6 под TASK-lock + mutation lock при settlement (ADOPT / ABORT / ROLLBACK); поле необязательное, валидируется, не входит в replay-идентичность.
+
+  Граф state machine, Resolver, RC-3, ManifestStore не менялись.
+- **Файлы:**
+  - изменены `web_alarm/microtask_gate.py`, `rollback_service.py`, `recovery_coordinator.py`, `operation_store.py`, `operation_contract.py`, `projection.py` (реэкспорт `rollback_stage_protected`);
+  - новый `test_web_alarm_recovery_coordinator_repair4b.py` (22 теста);
+  - фикстуры `test_web_alarm_rollback.py` / `test_web_alarm_projection.py` / `test_web_alarm_rollback_concurrency.py`: +5 строк «m1 ACTIVE» (откатывали microtask без исполнения — теперь запрещено), проверки не менялись.
+- **Проверки:**
+  - Repair #4B — 22/22, на 165 падают 20 из 22 (2 — контроль и stale);
+  - воспроизведение после — 12 сценариев без исполнения REFUSED, байты не тронуты; DESTRUCTIVE только 3 контроля с реально исполнявшимся этапом; R1 ×3 REFUSED;
+  - фокусно 27 модулей — 414 тестов, все exit 0;
+  - полный набор (47 модулей) — **569 OK, skip 1**, дважды на финальном коде;
+  - стресс-повторы — 27/27;
+  - adversarial #4B: Z1 24 раунда «активация ↔ ABORT settlement ↔ ROLLBACK + прямой RC-4 ↔ recover ×2» — 0 нарушений; Z2 (сессия старой сборки, два apply) OK; Z3 — downgrade fail-closed;
+  - прежние пробы (исходные RC-6, повторная проверка, #2, #2A, #3, #4, #4A) — вердикты совпадают с состоянием после #4A;
+  - compileall и `git diff --check` — OK.
+- **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`); в нём 0 settlement и 0 microtask в RECOVERY_REQUIRED.
+- **Findings / proposals:**
+  - **DECISION:** state machine разрешает активировать microtask с уже принятым (не закреплённым) ABORT — после этого её этап откатывается по критерию «был ACTIVE», хотя mutation authority не было; так было и на 164. Полное закрытие — запрет активации при ABORT / ROLLBACK disposition или persisted факт выдачи authority (WA4-E), вне scope;
+  - PROPOSAL: соседний ADOPT после ABORT до исполнения закрепляется административно (неразрушающе);
+  - записи с новым полем не читаются кодом ≤ 165 (downgrade fail-closed);
+  - один разовый FAIL_CLOSED конкурентного recover наблюдался однажды и не воспроизвёлся в 228 вызовах (не разрушающий).
+- **Documentation:**
+  - DOC / ARCHITECTURE IMPACT — YES после PASS (владелец `23`: правило отката RC-4 + RC-6, факт settlement);
+  - delta сверх #4A — §11 отчёта; синхронизирует ChatGPT после PASS (решение пользователя);
+  - `08` от #4B не меняется.
+- **Рекомендация:** RC-6 готов к независимой проверке; блокеров перед WA4-E внутри scope RC-6 исполнитель не видит (п. DECISION — вопрос дизайна). Решение — за проверкой ChatGPT.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-013_RC6_REPAIR4B/rc6_repair4b_report.md`.
+
 ---
 
 ### CLAUDE-WA-012 — RC-6 Repair #4A — FOLLOW-UP — результат

@@ -1,0 +1,5 @@
+X1 VERIFIED vs ABORT, both orders | OK | 12 rounds, outcomes {('APPLIED', 'VERIFIED', 'ABORT', 'NO_ACTION_REQUIRED'): 10, ('REJECTED', 'RECOVERY_REQUIRED', 'ABORT', 'MANUAL_DECISION_REQUIRED'): 2}
+X2 authority held vs sibling ABORT + settlement | OK | authorized=True rival_waited=1.01s accepted=True rival_state=MANUAL_DECISION_REQUIRED micro=RECOVERY_REQUIRED after=MICROTASK_NOT_ACTIVE
+X3 refused VERIFIED writes nothing | OK | refused=True identical=True
+X4 READY under foreign claim churn is bound to its basis | OK | rounds=12 ready=12 mismatched=0
+ALL OK

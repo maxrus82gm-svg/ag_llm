@@ -139,6 +139,8 @@ class ProjectionFixture(unittest.TestCase):
             self.write("keep.txt", KEEP)
             specs.append(("keep.txt", "delete"))
         ManifestSnapshotStore(self.storage).prepare_microtask(TASK, "m1", specs)
+        if kind == "mixed":  # Repair #4B: a rollback undoes a stage that has executed (been ACTIVE)
+            self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.ACTIVE)
         self.ops.begin(TASK, "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)
         self.ops.transition(TASK, "op_1", "STARTED")
         self.write("target.txt", at)

@@ -57,6 +57,112 @@ PRE_EXECUTION_STATUSES = frozenset({
 })
 
 
+# Repair #4B: statuses the state machine reaches only through ACTIVE (VERIFIED is
+# reached that way too, but a VERIFIED stage is never rolled back)
+EXECUTED_STATUSES = frozenset({
+    MicrotaskStatus.ACTIVE.value,
+    MicrotaskStatus.DONE.value,
+    MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT.value,
+    MicrotaskStatus.FAILED_VERIFICATION.value,
+})
+
+
+def rollback_stage_protected(microtask_id: str, microtask_status: str, current_microtask_id: str | None) -> bool:
+    """R1: a VERIFIED or non-current stage is never rolled back (moved here from projection)."""
+    return (
+        microtask_status == MicrotaskStatus.VERIFIED.value
+        or microtask_id != current_microtask_id
+    )
+
+
+def pre_execution_settlement(settlements: Iterable[dict[str, Any] | None]) -> dict[str, Any] | None:
+    """Repair #4B: a recovery settlement written while its microtask had never been ACTIVE.
+
+    Repair #4A lets an ABORT-only disposition move such a microtask to
+    RECOVERY_REQUIRED. The settlement keeps the status it was decided on
+    (``microtask_status``); since an accepted ABORT is permanent and refuses
+    every later mutation authority (``execution_refusal``), that microtask can
+    never have had a server-authorized effect, whatever its status is now.
+    """
+    return next(
+        (s for s in settlements if s and s.get("microtask_status") in PRE_EXECUTION_STATUSES),
+        None,
+    )
+
+
+def rollback_refusal(
+    task_id: str,
+    microtask_id: str,
+    *,
+    tasks: TaskStore,
+    operations: OperationStore,
+) -> tuple[str, str] | None:
+    """Repair #4B: why no destructive rollback of this microtask may run now, or None.
+
+    A rollback restores the microtask's restore point: it may only undo work of
+    the lifecycle-current stage that has actually executed (been ACTIVE) and so
+    could have had mutation authority. Refused, in this order:
+    - unreadable lifecycle facts (fail-closed);
+    - a VERIFIED or non-current stage (R1);
+    - a settlement of the microtask written while it had never been ACTIVE
+      (``pre_execution_settlement``): that accepted ABORT refuses all mutation
+      authority of the microtask forever, so no operation of it can have had a
+      server-authorized effect, whatever its status is now;
+    - a status that does not prove execution. ACTIVE / DONE /
+      UNKNOWN_AFTER_DISCONNECT / FAILED_VERIFICATION prove it (reached only
+      through ACTIVE); RECOVERY_REQUIRED no longer does by itself since Repair
+      #4A and counts only without an ABORT settlement recorded before Repair
+      #4B (which lacks the status it was decided on); pre-execution statuses
+      never do.
+    Shared by RC-4 (session creation and every destructive apply) and the RC-6
+    rollback preflight; the caller holds the operation TASK lock.
+    """
+    try:
+        micro = tasks.open_microtask(task_id, microtask_id)
+        plan = tasks.list_microtasks(task_id)
+        settlements = [
+            op.recovery_settlement
+            for op in operations.list(task_id)
+            if op.microtask_id == microtask_id and op.recovery_settlement
+        ]
+    except (TaskStoreError, OperationStoreError) as exc:
+        return "LIFECYCLE_STATE_UNAVAILABLE", f"microtask lifecycle facts are unreadable: {exc}"
+    status = micro.status.value
+    current = next((m.microtask_id for m in plan if m.status is not MicrotaskStatus.VERIFIED), None)
+    if microtask_id not in [m.microtask_id for m in plan] or rollback_stage_protected(microtask_id, status, current):
+        return (
+            "ROLLBACK_STAGE_PROTECTED",
+            f"microtask {microtask_id} is {status} and the lifecycle-current stage is {current}: a VERIFIED "
+            "or non-current stage is never rolled back",
+        )
+    before = pre_execution_settlement(settlements)
+    if before is not None:
+        return (
+            "MICROTASK_NEVER_EXECUTED",
+            f"recovery of an operation of microtask {microtask_id} ({status}) was settled ({before['action']} "
+            f"via {before['resolution_id']}) while the microtask was {before['microtask_status']} and had never "
+            "been ACTIVE: none of its operations can have had a server-authorized effect, so its restore point is "
+            "never restored over the current files; review them manually",
+        )
+    if status in EXECUTED_STATUSES:
+        return None
+    if status == MicrotaskStatus.RECOVERY_REQUIRED.value:
+        if any(s["action"] == "ABORT" and "microtask_status" not in s for s in settlements):
+            return (
+                "MICROTASK_EXECUTION_UNPROVEN",
+                f"microtask {microtask_id} is RECOVERY_REQUIRED with an ABORT settlement recorded before "
+                "Repair #4B (without the microtask status it was decided on): that the microtask ever executed is "
+                "not proven, so no destructive rollback runs; review the files manually",
+            )
+        return None
+    return (
+        "MICROTASK_NEVER_EXECUTED",
+        f"microtask {microtask_id} is {status}: it has never been ACTIVE, so no operation of it had a "
+        "server-authorized effect and its restore point is never restored over the current files "
+        "(a change found there was made outside the server); review it manually or activate the microtask first",
+    )
+
+
 def pre_execution_next_action(operation_id: str, microtask_id: str, microtask_status: str, action: str) -> str:
     """Manual boundary of an accepted ADOPT / ROLLBACK / RETRY whose microtask never executed.
 

@@ -4,7 +4,9 @@ Turns an accepted, fresh ROLLBACK resolution into a separate tracked recovery
 operation:
 
 1. ``prepare``: authority check (fresh accepted ROLLBACK for the same
-   task/microtask/operation, contract v2, no ABORT), side-effect-free restore
+   task/microtask/operation, contract v2, no ABORT; Repair #4B: only the
+   lifecycle-current stage that has executed, ``microtask_gate.rollback_refusal``,
+   re-proved before every destructive apply), side-effect-free restore
    point verification, server-derived target set from the verified manifest,
    persistent PREPARED record, then preservation of every target's current
    physical state (bytes content-addressed outside the repository) -> PRESERVED.
@@ -46,6 +48,7 @@ from typing import Any
 
 from .file_state import FileStateError, authority_of, observe_path, same_authority
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError, _atomic_write_bytes
+from .microtask_gate import rollback_refusal
 from .models import utc_now_iso
 from .operation_contract import LEGACY_CONTRACT_VERSION
 from .operation_store import OperationStore, OperationStoreError
@@ -368,6 +371,12 @@ class RollbackService:
                 f"operation recovery is already settled by {settlement['action']} via "
                 f"{settlement['resolution_id']}; no further rollback of it is carried out",
             )
+        # Repair #4B: only the lifecycle-current stage that has actually executed
+        # is restored (never a VERIFIED / non-current or never-ACTIVE microtask),
+        # re-proved before the session is created and before every destructive apply
+        refusal = rollback_refusal(task_id, microtask_id, tasks=self.operations.tasks, operations=self.operations)
+        if refusal is not None:
+            return None, None, refusal
         return resolution, record, None
 
     def _fresh(self, resolution) -> tuple[str, str] | None:

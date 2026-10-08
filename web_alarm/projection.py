@@ -54,6 +54,7 @@ from .microtask_gate import (  # noqa: F401  (R2 rules live there since Repair #
     authoritative_action,
     current_settlements_by_microtask,
     effective_settlement_target,
+    rollback_stage_protected,
     settlement_lifecycle_satisfied,
     settlement_lifecycle_target,
 )
@@ -93,13 +94,8 @@ _ROLLBACK_SETTLED = {CLOSED, PRESERVATION_FAILED}
 # an operation of the *current* stage (the first non-VERIFIED microtask in plan
 # order).  A VERIFIED stage is protected history (doc 23 §11, invariant 5): no
 # procedure authorizes rolling back an accepted stage, and a stage after the
-# current one has not started.
-def rollback_stage_protected(microtask_id: str, microtask_status: str, current_microtask_id: str | None) -> bool:
-    return (
-        microtask_status == MicrotaskStatus.VERIFIED.value
-        or microtask_id != current_microtask_id
-    )
-
+# current one has not started (rollback_stage_protected, re-exported above from
+# microtask_gate; since Repair #4B RC-4 applies it itself, rollback_refusal).
 
 # recovery states whose next coordinator step can advance a destructive restore
 # (prepare, then apply with per-target restore); finalize/release-only and

@@ -640,12 +640,18 @@ class OperationStore:
         *,
         resolution_id: str,
         expected_revision: int | None,
+        microtask_status: str | None = None,
     ) -> dict[str, Any]:
         """Internal recovery settlement for a caller holding ``task_lock``.
 
         This path is deliberately separate from ``transition``: generic
         callers cannot manufacture recovery-only STARTED/UNKNOWN ->
         VERIFIED/FAILED transitions.
+
+        RC-6 Repair #4B: ``microtask_status`` is the status of the operation's
+        microtask observed by the caller in the same locked section; it is kept
+        with the settlement as a lifecycle fact (e.g. an ABORT settled before
+        the microtask was ever ACTIVE) and is not part of the replay identity.
         """
         action = action.strip().upper() if isinstance(action, str) else ""
         if action not in {"ADOPT", "ABORT", "ROLLBACK"}:
@@ -713,6 +719,8 @@ class OperationStore:
             "basis_operation_revision": expected_revision,
             "settled_at": now,
         }
+        if microtask_status is not None:
+            record.recovery_settlement["microtask_status"] = microtask_status
         record.result_summary = f"recovery {action} via {resolution_id}"
         record.updated_at = now
         record.revision += 1

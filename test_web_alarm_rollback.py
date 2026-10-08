@@ -148,6 +148,8 @@ class RollbackFixture(unittest.TestCase):
         else:
             specs = [("new.txt", "create"), (keep, "delete")]
         ManifestSnapshotStore(self.storage).prepare_microtask(TASK, "m1", specs)
+        # Repair #4B: a rollback undoes a stage that has executed (been ACTIVE)
+        self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.ACTIVE)
         if kind == "new":
             self.ops.begin(TASK, "m1", "create_file", "new.txt", operation_id="op_1", payload=NEW)
         else:
@@ -455,6 +457,7 @@ class OwnershipTests(RollbackFixture):
         self.write("keep.txt", KEEP)
         self.write("target.txt", BEFORE)
         ManifestSnapshotStore(self.storage).prepare_microtask(TASK, "m1", [("target.txt", "edit"), ("keep.txt", "delete")])
+        self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.ACTIVE)  # Repair #4B: an executed stage
         self.ops.begin(TASK, "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)
         claims = TargetClaimService(self.storage)
         own = claims.acquire(TASK, "op_1", operation_revision=1)["claim"]
@@ -805,6 +808,7 @@ class FullTargetOwnershipRepairTests(RollbackFixture):
         self.write("gone.txt", GONE)
         ManifestSnapshotStore(self.storage).prepare_microtask(
             TASK, "m1", [("target.txt", "edit"), ("gone.txt", "delete")])
+        self.tasks.set_microtask_status(TASK, "m1", MicrotaskStatus.ACTIVE)  # Repair #4B: an executed stage
         self.ops.begin(TASK, "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)
         own = TargetClaimService(self.storage).acquire(TASK, "op_1", operation_revision=1)["claim"]
         self.ops.transition(TASK, "op_1", "STARTED")

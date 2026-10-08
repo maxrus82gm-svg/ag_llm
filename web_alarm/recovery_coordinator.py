@@ -22,6 +22,8 @@ from .microtask_gate import (
     effective_settlement_target,
     execution_refusal,
     pre_execution_next_action,
+    pre_execution_settlement,
+    rollback_refusal,
 )
 from .models import MicrotaskStatus, TaskStatus
 from .operation_store import OperationStore, OperationStoreError, OperationTransitionError
@@ -29,7 +31,6 @@ from .projection import (
     ProjectionError,
     ProjectionService,
     current_settlements_by_microtask,
-    rollback_stage_protected,
     settlement_lifecycle_satisfied,
     settlement_lifecycle_target,
 )
@@ -804,13 +805,6 @@ class RecoveryCoordinator:
             return self._preflight_micro_locked(task_id, microtask_id, target, **rule)
         return self._set_micro_locked(task_id, microtask_id, target, **rule)
 
-    def _current_microtask_locked(self, task_id: str) -> str | None:
-        """Lifecycle position: the first non-VERIFIED microtask in plan order."""
-        for micro in self.tasks.list_microtasks(task_id):
-            if micro.status is not MicrotaskStatus.VERIFIED:
-                return micro.microtask_id
-        return None
-
     def _rollback_stage_preflight(
         self,
         task_id: str,
@@ -825,6 +819,10 @@ class RecoveryCoordinator:
         step. Steps in which RC-4 restores nothing (release-only of a VERIFIED
         session, finalize of a persisted DRIFTED/FAILED outcome, apply under an
         accepted ABORT which RC-4 refuses to continue) are not destructive.
+
+        Repair #4B: the rule is ``microtask_gate.rollback_refusal``, the one
+        RC-4 applies itself too: a VERIFIED or non-current stage, or a
+        microtask that has never executed (been ACTIVE), is never rolled back.
 
         Repair #2A: before a destructive apply the microtask is put at the
         RECOVERY_REQUIRED boundary in this same locked section (the status the
@@ -854,14 +852,17 @@ class RecoveryCoordinator:
                     ):
                         return
                 operation = self.operations.get(task_id, operation_id)
-                micro = self.tasks.open_microtask(task_id, operation.microtask_id)
-                current = self._current_microtask_locked(task_id)
-                if rollback_stage_protected(operation.microtask_id, micro.status.value, current):
+                # Repair #4B: one rule with RC-4 itself: only the lifecycle-current
+                # stage that has actually executed (been ACTIVE) is rolled back
+                refusal = rollback_refusal(
+                    task_id, operation.microtask_id, tasks=self.tasks, operations=self.operations
+                )
+                if refusal is not None:
                     raise RecoveryCoordinatorBlocked(
-                        f"{action} refused before any rollback step: operation {operation_id} belongs to "
-                        f"microtask {operation.microtask_id} ({micro.status.value}), not to the current "
-                        f"stage ({current}); a VERIFIED or non-current stage is never rolled back"
+                        f"{action} refused before any rollback step ({refusal[0]}): operation {operation_id} "
+                        f"of microtask {operation.microtask_id}: {refusal[1]}"
                     )
+                micro = self.tasks.open_microtask(task_id, operation.microtask_id)
                 if action == "APPLY_ROLLBACK":
                     if micro.status not in _TO_RECOVERY_REQUIRED_FROM:
                         raise RecoveryCoordinatorBlocked(
@@ -910,10 +911,10 @@ class RecoveryCoordinator:
                 target, actions = self._settlement_disposition_locked(
                     task_id, view["microtask_id"], pending=action.value
                 )
-                self._apply_settlement_lifecycle_locked(
+                observed = self._apply_settlement_lifecycle_locked(
                     task_id, view["microtask_id"], target, finishing=False, preflight_only=True,
                     actions=actions,
-                )
+                ).status.value
                 if action is ResolutionAction.ADOPT:
                     with ExitStack() as target_stack:
                         self._lock_resolution_targets(
@@ -934,6 +935,7 @@ class RecoveryCoordinator:
                             action.value,
                             resolution_id=resolution_id,
                             expected_revision=resolution.basis["operation_revision"],
+                            microtask_status=observed,
                         )
                         micro = self._apply_settlement_lifecycle_locked(
                             task_id, view["microtask_id"], target, finishing=False, actions=actions
@@ -945,6 +947,7 @@ class RecoveryCoordinator:
                         action.value,
                         resolution_id=resolution_id,
                         expected_revision=resolution.basis["operation_revision"],
+                        microtask_status=observed,
                     )
                     micro = self._apply_settlement_lifecycle_locked(
                         task_id, view["microtask_id"], target, finishing=False, actions=actions
@@ -1121,15 +1124,16 @@ class RecoveryCoordinator:
                 target = self._settlement_target_locked(
                     task_id, view["microtask_id"], pending="ROLLBACK"
                 )
-                self._apply_settlement_lifecycle_locked(
+                observed = self._apply_settlement_lifecycle_locked(
                     task_id, view["microtask_id"], target, finishing=False, preflight_only=True
-                )
+                ).status.value
                 outcome = self.operations._settle_recovery_locked(
                     task_id,
                     operation_id,
                     "ROLLBACK",
                     resolution_id=session["resolution_id"],
                     expected_revision=session["basis"]["operation_revision"],
+                    microtask_status=observed,
                 )
                 micro = self._apply_settlement_lifecycle_locked(
                     task_id, view["microtask_id"], target, finishing=False
@@ -1286,6 +1290,22 @@ class RecoveryCoordinator:
                 "requires_human": True,
             }
 
+        if state == "ROLLBACK_ACCEPTED" and focus is not None:
+            before = pre_execution_settlement(
+                view["recovery_settlement"]
+                for view in projection["operations"]
+                if view["microtask_id"] == focus["microtask_id"]
+            )
+            if before is not None:
+                # Repair #4B: an ABORT settled before the microtask was ever ACTIVE
+                # (it is RECOVERY_REQUIRED through Repair #4A) means no operation of
+                # it had an authorized effect: its restore point is never restored
+                # over the current files (RC-4 refuses it too, rollback_refusal)
+                return {
+                    "stop": MANUAL_DECISION_REQUIRED,
+                    "reason": self._never_executed_rollback_reason(focus, before),
+                    "requires_human": True,
+                }
         if state in {"ADOPT_ACCEPTED", "ROLLBACK_ACCEPTED"} and focus is not None and (
             focus["microtask_status"] in _PRE_EXECUTION
         ):
@@ -1471,6 +1491,16 @@ class RecoveryCoordinator:
                 "requires_human": True,
             }
         return {"stop": NO_ACTION_REQUIRED, "reason": projection["next_safe_action"]}
+
+    @staticmethod
+    def _never_executed_rollback_reason(view: dict[str, Any], before: dict[str, Any]) -> str:
+        return (
+            f"accepted ROLLBACK of operation {view['operation_id']} is not carried out: recovery of an operation "
+            f"of microtask {view['microtask_id']} ({view['microtask_status']}) was settled ({before['action']} via "
+            f"{before['resolution_id']}) while the microtask was {before['microtask_status']} and had never been "
+            "ACTIVE, so none of its operations can have had a server-authorized effect. Its restore point is not "
+            "restored over the current files: review them manually, record ABORT for the operation, or replan"
+        )
 
     @staticmethod
     def _not_executed_reason(view: dict[str, Any], action: str) -> str:

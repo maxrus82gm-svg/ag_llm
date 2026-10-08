@@ -35,7 +35,7 @@ from .file_state import (
     observe_bytes,
     same_authority,
 )
-from .models import OperationRecord, OperationStatus, record_to_dict
+from .models import MicrotaskStatus, OperationRecord, OperationStatus, record_to_dict
 from .storage_policy import MAX_PAYLOAD_BYTES, PAYLOAD_RETENTION
 from .target_identity import CanonicalTarget, TargetIdentityError, target_key
 
@@ -46,6 +46,9 @@ LEGACY_FINGERPRINT_VERSION = 1
 FINGERPRINT_VERSION = 2
 
 V2_RECORD_FIELDS = ("contract_version", "revision", "contract", "receipt", "recovery_settlement")
+_SETTLEMENT_FIELDS = frozenset({"action", "resolution_id", "basis_operation_revision", "settled_at"})
+_SETTLEMENT_OPTIONAL = frozenset({"microtask_status"})
+_MICROTASK_STATUSES = frozenset(status.value for status in MicrotaskStatus)
 PRE_STATE_SOURCE = "server_observed_at_intent"
 RECEIPT_SOURCE = "server_observed_at_done"
 POST_STATE_SOURCES = ("payload", "declared", "mutation_kind")
@@ -597,10 +600,12 @@ def validate_record(record: OperationRecord) -> None:
 
     settlement = record.recovery_settlement
     if settlement is not None:
-        if not isinstance(settlement, Mapping) or set(settlement) != {
-            "action", "resolution_id", "basis_operation_revision", "settled_at"
-        }:
+        if not isinstance(settlement, Mapping) or set(settlement) - _SETTLEMENT_OPTIONAL != _SETTLEMENT_FIELDS:
             raise OperationContractError("recovery_settlement has unexpected fields")
+        # RC-6 Repair #4B: the microtask status observed when the settlement was
+        # written (absent in settlements recorded before Repair #4B)
+        if "microtask_status" in settlement and settlement["microtask_status"] not in _MICROTASK_STATUSES:
+            raise OperationContractError("recovery_settlement.microtask_status is invalid")
         if settlement["action"] not in {"ADOPT", "ABORT", "ROLLBACK"}:
             raise OperationContractError("recovery_settlement.action is invalid")
         _check_text("recovery_settlement.resolution_id", settlement["resolution_id"])

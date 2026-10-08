@@ -111,6 +111,8 @@ class RollbackRaceTests(unittest.TestCase):
                 tasks.set_microtask_status(task, "m1", MicrotaskStatus.ACTIVE)
         ManifestSnapshotStore(storage).prepare_microtask(
             "task_rb", "m1", [("target.txt", "edit"), ("keep.txt", "delete")])
+        # Repair #4B: a rollback undoes a stage that has executed (been ACTIVE)
+        tasks.set_microtask_status("task_rb", "m1", MicrotaskStatus.ACTIVE)
         ops.begin("task_rb", "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)
         ops.transition("task_rb", "op_1", "STARTED")
         (project / "target.txt").write_bytes(AFTER)
