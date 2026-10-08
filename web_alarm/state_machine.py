@@ -431,6 +431,49 @@ class ServerStateMachine:
                     return self._stale_reason(current, MicrotaskStatus.VERIFIED, exc), None
         return None, updated
 
+    def _admit_active(
+        self,
+        task_id: str,
+        microtask_id: str,
+        current: MicrotaskStatus,
+    ) -> tuple[str | None, MicrotaskRecord | None]:
+        """WA-014: ACTIVE only for a microtask that can still get mutation authority.
+
+        The recovery disposition (``microtask_gate.activation_refusal``) is read
+        while holding the operation TASK lock, which every writer of a
+        disposition holds too (Resolver acceptance, RC-4 session creation,
+        RC-6 settlement), and the activation compare-and-set (mutation lock;
+        it re-checks the earlier microtasks and the single ACTIVE one, F4)
+        happens inside that same TASK-locked section: an ABORT/ROLLBACK
+        accepted before the activation refuses it, one accepted after it found
+        an ACTIVE stage that could have had authority. Returns (refusal reason,
+        None) or (None, updated record); the caller rejects only after the
+        lock is released.
+        """
+        from .microtask_gate import activation_refusal
+        from .projection import ProjectionService
+
+        if self._projection is None:
+            self._projection = ProjectionService(self.tasks.storage_root)
+        service = self._projection
+        with service.operations.task_lock(task_id):
+            refusal = activation_refusal(
+                task_id,
+                microtask_id,
+                operations=service.operations,
+                resolver=service.resolver,
+                rollbacks=service.rollbacks,
+            )
+            if refusal is not None:
+                return f"recovery disposition blocks ACTIVE ({refusal[0]}): {refusal[1]}", None
+            try:
+                updated = self.tasks.compare_and_set_microtask_status(
+                    task_id, microtask_id, expected=current, status=MicrotaskStatus.ACTIVE, activate=True
+                )
+            except MicrotaskStatusConflict as exc:
+                return self._stale_reason(current, MicrotaskStatus.ACTIVE, exc), None
+        return None, updated
+
     def transition(
         self,
         task_id: str,
@@ -542,6 +585,11 @@ class ServerStateMachine:
             refusal, updated = self._admit_verified(task_id, microtask_id, current)
             if refusal is not None:
                 self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
+        elif requested == MicrotaskStatus.ACTIVE:
+            # WA-014: no ACTIVE over an ABORT/ROLLBACK disposition (checked under the locks)
+            refusal, updated = self._admit_active(task_id, microtask_id, current)
+            if refusal is not None:
+                self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
         else:
             try:
                 updated = self.tasks.compare_and_set_microtask_status(
@@ -549,7 +597,6 @@ class ServerStateMachine:
                     microtask_id,
                     expected=current,
                     status=requested,
-                    activate=requested == MicrotaskStatus.ACTIVE,
                 )
             except MicrotaskStatusConflict as exc:
                 self._reject(

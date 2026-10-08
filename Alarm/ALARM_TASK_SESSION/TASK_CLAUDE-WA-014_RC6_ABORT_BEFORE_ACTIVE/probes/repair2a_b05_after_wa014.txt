@@ -1,0 +1,4 @@
+
+### b05: in-process stale request via expected_status is refused without any status write
+   REJECTED (stale transition: the caller observed READY, but the microtask is ACTIVE; nothin) | microtask record unchanged: True
+  VERDICT: OK — stale basis refused, nothing written

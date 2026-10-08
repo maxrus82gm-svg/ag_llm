@@ -1,0 +1,16 @@
+failing on 166:
+  test_activation_after_an_accepted_abort_is_refused_and_nothing_is_restored
+  test_activation_after_an_accepted_rollback_is_refused_too
+  test_an_abort_cannot_slip_between_the_activation_check_and_active
+  test_an_activation_waits_for_an_abort_being_recorded_and_is_then_refused
+  test_an_open_rc4_session_refuses_the_activation
+  test_failed_verification_is_not_reactivated_under_an_abort
+  test_repeated_refusals_write_nothing_and_a_fresh_process_agrees
+  test_the_rule_counts_only_destructive_dispositions
+  test_unreadable_recovery_facts_refuse_the_activation
+passing on 166:
+  test_direct_rc4_after_activation_then_abort_still_restores
+  test_rollback_after_activation_then_abort_still_restores
+
+FAILED (failures=10, errors=1)
+TESTS 11; failing on 166: 9; passing on 166: 2

@@ -29,6 +29,18 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
+Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+TASK: —
+
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+---
+
+### CLAUDE-WA-014 — RC-6 Focused Safety Gate: accepted ABORT before ACTIVE
+
+**Статус постановки:** БЛОК 1, передана пользователем в чате как утверждённая к исполнению («Задача утверждена к исполнению»; строка статуса в БЛОКЕ 1 гласила «DRAFT / READY FOR USER HANDOFF — НЕ ЗАПУЩЕНА»), выполнена Claude 2026-10-08 (Gate A — CONFIRMED, Gate B — выполнен); результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
 Статус: DRAFT / READY FOR USER HANDOFF — НЕ ЗАПУЩЕНА
 TASK: CLAUDE-WA-014 — RC-6 Focused Safety Gate: accepted ABORT before ACTIVE
 
@@ -71,10 +83,7 @@ Repair #4B запретил откаты для микрозадачи, кото
 
 Полный technical evidence/report — в `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_*/`; в Chat итог — **один копируемый блок `text`** по новому правилу. В нём: TASK ID, baseline SHA, Gate A verdict, подтверждённая причинность, Gate B (если исполнялся), точные тесты/числа, изменённые файлы, риски/решения, DOC IMPACT, NEXT и report path. Не смешивать с промежуточным ходом работы.
 После commit/push пользователем ChatGPT выполняет независимый GitHub-only review. До PASS следующий correctness этап не объявлять открытым.
-
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
+```
 
 ### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP
 
@@ -4854,6 +4863,50 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA-014 — RC-6 Focused Safety Gate: accepted ABORT before ACTIVE — результат
+
+**TASK:** CLAUDE-WA-014 (БЛОК 1, передана пользователем в чате как утверждённая; строка статуса в БЛОКЕ 1 гласила «DRAFT / READY FOR USER HANDOFF»). Исполнитель Claude; независимый verifier — ChatGPT по GitHub. PRIMARY `23`, порядок `24`.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
+- **Baseline:** HEAD 167 `fb5e6e38…`; код `web_alarm/` и тесты идентичны commit 166 `19ca5626a28559cfe506ff6c993eb25a1c0a6e3f`; полный набор — 569 OK, skip 1.
+- **Gate A — CONFIRMED** (HTTP API, без прямой записи в storage, только временное storage):
+  - ABORT `op1` принят при READY → READY → ACTIVE проходит (200), хотя гейт исполнения F-C уже даёт `MICROTASK_RECOVERY_REQUIRED` (окна полномочий не было);
+  - затем RC-6 `recover` и прямой RC-4 физически восстанавливают файлы (write / delete / create);
+  - тот же класс: ROLLBACK до ACTIVE + активация;
+  - обратный порядок (ACTIVE до ABORT) откатывается законно.
+- **Root cause:** переход в ACTIVE (READY / FAILED_VERIFICATION) не учитывал recovery disposition; ACTIVE служил доказательством исполнения для правила отката #4B и RC-6.
+- **Gate B — исправление:**
+  - `microtask_gate.activation_refusal` — правило F-C (ABORT / ROLLBACK принят, закреплён или открытая сессия RC-4 → отказ; нечитаемые факты → отказ);
+  - `ServerStateMachine._admit_active`: решение и публичный CAS в одной секции под TASK-lock (под ним пишут disposition Resolver, RC-4 и RC-6); отказ — TransitionRejected / HTTP 409;
+  - ручная граница #4A для ROLLBACK — без выхода «активируй».
+
+  Схема данных, граф state machine, RC-6, RC-4, Resolver, Projection не менялись.
+- **Файлы:**
+  - `web_alarm/microtask_gate.py`, `web_alarm/state_machine.py`;
+  - новый `test_web_alarm_recovery_coordinator_wa014.py` (11 тестов);
+  - `test_web_alarm_recovery_coordinator_repair4b.py` — тест B4 обновлён: активация в окне краша теперь отклоняется.
+  - Тест Repair #3 F4 не менялся.
+- **Проверки:**
+  - WA-014 — 11/11, на 166 падают 9 из 11 (2 — позитивные контроли);
+  - Gate A после исправления — активация 409, ни один байт не изменился; законный порядок восстанавливает;
+  - фокусно 28 модулей — 425 тестов, все exit 0;
+  - полный набор (48 модулей) — **580 OK, skip 1**, дважды;
+  - стресс-повторы — 29/29;
+  - adversarial WA-014 — 54 раунда реальных процессов, нарушений 0 (ACTIVE выдан только при нуле принятых ABORT/ROLLBACK на момент решения; восстановление только после законной активации);
+  - прежние пробы — вердикты как после #4B (#4B Z1: 0 разрушительных из 12, было 10 из 24); #2A: b04 несовместима со стендом (барьер внутри секции под блокировкой), на новой границе 6/6 OK;
+  - compileall и `git diff --check` — OK.
+- **Безопасность:** живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`), resolution в нём нет.
+- **Риски / решения:**
+  - откат исполнявшегося этапа после ROLLBACK, принятого до активации, больше невозможен — сознательное изменение выхода #4A (оценить);
+  - данные старых сборок «ACTIVE после ABORT» неотличимы (в живом storage их нет);
+  - активация теперь может ждать TASK-lock (как VERIFIED с Repair #3);
+  - 1 раз из 54 — известная ошибка Windows `os.replace`, разрушения нет.
+- **Documentation:** ARCHITECTURE IMPACT — YES после PASS (`23`: предусловие перехода в ACTIVE; `24`: exit-proof RC-6); delta — §11 отчёта; синхронизирует ChatGPT после PASS.
+- **Блокеры RC-6 внутри scope:** исполнитель не видит. NEXT: commit / push пользователем → независимая GitHub-only проверка ChatGPT.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`.
+
 ---
 
 ### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP — результат

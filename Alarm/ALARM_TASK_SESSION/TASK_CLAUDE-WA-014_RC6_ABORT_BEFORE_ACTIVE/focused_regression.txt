@@ -1,0 +1,32 @@
+| Набор | Модуль | Тестов | Итог |
+| --- | --- | --- | --- |
+| WA-014 (new) | `test_web_alarm_recovery_coordinator_wa014` | 11 | OK (exit 0) |
+| Repair #4B (B4 updated) | `test_web_alarm_recovery_coordinator_repair4b` | 22 | OK (exit 0) |
+| Repair #4A | `test_web_alarm_recovery_coordinator_repair4a` | 16 | OK (exit 0) |
+| Repair #4 | `test_web_alarm_recovery_coordinator_repair4` | 20 | OK (exit 0) |
+| Repair #3 | `test_web_alarm_recovery_coordinator_repair3` | 34 | OK (exit 0) |
+| State machine CAS (#2A) | `test_web_alarm_state_machine_cas` | 13 | OK (exit 0) |
+| Repair #2 | `test_web_alarm_recovery_coordinator_repair2` | 25 | OK (exit 0) |
+| Repair #1 | `test_web_alarm_recovery_coordinator_repair1` | 21 | OK (exit 0) |
+| RC-6 | `test_web_alarm_recovery_coordinator` | 15 | OK (exit 0) |
+| RC-6 adversarial | `test_web_alarm_recovery_coordinator_adversarial` | 16 | OK (exit 0) |
+| RC-6 concurrency | `test_web_alarm_recovery_coordinator_concurrency` | 6 | OK (exit 0) |
+| RC-4 | `test_web_alarm_rollback` | 41 | OK (exit 0) |
+| RC-4 concurrency | `test_web_alarm_rollback_concurrency` | 2 | OK (exit 0) |
+| RC-5 projection | `test_web_alarm_projection` | 47 | OK (exit 0) |
+| RC-5 projection concurrency | `test_web_alarm_projection_concurrency` | 3 | OK (exit 0) |
+| RC-2 Resolver | `test_web_alarm_resolver` | 24 | OK (exit 0) |
+| RC-2 Resolver concurrency | `test_web_alarm_resolver_concurrency` | 1 | OK (exit 0) |
+| RC-3 claims | `test_web_alarm_target_claims` | 18 | OK (exit 0) |
+| RC-3 claims concurrency | `test_web_alarm_target_claims_concurrency` | 2 | OK (exit 0) |
+| RC-1 contract | `test_web_alarm_operation_contract` | 19 | OK (exit 0) |
+| Operation store | `test_web_alarm_operation_store` | 8 | OK (exit 0) |
+| Operation store concurrency | `test_web_alarm_operation_store_concurrency` | 5 | OK (exit 0) |
+| State machine | `test_web_alarm_state_machine` | 6 | OK (exit 0) |
+| Task store | `test_web_alarm_task_store` | 11 | OK (exit 0) |
+| Manifest store | `test_web_alarm_manifest_store` | 10 | OK (exit 0) |
+| Recovery report acceptance | `test_web_alarm_recovery_report_acceptance` | 10 | OK (exit 0) |
+| Server | `test_web_alarm_server` | 12 | OK (exit 0) |
+| CLI | `test_web_alarm_cli` | 7 | OK (exit 0) |
+
+Итого: 28 модулей, 425 тестов; модулей с exit 0 — 28

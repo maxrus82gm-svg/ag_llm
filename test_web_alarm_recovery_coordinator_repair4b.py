@@ -26,6 +26,7 @@ from web_alarm.recovery_coordinator import (
 from web_alarm.resolution_store import ResolutionResult
 from web_alarm.rollback_service import RollbackService
 from web_alarm.server import ApiError, WebAlarmApi
+from web_alarm.state_machine import TransitionRejected
 
 KEEP, GONE, NEW = b"keep\n", b"gone\n", b"new file\n"
 FILES = {
@@ -381,7 +382,8 @@ class RestartAndCrashTests(Repair4BFixture):
         self.resolve("ABORT", "op_1")
         self.crash_step("between_writes", 43)
         self.assertEqual((self.micro("m1"), self.marker("op_1")), (MicrotaskStatus.READY, "READY"))
-        self.machine.transition(TASK, "m1", MicrotaskStatus.ACTIVE)  # activated in the crash window
+        with self.assertRaises(TransitionRejected):  # WA-014: no activation in the crash window either
+            self.machine.transition(TASK, "m1", MicrotaskStatus.ACTIVE)
         self.external_partial("write")
         resolution = self.resolve("ROLLBACK", "op_2")
         before = self.files()
@@ -390,8 +392,9 @@ class RestartAndCrashTests(Repair4BFixture):
         state, steps, _ = self.fresh_recover()
 
         self.assertEqual(direct["result_code"], "MICROTASK_NEVER_EXECUTED")  # ABORT preceded any authority
-        self.assertEqual((state, steps), (MANUAL_DECISION_REQUIRED, []))  # the ROLLBACK focus stops first
-        self.assertEqual(self.gate()[0], "MICROTASK_RECOVERY_REQUIRED")  # no mutation authority while ACTIVE
+        self.assertEqual(state, MANUAL_DECISION_REQUIRED)
+        self.assertTrue(set(steps) <= {"FINISH_SETTLEMENT"}, steps)  # never a rollback step
+        self.assertEqual(self.gate()[0], "MICROTASK_NOT_ACTIVE")  # no mutation authority at any point
         self.assert_nothing_restored(before)
         self.resolve("ABORT", "op_2")  # the named way out
         closed = self.recover()

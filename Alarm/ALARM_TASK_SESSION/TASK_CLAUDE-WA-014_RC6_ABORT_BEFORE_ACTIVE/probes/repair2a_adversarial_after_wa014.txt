@@ -1,0 +1,65 @@
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-WA-009_RC6_REPAIR2\repair2a\probes\repair2a_adversarial.py", line 189, in run
+    fn(w)
+    ~~^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-WA-009_RC6_REPAIR2\repair2a\probes\repair2a_adversarial.py", line 161, in b04
+    wait(flags, "y_read", second)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-WA-009_RC6_REPAIR2\repair2a\probes\repair2a_adversarial.py", line 57, in wait
+    raise RuntimeError(f"child did not reach {name}: {proc.communicate()}")
+RuntimeError: child did not reach y_read: ('', 'Traceback (most recent call last):\n  File "M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py", line 165, in _serialized\n    lock.acquire()\n    ~~~~~~~~~~~~^^\n  File "M:\\GitHub\\ag_llm\\web_alarm\\store_lock.py", line 62, in acquire\n    raise StoreLockTimeout(f"store lock timeout: {self.path}")\nweb_alarm.store_lock.StoreLockTimeout: store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\tmpcmx8o2eu\\state\\locks\\operations\\task_v.lock\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "<string>", line 18, in <module>\n    ServerStateMachine(\'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\tmpcmx8o2eu\\\\state\').transition(\'task_v\', \'m1\', \'ACTIVE\', verification_evidence="x")\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py", line 590, in transition\n    refusal, updated = self._admit_active(task_id, microtask_id, current)\n                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py", line 459, in _admit_active\n    with service.operations.task_lock(task_id):\n         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File "C:\\Python313\\Lib\\contextlib.py", line 141, in __enter__\n    return next(self.gen)\n  File "M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py", line 167, in _serialized\n    raise OperationStoreError(str(exc)) from exc\nweb_alarm.operation_store.OperationStoreError: store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\tmpcmx8o2eu\\state\\locks\\operations\\task_v.lock\n')
+
+### b01: RETRY re-arm vs a stale manual UNKNOWN -> RECOVERY_REQUIRED decided before the re-arm (real processes)
+  recover: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=['REARM_RETRY']
+  stale manual transition: {'result': 'REJECTED', 'reason': 'stale transition: UNKNOWN_AFTER_DISCONNECT -> RECOVERY_REQUIRED was decided on UNKNOWN_AFTER_DISCONNECT, but microtask task_v/m1 is ACTIVE, not UNKNOWN_AFTER_DISCONNECT; the newer status was not overwritten'} | m1 = ACTIVE
+  recover again: state=READY_FOR_EXECUTION recovery=RETRY_ACCEPTED current=m1 steps=[]
+  VERDICT: OK Ч a manual decision taken on UNKNOWN never overwrites the re-armed ACTIVE
+
+### b02: ADOPT settlement vs a stale UNKNOWN -> RECOVERY_REQUIRED (real processes)
+  recover: state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=['SETTLE_ADOPT']
+  stale manual transition: {'result': 'REJECTED', 'reason': 'stale transition: UNKNOWN_AFTER_DISCONNECT -> RECOVERY_REQUIRED was decided on UNKNOWN_AFTER_DISCONNECT, but microtask task_v/m1 is DONE, not UNKNOWN_AFTER_DISCONNECT; the newer status was not overwritten'} | m1 = DONE
+  recover again: state=READY_FOR_VERIFICATION recovery=NORMAL current=m1 steps=[]
+  VERDICT: OK Ч ADOPT's DONE is not overwritten; no FINISH_SETTLEMENT churn afterwards
+
+### b03: destructive apply refused by RC-4 after the RECOVERY_REQUIRED mark: nothing restored, manual, one attempt
+  after crash: m1 = DONE | session: APPLYING
+  recover: state=RECOVERY_BLOCKED recovery=ROLLBACK_APPLYING current=m1 steps=['APPLY_ROLLBACK']
+     error=RECOVERY_STEP_REFUSED reason=APPLY_ROLLBACK was refused by RC-4 in this recover call (RESTORE_POINT_INVALID: snapshot integrity failure: a.txt); it is not repeated: resolve the blocker, then call recover again
+  m1 = RECOVERY_REQUIRED | restore events 1 -> 1
+  VERDICT: OK Ч stage put at the manual boundary, no further restore, the refused apply is not repeated
+
+### b04: two concurrent activations of the same READY microtask (real processes)
+  VERDICT: ERROR Ч probe raised
+Traceback (most recent call last):
+  File "C:\Python313\Lib\shutil.py", line 625, in _rmtree_unsafe
+    os.unlink(fullname)
+    ~~~~~~~~~^^^^^^^^^^
+PermissionError: [WinError 32] ѕроцесс не может получить доступ к файлу, так как этот файл зан€т другим процессом: 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpcmx8o2eu\\state\\locks\\operations\\task_v.lock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-WA-009_RC6_REPAIR2\repair2a\probes\repair2a_adversarial.py", line 199, in <module>
+    run(key)
+    ~~~^^^^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-WA-009_RC6_REPAIR2\repair2a\probes\repair2a_adversarial.py", line 194, in run
+    w.close()
+    ~~~~~~~^^
+  File "M:\GitHub\ag_llm\Alarm\ALARM_TASK_SESSION\TASK_CLAUDE-RC6-REVERIFY\probes\reverify_probes.py", line 67, in close
+    self.tmp.cleanup()
+    ~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\tempfile.py", line 955, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\tempfile.py", line 935, in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Python313\Lib\shutil.py", line 629, in _rmtree_unsafe
+    onexc(os.unlink, fullname, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\tempfile.py", line 910, in onexc
+    _os.unlink(path)
+    ~~~~~~~~~~^^^^^^
+PermissionError: [WinError 32] ѕроцесс не может получить доступ к файлу, так как этот файл зан€т другим процессом: 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpcmx8o2eu\\state\\locks\\operations\\task_v.lock'

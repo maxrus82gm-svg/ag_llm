@@ -1,0 +1,48 @@
+.................................................................................................................................................................................................................................................F............................................C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmplxl2j5g8'>
+  _warnings.warn(warn_message, ResourceWarning)
+.....C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmp4tdnvgtv'>
+  _warnings.warn(warn_message, ResourceWarning)
+.......C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpdavazpbv'>
+  _warnings.warn(warn_message, ResourceWarning)
+.............C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmplsec1nc0'>
+  _warnings.warn(warn_message, ResourceWarning)
+.C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpuwt9fbj5'>
+  _warnings.warn(warn_message, ResourceWarning)
+.C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpie9_q2gc'>
+  _warnings.warn(warn_message, ResourceWarning)
+..C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmp3wi40nyv'>
+  _warnings.warn(warn_message, ResourceWarning)
+..C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpfxqp_0s0'>
+  _warnings.warn(warn_message, ResourceWarning)
+..E...........C:\Python313\Lib\tempfile.py:941: ResourceWarning: Implicitly cleaning up <TemporaryDirectory 'C:\\Users\\REX\\AppData\\Local\\Temp\\tmpvbbi5hml'>
+  _warnings.warn(warn_message, ResourceWarning)
+......................................................................................................................................................................................s.......................................................
+======================================================================
+ERROR: test_b4_crash_between_the_abort_settlement_and_the_status_keeps_the_fact (test_web_alarm_recovery_coordinator_repair4b.RestartAndCrashTests.test_b4_crash_between_the_abort_settlement_and_the_status_keeps_the_fact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_recovery_coordinator_repair4b.py", line 384, in test_b4_crash_between_the_abort_settlement_and_the_status_keeps_the_fact
+    self.machine.transition(TASK, "m1", MicrotaskStatus.ACTIVE)  # activated in the crash window
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\state_machine.py", line 591, in transition
+    self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\web_alarm\state_machine.py", line 213, in _reject
+    raise TransitionRejected(
+    ...<6 lines>...
+    )
+web_alarm.state_machine.TransitionRejected: READY -> ACTIVE rejected: recovery disposition blocks ACTIVE (MICROTASK_RECOVERY_REQUIRED): microtask m1 carries an ABORT recovery disposition: its operations can never get mutation authority, so it is not activated (ACTIVE would claim an execution that was never permitted, and a later rollback would restore its restore point over changes no authorized executor made); record ABORT for its remaining operations or replan
+
+======================================================================
+FAIL: test_f4_activation_rechecks_earlier_microtasks_under_the_lock (test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_recovery_coordinator_repair3.py", line 633, in test_f4_activation_rechecks_earlier_microtasks_under_the_lock
+    with self.assertRaises(TransitionRejected) as refused:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+AssertionError: TransitionRejected not raised
+
+----------------------------------------------------------------------
+Ran 569 tests in 225.307s
+
+FAILED (failures=1, errors=1, skipped=1)

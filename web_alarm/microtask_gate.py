@@ -167,10 +167,20 @@ def pre_execution_next_action(operation_id: str, microtask_id: str, microtask_st
     """Manual boundary of an accepted ADOPT / ROLLBACK / RETRY whose microtask never executed.
 
     It cannot be completed now (no DONE without execution, no rollback of a
-    stage that never ran, no re-arm before activation) but stays completable:
-    activate the microtask normally, or close the operation with ABORT (which
-    RC-6 settles to RECOVERY_REQUIRED).
+    stage that never ran, no re-arm before activation). ADOPT and RETRY stay
+    completable by activating the microtask normally; a ROLLBACK never is
+    (WA-014: the accepted ROLLBACK refuses the activation, ``activation_refusal``,
+    so a stage that never executed is never restored over the current files).
+    Any of them can be closed with ABORT (which RC-6 settles to RECOVERY_REQUIRED).
     """
+    if action == "ROLLBACK":
+        return (
+            f"accepted ROLLBACK of operation {operation_id} is not carried out: its microtask {microtask_id} is "
+            f"{microtask_status} and has never been ACTIVE, so no operation of it can have had a server-authorized "
+            "effect and its restore point is never restored over the current files (the accepted ROLLBACK also "
+            "refuses the activation). Review the files manually and record ABORT for the operation (settled to "
+            "the RECOVERY_REQUIRED boundary), or replan"
+        )
     return (
         f"accepted {action} of operation {operation_id} cannot be completed while its microtask "
         f"{microtask_id} is {microtask_status}: the microtask has never been ACTIVE, so no operation of it "
@@ -375,6 +385,47 @@ def execution_refusal(
             "MICROTASK_RECOVERY_REQUIRED",
             f"microtask {microtask_id} carries an {found} recovery disposition: normal mutation is "
             "forbidden until an explicit lifecycle/recovery decision",
+        )
+    return None
+
+
+def activation_refusal(
+    task_id: str,
+    microtask_id: str,
+    *,
+    operations: OperationStore,
+    resolver: ResolverService,
+    rollbacks: RollbackStore,
+) -> tuple[str, str] | None:
+    """WA-014: why this microtask may not become ACTIVE now, or None.
+
+    ACTIVE opens the window in which operations of the microtask may get
+    mutation authority (``execution_refusal``, F-C). A microtask whose
+    operations already carry an ABORT/ROLLBACK recovery disposition (settled,
+    accepted or in an open RC-4 session; the same ``disposition_actions``) can
+    never get that authority. Activating it would make ACTIVE a false proof of
+    execution, which the rollback gate (``rollback_refusal``, Repair #4B)
+    relies on, and a later rollback would restore the restore point over
+    changes no authorized executor made. Unreadable facts refuse
+    (fail-closed). The caller holds the operation TASK lock (every writer of a
+    disposition holds it: Resolver acceptance, RC-4 session creation, RC-6
+    settlement) and writes ACTIVE in that same section, so the two cannot
+    interleave.
+    """
+    try:
+        actions = disposition_actions(
+            task_id, microtask_id, operations=operations, resolver=resolver, rollbacks=rollbacks
+        )
+    except (OperationStoreError, ResolverError, ResolutionStoreError, RollbackStoreError) as exc:
+        return "LIFECYCLE_STATE_UNAVAILABLE", f"microtask recovery facts are unreadable: {exc}"
+    if settlement_lifecycle_target(actions) is MicrotaskStatus.RECOVERY_REQUIRED:
+        found = ", ".join(sorted(set(a for a in actions if a in _DESTRUCTIVE)))
+        return (
+            "MICROTASK_RECOVERY_REQUIRED",
+            f"microtask {microtask_id} carries an {found} recovery disposition: its operations can never get "
+            "mutation authority, so it is not activated (ACTIVE would claim an execution that was never permitted, "
+            "and a later rollback would restore its restore point over changes no authorized executor made); "
+            "record ABORT for its remaining operations or replan",
         )
     return None
 
