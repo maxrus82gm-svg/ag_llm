@@ -20,6 +20,11 @@
 
 ---
 
+## 2026-10-08 — CLAUDE-WA-014 — RC-6: accepted ABORT/ROLLBACK before ACTIVE
+- **Сделано:** подтверждён опасный порядок ABORT/ROLLBACK→ACTIVE→rollback; добавлен fail-closed activation gate под TASK-lock, законный обратный порядок сохранён. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`.
+- **Итог:** RC-6 DONE / VERIFIED по независимому GitHub code/evidence review ChatGPT на commit `2c104782` от 2026-10-08; новые тесты 11/11, полный набор 580 OK (1 skip) ×2 по committed журналам. Без повторного локального запуска verifier; WA4-E ещё не утверждён к исполнению.
+- **Цепочка:** исходная RC-6 `CHATGPT-WA-008` и последовательные Repair `CLAUDE-WA-009…WA-014` сохраняются в task-сессиях и оперативной карточке Claude, без дублирования полных постановок здесь. `CLAUDE-WA-007` / RC-5 имеет результат исполнения, но отдельный independent review отложен; не записывать ему DONE.
+
 ## 2026-10-04 — CLAUDE-WA-005 — RC-3: Canonical-target conflict gate + mutation-boundary CAS
 - **Сделано:** реализован persistent Target Claim / Conflict Gate по canonical physical target: один владелец на цель, interprocess target lock, replay-safe acquire/release, crash-safe ownership и mutation-boundary CAS без physical mutation. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3/rc3_report.md`.
 - **Итог:** DONE / VERIFIED 2026-10-04 на commit 149 `163dfba`; ChatGPT независимо подтвердил focused 20/20, full Web Alarm 286/286, concurrency ещё 5/5 и compileall. Physical identity, release guard и fresh RETRY policy приняты; WA4-E lock-held STARTED-before-write интеграция зафиксирована как future requirement. RC-4 разрешён как следующий этап, но не запущен.

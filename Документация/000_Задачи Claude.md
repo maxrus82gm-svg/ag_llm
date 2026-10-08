@@ -11,7 +11,7 @@
 - Этот файл **не заменяет** `000_Задачи для агента.md`, `05_Реестр задач.md`, `06_Журнал выполнения и отчёты.md` и профильные документы проекта.
 - Если Claude выполняет значимое изменение проекта, итог после проверки должен быть отражён и в канонической документации проекта по обычным правилам.
 - До начала mutation-задачи явно указывать scope, запрещённые действия и критерии проверки. Эти границы ограничивают **самовольные изменения**, но не глубину инженерного анализа.
-- Claude работает как самостоятельный основной инженерный агент, а не только как исполнитель перечисленного чек-листа. Перечисленные tests/acceptance cases — обязательный минимум, не потолок. Перед `RESULT READY` Claude обязан сделать собственный adversarial pass и попытаться опровергнуть решение релевантными race/restart/replay/persistence/ownership/finalization/compatibility сценариями.
+- Claude работает как самостоятельный полноценный инженерный агент, а не только как исполнитель перечисленного чек-листа. Claude и Codex — равноправные независимые агенты, назначение по текущей TASK не создаёт иерархии. Перечисленные tests/acceptance cases — обязательный минимум, не потолок. Перед `RESULT READY` Claude обязан сделать собственный adversarial pass и попытаться опровергнуть решение релевантными race/restart/replay/persistence/ownership/finalization/compatibility сценариями.
 - Если неперечисленная проблема найдена внутри текущего scope — Claude сам её проверяет, исправляет и добавляет regression test. Если исправление выходит за scope/этап или требует архитектурного решения — код за рамками не менять; reproduction/evidence/root cause/impact и предложение обязательно вынести в task-report и БЛОК 3 как `FINDING / PROPOSAL / BLOCKER` для решения verifier/пользователя.
 - Claude имеет право читать соседний релевантный код и делать безопасные isolated probes/tests ради проверки гипотез. Это не даёт права самовольно запускать следующий этап, менять утверждённый план или расширять production mutation-scope.
 - Секреты, токены, cookies, Organization ID и платёжные данные сюда не записываются.
@@ -85,9 +85,9 @@ Repair #4B запретил откаты для микрозадачи, кото
 После commit/push пользователем ChatGPT выполняет независимый GitHub-only review. До PASS следующий correctness этап не объявлять открытым.
 ```
 
-### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP
+### CLAUDE-WA-013 — RC-6 Repair \#4B — FOLLOW-UP
 
-**Статус постановки:** прямой Chat-handoff пользователя (подтверждён его словами «вот тебе еще одна задача»; по постановке БЛОК 1 не используется и не ротируется), выполнена Claude 2026-10-08; результат — отдельной записью в БЛОКЕ 3. Продолжение CLAUDE-WA-012 / Repair #4A; его постановка и постановка Repair #4 сохранены ниже без изменений. Полная постановка дословно (хвостовые пробелы сняты):
+**Статус постановки:** прямой Chat-handoff пользователя (подтверждён его словами «вот тебе еще одна задача»; по постановке БЛОК 1 не используется и не ротируется), выполнена Claude 2026-10-08; результат — отдельной записью в БЛОКЕ 3. Продолжение CLAUDE-WA-012 / Repair \#4A; его постановка и постановка Repair #4 сохранены ниже без изменений. Полная постановка дословно (хвостовые пробелы сняты):
 
 ```text
 TASK: CLAUDE-WA-013
@@ -289,7 +289,7 @@ B. Microtask никогда не исполнялась, но получила R
 NEXT: пользователь commit/push → независимая GitHub-only проверка ChatGPT → только после PASS синхронизация постоянной документации и решение о WA4-E.
 ```
 
-### CLAUDE-WA-012 — RC-6 Repair #4A — FOLLOW-UP
+### CLAUDE-WA-012 — RC-6 Repair \#4A — FOLLOW-UP
 
 **Статус постановки:** прямой Chat-handoff пользователя (по постановке БЛОК 1 не используется и не ротируется), выполнена Claude 2026-10-08; результат — отдельной записью в БЛОКЕ 3. Продолжение CLAUDE-WA-011 / Repair #4; его постановка сохранена ниже без изменений. Полная постановка дословно (хвостовые пробелы сняты):
 
@@ -731,7 +731,7 @@ WA4-E по-прежнему запрещён до independent PASS RC-6.
 
 ### CLAUDE-WA-011 / RC-6 Repair #4 — постановка (сохранена без изменений)
 
-**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #4; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — RC-6 Repair #3, Repair #2 (+ #2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
+**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #4; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — RC-6 Repair #3, Repair #2 (+ \#2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
 
 ```text
 TASK: CLAUDE-WA-011 / RC-6 — REPAIR #4 / FINAL RECOVERY LIVENESS CLOSEOUT
@@ -1030,7 +1030,7 @@ Permanent project closeout и перевод RC-6 в DONE/VERIFIED выполн�
 
 ### Предыдущая постановка — CLAUDE-WA-010 / RC-6 Repair #3 (сохранена)
 
-**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #3; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты), вместе с вводными словами координатора. Предыдущие постановки — RC-6 Repair #2 (+ #2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
+**Статус постановки:** выполнена Claude 2026-10-08 (RC-6 Repair #3; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты), вместе с вводными словами координатора. Предыдущие постановки — RC-6 Repair #2 (+ \#2A), повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
 
 ```text
 Да, именно так и делаем: **задачу сначала фиксируем здесь в чате**, потом уже отдаём Claude. И я бы сейчас не дробил её на микрокоманды: даём ему найденные нами проблемы, обязательные инварианты и критерии приёмки, а **архитектурный способ исправления оставляем ему**. Это как раз наш нормальный сценарий.
@@ -1232,7 +1232,7 @@ Permanent project closeout и перевод RC-6 в DONE/VERIFIED выполн�
 > После твоего repair independent verification снова выполнит ChatGPT по GitHub. Только после independent PASS будет разрешён переход к WA4-E.
 ```
 
-### Предыдущая постановка — CLAUDE-WA-009 / RC-6 Repair #2 (+ #2A) (сохранена)
+### Предыдущая постановка — CLAUDE-WA-009 / RC-6 Repair #2 (+ \#2A) (сохранена)
 
 **Статус постановки:** выполнена Claude 2026-10-06 (RC-6 Repair #2; результат — в БЛОКЕ 3). Ниже — полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты). Предыдущие постановки — повторная проверка RC-6, первая проверка RC-6 и CLAUDE-WA-007 / RC-5 — сохранены следом без изменений: ни одна из них не закреплена в `001`.
 
@@ -2195,7 +2195,7 @@ TASK зафиксирована только в Chat.
 -> implementation Repair #2.
 ```
 
-#### Дополнение к постановке — REPAIR #2A (2026-10-07)
+#### Дополнение к постановке — REPAIR \#2A (2026-10-07)
 
 Выполнено Claude 2026-10-07 как продолжение той же TASK; результат — дополнением в БЛОКЕ 3. Постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
 
@@ -4876,11 +4876,11 @@ RC-6 НЕ НАЧИНАТЬ.
   - затем RC-6 `recover` и прямой RC-4 физически восстанавливают файлы (write / delete / create);
   - тот же класс: ROLLBACK до ACTIVE + активация;
   - обратный порядок (ACTIVE до ABORT) откатывается законно.
-- **Root cause:** переход в ACTIVE (READY / FAILED_VERIFICATION) не учитывал recovery disposition; ACTIVE служил доказательством исполнения для правила отката #4B и RC-6.
+- **Root cause:** переход в ACTIVE (READY / FAILED_VERIFICATION) не учитывал recovery disposition; ACTIVE служил доказательством исполнения для правила отката \#4B и RC-6.
 - **Gate B — исправление:**
   - `microtask_gate.activation_refusal` — правило F-C (ABORT / ROLLBACK принят, закреплён или открытая сессия RC-4 → отказ; нечитаемые факты → отказ);
   - `ServerStateMachine._admit_active`: решение и публичный CAS в одной секции под TASK-lock (под ним пишут disposition Resolver, RC-4 и RC-6); отказ — TransitionRejected / HTTP 409;
-  - ручная граница #4A для ROLLBACK — без выхода «активируй».
+  - ручная граница \#4A для ROLLBACK — без выхода «активируй».
 
   Схема данных, граф state machine, RC-6, RC-4, Resolver, Projection не менялись.
 - **Файлы:**
@@ -4895,11 +4895,11 @@ RC-6 НЕ НАЧИНАТЬ.
   - полный набор (48 модулей) — **580 OK, skip 1**, дважды;
   - стресс-повторы — 29/29;
   - adversarial WA-014 — 54 раунда реальных процессов, нарушений 0 (ACTIVE выдан только при нуле принятых ABORT/ROLLBACK на момент решения; восстановление только после законной активации);
-  - прежние пробы — вердикты как после #4B (#4B Z1: 0 разрушительных из 12, было 10 из 24); #2A: b04 несовместима со стендом (барьер внутри секции под блокировкой), на новой границе 6/6 OK;
+  - прежние пробы — вердикты как после \#4B (\#4B Z1: 0 разрушительных из 12, было 10 из 24); \#2A: b04 несовместима со стендом (барьер внутри секции под блокировкой), на новой границе 6/6 OK;
   - compileall и `git diff --check` — OK.
 - **Безопасность:** живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`), resolution в нём нет.
 - **Риски / решения:**
-  - откат исполнявшегося этапа после ROLLBACK, принятого до активации, больше невозможен — сознательное изменение выхода #4A (оценить);
+  - откат исполнявшегося этапа после ROLLBACK, принятого до активации, больше невозможен — сознательное изменение выхода \#4A (оценить);
   - данные старых сборок «ACTIVE после ABORT» неотличимы (в живом storage их нет);
   - активация теперь может ждать TASK-lock (как VERIFIED с Repair #3);
   - 1 раз из 54 — известная ошибка Windows `os.replace`, разрушения нет.
@@ -4909,16 +4909,16 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 
-### CLAUDE-WA-013 — RC-6 Repair #4B — FOLLOW-UP — результат
+### CLAUDE-WA-013 — RC-6 Repair \#4B — FOLLOW-UP — результат
 
-**TASK:** CLAUDE-WA-013 / RC-6 — REPAIR #4B / PRE-EXECUTION ABORT × SIBLING ROLLBACK (прямой Chat-handoff, подтверждён пользователем; БЛОК 1 не использовался; исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Safety; PRIMARY `23`, SECONDARY `24`. Продолжение CLAUDE-WA-012 / Repair #4A.
+**TASK:** CLAUDE-WA-013 / RC-6 — REPAIR \#4B / PRE-EXECUTION ABORT × SIBLING ROLLBACK (прямой Chat-handoff, подтверждён пользователем; БЛОК 1 не использовался; исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Safety; PRIMARY `23`, SECONDARY `24`. Продолжение CLAUDE-WA-012 / Repair \#4A.
 
 - **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
 - **Baseline:** commit 165 = `32bdf9635afcf81a9e6f1090a3bcba54b907c126`; полный набор на baseline — 547 OK, skip 1.
 - **Static finding verifier — ПОДТВЕРЖДЁН экспериментом и шире** (только временное storage; файлы меняла сама проба «извне», авторизованного исполнителя не было; `op2` STARTED — только запись lifecycle):
-  - **RC-6 (регрессия Repair #4A):** ABORT `op1` у microtask, ни разу не бывшей ACTIVE (BACKUP_VERIFIED / READY / W2) → RECOVERY_REQUIRED → принятый ROLLBACK `op2` → `recover` выполнял PREPARE / APPLY / SETTLE и **физически восстанавливал файлы** (WRITE / удалённый файл / созданный файл). На 164 этого пути не было;
+  - **RC-6 (регрессия Repair \#4A):** ABORT `op1` у microtask, ни разу не бывшей ACTIVE (BACKUP_VERIFIED / READY / W2) → RECOVERY_REQUIRED → принятый ROLLBACK `op2` → `recover` выполнял PREPARE / APPLY / SETTLE и **физически восстанавливал файлы** (WRITE / удалённый файл / созданный файл). На 164 этого пути не было;
   - **прямой вход RC-4 (`RollbackService` и HTTP API) — пробел со времён приёмки RC-4 (commit 154):** откатывал microtask без исполнения (и без соседнего ABORT) и **VERIFIED-этап**, в том числе не текущий; R1 был только в RC-6.
-- **Root cause:** RECOVERY_REQUIRED после #4A перестал означать «исполнялась», а RC-6 preflight и ручная граница смотрели только на статус; RC-4 не проверял жизненный цикл вовсе; persisted факта «RR из-за ABORT до исполнения» не было.
+- **Root cause:** RECOVERY_REQUIRED после \#4A перестал означать «исполнялась», а RC-6 preflight и ручная граница смотрели только на статус; RC-4 не проверял жизненный цикл вовсе; persisted факта «RR из-за ABORT до исполнения» не было.
 - **Решение:**
   1. одно правило `microtask_gate.rollback_refusal` — откат только текущего этапа, который был ACTIVE. Отказ при: нечитаемых фактах; VERIFIED / не текущем этапе (R1); settlement, записанном до первого ACTIVE; статусе, не доказывающем исполнение (RR со старым ABORT settlement без факта — `MICROTASK_EXECUTION_UNPROVEN`);
   2. применяют RC-4 `_authority` (создание сессии → REJECTED, API 409; каждый destructive apply → BLOCKED; finalize / release-only не затронуты) и RC-6 `_rollback_stage_preflight`; RC-6 `_classify` останавливает такой ROLLBACK на MANUAL_DECISION_REQUIRED;
@@ -4930,13 +4930,13 @@ RC-6 НЕ НАЧИНАТЬ.
   - новый `test_web_alarm_recovery_coordinator_repair4b.py` (22 теста);
   - фикстуры `test_web_alarm_rollback.py` / `test_web_alarm_projection.py` / `test_web_alarm_rollback_concurrency.py`: +5 строк «m1 ACTIVE» (откатывали microtask без исполнения — теперь запрещено), проверки не менялись.
 - **Проверки:**
-  - Repair #4B — 22/22, на 165 падают 20 из 22 (2 — контроль и stale);
+  - Repair \#4B — 22/22, на 165 падают 20 из 22 (2 — контроль и stale);
   - воспроизведение после — 12 сценариев без исполнения REFUSED, байты не тронуты; DESTRUCTIVE только 3 контроля с реально исполнявшимся этапом; R1 ×3 REFUSED;
   - фокусно 27 модулей — 414 тестов, все exit 0;
   - полный набор (47 модулей) — **569 OK, skip 1**, дважды на финальном коде;
   - стресс-повторы — 27/27;
-  - adversarial #4B: Z1 24 раунда «активация ↔ ABORT settlement ↔ ROLLBACK + прямой RC-4 ↔ recover ×2» — 0 нарушений; Z2 (сессия старой сборки, два apply) OK; Z3 — downgrade fail-closed;
-  - прежние пробы (исходные RC-6, повторная проверка, #2, #2A, #3, #4, #4A) — вердикты совпадают с состоянием после #4A;
+  - adversarial \#4B: Z1 24 раунда «активация ↔ ABORT settlement ↔ ROLLBACK + прямой RC-4 ↔ recover ×2» — 0 нарушений; Z2 (сессия старой сборки, два apply) OK; Z3 — downgrade fail-closed;
+  - прежние пробы (исходные RC-6, повторная проверка, #2, \#2A, #3, #4, \#4A) — вердикты совпадают с состоянием после \#4A;
   - compileall и `git diff --check` — OK.
 - **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`); в нём 0 settlement и 0 microtask в RECOVERY_REQUIRED.
 - **Findings / proposals:**
@@ -4946,16 +4946,16 @@ RC-6 НЕ НАЧИНАТЬ.
   - один разовый FAIL_CLOSED конкурентного recover наблюдался однажды и не воспроизвёлся в 228 вызовах (не разрушающий).
 - **Documentation:**
   - DOC / ARCHITECTURE IMPACT — YES после PASS (владелец `23`: правило отката RC-4 + RC-6, факт settlement);
-  - delta сверх #4A — §11 отчёта; синхронизирует ChatGPT после PASS (решение пользователя);
-  - `08` от #4B не меняется.
+  - delta сверх \#4A — §11 отчёта; синхронизирует ChatGPT после PASS (решение пользователя);
+  - `08` от \#4B не меняется.
 - **Рекомендация:** RC-6 готов к независимой проверке; блокеров перед WA4-E внутри scope RC-6 исполнитель не видит (п. DECISION — вопрос дизайна). Решение — за проверкой ChatGPT.
 - **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-013_RC6_REPAIR4B/rc6_repair4b_report.md`.
 
 ---
 
-### CLAUDE-WA-012 — RC-6 Repair #4A — FOLLOW-UP — результат
+### CLAUDE-WA-012 — RC-6 Repair \#4A — FOLLOW-UP — результат
 
-**TASK:** CLAUDE-WA-012 / RC-6 — REPAIR #4A / PREPARING × ACCEPTED RECOVERY (прямой Chat-handoff, подтверждён пользователем; БЛОК 1 не использовался; исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Correctness; PRIMARY `23`, SECONDARY `24`. Продолжение CLAUDE-WA-011 / Repair #4.
+**TASK:** CLAUDE-WA-012 / RC-6 — REPAIR \#4A / PREPARING × ACCEPTED RECOVERY (прямой Chat-handoff, подтверждён пользователем; БЛОК 1 не использовался; исполнитель Claude; независимый verifier — ChatGPT по GitHub). ARCH CLASS: Web Alarm Workspace / Recovery Correctness; PRIMARY `23`, SECONDARY `24`. Продолжение CLAUDE-WA-011 / Repair #4.
 
 - **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE, не VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
 - **Baseline:** commit 164 = `47e5344ade57aaabca8ed5f782d5eb94f57ad464`; полный набор на baseline — 531 OK, skip 1.
@@ -4976,13 +4976,13 @@ RC-6 НЕ НАЧИНАТЬ.
   - новый `test_web_alarm_recovery_coordinator_repair4a.py` (16 тестов);
   - существующие тесты не менялись.
 - **Проверки:**
-  - Repair #4A — 16/16, на 164 падают 16 из 16;
+  - Repair \#4A — 16/16, на 164 падают 16 из 16;
   - воспроизведение после — 0 ловушек из 16;
   - фокусно 23 модуля — 358/358;
   - полный набор (46 модулей) — **547 OK, skip 1**, дважды;
   - стресс-повторы — 27/27;
-  - adversarial Repair #4A — 3/3 (20 раундов тройной гонки «подготовка / ABORT / recover», устаревший RETRY, испорченный restore point);
-  - adversarial #4 — 5/5, #3 — 4/4, #2A — 5/5, #2 — 7 OK;
+  - adversarial Repair \#4A — 3/3 (20 раундов тройной гонки «подготовка / ABORT / recover», устаревший RETRY, испорченный restore point);
+  - adversarial #4 — 5/5, #3 — 4/4, \#2A — 5/5, #2 — 7 OK;
   - исходные пробы RC-6 — exit 0 / 0;
   - compileall и `git diff --check` — OK.
 - **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`).
@@ -5030,7 +5030,7 @@ RC-6 НЕ НАЧИНАТЬ.
   - полный набор (45 модулей) — **531 OK, skip 1**, дважды;
   - стресс-повторы — 24/24;
   - adversarial Repair #4 — 5/5: гонка settlement и позднего ROLLBACK на реальных процессах; два конкурентных recover; легаси-ROLLBACK у RC-4; recover при живой подготовке;
-  - adversarial Repair #3 — 4/4, #2A — 5/5, Repair #2 — 7 OK (a10 — как раньше);
+  - adversarial Repair #3 — 4/4, \#2A — 5/5, Repair #2 — 7 OK (a10 — как раньше);
   - исходные пробы RC-6 — exit 0 / 0;
   - compileall и `git diff --check` — OK.
 - **Безопасность:** всё во временном storage; живое storage только на чтение — 136 / 41, хеш до = после (`5961c00c…7cd2`).
@@ -5083,7 +5083,7 @@ RC-6 НЕ НАЧИНАТЬ.
   - полный набор (44 модуля) — **511 OK, skip 1**, дважды;
   - стресс-повторы гоночных модулей — 21/21;
   - adversarial Repair #3 — 4/4 (в том числе 24 раунда «VERIFIED ↔ ABORT» на реальных процессах, оба порядка);
-  - adversarial #2A — 5/5;
+  - adversarial \#2A — 5/5;
   - Repair #2 — 7 OK + a10 на легаси-форме 4/4;
   - исходные пробы RC-6 — exit 0 / 0;
   - compileall и `git diff --check` — OK.
@@ -5099,7 +5099,7 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 
-### Предыдущий результат — CLAUDE-WA-009 / RC-6 Repair #2 (+ #2A) (сохранён: независимая проверка ChatGPT после commit 162 завершилась FAIL, в `001` не переносился)
+### Предыдущий результат — CLAUDE-WA-009 / RC-6 Repair #2 (+ \#2A) (сохранён: независимая проверка ChatGPT после commit 162 завершилась FAIL, в `001` не переносился)
 
 **TASK:** CLAUDE-WA-009 / RC-6 — REPAIR #2 (исполнитель Claude; независимый verifier — ChatGPT).
 **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION (2026-10-06). Не DONE / VERIFIED. **WA4-E NOT STARTED.** Commit / push не выполнялись.
@@ -5134,18 +5134,18 @@ RC-6 НЕ НАЧИНАТЬ.
 
 **NEXT:** commit / push пользователем → независимая проверка ChatGPT → только после PASS RC-6 = DONE / VERIFIED и NEXT = WA4-E.
 
-**Дополнение — REPAIR #2A (2026-10-07), F-A CAS / закрытие окна R1:**
-- **Статус всего Repair #2 (с #2A):** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE. **WA4-E NOT STARTED.** Commit / push не выполнялись; Repair #2 тоже ещё не закоммичен (HEAD = 161).
+**Дополнение — REPAIR \#2A (2026-10-07), F-A CAS / закрытие окна R1:**
+- **Статус всего Repair #2 (с \#2A):** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE. **WA4-E NOT STARTED.** Commit / push не выполнялись; Repair #2 тоже ещё не закоммичен (HEAD = 161).
 - **Почему одного CAS мало.** Гонка «RC-6 проверил этап → state machine перевёл его в VERIFIED → RC-4 откатил» — не устаревшая запись: статус DONE не менялся, и CAS бы её пропустил. Поэтому закрытие из двух частей, без новых статусов и переходов:
   1. все переходы state machine стали compare-and-set: новый `TaskStore.compare_and_set_microtask_status` под `mutation_lock`; устаревший переход → обычный `TransitionRejected` / 409, ничего не пишется; добавлен необязательный `expected_status` (библиотека и сервер); активация переносит указатель текущей microtask в той же блокировке; BLOCKED_PREPARE при испорченном snapshot и подготовка через state machine тоже идут через CAS;
   2. перед разрушительным apply координатор в том же защищённом участке, где доказывает этап, переводит microtask в RECOVERY_REQUIRED (её статус после ROLLBACK settlement). Выходов из него у state machine нет, а устаревший `DONE → VERIFIED` отклоняется — во время отката этап не может стать VERIFIED.
 - **Файлы:** `task_store.py`, `state_machine.py`, `manifest_store.py`, `recovery_coordinator.py`, `server.py`; новый `test_web_alarm_state_machine_cas.py` (12 тестов). Граф переходов и ожидания существующих тестов не менялись.
 - **Проверки:**
-  - CAS — 12/12 (на коде до #2A 11 из 12 падают); фокусно — 278/278; финальный полный набор — **475 OK** (skip 1); compileall и `git diff --check` OK;
-  - adversarial #2A — 5/5; adversarial Repair #2 — 8/8; исходные probe — exit 0 / 0;
+  - CAS — 12/12 (на коде до \#2A 11 из 12 падают); фокусно — 278/278; финальный полный набор — **475 OK** (skip 1); compileall и `git diff --check` OK;
+  - adversarial \#2A — 5/5; adversarial Repair #2 — 8/8; исходные probe — exit 0 / 0;
   - живое storage только на чтение, хеш не изменился.
 - **Честно:**
-  - два предыдущих полных прогона дали по одному разному редкому падению старых race-тестов (RC-4 FAILED, RC-5 `CloseoutError`). Это sharing violation при `os.replace` на Windows — безопасный третий исход, который тесты не учитывают; диагностика 40 + 24 раунда чистая, пути не затронуты #2A → FINDING / proposal;
+  - два предыдущих полных прогона дали по одному разному редкому падению старых race-тестов (RC-4 FAILED, RC-5 `CloseoutError`). Это sharing violation при `os.replace` на Windows — безопасный третий исход, который тесты не учитывают; диагностика 40 + 24 раунда чистая, пути не затронуты \#2A → FINDING / proposal;
   - probe n02 / n02b перехватывают старую слепую запись и гонку больше не воспроизводят — её покрывают постоянные тесты A2 и B.
 - **Вне scope:** F-B, F-C (не менялись); legacy CLI `snapshot prepare` / `restore` — WA4-R.
 - **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-009_RC6_REPAIR2/repair2a/rc6_repair2a_report.md`.

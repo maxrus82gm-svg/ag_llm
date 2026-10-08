@@ -2,9 +2,9 @@
 
 ## Статус документа
 
-**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RC-0 + RC-1 + RC-2 + RC-3 DONE / VERIFIED; RC-4 NEXT.**
+**ARCHITECTURAL SOURCE / PARTIAL IMPLEMENTATION — WA-1…WA-3 и RC-0…RC-4 DONE / VERIFIED; RC-5 RESULT READY / самостоятельная независимая приёмка DEFERRED; RC-6 DONE / VERIFIED (GitHub review 2026-10-08); WA4-E NEXT / NOT STARTED.**
 
-WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. RC-0, RC-1, RC-2 и RC-3 завершены и независимо проверены; следующий этап — RC-4. RC-1 добавил durable Operation Contract v2; RC-2 — persistent Resolver; RC-3 — persistent canonical-target claims, interprocess conflict gate и mutation-boundary CAS. Authoritative physical mutation executor всё ещё не реализован.
+WA-1 и WA-2 реализованы и проверены полностью. WA-3.1–WA-3.7 также DONE / VERIFIED с fresh-process recovery evidence. Старый literal combined post-change disconnect criterion **не получил PASS задним числом**: по утверждённому RT-001 он закрыт как `SUPERSEDED / DEFERRED`, а его смысл перенесён в будущий deterministic lost-response acceptance после authoritative mutation executor. Канонический маршрут: `RC-0 → RC-1 → RC-2 → RC-3 → RC-4 → RC-5 → RC-6 → WA4-E → WA4-A → WA4-O → WA4-R`. RC-0…RC-4 завершены и независимо проверены. RC-5 реализован и получил исполнительный результат с repair, но отдельная независимая приёмка намеренно отложена. RC-6 завершён после цепочки независимых проверок и Repair #1…\#4B/WA-014; его итог проверен ChatGPT по GitHub, без собственного запуска тестов. Следующий этап — WA4-E, пока не утверждён к исполнению. RC-1 добавил durable Operation Contract v2; RC-2 — persistent Resolver; RC-3 — persistent canonical-target claims, interprocess conflict gate и mutation-boundary CAS; RC-4 — tracked safe rollback; RC-5 — projection/inspection; RC-6 — bounded project recovery/resume. Authoritative physical mutation executor всё ещё не реализован.
 
 Этот документ является каноническим владельцем архитектуры Web Alarm Workspace. Его нужно проверять и обновлять при любом подтверждённом изменении протокола, state machine, структуры TASK/микрозадач, snapshot/recovery-механики, правил replay protection, хранения или роли Web Alarm Server.
 
@@ -15,6 +15,16 @@ WA-1 и WA-2 реализованы и проверены полностью. WA
 WEB-02 остаётся самостоятельной переносимой подсистемой внутри `ag_llm`, но отдельного аналитического контура у неё больше нет. Сложные и спорные архитектурные вопросы WEB-02 разбираются в общем Круглом столе проекта (`28_Круглый стол - протокол и текущий вопрос.md`) наравне с вопросами любой другой подсистемы; WEB-02 не владеет этим контуром.
 
 Пока по вопросу нет утверждённого пользователем вердикта и отдельной исполнительной TASK, выводы Круглого стола не изменяют каноническую архитектуру WEB-02, план реализации или подтверждённую историю.
+
+### CURRENT-инварианты Recovery Closure (RC-5 / RC-6), подтверждение 2026-10-08
+
+- RC-5 реализует rebuild/validation Projection и чистые inspect/verify без изменения physical Workspace; самостоятельный RC-5 PASS **отложен**, не утверждается задним числом.
+- RC-6 `recover/resume` работает поверх persisted authority, ограничивает административное recovery и допускает tracked RC-4 restore **только** для текущего этапа с доказанной историей законной активации. Факт recovery-решения не выдаёт обычному исполнителю право физической записи; это будущий WA4-E.
+- `ACTIVE` разрешается только при отсутствии у операций микрозадачи принятого/закреплённого ABORT или ROLLBACK и открытой RC-4 session. Проверка `activation_refusal` и CAS активации сериализованы одной TASK-lock-секцией; нечитаемые факты отказывают fail-closed. `READY → ACTIVE` и `FAILED_VERIFICATION → ACTIVE` защищены; ADOPT/RETRY не считаются запретными destructive dispositions.
+- Если ABORT/ROLLBACK был принят **до** ACTIVE, активация запрещена и restore исходной точки не может перезаписать внешние изменения. Если ACTIVE легитимно предшествовал recovery-решению, санкционированный rollback по RC-4 остаётся разрешённым. Для pre-execution ROLLBACK путь «сначала активируй» больше не действует: manual review + ABORT / replan.
+- Оставшиеся observations не переписывают этот contract: при конкурентном Windows `os.replace` наблюдалась единичная ошибка сохранения rollback record без доказанного нарушения safety; статичный `next_safe_action` при отклонённой активации может быть неточен. Это находки для будущей приоритизации, не автоматически утверждённый Repair.
+
+Код и независимый GitHub-review: `CLAUDE-WA-014`, commit `2c10478291b932ff0c77ef130438adc7470fcd65`, отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`; после него удалены только восстановимые Python safety copies (cleanup Codex). Повторный runtime-прогон самим verifier не выполнялся.
 
 ## 1. Зачем это нужно
 
@@ -539,6 +549,12 @@ Recovery Report хранится restart-safe в machine-local Web Alarm storage
 33. Snapshot и будущий durable payload для tracked mutation хранятся в machine-local storage вне репозитория/vault, проверяются hash+size, имеют явный scope/secret/size/retention policy; содержимое snapshot/payload не должно попадать в обычные events/reports/logs. Legacy `Alarm/` не является production snapshot storage.
 34. Target claim RC-3 является persistent ownership/conflict fact, но не переносимой mutation authority. Физическая mutation разрешима только внутри server-owned `mutation_boundary`, пока одновременно удерживаются TASK-lock и canonical-target lock и повторно доказаны owner/revision/contract/physical-byte CAS facts. Standalone `/authorize` — только evidence. Для будущего WA4-E нормальная первая попытка должна фиксировать STARTED под уже удерживаемой TASK-lock **до physical write** через lock-held/internal transition path; обычный re-entrant `OperationStore.transition()` внутри boundary запрещён. Timeout/process death/Chat loss сами по себе claim не освобождают.
 35. Tracked rollback RC-4 является отдельной persistent recovery operation. До первого destructive restore current bytes/absence каждого target сохраняются как recoverable evidence. Для rollback-success ownership/target-lock распространяется на **весь restore target set, включая NOOP**, потому что каждый target участвует в финальном proof. Persistent `VERIFIED / SUCCESS` допускается только после exact final byte-state proof всего target set под удерживаемыми target-lock/claims; claims снимаются после persistence VERIFIED. Receipt фиксирует исторический факт действия, но не заменяет proof текущего состояния; partial/interrupted rollback остаётся restart-safe и не повторяет неизвестный effect вслепую.
+
+### RC-6 — подтверждённый lifecycle gate (WA-014, 2026-10-08)
+
+Для transition `READY`/`FAILED_VERIFICATION` → `ACTIVE` Server проверяет recovery dispositions операций той же microtask: принятый либо settled `ABORT`/`ROLLBACK`, а также незавершённая RC-4 rollback session запрещают активацию. Нечитаемые authority facts блокируют её fail-closed. Решение и публичная CAS-запись `ACTIVE` выполняются внутри per-TASK operation lock, с mutation lock в согласованном порядке; принятый до активации ABORT/ROLLBACK не может создать фиктивную историю исполнения. Обратный порядок — сначала законная ACTIVE, затем ABORT/ROLLBACK — сохраняет право на восстановление через RC-4/RC-6. Если ROLLBACK принят до ACTIVE, выход «сначала активировать» запрещён, требуется ручной разбор/ABORT/replan. Эта гарантия RC-6 не является реализацией будущего physical executor WA4-E.
+
+Independent GitHub review WA-014 2026-10-08: PASS по коду и сохранённым тестовым артефактам (580 OK, 1 skip, два прогона; 11 новых тестов). Тесты независимо не запускались; существующие findings Windows `os.replace` и устаревший текст NEXT остаются отдельными наблюдениями, не автоматически утверждёнными repair-задачами.
 
 ## 23. Точка развития
 

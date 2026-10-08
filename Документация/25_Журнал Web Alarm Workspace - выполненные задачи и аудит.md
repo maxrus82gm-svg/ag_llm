@@ -1,5 +1,6 @@
 # Журнал Web Alarm Workspace — выполненные задачи и аудит
 
+
 **Назначение:** профильный журнал архитектурной ветки Web Alarm Workspace.
 
 Этот документ хранит подробную историю фактически выполненной работы по Web Alarm Workspace и не заменяет общие проектные документы.
@@ -72,11 +73,22 @@ WA-1.2 — ...
 
 ## 3. Текущее состояние ветки
 
-**Статус:** WA-1 + WA-2 DONE / VERIFIED; WA-3 IN PROGRESS — WA-3.1–WA-3.7 DONE / VERIFIED; WA-3.7 fresh reopen PASS; один combined post-change controlled-disconnect acceptance gate остаётся открыт.
+**Текущий статус (2026-10-08):** WA-1…WA-3 DONE / VERIFIED; старый WA-3 combined-disconnect criterion = SUPERSEDED / DEFERRED по RT-001, не PASS. RC-0…RC-4 и RC-6 DONE / VERIFIED по independent review; RC-5 implementation/review repair RESULT READY / отдельный independent review DEFERRED. WA4-E NEXT / NOT STARTED.
 
 Архитектура зафиксирована в `23`, план реализации — в `24`.
 
-WA-3.5 завершена целиком; fresh-process reopen PASS. WA-3.6 DONE / VERIFIED / FRESH REOPEN PASS. WA-3.7 DONE / VERIFIED / FRESH REOPEN PASS: M001–M003 VERIFIED; focused 95/95, full WA 197/197, compileall/diff-check PASS. Final WA-3 reconciliation не закрыла parent gate: `CTRL-001` = FULL local change без disconnect, `CTRL-002` = real disconnect/recovery с NONE side effect. Требуется один combined incident: local change уже произошло, затем Remote disconnect до Chat-result.
+WA-3.5–WA-3.7 ранее получили fresh-process reopen PASS; WA-3.7: 95/95 focused и 197/197 full. Исторически `CTRL-001` доказал FULL local change без disconnect, а `CTRL-002` real disconnect с NONE effect — объединённого proof не было. RT-001 не признал его пройденным: отдельный deterministic lost-response acceptance перенесён в WA4-A после WA4-E. RC-6 завершён после CLAUDE-WA-014 на commit `2c104782` по GitHub code/evidence review без повторного запуска тестов verifier.
+
+
+### Последние подтверждённые итоги
+
+#### 2026-10-08 — RC-6 / CLAUDE-WA-014 — DONE / VERIFIED (GitHub independent review)
+
+Гипотеза ABORT/ROLLBACK до ACTIVE, ведущая к неправомерному восстановлению файлов через RC-6/RC-4, воспроизведена на baseline 166 и исправлена в WA-014. При принятом/закреплённом ABORT/ROLLBACK либо открытой RC-4 session переход в ACTIVE блокируется; решение и CAS сериализованы под TASK-lock. Законный порядок ACTIVE до ABORT/ROLLBACK остаётся допустимым. GitHub code/evidence review PASS commit `2c104782` от 2026-10-08; по сохранённым тестам: WA-014 11/11, focused 425/425, full 580 OK (1 skip) ×2, stress 29/29, adversarial 54 раунда без authority violation. Verifier тесты независимо не запускал. Цепочка: исходная `CHATGPT-WA-008`, независимые проверки и `CLAUDE-WA-009…WA-014` (Repair #2, #3, #4, \#4A, \#4B и финальная safety gate); полные постановки остаются в task sessions/карточках исполнителей. Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`. Windows sharing violation `os.replace`, legacy order и некорректный текст NEXT оставлены FINDINGS; RC-5 independent review остаётся DEFERRED, не DONE. NEXT: пользователь утверждает узкую TASK WA4-E, автоматически не запускать.
+
+#### 2026-10-08 — CODEX-ALARM-CLEANUP-001 — удаление повторных safety copies
+
+Codex по отчёту удалил 450 восстанавливаемых из Git `.py` safety copies (7 445 289 байт), сохранив исторические папки, отчёты и reproduction evidence. GitHub commit `91f46923` показывает удаление файлов `Alarm` и отдельное изменение `.obsidian/workspace.json`, код без изменений. Полный локальный Git diff подтвердил ровно 450 удалённых `.py` safety copies без потерь исходников, тестов или отчётов; 450/450 byte-identity и объём — данные исполнителя, verifier отдельно хеши не пересчитывал. Отчёт — `Документация/000_Задачи Codex.md`, БЛОК 3. Девять пустых локальных подпапок не участвуют в Git.
 
 ---
 
