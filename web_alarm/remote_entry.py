@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .context_pack import EntryContextPackBuilder
-from .models import MicrotaskStatus
+from .models import MicrotaskStatus, TaskStatus
 from .task_store import TaskStore, TaskStoreError
 
 
@@ -37,6 +37,8 @@ class RemoteEntry:
             if not path.is_dir():
                 continue
             task = self.tasks.open_task(path.name)
+            if task.status in (TaskStatus.COMPLETED, TaskStatus.ARCHIVED):
+                continue  # F-5: an interrupted completion is closed, never an entry candidate
             self.tasks.task_directory(task.task_id, active_only=True)
             task_ids.append(task.task_id)
         return task_ids

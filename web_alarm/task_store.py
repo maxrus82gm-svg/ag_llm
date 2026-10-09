@@ -23,6 +23,17 @@ from .models import (
 )
 from .workspace_registry import default_storage_root
 
+_CLOSED = frozenset({TaskStatus.COMPLETED, TaskStatus.ARCHIVED})
+
+# F-5 (CLAUDE-WA-017): where a TASK stands relative to its completion (completion_state)
+COMPLETION_ACTIVE = "ACTIVE"
+COMPLETION_DONE = "COMPLETED"
+# the directory move (the commit point) happened, the COMPLETED status write did not
+COMPLETION_MOVED_STATUS_PENDING = "MOVED_STATUS_PENDING"
+# the pre-WA-017 order wrote COMPLETED, then died before the directory move
+COMPLETION_STATUS_WRITTEN_NOT_MOVED = "STATUS_WRITTEN_NOT_MOVED"
+INTERRUPTED_COMPLETION = frozenset({COMPLETION_MOVED_STATUS_PENDING, COMPLETION_STATUS_WRITTEN_NOT_MOVED})
+
 
 class TaskStoreError(RuntimeError):
     """Raised when persisted TASK state is missing, inconsistent or unsafe."""
@@ -219,9 +230,24 @@ class TaskStore:
 
     def _require_mutable(self, task_dir: Path) -> TaskRecord:
         task = self._load_task_from(task_dir)
-        if task.status in {TaskStatus.COMPLETED, TaskStatus.ARCHIVED}:
+        if task.status in _CLOSED:
             raise TaskStoreError(f"task is not mutable: {task.task_id}")
         return task
+
+    def _active_task_dir(self, task_id: str) -> Path:
+        """The directory of a TASK every writer may still change (``active_only``).
+
+        F-5: in active/ *and* not closed by its status. A COMPLETED status left in
+        active/ by an interrupted pre-WA-017 completion is a closed TASK: no store
+        writes into it (finish it with the gated ``task complete``).
+        """
+        task_dir = self._task_path(task_id, active_only=True)
+        task = self._load_task_from(task_dir)
+        if task.status in _CLOSED:
+            raise TaskStoreError(
+                f"task {task.task_id} is {task.status.value} (interrupted completion): it is not active"
+            )
+        return task_dir
 
     def create_task(
         self,
@@ -274,7 +300,9 @@ class TaskStore:
         return task
 
     def task_directory(self, task_id: str, *, active_only: bool = False) -> Path:
-        task_dir = self._task_path(task_id, active_only=active_only)
+        if active_only:
+            return self._active_task_dir(task_id)
+        task_dir = self._task_path(task_id)
         self._load_task_from(task_dir)
         return task_dir
 
@@ -286,7 +314,7 @@ class TaskStore:
     def microtask_directory(
         self, task_id: str, microtask_id: str, *, active_only: bool = False
     ) -> Path:
-        task_dir = self._task_path(task_id, active_only=active_only)
+        task_dir = self._active_task_dir(task_id) if active_only else self._task_path(task_id)
         self._load_microtask_from(task_dir, microtask_id)
         work_dir = self._microtask_dir_path(task_dir, microtask_id)
         if not work_dir.is_dir():
@@ -504,27 +532,43 @@ class TaskStore:
         with self.mutation_lock(task_id):
             return self.complete_task_locked(task_id)
 
+    def completion_state(self, task_id: str) -> str:
+        """Pure: ACTIVE, COMPLETED, or an interrupted completion (``INTERRUPTED_COMPLETION``)."""
+        task_dir = self._task_path(task_id)
+        closed = self._load_task_from(task_dir).status in _CLOSED
+        if task_dir.parent == self.active_dir:
+            return COMPLETION_STATUS_WRITTEN_NOT_MOVED if closed else COMPLETION_ACTIVE
+        return COMPLETION_DONE if closed else COMPLETION_MOVED_STATUS_PENDING
+
     def complete_task_locked(self, task_id: str) -> TaskRecord:
         """``complete_task`` for a caller that already holds ``mutation_lock``.
 
-        A failed move restores the previous status: the TASK stays active and
-        mutable, never half completed.
+        F-5 (CLAUDE-WA-017): the directory move active/ -> completed/ is the one
+        commit point, and the COMPLETED status is written after it. No store
+        writes into a TASK outside active/ (or one closed by its status), so a
+        process death leaves either the untouched active TASK (before the move)
+        or a closed one (after it), never a closed TASK that still accepts
+        writes. A failed move changes nothing. An interrupted completion is
+        finished idempotently here: MOVED_STATUS_PENDING writes the status,
+        STATUS_WRITTEN_NOT_MOVED (a pre-WA-017 crash) performs the move.
         """
-        task_dir = self._task_path(task_id, active_only=True)
-        task = self._require_mutable(task_dir)
-        destination = self.completed_dir / task.task_id
-        if destination.exists():
-            raise TaskStoreError(f"completed task already exists: {task.task_id}")
-        previous = (task.status, task.updated_at)
-        task.status = TaskStatus.COMPLETED
-        task.updated_at = utc_now_iso()
-        self._write_task(task_dir, task)
-        try:
-            os.replace(task_dir, destination)
-        except OSError as exc:
-            task.status, task.updated_at = previous
-            self._write_task(task_dir, task)
-            raise TaskStoreError(f"cannot move task to completed: {task.task_id}") from exc
+        state = self.completion_state(task_id)
+        if state == COMPLETION_DONE:
+            raise TaskStoreError(f"task is already completed: {task_id}")
+        destination = self.completed_dir / _safe_id("task_id", task_id)
+        if state != COMPLETION_MOVED_STATUS_PENDING:
+            task_dir = self.active_dir / task_id
+            if state == COMPLETION_ACTIVE:
+                self._require_mutable(task_dir)
+            try:
+                os.replace(task_dir, destination)
+            except OSError as exc:
+                raise TaskStoreError(f"cannot move task to completed: {task_id}") from exc
+        task = self._load_task_from(destination)
+        if task.status not in _CLOSED:
+            task.status = TaskStatus.COMPLETED
+            task.updated_at = utc_now_iso()
+            self._write_task(destination, task)
         return self._load_task_from(destination)
 
     def archive_task(self, task_id: str) -> TaskRecord:

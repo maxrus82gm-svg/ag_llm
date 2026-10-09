@@ -36,6 +36,67 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+### CLAUDE-WA-017 — F-5/F-6 Reliability Repair
+
+**Статус постановки:** БЛОК 1 («NEW TASK / NOT STARTED»), запуск подтверждён пользователем в чате («сразу можешь приступать»), выполнена Claude 2026-10-09; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
+# TASK: CLAUDE-WA-017 — F-5/F-6 Reliability Repair
+
+**Статус:** NEW TASK / NOT STARTED
+**Проект:** WEB-02 / Web Alarm Workspace
+**Baseline:** RC-0…RC-6 DONE / VERIFIED, WA-016 accepted at `d53ec14`.
+
+## Цель
+
+Устранить два выявленных риска, сохранив архитектурные гарантии Recovery Closure. WA4-E пока не начинать.
+
+### F-5 — Crash-safe TASK completion
+
+В `TaskStore.complete_task_locked()` статус `COMPLETED` сохраняется до переноса каталога из `active/` в `completed/`.
+
+При гибели процесса между двумя действиями возможно зависание TASK в противоречивом состоянии.
+
+Необходимо воспроизвести проблему, выбрать минимальное безопасное исправление и доказать корректность при restart, повторном closeout, параллельных операциях и аварийном завершении.
+
+**Обязательный инвариант:** никакая уже закрытая TASK не может снова получить разрешение на mutation.
+
+### F-6 — Windows checkpoint rebuild race
+
+Существующий тест RC-5 X иногда завершается ошибкой `checkpoint is missing`, если процесс rebuild завершился неуспешно.
+
+Необходимо отделить допустимый FAILED rebuild от настоящей потери данных, исправить контракт теста или реализацию по результатам диагностики.
+
+**Обязательный инвариант:** отсутствующий, повреждённый или недостоверный checkpoint никогда не считается `VALID`.
+
+### Границы
+
+- Не начинать WA4-E.
+
+- Не расширять изменения на RC-3/RC-4/RC-6 без доказанной необходимости.
+
+- Не менять схему хранения без отдельного согласования.
+
+- Не закрывать попутно F-1/F-3.
+
+- Сохранять существующие файлы пользователя и живое storage.
+
+- Не создавать Remote-only журналы и массовые резервные копии.
+
+- Не выполнять commit/push.
+
+
+### Проверки
+
+Провести focused regression, crash/restart tests, multiprocess concurrency, полный Web Alarm test suite, compileall и `git diff --check`.
+
+В итоговом отчёте отдельно указать воспроизведение каждой проблемы до исправления, доказательства после исправления, оставшиеся ограничения и влияние на будущий WA4-E.
+
+**Финальный статус исполнителя:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
+
+После пользовательского commit/push — независимый GitHub-аудит ChatGPT. Только затем F-5/F-6 могут быть отмечены DONE / VERIFIED.
+```
+
 ### CLAUDE-WA-016 — RC-5 Repair #2 / Closeout consistency
 
 **Статус постановки:** БЛОК 1 («DRAFT — требует утверждения пользователя перед запуском»), утверждена пользователем в чате («подтверждаю!»), выполнена Claude 2026-10-09; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
@@ -5069,6 +5130,63 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA-017 — F-5/F-6 Reliability Repair — результат
+
+**TASK:** CLAUDE-WA-017 (БЛОК 1, «NEW TASK / NOT STARTED»; запуск подтверждён пользователем в чате: «сразу можешь приступать»). Исполнитель Claude; независимый verifier — ChatGPT по GitHub.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. F-5 / F-6 не DONE / VERIFIED. Статусы RC-0…RC-6 не менялись. **WA4-E NOT STARTED.** Commit / push не выполнялись.
+- **Baseline:** HEAD = `origin/main` = `d53ec140a41ea879e6ea14610fd53a2c8da71554` (173); полный набор — 593 OK, skip 1.
+- **F-5 — воспроизведено:**
+  - реальная смерть процесса между записью COMPLETED и переносом каталога оставляла TASK в `active/` со статусом COMPLETED;
+  - RemoteEntry считал её активной, `OperationStore.begin` и rebuild checkpoint писали в неё, повторный `complete` не сходился;
+  - **нарушен обязательный инвариант:** операция закрытой TASK (ungated-примитив или эта форма краша; этап ACTIVE + claim) получала `AUTHORIZED` в RC-3 `mutation_boundary`.
+- **F-5 — исправлено:**
+  - коммит-точка закрытия — атомарный перенос каталога, статус пишется после него, неудачный перенос ничего не меняет;
+  - `completion_state` + идемпотентное доведение (`MOVED_STATUS_PENDING` — записать статус; форма до WA-017 — перенос после повторного доказательства gate);
+  - `active_only`-гейт `task_directory` / `microtask_directory` отказывает и TASK с закрытым статусом;
+  - `execution_refusal` → `TASK_CLOSED` для закрытой TASK;
+  - диагностика `INTERRUPTED_COMPLETION` с NEXT «finish … with the gated `task complete`»;
+  - RemoteEntry пропускает закрытые;
+  - схема не менялась.
+- **F-6 — диагностика:**
+  - сигнатура = проваленный rebuild-процесс: только он создаёт первый checkpoint;
+  - 340 раундов без повтора;
+  - механизм на Windows доказан детерминированно: открытый чужим процессом файл → `os.replace` PermissionError [WinError 5] → ProjectionError, байты целы, STALE, затем VALID;
+  - принудительный отказ в гонке воспроизводит ровно `checkpoint is missing` старого контракта;
+  - реализация уже была fail-closed.
+- **F-6 — исправлен контракт теста X** (реализация не менялась):
+  - допустим только `FAILED:ProjectionError`;
+  - `REBUILT` без checkpoint = потеря данных;
+  - отсутствие checkpoint → только `MISSING`;
+  - `VALID ⇔` совпадение базы, полей и `.md`.
+- **Тесты:**
+  - новый `test_web_alarm_reliability_wa017.py` — 13: крэш до / после переноса / после статуса, отказ переноса, отказ статуса, форма до WA-017, полномочия ×3 формы, гонка «закрытие умирает против писателей», F-6 матрица повреждений, реальная Windows sharing violation;
+  - X — новый контракт + тест принудительного отказа;
+  - на коде до исправления: все тесты F-5 падают (кроме «отказ переноса без краша»), тесты F-6 проходят (подтверждение диагноза).
+- **Проверки:**
+  - фокусно 31 модуль — 442 OK;
+  - полный набор ×2 — **607 OK, skip 1**;
+  - стресс гонок 8 / 8 (краш закрытия против писателей, X / W / rebuilders, гонки closeout);
+  - compileall, `git diff --check`, LF — OK;
+  - живое storage только на чтение: 136 / 41, хеш до = после (`5961c00c…7cd2`); WA-3.6 / 3.7 → COMPLETED, NEXT read-only.
+- **Ограничения:**
+  - legacy-форма с открытой операцией от старых писателей не переносится (ручной разбор);
+  - RC-3 `acquire` для операции закрытой TASK не проверяет закрытость (не полномочие; через gate недостижимо);
+  - перенос на Windows отклоняется при открытом файле в каталоге (чистый отказ, повтор);
+  - точный источник handle WA-016 не пойман;
+  - F-1 / F-3 не трогались.
+- **WA4-E:** полномочие только в `mutation_boundary`, там теперь `TASK_CLOSED`; записи идут через `active_only`-гейт; коммит-точка закрытия — перенос каталога; PROPOSAL: повтор атомарной записи при Windows sharing violation (WA4-R).
+- **Файлы:**
+  - `web_alarm/task_store.py`, `closeout.py`, `microtask_gate.py`, `projection.py`, `remote_entry.py`;
+  - `test_web_alarm_projection_concurrency.py`;
+  - новые: `test_web_alarm_reliability_wa017.py`, `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY/` (отчёт + `probes/f5_completion_crash.py`);
+  - ротация этой карточки.
+- **Documentation impact:** ARCHITECTURE IMPACT — YES после аудита (`23`: коммит-точка закрытия, закрытая TASK без писателей и полномочий, контракт неудачного rebuild; `24` / `25`).
+- **NEXT:** commit / push пользователем → независимый GitHub-аудит ChatGPT → затем F-5 / F-6 DONE / VERIFIED.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY/wa017_report.md`.
+
 ---
 
 ### CLAUDE-WA-016 — RC-5 Repair #2 / Closeout consistency — результат

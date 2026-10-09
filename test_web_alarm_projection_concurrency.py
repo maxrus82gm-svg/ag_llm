@@ -4,6 +4,9 @@ W: gated TASK completion vs a new operation / microtask for the same TASK —
    never "TASK completed" + "new open state admitted inside it".
 X: checkpoint rebuild vs an authoritative change — a later validation never
    calls a checkpoint VALID unless it equals the fresh projection.
+   F-6 (CLAUDE-WA-017): a rebuild may fail closed (ProjectionError, e.g. a
+   Windows sharing violation on its atomic replace); that is not lost data. A
+   rebuild that reports success must leave a checkpoint behind.
 Two rebuilders: serialized; JSON and Markdown always belong together.
 """
 
@@ -44,12 +47,19 @@ if mode == "complete":
         return result
     projection_module.ProjectionService.build = widened
     service = CloseoutService(storage, lock_timeout=60)
-elif mode == "rebuild":
+elif mode in ("rebuild", "rebuild_fail"):
     real_write = ecs.EventCheckpointStore.write_checkpoint
     def slow_write(self, record):  # test-only: projection built, file not written yet
         time.sleep(0.3)
         return real_write(self, record)
     ecs.EventCheckpointStore.write_checkpoint = slow_write
+    if mode == "rebuild_fail":  # test-only: the atomic replace is refused (a Windows sharing violation)
+        real_replace = ecs.os.replace
+        def refuse(src, dst):
+            if Path(dst).name == "checkpoint.json":
+                raise PermissionError(13, "sharing violation (test)", str(dst))
+            return real_replace(src, dst)
+        ecs.os.replace = refuse
     service = ProjectionService(storage, lock_timeout=60)
 elif mode in ("begin", "transition"):
     service = OperationStore(storage, lock_timeout=60)
@@ -67,7 +77,7 @@ try:
     if mode == "complete":
         outcome = service.complete("task_r")
         result = outcome["result"]
-    elif mode == "rebuild":
+    elif mode in ("rebuild", "rebuild_fail"):
         service.rebuild_checkpoint("task_r")
         result = "REBUILT"
     elif mode == "begin":
@@ -108,7 +118,7 @@ class ProjectionRaceTests(unittest.TestCase):
         barrier.mkdir()
         processes = [
             subprocess.Popen([sys.executable, "-B", "-c", CHILD, str(storage), str(barrier), name, mode,
-                              "1" if jitter and mode != "complete" and mode != "rebuild" else "0"],
+                              "1" if jitter and mode not in ("complete", "rebuild", "rebuild_fail") else "0"],
                              cwd=REPO_ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             for name, mode in jobs
         ]
@@ -159,38 +169,56 @@ class ProjectionRaceTests(unittest.TestCase):
                     self.assertTrue(admitted)
         self.assertEqual(sum(outcomes.values()), ROUNDS)
 
-    def test_rebuild_racing_an_authoritative_change_is_never_falsely_valid(self):  # X
+    def race_rebuild(self, rebuild_mode: str) -> Counter:
         outcomes = Counter()
-        for index in range(ROUNDS):
+        for _ in range(ROUNDS):
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 storage = self.setup_task(root, verified=False)
                 (root / "project" / "two.txt").write_bytes(b"before\n")
                 OperationStore(storage).begin("task_r", "m2", "write", "two.txt", operation_id="op_seed",
                                               payload=b"after\n")
-                jobs = [("r", "rebuild"), ("m", "microtask"), ("t", "transition")]
-                self.run_jobs(storage, root, jobs, jitter=True)
+                jobs = [("r", rebuild_mode), ("m", "microtask"), ("t", "transition")]
+                rebuild = {r["name"]: r["result"] for r in self.run_jobs(storage, root, jobs, jitter=True)}["r"]
+                # F-6: the only admissible rebuild failure is the fail-closed ProjectionError
+                self.assertIn(rebuild, ("REBUILT", "FAILED:ProjectionError"))
                 service = ProjectionService(storage)
                 projection = service.build("task_r")
                 validation = service.validate_checkpoint("task_r", projection)
-                record = EventCheckpointStore(storage).read_checkpoint("task_r")
-                matches = (
-                    record.projection is not None
-                    and record.projection["source_fingerprint"] == projection["source_fingerprint"]
-                    and checkpoint_fields(projection) == {
-                        "last_verified_microtask_id": record.last_verified_microtask_id,
-                        "current_microtask_id": record.current_microtask_id,
-                        "current_status": record.current_status.value,
-                        "snapshot_status": record.snapshot_status,
-                        "last_operation_id": record.last_operation_id,
-                        "next_safe_action": record.next_safe_action,
-                    }
-                )
-                outcomes[validation["status"]] += 1
-                self.assertEqual(validation["status"] == "VALID", matches)
-                self.assertIn(validation["status"], ("VALID", "STALE"))
+                checkpoint_file = TaskStore(storage).task_directory("task_r") / "checkpoint.json"
+                outcomes[(rebuild, validation["status"])] += 1
+                if checkpoint_file.is_file():
+                    state = EventCheckpointStore(storage)
+                    record = state.read_checkpoint("task_r")
+                    matches = (
+                        record.projection is not None
+                        and record.projection["source_fingerprint"] == projection["source_fingerprint"]
+                        and checkpoint_fields(projection) == {
+                            "last_verified_microtask_id": record.last_verified_microtask_id,
+                            "current_microtask_id": record.current_microtask_id,
+                            "current_status": record.current_status.value,
+                            "snapshot_status": record.snapshot_status,
+                            "last_operation_id": record.last_operation_id,
+                            "next_safe_action": record.next_safe_action,
+                        }
+                        and state.checkpoint_markdown("task_r") == state.render_checkpoint_md(record)
+                    )
+                    self.assertEqual(validation["status"] == "VALID", matches)  # never falsely VALID
+                    self.assertIn(validation["status"], ("VALID", "STALE", "INCONSISTENT"))
+                else:
+                    # nothing existed before the race: only a rebuild that failed may leave none;
+                    # a rebuild reporting success without a checkpoint would be lost data
+                    self.assertEqual((rebuild, validation["status"]), ("FAILED:ProjectionError", "MISSING"))
                 self.assertEqual(service.rebuild_checkpoint("task_r")["validation"]["status"], "VALID")
         self.assertEqual(sum(outcomes.values()), ROUNDS)
+        return outcomes
+
+    def test_rebuild_racing_an_authoritative_change_is_never_falsely_valid(self):  # X
+        self.race_rebuild("rebuild")
+
+    def test_a_failed_rebuild_in_the_race_fails_closed_and_loses_nothing(self):  # X, F-6
+        outcomes = self.race_rebuild("rebuild_fail")
+        self.assertEqual(set(outcomes), {("FAILED:ProjectionError", "MISSING")})
 
     def test_concurrent_rebuilders_keep_json_and_markdown_together(self):
         with tempfile.TemporaryDirectory() as tmp:

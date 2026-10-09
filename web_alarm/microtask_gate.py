@@ -27,7 +27,7 @@ from .operation_store import OperationStore, OperationStoreError
 from .resolution_store import ResolutionStoreError
 from .resolver_service import ResolverError, ResolverService
 from .rollback_store import CLOSED, PRESERVATION_FAILED, VERIFIED, RollbackStore, RollbackStoreError
-from .task_store import TaskStore, TaskStoreError
+from .task_store import COMPLETION_ACTIVE, TaskStore, TaskStoreError
 
 # normal physical mutation is allowed only for an operation of an ACTIVE microtask
 EXECUTION_STATUS = MicrotaskStatus.ACTIVE
@@ -353,8 +353,18 @@ def execution_refusal(
     Unreadable facts refuse (fail-closed). The caller holds the
     operation TASK lock and the mutation lock, so the answer stays true for as
     long as it keeps them.
+
+    F-5 (CLAUDE-WA-017): a closed TASK — completed or archived, moved or
+    closed by its status only (an interrupted completion) — never grants
+    mutation authority again, whatever its microtasks and claims say.
     """
     try:
+        if tasks.completion_state(task_id) != COMPLETION_ACTIVE:
+            return (
+                "TASK_CLOSED",
+                f"TASK {task_id} is closed (completed/archived or an interrupted completion): "
+                "none of its operations may hold mutation authority",
+            )
         micro = tasks.open_microtask(task_id, microtask_id)
         if micro.status is not EXECUTION_STATUS:
             return (

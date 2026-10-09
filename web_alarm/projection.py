@@ -796,6 +796,14 @@ class ProjectionService:
         plan = self.tasks.open_plan(task_id)
         blockers: list[dict[str, Any]] = []
         diagnostics: list[dict[str, Any]] = []
+        if (task.status in (TaskStatus.COMPLETED, TaskStatus.ARCHIVED)) == (location == "active"):
+            # F-5: closed by only one of directory / status — an interrupted completion
+            diagnostics.append(_item(
+                "INTERRUPTED_COMPLETION",
+                f"TASK is {task.status.value} in {location}/: its completion was interrupted "
+                + ("after the move (the status record is pending)" if location != "active"
+                   else "after the status write, before the move (pre-WA-017 order)"),
+            ))
         basis: dict[str, Any] = {
             "task": [task.task_id, task.workspace_id, task.status.value, task.plan_revision, task.updated_at, location],
             "plan": [plan.revision, list(plan.microtask_ids), plan.current_microtask_id, plan.updated_at],
@@ -1058,6 +1066,14 @@ class ProjectionService:
             # closed TASK (its stores refuse writes, RC-6 stops at TASK_COMPLETED), so
             # the recovery facts it still carries are diagnostics, not a NEXT.
             next_action = f"TASK is {task.status.value}; its state is read-only history"
+            interrupted = next(
+                (d for d in projection["diagnostics"] if d["code"] == "INTERRUPTED_COMPLETION"), None
+            )
+            if interrupted is not None:  # F-5: closed already, the completion record is finished
+                next_action = (
+                    f"{interrupted['reason']}. The TASK is closed and read-only history: finish its "
+                    "completion record with the gated `task complete`"
+                )
             if attention or projection["blockers"]:
                 next_action += (
                     "; the recovery facts it still carries "

@@ -806,7 +806,7 @@ reconcile
 | WA-1 — Фундамент состояния и файловое ядро | DONE / VERIFIED — WA-1.1–WA-1.6 complete |
 | WA-2 — Local Web Alarm Server + UI | DONE / VERIFIED — WA-2.1–WA-2.4 complete |
 | WA-3 — Remote recovery + replay protection | DONE / VERIFIED — WA-3.1–WA-3.7 complete; old stricter combined criterion SUPERSEDED / DEFERRED by RT-001, not PASS |
-| Recovery Closure RC-0…RC-6 | RC-0…RC-4 и RC-6 DONE / VERIFIED; RC-5 implementation/review repair RESULT READY / independent review DEFERRED |
+| Recovery Closure RC-0…RC-6 | RC-0…RC-6 DONE / VERIFIED; RC-5 independent PASS 2026-10-09 |
 | WA-4 — Strict mutation gateway + hardening | PLANNED AFTER RC-0…RC-6 |
 
 **CURRENT (2026-10-08):** WA-1…WA-3, RC-0…RC-4 и RC-6 = DONE / VERIFIED; RC-5 (projection implementation + repair) = RESULT READY, independent review по решению пользователя DEFERRED. RC-6 после серии Repair #1…\#4B и CLAUDE-WA-014: переход READY/FAILED_VERIFICATION→ACTIVE отклоняется при принятом/закреплённом ABORT/ROLLBACK или открытой RC-4 session; проверка и CAS перехода атомарны относительно recovery decisions под TASK-lock; законный ACTIVE до ABORT не блокирует rollback. Отчёт `TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`: 580 OK, skip 1 ×2; WA-014 11/11; GitHub-аудит ChatGPT PASS. **NEXT: WA4-E TASK DRAFT / NOT STARTED; согласовать пользователя до передачи агенту**, затем WA4-A, WA4-O, WA4-R. Для WA4-E сохраняется STARTED-before-write под TASK-lock; standalone `/authorize` — только evidence. `.gitattributes` FOLLOW-UP deferred; старый WA-3 combined criterion = SUPERSEDED / DEFERRED, смысл — WA4-A.
@@ -835,3 +835,5 @@ WEB ALARM WORKSPACE READY FOR REGULAR USE
 ```
 
 Система считается готовой не тогда, когда появился UI, а тогда, когда реальный disconnect перестал приводить к потере точки продолжения, повтору неизвестной mutation или откату уже VERIFIED-работы.
+
+**CURRENT UPDATE (2026-10-09):** RC-5 / CLAUDE-WA-016 DONE / VERIFIED by independent ChatGPT review at d53ec14 (60/60 targeted; 593 full OK, 1 skip, exit 0). Old CURRENT/DEFERRED snapshots above are historical, not active decisions. Recovery Closure RC-0…RC-6 DONE / VERIFIED. F-5 crash window and F-6 Windows test race OPEN FOLLOW-UPS. WA4-E NOT STARTED; needs separate user approval.
