@@ -298,7 +298,7 @@ USER → Executor loop (без stages, без reset) → Dredd FINAL → final
 ##### P1
 
 - **P1-1. 151G обязан покрывать DIRECT-режим** (сейчас в нём вообще нет reset) — либо DIRECT нужно убрать для RUN с tools.
-- **P1-2. Дедупликация чтений:** (path, content_sha256, write_revision) → ссылка «уже передано в tool #k, не изменилось». Расширить Guard P1 на неподряд идущие повторы и на `find_text`.
+- **P1-2. Дедупликация чтений:** (path, content_sha256, write_revision) → ссылка «уже передано в tool №k, не изменилось». Расширить Guard P1 на неподряд идущие повторы и на `find_text`.
 - **P1-3. Final Audit в DIRECT:** при write_revision = 0 и пустых mutation facts — только имена из git status, без workspace diff. Либо task-scope по образцу 151C.
 - **P1-4. Audit diagnostic** получает ограниченный скомпилированный контекст, а не полную копию.
 - **P1-5. Ограничить историю чата в DIRECT** по байтам и через summary — согласовать с политикой документа 03 (я его не читал).
