@@ -121,6 +121,7 @@ Server не спрашивает модель о действии, если пр
   Привязка evidence к run/plan/stage/requirement/state revision; stale evidence не закрывает новый requirement.
 - **151C — Compact Final Audit Packet + Task-scoped Git Evidence.**
   Dredd получает полный по смыслу, но компактный пакет; workspace-wide diff перестаёт быть default payload.
+  Recovery CODEX-ULTRA-151C-RECOVERY-001 от 2026-10-09 подготовлен к независимой проверке: RESULT READY / AWAITING INDEPENDENT VERIFICATION. КТ-3 остаётся PENDING; findings, offline checks и ограничения — в документе 21, правила packet — в документе 13. Переход к 151D разрешён после независимого PASS ChatGPT.
 - **151D — Server Direct Exact Evidence.**
   Exact READ/VERIFY из принятого контракта выполняются Server через существующие permission/scope/budget gates без лишнего Executor decision call.
 - **151E — Server Factual Final Report.**

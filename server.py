@@ -1622,6 +1622,7 @@ def _agent_git_status(
 
     command = [
         "git",
+        "--literal-pathspecs",
         "-c",
         "core.quotepath=false",
         "--no-pager",
@@ -1677,6 +1678,7 @@ def _agent_git_diff(
     result = _run_verify_process(
         [
             "git",
+            "--literal-pathspecs",
             "-c",
             "core.quotepath=false",
             "--no-pager",
@@ -2408,8 +2410,11 @@ def _clip_final_audit_text(text: str, limit: int) -> tuple[str, bool, int]:
     if original_bytes <= limit:
         return text, False, original_bytes
     marker = b"\n... <FINAL AUDIT EVIDENCE TRUNCATED> ..."
-    kept = max(limit - len(marker), 0)
-    clipped = raw[:kept].decode("utf-8", errors="replace")
+    limit = max(limit, 0)
+    if limit < len(marker):
+        return marker[:limit].decode("ascii"), True, original_bytes
+    kept = limit - len(marker)
+    clipped = raw[:kept].decode("utf-8", errors="ignore")
     return clipped + marker.decode("ascii"), True, original_bytes
 
 
@@ -2463,7 +2468,7 @@ def _final_audit_tool_material_preview(
     )
     return {
         "content": clipped,
-        "truncated": truncated,
+        "truncated": truncated or (isinstance(result, dict) and bool(result.get("truncated"))),
         "original_bytes": original_bytes,
     }
 
@@ -2666,9 +2671,14 @@ def _compact_final_audit_task_plan(
     for stage_id, state in (task_plan_evidence.get("stage_states") or {}).items():
         if not isinstance(state, dict):
             continue
+        stage_result, result_truncated, result_bytes = _clip_final_audit_text(
+            str(state.get("result") or ""), MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES,
+        )
         compact_states[str(stage_id)] = {
             "status": state.get("status"),
-            "result": str(state.get("result") or "")[:2000],
+            "result": stage_result,
+            "result_truncated": result_truncated,
+            "result_original_bytes": result_bytes,
             "evidence_generation": int(state.get("evidence_generation", 0)),
             "repair": bool(state.get("repair", False)),
             "obligations": copy.deepcopy(state.get("obligations") or {}),
@@ -2854,6 +2864,7 @@ def _collect_final_audit_evidence(
         task_plan_evidence,
         freshness_snapshot,
     )
+    compact_task_plan = _compact_final_audit_task_plan(task_plan_evidence)
     candidate_conflicts = _candidate_fact_conflicts(
         candidate_final, tool_call_count=tool_call_count,
         write_revision=verification_state.get("write_revision", 0),
@@ -2865,6 +2876,16 @@ def _collect_final_audit_evidence(
     mutation_evidence_incomplete_reasons: list[str] = []
     critical_reasons: list[str] = []
     any_truncated = False
+
+    for stage in (compact_task_plan or {}).get("stages") or []:
+        stage_id = str(stage.get("stage_id") or "")
+        state = compact_task_plan["stage_states"].get(stage_id) or {}
+        if state.get("result_truncated"):
+            any_truncated = True
+            reason = f"stage_result_truncated:{stage_id}"
+            incomplete_reasons.append(reason)
+            if stage.get("completion_mode") == "model_result":
+                critical_reasons.append(reason)
 
     if task_scoped and not isinstance(freshness_snapshot, dict):
         reason = "task_plan_freshness_snapshot_missing"
@@ -2951,6 +2972,7 @@ def _collect_final_audit_evidence(
             if not evidence.get("ok"):
                 evidence.setdefault("reason", f"{label}_unavailable")
             if evidence.get("truncated"):
+                any_truncated = True
                 truncated_reason = f"{label}_truncated"
                 evidence.setdefault("reason", truncated_reason)
                 if task_scoped:
@@ -3049,7 +3071,7 @@ def _collect_final_audit_evidence(
     task_material_included_bytes = 0
     task_material_truncated = False
     task_material_deduplicated = 0
-    seen_material: set[tuple[str, str, str]] = set()
+    seen_material: dict[tuple[str, str, str], dict] = {}
     material_required_tools = {
         "read_file",
         "read_file_range",
@@ -3057,9 +3079,48 @@ def _collect_final_audit_evidence(
         "list_dir",
     }
 
-    for fact in tool_facts or []:
-        if not isinstance(fact, dict):
+    # Only source records bound to the current freshness snapshot can impose
+    # mandatory semantic material. Older generations remain visible as facts.
+    active_material_sources: dict[tuple[str, str], list[tuple[str, str]]] = {}
+    for requirement in requirement_coverage.get("requirements") or []:
+        if requirement.get("tool") not in material_required_tools:
             continue
+        stage_id = str(requirement.get("stage_id") or "")
+        evidence_id = str(requirement.get("evidence_id") or "")
+        for source in requirement.get("source_records") or []:
+            source_id = str(source.get("source_record_id") or "")
+            if source_id:
+                active_material_sources.setdefault((stage_id, source_id), []).append(
+                    (stage_id, evidence_id)
+                )
+
+    def material_requirements(fact: dict) -> list[tuple[str, str]]:
+        stage_id = str(fact.get("stage_id") or "")
+        if task_scoped:
+            return active_material_sources.get(
+                (stage_id, str(fact.get("source_record_id") or "")), []
+            )
+        if fact.get("tool") in material_required_tools:
+            return [(stage_id, str(item)) for item in fact.get("requirement_ids") or []]
+        return []
+
+    indexed_facts = [
+        (index, fact) for index, fact in enumerate(tool_facts or [])
+        if isinstance(fact, dict)
+    ]
+    seen_material_sources: set[tuple[str, str]] = set()
+    # Allocate material to current requirements before optional exploration,
+    # then restore the original event order in the compact packet.
+    for fact_index, fact in sorted(
+        indexed_facts, key=lambda pair: (
+            not bool(material_requirements(pair[1])), pair[1].get("status") == "OK",
+        )
+    ):
+        required_material = material_requirements(fact)
+        seen_material_sources.add((
+            str(fact.get("stage_id") or ""),
+            str(fact.get("source_record_id") or ""),
+        ))
         item = {
             key: copy.deepcopy(fact.get(key))
             for key in (
@@ -3084,6 +3145,11 @@ def _collect_final_audit_evidence(
             )
             if key in fact
         }
+        # A successful tool can still report a negative fact (e.g. zero matches).
+        # Keep its bounded summary even when no preview material can be included.
+        item["summary"] = str(fact.get("summary") or "")[:1000]
+        if fact.get("status") != "OK":
+            item["error"] = str(fact.get("error") or "")[:300]
         preview = fact.get("material_preview")
         result_sha256 = str((fact.get("result") or {}).get("sha256") or "")
         material_key = (
@@ -3091,12 +3157,17 @@ def _collect_final_audit_evidence(
             str(fact.get("path") or ""),
             result_sha256,
         )
+        material_problem = None
         if isinstance(preview, dict) and isinstance(preview.get("content"), str):
             if result_sha256 and material_key in seen_material:
+                source_material = seen_material[material_key]
                 item["material_deduplicated"] = True
+                item["material_source_record_id"] = source_material["source_record_id"]
+                item["material_truncated"] = source_material["truncated"]
                 task_material_deduplicated += 1
+                if source_material["truncated"]:
+                    material_problem = "truncated"
             elif remaining_tool_material_bytes > 0:
-                seen_material.add(material_key)
                 clipped, total_truncated, _original_bytes = _clip_final_audit_text(
                     preview["content"],
                     remaining_tool_material_bytes,
@@ -3110,6 +3181,10 @@ def _collect_final_audit_evidence(
                 material_truncated = bool(
                     preview.get("truncated") or total_truncated
                 )
+                seen_material[material_key] = {
+                    "source_record_id": fact.get("source_record_id"),
+                    "truncated": material_truncated,
+                }
                 item["material_preview"] = {
                     "content": clipped,
                     "truncated": material_truncated,
@@ -3117,32 +3192,27 @@ def _collect_final_audit_evidence(
                 }
                 if material_truncated:
                     task_material_truncated = True
-                    if (
-                        fact.get("tool") in material_required_tools
-                        and fact.get("requirement_ids")
-                    ):
-                        for requirement_id in fact.get("requirement_ids") or []:
-                            reason = (
-                                "requirement_material_truncated:"
-                                f"{fact.get('stage_id')}:{requirement_id}"
-                            )
-                            incomplete_reasons.append(reason)
-                            critical_reasons.append(reason)
+                    material_problem = "truncated"
             else:
                 item["material_omitted_due_to_budget"] = True
                 task_material_truncated = True
-                if (
-                    fact.get("tool") in material_required_tools
-                    and fact.get("requirement_ids")
-                ):
-                    for requirement_id in fact.get("requirement_ids") or []:
-                        reason = (
-                            "requirement_material_budget_exhausted:"
-                            f"{fact.get('stage_id')}:{requirement_id}"
-                        )
-                        incomplete_reasons.append(reason)
-                        critical_reasons.append(reason)
-        compact_tool_evidence.append(item)
+                material_problem = "budget_exhausted"
+        else:
+            material_problem = "missing"
+        if material_problem:
+            for stage_id, requirement_id in required_material:
+                reason = f"requirement_material_{material_problem}:{stage_id}:{requirement_id}"
+                incomplete_reasons.append(reason)
+                critical_reasons.append(reason)
+        compact_tool_evidence.append((fact_index, item))
+
+    for source_key, requirements in active_material_sources.items():
+        if source_key not in seen_material_sources:
+            for stage_id, requirement_id in requirements:
+                reason = f"requirement_material_missing:{stage_id}:{requirement_id}"
+                incomplete_reasons.append(reason)
+                critical_reasons.append(reason)
+    compact_tool_evidence = [item for _index, item in sorted(compact_tool_evidence)]
 
     if is_mutating_run:
         critical_reasons.extend(mutation_evidence_incomplete_reasons)
@@ -3219,7 +3289,7 @@ def _collect_final_audit_evidence(
                 verification_state
             ),
         },
-        "task_plan": _compact_final_audit_task_plan(task_plan_evidence),
+        "task_plan": compact_task_plan,
         "requirement_coverage": requirement_coverage,
         "evidence_freshness": {
             "snapshot_sha256": freshness_snapshot_sha256,
@@ -3413,6 +3483,26 @@ def _planner_target_snapshot(root: Path, path_text: str, policy: dict) -> dict:
     _require_text_suffix(path)
     content = _read_logical_text(path)
     return {"exists": True, "sha256": _sha256_utf8(content), "content": content}
+
+
+def _planner_dependency_fingerprint(root: Path, tool: str, arguments: dict, policy: dict) -> str | None:
+    """Bind evidence to its observed semantics without widening persistence targets."""
+    if tool == "list_dir":
+        observation = _agent_list_dir(root, arguments["path"], policy)
+    elif tool == "git_diff":
+        observation = _agent_git_diff(root, arguments["paths"], policy, allow_missing=True)
+        if not observation.get("ok"):
+            raise ValueError("Git dependency state is unavailable")
+        observation = {
+            key: observation.get(key) for key in ("stdout", "stderr", "paths", "truncated")
+        }
+    else:
+        return evidence_dependency_state_fingerprint(
+            lambda path: _planner_target_snapshot(root, path, policy), tool, arguments,
+        )
+    if observation.get("truncated"):
+        raise ValueError("Dependency observation is truncated")
+    return _sha256_utf8(json.dumps(observation, ensure_ascii=False, sort_keys=True))
 
 
 def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, policy: dict, repair=False) -> dict:
@@ -4117,6 +4207,7 @@ async def _run_agent_task_impl(
             path=runtime_log_dir / "task_plans" / f"{run_id}.json", run_id=run_id,
             task_block_id=task_block_id, raw_task=task, planner_call=planner_call, emit=_emit,
             snapshot=lambda path: _planner_target_snapshot(root, path, policy),
+            dependency_state=lambda tool, args: _planner_dependency_fingerprint(root, tool, args, policy),
             prepare=lambda call, artifact, repair: _prepare_persistence_candidate(root, call, artifact, policy, repair),
             planner_session_id=planner_session.session_id,
             planner_feedback=planner_session.add_control_message,
@@ -5357,6 +5448,15 @@ async def _run_agent_task_impl(
                         else None
                     ),
                 }
+                if function_name == "verify_file_content" and isinstance(result, dict):
+                    # Exact positive/negative facts survive even when the optional
+                    # material-preview budget has been exhausted.
+                    result_identity["verification"] = {
+                        key: result[key] for key in (
+                            "check", "path", "kind", "passed", "matched", "exists",
+                            "actual_sha256", "expected_sha256", "needle_sha256", "expected_chars",
+                        ) if key in result
+                    }
                 observed_state_sha256 = None
                 if (
                     tool_ok
@@ -5366,11 +5466,7 @@ async def _run_agent_task_impl(
                 ):
                     try:
                         observed_state_sha256 = (
-                            evidence_dependency_state_fingerprint(
-                                lifecycle.snapshot,
-                                function_name,
-                                parsed_tool_args,
-                            )
+                            lifecycle.dependency_state(function_name, parsed_tool_args)
                         )
                     except (PermissionError, ValueError, OSError):
                         observed_state_sha256 = None
@@ -5404,7 +5500,7 @@ async def _run_agent_task_impl(
                     "result": result_identity,
                     "material_preview": (
                         _final_audit_tool_material_preview(function_name, result)
-                        if tool_ok
+                        if tool_ok or function_name in VERIFICATION_TOOL_NAMES
                         else None
                     ),
                     "summary": str(last_tool_result_summary)[:1000],
@@ -5509,13 +5605,20 @@ async def _run_agent_task_impl(
                         )
                 else:
                     if dispatcher_started:
-                        _emit("tool_error", {
+                        tool_result_record = _emit("tool_error", {
                             "tool_sequence": last_tool_sequence,
                             "evidence_record_id": tool_evidence_record_id,
                             "function": function_name,
                             "arguments": safe_args,
                             "error": tool_error,
+                            "result": result,
                         })
+                        if consistency_tool_facts:
+                            consistency_tool_facts[-1]["source_run_store_record_id"] = (
+                                tool_result_record.get("record_id")
+                                if isinstance(tool_result_record, dict)
+                                else None
+                            )
 
                     signature = (
                         function_name,

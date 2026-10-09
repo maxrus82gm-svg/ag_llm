@@ -207,10 +207,13 @@ class TaskLifecycle:
     def __init__(self, *, path: Path, run_id: str, task_block_id: str | None,
                  raw_task: str, planner_call, emit, snapshot, prepare,
                  planner_session_id: str | None = None, planner_feedback=None,
-                 planner_review=None, dredd_enabled: bool = True):
+                 planner_review=None, dredd_enabled: bool = True, dependency_state=None):
         self.path, self.raw_task = path, raw_task
         self.planner_call, self.emit = planner_call, emit
         self.snapshot, self.prepare = snapshot, prepare
+        self.dependency_state = dependency_state or (
+            lambda tool, args: evidence_dependency_state_fingerprint(self.snapshot, tool, args)
+        )
         self.planner_session_id = planner_session_id or "ps_" + uuid.uuid4().hex
         self.planner_feedback = planner_feedback
         self.planner_review = planner_review
@@ -716,8 +719,7 @@ class TaskLifecycle:
             if dependency_targets:
                 try:
                     current_state_fingerprint = (
-                        evidence_dependency_state_fingerprint(
-                            self.snapshot,
+                        self.dependency_state(
                             requirement["tool"],
                             requirement["arguments"],
                         )
@@ -857,8 +859,7 @@ class TaskLifecycle:
                 target_state = None
                 if dependency_targets:
                     try:
-                        target_state = evidence_dependency_state_fingerprint(
-                            self.snapshot,
+                        target_state = self.dependency_state(
                             requirement["tool"],
                             requirement["arguments"],
                         )
@@ -1080,7 +1081,9 @@ class TaskLifecycle:
 
     def complete(self, content):
         sid = self.stage["stage_id"]
-        self.state["stage_states"][sid]["result"] = content[:4000]
+        # Persist the complete stage result. Final Audit applies an explicit
+        # byte budget and fails closed when required semantic material is cut.
+        self.state["stage_states"][sid]["result"] = content
         self.set_status("SATISFIED")
         self.event("stage_satisfied")
         self.advance()
