@@ -536,101 +536,117 @@ class OperationStore:
         *,
         result_summary: str | None = None,
     ) -> dict[str, Any]:
+        with self._serialized(task_id):
+            return self._transition_locked(task_id, operation_id, requested_status, result_summary=result_summary)
+
+    def _transition_locked(
+        self,
+        task_id: str,
+        operation_id: str,
+        requested_status: OperationStatus | str,
+        *,
+        result_summary: str | None = None,
+    ) -> dict[str, Any]:
+        """``transition`` for a caller that already holds this TASK's operation lock.
+
+        WA4-E: the executor persists STARTED (and the DONE receipt) inside the RC-3
+        ``mutation_boundary``, which holds the TASK lock; the public ``transition``
+        would wait for that same non-re-entrant lock. Same checks, same record.
+        """
         requested = OperationStatus(requested_status)
         operation_id = _safe_component("operation_id", operation_id)
-        with self._serialized(task_id):
-            path = self._path(task_id, operation_id, active_only=True)
-            record = self._load_path(path, task_id, operation_id)
-            current = record.status
+        path = self._path(task_id, operation_id, active_only=True)
+        record = self._load_path(path, task_id, operation_id)
+        current = record.status
 
-            if requested == current:
-                self.events.append_event(
-                    task_id,
-                    "OPERATION_TRANSITION_REPLAY",
-                    microtask_id=record.microtask_id,
-                    operation_id=operation_id,
-                    payload={"status": current.value},
-                )
-                self._touch_checkpoint(task_id, operation_id)
-                return {
-                    "operation": record,
-                    "changed": False,
-                    "replayed": True,
-                    "replay_decision": self.replay_decision(record.status),
-                    "contract_status": assess(record),
-                }
-
-            if requested not in self._ALLOWED.get(current, set()):
-                raise OperationTransitionError(
-                    f"{current.value} -> {requested.value} is not allowed"
-                )
-            if result_summary is not None and (
-                not isinstance(result_summary, str) or not result_summary.strip()
-            ):
-                raise OperationStoreError(
-                    "result_summary must be a non-empty string when provided"
-                )
-
-            is_contract = record.contract_version != LEGACY_CONTRACT_VERSION
-            receipt = None
-            if is_contract and requested == OperationStatus.DONE:
-                receipt = self._done_receipt(record, record.revision + 1)
-                if receipt["matches_expected_post"] is False:
-                    self.events.append_event(
-                        task_id,
-                        "OPERATION_RECEIPT_MISMATCH",
-                        microtask_id=record.microtask_id,
-                        operation_id=operation_id,
-                        payload={
-                            "expected_post_state": authority_of(
-                                record.contract["expected_post_state"]
-                            ),
-                            "observed": authority_of(receipt),
-                            "eol_only_drift": receipt["eol_only_drift"],
-                        },
-                    )
-                    raise OperationReceiptMismatch(
-                        "server-observed target does not match expected post-state; "
-                        "DONE refused, reconciliation required"
-                        + (" (EOL_ONLY_DRIFT)" if receipt["eol_only_drift"] else "")
-                    )
-
-            record.status = requested
-            if result_summary is not None:
-                record.result_summary = result_summary.strip()
-            record.updated_at = utc_now_iso()
-            if is_contract:
-                record.revision += 1
-                if receipt is not None:
-                    record.receipt = receipt
-            _persist_record(path, record)
-            event_payload: dict[str, Any] = {
-                "from": current.value,
-                "to": requested.value,
-                "result_summary": record.result_summary,
-            }
-            if is_contract:
-                event_payload["revision"] = record.revision
-            if receipt is not None:
-                event_payload["receipt"] = dict(
-                    authority_of(receipt),
-                    matches_expected_post=receipt["matches_expected_post"],
-                )
+        if requested == current:
             self.events.append_event(
                 task_id,
-                "OPERATION_TRANSITION",
+                "OPERATION_TRANSITION_REPLAY",
                 microtask_id=record.microtask_id,
                 operation_id=operation_id,
-                payload=event_payload,
+                payload={"status": current.value},
             )
             self._touch_checkpoint(task_id, operation_id)
             return {
                 "operation": record,
-                "changed": True,
-                "replayed": False,
+                "changed": False,
+                "replayed": True,
                 "replay_decision": self.replay_decision(record.status),
                 "contract_status": assess(record),
             }
+
+        if requested not in self._ALLOWED.get(current, set()):
+            raise OperationTransitionError(
+                f"{current.value} -> {requested.value} is not allowed"
+            )
+        if result_summary is not None and (
+            not isinstance(result_summary, str) or not result_summary.strip()
+        ):
+            raise OperationStoreError(
+                "result_summary must be a non-empty string when provided"
+            )
+
+        is_contract = record.contract_version != LEGACY_CONTRACT_VERSION
+        receipt = None
+        if is_contract and requested == OperationStatus.DONE:
+            receipt = self._done_receipt(record, record.revision + 1)
+            if receipt["matches_expected_post"] is False:
+                self.events.append_event(
+                    task_id,
+                    "OPERATION_RECEIPT_MISMATCH",
+                    microtask_id=record.microtask_id,
+                    operation_id=operation_id,
+                    payload={
+                        "expected_post_state": authority_of(
+                            record.contract["expected_post_state"]
+                        ),
+                        "observed": authority_of(receipt),
+                        "eol_only_drift": receipt["eol_only_drift"],
+                    },
+                )
+                raise OperationReceiptMismatch(
+                    "server-observed target does not match expected post-state; "
+                    "DONE refused, reconciliation required"
+                    + (" (EOL_ONLY_DRIFT)" if receipt["eol_only_drift"] else "")
+                )
+
+        record.status = requested
+        if result_summary is not None:
+            record.result_summary = result_summary.strip()
+        record.updated_at = utc_now_iso()
+        if is_contract:
+            record.revision += 1
+            if receipt is not None:
+                record.receipt = receipt
+        _persist_record(path, record)
+        event_payload: dict[str, Any] = {
+            "from": current.value,
+            "to": requested.value,
+            "result_summary": record.result_summary,
+        }
+        if is_contract:
+            event_payload["revision"] = record.revision
+        if receipt is not None:
+            event_payload["receipt"] = dict(
+                authority_of(receipt),
+                matches_expected_post=receipt["matches_expected_post"],
+            )
+        self.events.append_event(
+            task_id,
+            "OPERATION_TRANSITION",
+            microtask_id=record.microtask_id,
+            operation_id=operation_id,
+            payload=event_payload,
+        )
+        self._touch_checkpoint(task_id, operation_id)
+        return {
+            "operation": record,
+            "changed": True,
+            "replayed": False,
+            "replay_decision": self.replay_decision(record.status),
+            "contract_status": assess(record),
+        }
 
     def _settle_recovery_locked(
         self,

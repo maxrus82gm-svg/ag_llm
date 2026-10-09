@@ -23,6 +23,7 @@ from .context_pack import EntryContextPackBuilder
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION, record_to_dict
+from .mutation_executor import MutationExecutor, MutationExecutorError, MutationRequestError
 from .operation_contract import decode_payload_spec
 from .operation_store import (
     OperationConflictError,
@@ -176,6 +177,7 @@ class WebAlarmApi:
         self.rollbacks = RollbackService(storage_root)
         self.projection = ProjectionService(storage_root)
         self.closeout = CloseoutService(storage_root)
+        self.executor = MutationExecutor(storage_root)
 
     @property
     def storage_root(self) -> Path:
@@ -324,6 +326,7 @@ class WebAlarmApi:
                         "recovery_entry",
                         "projection",
                         "closeout",
+                        "mutations",
                     ],
                 }
 
@@ -685,6 +688,35 @@ class WebAlarmApi:
                     "operations collection supports GET and POST",
                 )
 
+            if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "mutations":
+                # WA4-E: the server performs the tracked mutation itself (replay-safe by operation_id)
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", "mutation execution requires POST")
+                data = _require_object(body)
+                allow_secret_target = data.get("allow_secret_target", False)
+                if not isinstance(allow_secret_target, bool):
+                    raise ApiError(400, "invalid_field", "allow_secret_target must be boolean")
+                outcome = self.executor.execute(
+                    parts[1],
+                    _require_text(data, "microtask_id"),
+                    _require_text(data, "operation_id"),
+                    _require_text(data, "action"),
+                    _require_text(data, "target"),
+                    destination=_optional_text(data, "destination"),
+                    payload=decode_payload_spec(data.get("payload")),
+                    expected_pre_state=data.get("expected_pre_state"),
+                    expected_post_state=data.get("expected_post_state"),
+                    expected_precondition_sha256=_optional_text(data, "expected_precondition_sha256"),
+                    request_payload=data.get("request"),
+                    agent=_optional_text(data, "agent"),
+                    channel=_optional_text(data, "channel"),
+                    allow_secret_target=allow_secret_target,
+                )
+                if outcome["result"] not in ("EXECUTED", "REPLAYED"):
+                    raise ApiError(409, f"mutation_{outcome['result'].lower()}", outcome["reason"],
+                                   details=_jsonable(outcome))
+                return 200, _jsonable(outcome)
+
             if (
                 len(parts) == 4
                 and parts[0] == "tasks"
@@ -875,6 +907,10 @@ class WebAlarmApi:
 
         except ApiError:
             raise
+        except MutationRequestError as exc:
+            raise ApiError(400, "invalid_mutation_request", str(exc)) from exc
+        except MutationExecutorError as exc:
+            raise ApiError(409, "mutation_executor_error", str(exc)) from exc
         except TransitionRejected as exc:
             raise ApiError(
                 409,

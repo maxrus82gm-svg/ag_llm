@@ -12,6 +12,7 @@ from .closeout import CloseoutError, CloseoutService
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import MicrotaskStatus, record_to_dict
+from .mutation_executor import EXECUTED, REPLAYED, MutationExecutor, MutationExecutorError
 from .projection import ProjectionError, ProjectionService
 from .recovery_coordinator import (
     FAIL_CLOSED,
@@ -123,6 +124,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     report = root.add_parser("report")
     report.add_argument("--task-id", required=True)
+
+    mutate = root.add_parser("mutate", help="WA4-E: the server performs one tracked mutation (replay-safe)")
+    mutate.add_argument("--task-id", required=True)
+    mutate.add_argument("--microtask-id", required=True)
+    mutate.add_argument("--operation-id", required=True, help="idempotency key: a replay names the same id")
+    mutate.add_argument("--action", required=True, help="write | edit | create | delete | move | rename")
+    mutate.add_argument("--target", required=True)
+    mutate.add_argument("--destination", help="move/rename only")
+    mutate.add_argument("--payload-file", help="exact new bytes for write/edit/create")
 
     return parser
 
@@ -264,6 +274,19 @@ def _handle(args: argparse.Namespace) -> int:
         print(f"NEXT SOURCE: {projection['authority_source']}")
         return 0
 
+    if args.command == "mutate":
+        outcome = MutationExecutor(args.storage_root).execute(
+            args.task_id,
+            args.microtask_id,
+            args.operation_id,
+            args.action,
+            args.target,
+            destination=args.destination,
+            payload=Path(args.payload_file).read_bytes() if args.payload_file else None,
+        )
+        _json(outcome)
+        return 0 if outcome["result"] in (EXECUTED, REPLAYED) else 3
+
     raise RuntimeError("unreachable CLI branch")
 
 
@@ -281,6 +304,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         ProjectionError,
         RecoveryCoordinatorError,
         CloseoutError,
+        MutationExecutorError,
         ValueError,
         OSError,
     ) as exc:

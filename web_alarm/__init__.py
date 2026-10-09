@@ -4,6 +4,7 @@ from .closeout import CloseoutError, CloseoutService
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION
+from .mutation_executor import MutationExecutor, MutationExecutorError, MutationRequestError
 from .operation_contract import OPERATION_CONTRACT_VERSION
 from .operation_store import (
     OperationConflictError,
@@ -90,6 +91,9 @@ __all__ = [
     "ManifestSnapshotStore",
     "ManifestStoreError",
     "SCHEMA_VERSION",
+    "MutationExecutor",
+    "MutationExecutorError",
+    "MutationRequestError",
     "OPERATION_CONTRACT_VERSION",
     "OperationConflictError",
     "OperationContractRejected",

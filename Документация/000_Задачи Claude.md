@@ -36,6 +36,436 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+### CLAUDE-WA-018 — WA4-E / Authoritative Mutation Executor & Gateway
+
+**Статус постановки:** БЛОК 1 («USER APPROVED FOR EXECUTION — 2026-10-09»), запуск подтверждён пользователем в чате («можешь приступать»), выполнена Claude 2026-10-09; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
+# TASK: CLAUDE-WA-018 — WA4-E / Authoritative Mutation Executor & Gateway
+
+**Проект:** ag_llm / WEB-02 — Web Alarm Workspace
+**Исполнитель:** Claude Desktop / Claude Code
+**Независимый verifier:** ChatGPT
+**Статус:** USER APPROVED FOR EXECUTION — 2026-10-09
+**ARCH CLASS:** Web Alarm / Authoritative Mutation Execution / Safety & Persistence
+**PRIMARY PROFILE:** `Документация/23_Архитектура Web Alarm Workspace.md`
+**SECONDARY PROFILE:** `Документация/24_План реализации Web Alarm Workspace.md`
+**Planning reference:** `Документация/33_Круглый стол - план исполнения.md`
+**Репозиторий:** `M:\GitHub\ag_llm`
+
+## 1. Исходное состояние
+
+Подтверждённый baseline:
+
+- WA-1, WA-2, WA-3 — DONE / VERIFIED.
+
+- Recovery Closure RC-0…RC-6 — DONE / VERIFIED.
+
+- CLAUDE-WA-016 (RC-5) — independent PASS.
+
+- CLAUDE-WA-017 (F-5/F-6) — independent PASS, accepted commit `c7681c3841676438d1246ec3de5ac7049c52a4f9`.
+
+- Последний просмотренный GitHub HEAD — `3b5ab323446c16cacadf9ce2c796af8b8d75c85a` (176). Это контрольная точка, а не требование откатить локальную рабочую копию.
+
+- WA4-E — PLANNED / NOT STARTED.
+
+- WA4-A, WA4-O, WA4-R — последующие, ещё не начатые этапы.
+
+- TASK 151C — PAUSED / DEFERRED.
+
+
+**Главное правило:** ранее независимо принятые этапы не выполнять заново. Проверять совместимость с ними и исправлять только проблемы, относящиеся к утверждённому scope WA4-E.
+
+## 2. Обязательный вход и регистрация TASK
+
+Перед изменением runtime:
+
+1. Прочитать `08_Старт.md` → глобальный `000_Задачи для агента.md` → `34_TACTICAL_CONTEXT.md` → `18_Регламент сопровождения документации.md` → `01_Архитектура и текущее состояние.md`.
+
+2. Прочитать архитектуру `23`, план `24`, релевантную историю `25` и утверждённый execution plan `33` (RT-001).
+
+3. Проверить `000_Задачи Claude.md`, особенно БЛОК 1 и сохранность предыдущей CLAUDE-WA-017 в БЛОКАХ 2–3 и постоянной истории.
+
+4. Сохранить полную утверждённую постановку CLAUDE-WA-018 в персональном БЛОКЕ 1. Отразить текущий project-level NEXT, исполнителя и маршрут к карточке Claude в глобальном `000`, не уничтожая подтверждённую историю и отложенный БЛОК 3.
+
+5. Проверить `git status`, актуальный HEAD, dirty files, локальные незакоммиченные изменения и возможную параллельную работу Codex.
+
+
+Не переписывать и не сбрасывать чужие изменения. Задача Codex по связям Obsidian Tactical Context — независимая документационная работа; пересекающиеся файлы не редактировать параллельно без reconciliation.
+
+Если фактическое состояние отличается от записанного, сначала установить текущую доказанную точку. При существенном конфликте остановиться с `BLOCKER`, а не применять постановку вслепую.
+
+## 3. Цель TASK
+
+Реализовать **Authoritative Mutation Executor / Gateway** на существующем фундаменте Web Alarm.
+
+Система должна перейти от преимущественно отслеживания, согласования и восстановления операций к их **реальному контролируемому исполнению сервером**.
+
+Обязательная транзакционная цепочка:
+
+`INTENT → CANONICAL TARGET → SNAPSHOT → PRECONDITION/CAS → PERSISTED STARTED → PHYSICAL MUTATION → EXACT POST-PROOF → PERSISTED RECEIPT → RESULT`
+
+Ключевая архитектурная гарантия:
+
+**Операция не имеет права выполнить первую физическую запись, пока её STARTED не зафиксирован persistent под уже удерживаемым TASK-lock.**
+
+Повторная доставка того же durable operation contract не должна вызывать второй физический side effect.
+
+WA4-E должен использовать существующие RC-компоненты как единую систему, а не создавать параллельный механизм хранения, authority, Resolver или recovery.
+
+## 4. Разрешённый scope
+
+### A. Проверка существующего фундамента
+
+До реализации установить по коду:
+
+- Где хранятся durable Operation Contract, `operation_id`, fingerprint и revision.
+
+- Где находятся server-owned state и authoritative operation lifecycle.
+
+- Как работают RC-3 ownership claims, target-lock и mutation-boundary CAS.
+
+- Как RC-4 выполняет tracked rollback.
+
+- Как RC-5 строит Projection и fail-closed проверки.
+
+- Как RC-6 формирует `READY_FOR_EXECUTION` и `NEXT SAFE ACTION`.
+
+- Как WA-017 защищает завершённые TASK от новых mutations.
+
+
+Составить короткую карту существующих точек интеграции. Не создавать новый слой там, где уже существует подходящий canonical API.
+
+### B. Authoritative execution entrypoint
+
+Реализовать серверный исполнитель, принимающий durable operation contract и действующий исключительно после server-owned проверок.
+
+Gateway должен поддерживать разрешённые планом классы файловых операций:
+
+- `write`
+
+- `edit`
+
+- `create`
+
+- `delete`
+
+- `move`
+
+- `rename`
+
+
+Использовать существующие схемы и согласованные semantics там, где они уже определены. Не добавлять выдуманную новую authority model.
+
+Если конкретная операция требует архитектурного решения, которое RT-001 явно отложил, не принимать его молча. Изолировать конфликт и представить `BLOCKER / PROPOSAL`. Не объявлять WA4-E полностью завершённой при непокрытом обязательном scope.
+
+### C. Обязательные admission gates
+
+До физической mutation сервер должен проверить:
+
+- TASK существует, находится в допускающем исполнение состоянии и не закрыта.
+
+- Microtask является разрешённой текущей микрозадачей.
+
+- Нет нерешённого recovery, запрещающего execution.
+
+- Операция имеет корректный durable contract и идентичность.
+
+- Target входит в утверждённый manifest.
+
+- Физический путь канонизирован и находится внутри разрешённого workspace/root.
+
+- Source и destination защищены, когда операция затрагивает два пути.
+
+- Snapshot / restore point создан и подтверждён до destructive modification.
+
+- Actual pre-state соответствует ожидаемому: bytes/hash/existence и необходимые revision.
+
+- RC-3 ownership, conflict gate, locks и CAS выполнены.
+
+- Operation request не является stale, изменённым или запрещённым replay.
+
+- Фактическое выполнение разрешено текущим authoritative lifecycle.
+
+
+Запретить обход через различное написание пути, `..`, недопустимые symlink/junction, Windows case/path normalization и конфликтующие physical targets.
+
+Ownership claim сам по себе не предоставляет mutation authority.
+
+### D. STARTED-before-write
+
+Особое внимание уделить временному окну между admission и физической записью.
+
+Обязательно:
+
+1. Захватить требуемые блокировки в согласованном порядке.
+
+2. Повторно проверить критические persistent authority facts на границе mutation.
+
+3. Зафиксировать `STARTED` durable под TASK-lock.
+
+4. Только после успешной фиксации разрешить physical mutation.
+
+5. Обеспечить корректную обработку отказа записи статуса `STARTED`.
+
+6. Не допускать выполнения через устаревшую standalone authorization.
+
+7. Сохранять существующие RC-3/RC-6 semantics и запрет mutations после TASK closeout.
+
+
+Не освобождать authority или ownership преждевременно между критическими этапами.
+
+### E. Physical mutation и доказательство результата
+
+Использовать безопасные операции с файлами, в том числе temporary file + atomic replace, когда это применимо.
+
+Требования:
+
+- Предварительно доказанное текущее состояние нельзя молча перезаписывать после внешнего drift.
+
+- Для `create` подтверждать отсутствие объекта и защищать от конкурентного появления.
+
+- Для `delete` и замены существующих данных обеспечивать проверенный restore point.
+
+- Для `move/rename` учитывать source/destination, конфликтующие target и ограничения атомарности платформы.
+
+- Каждая фактическая операция должна иметь собственную durable identity.
+
+- Composite sequence не считается одной атомарной транзакцией без специально доказанной поддержки.
+
+- После mutation необходимо exact post-state verification.
+
+- Нельзя записывать SUCCESS/VERIFIED на основании одного лишь успешного системного вызова.
+
+- Receipt должен содержать достаточную проверяемую информацию для последующего recovery и независимого аудита.
+
+
+Исторический receipt и доказательство текущего состояния файла — разные понятия.
+
+### F. Replay, interruption, recovery
+
+Проверить четыре критических окна отказа:
+
+1. Сбой до persistent `STARTED`.
+
+2. Сбой после `STARTED`, но до physical mutation.
+
+3. Сбой после physical mutation, но до записи receipt.
+
+4. Receipt сохранён, но ответ клиенту потерян.
+
+
+После restart/fresh process сервер обязан восстановить authoritative state и выбрать безопасное действие.
+
+Неизвестный результат физической mutation **нельзя повторять вслепую**.
+
+Для повторно поступившего идентичного operation contract использовать уже доказанный результат либо безопасную reconciliation/recovery-процедуру. Изменённый payload/fingerprint под тем же identity должен отклоняться.
+
+Не создавать competing Resolver. Использовать имеющиеся RC-2/RC-4/RC-5/RC-6 механизмы.
+
+Полномасштабная deterministic lost-response fault-injection acceptance является следующей отдельной задачей WA4-A. В WA4-E обязательно обеспечить и проверить собственные crash/replay guarantees, но не поглощать весь WA4-A.
+
+## 5. Что запрещено
+
+Без отдельного решения пользователя **не выполнять**:
+
+- WA4-A как самостоятельный следующий этап.
+
+- WA4-O, новый Situation UI, persistent jobs, transport sensor.
+
+- WA4-R, strict rollout и переключение production в STRICT.
+
+- Новую lease/heartbeat модель, отложенную по V17.
+
+- Замену JSON/event storage на SQLite или новую state machine по собственной инициативе.
+
+- Новую MCP/external transport architecture.
+
+- TASK 151C и другие отложенные работы Ultra Runtime.
+
+- Отдельные F-1/F-3 repair вне подтверждённой зависимости WA4-E.
+
+- Удаление исторических TASK, snapshots, receipts или runtime evidence.
+
+- Массовый рефакторинг, не необходимый для WA4-E.
+
+- Изменение live user workspace ради тестов.
+
+- Commit/push без отдельного разрешения пользователя.
+
+
+Все tests и fault probes с физическими мутациями проводить в изолированном test storage/temp workspace.
+
+Для локального Claude применять регламент от 2026-10-08: не создавать ненужные Remote-only `ALARM_TASK_SESSION/TASK_*`, `session.jsonl`, `context.md`, `history.md`, пооперационные журналы агента или массовые safety-копии tracked-файлов. Штатные Web Alarm runtime snapshots/receipts сохранять обязательно.
+
+## 6. Самостоятельная инженерная проверка
+
+Перечисленные проверки являются **обязательным минимумом, но не ограничением анализа**.
+
+Claude должен самостоятельно выполнить adversarial pass и попытаться опровергнуть корректность своей реализации.
+
+Минимальная матрица:
+
+**Positive:**
+
+- Контролируемые create/write/edit/delete/move/rename в test workspace.
+
+- Корректная snapshot/precondition/mutation/post-proof/receipt цепочка.
+
+- Fresh-process восстановление сохранённой операции.
+
+- Возврат результата без повторного side effect.
+
+
+**Negative / safety:**
+
+- TASK CLOSED / COMPLETED / ARCHIVED.
+
+- Неверная текущая microtask или неразрешённое состояние.
+
+- Target вне manifest и вне registered root.
+
+- Отсутствующий/невалидный snapshot.
+
+- Изменившийся pre-state/hash/revision.
+
+- Дублирующийся `operation_id` с другим payload.
+
+- Повтор идентичного operation contract.
+
+- Конфликт двух процессов по одному canonical physical target.
+
+- Разные варианты написания одного пути.
+
+- Race между claim, проверкой состояния, STARTED и записью.
+
+- Race между mutation и TASK closeout.
+
+- Сбой persistence `STARTED`, физической записи, post-proof или receipt.
+
+- Partial/restart recovery без двойного выполнения.
+
+- Windows file handle / sharing violations — безопасный fail-closed результат, без фиктивного SUCCESS.
+
+- Несовместимость с существующими RC-4 rollback и RC-6 resume.
+
+- Backward compatibility чтения существующих persistent records.
+
+- Fail-closed поведение при повреждённых или устаревших authority facts.
+
+
+Для операций с двумя путями отдельно проверить блокировки обоих targets и конкуренцию с чужой записью.
+
+Если собственный анализ обнаружит дополнительный edge case **внутри WA4-E**, исправить и добавить regression test самостоятельно.
+
+Если найденная проблема требует выхода за scope — предоставить reproduction, evidence, root cause, impact и конкретную `PROPOSAL`; внеплановый код не менять.
+
+## 7. Порядок исполнения
+
+**Этап 1 — Preflight:** Git, task-state, documentation route, существующая архитектура, compatibility risks.
+
+**Этап 2 — Design within approved boundaries:** определить минимальные точки интеграции с RC-1/RC-2/RC-3/RC-4/RC-5/RC-6. Если обнаружен фундаментальный архитектурный блокер, остановиться до mutation.
+
+**Этап 3 — Implementation:** выполнить ограниченные изменения Web Alarm runtime, API/CLI entrypoint по существующим паттернам и targeted regression tests.
+
+**Этап 4 — Adversarial verification:** focused tests, concurrency/fresh-process/interruption tests, relevant expanded regression, full Web Alarm regression, compile/syntax checks, `git diff --check`.
+
+**Этап 5 — Documentation impact:** сверить результат с архитектурой и планом. Исправить только необходимые CURRENT-формулировки; отдельно отметить устаревшие статусы RC-5/RC-6 в 24/04 при обнаружении. Не превращать самопроверку Claude в независимый PASS.
+
+**Этап 6 — Closeout:** ротация персональной карточки Claude и итог для независимого verifier.
+
+## 8. Критерии передачи результата
+
+TASK может получить `RESULT READY / AWAITING INDEPENDENT VERIFICATION`, когда:
+
+1. Реально существует authoritative execution path WA4-E.
+
+2. Все предусмотренные в рамках WA4-E mutation types покрыты либо явно документированы доказанные блокеры, мешающие закрытию.
+
+3. `STARTED-before-first-physical-write` доказан тестами и анализом критических границ.
+
+4. Gateway механически отклоняет операции без необходимых authority/snapshot/CAS gates.
+
+5. Replay не производит повторного side effect.
+
+6. Interrupted mutation восстанавливается либо остаётся fail-closed с честным `NEXT SAFE ACTION`.
+
+7. Exact post-proof и persistent receipt связаны с тем же operation contract.
+
+8. Существующие RC-инварианты не регрессировали.
+
+9. Пройдены focused и full regression checks с точными результатами.
+
+10. Выполнен самостоятельный adversarial review, найденные проблемы не скрыты.
+
+11. Нет случайных изменений чужих файлов, документационных веток и live storage.
+
+12. Статус `DONE / VERIFIED` нигде не выставлен без независимой приёмки ChatGPT.
+
+
+При наличии существенного незакрытого блокера — `BLOCKED / PARTIAL RESULT`, а не фиктивный SUCCESS.
+
+## 9. Документация и handoff
+
+После завершения фактического исполнения:
+
+- Перенести полную постановку CLAUDE-WA-018 из БЛОКА 1 персональной карточки Claude в БЛОК 2.
+
+- В БЛОКЕ 3 записать factual result, изменённые файлы, выполненные проверки, открытые findings, documentation impact и `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
+
+- Только после доказанного сохранения БЛОКОВ 2–3 очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+
+- Незавершённую/PAUSED TASK не очищать.
+
+- Обновить `34_TACTICAL_CONTEXT.md` только необходимой дельтой, не вмешиваясь в параллельные изменения Codex.
+
+- Постоянную историю `001`, `05`, `06`, `25` и окончательный `DONE / VERIFIED` синхронизировать после независимого PASS по правилам документа 18.
+
+- Не перезаписывать ранее подтверждённые исторические записи.
+
+
+Не создавать подробный отдельный task-report-файл без необходимости. Если для независимой проверки нужны данные, не помещающиеся в краткий итог, создать один компактный report/evidence artifact с ясным назначением и путём.
+
+## 10. Формат финального ответа Claude
+
+Вернуть **один цельный копируемый блок** `**text**`, без фрагментации отчёта.
+
+Внутри него обязательно указать:
+
+- TASK ID: CLAUDE-WA-018.
+
+- STATUS: RESULT READY / BLOCKED / PARTIAL RESULT.
+
+- BASELINE: фактический HEAD, branch, наличие dirty files до и после.
+
+- SCOPE IMPLEMENTED: поддержанные operation types.
+
+- ARCHITECTURE: использованные RC-компоненты и точки интеграции.
+
+- SAFETY PROOF: STARTED-before-write, snapshot/CAS, replay, exact post-proof.
+
+- CHANGED FILES: точный перечень.
+
+- TESTS: названия, counts, PASS/FAIL/SKIP, exit codes.
+
+- ADVERSARIAL FINDINGS: найденные дефекты и способы их проверки.
+
+- OPEN RISKS / OUT-OF-SCOPE FINDINGS.
+
+- DOCUMENTATION IMPACT.
+
+- REPORT/EVIDENCE PATH, если создан.
+
+- COMMIT/PUSH: NOT PERFORMED.
+
+- NEXT: independent ChatGPT review of WA4-E; затем, только после PASS, отдельная WA4-A.
+
+
+**Итоговое правило:** реализовать WA4-E как продолжение уже подтверждённой архитектуры, а не как новую параллельную систему. Сохранить инварианты RC-0…RC-6, доказать безопасное исполнение файловых мутаций и передать результат на независимую проверку.
+
+**EXECUTION AUTHORIZED. BEGIN WITH PREFLIGHT.**
+```
+
 ### CLAUDE-WA-017 — F-5/F-6 Reliability Repair
 
 **Статус постановки:** БЛОК 1 («NEW TASK / NOT STARTED»), запуск подтверждён пользователем в чате («сразу можешь приступать»), выполнена Claude 2026-10-09; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
@@ -5130,6 +5560,67 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA-018 — WA4-E / Authoritative Mutation Executor & Gateway — результат
+
+**TASK:** CLAUDE-WA-018 (БЛОК 1, «USER APPROVED FOR EXECUTION — 2026-10-09»; запуск подтверждён пользователем в чате). Исполнитель Claude; независимый verifier — ChatGPT.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE / VERIFIED. WA4-A / WA4-O / WA4-R не начаты. Commit / push не выполнялись.
+- **Baseline:** HEAD = `origin/main` = `3b5ab323446c16cacadf9ce2c796af8b8d75c85a` (176); код = принятый `c7681c3`; полный набор — 607 OK, skip 1.
+- **Грязное дерево до старта (не моё, не тронуто):**
+  - БЛОК 1 карточки;
+  - работа Codex `CODEX-DOC-034-GRAPH-001` (`000_Задачи Codex.md`, `00`, `08`, `34`);
+  - `.obsidian/*`.
+- **Реализовано:**
+  - `web_alarm/mutation_executor.py` — серверный исполнитель поверх существующих RC-1 / 3 / 2 / 4 / 6, без новых хранилищ и authority:
+    - `begin` (обязательный `operation_id`);
+    - admission (контракт, payload, цель в VERIFIED restore point);
+    - RC-3 claim;
+    - RC-3 `mutation_boundary` (CAS + `execution_refusal`, включая TASK_CLOSED);
+    - **STARTED через lock-held переход до первой записи**;
+    - запись (атомарная замена / создание без замены существующего / unlink);
+    - **RC-1 DONE = exact post-proof + receipt**;
+    - release claim.
+  - Replay: тот же receipt; STARTED / UNKNOWN не повторяются вслепую (RC-2 / RC-6); авторитетный RETRY операции в STARTED исполняется снова.
+  - move / rename — две tracked операции, обе цели под claims до первой записи; пара не атомарна (PARTIAL).
+  - `operation_store` — `_transition_locked`; `server` — `POST /tasks/{id}/mutations`; `cli` — `mutate`; `__init__` — экспорт.
+- **Adversarial (найдено и исправлено):**
+  - claim после отказа до STARTED (модель RC-3: владение остаётся, `CLAIM_ALREADY_RELEASED`);
+  - двойная одновременная доставка → REPLAYED;
+  - WRITE отсутствующего файла не заменяет появившийся;
+  - CREATE в окне не перезаписывает.
+- **Тесты:**
+  - новый `test_web_alarm_mutation_executor.py` — 36: позитивные; admission; отказы; 4 окна реального краша; гонки процессов (одна цель, двойная доставка, закрытие TASK); Windows sharing violation; RC-4 / RC-6 / HTTP / CLI;
+  - чувствительность — 5 / 5 отключённых защит пойманы.
+- **Проверки:**
+  - фокусно 32 модуля — 492 OK;
+  - полный набор ×2 — **643 OK, skip 1**, exit 0;
+  - стресс 6 / 6;
+  - compileall, `git diff --check`, LF — OK;
+  - живое storage только на чтение: 136 / 41, хеш до = после (`5961c00c…7cd2`).
+- **PROPOSAL / риски:**
+  - P-1 нативная атомарная move требует двухцелевой схемы контракта;
+  - P-2 RETRY после UNKNOWN / FAILED нельзя записать в lifecycle RC-1 (fail-closed `RETRY_LIFECYCLE_UNSUPPORTED`);
+  - P-3 RC-2 RETRY / ADOPT оцениваются по всему restore point микрозадачи (многоцелевой этап → ROLLBACK / MANUAL);
+  - P-4 исполненный RETRY остаётся устаревшим советом (класс F-3);
+  - R-1 окно CAS → запись не защищено от несовместимого внешнего писателя (WA4-R);
+  - R-2 нет автоповтора при Windows sharing violation;
+  - DONE ≠ VERIFIED;
+  - F-1 / F-3 не трогались.
+- **Отмеченные устаревшие статусы:** `24`, шапка, и `04`, строка 69 — RC-5 «DEFERRED»; в `001` нет WA-015…017 (синхронизация verifier).
+- **Documentation impact:**
+  - `23` — статус и раздел WA4-E (AWAITING VERIFICATION);
+  - `24` — CURRENT UPDATE;
+  - глобальный `000`, БЛОК 1 — активная TASK и маршрут;
+  - `34` — дельта на строках, которых Codex не менял;
+  - `001` / `05` / `06` / `25` — verifier после PASS.
+- **Файлы:**
+  - новые: `web_alarm/mutation_executor.py`, `test_web_alarm_mutation_executor.py`, `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-018_WA4E_EXECUTOR/wa018_report.md`;
+  - изменены: `web_alarm/operation_store.py`, `web_alarm/server.py`, `web_alarm/cli.py`, `web_alarm/__init__.py`, документы `23` / `24` / `000` / `34`, эта карточка.
+- **NEXT:** commit / push пользователем → независимый review WA4-E (ChatGPT) → только после PASS отдельная WA4-A.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-018_WA4E_EXECUTOR/wa018_report.md`.
+
 ---
 
 ### CLAUDE-WA-017 — F-5/F-6 Reliability Repair — результат
