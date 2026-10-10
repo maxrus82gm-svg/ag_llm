@@ -66,6 +66,57 @@ Structured output должен соответствовать существую
 - error mapping;
 - Windows subprocess lifecycle.
 
+## 2а. FUTURE — Codex App Server: приоритетный кандидат для агентской интеграции
+
+**ARCHITECTURAL DIRECTION / NOT IMPLEMENTED (2026-10-10).** Встроенное управление Codex из стороннего приложения нельзя проектировать только вокруг `codex mcp-server`. OpenAI в августе 2026 объявила **именно режим Codex-as-MCP-server (`codex mcp-server`) deprecated** с рекомендацией использовать **Codex App Server**. Это НЕ означает устаревания самого MCP-протокола, а также MCP-клиента Codex для подключения инструментов.
+
+### Разделить три маршрута, не подменяя друг другом
+
+| Вариант | Механизм | Целевой сценарий |
+| --- | --- | --- |
+| **Codex App Server — основной кандидат** | `codex app-server`, двусторонний JSON-RPC (локальный stdio; другие transports только после проверки версии и безопасности), `initialize`, `thread/start`, `turn/start`, события, завершение/прерывание | Встроенный в Ultra управляемый Codex-agent: независимое исследование, план, review, bounded task |
+| **Codex CLI exec — упрощённый альтернативный путь** | Отдельный `codex exec` subprocess с машинно-читаемым результатом, если установленная версия и выбранные параметры это гарантируют | Изолированная одноразовая CLI TASK, прототип Planner adapter; ограниченный session control |
+| **MCP — подключение инструментов** | Codex выступает MCP client для узких Ultra tools или других разрешённых tool-серверов | Доступ Codex к определённым инструментам, а не полный lifecycle управления Codex через deprecated `codex mcp-server` |
+
+Целевая цепочка App Server:
+
+    Ultra Server / Agent Task Router
+      → Codex App Server Adapter (local IPC, JSON-RPC)
+      → Codex App Server (managed local process)
+      → отдельные thread / turn / notifications / approval events
+      → structured agent artifact + provenance
+      → Ultra validation / consistency gates
+      → пользовательское решение
+
+**App Server — интерфейс взаимодействия с работающим Codex-agent**, а не общий HTTP-сервис в интернете, не MCP tool server, не замена model provider API и не утверждение, что Desktop-приложение автоматически предоставляет публичный inbound endpoint. Предпочитать локальный процесс и минимальный транспорт; поддерживаемые возможности и методы проверяются на установленной версии Codex, а не зашиваются в вечный контракт.
+
+### Контракт полномочий и жизненного цикла
+
+- Ultra может назначить **новую** ограниченную сессию Codex только после отдельного решения пользователя. Уже открытая пользователем самостоятельная локальная Codex-среда/чат не становится объектом удалённого управления по факту установки App Server.
+- `thread` / `turn` привязываются к Ultra TASK, source snapshot, назначенной роли и версии артефакта; не путать internal Codex thread ID с Ultra Task/Run ID.
+- Каждая сессия получает ограниченный scope, только требуемые файлы/контекст, timeout, cancellation, поток событий и сохранённый итог; отдельные errors, approvals и признаки незавершённой работы нельзя скрывать.
+- **Git не требуется для чтения текущего исходника.** По общему решению пользователя самостоятельные локальные агенты Codex/Claude не обращаются к Git/GitHub без специального разрешения; историю конкретных ревизий запрашивают у пользователя/координатора. Adapter не должен неявно обходить это правило через shell/tools. При реализации проверить, можно ли надёжно обеспечить эту границу через поддерживаемые sandbox/approvals; иначе не обещать автоматическую гарантию.
+- Нельзя считать встроенную безопасность Codex автоматической заменой server-owned Ultra permissions, evidence, verification, rollback и человеческих approvals. При расхождении слоёв безопасный результат — BLOCKED.
+- Режим самостоятельного INDEPENDENT PLAN требует скрывать 33/чужие планы до фиксации SUBMITTED; REVIEW может читать исходный план. Техническое enforcement доступа — отдельная будущая проверка.
+
+### Что необходимо исследовать перед внедрением
+
+1. На актуальной **Windows** установке Codex проверить реальный запуск `codex app-server`, supported transport, JSON-RPC handshake, thread/turn lifecycle, notifications и структурированную выдачу.
+2. Исследовать authorization, текущие условия использования, session recovery, cancellation, timeout, rate/usage accounting, app-server upgrades и обработку отказов.
+3. Установить, можно ли использовать пользовательскую авторизацию выбранным официально поддерживаемым способом; **не делать вывода, что подписка, UI и API-биллинг полностью взаимозаменяемы**.
+4. На mock/offline-first прототипе проверить ограничение инструментов, отмену, approval escalation, отсутствие неразрешённых Git-операций, секретов и side effects.
+5. Только после отдельного разрешения провести ограниченный local smoke test, затем решить, нужен ли sidecar, отдельный сервис или достаточно subprocess + stdio.
+
+Документ 11 остаётся владельцем Agent/Model Assignment и будущей координации; текущий раздел 19 — владелец transport/adapter. Реализация не начиналась, никаких существующих task-cards или локальных Codex-сессий этот контракт не меняет.
+
+**Официальные основания для следующей реализации:**
+
+- Codex App Server: https://github.com/openai/codex/tree/main/codex-rs/app-server
+- CLI transport / App Server command: https://github.com/openai/codex/blob/main/codex-rs/cli/src/main.rs
+- OpenAI notice о deprecated `codex mcp-server`: https://github.com/openai/codex/issues/11927#issuecomment (сверить конкретное сообщение от 2026-08-26; ссылка на issue https://github.com/openai/codex/issues/11927)
+
+**Версионная оговорка:** предупреждения/детали App Server могут меняться; никакой конкретный issue, экспериментальная опция или метод не объявляется здесь обязательной неизменной частью production API.
+
 ## 3. CHATGPT ↔ ULTRA VIA PLUGIN / MCP
 
 Это отдельная архитектура, где инициатором interaction является внешний ChatGPT или integration environment.
