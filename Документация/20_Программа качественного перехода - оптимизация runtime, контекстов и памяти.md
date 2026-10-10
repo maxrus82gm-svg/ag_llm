@@ -12,6 +12,8 @@
 После завершения программы подтверждённые решения должны быть разнесены по профильным документам.
 Документы 20 и 21 удаляются только после отдельного zero-loss reconciliation и финального документационного аудита.
 
+**Актуальное правило маршрута (2026-10-11 / сохранение результатов Ultra):** единственная действующая новая execution-последовательность после утверждения RT-002/FINAL-B2 — **§5а ниже**. Вся первоначальная волна 151A–151J хранится как история уже завершённых 151A/151B, исторических целей и отложенных задач, **НЕ как параллельный NEXT**. Старые 151C/KT3 и 151D/E/F/H/I не закрыты и не запускаются сами; старые критерии КТ и memory 152–154 не получают автоматического PASS. При несовпадении схем применять §5а, исторические свидетельства искать в 21 и Git. Архив/immutable 33.3 не переписывать.
+
 ## 1. Цель
 
 Существенно уменьшить токены, latency и лишние model calls без ослабления correctness.
@@ -113,7 +115,7 @@ Server не спрашивает модель о действии, если пр
 - TASK 151 — integrated regression + CURRENT documentation reconciliation.
 - После 151 фиксируется STABLE BASELINE S1.
 
-### Оптимизационная волна 151A–151J
+### Историческая/отложенная оптимизационная волна 151A–151J (НЕ текущая последовательность исполнения)
 
 - **151A — Benchmark + Context Accounting + Usage Accounting.**
   B1/B2/B3, включая B1-clean и B1-dirty. Каждый provider attempt получает identity/outcome; каждый context block измеряется.
@@ -137,7 +139,9 @@ Server не спрашивает модель о действии, если пр
 - **151J — Integrated Optimization Regression / Consolidation.**
   Совместный B1/B2/B3, negative matrix, rollback switches, сравнение before/after.
 
-## 5а. RT-002/B2 — каноническая утверждённая аварийная ветка Ultra (2026-10-10)
+## 5а. RT-002/B2 — ЕДИНСТВЕННЫЙ текущий маршрут реализации Ultra (утверждён 2026-10-10)
+
+**2026-10-11 / CURRENT S0 status and live boundary:** amendment published by user in №252 `2062e54ad6d085d0fe2377da3ef877d3703ef05e`: Codex-reported 166 PASS/0 FAIL/ERROR/SKIP/guard 0; GitHub source review confirms targeted terminal post-callback guard, but no independent guarded execution. USER MANUAL LIVE T-036/R-036 BLOCKED as correct out-of-scope WRITE denial; T-037/R-037 SUCCESS + Final Audit PASS after exact WRITE→READ→EQUALS. These are **two specific user-run live scenarios**, not acceptance of injected post-callback failures or of 166 self-tests. Details and limitations in 21 (2026-10-11). **S0 NOT YET FORMALLY DONE/VERIFIED; S1+ BLOCKED.** No Desktop Commander testing without user collaboration. Keep UX STOP and Web Alarm independent.
 
 **S0 REPAIR handoff (2026-10-10 / user commit №250):** `CODEX-RT002-S0-REPAIR-001` modifies production `server.py`, `run_store.py`, `audit_storage.py` and regression suites; **Codex-reported 155/155 offline PASS, 0 guard violations**. Independent code review considers F01–F04 repair plausible, but **no independent executable verification** (both Remote desktops offline); terminal `run_finished SUCCESS` callback integrity window remains an **unreproduced adversarial question** requiring targeted test. This is a factual status update **NOT S0 acceptance / NOT 151C DONE**; dependent S1+, 151G remain locked until a documented independent result. UI STOP backlog stays separate.
 
@@ -326,50 +330,13 @@ Server не выбирает без модели:
 До финального reconciliation 20/21 являются рабочими переходными источниками.
 После КТ-F их подтверждённое содержание переносится в постоянные профильные документы, затем 20/21 удаляются отдельной TASK только после проверки zero-loss.
 
-## 13. Текущий порядок
+## 13. Порядок исполнения — только RT-002/B2 §5а
 
-```text
-150 UI binding audit
-151 Integrated stabilization close
-  ↓
-КТ-0 STABLE BASELINE S1
-  ↓
-151A Accounting / Benchmark
-  ↓
-КТ-1
-151B Evidence Freshness
-  ↓
-КТ-2
-151C Compact Final Audit + task-scoped Git
-  ↓
-КТ-3
-151D Server Direct Exact Evidence
-  ↓
-КТ-4
-151E Server Factual Final Report
-  ↓
-КТ-5
-151F Modular Global Context
-151G Stage Context Compiler
-151H Planner Prompt Optimization
-151I Role Budgets
-151J Integrated Optimization Consolidation
-  ↓
-КТ-6 / КТ-7
-152 Structured Task Digest
-153 Rolling Micro History
-154 Relevant Prior Facts / Context Compiler V2
-  ↓
-КТ-8
-Final architectural + documentation audit
-  ↓
-КТ-F
-delete transitional docs 20/21
-```
+**Канонический активный план:** таблица predecessors и acceptance §5а; не копировать в этот раздел конкурирующую устаревшую схему. Для навигации: `S0 (+ S1 после acceptance)` → `S2` → `S3a/S3b/S3c` с указанными в §5а параллельными `S4/S5/C1/C2/S9` → отдельная независимая `S13a` → `S6a` → `S6b` (минимальная 151G) → `S7/S10` и `R1` → `S13b`. **Это обзор, не замена таблицы зависимостей §5а:** отдельные predecessors могут позволять начало S6a до S13a, но S6b только после independently accepted S13a + S6a.
 
-Не перескакивать к памяти, пока не закрыта оптимизационная база.
-Не объединять несколько зон риска в одну repair TASK без необходимости.
-Любое изменение, которое экономит токены за счёт потери доказательств или semantic coverage, отклоняется.
+**Неисполняемый исторический маршрут:** прежняя цепочка 151C → 151D → 151E → 151F → 151G → 151H → 151I → 151J и контрольные точки КТ-3/4/5 не являются текущим NEXT после USER PLAN APPROVAL RT-002. Отложенные задачи остаются в реестре `05` со статусами PARKED/DEFERRED, а решения и фактическая история — в `21` и Git; это не отменяет обязанности их когда-либо закрыть по отдельному решению. Memory `152–154` и полный live benchmark `КТ-7` не разрешены автоматически.
+
+**Текущая консервация:** S0 Repair #252 — 166/166 **self-reported**, два пользовательских live T-036/R-036 (BLOCKED) и T-037/R-037 (SUCCESS + Final Audit PASS). Независимый полный guarded re-run и специальные реальные callback fault injections не выполнены; **S0 acceptance pending**, новые зависимые TASK и UX STOP не назначены. В документах 01/13 — архитектура Ultra, 21 — факты, 34/000 — навигация; Web Alarm 23–25 и Voice 12 имеют отдельные acceptance gates.
 
 ## 14. Accounting contract
 
