@@ -19,6 +19,13 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+**Статус:** WAITING — новой утверждённой задачи нет.
+**Последний результат:** CODEX-RT002-S0-001 — RESULT READY / AWAITING INDEPENDENT VERIFICATION, предлагаемый verdict FINDINGS; подробности в БЛОКЕ 3. S1+ не начинать без независимого решения и нового назначения. Старая 151C PARKED / КТ-3 PENDING.
+
+---
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
 **TASK ID:** CODEX-RT002-S0-001 — RT-002/B2 / S0: Fresh Kernel Integration Baseline and Safety Gate.
 **Статус:** **USER APPROVED / READY FOR MANUAL START** (2026-10-10), одна задача за раз; исполнитель — **Codex, GPT-6 Sol, Very High** (выбрано пользователем, реальный backend/effort проверять отдельно).
 **ARCH CLASS:** Ultra Runtime / Verification / Safe Rebaseline.
@@ -62,6 +69,202 @@
 
 ---
 
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+## CODEX-RT002-S0-001 — factual baseline / 2026-10-10
+
+**Статус исполнения:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. **Предлагаемый verdict:** FINDINGS; пригодность для новой защищённой ветки S2/S3 → S6a/151G пока НЕ доказана. Это локальная самопроверка, не независимый PASS, не DONE и не закрытие 151C/КТ-3. Найдены четыре HIGH-воспроизведения с двумя общими причинами. Production оставлен в исходном состоянии.
+
+**Исполнитель:** локальный Codex. Пользователь запросил GPT-6 Sol / Very High; фактический backend и reasoning effort доступными средствами независимо не подтверждены. Другие агенты не привлекались.
+
+### 1. Основание, источник и границы
+
+Применён маршрут 08 → общий 000 → 34 → 18 → 01 → собственная карточка. Адресно прочитаны 13 (server authority, evidence/freshness, §18 Final Audit и pending recovery), 20 §5а, текущая RT-002 запись 21, внешний USER PLAN APPROVAL в 28, 33.3 FINAL-B2 (§2 T0/S0, §3 DAG и границы последующих этапов). Получены определения `DOC-GIT-01@1`, `DOC-READ-01@1`, `DOC-VERSION-01@1`, `DOC-CHANGE-01@1` из 18 вместе с requires; использовано ручное адресное чтение, не несуществующий автоматический resolver.
+
+33.3: **45043 исходных UTF-8 bytes**, полный SHA-256 **c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf** — точное совпадение с утверждённым B2, без нормализации переводов строк. Immutable commit №242 / `e7365ea773c9adc4e813e05a58810e40b4de4bb4` и разрешение/handoff №244 приняты как сведения координатора; старый DRAFT внутри immutable B2 не отменяет внешнее утверждение.
+
+Четыре runtime-файла локально совпали по SHA-256 с байтами, изученными в предыдущем REVIEW. Это сравнение обычных файлов, **не** доказательство совпадения Git blob. Координаторский `main@cd48ff1629a8e04a734e36196d32ee52e37c103b` и предоставленные blob IDs сохранены в полной постановке БЛОКА 2; локальные Git state/HEAD/dirty status не исследовались.
+
+**GIT_DATA_REQUIRED, только для committed↔local сверки:** координатору предоставить полные обычные file-byte SHA-256 либо экспортированные bytes `server.py`, `task_planner.py`, `run_store.py`, `verifier_runtime.py` из указанного snapshot с точным revision. Текущие probes от этого не зависели; утверждение «проверена именно committed версия» остаётся недоказанным. Git-object hashes не вычислялись обходным способом.
+
+### 2. Что изменено и как воспроизвести
+
+Создан только `M:/GitHub/ag_llm/test_rt002_s0_kernel.py` (27453 bytes, SHA-256 **845134a0ee3493e31213107c52bba7437c2364505d3036bda4556b5e3a9c5341**). Это отдельный guarded runner, 16 новых тестовых методов и явный manifest 81 существующей проверки; существующие тесты не изменены. Документационное изменение — только эта карточка: полная S0 постановка перенесена в БЛОК 2, прежние REVIEW-1 БЛОКИ 2/3 сохранены ниже, старые архивы оставлены.
+
+Из `M:/GitHub/ag_llm`:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+**Финальный запуск: 97 tests = 93 PASS + 4 FAIL; 0 ERROR, 0 SKIP, exit 1.** Красные проверки намеренно показывают дефекты baseline; не помечены expectedFailure и не замаскированы общим PASS.
+
+| Группа | Число |
+|---|---:|
+| Новые KernelBoundaryTests / IdentityBoundaryTests | 14 / 2 |
+| StageEvidenceContractTests | 10 |
+| FinalAuditByteBudgetTests / RecoveryIntegrationTests | 2 / 16 |
+| PersistenceStateTests / PlannerIntegrationTests | 11 / 20 |
+| VerifierRuntimeTests, адресный protocol subset | 10 |
+| Run Store v2 / provider accounting, прямой вызов pure fixtures | 9 / 3 |
+| Всего | 97 |
+
+Повтор четырёх дефектов на том же финальном test-файле:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_read_change_before_fingerprint_cannot_certify_old_content test_verify_change_before_fingerprint_cannot_certify_old_predicate test_missing_recorder_cannot_return_certified_success test_lost_tool_outcome_cannot_return_certified_success
+```
+
+**4 tests, 4 FAIL, 0 ERROR/SKIP, exit 1.** Все четыре вновь дошли до одного mock Dredd вызова и одного SUCCESS. Изоляция обоих запусков: **0 guard violations**, реальных provider/Git/network вызовов нет.
+
+Проверка обычного unittest discovery:
+
+```powershell
+.venv/Scripts/python.exe -B -m unittest test_rt002_s0_kernel -v
+```
+
+**0 tests, 1 module SKIP, exit 0** — ожидаемо: без standalone-изоляции модуль не импортирует runtime и не устанавливает глобальные hooks в чужой suite. Это проверка безопасного включения файла, не дополнительный runtime PASS. Промежуточные запуски с доработкой fixtures не включены в 97; ошибки настройки denied scope, ожидаемого LOOP DETECTED и Windows newline устранены до финального результата.
+
+### 3. Изоляция и предел доказательности
+
+Guard устанавливается **до** imports server/legacy fixtures: audit hook блокирует subprocess/os.system/spawn, Python socket connect/bind/DNS, чтение .git, чтение production .ultra и файловые мутации вне уникального temp root. Единственное разрешённое socket housekeeping — синхронный stdlib socketpair для Windows asyncio. LOCALAPPDATA/APPDATA/TEMP/TMP направлены в sandbox; -B запрещает pycache writes.
+
+Executor HTTP, token acquisition, Planner и Dredd заменены fake/AsyncMock adapters; server Git helpers заменены фиктивными обычными словарями. Без этих mocks исходный runtime умеет обращаться к Git: наличие проверки S0 не меняет его архитектуру и не даёт такого права локальному агенту. Из manifest исключены весь FinalAuditGitScopeTests и методы recovery `test_ignored_file_material_remains_available_without_git_diff` / `test_git_diff_state_drift_requires_new_source_evidence`; они не исполнялись. Полный неотобранный legacy suite не запускался. Pytest-style функции вызваны напрямую с temp fixtures и MonkeyPatch, без plugin discovery.
+
+Это process-local Python guard плюс проверка выбранных путей, **не OS sandbox** и не сертификация произвольных сторонних расширений. Stress, GUI, реальные provider/transport и Git semantics не проверены. Mock PASS намеренно используется для проверки механических server gates: выводы не зависят от добросовестности LLM.
+
+### 4. Инварианты: результат с точными selectors
+
+В таблице имена test_* относятся к manifest runner; полный список каждого вызова сохраняется в result.json и воспроизводится из _manifest().
+
+| Инвариант | Verdict | Доказательство / предел |
+|---|---|---|
+| Server permissions, READ/VERIFY scope, traversal, WRITE denial/grant | PASS в проверенных случаях | Новые test_read_and_verify_denied_scopes_and_traversal, test_denied_read_never_satisfies_requirement_or_calls_dredd; PlannerIntegration test_scope_violation_does_not_reach_audit_or_force, test_write_off_uses_existing_permission_escalation, test_explicit_permission_grant_allows_same_contract_to_continue. Denied READ заканчивается LOOP DETECTED после трёх ошибок, не SUCCESS; диагностируется PermissionError. |
+| task/run/plan/stage/generation/requirement/source + exact arguments | PASS в проверенных случаях | test_identity_dimensions_and_same_hash_other_target_are_rejected: 9 подмен identity/status/executed и другой target при одинаковом content hash; StageEvidenceContract old_plan_version, execution_repair_generation, missing_source_record_identity; PlannerIntegration wrong_successful_verify и server_evidence_gate. Аргументы связываются arguments_sha256; модельный текст не становится authoritative fact. |
+| equals ≠ contains; false equality | PASS без гонки; FINDING при гонке | test_exact_equality_is_not_contains_and_false_block_is_explicit; test_required_false_equals_blocks_without_dredd: 0 audit, 0 SUCCESS, VerificationError/LOOP DETECTED. Положительный точный equals и READ проходят; F02 показывает отдельную потерю свежести. |
+| Полнота обязательного material до Dredd | PASS для missing/truncated/budget cases; FINDING по durability | Recovery test_missing_required_material_blocks_before_dredd, required_material_budget_exhaustion, deduplicated_required_large_read, tool_level_truncated_find_text, truncated_model_result; PlannerIntegration incomplete_requirement_coverage. В этих случаях 0 mock audit, 0 SUCCESS. Но F03/F04: отсутствующий durable source не признаётся incomplete. |
+| Negative tail / failed exact outcome / dedup | PASS в проверенных случаях | Recovery failed_exact_check_keeps_details_and_its_outcome_record, failed_exact_metadata_survives_zero_material_budget, empty_search_negative_fact_survives_no_preview_budget, complete_deduplicated_material_keeps_an_explicit_source. count=0 и expected/actual остаются явными; старый truncated generation не блокирует новый fresh proof. |
+| replan/repair/mutation/dependency drift | PASS для проверенных transitions | StageEvidenceContract old_plan_version, execution_repair_generation, target_state_drift, dependency_drift_in_compile_paths; PersistenceState stale_candidate, server_binding_other_plan_version, satisfied_receipt_invalidated_by_external_change и replan_cannot_silently_drop_obligation. |
+| freshness после packet, после Dredd и перед terminal SUCCESS | PASS в проверенных поздних окнах; FINDING в исходном observation binding | PlannerIntegration state_change_during_packet_collection и state_change_during_final_audit; Recovery directory_listing_drift_after_pass; новый test_mutation_after_audit_pass_before_terminal_gate_requires_new_read: изменение в callback final_audit_passed вызывает terminal_evidence_freshness_blocked, fresh READ и второй audit, только затем SUCCESS. F01/F02 подменяют исходный binding раньше этих gates, поэтому поздние сравнения его не исправляют. |
+| Mandatory physical-tool reserve | PASS в проверенных случаях | PlannerIntegration test_tool_reserve_preserves_mandatory_write_read_verify_calls: лимит 3, ровно WRITE/READ/VERIFY; лишние calls остановлены до выполнения. test_tool_reserve_blocks_impossible_plan_before_executor_api: лимит 2, 0 executor API, 0 audit. Это существующий reserve, не будущий S3 resource ledger. |
+| abort/restart/replay, UNKNOWN | PASS узко; полного crash recovery proof нет | Новый test_abort_after_write_records_no_success_and_does_not_auto_replay: физический WRITE=1, cancellation до receipt, 0 audit/SUCCESS; новый controller не загружает и не переигрывает старый latch. Existing successful_persistence_advances_before_executor_can_repeat_write не допускает повторного WRITE. Unknown usage остаётся incomplete; duplicate terminal не удваивает usage. Это не доказательство exactly-once при power loss и не реализованный resume interrupted RUN. |
+| Storage failures | FINDING | Плановый atomic_state failure прекращает RUN до executor/audit; last-state preservation, retry/fallback generation проверены. Однако F03/F04 допускают SUCCESS без обязательного durable outcome. |
+| Unsupported material / diagnostics / protocol | PASS в проверенных случаях | test_missing_oversized_unsupported_and_invalid_predicate_fail_closed: missing file, binary suffix, file limit, bad kind/hash/exists args. Dispatcher failure оставляет tool_started → tool_error. Verifier malformed/unknown/mismatched verdict/check_type и unsupported provider/model не превращаются в PASS и не fallback. Реальный транспорт не тестировался. |
+
+### 5. Findings: воспроизведение, причина и безопасное предложение
+
+#### S0-F01 — HIGH: READ material и observed_state относятся к разным состояниям файла
+
+**Repro:** `KernelBoundaryTests.test_read_change_before_fingerprint_cannot_certify_old_content`. Только temp target: READ возвращает `OLD MATERIAL`; wrapper сразу после реального READ заменяет файл на `NEW MATERIAL`, до возврата управления server evidence binding. Не подменяются result, contract, hashes, lifecycle или решение Server. Это детерминированное воспроизведение внешнего изменения в реальном промежутке между чтением и повторным snapshot.
+
+**Факт:** packet содержит `OLD MATERIAL`, а `observed_state_sha256` совпадает с fingerprint уже `NEW MATERIAL`. completeness.complete=true / critical_for_success=false; mock Dredd=1, terminal SUCCESS=1. Следующие freshness checks сравнивают текущий файл с ошибочно новым binding и не видят старость READ.
+
+**Источник:** server.py `_agent_read_file`, `_planner_dependency_fingerprint`, `_run_agent_task_impl` — формирование observed_state_sha256 и consistency_tool_facts после dispatcher; task_planner.py `evidence_dependency_state_fingerprint` / `_matched_evidence_requirement_ids_for_stage`. Значимость: сервер заявляет свежий обязательный READ, который фактически не видел текущего содержимого.
+
+**Минимальный будущий patch, НЕ применён:** строить observation fingerprint из того же наблюдения/байтов, что породили tool result (для READ — content_sha256 и canonical target/exists). Отдельный текущий snapshot использовать только для сравнения, не для присвоения старому result нового observed_state. При несовпадении reopen generation / запрос fresh proof или явный BLOCKED; проверить read_file_range/find_text/list_dir тем же принципом. Простой дополнительный post-read snapshot сам по себе проблему не решает, если им снова маркируется старый material.
+
+#### S0-F02 — HIGH: старый положительный equals сертифицирует уже неверный target
+
+**Repro:** `KernelBoundaryTests.test_verify_change_before_fingerprint_cannot_certify_old_predicate`. Файл физически записан как `done\n` с newline="", real verify(kind=equals,value="done\n") возвращает true; до binding wrapper меняет target на `WRONG`. Положительный control `test_positive_exact_verify_control_for_fingerprint_race` с теми же исходными bytes/args без изменения проходит.
+
+**Факт:** packet verification.passed=true и actual_sha256=`SHA256("done\n")`, но observed_state относится к `WRONG`; mock Dredd=1, SUCCESS=1. Это не смешение contains/equals и не Windows newline artifact. Причина общая с F01, но проверяется более сильный детерминированный predicate.
+
+**Источник:** server.py `_agent_verify_file_content`, post-dispatch observed_state binding; task_planner.py matcher и freshness. **Будущий patch:** bind VERIFY к actual observation, включая exists/actual_sha256 и args fingerprint; при current state mismatch обязательный свежий VERIFY. Для exists/absent отдельно зафиксировать наблюдаемую existence; для directory/multi-path dependencies не притворяться, что file-only fingerprint универсален. F01/F02 — одна обязательная область исправления и два независимых repro, а не два разных архитектурных механизма.
+
+#### S0-F03 — HIGH: недоступный Run Store не блокирует защищённый SUCCESS
+
+**Repro:** `KernelBoundaryTests.test_missing_recorder_cannot_return_certified_success`: constructor `AuditThreadRecorder` выдаёт OSError, имитируя недоступное хранилище. READ и lifecycle работают в temp; result существует только в оперативном контуре.
+
+**Факт:** audit_storage_error наблюдаем, `source_run_store_record_id=null`, но сгенерированный RAM `source_record_id=evidence_...` достаточен для complete=true / critical_for_success=false; mock Dredd=1, SUCCESS=1.
+
+**Источник:** server.py `_run_agent_task_impl`, init AuditThreadRecorder (комментарий “Audit observability is not allowed to veto the Executor RUN”), `_emit`; `_final_audit_requirement_coverage` / packet completeness. Это действующий best-effort design, а не утверждение о случайной новой регрессии. Он не обеспечивает требуемую S0 гарантию сохранённого обязательного proof/recovery.
+
+**Будущий patch:** разделить необязательную observability и обязательное evidence storage. Для protected requirement нужен успешно сохранённый и адресуемый outcome с RUN/plan/stage/generation/args/target identity; иначе critical_for_success до Dredd и запрет certified SUCCESS. Не превращать любой сбой cosmetic trace/UI logging в общий veto. UI/config в S0 не трогались.
+
+#### S0-F04 — HIGH: потеря durable tool_finished оставляет ложную полноту packet
+
+**Repro:** `KernelBoundaryTests.test_lost_tool_outcome_cannot_return_certified_success`: recorder создаётся, tool_started и другие события записываются; только `observe(tool_finished)` выдаёт OSError.
+
+**Факт:** outcome pointer становится null; fault виден в событии, но completeness снова complete=true / critical_for_success=false; mock Dredd=1, SUCCESS=1. Сохранённый tool_started и RAM material не заменяют запись результата инструмента. Отдельная обычная положительная READ fixture проверяет, что непотерянный source действительно разрешается через load_run_record.
+
+**Источник:** server.py `_emit`, обработка tool_result_record после tool_finished и присваивание source_run_store_record_id; task_planner.py matcher требует только непустой logical source_record_id; packet requirement coverage не проверяет durable outcome availability.
+
+**Будущий patch:** сохранять обязательный outcome до удовлетворения requirement; проверять существование/целостность и точную identity адресуемой записи, а не только непустую строку-ID. Отклонять отсутствующий/недоступный/повреждённый outcome. Явно обрабатывать partial append/index failure и cancellation между mutation и receipt без автоматического retry mutation. F03/F04 — две точки отказа одной обязательной области storage.
+
+**Рекомендация для независимой приёмки:** признать FINDINGS и не выдавать SUITABLE FOR NAMED NEW SCOPE до адресного исправления двух причин и повторной S0-проверки. Наличие 93 зелёных проверок не компенсирует четыре нарушения обязательных guarantees. Выпуск исправлений требует новой отдельно разрешённой TASK; её создание/старт здесь не выполнялись.
+
+### 6. Доступные evidence / reproducibility
+
+Финальный sandbox: `C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-y3mo_q14/`.
+- `result.json`: manifest всех 97 cases, фактические counts, isolation violations, events и packets четырёх repro; SHA-256 **72b278ab3cd4a42b735d180c33794179880d40482cb3dd1f52828b0aa0e0b848**.
+- `unittest.log`: SHA-256 **9d28dcc90474fc683ff666263e76c1126f1aa78a79a0ce3c6eecb331d237d209**.
+- Время runner 27.949 s. Случайные RUN/record IDs и время при повторе закономерно меняются; критерии counts/identity/гейтов остаются теми же.
+
+Повтор: `C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-ltmtrjzz/`.
+- `result.json`: SHA-256 **95de5c259e67afccf2ce73c93575b17f39023e2938d6759a344853fb72d8cafd**.
+- `unittest.log`: SHA-256 **0ff71ec5a138b610cca0882d4fbaebcf166f8d9bcba2e4811831c6b417e43153**.
+- Время runner 2.612 s.
+
+Доступность обоих JSON/log и соответствие log hashes проверены. Это временные локальные evidence, **не immutable archive и не SUBMITTED seal**. Внутренние temp workspaces отдельных fixtures очищаются; воспроизводимый test source и достаточные факты сохранены в разрешённых рабочих файлах. До внешней публикации/печати статус остаётся RESULT READY; номер коммита не придуман. Hash этой карточки публикуется отдельно от её собственных bytes.
+
+### 7. Локальные source revisions (полные file-byte SHA-256)
+
+Пути ниже относятся к `M:/GitHub/ag_llm/`; это точные байты локальных файлов, не Git blobs. Исходный snapshot карточки до ротации: **8ceb169dcafa555dcb67e278d939ae545e032ddbc6bdd70b5c7cae1113b5f4d7**. Финальная проверка охватывает 166 исходных файлов корня и документации: изменена только собственная карточка, остальные **165 byte-identical**; дополнительно создан один разрешённый test-файл. Production/config/transport/UI и существующие tests не изменены.
+
+| Runtime / fixture source | SHA-256 |
+|---|---|
+| `audit_storage.py` | `15466977e17d2f48e377ccd9b77d7ecc01aaec82c2aabf4501f8cd3c11595905` |
+| `planner_runtime.py` | `ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e` |
+| `provider_accounting.py` | `dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902` |
+| `run_store.py` | `91f82db61a75980ebae8a0ee4e707ac2c09e33628021991d70d639b97b2eef44` |
+| `server.py` | `404d43d6a39924a3a0d725650f0cf4ba67591bca13e071794ab4d576f378090a` |
+| `task_planner.py` | `c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346` |
+| `test_final_audit_recovery.py` | `8dc022756d5a3b4abb46c86d68f4ea0c9771b4ccba264253843b47b7ade32442` |
+| `test_final_audit.py` | `1e7f883ab9579d9775e6f1603dea46dba37f6f95a8eccf5c1ef39846dd383c57` |
+| `test_provider_accounting.py` | `5c16cc5ab0d55a9ca88720e4c1b42031f4c3cb5657501045403d235fddb00738` |
+| `test_run_store_v2.py` | `28334ef3a59d8ed375eaca7e91e97048cd07f1fdd53526672391546e8fe4b4a2` |
+| `test_stage_evidence_contract.py` | `3467538143c6b7bbab031211a9a6f8d18882899f3a60d877dcd4f91f6eaf12c9` |
+| `test_task_planner.py` | `49ba81617fb85da8656e67db3613a7b641479ad3f177238ad736df6ae019cfa9` |
+| `test_verifier_runtime.py` | `905b6b4cf5553b4f0cfd29edcf3157daa9faa4c78d96416323772880a520cd1a` |
+| `verifier_runtime.py` | `7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228` |
+
+| Нормативный source (Документация/) | SHA-256 |
+|---|---|
+| `000_Задачи для агента.md` | `159584416c3edc8d285143bf4e1349d51a8535753922608f1963a9782de30a12` |
+| `01_Архитектура и текущее состояние.md` | `0d292f590dfce4f9a72abebb7067c2bbd8eaa1ead3d662ac227d586c4b6bc5da` |
+| `08_Старт.md` | `143cd3fb5b7d22d8288726753bfaf248f4d8a5dcd7f2a4e96dd02ba629ce16b0` |
+| `13_Архитектура оперативной верификации и контроля выполнения задач.md` | `994cd41a3ca460753b665c901667548f46462ebf2b2e7167341e7d9bae88f742` |
+| `18_Регламент сопровождения документации.md` | `88fab7b4a23f1dda95ee1fc2c83417fc261333ffdcac1dfb6d8d21d3444c94aa` |
+| `20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md` | `22c7786c41ce7000c640ac82f523270cc98f1e4287277fa1b02b4f15ffee048a` |
+| `21_Журнал качественного перехода - решения, метрики и аудит.md` | `0c1b020bbe0661420b618e1afcd945479028dc58b5e87de57fd009c352b50793` |
+| `28_Круглый стол - протокол и текущий вопрос.md` | `1cbb8d05596085955a22575e0c46cb3a3ee05f5bc4ef74515ea593feec8fe9d1` |
+| `33.3_Круглый стол - итоговый план.md` | `c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf` |
+| `34_TACTICAL_CONTEXT.md` | `a487b36fb181d0328ce772b7f681f5f963c9af881ea327638bef858a5c295e11` |
+
+### 8. Closeout / DOC IMPACT / NEXT
+
+**Rollback test changes:** удалить только созданный `test_rt002_s0_kernel.py`, если пользователь отклонит этот набор; runtime откатывать нечего. Возврат карточки возможен из сохранённой постановки БЛОКА 2 и архива REVIEW-1, без уничтожения factual result/истории; никаких reset/checkout. Временные sandbox logs можно удалить после независимой приёмки/сохранения нужных evidence, только по точным путям. Очистка сейчас не выполнялась.
+
+**Documentation Change Impact:** нормативные Rule-ID/contract не изменены. Обязательные БЛОКИ 1/2/3 сохранены; S0 assignment скопирован полностью, REVIEW-1 БЛОКИ 2/3 сохранены отдельным архивом, прежние 151C/DOC-034 архивы — byte-exact. Текст до БЛОКА 1 сохранён byte-exact. Новых wiki/Markdown graph edges не добавлено, прежние ссылки не переименованы; механическая проверка структуры/сохранения выполнена. Это не визуальный Obsidian Graph PASS и не принятие старой DOC-034.
+
+**SHARED DOC DELTA — передать ChatGPT после независимого рассмотрения:**
+- 20 §5а / 21: зафиксировать локальный S0 result FINDINGS, 97=93+4 и четыре repro/two root causes; независимый verdict и возможные исправления записывать отдельно. Не выдавать старт S0 за его приёмку.
+- общий 000 / 34: отразить ожидание независимой проверки/решения, не объявлять S1 или зависимые этапы разблокированными.
+- 13: при подтверждении findings уточнить предел текущего observation binding / durable source guarantees; исправленный runtime описывать только после отдельной реализации и проверки.
+- 28 / 33.3: утверждение B2 и immutable bytes не менять; результаты S0 не являются новой редакцией плана или принятием 151C. S13a ACCEPTED before S6b остаётся условием канонического маршрута.
+
+Общие документы вне write-scope не правились. **DOC CLOSEOUT INCOMPLETE для общего контура:** ждёт решения и записей уполномоченного координатора; персональный factual handoff подготовлен.
+
+**Строго ограниченный NEXT:** пользователь публикует локальные изменения; ChatGPT независимо проверяет source hashes, isolation/manifest, воспроизводит четыре failures и устанавливает S0 verdict. При подтверждении — согласовать отдельную TASK исправления двух причин и повтор S0. **Никакой S1+ здесь не начат; 151C PARKED / КТ-3 PENDING сохранены.**
+
+
+---
+
+## ARCHIVED REVIEW-1 — прежние БЛОКИ 2/3 (сохранено при S0, 2026-10-10)
+
+Ниже прежний closeout сохранён дословно; fenced snapshot не является новым назначением.
+
+````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 **TASK:** CODEX-RT-002-PLAN-REVIEW-001 (историческая, сдана и внешне запечатана). Полная утверждённая постановка и closeout неизменно восстанавливаются из GitHub `main@cd48ff1629a8e04a734e36196d32ee52e37c103b` в старом БЛОКЕ 1; оригинальный документ результата — `33.1` immutable commit №238. Характер: REVIEW / NOT BLIND первоначального 33 по V1…V13 с 15 findings, DAG и A1…A8, без кода. **Планирование завершено, не исполнять повторно.**
@@ -76,6 +279,9 @@
 **NEXT:** только новая USER ASSIGNED `CODEX-RT002-S0-001` в БЛОКЕ 1.
 
 ---
+
+
+````
 
 ## Архив приоритета 151C — решение пользователя 2026-10-10
 
