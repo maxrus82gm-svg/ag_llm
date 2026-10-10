@@ -16,6 +16,7 @@ aliases:
 
 ## 1. Что сейчас происходит
 
+- **Ultra / Codex App Server (2026-10-10):** уточнён документ `19`: для будущей глубокой интеграции Codex как агента предпочтительно исследовать **Codex App Server (локальный JSON-RPC)**; `codex exec` — упрощённый одноразовый путь. OpenAI объявила deprecated только режим **`codex mcp-server`** (Codex-as-MCP-server), **не протокол MCP в целом** и не использование MCP-инструментов в Codex. Зафиксированы server-owned permissions, TASK/thread identities, запрет несанкционированных Git-операций, feasibility/Windows checks. **CONCEPT / NOT IMPLEMENTED**, реальный локальный runtime не менялся.
 - **Ultra / Claude integration (2026-10-10):** в профильном документе `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md` дополнена концепция трёх раздельных путей: Ultra → Claude Messages API как LLM; Ultra → локальный Claude Code CLI / Agent SDK как agent backend; Claude → Ultra через ограниченный MCP tool server. Рассмотрены app/sidecar, discovery, auth, network/permissions, независимые планировщики и feasibility gates. **FUTURE / NOT IMPLEMENTED**; код, настройки, runtime и работа локальных агентов не изменялись.
 - **Коммит пользователя 192:** GitHub содержит `28.1_Архитектура круглого стола - предложение от Astra.md` и обновлённый 28; это входные архитектурные предложения для дальнейшего согласования, **не PLAN APPROVAL** и не разрешение исполнения.
 
