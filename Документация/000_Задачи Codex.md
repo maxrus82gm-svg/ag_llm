@@ -19,99 +19,52 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-**TASK:** CODEX-ULTRA-151C-RECOVERY-001 — TASK 151C / KT-3: Recovery, Independent Code Audit & Closure.
-**Приоритет новой границы полномочий (не переписывает историю исполнения):** эта TASK уже получила RESULT READY и не должна запускаться повторно самовольно. Упомянутые ниже в первоначальной постановке `HEAD/history/git diff --check/Git state` описывают прежний baseline, historical evidence и старый тестовый маршрут; для любого нового действия действует `DOC-GIT-01@1`, сведения Git запрашиваются у координатора/пользователя. Не стирать БЛОКИ 2–3 и не переводить КТ-3 в DONE без независимой проверки.
+**TASK ID:** CODEX-RT-002-PLAN-REVIEW-001 — единоличная независимая критическая экспертиза плана RT-002.
+**Назначение пользователя:** 2026-10-10, USER ASSIGNED / READY FOR MANUAL START; запуск осуществляется лично пользователем в отдельном чате Codex.
+**Исполнитель:** только Codex; целевая модель по выбору пользователя — **GPT-6 Sol / Very High**. Проверить фактическую модель в интерфейсе; не заявлять неподтверждённое.
+**Режим:** **REVIEW** (план 33 открыт для чтения с начала; НЕ INDEPENDENT_PLAN и НЕ blind).
+**Слот / единственный разрешённый итоговый write target:** `Документация/33.1_Круглый стол - альтернативное планирование A.md`, только между `<!-- SLOT:BEGIN -->` и `<!-- SLOT:END -->`.
+**Идентификаторы:** RT-002; slot A; `assignment_id=CODEX-RT-002-PLAN-REVIEW-001`; `context_id=RT-002/REVIEW/2026-10-10`.
+**Evidence baseline:** GitHub `main@27ddda0162959f23fabf92ea80a9a58006af93fc` (координаторский снимок до этой постановки), точная версия плана 33: blob `0bec162cfcba865421b32ab6e5b2e800c3fff02d`; 31: SHA-256 `34f8706348dad6b42e22ad3ca20515b48a3f633ad2eefb85e5e33a809223bf76`; утверждённый verdict 32: решение пользователя 2026-10-10. Рабочая локальная копия может отличаться: до работы сверить, что постановка и план доступны после пользовательского Fetch/Pull; Git самостоятельно не использовать.
+**Планировочный manifest:** `28 / RT-002/PIM-REVIEW-1`; правила `18, 28, 33` в явно указанной редакции `@1/@2`.
+**Статус исходного плана 33:** DRAFT / AWAITING USER PLAN REVIEW; PLAN APPROVAL PENDING.
+**Незакрытый старый Codex 151C:** `CODEX-ULTRA-151C-RECOVERY-001` **снят пользователем с активной очереди / PARKED**, его результат остаётся `RESULT READY / AWAITING INDEPENDENT VERIFICATION`, **НЕ DONE / VERIFIED**; повторный запуск, доработка и отдельная приёмка 151C сейчас **не поручены**. Вернуть к нему только по новому решению пользователя. Старые БЛОКИ 2–3 по DOC-034 сохраняются без перезаписи.
 
-**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION (2026-10-09; USER APPROVED). Исполнитель Codex; независимый verifier и владелец общей документации — ChatGPT.
-**Предыдущая задача:** CODEX-DOC-034-GRAPH-001 остаётся в БЛОКАХ 2–3 в статусе RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не стирать и не повышать её статус без проверки. Пользователь явно разрешил запуск новой работы параллельно ожидающей приёмке.
+## Цель и независимость
+Провести глубокую **критическую**, а не согласительную экспертизу предложенного ChatGPT плана T0–T13 (док. 33). Оценить, приведёт ли последовательность TASK к измеримому сокращению повторной пересылки контекста и token usage Ultra **без утраты evidence, fail-closed safety, корректности Final Audit и человеческого контроля**. Проверить, нет ли более эффективного, дешёвого или безопасного порядка. Имея доступ к исходному плану, честно заявить `REVIEW / NOT BLIND`. Claude на эту стадию не назначен, слот 33.2 не трогать.
 
-## Цель
-Проверить существующую реализацию TASK 151C (Compact Final Audit Packet + Task-scoped Git Evidence / КТ-3), найти оставшиеся реальные дефекты, исправить только подтверждённые в пределах разрешённого Ultra scope, предоставить evidence-backed отчёт для независимой приёмки. НЕ реализовывать с нуля и НЕ объявлять DONE/VERIFIED самостоятельно.
+## Обязательный маршрут и точные источники
+1. Обычный старт по `08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md`; затем эта персональная карточка и профиль Ultra. Для **REVIEW** чтение 34 и оперативной части 33 разрешено.
+2. Нормативные правила: `DOC-GIT-01@1`, `DOC-READ-01@1`, `DOC-VERSION-01@1`, `DOC-CHANGE-01@1` (18); `RT-INDEPENDENCE-01@1`, `RT-INPUT-01@1`, `RT-FINAL-01@1`, `RT-CLEANUP-01@2` (28); `PLAN-MODES-01@1`, `PLAN-SEAL-01@1`, `PLAN-RECONCILE-01@2`, `PLAN-APPROVAL-01@2` (33), включая `requires` и ревизии.
+3. PRIMARY: `33_Круглый стол - план исполнения.md`, **целиком оперативный план RT-002 T0–T13**, зафиксированный в baseline; **32** — именно утверждённый Decision Record V-1…V-13, **31** — аттестованный синтез + негативные доказательства/unresolved; **28** — текущий RT, `Planning Input Manifest RT-002/PIM-REVIEW-1` и gate.
+4. SECONDARY по спорным пунктам: `13_Архитектура оперативной верификации и контроля выполнения задач.md`, `20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md`, `21_Журнал качественного перехода - решения, метрики и аудит.md`, `05_Реестр задач.md`; `31.1/31.2` для representation corrections; `29/29.1/30/30.1`, raw R-031/R-026/R-032 и конкретные исходники/тесты **только адресно**, если нужно проверить фактическое утверждение. Не перечитывать большие архивы без цели.
+5. Версионность: `main@27ddda016295` — **координаторский снимок**, не утверждение о локальном HEAD. Читая локальные файлы, указать реально наблюдаемые revisions/даты и неизвестный drift. Запрашивать Git evidence у пользователя/ChatGPT, но самому не обращаться к Git/GitHub даже для status/diff/log.
 
-## Источник и baseline
-Корень: M:\GitHub\ag_llm.
-Важный implementation commit: deef0adc7f1a9b36134c3ed0fd7851c893aae046 (№140 от 2026-10-03).
-Актуальные HEAD / рабочую копию / историю после №140 определить самостоятельно на старте; не считать №140 текущим HEAD.
-Маршрут: 08_Старт.md → 000_Задачи для агента.md → 000_Задачи Codex.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md → 13 / 20 / 21.
-PRIMARY: 13_Архитектура оперативной верификации и контроля выполнения задач.md.
-SECONDARY: 20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md; 21_Журнал качественного перехода - решения, метрики и аудит.md; 03 по необходимости.
+## Обязательная техническая экспертиза
+1. **Диагноз против плана:** R-031 — два крупных результата `read_file(ultra_ui.py)` повторно переданы в сумме 11 раз; `668 898` provider-reported total не равны доказанному денежному биллингу. Проверить цепочку повторной отправки и доказательства против гипотез. Отдельно оценить R-032 (внутренний `{"candidates":[]}` с ложным PASS), R-026 UNKNOWN/terminal, DIRECT bypass и R-033/R-034, не выдавая неизвестные причины за факты.
+2. **Безопасность и экономика:** нужны ли bounded `read_file` / `read_file_range`, совокупный бюджет pre-HTTP, дедупликация, ограничение tool results, разграничение Planner/Executor/Dredd, Server exact evidence, сохранение полноты отрицательных фактов, freshness и fail-closed. Проверить стоимость вычислений/качество/evidence, сценарии отказа, обходы, большие файлы, повторные вызовы, cached tokens, конкурирующие политики.
+3. **Сверка решения и плана:** каждому V-1…V-13 дать покрытие в T0–T13, критерии acceptance, измеримую проверку и явный статус `deferred` для V-13. Особое внимание: V-3 — emergency pre-HTTP budget **до 151G**; V-4 — оба лимита, а не один; V-11 — раздельные настройки Planner/history/Final Audit; V-12 — пути и `contains/equals`.
+4. **Главный новый вопрос пользователя — старую 151C больше не блокируем как текущую работу.** Разобрать **T0**, который сейчас предписывает отдельную независимую приёмку `151C/КТ-3` как gate к последующим этапам, и зависимости `151C → 151D/E/.../151G` в 20. Не выдавать непринятую 151C за DONE и не удалять safety gates. Предложить технически обоснованные **варианты перепланирования**, в том числе безопасный минимальный rebaseline/integration gate по фактическому коду и точным regression, явные prerequisite/blockers и отсутствие ложного closure старой TASK.
+5. **Порядок и исполнимость:** построить исправленный DAG T0–T13 с критическим путём, приоритетом аварийной защиты, dependency/cycle/conflict audit против 20, границами scopes, владельцами, rollback/fallback и отдельными небольшими TASK; отделить подготовку безопасности от дорогих live/stress и будущих экспериментальных возможностей.
+6. **Контроль пользователя:** для каждого этапа понятный визуальный/UI контроль (настройки лимитов, расходы, причины блокировок, Planner ON/OFF без скрытого изменения контекста), offline/mock-first тесты, adversarial/failure cases, измеримые before/after метрики токенов, сохранность негативных evidence и human acceptance. Не рекомендовать скрытую автоматику вместо наблюдаемого результата.
+7. **Adversarial review:** самостоятельно искать omissions, лишние этапы, двойные расходы, логические противоречия, преждевременные approvals, ложную эффективность от клиппинга и риски совместного изменения нескольких переменных. Если обнаружена ошибка — дать точный источник/path/selector, последствия, минимальное исправление и тест, отличать факт от гипотезы.
 
-## Обязательная аналитика
-1. Сверить committed/runtime baseline, TASK 151B freshness, 151C code/verification gaps, актуальную документацию и результаты предыдущих tests.
-2. Независимо оценить Final Audit packet: RAW TASK; accepted task plan; active requirements; requirement-to-evidence coverage; mutation receipts; exact verification; freshness source identity; task-relevant conflicting/negative/external/unattributed facts; candidate final; completeness metadata.
-3. Убедиться, что Server mechanical completeness fail-closed ДО Dredd и не допускает false PASS.
-4. Проверить task-scoped Git: отсутствие workspace-wide diff в default; no-path NOT_APPLICABLE; delete/move/rename, directories, untracked/ignored, path scope, no RUN ownership inference from Git alone.
-5. Проверить large outputs / truncated material / deduplication / item+packet budgets, preservation of relevant evidence, run-store reproducibility and source identifiers.
-6. Проверить freshness revalidation before/after Final Audit packet and fail-closed on drift.
-7. Провести adversarial review сверх уже существующих tests. Найти и устранить только воспроизводимые реальные дефекты Ultra.
-8. Проверки offline: targeted regressions; expanded Final Audit/Planner/freshness/Run Store; full unittest; py_compile; UI smoke; git diff --check. Точные числа, failures/skip и ограничения отразить в отчёте.
+## Формат результата в оперативном слоте 33.1
+- Метаданные (TASK, participant/model, mode REVIEW/non-blind, baseline versions, read sources, неизвестные источники/drift).
+- **Короткий вердикт:** `ACCEPT AS IS / ACCEPT WITH CHANGES / REWORK REQUIRED / BLOCKED` + почему.
+- `FINDINGS` с severity `CRITICAL/HIGH/MEDIUM/LOW`, evidence path + revision + selector, impact, предложенной коррекцией и verification method.
+- Матрица `V-1…V-13 → этап(ы) 33 → gaps`; отдельно T0/151C conflict.
+- **Предложенный альтернативный/исправленный DAG** и порядок небольших исполнимых задач, явные условия переходов, rollback/fallback, budget/UX/acceptance; объяснить каждое существенное изменение.
+- `OPEN QUESTIONS / UNKNOWN / REQUIRES USER DECISION`, `DOC IMPACT`, `RECOMMENDED NEXT`; не выдавать гипотезы за измеренную экономию.
+- Изменять **только оперативный слот 33.1**. В финале сообщить `RESULT READY / AWAITING SEAL` и отдельным кратким отчётом в чате указать, что реально проверено. Координатор после сдачи фиксирует независимый seal/provenance и при разрешённом reveal готовит **33.3**; USER PLAN APPROVAL только отдельно.
 
-## Границы / параллельная работа
-Claude параллельно работает над Web Alarm WA4-E. Не менять web_alarm/*, профильные 23/24/25, персональную карточку Claude, код/tests/неоткоммиченные изменения Claude. Ultra code targets: server.py, task_planner.py, verifier_runtime.py и соответствующие regression tests.
-Общие документы 000 (глобальный), 00, 01, 04, 05, 06, 08, 18, 34 — ТОЛЬКО ChatGPT-координатор. Codex их читает и передаёт proposed changes в DOC IMPACT.
-Документы 13/20/21 Codex ведёт исключительно в Ultra scope, не затирая изменения другого автора.
-Изоляция рабочей копии приветствуется. Никаких reset/clean/stash/add -A/commit/push/pull, переписывания истории или захвата чужого scope без отдельного разрешения. Не запускать live paid Ultra, R-027/R-031 stress; они относятся к будущей TASK 151G.
-Если исправления нельзя безопасно изолировать, STOP before mutation и предложить конкретный безопасный путь.
+## Жёсткие ограничения / STOP
+- **Никаких изменений в коде Ultra, runtime, конфигурациях, 20/21, исходном 33, 28/31/32/34/05/000, слотах 33.2/33.3 или других документах.** Исключение: только указанная оперативная область 33.1.
+- **Никаких Git/GitHub операций локальным Codex**, даже read-only; никаких commit/push/reset/stash/checkout. История 151C/DOC-034 сохранена по immutable GitHub baseline, ротировать старые карточки самому не нужно.
+- Не запускать платный Ultra/live RUN, R-031 stress, внешних агентов, дорогостоящие пробы; при необходимости допустима малая **изолированная offline/mock** проверка без side effects и без Git, с фактическими числами в отчёте.
+- Не обращаться к Claude, не выдавать USER APPROVAL/PLAN APPROVAL/FINAL DONE; никакого handoff в 20/21 и начала T0–T13. Если не найден baseline/slot/authority или обнаружен drift с риском перезаписи — `BLOCKED` с точной причиной, никаких самовольных исправлений.
 
-## Закрытие / отчёт
-До любых правок: baseline report + findings + минимальный design. Далее только justified targeted repairs and regression.
-Результат: RESULT READY / AWAITING INDEPENDENT VERIFICATION, не DONE. В итоговом отчёте: точные пути и изменения, tests с числами и exit code, оставшиеся риски, Git state, DOC IMPACT, NEXT. Никаких commit/push. Общие документы не редактировать.
-Только независимая приёмка ChatGPT может подтвердить КТ-3 DONE. После принятия NEXT = TASK 151D — Server Direct Exact Evidence.
-
-## Baseline report / findings / minimal design — 2026-10-09
-
-**ARCH CLASS:** Quality Transition / Final Audit / Evidence Packaging / Runtime Efficiency.
-**PRIMARY PROFILE:** 13_Архитектура оперативной верификации и контроля выполнения задач.md.
-**Baseline:** main, a142817b33964691584aadbd6ea6464779df1815 (177). Целевой Ultra implementation остаётся байтово на deef0adc7f1a9b36134c3ed0fd7851c893aae046; после него нет изменений server.py / task_planner.py / verifier_runtime.py и трёх исходных regression modules. На входе изменены .obsidian/graph.json, .obsidian/workspace.json, персональная карточка Codex и глобальный 000; они сохраняются.
-**Изоляция:** C:\Users\REX\.codex\worktrees\ultra151c-recovery\ag_llm, от указанного HEAD. Tests/probes используют временный LOCALAPPDATA и запрет внешних socket connections. Live paid Ultra, runtime Web Alarm и R-027/R-031 не запускаются.
-**Baseline tests:** проектный .venv Python — 187 tests OK, exit 0 (Final Audit / Planner / freshness / Verifier / Run Store). Первая попытка на системном Python 3.13 дала 4 import errors из-за отсутствующего httpx; это ошибка окружения, затем использован штатный проектный venv без установки зависимостей.
-**Подтверждённые findings до code edits:**
-1. Первое exploratory read 9 000 bytes усекается без requirement; следующее обязательное чтение того же результата дедуплицируется и обходит completeness: Dredd вызван 1 раз, mock PASS принят, critical_for_success=false.
-2. После внешнего изменения большого файла на короткое содержимое freshness повышает generation и получает fresh read; старое усечённое material всё равно ошибочно блокирует Final Audit.
-3. Task path target[1].txt включает в реальный Git status также чужой target1.txt: Git интерпретирует filename как pattern.
-4. Clipping при лимитах 0–40 bytes возвращает 41-byte marker; при разрыве UTF-8 лимит 42 даёт 44 bytes с replacement character.
-5. Failed equals → successful sha256: compact packet теряет failed expected/actual hashes и детали error; source_run_store_record_id отрицательного результата ведёт в tool_started вместо outcome record.
-**Минимальный design:** только server.py + соответствующий regression module: literal pathspecs; strict UTF-8 byte limit; mandatory material привязать к текущим source IDs/generation, выделять его до exploratory material, переносить полноту и source ID при dedup; negative exact material и полный outcome хранить с правильной ссылкой Run Store. Freshness, permissions, RAW TASK, Planner contract, paid/live policy и роли не ослаблять.
-**Documentation Block:** DOC IMPACT YES — профильные 13/20/21 и эта карточка. CURRENT STATE/ARCHITECTURE IMPACT YES — источники/полнота Final Audit packet; CONTEXT LIBRARY IMPACT NO; REGISTRY/ROUTING IMPACT NO; NEW DOCUMENT REQUIRED NO (кроме необходимого regression test). Общие 000/00/01/04/05/06/08/18/34 — только proposed changes для ChatGPT.
-**Предыдущий pending result:** БЛОКИ 2–3 задачи CODEX-DOC-034-GRAPH-001 сохраняются целиком; без independent PASS не перезаписывать их ротацией текущего recovery.
-
-## Factual recovery result — 2026-10-09
-
-**TASK:** CODEX-ULTRA-151C-RECOVERY-001.
-**Статус результата:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. КТ-3 остаётся PENDING, приёмка — ChatGPT.
-**Изменения:** устранены 8 классов defects: dedup completeness bypass; stale material false block; Git pattern scope leak; UTF-8 byte overrun; потеря negative exact/empty-search facts и неверный Run Store outcome pointer; потеря upstream truncation; directory/Git-state freshness; молчаливое усечение model stage result. Подробная factual запись, воспроизведение и ограничения — в профильном документе 21.
-**Design delta после дополнительных findings:** task_planner.py получает optional typed dependency callback без ослабления file-only persistence; полный model stage result сохраняется в task-plan state, explicit audit projection ограничена 8 KiB и fail-closed для required model_result. Все outcome summaries, включая count=0, сохраняются отдельно от preview budget. Права Executor на directory git_diff не расширены. Verifier protocol и 151D не менялись.
-**Целевые файлы:**
-
-- M:\GitHub\ag_llm\server.py
-- M:\GitHub\ag_llm\task_planner.py
-- M:\GitHub\ag_llm\test_final_audit_recovery.py
-- M:\GitHub\ag_llm\Документация\13_Архитектура оперативной верификации и контроля выполнения задач.md
-- M:\GitHub\ag_llm\Документация\20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md
-- M:\GitHub\ag_llm\Документация\21_Журнал качественного перехода - решения, метрики и аудит.md
-- M:\GitHub\ag_llm\Документация\000_Задачи Codex.md.
-
-| Проверка | Результат | Exit code |
-| --- | --- | --- |
-| Baseline: Final Audit / Planner / freshness / Verifier / Run Store | 187 tests OK; 49.067 s | 0 |
-| Окончательные targeted recovery regressions | 24 tests OK; 10.682 s; failures/errors/skip 0 | 0 |
-| Окончательные expanded Ultra / Audit / Planner / Run Store | 276 tests OK; 62.260 s; failures/errors/skip 0 | 0 |
-| Окончательный full unittest discovery | 1000 tests; 395.103 s; failures/errors 0, skipped 1 | 0 |
-| py_compile: server, task_planner, verifier_runtime, recovery test | 4/4 PASS | 0 |
-| UI smoke: UltraApp construction/update/destroy | 1/1 PASS | 0 |
-| git diff --check | PASS | 0 |
-
-Skip: test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed — Windows не разрешает создание symlink; причина отдельно подтверждена. Предварительные regression evidence до repairs: 14 test methods, failures=200 (включая subtests), errors=4, exit 1; отдельный empty-search negative probe: 1 test / 1 failure, exit 1. Эти неудачные проверки сохранены как evidence, а не выданы за acceptance PASS. Системный Python 3.13 дал 4 import errors (нет httpx); штатный проектный .venv использован без установки зависимостей. При подготовке исправлены двухстадийная model_result fixture и имя класса отдельной skip diagnostic; production defects и fixture errors разделены.
-
-Воспроизводимые команды в изолированном LOCALAPPDATA, с запретом внешних socket connections: проектный .venv Python -B -m unittest test_final_audit_recovery; Python -B -m unittest discover -s . -p 'test_*.py'. Raw logs, offline guard, UI/compile probe и source SHA-256 manifest: C:\Users\REX\AppData\Local\Temp\codex-ultra151c-3artJP (файлы *-acceptance3.log, acceptance-source-hashes.json). Full unittest выводит существующие ResourceWarning о temporary directory cleanup и asyncio slow-task warnings; итоговый status OK, failures/errors 0.
-
-**Git / loss check:** HEAD a142817b33964691584aadbd6ea6464779df1815 и index не менялись; commit/push/reset/clean/stash/pull/add -A не выполнялись. Основная копия получила только проверенные целевые deltas с baseline SHA-256 guards. Остальные 1211 tracked files совпадают с baseline, включая исходные пользовательские .obsidian/graph.json и глобальный 000. При финальной сверке .obsidian/workspace.json отличается от стартового SHA-256; агент его не редактировал и не восстанавливал, текущее внешнее изменение оставлено без вмешательства. Web Alarm code/runtime/tests, профили 23/24/25, карточка Claude, общие 00/01/04/05/06/08/18/34 и Alarm не изменялись. Tests используют изолированные synthetic storage / LOCALAPPDATA, новые Alarm artifacts не создавались. Journal history сохранена; БЛОКИ 2–3 предыдущей CODEX-DOC-034-GRAPH-001 сохранены целиком по исключению текущей постановки, recovery не затирает ожидающий приёмки result. Изолированный worktree сохранён для review, без snapshot commit.
-**Ограничения:** live paid Ultra / R-027/R-031 не запускались; mock Dredd не является live независимой приёмкой. Token/call savings не измерялись. UI smoke ограничен construction/update/destroy. Concurrent writer внутри физического tool read не стресс-тестировался; best-effort observability при storage failure не менялась.
-**DOC IMPACT:** YES; CURRENT STATE / ARCHITECTURE IMPACT YES; CONTEXT LIBRARY IMPACT NO; REGISTRY/ROUTING IMPACT NO; NEW DOCUMENT REQUIRED NO. CANONICAL OWNER 13; AFFECTED DOCUMENTS 13/20/21 + персональная карточка. CONTRADICTION CHECK REQUIRED / PASS; LOSS CHECK PASS. Proposed delta только для ChatGPT: общие 000/05/06/01/34 — текущий recovery result, КТ-3 pending PASS, ограничения/NEXT; обычные текстовые имена, без новых рёбер 34.
-**NEXT:** независимая проверка ChatGPT по утверждённой постановке, diff и воспроизводимым tests. Только после принятого PASS — КТ-3 DONE и TASK 151D. 151D не запускалась.
-
-
----
+**Старт:** только после отдельного ручного сообщения пользователя Codex. **Результат:** review-файл 33.1, затем внешняя координация.
 
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
@@ -211,3 +164,12 @@ Codex: задача утверждена пользователем. Прочи�
 **DOC IMPACT:** 00, 08, 34, персональная карточка Codex. REGISTRY IMPACT: NO — существующая связь 05 сохранена без изменения реестра. CONTEXT LIBRARY IMPACT: NO — библиотека 14–16 и runtime prompt не затронуты.
 
 **NEXT:** независимая проверка ChatGPT по этой постановке и diff, затем визуально подтвердить в Obsidian Graph единственного соседа 34 — реестр 05; commit/push выполняет пользователь. Статус не повышать до DONE / VERIFIED до принятого независимого PASS.
+
+---
+
+## Архив приоритета 151C — решение пользователя 2026-10-10
+
+`CODEX-ULTRA-151C-RECOVERY-001` снята из активного БЛОКА 1 **без признания DONE**. Первоначальная полная постановка и factual recovery-report сохранились неизменёнными в GitHub `main@27ddda0162959f23fabf92ea80a9a58006af93fc`, файл `Документация/000_Задачи Codex.md`, старый БЛОК 1. Результат 151C — `RESULT READY / AWAITING INDEPENDENT VERIFICATION` / КТ-3 `PENDING`; пользователь отложил эту отдельную приёмку и поручил сначала пересмотреть весь план RT-002. Это не означает принятия 151C и не отменяет требований доказательности для будущих TASK.
+
+БЛОКИ 2–3 по `CODEX-DOC-034-GRAPH-001` — **исторический незакрытый RESULT READY**, сохранены без изменений. Следующая ротация только после безопасной координации, не перетирать историю автоматически.
+
