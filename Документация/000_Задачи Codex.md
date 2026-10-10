@@ -500,6 +500,209 @@ Commit №247 (2fb37a266a0780191471cdcecea587fb449a4168), независимый
 
 ---
 
+## AMENDMENT — финальная проверка S0: терминальный on_event / SUCCESS (2026-10-10 → 2026-10-11)
+
+**TASK:** CODEX-RT002-S0-REPAIR-001, продолжение по прямому дополнению пользователя; новая TASK не открыта. **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Это self-test исполнителя, не DONE / VERIFIED и не независимый S0 PASS.
+
+Предыдущий отчёт БЛОКА 3 выше сохранён дословно. Его 155 PASS относятся к прежней редакции; актуальный результат этой редакции — **166 PASS** ниже. Уточнение снимает предположение, что проверок перед терминальным callback достаточно для безопасного возврата. Ранее обозначенное общее ограничение «после последней проверки» не оправдывает обнаруженное синхронное окно: управляемый сервером callback входит в завершение RUN и теперь охвачен повторным gate.
+
+### A1. Авторизация, исходные данные и границы
+
+AMENDMENT пользователя: сначала изолированно воспроизвести удаление/повреждение обязательной записи Run Store, изменение исходного файла/обязательной зависимости и исключение/нарушение terminal invariants именно в синхронном on_event при run_finished: SUCCESS. При подтверждении минимально исправить S0; проверить Final Audit ON/OFF, исходные F01–F04, Repair и релевантную полную offline regression; сохранить команды, счётчики, исходные версии и ограничения. БЛОК 1 не заполнять, БЛОК 2 не менять, прежний БЛОК 3 сохранить и дополнить. После отчёта остановиться до независимой приёмки. UI, S1/S2, бюджетная система, Stage Compiler, live/HTTP, Git/GitHub, commit/push не разрешены.
+
+Пользователь сообщил о публикации основной REPAIR в №250. Локальный 000_Задачи для агента.md содержит №250 / 321f7436337f162b7741a13619954a49ed80d117, а 34 — открытый непроверенный callback-window. Это provenance из обычных документов и чата, **не результат чтения Git** и не доказательство совпадения local bytes с remote/HEAD. История не запрашивалась и не читалась.
+
+Прочитанные локальные маршрутизаторы/владельцы: 08 → общий 000 → 34 → 18 → 01; task-card БЛОКИ 2/3, server.py, task_planner.py, run_store.py, audit_storage.py и offline fixtures. Действуют rule-ref:DOC-GIT-01@1 и DOC-TASK-BLOCK1-01@1. Явный AMENDMENT пользователя разрешает это продолжение при WAITING в БЛОКЕ 1; карточка не заполнялась заново. Общие документы и immutable FINAL-B2 не редактировались.
+
+### A2. Дефект подтверждён до изменения production
+
+Исходная версия server.py: SHA-256 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3, 321998 bytes. На ней сначала добавлены только adversarial tests, затем выполнены прогоны BEFORE и BEFORE-CERT из A5.
+
+В исходном _emit mandatory outcomes/certifications и сохранённая terminal SUCCESS проверялись **перед** on_event. Callback получал deepcopy, поэтому не менял серверный payload непосредственно, но мог изменить файлы/Run Store. Затем исключение класса Exception подавлялось, best-effort trace записывался, _emit возвращался без новой проверки. Оба вызывающих пути возвращали content. Следовательно, проверка была корректной на прежний момент и уже не доказывала состояние при фактическом возврате.
+
+Подтверждённые исходные инъекции:
+
+| Группа | Сценарии до исправления | Фактический исход исходного server.py |
+|---|---|---|
+| Durable outcome | missing/duplicate index, неверный locator/event/source, partial stream, corruption, deleted stream × Final Audit ON/OFF = 16 | Вернулся Finished; последнее событие SUCCESS; fault callback вызван один раз. |
+| Сертификация | Удаление/повреждение final_audit_passed при ON; удаление/повреждение самой run_finished при ON/OFF = 6 | Вернулся Finished даже без проверяемой ранее принятой записи. |
+| Свежесть и persistence | READ, equals VERIFY, list_dir, fake compile dependency, persistence target × ON/OFF = 10 | Вернулся Finished после изменения обязательного состояния. |
+| Мутация + исключение | Изменение READ target и RuntimeError из callback × ON/OFF = 2 | Exception подавлен, вернулся Finished на устаревшем evidence. |
+| Контроль | Только RuntimeError и изменение копии event, доказательства целы × ON/OFF = 2 | Законный Finished. Исключение декоративного наблюдателя само по себе не делает результат ложным. |
+
+Итого **34 различных отрицательных сценария воспроизведены** на исходном production; 2 положительных контроля сохранили законный успех. В первом BEFORE fixture повреждения attestation искал отсутствующий в ней ключ status: одна инъекция final_audit_passed:corrupt была неполной, cleanup добавил одну FAIL-запись. Это ошибка нового теста, не подтверждение этого сценария; в unittest.log явно записан один callback_errors element. До production-правки fixture исправлен на порчу существующего заголовка event; BEFORE-CERT повторил все 6 certification cases и получил все 6 ожидаемых нарушений. Остальные 33 отрицательных сценария первого BEFORE были реальными. Assertions и fault injections после воспроизведения не ослаблялись.
+
+### A3. Минимальное общее исправление S0
+
+Изменён только production **server.py**; Run Store schema, audit_storage.py, task_planner.py, UI и planner/provider протоколы не менялись.
+
+1. _terminal_evidence_snapshot перед терминальным _emit повторяет существующие условия обязательного evidence и satisfied/persistence obligations; сохраняет snapshot актуальных зависимостей. Это также закрывает callbacks planner_session_completed/final_audit_skipped между gate вызывающего кода и входом в _emit.
+2. После возврата из on_event и best-effort runtime trace _emit снова проверяет все mandatory outcomes, сохранённые final_audit_passed и **свою собственную** terminal record по исходному acknowledgement и expected payload. Затем повторяет freshness/obligations и сравнивает snapshot. Удаление, порча, потеря identity, устаревание либо сбой обязательной проверки запрещают успешный возврат.
+3. При нарушении используется существующий _block_evidence / LifecycleBlocked: конечный результат BLOCKED; корректирующее run_finished BLOCKED пытается сохраниться и доставляется наблюдателю. Ни Executor, ни Dredd, ни mutation не повторяются; новой retry loop нет.
+4. Для legacy callers без TaskLifecycle snapshot берёт реальные аргументы из **проверенного durable outcome**, а не отсутствующее поле arguments RAM-факта. _validate_durable_tool_outcome теперь возвращает уже проверенную запись; все прежние проверки binding/result/hash сохранены. Файловая свежесть сверяется до/после callback; дополнительных Git diagnostics не введено, git_diff из этого fallback исключён.
+5. Обычный Exception только в декоративном callback по-прежнему best-effort: если обязательные инварианты после него целы, SUCCESS законен. Если callback успел что-либо повредить, исключение не обходит post-check. BaseException, включая asyncio.CancelledError, не подавляется: перед распространением того же экземпляра исключения сервер пытается зафиксировать BLOCKED с reason terminal_callback_interrupted.
+
+Кодовые точки текущей редакции: server.py:3558 (_validate_durable_tool_outcome), :3754 (_terminal_evidence_snapshot), :3784 (_emit), :3822 (interruption), :3836 (post-callback gate). SUCCESS-пути: :6377 (Final Audit OFF), :7128 (ON). Проверки добавлены в общий _emit, поэтому покрывают оба пути, включая legacy callers.
+
+Наблюдаемая граница точна: callback по определению **уже получил SUCCESS**, иначе описанная пользователем инъекция не сработала бы. Для такого синхронного наблюдателя это provisional notification до возврата callback и post-check; при нарушении следует корректирующий BLOCKED и нет успешного return. Исправление не утверждает, что невозможно увидеть промежуточное SUCCESS в событиях/сырой истории. Удалять или переписывать прежнюю запись ради такого утверждения было бы потерей истории.
+
+### A4. Финальные adversarial checks — 11 методов / 61 сценарий
+
+Новые методы находятся в test_rt002_s0_repair.py:90–385. Исходные 23 repair methods не переписаны: удаление только добавленного диапазона в памяти восстанавливает исходные 32366 bytes и SHA-256 f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e. Guarded runner test_rt002_s0_kernel.py не изменён. Все 155 прежних exact test IDs присутствуют в финальном manifest.
+
+| Проверка нового набора | Сценариев | Финальное поведение |
+|---|---:|---|
+| 8 видов damage outcome × ON/OFF | 16 | BLOCKED, последняя terminal notification BLOCKED; один fault callback. |
+| Attestation/terminal record: missing/corrupt | 6 | BLOCKED, проверяется и собственный acknowledgement SUCCESS. |
+| READ drift/deletion, equals, directory, compile, вторичная compile dependency, persistence target × ON/OFF | 14 | BLOCKED; для вторичной зависимости исходный result.md остаётся прежним. |
+| Мутация источника + RuntimeError × ON/OFF | 2 | BLOCKED, исключение не прячет drift. |
+| Только Exception/deepcopy tampering × ON/OFF | 2 | Finished, доказательства и сохранённая terminal SUCCESS проверяемы. |
+| CancelledError и собственный BaseException × ON/OFF | 4 | Исходный экземпляр исключения распространяется; последняя сохранённая/доставленная terminal запись BLOCKED; нормального return нет. |
+| Legacy: source/outcome/terminal damage × ON/OFF | 6 | BLOCKED и без TaskLifecycle. |
+| exists меняет только content; READ меняет только unrelated file × ON/OFF | 4 | Законный Finished: семантическая свежесть не заменена излишним запретом любых файловых изменений. |
+| Повреждение SATISFIED stage state × ON/OFF | 2 | BLOCKED, status не принимается на доверии. |
+| Outcome пропал, запись корректирующего BLOCKED также отказывает × ON/OFF | 2 | Возвращён и доставлен BLOCKED, ровно одна попытка corrective append; отказ store не разрешает SUCCESS. |
+| Drift из planner_session_completed (ON/OFF) и final_audit_skipped (OFF) до _emit SUCCESS | 3 | BLOCKED **до** публикации SUCCESS. |
+| **Итого** | **61** | **51 BLOCKED return + 4 interruption (terminal BLOCKED) + 6 valid Finished**. |
+
+В 48 отрицательных инъекциях, сработавших внутри SUCCESS callback, тест намеренно требует одну уже полученную provisional SUCCESS и последующую BLOCKED, а не невозможное «callback сработал на SUCCESS, но никогда его не видел». Проверяются отсутствие повторного callback SUCCESS/новых Executor/Dredd вызовов, два исходных Executor fake responses, Dredd=1 при ON и 0 при OFF. 3 ранних boundary injections не видят SUCCESS вообще. CancelledError/другой BaseException проверены отдельно от обычного Exception.
+
+**Исходные F01–F04 повторены в FULL:** все четыре PASS; в каждом returned BLOCKED, Dredd=0, SUCCESS events=0. F01/F02 без свежего tool response достигают существующего run_lifecycle_budget_exhausted; законное восстановление свежим READ/VERIFY остаётся в прежних Repair tests и PASS. F03 — mandatory_evidence_store_unavailable; F04 — mandatory_evidence_unavailable / missing durable acknowledgement.
+
+### A5. Команды и полная хронология результатов
+
+CWD: M:/GitHub/ag_llm. Runtime — локальная .venv, pyvenv.cfg: Python 3.12.10. Единственная точка запуска suite — standalone runner, без pytest/unittest discovery и plugins. Селекторы — реальные имена методов manifest; никаких expectedFailure/xfail или скрытых SKIP.
+
+C1 — исходные 5 targeted methods (до/после исправления):
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_outcome_damage_cannot_return_success test_terminal_callback_certification_damage_cannot_return_success test_terminal_callback_dependency_drift_cannot_return_success test_terminal_callback_mutation_then_exception_cannot_return_success test_terminal_callback_exception_only_remains_optional
+```
+
+C2 — повтор исправленного certification fixture на исходном production:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_certification_damage_cannot_return_success
+```
+
+C3 — расширенные edge cases:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_dependency_drift_cannot_return_success test_terminal_callback_interruption_propagates_with_blocked_terminal test_terminal_callback_legacy_file_and_record_damage_cannot_return_success test_terminal_callback_semantic_and_unrelated_changes_allow_success test_terminal_callback_stage_state_damage_cannot_return_success test_terminal_callback_damage_and_blocked_append_failure_still_fail_closed test_terminal_boundary_rechecks_events_after_the_callers_freshness_gate
+```
+
+C4 — повтор legacy после устранения найденного обхода:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_legacy_file_and_record_damage_cannot_return_success
+```
+
+C5 — релевантный полный regression, включая F01–F04, весь прежний S0 Repair и все новые методы:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+| Прогон | Команда | Methods PASS / FAIL / ERROR / SKIP | FAIL entries unittest | Exit | Guard violations | Seconds | Sandbox suffix |
+|---|---|---|---:|---:|---:|---:|---|
+| BEFORE: production исходный | C1 | 1 / 4 / 0 / 0 | 35 | 1 | 0 | 25.848 | zi73nazj |
+| BEFORE-CERT: production исходный, fixture исправлен | C2 | 0 / 1 / 0 / 0 | 6 | 1 | 0 | 4.617 | o2zqft5a |
+| Первое исправление | C1 | 5 / 0 / 0 / 0 | 0 | 0 | 0 | 25.648 | jv7p4sp9 |
+| Дополнительные edge cases | C3 | 6 / 1 / 0 / 0 | 2 | 1 | 0 | 20.657 | tf1r3xvw |
+| Legacy arguments исправлены | C4 | 1 / 0 / 0 / 0 | 0 | 0 | 0 | 2.427 | ywv_8gzr |
+| **FINAL FULL** | **C5** | **166 / 0 / 0 / 0** | **0** | **0** | **0** | **108.891** | **e3w2yqjs** |
+
+PASS/FAIL в этой таблице считают методы, поэтому в BEFORE 1+4=5. FAIL entries — отдельные subTest/cleanup записи unittest: 35 не является числом запущенных методов. BEFORE-CERT = 6 subTest violations одного метода. В C3 обе FAIL entries относятся к одному legacy method: RAM-факт не содержал arguments, initial fallback пропускал source. Корень исправлен чтением проверенного durable record; C4 и FULL подтверждают устранение. Промежуточные red runs раскрыты и не выдаются за успешную приёмку.
+
+Состав FINAL FULL: прежние 155 test IDs + 11 новых = 166. Прежние 97 S0 (14 Kernel, 2 Identity, 10 Stage Evidence, 2 byte budget, 11 persistence, 16 recovery, 20 Planner whitelist, 10 Verifier whitelist, 12 RunStore/provider functions), прежние 23 Repair и 35 compatibility/storage/file-tool tests сохранены. Новые 11 увеличили RepairBoundaryTests до 34. Результат self-test: **PASS 166 / FAIL 0 / ERROR 0 / SKIP 0, exit 0, guard 0**.
+
+Все artifacts ниже находятся **в TEMP**, не в репозитории. Общая база: C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-<suffix>/; в каждой — unittest.log и result.json (manifest, failures/errors/skips/guards, events, packets, observations). Они могут исчезнуть при очистке TEMP; для воспроизведения достаточно текущих исходников/runner, а не сохранности TEMP.
+
+| Suffix | SHA-256 unittest.log | SHA-256 result.json |
+|---|---|---|
+| zi73nazj | 96e9a761e2ec4c7131a143b18693cf2375315fe26473b6ec90548d336fe59f7a | bf34d8b706ce481283c85678560b7b7433b3c2deee0c5d27cf08961df3eb2220 |
+| o2zqft5a | 976db8ba858f00d4bec7ea35e6b8ecae1bf0ea0971b841c8dba5ac103a19361b | 46f5220db7110dfa9b69746856492c24b6416ae4be5a87fbe751806d288c3c12 |
+| jv7p4sp9 | 8f67e727978f5bcdd34df5e661802754af0de079a2d16c33c462d0d48b1e88d2 | 19ebafb8091d438ca5a5379b934a17a9e9197636f00f0c4613791759f22de3f6 |
+| tf1r3xvw | e5bc5d4166c6e1c14dfabb4aca5757c5410ac0f30ed8ec8e44c1e55a6bc6c526 | 9346a9f7d948702766015debc9d0b2a23e695caa40e2eefd7fff16fb38280d60 |
+| ywv_8gzr | 2cb6483dd6a31adba8e9e1bf2486cfd7779002133cc75387ea9d1c3345b3b512 | 4e157bf893fbaf71ea4095c785c8e5352aa66cdd8535d46fca1443ec2b9fc69d |
+| e3w2yqjs | 4e7aadd433c94210e7c2ac59d4024486a39585275270b926902e106a35f51fa2 | 0538b35585760804891976f62cc4240a5628b4ee45583931f37291e67af673ca |
+
+### A6. Версии, изоляция и loss check
+
+Версии ниже установлены прямым чтением файлов и SHA-256, без Git. FINAL FULL выполнен именно на указанных AFTER bytes; после suite хеши server.py, test module и runner повторно совпали. Исходная карточка перед AMENDMENT: 124347 bytes, SHA-256 170c9791cc45936abf5c14aebe6e316b112e764a2770d6809d475cde371a7cef.
+
+| Файл | BEFORE bytes / SHA-256 | AFTER bytes / SHA-256 |
+|---|---|---|
+| server.py | 321998 / 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3 | 324699 / 44d8cc8affaf9c76272f74ec19e046352e8a19a094c3e48e2dc37ccda6159f54 |
+| test_rt002_s0_repair.py | 32366 / f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e | 52829 / 860f723f4c864deb0fbf6a7699a0ef9b44a29fc6c08038cffb026b36e32fb868 |
+
+Неизменённые опорные файлы:
+
+| Файл | Bytes | SHA-256 (BEFORE = AFTER) |
+|---|---:|---|
+| run_store.py | 23844 | a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6 |
+| audit_storage.py | 31728 | 5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c |
+| test_rt002_s0_kernel.py | 28657 | cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b |
+| task_planner.py | 55904 | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 |
+| ultra_ui.py | 246742 | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d |
+| Документация/33.3_Круглый стол - итоговый план.md | 45043 | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf |
+
+rule_set_ref: документ 18_Регламент сопровождения документации.md, прочитанная локальная редакция SHA-256 0b4ce6e621f372bdd2ea268c28e899cd137bdbcd60c8e6846a8f4c428854b51b; DOC-GIT-01@1, DOC-TASK-BLOCK1-01@1. Документы 08/000/34/01 не превращались в разрешение на Git, live или новые этапы.
+
+Снимок 168 обычных py/md/json/toml файлов корня и Документация перед/после работы до сохранения отчёта обнаружил изменения только server.py и test_rt002_s0_repair.py. Это файловая сверка указанного охвата, **не Git status и не заявление о clean tree**. При closeout добавляется только настоящая вставка в персональный БЛОК 3; сырые логи, массовые backups и новые task/report files в репозитории не создавались.
+
+Сохранность карточки контролируется exact bytes:
+
+| Неизменяемый фрагмент | SHA-256 |
+|---|---|
+| Начало карточки, БЛОКИ 1/2 до заголовка БЛОКА 3 | 5db744ea99fcb2982ebfa6bfe64fcfc70b13603e734fd80be49ed42146c73004 |
+| Прежний полный отчёт БЛОКА 3 до ARCHIVED S0-001 | 9d00f3e6f81970480e75142903343c84a69a2cdd1916f195fe02d45b4565adc7 |
+| ARCHIVED S0-001 и вся последующая история | 1627e88619646cbc41fcf16b3c263a3d02e9dfcb613f588de3b845631d4a0925 |
+
+Перед записью проверяется byte equality всей карточки с исходным снимком и неизменность протестированных production/test bytes. Вставка располагается непосредственно **перед ARCHIVED S0-001**, с сохранением prefix, старого отчёта и tail; atomic sibling-temp replacement, readback equality и отдельная проверка трёх фрагментов. БЛОК 1 остаётся WAITING, БЛОК 2 и архивы не меняются. Старый NEXT §9 выше — исторический handoff до AMENDMENT; его слова «новые AMENDMENT отсутствуют» не относятся к текущему состоянию. Актуальный NEXT — A8 ниже.
+
+Все шесть запусков работали под существующими process-wide guards **до runtime imports**: запрещены subprocess/process launch, HTTP/сеть/DNS, чтение .git/production .ultra и запись за пределами временного sandbox. Windows asyncio socketpair разрешён адресно существующим механизмом. TEMP/TMP/LOCALAPPDATA/APPDATA перенаправлены; -B исключает bytecode writes. Token/provider transports, Planner/Dredd, Git diagnostics, compile/tool subprocess и backup/runtime paths безопасно подменены. Adversarial callbacks повреждали только временные fixture-файлы. **Guard violations во всех запусках = 0**; live-вызовов и реальных Git-команд не было.
+
+### A7. Ограничения и риски
+
+- Post-check доказывает возможность безопасного завершения на проверяемой границе, а не блокирует файловую систему. Внешний процесс после последнего чтения, ABA с восстановлением прежнего наблюдаемого состояния, подмена самой доверенной среды, deferred callbacks/другие потоки остаются за пределами этой гарантии. Snapshot comparison не обещает detection невидимого промежуточного изменения.
+- SUCCESS notification/запись существовала до исполнения fault callback. Уже доставленное уведомление нельзя отозвать; исправление даёт окончательный BLOCKED и запрещает успешный return. Историческая SUCCESS не удаляется. Потребитель не должен считать произвольную раннюю/raw строку отдельным окончательным verdict, игнорируя последующий BLOCKED и обязательный proof. UI/API семантика не перепроектировалась и UI не менялся.
+- Если store после fault недоступен, сервер не может обещать durable corrective BLOCKED; проверено, что обычный отказ этой записи не отменяет BLOCKED return/notification и не вызывает повторов. Если и внешняя доставка не работает, её успешность также нельзя гарантировать. Сохранённая старшая SUCCESS/отставшая summary без повторной проверки mandatory proof не является достаточным свидетельством успешного RUN.
+- При ON Final Audit уже был вызван один раз до terminal fault: невозможность вернуть SUCCESS не отменяет совершённый запрос. Нового Dredd/Executor/physical mutation после terminal fault нет.
+- Legacy snapshot не создаёт несуществующий декларативный stage contract и не сертифицирует legacy freshness до начала этой границы. Он ловит изменения наблюдаемых файлов в terminal callback; git_diff исключён из legacy fallback ради отсутствия новых Git diagnostics. В V6 declared requirements/persistence действуют существующие полноценные gates. Это не реализация S1/S2.
+- OFF/ON paths, CancelledError/BaseException и logical dependency freshness проверены offline; настоящий provider/network, реальные compile/backend subprocess, GUI Stop, multi-process races и Git-dependent fixtures намеренно не запускались. **SKIP=0 относится к explicit 166-test manifest**, а не к любому тесту проекта. Полного unrestricted discovery не было; исключённые unsafe tests не объявлены PASS.
+- TEMP evidence может быть очищено системой. Git HEAD/dirty state/remote identity не проверены; №250 и SHA из маршрутизатора — переданный provenance. Независимая приёмка должна сверять эти новые file hashes и повторить guarded suite; прежний статический review №250 сам по себе не принимает текущую правку.
+
+Rollback — только по отдельному решению пользователя/координатора, восстановлением согласованных исходных server.py bytes. Автоматического reset/checkout/replay не выполнять; рабочие данные/Run Store/историю не откатывать. Такой возврат снова открывает подтверждённое terminal window. Новые regression tests полезно сохранять как воспроизведение дефекта.
+
+### A8. DOC IMPACT и NEXT для независимой приёмки
+
+```text
+DOC IMPACT: YES
+CURRENT STATE IMPACT: YES
+ARCHITECTURE IMPACT: NO (граница S0 укреплена, новый subsystem/protocol не вводился)
+CONTEXT LIBRARY IMPACT: NO
+REGISTRY / ROUTING IMPACT: YES (только дельта для координатора)
+NEW DOCUMENT REQUIRED: NO
+CANONICAL OWNER: 13_Архитектура оперативной верификации и контроля выполнения задач.md
+AFFECTED DOCUMENTS: персональный 000_Задачи Codex.md; после independent review — общий 000, 34, 01/13, 05/06, 20 §5а, 21
+CONTRADICTION CHECK: REQUIRED
+LOSS CHECK: PASS (предыдущий отчёт/БЛОКИ 1–2/архивы сохранены; исходные 155 tests retained)
+```
+
+SHARED DOC DELTA **предложена, не внесена локально**: общий 000/34 должны заменить «callback-window NOT REPRODUCED» на «подтверждён и исправлен; 166 PASS self-reported, независимая приёмка ожидается»; 01/13 — отразить post-callback terminal gate и точный предел provisional notification; 21 — before/after, хеши, 61 scenario и ограничения; 05/06 — отдельное append-only событие AMENDMENT; 20 §5а — сохранить S1/S2/151G закрытыми до независимого решения. Immutable 33.3 и прежние findings не переписывать, новой нумерации коммитов не выдумывать. Новых нормативных изменений Git-контракта нет.
+
+NEXT (ChatGPT):
+
+1. Независимо сверить server.py/test hashes из A6, проверить оба call sites и post-callback gate, собственный terminal acknowledgement, legacy arguments, обычный Exception и распространение BaseException. Отдельно оценить provisional SUCCESS / corrective BLOCKED semantics и отказ corrective append; не подменять их обещанием «SUCCESS вообще не наблюдался».
+2. Повторить C5 **с guards**, ожидая 166 PASS / 0 FAIL/ERROR/SKIP, exit 0, guard 0. Проверить inclusion всех прежних 155 test IDs, исходные F01–F04 (Dredd=0/SUCCESS=0), 11 новых methods / 61 scenario, отсутствие replay/новых фаз.
+3. Проверить loss check карточки: исходный БЛОК 1 WAITING, БЛОК 2 прежний, старый БЛОК 3 и архивы целы; AMENDMENT только дописан. Согласовать SHARED DOC DELTA после независимого verdict.
+4. Commit/push/публикация — пользователь или отдельно уполномоченный внешний координатор. Самостоятельной независимой приёмки, DONE/VERIFIED, открытия S1/S2/151G и нового TASK старта здесь нет.
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION. После сохранения отчёта исполнитель остановлен до независимой приёмки.**
+
+---
+
 ## ARCHIVED S0-001 — прежние БЛОКИ 2/3 (сохранено при REPAIR, 2026-10-10)
 
 Историческая постановка S0 и отчёт FINDINGS / NO S0 PASS сохранены дословно. Это не активная задача и не новый verdict.

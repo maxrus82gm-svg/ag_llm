@@ -3555,7 +3555,7 @@ def _tool_evidence_binding(fact: dict) -> dict:
     )}
 
 
-def _validate_durable_tool_outcome(root: Path, run_id: str, fact: dict) -> None:
+def _validate_durable_tool_outcome(root: Path, run_id: str, fact: dict) -> dict | None:
     if not fact.get("executed"):
         return
     if fact.get("run_id") != run_id:
@@ -3573,6 +3573,7 @@ def _validate_durable_tool_outcome(root: Path, run_id: str, fact: dict) -> None:
     ))
     if result_sha256 != (fact.get("result") or {}).get("sha256"):
         raise ValueError("Durable tool result mismatch")
+    return record
 
 
 def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, policy: dict, repair=False) -> dict:
@@ -3750,6 +3751,36 @@ async def _run_agent_task_impl(
             except Exception as exc:
                 _block_evidence("mandatory_certification_unavailable:" + type(exc).__name__)
 
+    def _terminal_evidence_snapshot():
+        try:
+            if lifecycle is not None:
+                if any(lifecycle.remaining_evidence_requirements_for_stage(stage, consistency_tool_facts)
+                       for stage in lifecycle.plan["stages"] if not stage["persistence_required"]):
+                    raise ValueError("required evidence is no longer current")
+                lifecycle.assert_satisfied()
+                return lifecycle.evidence_freshness_snapshot_sha256(consistency_tool_facts)
+            # Legacy callers have no declared stages. Bind their file observations
+            # across the callback without introducing extra Git diagnostics.
+            states = []
+            for fact in consistency_tool_facts:
+                tool = fact["tool"]
+                if not fact.get("executed") or tool == "git_diff":
+                    continue
+                record = _validate_durable_tool_outcome(root, run_id, fact)
+                arguments = record["payload"].get("arguments") or {}
+                if not evidence_dependency_targets(tool, arguments):
+                    continue
+                try:
+                    state = _planner_dependency_fingerprint(root, tool, arguments, policy)
+                except (PermissionError, ValueError, OSError):
+                    state = "UNRESOLVED"
+                states.append((fact["source_record_id"], state))
+            return states
+        except LifecycleBlocked:
+            raise
+        except Exception as exc:
+            _block_evidence("terminal_evidence_invalid:" + type(exc).__name__)
+
     def _emit(event_type: str, payload: dict):
         event = {
             "event": event_type,
@@ -3758,14 +3789,16 @@ async def _run_agent_task_impl(
             **payload,
         }
         # Role switches do not waive the proof required for a returned SUCCESS.
+        terminal_success = event_type == "run_finished" and payload.get("status") == "SUCCESS"
         required_event = (
             event_type in {"tool_started", "final_audit_passed"}
-            or (event_type == "run_finished" and payload.get("status") == "SUCCESS")
+            or terminal_success
         )
         expected_payload = {key: copy.deepcopy(value) for key, value in event.items()
                             if key not in {"event", "timestamp", "run_id"}} if required_event else None
-        if event_type == "final_audit_passed" or (event_type == "run_finished" and payload.get("status") == "SUCCESS"):
+        if event_type == "final_audit_passed" or terminal_success:
             _assert_durable_outcomes()
+        terminal_snapshot = _terminal_evidence_snapshot() if terminal_success else None
         persisted_record = None
         if audit_recorder is not None:
             try:
@@ -3786,6 +3819,13 @@ async def _run_agent_task_impl(
                 on_event(copy.deepcopy(event))
             except Exception:
                 pass
+            except BaseException:
+                if terminal_success:
+                    try:
+                        _block_evidence("terminal_callback_interrupted")
+                    except LifecycleBlocked:
+                        pass
+                raise
 
         try:
             runtime_log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -3793,6 +3833,17 @@ async def _run_agent_task_impl(
                 f.write(json.dumps(event, ensure_ascii=False) + "\n")
         except Exception:
             pass
+        if terminal_success:
+            # SUCCESS observed by a synchronous callback is provisional until it
+            # returns. Never retry tools/audit after a terminal observer fault.
+            _assert_durable_outcomes()
+            try:
+                validate_run_record(root, run_id, persisted_record or {},
+                                    event=event_type, payload=expected_payload)
+            except Exception as exc:
+                _block_evidence("mandatory_evidence_event_unavailable:" + event_type + ":" + type(exc).__name__)
+            if _terminal_evidence_snapshot() != terminal_snapshot:
+                _block_evidence("terminal_evidence_changed_after_callback")
         return persisted_record
 
     def _context_message(
