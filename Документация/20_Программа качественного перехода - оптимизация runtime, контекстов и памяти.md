@@ -137,6 +137,46 @@ Server не спрашивает модель о действии, если пр
 - **151J — Integrated Optimization Regression / Consolidation.**
   Совместный B1/B2/B3, negative matrix, rollback switches, сравнение before/after.
 
+## 5а. RT-002/B2 — каноническая утверждённая аварийная ветка Ultra (2026-10-10)
+
+**Статус:** USER PLAN APPROVED — `RT-002/FINAL-B2` (immutable GitHub commit №242 `e7365ea773c9adc4e813e05a58810e40b4de4bb4`; blob `05cfcd9f3a4bcc26e9dab81a6bcb744b4ed15550`; SHA-256 `c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf`), внешняя запись USER PLAN APPROVAL в `28`. Это новая **каноническая ветка execution TASK**, утверждённая после RT-002 и Codex REVIEW-1, а **не** объявление об уже выполненном коде. Исходная нумерованная 151A–151J ниже/выше сохранена как историческая/отложенная программа; в точках конфликта **для новой RT-002 волны применять эту §5а**.
+
+**Статусы/переходы:** `151C / КТ-3` = PARKED / RESULT READY / AWAITING INDEPENDENT VERIFICATION / **НЕ DONE**. 151D/E/F/H/I и V13 = DEFERRED и **не получают** ложного PASS от новых gates. Зависимости старой 151D/E-ветки остаются обязательными для самой ветки, но **для новой аварийной волны** старый `151C DONE` не является required predecessor — вместо этого по отдельному доказательству применяются **S0** и перед compiler **S6a**. До accepted S0 dependent новые TASK запрещены. **S6b/151G запрещён до independent ACCEPTED S13a**, даже если S3/safety код уже написан. Данная dependency override осознанно утверждена человеком вместе с B2 и не означает общего пропуска КТ-3/4/5.
+
+**Исполнение:** только **одна активная Codex implementation TASK за раз**, если человек не изменит маршрут; пользователь назначил первой `CODEX-RT002-S0-001` / **S0** и запросил **GPT-6 Sol, Very High**. Реальный backend/effort проверить в интерфейсе, requested ≠ independently verified. Codex — свободный инженер в рамках конкретной TASK: собственные локальные исследования, релевантные offline tests/fixtures/adversarial checks и корректные предложения; ограничения не запрещают инициативу. Но он не вправе менять полномочия, чужие TASK, USER PLAN APPROVAL или реализовывать следующие узлы без отдельного поручения. Каждая задача завершает **RESULT READY → независимый ChatGPT verifier → USER acceptance/новая TASK**; не выдавать self-test за DONE.
+
+| № / раздел B2 | Явные predecessors (перед **началом**), ответственный тип | Evidence/verification/human check |
+| --- | --- | --- |
+| **S0** / fresh baseline gate | USER PLAN APPROVAL + verified handoff; независимый kernel analyst/verifier | Source/permission/exact args, mandatory packet, negative/freshness/replay, безопасный offline snapshot. Существенный drift ⇒ BLOCKED. Узкая пригодность scope, НЕ старый КТ-3 |
+| **S1** / baseline and routes | approved snapshot, после отдельной TASK assignment; evidence/transport | R031 raw 8+3 offline, 7 POST sites + mode callers, Chat/Compressor boundary, unknown и precise provenance; не live |
+| **S2** / budget policy | independently ACCEPTED S0 и S1; Server policy/UI owner | validated bytes/attempts/RUN policy, conservative units, UNKNOWN, protected reserve, будущие UI defaults после mock calibration |
+| **S3a** / durable budget ledger | ACCEPTED S2; ledger owner | reserve/terminal/late/UNKNOWN/crash/concurrent state machine mock; failure fail-closed |
+| **S3b** / physical pre-HTTP guard | ACCEPTED S3a+S1; transport | Все LLM physical sends, denied=0, final body bound+hash, tool schemas, standalone policies |
+| **S3c** / reserve before mutation | ACCEPTED S3b+S0; Server/evidence | tool + provider verification reserve, blocked when insufficient, no stale SUCCESS |
+| **S4** / file read limits | ACCEPTED S2; production apply после S3b; tools | отдельный full-read/request cap, honest unsupported >current physical bound, no silent partial |
+| **S5** / UI/policy snapshot | ACCEPTED S2; runtime demo после S3b/S4; UI/settings | edit/save/restart/reset, independent Planner/history/Final Audit, live RUN immutable effective revision |
+| **C1** / final protocol | ACCEPTED S0; R032 fixture; result owner | JSON protocol negative, human answer + user-requested JSON positive, no false PASS |
+| **C2** / paths/predicates | ACCEPTED S0; focused fixtures; Planner/tool owner | unambiguous base/target/scope, contains!=equals, no guessed path |
+| **S9** / usage accounting | ACCEPTED S1+S3a; accounting | unique physical attempts, UNKNOWN/cached/duplicate/late; no made-up billing |
+| **S13a** / independent emergency release | independently accepted S3c+S4+S5+C1+C2+S9; separate verifier | **Независимый OFFLINE PASS/ACCEPTED**, all physical routes bounded, restart/rollback/UI/negative evidence, not LIVE/КТ-7 DONE |
+| **S6a** / evidence/expansion | ACCEPTED S0+S3b+S3c+S4; context verifier | actual material + rights/freshness/source generation/negative evidence/tool pairing; missing→BLOCKED |
+| **S6b / минимальная 151G** | **independently ACCEPTED S13a + S6a**, C1/C2 required correctness cases accepted; context owner | bounded stage+DIRECT/repair/diagnostic working sets; R031 replay without lost material, not full old context stack |
+| **S7** / Inspector | ACCEPTED S3b+S6a, implementation completion after S6b; UI | true sent/denied/planned, source locators, truncation+freshness, safe preview |
+| **S10** / factor independence | ACCEPTED S5+C1+S9; post-compiler factor matrix after S6b; policy | Planner/history/Audit 2×2×2, independent settings without bypass |
+| **R1** / dirty research | ACCEPTED S1; evidence analysis | frozen clean/dirty injected evidence, causal delta FOUND or UNRESOLVED, no local Git |
+| **S13b / future 151J** | ACCEPTED S13a+S6b+S7+S10 + R1 result; independent verifier | All A1…A8, B1/B2/B3, false BLOCKED+semantic regressions, UI, **LIVE PENDING** |
+| **D / V-13** | Separate user permissions + own historical KT prerequisites | 151D/E/F/H/I, modular contexts, dialogue/compressor/rates/memory 152–154, not an RT-002 emergency prerequisite |
+
+**Минимально исполнимая критическая последовательность:** S0/S1→S2→S3a→S3b→S3c плюс S4/S5/C1/C2/S9→**independent S13a PASS** → S6a→S6b→S7/S10→S13b. S6a может быть начат по собственным listed predecessors до S13a, но compiler **S6b нельзя начинать до accepted S13a**. Все predecessors требуют independent acceptance, а не только Codex self-report. Ответственные лица/точный write scope назначаются отдельной TASK; общие server.py/ultra_ui.py/verifier_runtime.py не писать конкурентно.
+
+**Матрица непропускаемых решений** (source exact §6 B2): V1→S1; V2→S1/S6/S13b; V3→S2/S3/S13a (до 151G); V4→S4+request cap/S5; V5→S6a/b/S7; V6→C1; V7→S9; V8→R1 **research only**; V9→A1…A8; V10→this approved handoff; V11→S5/S10; V12→C2; V13→D deferred. **Acceptance A1…A8** принадлежит B2 §7 и здесь обязателен без сокращения: A1 separated large read; A2 2×2×2 roles/history/audit; A3 all pre-HTTP routes/boundaries; A4 recovery/cancel/concurrency; A5 duplicate/late/UNKNOWN; A6 dirty/clean causal evidence; A7 internal protocol vs explicit JSON; A8 missing/truncated/wrong-target evidence. B1/B2/B3 positive benchmarks + negative, fake socket/credential isolation, UI smoke и rollback — в B2 §7–8; не выдавать `offline passed` за `LIVE VERIFIED`.
+
+**Hard safety contract** (source B2 §4–5): authority на final serialized HTTP body и durable reserve-before-send; policy bytes/read/attempts/RUN с model-specific estimate (bytes/4 ≠ гарантированный token cap); UNKNOWN liability, output and mandatory tool/provider verification reserve, no balance reset on retry/replan/restart/UI, same ledger across modes, no paid network in offline. No actual material loss, full source+generation+ACL/freshness/negative preserved; old compiler rollback только под общим guard. UI задаёт все основные настраиваемые полями с единицами/defaults, отдельными Planner/history/Audit controls и human-readable denied reason. False BLOCKED/usefulness измеряются отдельно от экономии tokens. No premature fixed numeric defaults/prod enable/paid stress.
+
+**Live vs offline:** прежняя §10 остаётся целью **полной КТ-7**, но введён **отдельный приёмочный режим для аварийной волны**: approved offline acceptance допускает S0…S13a и безопасное bounded S6b в рамках матрицы; это не закрывает прежние live KT6/KT7. Полная live серия только по особому USER GO/лимиту/stop criteria и отдельному acceptance. Даже если old §13 diagram визуально ведёт через 151C, для RT-002 применяется эта утверждённая вставка; старые KT3/4/5 остаются PENDING до их собственных доказательств.
+
+**Документационное владение:** `20` = канонический owner исполнения и зависимостей, `21` = факты и истории реальных проверок, `05` = статусы, `34/000` = текущая навигация; `33.3 B2` immutable approved reference, `28` внешний approval/seal. При каждой фактической TASK сверять локальный source snapshot и observed evidence; Git history/commit/branch — только внешнему уполномоченному координатору, **никакого локального Codex Git/GitHub**. Контроль результата: scope, source-version, independent tests, honest limitations, human readable UI/demo или метод проверки; user может принять/попросить исправления до следующей TASK.
+
 ## 6. Память после оптимизационной базы
 
 Память не является способом лечить текущий перерасход T-021 и не внедряется раньше 151J.
