@@ -71,6 +71,7 @@ PROVIDER_ACCOUNTING_EVENTS = {
     "provider_attempt_terminal",
 }
 FRESHNESS_SERVER_EVENTS = {
+    "tool_evidence_stale",
     "evidence_invalidated",
     "final_audit_evidence_snapshot_bound",
     "final_audit_evidence_snapshot_stale",
@@ -353,6 +354,18 @@ class AuditThreadRecorder:
             self.workspace_root, self.run_id, source=source, event=kind,
             payload=payload, timestamp=float(event.get("timestamp") or 0.0),
         )
+        # The append/index fsync acknowledgement is the evidence authority.
+        # Summary/UI projections may fail independently without losing that proof.
+        try:
+            self._update_summary(event)
+        except Exception as exc:
+            event["audit_summary_error"] = type(exc).__name__
+        return record
+
+    def _update_summary(self, event: dict) -> None:
+        kind = event["event"]
+        if kind in {"tool_finished", "tool_error"}:
+            return
         summary = load_run_summary(self.workspace_root, self.run_id) or {}
         changed = False
         if kind == "api_request":
@@ -395,13 +408,20 @@ class AuditThreadRecorder:
             changed = True
         if changed:
             update_run_summary_index(self.workspace_root, self.run_id, summary)
-        return record
 
     def observe(self, event: dict, *, persist: bool = True) -> dict | None:
         kind = event.get("event")
         if kind not in _AUDIT_EVENTS:
             return None
         persisted_record = self._persist_event(event) if persist else None
+        try:
+            self._project_event(event)
+        except Exception as exc:
+            event["audit_projection_error"] = type(exc).__name__
+        return persisted_record
+
+    def _project_event(self, event: dict) -> None:
+        kind = event.get("event")
         issues = self.thread["issues"]
         if kind in EXECUTOR_DIAGNOSTIC_EVENTS:
             diagnostic_kind = kind.removeprefix(
@@ -654,4 +674,3 @@ class AuditThreadRecorder:
             self.thread["run_status"] = _short(event.get("status")) or "FINISHED"
             if event.get("status") == "BLOCKED" and self.thread["final_audit"] == "PENDING":
                 self.thread["final_audit"] = "NOT_RUN"
-        return persisted_record

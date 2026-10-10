@@ -19,11 +19,492 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-**Статус:** WAITING — новой утверждённой задачи нет.
-**Последний результат:** CODEX-RT002-S0-001 — RESULT READY / AWAITING INDEPENDENT VERIFICATION, предлагаемый verdict FINDINGS; подробности в БЛОКЕ 3. S1+ не начинать без независимого решения и нового назначения. Старая 151C PARKED / КТ-3 PENDING.
+**Статус:** ОЖИДАНИЕ НОВОЙ УТВЕРЖДЁННОЙ ЗАДАЧИ.
+
+CODEX-RT002-S0-REPAIR-001 передана на независимую проверку ChatGPT: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка — БЛОК 2, фактический результат — БЛОК 3. Следующие TASK, S1, 151G и старая 151C не запускать.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+Ниже полная первоначальная постановка прежнего БЛОКА 1, сохранённая без изменения bytes; её исходный статус READY относится к моменту назначения. Текущий результат и AMENDMENT — в БЛОКЕ 3.
+
+# CODEX-RT002-S0-REPAIR-001 — Repair Evidence Freshness & Durable Outcomes
+
+**Статус:** USER ASSIGNED / READY FOR MANUAL START после вставки пользователем.
+
+**Исполнитель:** Codex — GPT-6 Sol, Very High.
+
+**Проект:** `ag_llm` / GigaChat Ultra.
+
+**Тип:** Runtime correctness & safety repair.
+
+**Независимый verifier:** ChatGPT.
+
+**Основная цель:** устранить две подтверждённые анализом исходников причины четырёх HIGH-нарушений, найденных в `CODEX-RT002-S0-001`, сохранив остальные гарантии Ultra.
+
+## 1. Исходное состояние
+
+Предыдущая S0 закончилась вердиктом `FINDINGS / NO S0 PASS`.
+
+Codex сообщил результаты 97 offline-тестов: 93 PASS, 4 FAIL, 0 ERROR/SKIP.
+
+Исходные доказательства:
+
+- Коммит пользователя №247: `2fb37a266a0780191471cdcecea587fb449a4168`.
+    
+- Личная карточка `Документация/000_Задачи Codex.md`, БЛОК 3.
+    
+- Новый тестовый модуль `test_rt002_s0_kernel.py`.
+    
+- Независимый анализ ChatGPT и статус блокировки дальнейших задач — коммит №248.
+    
+- Каноническая программа — `20`, §5а; утверждённый план — `33.3 FINAL-B2`.
+    
+
+Четыре нарушения объединяются в две группы:
+
+**Группа A — S0-F01 и S0-F02: неправильная привязка наблюдения к состоянию файла.**
+
+- READ возвращает прежние данные, но последующий fingerprint может отражать уже изменённый файл.
+    
+- VERIFY успешно проверяет прежнее содержимое, однако последующее изменение файла может быть ошибочно связано с положительным результатом проверки.
+    
+- В обоих случаях возможны вызов Dredd и ложный `SUCCESS`.
+    
+
+**Группа B — S0-F03 и S0-F04: отсутствие обязательного сохранённого доказательства.**
+
+- При недоступности `AuditThreadRecorder` обязательный результат может остаться только в памяти.
+    
+- Если запись `tool_finished` не сохранена, логический ID доказательства всё ещё может удовлетворить требование.
+    
+- В обоих случаях возможен `SUCCESS` без восстановимого обязательного evidence.
+    
+
+## 2. Требуемый инженерный результат
+
+Исправить обе причины на уровне правильной архитектурной границы, а не частными условиями ради четырёх тестов.
+
+### A. Достоверность наблюдений READ/VERIFY
+
+Результат операции и его доказательство должны относиться к одному фактическому наблюдению.
+
+Исследуй и при необходимости скорректируй:
+
+- `_agent_read_file`, `_agent_verify_file_content`;
+    
+- `_planner_dependency_fingerprint`;
+    
+- post-dispatch binding в `_run_agent_task_impl`;
+    
+- связанные методы `task_planner.py` и lifecycle/freshness;
+    
+- аналогичные пути `read_file_range`, `find_text`, `list_dir`, если обнаружится та же ошибка.
+    
+
+Требования:
+
+1. Не присваивать старому результату новый fingerprint, полученный после изменения target.
+    
+2. Сохранять точную identity: target, arguments, source, generation, RUN, stage и requirement.
+    
+3. Сопоставлять наблюдение с текущим состоянием без подмены его происхождения.
+    
+4. При подтверждённом расхождении требовать актуальное evidence или переходить в честный `BLOCKED`.
+    
+5. Не считать одинаковый content hash достаточным доказательством одинаковой authority/identity.
+    
+6. Сохранять семантику `equals`, `contains`, `exists`, отрицательные результаты и проверку изменений перед terminal `SUCCESS`.
+    
+
+Простой дополнительный snapshot не считается исправлением, если он снова используется для маркировки устаревшего результата.
+
+### B. Обязательная сохранность доказательств
+
+Исследуй `AuditThreadRecorder`, `_emit`, `tool_finished`, Run Store и финальное построение Audit Packet.
+
+Требования:
+
+1. Разделить необязательные диагностические события и обязательные доказательства, необходимые для утверждения результата.
+    
+2. Обязательный результат инструмента должен иметь действительно сохранённую, доступную и проверяемую запись.
+    
+3. Пустой или выдуманный `source_record_id` не может заменять durable outcome.
+    
+4. Ошибка обязательной записи, отсутствующий outcome, нарушение identity или повреждение evidence должны блокировать соответствующий certified `SUCCESS`.
+    
+5. Неполный критичный Audit Packet не должен запускать Dredd.
+    
+6. Сохранять негативные факты, ошибки, результат частичной операции и восстановимую историю.
+    
+7. Не останавливать полностью работоспособную задачу из-за отказа исключительно декоративной телеметрии, если обязательное evidence независимо сохранено и доказано.
+    
+8. После mutation со сбойным сохранением результата **не выполнять автоматически повторную mutation**, не доказав её безопасность.
+    
+
+Существующий механизм mandatory tool reserve и границы разрешений должны продолжать действовать.
+
+## 3. Инженерная самостоятельность
+
+Работай самостоятельно как опытный разработчик.
+
+Разрешено:
+
+- глубоко исследовать связанные исходники и зависимости;
+    
+- выбирать наиболее надёжное техническое решение;
+    
+- исправлять production-код, необходимый для закрытия указанных двух причин;
+    
+- добавлять и усиливать offline regression tests;
+    
+- устранять обнаруженные внутри этого scope сопутствующие дефекты;
+    
+- проводить adversarial analysis, включая не перечисленные явно edge cases.
+    
+
+Ожидаемые исходники: `server.py`, `task_planner.py`, `run_store.py`, `audit_storage.py` и непосредственно связанные с ними компоненты по фактической необходимости. Список не ограничивает глубину исследования.
+
+**Не делать:** общую переработку архитектуры Ultra, новый Context Compiler, budget ledger, переделку интерфейса, изменение моделей и транспортов, возобновление 151C или работы над 151D/E/F/H/I.
+
+Если обнаружен дефект за пределами repair scope — зафиксировать `FINDING / PROPOSAL` с доказательством, не расширяя самовольно задачу.
+
+## 4. Обязательные тесты
+
+Использовать существующий `test_rt002_s0_kernel.py` и необходимые адресные регрессионные тесты.
+
+Минимальные сценарии:
+
+- F01: изменение файла после READ, до evidence binding.
+    
+- F02: изменение файла после положительного `equals`, до binding.
+    
+- F03: ошибка создания обязательного recorder.
+    
+- F04: ошибка сохранения `tool_finished`.
+    
+- Положительный READ с корректно сохранённым material.
+    
+- Положительный VERIFY без изменения target.
+    
+- Корректное обнаружение устаревших source/generation и неправильного target.
+    
+- Missing/corrupt/partial outcome, ошибка index/append при сохранении.
+    
+- Recovery/restart/cancellation после операции без повторной опасной mutation.
+    
+- Отказ необязательной телеметрии при исправном обязательном storage.
+    
+- Проверки прав и разрешений, negative evidence, Final Audit, restart/replay.
+    
+
+Для нарушенных обязательных требований: **никакого ложного SUCCESS и никакого преждевременного Dredd**. Если возможно законное восстановление через новое evidence, успешное завершение должно оставаться достижимым.
+
+**Цель regression:** перевести четыре исходных FAIL в PASS, сохранить 93 предыдущих PASS и добавить разумные проверки новых пограничных случаев. Не подменять это изменением ожидаемых результатов, отключением тестов, `expectedFailure` или удалением отрицательных fixtures.
+
+Все тесты — offline/mock в изолированных временных Workspace. Без реального провайдера, платных API, сетевых вызовов и пользовательского production storage. Перед запуском расширенного suite проверить, что тесты не выполняют неожиданных Git/network/side-effect операций.
+
+## 5. Визуальная и эксплуатационная сторона
+
+Эта TASK не требует изменения GUI.
+
+Однако Server должен формировать понятные terminal events и причины отказа, чтобы существующий монитор Ultra мог показывать отказ обязательного evidence без ложного статуса `SUCCESS`.
+
+Если существующий монитор не умеет корректно отображать новый статус, зафиксируй адресное UI finding и предлагаемую доработку. Сам `ultra_ui.py` без отдельного разрешения не менять.
+
+Кнопка `ULTRA-UX-STOP-001` — другая будущая задача, её здесь не реализовывать.
+
+## 6. Документация, Git и выполнение
+
+Перед началом: `08 → общий 000 → 34 → 18 → 01`, затем профиль `13`, программа `20 §5а`, журнал `21`, утверждённый `33.3 FINAL-B2`, собственная карточка и исходный отчёт S0.
+
+Учесть правило `DOC-TASK-BLOCK1-01@1` из документа `18`.
+
+**Активную постановку БЛОКА 1 не переписывать в процессе исполнения.** Небольшие уточнения пользователя, поступившие в чат, учитывать как отдельные адресные AMENDMENT и отразить в итоговом отчёте.
+
+Локальному Codex запрещены любые Git/GitHub операции, включая read-only status/diff/log/show и косвенный запуск этих операций тестами. Нужный commit/blob provenance предоставляет пользователь или координатор. Исходные файлы читать напрямую; точные SHA-256 обычных файлов разрешены.
+
+Нельзя удалять или перезаписывать чужие, untracked и пользовательские рабочие данные.
+
+Общую документацию `000/05/06/13/20/21/28/33.3/34` не менять. Для неё подготовить `DOC IMPACT / SHARED DOC DELTA`; синхронизацию делает ChatGPT.
+
+## 7. Критерии сдачи
+
+В БЛОКЕ 3 предоставить:
+
+- точные файлы и функции, которые изменены;
+    
+- объяснение обеих причин дефектов и способа устранения;
+    
+- результаты исходных четырёх regression probes до/после;
+    
+- полный набор запущенных тестов: команда, количество PASS/FAIL/ERROR/SKIP и exit code;
+    
+- положительные и отрицательные результаты проверки обязательного evidence;
+    
+- конкретные доказательства, что Dredd/SUCCESS не допускаются при неполном обязательном evidence;
+    
+- восстановление, ошибки storage и поведение при повторных попытках;
+    
+- исходные SHA-256, границы источников и возможные расхождения с GitHub baseline;
+    
+- риски, оставшиеся ограничения, rollback, `DOC IMPACT` и `NEXT`;
+    
+- отдельный перечень дополнительных AMENDMENT, если пользователь давал их в процессе.
+    
+
+После фактического завершения безопасно перенести полную первоначальную постановку в БЛОК 2, factual result — в БЛОК 3 и освободить БЛОК 1. Не удалять старый отчёт S0 и архив предыдущих задач.
+
+**Итоговый статус:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION`. Не объявлять `DONE / VERIFIED` самостоятельно.
+
+После сдачи ChatGPT независимо рассматривает исправления и повторную S0-проверку. Только после независимой приёмки можно обсуждать следующую зависимую задачу программы.
+
+**Важно:** никакого самостоятельного старта S1, 151G или новых TASK.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK ID:** CODEX-RT002-S0-REPAIR-001 — Repair Evidence Freshness & Durable Outcomes.
+**СТАТУС:** **RESULT READY / AWAITING INDEPENDENT VERIFICATION**. Самопроверка Codex завершена; независимый PASS ChatGPT ещё не получен. Это не DONE / VERIFIED и не принятие всей S0 или 151C.
+**Дата:** 2026-10-10. **Исполнитель:** локальный Codex; запрошенный пользователем профиль — GPT-6 Sol, Very High. Инструментального подтверждения фактического backend/effort нет; переключение модели и делегирование не выполнялись.
+**Основание старта:** прямое поручение пользователя на новую REPAIR TASK и исходный БЛОК 1. **AMENDMENT:** новых уточнений во время исполнения не поступало; исходная постановка сохранена целиком в БЛОКЕ 2.
+
+## 1. Вывод и границы результата
+
+Обе подтверждённые причины исправлены. Сам результат READ/VERIFY теперь определяет fingerprint наблюдения; последующее чтение только проверяет свежесть. Для любого RUN, возвращающего SUCCESS обязательный выполненный outcome должен читаться по реальному указателю Run Store, совпадать по байтам и identity; RAM-ID или запись одного tool_started не являются доказательством результата.
+
+Финальный guarded offline-прогон: **155 PASS / 0 FAIL / 0 ERROR / 0 SKIP, exit 0, isolation violations 0**. В него входят все 97 исходных тестов S0: прежние 93 положительные проверки сохранены, четыре отрицательные регрессии проходят; дополнительно 23 новых repair-тестов и 35 связанных проверок совместимости/файловых инструментов. Для четырёх исходных инъекций финальные наблюдения: **Dredd = 0, опубликованный SUCCESS = 0**, каждый RUN возвращает BLOCKED.
+
+Изменены только server.py, run_store.py, audit_storage.py, test_rt002_s0_kernel.py; добавлен test_rt002_s0_repair.py. Документационная запись — только эта личная карточка. task_planner.py изучен, но не изменён: существующие matching/freshness/generation/recovery методы используются через исправленную серверную границу. Нет изменений GUI, моделей, транспортов, Context Compiler, budget ledger, Web Alarm и общих регламентов. S1, 151G, ULTRA-UX-STOP-001 и следующие TASK не запускались.
+
+## 2. Причины и production-изменения
+
+### A. Наблюдение и последующее состояние раньше смешивались
+
+До repair dispatcher получал старый material/положительный equals, затем post-dispatch fingerprint заново читал уже изменённый target. Старое утверждение получало новый hash и проходило проверку свежести. Дополнительный snapshot сам по себе эту ошибку не устраняет.
+
+В server.py непосредственно изменены _agent_verify_file_content, _planner_dependency_fingerprint, _run_agent_task_impl и проекция tool facts в _collect_final_audit_evidence; добавлены _tool_observation_fingerprint, _tool_evidence_binding и _validate_durable_tool_outcome. Реализации read_file/read_file_range/find_text/list_dir уже возвращали данные нужного наблюдения и не переписывались.
+
+- Новый _tool_observation_fingerprint связывает read_file/read_file_range/find_text с content_sha256, который получен из того же логического чтения, что и material; content VERIFY — с actual_sha256 той же проверки. Проверяется нормализованный path результата; точные исходные arguments и target identity сохраняются отдельно.
+- list_dir связывается с возвращёнными path/entries/truncated, а не с повторным листингом. Truncated observation не удовлетворяет обязательное evidence. Ветка git_diff использует возвращённое наблюдение; при этой TASK реальные Git-вызовы не выполнялись.
+- _agent_verify_file_content для exists/absent фиксирует regular-file existence и target_exists одним stat-наблюдением. _planner_dependency_fingerprint сопоставляет ту же семантику предиката: изменение только содержимого не делает истинный exists ложным. equals не превращается в contains; положительные/отрицательные значения остаются различимы.
+- Для непрозрачных проверок вроде python_compile dependency snapshot фиксируется перед исполнением, затем сравнивается с текущим состоянием. Проверка компиляции в новых тестах полностью fake, без дочернего процесса.
+- Post-dispatch сохраняет старый observation fingerprint как исторический факт. Подтверждённое расхождение даёт tool_evidence_stale, execution_defect текущего stage и новую evidence_generation; старое evidence больше не закрывает этап. Executor получает явную пометку STALE и требование свежего наблюдения. Повтор READ/VERIFY после изменения может законно завершить RUN.
+- Исходные проверки свежести перед Final Audit, после сбора Packet, после Dredd и перед terminal SUCCESS сохранены. Mutation не проходит через generic stale-check собственного pre-state: её фактический результат проверяется штатными receipts/obligations после durable gate.
+
+### B. Обязательные outcomes раньше сохранялись best effort
+
+Исключения recorder/observe подавлялись, но RAM-факт с логическим source_record_id продолжал участвовать в stage evidence. Указатель мог быть пустым или вести только на начало операции.
+
+В run_store.py:
+
+- append_run_record проверяет число записанных байтов outcome и index, сохраняет прежние flush/fsync для обоих файлов и возвращает SHA-256 точных записанных байтов.
+- load_run_record отвергает неоднозначный ID, неверную пару source/stream, недопустимые offset/length, неполную запись, checksum mismatch и несовпадение record/index identity. Старые индексы без checksum остаются читаемыми.
+- Новый validate_run_record требует реальный acknowledgement, повторно читает outcome с checksum именно из acknowledgement, проверяет event и при необходимости полный payload. Удаление checksum из mutable index не снимает эту проверку. Автоматического исправления повреждённой истории и повторного исполнения инструмента нет.
+
+В audit_storage.py:
+
+- _persist_event отделяет подтверждение append/index от _update_summary; observe — от _project_event. Ошибка обязательной записи продолжает распространяться. Ошибка исключительно summary/UI projection после сохранения не теряет acknowledgement; событие получает audit_summary_error/audit_projection_error.
+- tool_evidence_stale добавлен в FRESHNESS_SERVER_EVENTS и сохраняется в истории. Полные tool_finished/tool_error, включая отрицательные результаты, сохраняются до закрытия этапа.
+
+В server.py:
+
+- _tool_evidence_binding и _validate_durable_tool_outcome проверяют source, task/RUN/plan/version/stage/candidate/generation/requirements/targets/tool/capability/status/sequence, arguments hash, observation hash и полный result hash. Packet содержит source_run_store_record_id, source_run_store_sha256, plan_id и candidate_id для независимого разрешения ссылки.
+- _emit независимо от включения Planner/Final Audit требует сохранённые и читаемые tool_started перед dispatcher, final_audit_passed и terminal SUCCESS. Начало операции повторно проверяется после callback до физического исполнения. Отсутствие recorder блокирует RUN до Executor.
+- _assert_durable_outcomes работает после каждого outcome, до следующей итерации/dispatch, до закрытия mutation receipt/этапа, до сбора Packet, непосредственно перед Final Dredd, перед final_audit_passed и SUCCESS. Подтверждение Final Audit также повторно проверяется перед SUCCESS.
+- Ошибка обязательного storage даёт существующий run_finished(status=BLOCKED, reason=mandatory_...) и LifecycleBlocked. Если возможно, terminal reason сохраняется в lifecycle. Candidate после физической mutation с потерянным outcome помечается executed=True, outcome=UNKNOWN, evidence_status=UNAVAILABLE до остановки; повтор mutation не запускается.
+- on_event получает deepcopy, поэтому внешний callback не переписывает серверный material/identity. Создание каталога и запись дополнительного runtime trace входят в best-effort блок и сами не являются обязательным evidence.
+
+Mandatory storage-gate действует и при отключении Final Audit, и при обоих role-флагах False: эти переключатели не разрешают SUCCESS без durable outcomes. Эта дополнительная ветка того же дефекта обнаружена при заключительной экспертизе и закрыта тремя адресными regression-тестами. Observation provenance формируется и в legacy RUN без lifecycle; requirement matching/generation относятся к включённому Planner. Изменений полномочий инструментов или разрешений на Git здесь нет.
+
+## 3. Четыре исходных regression probes: до / после
+
+| Probe | До repair, повторено на исходных bytes | После repair, финальный прогон |
+|---|---|---|
+| S0-F01: READ → внешнее изменение до binding | OLD MATERIAL, fingerprint нового файла; Dredd 1, SUCCESS 1, FAIL | OLD MATERIAL остаётся со своим fingerprint; tool_evidence_stale, generation повышена; Dredd 0, SUCCESS 0, BLOCKED |
+| S0-F02: успешный equals → WRONG до binding | passed=True старого done\n, fingerprint WRONG; Dredd 1, SUCCESS 1, FAIL | Старый PASS не становится доказательством WRONG; Dredd 0, SUCCESS 0, BLOCKED |
+| S0-F03: constructor recorder raises OSError | RAM evidence с пустым durable pointer; Dredd 1, SUCCESS 1, FAIL | mandatory_evidence_store_unavailable, ни одного tool_started; Dredd 0, SUCCESS 0 |
+| S0-F04: observe(tool_finished) raises OSError | Начало операции сохранено, outcome потерян; Dredd 1, SUCCESS 1, FAIL | mandatory_evidence_unavailable: Missing durable Run Store acknowledgement; один tool_started, Dredd 0, SUCCESS 0 |
+
+В F01/F02 fixture намеренно больше не предоставляет свежих tool responses: после stale observation Executor повторяет финальный текст, а существующий lifecycle bound завершает RUN с run_lifecycle_budget_exhausted. Это не немедленный storage BLOCKED; причинное событие tool_evidence_stale сохраняется раньше. Отдельные новые тесты дают второе свежее чтение/проверку и получают законный SUCCESS. В equals recovery содержимое возвращается к тому же hash, но только новое source_record_id и повышенная generation удовлетворяют требование.
+
+Исходные инъекции четырёх probes не удалены и не ослаблены. При первом прогоне исправленного production четыре диагностические строки старых тестов дали AttributeError: они безусловно читали audit.await_args, хотя безопасный сервер уже не отправлял Packet. Изменены только эти предпосылки/диагностические assertions: материал и fingerprint проверяются по сохранённому tool_finished, дополнительно требуются stale/BLOCKED и ноль Dredd. Прежнее главное требование «никакого ложного SUCCESS» сохранено. Нет expectedFailure, удаления отрицательных fixtures или отключения исходных 97 тестов; совпадение всех 97 test IDs с первым полным manifest проверено.
+
+## 4. Дополнительные сценарии и доказательства
+
+| Граница | Проверки и фактический исход |
+|---|---|
+| READ/VERIFY freshness | read_file_range, find_text и list_dir меняются после возвращённого result; exists → удаление, absent → появление файла. Все требуют свежего observation; при исчерпанном tool reserve — BLOCKED, Dredd 0, SUCCESS 0. |
+| Семантика predicates | exists сохраняет истинность при изменении только content; equals/contains/sha256 и отрицательные результаты сохранены существующими и дополнительными тестами. |
+| Законное восстановление | После stale READ/equals допускается новое наблюдение, повышенная generation, новый source; Final Dredd 1, SUCCESS 1. Старое evidence остаётся историей. |
+| Непрозрачная проверка | Fake compile возвращает OK, но меняет dependency; pre-state не подменяется новым, stage не удовлетворён. Реальный subprocess не запускался. |
+| Повреждение/адресация | 8 вариантов: missing index entry, duplicate ID, отрицательный offset, wrong event, wrong source/stream, partial record, equal-length parseable corruption, удалённый stream. Каждый блокирует до Final Dredd. |
+| Identity | При одинаковом material отдельно отвергаются 19 подмен: logical/durable source, checksum, task/RUN/plan/version/stage/candidate/generation/requirements/target/tool/capability/status/arguments/observation/sequence/result. Существующий matcher дополнительно проверяет executed и source/generation eligibility. |
+| Legacy index | Старый index без checksum читается; это не позволяет сертификацию без acknowledgement. Семантически эквивалентная whitespace-правка record при изменённом locator и удалённом index checksum отвергается по исходному byte checksum. |
+| Реальные storage-фазы | Короткая физическая запись outcome; короткая запись index; отказ открытия index для append; отказ первого и второго fsync. 5 вариантов после физической mutation: ровно 1 mutation, Dredd 0, SUCCESS 0, частичная история не переписывается автоматически. |
+| Mutation и restart | Потеря outcome после записи оставляет файл с done, candidate UNKNOWN/executed, без persistence_satisfied и без повторной записи. Новый явно начатый READ RUN в том же temp Workspace не воспроизводит старую mutation и может завершиться. Автоматического resume нет. Существующая cancellation-проба после физической записи также сохранена. |
+| До dispatcher | Недоступен обязательный tool_started — физическая mutation не начинается. |
+| До Dredd | Повреждение outcome при сборе Packet: Final Dredd 0, SUCCESS 0. |
+| Во время/после Dredd | Повреждение source во время fake Final Audit: он уже вызван один раз, но final_audit_passed/SUCCESS не публикуются. Удаление outcome или attestation после audit-pass callback также блокирует SUCCESS. Это не обещание отменить уже отправленный запрос. |
+| Terminal storage | Отказ append final_audit_passed или run_finished SUCCESS: SUCCESS не публикуется; возвращается BLOCKED. |
+| Role flags | Planner ON / Final Audit OFF и оба OFF не обходят mandatory storage gate. При исправном store legacy RUN с обоими OFF по-прежнему завершается без вызова Dredd. |
+| Negative facts | Ошибочный equals сохранён как tool_error с passed=False и полным binding; не закрывает обязательное требование и не запускает Final Dredd. |
+| Необязательная телеметрия | Сбои summary, UI projection, executor diagnostic и дополнительного runtime log при исправном mandatory store не отменяют законное завершение. Callback не переписывает серверный result/binding. |
+| Регрессии гарантий | Сохранены permission escalation/scope denial, exact requirement matching, mandatory reserve, Final Audit routing/recovery, provider unknown usage/replay accounting, backup/rollback и precise file edits. |
+
+Все Dredd-числа здесь — await_count fake verifier, все Executor ответы/token adapters — mock. Это offline correctness evidence, не измерение качества живой модели или провайдера.
+
+## 5. Прогоны: команды, результаты, изоляция
+
+Рабочий каталог M:/GitHub/ag_llm. Команды ниже воспроизводимы; FULL означает manifest на соответствующей промежуточной версии harness. Финальная версия FULL содержит 155 тестов. Порядок selectors не влияет на порядок выполнения manifest.
+
+FULL:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+FOUR:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_lost_tool_outcome_cannot_return_certified_success test_missing_recorder_cannot_return_certified_success test_read_change_before_fingerprint_cannot_certify_old_content test_verify_change_before_fingerprint_cannot_certify_old_predicate
+```
+
+DEV14:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_corruption_during_final_audit_cannot_emit_pass_or_success test_corruption_during_packet_collection_never_reaches_dredd test_deleted_outcome_after_audit_pass_is_rechecked_before_success test_exists_and_absent_races_require_a_new_observation test_exists_predicate_survives_content_only_change test_fake_compile_cannot_certify_changed_dependencies test_final_attestation_and_terminal_write_failures_cannot_publish_success test_missing_corrupt_partial_or_wrong_record_blocks_before_dredd test_outcome_failure_after_mutation_records_unknown_without_retry test_projection_summary_and_diagnostic_failures_do_not_veto_valid_outcomes test_range_find_and_directory_races_never_relabel_old_observation test_required_intent_append_failure_prevents_physical_mutation test_stale_equals_can_recover_without_reusing_old_pass test_stale_read_recovers_only_with_fresh_generation
+```
+
+DEV3:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_deleted_outcome_after_audit_pass_is_rechecked_before_success test_missing_corrupt_partial_or_wrong_record_blocks_before_dredd test_range_find_and_directory_races_never_relabel_old_observation
+```
+
+DEV6:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_acknowledgement_binds_every_identity_dimension_even_with_equal_content test_final_attestation_deleted_after_callback_cannot_certify_success test_negative_verify_is_durable_and_never_certifies_success test_old_indexes_remain_readable_but_cannot_downgrade_certification test_partial_writes_index_append_and_fsync_failures_never_replay_mutation test_runtime_log_failure_is_optional_and_callbacks_cannot_rewrite_evidence
+```
+
+ROLES3:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_both_roles_disabled_cannot_bypass_durable_outcomes test_both_roles_disabled_still_allow_success_with_durable_outcome test_disabled_audit_does_not_waive_planner_durable_outcomes
+```
+
+| Прогон | Команда | TESTS | PASS / FAIL / ERROR / SKIP | exit | guard | sandbox (в системном Temp) |
+|---|---|---:|---|---:|---:|---|
+| До исправления | FOUR | 4 | 0 / 4 / 0 / 0 | 1 | 0 | codex-rt002-s0-lv5q4mc_ |
+| Production исправлен, старая диагностика probes | FULL (97) | 97 | 93 / 0 / 4 / 0 | 1 | 0 | codex-rt002-s0-3wywtt5f |
+| Исправлена диагностика четырёх probes | FOUR | 4 | 4 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-y5xd65is |
+| Разработка дополнительных fixtures | DEV14 | 14 | 11 методов PASS; 2 FAIL subcases / 3 ERROR subcases; SKIP 0 | 1 | 0 | codex-rt002-s0-8iu_kw36 |
+| Исправлены fixtures: безопасный deepcopy и имя text | DEV3 | 3 | 3 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-gu77ge6u |
+| Новые storage/identity/terminal probes | DEV6 | 6 | 6 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-bhmx035_ |
+| Полный S0 + repair | FULL (117) | 117 | 117 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-f_xd9x82 |
+| Расширение старых зависимых тестов — НЕ ЗАСЧИТАНО | FULL (151) | 151 | 151 / 0 / 0 / 0; guard 2 | 1 | 2 | codex-rt002-s0-0vf3nwl0 |
+| Безопасный расширенный набор до проверки role flags | FULL (152) | 152 | 152 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-u5cfuc7r |
+| Role flags: адресные проверки | ROLES3 | 3 | 3 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-tkr70j9x |
+| Итог после устранения обхода role flags | FULL (155) | 155 | 155 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-bzrixjsk |
+
+В DEV14 три метода имели неуспешные subcases; FAIL/ERROR перечислены как записи unittest, их нельзя складывать с PASS методов. Причины development-ошибок — неверное имя аргумента find_text (needle вместо text) и повтор fault callback при deepcopy тестового Events; исправлены сами новые fixtures, инъекции сохранены.
+
+В прогоне 151 runner отклонил две попытки subprocess.Popen **до создания дочерних процессов**. Причина — прежний test_explicit_raw_task_no_mutation_policy_is_fail_closed косвенно вызвал реальные _agent_git_status/_agent_git_diff через _collect_final_audit_evidence. Ни один Git-процесс не стартовал; прогон имеет exit 1 и не считается безопасным PASS. Финальный IsolatedFileEditingToolboxTests подставляет fake unavailable Git observations для всех тестов этого класса; возвращён также ранее не включённый дополнительный test_mutation_bookkeeping_and_final_audit_evidence. Негативный тест запрета мутаций не отключён. Финальные guard counters равны нулю.
+
+Runner устанавливает process-wide audit guards **до runtime imports**: запрещает дочерние процессы, сеть/DNS, чтение Git/production storage и записи за пределами sandbox. Штатный синхронный socketpair для Windows asyncio разрешён адресно. TEMP/TMP/LOCALAPPDATA/APPDATA перенаправлены в изоляцию, -B исключает bytecode writes; provider/token/Git diagnostics в исполняемых тестах fake. pytest-style functions вызываются адресно с временными fixtures, без plugin discovery и без полного неконтролируемого repository suite.
+
+Финальный состав: KernelBoundaryTests 14; IdentityBoundaryTests 2; StageEvidenceContractTests 10; FinalAuditByteBudgetTests 2; PersistenceStateTests 11; RecoveryIntegration 16; PlannerIntegration whitelist 20; VerifierRuntime whitelist 10; RunStore/Provider functions 12 = исходные 97. RepairBoundaryTests 23; AuditStorageTests 9; IsolatedFileEditingToolboxTests 22; audit_v2_compatibility 2; verify_file_content 2 = ещё 58. Исключения исходной S0 (реальные Git-dependent fixtures) не превращены в скрытые SKIP.
+
+Все результаты/manifest/наблюдения сохраняются во временных result.json и unittest.log, не в production storage и не как сырой stdout в репозитории. У временных файлов ограниченный срок доступности; независимая приёмка должна повторить финальную команду на переданных исходниках.
+
+### Evidence paths и контрольные суммы
+
+Общий префикс sandbox: C:/Users/REX/AppData/Local/Temp/. В каждой папке лежат result.json (полный manifest, counters, observations) и unittest.log.
+
+| Sandbox | SHA-256 unittest.log | SHA-256 result.json |
+|---|---|---|
+| codex-rt002-s0-lv5q4mc_ | f3fb262fe7374f83c825f110142d67f1156ef64183c896db6bf8dfcdb020cdb1 | 7ada18cf02ec506e135555c695e3c2d26978ba266f07eca186c80b60763e957c |
+| codex-rt002-s0-3wywtt5f | a5e78791d0fbe78c427b267a564783f7c7df46a20971a31df32ef87454ad0da1 | ab74b013bcdfa46da320af734687da0a13691d93d5e68b729a062f51185a404d |
+| codex-rt002-s0-y5xd65is | 6105077ba800eae72bce4b93fcf9b21c2acb3b292226b6a95ec376fd4be6546e | 6133aaed9a25f15ad30d24683d5aee85185a425022a7a8264442aa772e496eb8 |
+| codex-rt002-s0-8iu_kw36 | 906c44b94631c360888934ebdee27016d64585576dd841a8c936e914754729d6 | d6b6451b9975254c6af48caf2e883dfe5085756ea291487fb3caa1efbb876840 |
+| codex-rt002-s0-gu77ge6u | bd900685ef3b3d60f19da0f33411e588f44fd0662e42ae16aeeba42b4ecabf63 | 5073d75e917a1a6e27bfcb63ca237a0875babd521cd86869d1a9a3af25d358f3 |
+| codex-rt002-s0-bhmx035_ | 261b9801bd6b106e7444152561bcbba6098faf377b64d9ef5929cfca5eec69c4 | f812a53865e681531d0a713a2f0c06dcdfd5d20acae12654d99c40a6d14a4203 |
+| codex-rt002-s0-f_xd9x82 | 3efdd8f3ad965c2b291a81ff4ed5e8b2b9633891efdb21ab46cb1747b2e2efa9 | 5e478f6bf65f0bc35f29d17453380fa838b264437279dd8cfe1735b763e077b7 |
+| codex-rt002-s0-0vf3nwl0 | 1206e4110fb43c6d675af3c74797f501c0cb786edc6a1ed4c04da717d6a68140 | bba3cdc8bd5e65d31eb3d2eb5f8af88718cfece295f2da1308e9632ddbb6d2b5 |
+| codex-rt002-s0-u5cfuc7r | ea746f632a1c4125411a35b3303df174ecd4202c82d9d23813a2faedcf5ff760 | 8f5dd5e4a6b05f2087fb976861859145338b5585861a4c81f8d12e6bfea193c7 |
+| codex-rt002-s0-tkr70j9x | d8d5f82a383704ed25b88af76e4b61ab1f2abea32cb056a267950eda5a952846 | dbce126660ba6dd3811223d05e0e33c02d9ba4f157cdce21bbb0dd8db3330d1f |
+| codex-rt002-s0-bzrixjsk | 9210fff3fff8ab87514db60dd0b6cb1800af93c8080193a9318f706979e23265 | 83db60a4e38e5237d45c604e13279c81888728cd3cd2c111155f0b615bfd8e5d |
+
+## 6. Provenance и неизменность scope
+
+Исследованы локальные обычные файлы по маршруту 08 → общий 000 → 34 → 18 → 01, затем профиль 13, программа 20 §5а, журнал 21, 33.3 FINAL-B2, личная карточка и исходный S0-отчёт. Правила DOC-GIT-01@1 и DOC-TASK-BLOCK1-01@1 соблюдаются; прямой новый старт пользователя имеет приоритет над отстающим общим маршрутизатором. Общая документация не синхронизировалась локальным Codex.
+
+Commit №247 (2fb37a266a0780191471cdcecea587fb449a4168), независимый review №248 и immutable FINAL-B2 commit №242 (e7365ea773c9adc4e813e05a58810e40b4de4bb4) — provenance из переданной постановки/документов, а не результат локального чтения истории. Git dirty state, HEAD и актуальное совпадение с GitHub не установлены: полномочий на такие операции не было. Возможное расхождение remote baseline с локальными bytes нельзя исключить без координатора.
+
+До edits сняты SHA-256 167 обычных root/Документация файлов; это файловый контроль ограниченного множества, не Git status и не заявление об инвентаризации всех ignored/untracked/subdirectories. В этом множестве до ротации карточки изменены только три production-файла и исходный S0 harness; добавлен один repair test module. task_planner.py, ultra_ui.py, verifier_runtime.py, planner_runtime.py, shared docs и исходные сторонние тесты совпадают с начальной фиксацией.
+
+| Файл | Исходный SHA-256 | Финальный SHA-256 |
+|---|---|---|
+| server.py | 404d43d6a39924a3a0d725650f0cf4ba67591bca13e071794ab4d576f378090a | 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3 |
+| run_store.py | 91f82db61a75980ebae8a0ee4e707ac2c09e33628021991d70d639b97b2eef44 | a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6 |
+| audit_storage.py | 15466977e17d2f48e377ccd9b77d7ecc01aaec82c2aabf4501f8cd3c11595905 | 5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c |
+| task_planner.py | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 |
+| test_rt002_s0_kernel.py | 845134a0ee3493e31213107c52bba7437c2364505d3036bda4556b5e3a9c5341 | cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b |
+| test_rt002_s0_repair.py | NEW | f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e |
+| ultra_ui.py | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d |
+| verifier_runtime.py | 7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228 | 7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228 |
+| planner_runtime.py | ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e | ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e |
+| Документация/33.3_Круглый стол - итоговый план.md | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf |
+
+Исходная полная личная карточка: SHA-256 0f8b0b6c89499b8067170a2b4e277c6b4867f8f75e0d6f723317dc094fbf5809. Её bytes оставались неизменны на всех этапах исполнения и тестирования; только финальная атомарная ротация создаёт новую редакцию. Исходная постановка без заголовка БЛОКА 1, перенесённая целиком в БЛОК 2: 16095 bytes, SHA-256 b55a38f46e4717fa166abc1ecc7c4384e4d6352fa04e70d0da44d688c19e63e9. Предыдущие S0 БЛОКИ 2/3 сохранены дословно в архиве ниже, SHA-256 исходного фрагмента cb11c9c44cd36fab17605acd3719e7ca44a2c0648d76fe6627df562284e0f699; весь более ранний хвост с REVIEW-1/151C/DOC-034 сохранён, SHA-256 7c43ac7dbdddb9dfc18fdd5177606444687fa31b84dd1e01a66d56c338f0856d.
+
+## 7. Ограничения, риски и rollback
+
+- Это self-test локального repair, не независимое принятие S0. Ни live provider, ни платные API, ни production storage, ни реальная GUI-сессия не использовались. Две попытки дочернего процесса в незасчитанном расширенном прогоне пресечены runner до запуска; финальный набор полностью offline.
+- Повторное разрешение records/index увеличивает локальный I/O; число remote/provider calls от durability gate не растёт. Профилирование latency, большой истории и бюджетов относится к дальнейшей программе, здесь не выполнялось.
+- Freshness остаётся проверкой на границах фаз, а не блокировкой файловой системы: изменение после последней проверки, ABA без наблюдаемого промежуточного состояния, подмена самой доверенной среды или многопроцессный writer одного RUN не сертифицированы этими тестами. Проверенный ABA с зарегистрированным stale-event требует нового source/generation.
+- Durable означает успешные записи/flush/fsync, acknowledgement и read-back в существующем Run Store. Fault injection не является испытанием отключения питания/сбоев оборудования. Частично записанные или недоступные records/index сохраняются; автоматического self-heal/возобновления mutation нет.
+- При неуспешной записи terminal-события в сыром журнале может остаться неподтверждённый фрагмент/попытка записи. Это не опубликованный certified SUCCESS; сервер возвращает BLOCKED и пытается сохранить его. При полном отказе storage причина всё равно передаётся on_event и в возвращённом тексте. Нельзя принимать произвольную строку сырого tail за прошедший gate verdict.
+- Отказ необязательной summary/UI projection может оставить видимую проекцию отстающей, хотя mandatory record исправен. Источник истины — проверяемый indexed outcome и terminal event, не одна карточка summary.
+- В F01/F02 без нового tool response используется существующий lifecycle bound; новый быстрый stop/экономия циклов при упрямом Executor здесь не реализованы. Recovery с новым evidence проверен.
+
+**UI FINDING / PROPOSAL (не блокирует этот repair):** ultra_ui.py:5551 форматирует run_finished со статусом, но без reason; :5960 явно поддерживает BLOCKED, а возвращаемый chat payload содержит причину. Новый tool_evidence_stale выводится общим trace-форматтером. При отдельной доработке показывать reason для BLOCKED, содержательные stale facts и audit_summary_error/audit_projection_error. GUI и кнопка Stop не изменены.
+
+**Rollback:** только по отдельному решению пользователя/координатора восстановить согласованные исходные bytes server.py/run_store.py/audit_storage.py по таблице; тесты можно оставить как воспроизводимые safety probes. Не откатывать рабочие данные, Run Store и историю, не выполнять автоматические reset/checkout/replay. Возврат старых production bytes возвращает четыре известных HIGH; это риск rollback, а не рекомендуемое действие.
+
+## 8. DOC IMPACT / SHARED DOC DELTA
+
+Это пакет для ChatGPT, а не внесённые локально нормативные изменения.
+
+| Владелец | Предлагаемая синхронизация после независимого рассмотрения |
+|---|---|
+| Общий 000 и 34 | Устранить отставание маршрутизатора; сослаться на эту REPAIR, статус ожидания независимой проверки и отсутствие следующего разрешённого старта. |
+| 05 / 06 | Отразить отдельную REPAIR TASK и factual handoff; не переписывать исходный FINDINGS / NO S0 PASS и четыре HIGH как будто их не было. |
+| 13 | После принятия зафиксировать различие observation/provenance/freshness, проверяемый durable outcome и fail-closed certification boundary. |
+| 20 §5а | Перед зависимыми задачами требуется независимое решение по repair/S0; self-test 155 PASS не открывает S1 автоматически. |
+| 21 | Записать before/after F01–F04, команды, hashes, ограничения и независимый вердикт отдельным событием. |
+| 01 | После принятия обновить фактическое runtime-состояние по трём изменённым production-файлам. |
+| 28 / 33.3 | При необходимости добавить внешний указатель на review evidence в протокол; утверждённый immutable FINAL-B2 не переписывать. |
+| 18 / 08 / инструкции агентов | Нового изменения Git-контракта эта TASK не требует; действующее правило без разрешения на git log также сохраняется. |
+
+## 9. NEXT — независимая приёмка
+
+1. ChatGPT проверяет три production-изменения, целостность binding/locator/hash, границы certified режима и исключение повторной mutation; сверяет переданные file SHA-256 с этой редакцией.
+2. Повторяет FULL: .venv/Scripts/python.exe -B test_rt002_s0_kernel.py. Ожидается 155 PASS, exit 0 и guard 0; никакого uncontrolled discovery, live provider или real Git.
+3. Отдельно проверяет сохранение исходных отрицательных инъекций F01–F04, ноль Final Dredd/SUCCESS при недостающем proof и достижимость законного fresh-evidence recovery. Старые 93 PASS не должны быть потеряны.
+4. Проверяет ротацию: первоначальный БЛОК 1 целиком в БЛОКЕ 2, прежняя S0 и более ранние архивы сохранены; новые AMENDMENT отсутствуют.
+5. Выносит независимый verdict, затем согласует SHARED DOC DELTA. До него: **RESULT READY / AWAITING INDEPENDENT VERIFICATION**, следующие задачи не разрешены. Публикацию/commit/push выполняет пользователь либо отдельно уполномоченный внешний координатор.
+
+---
+
+## ARCHIVED S0-001 — прежние БЛОКИ 2/3 (сохранено при REPAIR, 2026-10-10)
+
+Историческая постановка S0 и отчёт FINDINGS / NO S0 PASS сохранены дословно. Это не активная задача и не новый verdict.
+
+```````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 **TASK ID:** CODEX-RT002-S0-001 — RT-002/B2 / S0: Fresh Kernel Integration Baseline and Safety Gate.
@@ -257,6 +738,11 @@ Executor HTTP, token acquisition, Planner и Dredd заменены fake/AsyncMo
 
 **Строго ограниченный NEXT:** пользователь публикует локальные изменения; ChatGPT независимо проверяет source hashes, isolation/manifest, воспроизводит четыре failures и устанавливает S0 verdict. При подтверждении — согласовать отдельную TASK исправления двух причин и повтор S0. **Никакой S1+ здесь не начат; 151C PARKED / КТ-3 PENDING сохранены.**
 
+
+---
+
+
+```````
 
 ---
 

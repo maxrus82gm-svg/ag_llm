@@ -158,14 +158,16 @@ class KernelBoundaryTests(unittest.IsolatedAsyncioTestCase):
                 changed = True
             return result
         result, audit, _ = await self.read_case(extra_patches=(patch.object(server, "_agent_read_file", side_effect=racing_read),))
-        packet = json.loads(audit.await_args.kwargs["verification_context"])
-        fact = packet["authoritative_tool_evidence"][0]
+        outcome = next(e for e in self.events if e["event"] == "tool_finished")
+        fact = outcome["evidence_binding"]
         self.assertEqual(target.read_text(encoding="utf-8"), "NEW MATERIAL")
-        self.assertEqual(fact["material_preview"]["content"], "OLD MATERIAL")
-        self.assertNotEqual(server._sha256_utf8(fact["material_preview"]["content"]), server._sha256_utf8(target.read_text(encoding="utf-8")))
-        self.assertEqual(fact["observed_state_sha256"], server._planner_dependency_fingerprint(
+        self.assertEqual(outcome["result"]["content"], "OLD MATERIAL")
+        self.assertNotEqual(fact["observed_state_sha256"], server._planner_dependency_fingerprint(
             self.workspace, "read_file", {"path": "result.md"}, self.policy(allow_verify=True)))
         self.capture(result, audit)
+        self.assertTrue(any(e["event"] == "tool_evidence_stale" for e in self.events))
+        self.assertIn("BLOCKED", result)
+        audit.assert_not_awaited()
         self.assertFalse(self.success_events(), "S0-F01: stale READ material certified against a later filesystem fingerprint; returned " + result)
 
     async def test_verify_change_before_fingerprint_cannot_certify_old_predicate(self):
@@ -186,13 +188,14 @@ class KernelBoundaryTests(unittest.IsolatedAsyncioTestCase):
         result, audit, _ = await self.run_v6(contract, responses=[planner_tests.tool(call), legacy.FakeResponse("Finished")],
             extra_patches=(patch.object(server, "_agent_verify_file_content", side_effect=racing_verify),))
         self.assertEqual(target.read_text(encoding="utf-8"), "WRONG")
-        packet = json.loads(audit.await_args.kwargs["verification_context"])
-        fact = packet["authoritative_tool_evidence"][0]
+        fact = next(e for e in self.events if e["event"] == "tool_finished")["evidence_binding"]
         self.assertTrue(fact["result"]["verification"]["passed"])
         self.assertEqual(fact["result"]["verification"]["actual_sha256"], server._sha256_utf8("done\n"))
-        self.assertEqual(fact["observed_state_sha256"], server._planner_dependency_fingerprint(
+        self.assertNotEqual(fact["observed_state_sha256"], server._planner_dependency_fingerprint(
             self.workspace, "verify_file_content", call["arguments"], self.policy(allow_verify=True)))
         self.capture(result, audit)
+        self.assertTrue(any(e["event"] == "tool_evidence_stale" for e in self.events))
+        self.assertIn("BLOCKED", result)
         self.assertFalse(self.success_events(), "S0-F02: false current equals after observation/fingerprint race; returned " + result)
         self.assertEqual(audit.await_count, 0)
 
@@ -202,8 +205,9 @@ class KernelBoundaryTests(unittest.IsolatedAsyncioTestCase):
         result, audit, _ = await self.read_case(extra_patches=(
             patch.object(server, "AuditThreadRecorder", side_effect=OSError("S0 simulated storage unavailable")),))
         self.assertTrue(any(e["event"] == "audit_storage_error" for e in self.events))
-        packet = json.loads(audit.await_args.kwargs["verification_context"])
-        self.assertIsNone(packet["authoritative_tool_evidence"][0]["source_run_store_record_id"])
+        audit.assert_not_awaited()
+        self.assertIn("mandatory_evidence_store_unavailable", result)
+        self.assertFalse(any(e["event"] == "tool_started" for e in self.events))
         self.capture(result, audit)
         self.assertFalse(self.success_events(), "S0-F03: SUCCESS despite unavailable RunStore; returned " + result)
 
@@ -220,8 +224,9 @@ class KernelBoundaryTests(unittest.IsolatedAsyncioTestCase):
         result, audit, _ = await self.read_case(extra_patches=(
             patch.object(server.AuditThreadRecorder, "observe", fail_outcome),))
         self.assertEqual(failures, ["tool_finished"])
-        packet = json.loads(audit.await_args.kwargs["verification_context"])
-        self.assertIsNone(packet["authoritative_tool_evidence"][0]["source_run_store_record_id"])
+        audit.assert_not_awaited()
+        self.assertIn("mandatory_evidence_unavailable", result)
+        self.assertEqual(len([e for e in self.events if e["event"] == "tool_started"]), 1)
         self.capture(result, audit)
         self.assertFalse(self.success_events(), "S0-F04: SUCCESS with missing durable tool outcome; returned " + result)
 
@@ -415,11 +420,25 @@ def _manifest():
         "test_request_body_has_no_tools_or_function_declarations",
     ]
     suite.addTests(test_verifier_runtime.VerifierRuntimeTests(name) for name in verifier_names)
+    # Directly affected compatibility and file-tool regressions. Packet builders
+    # in these unit tests must receive fake Git observations, never spawn Git.
+    import test_audit_observability
+    import test_file_editing_toolbox
+    suite.addTests(loader.loadTestsFromTestCase(test_audit_observability.AuditStorageTests))
+    class IsolatedFileEditingToolboxTests(test_file_editing_toolbox.FileEditingToolboxTests):
+        def setUp(self):
+            super().setUp()
+            unavailable = {"ok": False, "exit_code": None, "stdout": "", "stderr": "offline fake", "truncated": False}
+            for helper in ("_agent_git_status", "_agent_git_diff"):
+                self.enterContext(patch.object(server, helper, return_value=unavailable))
+    suite.addTests(loader.loadTestsFromTestCase(IsolatedFileEditingToolboxTests))
     # Pure pytest-style functions, invoked directly: no pytest plugin discovery.
     import pytest
     import test_run_store_v2
     import test_provider_accounting
-    for module in (test_run_store_v2, test_provider_accounting):
+    import test_audit_v2_compatibility
+    import test_verify_file_content
+    for module in (test_run_store_v2, test_provider_accounting, test_audit_v2_compatibility, test_verify_file_content):
         for name, function in inspect.getmembers(module, inspect.isfunction):
             if not name.startswith("test_"):
                 continue
@@ -429,6 +448,8 @@ def _manifest():
                     function(**{p: available[p] for p in inspect.signature(function).parameters})
             run_function.__name__ = module.__name__ + "." + name
             suite.addTest(unittest.FunctionTestCase(run_function))
+    import test_rt002_s0_repair
+    suite.addTests(test_rt002_s0_repair.build_suite(sys.modules[__name__]))
     return suite
 
 
@@ -469,7 +490,7 @@ def main():
     log_path = base / "unittest.log"
     with log_path.open("w", encoding="utf-8") as stream:
         result = unittest.TextTestRunner(stream=stream, verbosity=2).run(unittest.TestSuite(tests))
-    report = {"task": "CODEX-RT002-S0-001", "sandbox": str(base), "tests": result.testsRun,
+    report = {"task": "CODEX-RT002-S0-REPAIR-001", "sandbox": str(base), "tests": result.testsRun,
               "failures": [t.id() for t, _ in result.failures], "errors": [t.id() for t, _ in result.errors],
               "skipped": [(t.id(), reason) for t, reason in result.skipped], "isolation_violations": violations,
               "manifest": [t.id() for t in tests], "elapsed_seconds": round(time.time() - started, 3),

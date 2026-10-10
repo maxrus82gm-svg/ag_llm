@@ -6,6 +6,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -30,6 +31,7 @@ from server_context_messages import resolve_server_context_message
 from model_registry import get_model_spec
 from gigachat_transport import CHAT_URL, OAUTH_URL, extract_usage, get_access_token
 from audit_storage import AuditThreadRecorder
+from run_store import validate_run_record
 from planner_runtime import (
     DEFAULT_PLANNER_MODEL_ID,
     PlannerSession,
@@ -1129,16 +1131,21 @@ def _agent_verify_file_content(
 
     path = _require_operation_permission(root, path_text, "read", policy)
     _require_text_suffix(path)
-    exists = path.is_file()
+    try:
+        target_exists = True
+        exists = stat.S_ISREG(path.stat().st_mode)
+    except FileNotFoundError:
+        target_exists = exists = False
     actual_sha256 = None
     if kind == "exists":
         passed = exists
     elif kind == "absent":
-        passed = not path.exists()
+        passed = not target_exists
     else:
         if not exists:
             raise FileNotFoundError(f"Файл не найден: {path_text}")
         content = _read_logical_text(path)
+        target_exists = exists = True
         actual_sha256 = _sha256_utf8(content)
         passed = {
             "equals": content == value,
@@ -1153,6 +1160,7 @@ def _agent_verify_file_content(
         "passed": passed,
         "matched": passed,
         "exists": exists,
+        "target_exists": target_exists,
         "actual_sha256": actual_sha256,
     }
     if kind == "equals":
@@ -3127,9 +3135,12 @@ def _collect_final_audit_evidence(
                 "sequence",
                 "source_record_id",
                 "source_run_store_record_id",
+                "source_run_store_sha256",
                 "task_block_id",
                 "run_id",
+                "plan_id",
                 "plan_version",
+                "candidate_id",
                 "stage_id",
                 "evidence_generation",
                 "requirement_ids",
@@ -3485,6 +3496,35 @@ def _planner_target_snapshot(root: Path, path_text: str, policy: dict) -> dict:
     return {"exists": True, "sha256": _sha256_utf8(content), "content": content}
 
 
+def _tool_observation_fingerprint(tool: str, arguments: dict, result: dict) -> str | None:
+    """Fingerprint the observation that produced the result, never a later read."""
+    path = arguments.get("path")
+    if tool in {"read_file", "read_file_range", "find_text", "verify_file_content", "list_dir"}:
+        if result.get("path") != os.path.normpath(path).replace("\\", "/"):
+            return None
+    if tool == "list_dir":
+        if result.get("truncated"):
+            return None
+        observation = {key: result.get(key) for key in ("path", "entries", "truncated")}
+    elif tool == "git_diff":
+        if not result.get("ok") or result.get("truncated"):
+            return None
+        observation = {key: result.get(key) for key in ("stdout", "stderr", "paths", "truncated")}
+    elif tool == "verify_file_content" and arguments.get("kind") in {"exists", "absent"}:
+        observation = {"target": path, "exists": result.get("exists"),
+                       "target_exists": result.get("target_exists")}
+    elif tool in {"read_file", "read_file_range", "find_text", "verify_file_content"}:
+        digest = result.get("actual_sha256") if tool == "verify_file_content" else result.get("content_sha256")
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            return None
+        return evidence_dependency_state_fingerprint(
+            lambda _path: {"exists": True, "sha256": digest}, tool, arguments,
+        )
+    else:
+        return None
+    return _sha256_utf8(json.dumps(observation, ensure_ascii=False, sort_keys=True))
+
+
 def _planner_dependency_fingerprint(root: Path, tool: str, arguments: dict, policy: dict) -> str | None:
     """Bind evidence to its observed semantics without widening persistence targets."""
     if tool == "list_dir":
@@ -3493,16 +3533,46 @@ def _planner_dependency_fingerprint(root: Path, tool: str, arguments: dict, poli
         observation = _agent_git_diff(root, arguments["paths"], policy, allow_missing=True)
         if not observation.get("ok"):
             raise ValueError("Git dependency state is unavailable")
-        observation = {
-            key: observation.get(key) for key in ("stdout", "stderr", "paths", "truncated")
-        }
+    elif tool == "verify_file_content" and arguments.get("kind") in {"exists", "absent"}:
+        observation = _agent_verify_file_content(
+            root, arguments["path"], arguments["kind"], arguments["value"], policy,
+        )
     else:
         return evidence_dependency_state_fingerprint(
             lambda path: _planner_target_snapshot(root, path, policy), tool, arguments,
         )
     if observation.get("truncated"):
         raise ValueError("Dependency observation is truncated")
-    return _sha256_utf8(json.dumps(observation, ensure_ascii=False, sort_keys=True))
+    return _tool_observation_fingerprint(tool, arguments, observation)
+
+
+def _tool_evidence_binding(fact: dict) -> dict:
+    return {key: copy.deepcopy(fact.get(key)) for key in (
+        "source_record_id", "task_block_id", "run_id", "plan_id", "plan_version", "stage_id", "candidate_id",
+        "evidence_generation", "requirement_ids", "target_identity", "tool",
+        "capability", "status", "executed", "arguments_sha256",
+        "observed_state_sha256", "sequence", "result",
+    )}
+
+
+def _validate_durable_tool_outcome(root: Path, run_id: str, fact: dict) -> None:
+    if not fact.get("executed"):
+        return
+    if fact.get("run_id") != run_id:
+        raise ValueError("Outcome belongs to another RUN")
+    record = validate_run_record(root, run_id, {
+        "record_id": fact.get("source_run_store_record_id"),
+        "sha256": fact.get("source_run_store_sha256"),
+    }, event="tool_finished" if fact.get("status") == "OK" else "tool_error")
+    payload = record.get("payload") or {}
+    if payload.get("evidence_binding") != _tool_evidence_binding(fact):
+        raise ValueError("Durable outcome binding mismatch")
+    result_sha256 = _sha256_utf8(json.dumps(
+        payload.get("result"), ensure_ascii=False, sort_keys=True,
+        separators=(",", ":"), default=str,
+    ))
+    if result_sha256 != (fact.get("result") or {}).get("sha256"):
+        raise ValueError("Durable tool result mismatch")
 
 
 def _prepare_persistence_candidate(root: Path, call: dict, artifact: dict, policy: dict, repair=False) -> dict:
@@ -3643,6 +3713,42 @@ async def _run_agent_task_impl(
     ).resolve()
     workspace_backup_base = BACKUP_BASE
     audit_recorder: AuditThreadRecorder | None = None
+    lifecycle = None
+    certification_records = []
+
+    def _block_evidence(reason: str):
+        if lifecycle is not None:
+            try:
+                lifecycle.block(reason)
+            except LifecycleBlocked:
+                raise
+            except Exception:
+                # Storage failure must not hide the terminal safety decision.
+                pass
+        _emit("run_finished", {"status": "BLOCKED", "reason": reason})
+        raise LifecycleBlocked(reason)
+
+    def _assert_durable_outcomes():
+        for fact in consistency_tool_facts:
+            try:
+                _validate_durable_tool_outcome(root, run_id, fact)
+            except Exception as exc:
+                candidate = lifecycle.state["candidates"].get(fact.get("candidate_id")) if lifecycle else None
+                if candidate is not None:
+                    candidate["evidence_status"] = "UNAVAILABLE"
+                    if not candidate.get("executed"):
+                        candidate["executed"] = True
+                        candidate["outcome"] = "UNKNOWN"
+                    try:
+                        lifecycle.save()
+                    except OSError:
+                        pass
+                _block_evidence("mandatory_evidence_unavailable:" + type(exc).__name__ + ":" + str(exc))
+        for saved in certification_records:
+            try:
+                validate_run_record(root, run_id, saved["ack"], event=saved["event"], payload=saved["payload"])
+            except Exception as exc:
+                _block_evidence("mandatory_certification_unavailable:" + type(exc).__name__)
 
     def _emit(event_type: str, payload: dict):
         event = {
@@ -3651,20 +3757,38 @@ async def _run_agent_task_impl(
             "timestamp": time.time(),
             **payload,
         }
+        # Role switches do not waive the proof required for a returned SUCCESS.
+        required_event = (
+            event_type in {"tool_started", "final_audit_passed"}
+            or (event_type == "run_finished" and payload.get("status") == "SUCCESS")
+        )
+        expected_payload = {key: copy.deepcopy(value) for key, value in event.items()
+                            if key not in {"event", "timestamp", "run_id"}} if required_event else None
+        if event_type == "final_audit_passed" or (event_type == "run_finished" and payload.get("status") == "SUCCESS"):
+            _assert_durable_outcomes()
         persisted_record = None
         if audit_recorder is not None:
             try:
                 persisted_record = audit_recorder.observe(event)
             except Exception as exc:
                 event["audit_storage_error"] = type(exc).__name__
+        if required_event:
+            try:
+                validate_run_record(root, run_id, persisted_record or {},
+                                    event=event_type, payload=expected_payload)
+            except Exception as exc:
+                _block_evidence("mandatory_evidence_event_unavailable:" + event_type + ":" + type(exc).__name__)
+            if event_type == "final_audit_passed":
+                certification_records.append({"ack": copy.deepcopy(persisted_record),
+                                              "event": event_type, "payload": expected_payload})
         if on_event:
             try:
-                on_event(event)
+                on_event(copy.deepcopy(event))
             except Exception:
                 pass
 
-        runtime_log_path.parent.mkdir(parents=True, exist_ok=True)
         try:
+            runtime_log_path.parent.mkdir(parents=True, exist_ok=True)
             with runtime_log_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(event, ensure_ascii=False) + "\n")
         except Exception:
@@ -3718,6 +3842,9 @@ async def _run_agent_task_impl(
         # Audit observability is not allowed to veto the Executor RUN.
         audit_recorder = None
         _emit("audit_storage_error", {"error_type": type(exc).__name__})
+
+    if audit_recorder is None:
+        _block_evidence("mandatory_evidence_store_unavailable")
 
     try:
         runtime_paths = ensure_workspace_runtime_dirs(
@@ -4378,6 +4505,7 @@ async def _run_agent_task_impl(
 
     async with httpx.AsyncClient(timeout=180.0) as client:
         while True:
+            _assert_durable_outcomes()
             if lifecycle:
                 lifecycle.tick("EXECUTOR_OR_DISPATCH")
                 active_stage = lifecycle.stage
@@ -5222,21 +5350,47 @@ async def _run_agent_task_impl(
                 dispatcher_started = False
                 tool_evidence_record_id = "evidence_" + uuid.uuid4().hex
                 tool_started_record = None
+                tool_dependency_before = None
                 try:
+                    _assert_durable_outcomes()
                     if lifecycle and function_name in MUTATION_TOOL_NAMES:
                         # Permission denial still goes through the existing permission lifecycle.
                         _require_operation_permission(root, safe_args.get("path"),
                             "delete" if function_name == "delete_file" else "write", policy)
                         candidate_id = await lifecycle.before_mutation({"name": function_name,
                             "arguments": _parse_agent_arguments(function_name, function_call.get("arguments"))})
-                    dispatcher_started = True
+                    if (tool_dependency_identities and function_name not in {
+                        "read_file", "read_file_range", "find_text", "list_dir", "verify_file_content", "git_diff",
+                    }):
+                        try:
+                            tool_dependency_before = (
+                                lifecycle.dependency_state(function_name, parsed_tool_args) if lifecycle else
+                                _planner_dependency_fingerprint(root, function_name, parsed_tool_args, policy)
+                            )
+                        except (PermissionError, ValueError, OSError):
+                            pass
                     tool_started_record = _emit("tool_started", {
                         "tool_sequence": last_tool_sequence + 1,
                         "evidence_record_id": tool_evidence_record_id,
                         "function": function_name,
                         "arguments": safe_args,
+                        "evidence_identity": {
+                            "task_block_id": tool_task_block_id, "run_id": tool_run_id,
+                            "plan_version": tool_plan_version, "stage_id": tool_stage_id,
+                            "evidence_generation": tool_evidence_generation,
+                            "requirement_ids": list(tool_requirement_ids),
+                            "target_identity": list(tool_dependency_identities),
+                            "arguments_sha256": evidence_arguments_fingerprint(parsed_tool_args) if isinstance(parsed_tool_args, dict) else None,
+                            "candidate_id": candidate_id,
+                        },
                         "timestamp": time.time(),
                     })
+                    try:
+                        validate_run_record(root, run_id, tool_started_record or {}, event="tool_started")
+                    except Exception as exc:
+                        _block_evidence("mandatory_tool_intent_unavailable:" + type(exc).__name__)
+                    _assert_durable_outcomes()
+                    dispatcher_started = True
                     result = _execute_agent_function(
                         root, function_call, policy, backup_session
                     )
@@ -5373,13 +5527,6 @@ async def _run_agent_task_impl(
                         run_owned_state=final_audit_retry_state["run_owned_state"],
                         verification_state=verification_state,
                     )
-                    if lifecycle:
-                        post_mutation_stage_decision = lifecycle.after_mutation(candidate_id, result)
-                        if post_mutation_stage_decision is None:
-                            try:
-                                pending_persistence_call = lifecycle.next_prepared_call()
-                            except PlanInvalidated as exc:
-                                plan_invalidated = exc.fact
 
                 if tool_ok and function_name == "python_compile":
                     python_revision = verification_state["python_write_revision"]
@@ -5454,22 +5601,20 @@ async def _run_agent_task_impl(
                     result_identity["verification"] = {
                         key: result[key] for key in (
                             "check", "path", "kind", "passed", "matched", "exists",
-                            "actual_sha256", "expected_sha256", "needle_sha256", "expected_chars",
+                            "actual_sha256", "expected_sha256", "needle_sha256", "expected_chars", "target_exists",
                         ) if key in result
                     }
                 observed_state_sha256 = None
                 if (
                     tool_ok
-                    and lifecycle is not None
                     and isinstance(parsed_tool_args, dict)
                     and tool_dependency_identities
                 ):
-                    try:
-                        observed_state_sha256 = (
-                            lifecycle.dependency_state(function_name, parsed_tool_args)
-                        )
-                    except (PermissionError, ValueError, OSError):
-                        observed_state_sha256 = None
+                    observed_state_sha256 = _tool_observation_fingerprint(function_name, parsed_tool_args, result)
+                    if function_name not in {
+                        "read_file", "read_file_range", "find_text", "list_dir", "verify_file_content", "git_diff",
+                    }:
+                        observed_state_sha256 = tool_dependency_before
 
                 consistency_tool_facts.append({
                     "sequence": last_tool_sequence,
@@ -5479,9 +5624,12 @@ async def _run_agent_task_impl(
                         if isinstance(tool_started_record, dict)
                         else None
                     ),
+                    "source_run_store_sha256": None,
                     "task_block_id": tool_task_block_id,
                     "run_id": tool_run_id,
                     "plan_version": tool_plan_version,
+                    "plan_id": lifecycle.state["plan_id"] if lifecycle else None,
+                    "candidate_id": candidate_id,
                     "stage_id": tool_stage_id,
                     "evidence_generation": tool_evidence_generation,
                     "requirement_ids": list(tool_requirement_ids),
@@ -5594,6 +5742,7 @@ async def _run_agent_task_impl(
                         "arguments": safe_args,
                         "duration": None,
                         "result": result,
+                        "evidence_binding": _tool_evidence_binding(consistency_tool_facts[-1]),
                     })
                     if consistency_tool_facts:
                         consistency_tool_facts[-1][
@@ -5602,6 +5751,9 @@ async def _run_agent_task_impl(
                             tool_result_record.get("record_id")
                             if isinstance(tool_result_record, dict)
                             else None
+                        )
+                        consistency_tool_facts[-1]["source_run_store_sha256"] = (
+                            tool_result_record.get("sha256") if isinstance(tool_result_record, dict) else None
                         )
                 else:
                     if dispatcher_started:
@@ -5612,12 +5764,16 @@ async def _run_agent_task_impl(
                             "arguments": safe_args,
                             "error": tool_error,
                             "result": result,
+                            "evidence_binding": _tool_evidence_binding(consistency_tool_facts[-1]),
                         })
                         if consistency_tool_facts:
                             consistency_tool_facts[-1]["source_run_store_record_id"] = (
                                 tool_result_record.get("record_id")
                                 if isinstance(tool_result_record, dict)
                                 else None
+                            )
+                            consistency_tool_facts[-1]["source_run_store_sha256"] = (
+                                tool_result_record.get("sha256") if isinstance(tool_result_record, dict) else None
                             )
 
                     signature = (
@@ -5657,6 +5813,34 @@ async def _run_agent_task_impl(
                             f"Trace: logs/runs/{run_id}.jsonl"
                         )
 
+                _assert_durable_outcomes()
+
+                # A receipt/stage may advance only after its outcome is recoverable.
+                if lifecycle and tool_ok and function_name in MUTATION_TOOL_NAMES:
+                    post_mutation_stage_decision = lifecycle.after_mutation(candidate_id, result)
+                    if post_mutation_stage_decision is None:
+                        try:
+                            pending_persistence_call = lifecycle.next_prepared_call()
+                        except PlanInvalidated as exc:
+                            plan_invalidated = exc.fact
+
+                observation_stale = False
+                if (lifecycle and tool_ok and tool_requirement_ids and tool_dependency_identities
+                        and function_name not in MUTATION_TOOL_NAMES):
+                    try:
+                        current_observation = lifecycle.dependency_state(function_name, parsed_tool_args)
+                    except (PermissionError, ValueError, OSError):
+                        current_observation = None
+                    if observed_state_sha256 is None or current_observation != observed_state_sha256:
+                        observation_stale = True
+                        _emit("tool_evidence_stale", {
+                            "stage_id": tool_stage_id, "source_record_id": tool_evidence_record_id,
+                            "observed_state_sha256": observed_state_sha256,
+                            "current_state_sha256": current_observation,
+                            "reason": "fresh_observation_required",
+                        })
+                        lifecycle.execution_defect([tool_stage_id])
+
                 tool_iterations += 1
 
                 if (
@@ -5692,6 +5876,9 @@ async def _run_agent_task_impl(
                             continue
 
                 result_for_model = dict(result)
+                if observation_stale:
+                    result_for_model["_evidence_status"] = "STALE"
+                    result_for_model["_evidence_instruction"] = "Target changed after this observation. Obtain fresh evidence for the current stage; this result cannot satisfy it."
                 result_for_model["_verification_state"] = dict(verification_state)
                 remaining_tools = max(policy["tool_limit"] - tool_iterations, 0)
                 result_for_model["_tool_budget"] = {
@@ -6163,6 +6350,7 @@ async def _run_agent_task_impl(
                 },
             )
             try:
+                _assert_durable_outcomes()
                 task_plan_evidence = None
                 freshness_snapshot = None
                 if lifecycle:
@@ -6262,12 +6450,14 @@ async def _run_agent_task_impl(
                             "collection without a resolvable freshness repair."
                         )
 
+                _assert_durable_outcomes()
                 final_audit_retry_state["final_audit_attempt_count"] += 1
                 audit_attempt = final_audit_retry_state[
                     "final_audit_attempt_count"
                 ]
                 if lifecycle:
                     lifecycle.tick("FINAL_VERIFIER")
+                _assert_durable_outcomes()
                 audit_result = await run_verifier_check(
                     verifier_model_id=verifier_model_id,
                     check_type="FINAL",

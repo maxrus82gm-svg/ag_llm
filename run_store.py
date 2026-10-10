@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 import re
@@ -380,19 +381,22 @@ def append_run_record(workspace_root: str | Path, run_id: str, *, source: str,
     stream_path.parent.mkdir(parents=True, exist_ok=True)
     with stream_path.open("ab") as stream:
         offset = stream.tell()
-        stream.write(encoded)
+        if stream.write(encoded) != len(encoded):
+            raise OSError("Partial Run Store outcome append")
         stream.flush()
         os.fsync(stream.fileno())
     index_record = {"record_id": record_id, "sequence": sequence, "source": source,
                     "event": event, "stream": stream_name, "offset": offset,
-                    "length": len(encoded), "timestamp": timestamp}
+                    "length": len(encoded), "timestamp": timestamp,
+                    "sha256": hashlib.sha256(encoded).hexdigest()}
     for key in ("stage_id", "api_request_number", "status", "mode"):
         if payload.get(key) is not None:
             index_record[key] = payload[key]
     index_encoded = (json.dumps(index_record, ensure_ascii=False,
                                 separators=(",", ":")) + "\n").encode("utf-8")
     with index_path.open("ab") as index_stream:
-        index_stream.write(index_encoded)
+        if index_stream.write(index_encoded) != len(index_encoded):
+            raise OSError("Partial Run Store index append")
         index_stream.flush()
         os.fsync(index_stream.fileno())
     return index_record
@@ -407,16 +411,62 @@ def list_run_records(workspace_root: str | Path, run_id: str) -> list[dict]:
 
 
 def load_run_record(workspace_root: str | Path, run_id: str,
-                    record_id: str) -> dict | None:
-    item = next((value for value in list_run_records(workspace_root, run_id)
-                 if value.get("record_id") == record_id), None)
-    if item is None:
+                    record_id: str, *, expected_sha256: str | None = None) -> dict | None:
+    matches = [value for value in list_run_records(workspace_root, run_id)
+               if value.get("record_id") == record_id]
+    if not matches:
         return None
+    if len(matches) != 1:
+        raise ValueError("Ambiguous Run Store record identity")
+    item = matches[0]
+    if (item.get("source") not in STREAM_BY_SOURCE
+            or item.get("stream") != STREAM_BY_SOURCE[item["source"]]
+            or type(item.get("offset")) is not int or item["offset"] < 0
+            or type(item.get("length")) is not int or item["length"] <= 0):
+        raise ValueError("Invalid Run Store record locator")
     path = run_component_path(workspace_root, run_id, item["stream"])
     with path.open("rb") as stream:
-        stream.seek(int(item["offset"]))
-        encoded = stream.read(int(item["length"]))
-    return json.loads(encoded.decode("utf-8"))
+        stream.seek(item["offset"])
+        encoded = stream.read(item["length"])
+    if len(encoded) != item["length"] or not encoded.endswith(b"\n"):
+        raise ValueError("Partial Run Store record")
+    # Older indexes remain readable. Current certified outcomes additionally bind
+    # the acknowledged checksum, so removal of this field cannot downgrade them.
+    if "sha256" in item and hashlib.sha256(encoded).hexdigest() != item["sha256"]:
+        raise ValueError("Run Store record checksum mismatch")
+    if expected_sha256 is not None and hashlib.sha256(encoded).hexdigest() != expected_sha256:
+        raise ValueError("Durable outcome acknowledgement checksum mismatch")
+    record = json.loads(encoded.decode("utf-8"))
+    if not isinstance(record, dict) or any(
+        record.get(key) != item.get(key)
+        for key in ("record_id", "sequence", "source", "event", "timestamp")
+    ):
+        raise ValueError("Run Store record/index identity mismatch")
+    return record
+
+
+def validate_run_record(workspace_root: str | Path, run_id: str,
+                        acknowledgement: dict, *, event: str,
+                        payload: dict | None = None) -> dict:
+    """Read back an acknowledged outcome, including its exact bytes and identity.
+
+    The checksum comes from the append acknowledgement, not a mutable index.
+    No retry or repair is performed here: an uncertain mutation is never replayed.
+    """
+    record_id = acknowledgement.get("record_id")
+    checksum = acknowledgement.get("sha256")
+    if (not isinstance(record_id, str) or not record_id
+            or not isinstance(checksum, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", checksum)):
+        raise ValueError("Missing durable Run Store acknowledgement")
+    record = load_run_record(workspace_root, run_id, record_id, expected_sha256=checksum)
+    if (record is None or record.get("event") != event
+            or (payload is not None and record.get("payload") != payload)):
+        raise ValueError("Missing or mismatched durable outcome")
+    encoded = (json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+    if hashlib.sha256(encoded).hexdigest() != checksum:
+        raise ValueError("Durable outcome acknowledgement checksum mismatch")
+    return record
 
 
 def load_stream_records(workspace_root: str | Path, run_id: str,
