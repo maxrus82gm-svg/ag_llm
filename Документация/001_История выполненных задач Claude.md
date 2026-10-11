@@ -20,6 +20,18 @@
 
 ---
 
+## 2026-10-09 — CLAUDE-WA-018 — WA4-E: Authoritative Mutation Executor & Gateway
+- **Сделано:** server-owned gateway `web_alarm/mutation_executor.py`, HTTP `POST /tasks/{id}/mutations`, CLI `mutate`; durable STARTED под TASK-lock до записи, byte-exact post-proof и persisted DONE receipt; replay без двойной записи; move/rename — две tracked операции, не атомарны. Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-018_WA4E_EXECUTOR/wa018_report.md`.
+- **Итог:** DONE / VERIFIED — ChatGPT independently reviewed commit `a142817b33964691584aadbd6ea6464779df1815` (177) and ran 36/36 new tests and 643 full Web Alarm OK (1 skip, exit 0) on 2026-10-09. 2026-10-11 GitHub blob comparison confirmed unchanged WA4-E code/tests; P-1…P-4 and R-1…R-4 remain explicitly open, WA4-A not started.
+
+## 2026-10-09 — CLAUDE-WA-017 — F-5/F-6 reliability repair
+- **Сделано:** безопасное crash-resumable завершение TASK и корректный fail-closed rebuild checkpoint при Windows race. Отчёт: `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY/wa017_report.md`.
+- **Итог:** DONE / VERIFIED; independent 17/17 focused, 607 full OK (1 skip), commit `c7681c3841676438d1246ec3de5ac7049c52a4f9`.
+
+## 2026-10-09 — CLAUDE-WA-016 — RC-5 Projection / closeout repair
+- **Сделано:** согласованы Projection/closeout с RC-6 settlement, protected rollback и read-only NEXT для закрытой TASK.
+- **Итог:** DONE / VERIFIED, independent 60/60 focused, 593 full OK (1 skip), commit `d53ec140a41ea879e6ea14610fd53a2c8da71554`; прежний DEFERRED — историческое состояние.
+
 ## 2026-10-08 — CLAUDE-WA-014 — RC-6: accepted ABORT/ROLLBACK before ACTIVE
 - **Сделано:** подтверждён опасный порядок ABORT/ROLLBACK→ACTIVE→rollback; добавлен fail-closed activation gate под TASK-lock, законный обратный порядок сохранён. Отчёт — `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`.
 - **Итог:** RC-6 DONE / VERIFIED по независимому GitHub code/evidence review ChatGPT на commit `2c104782` от 2026-10-08; новые тесты 11/11, полный набор 580 OK (1 skip) ×2 по committed журналам. Без повторного локального запуска verifier; WA4-E ещё не утверждён к исполнению.
