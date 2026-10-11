@@ -1,0 +1,97 @@
+{
+  "task": "CODEX-WA4-O-001",
+  "command": "node --test test_web_alarm_operator_ui.js",
+  "tests": [
+    {
+      "name": "O1 workspace filter and task selection never mix details",
+      "status": "PASS"
+    },
+    {
+      "name": "O2 timeline shows persisted DONE separately from VERIFIED",
+      "status": "PASS"
+    },
+    {
+      "name": "O3 inconsistent read has no progress value or usable copy action",
+      "status": "PASS"
+    },
+    {
+      "name": "O4 absent current operation stays undetermined",
+      "status": "PASS"
+    },
+    {
+      "name": "O5 offline retains last snapshot visibly stale and disables copying NEXT",
+      "status": "PASS"
+    },
+    {
+      "name": "O5 ageing snapshot becomes stale without inventing runtime status",
+      "status": "PASS"
+    },
+    {
+      "name": "O6 server NEXT copied exactly; no client authority decisions",
+      "status": "PASS"
+    },
+    {
+      "name": "O7 navigation refresh disclosure emit only GET",
+      "status": "PASS"
+    },
+    {
+      "name": "O8 restored browser selection still fetches server-owned state",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 old task response cannot repaint new selected task",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 loading clears old task details immediately",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 response identity mismatch is an error, never another workspace data",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 HTML and script input remains text in rendered nodes",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 repeated refresh is single-flight and stable ordering survives update",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 server refusal shows exact reason and refreshes facts",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 lost POST response never automatically reissues creation",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 repeated creation submits once and confirmation captures intent",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 cancelled confirmation causes no POST",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 empty navigator and unavailable clipboard are honest",
+      "status": "PASS"
+    },
+    {
+      "name": "O9 narrow selection collapses navigator; desktop resize restores it",
+      "status": "PASS"
+    }
+  ],
+  "counts": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "sha256": {
+    "web_alarm/ui.py": "16d7a38ff241323b4d39503ef15cf0420675d57811012fad7306f1a2b73d1563",
+    "test_web_alarm_operator_ui.js": "184d36921b180c20f5184ef7ce39efd2a91b0322324be3b4de942e66084fe8c0"
+  }
+}

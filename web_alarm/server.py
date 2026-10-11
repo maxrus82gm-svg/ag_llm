@@ -55,6 +55,7 @@ from .state_machine import (
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
 from .ui import INDEX_HTML
+from .operator_view import navigation, operator_details
 from .workspace_registry import (
     WorkspaceRegistry,
     WorkspaceRegistryError,
@@ -230,7 +231,12 @@ class WebAlarmApi:
             except ManifestStoreError as exc:
                 manifest_view = {"available": False, "reason": str(exc)}
 
-        events = self.state.read_events(task_id)
+        event_error = None
+        try:
+            events = self.state.read_events(task_id)
+        except EventCheckpointStoreError as exc:
+            events = []
+            event_error = str(exc)
         reports = [
             record_to_dict(item)
             for item in events
@@ -264,6 +270,7 @@ class WebAlarmApi:
             "next_safe_action": projection["next_safe_action"],
             "authority_source": projection["authority_source"],
             "checkpoint_validation": bundle["checkpoint_validation"],
+            "operator": operator_details(self, task_id, bundle, events, event_error),
         }
 
     def _list_tasks(self) -> dict[str, list[dict[str, Any]]]:
@@ -394,6 +401,11 @@ class WebAlarmApi:
                     )
                     return 201, {"workspace": record_to_dict(record)}
                 raise ApiError(405, "method_not_allowed", "unsupported method for /workspaces")
+
+            if parts == ["ui", "tasks"]:
+                if method != "GET":
+                    raise ApiError(405, "method_not_allowed", "operator navigation is read-only")
+                return 200, navigation(self)
 
             if parts == ["tasks"]:
                 if method == "GET":

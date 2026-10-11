@@ -1,0 +1,73 @@
+{
+  "tool": "cua_repl / IAB",
+  "fixture": "wa4o_ui_demo.py",
+  "checks": [
+    {
+      "case": "desktop-restart",
+      "viewport": "1440x1000",
+      "heading": "Обновление конфигурации сервиса",
+      "progress": "2 / 6 VERIFIED",
+      "next": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically"
+    },
+    {
+      "case": "workspace-isolation",
+      "identity": "task_lab / ws_lab",
+      "progress": "0 / 2 VERIFIED"
+    },
+    {
+      "case": "done-not-verified",
+      "progress": "0 / 2 VERIFIED",
+      "done": "1 DONE · ожидает проверки"
+    },
+    {
+      "case": "closed-history",
+      "status": "COMPLETED",
+      "next": "TASK is COMPLETED; its state is read-only history",
+      "operation": "Операция\nНе определена\nИстория\n0 операций · раскрывается ниже"
+    },
+    {
+      "case": "narrow-layout",
+      "viewport": "390x844",
+      "metrics": {
+        "document": 375,
+        "main": 375,
+        "navigatorOpen": false,
+        "viewport": 390
+      },
+      "progress": "2 / 6 VERIFIED"
+    },
+    {
+      "case": "keyboard-navigator",
+      "open": true
+    },
+    {
+      "case": "safe-raw-text",
+      "text": "Disposable visual acceptance. <script>alert(1)</script>",
+      "scriptNodes": 0,
+      "unexpectedDialog": false
+    },
+    {
+      "case": "real-offline",
+      "banner": "Связь недоступна. Показан предыдущий снимок; NEXT SAFE ACTION устарел.",
+      "copyEnabled": false,
+      "retainedTask": "Обновление конфигурации сервиса"
+    },
+    {
+      "case": "restart-recovery",
+      "progress": "2 / 6 VERIFIED",
+      "next": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically",
+      "copyEnabled": true
+    },
+    {
+      "case": "fresh-browser-tab",
+      "identity": "task_delivery / ws_delivery",
+      "progress": "2 / 6 VERIFIED",
+      "next": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically"
+    }
+  ],
+  "limitations": "One Chromium-based browser; final visual acceptance belongs to the user.",
+  "fixture_read_side_effects": {
+    "files_checked": 70,
+    "changed": []
+  }
+}

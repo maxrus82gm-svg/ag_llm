@@ -1,0 +1,60 @@
+{
+  "initial": {
+    "targets": [
+      "test_web_alarm_operator_ui",
+      "test_web_alarm_ui"
+    ],
+    "tests_run": 29,
+    "passed": 27,
+    "failures": 0,
+    "errors": 2,
+    "skips": 0,
+    "isolation_violations": [],
+    "unsuccessful_tests": [
+      {
+        "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o2_real_lifecycle_statuses_are_not_ui_statuses (status='ACTIVE')",
+        "status": "FAIL",
+        "error": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_operator_ui.py\", line 106, in test_o2_real_lifecycle_statuses_are_not_ui_statuses\n    self.prepare()\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_operator_ui.py\", line 72, in prepare\n    self.api.machine.prepare_microtask(tid, mid, [('a.txt', 'edit')])\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py\", line 293, in prepare_microtask\n    self._reject(\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py\", line 213, in _reject\n    raise TransitionRejected(\nweb_alarm.state_machine.TransitionRejected: READY -> PREPARING rejected: prepare is allowed only from PLANNED or BLOCKED_PREPARE\n"
+      },
+      {
+        "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_operation_of_later_stage_is_not_current",
+        "status": "ERROR",
+        "error": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_operator_ui.py\", line 159, in test_o4_operation_of_later_stage_is_not_current\n    self.prepare(mid='m2')\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_operator_ui.py\", line 72, in prepare\n    self.api.machine.prepare_microtask(tid, mid, [('a.txt', 'edit')])\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py\", line 300, in prepare_microtask\n    self._require_previous_verified(\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py\", line 245, in _require_previous_verified\n    self._reject(\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\state_machine.py\", line 213, in _reject\n    raise TransitionRejected(\nweb_alarm.state_machine.TransitionRejected: PLANNED -> PREPARING rejected: previous microtask m1 is PLANNED, not VERIFIED\n",
+        "facts": []
+      }
+    ]
+  },
+  "extra": {
+    "targets": [
+      "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_real_partial_rollback_is_visible_over_http",
+      "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_stale_resolver_decision_never_overrides_new_next",
+      "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_corrupt_operations_withhold_progress_and_identity",
+      "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_closed_task_has_only_history_despite_unfinished_operation"
+    ],
+    "tests_run": 4,
+    "passed": 4,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "isolation_violations": [],
+    "unsuccessful_tests": []
+  },
+  "intermediate": {
+    "targets": [
+      "test_web_alarm_operator_ui",
+      "test_web_alarm_ui",
+      "test_web_alarm_projection",
+      "test_web_alarm_projection_repair2",
+      "test_web_alarm_recovery_coordinator",
+      "test_web_alarm_lost_response"
+    ],
+    "tests_run": 150,
+    "passed": 150,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "isolation_violations": [],
+    "unsuccessful_tests": []
+  },
+  "note": "Initial errors were fixture lifecycle misuse (prepare from READY, prepare m2 before m1 VERIFIED); corrected in tests without relaxing server gates. No production test failure concealed."
+}

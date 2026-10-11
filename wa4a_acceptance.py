@@ -299,7 +299,7 @@ sys.addaudithook(_audit)
 '''
 
 
-def run_tests(targets, output):
+def run_tests(targets, output, *, task_id="CODEX-WA4-A-001"):
     output = Path(output).resolve()
     temp_root = Path(tempfile.gettempdir()).resolve()
     if not output.is_relative_to(temp_root):
@@ -348,7 +348,7 @@ def run_tests(targets, output):
     for p in sorted(ROOT.glob("test_web_alarm*.py")):
         hashes[p.name] = sha(p.read_bytes())
     hashes["wa4a_acceptance.py"] = sha(Path(__file__).read_bytes())
-    summary = {"task": "CODEX-WA4-A-001", "targets": targets, "python": sys.version,
+    summary = {"task": task_id, "targets": targets, "python": sys.version,
                "platform": sys.platform, "started_unix": started, "elapsed_seconds": round(time.time()-started, 3),
                "tests_run": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
                "skips": len(result.skipped), "passed": result.testsRun-len(result.failures)-len(result.errors)-len(result.skipped),
@@ -367,6 +367,7 @@ if __name__ == "__main__":
     else:
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument("--output", required=True)
+        parser.add_argument("--task", default="CODEX-WA4-A-001", help="Evidence task label; isolation is unchanged")
         parser.add_argument("targets", nargs="+", help="unittest names, or all for Web Alarm discovery")
         ns = parser.parse_args()
-        raise SystemExit(run_tests(ns.targets, ns.output))
+        raise SystemExit(run_tests(ns.targets, ns.output, task_id=ns.task))

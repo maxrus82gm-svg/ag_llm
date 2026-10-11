@@ -19,12 +19,461 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
 
-Последний результат: CODEX-WA4-A-001 — RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка и factual handoff сохранены в БЛОКАХ 2–3. Следующие задачи не запускать до назначения пользователя.
+CODEX-WA4-O-001: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка в БЛОКЕ 2; factual handoff в БЛОКЕ 3 и reports/CODEX-WA4-O-001/report.md. Следующую TASK не начинать без нового назначения пользователя.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# CODEX-WA4-O-001 — Web Alarm Operator UI / UX-Ops
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**STATUS:** USER ASSIGNED / READY FOR EXECUTION  
+**ARCH CLASS:** Web Alarm Workspace / Operator UI / Server-owned State Visualization  
+**PRIMARY:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+## 1. Исходная точка
+
+Подтверждённый baseline: `main` commit №262 `2810cfb`.
+
+- WA-1…WA-3, RC-0…RC-6 — DONE / VERIFIED.
+    
+- WA4-E / CLAUDE-WA-018 — DONE / VERIFIED.
+    
+- WA4-A / CODEX-WA4-A-001 — DONE / VERIFIED.
+    
+- Независимый GitHub Windows CI: 5/5 smoke, 166/166 focused и 689/689 full PASS.
+    
+- WA4-R / Strict Rollout — NOT STARTED.
+    
+
+Текущий Web Alarm имеет работающий минимальный UI WA-2.3 в `web_alarm/ui.py`, API в `web_alarm/server.py` и существующий `GET /tasks/{id}/ui`. Однако операторские сведения преимущественно отображаются техническими JSON-блоками без полноценной навигации по этапам, визуального прогресса и удобного представления recovery.
+
+**Цель этой TASK — реализовать полноценный первый рабочий интерфейс WA4-O на существующей серверной архитектуре, а не очередной макет.**
+
+## 2. Обязательный preflight
+
+Прочитать по регламенту:
+
+`08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md → 23/24/25`.
+
+Затем проверить текущие реализации:
+
+- `web_alarm/ui.py`;
+    
+- `web_alarm/server.py`;
+    
+- `web_alarm/projection.py`;
+    
+- `web_alarm/recovery_coordinator.py`;
+    
+- `web_alarm/operation_store.py`;
+    
+- `web_alarm/task_store.py`;
+    
+- `test_web_alarm_ui.py`;
+    
+- смежные UI, projection, recovery и authority-тесты.
+    
+
+Сверить реальный локальный baseline без самостоятельных Git/GitHub-операций. Если требуется информация о commit/history — запросить у пользователя или ChatGPT-координатора.
+
+## 3. Основная задача
+
+Создать удобную рабочую панель для пользователя, позволяющую:
+
+1. Выбрать Workspace и TASK.
+    
+2. Мгновенно увидеть текущий этап и его статус.
+    
+3. Увидеть последовательность микрозадач, уже подтверждённые и оставшиеся этапы.
+    
+4. Узнать текущую операцию и её состояние.
+    
+5. Увидеть recovery, блокеры, ошибки, причины отказа.
+    
+6. Прочитать `NEXT SAFE ACTION` без поиска в технических журналах.
+    
+7. Раскрыть подробные доказательства только при необходимости.
+    
+8. Обновить отображение и продолжить наблюдение после перезапуска сервера или смены браузера.
+    
+
+### Главный архитектурный принцип
+
+**Server owns state. UI presents state.**
+
+UI не имеет своей независимой state machine исполнения, не создаёт собственные статусы операций и не превращает transport-события в факты успешного выполнения.
+
+## 4. Обязательная структура интерфейса
+
+### A. Workspace / TASK navigator
+
+- Переключение между зарегистрированными Workspace.
+    
+- Список активных и завершённых TASK с различимыми статусами.
+    
+- Название, идентификатор, текущий этап, серверный статус и блокер при наличии.
+    
+- Выделение выбранной TASK.
+    
+- Сохранение уже работающих функций создания Workspace/TASK.
+    
+- Выбор другой TASK без потери понимания, какая сейчас открыта.
+    
+
+### B. Task Overview
+
+- Название и цель TASK.
+    
+- Авторитетный серверный статус.
+    
+- Текущая микрозадача.
+    
+- Индикатор подтверждённого прогресса: например `3 / 8 VERIFIED`, только если существуют доказанные данные.
+    
+- Отдельное отображение `DONE` и `VERIFIED`.
+    
+- Информация о checkpoint/snapshot и достоверности проекции.
+    
+- Различение текущего, исторического и неизвестного состояния.
+    
+
+### C. Stage Timeline / Progress
+
+Реализовать визуальную последовательность микрозадач:
+
+- PLANNED / ожидание;
+    
+- READY;
+    
+- ACTIVE;
+    
+- DONE / ожидает verification;
+    
+- VERIFIED;
+    
+- FAILED / FAILED_VERIFICATION;
+    
+- recovery / UNKNOWN / blocked, когда это подтверждено серверными источниками.
+    
+
+Точные названия и допустимые переходы брать из существующей state machine.
+
+Если UI использует упрощённые человекочитаемые подписи, они не должны подменять реальные persisted statuses.
+
+Этапы должны раскрываться, показывая их goal, prerequisites, operations, blockers и относящиеся к ним evidence.
+
+Не создавать новые runtime-статусы только ради оформления.
+
+### D. Current Operation
+
+Выводить:
+
+- `operation_id`;
+    
+- действие и target;
+    
+- реальный persisted status;
+    
+- наличие receipt и его тип;
+    
+- совпадение ожидаемого post-state, когда это доказано;
+    
+- uncertainty/reconciliation requirement;
+    
+- признак replay, если это подтверждено сервером;
+    
+- связь операции с микрозадачей.
+    
+
+Если текущую операцию нельзя достоверно определить, показывать «не определена», а не назначать последнюю по времени операцию текущей.
+
+### E. Recovery & NEXT SAFE ACTION
+
+Сделать отдельную хорошо заметную область:
+
+- authoritative `NEXT SAFE ACTION`;
+    
+- текущий recovery state;
+    
+- причина блокировки;
+    
+- последствия обрыва;
+    
+- наличие и статус recovery evidence;
+    
+- результаты Resolver, если доступны;
+    
+- необходимость ручного решения.
+    
+
+Не считать потерю HTTP-ответа доказательством FAILED. Не разрешать автоматический retry из UNKNOWN.
+
+### F. Evidence Inspector
+
+По раскрытию показывать:
+
+- manifest и snapshot;
+    
+- checkpoint и validation;
+    
+- recent events;
+    
+- operation history и receipt;
+    
+- recovery reports;
+    
+- RAW TASK;
+    
+- диагностическую информацию.
+    
+
+Основной экран не должен быть завален JSON. Полные технические сведения оставить в раскрываемых деталях.
+
+## 5. Операторские действия
+
+**Разрешены в этом этапе:**
+
+- Выбор Workspace/TASK/этапа.
+    
+- Ручное обновление и безопасное read-only автообновление при необходимости.
+    
+- Раскрытие evidence и причин ошибок.
+    
+- Копирование человекочитаемого контекста или `NEXT SAFE ACTION`.
+    
+- Сохранение существующего server-backed создания Workspace/TASK.
+    
+
+Любые дополнительные state-changing controls допускаются **только через уже существующие проверенные серверные API**, с явным намерением пользователя, отображением фактического серверного ответа и сохранением всех admission/CAS/authority checks.
+
+Не добавлять напрямую в интерфейс опасные one-click действия `RETRY`, `ROLLBACK`, `DELETE`, `ABORT`, физическую mutation или принудительное изменение статуса. Если для удобной кнопки требуется новый permission contract или изменение runtime authority, оформить это как PROPOSAL, а не реализовывать молча.
+
+После отказа API интерфейс должен честно показать причину и обновить состояние. Нельзя оптимистично рисовать успешный переход до его подтверждения сервером.
+
+## 6. UX / визуальный стандарт
+
+Интерфейс должен быть пригоден для регулярной работы, а не выглядеть как отладочная страница.
+
+Требования:
+
+- понятная визуальная иерархия;
+    
+- аккуратная тёмная тема на основе текущего стиля;
+    
+- читабельные названия, статусы и причины;
+    
+- визуально различимые verified / waiting / failure / unknown;
+    
+- цвет не должен быть единственным индикатором состояния;
+    
+- адаптация под разные размеры окна;
+    
+- корректные состояния loading / empty / offline / error / stale;
+    
+- отсутствие случайного переключения на опасное действие;
+    
+- подтверждение перед допускаемыми state-changing действиями;
+    
+- управление с клавиатуры, видимый focus и доступные подписи;
+    
+- безопасная вставка пользовательского текста без HTML-инъекций;
+    
+- никакой зависимости от внешних CDN, платных сервисов и аккаунтов.
+    
+
+**Особый UX-принцип:** расположение элементов не должно провоцировать случайные действия при изменении списков. Выбранная TASK должна оставаться явно выделенной; сортировка не должна непредсказуемо перемещать элементы при обновлении.
+
+Пользовательские тексты существующего русскоязычного Web Alarm UI сохранить русскими; технические значения API не переводить внутри protocol objects.
+
+## 7. Server-owned read model
+
+Если существующего `GET /tasks/{id}/ui` недостаточно, разрешено минимально расширить read-only агрегирование состояния в `web_alarm/server.py` или выделенном модуле представления.
+
+Условия:
+
+- только авторитетные persisted state, Projection/RC facts и допустимые производные;
+    
+- без вызова mutation/recovery/rollback при обычном GET;
+    
+- явный статус отсутствующих, противоречивых и stale evidence;
+    
+- не считать checkpoint VALID без проверки;
+    
+- не подменять неопределённое состояние успешным;
+    
+- не создавать отдельное хранилище UI execution status;
+    
+- без изменения существующих RC-1…RC-6, WA4-E и WA4-A invariants.
+    
+
+Минимально менять API; не строить новый framework или дублирующую серверную архитектуру.
+
+## 8. Acceptance matrix O1–O10
+
+**O1 — TASK navigation:** два Workspace и несколько TASK; корректный выбор, отсутствие перемешивания данных.
+
+**O2 — Stage timeline:** правильный порядок и реальные состояния микрозадач, включая VERIFIED, WAITING, ACTIVE и FAILED.
+
+**O3 — Progress honesty:** отображение подтверждённого прогресса не считает DONE или неизвестную операцию VERIFIED.
+
+**O4 — Current operation:** корректная идентификация операции; отсутствие ложной «текущей» при неоднозначных данных.
+
+**O5 — Recovery / disconnect:** UNKNOWN, PARTIAL, stale и blocked cases видны пользователю без ложного SUCCESS.
+
+**O6 — Next Safe Action:** точное отражение серверного решения и причины отказа, без самостоятельного вычисления mutation authority в UI.
+
+**O7 — Read-only safety:** открытие экрана, refresh и просмотр evidence не изменяют Workspace, TASK, operations или recovery facts.
+
+**O8 — Restart persistence:** новое браузерное подключение/новый HTTP Server process отображают тот же сохранённый authoritative state.
+
+**O9 — UX robustness:** offline/error/loading/empty, безопасный рендеринг пользовательского текста, сохранение выбранной TASK, отсутствие случайного опасного перехода.
+
+**O10 — Compatibility:** старые API/WA-2.3 flows и полная регрессия Web Alarm не нарушены.
+
+Для каждого сценария представить PASS / FAIL / BLOCKED с конкретными проверками. Включить реальные HTTP integration tests, а не ограничиваться поиском строк в HTML.
+
+## 9. Проверки
+
+Выполнить:
+
+1. Focused UI/UX-Ops unit и HTTP integration tests.
+    
+2. Adversarial UI checks: неверный статус, stale data, conflicting evidence, пользовательский HTML/script-текст, lost response, repeated clicks.
+    
+3. Проверки отсутствия физических side effects при чтении.
+    
+4. Restart/fresh-instance persistence.
+    
+5. Полный доступный `test_web_alarm_*.py` regression.
+    
+6. `compileall`/`py_compile` для изменённых Python-модулей.
+    
+7. Проверку синтаксиса и работы клиентского JavaScript доступными локальными средствами.
+    
+8. По возможности реальный локальный браузерный smoke-test с визуальной проверкой desktop/narrow layout. Если GUI недоступен, честно указать это как ограничение — не выдавать source-level inspection за визуальный PASS.
+    
+
+**GitHub Actions:** после пользовательской публикации ChatGPT организует независимый CI на GitHub. Локальный Codex не запускает Git/GitHub самостоятельно.
+
+## 10. Scope / ограничения
+
+Разрешено менять UI, необходимые read-only server projection/DTO и тесты Web Alarm.
+
+Запрещено без нового USER GO:
+
+- изменять Ultra;
+    
+- выполнять WA4-R / Strict Rollout;
+    
+- добавлять новый mutation executor;
+    
+- ослаблять RC-3/CAS/recovery/fail-closed;
+    
+- выполнять опасные действия на реальных пользовательских файлах;
+    
+- внедрять новый orchestration scheduler;
+    
+- добавлять облачный frontend, внешнюю аутентификацию или deployment;
+    
+- пользоваться Git/GitHub даже для чтения, кроме отдельного явного разрешения.
+    
+
+Все тесты проводить на disposable Workspace/storage. Не запускать изменения на действующих пользовательских TASK.
+
+## 11. Document Impact
+
+Канонические владельцы:
+
+- `23` — архитектура и инварианты Web Alarm;
+    
+- `24` — план, acceptance и текущий этап;
+    
+- `25` — профильная история;
+    
+- `05`, `06`, `08`, `34` — общая документация под контролем ChatGPT.
+    
+
+Исполнитель формирует `DOC IMPACT / SHARED DOC DELTA` и сохраняет factual evidence, но не объявляет независимый PASS и не переписывает общие статусы.
+
+Полная TASK остаётся в персональном БЛОКЕ 1 до завершения исполнения.
+
+## 12. Exit criteria / handoff
+
+Результат должен включать:
+
+- реально работающий новый операторский интерфейс;
+    
+- список изменённых исходников;
+    
+- screenshot/visual evidence, если доступен браузер;
+    
+- описание server-owned источников каждого отображаемого состояния;
+    
+- результаты O1–O10;
+    
+- focused и full regression с точными числами;
+    
+- честные известные ограничения;
+    
+- рекомендации дальнейшего UX development вне текущего scope;
+    
+- полный factual report для независимого анализа.
+    
+
+После завершения выполнить регламентную ротацию персональных БЛОКОВ:
+
+**БЛОК 1 → БЛОК 2 (полная постановка); factual result → БЛОК 3; БЛОК 1 → ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.**
+
+Статус сдачи:
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION.**
+
+После независимой приёмки ChatGPT и пользовательского визуального просмотра можно закрыть WA4-O как DONE / VERIFIED.
+
+**WA4-R не запускать автоматически.**
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-O-001 — Web Alarm Operator UI / UX-Ops
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+DATE: 2026-10-11
+ARCH CLASS: Web Alarm Workspace / Operator UI / Server-owned State Visualization; PRIMARY 23, PLAN 24, HISTORY 25.
+
+Реализована рабочая операторская панель на существующем Web Alarm UI: Workspace/TASK navigation, overview, verified progress, timeline и раскрываемые evidence, current operation, recovery, authoritative NEXT SAFE ACTION, offline/stale UX. Сервер остаётся владельцем execution state. Read-only DTO сверяет Projection/records двумя bounded чтениями; противоречия не превращаются в подтверждённый прогресс. Текущая операция — только единственная незавершённая операция текущего этапа; last_operation_id не является current. DONE отдельно от VERIFIED, receipt — исторический proof.
+
+Файлы: web_alarm/ui.py, web_alarm/server.py, новый web_alarm/operator_view.py; новые test_web_alarm_operator_ui.py (28 HTTP/adversarial tests), test_web_alarm_operator_ui.js (20 actual-client tests), wa4o_ui_demo.py; wa4a_acceptance.py получил только опциональный --task label. Runtime mutation/recovery authority не изменена. Ultra, WA4-R, общие docs и чужие карточки не менялись; Git/GitHub не использовались.
+
+ПРОВЕРКИ:
+- O1–O10: PASS в самопроверке исполнителя, не independent VERIFIED.
+- Final focused: 154 PASS / 0 FAIL / 0 ERROR / 0 SKIP, exit 0, guard violations 0.
+- Full Web Alarm: 717 total = 716 PASS / 0 FAIL / 0 ERROR / 1 SKIP, exit 0, guard violations 0.
+- SKIP: CanonicalTargetTests.test_symlink_target_fails_closed — symlink creation is not permitted here.
+- Client JS: 20 PASS / 0 FAIL / 0 SKIP; syntax OK. compileall exit 0, whitespace violations 0.
+- Real browser IAB: desktop 1440×1000, narrow 390×844; Workspace isolation, DONE honesty, closed history, keyboard disclosure, safe RAW text, offline and fresh server/browser connection. 70 fixture files unchanged. Screenshots сохранены. Тестовые servers остановлены, вкладки закрыты, viewport сброшен.
+- Source SHA-256 полного regression совпали с финальными исходниками. Прежний БЛОК 1 оставался frozen до ротации.
+
+FULL FACTUAL REPORT / EVIDENCE: reports/CODEX-WA4-O-001/report.md; focused.json, full.json, client.json, visual.json, checks.json, development.json, versions.json, rotation.json, manifest.json; desktop-recovery.jpg, narrow-recovery.jpg, desktop-offline.jpg.
+
+ОГРАНИЧЕНИЯ: self-review, визуальное принятие пользователем и техническая проверка ChatGPT ещё нужны; один IAB браузер, нет cross-browser certification; symlink SKIP; чтение не атомарная транзакция, receipt не current byte proof; большой history не benchmarked. P/R и non-atomic move сохранены; live пользовательские mutation/real Remote-disconnect не выполнялись. Наблюдалось внешнее изменение .obsidian/workspace.json, агент его не редактировал/не восстанавливал.
+
+DOC IMPACT / SHARED DOC DELTA: адресные предложения для 23/24/25, 01/05/06/global 000/34 и при необходимости 08/22 — в полном отчёте. DOC CLOSEOUT INCOMPLETE для общего контура до независимого verifier/координатора. 18/04/14–16/RT/Ultra — NO CHANGE.
+AMENDMENT: новых дополнений в ходе этой TASK не получено.
+NEXT: независимая техническая проверка ChatGPT и визуальный просмотр пользователем; затем согласованный documentation closeout. DONE / VERIFIED не присваивать. Следующие TASK, включая WA4-R, не начинать.
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WA4-O-001
+
+Предыдущие постановки, результаты и архивы сохранены без изменения. Текущая сдача находится выше.
+
+`````````markdown
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 # CODEX-WA4-A-001 — Deterministic Lost-Response Acceptance
@@ -1343,3 +1792,5 @@ Codex: задача утверждена пользователем. Прочи�
 ~~~~
 
 ````````
+
+`````````

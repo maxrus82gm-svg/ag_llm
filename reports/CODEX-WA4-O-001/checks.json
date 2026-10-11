@@ -1,0 +1,16 @@
+{
+  "task": "CODEX-WA4-O-001",
+  "python": {
+    "command": ".venv/Scripts/python.exe -B -X pycache_prefix=%TEMP%/CODEX-WA4-O-001-compile -m compileall -q web_alarm test_web_alarm_operator_ui.py wa4o_ui_demo.py wa4a_acceptance.py",
+    "exit_code": 0
+  },
+  "javascript": {
+    "method": "node:vm.Script on the actual inline script, also compiled/executed by the 20 client tests",
+    "status": "PASS",
+    "sha256": "9705e49ddc7189f2d5a29e250fef0fecc9b82fbe3010180b5eccd4b89d0d6a1a"
+  },
+  "whitespace": {
+    "status": "PASS",
+    "violations": []
+  }
+}
