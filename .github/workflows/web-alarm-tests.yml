@@ -1,0 +1,53 @@
+# Commit/task 256: GitHub-hosted smoke checks for Web Alarm WA4-E.
+# CI uses isolated temporary fixtures; it never targets live Workspace storage.
+name: Web Alarm smoke
+
+on:
+  push:
+    branches:
+      - GPT
+    paths:
+      - '.github/workflows/web-alarm-tests.yml'
+      - 'web_alarm/**'
+      - 'test_web_alarm_*.py'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/web-alarm-tests.yml'
+      - 'web_alarm/**'
+      - 'test_web_alarm_*.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-alarm-smoke-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wa4e-smoke:
+    name: WA4-E smoke / Python 3.12 / Windows
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check Python
+        run: python --version
+
+      - name: Run five isolated WA4-E tests
+        run: >-
+          python -B -m unittest -v
+          test_web_alarm_mutation_executor.PositiveTests.test_started_is_persisted_before_the_first_physical_write
+          test_web_alarm_mutation_executor.PositiveTests.test_replay_of_the_same_contract_never_repeats_the_side_effect
+          test_web_alarm_mutation_executor.PositiveTests.test_create_and_delete
+          test_web_alarm_mutation_executor.AdmissionTests.test_changed_pre_state_is_never_overwritten
+          test_web_alarm_mutation_executor.AdmissionTests.test_closed_and_archived_tasks_admit_nothing
