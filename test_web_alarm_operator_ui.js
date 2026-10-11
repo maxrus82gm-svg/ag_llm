@@ -165,3 +165,35 @@ test('O9 narrow selection collapses navigator; desktop resize restores it',async
   const h=harness();await settle();h.width=390;await h.run("selectTask('task_a')");assert.equal(h.el('navigatorPanel').open,false);
   h.width=1440;h.events.resize();assert.equal(h.el('navigatorPanel').open,true);
 });
+
+// REPAIR #1: every export containing NEXT must be gated by a fresh coherent read.
+test('O6 context export is forbidden when server read is incoherent',async()=>{
+  const h=harness();await settle();const v=task();v.operator.coherent=false;
+  h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+  assert.equal(h.el('copyContext').disabled,true);
+  await h.run("$('copyContext').onclick()");
+  assert.deepEqual(h.copied,[]);
+  assert.match(h.el('copyStatus').textContent,/не скопирован/);
+});
+test('O5 context export is forbidden after offline response and restored on fresh read',async()=>{
+  const h=harness();await settle();await h.run("selectTask('task_a')");
+  assert.equal(h.el('copyContext').disabled,false);
+  h.routes.set('/tasks/task_a/ui',()=>{throw new TypeError('offline')});
+  await h.run('loadDetail(view.epoch)');
+  assert.equal(h.el('copyContext').disabled,true);
+  await h.run("$('copyContext').onclick()");
+  assert.deepEqual(h.copied,[]);
+  h.routes.delete('/tasks/task_a/ui');
+  await h.run('loadDetail(view.epoch)');
+  assert.equal(h.el('copyContext').disabled,false);
+  await h.run("$('copyContext').onclick()");
+  assert.equal(h.copied.length,1);
+  assert.match(h.copied[0],/NEXT SAFE ACTION: SERVER NEXT/);
+});
+test('O9 context export is forbidden after 45-second freshness timeout',async()=>{
+  const h=harness();await settle();await h.run("selectTask('task_a')");
+  h.clock+=46000;h.intervals[0]();
+  assert.equal(h.el('copyContext').disabled,true);
+  await h.run("$('copyContext').onclick()");
+  assert.deepEqual(h.copied,[]);
+});

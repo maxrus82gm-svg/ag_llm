@@ -1,4 +1,4 @@
-# Commits 256/260: WA4-E smoke and guarded WA4-A acceptance/regression.
+# Commits 256/260/264: WA4-E smoke, WA4-A/WA4-O guarded acceptance/regression.
 # PRs run focused and full regression; manual runs can disable the full suite.
 # CI uses isolated temporary fixtures; it never targets live Workspace storage.
 name: Web Alarm smoke
@@ -11,6 +11,8 @@ on:
       - '.github/workflows/web-alarm-tests.yml'
       - 'web_alarm/**'
       - 'test_web_alarm_*.py'
+      - 'test_web_alarm_*.js'
+      - 'wa4a_acceptance.py'
   pull_request:
     branches:
       - main
@@ -18,10 +20,12 @@ on:
       - '.github/workflows/web-alarm-tests.yml'
       - 'web_alarm/**'
       - 'test_web_alarm_*.py'
+      - 'test_web_alarm_*.js'
+      - 'wa4a_acceptance.py'
   workflow_dispatch:
     inputs:
       run_full_regression:
-        description: 'Also run the complete Web Alarm suite (689 tests at WA4-A baseline)'
+        description: 'Also run the complete Web Alarm regression suite'
         type: boolean
         required: false
         default: true
@@ -88,7 +92,20 @@ jobs:
           test_web_alarm_resolver
           test_web_alarm_recovery_coordinator
 
-      - name: Run guarded full Web Alarm regression (689 tests at baseline)
+      - name: Run guarded WA4-O operator HTTP acceptance
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: >-
+          python -B wa4a_acceptance.py --task CODEX-WA4-O-001
+          --output "${{ runner.temp }}/wa4o-focused"
+          test_web_alarm_operator_ui
+
+      - name: Run WA4-O shipped JavaScript client tests
+        run: node --test test_web_alarm_operator_ui.js
+
+      - name: Run guarded full Web Alarm regression (717 tests at WA4-O baseline)
         if: github.event_name == 'pull_request' || inputs.run_full_regression
         env:
           TMPDIR: ${{ runner.temp }}
@@ -107,5 +124,7 @@ jobs:
             ${{ runner.temp }}/wa4a-focused/isolation.jsonl
             ${{ runner.temp }}/wa4a-full/results.json
             ${{ runner.temp }}/wa4a-full/isolation.jsonl
+            ${{ runner.temp }}/wa4o-focused/results.json
+            ${{ runner.temp }}/wa4o-focused/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7

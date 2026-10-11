@@ -429,7 +429,10 @@ function saveSelection(){
 function setFresh(fresh,message=''){
   view.fresh=fresh;
   notice('freshness',message);
-  $('copyNext').disabled=!fresh||!view.data?.operator.coherent
+  // Context also contains NEXT SAFE ACTION; never export it from a stale read.
+  const canCopy=fresh&&Boolean(view.data?.operator.coherent);
+  $('copyNext').disabled=!canCopy;
+  $('copyContext').disabled=!canCopy
 }
 function clearDetail(){
   view.data=null;
@@ -746,10 +749,12 @@ $('copyNext').onclick=()=>{
 }
 ;
 $('copyContext').onclick=()=>{
-  if(view.data){
-    const v=view.data;
-    copy(['TASK: '+v.task_state.task.task_id,'Workspace: '+v.workspace.workspace_id,'Снимок: '+v.operator.read_at,'Свежий: '+view.fresh,'Статус: '+v.task_state.task.status,'Этап: '+v.current_microtask_id,'Recovery: '+v.recovery_state,'NEXT SAFE ACTION: '+v.next_safe_action].join('\n'))
+  if(!view.fresh||!view.data?.operator.coherent){
+    text('copyStatus','Контекст не скопирован: снимок недостоверен или устарел. Обновите данные.');
+    return
   }
+  const v=view.data;
+  copy(['TASK: '+v.task_state.task.task_id,'Workspace: '+v.workspace.workspace_id,'Снимок: '+v.operator.read_at,'Свежий: '+view.fresh,'Статус: '+v.task_state.task.status,'Этап: '+v.current_microtask_id,'Recovery: '+v.recovery_state,'NEXT SAFE ACTION: '+v.next_safe_action].join('\n'))
 }
 ;
 try{
