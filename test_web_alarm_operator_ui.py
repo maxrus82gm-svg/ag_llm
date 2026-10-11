@@ -330,11 +330,11 @@ from web_alarm.server import WebAlarmApi,create_server
 s=create_server(WebAlarmApi(sys.argv[1]),port=0)
 t=threading.Thread(target=s.serve_forever);t.start()
 try:
- with urllib.request.urlopen('http://127.0.0.1:'+str(s.server_port)+'/tasks/task_a/ui') as r: print(r.read().decode())
+ with urllib.request.urlopen('http://127.0.0.1:'+str(s.server_port)+'/tasks/task_a/ui') as r: sys.stdout.buffer.write(r.read())
 finally: s.shutdown();s.server_close();t.join()
 '''
         r = subprocess.run([sys.executable,'-B','-c',script,str(self.root/'storage')],
-                           cwd=ROOT,capture_output=True,text=True,timeout=20)
+                           cwd=ROOT,capture_output=True,text=True,encoding='utf-8',timeout=20)
         self.assertEqual(r.returncode,0,r.stderr)
         after = json.loads(r.stdout)
         self.assertEqual(before['next_safe_action'],after['next_safe_action'])
