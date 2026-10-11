@@ -395,6 +395,17 @@ class AdmissionTests(Fixture):
 
 
 class FailureTests(Fixture):
+    def test_operation_disappearing_during_claim_is_a_safe_refusal(self):
+        self.activate()
+        self.ops.begin(TASK, "m1", "write", "a.txt", operation_id="op_1", payload=AFTER)
+        with mock.patch.object(self.executor.operations, "contract_status",
+                               side_effect=OperationStoreError("operation moved during close")):
+            outcome = self.run_write()
+        self.assertEqual((outcome["result"], outcome["result_code"]),
+                         (REFUSED, "OWNERSHIP_UNAVAILABLE"))
+        self.assertEqual((self.read("a.txt"), self.op().status), (BEFORE, OperationStatus.INTENT))
+        self.assertEqual(self.active_claims(), [])
+
     def test_started_not_persisted_writes_nothing(self):
         self.activate()
         real = OperationStore._transition_locked

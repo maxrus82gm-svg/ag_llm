@@ -191,7 +191,12 @@ class TargetClaimService:
             return "LEGACY_CONTRACT", "legacy contract v1 cannot prove canonical target + CAS basis"
         if record.status in _COMPLETED:
             return "OPERATION_ALREADY_COMPLETED", f"operation is {record.status.value}"
-        status = self.operations.contract_status(task_id, record.operation_id)
+        try:
+            status = self.operations.contract_status(task_id, record.operation_id)
+        except OperationStoreError as exc:
+            # The TASK can move active -> completed while an unguarded storage
+            # primitive is closing it. Never grant a claim on unreadable evidence.
+            raise TargetClaimError(f"operation state unavailable: {exc}") from exc
         if status["payload_verified"] is False:
             return "PAYLOAD_INTEGRITY_FAILURE", "durable payload does not match its reference"
         if not status["rearm_contract_sufficient"]:
