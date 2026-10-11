@@ -252,10 +252,14 @@ GUARD = r'''
 import ipaddress, json, os, sys, tempfile
 from pathlib import Path
 _audit_temp = Path(tempfile.gettempdir()).resolve()
-_audit_log = os.environ["WA4A_GUARD_LOG"]
+_audit_log = Path(os.environ["WA4A_GUARD_LOG"]).resolve()
+if not _audit_log.is_relative_to(_audit_temp):
+    raise RuntimeError("WA4-A audit log must be inside disposable temp")
+# Open once before the audit hook. A denied write must never re-enter
+# the hook while recording the denial (especially on Windows runners).
+_audit_fd = os.open(_audit_log, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
 def _violation(event, reason):
-    with open(_audit_log, "a", encoding="utf-8") as f:
-        f.write(json.dumps({"event":event,"reason":reason,"pid":os.getpid()})+"\n")
+    os.write(_audit_fd, (json.dumps({"event":event,"reason":reason,"pid":os.getpid()})+"\n").encode("utf-8"))
     raise PermissionError("WA4-A isolation: "+reason)
 def _path(value, write=False):
     if value is None or isinstance(value, int): return
@@ -297,8 +301,9 @@ sys.addaudithook(_audit)
 
 def run_tests(targets, output):
     output = Path(output).resolve()
-    if output.is_relative_to(ROOT):
-        raise ValueError("write test evidence to a temporary directory; publish reviewed evidence separately")
+    temp_root = Path(tempfile.gettempdir()).resolve()
+    if not output.is_relative_to(temp_root):
+        raise ValueError("WA4-A test evidence must stay inside the disposable Python temp directory")
     output.mkdir(parents=True, exist_ok=True)
     guard_dir = Path(tempfile.mkdtemp(prefix="wa4a_guard_"))
     guard_log = output / "isolation.jsonl"

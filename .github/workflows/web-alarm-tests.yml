@@ -74,6 +74,10 @@ jobs:
           python-version: '3.12'
 
       - name: Run guarded WA4-A focused acceptance (166 tests at baseline)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
         run: >-
           python -B wa4a_acceptance.py --output "${{ runner.temp }}/wa4a-focused"
           test_web_alarm_lost_response
@@ -86,6 +90,10 @@ jobs:
 
       - name: Run guarded full Web Alarm regression (689 tests at baseline)
         if: github.event_name == 'pull_request' || inputs.run_full_regression
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
         run: >-
           python -B wa4a_acceptance.py --output "${{ runner.temp }}/wa4a-full" all
 
