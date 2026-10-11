@@ -1,0 +1,4418 @@
+{
+  "task": "CODEX-WA4-A-001",
+  "targets": [
+    "test_web_alarm_lost_response",
+    "test_web_alarm_mutation_executor",
+    "test_web_alarm_operation_contract",
+    "test_web_alarm_operation_store",
+    "test_web_alarm_target_claims",
+    "test_web_alarm_resolver",
+    "test_web_alarm_recovery_coordinator"
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "win32",
+  "started_unix": 1791711281.6430557,
+  "elapsed_seconds": 165.84,
+  "tests_run": 165,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "passed": 165,
+  "successful": true,
+  "isolation_violations": [],
+  "source_sha256": {
+    "web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+    "web_alarm/cli.py": "2815a01c579ad6986643554846a864a6cb7dae5042925c9c54ea618051a178da",
+    "web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "web_alarm/event_checkpoint_store.py": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+    "web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "web_alarm/mutation_executor.py": "74762371397108fa6dcf93a16a8d8d762da76422134d9360ae9fff357efe70c0",
+    "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "web_alarm/operation_store.py": "431b092470afe2ecd61b2ce2fde5d60a848366d0d9c7437f7f8deba9c583b1e3",
+    "web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "web_alarm/projection.py": "1d788d2153621fb0aba9ed19ac2dbb3b74758bb78e3a4548c08dab295bf09af0",
+    "web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "web_alarm/recovery_coordinator.py": "362d74594cd323c93e93dfc1683e128a0d8ed05baf67652f19b95a97955f24d2",
+    "web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "web_alarm/server.py": "8d6c1c85b8be020503ba118085e2c1f6b3034e655cf789a1a820b04c3eb494f2",
+    "web_alarm/state_machine.py": "0bec1f270ac957fff279d3cf1de13201421600b6b173ef0f17b983c57bfac2fb",
+    "web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "web_alarm/target_claim_service.py": "1d1558305a621247dc25f3390f2097171d261374b67429d519a75e06bc20dfe1",
+    "web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "web_alarm/task_store.py": "bf8127d0d06f5e46f8d8eae7c76f2019e3f471efc628bc1c10b03f1135890527",
+    "web_alarm/transport_event_store.py": "107a8e89cff2ffaae2a6eb899d0028e1c2a46788e12edfc3de5b9448a3b020cf",
+    "web_alarm/ui.py": "86e4d042651bb4a9a5b02b270e5966ebedcf4f5c8f0fe91137dddc0aadbbdbd5",
+    "web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "test_web_alarm_cli.py": "da16d5b886309d369c8607ab85ec7aab2c3a3bcfd89212429a941b431eeeca59",
+    "test_web_alarm_context_pack.py": "0775e6d15091e42f46b32a1349725fd90041aedb38a46e743199029e45766d52",
+    "test_web_alarm_event_checkpoint_store.py": "de26ecc5698d8e90d7b7a00cc4675d281df01ce39093d7af9db1910e1675cb1c",
+    "test_web_alarm_lost_response.py": "eee1784d73dd897e7e590d219ffea36ff7359c02502d6972490c395f288477f3",
+    "test_web_alarm_manifest_store.py": "d35fb7538581e681a08022138fcbf3da407d759f5104c935a3a6e89b0c50009b",
+    "test_web_alarm_models.py": "da0b930d37f8b2fcf39bc89e2458d8eeaede163f154f2906eac27551a3964ac1",
+    "test_web_alarm_mutation_executor.py": "6e258ae3e505c269301c82c61e5e908bb9694db9b0178950d797452c868c2772",
+    "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+    "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba",
+    "test_web_alarm_operation_store_concurrency.py": "bab96f7d52a1f60085936c93c1cba7887a1b20dda05d8e92e6e8ba3e949a303b",
+    "test_web_alarm_payload_store.py": "9b232329cbe3fdf8b84091780967834537f447bc17c690b15a829a09f0303a0a",
+    "test_web_alarm_projection.py": "d338067a27db813dc0621ae4bb3264c7bc865c2c01d6f53653491e4c541cf7d9",
+    "test_web_alarm_projection_concurrency.py": "02da5133346a3e94cca33710b7e2088e1f5bca22db737109310748abaeee8f9c",
+    "test_web_alarm_projection_repair2.py": "add847e7e4331ffc4e962948bd8bc94d9335ea15442827a04831c8715e0d23dc",
+    "test_web_alarm_reconciliation.py": "074b467b1b925aec12e12fe6e14dfa0f1223e48cf7f12675ae67034aa7e96605",
+    "test_web_alarm_reconciliation_decision.py": "4dd20a9a5bb58586dab2e6b47de09281ae62efdb37e50a5397032d4a89043b91",
+    "test_web_alarm_reconciliation_integration.py": "ced03d05078b77ebcbbd6f4b526806ee4a8e753bfcd40030df02ff7d6be8d334",
+    "test_web_alarm_recovery_coordinator.py": "c7408223f4ae462600a9c6384b6cc327068b1f8e54e5061b049c9c74770e8d7a",
+    "test_web_alarm_recovery_coordinator_adversarial.py": "0c6ff6cffefbbe4f7e5fe557b3a8f6bf1fd7e9ea47d09632b9aa95e8e55856ba",
+    "test_web_alarm_recovery_coordinator_concurrency.py": "9ed892335426f5813d960d522429a917616e8b1a9591d3d5110e0c2cd180658b",
+    "test_web_alarm_recovery_coordinator_repair1.py": "90be1c61284e78f199131d333368a645820cf5f5a392df8a7a49ded7d5057493",
+    "test_web_alarm_recovery_coordinator_repair2.py": "42be3c91ee5f9af7e97a86bc7653c01f1963390bba78fe7597a5fa7c27c51c66",
+    "test_web_alarm_recovery_coordinator_repair3.py": "bf316497034a0f28f211ad27e25e079dc2bf3f3dd575a72aeff08c7e2d983811",
+    "test_web_alarm_recovery_coordinator_repair4.py": "016ce8bfd5c00ff5cfe56444f76fff033c12967603fa67d1ef1206fde3107211",
+    "test_web_alarm_recovery_coordinator_repair4a.py": "2cf70b19aac76f1752a88b012f081204446f18e39cb985fdaf06649651df8015",
+    "test_web_alarm_recovery_coordinator_repair4b.py": "d61b004360aeef1404d19f84450f62f992f6a74734b6d573d91295f5d05e85f3",
+    "test_web_alarm_recovery_coordinator_wa014.py": "f8381c97b87e30335e56a1314d4e6f2cf6f421899f84e2984cab8b886b530758",
+    "test_web_alarm_recovery_report_acceptance.py": "14d562590eb844b4f02d77546dc49cf9a35d9c8c7588061c370d058ae7a54ac5",
+    "test_web_alarm_recovery_report_builder.py": "35a0b5cc3ddc32f8ac0bc28d42d7ba15d9adb552a1d3b6102b0fd937556de73b",
+    "test_web_alarm_recovery_report_integration.py": "a1189a9b2a17cffb21cf3dc1bed617851188793277c1939628254218d656e840",
+    "test_web_alarm_recovery_report_store.py": "9e0ae8ec8b6506df921fbacaac56fe359f7edd8d9bd436aab022d7ba0ec195e4",
+    "test_web_alarm_recovery_scenarios.py": "f9a6ab823f1bf908a58581f49d73d66a5a8a50d205ebccf8a20fb57ec9bb1093",
+    "test_web_alarm_reliability_wa017.py": "72dabbb03cfa49dcf01ff7057acd0ab8e188f5ba14df1d7ad0aa68f7ddbbac2d",
+    "test_web_alarm_remote_entry.py": "e8b956d296588672f9a893aff0e7cb5e9fa0a0ae918d09f52720b8ab430a4be0",
+    "test_web_alarm_resolver.py": "0b9cd46389b397ff97d2a3d3686d1887baee920459e3d969769ebac6a7b06bbc",
+    "test_web_alarm_resolver_concurrency.py": "2b51c468df66c0a9441040814c1f59b9e17e3b73f4b3b1a00a13e07e9dac8d96",
+    "test_web_alarm_restart_recovery.py": "11807f4a50ec11d22f37d68105d73380fc2a2f3151915a6136554056c1ce9a3c",
+    "test_web_alarm_rollback.py": "17f9145fd8b7e578ce3680c63fff04eb404553c564b1a0c6482d1da7799b6aaa",
+    "test_web_alarm_rollback_concurrency.py": "c12bfee5c4b09ae62c9a934079a9325612f6e331587ad13dacb3f836f263e8c4",
+    "test_web_alarm_server.py": "7aa4fd2a77daacb50e990355d82a1046c338fd3a90df4b179cd26c144d89ea3f",
+    "test_web_alarm_state_machine.py": "483e913b6e3ae4b8059511987e0cd09f64d4a1e494e2bd939740e900fa592bfb",
+    "test_web_alarm_state_machine_cas.py": "7a2ce35e5342667d490c3494666fbec0b43af4d883f815f23a472f6d092e1dff",
+    "test_web_alarm_target_claims.py": "a6fd3b43880f26a22ee2dbbfb2d076a9e8385c6a8ed006c1d27540537e844616",
+    "test_web_alarm_target_claims_concurrency.py": "48443dc39e85f27c77d92ce8ff39cbea5f1f62fa1403034cb64da57fb3052484",
+    "test_web_alarm_target_identity.py": "f7ad1b7977454412ca2f2fed2736bf7d34edfd66161baa88dad992d4c1ab163c",
+    "test_web_alarm_task_store.py": "df3dd3bfbfa9d97329a8d5b4af915b3a994fde7dd4c8918219f08582098eae3b",
+    "test_web_alarm_transport_authority.py": "3b5218ee6f623f3b9c889032c38f324d2671f7c0f0fcfc638f2ef9c6abd95c53",
+    "test_web_alarm_transport_event_store.py": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849",
+    "test_web_alarm_transport_ingestion.py": "765fa85afb8846855e3de15bbe1fbd4a1b3d24aec62778ad5f70810635cf07eb",
+    "test_web_alarm_transport_recovery.py": "de660a794815e9d58b0648ab84ecc4e90e398134d9e83d79a71793be078f20b1",
+    "test_web_alarm_ui.py": "fcfa67c3e352422a15197423fcae3a4598625b66d6d14b2e4c6af066420cc1b7",
+    "test_web_alarm_workspace_registry.py": "16ac6c5b053cd8123b26004cda26dd080140d0332acea15ac5ecb760521984ed",
+    "wa4a_acceptance.py": "8d617177b16222c9e7654751ee00368821da480a78c527c4356ea840c3f64b35"
+  },
+  "tests": [
+    {
+      "test": "test_web_alarm_lost_response.CompositeTests.test_A1_A6_move_lost_response_replays_both_original_receipts",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 10188,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "fresh",
+          "mode": "deliver",
+          "observed": {
+            "pid": 37804,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "MOVE_COMPLETED",
+                "reason": "move as two tracked operations (create destination, delete source)",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "composite": "move",
+                "steps": [
+                  {
+                    "result": "REPLAYED",
+                    "result_code": "KNOWN_RECEIPT",
+                    "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.create-destination",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "CREATE",
+                    "target": "dst.txt",
+                    "receipt": {
+                      "exists": true,
+                      "size": 7,
+                      "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "eol": "lf",
+                      "bom": false,
+                      "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:42.918653+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "REPLAYED",
+                      "result_code": "ALREADY_RELEASED"
+                    }
+                  },
+                  {
+                    "result": "REPLAYED",
+                    "result_code": "KNOWN_RECEIPT",
+                    "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.delete-source",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "DELETE",
+                    "target": "src.txt",
+                    "receipt": {
+                      "exists": false,
+                      "size": null,
+                      "sha256": null,
+                      "eol": null,
+                      "bom": null,
+                      "normalized_sha256": null,
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:43.193521+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "REPLAYED",
+                      "result_code": "ALREADY_RELEASED"
+                    }
+                  }
+                ],
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify both steps and transition them DONE -> VERIFIED"
+              },
+              "received_bytes": 2680
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A1",
+            "A2",
+            "A6"
+          ],
+          "action": "move",
+          "receipts": [
+            {
+              "exists": true,
+              "size": 7,
+              "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+              "eol": "lf",
+              "bom": false,
+              "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-11T09:34:42.918653+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            },
+            {
+              "exists": false,
+              "size": null,
+              "sha256": null,
+              "eol": null,
+              "bom": null,
+              "normalized_sha256": null,
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-11T09:34:43.193521+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            }
+          ],
+          "physical_calls": 2,
+          "atomic": false
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.CompositeTests.test_A1_A6_rename_lost_response_replays_both_original_receipts",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 34152,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "fresh",
+          "mode": "deliver",
+          "observed": {
+            "pid": 5328,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "MOVE_COMPLETED",
+                "reason": "rename as two tracked operations (create destination, delete source)",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "composite": "rename",
+                "steps": [
+                  {
+                    "result": "REPLAYED",
+                    "result_code": "KNOWN_RECEIPT",
+                    "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.create-destination",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "CREATE",
+                    "target": "dst.txt",
+                    "receipt": {
+                      "exists": true,
+                      "size": 7,
+                      "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "eol": "lf",
+                      "bom": false,
+                      "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:45.327773+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "REPLAYED",
+                      "result_code": "ALREADY_RELEASED"
+                    }
+                  },
+                  {
+                    "result": "REPLAYED",
+                    "result_code": "KNOWN_RECEIPT",
+                    "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.delete-source",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "DELETE",
+                    "target": "src.txt",
+                    "receipt": {
+                      "exists": false,
+                      "size": null,
+                      "sha256": null,
+                      "eol": null,
+                      "bom": null,
+                      "normalized_sha256": null,
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:45.593650+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "REPLAYED",
+                      "result_code": "ALREADY_RELEASED"
+                    }
+                  }
+                ],
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify both steps and transition them DONE -> VERIFIED"
+              },
+              "received_bytes": 2684
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A1",
+            "A2",
+            "A6"
+          ],
+          "action": "rename",
+          "receipts": [
+            {
+              "exists": true,
+              "size": 7,
+              "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+              "eol": "lf",
+              "bom": false,
+              "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-11T09:34:45.327773+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            },
+            {
+              "exists": false,
+              "size": null,
+              "sha256": null,
+              "eol": null,
+              "bom": null,
+              "normalized_sha256": null,
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-11T09:34:45.593650+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            }
+          ],
+          "physical_calls": 2,
+          "atomic": false
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.CompositeTests.test_A6_partial_move_can_only_finish_the_unexecuted_step",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "move_partial",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "finish",
+          "mode": "deliver",
+          "observed": {
+            "pid": 4236,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "EXECUTED",
+                "result_code": "MOVE_COMPLETED",
+                "reason": "move as two tracked operations (create destination, delete source)",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "composite": "move",
+                "steps": [
+                  {
+                    "result": "REPLAYED",
+                    "result_code": "KNOWN_RECEIPT",
+                    "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.create-destination",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "CREATE",
+                    "target": "dst.txt",
+                    "receipt": {
+                      "exists": true,
+                      "size": 7,
+                      "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "eol": "lf",
+                      "bom": false,
+                      "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:47.685423+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "REPLAYED",
+                      "result_code": "ALREADY_RELEASED"
+                    }
+                  },
+                  {
+                    "result": "EXECUTED",
+                    "result_code": "EXACT_POST_STATE_PROVED",
+                    "reason": "executed once; the receipt is the server-observed post-state",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a.delete-source",
+                    "operation_status": "DONE",
+                    "operation_revision": 3,
+                    "mutation_kind": "DELETE",
+                    "target": "src.txt",
+                    "receipt": {
+                      "exists": false,
+                      "size": null,
+                      "sha256": null,
+                      "eol": null,
+                      "bom": null,
+                      "normalized_sha256": null,
+                      "source": "server_observed_at_done",
+                      "observed_at": "2026-10-11T09:34:48.682567+00:00",
+                      "revision": 3,
+                      "matches_expected_post": true,
+                      "eol_only_drift": false
+                    },
+                    "physical_mutation_performed": true,
+                    "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                    "claim_release": {
+                      "result": "RELEASED",
+                      "result_code": "OWNER_RELEASED"
+                    }
+                  }
+                ],
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify both steps and transition them DONE -> VERIFIED"
+              },
+              "received_bytes": 2655
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A6"
+          ],
+          "recovery": {
+            "decision_version": 1,
+            "decision": "ROLLBACK_CURRENT_MICROTASK",
+            "reason_code": "PARTIAL_KNOWN_STATE",
+            "reason": "targets are a mixture of exact pre-state and exact expected post-state with a valid restore point",
+            "evidence_fingerprint": "eb13611ac2a44fd83a476c65eacbf1f0637add0070bb3bad11ee6311a60a94fd",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a.create-destination",
+            "operation_status": "DONE",
+            "target_counts": {
+              "PRE_STATE": 1,
+              "EXPECTED_POST_STATE": 1,
+              "DRIFT": 0,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "src.txt",
+              "dst.txt"
+            ],
+            "next_safe_action": "rollback only the current microtask through the later explicit recovery executor; do not retry first",
+            "automatic_mutation_authorized": false
+          },
+          "physical_calls": 2,
+          "completed_only": "delete-source"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.CompositeTests.test_A6_partial_move_source_drift_is_preserved",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "move_partial",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refuse",
+          "mode": "deliver",
+          "observed": {
+            "pid": 33512,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_partial",
+                  "message": "move as two tracked operations (create destination, delete source)",
+                  "details": {
+                    "result": "PARTIAL",
+                    "result_code": "MOVE_INTERRUPTED",
+                    "reason": "move as two tracked operations (create destination, delete source)",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "composite": "move",
+                    "steps": [
+                      {
+                        "result": "REPLAYED",
+                        "result_code": "KNOWN_RECEIPT",
+                        "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                        "task_id": "wa4a_task",
+                        "operation_id": "op_a.create-destination",
+                        "operation_status": "DONE",
+                        "operation_revision": 3,
+                        "mutation_kind": "CREATE",
+                        "target": "dst.txt",
+                        "receipt": {
+                          "exists": true,
+                          "size": 7,
+                          "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                          "eol": "lf",
+                          "bom": false,
+                          "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                          "source": "server_observed_at_done",
+                          "observed_at": "2026-10-11T09:34:50.016252+00:00",
+                          "revision": 3,
+                          "matches_expected_post": true,
+                          "eol_only_drift": false
+                        },
+                        "physical_mutation_performed": false,
+                        "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                        "claim_release": {
+                          "result": "REPLAYED",
+                          "result_code": "ALREADY_RELEASED"
+                        }
+                      },
+                      {
+                        "result": "REFUSED",
+                        "result_code": "PRECONDITION_FAILED",
+                        "reason": "target bytes changed since the CAS basis",
+                        "task_id": "wa4a_task",
+                        "operation_id": "op_a.delete-source",
+                        "operation_status": "INTENT",
+                        "operation_revision": 1,
+                        "mutation_kind": "DELETE",
+                        "target": "src.txt",
+                        "receipt": null,
+                        "physical_mutation_performed": false,
+                        "next_safe_action": "nothing was written; the operation keeps its target ownership (RC-3: it belongs to the logical operation) and a replay continues once the blocker is gone; to abandon it, transition it to FAILED or record ABORT, then release its claim"
+                      }
+                    ],
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "the destination exists (op_a.create-destination has its receipt) but the source was not deleted (PRECONDITION_FAILED): the pair is not atomic. Replay the same move once the blocker is resolved (it continues with the delete), or roll the microtask back through RC-2/RC-4"
+                  }
+                }
+              },
+              "received_bytes": 2944
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A6",
+            "A7"
+          ],
+          "result": {
+            "result": "PARTIAL",
+            "result_code": "MOVE_INTERRUPTED",
+            "reason": "move as two tracked operations (create destination, delete source)",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "composite": "move",
+            "steps": [
+              {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a.create-destination",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "CREATE",
+                "target": "dst.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:34:50.016252+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              {
+                "result": "REFUSED",
+                "result_code": "PRECONDITION_FAILED",
+                "reason": "target bytes changed since the CAS basis",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a.delete-source",
+                "operation_status": "INTENT",
+                "operation_revision": 1,
+                "mutation_kind": "DELETE",
+                "target": "src.txt",
+                "receipt": null,
+                "physical_mutation_performed": false,
+                "next_safe_action": "nothing was written; the operation keeps its target ownership (RC-3: it belongs to the logical operation) and a replay continues once the blocker is gone; to abandon it, transition it to FAILED or record ABORT, then release its claim"
+              }
+            ],
+            "physical_mutation_performed": false,
+            "next_safe_action": "the destination exists (op_a.create-destination has its receipt) but the source was not deleted (PRECONDITION_FAILED): the pair is not atomic. Replay the same move once the blocker is resolved (it continues with the delete), or roll the microtask back through RC-2/RC-4"
+          },
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_contract_kind_cannot_disagree_with_request_action",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 36900,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 33968,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_f_p95y91\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: contract.mutation_kind contradicts operation action",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_f_p95y91\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: contract.mutation_kind contradicts operation action",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 1069
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "6340c4d1e692087ab37011b35fece7b830dcc582c1668bc615fb8796768e0ad8",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_contract_pre_state_cannot_disagree_with_intent_history",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 31388,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38116,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation history contradicts durable intent",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation history contradicts durable intent",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 785
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "63d9e046841f4d005b9e141bd5dce6a01c28333b3f269cc009bf95e7f30ae4c4",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_contract_workspace_identity_must_match_TASK",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 11168,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 36960,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation workspace identity does not match TASK",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation workspace identity does not match TASK",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 793
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "5072bcb120ccb27f3eeaed9c9196686ebf7a59051df01c5355b655eb7c9ea655",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_corrupt_event_JSON_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 36344,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38804,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "cannot validate operation history: invalid event JSON at line 1",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "cannot validate operation history: invalid event JSON at line 1",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 823
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "1a16850fbddcc4ec73ea553dcfff51fe1d984f26e83b7830a7a161330e08cef9",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_execution_event_cannot_contradict_receipt",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 38212,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 2828,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "execution event contradicts durable receipt",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "execution event contradicts durable receipt",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 783
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "cfb8bd48dd9f3544daed2482f45cd766fc6c62b10573ee389c94bb89697435e5",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_intent_history_fingerprint_contradiction_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 38452,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38580,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation history contradicts durable intent",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation history contradicts durable intent",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 785
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "ee61f0e6ab23599ed1f0d067665115aad6e7d1cb685fccd9ff3a3698509b63de",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_missing_intent_history_is_not_a_valid_success",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 9276,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 36964,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation is missing durable intent history",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation is missing durable intent history",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 783
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_pending_intent_with_lost_history_cannot_grant_new_mutation",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "corrupt_pending",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39632,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation is missing durable intent history",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation is missing durable intent history",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 783
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed before mutation",
+          "actual_status": 409,
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_false_match_flag_is_a_contradiction",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39276,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39280,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_n42awehr\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt match flag contradicts contract post-state",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_n42awehr\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt match flag contradicts contract post-state",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 1067
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "8af7581b45b29028563dc95018d38423a7436ab4fea930d618ec4d11be9212bd",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_future_revision_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39388,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39572,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_ua9trvhp\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt.revision is outside operation history",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_ua9trvhp\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt.revision is outside operation history",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 1057
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "fec4a1bcf74dfb6f25129616bcb17b5e1dd47569be0d4b95fcc290ff7f0dd994",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_history_contradiction_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 38588,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39056,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation history contradicts durable receipt",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation history contradicts durable receipt",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 787
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "c5e5e08ae417581d1b08debb7bf197a1de9d3953aa8b7c2585f6423b02969158",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_missing_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39276,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39344,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_dvnqe2cy\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: DONE/VERIFIED v2 operation has no receipt",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_dvnqe2cy\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: DONE/VERIFIED v2 operation has no receipt",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 1049
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "b0461d7562ffd08270e8af5412e09938f3c72912ff9d5a879e66a70b982b897e",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_wrong_hash_cannot_be_replayed_as_success",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39408,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 22116,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_0ud6gcik\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt match flag contradicts contract post-state",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "invalid operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_0ud6gcik\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json: receipt match flag contradicts contract post-state",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 1067
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "8d25b3f5a4b7807baf374372602344cd41fd920a59eb3aa96a38fee55440f606",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_record_identity_mismatch_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39764,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 18672,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation identity does not match requested record",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation identity does not match requested record",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 797
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "5bc8b30021007260eeea6f4d0c80519cc815d580806bf4df64f4d3cb55510fa7",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_terminal_status_history_contradiction_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39588,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38112,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "operation history contradicts durable status",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "operation history contradicts durable status",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 785
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "51802887bdd52d3e001add56ef3081f893b8bb000c125f4c3e2f435351315dc7",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.IntegrityTests.test_A8_truncated_record_JSON_is_rejected",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 36152,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "corrupt_replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39324,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "cannot read operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_qmfda_qw\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "REQUEST_REJECTED",
+                    "reason": "cannot read operation record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_qmfda_qw\\state\\tasks\\active\\wa4a_task\\operations\\op_a.json",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "fix the request; nothing was recorded or written"
+                  }
+                }
+              },
+              "received_bytes": 971
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A8"
+          ],
+          "expected": "fail closed",
+          "actual_status": 409,
+          "corrupt_sha256": "38df422673af1584ff3e74f4f685ada5bf516eeea4d03e95403317353f37064b",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_after_physical_write_adopt_without_second_execution",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "after_write",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "unknown",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39428,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_reconciliation_required",
+                  "message": "the operation is STARTED",
+                  "details": {
+                    "result": "RECONCILIATION_REQUIRED",
+                    "result_code": "FATE_UNKNOWN",
+                    "reason": "the operation is STARTED",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "STARTED",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                    "reconciliation": {
+                      "decision": "ADOPT_CURRENT_STATE",
+                      "reason_code": "EXACT_POST_STATE_PROVEN",
+                      "evidence_fingerprint": "f07176273499f257f95d6795425261d913970750390f3ef0942135a816fd3bfb"
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1310
+            }
+          }
+        },
+        {
+          "worker": "adopted",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39076,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already VERIFIED: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "VERIFIED",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:24.116288+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "nothing to do",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1136
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5",
+            "A6"
+          ],
+          "window": "after physical write",
+          "recovery": {
+            "decision_version": 1,
+            "decision": "ADOPT_CURRENT_STATE",
+            "reason_code": "EXACT_POST_STATE_PROVEN",
+            "reason": "all targets exactly match the recorded expected post-state",
+            "evidence_fingerprint": "f07176273499f257f95d6795425261d913970750390f3ef0942135a816fd3bfb",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a",
+            "operation_status": "STARTED",
+            "target_counts": {
+              "PRE_STATE": 0,
+              "EXPECTED_POST_STATE": 1,
+              "DRIFT": 0,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "a.txt"
+            ],
+            "next_safe_action": "adopt the existing Workspace state through the later recovery integration; do not rerun the mutation",
+            "automatic_mutation_authorized": false
+          },
+          "physical_calls": 1,
+          "execution_events": 0,
+          "receipt_origin": "RC-6 ADOPT; not a fabricated execution event"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_after_receipt_before_execution_event_preserves_receipt",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "after_receipt",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "replay",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39440,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:25.918110+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              },
+              "received_bytes": 1176
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5",
+            "A8"
+          ],
+          "window": "after receipt, before execution event",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_after_started_requires_resolver_before_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "after_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "unknown",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38352,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_reconciliation_required",
+                  "message": "the operation is STARTED",
+                  "details": {
+                    "result": "RECONCILIATION_REQUIRED",
+                    "result_code": "FATE_UNKNOWN",
+                    "reason": "the operation is STARTED",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "STARTED",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                    "reconciliation": {
+                      "decision": "RETRY_SAFE",
+                      "reason_code": "PRE_STATE_AND_POST_NOT_REACHED",
+                      "evidence_fingerprint": "01ed2107739a178be2110492e2a55a0fa075f9967aadccad5f7b1a382437a87b"
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1308
+            }
+          }
+        },
+        {
+          "worker": "authorized_retry",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39768,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:29.131951+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              },
+              "received_bytes": 1154
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5"
+          ],
+          "window": "after STARTED",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_before_started_safe_first_execution_in_fresh_process",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "retry",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39060,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:30.996106+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              },
+              "received_bytes": 1154
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5"
+          ],
+          "window": "before STARTED",
+          "recovery": {
+            "decision_version": 1,
+            "decision": "RETRY_SAFE",
+            "reason_code": "INTENT_AND_PRE_STATE",
+            "reason": "operation remained INTENT and all declared targets exactly match pre-state",
+            "evidence_fingerprint": "9ff6b9b5920988f9dc369618f2867ca16f4ee01873b873fcf15a92e6cf6cce68",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "target_counts": {
+              "PRE_STATE": 1,
+              "EXPECTED_POST_STATE": 0,
+              "DRIFT": 0,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "a.txt"
+            ],
+            "next_safe_action": "retry only through the replay-safe execution path using the same operation_id",
+            "automatic_mutation_authorized": false
+          },
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_durable_receipt_before_DONE_event_is_still_replayable",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "receipt_before_event",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "fresh",
+          "mode": "deliver",
+          "observed": {
+            "pid": 35668,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:32.218105+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              },
+              "received_bytes": 1176
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5",
+            "A8"
+          ],
+          "window": "durable receipt before DONE event",
+          "physical_calls": 1,
+          "receipt": {
+            "exists": true,
+            "size": 15,
+            "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+            "eol": "crlf",
+            "bom": false,
+            "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-11T09:35:32.218105+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          },
+          "execution_events": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A5_unknown_retry_lifecycle_is_explicit_safe_refusal",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "unsupported",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39196,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "a RETRY of an UNKNOWN_AFTER_DISCONNECT operation cannot record its outcome: the RC-1 lifecycle has no transition out of UNKNOWN_AFTER_DISCONNECT",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "RETRY_LIFECYCLE_UNSUPPORTED",
+                    "reason": "a RETRY of an UNKNOWN_AFTER_DISCONNECT operation cannot record its outcome: the RC-1 lifecycle has no transition out of UNKNOWN_AFTER_DISCONNECT",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "UNKNOWN_AFTER_DISCONNECT",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "ABORT it and execute the change as a new operation (PROPOSAL: a re-arm transition UNKNOWN_AFTER_DISCONNECT -> STARTED needs a lifecycle decision)"
+                  }
+                }
+              },
+              "received_bytes": 1118
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A5"
+          ],
+          "retained_limit": "P-2",
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A6_identical_pre_and_post_is_not_proof_of_unexecuted_work",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "worker",
+          "mode": "deliver",
+          "observed": {
+            "pid": 37236,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_reconciliation_required",
+                  "message": "the operation is STARTED",
+                  "details": {
+                    "result": "RECONCILIATION_REQUIRED",
+                    "result_code": "FATE_UNKNOWN",
+                    "reason": "the operation is STARTED",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "STARTED",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                    "reconciliation": {
+                      "decision": "MANUAL_REVIEW_REQUIRED",
+                      "reason_code": "PRE_STATE_ALSO_MATCHES_EXPECTED_POST",
+                      "evidence_fingerprint": "54c4de3e18ea50ec6664a9bc260514977a8a56e831c5912626ce64f55f2a43e8"
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1326
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A6"
+          ],
+          "recovery": {
+            "decision_version": 1,
+            "decision": "MANUAL_REVIEW_REQUIRED",
+            "reason_code": "PRE_STATE_ALSO_MATCHES_EXPECTED_POST",
+            "reason": "current pre-state is also a valid expected post-state for at least one target",
+            "evidence_fingerprint": "54c4de3e18ea50ec6664a9bc260514977a8a56e831c5912626ce64f55f2a43e8",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a",
+            "operation_status": "STARTED",
+            "target_counts": {
+              "PRE_STATE": 1,
+              "EXPECTED_POST_STATE": 0,
+              "DRIFT": 0,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "a.txt"
+            ],
+            "next_safe_action": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically",
+            "automatic_mutation_authorized": false
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.InterruptionTests.test_A6_unclassified_bytes_never_adopt_or_retry_blindly",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "after_write",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "ambiguous",
+          "mode": "deliver",
+          "observed": {
+            "pid": 11708,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_reconciliation_required",
+                  "message": "the operation is STARTED",
+                  "details": {
+                    "result": "RECONCILIATION_REQUIRED",
+                    "result_code": "FATE_UNKNOWN",
+                    "reason": "the operation is STARTED",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "STARTED",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                    "reconciliation": {
+                      "decision": "MANUAL_REVIEW_REQUIRED",
+                      "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+                      "evidence_fingerprint": "e5b3f20bd2022714669dd71df3d2101f1a2c467e9011f661e772419d24953911"
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1318
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A6"
+          ],
+          "recovery": {
+            "decision_version": 1,
+            "decision": "MANUAL_REVIEW_REQUIRED",
+            "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+            "reason": "unsafe target classifications: DRIFT",
+            "evidence_fingerprint": "e5b3f20bd2022714669dd71df3d2101f1a2c467e9011f661e772419d24953911",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a",
+            "operation_status": "STARTED",
+            "target_counts": {
+              "PRE_STATE": 0,
+              "EXPECTED_POST_STATE": 0,
+              "DRIFT": 1,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "a.txt"
+            ],
+            "next_safe_action": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically",
+            "automatic_mutation_authorized": false
+          },
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A1_A2_http_lost_delivery_then_new_process_replays_exact_receipt",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 30952,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "fresh_client",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39288,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:38.168405+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            }
+          }
+        },
+        {
+          "worker": "fresh_again",
+          "mode": "deliver",
+          "observed": {
+            "pid": 34436,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:38.168405+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A1",
+            "A2",
+            "A8"
+          ],
+          "expected": "same receipt, one write, one execution event",
+          "operation_sha256": "00d8e729fe32dc330bcf4533979cc09b6637c562276b5f8bc1e0a7ad14addfa7",
+          "target_sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+          "receipt": {
+            "exists": true,
+            "size": 15,
+            "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+            "eol": "crlf",
+            "bom": false,
+            "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-11T09:35:38.168405+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          },
+          "history_prefix_sha256": "aebc0184c8930dca8b0d99a6b8705267c60ad932a0f5241689af53df00356498",
+          "recovery": {
+            "SERVICE_VERSION": 1,
+            "MODE": "READ_ONLY_RECONCILIATION",
+            "MUTATION_PERFORMED": false,
+            "TASK_ID": "wa4a_task",
+            "MICROTASK_ID": "m1",
+            "OPERATION_ID": "op_a",
+            "EVIDENCE": {
+              "evidence_version": 1,
+              "task_id": "wa4a_task",
+              "microtask_id": "m1",
+              "workspace_id": "wa4a_ws",
+              "workspace_root": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4a_z8h8bmef\\project",
+              "operation_id": "op_a",
+              "operation_status": "DONE",
+              "operation_action": "write",
+              "operation_target": "a.txt",
+              "operation_request_fingerprint": "2bec40f4a5e2115b846abe602d302eb635b7a60db57d12312635c079f8295bc3",
+              "operation_expected_precondition_sha256": null,
+              "operation_result_summary": "WA4-E: executed; exact post-state proved by the server",
+              "verification_evidence": null,
+              "manifest_status": "VERIFIED",
+              "snapshot_status": "VERIFIED",
+              "evidence_complete": true,
+              "expected_post_complete": true,
+              "errors": [],
+              "targets": [
+                {
+                  "source_path": "a.txt",
+                  "expected_change": "edit",
+                  "exists_before": true,
+                  "size_before": 7,
+                  "sha256_before": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "snapshot_path": "snapshots\\snapshot_d8716d9107ac40bb9a2857898b7c208f.bin",
+                  "snapshot_valid": true,
+                  "snapshot_error": null,
+                  "current_exists": true,
+                  "current_is_file": true,
+                  "current_size": 15,
+                  "current_sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "path_error": null,
+                  "expected_post_exists": true,
+                  "expected_post_sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "expected_post_source": "operation.contract",
+                  "operation_target": true,
+                  "operation_precondition_matches_manifest": null,
+                  "matches_pre_state": false,
+                  "matches_expected_post_state": true,
+                  "drift_detected": false,
+                  "classification": "EXPECTED_POST_STATE",
+                  "missing_evidence": []
+                }
+              ]
+            },
+            "DECISION": {
+              "decision_version": 1,
+              "decision": "ADOPT_CURRENT_STATE",
+              "reason_code": "EXACT_POST_STATE_PROVEN",
+              "reason": "all targets exactly match the recorded expected post-state",
+              "evidence_fingerprint": "e55f6094dc4fe425447dec8dff36ac781e431278ffcce32ff3d4838d23e72b60",
+              "task_id": "wa4a_task",
+              "microtask_id": "m1",
+              "operation_id": "op_a",
+              "operation_status": "DONE",
+              "target_counts": {
+                "PRE_STATE": 0,
+                "EXPECTED_POST_STATE": 1,
+                "DRIFT": 0,
+                "CHANGED_UNCLASSIFIED": 0,
+                "MISSING_EVIDENCE": 0
+              },
+              "affected_targets": [
+                "a.txt"
+              ],
+              "next_safe_action": "adopt the existing Workspace state through the later recovery integration; do not rerun the mutation",
+              "automatic_mutation_authorized": false
+            },
+            "NEXT_SAFE_ACTION": "adopt the existing Workspace state through the later recovery integration; do not rerun the mutation"
+          },
+          "physical_calls": 1,
+          "execution_events": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A1_create_response_loss_does_not_attempt_create_again",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 35832,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "fresh",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38852,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "CREATE",
+                "target": "new.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:41.006975+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1181
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A1",
+            "A2"
+          ],
+          "action": "create",
+          "physical_calls": 1,
+          "receipt": {
+            "exists": true,
+            "size": 15,
+            "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+            "eol": "crlf",
+            "bom": false,
+            "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-11T09:35:41.006975+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A1_delete_response_loss_does_not_attempt_delete_again",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39716,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "fresh",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39140,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "DELETE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": false,
+                  "size": null,
+                  "sha256": null,
+                  "eol": null,
+                  "bom": null,
+                  "normalized_sha256": null,
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:42.978439+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1055
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A1",
+            "A2"
+          ],
+          "action": "delete",
+          "physical_calls": 1,
+          "receipt": {
+            "exists": false,
+            "size": null,
+            "sha256": null,
+            "eol": null,
+            "bom": null,
+            "normalized_sha256": null,
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-11T09:35:42.978439+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A3_concurrent_redelivery_after_lost_response_never_executes_again",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39784,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A3"
+          ],
+          "expected": "four replays, zero additional writes",
+          "responses": [
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:44.847180+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:44.847180+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:44.847180+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:44.847180+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            }
+          ],
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A3_four_fresh_clients_deliver_one_contract_concurrently",
+      "status": "PASS",
+      "facts": [
+        {
+          "acceptance": [
+            "A3"
+          ],
+          "expected": "one execution",
+          "responses": [
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:47.474750+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:47.474750+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              },
+              "received_bytes": 1176
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:47.474750+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            },
+            {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:47.474750+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1156
+            }
+          ],
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.LostResponseTests.test_A4_changed_request_never_rewrites_original_contract_or_receipt",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 11104,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A4"
+          ],
+          "variants": [
+            "payload",
+            "target",
+            "action",
+            "precondition",
+            "request_metadata",
+            "microtask"
+          ],
+          "operation_sha256": "2d0e58255aa1173a7b8aa3b0e5d48ff92755003d6856361099c66bf89606606a",
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_byte_drift_after_retry_authorization_blocks_CAS",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "after_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 20924,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_reconciliation_required",
+                  "message": "the operation is STARTED",
+                  "details": {
+                    "result": "RECONCILIATION_REQUIRED",
+                    "result_code": "FATE_UNKNOWN",
+                    "reason": "the operation is STARTED",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "STARTED",
+                    "operation_revision": 2,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                    "reconciliation": {
+                      "decision": "MANUAL_REVIEW_REQUIRED",
+                      "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+                      "evidence_fingerprint": "90a9ace615c971f171250e0176d0634fc3a9911a61c8143caec3c4ec0ca3c7ec"
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1318
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "RECONCILIATION_REQUIRED",
+            "result_code": "FATE_UNKNOWN",
+            "reason": "the operation is STARTED",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "STARTED",
+            "operation_revision": 2,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+            "reconciliation": {
+              "decision": "MANUAL_REVIEW_REQUIRED",
+              "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+              "evidence_fingerprint": "90a9ace615c971f171250e0176d0634fc3a9911a61c8143caec3c4ec0ca3c7ec"
+            }
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_closed_task_cannot_execute_pending_intent",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 35928,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "unknown active task_id: wa4a_task",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "TASK_CLOSED",
+                    "reason": "unknown active task_id: wa4a_task",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "the TASK is closed: no mutation is admitted"
+                  }
+                }
+              },
+              "received_bytes": 760
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "TASK_CLOSED",
+            "reason": "unknown active task_id: wa4a_task",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "the TASK is closed: no mutation is admitted"
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_closed_task_returns_history_but_never_new_authority",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 27552,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "historical",
+          "mode": "deliver",
+          "observed": {
+            "pid": 35712,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "persisted receipt of a closed TASK",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:35:54.677079+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "the TASK is closed: read-only history"
+              },
+              "received_bytes": 1005
+            }
+          }
+        },
+        {
+          "worker": "new",
+          "mode": "deliver",
+          "observed": {
+            "pid": 22116,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "unknown active task_id: wa4a_task",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "TASK_NOT_ACTIVE",
+                    "reason": "unknown active task_id: wa4a_task",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_new",
+                    "operation_status": null,
+                    "operation_revision": null,
+                    "mutation_kind": null,
+                    "target": null,
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "no mutation is admitted outside an active TASK"
+                  }
+                }
+              },
+              "received_bytes": 762
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "historical_receipt": {
+            "exists": true,
+            "size": 15,
+            "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+            "eol": "crlf",
+            "bom": false,
+            "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-11T09:35:54.677079+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          },
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_corrupt_payload_blocks_pending_retry",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 39164,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "payload blob hash mismatch: 751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "PAYLOAD_INTEGRITY_FAILURE",
+                    "reason": "payload blob hash mismatch: 751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": null
+                  }
+                }
+              },
+              "received_bytes": 851
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "PAYLOAD_INTEGRITY_FAILURE",
+            "reason": "payload blob hash mismatch: 751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": null
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_corrupt_snapshot_blocks_retry",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 29748,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "no verified restore point for m1: snapshot integrity failure: a.txt",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "RESTORE_POINT_NOT_VERIFIED",
+                    "reason": "no verified restore point for m1: snapshot integrity failure: a.txt",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "nothing was written"
+                  }
+                }
+              },
+              "received_bytes": 819
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "RESTORE_POINT_NOT_VERIFIED",
+            "reason": "no verified restore point for m1: snapshot integrity failure: a.txt",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "nothing was written"
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_current_post_proof_cannot_be_replaced_by_declared_intent",
+      "status": "PASS",
+      "facts": [
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "RECONCILIATION_REQUIRED",
+            "result_code": "POST_PROOF_FAILED",
+            "reason": "the target does not hold the contracted post-state: server-observed target does not match expected post-state; DONE refused, reconciliation required",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "STARTED",
+            "operation_revision": 2,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "operation op_a: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/wa4a_task/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+            "reconciliation": {
+              "decision": "MANUAL_REVIEW_REQUIRED",
+              "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+              "evidence_fingerprint": "bf339f7b4052b4e22f48f7a0922a1ac9a17bf1fd056dbbd79797a4a60e69a9c8"
+            }
+          },
+          "receipt": null
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_durable_receipt_is_historical_and_does_not_overwrite_later_drift",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "drop_response",
+          "observed": {
+            "pid": 39108,
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0,
+              "body": null
+            }
+          }
+        },
+        {
+          "worker": "history",
+          "mode": "deliver",
+          "observed": {
+            "pid": 34560,
+            "client": {
+              "state": "RECEIVED",
+              "status": 200,
+              "body": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "wa4a_task",
+                "operation_id": "op_a",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "a.txt",
+                "receipt": {
+                  "exists": true,
+                  "size": 15,
+                  "sha256": "751bf54d9c608ef2588f14f44514d911cd7aff1cd336a210edfae56aeed43bf0",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "797c4046cbafce7d1eae8d4d5dfc7f38e188a1446f24b23c707902495b2ac14d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-11T09:36:01.170285+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              },
+              "received_bytes": 1178
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "recovery": {
+            "decision_version": 1,
+            "decision": "MANUAL_REVIEW_REQUIRED",
+            "reason_code": "UNSAFE_TARGET_CLASSIFICATION",
+            "reason": "unsafe target classifications: DRIFT",
+            "evidence_fingerprint": "52509833bb5aa8bef64d5804817a058bd6298ec0267484ac91fa5580b2017ce1",
+            "task_id": "wa4a_task",
+            "microtask_id": "m1",
+            "operation_id": "op_a",
+            "operation_status": "DONE",
+            "target_counts": {
+              "PRE_STATE": 0,
+              "EXPECTED_POST_STATE": 0,
+              "DRIFT": 1,
+              "CHANGED_UNCLASSIFIED": 0,
+              "MISSING_EVIDENCE": 0
+            },
+            "affected_targets": [
+              "a.txt"
+            ],
+            "next_safe_action": "inspect conflicting or missing evidence; do not retry, adopt, or rollback automatically",
+            "automatic_mutation_authorized": false
+          },
+          "historical_only": true,
+          "physical_calls": 1
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_nonactive_microtask_blocks_pending_execution",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 35740,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "microtask m1 is UNKNOWN_AFTER_DISCONNECT; normal physical mutation is allowed only while the microtask is ACTIVE",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "MICROTASK_NOT_ACTIVE",
+                    "reason": "microtask m1 is UNKNOWN_AFTER_DISCONNECT; normal physical mutation is allowed only while the microtask is ACTIVE",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "nothing was written; the operation keeps its target ownership (RC-3: it belongs to the logical operation) and a replay continues once the blocker is gone; to abandon it, transition it to FAILED or record ABORT, then release its claim"
+                  }
+                }
+              },
+              "received_bytes": 1117
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "MICROTASK_NOT_ACTIVE",
+            "reason": "microtask m1 is UNKNOWN_AFTER_DISCONNECT; normal physical mutation is allowed only while the microtask is ACTIVE",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "nothing was written; the operation keeps its target ownership (RC-3: it belongs to the logical operation) and a replay continues once the blocker is gone; to abandon it, transition it to FAILED or record ABORT, then release its claim"
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_other_operation_cannot_bypass_held_ownership",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 38556,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "another operation owns this canonical physical target",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "TARGET_OWNED",
+                    "reason": "another operation owns this canonical physical target",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_other",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "nothing was written",
+                    "blocking_owner": {
+                      "claim_id": "claim_b09285c404ea9366ac958a168a7c7fbe",
+                      "generation": 1,
+                      "task_id": "wa4a_task",
+                      "microtask_id": "m1",
+                      "operation_id": "op_a",
+                      "operation_revision": 1,
+                      "created_at": "2026-10-11T09:36:04.675939+00:00",
+                      "owner": null
+                    }
+                  }
+                }
+              },
+              "received_bytes": 1110
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "TARGET_OWNED",
+            "reason": "another operation owns this canonical physical target",
+            "task_id": "wa4a_task",
+            "operation_id": "op_other",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "nothing was written",
+            "blocking_owner": {
+              "claim_id": "claim_b09285c404ea9366ac958a168a7c7fbe",
+              "generation": 1,
+              "task_id": "wa4a_task",
+              "microtask_id": "m1",
+              "operation_id": "op_a",
+              "operation_revision": 1,
+              "created_at": "2026-10-11T09:36:04.675939+00:00",
+              "owner": null
+            }
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_released_claim_does_not_regain_authority",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "lost",
+          "mode": "before_started",
+          "observed": {
+            "client": {
+              "state": "UNKNOWN",
+              "received_bytes": 0
+            },
+            "exit": 91
+          }
+        },
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 33956,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "this basis was already claimed and released; a new basis is required",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "CLAIM_ALREADY_RELEASED",
+                    "reason": "this basis was already claimed and released; a new basis is required",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "a.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "nothing was written; execute the change as a new operation_id"
+                  }
+                }
+              },
+              "received_bytes": 859
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "CLAIM_ALREADY_RELEASED",
+            "reason": "this basis was already claimed and released; a new basis is required",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "a.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "nothing was written; execute the change as a new operation_id"
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_lost_response.SafetyTests.test_A7_target_outside_verified_manifest_is_refused",
+      "status": "PASS",
+      "facts": [
+        {
+          "worker": "refused",
+          "mode": "deliver",
+          "observed": {
+            "pid": 17348,
+            "client": {
+              "state": "RECEIVED",
+              "status": 409,
+              "body": {
+                "error": {
+                  "code": "mutation_refused",
+                  "message": "outside.txt is not a target of the restore point of m1; a tracked mutation is admitted only for a target RC-4 can restore",
+                  "details": {
+                    "result": "REFUSED",
+                    "result_code": "TARGET_NOT_IN_MANIFEST",
+                    "reason": "outside.txt is not a target of the restore point of m1; a tracked mutation is admitted only for a target RC-4 can restore",
+                    "task_id": "wa4a_task",
+                    "operation_id": "op_a",
+                    "operation_status": "INTENT",
+                    "operation_revision": 1,
+                    "mutation_kind": "WRITE",
+                    "target": "outside.txt",
+                    "receipt": null,
+                    "physical_mutation_performed": false,
+                    "next_safe_action": "nothing was written"
+                  }
+                }
+              },
+              "received_bytes": 929
+            }
+          }
+        },
+        {
+          "acceptance": [
+            "A7"
+          ],
+          "refusal": {
+            "result": "REFUSED",
+            "result_code": "TARGET_NOT_IN_MANIFEST",
+            "reason": "outside.txt is not a target of the restore point of m1; a tracked mutation is admitted only for a target RC-4 can restore",
+            "task_id": "wa4a_task",
+            "operation_id": "op_a",
+            "operation_status": "INTENT",
+            "operation_revision": 1,
+            "mutation_kind": "WRITE",
+            "target": "outside.txt",
+            "receipt": null,
+            "physical_mutation_performed": false,
+            "next_safe_action": "nothing was written"
+          },
+          "physical_calls": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_a_move_interrupted_between_its_steps_is_partial",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_changed_pre_state_is_never_overwritten",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_closed_and_archived_tasks_admit_nothing",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_incomplete_contract_and_corrupt_payload",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_invalid_restore_point",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_microtask_not_active_or_not_current",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_move_protections",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_path_spellings_name_one_physical_target",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_same_operation_id_with_another_payload_or_target",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.AdmissionTests.test_target_outside_the_manifest_or_the_root",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_cli_entrypoint",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_closed_task_replay_returns_the_persisted_receipt",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_http_endpoint",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_many_target_stage_recovers_an_interrupted_write_through_rollback",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_rc4_rolls_back_an_executed_mutation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CompatibilityTests.test_rc6_is_ready_again_after_an_execution",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CrashWindowTests.test_death_after_started_before_the_write_needs_a_retry",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CrashWindowTests.test_death_after_the_receipt_returns_the_same_receipt",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CrashWindowTests.test_death_after_the_write_before_the_receipt_is_adopted_not_repeated",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.CrashWindowTests.test_death_before_started_is_executed_once_on_replay",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.FailureTests.test_a_real_windows_sharing_violation_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.FailureTests.test_a_write_of_an_absent_file_never_replaces_one_that_appeared",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.FailureTests.test_external_creation_inside_the_window_is_never_overwritten",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.FailureTests.test_post_proof_failure_never_reports_success",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.FailureTests.test_started_not_persisted_writes_nothing",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.PositiveTests.test_create_and_delete",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.PositiveTests.test_move_and_rename_are_two_tracked_operations",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.PositiveTests.test_replay_of_the_same_contract_never_repeats_the_side_effect",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.PositiveTests.test_started_is_persisted_before_the_first_physical_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.PositiveTests.test_write_and_edit_follow_the_whole_chain",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.RaceTests.test_the_same_contract_delivered_twice_at_once_executes_once",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.RaceTests.test_two_executors_on_one_physical_target_never_both_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.SingleTargetRecoveryTests.test_a_refused_write_is_proved_unchanged_and_a_retry_executes_it",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.SingleTargetRecoveryTests.test_receipt_not_persisted_then_adopted_without_a_second_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_mutation_executor.SingleTargetRecoveryTests.test_retry_of_an_unknown_after_disconnect_operation_is_refused",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.LegacyOperationCompatibilityTests.test_frozen_wa37_records_read_safely_without_rewrite",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.LegacyOperationCompatibilityTests.test_legacy_fingerprint_algorithm_is_unchanged",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.LegacyOperationCompatibilityTests.test_legacy_record_in_active_task_replays_and_keeps_legacy_shape",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_contract_inconsistencies_are_rejected_before_any_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_corrupted_or_missing_payload_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_done_is_refused_when_target_bytes_contradict_contract",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_done_receipt_is_server_observed_and_revision_advances",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_duplicate_operation_id_with_different_payload_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_explicit_write_persists_self_contained_contract_without_mutation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_fresh_process_reopens_same_contract_revision_and_payload",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_fresh_reconciliation_uses_persisted_post_without_caller_input",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_old_style_done_records_receipt_without_expectation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_old_style_request_is_v2_but_incomplete_and_not_rearm_sufficient",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_payload_size_limit_and_storage_inside_workspace_fail_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_secret_target_requires_explicit_recorded_override",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_server_accepts_contract_fields_and_reports_status",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_supplied_post_contradicting_contract_requires_manual_review",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_target_spellings_replay_same_logical_operation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_contract.OperationContractTests.test_unknown_or_corrupted_contract_version_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_lifecycle_is_forward_only_and_terminal_replay_is_idempotent",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_new_intent_is_persistent_and_does_not_touch_real_workspace",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_read_only_list_does_not_create_operations_directory",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_same_operation_id_and_request_is_idempotent_replay",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_same_operation_id_with_different_request_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_server_conflicting_replay_returns_409",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_server_operation_endpoints_preserve_replay_identity",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_operation_store.OperationStoreTests.test_started_and_unknown_replay_require_reconciliation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ClaimServerTests.test_server_claim_endpoints",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ConflictGateTests.test_basic_acquire_creates_one_persistent_owner",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ConflictGateTests.test_different_targets_do_not_conflict",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ConflictGateTests.test_equivalent_spellings_share_one_conflict_identity",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ConflictGateTests.test_replay_returns_same_claim_without_duplicate_effect",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ConflictGateTests.test_same_task_and_cross_task_operations_conflict",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ContractAndResolverGateTests.test_aborted_operation_cannot_take_a_free_target",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ContractAndResolverGateTests.test_incomplete_or_corrupt_payload_contract_cannot_acquire",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ContractAndResolverGateTests.test_legacy_contract_cannot_acquire_or_authorize",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ContractAndResolverGateTests.test_resolver_state_never_grants_false_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ContractAndResolverGateTests.test_rollback_request_is_not_mutation_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.MutationBoundaryCasTests.test_authorization_is_cas_checked_persisted_and_replay_safe",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.MutationBoundaryCasTests.test_executor_flow_boundary_then_lifecycle_then_release",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.MutationBoundaryCasTests.test_physical_drift_after_acquire_fails_closed_without_overwrite",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.MutationBoundaryCasTests.test_stale_operation_revision_gets_no_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ReleaseTests.test_after_release_other_operation_acquires_only_on_fresh_basis",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ReleaseTests.test_claim_survives_process_death_and_restart",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_target_claims.ReleaseTests.test_wrong_owner_cannot_release_and_release_replay_is_idempotent",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_abort_is_persistent_idempotent_and_closes_resolver_recovery",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_action_decision_mismatch_is_rejected",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_adopt_records_fact_without_mutation_or_lifecycle_change",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_malformed_requests_fail_before_any_record",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_payload_integrity_failure_blocks_rearm",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_replay_is_idempotent_and_identity_conflicts_fail_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_retry_is_persistent_rearm_only_and_survives_fresh_process",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_retry_is_rejected_for_corrupt_contract_without_recording",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_retry_is_rejected_for_incomplete_contract",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_retry_is_rejected_for_legacy_contract",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_rollback_is_tracked_request_only",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_stale_operation_revision_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverActionTests.test_stale_target_evidence_fails_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_accepted_abort_drives_report_next_safe_action",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_adopt_is_the_only_source_of_accepted_facts",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_rejected_outcomes_are_reported_without_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_rejected_rearm_is_not_recommended_as_retry",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_report_next_action_follows_fresh_accepted_semantics",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_report_without_resolutions_keeps_decision_next_action",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_retry_rearm_and_rollback_request_are_never_reported_as_executed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_rollback_request_is_not_actually_rolled_back",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_stale_adopt_is_not_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverRecoveryReportTests.test_stale_outcome_survives_report_and_fresh_process",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_resolver.ResolverServerTests.test_server_resolution_endpoints",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_abort_settles_without_erasing_forensic_operation_status",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_adopt_settles_durably_and_stops_at_verification_boundary",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_clean_active_task_is_ready_without_writes",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_one_command_rollback_uses_rc4_then_stops_for_new_decision",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_retry_rearms_microtask_but_performs_no_physical_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_step_budget_fails_closed_without_infinite_loop_and_resume_is_safe",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoveryCoordinatorIntegrationTests.test_unresolved_operation_requires_manual_decision",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_abort_settlement_fails_operation_without_workspace_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_adopt_refuses_when_current_bytes_are_not_expected_post",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_adopt_settlement_is_idempotent_for_same_resolution",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_adopt_settlement_proves_post_state_and_persists_receipt",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_generic_transition_still_cannot_manufacture_recovery_verified",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_lock_held_microtask_status_write_does_not_reacquire_lock",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_rollback_settlement_fails_original_operation_without_workspace_write",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator.RecoverySettlementPrimitiveTests.test_settlement_revision_cas_fails_closed",
+      "status": "PASS",
+      "facts": []
+    }
+  ]
+}

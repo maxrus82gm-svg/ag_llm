@@ -509,6 +509,9 @@ def validate_record(record: OperationRecord) -> None:
     kind = contract["mutation_kind"]
     if kind is not None and kind not in {item.value for item in MutationKind}:
         raise OperationContractError("contract.mutation_kind is invalid")
+    action_kind = mutation_kind_for(record.action)
+    if kind != (action_kind.value if action_kind is not None else None):
+        raise OperationContractError("contract.mutation_kind contradicts operation action")
     _check_state(
         "contract.pre_state",
         contract["pre_state"],
@@ -585,10 +588,19 @@ def validate_record(record: OperationRecord) -> None:
             raise OperationContractError("receipt.source is invalid")
         _check_text("receipt.observed_at", receipt["observed_at"])
         _check_size("receipt.revision", receipt["revision"])
+        if not 1 <= receipt["revision"] <= revision:
+            raise OperationContractError("receipt.revision is outside operation history")
         if receipt["matches_expected_post"] not in (True, False, None):
             raise OperationContractError("receipt.matches_expected_post is invalid")
         if not isinstance(receipt["eol_only_drift"], bool):
             raise OperationContractError("receipt.eol_only_drift must be boolean")
+        expected_match = None if post is None else same_authority(post, receipt)
+        if receipt["matches_expected_post"] is not expected_match:
+            raise OperationContractError("receipt match flag contradicts contract post-state")
+        if receipt["eol_only_drift"] is not eol_only_drift(post, receipt):
+            raise OperationContractError("receipt EOL flag contradicts contract post-state")
+        if record.status in {OperationStatus.DONE, OperationStatus.VERIFIED} and expected_match is False:
+            raise OperationContractError("DONE/VERIFIED receipt contradicts contract post-state")
         if record.status not in {
             OperationStatus.DONE,
             OperationStatus.VERIFIED,

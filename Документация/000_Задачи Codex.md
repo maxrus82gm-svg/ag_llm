@@ -19,12 +19,268 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-**Статус:** ОЖИДАНИЕ НОВОЙ УТВЕРЖДЁННОЙ ЗАДАЧИ.
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
 
-CODEX-RT002-S0-REPAIR-001 передана на независимую проверку ChatGPT: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка — БЛОК 2, фактический результат — БЛОК 3. Следующие TASK, S1, 151G и старая 151C не запускать.
+Последний результат: CODEX-WA4-A-001 — RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка и factual handoff сохранены в БЛОКАХ 2–3. Следующие задачи не запускать до назначения пользователя.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# CODEX-WA4-A-001 — Deterministic Lost-Response Acceptance
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**STATUS:** USER ASSIGNED / READY FOR EXECUTION  
+**ARCH CLASS:** Web Alarm Workspace / Mutation Gateway / Recovery / Acceptance  
+**PRIMARY PROFILE:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**IMPLEMENTATION PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**PROFILE HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+## 1. Исходная точка
+
+Web Alarm WA-1…WA-3, RC-0…RC-6 и WA4-E (`CLAUDE-WA-018`) завершены со статусом `DONE / VERIFIED`.
+
+WA4-E реализовал серверный authoritative mutation executor:
+
+- `web_alarm/mutation_executor.py`;
+    
+- `POST /tasks/{id}/mutations`;
+    
+- CLI `mutate`;
+    
+- durable Operation Contract, STARTED-before-write, CAS, physical-byte post-proof, persistent receipt;
+    
+- идемпотентность повторной доставки операции;
+    
+- write/edit/create/delete и двухшаговые move/rename.
+    
+
+Независимый baseline WA4-E: 36/36 focused PASS, 643 full Web Alarm OK, 1 skipped.
+
+GitHub Actions `Web Alarm smoke` уже настроен на Windows/Python 3.12. Его пять smoke-тестов не заменяют полный регресс.
+
+**Обязательный preflight:** прочитать `08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md`, затем профильные 23/24/25 и актуальные исходники. Сверить состояние локальной рабочей копии с фактическими файлами и доступным baseline, не предполагая отсутствия чужих изменений.
+
+## 2. Цель
+
+**Доказать детерминированным воспроизводимым испытанием, что успешная физическая мутация Web Alarm не исполняется повторно, если её ответ потерян до доставки вызывающему клиенту.**
+
+Главный проверяемый сценарий:
+
+1. Клиент отправляет mutation с устойчивым `operation_id`.
+    
+2. WA4-E исполняет её и сохраняет точный persistent receipt.
+    
+3. Ответ клиенту намеренно не доставляется.
+    
+4. Клиент считает исход вызова неизвестным.
+    
+5. Web Alarm Server завершается или перезапускается.
+    
+6. Новый клиент / новый Python-процесс повторяет исходный запрос.
+    
+7. Сервер возвращает ранее сохранённый receipt.
+    
+8. Физическое действие **не повторяется**.
+    
+9. Фактические байты, operation history, receipt и recovery evidence подтверждают отсутствие повторной мутации.
+    
+
+**Важно:** потеря ответа не равна неуспешному исполнению. Система не должна угадывать исход по transport status.
+
+## 3. Scope
+
+Разрешено:
+
+- Разработать детерминированную fault-injection/acceptance оснастку для WA4-A.
+    
+- Добавить специализированные тесты и необходимые test helpers.
+    
+- Использовать существующие HTTP, CLI, Operation Store, Executor, Resolver, reconciliation и recovery contracts.
+    
+- Исправить обнаруженный дефект в Web Alarm runtime, если он непосредственно блокирует WA4-A и исправление не расширяет утверждённую архитектуру.
+    
+- Провести focused, adversarial, restart/process-level и полный доступный Web Alarm regression.
+    
+
+**Предпочтение: сначала test/evidence, затем минимальный runtime repair только при воспроизведённом дефекте.**
+
+Не начинать WA4-O, WA4-R, расширение функциональности UI, интеграцию с Ultra или самостоятельное перепроектирование recovery.
+
+## 4. Обязательная acceptance matrix
+
+**A1 — Lost response after durable receipt**
+
+Физическая mutation завершена, receipt persisted, клиент не получил HTTP/CLI-ответ. Повтор с тем же contract и `operation_id` возвращает идентичный receipt без повторного side effect.
+
+**A2 — Fresh-process replay**
+
+После A1 полностью пересоздать используемые process/service/store instances. Доказать прежний receipt, неизменность содержимого target и отсутствие повторного события исполнения.
+
+**A3 — Concurrent duplicate delivery**
+
+Проверить одновременную повторную доставку идентичного запроса. Разрешено ровно одно фактическое исполнение, остальные должны получить допустимый persisted replay/refusal без второго side effect.
+
+**A4 — Different request / same operation_id**
+
+Изменённый контракт с прежним `operation_id` отклоняется. Исходная операция и её receipt не переписываются.
+
+**A5 — Loss before STARTED / after STARTED / after physical write / after receipt**
+
+Детерминированно испытать соответствующие окна прерывания, не подменяя ранее доказанные crash-tests WA4-E.
+
+Каждое окно должно приводить к документированному безопасному исходу: разрешённому retry, reconciliation/adopt либо fail-closed/manual review. Нельзя выдавать неизвестное исполнение за SUCCESS.
+
+**A6 — Ambiguous and partial outcome**
+
+Проверить различение PRE_STATE, exact POST_STATE, partial и ambiguous evidence. Для move/rename учитывать, что это две tracked операции, а не атомарная транзакция.
+
+**A7 — Safety boundaries**
+
+Проверить, что retry/replay не обходит TASK status, manifest/snapshot, ownership/claims, CAS и текущий physical-byte proof. Закрытая TASK может вернуть исторический receipt, но не получает права новой mutation.
+
+**A8 — Persistent evidence integrity**
+
+Проверить неизменность identity и целостность receipt, связанного контракта и operation history при повторной доставке и restart. При повреждённых или противоречивых evidence — fail-closed.
+
+Для каждого сценария зафиксировать фактический ожидаемый и полученный результат.
+
+## 5. Существующие ограничения, которые нельзя скрывать
+
+WA4-E оставил открытыми следующие вопросы:
+
+- **P-2:** RETRY из `UNKNOWN_AFTER_DISCONNECT`/`FAILED` может быть несовместим с текущими lifecycle transitions; существующий `RETRY_LIFECYCLE_UNSUPPORTED` является безопасным отказом, не автоматическим FAIL WA4-A.
+    
+- **P-3:** RC-2 может оценивать recovery относительно всего restore point, а не одной операции.
+    
+- **P-4:** возможны устаревшие advisory resolution после исполненного RETRY.
+    
+- **R-1:** внешний несовместимый writer между CAS и physical replace.
+    
+- **R-2–R-4:** Windows sharing violations, отсутствие автоматического создания каталогов и ограничения payload для move.
+    
+
+**Не исправлять всё перечисленное ради расширения scope.** Если сценарий WA4-A требует нового lifecycle design, оформить точный BLOCKER/PROPOSAL с evidence. Нельзя разрешать повторную запись ценой ослабления fail-closed.
+
+## 6. Правила безопасности
+
+- Только disposable temporary Workspace и отдельный temporary Web Alarm storage.
+    
+- Ни одна fault injection не направляется на рабочие пользовательские документы.
+    
+- Не трогать real live TASK/storage, `.obsidian`, Ultra runtime и посторонние локальные изменения.
+    
+- Запускать только контролируемые тестовые процессы, завершать только процессы, созданные данным тестом.
+    
+- Никаких внешних платных моделей, сетевых сервисов, real Remote disconnect или реальных пользовательских данных.
+    
+- Сохранять RC-1…RC-6 и WA4-E invariants: server-owned authority, lock order, STARTED-before-write, exact CAS, receipts, replay safety, recovery/restart persistence.
+    
+- Codex не выполняет самостоятельно `git commit/push/pull/merge/rebase/reset/clean/checkout/switch` и не меняет Git-конфигурацию без отдельного разрешения.
+    
+
+## 7. Порядок выполнения
+
+1. **Preflight:** чтение обязательных документов и кода, определение фактического baseline, рабочих конфликтов и test entrypoints.
+    
+2. **Test design:** фиксированная acceptance matrix A1–A8 и способ детерминированной потери ответа без реального сетевого обрыва.
+    
+3. **Implementation:** сначала acceptance tests/fault-injection harness; минимальные исправления только при доказанной необходимости.
+    
+4. **Adversarial pass:** самостоятельно проверить relevant edge cases, повторную доставку, process death, race, byte drift и целостность receipts.
+    
+5. **Verification:** focused WA4-A → смежные WA4-E/RC regression → полный доступный Web Alarm unittest → compileall/py_compile → diff/whitespace checks, если разрешены соответствующие локальные read-only проверки.
+    
+6. **Reporting:** сохранить test matrix, результаты, изменённые файлы, findings и ограничения. Не объявлять независимый PASS самостоятельно.
+    
+
+GitHub Actions после публикации изменений может использоваться координатором как дополнительный независимый CI-сигнал. Исторические 5/5 PASS не являются доказательством нового кода.
+
+## 8. Documentation Block
+
+**PRIMARY:** `23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `24_План реализации Web Alarm Workspace.md`  
+**PROFILE HISTORY:** `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+В пределах личной исполнительской ответственности обновить task-card Codex по установленному регламенту и сохранить factual report.
+
+Общие документы `000_Задачи для агента.md`, `34_TACTICAL_CONTEXT.md`, `05_Реестр задач.md`, `06_Журнал выполнения и отчёты.md`, `01`, `04`, `08`, `18` и профильный append-only журнал `25` координирует ChatGPT после проверки. Исполнитель может указать требуемые дельты, но не должен самостоятельно менять общие статусы на `DONE / VERIFIED`.
+
+В `23/24` не проставлять независимый PASS до проверки координатором. Предлагать только документально подтверждённые изменения.
+
+## 9. Exit criteria
+
+Задача может быть представлена на независимую приёмку, только когда:
+
+- ключевой lost-response-after-write сценарий воспроизводится детерминированно;
+    
+- fresh process возвращает прежний receipt;
+    
+- повторного physical side effect нет;
+    
+- A1–A8 имеют явные PASS / FAIL / BLOCKED / NOT_APPLICABLE с обоснованием;
+    
+- не скрыты UNKNOWN, PARTIAL, lifecycle и race limitations;
+    
+- focused и полный доступный регресс запущены и результаты сохранены;
+    
+- сохранены все существующие safety invariants;
+    
+- подготовлен полноценный factual report.
+    
+
+**Если acceptance не доказан — статус BLOCKED / RESULT READY WITH FINDINGS, а не фиктивный SUCCESS.**
+
+## 10. Передача результата
+
+По завершении:
+
+- Сохранить технический отчёт и test evidence в выделенной папке TASK или существующем допустимом отчётном каталоге.
+    
+- Выполнить безопасную ротацию персональной карточки Codex: полная исходная задача → БЛОК 2; factual report → БЛОК 3; только после сохранения обоих БЛОК 1 → `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+    
+- Сообщить координатору список изменённых файлов, команды и результаты тестирования, воспроизводимые findings, статус сценариев A1–A8 и оставшиеся риски.
+    
+- Итоговый статус: **RESULT READY / AWAITING INDEPENDENT VERIFICATION**.
+    
+
+**После независимого PASS:** WA4-A может получить `DONE / VERIFIED`; только затем отдельно обсуждается и назначается WA4-O / UX-Ops. Автоматический переход запрещён.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK ID:** CODEX-WA4-A-001
+**RESULT STATE:** RESULT READY / AWAITING INDEPENDENT VERIFICATION
+**ARCH CLASS:** Web Alarm Workspace / Mutation Gateway / Recovery / Acceptance
+**Mode / scope:** local offline acceptance; запись только Web Alarm integrity checks, test harness/tests, личная карточка и factual evidence. Git/GitHub не использовались.
+
+Доказана temporal chain: physical mutation → durable receipt → потеря HTTP response (0 delivered bytes, client UNKNOWN) → завершение процесса → новые process/API/store → исходный receipt / REPLAYED без второй записи. A1–A8: PASS в самопроверке; независимый PASS не присваивался.
+
+До repair воспроизведены ложные HTTP 200 / REPLAYED при противоречивых receipt/contract/history. Дополнительно подтверждены неверный Workspace/status/execution evidence, запись pending INTENT без intent history и backdated receipt revision. После repair integrity cases получают HTTP 409; повреждённые источники не переписываются. Обрыв между durable receipt и DONE/execution event остаётся допустимым.
+
+Изменены web_alarm/operation_contract.py и web_alarm/operation_store.py; добавлены wa4a_acceptance.py, test_web_alarm_lost_response.py и reports/CODEX-WA4-A-001/. Mutation executor, HTTP/CLI интерфейсы, Ultra и UI не изменялись.
+
+**Итоговые проверки:** WA4-A 46/46; исходные WA4-E 36/36; RC 84/84; focused 166/166, FAIL=0, ERROR=0, SKIP=0, exit 0. Полный Web Alarm: 689 RUN / 688 PASS / 0 FAIL / 0 ERROR / 1 SKIP, exit 0. Compileall exit 0; whitespace/conflict markers — 0. Isolation violations — 0. Точные команды, каждый test result, исходные/final SHA-256 и ограничения — в полном отчёте и JSON evidence.
+
+**Полный отчёт:** `reports/CODEX-WA4-A-001/report.md`. Evidence: `red.json`, `red2.json`, `red3.json`, `red4.json`, `focused.json`, `full.json`; версии/хронология/scope/rotation — `versions.json`, `runs.json`, `rotation.json`. Первоначальный полный 688/687 PASS/1 SKIP — промежуточная версия; итоговый full повторён после последнего repair.
+
+**Ограничения:** deterministic in-memory HTTP wire; реальный Remote disconnect и потеря CLI stdout отдельно не проверялись. Historical receipt не означает fresh current-byte proof: последующий drift сохраняется, reconciliation требует manual review. P-2/P-3/P-4 и R-1…R-4 сохранены; move/rename не атомарны. Integrity checks не являются криптографической защитой от согласованной подмены. Повреждение исходного intent history требует ручного разбора; нагрузка больших журналов не измерялась.
+
+**DOC IMPACT:** YES; CURRENT STATE/ARCHITECTURE/REGISTRY impact YES; CONTEXT LIBRARY NO. Изменены только личная карточка и factual report/evidence. Общие документы read-only; SHARED DOC DELTA для 23/24/25, 000/34/05/06 и Web Alarm строки 01 передана в отчёте. 04/08/18 и инструкции других агентов — NO CHANGE. DOC CLOSEOUT INCOMPLETE до независимой проверки и записи ChatGPT. Наблюдавшийся внешний drift .obsidian/graph.json и workspace.json не восстанавливался.
+
+**LOSS CHECK:** исходная постановка сохранена дословно в БЛОКЕ 2; прежние БЛОКИ 2/3 и архив включены ниже дословно. Фактическая проверка — rotation.json.
+
+**NEXT / receiver:** ChatGPT — независимая приёмка и общий документационный closeout; публикацию выполняет пользователь/уполномоченный координатор. WA4-O/WA4-R и другие задачи не запускать. Исполнитель остановлен в ожидании проверки.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-A-001
+
+Прежняя постановка, factual result и вложенные архивы сохранены дословно; это история, не активное поручение.
+
+````````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 Ниже полная первоначальная постановка прежнего БЛОКА 1, сохранённая без изменения bytes; её исходный статус READY относится к моменту назначения. Текущий результат и AMENDMENT — в БЛОКЕ 3.
@@ -1086,3 +1342,4 @@ Codex: задача утверждена пользователем. Прочи�
 **NEXT:** независимая проверка ChatGPT по этой постановке и diff, затем визуально подтвердить в Obsidian Graph единственного соседа 34 — реестр 05; commit/push выполняет пользователь. Статус не повышать до DONE / VERIFIED до принятого независимого PASS.
 ~~~~
 
+````````

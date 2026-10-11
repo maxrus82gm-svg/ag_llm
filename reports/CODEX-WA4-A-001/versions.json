@@ -1,0 +1,129 @@
+{
+  "task": "CODEX-WA4-A-001",
+  "source_capture_utc": "2026-10-11T09:15:10.874Z",
+  "baseline": {
+    "web_alarm/mutation_executor.py": {
+      "sha256": "74762371397108fa6dcf93a16a8d8d762da76422134d9360ae9fff357efe70c0",
+      "bytes": 39304
+    },
+    "web_alarm/operation_store.py": {
+      "sha256": "1e9bfdb8db010b6a9abe61cb3cbe9a79db50353a7ec0b85ba799ad38436863e3",
+      "bytes": 32554
+    },
+    "web_alarm/operation_contract.py": {
+      "sha256": "b711c447b47117f4a5cb319ce644e0e5d9f48f5992bb75a5f7e00ad3c6005ba4",
+      "bytes": 26665
+    },
+    "web_alarm/server.py": {
+      "sha256": "8d6c1c85b8be020503ba118085e2c1f6b3034e655cf789a1a820b04c3eb494f2",
+      "bytes": 52477
+    },
+    "web_alarm/cli.py": {
+      "sha256": "2815a01c579ad6986643554846a864a6cb7dae5042925c9c54ea618051a178da",
+      "bytes": 12797
+    },
+    "test_web_alarm_mutation_executor.py": {
+      "sha256": "6e258ae3e505c269301c82c61e5e908bb9694db9b0178950d797452c868c2772",
+      "bytes": 39419
+    },
+    "Документация/000_Задачи Codex.md": {
+      "sha256": "120497d71f81f2b58e4970d72458ad4cf188347046a7163e764f097ebf936070",
+      "bytes": 173597
+    }
+  },
+  "final_python_sources": {
+    "web_alarm/operation_contract.py": {
+      "sha256": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+      "bytes": 27639
+    },
+    "web_alarm/operation_store.py": {
+      "sha256": "2afc17719c017eab2e6550d9bcfd7b895c2e90cb818a669a7bfee872bd163002",
+      "bytes": 36745
+    },
+    "web_alarm/mutation_executor.py": {
+      "sha256": "74762371397108fa6dcf93a16a8d8d762da76422134d9360ae9fff357efe70c0",
+      "bytes": 39304
+    },
+    "web_alarm/server.py": {
+      "sha256": "8d6c1c85b8be020503ba118085e2c1f6b3034e655cf789a1a820b04c3eb494f2",
+      "bytes": 52477
+    },
+    "web_alarm/cli.py": {
+      "sha256": "2815a01c579ad6986643554846a864a6cb7dae5042925c9c54ea618051a178da",
+      "bytes": 12797
+    },
+    "test_web_alarm_mutation_executor.py": {
+      "sha256": "6e258ae3e505c269301c82c61e5e908bb9694db9b0178950d797452c868c2772",
+      "bytes": 39419
+    },
+    "wa4a_acceptance.py": {
+      "sha256": "8d617177b16222c9e7654751ee00368821da480a78c527c4356ea840c3f64b35",
+      "bytes": 17371
+    },
+    "test_web_alarm_lost_response.py": {
+      "sha256": "1f48a0b175c89feedd29aa9dbdd356e8d1c47cb2a88502949a5a646bb0448cea",
+      "bytes": 25571
+    }
+  },
+  "normative_sources": {
+    "Документация/08_Старт.md": "3182f64399660c37abb58f9c6700fdc067540d14dcecb833e9481880afb03453",
+    "Документация/000_Задачи для агента.md": "fac9ba4169530b96d0d913205c654f9742eba467b2842fb3df7592e3a39d498b",
+    "Документация/34_TACTICAL_CONTEXT.md": "bb877594a4dcf4d95971451a63bfebb7297cccf42d1516a56d269b80c9fb865b",
+    "Документация/18_Регламент сопровождения документации.md": "0b4ce6e621f372bdd2ea268c28e899cd137bdbcd60c8e6846a8f4c428854b51b",
+    "Документация/01_Архитектура и текущее состояние.md": "d0735afc90a6e4ee6012bd160319dff57bf1dd2927abf29f440a195c456df17d",
+    "Документация/23_Архитектура Web Alarm Workspace.md": "cd660d28c1394dd863d7da6a7b873dba2b97e29bfbabe16ae75c74090bb334ef",
+    "Документация/24_План реализации Web Alarm Workspace.md": "9bd6487171fda18e5f030492b1e02c4fd6c21dbca7598b837d8cd1eb849ce1da",
+    "Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md": "394b683114ecc54858dfc4b8edd09d04fb80227ed8aca7c59d4c7f5e26f2fc1a"
+  },
+  "provenance": {
+    "accepted_wa4e_commit_from_handoff": "a142817b33964691584aadbd6ea6464779df1815",
+    "git_access": false,
+    "commit_membership_locally_verified": false
+  },
+  "compile": {
+    "exit": 0,
+    "command": ".\\.venv\\Scripts\\python.exe -B -X \"pycache_prefix=$env:TEMP\\CODEX-WA4-A-001-compile-final\" -m compileall -q web_alarm wa4a_acceptance.py test_web_alarm_lost_response.py"
+  },
+  "whitespace": {
+    "files": 4,
+    "trailing_whitespace": 0,
+    "conflict_markers": 0
+  },
+  "scope_check": {
+    "protected_files_checked": 216,
+    "unchanged": 211,
+    "changes": [
+      {
+        "path": "web_alarm/operation_contract.py",
+        "before": "b711c447b47117f4a5cb319ce644e0e5d9f48f5992bb75a5f7e00ad3c6005ba4",
+        "after": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "authored": true
+      },
+      {
+        "path": "web_alarm/operation_store.py",
+        "before": "1e9bfdb8db010b6a9abe61cb3cbe9a79db50353a7ec0b85ba799ad38436863e3",
+        "after": "2afc17719c017eab2e6550d9bcfd7b895c2e90cb818a669a7bfee872bd163002",
+        "authored": true
+      },
+      {
+        "path": "Документация/000_Задачи Codex.md",
+        "before": "120497d71f81f2b58e4970d72458ad4cf188347046a7163e764f097ebf936070",
+        "after": "202eb6b60ecb68e44d1df34c8e9603656ab40ca7234c6320e2174a63a0bbb813",
+        "authored": true
+      },
+      {
+        "path": ".obsidian/graph.json",
+        "before": "cb6b7a10a9548632e27b5b309652f84a2963a2f3ad40f6909b959a68f2bdf15b",
+        "after": "9e2272cdcbdd7bb0a7bd0213776505a9b427303f7c45a7a9f4ef78d9841c8176",
+        "authored": false
+      },
+      {
+        "path": ".obsidian/workspace.json",
+        "before": "ffc610c6a45d482e0e946a5d1fa7b1640f364949ebc7fda17709eaa87240982d",
+        "after": "fbf32706c11e8982d229f4c8ae71a83d0334b1f7c60d57470b4e786feb6b5159",
+        "authored": false
+      }
+    ]
+  },
+  "final_card_sha256": "202eb6b60ecb68e44d1df34c8e9603656ab40ca7234c6320e2174a63a0bbb813"
+}

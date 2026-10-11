@@ -221,7 +221,70 @@ class OperationStore:
             raise OperationStoreError(f"invalid operation record: {path}: {exc}") from exc
         if record.task_id != task_id or record.operation_id != operation_id:
             raise OperationStoreError("operation identity does not match requested record")
+        if record.contract_version != LEGACY_CONTRACT_VERSION:
+            if record.contract["workspace_id"] != self.tasks.open_task(task_id).workspace_id:
+                raise OperationStoreError("operation workspace identity does not match TASK")
+            self._validate_history(record)
         return record
+
+    def _validate_history(self, record: OperationRecord) -> None:
+        """Reject contradictory persisted evidence before replay can append to it.
+
+        The operation is committed before its event is appended. Missing final
+        transition/execution events are therefore legitimate crash windows, not
+        proof of failure. Existing events must nevertheless agree with the
+        durable contract/receipt; they never grant mutation authority themselves.
+        """
+        try:
+            events = self.events.read_events(record.task_id)
+        except (EventCheckpointStoreError, UnicodeDecodeError) as exc:
+            raise OperationStoreError(f"cannot validate operation history: {exc}") from exc
+        contract = record.contract
+        intent_seen = False
+        expected_intent = {
+            "action": record.action, "target": record.target,
+            "request_fingerprint": record.request_fingerprint,
+            "contract_version": record.contract_version,
+            "target_key": contract["target_key"],
+            "pre_state": authority_of(contract["pre_state"]),
+            "expected_post_state": authority_of(contract["expected_post_state"]),
+            "payload": ({k: contract["payload_ref"][k] for k in ("sha256", "size")}
+                        if contract["payload_ref"] is not None else None),
+        }
+        for event in events:
+            if event.operation_id != record.operation_id:
+                continue
+            if not isinstance(event.payload, dict):
+                raise OperationStoreError("operation history payload is invalid")
+            payload = event.payload
+            if event.event_type == "OPERATION_INTENT":
+                if event.microtask_id != record.microtask_id or any(
+                    key not in payload or payload[key] != value for key, value in expected_intent.items()
+                ):
+                    raise OperationStoreError("operation history contradicts durable intent")
+                intent_seen = True
+            elif event.event_type in {"OPERATION_TRANSITION", "OPERATION_RECOVERY_SETTLED"}:
+                revision = payload.get("revision")
+                if isinstance(revision, bool) or not isinstance(revision, int) or not 1 <= revision <= record.revision:
+                    raise OperationStoreError("operation history revision contradicts durable record")
+                if event.microtask_id != record.microtask_id:
+                    raise OperationStoreError("operation history microtask identity mismatch")
+                if revision == record.revision and payload.get("to") != record.status.value:
+                    raise OperationStoreError("operation history contradicts durable status")
+                if "receipt" in payload or (record.receipt is not None and revision == record.receipt["revision"]):
+                    if record.receipt is None or revision > record.receipt["revision"]:
+                        raise OperationStoreError("receipt revision predates its persisted evidence")
+                    expected_receipt = dict(authority_of(record.receipt),
+                                            matches_expected_post=record.receipt["matches_expected_post"])
+                    if payload.get("receipt") != expected_receipt:
+                        raise OperationStoreError("operation history contradicts durable receipt")
+            elif event.event_type == "MUTATION_EXECUTED":
+                if (record.receipt is None or event.microtask_id != record.microtask_id
+                        or payload.get("mutation_kind") != contract["mutation_kind"]
+                        or payload.get("receipt") != authority_of(record.receipt)):
+                    raise OperationStoreError("execution event contradicts durable receipt")
+        if not intent_seen:
+            raise OperationStoreError("operation is missing durable intent history")
 
     def get(self, task_id: str, operation_id: str) -> OperationRecord:
         operation_id = _safe_component("operation_id", operation_id)

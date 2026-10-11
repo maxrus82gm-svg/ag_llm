@@ -1,0 +1,289 @@
+{
+  "task": "CODEX-WA4-A-001",
+  "final_runs": [
+    "focused-v2",
+    "full-v2"
+  ],
+  "runs": [
+    {
+      "run": "baseline",
+      "targets": [
+        "test_web_alarm_lost_response"
+      ],
+      "tests_run": 34,
+      "passed": 0,
+      "failures": 1,
+      "errors": 33,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 13.264,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm\\operation_contract.py": "b711c447b47117f4a5cb319ce644e0e5d9f48f5992bb75a5f7e00ad3c6005ba4",
+        "web_alarm\\operation_store.py": "1e9bfdb8db010b6a9abe61cb3cbe9a79db50353a7ec0b85ba799ad38436863e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "baseline2",
+      "targets": [
+        "test_web_alarm_lost_response"
+      ],
+      "tests_run": 34,
+      "passed": 21,
+      "failures": 9,
+      "errors": 4,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 64.109,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm\\operation_contract.py": "b711c447b47117f4a5cb319ce644e0e5d9f48f5992bb75a5f7e00ad3c6005ba4",
+        "web_alarm\\operation_store.py": "1e9bfdb8db010b6a9abe61cb3cbe9a79db50353a7ec0b85ba799ad38436863e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "red",
+      "targets": [
+        "test_web_alarm_lost_response.IntegrityTests"
+      ],
+      "tests_run": 11,
+      "passed": 3,
+      "failures": 8,
+      "errors": 0,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 21.992,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm\\operation_contract.py": "b711c447b47117f4a5cb319ce644e0e5d9f48f5992bb75a5f7e00ad3c6005ba4",
+        "web_alarm\\operation_store.py": "1e9bfdb8db010b6a9abe61cb3cbe9a79db50353a7ec0b85ba799ad38436863e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "focused1",
+      "targets": [
+        "test_web_alarm_lost_response"
+      ],
+      "tests_run": 39,
+      "passed": 39,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 75.536,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm\\operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm\\operation_store.py": "bcd774218a5c9344ff75e40c8cc8f159c7ac8d7cd3f5f8f79dc3a825a9169fab",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "adjacent",
+      "targets": [
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_operation_contract",
+        "test_web_alarm_operation_store",
+        "test_web_alarm_target_claims",
+        "test_web_alarm_resolver",
+        "test_web_alarm_recovery_coordinator"
+      ],
+      "tests_run": 120,
+      "passed": 120,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 79.502,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm\\operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm\\operation_store.py": "bcd774218a5c9344ff75e40c8cc8f159c7ac8d7cd3f5f8f79dc3a825a9169fab",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "red2",
+      "targets": [
+        "test_web_alarm_lost_response.IntegrityTests.test_A8_contract_workspace_identity_must_match_TASK",
+        "test_web_alarm_lost_response.IntegrityTests.test_A8_terminal_status_history_contradiction_is_rejected",
+        "test_web_alarm_lost_response.IntegrityTests.test_A8_execution_event_cannot_contradict_receipt",
+        "test_web_alarm_lost_response.InterruptionTests.test_A5_durable_receipt_before_DONE_event_is_still_replayable"
+      ],
+      "tests_run": 4,
+      "passed": 1,
+      "failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 7.606,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "bcd774218a5c9344ff75e40c8cc8f159c7ac8d7cd3f5f8f79dc3a825a9169fab",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "focused-final",
+      "targets": [
+        "test_web_alarm_lost_response"
+      ],
+      "tests_run": 43,
+      "passed": 43,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 81.351,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "fb2ea3ba98f6ac8044ace1489af8572dd2a02948ccae33d7f7d3b95044fb6f18",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "red3",
+      "targets": [
+        "test_web_alarm_lost_response.IntegrityTests.test_A8_pending_intent_with_lost_history_cannot_grant_new_mutation"
+      ],
+      "tests_run": 1,
+      "passed": 0,
+      "failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 1.941,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "fb2ea3ba98f6ac8044ace1489af8572dd2a02948ccae33d7f7d3b95044fb6f18",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "focused",
+      "targets": [
+        "test_web_alarm_lost_response",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_operation_contract",
+        "test_web_alarm_operation_store",
+        "test_web_alarm_target_claims",
+        "test_web_alarm_resolver",
+        "test_web_alarm_recovery_coordinator"
+      ],
+      "tests_run": 165,
+      "passed": 165,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 165.84,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "431b092470afe2ecd61b2ce2fde5d60a848366d0d9c7437f7f8deba9c583b1e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "full",
+      "targets": [
+        "all"
+      ],
+      "tests_run": 688,
+      "passed": 687,
+      "failures": 0,
+      "errors": 0,
+      "skips": 1,
+      "successful": true,
+      "elapsed_seconds": 626.275,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "431b092470afe2ecd61b2ce2fde5d60a848366d0d9c7437f7f8deba9c583b1e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "red4",
+      "targets": [
+        "test_web_alarm_lost_response.IntegrityTests.test_A8_receipt_backdated_revision_is_rejected"
+      ],
+      "tests_run": 1,
+      "passed": 0,
+      "failures": 1,
+      "errors": 0,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 1.928,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "431b092470afe2ecd61b2ce2fde5d60a848366d0d9c7437f7f8deba9c583b1e3",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "focused-v2",
+      "targets": [
+        "test_web_alarm_lost_response",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_operation_contract",
+        "test_web_alarm_operation_store",
+        "test_web_alarm_target_claims",
+        "test_web_alarm_resolver",
+        "test_web_alarm_recovery_coordinator"
+      ],
+      "tests_run": 166,
+      "passed": 166,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 160.785,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "2afc17719c017eab2e6550d9bcfd7b895c2e90cb818a669a7bfee872bd163002",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    },
+    {
+      "run": "full-v2",
+      "targets": [
+        "all"
+      ],
+      "tests_run": 689,
+      "passed": 688,
+      "failures": 0,
+      "errors": 0,
+      "skips": 1,
+      "successful": true,
+      "elapsed_seconds": 588.267,
+      "isolation_violations": [],
+      "production_sha256": {
+        "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+        "web_alarm/operation_store.py": "2afc17719c017eab2e6550d9bcfd7b895c2e90cb818a669a7bfee872bd163002",
+        "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+        "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba"
+      }
+    }
+  ]
+}
