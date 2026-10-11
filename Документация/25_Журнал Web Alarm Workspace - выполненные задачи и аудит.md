@@ -73,7 +73,7 @@ WA-1.2 — ...
 
 ## 3. Текущее состояние ветки
 
-**CURRENT (2026-10-11):** WA-1…WA-3, RC-0…RC-6, WA-017 и WA4-E / CLAUDE-WA-018 — DONE / VERIFIED. Independently tested WA4-E: 36/36 focused and 643 full OK (1 skipped), exit 0 on 2026-10-09 at commit `a142817b33964691584aadbd6ea6464779df1815`; GitHub blob identity verified 2026-10-11. WA4-A, WA4-O, WA4-R not started and require separate user authorization; combined-disconnect WA-3 historical criterion remains SUPERSEDED / DEFERRED (not PASS), carried to WA4-A.
+**CURRENT (2026-10-11):** WA-1…WA-3, RC-0…RC-6, WA-017, WA4-E / CLAUDE-WA-018 and **WA4-A / CODEX-WA4-A-001 DONE / VERIFIED**. №259 source, №261 CI guard repair; [Actions PR №5 38135287346](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346) 5/5 smoke + 166/166 focused + 689/689 full PASS, no skips. NEXT WA4-O only separate USER GO; WA4-R not assigned. Older dated NEXT entries are historical.
 
 Архитектура зафиксирована в `23`, план реализации — в `24`.
 
@@ -979,3 +979,11 @@ Accepted GitHub commit c7681c3841676438d1246ec3de5ac7049c52a4f9. Reviewer ChatGP
 Внешний ChatGPT-координатор опубликовал `.github/workflows/web-alarm-tests.yml` коммитом №256 `f211045d18d30331f6d95c912c140e4d7ad9b647` через постоянную ветку `GPT`, PR №2 merged в `main`. GitHub-hosted Windows/Python 3.12 без live Workspace и без секретов: [push 38124155634](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38124155634) — пять unittest, 5/5 OK в 5.631 с; [PR 38124184732](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38124184732) — job SUCCESS. Проверены STARTED-before-write, same-contract replay, create/delete, pre-state CAS drift и closed/archived TASK admission. Реальный CI bootstrap **VERIFIED**; отдельная независимая WA4-E проверка 36 focused / 643 full, 1 skipped, относится к запуску на домашнем ПК 2026-10-09, не к CI. Документальное отражение — №257.
 
 **NEXT:** отдельно согласовать расширение Windows CI до 36/643 и покрытие других модулей. Не считать 5/5 полной приёмкой Web Alarm, не назначать WA4-A автоматически и не относить это к Ultra RT-002. Никаких прав на live mutation и нового архитектурного контракта GitHub workflow не даёт.
+
+## 2026-10-11 — CODEX-WA4-A-001 / WA4-A — independent acceptance + CI closeout
+
+**Status: DONE / VERIFIED by ChatGPT for A1–A8 scope.** Codex implementation/evidence №259 `b009f8039b03d293aaf23c799f678d92ff18949c`: `reports/CODEX-WA4-A-001/report.md`, 46 new tests, guarded `wa4a_acceptance.py`, contract/receipt/event history checks in `web_alarm/operation_contract.py` and `operation_store.py`. Verified deterministic HTTP response loss following durable receipt → fresh-process exact historical replay with no duplicate physical side effect; concurrent duplicate requests, contract conflicts, crash windows, two-step move/rename, target/CAS/claim gates and corrupted-history fail-closed. WA4-E executor and Ultra untouched.
+
+**Independent Windows CI proof:** [Actions PR №5 38135287346](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346) → **166/166 focused, 689/689 full Web Alarm, 5/5 smoke PASS**, zero failures/errors/skips/isolation violations, exit 0; [artifacts](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346/artifacts/11701043298). Original executor-local full 688 PASS + 1 symlink SKIP; GitHub Windows 689/689 PASS. Historical №260 CI red audit-recursion/temp mismatch → infra-only repair №261 `9ad29853` and verified green PR №5 (merged). No retroactive green claim for failed first run.
+
+**Unresolved / boundaries:** P-2 UNKNOWN/FAILED RETRY stays fail-closed; P-3/P-4/R-1…R-4, move/rename non-atomic, no fresh real Remote disconnect or live mutation, no cryptographic log-authentication or big-history benchmark. `DONE` receipt not `VERIFIED`, and historical replay not proof of current bytes. **NEXT WA4-O only after user-go TASK; WA4-R NOT STARTED.** Parallel Ultra S0 separately accepted, S1 unassigned and 151C parked, unchanged.
