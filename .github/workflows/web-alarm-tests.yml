@@ -1,4 +1,5 @@
-# Commit/task 256: GitHub-hosted smoke checks for Web Alarm WA4-E.
+# Commits 256/260: WA4-E smoke and guarded WA4-A acceptance/regression.
+# PRs run focused and full regression; manual runs can disable the full suite.
 # CI uses isolated temporary fixtures; it never targets live Workspace storage.
 name: Web Alarm smoke
 
@@ -18,6 +19,12 @@ on:
       - 'web_alarm/**'
       - 'test_web_alarm_*.py'
   workflow_dispatch:
+    inputs:
+      run_full_regression:
+        description: 'Also run the complete Web Alarm suite (689 tests at WA4-A baseline)'
+        type: boolean
+        required: false
+        default: true
 
 permissions:
   contents: read
@@ -51,3 +58,46 @@ jobs:
           test_web_alarm_mutation_executor.PositiveTests.test_create_and_delete
           test_web_alarm_mutation_executor.AdmissionTests.test_changed_pre_state_is_never_overwritten
           test_web_alarm_mutation_executor.AdmissionTests.test_closed_and_archived_tasks_admit_nothing
+
+  wa4a-regression:
+    name: WA4-A focused + full / Python 3.12 / Windows
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run guarded WA4-A focused acceptance (166 tests at baseline)
+        run: >-
+          python -B wa4a_acceptance.py --output "${{ runner.temp }}/wa4a-focused"
+          test_web_alarm_lost_response
+          test_web_alarm_mutation_executor
+          test_web_alarm_operation_contract
+          test_web_alarm_operation_store
+          test_web_alarm_target_claims
+          test_web_alarm_resolver
+          test_web_alarm_recovery_coordinator
+
+      - name: Run guarded full Web Alarm regression (689 tests at baseline)
+        if: github.event_name == 'pull_request' || inputs.run_full_regression
+        run: >-
+          python -B wa4a_acceptance.py --output "${{ runner.temp }}/wa4a-full" all
+
+      - name: Upload test results and isolation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa4a-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/wa4a-focused/results.json
+            ${{ runner.temp }}/wa4a-focused/isolation.jsonl
+            ${{ runner.temp }}/wa4a-full/results.json
+            ${{ runner.temp }}/wa4a-full/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
