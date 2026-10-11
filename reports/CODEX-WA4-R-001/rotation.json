@@ -1,0 +1,24 @@
+{
+  "task": "CODEX-WA4-R-001",
+  "completed_at_utc": "2026-10-11T19:00:45.676Z",
+  "before_sha256": "9f62c45d6c355e1d58d95850cdf30b5c6f89c74f5d512e415ac1cdabf1e9aa47",
+  "phase1_sha256": "208895b1b0314a3e1e2616fe0ac310f1e54569912d5b64136c29e05b58a265e9",
+  "after_sha256": "1b5de412bbd9e92902438b9d479de8ee66d606f4a6a9e4aebd985c9c0258d244",
+  "assignment_sha256": "4300ffe4dd967ac0def7846d0f9717de1cfe39d60420cb2f251ef05d8c9dd008",
+  "previous_blocks_sha256": "5f4106aaf4f8719a266507c5940c905aea7ae77c90bf8cfcd85772b131b34fd0",
+  "assignment_preserved_exact": true,
+  "previous_blocks_preserved_exact": true,
+  "block1_frozen_during_execution": true,
+  "factual_report_saved_before_clear": true,
+  "block2_and_block3_verified_before_block1_clear": true,
+  "block1_waiting": true,
+  "archive_fence_length": 10,
+  "independent_verification_pending": true,
+  "windows_phase2_recovery": {
+    "initial_rename": "EPERM",
+    "phase1_bytes_verified_before_retry": true,
+    "staged_final_bytes_verified_before_retry": true,
+    "bounded_retry": 1,
+    "retry_result": "SUCCESS"
+  }
+}

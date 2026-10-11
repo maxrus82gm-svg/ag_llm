@@ -125,6 +125,9 @@ def build_parser() -> argparse.ArgumentParser:
     report = root.add_parser("report")
     report.add_argument("--task-id", required=True)
 
+    observe = root.add_parser("observe", help="WA4-R: read-only, on-demand OBSERVE diagnostics (no enforcement)")
+    observe.add_argument("--task-id", required=True)
+
     mutate = root.add_parser("mutate", help="WA4-E: the server performs one tracked mutation (replay-safe)")
     mutate.add_argument("--task-id", required=True)
     mutate.add_argument("--microtask-id", required=True)
@@ -272,6 +275,12 @@ def _handle(args: argparse.Namespace) -> int:
         print(f"CHECKPOINT: {validation['status']} (never authority)")
         print(f"NEXT SAFE ACTION: {projection['next_safe_action']}")
         print(f"NEXT SOURCE: {projection['authority_source']}")
+        return 0
+
+    if args.command == "observe":
+        from .observation import observe
+        from .server import WebAlarmApi
+        _json(observe(WebAlarmApi(args.storage_root), args.task_id))
         return 0
 
     if args.command == "mutate":

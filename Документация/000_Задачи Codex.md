@@ -21,10 +21,201 @@
 
 ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
 
-CODEX-WA4-O-001: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка в БЛОКЕ 2; factual handoff в БЛОКЕ 3 и reports/CODEX-WA4-O-001/report.md. Следующую TASK не начинать без нового назначения пользователя.
+CODEX-WA4-R-001: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка сохранена в БЛОКЕ 2, factual handoff — в БЛОКЕ 3. Следующих этапов не запускать; WARN/GATEWAY REQUIRED/STRICT не разрешены.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-001. Полная исходная пользовательская постановка ниже сохранена дословно; её STATUS candidate — исторический текст до прямого USER GO в текущем чате. AMENDMENT: новых уточнений во время исполнения не поступало.
+
+``````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# CODEX-WA4-R-001 — Strict Rollout Preflight / OBSERVE
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**ARCH CLASS:** Web Alarm Workspace / Strict Rollout / Mutation Control  
+**PRIMARY PROFILE:** Документация/23_Архитектура Web Alarm Workspace.md  
+**PLAN:** Документация/24_План реализации Web Alarm Workspace.md  
+**HISTORY:** Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md  
+**STATUS:** USER TASK CANDIDATE — execute only after user places this text in personal БЛОК 1 and starts Codex.
+
+## 1. Исходная точка
+
+GitHub baseline при подготовке: `main` и `GPT` совпадают, SHA `8966e152359c53f048f8c7b102e5c21db5e16006`.
+
+WA-1–WA-3, RC-0–RC-6, WA4-E, WA4-A прошли независимую приёмку.
+
+WA4-O / CODEX-WA4-O-001: независимый Windows CI run `38153364378` — 719/719 full Web Alarm, 167/167 focused, 29/29 operator+launcher, 23/23 JS, 5/5 smoke PASS. Пользователь просмотрел демонстрацию и согласился оставить эту версию как промежуточную. Полная визуальная проверка всех сценариев не объявлена PASS.
+
+UX-пожелания пользователя сохранены в документе 24 (UX-2026-10-11, B, C). Их реализация не входит в эту задачу.
+
+WA4-R ещё не реализован и не принят.
+
+## 2. Цель
+
+Подготовить начало финального Strict Rollout по утверждённой последовательности:
+
+OBSERVE → WARN → GATEWAY REQUIRED → STRICT → FINAL AUDIT.
+
+Сейчас разрешён **только preflight и, если безопасно и архитектурно обоснованно, реализация OBSERVE**.
+
+Нельзя включать обязательный gateway или strict enforcement.
+
+## 3. Обязательный preflight
+
+Прочитать проектный маршрут `08 → 000 → 34 → 18 → 01 → 23/24/25` и собственную персональную карточку Codex.
+
+Проверить текущие исходники, server API, CLI, Mutation Executor, RC-3 ownership, RC-5/RC-6 recovery и фактические точки входа изменяющих операций.
+
+Составить матрицу существующих путей:
+
+- Web Alarm HTTP mutation gateway;
+    
+- Web Alarm CLI и legacy-команды;
+    
+- Desktop Commander Remote;
+    
+- прямые файловые операции локальных агентов;
+    
+- внешние процессы/редакторы;
+    
+- создание, изменение, удаление, перенос файлов и другие операции, значимые для текущего workflow.
+    
+
+Для каждого пути определить: кто вызывает, кто контролирует, может ли Web Alarm реально наблюдать действие, где необходим gateway, существуют ли обходы, какой требуется механизм для WARN/STRICT и какие ограничения нельзя закрыть существующим API.
+
+**Не объявлять внешний прямой файловый вызов наблюдаемым, если Web Alarm объективно не получает о нём evidence.**
+
+## 4. OBSERVE
+
+После анализа выбрать минимально безопасный вариант наблюдения.
+
+Если существующих механизмов достаточно:
+
+- использовать реальные server-owned данные;
+    
+- выдавать диагностические сведения без изменения execution authority;
+    
+- отдельно различать gateway mutation и наблюдаемое внешнее событие;
+    
+- не превращать отсутствие telemetry в доказательство отсутствия операции;
+    
+- сохранить совместимость существующих workflow;
+    
+- добавить focused regression tests.
+    
+
+Если для полноценного OBSERVE требуется новая архитектура или перехват недоступных вызовов, **не имитировать работоспособность**. Зафиксировать точный blocker и предложить ограниченное инженерное решение для утверждения пользователем.
+
+OBSERVE не должен отказывать в операциях, которые раньше были разрешены, выполнять recovery, менять статус микрозадачи, создавать фиктивные receipts или самостоятельно запускать mutation.
+
+## 5. Инварианты
+
+- Все реальные mutation authority остаются на сервере.
+    
+- Подтверждённый snapshot и manifest обязательны для gateway mutation.
+    
+- Не ослаблять RC-3 claim/CAS, persisted STARTED, operation contracts и historical receipt integrity.
+    
+- `UNKNOWN_AFTER_DISCONNECT` не трактовать как FAILED.
+    
+- Никаких слепых replay/rollback.
+    
+- `DONE` не приравнивать к `VERIFIED`.
+    
+- Нельзя изменять или очищать live пользовательское хранилище.
+    
+- Тесты работают только на изолированных временных данных.
+    
+- Не выполнять Git/GitHub-операции, включая чтение истории, без отдельного разрешения пользователя согласно DOC-GIT-01.
+    
+- Не изменять Ultra, Planner, Dredd, голосовой контур и новый UX backlog.
+    
+
+## 6. Проверки
+
+Обязательны:
+
+1. Проверка неизменности поведения gateway при OBSERVE.
+    
+2. Отрицательные сценарии: запрещённая mutation, устаревший CAS, закрытая TASK, некорректные evidence.
+    
+3. Отсутствие новых несанкционированных mutations при наблюдении.
+    
+4. Проверка повторного открытия состояния, если OBSERVE сохраняет диагностические данные.
+    
+5. Самостоятельный adversarial review.
+    
+6. Focused regression, затем полный Web Alarm regression при фактическом изменении runtime, с точными PASS/FAIL/SKIP.
+    
+7. Отдельный список внешних mutation paths, которые текущая реализация не контролирует.
+    
+
+Не заявлять SUCCESS только по компиляции или наличию новых тестов.
+
+## 7. Результат
+
+Выдать factual report:
+
+- матрица путей изменения файлов;
+    
+- реализован ли OBSERVE, или только подготовлен design;
+    
+- изменённые файлы и точный scope;
+    
+- результаты проверок;
+    
+- подтверждённые ограничения и незакрытые bypass paths;
+    
+- проектный маршрут WARN → GATEWAY REQUIRED → STRICT;
+    
+- условия включения следующей стадии;
+    
+- DOC IMPACT и NEXT SAFE ACTION.
+    
+
+Не переходить к WARN/GATEWAY REQUIRED/STRICT без отдельного USER GO и независимой приёмки OBSERVE.
+
+Статус результата: `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
+
+Выполнить безопасную ротацию персональных БЛОКОВ 1→2/3 только после сохранения factual result. Общую документацию Web Alarm самовольно не закрывать.
+
+---
+
+``````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK:** CODEX-WA4-R-001 — Strict Rollout Preflight / OBSERVE.  
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.  
+**EXECUTOR:** Codex, 2026-10-11. **ARCH CLASS:** Web Alarm Workspace / Strict Rollout / Mutation Control; primary profile 23, plan 24, history 25. **MODE / RECORD:** preflight + bounded OBSERVE / FACT + future PROPOSAL.
+
+**Результат:** проверены фактические mutation paths и authority boundaries. Реализована on-demand read-only диагностика GET /tasks/{task_id}/observe и CLI observe --task-id. Использует существующую RC-5 projection, validated operations/history и snapshot/current-state evidence только текущего manifest. Нового store, authority, status machine, watcher, gateway admission, recovery или automatic mutation нет. WARN / GATEWAY REQUIRED / STRICT НЕ включены.
+
+**Изменения:** web_alarm/observation.py (новый DTO), web_alarm/server.py (read-only endpoint/capability + актуальный module comment), web_alarm/cli.py (observe), test_web_alarm_observation.py (30 tests), reports/CODEX-WA4-R-001/*, эта персональная ротация. Executor/RC-3/RC-4/RC-5/RC-6/operation contracts/UI/launcher/Ultra не менялись. Git/GitHub и live storage не использовались.
+
+**Доказанные границы:** HTTP mutations и CLI mutate проходят один logical server-owned WA4-E boundary; persisted STARTED до physical write, snapshot/manifest/claims/CAS/receipts не ослаблены. RC-4/RC-6 recovery остаётся отдельным gated path. Legacy CLI snapshot restore напрямую перезаписывает/удаляет files без RC-4 session/preservation/CAS — bypass воспроизведён только в disposable fixture и НЕ закрыт этим OBSERVE. Remote direct file/shell/GUI, локальные агенты, редакторы и прочие external writers не перехватываются. State difference не устанавливает writer/event; вне manifest и transient writes не наблюдаются. DONE receipt может быть создан после внешней записи; correlated executor event — historical unauthenticated evidence, отсутствие event не доказывает отсутствие эффекта. UNKNOWN остаётся UNKNOWN, DONE не становится VERIFIED.
+
+**Проверки:** focused 228/228 PASS, 0 FAIL/ERROR/SKIP, 305.725 s; full 749 total = 748 PASS + 1 SKIP, 0 FAIL/ERROR, 686.342 s; оба exit 0, isolation violations 0. SKIP CanonicalTargetTests.test_symlink_target_fails_closed: symlink creation is not permitted here. Node UI regression 23/23 PASS, 0 FAIL/SKIP; compileall exit 0; whitespace/NUL checks PASS. 30 новых tests включают 6 paired gateway action comparisons, real HTTP, fresh-process reopen, no-new-files/status/authority, replay without repeat, negative admission/CAS/closed/corrupt evidence, unobservable external cases и store race. Final source hashes совпали с full и focused. Два промежуточных fixture run (6 ERROR; затем 2 FAIL) сохранены прозрачно в development.json; исправлены согласно реальному API, без ослабления runtime.
+
+**Полный factual report:** reports/CODEX-WA4-R-001/report.md — матрица путей, source selectors, findings, runtime contract, команды, стадийный design и SHARED DOC DELTA. Evidence: focused.json, full.json, client.json, checks.json, versions.json, development.json; rotation.json/manifest.json фиксируют конечные байты. Сырые logs/fixtures только system TEMP: C:\Users\REX\AppData\Local\Temp\wa4r-Iurd2b.
+
+**Ограничения:** external event feed/attribution unavailable; global external OBSERVE и enforcement не реализованы. Bounded store check не atomic project snapshot. Same-user shell/library access не OS security boundary; legacy restore, CAS/write gap, P/R, non-atomic move, snapshot/storage secret-size-location policy, большие histories остаются открыты. Нет live Remote-disconnect / ACL rollout / новой visual acceptance. Future WARN→GATEWAY REQUIRED→STRICT→FINAL AUDIT — только design в report и отдельные USER GO + independent gates.
+
+**DOC IMPACT:** YES; current/architecture/registry-status YES; context library NO; Rule-ID/contracts unchanged; new normative doc NO. Common/profile owners не редактировались Codex. Во время тестов стороннее обновление 000/01/05/06/24/25/34 внесло WA4-O automated PASS / interim UI, но оставило WA4-R candidate/not launched; фактическое назначение подтверждено исходным личным БЛОКОМ 1 и USER GO данного чата. Не откатывать параллельные записи; ChatGPT обновляет этот status и canonical owners 23/24/25 по factual handoff. DOC CLOSEOUT INCOMPLETE для общего контура до действий координатора. .obsidian/workspace.json также изменился вне действий Codex, не восстановлен агентом.
+
+**NEXT SAFE ACTION:** независимая ChatGPT verification именно bounded OBSERVE и его слепых зон; только затем отдельное решение пользователя по новой TASK. Codex остановлен после отчёта; следующих этапов не запускать.
+
+---
+
+## Сохранённая предыдущая карточка БЛОКОВ 2–3
+
+Ниже предыдущий текст сохранён дословно; статусы и постановки относятся к своим историческим TASK.
+
+``````````markdown
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 # CODEX-WA4-O-001 — Web Alarm Operator UI / UX-Ops
@@ -1794,3 +1985,4 @@ Codex: задача утверждена пользователем. Прочи�
 ````````
 
 `````````
+``````````

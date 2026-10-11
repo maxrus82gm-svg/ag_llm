@@ -1,9 +1,9 @@
 """Local typed HTTP API for Web Alarm Workspace.
 
 The API exposes persistent Web Alarm control-plane state over loopback HTTP.
-Normal project mutation is still not exposed before WA4-E; RC-6 ``recover``
-may perform only tracked recovery/administrative actions through the existing
-Resolver, RC-3 ownership and RC-4 rollback contracts.
+Normal project mutation uses the WA4-E executor; RC-6 ``recover`` may perform
+only tracked recovery/administrative actions through the existing Resolver,
+RC-3 ownership and RC-4 rollback contracts. WA4-R OBSERVE is read-only diagnostics.
 """
 
 from __future__ import annotations
@@ -56,6 +56,7 @@ from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
 from .ui import INDEX_HTML
 from .operator_view import navigation, operator_details
+from .observation import observe
 from .workspace_registry import (
     WorkspaceRegistry,
     WorkspaceRegistryError,
@@ -334,6 +335,7 @@ class WebAlarmApi:
                         "projection",
                         "closeout",
                         "mutations",
+                        "observe_diagnostics",
                     ],
                 }
 
@@ -384,6 +386,13 @@ class WebAlarmApi:
                     "method_not_allowed",
                     "transport events support GET and POST",
                 )
+
+            if len(parts) == 3 and parts[0] == "tasks" and parts[2] == "observe":
+                if method != "GET":
+                    raise ApiError(405, "method_not_allowed", "OBSERVE diagnostics require GET")
+                if query or body is not None:
+                    raise ApiError(400, "invalid_observe_request", "OBSERVE accepts no mode or authority parameters")
+                return 200, observe(self, parts[1])
 
             if parts == ["workspaces"]:
                 if method == "GET":

@@ -1,0 +1,15 @@
+{
+  "task": "CODEX-WA4-R-001",
+  "command": "node --test test_web_alarm_operator_ui.js",
+  "node": "22.20.0",
+  "tests": 23,
+  "passed": 23,
+  "failures": 0,
+  "skips": 0,
+  "exit_code": 0,
+  "source_sha256": {
+    "test_web_alarm_operator_ui.js": "f1eb1e1b4234fc563805b2adf14ab542cce563ce8a5684f2d36cc033f9e8d637",
+    "web_alarm/ui.py": "67a05a68d2dac63b79eaa8529d35944e5580d62f189f3563471b0ecf84db2e5b"
+  },
+  "reason_for_final_repeat": "Pair lightweight client regression with explicitly recorded source hashes; no UI changes."
+}

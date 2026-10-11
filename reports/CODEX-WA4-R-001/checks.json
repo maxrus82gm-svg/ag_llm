@@ -1,0 +1,118 @@
+{
+  "changed_existing": [
+    "web_alarm/cli.py",
+    "web_alarm/server.py",
+    ".obsidian/workspace.json"
+  ],
+  "new_python_files": [
+    "test_web_alarm_observation.py",
+    "web_alarm/observation.py"
+  ],
+  "source_checks": [
+    {
+      "path": "web_alarm/observation.py",
+      "sha256": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+      "trailing_whitespace": [],
+      "nul": false
+    },
+    {
+      "path": "web_alarm/server.py",
+      "sha256": "7b17ed5f4bc754c25a44c33dc029d75167fb5cb170fdd48f2d2e187a096a21e4",
+      "trailing_whitespace": [],
+      "nul": false
+    },
+    {
+      "path": "web_alarm/cli.py",
+      "sha256": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+      "trailing_whitespace": [],
+      "nul": false
+    },
+    {
+      "path": "test_web_alarm_observation.py",
+      "sha256": "e895b409d4d63ac2d4a768eaedac0ccbc7fe3c24126704e034d9bc9155e70c9d",
+      "trailing_whitespace": [],
+      "nul": false
+    }
+  ],
+  "ultra_server_unchanged": true,
+  "ui_unchanged": true,
+  "personal_block1_unchanged": true,
+  "compileall_exit": 0,
+  "js": {
+    "tests": 23,
+    "pass": 23,
+    "fail": 0,
+    "skip": 0,
+    "exit": 0
+  },
+  "production_files_changed_by_task": [
+    "web_alarm/observation.py",
+    "web_alarm/server.py",
+    "web_alarm/cli.py"
+  ],
+  "test_files_changed_by_task": [
+    "test_web_alarm_observation.py"
+  ],
+  "source_selectors_resolved": 36,
+  "adversarial_review": {
+    "reviewer": "Codex self-review; not independent acceptance",
+    "confirmed": [
+      "legacy restore overwrites unknown disposable bytes without RC4 session",
+      "outside-manifest and transient changes are unobservable",
+      "external DONE receipt is not a gateway execution proof",
+      "durable DONE can precede a missing executor event",
+      "corrupt authority is not repaired by OBSERVE",
+      "coherence detects a real store change without retrying"
+    ],
+    "limits": [
+      "no external event feed or writer attribution",
+      "no atomic cross-file/current-state guarantee",
+      "no OS access-control enforcement",
+      "snapshot/store policy not universally guarded",
+      "no live Remote or user-storage mutation"
+    ]
+  },
+  "full_sources_match": true,
+  "full_summary": {
+    "run": 749,
+    "pass": 748,
+    "fail": 0,
+    "error": 0,
+    "skip": 1,
+    "guard_violations": 0,
+    "exit": 0
+  },
+  "skip_details": [
+    {
+      "test": "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+      "status": "SKIP",
+      "reason": "symlink creation is not permitted here"
+    }
+  ],
+  "concurrent_changes_not_written_by_task": [
+    "Документация/000_Задачи для агента.md",
+    "Документация/01_Архитектура и текущее состояние.md",
+    "Документация/05_Реестр задач.md",
+    "Документация/06_Журнал выполнения и отчёты.md",
+    "Документация/24_План реализации Web Alarm Workspace.md",
+    "Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md",
+    "Документация/34_TACTICAL_CONTEXT.md",
+    ".obsidian/workspace.json"
+  ],
+  "common_documents_edited_by_codex": false,
+  "ultra_unchanged": true,
+  "block1_preserved_until_closeout": true,
+  "rotation_loss_check_pass": true,
+  "block1_waiting": true,
+  "stage_file_remaining": false,
+  "full_sources_match_after_closeout": true,
+  "common_documents_current_sha256": {
+    "Документация/000_Задачи для агента.md": "5d3e3147bc7ce23b7c33847c9786d4031d70c2b27e44f8d5dce29d3e7cd0b609",
+    "Документация/01_Архитектура и текущее состояние.md": "fb3a639ea3878dd14b9eda25efd12d801ffbe10547090620d8784b5b061baf43",
+    "Документация/05_Реестр задач.md": "5d5e5642c143109467088bb0c5d1bd37fd9b4c59859be7a12aaff1d1cbf6e6f7",
+    "Документация/06_Журнал выполнения и отчёты.md": "337e669730e7a5fd33018d369c4db568bf9497653ae7c8057ce95d0a636b4d2c",
+    "Документация/24_План реализации Web Alarm Workspace.md": "7947dc0bc7cb7f7eb79aaea992978cdb9d0f2b220a487cb91814b6eae6ee504a",
+    "Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md": "d4b63a789fadf5d412fc5691fb659fdaa0aa9bec2698b6706c0978f7f360dc00",
+    "Документация/34_TACTICAL_CONTEXT.md": "17ff03ff0139887141369e416721019ae09d3580b788cbcc308436d3353fc585"
+  }
+}
