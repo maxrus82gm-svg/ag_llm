@@ -73,7 +73,7 @@ WA-1.2 — ...
 
 ## 3. Текущее состояние ветки
 
-**Текущий статус (2026-10-08):** WA-1…WA-3 DONE / VERIFIED; старый WA-3 combined-disconnect criterion = SUPERSEDED / DEFERRED по RT-001, не PASS. RC-0…RC-4 и RC-6 DONE / VERIFIED по independent review; RC-5 implementation/review repair RESULT READY / отдельный independent review DEFERRED. WA4-E NEXT / NOT STARTED.
+**CURRENT (2026-10-11):** WA-1…WA-3, RC-0…RC-6, WA-017 и WA4-E / CLAUDE-WA-018 — DONE / VERIFIED. Independently tested WA4-E: 36/36 focused and 643 full OK (1 skipped), exit 0 on 2026-10-09 at commit `a142817b33964691584aadbd6ea6464779df1815`; GitHub blob identity verified 2026-10-11. WA4-A, WA4-O, WA4-R not started and require separate user authorization; combined-disconnect WA-3 historical criterion remains SUPERSEDED / DEFERRED (not PASS), carried to WA4-A.
 
 Архитектура зафиксирована в `23`, план реализации — в `24`.
 
@@ -961,3 +961,15 @@ OPEN: F-5 TaskStore.complete_task_locked death between completed status persiste
 ## 2026-10-09 — CLAUDE-WA-017 — F-5/F-6 DONE / VERIFIED (independent audit)
 
 Accepted GitHub commit c7681c3841676438d1246ec3de5ac7049c52a4f9. Reviewer ChatGPT inspected changed code, closeout/RC-3 mutation authority boundary, F-5 crash/restart and F-6 checkpoint concurrency tests. Independent run on home DESKTOP-SC96D3U at matching clean HEAD: python -B -m unittest test_web_alarm_reliability_wa017 test_web_alarm_projection_concurrency -q => 17 OK, exit 0; python -B -m unittest discover -p test_web_alarm*.py -q => 607 OK, skipped=1, exit 0; compileall web_alarm OK, git diff --check HEAD^ HEAD clean. F-5: directory move is closeout commit point and closed-task execution gets TASK_CLOSED; interruption resumes safely. F-6: FAILED rebuild permits MISSING/STALE/INCONSISTENT but never false VALID; test X contract corrected, runtime checkpoint semantics unchanged. No critical blocker found. Limitation register preserved: stale/legacy RC-3 acquire can acquire claim ownership without mutation authority; transient Windows sharing violation, cosmetic server list and unconfirmed origin of earlier handle; F-1/F-3 unchanged. WA4-E remains NOT STARTED. Agent report: Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY/wa017_report.md.
+
+## 2026-10-11 — CLAUDE-WA-018 / WA4-E — DONE / VERIFIED (independent review 2026-10-09)
+
+**Source:** accepted code commit `a142817b33964691584aadbd6ea6464779df1815` (177); Claude report `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-018_WA4E_EXECUTOR/wa018_report.md`. ChatGPT compared current GitHub blob SHA of executor, operation store, server, CLI and tests to reviewed commit and confirmed no drift on 2026-10-11.
+
+**Implementation:** `web_alarm/mutation_executor.py` and HTTP `POST /tasks/{id}/mutations` / CLI `mutate`; one durable operation identity per mutation. RC-1 contract/payload, VERIFIED manifest snapshot, RC-3 canonical ownership and TASK/mutation/target locks, CAS, persisted STARTED before first write, exact post-proof + persisted DONE receipt, and release. Identical replay returns the original receipt; uncertain fate requires reconciliation/Resolver and RC-6, not blind repeat. `move/rename` is CREATE destination + DELETE source, both tracked/claimed, **not atomic** and legitimately PARTIAL.
+
+**Independent verification:** 36/36 targeted WA4-E and full Web Alarm 643 OK, 1 skipped, exit 0; Windows process crash-window/race and closed-TASK scenarios are covered by focused tests; independent code review included lock boundaries, exact receipts and replay behavior. Full Web Alarm suite was actually rerun by ChatGPT 2026-10-09; GitHub Actions not used. **PASS limited to WA4-E, not strict rollout.**
+
+**Retained findings:** P-1 atomic native move requires separate design; P-2 UNKNOWN_AFTER_DISCONNECT/FAILED RETRY lifecycle unsupported (fail-closed); P-3 microtask-wide RC-2 evidence scope; P-4 stale advisory RETRY after execution; R-1 non-compliant external writer gap before replace, R-2 no automatic Windows sharing retry, R-3 parent directory creation absent, R-4 payload limit. F-1/F-3 still out of scope. `DONE` operation receipt remains distinct from `VERIFIED`.
+
+**NEXT:** WA4-A deterministic lost-response acceptance must be separately assigned by user, preserving stricter temporal combined-incident proof (not inherited from WA-3). WA4-O and WA4-R not started; Ultra RT-002 S0 is a separate architecture and remains independently accepted without change by this WA closeout.
