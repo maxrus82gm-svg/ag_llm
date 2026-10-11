@@ -147,6 +147,8 @@ Server не спрашивает модель о действии, если пр
 
 **S0 actual outcome (2026-10-10 / commit №247):** Codex standalone offline reported **97=93 PASS + 4 FAIL (0 errors/skips, exit 1)** with FOUR HIGH proof failures / TWO causes: evidence from READ/VERIFY can be bound to a later filesystem fingerprint; absent mandatory durable AuditThreadRecorder/tool_finished record can leave packet apparently complete and RUN marked SUCCESS. Independent GitHub source inspection confirms the suspicious code paths; **independent execution not performed (Remote devices offline)** and server/planner local byte/EOL identity has not been fully reconciled. **S0 = FINDINGS / NOT ACCEPTED FOR NEW WAVE; no dependent S1/S2/etc** until authorized focused repair, retained regression and independent rerun. This is a factual safety finding, not plan B2 reapproval or 151C/KT3 DONE. Canonical design/immutable B2 unchanged.
 
+**Постоянная независимость от Круглого стола:** этот §5а сохраняет утверждённое решение, полный граф predecessors, контракт безопасности, матрицу V1–V13, A1–A8, границы OFFLINE/LIVE и отложенные узлы. Даже если оперативные слоты 28–35 будут позднее очищены по отдельному решению, §5а остаётся authoritative execution owner. Очистка 33.3 НЕ разрешает удалять его единственный архивный sealed snapshot, trace принятия и Git provenance; исторические причины F01–F15 консолидированы ниже. При возникновении расхождения с sealed B2 остановить handoff и сверить, не менять решение молча.
+
 **Статус:** USER PLAN APPROVED — `RT-002/FINAL-B2` (immutable GitHub commit №242 `e7365ea773c9adc4e813e05a58810e40b4de4bb4`; blob `05cfcd9f3a4bcc26e9dab81a6bcb744b4ed15550`; SHA-256 `c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf`), внешняя запись USER PLAN APPROVAL в `28`. Это новая **каноническая ветка execution TASK**, утверждённая после RT-002 и Codex REVIEW-1, а **не** объявление об уже выполненном коде. Исходная нумерованная 151A–151J ниже/выше сохранена как историческая/отложенная программа; в точках конфликта **для новой RT-002 волны применять эту §5а**.
 
 **Статусы/переходы:** `151C / КТ-3` = PARKED / RESULT READY / AWAITING INDEPENDENT VERIFICATION / **НЕ DONE**. 151D/E/F/H/I и V13 = DEFERRED и **не получают** ложного PASS от новых gates. Зависимости старой 151D/E-ветки остаются обязательными для самой ветки, но **для новой аварийной волны** старый `151C DONE` не является required predecessor — вместо этого по отдельному доказательству применяются **S0** и перед compiler **S6a**. До accepted S0 dependent новые TASK запрещены. **S6b/151G запрещён до independent ACCEPTED S13a**, даже если S3/safety код уже написан. Данная dependency override осознанно утверждена человеком вместе с B2 и не означает общего пропуска КТ-3/4/5.
@@ -184,6 +186,31 @@ Server не спрашивает модель о действии, если пр
 **Live vs offline:** прежняя §10 остаётся целью **полной КТ-7**, но введён **отдельный приёмочный режим для аварийной волны**: approved offline acceptance допускает S0…S13a и безопасное bounded S6b в рамках матрицы; это не закрывает прежние live KT6/KT7. Полная live серия только по особому USER GO/лимиту/stop criteria и отдельному acceptance. Даже если old §13 diagram визуально ведёт через 151C, для RT-002 применяется эта утверждённая вставка; старые KT3/4/5 остаются PENDING до их собственных доказательств.
 
 **Документационное владение:** `20` = канонический owner исполнения и зависимостей, `21` = факты и истории реальных проверок, `05` = статусы, `34/000` = текущая навигация; `33.3 B2` immutable approved reference, `28` внешний approval/seal. При каждой фактической TASK сверять локальный source snapshot и observed evidence; Git history/commit/branch — только внешнему уполномоченному координатору, **никакого локального Codex Git/GitHub**. Контроль результата: scope, source-version, independent tests, honest limitations, human readable UI/demo или метод проверки; user может принять/попросить исправления до следующей TASK.
+
+
+### Zero-loss перенос финального REVIEW-1 / B2 — постоянный индекс причин и доказательств
+
+Этот индекс является частью утверждённого маршрута Ultra и сохраняется независимо от оперативного Круглого стола. **Не создавать по нему новые TASK без USER GO.** Статус ACCEPTED здесь означает принятие требования в B2, **не** исправленный код и не PASS этапа. Первоначальные отзывы сохраняются как immutable Git history/архив, однако следующий исполнитель может восстановить основания из этого раздела и §5а выше.
+
+| Finding REVIEW-1 | Принятое решение / защита / узел B2 |
+| --- | --- |
+| F01 HIGH | ACCEPTED: не выдавать 151C за принятую; PARKED, узкий S0 вместо полного старого T0 |
+| F02 HIGH | ACCEPTED conditionally: явный revised dependency graph новой ветки, старая ветка не получает PASS; §5а является принятой ревизией |
+| F03 HIGH | ACCEPTED: S1/S3b исследуют 7 физических LLM POST мест и всех mode-callers, в том числе Chat и Compressor |
+| F04 HIGH | ACCEPTED: S3a/S3b durable reserve, UNKNOWN, crash/concurrency и pre-send enforcement |
+| F05 HIGH | ACCEPTED: bytes != tokens != billed money, output reserve, cached и UNKNOWN учитывать отдельно |
+| F06 HIGH | ACCEPTED: budget ledger authoritative, сбой хранения ⇒ fail-closed; diagnostics/UI не могут обходить gate |
+| F07 HIGH | ACCEPTED: S6a/b actual material, права, source/generation/freshness, отрицательные факты и protocol pairing |
+| F08 HIGH | ACCEPTED: C1 блокирует внутренний JSON как human final, но сохраняет legitimate explicit JSON output |
+| F09 MEDIUM | ACCEPTED: S4 не обещает range/find за физическим лимитом reader, отдельные read/request caps |
+| F10 MEDIUM | MODIFIED: существующие Planner/Audit флаги сохранить, историю отделить раньше, S10 тестирует 2×2×2 |
+| F11 HIGH | ACCEPTED: Git координируется отдельно, seal/approval не подменяют независимый handoff |
+| F12 MEDIUM | ACCEPTED: A1–A8 точно охватываются до общей приёмки; offline != live |
+| F13 MEDIUM | ACCEPTED: C2 точные paths/predicates, R1 dirty-causality только исследование |
+| F14 MEDIUM | ACCEPTED: rollback компилятора остаётся под тем же hard budget guard; долги UNKNOWN не сбрасываются |
+| F15 LOW | MODIFIED: owner по ответственности, конкретный агент в отдельной TASK, никаких ложных live/verified статусов |
+
+**Итог:** 13 ACCEPTED, 2 MODIFIED, 0 REJECTED. Все 9 HIGH закрыты **на уровне требований утверждённого B2**, не как завершённые production fixes. Приемочные сценарии A1–A8, их oracle и позитивные B1/B2/B3 изложены в §5а; каждый из них обязателен для соответствующего независимого acceptance. Утверждённая версия: RT-002/FINAL-B2, seal commit №242 `e7365ea773c9adc4e813e05a58810e40b4de4bb4`, blob `05cfcd9f3a4bcc26e9dab81a6bcb744b4ed15550`, SHA-256 `c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf`. Архивные inputs: первоначальный 33 (T0–T13), 32 (V1–V13), 31 synthesis, Codex 33.1 REVIEW-1 №238 (15 findings). Подтверждение USER PLAN APPROVAL и handoff хранится также в 28 и Git, но **для практического продолжения достаточно 20 §5а + 21 evidence + 05 task states + профиль 13**. Никакая будущая очистка 28–35 не может считаться zero-loss без проверки этой матрицы, sealed locators и raw evidence retention.
 
 ## 6. Память после оптимизационной базы
 
