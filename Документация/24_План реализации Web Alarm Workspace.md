@@ -6,7 +6,7 @@
 
 Этот документ является каноническим планом внедрения Web Alarm Workspace. Архитектурные инварианты и назначение системы принадлежат документу `23_Архитектура Web Alarm Workspace.md`; здесь фиксируются порядок реализации, крупные этапы, критерии приёмки и фактический статус внедрения.
 
-WA-1…WA-3, RC-0…RC-6, WA4-E и **WA4-A / CODEX-WA4-A-001 = DONE / VERIFIED**. WA4-A code/evidence №259 `b009f803`: A1–A8, 46 new tests, lost response/fresh-process replay without repeat, v2 receipt/history integrity gate. Independent GitHub Windows CI PR №5 [38135287346](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346): 166/166 focused + 689/689 full + 5/5 smoke PASS, zero skip; infra expansion №260 and guard repair №261. **NEXT WA4-O / authoritative UX-Ops — only new USER GO**, WA4-R NOT ASSIGNED. Older dated CURRENT/DEFERRED statements below historical; Ultra unchanged.
+**CURRENT UPDATE 2026-10-11 / WA4-O implementation technical PASS:** WA-1…WA-3, RC-0…RC-6, WA4-E, WA4-A DONE / VERIFIED. CODEX-WA4-O-001 UI code/CI independently PASS through PR №7/№266 `4cf2f53`: Windows Actions [38153364378](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38153364378) 5/5 smoke, 167/167 focused, 29/29 operator+launcher, 23/23 JS, 719/719 full, 0 fail/error/skip/isolations. User opened isolated BAT-launched demo and accepted existing style/interface **for interim progression only**; exhaustive visual scenarios not signed off. Future UX changes A/B/C documented here **not implemented**. **NEXT candidate WA4-R**, drafted OBSERVE preflight CODEX-WA4-R-001 **NOT ASSIGNED / NOT STARTED**. Earlier snapshots below historical; Ultra not affected.
 
 ## Краткая карта реализации
 
@@ -670,7 +670,7 @@ Web Alarm Server по умолчанию работает локально и н
 Workspace root должен быть явно зарегистрирован, а path validation не должен позволять выход за разрешённые roots через `..`, symlink/junction или некорректную нормализацию пути.
 #### WA-4.6 — Расширенный Task Progress UI / UX-Ops
 
-**Статус: BLOCKED / PLANNED. Не начинать до закрытия correctness/recovery-контура RT-001: Recovery Closure, authoritative Mutation Executor / Gateway и lost-response acceptance должны быть DONE / VERIFIED.**
+**CURRENT STATUS 2026-10-11: WA4-O implementation delivered and independently AUTOMATED PASS; visual user review = interim UI acceptance, exhaustive human visual gate NOT confirmed.** Earlier BLOCKED/PLANNED requirements were satisfied for starting implementation, not a future blocker. The new UX A/B/C entries below are FUTURE, not part of CODEX-WA4-O-001 acceptance.
 
 После доказанной надёжности recovery и исполнения Web Alarm Workspace обязан перейти к отдельному этапу развития операторского интерфейса. Это не замена уже существующего минимального UI WA-2.3, а следующий полноценный слой наблюдаемости над авторитетным persistent state.
 
@@ -747,6 +747,14 @@ Workspace root должен быть явно зарегистрирован, а
 
 **Согласованность записей:** A — трёхколоночная компоновка; B — одно поле, planner, русские статусы, отказ от навигатора, альтернативы; C — **наиболее актуальный выбор поведения пустой/непустой TASK**. A/B не удалять и не выдавать ранний вариант «пустая durable TASK сразу» за последний согласованный принцип. №23/№25/Ultra без изменений до отдельного архитектурного решения и фактической реализации.
 
+
+#### WA4-R / CODEX-WA4-R-001 — next-candidate handoff (2026-10-11, NOT ASSIGNED)
+
+**Original approved sequence remains:** OBSERVE → WARN → GATEWAY REQUIRED → STRICT → Final Audit. This is the terminal technical phase of the original RT-001 Web Alarm plan; it is **not** the deferred user interface redesign. ChatGPT composed two full copyable blocks in the prior conversation (personal Codex БЛОК 1 text + short chat launch message). **Candidate prepared only: not inserted by ChatGPT into the Codex personal card, no confirmed user assignment, no Codex execution, no rollout state activation.** Re-open personal Codex БЛОК 1 before start; follow DOC-TASK-BLOCK1-01@1 (user inserts and launches).
+
+**Proposed first scoped engineering TASK:** `CODEX-WA4-R-001 — Strict Rollout Preflight / OBSERVE`, primary profile 23, plan 24, factual journal 25. Inventory actual tracked mutation routes (Web Alarm HTTP gateway, CLI and legacy direct restore, Desktop Commander Remote, direct agent file tools, external writers). For each path record owner/capability, observable vs unobservable evidence, migration/bypass risk and enforceability. If technically possible safely implement *only* evidence-only diagnostic OBSERVE with tests; otherwise return clear blockers/design recommendation. It must not create mutation authority, forge evidence, claim omniscient external interception, alter checkpoint or automatic recovery. **WARN / GATEWAY REQUIRED / STRICT forbidden in this first candidate**, as are live production mutation, Ultra changes and local Codex Git/GitHub. Use isolated temp tests (negative gateway/admission, closed TASK, stale CAS, offline, restart where needed), adversarial pass, exact full regression when runtime changed; report Factual Result, evidence, open risks and necessary next gate. Independent verification and separate USER GO before any later rollout mode.
+
+**User scheduling decision:** first complete original technical route WA4-R, then start a separately approved UX implementation task from A/B/C. Current disposable demo is not production; WA4-O technical PASS does not certify all human visual/offline/narrow/recovery scenarios. Preserve known P-2/3/4, R-1…R-4 and non-atomic two-step move/rename, no new real controlled remote-disconnect proof. Existing WA4-O code/CI and UX wishes are not evidence of a strict-enforcement bypass closure.
 
 #### WA-4.7 — Rollout
 
@@ -870,7 +878,7 @@ reconcile
 | WA-2 — Local Web Alarm Server + UI | DONE / VERIFIED — WA-2.1–WA-2.4 complete |
 | WA-3 — Remote recovery + replay protection | DONE / VERIFIED — WA-3.1–WA-3.7 complete; old stricter combined criterion SUPERSEDED / DEFERRED by RT-001, not PASS |
 | Recovery Closure RC-0…RC-6 | RC-0…RC-6 DONE / VERIFIED; RC-5 independent PASS 2026-10-09 |
-| WA-4 — Strict mutation gateway + hardening | PARTIAL: WA4-E/A DONE / VERIFIED; WA4-O/R PLANNED / NOT ASSIGNED |
+| WA-4 — Strict mutation gateway + hardening | PARTIAL: WA4-E/A verified, WA4-O implementation independently automated PASS / interim UI acceptance (full visual pending); WA4-R OBSERVE preflight candidate / NOT ASSIGNED, future UX A/B/C unimplemented |
 
 **HISTORICAL SNAPSHOT (2026-10-08; superseded by 2026-10-11 below):** WA-1…WA-3, RC-0…RC-4 и RC-6 = DONE / VERIFIED; RC-5 (projection implementation + repair) = RESULT READY, independent review по решению пользователя DEFERRED. RC-6 после серии Repair #1…\#4B и CLAUDE-WA-014: переход READY/FAILED_VERIFICATION→ACTIVE отклоняется при принятом/закреплённом ABORT/ROLLBACK или открытой RC-4 session; проверка и CAS перехода атомарны относительно recovery decisions под TASK-lock; законный ACTIVE до ABORT не блокирует rollback. Отчёт `TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE/rc6_wa014_report.md`: 580 OK, skip 1 ×2; WA-014 11/11; GitHub-аудит ChatGPT PASS. **NEXT: WA4-E TASK DRAFT / NOT STARTED; согласовать пользователя до передачи агенту**, затем WA4-A, WA4-O, WA4-R. Для WA4-E сохраняется STARTED-before-write под TASK-lock; standalone `/authorize` — только evidence. `.gitattributes` FOLLOW-UP deferred; старый WA-3 combined criterion = SUPERSEDED / DEFERRED, смысл — WA4-A.
 
@@ -908,3 +916,5 @@ WEB ALARM WORKSPACE READY FOR REGULAR USE
 **CURRENT UPDATE (2026-10-11, WA4-E independent closeout):** CLAUDE-WA-018 / WA4-E = DONE / VERIFIED on `a142817b33964691584aadbd6ea6464779df1815` (177); independent ChatGPT 36/36 focused and 643 full OK (1 skipped), exit 0 on 2026-10-09; GitHub source/test blob identity reconfirmed 2026-10-11. STARTED-before-first-write is durable under TASK-lock, DONE exact bytes/receipt, repeat delivery produces no second write. Move/rename remain non-atomic two-step PARTIAL-safe. P-2 UNKNOWN/FAILED RETRY remains fail-closed unsupported; P-3/P-4 and R-1–R-4 remain open. WA4-A/O/R NOT STARTED; WA4-A requires separately approved USER TASK. `WA4-E NOT STARTED` in earlier dated sections is historical only.
 
 **CURRENT 2026-10-11 — WA4-A independently accepted:** CODEX-WA4-A-001 (code/evidence №259 `b009f803`) A1–A8 deterministic lost-response acceptance; 46 new tests. [GitHub Windows CI run 38135287346](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346): focused **166/166**, full **689/689**, smoke **5/5** PASS, 0 skips/errors, guarded violations 0. CI expansion №260 and self-recursion repair №261 are infrastructure, not new WA4-E authority. **NEXT WA4-O only on USER GO**; WA4-R NOT STARTED. P/R and non-atomic move constraints persist; no new real Remote disconnect. `DONE` operation receipt ≠ `VERIFIED` operation.
+
+**CURRENT HANDOFF / 2026-10-11:** WA4-O PR №7 merged, technical CI 719/719 PASS; demo examined by user as interim version, full visual signoff pending. UX future A/B/C preserved in WA-4.6. WA4-R candidate `CODEX-WA4-R-001` preflight/OBSERVE prepared in prior chat only, user has not confirmed placement in personal Codex БЛОК 1 or execution; no strict rollout enabled. Next CHAT: 08→000→34→18→01→23/24/25, verify GitHub HEAD/personal Codex card, ask user whether to assign or revise candidate. This statement supersedes historical "WA4-O NEXT" lines above, without rewriting their dated history.
