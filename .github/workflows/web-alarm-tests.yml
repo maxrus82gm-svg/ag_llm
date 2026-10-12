@@ -227,3 +227,35 @@ jobs:
             ${{ runner.temp }}/wa4a-close-race/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7
+
+  wa017-crash-race:
+    name: WA-017 dying closeout race / 80 rounds / Windows
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run guarded WA-017 crash versus writer race (80 rounds, no assertion changes)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          $target = "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task"
+          $cases = @(1..20 | ForEach-Object { $target })
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-001-DIAG-01 --output "${{ runner.temp }}/wa017-crash-race" @cases
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload WA-017 crash race evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa017-crash-race-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/wa017-crash-race/results.json
+            ${{ runner.temp }}/wa017-crash-race/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
