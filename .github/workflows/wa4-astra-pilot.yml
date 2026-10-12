@@ -1,0 +1,75 @@
+# Independent verification of ASTRA-WEB02-TEST-ARCH-001.
+# Diagnostic-only CI: three new pilot tests + adjacent regressions on Windows.
+name: Web Alarm Astra pilot (independent)
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - '.github/workflows/wa4-astra-pilot.yml'
+      - 'test_web_alarm_new_invariants.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/wa4-astra-pilot.yml'
+      - 'test_web_alarm_new_invariants.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  astra-pilot:
+    name: Astra P1-P3 / Windows / Python 3.12
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact head revision
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify Astra pilot source identity (SHA-256)
+        shell: pwsh
+        run: |
+          python -c "import hashlib, pathlib, sys; actual=hashlib.sha256(pathlib.Path('test_web_alarm_new_invariants.py').read_bytes()).hexdigest(); expected='b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b'; print('ASTRA PILOT SOURCE SHA256',actual,'expected',expected); sys.exit(actual != expected)"
+
+      - name: Run three guarded Astra pilot invariants
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        shell: pwsh
+        run: |
+          python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output "${{ runner.temp }}/astra-pilot" test_web_alarm_new_invariants
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -c "import json, pathlib, sys; d=json.loads(pathlib.Path(r'${{ runner.temp }}/astra-pilot/results.json').read_text(encoding='utf-8')); ids={x['test'] for x in d['tests']}; ok=(d['tests_run']==3 and d['passed']==3 and d['failures']==0 and d['errors']==0 and d['skips']==0 and d['successful'] is True and not d['isolation_violations'] and ids=={'test_web_alarm_new_invariants.NewInvariantTests.'+name for name in ('test_staging_fsync_failure_preserves_prestate_across_restart','test_empty_create_crash_delete_and_historical_replay_never_resurrects','test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects')}); print('ASTRA PILOT EXACT COLLECTION',sorted(ids),'validated',ok); sys.exit(0 if ok else 1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Run guarded adjacent regressions + Astra pilot
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        shell: pwsh
+        run: |
+          python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output "${{ runner.temp }}/astra-focused" test_web_alarm_new_invariants test_web_alarm_lost_response test_web_alarm_mutation_executor test_web_alarm_payload_store test_web_alarm_target_claims_concurrency test_web_alarm_workspace_registry
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -c "import json, pathlib, sys; d=json.loads(pathlib.Path(r'${{ runner.temp }}/astra-focused/results.json').read_text(encoding='utf-8')); ids=[x['test'] for x in d['tests']]; ok=(d['tests_run']==103 and d['passed']==103 and d['failures']==0 and d['errors']==0 and d['skips']==0 and d['successful'] is True and not d['isolation_violations'] and len(ids)==len(set(ids)) and any(s.startswith('test_web_alarm_new_invariants.') for s in ids)); print('ASTRA FOCUSED COLLECTION',d['tests_run'],'validated',ok); sys.exit(0 if ok else 1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload pilot and focused evidence regardless of result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: astra-test-arch-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/astra-pilot/results.json
+            ${{ runner.temp }}/astra-pilot/isolation.jsonl
+            ${{ runner.temp }}/astra-focused/results.json
+            ${{ runner.temp }}/astra-focused/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
