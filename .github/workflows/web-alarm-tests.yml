@@ -122,6 +122,17 @@ jobs:
           test_web_alarm_recovery_coordinator_repair4b
           test_web_alarm_rollback
 
+      - name: Run guarded WA4-R diagnostic closeout race (20 repeats, 80 rounds)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          $target = "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state"
+          $repeatTargets = @(1..20 | ForEach-Object { $target })
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-001-DIAG-01 --output "${{ runner.temp }}/wa4r-diag" @repeatTargets
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Run WA4-O shipped JavaScript client tests
         run: node --test test_web_alarm_operator_ui.js
 
@@ -148,5 +159,7 @@ jobs:
             ${{ runner.temp }}/wa4o-focused/isolation.jsonl
             ${{ runner.temp }}/wa4r-focused/results.json
             ${{ runner.temp }}/wa4r-focused/isolation.jsonl
+            ${{ runner.temp }}/wa4r-diag/results.json
+            ${{ runner.temp }}/wa4r-diag/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7
