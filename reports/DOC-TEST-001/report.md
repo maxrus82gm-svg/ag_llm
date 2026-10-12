@@ -40,6 +40,10 @@ Other changed files:
 - Existing project test names referenced in sample profiles were checked against GitHub root listing.
 - **NO runtime Python tests run for documentation-only change.** Source/runner/workflow changes: none.
 
+## Continuity and existing task-card ownership
+
+At final reconciliation, `Документация/000_Задачи ChatGPT.md` already contained an unrelated earlier ChatGPT documentation TASK with `RESULT READY / AWAITING INDEPENDENT VERIFICATION` in its user-controlled БЛОК 1; `000_Задачи для агента.md` still routes a separate Web Alarm/Ultra workstream. **Neither was overwritten, rotated, or falsely closed** by this cross-project documentation effort, to preserve user assignment and prior history. This DOC-TEST-001 task is instead discoverable via 05/06/34, its own versioned `reports/DOC-TEST-001/report.md`, and PR №14. The prior task-card states must be reconciled by their actual owners separately; do not treat them as up-to-date Web Alarm rollout facts. This report does not claim pre-execution placement into a personal БЛОК 1.
+
 ## What is NOT implemented
 
 - One-click/batch test launcher; common source-manifest+evidence validator; safe shared runner across Ultra/Web Alarm; historical runner defects (0-test green, negative subtest PASS count); F1–F3 Web Alarm repair; any rollout gate, Voice test profile or Ultra runtime enforcement. These are **proposals/gaps**, never claimed as PASS.
