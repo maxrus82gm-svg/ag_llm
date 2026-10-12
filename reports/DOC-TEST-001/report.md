@@ -34,7 +34,7 @@ Other changed files:
 ## Mechanical checks performed
 
 - Four intended new Markdown docs present on separate `docs/test-architecture-20261012` branch.
-- Graph: 00 has one `[[36...]]`; 36 has three child `[[36.1...]]`, `[[36.2...]]`, `[[36.3...]]`; all children no outgoing Wiki links; 08/02/09 no added links to children.
+- Graph: 00 has one Wiki-link to 36; 36 has three Wiki-links to 36.1, 36.2, 36.3; all children have no outgoing Wiki-links; 08/02/09 contain no added graph links to the testing branch.
 - All seven expected TEST Rule-IDs are defined once under 36.1, with machine-readable `rule-meta` contract, matched in 08 route.
 - Markdown fenced code counts balanced on all affected documents; no unauthorized 36 Wiki-links outside map/tree.
 - Existing project test names referenced in sample profiles were checked against GitHub root listing.
