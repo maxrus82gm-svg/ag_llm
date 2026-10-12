@@ -166,7 +166,6 @@ jobs:
 
   wa4r-diag-isolated:
     name: WA4-R DIAG / 80 race rounds / Windows
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
@@ -199,7 +198,6 @@ jobs:
 
   wa4a-close-race:
     name: WA4-A direct-close race / 80 rounds / Windows
-    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
