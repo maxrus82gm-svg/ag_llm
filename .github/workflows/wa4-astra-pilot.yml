@@ -32,10 +32,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Verify Astra pilot source identity (SHA-256)
+      - name: Verify Astra pilot source identity (SHA-256, LF/CRLF only)
         shell: pwsh
         run: |
-          python -c "import hashlib, pathlib, sys; actual=hashlib.sha256(pathlib.Path('test_web_alarm_new_invariants.py').read_bytes()).hexdigest(); expected='b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b'; print('ASTRA PILOT SOURCE SHA256',actual,'expected',expected); sys.exit(actual != expected)"
+          python -c "import hashlib, pathlib, sys; raw=pathlib.Path('test_web_alarm_new_invariants.py').read_bytes(); canon=raw.replace(b'\r\n', b'\n'); expected='b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b'; actual=hashlib.sha256(canon).hexdigest(); valid=(actual==expected and (raw==canon or raw==canon.replace(b'\n', b'\r\n'))); print('ASTRA PILOT SOURCE SHA256 normalized LF',actual,'expected',expected,'raw',hashlib.sha256(raw).hexdigest(),'validated',valid); sys.exit(0 if valid else 1)"
 
       - name: Run three guarded Astra pilot invariants
         env:
