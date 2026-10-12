@@ -1,5 +1,7 @@
 # DOC-TEST-001 — Cross-project testing architecture / factual handoff
 
+**CLOSEOUT ADDENDUM (2026-10-12):** User authorized merge. Documentation [PR №14](https://github.com/maxrus82gm-svg/ag_llm/pull/14) merged into `main` (`ae3934eea60851cde2abe88e348701068065e556`). Separate Astra diagnostic CI [PR №13](https://github.com/maxrus82gm-svg/ag_llm/pull/13) merged (`9d7fa6d2ddcdc9124b48ff1075e8e5fb4945102d`), unchanged production/test sources. Local Git/Obsidian sync NOT VERIFIED; F1–F3, runner repairs and one-click implementation remain OPEN. The original RESULT READY / AWAITING MERGE status below is the historical pre-merge handoff, not current status.
+
 **STATUS:** RESULT READY / AWAITING USER REVIEW AND OPTIONAL INDEPENDENT AUDIT  
 **Executor/coordinator:** ChatGPT (authorized by user in conversation 2026-10-12)  
 **ARCH CLASS:** Cross-project / testing rules / documentation-only  
