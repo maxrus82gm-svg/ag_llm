@@ -1,0 +1,549 @@
+{
+  "source": "full final run",
+  "tests": [
+    {
+      "test": "test_web_alarm_new_invariants.NewInvariantTests.test_empty_create_crash_delete_and_historical_replay_never_resurrects",
+      "status": "PASS",
+      "facts": [
+        {
+          "schema": "web-alarm-pilot/v1",
+          "seed": 742919,
+          "test": "test_web_alarm_new_invariants.NewInvariantTests.test_empty_create_crash_delete_and_historical_replay_never_resurrects",
+          "oracle": "stdlib raw bytes/JSON; no production readers",
+          "command": "python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output <fresh-system-TEMP> test_web_alarm_new_invariants.NewInvariantTests.test_empty_create_crash_delete_and_historical_replay_never_resurrects"
+        },
+        {
+          "fixture": "task_empty",
+          "workspace": "ws_empty",
+          "target": "empty.bin",
+          "initial_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          }
+        },
+        {
+          "worker": "crash",
+          "exit": 91,
+          "trace": [
+            {
+              "phase": "apply_enter",
+              "ns": 31147500000000,
+              "kind": "CREATE"
+            },
+            {
+              "phase": "crash_triggered",
+              "ns": 31147578000000,
+              "point": "durable_DONE_before_response",
+              "exit_code": 91
+            }
+          ],
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "worker": "reopen",
+          "exit": 0,
+          "trace": [],
+          "stdout": "{\"result\": \"REPLAYED\", \"result_code\": \"KNOWN_RECEIPT\", \"receipt\": {\"exists\": true, \"size\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"eol\": \"none\", \"bom\": false, \"normalized_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:03.795331+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "worker": "delete",
+          "exit": 0,
+          "trace": [
+            {
+              "phase": "apply_enter",
+              "ns": 31148515000000,
+              "kind": "DELETE"
+            }
+          ],
+          "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"receipt\": {\"exists\": false, \"size\": null, \"sha256\": null, \"eol\": null, \"bom\": null, \"normalized_sha256\": null, \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:04.800894+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          },
+          "expected_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          }
+        },
+        {
+          "worker": "history",
+          "exit": 0,
+          "trace": [],
+          "stdout": "{\"result\": \"REPLAYED\", \"result_code\": \"KNOWN_RECEIPT\", \"receipt\": {\"exists\": true, \"size\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"eol\": \"none\", \"bom\": false, \"normalized_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:03.795331+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          },
+          "expected_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          }
+        },
+        {
+          "invariants": [
+            "WA-I04",
+            "WA-I11",
+            "WA-I13"
+          ],
+          "apply_attempts": 2,
+          "historical_create_receipt": {
+            "exists": true,
+            "size": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "eol": "none",
+            "bom": false,
+            "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "source": "server_observed_at_done",
+            "observed_at": "2026-10-12T11:29:03.795331+00:00",
+            "revision": 3,
+            "matches_expected_post": true,
+            "eol_only_drift": false
+          },
+          "current_file": {
+            "exists": false,
+            "size": null,
+            "sha256": null
+          }
+        },
+        {
+          "terminal_fixture_files": {
+            "crash.json": "d10eeed178223a68e4efeb5f705ec66429aacc4150a060d6381738aaaa2379a8",
+            "crash.jsonl": "8cb051be16c6a5dba41564335e13f5c478ed9dd8250702d4573dc51180a76597",
+            "delete.json": "3a9f2b351ca97d97627da811fdca5be914c751a87e3113066b4e08f69cf53e34",
+            "delete.jsonl": "dad9140ddfa8731cba0352b56c55ddc3b987302dc16db67b0ffc99e6d26e2687",
+            "history.json": "fdffe5cb8b1a3802750c21c17840a718927b742f9ff624bb2e0c7594724c5468",
+            "reopen.json": "9d963bb0343c74a075cb379defe022470babf224695b733ffbd70ebf858df5ac",
+            "storage/locks/operations/task_empty.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/prepare/task_empty/m1.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/targets/aaeffcda8922c2c02d7a25a943adef30d5cdcfb7287af1895c6c13a51a7233b2.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/tasks/task_empty.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/target_claims/aaeffcda8922c2c02d7a25a943adef30d5cdcfb7287af1895c6c13a51a7233b2.json": "71619b4c603475dd849d772ce8ec99aecb4c0a3898311db09ef237190d1567f8",
+            "storage/tasks/active/task_empty/checkpoint.json": "4430db2ce4396dcc158818522a8cad6329aabf6db57de1200fe542356d5cc679",
+            "storage/tasks/active/task_empty/checkpoint.md": "a2cb3afdf4a2be996fbbcc81b8b62c49ad3a9446caf96d820cbb8f0f9743bf8e",
+            "storage/tasks/active/task_empty/events.jsonl": "253561734a90276c5582cb193fbeb284c1d18e3abc51e131dbcc25875dc39ec0",
+            "storage/tasks/active/task_empty/microtasks/m1/restore_point/manifest.json": "b5cc524ad5068bcde1fc6525cdf3d725993928c9cfe6f9e9895057a20862ee19",
+            "storage/tasks/active/task_empty/microtasks/m1/restore_point/manifest_entries/manifest_535e8fa5be684bc59a026e2eaa2b33e2.json": "2eff1ecffcd1869a9330abfd88b826c71f041acbdb7fdff10243392061414eb5",
+            "storage/tasks/active/task_empty/microtasks/m1/restore_point/snapshots/snapshot_8cc295d9ee654c668cd5cd237213e511.json": "e9e24e8e830fa335f135ac5280ded91787d820a818a6e4d41de9d23ea407b475",
+            "storage/tasks/active/task_empty/microtasks/m1.json": "6a8545853294d0c4d10fee8b3fae0ac175fabeb1d6ea84feab8968d0fe25d1ad",
+            "storage/tasks/active/task_empty/operations/op_delete.json": "b1f2d23b87f6856c35113e6fa6984b74b9211c66aa0adf5b635d7eca3f1ef2b2",
+            "storage/tasks/active/task_empty/operations/op_shared.json": "77c500ac5a195d1485db69f99a21e603250e6cbb7bb58639bc8f3e965c944108",
+            "storage/tasks/active/task_empty/payloads/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/tasks/active/task_empty/plan.json": "6cd8d46a69e03384c969b80d044b7351dbc0ec569c7cb803143c3fd10d4e23e3",
+            "storage/tasks/active/task_empty/task.json": "33f4438670d7a3dab7552e29d986f26d597ad1c181169c57e2d2fdb8ec0bceb9",
+            "storage/tasks/active/task_empty/task.md": "ab94ec319d9f7574e41c10b15b3fdfeb39cf322877ec00d5b269c15c853c7b7a",
+            "storage/workspaces/ws_empty.json": "ca85ed75ebc85cad91c874482000aa1b57afa0983fe11714e6979cc21fffc6c3"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_new_invariants.NewInvariantTests.test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects",
+      "status": "PASS",
+      "facts": [
+        {
+          "schema": "web-alarm-pilot/v1",
+          "seed": 742919,
+          "test": "test_web_alarm_new_invariants.NewInvariantTests.test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects",
+          "oracle": "stdlib raw bytes/JSON; no production readers",
+          "command": "python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output <fresh-system-TEMP> test_web_alarm_new_invariants.NewInvariantTests.test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects"
+        },
+        {
+          "fixture": "task_left",
+          "workspace": "ws_left",
+          "target": "данные space.bin",
+          "initial_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "64783ef0c592d9983d87b647882031dea6eb4984e64c6c9e64a6e53a2f07ee69"
+          }
+        },
+        {
+          "fixture": "task_right",
+          "workspace": "ws_right",
+          "target": "данные space.bin",
+          "initial_file": {
+            "exists": true,
+            "size": 8,
+            "sha256": "de149f0a821ba3574ba0193b3faf871f19b2e3664e9da9316b799d30f4871486"
+          }
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "64783ef0c592d9983d87b647882031dea6eb4984e64c6c9e64a6e53a2f07ee69"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "64783ef0c592d9983d87b647882031dea6eb4984e64c6c9e64a6e53a2f07ee69"
+          }
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 8,
+            "sha256": "de149f0a821ba3574ba0193b3faf871f19b2e3664e9da9316b799d30f4871486"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 8,
+            "sha256": "de149f0a821ba3574ba0193b3faf871f19b2e3664e9da9316b799d30f4871486"
+          }
+        },
+        {
+          "schedule": "both workers entered apply with durable STARTED before release"
+        },
+        {
+          "worker": "left",
+          "exit": 0,
+          "trace": [
+            {
+              "phase": "apply_enter",
+              "ns": 31150187000000,
+              "kind": "WRITE"
+            }
+          ],
+          "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"receipt\": {\"exists\": true, \"size\": 268, \"sha256\": \"5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd\", \"eol\": \"mixed\", \"bom\": true, \"normalized_sha256\": \"3a6d316c329e2877a3582a0e158e27b30b0ac9ccbf8266c3b2dc7f7fd8b0383f\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:06.498762+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "worker": "right",
+          "exit": 0,
+          "trace": [
+            {
+              "phase": "apply_enter",
+              "ns": 31150187000000,
+              "kind": "WRITE"
+            }
+          ],
+          "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"receipt\": {\"exists\": true, \"size\": 269, \"sha256\": \"77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3\", \"eol\": \"mixed\", \"bom\": true, \"normalized_sha256\": \"47d09fefdbaad650ebe570ad9ebcd7037ccf555a46c680fc4ce2e8477c98383a\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:06.499762+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 268,
+            "sha256": "5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 268,
+            "sha256": "5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd"
+          }
+        },
+        {
+          "worker": "replay_left",
+          "exit": 0,
+          "trace": [],
+          "stdout": "{\"result\": \"REPLAYED\", \"result_code\": \"KNOWN_RECEIPT\", \"receipt\": {\"exists\": true, \"size\": 268, \"sha256\": \"5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd\", \"eol\": \"mixed\", \"bom\": true, \"normalized_sha256\": \"3a6d316c329e2877a3582a0e158e27b30b0ac9ccbf8266c3b2dc7f7fd8b0383f\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:06.498762+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 269,
+            "sha256": "77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 269,
+            "sha256": "77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3"
+          }
+        },
+        {
+          "worker": "replay_right",
+          "exit": 0,
+          "trace": [],
+          "stdout": "{\"result\": \"REPLAYED\", \"result_code\": \"KNOWN_RECEIPT\", \"receipt\": {\"exists\": true, \"size\": 269, \"sha256\": \"77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3\", \"eol\": \"mixed\", \"bom\": true, \"normalized_sha256\": \"47d09fefdbaad650ebe570ad9ebcd7037ccf555a46c680fc4ce2e8477c98383a\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-12T11:29:06.499762+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}}\n",
+          "stderr": ""
+        },
+        {
+          "invariants": [
+            "WA-I03",
+            "WA-I11",
+            "WA-I13"
+          ],
+          "apply_attempts": 2,
+          "input_seed": 742919,
+          "payload_hashes": [
+            "5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd",
+            "77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3"
+          ]
+        },
+        {
+          "terminal_fixture_files": {
+            "left.entered": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "left.json": "32e4b8f3b8b6632705d3f11b8e32165f3eee2ea7e1d217e6a517c531ace73e6c",
+            "left.jsonl": "1ee370cffeeba7aba83692aefaf469c3e070bca930052aae92cafdd33840108f",
+            "release": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "replay_left.json": "ed2e6866ee570d524172d97bd74ce5043f9e553a9da10a4d00ece3a23cd44c1f",
+            "replay_right.json": "98c1e80c375eafbdfa200c784bb933d12fb55a59a1e9ddbd22133f88e00d8afe",
+            "right.entered": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "right.json": "dc353be41b0fe2eb45c4b9695815313d9c59b79f58f5979e134f50427bed28f6",
+            "right.jsonl": "1ee370cffeeba7aba83692aefaf469c3e070bca930052aae92cafdd33840108f",
+            "storage/locks/operations/task_left.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/operations/task_right.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/prepare/task_left/m1.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/prepare/task_right/m1.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/targets/2b974799fdc5c4e734724f87a6ba463ebe90758addff3fda7313f7e217107468.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/targets/83a474f95e08f0cc1e64460d480d9c6c7c3aaed80693e70808655f79434099d6.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/tasks/task_left.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/tasks/task_right.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/target_claims/2b974799fdc5c4e734724f87a6ba463ebe90758addff3fda7313f7e217107468.json": "186b09d7c67d1d21f6a58ca6f5bae15fe58ea8441cc9cdfc4d91fa3e82b843df",
+            "storage/target_claims/83a474f95e08f0cc1e64460d480d9c6c7c3aaed80693e70808655f79434099d6.json": "4a9ddef2824e2f112217f798b9e023ace55f5d8461681687b1a34a57ff9c2308",
+            "storage/tasks/active/task_left/checkpoint.json": "12106db0367f536953f784366286bf38d05d1bbe392a200099de0fcc8646abbb",
+            "storage/tasks/active/task_left/checkpoint.md": "464370a0c8ef7ff63e8f901fed5a22e7a16bf2cc3c818c10ae1686c728ccc813",
+            "storage/tasks/active/task_left/events.jsonl": "98b1edb5e171189b5c83cdec8fc30114f8b6f4928efcc187ddad89cbcbe4f128",
+            "storage/tasks/active/task_left/microtasks/m1/restore_point/manifest.json": "ba1326cc07b9bf4721fb58e71e2b76f329500ef0a50b56ba221e049c975be06e",
+            "storage/tasks/active/task_left/microtasks/m1/restore_point/manifest_entries/manifest_2039bf41c9584adba3dbe5a8dda0c083.json": "ae059074b2780bf87c798427932b791d7ce3d61e688a67d036cdf11edc797ca0",
+            "storage/tasks/active/task_left/microtasks/m1/restore_point/snapshots/snapshot_09d8dfe9939f4034b13e5a792c795f24.bin": "64783ef0c592d9983d87b647882031dea6eb4984e64c6c9e64a6e53a2f07ee69",
+            "storage/tasks/active/task_left/microtasks/m1/restore_point/snapshots/snapshot_09d8dfe9939f4034b13e5a792c795f24.json": "ed401457cf61d99fa60785dfc8241e72d366b1ae80555bf8c150cf45a61163b2",
+            "storage/tasks/active/task_left/microtasks/m1.json": "74f18447b91fca9b85e914340b3eee16e58e40f5f4376bba0e5a9da32e8c5393",
+            "storage/tasks/active/task_left/operations/op_shared.json": "8447b7bb7d4ef547addac839cbc4ea158ac0d0e6e315030e408f898d35fb6d7d",
+            "storage/tasks/active/task_left/payloads/5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd.bin": "5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd",
+            "storage/tasks/active/task_left/plan.json": "7709e68c143e6a47da8cc4bc91a09407bb89736253d8cccd1b169b514b25c710",
+            "storage/tasks/active/task_left/task.json": "fcaf113b87094c55c87781457804e37f02bc4ef1d87df977bd25fee5e14d1bfc",
+            "storage/tasks/active/task_left/task.md": "ab94ec319d9f7574e41c10b15b3fdfeb39cf322877ec00d5b269c15c853c7b7a",
+            "storage/tasks/active/task_right/checkpoint.json": "1a8052431f7c6e03d72acead922dcd0aa82767f59faeb56670fc4a97b8bb93cc",
+            "storage/tasks/active/task_right/checkpoint.md": "33b03a030627fa8452e2b8babdbd7fe5a5a114578581a174c176d8d3d1ce4045",
+            "storage/tasks/active/task_right/events.jsonl": "871f89401a4136188496dbc28c9dd1efa205cb10091d2c7e66def355a43e4304",
+            "storage/tasks/active/task_right/microtasks/m1/restore_point/manifest.json": "6d50f388031d2d93756d737d46fab9a265c5f1973eeccd14ab34a14a06913ba0",
+            "storage/tasks/active/task_right/microtasks/m1/restore_point/manifest_entries/manifest_69daa9ce388a4086a30e80fafbfae962.json": "58e18f50e00c36f01c935ca290c6b76fcd1fdb68736e2034ab1e353c82d7aff1",
+            "storage/tasks/active/task_right/microtasks/m1/restore_point/snapshots/snapshot_625bcd53302c49399cc8df8659f69019.bin": "de149f0a821ba3574ba0193b3faf871f19b2e3664e9da9316b799d30f4871486",
+            "storage/tasks/active/task_right/microtasks/m1/restore_point/snapshots/snapshot_625bcd53302c49399cc8df8659f69019.json": "c4caccb9fee675d7c2e11046ca16c748059aca83f622d4dc0c52b0183464d8f2",
+            "storage/tasks/active/task_right/microtasks/m1.json": "eab5f48ad8928703273cfdb88e0dec760a63fa775c856fdd6ece236179137a0d",
+            "storage/tasks/active/task_right/operations/op_shared.json": "81a1fa6f23a3e5e59be11c9e4e8b787007a4bc0c50505efb8c980363fc1f1e4d",
+            "storage/tasks/active/task_right/payloads/77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3.bin": "77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3",
+            "storage/tasks/active/task_right/plan.json": "fe3561ea998e9b4b7bf257ecc4fd892e840d3845ee0899bd53496d5093d29035",
+            "storage/tasks/active/task_right/task.json": "b58f2f7024e6e131674c75305515b3aec6a1e098a5f8b7d9a60555cd8bc00a40",
+            "storage/tasks/active/task_right/task.md": "ab94ec319d9f7574e41c10b15b3fdfeb39cf322877ec00d5b269c15c853c7b7a",
+            "storage/workspaces/ws_left.json": "7961e061e82a343dfe490457b2b57ade7951495fc060f94644459a5c24ce9459",
+            "storage/workspaces/ws_right.json": "c9126a6ae0a1b558d2e1997829b649ee7774d9217739c36d6e6221c94a0787b2",
+            "workspace ws_left/данные space.bin": "5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd",
+            "workspace ws_right/данные space.bin": "77f2f31ddaa32728e3de18028dce98cfeb5df9569535e978deaaa7e7fc18e0a3"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_new_invariants.NewInvariantTests.test_staging_fsync_failure_preserves_prestate_across_restart",
+      "status": "PASS",
+      "facts": [
+        {
+          "schema": "web-alarm-pilot/v1",
+          "seed": 742919,
+          "test": "test_web_alarm_new_invariants.NewInvariantTests.test_staging_fsync_failure_preserves_prestate_across_restart",
+          "oracle": "stdlib raw bytes/JSON; no production readers",
+          "command": "python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output <fresh-system-TEMP> test_web_alarm_new_invariants.NewInvariantTests.test_staging_fsync_failure_preserves_prestate_across_restart"
+        },
+        {
+          "fixture": "task_fault",
+          "workspace": "ws_fault",
+          "target": "data.bin",
+          "initial_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          }
+        },
+        {
+          "worker": "fault",
+          "exit": 0,
+          "trace": [
+            {
+              "phase": "apply_enter",
+              "ns": 31151968000000,
+              "kind": "WRITE"
+            },
+            {
+              "phase": "fault_triggered",
+              "ns": 31151968000000,
+              "fault": "target_staging_fsync",
+              "errno": 28
+            }
+          ],
+          "stdout": "{\"result\": \"RECONCILIATION_REQUIRED\", \"result_code\": \"WRITE_REFUSED_TARGET_UNCHANGED\", \"receipt\": null}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          }
+        },
+        {
+          "worker": "reopen",
+          "exit": 0,
+          "trace": [],
+          "stdout": "{\"result\": \"RECONCILIATION_REQUIRED\", \"result_code\": \"FATE_UNKNOWN\", \"receipt\": null}\n",
+          "stderr": ""
+        },
+        {
+          "observed_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          },
+          "expected_file": {
+            "exists": true,
+            "size": 7,
+            "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          }
+        },
+        {
+          "invariants": [
+            "WA-I07",
+            "WA-I10"
+          ],
+          "fault_hits": 1,
+          "apply_attempts": 1,
+          "raw_operation": {
+            "operation_id": "op_shared",
+            "task_id": "task_fault",
+            "microtask_id": "m1",
+            "action": "write",
+            "target": "data.bin",
+            "status": "STARTED",
+            "request_fingerprint": "8514775601c91af0aa2fc0f91a85f0acdf34abfc1b554262641cd15122c49118",
+            "expected_precondition_sha256": null,
+            "result_summary": "WA4-E: authoritative execution started",
+            "schema_version": 1,
+            "created_at": "2026-10-12T11:29:08.021050+00:00",
+            "updated_at": "2026-10-12T11:29:08.162121+00:00",
+            "contract_version": 2,
+            "revision": 2,
+            "contract": {
+              "workspace_id": "ws_fault",
+              "target_key": "data.bin",
+              "mutation_kind": "WRITE",
+              "pre_state": {
+                "exists": true,
+                "size": 7,
+                "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+                "eol": "crlf",
+                "bom": false,
+                "normalized_sha256": "037c6c13f6a778cbf04b773880b8397fb3d95c6609b73397c6df9c6007a23839",
+                "source": "server_observed_at_intent",
+                "observed_at": "2026-10-12T11:29:08.021050+00:00"
+              },
+              "declared_pre_state": null,
+              "expected_post_state": {
+                "exists": true,
+                "size": 7,
+                "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "eol": "lf",
+                "bom": false,
+                "normalized_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "source": "payload"
+              },
+              "payload_ref": {
+                "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "size": 7,
+                "store": "task_payloads",
+                "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+              },
+              "provenance": {
+                "agent": null,
+                "channel": null,
+                "authority": "claimed"
+              },
+              "policy": {
+                "secret_pattern": null,
+                "secret_override": false,
+                "max_payload_bytes": 1048576,
+                "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+              },
+              "fingerprint_version": 2,
+              "complete": true,
+              "issues": []
+            },
+            "receipt": null,
+            "recovery_settlement": null
+          },
+          "snapshot_preserved": true
+        },
+        {
+          "terminal_fixture_files": {
+            "fault.json": "39691c97755b6b7c8c7b75d9f6026184cfa4cf93e15b91267eb4cfd978ad8ff9",
+            "fault.jsonl": "2911f42bf13abf7bdb199c66607419216c99ad2f5523dc79f463c003699deb2c",
+            "reopen.json": "59985accc909a88a715f094bcbc133611ae34ad2d8bcbe65162d9d056ebb8fc3",
+            "storage/locks/operations/task_fault.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/prepare/task_fault/m1.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/targets/8db51b97dcb9b515e0f832fca91ab3cb901c2f88f28cd9ccca2f83ef21baa063.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/locks/tasks/task_fault.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "storage/target_claims/8db51b97dcb9b515e0f832fca91ab3cb901c2f88f28cd9ccca2f83ef21baa063.json": "fd690e0d6ef7260973eb0972153b4b184f249cd14f87bb6c03cb91ef5dc367e9",
+            "storage/tasks/active/task_fault/checkpoint.json": "b669376fb244a0bbd585a14b4eaaca2add5ea43fe0df17ff4b4aa7a35eb7dd81",
+            "storage/tasks/active/task_fault/checkpoint.md": "42d305f1782484db1b0a020812ee24f8c00ace4e56274f19287bce421fb70a88",
+            "storage/tasks/active/task_fault/events.jsonl": "650550516332ba66d559ea17d44eafbd949311ed4c0effc972de53897bf96e17",
+            "storage/tasks/active/task_fault/microtasks/m1/restore_point/manifest.json": "108a6425d235bb225ddbc668aca9fcd3b53abf186af3653236b2deab7314e8de",
+            "storage/tasks/active/task_fault/microtasks/m1/restore_point/manifest_entries/manifest_8196801fab4a4c3ab9bbe1a60bbf09c9.json": "07c00f8a1d44c65d26fef2d2c2dca04f29c29f8cb6a35b010f16a06d05c8fb04",
+            "storage/tasks/active/task_fault/microtasks/m1/restore_point/snapshots/snapshot_3cbebe5b253843609e2645d90f77786d.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "storage/tasks/active/task_fault/microtasks/m1/restore_point/snapshots/snapshot_3cbebe5b253843609e2645d90f77786d.json": "98108bf33172d62d7fa13e768c5af7b96a6b2c48c4cb9af9c28ffb55ad10a352",
+            "storage/tasks/active/task_fault/microtasks/m1.json": "06a9fb26d3f2ebcb36c9979f41fb95cfaf469fb84ca7feef20dfb935270a195a",
+            "storage/tasks/active/task_fault/operations/op_shared.json": "03397c930de6ed7cddffd4f0575bc10bfa49cb54adaa522c275dccc4489abc36",
+            "storage/tasks/active/task_fault/payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "storage/tasks/active/task_fault/plan.json": "8d1f1093d12c43c2f9eb7cc81c335c9d85eeb3e6154c8eef4f1298037c4a8d9c",
+            "storage/tasks/active/task_fault/task.json": "5304588b04b4edef75b0cb44051a7ace2c0109d2fceb3c692f64cd8088c4b42f",
+            "storage/tasks/active/task_fault/task.md": "ab94ec319d9f7574e41c10b15b3fdfeb39cf322877ec00d5b269c15c853c7b7a",
+            "storage/workspaces/ws_fault.json": "3136548ff467050011cc8539c5331e31a1679ffdb5cc455b1e54a3ce89caa07f",
+            "workspace ws_fault/data.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+          }
+        }
+      ]
+    }
+  ],
+  "sensitivity_controls": [
+    {
+      "test": "quality_cases.Sensitivity.test_changed_input_bytes_are_detected_by_independent_model",
+      "status": "PASS",
+      "facts": [
+        {
+          "negative_control": "left input differs from model",
+          "expected_inner_failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 290, in test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects\n    self.check_file(project / target, after)\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 215, in check_file\n    self.assertEqual(observed, expected_file(data))\nAssertionError: {'exi[15 chars]ze': 33, 'sha256': '0b268b04c9321fe3e31039968b[35 chars]f83'} != {'exi[15 chars]ze': 268, 'sha256': '5b00c4858521c40f93348d337[36 chars]cfd'}\n  {'exists': True,\n-  'sha256': '0b268b04c9321fe3e31039968b7b073c3706e6270fe25e6fe3b2f03daf1baf83',\n+  'sha256': '5b00c4858521c40f93348d337a452bd823e1733c43ae09f232156432eed70cfd',\n-  'size': 33}\n?          ^^\n\n+  'size': 268}\n?          ^^^\n\n"
+        }
+      ]
+    },
+    {
+      "test": "quality_cases.Sensitivity.test_removed_fault_is_detected",
+      "status": "PASS",
+      "facts": [
+        {
+          "negative_control": "fault removed",
+          "expected_inner_failure": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 225, in test_staging_fsync_failure_preserves_prestate_across_restart\n    self.assertEqual((out['result'], out['result_code']),\nAssertionError: Tuples differ: ('EXECUTED', 'EXACT_POST_STATE_PROVED') != ('RECONCILIATION_REQUIRED', 'WRITE_REFUSED_TARGET_UNCHANGED')\n\nFirst differing element 0:\n'EXECUTED'\n'RECONCILIATION_REQUIRED'\n\n- ('EXECUTED', 'EXACT_POST_STATE_PROVED')\n+ ('RECONCILIATION_REQUIRED', 'WRITE_REFUSED_TARGET_UNCHANGED')\n"
+        }
+      ]
+    }
+  ]
+}

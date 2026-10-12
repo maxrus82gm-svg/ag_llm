@@ -1,0 +1,282 @@
+{
+  "runs": [
+    {
+      "run": "pilot-1",
+      "kind": "product_test",
+      "tests_run": 3,
+      "passed": 1,
+      "failures": 0,
+      "errors": 2,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 3.88,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-1\\results.json",
+      "raw_results_sha256": "f792a2db3d4bceec8063d6a10b79ccd397370eb4bfe19bc1710072cfaaba875f",
+      "source_pilot_sha256": "b203daf0f57c551a64d2c822ca5f466ca0a78be31dcc06bfe7ffa795eb147e6d",
+      "nonpassing": [
+        {
+          "test": "test_web_alarm_new_invariants.NewInvariantTests.test_empty_create_crash_delete_and_historical_replay_never_resurrects",
+          "status": "ERROR",
+          "error": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 251, in test_empty_create_crash_delete_and_historical_replay_never_resurrects\n    assert_receipt(self, record['receipt'], b'')\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 64, in assert_receipt\n    test.assertIs(receipt['post_state_match'], True)\n                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^\nKeyError: 'post_state_match'\n"
+        },
+        {
+          "test": "test_web_alarm_new_invariants.NewInvariantTests.test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects",
+          "status": "ERROR",
+          "error": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 294, in test_same_operation_id_in_two_workspaces_has_independent_concurrent_effects\n    assert_receipt(self, record['receipt'], after)\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_new_invariants.py\", line 64, in assert_receipt\n    test.assertIs(receipt['post_state_match'], True)\n                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^\nKeyError: 'post_state_match'\n"
+        }
+      ],
+      "targets": [
+        "test_web_alarm_new_invariants"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804319.0781777,
+      "runner_entrypoint": "wa4a_acceptance.py",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-1",
+      "command": ".\\.venv\\Scripts\\python.exe -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-1\" test_web_alarm_new_invariants"
+    },
+    {
+      "run": "pilot-2",
+      "kind": "product_test",
+      "tests_run": 3,
+      "passed": 3,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 5.867,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-2\\results.json",
+      "raw_results_sha256": "42f2eb7d39b95408bc7ad5e57a1784c6b4484fbeffd44a4b6d58b544e3dbcf04",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [],
+      "targets": [
+        "test_web_alarm_new_invariants"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804339.788748,
+      "runner_entrypoint": "wa4a_acceptance.py",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-2",
+      "command": ".\\.venv\\Scripts\\python.exe -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\pilot-2\" test_web_alarm_new_invariants"
+    },
+    {
+      "run": "focused",
+      "kind": "product_test",
+      "tests_run": 103,
+      "passed": 103,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 149.532,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\focused\\results.json",
+      "raw_results_sha256": "022fc9f63d731fea66afbbfe592cdba7cbe34eadccf00d2e4ee245a23845b287",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [],
+      "targets": [
+        "test_web_alarm_new_invariants",
+        "test_web_alarm_lost_response",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_payload_store",
+        "test_web_alarm_target_claims_concurrency",
+        "test_web_alarm_workspace_registry"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804379.6057918,
+      "runner_entrypoint": "wa4a_acceptance.py",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\focused",
+      "command": ".\\.venv\\Scripts\\python.exe -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\focused\" test_web_alarm_new_invariants test_web_alarm_lost_response test_web_alarm_mutation_executor test_web_alarm_payload_store test_web_alarm_target_claims_concurrency test_web_alarm_workspace_registry"
+    },
+    {
+      "run": "full",
+      "kind": "product_test",
+      "tests_run": 752,
+      "passed": 751,
+      "failures": 0,
+      "errors": 0,
+      "skips": 1,
+      "successful": true,
+      "elapsed_seconds": 660.566,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\full\\results.json",
+      "raw_results_sha256": "7fed609edcacf11bf4c169677c170a9737997f23cf6dfffd8e3d0ed7e52c6c71",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [
+        {
+          "test": "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+          "status": "SKIP",
+          "reason": "symlink creation is not permitted here"
+        }
+      ],
+      "targets": [
+        "all"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804397.6287844,
+      "runner_entrypoint": "wa4a_acceptance.py",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\full",
+      "command": ".\\.venv\\Scripts\\python.exe -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\full\" all"
+    },
+    {
+      "run": "quality-Empty",
+      "kind": "quality_counterexample",
+      "tests_run": 0,
+      "passed": 0,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 0.017,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-Empty\\results.json",
+      "raw_results_sha256": "489f463464076374aedcad45c4dea7fb95d01fb6a3be6b7105c3cf4ff729c539",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [],
+      "targets": [
+        "quality_cases.Empty"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804476.6983566,
+      "runner_entrypoint": "quality_cases.py via wa4a_acceptance.run_tests",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-Empty"
+    },
+    {
+      "run": "quality-TwoSubtestFailures",
+      "kind": "quality_counterexample",
+      "tests_run": 1,
+      "passed": -1,
+      "failures": 2,
+      "errors": 0,
+      "skips": 0,
+      "successful": false,
+      "elapsed_seconds": 0.017,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-TwoSubtestFailures\\results.json",
+      "raw_results_sha256": "59cbc52e305a33585adddd36124fb5371dd998a7e23c3680d4280423ada65259",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [
+        {
+          "test": "quality_cases.TwoSubtestFailures.test_two_bad_cases (case=0)",
+          "status": "FAIL",
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality_cases.py\", line 20, in test_two_bad_cases\n    self.assertEqual('deliberate observed violation', 'required invariant')\nAssertionError: 'deliberate observed violation' != 'required invariant'\n- deliberate observed violation\n+ required invariant\n\n"
+        },
+        {
+          "test": "quality_cases.TwoSubtestFailures.test_two_bad_cases (case=1)",
+          "status": "FAIL",
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality_cases.py\", line 20, in test_two_bad_cases\n    self.assertEqual('deliberate observed violation', 'required invariant')\nAssertionError: 'deliberate observed violation' != 'required invariant'\n- deliberate observed violation\n+ required invariant\n\n"
+        }
+      ],
+      "targets": [
+        "quality_cases.TwoSubtestFailures"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804476.8817537,
+      "runner_entrypoint": "quality_cases.py via wa4a_acceptance.run_tests",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-TwoSubtestFailures"
+    },
+    {
+      "run": "quality-CaughtGuardViolation",
+      "kind": "quality_counterexample",
+      "tests_run": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 0.016,
+      "isolation_violations": [
+        {
+          "event": "os.system",
+          "reason": "shell/native execution forbidden",
+          "pid": 35860
+        }
+      ],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-CaughtGuardViolation\\results.json",
+      "raw_results_sha256": "6e0b4c3f50b376eb73ce5439b235292b4999f306584a366fbc5c9756ea3927c0",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [],
+      "targets": [
+        "quality_cases.CaughtGuardViolation"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804477.052723,
+      "runner_entrypoint": "quality_cases.py via wa4a_acceptance.run_tests",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-CaughtGuardViolation"
+    },
+    {
+      "run": "quality-Sensitivity",
+      "kind": "quality_counterexample",
+      "tests_run": 2,
+      "passed": 2,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "elapsed_seconds": 2.643,
+      "isolation_violations": [],
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-Sensitivity\\results.json",
+      "raw_results_sha256": "c4533aae71a1880cc8fd078d9838ac80f1814ead34c6be6c2bf5e575fc071bbc",
+      "source_pilot_sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "nonpassing": [],
+      "targets": [
+        "quality_cases.Sensitivity"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791804477.232438,
+      "runner_entrypoint": "quality_cases.py via wa4a_acceptance.run_tests",
+      "output_directory": "C:\\Users\\REX\\AppData\\Local\\Temp\\astra-testarch-r68ccd_4\\quality-Sensitivity"
+    }
+  ],
+  "development_error": {
+    "run": "pilot-1",
+    "cause": "wrong fixture receipt key post_state_match; actual schema matches_expected_post; production unchanged"
+  },
+  "oracle_negative_controls": [
+    {
+      "case": "exists",
+      "rejected": true
+    },
+    {
+      "case": "size",
+      "rejected": true
+    },
+    {
+      "case": "sha256",
+      "rejected": true
+    },
+    {
+      "case": "matches_expected_post",
+      "rejected": true
+    },
+    {
+      "case": "duplicate",
+      "rejected": true
+    },
+    {
+      "case": "nan",
+      "rejected": true
+    }
+  ],
+  "quality_counterexamples_are_intentional": true,
+  "quality_exit_codes": {
+    "Empty": 0,
+    "TwoSubtestFailures": 1,
+    "CaughtGuardViolation": 1,
+    "Sensitivity": 0
+  },
+  "all_product_run_guard_violations": 0,
+  "packaging_notes": [
+    "TEMP evidence packaging script syntax error repaired; no product run affected",
+    "Protected-manifest check detected three external file changes and stopped; explicitly recorded baseline/tested/current hashes, no rollback",
+    "No additional FULL or stress run after external source changes; current checkout FULL acceptance not claimed"
+  ]
+}
