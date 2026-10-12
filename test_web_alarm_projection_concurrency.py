@@ -30,9 +30,40 @@ REPO_ROOT = Path(__file__).resolve().parent
 ROUNDS = 4
 
 CHILD = r"""
-import json, random, sys, time
+import json, random, sys, time, traceback
 from pathlib import Path
 storage, barrier, name, mode, jitter = sys.argv[1:6]
+trace = []
+def mark(phase, **facts):
+    if len(trace) < 128:
+        trace.append(dict(phase=phase, ns=time.monotonic_ns(), **facts))
+def error_chain(exc):
+    chain, seen = [], set()
+    while exc is not None and id(exc) not in seen and len(chain) < 12:
+        seen.add(id(exc))
+        chain.append(dict(type=type(exc).__module__ + '.' + type(exc).__qualname__,
+                          message=str(exc), errno=getattr(exc, 'errno', None),
+                          winerror=getattr(exc, 'winerror', None),
+                          relation='cause' if exc.__cause__ else 'context',
+                          frames=traceback.format_tb(exc.__traceback__)))
+        exc = exc.__cause__ or exc.__context__
+    return chain
+from web_alarm.store_lock import InterProcessLock
+real_acquire, real_release = InterProcessLock.acquire, InterProcessLock.release
+def acquire(self):
+    mark('lock_wait', lock=str(self.path.relative_to(storage)))
+    try:
+        result = real_acquire(self)
+    except Exception as exc:
+        mark('lock_refused', error=error_chain(exc))
+        raise
+    mark('lock_acquired', lock=str(self.path.relative_to(storage)))
+    return result
+def release(self):
+    result = real_release(self)
+    mark('lock_released', lock=str(self.path.relative_to(storage)))
+    return result
+InterProcessLock.acquire, InterProcessLock.release = acquire, release
 import web_alarm.projection as projection_module
 from web_alarm.closeout import CloseoutService
 from web_alarm.operation_store import OperationStore
@@ -40,10 +71,25 @@ from web_alarm.projection import ProjectionService
 from web_alarm.task_store import TaskStore
 import web_alarm.event_checkpoint_store as ecs
 if mode == "complete":
+    for method in ('completion_state', 'complete_task_locked'):
+        original = getattr(TaskStore, method)
+        def traced(self, task_id, _original=original, _method=method):
+            mark(_method + '_enter')
+            try:
+                result = _original(self, task_id)
+            except Exception as exc:
+                mark(_method + '_failed', error=error_chain(exc))
+                raise
+            mark(_method + '_return', state=result if isinstance(result, str) else result.status.value)
+            return result
+        setattr(TaskStore, method, traced)
     real = projection_module.ProjectionService.build
     def widened(self, task_id):  # test-only: hold the inspect -> complete window open
+        mark('projection_enter')
         result = real(self, task_id)
+        mark('projection_built', blockers=[b['code'] for b in result['closeout']])
         time.sleep(0.3)
+        mark('projection_return')
         return result
     projection_module.ProjectionService.build = widened
     service = CloseoutService(storage, lock_timeout=60)
@@ -66,17 +112,25 @@ elif mode in ("begin", "transition"):
 else:
     service = TaskStore(storage, lock_timeout=60)
 Path(barrier, f"ready_{name}").touch()
+mark('ready')
 deadline = time.monotonic() + 60
 while not Path(barrier, "go").exists():
     if time.monotonic() > deadline:
         raise SystemExit("barrier timeout")
     time.sleep(0.0005)
 if jitter == "1":
-    time.sleep(random.uniform(0, 0.6))
+    delay = random.uniform(0, 0.6)
+    mark('jitter', seconds=delay)
+    time.sleep(delay)
+mark('operation_enter', operation=mode)
+details, failure = None, None
 try:
     if mode == "complete":
         outcome = service.complete("task_r")
         result = outcome["result"]
+        details = dict(completed=outcome['completed'], event_recorded=outcome.get('event_recorded'),
+                       resumed=outcome.get('resumed'),
+                       blockers=[b['code'] for b in outcome['closeout']['blockers']])
     elif mode in ("rebuild", "rebuild_fail"):
         service.rebuild_checkpoint("task_r")
         result = "REBUILT"
@@ -91,8 +145,57 @@ try:
         result = "CREATED"
 except Exception as exc:
     result = "FAILED:" + type(exc).__name__
-print(json.dumps({"name": name, "mode": mode, "result": result}))
+    failure = error_chain(exc)
+mark('operation_return', result=result)
+print(json.dumps({"name": name, "mode": mode, "result": result, 'error': failure,
+                  'closeout': details, 'trace': trace, 'trace_at_limit': len(trace) == 128}))
 """
+
+# Read-only terminal evidence, also executed in a fresh process. No recovery or
+# checkpoint rebuild here: diagnosis must not repair the state being inspected.
+SNAPSHOT = r'''
+def terminal_snapshot(storage):
+    import hashlib, json
+    from pathlib import Path
+    from web_alarm.task_store import TaskStore
+    from web_alarm.operation_store import OperationStore
+    from web_alarm.event_checkpoint_store import EventCheckpointStore
+    from web_alarm.projection import ProjectionService
+    from web_alarm.models import record_to_dict
+    storage = Path(storage)
+    result = {'locations': {name: (storage/'tasks'/name/'task_r').is_dir()
+                            for name in ('active', 'completed')}, 'read_errors': []}
+    def read(key, action):
+        try:
+            result[key] = action()
+        except Exception as exc:
+            chain = []
+            while exc is not None and len(chain) < 12:
+                chain.append({'type': type(exc).__name__, 'message': str(exc)})
+                exc = exc.__cause__ or exc.__context__
+            result['read_errors'].append({'read': key, 'chain': chain})
+    tasks = TaskStore(storage)
+    read('task', lambda: record_to_dict(tasks.open_task('task_r')))
+    read('plan', lambda: record_to_dict(tasks.open_plan('task_r')))
+    read('microtasks', lambda: [record_to_dict(m) for m in tasks.list_microtasks('task_r')])
+    read('operations', lambda: [record_to_dict(o) for o in OperationStore(storage).list('task_r')])
+    read('history', lambda: [hashlib.sha256(json.dumps(record_to_dict(e), sort_keys=True).encode()).hexdigest()
+                             for e in EventCheckpointStore(storage).read_events('task_r')])
+    def projection():
+        service = ProjectionService(storage)
+        p = service.build('task_r')
+        return {key: p[key] for key in ('task', 'source_fingerprint', 'projection_fingerprint',
+                                        'closeout', 'diagnostics', 'next_safe_action', 'authority_source')}
+    read('projection', projection)
+    read('checkpoint', lambda: ProjectionService(storage).validate_checkpoint('task_r'))
+    def files():
+        directory = tasks.task_directory('task_r')
+        return {p.relative_to(directory).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(directory.rglob('*')) if p.is_file()}
+    read('files', files)
+    return result
+'''
+exec(SNAPSHOT)
 
 
 class ProjectionRaceTests(unittest.TestCase):
@@ -134,11 +237,39 @@ class ProjectionRaceTests(unittest.TestCase):
                 stdout, stderr = process.communicate(timeout=120)
                 self.assertEqual(process.returncode, 0, stderr)
                 results.append(json.loads(stdout))
+            if not hasattr(self, 'facts'):
+                self.facts = []
+            self.facts.append({'workers': results})
         finally:
             for process in processes:
                 if process.poll() is None:
                     process.kill()
+                    process.wait(timeout=10)
         return results
+
+    def capture_terminal(self, storage, before):
+        """Keep evidence before strict result assertions, including on a FAIL."""
+        after = terminal_snapshot(storage)
+        reopened = subprocess.run(
+            [sys.executable, '-B', '-c', SNAPSHOT +
+             '\nimport json,sys; print(json.dumps(terminal_snapshot(sys.argv[1])))', str(storage)],
+            cwd=REPO_ROOT, capture_output=True, text=True, timeout=60)
+        record = {'terminal': after, 'baseline': before, 'reopen_exit': reopened.returncode}
+        self.facts.append(record)
+        self.assertEqual(reopened.returncode, 0, reopened.stderr)
+        record['reopened'] = json.loads(reopened.stdout)
+        self.assertEqual(after, record['reopened'])
+        self.assertFalse(after['read_errors'], after['read_errors'])
+        self.assertEqual(sum(after['locations'].values()), 1)
+        self.assertEqual(after['plan']['microtask_ids'][:2], before['plan']['microtask_ids'])
+        self.assertEqual(after['history'][:len(before['history'])], before['history'])
+        self.assertEqual(after['microtasks'][:2], before['microtasks'])
+        # Completion may update task.json and append history; a writer may
+        # update plan/checkpoint. Existing immutable records must survive.
+        for path, digest in before['files'].items():
+            if path not in ('task.json', 'plan.json', 'events.jsonl', 'checkpoint.json', 'checkpoint.md'):
+                self.assertEqual(after['files'].get(path), digest, path)
+        return after
 
     def test_completion_never_admits_new_open_state(self):  # W
         outcomes = Counter()
@@ -146,12 +277,22 @@ class ProjectionRaceTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 storage = self.setup_task(root, verified=True)
+                before = terminal_snapshot(storage)
                 jobs = [("a", "complete"), ("b1", "begin"), ("b2", "begin"), ("c1", "microtask")]
                 results = self.run_jobs(storage, root, jobs, jitter=bool(index % 2))
+                terminal = self.capture_terminal(storage, before)
+                self.facts[-1]['round'] = index
                 by_mode = {r["name"]: r["result"] for r in results}
+                self.assertEqual(
+                    sorted(o['operation_id'] for o in terminal['operations']),
+                    sorted('op_' + r['name'] for r in results if r['result'] == 'BEGUN'))
+                self.assertEqual(
+                    sorted(terminal['plan']['microtask_ids']),
+                    sorted(['m1', 'm2'] + ['late_' + r['name'] for r in results if r['result'] == 'CREATED']))
                 completed_dir = storage / "tasks" / "completed" / "task_r"
                 active_dir = storage / "tasks" / "active" / "task_r"
                 if by_mode["a"] == "COMPLETED":
+                    self.assertEqual(terminal['task']['status'], 'COMPLETED')
                     outcomes["completion_won"] += 1
                     self.assertTrue(completed_dir.is_dir())
                     self.assertFalse(active_dir.exists())  # no write recreated the active TASK
@@ -161,6 +302,7 @@ class ProjectionRaceTests(unittest.TestCase):
                     self.assertEqual(plan.microtask_ids, ["m1", "m2"])
                     self.assertTrue(all(r["result"].startswith("FAILED") for r in results if r["name"] != "a"))
                 else:
+                    self.assertEqual(terminal['task']['status'], before['task']['status'])
                     outcomes["writer_won"] += 1
                     self.assertEqual(by_mode["a"], "REJECTED")
                     self.assertTrue(active_dir.is_dir())

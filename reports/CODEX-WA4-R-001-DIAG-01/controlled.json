@@ -1,0 +1,1092 @@
+{
+  "kind": "controlled scheduling / fault injection; not natural reproduction of historical CI",
+  "harness_sha256": "88f0e26e524c7502dde03a25f5dc9466efbd3b126cebbb70a7921cbde3f3b193",
+  "tests": [
+    {
+      "test": "diag_cases.Diagnostics.test_injected_directory_move_failure",
+      "status": "PASS",
+      "facts": [
+        {
+          "fault": "test_injected_directory_move_failure",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "cannot move task to completed: task_r",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "TaskStoreError",
+              "message": "cannot move task to completed: task_r",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 100, in complete\n    task = self.tasks.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 566, in complete_task_locked\n    raise TaskStoreError(f\"cannot move task to completed: {task_id}\") from exc\n"
+              ]
+            },
+            {
+              "type": "PermissionError",
+              "message": "[Errno 13] DIAG injected rename refusal: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa4rdiag_case_r2klp87v\\\\state\\\\tasks\\\\active\\\\task_r'",
+              "errno": 13,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 564, in complete_task_locked\n    os.replace(task_dir, destination)\n",
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\diag_cases.py\", line 176, in fail\n    raise PermissionError(13,'DIAG injected rename refusal',str(src))\n"
+              ]
+            }
+          ],
+          "entered_ns": 17293968000000,
+          "failed_ns": 17294000000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "9801f23a812e4a1421074edbe4b9e0c914ac6d5b6889c64c88c517ecb6a93aa3",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "eed9419a1d7f6ad3b8933ad4c67d2291182a48455fe9631846f255a34670ef01",
+              "projection_fingerprint": "011f90424866f1da946f505cd7f4ecdd2841727c48692ccf50cca890ae8a952a",
+              "closeout": [],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_2ee49888eb5f4f2db912f2a76224bc4c",
+                "updated_at": "2026-10-12T07:38:10.131615+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "eed9419a1d7f6ad3b8933ad4c67d2291182a48455fe9631846f255a34670ef01",
+                  "projection_fingerprint": "011f90424866f1da946f505cd7f4ecdd2841727c48692ccf50cca890ae8a952a",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "eed9419a1d7f6ad3b8933ad4c67d2291182a48455fe9631846f255a34670ef01",
+              "current_projection_fingerprint": "011f90424866f1da946f505cd7f4ecdd2841727c48692ccf50cca890ae8a952a"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17294390000000
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_injected_history_append_failure_after_commit",
+      "status": "PASS",
+      "facts": [
+        {
+          "closeout": {
+            "result": "COMPLETED",
+            "event_recorded": false
+          }
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": false,
+              "completed": true
+            },
+            "task_status": "COMPLETED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "e0fdbabd96b105179e5ce3e780818d161bce349d5d8f757f99366e35e8168ec3",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "COMPLETED",
+                "location": "completed",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "44a2caf51d0631e224b45a873f5f5daf4156d18ed3a8bc0411061518982452b1",
+              "projection_fingerprint": "2547fe6bca5a3a4eee8c6aa398a315c9fc3476a6d686db8f5cc8f9bb50fcdac2",
+              "closeout": [
+                {
+                  "code": "TASK_NOT_ACTIVE",
+                  "reason": "TASK is COMPLETED (completed)",
+                  "next": "nothing to complete"
+                }
+              ],
+              "diagnostics": [],
+              "next_safe_action": "TASK is COMPLETED; its state is read-only history",
+              "authority_source": "task_status"
+            },
+            "checkpoint": {
+              "status": "STALE",
+              "reasons": [
+                "authoritative source changed since the checkpoint was built"
+              ],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_4af0d4b725a24ef3bdeccdffc0655a98",
+                "updated_at": "2026-10-12T07:38:11.458712+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "aaafa5c5d55d3c7bb9f2ed7206b2292fd7fcd24b6be58c6d375331cdcf8b6de8",
+                  "projection_fingerprint": "b601166250901eba1a10cdeb13bd93834e3b86f2181d9747bb28ce7e16c9cf27",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "44a2caf51d0631e224b45a873f5f5daf4156d18ed3a8bc0411061518982452b1",
+              "current_projection_fingerprint": "2547fe6bca5a3a4eee8c6aa398a315c9fc3476a6d686db8f5cc8f9bb50fcdac2"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17295718000000
+        },
+        {
+          "post_close_writes": "both refused; TASK bytes/projection/history unchanged"
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_injected_operation_read_failure_blocks_gate",
+      "status": "PASS",
+      "facts": [
+        {
+          "fault_projection": {
+            "closeout": [
+              {
+                "code": "PROJECTION_OPERATIONS_UNREADABLE",
+                "reason": "DIAG unreadable operations",
+                "next": "repair the persistent plan/state by manual review"
+              }
+            ],
+            "next_safe_action": "projection is blocked (OPERATIONS_UNREADABLE: DIAG unreadable operations); persistent state is inconsistent — repair it by manual review before any mutation",
+            "authority_source": "projection_blocker"
+          }
+        },
+        {
+          "closeout": {
+            "result": "REJECTED",
+            "blockers": [
+              {
+                "code": "PROJECTION_OPERATIONS_UNREADABLE",
+                "reason": "DIAG unreadable operations",
+                "next": "repair the persistent plan/state by manual review"
+              }
+            ]
+          }
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "2709d3e615e374530a501374e2c468e413cc266a8d2dde664a0c0d0541ceec7b",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "39169249f59dc275cab698b248c308c6f1e00628bad8205876843755ef0ac1e0",
+              "projection_fingerprint": "cbad2aa30ab106cedd4d7187deaf4b4236dc694c209033ad7cbfba012a6f0179",
+              "closeout": [],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_96c3edf3eb4e435a966131aae70a4772",
+                "updated_at": "2026-10-12T07:38:12.934647+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "39169249f59dc275cab698b248c308c6f1e00628bad8205876843755ef0ac1e0",
+                  "projection_fingerprint": "cbad2aa30ab106cedd4d7187deaf4b4236dc694c209033ad7cbfba012a6f0179",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "39169249f59dc275cab698b248c308c6f1e00628bad8205876843755ef0ac1e0",
+              "current_projection_fingerprint": "cbad2aa30ab106cedd4d7187deaf4b4236dc694c209033ad7cbfba012a6f0179"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17297187000000
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_injected_read_failure_before_commit",
+      "status": "PASS",
+      "facts": [
+        {
+          "fault": "test_injected_read_failure_before_commit",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "cannot read JSON record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_mxb89fwv\\state\\tasks\\active\\task_r\\task.json",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "TaskStoreError",
+              "message": "cannot read JSON record: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_mxb89fwv\\state\\tasks\\active\\task_r\\task.json",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 90, in complete\n    state = self.tasks.completion_state(task_id)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 538, in completion_state\n    closed = self._load_task_from(task_dir).status in _CLOSED\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 178, in _load_task_from\n    raw = _read_json(task_dir / \"task.json\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\diag_cases.py\", line 166, in fail\n    except PermissionError as exc: raise TaskStoreError('cannot read JSON record: '+str(path)) from exc\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+              ]
+            },
+            {
+              "type": "PermissionError",
+              "message": "[Errno 13] DIAG injected read refusal: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa4rdiag_case_mxb89fwv\\\\state\\\\tasks\\\\active\\\\task_r\\\\task.json'",
+              "errno": 13,
+              "winerror": null,
+              "frames": [
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\diag_cases.py\", line 165, in fail\n    try: raise PermissionError(13,'DIAG injected read refusal',str(path))\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+              ]
+            }
+          ],
+          "entered_ns": 17298093000000,
+          "failed_ns": 17298109000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "e7031b9c4609a8d6786d97372fb5072ffb64209803fbed6925a8ca240745f840",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "6a6c4366c8fe681d50d5bf0bae20d640ceafd3e339f3dbe99de966680a91b42b",
+              "projection_fingerprint": "22e10c869d5eb539d06e250f3c9909344f59379ac78715a2042c3e0e3ea98782",
+              "closeout": [],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_09da40c82df9488b8f0b37439cccbd9a",
+                "updated_at": "2026-10-12T07:38:14.259236+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "6a6c4366c8fe681d50d5bf0bae20d640ceafd3e339f3dbe99de966680a91b42b",
+                  "projection_fingerprint": "22e10c869d5eb539d06e250f3c9909344f59379ac78715a2042c3e0e3ea98782",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "6a6c4366c8fe681d50d5bf0bae20d640ceafd3e339f3dbe99de966680a91b42b",
+              "current_projection_fingerprint": "22e10c869d5eb539d06e250f3c9909344f59379ac78715a2042c3e0e3ea98782"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17298484000000
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_injected_status_write_after_move_and_explicit_resume",
+      "status": "PASS",
+      "facts": [
+        {
+          "fault": "test_injected_status_write_after_move_and_explicit_resume",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "cannot persist completed task status",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "TaskStoreError",
+              "message": "cannot persist completed task status",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 100, in complete\n    task = self.tasks.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 571, in complete_task_locked\n    self._write_task(destination, task)\n",
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\diag_cases.py\", line 187, in fail\n    except PermissionError as exc: raise TaskStoreError('cannot persist completed task status') from exc\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+              ]
+            },
+            {
+              "type": "PermissionError",
+              "message": "[Errno 13] DIAG injected status write refusal",
+              "errno": 13,
+              "winerror": null,
+              "frames": [
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\diag_cases.py\", line 186, in fail\n    try: raise PermissionError(13,'DIAG injected status write refusal')\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"
+              ]
+            }
+          ],
+          "entered_ns": 17299359000000,
+          "failed_ns": 17299390000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": false,
+              "completed": true
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "96980bdffce9faadc66290c4196b3669a4be9b48282f19d64b33912585a1540d",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "completed",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "8dce06953e1e4a884870afce2e2e73f32820f38e15ce9e51ea44586437f1f947",
+              "projection_fingerprint": "f0efbf0f9c54e5edd24e90f9803b81fb8a56e442f7ee31a245ac69b9638531da",
+              "closeout": [
+                {
+                  "code": "TASK_NOT_ACTIVE",
+                  "reason": "TASK is PLANNED (completed)",
+                  "next": "nothing to complete"
+                }
+              ],
+              "diagnostics": [
+                {
+                  "code": "INTERRUPTED_COMPLETION",
+                  "reason": "TASK is PLANNED in completed/: its completion was interrupted after the move (the status record is pending)"
+                }
+              ],
+              "next_safe_action": "TASK is PLANNED in completed/: its completion was interrupted after the move (the status record is pending). The TASK is closed and read-only history: finish its completion record with the gated `task complete`",
+              "authority_source": "task_status"
+            },
+            "checkpoint": {
+              "status": "STALE",
+              "reasons": [
+                "authoritative source changed since the checkpoint was built"
+              ],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_8629d210ada54c02b69dc8e97457a337",
+                "updated_at": "2026-10-12T07:38:15.539442+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "2ab839f73c9d31a3bf285bf4568012c65f6fd042a5512562c54bf7078b174367",
+                  "projection_fingerprint": "82da694787f1b22a6bcf5140efb9633b393424b4228f4dd2e9a60d175cb28d9e",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "8dce06953e1e4a884870afce2e2e73f32820f38e15ce9e51ea44586437f1f947",
+              "current_projection_fingerprint": "f0efbf0f9c54e5edd24e90f9803b81fb8a56e442f7ee31a245ac69b9638531da"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17299765000000
+        },
+        {
+          "post_close_writes": "both refused; TASK bytes/projection/history unchanged"
+        },
+        {
+          "explicit_resume": {
+            "result": "COMPLETED",
+            "resumed": "MOVED_STATUS_PENDING"
+          }
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": false,
+              "completed": true
+            },
+            "task_status": "COMPLETED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 11,
+            "file_count": 16,
+            "task_tree_digest": "3645088a0ae95080f1871dc651bb85efa37aaf3b66e51b5613b578981f6730e6",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "COMPLETED",
+                "location": "completed",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "46a08cae2f29aeb442d95a1dddd6de4aa0d558d2027654304e1ae7992d501200",
+              "projection_fingerprint": "e005545df88817d821146b570cb505a5bd045aa86372d7d08e2d83249869f152",
+              "closeout": [
+                {
+                  "code": "TASK_NOT_ACTIVE",
+                  "reason": "TASK is COMPLETED (completed)",
+                  "next": "nothing to complete"
+                }
+              ],
+              "diagnostics": [],
+              "next_safe_action": "TASK is COMPLETED; its state is read-only history",
+              "authority_source": "task_status"
+            },
+            "checkpoint": {
+              "status": "STALE",
+              "reasons": [
+                "authoritative source changed since the checkpoint was built"
+              ],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_8629d210ada54c02b69dc8e97457a337",
+                "updated_at": "2026-10-12T07:38:15.539442+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "2ab839f73c9d31a3bf285bf4568012c65f6fd042a5512562c54bf7078b174367",
+                  "projection_fingerprint": "82da694787f1b22a6bcf5140efb9633b393424b4228f4dd2e9a60d175cb28d9e",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "46a08cae2f29aeb442d95a1dddd6de4aa0d558d2027654304e1ae7992d501200",
+              "current_projection_fingerprint": "e005545df88817d821146b570cb505a5bd045aa86372d7d08e2d83249869f152"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17300343000000
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_operations_lock_timeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "schedule": "holder acquired operations",
+          "ns": 17301625000000
+        },
+        {
+          "fault": "test_operations_lock_timeout",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_92w5t9xt\\state\\locks\\operations\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "OperationStoreError",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_92w5t9xt\\state\\locks\\operations\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 88, in complete\n    with self.operations.task_lock(task_id):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py\", line 137, in __enter__\n    return next(self.gen)\n           ^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 167, in _serialized\n    raise OperationStoreError(str(exc)) from exc\n"
+              ]
+            },
+            {
+              "type": "StoreLockTimeout",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_92w5t9xt\\state\\locks\\operations\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 165, in _serialized\n    lock.acquire()\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\store_lock.py\", line 62, in acquire\n    raise StoreLockTimeout(f\"store lock timeout: {self.path}\")\n"
+              ]
+            }
+          ],
+          "entered_ns": 17301640000000,
+          "failed_ns": 17301703000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [
+              [
+                "op_seed",
+                "INTENT"
+              ]
+            ],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 11,
+            "file_count": 18,
+            "task_tree_digest": "e4fd0d8118992e09f88d87bdd14ecda548fc584259ed3f115f605e20caa0f45d",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "b6ec9da9b4bc26e37d01077d06c6dbd2e937b24338193fc52d6fbe406c5208fe",
+              "projection_fingerprint": "635b9a48d6a76b9497c8e7b545c998c6b51625e0edcba6783c7c30005a4b3ece",
+              "closeout": [
+                {
+                  "code": "OPERATION_OPEN",
+                  "reason": "op_seed is INTENT (declared, not executed)",
+                  "operation_id": "op_seed",
+                  "next": "transition op_seed to FAILED or record an accepted ABORT"
+                }
+              ],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED but closeout is blocked (OPERATION_OPEN): transition op_seed to FAILED or record an accepted ABORT",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_bdf601ac2f1b44e4ba72bbf70b4c614b",
+                "updated_at": "2026-10-12T07:38:17.558109+00:00",
+                "next_safe_action": "every microtask is VERIFIED but closeout is blocked (OPERATION_OPEN): transition op_seed to FAILED or record an accepted ABORT",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "b6ec9da9b4bc26e37d01077d06c6dbd2e937b24338193fc52d6fbe406c5208fe",
+                  "projection_fingerprint": "635b9a48d6a76b9497c8e7b545c998c6b51625e0edcba6783c7c30005a4b3ece",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "b6ec9da9b4bc26e37d01077d06c6dbd2e937b24338193fc52d6fbe406c5208fe",
+              "current_projection_fingerprint": "635b9a48d6a76b9497c8e7b545c998c6b51625e0edcba6783c7c30005a4b3ece"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17302093000000
+        },
+        {
+          "holder": "operations",
+          "exit": 0,
+          "output": "{\"result\": \"RELEASED\"}\n",
+          "stderr": "",
+          "finished_ns": 17302109000000
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_real_windows_prelock_reader_blocks_directory_move",
+      "status": "PASS",
+      "facts": [
+        {
+          "schedule": "holder acquired reader",
+          "ns": 17303234000000
+        },
+        {
+          "fault": "test_real_windows_prelock_reader_blocks_directory_move",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "cannot move task to completed: task_r",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "TaskStoreError",
+              "message": "cannot move task to completed: task_r",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 100, in complete\n    task = self.tasks.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 566, in complete_task_locked\n    raise TaskStoreError(f\"cannot move task to completed: {task_id}\") from exc\n"
+              ]
+            },
+            {
+              "type": "PermissionError",
+              "message": "[WinError 5] Отказано в доступе: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa4rdiag_case_37e3nd46\\\\state\\\\tasks\\\\active\\\\task_r' -> 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa4rdiag_case_37e3nd46\\\\state\\\\tasks\\\\completed\\\\task_r'",
+              "errno": 13,
+              "winerror": 5,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 564, in complete_task_locked\n    os.replace(task_dir, destination)\n"
+              ]
+            }
+          ],
+          "entered_ns": 17303234000000,
+          "failed_ns": 17303265000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "181e0c05710b77c6febfb1eb557865c4aec7c7e5261f7dacff34b6582e194dae",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "221203c045e043e50a92f6f8ed793fe2f11bf197503744997139c45a18ad2f1f",
+              "projection_fingerprint": "3af0459926281efe91313851b05563be730fe5837540d732e9ac857e24488019",
+              "closeout": [],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_9fd79b1a78754559aa9bab273ec49bf6",
+                "updated_at": "2026-10-12T07:38:19.180645+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "221203c045e043e50a92f6f8ed793fe2f11bf197503744997139c45a18ad2f1f",
+                  "projection_fingerprint": "3af0459926281efe91313851b05563be730fe5837540d732e9ac857e24488019",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "221203c045e043e50a92f6f8ed793fe2f11bf197503744997139c45a18ad2f1f",
+              "current_projection_fingerprint": "3af0459926281efe91313851b05563be730fe5837540d732e9ac857e24488019"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17303656000000
+        },
+        {
+          "holder": "reader",
+          "exit": 0,
+          "output": "{\"result\": \"BEGUN\", \"reader_path\": \"OperationStore.begin -> TaskStore.open_microtask -> Path.open(task.md)\"}\n",
+          "stderr": "",
+          "finished_ns": 17303765000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [
+              [
+                "op_reader",
+                "INTENT"
+              ]
+            ],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 11,
+            "file_count": 18,
+            "task_tree_digest": "3361fb15ff94404d05be861713dce10a84714d8bee4e6f394014f705a948cf3d",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "f278fcf6c6335ee1bc4d32bc5335d55f11e5acd5f7ca94aa431c6d748606e898",
+              "projection_fingerprint": "f8400ceb4582c68a18a2d61c1fc20e0cf238621d078fb640016eba88eba6ef70",
+              "closeout": [
+                {
+                  "code": "OPERATION_OPEN",
+                  "reason": "op_reader is INTENT (declared, not executed)",
+                  "operation_id": "op_reader",
+                  "next": "transition op_reader to FAILED or record an accepted ABORT"
+                }
+              ],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED but closeout is blocked (OPERATION_OPEN): transition op_reader to FAILED or record an accepted ABORT",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_9fd79b1a78754559aa9bab273ec49bf6",
+                "updated_at": "2026-10-12T07:38:20.007810+00:00",
+                "next_safe_action": "every microtask is VERIFIED but closeout is blocked (OPERATION_OPEN): transition op_reader to FAILED or record an accepted ABORT",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "f278fcf6c6335ee1bc4d32bc5335d55f11e5acd5f7ca94aa431c6d748606e898",
+                  "projection_fingerprint": "f8400ceb4582c68a18a2d61c1fc20e0cf238621d078fb640016eba88eba6ef70",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "f278fcf6c6335ee1bc4d32bc5335d55f11e5acd5f7ca94aa431c6d748606e898",
+              "current_projection_fingerprint": "f8400ceb4582c68a18a2d61c1fc20e0cf238621d078fb640016eba88eba6ef70"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17304156000000
+        },
+        {
+          "after_release_closeout": "REJECTED"
+        }
+      ]
+    },
+    {
+      "test": "diag_cases.Diagnostics.test_task_mutation_lock_timeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "schedule": "holder acquired tasks",
+          "ns": 17305296000000
+        },
+        {
+          "fault": "test_task_mutation_lock_timeout",
+          "chain": [
+            {
+              "type": "CloseoutError",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_toknvwu0\\state\\locks\\tasks\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": []
+            },
+            {
+              "type": "TaskStoreError",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_toknvwu0\\state\\locks\\tasks\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 89, in complete\n    with self.tasks.mutation_lock(task_id):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                "  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py\", line 137, in __enter__\n    return next(self.gen)\n           ^^^^^^^^^^^^^^\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 159, in mutation_lock\n    raise TaskStoreError(str(exc)) from exc\n"
+              ]
+            },
+            {
+              "type": "StoreLockTimeout",
+              "message": "store lock timeout: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag_case_toknvwu0\\state\\locks\\tasks\\task_r.lock",
+              "errno": null,
+              "winerror": null,
+              "frames": [
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 157, in mutation_lock\n    lock.acquire()\n",
+                "  File \"M:\\GitHub\\ag_llm\\web_alarm\\store_lock.py\", line 62, in acquire\n    raise StoreLockTimeout(f\"store lock timeout: {self.path}\")\n"
+              ]
+            }
+          ],
+          "entered_ns": 17305328000000,
+          "failed_ns": 17305390000000
+        },
+        {
+          "terminal": {
+            "locations": {
+              "active": true,
+              "completed": false
+            },
+            "task_status": "PLANNED",
+            "plan_ids": [
+              "m1",
+              "m2"
+            ],
+            "operations": [],
+            "microtasks": [
+              [
+                "m1",
+                "VERIFIED"
+              ],
+              [
+                "m2",
+                "VERIFIED"
+              ]
+            ],
+            "history_count": 10,
+            "file_count": 16,
+            "task_tree_digest": "391472e5f3dfa2f6a6fd121387fc166b8a542d975f4c2c0b37c5465bab960522",
+            "projection": {
+              "task": {
+                "task_id": "task_r",
+                "workspace_id": "ws",
+                "status": "PLANNED",
+                "location": "active",
+                "plan_revision": 3
+              },
+              "source_fingerprint": "25038fa05b0ed3a9f9956a6a38adadd6c1581f88d7febc75f20378cfb59b204e",
+              "projection_fingerprint": "ab6b3b1554a3f06f1ed31b57c67c29a0a75f66511e4e2feec76dbedf7d5de99e",
+              "closeout": [],
+              "diagnostics": [],
+              "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+              "authority_source": "closeout_gate"
+            },
+            "checkpoint": {
+              "status": "VALID",
+              "reasons": [],
+              "authoritative": false,
+              "persisted": {
+                "checkpoint_id": "checkpoint_a7ee56e7f01e482ba025d52093899a9b",
+                "updated_at": "2026-10-12T07:38:21.258614+00:00",
+                "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                "projection": {
+                  "projection_version": 1,
+                  "source_fingerprint": "25038fa05b0ed3a9f9956a6a38adadd6c1581f88d7febc75f20378cfb59b204e",
+                  "projection_fingerprint": "ab6b3b1554a3f06f1ed31b57c67c29a0a75f66511e4e2feec76dbedf7d5de99e",
+                  "authority_source": "closeout_gate"
+                }
+              },
+              "current_source_fingerprint": "25038fa05b0ed3a9f9956a6a38adadd6c1581f88d7febc75f20378cfb59b204e",
+              "current_projection_fingerprint": "ab6b3b1554a3f06f1ed31b57c67c29a0a75f66511e4e2feec76dbedf7d5de99e"
+            },
+            "read_errors": []
+          },
+          "reopened_equal": true,
+          "retention": {
+            "plan_prefix_preserved": true,
+            "history_prefix_preserved": true,
+            "existing_microtasks_preserved": true,
+            "immutable_files_preserved": true,
+            "existing_operations_preserved": true
+          },
+          "captured_ns": 17305765000000
+        },
+        {
+          "holder": "tasks",
+          "exit": 0,
+          "output": "{\"result\": \"RELEASED\"}\n",
+          "stderr": "",
+          "finished_ns": 17305781000000
+        }
+      ]
+    }
+  ]
+}

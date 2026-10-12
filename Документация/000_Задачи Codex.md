@@ -19,12 +19,347 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
+**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.**
 
-CODEX-WA4-R-001: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка сохранена в БЛОКЕ 2, factual handoff — в БЛОКЕ 3. Следующих этапов не запускать; WARN/GATEWAY REQUIRED/STRICT не разрешены.
+Предыдущая диагностика передана на независимую проверку ChatGPT; следующая задача не назначена.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-001-DIAG-01. Полная пользовательская постановка сохранена дословно. AMENDMENT: новых уточнений во время этой диагностики не поступало.
+
+```````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# CODEX-WA4-R-001-DIAG-01 — Closeout Race / Independent CI Failure Diagnosis
+
+**PROJECT:** `ag_llm / WEB-02 / Web Alarm Workspace`  
+**EXECUTOR:** Codex CLI  
+**ARCH CLASS:** Web Alarm Workspace / RC-5 Closeout / Concurrency / WA4-R Verification  
+**PRIMARY PROFILE:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`  
+**PARENT TASK:** `CODEX-WA4-R-001`  
+**STATUS:** USER APPROVED / READY FOR EXECUTION
+
+## 1. Цель
+
+Выполнить ограниченную диагностику сбоя конкурентного закрытия TASK, выявленного независимым GitHub Windows CI при проверке `CODEX-WA4-R-001`.
+
+Установить, является ли сбой:
+
+- допустимым fail-closed отказом при конкурентном доступе;
+- нестабильностью тестового harness или Windows filesystem;
+- дефектом реализации RC-5 Closeout;
+- нарушением инварианта закрытия TASK;
+- иной причиной, подтверждённой evidence.
+
+**Не считать успешный повтор теста доказательством отсутствия дефекта.**
+
+Цель — установить фактическую причину, доказать либо опровергнуть безопасность конечного состояния и передать результат ChatGPT для независимой проверки.
+
+## 2. Исходные факты
+
+Исходная версия Web Alarm OBSERVE:
+
+- Коммит №280: `c7de06a60e2bd75d5f266ccf931a5ebb4da625f3`.
+- GitHub PR №11: https://github.com/maxrus82gm-svg/ag_llm/pull/11
+- Independent CI: https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38206439998
+
+В первой попытке GitHub Actions:
+
+- WA4-R focused: PASS, 228 tests.
+- Full regression: 749 tests, 748 PASS, 1 FAIL.
+- JavaScript: PASS.
+
+Сбой:
+
+`test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state`
+
+Ожидалось:
+
+`REJECTED`
+
+Получено:
+
+`FAILED:CloseoutError`
+
+Во второй попытке тот же independent CI прошёл полностью: 749 PASS.
+
+**Корневая причина первого отказа не установлена.**
+
+Существующий тест возвращает тип исключения, но не сохраняет подробную причину, исходное состояние, событийную последовательность и доказательства конечного состояния TASK.
+
+Это и является предметом диагностики.
+
+Данные коммитов и PR предоставлены координатором. Локальный Codex НЕ получает разрешения обращаться к Git/GitHub.
+
+## 3. Обязательный preflight
+
+До выполнения:
+
+1. Прочитать `Документация/08_Старт.md`.
+2. Открыть общий `000_Задачи для агента.md`.
+3. Проверить персональный БЛОК 1 Codex.
+4. Прочитать актуальный `34_TACTICAL_CONTEXT.md`.
+5. Прочитать применимые правила из №18, включая `DOC-GIT-01@1`, `DOC-READ-01@1`, `DOC-VERSION-01@1`, `DOC-CHANGE-01@1`, `DOC-TASK-BLOCK1-01@1`.
+6. Проверить профильные №01, №23, №24, №25.
+7. Зафиксировать действующий локальный scope и текущие исходные файлы без использования Git.
+
+Не перезаписывать более новые документы старыми сведениями из постановки.
+
+## 4. Разрешённая область
+
+**Read scope:**
+
+- `test_web_alarm_projection_concurrency.py`
+- `web_alarm/closeout.py`
+- `web_alarm/task_store.py`
+- `web_alarm/operation_store.py`
+- `web_alarm/projection.py`
+- необходимые связанные lock/store и checkpoint modules;
+- `wa4a_acceptance.py`;
+- ранее сохранённый отчёт `reports/CODEX-WA4-R-001/report.md`.
+
+**Write scope:**
+
+- временные диагностические scripts/fixtures исключительно внутри system TEMP;
+- минимальная диагностическая модификация `test_web_alarm_projection_concurrency.py` при необходимости;
+- отдельный новый диагностический тестовый файл только при доказанной необходимости;
+- `reports/CODEX-WA4-R-001-DIAG-01/` — итоговый отчёт и компактное evidence;
+- персональная карточка Codex — только регламентная ротация после завершения.
+
+Разрешено добавлять instrumented diagnostic output и тестовые проверки, но запрещено ослаблять исходные assertions либо менять ожидаемый результат с `REJECTED` на `FAILED` ради зелёного теста.
+
+**Production-код не менять.** Если обнаружен реальный дефект, подготовить конкретный repair proposal с файлами, причинами и тестами, затем остановиться до отдельного USER GO.
+
+## 5. Диагностическая работа
+
+### D1 — Восстановление failure path
+
+Проследить фактический путь:
+
+`CloseoutService.complete → TASK locks → completion_state → ProjectionService.build → closeout verdict → complete_task_locked`
+
+Также проверить конкурентные пути:
+
+- `OperationStore.begin`;
+- `TaskStore.create_microtask`;
+- completion directory transition;
+- checkpoint/projection reads;
+- exception wrapping в `CloseoutError`.
+
+Установить, где могут возникать `TaskStoreError`, `OperationStoreError`, lock timeout, transient filesystem access error либо несогласованное состояние между записями.
+
+Разделять подтверждённую причину, гипотезу и недоказанное предположение.
+
+### D2 — Диагностическое инструментирование
+
+В тестовом harness обеспечить фиксацию:
+
+- полного типа и сообщения исключения;
+- исходного exception cause/context, если доступно;
+- имени worker и операции;
+- этапа и порядка конкурентных действий;
+- факта получения либо отказа lock;
+- результата Closeout;
+- конечного местонахождения TASK;
+- наличия новых operation/microtask records;
+- состояния projection/checkpoint;
+- обнаруженных ошибок чтения хранилищ.
+
+Использовать bounded diagnostic output, не записывать секреты, пользовательские данные либо массовые stdout-логи в репозиторий.
+
+Логирование должно быть тестовым и не влиять на production authority.
+
+### D3 — Воспроизведение
+
+Запустить существующий проблемный тест на disposable Windows storage.
+
+Выполнить не менее 20 ограниченных повторений теста при доступной среде. Сохранить число реальных конкурентных раундов, успешных и неуспешных попыток.
+
+При подтверждённой необходимости добавить контролируемые test-only задержки либо синхронизацию для воспроизведения подозреваемого порядка событий.
+
+Для искусственного отказа обязательно указать, что это fault injection, а не доказательство естественного воспроизведения исходной ошибки.
+
+Если воспроизведение невозможно, зафиксировать `NOT REPRODUCED`, а не `FIXED`.
+
+Не допускать бесконечного retry. Ограничить время и число попыток; при блокировке завершить с диагностическим результатом.
+
+### D4 — Проверка инвариантов
+
+Для каждой диагностированной ветки подтвердить либо опровергнуть:
+
+1. COMPLETED TASK никогда не получает вновь допущенную operation/microtask.
+2. При отказе Closeout не происходит незаконного частичного закрытия.
+3. Не появляется одновременно противоречивое active/completed состояние.
+4. Не теряются ранее существовавшие TASK plan, operation records и history.
+5. Отказ lock/storage не превращается в разрешение записи.
+6. Проекция не выдаёт недостоверное безопасное NEXT.
+7. Restart/reopen сохраняет проверяемое конечное состояние.
+8. Отказ одного конкурентного worker не приводит к скрытой успешной mutation после закрытия TASK.
+
+Если инвариант невозможно доказать имеющимися данными, отметить `UNVERIFIED`, а не PASS.
+
+### D5 — Причина и классификация
+
+Подготовить одну из классификаций:
+
+- `TEST HARNESS DEFECT`;
+- `EXPECTED FAIL-CLOSED / TEST EXPECTATION DEFECT`;
+- `RUNTIME DEFECT`;
+- `WINDOWS/FILESYSTEM TRANSIENT — CAUSE ESTABLISHED`;
+- `INCONCLUSIVE / NOT REPRODUCED`.
+
+Обязательно приложить evidence, объясняющее выбранную классификацию.
+
+**`EXPECTED FAIL-CLOSED` разрешается только при подтверждённой причине отказа и безопасном конечном состоянии.**
+
+Если причина не установлена, не приписывать её автоматически Windows scheduling.
+
+### D6 — Регрессия
+
+После завершения диагностики:
+
+- выполнить targeted concurrency regression;
+- проверить смежные RC-5 closeout/projection tests;
+- проверить, что диагностические изменения не ослабили проверку;
+- выполнить guarded full Web Alarm regression, если среда позволяет;
+- сохранить точное количество PASS/FAIL/ERROR/SKIP;
+- записать source SHA-256 без использования Git.
+
+Если full regression недоступна или не завершена, указать соответствующий blocker. Не подменять её результат предыдущими CI.
+
+Использовать `wa4a_acceptance.py` в штатной изолированной конфигурации, когда применимо.
+
+## 6. Безусловные запреты
+
+- Никаких Git/GitHub-операций, даже read-only `status/diff/log/show`, согласно `DOC-GIT-01@1`.
+- Не выполнять commit, push, branch, merge или PR operations.
+- Не менять production Closeout, RC-3/4/5/6, mutation executor или server authority.
+- Не включать WARN, GATEWAY REQUIRED, STRICT.
+- Не запускать следующий этап WA4-R.
+- Не изменять Ultra, UI/UX, launcher, общие нормативные документы.
+- Не работать с live storage, пользовательскими TASK, реальными проектными файлами.
+- Не удалять исторические отчёты или изменять прежние evidence.
+- Не создавать массовые backups либо raw logs внутри repository.
+- Не объявлять исходный failure решённым только на основании успешного rerun.
+- Не заявлять `DONE / VERIFIED` самостоятельно.
+
+В случае необходимости выйти за scope — остановиться с `BLOCKED / USER DECISION REQUIRED`.
+
+## 7. Итоговые артефакты
+
+Сохранить:
+
+`reports/CODEX-WA4-R-001-DIAG-01/report.md`
+
+В отчёте обязательно:
+
+- исходные факты;
+- проверенные source paths;
+- временная последовательность гонки;
+- реальная либо неустановленная причина `CloseoutError`;
+- конечное состояние TASK;
+- результат каждого инварианта;
+- таблица повторений;
+- результаты focused/full;
+- список изменённых файлов;
+- source hashes;
+- классификация;
+- remaining risks;
+- минимальный repair proposal при необходимости;
+- `DOC IMPACT`;
+- `NEXT SAFE ACTION`.
+
+Допустимо добавить компактные машинные evidence-файлы с повторениями, причиной исключения и результатами проверок. Не сохранять избыточные логи.
+
+## 8. Критерии завершения
+
+Диагностическая TASK может быть передана на независимую проверку, если:
+
+1. Проверен полный failure path.
+2. Собраны причины исключений с сохранением исходного context/cause.
+3. Подтверждены либо явно отмечены недоказанными конечные инварианты.
+4. Выполнены ограниченные повторения с точными числами.
+5. Не скрыты исходный FAIL и предыдущий успешный rerun.
+6. Не изменена production authority.
+7. Есть доказательная классификация либо честный `INCONCLUSIVE`.
+8. Подготовлены отчёт, evidence и документационная дельта.
+
+Если найден настоящий runtime defect, результат этой TASK — **диагноз + repair proposal**, а не самовольное исправление.
+
+Если причина не установлена, результат — `INCONCLUSIVE / BLOCKED FOR ACCEPTANCE`, с конкретным следующим необходимым диагностическим шагом.
+
+Только ChatGPT после независимого review определяет, достаточно ли данных для приёмки OBSERVE и разрешения Merge PR №11.
+
+## 9. DOC IMPACT / ротация
+
+Провести Documentation Impact Check.
+
+Общие документы №000, №01, №05, №06, №23, №24, №25, №34 самостоятельно не редактировать. Подготовить `SHARED DOC DELTA` для ChatGPT.
+
+Не менять глобальный статус `CODEX-WA4-R-001` на DONE/VERIFIED.
+
+После сохранения полного factual result выполнить безопасную ротацию персональной карточки:
+
+- Полная новая постановка → БЛОК 2.
+- Фактический результат → БЛОК 3.
+- Предыдущие записи сохранить без потерь в истории.
+- БЛОК 1 очистить до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ` только после проверки обеих сохранённых записей.
+
+## 10. Финальный handoff
+
+В завершение вернуть в Chat один самостоятельный копируемый блок `text`:
+
+TASK: CODEX-WA4-R-001-DIAG-01  
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION либо BLOCKED  
+ROOT CAUSE: ...  
+CLASSIFICATION: ...  
+TASK FINAL STATE: ...  
+SAFETY INVARIANTS: ...  
+REPRODUCTION: ...  
+TESTS: ...  
+FILES CHANGED: ...  
+PRODUCTION CODE: UNCHANGED  
+DOC IMPACT: ...  
+EVIDENCE: ...  
+NEXT SAFE ACTION: Independent ChatGPT verification.
+
+**После передачи результата остановиться.**
+
+PR №11 не объединять. Исходный OBSERVE не принимать самостоятельно. Никакие следующие стадии не запускать.
+
+---
+
+```````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+```text
+TASK: CODEX-WA4-R-001-DIAG-01
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+ROOT CAUSE: historical CI cause UNESTABLISHED. Controlled actual Windows pre-lock reader produced CloseoutError -> TaskStoreError -> PermissionError(errno=13, winerror=5) at directory move; original active TASK remained intact.
+CLASSIFICATION: INCONCLUSIVE / NOT REPRODUCED; BLOCKED FOR ACCEPTANCE of historical CI/OBSERVE pending independent ChatGPT decision.
+TASK FINAL STATE: observed clean races either COMPLETED/read-only with no new state, or REJECTED/active with admitted writers. Controlled move failure: unchanged active/PLANNED; after reader release op_reader/INTENT admitted only in active TASK, subsequent closeout REJECTED. Injected post-move status failure: closed MOVED_STATUS_PENDING, writes denied, explicit gated resume -> COMPLETED.
+SAFETY INVARIANTS: I1-I8 PASS within observed disposable branches and fresh-process reopen. Historical failed CI terminal invariants UNVERIFIED; no recovered incident evidence.
+REPRODUCTION: final 20 W repetitions = 80 rounds, plus module W = 4, full W = 4; 0 natural CloseoutError. Across all instrumented revisions 176 rounds = 101 COMPLETED + 75 REJECTED; original unmodified baseline adds 4 rounds. Controlled native WinError 5 is a possible safe path, not proof of original incident cause.
+TESTS: final focused 95 PASS; final controlled 8 PASS; full 749 total = 748 PASS + 1 symlink-permission SKIP, 0 FAIL/ERROR. Three final processes exit 0; isolation violations 0. All 19 original assertions retained; 31 after diagnostic additions; ROUNDS=4 and strict REJECTED assertion unchanged.
+FILES CHANGED: test_web_alarm_projection_concurrency.py; reports/CODEX-WA4-R-001-DIAG-01/report.md plus checks.json, controlled.json, repetitions.json, versions.json; this personal card rotation. Diagnostic scripts/fixtures/raw logs only system TEMP.
+PRODUCTION CODE: UNCHANGED; all web_alarm/*.py, other tests and wa4a_acceptance.py match pre-task SHA. No Git/GitHub, live data, Ultra/UI/launcher/common-document edits or rollout activation.
+DOC IMPACT: YES; architecture contract unchanged. SHARED DOC DELTA / DOC CLOSEOUT INCOMPLETE: coordinator owns 000/01/05/06/23/24/25/34; preserve first CI FAIL and second PASS, record diagnostic limitations, do not automatically accept WA4-R or assign next stage.
+EVIDENCE: reports/CODEX-WA4-R-001-DIAG-01/report.md and four compact JSON files. Raw evidence/scripts: C:/Users/REX/AppData/Local/Temp/wa4rdiag-06exabdv; final sources and artifact hashes in versions.json.
+NEXT SAFE ACTION: Independent ChatGPT verification. Run unchanged strict instrumented test in original Windows CI, inspect full cause/phases/terminal state before any expectation repair. No production repair implemented; separate USER GO for future changes. PR 11 not merged; no DONE / VERIFIED; stop after handoff.
+```
+
+**Полный отчёт:** `reports/CODEX-WA4-R-001-DIAG-01/report.md`; здесь приведён самостоятельный factual handoff, а в отчёте — source trace, сценарии, инварианты, команды, hashes и ограничения.
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WA4-R-001-DIAG-01
+
+```````````markdown
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 **TASK:** CODEX-WA4-R-001. Полная исходная пользовательская постановка ниже сохранена дословно; её STATUS candidate — исторический текст до прямого USER GO в текущем чате. AMENDMENT: новых уточнений во время исполнения не поступало.
@@ -1986,3 +2321,4 @@ Codex: задача утверждена пользователем. Прочи�
 
 `````````
 ``````````
+```````````

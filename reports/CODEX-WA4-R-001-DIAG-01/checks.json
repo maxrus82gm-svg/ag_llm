@@ -1,0 +1,257 @@
+{
+  "runs": [
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790090.3280694,
+      "elapsed_seconds": 6.232,
+      "tests_run": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "baseline",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\baseline\\results.json",
+      "raw_results_sha256": "76e0461b77219aaa48a17eb05568ac8275dd3cfd05a5df8adfd216435d4ea832",
+      "source_test_sha256": "02da5133346a3e94cca33710b7e2088e1f5bca22db737109310748abaeee8f9c",
+      "nonpassing": [],
+      "closeout_rounds": {}
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790203.5138273,
+      "elapsed_seconds": 8.117,
+      "tests_run": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "instrumented-smoke",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\instrumented-smoke\\results.json",
+      "raw_results_sha256": "fef5b47f213237b46843aa281e329a805f9a5864f9351b52373861a2064bc84a",
+      "source_test_sha256": "9700e932a0efda46fce8383f39b209b78db5e4f68c465e23ea99b30641d47d87",
+      "nonpassing": [],
+      "closeout_rounds": {
+        "REJECTED": 2,
+        "COMPLETED": 2
+      }
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790219.47708,
+      "elapsed_seconds": 155.164,
+      "tests_run": 20,
+      "passed": 20,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "repeat20",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\repeat20\\results.json",
+      "raw_results_sha256": "6d01e0c9635d9d23d502ed6f24c0ef776cdc5c6ec1ead22ea101e48793d646f0",
+      "source_test_sha256": "9700e932a0efda46fce8383f39b209b78db5e4f68c465e23ea99b30641d47d87",
+      "nonpassing": [],
+      "closeout_rounds": {
+        "REJECTED": 32,
+        "COMPLETED": 48
+      }
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "diag_cases"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790395.1418319,
+      "elapsed_seconds": 30.805,
+      "tests_run": 12,
+      "passed": 12,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "controlled",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\controlled\\results.json",
+      "raw_results_sha256": "0d04228896515250291194c21847f47915a0a69135fea738e833abde76a6569a",
+      "source_test_sha256": "9700e932a0efda46fce8383f39b209b78db5e4f68c465e23ea99b30641d47d87",
+      "nonpassing": [],
+      "closeout_rounds": {
+        "REJECTED": 1,
+        "COMPLETED": 3
+      }
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "diag_cases.Diagnostics"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790574.0605392,
+      "elapsed_seconds": 12.947,
+      "tests_run": 8,
+      "passed": 8,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "controlled-final",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\controlled-final\\results.json",
+      "raw_results_sha256": "3553bfa0c35698f54ea30964cdfeb7e3e2069514998b9731c67c329374f80b4a",
+      "source_test_sha256": "a691f937316292e944cc672d5a363ad418b0c676ce042a18f53ee005d4afc423",
+      "nonpassing": [],
+      "closeout_rounds": {}
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "diag_cases.Diagnostics"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790689.363551,
+      "elapsed_seconds": 12.743,
+      "tests_run": 8,
+      "passed": 8,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "controlled-v3-final",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\controlled-v3-final\\results.json",
+      "raw_results_sha256": "7c08e33c1abcd5906b60574108cdbbe60f9070e2972b516dd37cfa9bf3b5d60f",
+      "source_test_sha256": "a691f937316292e944cc672d5a363ad418b0c676ce042a18f53ee005d4afc423",
+      "nonpassing": [],
+      "closeout_rounds": {}
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state",
+        "test_web_alarm_projection_concurrency",
+        "test_web_alarm_projection",
+        "test_web_alarm_projection_repair2",
+        "test_web_alarm_task_store"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790470.0256073,
+      "elapsed_seconds": 265.975,
+      "tests_run": 95,
+      "passed": 95,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "focused-final",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\focused-final\\results.json",
+      "raw_results_sha256": "59f6117d90c94c8e1ccbbddea5d7f7c5fe17f8002593f9de5bff04c357876c81",
+      "source_test_sha256": "a691f937316292e944cc672d5a363ad418b0c676ce042a18f53ee005d4afc423",
+      "nonpassing": [],
+      "closeout_rounds": {
+        "REJECTED": 38,
+        "COMPLETED": 46
+      }
+    },
+    {
+      "task": "CODEX-WA4-R-001-DIAG-01",
+      "targets": [
+        "all"
+      ],
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "platform": "win32",
+      "started_unix": 1791790487.0485704,
+      "elapsed_seconds": 670.282,
+      "tests_run": 749,
+      "passed": 748,
+      "failures": 0,
+      "errors": 0,
+      "skips": 1,
+      "successful": true,
+      "isolation_violations": [],
+      "run": "full-final",
+      "raw_results": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4rdiag-06exabdv\\full-final\\results.json",
+      "raw_results_sha256": "f6243561f00ca5642a751952fa7f385966914d5108f9e84160053fbc75053049",
+      "source_test_sha256": "a691f937316292e944cc672d5a363ad418b0c676ce042a18f53ee005d4afc423",
+      "nonpassing": [
+        {
+          "test": "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+          "status": "SKIP",
+          "reason": "symlink creation is not permitted here"
+        }
+      ],
+      "closeout_rounds": {
+        "REJECTED": 2,
+        "COMPLETED": 2
+      }
+    }
+  ],
+  "development_notes": [
+    "Initial TEMP diagnostic launch failed before unittest: repository was missing from sys.path; fixed only TEMP harness.",
+    "First controlled loader included 4 imported ProjectionRaceTests in addition to 8 Diagnostics; later target narrowed to Diagnostics.",
+    "controlled and controlled-final are intermediate runs; controlled-v3-final is final instrumented TEMP harness.",
+    "focused-final contains 20 repeated W tests plus 75 module tests, including one more W test; no counts are independent CI acceptance."
+  ]
+}
