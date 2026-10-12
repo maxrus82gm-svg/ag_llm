@@ -300,9 +300,19 @@ class ClosedTaskAuthorityTests(Fixture):
 
 
 CRASH_RACE_CHILD = r"""
-import json, os, sys, time
+import json, os, sys, time, traceback
 from pathlib import Path
 storage, barrier, name, mode = sys.argv[1:5]
+def exception_chain(exc):
+    chain, seen = [], set()
+    while exc is not None and id(exc) not in seen and len(chain) < 12:
+        seen.add(id(exc))
+        chain.append({"type": type(exc).__module__ + "." + type(exc).__qualname__,
+                      "message": str(exc), "errno": getattr(exc, "errno", None),
+                      "winerror": getattr(exc, "winerror", None),
+                      "frames": traceback.format_tb(exc.__traceback__)[-12:]})
+        exc = exc.__cause__ or exc.__context__
+    return chain
 import web_alarm.task_store as ts
 if mode == "complete_die":
     real_replace = ts.os.replace
@@ -320,6 +330,7 @@ while not Path(barrier, "go").exists():
     time.sleep(0.0005)
 if mode != "complete_die":
     time.sleep(0.05 * int(name[-1]))
+failure = None
 try:
     if mode == "complete_die":
         result = CloseoutService(storage, lock_timeout=60).complete("task_w")["result"]
@@ -332,7 +343,8 @@ try:
         result = "CREATED"
 except Exception as exc:
     result = "FAILED:" + type(exc).__name__
-print(json.dumps({"name": name, "result": result}))
+    failure = exception_chain(exc)
+print(json.dumps({"name": name, "result": result, "error": failure}))
 """
 
 
@@ -340,7 +352,12 @@ class CompletionCrashRaceTests(Fixture):
     """F-5, real processes: a completion dying right after its commit point vs concurrent writers."""
 
     def test_writers_racing_a_dying_completion_never_land_in_the_closed_task(self):
-        for _ in range(4):
+        # Keep the original strict REJECTED/EXIT 9 assertions. Evidence is
+        # collected before any assertion so a naturally failing Windows race
+        # remains diagnosable, not silently classified as safe.
+        if not hasattr(self, "facts"):
+            self.facts = []
+        for round_index in range(4):
             self.setUp()
             self.stage("m1", "one.txt")
             barrier = Path(self.tempdir.name) / "barrier"
@@ -356,15 +373,30 @@ class CompletionCrashRaceTests(Fixture):
                     time.sleep(0.01)
                 (barrier / "go").touch()
                 results = {}
+                child_evidence = {}
                 for proc, (name, _) in zip(procs, jobs):
                     out, err = proc.communicate(timeout=120)
-                    results[name] = json.loads(out)["result"] if out.strip() else f"EXIT {proc.returncode}"
+                    data = json.loads(out) if out.strip() else {"result": f"EXIT {proc.returncode}"}
+                    results[name] = data["result"]
+                    child_evidence[name] = {"returncode": proc.returncode,
+                                            "stderr": err[-4000:], **data}
             finally:
                 for proc in procs:
                     if proc.poll() is None:
                         proc.kill()
             ops = [op.operation_id for op in OperationStore(self.storage).list(TASK)]
             plan = self.tasks.open_plan(TASK).microtask_ids
+            terminal = {"active": (self.tasks.active_dir / TASK).is_dir(),
+                        "completed": (self.tasks.completed_dir / TASK).is_dir(),
+                        "task_status": self.tasks.open_task(TASK).status.value,
+                        "operation_ids": ops, "plan_ids": plan,
+                        "event_count": len(EventCheckpointStore(self.storage).read_events(TASK)),
+                        "project_one": (self.project / "one.txt").read_bytes().hex(),
+                        "project_two": (self.project / "two.txt").read_bytes().hex()}
+            # Storage only consists of disposable unittest TemporaryDirectory
+            # fixtures; never capture real user storage or unbounded logs.
+            self.facts.append({"round": round_index, "workers": child_evidence,
+                               "terminal": terminal})
             if self.where() == "completed":  # the dying completion committed first
                 self.assertEqual(results["c0"], "EXIT 9")
                 self.assertEqual((ops, plan), ([], ["m1"]))  # nothing landed inside the closed TASK
