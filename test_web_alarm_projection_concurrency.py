@@ -19,6 +19,7 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
+from web_alarm.closeout import CloseoutError, CloseoutService
 from web_alarm.event_checkpoint_store import EventCheckpointStore
 from web_alarm.operation_store import OperationStore
 from web_alarm.projection import ProjectionService, checkpoint_fields
@@ -271,6 +272,48 @@ class ProjectionRaceTests(unittest.TestCase):
                 self.assertEqual(after['files'].get(path), digest, path)
         return after
 
+    def assert_known_windows_move_refusal(self, worker):
+        """Only a native pre-commit directory move refusal is an expected failure.
+
+        Do not accept arbitrary CloseoutError, lock timeouts, read errors,
+        completed-but-pending state or unknown outcomes as a safe race.
+        """
+        self.assertEqual(worker["result"], "FAILED:CloseoutError")
+        chain = worker.get("error") or []
+        self.assertEqual([item["type"] for item in chain], [
+            "web_alarm.closeout.CloseoutError",
+            "web_alarm.task_store.TaskStoreError",
+            "builtins.PermissionError",
+        ])
+        self.assertEqual(chain[0]["message"], "cannot move task to completed: task_r")
+        self.assertEqual(chain[1]["message"], "cannot move task to completed: task_r")
+        self.assertEqual(chain[2]["errno"], 13)
+        self.assertIn(chain[2]["winerror"], (5, 32))
+        self.assertTrue(any("os.replace(task_dir, destination)" in frame
+                            for frame in chain[2].get("frames", [])))
+        phases = [item["phase"] for item in worker.get("trace", [])]
+        self.assertIn("complete_task_locked_failed", phases)
+        self.assertNotIn("complete_task_locked_return", phases)
+
+    @unittest.skipUnless(sys.platform == "win32", "requires Windows directory rename sharing semantics")
+    def test_native_windows_reader_refuses_move_and_preserves_active_task(self):
+        # A real held file handle, not a patched os.replace or fault injection.
+        with tempfile.TemporaryDirectory() as tmp:
+            storage = self.setup_task(Path(tmp), verified=True)
+            before = terminal_snapshot(storage)
+            with (storage / "tasks" / "active" / "task_r" / "task.md").open("rb"):
+                with self.assertRaises(CloseoutError) as outcome:
+                    CloseoutService(storage).complete("task_r")
+                cause = outcome.exception.__cause__
+                self.assertEqual(str(outcome.exception), "cannot move task to completed: task_r")
+                self.assertEqual(type(cause).__name__, "TaskStoreError")
+                self.assertIsInstance(cause.__cause__, PermissionError)
+                self.assertEqual(cause.__cause__.errno, 13)
+                self.assertIn(cause.__cause__.winerror, (5, 32))
+                self.assertEqual(terminal_snapshot(storage), before)
+            self.facts = []
+            self.assertEqual(self.capture_terminal(storage, before), before)
+
     def test_completion_never_admits_new_open_state(self):  # W
         outcomes = Counter()
         for index in range(ROUNDS):
@@ -303,12 +346,24 @@ class ProjectionRaceTests(unittest.TestCase):
                     self.assertTrue(all(r["result"].startswith("FAILED") for r in results if r["name"] != "a"))
                 else:
                     self.assertEqual(terminal['task']['status'], before['task']['status'])
-                    outcomes["writer_won"] += 1
-                    self.assertEqual(by_mode["a"], "REJECTED")
                     self.assertTrue(active_dir.is_dir())
                     self.assertFalse(completed_dir.exists())
                     admitted = [r for r in results if r["result"] in ("BEGUN", "CREATED")]
-                    self.assertTrue(admitted)
+                    if by_mode["a"] == "REJECTED":
+                        outcomes["writer_won"] += 1
+                        self.assertEqual(by_mode["a"], "REJECTED")
+                        self.assertTrue(admitted)
+                    else:
+                        # The ONLY permitted failed closeout is a proven native
+                        # Windows refusal of the directory move BEFORE commit.
+                        # capture_terminal above confirms active-only location,
+                        # no phantom operations, retained records, immutable
+                        # history and fresh-process agreement.
+                        self.assert_known_windows_move_refusal(
+                            next(r for r in results if r["name"] == "a"))
+                        self.assertEqual(
+                            terminal["locations"], {"active": True, "completed": False})
+                        outcomes["native_precommit_refusal"] += 1
         self.assertEqual(sum(outcomes.values()), ROUNDS)
 
     def race_rebuild(self, rebuild_mode: str) -> Counter:
