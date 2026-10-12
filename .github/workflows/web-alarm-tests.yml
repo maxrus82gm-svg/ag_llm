@@ -163,3 +163,69 @@ jobs:
             ${{ runner.temp }}/wa4r-diag/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7
+
+  wa4r-diag-isolated:
+    name: WA4-R DIAG / 80 race rounds / Windows
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run guarded WA4-R closeout diagnostic separately (80 rounds)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          $target = "test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state"
+          $cases = @(1..20 | ForEach-Object { $target })
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-001-DIAG-01 --output "${{ runner.temp }}/diag-independent" @cases
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload independent WA4-R diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa4r-diag-independent-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/diag-independent/results.json
+            ${{ runner.temp }}/diag-independent/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  wa4a-close-race:
+    name: WA4-A direct-close race / 80 rounds / Windows
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run isolated WA4-A mutation versus direct TASK closure (80 rounds)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          $target = "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task"
+          $cases = @(1..20 | ForEach-Object { $target })
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-001-DIAG-01 --output "${{ runner.temp }}/wa4a-close-race" @cases
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload independent direct-close race evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa4a-close-race-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/wa4a-close-race/results.json
+            ${{ runner.temp }}/wa4a-close-race/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
