@@ -1,4 +1,4 @@
-# Commits 256/260/264: WA4-E smoke, WA4-A/WA4-O guarded acceptance/regression.
+# WA4-E smoke, WA4-A/WA4-O regression, and independent WA4-R OBSERVE acceptance.
 # PRs run focused and full regression; manual runs can disable the full suite.
 # CI uses isolated temporary fixtures; it never targets live Workspace storage.
 name: Web Alarm smoke
@@ -103,6 +103,25 @@ jobs:
           test_web_alarm_operator_ui
           test_web_alarm_ui_launcher
 
+      - name: Run guarded WA4-R OBSERVE acceptance (Codex reported 228 focused)
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: >-
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-001
+          --output "${{ runner.temp }}/wa4r-focused"
+          test_web_alarm_observation
+          test_web_alarm_mutation_executor
+          test_web_alarm_lost_response
+          test_web_alarm_target_claims
+          test_web_alarm_target_claims_concurrency
+          test_web_alarm_cli
+          test_web_alarm_server
+          test_web_alarm_projection_repair2
+          test_web_alarm_recovery_coordinator_repair4b
+          test_web_alarm_rollback
+
       - name: Run WA4-O shipped JavaScript client tests
         run: node --test test_web_alarm_operator_ui.js
 
@@ -127,5 +146,7 @@ jobs:
             ${{ runner.temp }}/wa4a-full/isolation.jsonl
             ${{ runner.temp }}/wa4o-focused/results.json
             ${{ runner.temp }}/wa4o-focused/isolation.jsonl
+            ${{ runner.temp }}/wa4r-focused/results.json
+            ${{ runner.temp }}/wa4r-focused/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7
