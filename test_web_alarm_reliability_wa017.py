@@ -314,11 +314,18 @@ def exception_chain(exc):
         exc = exc.__cause__ or exc.__context__
     return chain
 import web_alarm.task_store as ts
+def phase(value):
+    with Path(barrier, "phase_" + name + ".jsonl").open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps({"phase": value, "pid": os.getpid()}) + "\n")
+        stream.flush()
 if mode == "complete_die":
     real_replace = ts.os.replace
     def replace(src, dst):
         if Path(src).is_dir():
+            phase("before_directory_move")
             real_replace(src, dst)
+            phase("directory_moved")
+            phase("crash_exit_9")
             os._exit(9)  # dies right after the commit point, holding both TASK locks
         return real_replace(src, dst)
     ts.os.replace = replace
@@ -384,6 +391,10 @@ class CompletionCrashRaceTests(Fixture):
                 for proc in procs:
                     if proc.poll() is None:
                         proc.kill()
+                    proc.communicate(timeout=10)
+            for name, _ in jobs:
+                path = barrier / ("phase_" + name + ".jsonl")
+                child_evidence[name]["trace"] = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()] if path.exists() else []
             ops = [op.operation_id for op in OperationStore(self.storage).list(TASK)]
             plan = self.tasks.open_plan(TASK).microtask_ids
             terminal = {"active": (self.tasks.active_dir / TASK).is_dir(),
@@ -399,6 +410,8 @@ class CompletionCrashRaceTests(Fixture):
                                "terminal": terminal})
             if self.where() == "completed":  # the dying completion committed first
                 self.assertEqual(results["c0"], "EXIT 9")
+                self.assertEqual([item["phase"] for item in child_evidence["c0"]["trace"]],
+                                 ["before_directory_move", "directory_moved", "crash_exit_9"])
                 self.assertEqual((ops, plan), ([], ["m1"]))  # nothing landed inside the closed TASK
                 self.assertTrue(all(results[n].startswith("FAILED") for n in ("b1", "b2", "m3")), results)
                 self.assertEqual(CloseoutService(self.storage).complete(TASK)["resumed"],

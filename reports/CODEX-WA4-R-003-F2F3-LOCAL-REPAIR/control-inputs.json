@@ -1,0 +1,26 @@
+{
+  "old_lookup": {
+    "source_path": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r003-ap5tmftn\\before\\web_alarm\\task_store.py",
+    "source_sha256": "bf8127d0d06f5e46f8d8eae7c76f2019e3f471efc628bc1c10b03f1135890527",
+    "method": "_task_path",
+    "code": "def _task_path(self, task_id: str, *, active_only: bool = False) -> Path:\n        task_id = _safe_id(\"task_id\", task_id)\n        active = self.active_dir / task_id\n        completed = self.completed_dir / task_id\n        if active.is_dir() and completed.is_dir():\n            raise TaskStoreError(f\"task exists in active and completed: {task_id}\")\n        if active.is_dir():\n            return active\n        if not active_only and completed.is_dir():\n            return completed\n        raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")"
+  },
+  "old_complete": {
+    "source_path": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r003-ap5tmftn\\before\\web_alarm\\task_store.py",
+    "source_sha256": "bf8127d0d06f5e46f8d8eae7c76f2019e3f471efc628bc1c10b03f1135890527",
+    "method": "complete_task",
+    "code": "def complete_task(self, task_id: str) -> TaskRecord:\n        \"\"\"Storage primitive: no closeout gate. Public workflows use CloseoutService.\"\"\"\n        with self.mutation_lock(task_id):\n            return self.complete_task_locked(task_id)"
+  },
+  "gap_lookup": {
+    "source_path": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r003-ap5tmftn\\target1-task_store.py",
+    "source_sha256": "07f4324ac7a5bb53f00bf4a4903d0097a2b21a24f09d7921c380b87995890b24",
+    "method": "_task_path",
+    "code": "def _task_path(self, task_id: str, *, active_only: bool = False) -> Path:\n        task_id = _safe_id(\"task_id\", task_id)\n        active = self.active_dir / task_id\n        completed = self.completed_dir / task_id\n        # Completion moves active -> completed. Probe the destination first:\n        # active=True followed by completed=True could describe different\n        # moments of one move, rather than two simultaneously existing TASKs.\n        # This is a path lookup, not a lock or a snapshot of concurrent reads.\n        if completed.is_dir():\n            if active.is_dir():\n                raise TaskStoreError(f\"task exists in active and completed: {task_id}\")\n            if not active_only:\n                return completed\n        elif active.is_dir():\n            return active\n        raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")"
+  },
+  "old_race": {
+    "source_path": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r003-ap5tmftn\\focused1-tests.py",
+    "source_sha256": "6446175588a8040bca779361e3eb5eba2c0393d0579347a0e139f5e6e95b0147",
+    "method": "test_two_executors_on_one_physical_target_never_both_write",
+    "code": "def test_two_executors_on_one_physical_target_never_both_write(self):\r\n        for round_ in range(4):\r\n            self.setUp()\r\n            self.activate()\r\n            results = self.race([\r\n                (\"a\", \"none\", {\"operation_id\": \"op_a\", \"target\": \"a.txt\", \"payload\": \"from a\\n\"}),\r\n                (\"b\", \"none\", {\"operation_id\": \"op_b\", \"target\": \"./sub/../a.txt\", \"payload\": \"from b\\n\"}),\r\n            ])\r\n            executed = [name for name, out in results.items() if out[\"result\"] == EXECUTED]\r\n            self.assertEqual(len(executed), 1, results)\r\n            loser = \"b\" if executed == [\"a\"] else \"a\"\r\n            self.assertEqual(results[loser][\"result\"], REFUSED)\r\n            self.assertIn(results[loser][\"result_code\"], (\"TARGET_OWNED\", \"PRECONDITION_FAILED\"))\r\n            self.assertEqual(self.read(\"a.txt\"), f\"from {executed[0]}\\n\".encode())\r\n            self.assertEqual(self.active_claims(), [])"
+  }
+}

@@ -404,13 +404,22 @@ class MutationExecutor:
                                 task_id=task_id, operation_id=op, record=record,
                                 next_safe_action="declare a complete contract under a new operation_id")
         data = None
-        if kind in (MutationKind.CREATE, MutationKind.WRITE):
-            try:
-                data = self.operations.read_payload(task_id, op)  # hash+size verified, before STARTED
-            except OperationPayloadIntegrityError as exc:
-                return self._result(REFUSED, "PAYLOAD_INTEGRITY_FAILURE", str(exc),
-                                    task_id=task_id, operation_id=op, record=record)
-        refusal = self._manifest_refusal(task_id, record)
+        try:
+            # These reads precede the physical boundary but still open TASK
+            # files. Share completion's outer lock so Windows readers cannot
+            # race its move; drop it before acquire/boundary re-enter the lock.
+            with self.operations.task_lock(task_id), self.tasks.mutation_lock(task_id):
+                if kind in (MutationKind.CREATE, MutationKind.WRITE):
+                    try:
+                        data = self.operations.read_payload(task_id, op)
+                    except OperationPayloadIntegrityError as exc:
+                        return self._result(REFUSED, "PAYLOAD_INTEGRITY_FAILURE", str(exc),
+                                            task_id=task_id, operation_id=op, record=record)
+                refusal = self._manifest_refusal(task_id, record)
+        except (OperationStoreError, TaskStoreError) as exc:
+            return self._result(REFUSED, "ADMISSION_UNAVAILABLE", str(exc),
+                                task_id=task_id, operation_id=op, record=record,
+                                next_safe_action="nothing was written; inspect the TASK and execution preflight")
         if refusal is not None:
             return self._result(REFUSED, *refusal, task_id=task_id, operation_id=op, record=record,
                                 next_safe_action="nothing was written")

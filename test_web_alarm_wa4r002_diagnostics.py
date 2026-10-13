@@ -68,6 +68,7 @@ def worker(config_path):
     from web_alarm.operation_store import OperationStore
     from web_alarm.target_claim_service import TargetClaimService
     from web_alarm.task_store import TaskStore
+    from web_alarm.store_lock import InterProcessLock
     cfg = read_json(config_path)
     base, storage = Path(cfg['base']), Path(cfg['storage'])
     name, mode = cfg['name'], cfg['mode']
@@ -86,7 +87,14 @@ def worker(config_path):
     actual_event, actual_path = EventCheckpointStore.append_event, EventCheckpointStore._events_path
     actual_apply, actual_transition = MutationExecutor._apply, OperationStore._transition_locked
     actual_replace, actual_lock, actual_write = os.replace, TaskStore.mutation_lock, TaskStore._write_task
+    actual_lock_acquire = InterProcessLock.acquire
     def text(path, *args, **kwargs):
+        if mode == 'held_RAW_read' and not armed['paused'] and path.name == 'task.md' and 'active' in path.parts:
+            armed['paused'] = True
+            with path.open('r', encoding=kwargs.get('encoding', 'utf8')) as handle:
+                data = handle.read()
+                pause('held_RAW_read', path=str(path), frames=traceback.format_stack(limit=8))
+                return data
         if mode == 'acquire_read' and armed['acquire'] and not armed['paused'] and path.name == 'task.md' and 'active' in path.parts:
             armed['paused'] = True
             pause('cached_task_read', path=str(path), frames=traceback.format_stack(limit=8))
@@ -130,6 +138,9 @@ def worker(config_path):
         return result
     def replace(src, dst):
         moving = Path(src) == storage / 'tasks/active' / TASK and Path(dst) == storage / 'tasks/completed' / TASK
+        if moving and mode == 'close_trace':
+            op_path=storage/'tasks/active'/TASK/'operations/op_diag.json'
+            mark('before_directory_move', operation=read_json(op_path) if op_path.exists() else None)
         result = actual_replace(src, dst)
         if moving:
             mark('directory_moved')
@@ -154,6 +165,10 @@ def worker(config_path):
             if mode == 'close_hold':
                 pause('mutation_lock_acquired')
             yield
+    def lock_acquire(lock):
+        if mode == 'close_trace' and lock.path == storage/'locks/operations'/f'{TASK}.lock':
+            mark('operations_lock_attempt')
+        return actual_lock_acquire(lock)
 
     try:
         with mock.patch.object(Path, 'read_text', text), mock.patch.object(Path, 'read_bytes', binary), \
@@ -164,7 +179,8 @@ def worker(config_path):
              mock.patch.object(OperationStore, '_transition_locked', transition), \
              mock.patch.object(os, 'replace', replace), \
              mock.patch.object(TaskStore, '_write_task', write_task), \
-             mock.patch.object(TaskStore, 'mutation_lock', lock):
+             mock.patch.object(TaskStore, 'mutation_lock', lock), \
+             mock.patch.object(InterProcessLock, 'acquire', lock_acquire):
             action = cfg['action']
             mark('actor_enter', action=action, mode=mode)
             if action == 'mutate':
@@ -339,13 +355,18 @@ class RaceEvidenceTests(unittest.TestCase):
         return process
 
     def test_F2_cached_snapshot_read_is_refused_without_physical_effect(self):
-        process = self.moved_reader('snapshot_read','cached_snapshot_read')
-        out = self.finish('mutation', process)
-        self.assertEqual((out['result'], out['result_code']), ('REFUSED','RESTORE_POINT_NOT_VERIFIED'))
-        self.assert_closed(self.state('terminal'), PRE)
-        self.assertEqual(self.run_actor('replay','mutate')['result'], 'REFUSED')
-        self.assert_closed(self.state('after_fresh_refusal'),PRE)
-        self.assertEqual(self.apply_count(), 0)
+        # Historical selector retained: read/move is now serialized instead
+        # of deliberately producing the old typed refusal.
+        self.setup_fixture()
+        writer=self.start('mutation','mutate','snapshot_read')
+        self.phase('mutation','cached_snapshot_read',writer)
+        closer=self.start('close','direct_close','close_trace')
+        self.phase('close','operations_lock_attempt',closer)
+        self.assertFalse((self.base/'close.directory_moved').exists())
+        self.release('mutation')
+        out=self.finish('mutation',writer)
+        self.assertEqual(self.finish('close',closer)['result'],'COMPLETED')
+        self.check_closed_delivery(out)
 
     def test_F2_projection_cached_snapshot_error_preserves_checkpoint_and_raw_state(self):
         from web_alarm.projection import ProjectionService
@@ -370,18 +391,36 @@ class RaceEvidenceTests(unittest.TestCase):
         self.assertEqual(self.apply_count(),0)
 
     def test_F2_cached_acquire_task_read_reproduces_error_but_preserves_PRE(self):
-        process = self.moved_reader('acquire_read','cached_task_read')
-        out = self.finish('mutation', process, 2)
-        self.assert_error(out, 'TaskStoreError', deepest='FileNotFoundError')
-        terminal = self.state('terminal_before_replay')
-        self.assert_closed(terminal, PRE)
-        self.assertEqual(terminal['operations']['op_diag']['status'], 'INTENT')
-        self.assertIsNone(terminal['operations']['op_diag']['receipt'])
-        self.assertEqual(self.run_actor('replay','mutate')['result'], 'REFUSED')
-        after=self.state('after_fresh_refusal')
-        self.assert_closed(after,PRE)
-        self.assertEqual(after['operations']['op_diag'],terminal['operations']['op_diag'])
-        self.assertEqual(self.apply_count(), 0)
+        self.setup_fixture()
+        writer=self.start('mutation','mutate','acquire_read')
+        self.phase('mutation','cached_task_read',writer)
+        closer=self.start('close','direct_close','close_trace')
+        self.phase('close','operations_lock_attempt',closer)
+        self.assertFalse((self.base/'close.directory_moved').exists())
+        self.release('mutation')
+        out=self.finish('mutation',writer)
+        self.assertEqual(self.finish('close',closer)['result'],'COMPLETED')
+        self.check_closed_delivery(out)
+
+    def check_closed_delivery(self,out):
+        self.assertIn(out['result'],('EXECUTED','REFUSED'))
+        executed=out['result']=='EXECUTED'
+        data=POST if executed else PRE
+        terminal=self.state('serialized_terminal_before_replay')
+        self.assert_closed(terminal,data)
+        record=terminal['operations']['op_diag']
+        self.assertEqual(record['status'],'DONE' if executed else 'INTENT')
+        if executed:
+            self.assertEqual(record['receipt']['sha256'],sha(POST))
+            self.assertIs(record['receipt']['matches_expected_post'],True)
+        else:
+            self.assertIsNone(record['receipt'])
+        replay=self.run_actor('replay','mutate')
+        self.assertEqual(replay['result'],'REPLAYED' if executed else 'REFUSED')
+        after=self.state('after_fresh_serialized_replay')
+        self.assert_closed(after,data)
+        self.assertEqual(after['operations']['op_diag'],record)
+        self.assertEqual(self.apply_count(),1 if executed else 0)
 
     def test_F2_release_event_error_after_DONE_is_replayed_without_second_apply(self):
         self.setup_fixture()
@@ -390,10 +429,13 @@ class RaceEvidenceTests(unittest.TestCase):
         before = self.state('DONE_before_move')
         self.assertEqual(before['operations']['op_diag']['status'],'DONE')
         self.assertEqual(before['target_sha256'],sha(POST))
-        self.assertEqual(self.run_actor('close','direct_close')['result'],'COMPLETED')
+        closer=self.start('close','direct_close','close_trace')
+        self.phase('close','operations_lock_attempt',closer)
+        self.assertFalse((self.base/'close.directory_moved').exists())
         self.release('mutation')
-        out = self.finish('mutation',process,2)
-        self.assert_error(out,'EventCheckpointStoreError',deepest='FileNotFoundError')
+        out = self.finish('mutation',process)
+        self.assertEqual(out['result'],'EXECUTED')
+        self.assertEqual(self.finish('close',closer)['result'],'COMPLETED')
         terminal = self.state('error_before_replay')
         self.assert_closed(terminal,POST)
         receipt = terminal['operations']['op_diag']['receipt']
@@ -401,7 +443,7 @@ class RaceEvidenceTests(unittest.TestCase):
         self.assertIs(receipt['matches_expected_post'],True)
         self.assertTrue(terminal['claims'])
         self.assertTrue(all(c['active'] is None for c in terminal['claims'].values()))
-        self.assertFalse(any(e['event_type']=='TARGET_CLAIM_RELEASED' for e in terminal['events']))
+        self.assertEqual(sum(e['event_type']=='TARGET_CLAIM_RELEASED' for e in terminal['events']),1)
         replay = self.run_actor('replay','mutate')
         self.assertEqual((replay['result'],replay['receipt']),('REPLAYED',receipt))
         self.assert_closed(self.state('after_fresh_replay'),POST)
@@ -413,21 +455,18 @@ class RaceEvidenceTests(unittest.TestCase):
         writer=self.start('mutation','mutate','boundary')
         self.phase('mutation','before_apply',writer)
         self.assertEqual(self.state('STARTED_at_barrier')['operations']['op_diag']['status'],'STARTED')
-        closer=self.start('close','direct_close','close_hold')
-        self.phase('close','mutation_lock_attempt',closer)
+        closer=self.start('close','direct_close','close_trace')
+        self.phase('close','operations_lock_attempt',closer)
         with self.assertRaises(TaskStoreError):
             with TaskStore(self.storage,lock_timeout=.1).mutation_lock(TASK):
                 self.fail('execution boundary did not hold mutation lock')
-        self.assertFalse((self.base/'close.mutation_lock_acquired').exists())
+        self.assertFalse((self.base/'close.directory_moved').exists())
         self.release('mutation')
-        self.phase('close','mutation_lock_acquired',closer)
         self.assertEqual(self.finish('mutation',writer)['result'],'EXECUTED')
-        done=self.state('DONE_before_move')
-        self.assertTrue(done['locations']['active'])
-        self.assertEqual(done['operations']['op_diag']['status'],'DONE')
-        self.assertEqual(done['target_sha256'],sha(POST))
-        self.release('close')
         self.assertEqual(self.finish('close',closer)['result'],'COMPLETED')
+        before_move=[e for f in self.facts for e in f.get('trace',[]) if e['phase']=='before_directory_move']
+        self.assertEqual(len(before_move),1)
+        self.assertEqual(before_move[0]['operation']['status'],'DONE')
         self.assert_closed(self.state('after_move'),POST)
         self.assertEqual(self.run_actor('replay','mutate')['result'],'REPLAYED')
         self.assertEqual(self.apply_count(),1)
@@ -466,6 +505,120 @@ class RaceEvidenceTests(unittest.TestCase):
         self.assertEqual(state['locations'],{'active':True,'completed':False})
         self.assertEqual(state['operations']['op_late']['status'],'INTENT')
         self.unchanged_evidence(state,PRE)
+
+    def test_F2_directory_probes_do_not_invent_duplicate_during_real_move(self):
+        from web_alarm.task_store import TaskStore
+        self.setup_fixture(verified=True)
+        tasks=TaskStore(self.storage)
+        active=self.storage/'tasks/active'/TASK
+        completed=self.storage/'tasks/completed'/TASK
+        real=Path.is_dir
+        moved=[]
+        def interleave(path):
+            if path==completed and not moved:
+                moved.append(True)
+                tasks.complete_task(TASK)
+                self.facts.append({'phase':'real_move_between_directory_probes','raw':self.observe()})
+            return real(path)
+        with mock.patch.object(Path,'is_dir',interleave):
+            located=tasks.task_directory(TASK)
+        self.assertEqual(len(moved),1)
+        self.assertEqual(located,completed)
+        self.assert_closed(self.state('after_interleaved_lookup'),PRE)
+
+    def test_F2_genuine_duplicate_directory_still_fails_closed(self):
+        import shutil
+        from web_alarm.task_store import TaskStore, TaskStoreError
+        self.setup_fixture()
+        shutil.copytree(self.storage/'tasks/active'/TASK,self.storage/'tasks/completed'/TASK)
+        with self.assertRaisesRegex(TaskStoreError,'exists in active and completed'):
+            TaskStore(self.storage).task_directory(TASK)
+        self.assertEqual(self.run_actor('mutate','mutate')['result'],'REFUSED')
+        self.assertEqual(self.apply_count(),0)
+        self.assertEqual((self.project/'data.bin').read_bytes(),PRE)
+
+    def test_F2_move_between_destination_and_source_probe_is_resolved(self):
+        from web_alarm.task_store import TaskStore
+        self.setup_fixture(verified=True)
+        tasks=TaskStore(self.storage)
+        active=self.storage/'tasks/active'/TASK
+        completed=self.storage/'tasks/completed'/TASK
+        real=Path.is_dir
+        moved=[]
+        def interleave(path):
+            if path==active and not moved:
+                moved.append(True)
+                tasks.complete_task(TASK)
+                self.facts.append({'phase':'move_after_destination_false_before_source_probe','raw':self.observe()})
+            return real(path)
+        with mock.patch.object(Path,'is_dir',interleave):
+            located=tasks.task_directory(TASK)
+        self.assertEqual(located,completed)
+        self.assertEqual(len(moved),1)
+        self.assert_closed(self.state('resolved_move_gap'),PRE)
+
+    def test_F2_completion_lock_timeout_writes_nothing_and_releases_locks(self):
+        from web_alarm.task_store import TaskStore, TaskStoreError
+        from web_alarm.operation_store import OperationStore
+        self.setup_fixture(verified=True)
+        with OperationStore(self.storage).task_lock(TASK):
+            with self.assertRaises(TaskStoreError) as caught:
+                TaskStore(self.storage,lock_timeout=.05).complete_task(TASK)
+        self.facts.append({'expected_lock_timeout':error_chain(caught.exception)})
+        self.assertEqual(error_chain(caught.exception)[-1]['type'],'StoreLockTimeout')
+        self.assertEqual(self.state('timeout_preserves_task'),self.initial)
+        self.assertEqual(self.run_actor('complete','complete')['result'],'COMPLETED')
+        self.assert_closed(self.state('after_lock_release'),PRE)
+
+    def test_F2_invalid_completion_identity_creates_no_lock_files(self):
+        from web_alarm.task_store import TaskStore, TaskStoreError
+        self.setup_fixture()
+        before={p.relative_to(self.storage).as_posix() for p in self.storage.rglob('*')}
+        with self.assertRaises(TaskStoreError):
+            TaskStore(self.storage).complete_task('../escape')
+        self.assertEqual({p.relative_to(self.storage).as_posix() for p in self.storage.rglob('*')},before)
+        self.assertEqual(self.state('invalid_id_unchanged'),self.initial)
+
+    def test_F2_preflight_lock_failure_refuses_without_apply_and_replay_is_safe(self):
+        from web_alarm.mutation_executor import MutationExecutor
+        from web_alarm.operation_store import OperationStoreError
+        self.setup_fixture()
+        executor=MutationExecutor(self.storage)
+        @contextmanager
+        def unavailable(task):
+            raise OperationStoreError('injected preflight lock unavailable')
+            yield
+        with mock.patch.object(MutationExecutor,'_apply',wraps=MutationExecutor._apply) as apply:
+            with mock.patch.object(executor.operations,'task_lock',unavailable):
+                out=executor.execute(TASK,'m1','op_diag','write','data.bin',payload=POST)
+            self.assertEqual((out['result'],out['result_code']),('REFUSED','ADMISSION_UNAVAILABLE'))
+            apply.assert_not_called()
+            state=self.state('preflight_refused')
+            self.unchanged_evidence(state,PRE)
+            self.assertEqual(state['operations']['op_diag']['status'],'INTENT')
+            self.assertIsNone(state['operations']['op_diag']['receipt'])
+            self.assertEqual(executor.execute(TASK,'m1','op_diag','write','data.bin',payload=POST)['result'],'EXECUTED')
+            self.assertEqual(apply.call_count,1)
+        self.unchanged_evidence(self.state('replayed_after_lock_recovery'),POST)
+
+    @unittest.skipUnless(sys.platform=='win32','native Windows RAW-reader overlap')
+    def test_F3_RAW_reader_is_inside_operations_lock_before_admission(self):
+        from web_alarm.closeout import CloseoutService, CloseoutError
+        self.setup_fixture(verified=True)
+        reader=self.start('begin','begin','held_RAW_read')
+        self.phase('begin','held_RAW_read',reader)
+        with self.assertRaises(CloseoutError) as caught:
+            CloseoutService(self.storage,lock_timeout=.1).complete(TASK)
+        chain=error_chain(caught.exception)
+        self.facts.append({'blocked_closeout_chain':chain,'intermediate':self.observe()})
+        self.assertEqual(chain[-1]['type'],'StoreLockTimeout',chain)
+        self.release('begin')
+        self.assertEqual(self.finish('begin',reader)['result'],'BEGUN')
+        self.assertEqual(self.run_actor('close','complete')['result'],'REJECTED')
+        terminal=self.state('after_serialized_admission')
+        self.assertEqual(terminal['locations'],{'active':True,'completed':False})
+        self.assertEqual(terminal['operations']['op_late']['status'],'INTENT')
+        self.unchanged_evidence(terminal,PRE)
 
 
 if __name__ == '__main__':

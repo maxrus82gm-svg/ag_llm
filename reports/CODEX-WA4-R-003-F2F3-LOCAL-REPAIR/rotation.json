@@ -1,0 +1,27 @@
+{
+  "task": "CODEX-WA4-R-003-F2F3-LOCAL-REPAIR",
+  "before_sha256": "258ff13147727895e55df0dc8bd8056b0187ba65d23fdc2fd88749d431fa4118",
+  "assignment_sha256": "27792527738a414f3053c688b9ea826164781dbe6077b9aac728c472c40d7f21",
+  "assignment_bytes": 16052,
+  "previous_tail_sha256": "24cf3de2c0b1435552d7881c72e7e54ef2bc582be655af3b987073cd919e2ce3",
+  "previous_tail_bytes": 282680,
+  "fence_length": 15,
+  "phases": [
+    {
+      "phase": "save_block2_and_block3_before_freeing_block1",
+      "sha256": "5828c461cc379bba7326f42bda01e0c91dba53d3e37bf7732572b0c1163201ff",
+      "original_assignment_in_block2": true,
+      "previous_tail_byte_identical": true
+    },
+    {
+      "phase": "free_block1",
+      "sha256": "a14ae64b0c43e116f1c50a94fdd11b2ff4c0ca70ac5cea35f97db6124911ae5b",
+      "original_assignment_in_block2": true,
+      "previous_tail_byte_identical": true
+    }
+  ],
+  "after_sha256": "a14ae64b0c43e116f1c50a94fdd11b2ff4c0ca70ac5cea35f97db6124911ae5b",
+  "prefix_byte_identical": true,
+  "previous_tail_byte_identical": true,
+  "assignment_byte_identical": true
+}

@@ -406,8 +406,6 @@ class OperationStore:
             raise OperationStoreError("action must be a non-empty string")
         if not target:
             raise OperationStoreError("target must be a non-empty string")
-        self.tasks.open_microtask(task_id, microtask_id)
-        self.tasks.task_directory(task_id, active_only=True)
         chosen_id = _safe_component(
             "operation_id",
             operation_id or new_id("op"),
@@ -423,7 +421,14 @@ class OperationStore:
             allow_secret_target=allow_secret_target,
         )
 
-        with self._serialized(task_id):
+        with self._serialized(task_id), self.tasks.mutation_lock(task_id):
+            # RAW/task reads must share the completion lock too: on Windows a
+            # pre-lock reader can prevent the directory move even though no
+            # operation has been admitted yet. No file handle escapes this
+            # scope. The inner lock also excludes TaskStore metadata writers;
+            # direct completion and CloseoutService take these in this order.
+            self.tasks.open_microtask(task_id, microtask_id)
+            self.tasks.task_directory(task_id, active_only=True)
             path = self._path(task_id, chosen_id, active_only=True)
             if path.exists():
                 existing = self._load_path(path, task_id, chosen_id)

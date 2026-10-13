@@ -19,10 +19,311 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.**
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ. CODEX-WA4-R-003-F2F3-LOCAL-REPAIR: RESULT READY / AWAITING INDEPENDENT VERIFICATION.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-003-F2F3-LOCAL-REPAIR. Исходный БЛОК 1 сохранён дословно, до отчёта не изменялся.
+**AMENDMENT / EVIDENCE:** адресный handoff WEB_07 по F3 и пользовательские JSON/ZIP из run 38379575748 сохранены отдельно в отчёте и original attachments; исходную постановку не заменяют.
+
+```````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-003-F2F3-LOCAL-REPAIR
+
+**Статус:** ASSIGNED / AWAITING LOCAL EXECUTION  
+**Исполнитель:** Codex, локальный агент  
+**ARCH CLASS:** Web Alarm Workspace / Runtime Reliability & Concurrency  
+**PRIMARY PROFILE:** 23 — Web Alarm  
+**TEST PROFILE:** 36.2  
+**Тема:** Независимое инженерное расследование и локальный ремонт гонок F2/F3.
+
+## 1. Цель
+
+Исследовать два подтверждённых красных сценария Windows CI, установить фактические причины, выполнить необходимые адресные исправления, дополнить общую накопительную базу тестов и **самостоятельно провести локальное тестирование на Windows**.
+
+Тесты не являются единственным доказательством корректности.
+
+Исполнитель обязан провести собственную инженерную проверку исходников, алгоритмов, последовательностей событий, блокировок, файловых операций, отказов и восстановления состояния.
+
+**Зелёный результат тестов без анализа кода и фактического состояния данных недостаточен для RESULT READY.**
+
+## 2. Обязательное чтение
+
+Пройти актуальный локальный маршрут:
+
+`08 → 000 → 34 → 18 → 01 → 23/24/25 → 36 → 36.1 → 36.2`
+
+Применять `TEST-COLLAB-01@1`, `TEST-DEV-01@1`, `TEST-COV-01@1`, `TEST-EXEC-01@1`, `TEST-QA-01@1`, `TEST-FLAKY-01@1`, `TEST-EVID-01@1`, `TEST-SCOPE-01@1`.
+
+Соблюдать `DOC-GIT-01@1`: **никаких Git/GitHub-операций локального агента без отдельного разрешения**, включая `git status`, `git diff` и чтение `.git`.
+
+Изучить существующие исходники и тесты непосредственно в локальной рабочей копии. Убедиться, что прежняя TASK не выполняется одновременно в тех же файлах; при конфликте сохранить чужие изменения и сообщить о блокере.
+
+## 3. Исходные доказательства
+
+GitHub Windows Actions, run `38379575748`:
+
+[https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38379575748](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38379575748)
+
+Проверяемая CI-ревизия:
+
+`37123b176097c15c8d21e0040bdf7d7f3e8072a3`
+
+### F2 — direct close versus mutation
+
+Задание `WA4-A direct-close race / 80 rounds / Windows` завершилось FAIL.
+
+Selector:
+
+`test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task`
+
+Наблюдался `EventCheckpointStoreError` с причиной:
+
+`task exists in active and completed: task_e`
+
+Stack проходит через `OperationStore.begin`, `EventCheckpointStore.append_event`, `TaskStore.task_directory` и `TaskStore._task_path`.
+
+**Гипотеза, не установленная причина:** чтения active/completed могут пересекаться с перемещением директории TASK. Проверить этот вариант и альтернативные причины; не считать гипотезу доказательством.
+
+### F3 — dying completion versus writers
+
+Задание `WA4-R-002 independent diagnostic / Windows` завершилось FAIL: 63 теста, 1 failure.
+
+Selector:
+
+`test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task`
+
+При активной TASK тест ожидал результат completion `REJECTED`, но фактически получил:
+
+`FAILED:CloseoutError`
+
+Нужно установить точную fault phase, причину ошибки и реальный terminal state. Само исключение не доказывает ни повреждение данных, ни безопасность.
+
+Дополнительные факты:
+
+- Все 8 новых `test_web_alarm_wa4r002_diagnostics` прошли.
+    
+- Полный Web Alarm regression: 761/761 PASS.
+    
+- Изолированные гонки проходили в отдельных прогонах.
+    
+- Negative controls независимого задания не исполнялись из-за предшествующего FAIL.
+    
+
+**Первоначальные красные результаты сохраняются как исторические свидетельства. Повторный PASS их не отменяет.**
+
+## 4. Этап A — самостоятельное расследование
+
+До исправлений:
+
+1. Изучить реальные реализации `TaskStore`, `CloseoutService`, `MutationExecutor`, `OperationStore`, `EventCheckpointStore`, checkpoint/projection и соответствующие тестовые harness.
+    
+2. Вручную восстановить последовательности возможных событий: lock acquisition, operation BEGIN/STARTED/APPLY/DONE, append event, directory move, status update, process termination и fresh-process recovery.
+    
+3. Проверить границы блокировок, повторное определение пути TASK, TOCTOU, Windows rename semantics, обработку исключений, сохранность receipts и checkpoint.
+    
+4. Отдельно определить: допустимый отказ, реальный дефект runtime, дефект тестового harness или пока неопределённая ситуация.
+    
+5. Проверить, какие ещё участки кода используют ту же опасную последовательность, даже если существующие тесты её не обнаруживают.
+    
+
+Подготовить короткую evidence-based матрицу:
+
+`Observed failure → possible cause → source path → expected invariant → existing test → gap`.
+
+**Не переходить сразу к косметическому изменению assertions.**
+
+## 5. Этап B — локальное воспроизведение и независимый oracle
+
+Использовать существующий Windows runner и только disposable TEMP fixtures.
+
+Сначала провести узкий baseline текущих тестов, сохранить первый новый FAIL и точную фактическую collection.
+
+Если сбой не воспроизводится естественно, допускается контролируемая диагностическая инъекция, которая достигает той же критической ветви исполнения. Natural reproduction и injected reproduction должны быть явно разделены.
+
+При необходимости создать дополнительные deterministic phase-barrier тесты.
+
+Проверять независимо от возвращаемых production enum:
+
+- фактическое наличие TASK в `active` и `completed` после остановки процессов;
+    
+- исходные и конечные bytes/hash целевых файлов;
+    
+- состояние `task.json`, plan, operations, events, receipts и checkpoint;
+    
+- число реальных физических применений mutation;
+    
+- отсутствие недопустимых writes после завершения TASK;
+    
+- корректность fresh-process recovery и replay;
+    
+- отсутствие дублирования эффектов, потери записей и ложного авторитетного состояния.
+    
+
+Снимки состояния получать после остановки собственных worker-процессов, отдельно отмечая промежуточные наблюдения в момент гонки.
+
+## 6. Этап C — исправление
+
+После установления причины внести минимальные адресные изменения в разрешённые runtime-файлы.
+
+Допускается улучшать существующие тесты и добавлять новые regression/negative selectors **в общую тестовую базу проекта**.
+
+Обязательно:
+
+- сохранять строгий контракт и fail-closed поведение там, где оно требуется;
+    
+- не заменять `REJECTED` на «любое исключение допустимо»;
+    
+- не скрывать failure через skip, XFAIL, дополнительные retries или исключение теста из collection;
+    
+- не менять исторические evidence;
+    
+- не ухудшать безопасность ради устранения race;
+    
+- самостоятельно проверить все новые ветви и побочные эффекты исправления.
+    
+
+Если выяснится, что причина в harness, исправить harness в рамках scope, но не ослаблять продуктовый oracle. Доказать качество новых тестов, включая контроль того, что тест действительно достиг целевой fault phase.
+
+## 7. Этап D — обязательные локальные проверки после исправления
+
+**Локальные тесты выполняет сам Codex, а не передаёт их запуск координатору.**
+
+Порядок:
+
+1. Syntax/static checks изменённых Python-модулей.
+    
+2. Точные F2/F3 selectors с проверкой collection и assertions.
+    
+3. Новые regression tests и подходящие negative controls.
+    
+4. Смежные тесты `test_web_alarm_mutation_executor`, `test_web_alarm_reliability_wa017`, `test_web_alarm_wa4r002_diagnostics` и `test_web_alarm_projection_concurrency`.
+    
+5. Bounded Windows race/stress повторения после локального PASS, с сохранением результатов по каждой попытке.
+    
+6. Полная Web Alarm regression, если среда позволяет.
+    
+
+Пример стандартного запуска из корня проекта:
+
+```
+python -B wa4a_acceptance.py --task CODEX-WA4-R-003-F2F3-LOCAL-REPAIR --output "$env:TEMP\wa-f2f3-focused" test_web_alarm_mutation_executor test_web_alarm_reliability_wa017 test_web_alarm_wa4r002_diagnostics test_web_alarm_projection_concurrency
+```
+
+После целевых проверок:
+
+```
+python -B wa4a_acceptance.py --task CODEX-WA4-R-003-F2F3-LOCAL-REPAIR --output "$env:TEMP\wa-f2f3-full" all
+```
+
+Для каждого повторного запуска — отдельная output-директория.
+
+Обязательно проверить фактические test IDs, counts PASS/FAIL/ERROR/SKIP, exit codes, isolation и результаты негативных контролей.
+
+Если что-либо невозможно выполнить, указать `NOT RUN / BLOCKED`, не объявляя полный PASS.
+
+## 8. Этап E — ручная инженерная ревизия
+
+**Этот этап обязателен даже при полностью зелёной регрессии.**
+
+После всех исправлений исполнитель самостоятельно:
+
+- перечитывает изменённые функции целиком;
+    
+- выполняет логический walkthrough нормальных и аварийных ветвей;
+    
+- проверяет, нет ли новых race windows;
+    
+- анализирует соблюдение lock ordering и atomicity;
+    
+- проверяет крайние состояния и частичные отказы, включая сценарии вне первоначального чек-листа;
+    
+- сверяет фактические данные с архитектурными контрактами, а не только с assertions;
+    
+- определяет остаточные риски и непокрытые случаи.
+    
+
+Результат отдельным разделом отчёта: **MANUAL ENGINEERING REVIEW** с конкретными проверенными ветвями и выводами.
+
+Недостаточно написать просто «код проверен».
+
+## 9. Границы полномочий
+
+Разрешено: адресное исследование, исправление Web Alarm runtime и тестов по F2/F3, необходимые безопасные локальные проверки, дополнение общего набора регрессионных тестов, профильный фактический отчёт.
+
+Запрещено без отдельного решения: Git/GitHub-операции, merge, rollout, WARN/STRICT/GATEWAY REQUIRED, изменение production workspace, destructive live fault injection, вмешательство в Ultra/Voice и самостоятельное редактирование общих документов `000/01/05/06/08/18/34/36/36.1`.
+
+По F1 не объявлять закрытие в составе данной TASK. При обнаружении пересекающейся причины указать её и выполнить только необходимые смежные проверки.
+
+Для общих документов подготовить `SHARED DOC DELTA`, который затем рассмотрит ChatGPT.
+
+## 10. Сдача
+
+Финальный статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+Представить:
+
+- краткий человеческий итог;
+    
+- фактическую root cause либо обоснованное `INCONCLUSIVE`;
+    
+- список изменённых файлов и конкретных участков;
+    
+- сравнение исходного и исправленного поведения;
+    
+- перечень созданных/усиленных тестов;
+    
+- точные команды и результаты локальных прогонов;
+    
+- raw evidence, исходный FAIL, phase markers, hashes, recovery observations;
+    
+- отдельный `MANUAL ENGINEERING REVIEW`;
+    
+- нерешённые риски и `DOC IMPACT / SHARED DOC DELTA`;
+    
+- `NEXT SAFE ACTION`.
+    
+
+При необходимости для независимой приёмки сохранить один компактный task-report с указателями на evidence. Не создавать массив ненужных служебных отчётов.
+
+**Окончательный DONE / VERIFIED присваивает ChatGPT только после собственной независимой проверки исходников, тестов и доказательств.**
+
+TASK не разрешает автоматический переход к STRICT rollout.
+
+---
+
+```````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-003-F2F3-LOCAL-REPAIR. **STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION.** Исполнитель 007/Codex; Windows/Python 3.12.10, 2026-10-13.
+
+F2: real-move TOCTOU phantom duplicate и cached reader/event paths исправлены; bounded recheck также устраняет вручную найденный false UNKNOWN. Completion, begin и ранние executor reads соблюдают operations → mutation; CAS/ownership/physical boundary не ослаблены. Изменены 3 runtime + 3 существующих test-файла, добавлены 8 regression methods без удаления прежних 761 selectors.
+
+F3: original CI ZIP подтверждает pre-move native WinError 5/active-only PLANNED. Локальный held RAW reader воспроизводит тот же класс отказа до repair и защищён lock после repair. Владельца handle именно исторического CI record установить нельзя; исторический FAIL сохранён, VERIFIED не присваивается. Strict REJECTED/crash exit9 assertions сохранены, crash markers и fresh recovery проверены.
+
+Проверки final revision: focused 71 PASS/0 FAIL/0 ERROR/0 SKIP; quality 6 outer PASS с целевыми inner RED; 5 bounded stress attempts, 10 methods/40 внутренних раундов PASS; FULL 769 tests: 768 PASS/0 FAIL/0 ERROR/1 SKIP, exit 0, guard 0. Source SHA финальных addressed/focused/quality/stress/FULL совпадают. Промежуточные RED/ERROR не скрыты: before duplicate/RAW, manually found move gap, missing hashlib harness import и старый CAS test oracle; причины и поправки в report.
+
+**MANUAL ENGINEERING REVIEW** проведён отдельно: lock ordering/callers, normal/failed move, timeout/exception unwinding, STARTED/APPLY/DONE/release, duplicate/invalid ID, early refusal, raw bytes/events/receipt/checkpoint, fresh restart/replay. F1 OPEN; cached direct Projection snapshot read error остаётся отдельным read-only ограничением с доказанным сохранением данных и fresh STALE. Natural stress F3 дал 20 exit9; writer-first REJECTED доказан отдельно deterministic control. Никаких live mutations, Git/GitHub, Ultra/Voice/UI/CI изменений или следующих стадий.
+
+**REPORT / EVIDENCE:** [report](../reports/CODEX-WA4-R-003-F2F3-LOCAL-REPAIR/report.md); рядом checks.json, versions.json, evidence.zip, historical-CI.zip, historical-F3.json, quality_controls.py, control-inputs.json, rotation.json, manifest.json. TEMP raw attempts дополнительно сохранены; переносимые evidence находятся в reports. Внешний drift общих документов зафиксирован, не откатывался; полный БЛОК 1 оставался неизменен до ротации.
+
+**DOC IMPACT / SHARED DOC DELTA:** для 23/24/25, 36.2 и общего current/history контура предложена адресная дельта в report. Общие документы мной не редактировались; DOC CLOSEOUT INCOMPLETE до координатора. Нумерация commit не придумывалась.
+
+**NEXT SAFE ACTION:** независимая проверка WEB_07 sources/oracle/raw evidence/recovery и при отдельно разрешённом решении CI. Только ChatGPT присваивает acceptance/VERIFIED. F1 и STRICT не закрывать, следующие TASK не запускать.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и история
+
+Дословный архив, не действующая постановка и не новые полномочия.
+
+```````````````markdown
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 **TASK:** CODEX-WA4-R-002. Полная первоначальная утверждённая постановка сохранена дословно. Во время исполнения БЛОК 1 не переписывался.
@@ -2904,3 +3205,4 @@ Codex: задача утверждена пользователем. Прочи�
 `````````````
 
 ``````````````
+```````````````

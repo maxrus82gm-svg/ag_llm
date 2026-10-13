@@ -1,0 +1,120 @@
+{
+  "provenance": {
+    "repository": "maxrus82gm-svg/ag_llm",
+    "github_actions_run_id": 38379575748,
+    "github_actions_run_url": "https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38379575748",
+    "artifact_name": "wa4r002-independent-38379575748-1",
+    "artifact_id": 11802732223,
+    "original_file_in_zip": "wa4r002-focused/results.json",
+    "source_commit": "37123b176097c15c8d21e0040bdf7d7f3e8072a3",
+    "original_results_sha256": "956a8c608d169c3a610073692b948ecca71e38f8c3293fe1cc660584ae0f9398",
+    "excerpt": "Exact failed test record plus original run metadata; not the full test report"
+  },
+  "run_summary": {
+    "task": "CODEX-WA4-R-002-INDEPENDENT",
+    "targets": [
+      "test_web_alarm_wa4r002_diagnostics",
+      "test_web_alarm_reliability_wa017",
+      "test_web_alarm_projection_concurrency",
+      "test_web_alarm_mutation_executor"
+    ],
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "win32",
+    "started_unix": 1791885236.346626,
+    "elapsed_seconds": 98.297,
+    "tests_run": 63,
+    "failures": 1,
+    "errors": 0,
+    "skips": 0,
+    "passed": 62,
+    "successful": false,
+    "isolation_violations": []
+  },
+  "failed_test": {
+    "test": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+    "status": "FAIL",
+    "error": "Traceback (most recent call last):\n  File \"D:\\a\\ag_llm\\ag_llm\\test_web_alarm_reliability_wa017.py\", line 407, in test_writers_racing_a_dying_completion_never_land_in_the_closed_task\n    self.assertEqual(results[\"c0\"], \"REJECTED\")\nAssertionError: 'FAILED:CloseoutError' != 'REJECTED'\n- FAILED:CloseoutError\n+ REJECTED\n\n",
+    "facts": [
+      {
+        "round": 0,
+        "workers": {
+          "c0": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "c0",
+            "result": "FAILED:CloseoutError",
+            "error": [
+              {
+                "type": "web_alarm.closeout.CloseoutError",
+                "message": "cannot move task to completed: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 35, in <module>\n",
+                  "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\closeout.py\", line 102, in complete\n    raise CloseoutError(str(exc)) from exc\n"
+                ]
+              },
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "cannot move task to completed: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\closeout.py\", line 100, in complete\n    task = self.tasks.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\task_store.py\", line 566, in complete_task_locked\n    raise TaskStoreError(f\"cannot move task to completed: {task_id}\") from exc\n"
+                ]
+              },
+              {
+                "type": "builtins.PermissionError",
+                "message": "[WinError 5] Access is denied: 'D:\\\\a\\\\_temp\\\\tmpsyr3j4f0\\\\state\\\\tasks\\\\active\\\\task_w' -> 'D:\\\\a\\\\_temp\\\\tmpsyr3j4f0\\\\state\\\\tasks\\\\completed\\\\task_w'",
+                "errno": 13,
+                "winerror": 5,
+                "frames": [
+                  "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\task_store.py\", line 564, in complete_task_locked\n    os.replace(task_dir, destination)\n",
+                  "  File \"<string>\", line 20, in replace\n"
+                ]
+              }
+            ]
+          },
+          "b1": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b1",
+            "result": "BEGUN",
+            "error": null
+          },
+          "b2": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b2",
+            "result": "BEGUN",
+            "error": null
+          },
+          "m3": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "m3",
+            "result": "CREATED",
+            "error": null
+          }
+        },
+        "terminal": {
+          "active": true,
+          "completed": false,
+          "task_status": "PLANNED",
+          "operation_ids": [
+            "op_b1",
+            "op_b2"
+          ],
+          "plan_ids": [
+            "m1",
+            "late_m3"
+          ],
+          "event_count": 7,
+          "project_one": "6f6e652e7478740a",
+          "project_two": "74776f2e7478740a"
+        }
+      }
+    ]
+  }
+}

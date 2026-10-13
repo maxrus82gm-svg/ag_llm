@@ -166,12 +166,20 @@ class TaskStore:
         task_id = _safe_id("task_id", task_id)
         active = self.active_dir / task_id
         completed = self.completed_dir / task_id
-        if active.is_dir() and completed.is_dir():
-            raise TaskStoreError(f"task exists in active and completed: {task_id}")
-        if active.is_dir():
+        # Completion moves active -> completed. Probe the destination first:
+        # active=True followed by completed=True could describe different
+        # moments of one move, rather than two simultaneously existing TASKs.
+        # This is a path lookup, not a lock or a snapshot of concurrent reads.
+        completed_present = completed.is_dir()
+        if not completed_present and active.is_dir():
             return active
-        if not active_only and completed.is_dir():
-            return completed
+        # If active disappeared after the destination probe, re-read the
+        # destination once. This is a bounded lookup, never a mutation retry.
+        if completed_present or completed.is_dir():
+            if active.is_dir():
+                raise TaskStoreError(f"task exists in active and completed: {task_id}")
+            if not active_only:
+                return completed
         raise TaskStoreError(f"unknown {'active ' if active_only else ''}task_id: {task_id}")
 
     def _load_task_from(self, task_dir: Path) -> TaskRecord:
@@ -529,8 +537,19 @@ class TaskStore:
 
     def complete_task(self, task_id: str) -> TaskRecord:
         """Storage primitive: no closeout gate. Public workflows use CloseoutService."""
-        with self.mutation_lock(task_id):
-            return self.complete_task_locked(task_id)
+        task_id = _safe_id("task_id", task_id)
+        # Share the operation writers' lock even for this ungated primitive.
+        # Otherwise it may relocate a TASK during begin/acquire/release reads
+        # or append_event. Keep operations -> mutation, as in CloseoutService.
+        lock = InterProcessLock(
+            self.storage_root / "locks" / "operations" / f"{task_id}.lock",
+            timeout=self.lock_timeout,
+        )
+        try:
+            with lock, self.mutation_lock(task_id):
+                return self.complete_task_locked(task_id)
+        except StoreLockTimeout as exc:
+            raise TaskStoreError(str(exc)) from exc
 
     def completion_state(self, task_id: str) -> str:
         """Pure: ACTIVE, COMPLETED, or an interrupted completion (``INTERRUPTED_COMPLETION``)."""
@@ -541,7 +560,7 @@ class TaskStore:
         return COMPLETION_DONE if closed else COMPLETION_MOVED_STATUS_PENDING
 
     def complete_task_locked(self, task_id: str) -> TaskRecord:
-        """``complete_task`` for a caller that already holds ``mutation_lock``.
+        """``complete_task`` for a caller holding operations and mutation locks.
 
         F-5 (CLAUDE-WA-017): the directory move active/ -> completed/ is the one
         commit point, and the COMPLETED status is written after it. No store

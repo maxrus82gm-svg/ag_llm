@@ -10,6 +10,7 @@ sharing violations. Races (real processes): two executors on one physical target
 TASK completion. Compatibility: RC-2 RETRY / ADOPT, RC-4 rollback, RC-6 recover / READY.
 """
 
+import hashlib
 import json
 import os
 import subprocess
@@ -63,12 +64,14 @@ CHILD = """
     real_transition = store.OperationStore._transition_locked
     real_apply = mx.MutationExecutor._apply
     real_release = mx.MutationExecutor._release
+    apply_calls = [0]
     def transition(self, task_id, operation_id, requested, **kw):
         status = store.OperationStatus(requested).value
         if point == "before_started" and status == "STARTED":
             os._exit(9)
         return real_transition(self, task_id, operation_id, requested, **kw)
     def apply(kind, path, data):
+        apply_calls[0] += 1
         if point == "after_started":
             os._exit(9)
         if point == "slow_write":
@@ -93,7 +96,9 @@ CHILD = """
     out = mx.MutationExecutor(storage, lock_timeout=60).execute(
         "task_e", "m1", request.get("operation_id", "op_1"), request.get("action", "write"),
         request.get("target", "a.txt"), payload=request.get("payload", "after-content\\n").encode())
-    print(json.dumps({k: out.get(k) for k in ("result", "result_code", "physical_mutation_performed", "receipt")}))
+    delivered = {k: out.get(k) for k in ("result", "result_code", "physical_mutation_performed", "receipt")}
+    delivered["apply_count"] = apply_calls[0]
+    print(json.dumps(delivered))
 """
 
 CLOSE_CHILD = """
@@ -105,15 +110,9 @@ CLOSE_CHILD = """
     while not Path(barrier, "go").exists():
         time.sleep(0.0005)
     time.sleep(0.05)
-    result = None
-    for attempt in range(100):  # Windows refuses the move while a file inside the TASK is open: retry
-        try:
-            TaskStore(storage, lock_timeout=60).complete_task("task_e")
-            result = "CLOSED"
-            break
-        except Exception as exc:
-            result = "FAILED:" + type(exc).__name__ + ": " + str(exc)
-            time.sleep(0.05)
+    # No retry-washing: completion must serialize with operation readers.
+    TaskStore(storage, lock_timeout=60).complete_task("task_e")
+    result = "CLOSED"
     print(json.dumps({"result": result}))
 """
 
@@ -581,6 +580,8 @@ class CrashWindowTests(Fixture):
 
 class RaceTests(Fixture):
     def race(self, jobs):
+        if not hasattr(self, "facts"):
+            self.facts = []
         barrier = Path(self.tempdir.name) / "barrier"
         barrier.mkdir()
         procs = []
@@ -600,29 +601,69 @@ class RaceTests(Fixture):
             results = {}
             for proc, (name, _, _) in zip(procs, jobs):
                 out, err = proc.communicate(timeout=120)
+                self.facts.append({"worker": name, "exit": proc.returncode, "stdout": out, "stderr": err})
                 self.assertEqual(proc.returncode, 0, err)
                 results[name] = json.loads(out)
         finally:
             for proc in procs:
                 if proc.poll() is None:
                     proc.kill()
+                proc.communicate(timeout=10)
         return results
 
     def test_two_executors_on_one_physical_target_never_both_write(self):
         for round_ in range(4):
             self.setUp()
             self.activate()
+            # Compete from the same durable CAS basis. A start barrier alone
+            # allowed B's begin to observe A's *finished* write and legitimately
+            # create a second, sequential contract with a different pre-state.
+            for name in ("a", "b"):
+                self.ops.begin(TASK, "m1", "write", "a.txt", operation_id=f"op_{name}",
+                               payload=f"from {name}\n".encode())
+            location = self.tasks.active_dir / TASK
+            initial = {p.stem: json.loads(p.read_text(encoding="utf-8"))
+                       for p in (location / "operations").glob("*.json")}
+            self.assertEqual({r["contract"]["pre_state"]["sha256"] for r in initial.values()},
+                             {hashlib.sha256(BEFORE).hexdigest()})
             results = self.race([
                 ("a", "none", {"operation_id": "op_a", "target": "a.txt", "payload": "from a\n"}),
                 ("b", "none", {"operation_id": "op_b", "target": "./sub/../a.txt", "payload": "from b\n"}),
             ])
+            records = {p.stem: json.loads(p.read_text(encoding="utf-8"))
+                       for p in (location / "operations").glob("*.json")}
+            self.facts.append({"round": round_, "initial": initial, "terminal_operations": records,
+                               "target_hex": self.read("a.txt").hex(),
+                               "events": [json.loads(line) for line in
+                                          (location / "events.jsonl").read_text(encoding="utf-8").splitlines()]})
             executed = [name for name, out in results.items() if out["result"] == EXECUTED]
             self.assertEqual(len(executed), 1, results)
             loser = "b" if executed == ["a"] else "a"
             self.assertEqual(results[loser]["result"], REFUSED)
             self.assertIn(results[loser]["result_code"], ("TARGET_OWNED", "PRECONDITION_FAILED"))
             self.assertEqual(self.read("a.txt"), f"from {executed[0]}\n".encode())
+            self.assertEqual(sum(out["apply_count"] for out in results.values()), 1)
+            self.assertEqual(records[f"op_{executed[0]}"]["status"], "DONE")
+            self.assertEqual(records[f"op_{loser}"]["status"], "INTENT")
+            self.assertIsNone(records[f"op_{loser}"]["receipt"])
             self.assertEqual(self.active_claims(), [])
+
+    def test_sequential_fresh_contracts_may_both_write_with_distinct_CAS_bases(self):
+        self.activate()
+        self.facts = []
+        for name, before in (("a", BEFORE), ("b", b"from a\n")):
+            request = {"operation_id": f"op_{name}", "target": "a.txt", "payload": f"from {name}\n"}
+            child = self.child("none", "-", name, json.dumps(request))
+            self.assertEqual(child.returncode, 0, child.stderr)
+            delivered = json.loads(child.stdout)
+            raw = json.loads((self.tasks.active_dir / TASK / "operations" / f"op_{name}.json").read_text(encoding="utf-8"))
+            self.facts.append({"worker": name, "delivered": delivered, "raw_operation": raw,
+                               "target_hex": self.read("a.txt").hex()})
+            self.assertEqual((delivered["result"], delivered["apply_count"], raw["status"]), (EXECUTED, 1, "DONE"))
+            self.assertEqual(raw["contract"]["pre_state"]["sha256"], hashlib.sha256(before).hexdigest())
+            self.assertEqual(raw["receipt"]["sha256"], hashlib.sha256(f"from {name}\n".encode()).hexdigest())
+        self.assertEqual((self.read("a.txt"), len(self.events("MUTATION_EXECUTED")), self.active_claims()),
+                         (b"from b\n", 2, []))
 
     def test_the_same_contract_delivered_twice_at_once_executes_once(self):
         for round_ in range(4):
@@ -642,15 +683,31 @@ class RaceTests(Fixture):
             self.activate()
             results = self.race([("w", "slow_write", {}), ("close", "close", None)])
             closed = (self.tasks.completed_dir / TASK).is_dir()
+            location = (self.tasks.completed_dir if closed else self.tasks.active_dir) / TASK
+            raw = {"active": (self.tasks.active_dir / TASK).is_dir(), "completed": closed,
+                   "task": json.loads((location / "task.json").read_text(encoding="utf-8")),
+                   "plan": json.loads((location / "plan.json").read_text(encoding="utf-8")),
+                   "operations": {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in (location / "operations").glob("*.json")},
+                   "events": [json.loads(line) for line in (location / "events.jsonl").read_text(encoding="utf-8").splitlines()],
+                   "file_sha256": {p.relative_to(location).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                                   for p in location.rglob("*") if p.is_file()},
+                   "target_hex": self.read("a.txt").hex()}
+            self.facts.append({"round": round_, "workers": results, "terminal_raw": raw})
             self.assertEqual(results["close"]["result"], "CLOSED")
             if results["w"]["result"] == EXECUTED:
                 outcomes.add("executed_then_closed")
                 self.assertEqual((self.read("a.txt"), self.op().status), (AFTER, OperationStatus.DONE))
+                self.assertEqual(results["w"]["apply_count"], 1)
+                self.assertEqual(raw["operations"]["op_1"]["receipt"]["sha256"], hashlib.sha256(AFTER).hexdigest())
             else:
                 outcomes.add("closed_first")
                 self.assertEqual(results["w"]["result"], REFUSED)
                 self.assertEqual(self.read("a.txt"), BEFORE)
+                self.assertEqual(results["w"]["apply_count"], 0)
+                self.assertTrue(all(op["receipt"] is None for op in raw["operations"].values()))
             self.assertTrue(closed)
+            self.assertFalse(raw["active"])
+            self.assertEqual(raw["task"]["status"], "COMPLETED")
         self.assertTrue(outcomes)
 
 
