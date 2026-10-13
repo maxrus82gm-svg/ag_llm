@@ -259,3 +259,45 @@ jobs:
             ${{ runner.temp }}/wa017-crash-race/isolation.jsonl
           if-no-files-found: warn
           retention-days: 7
+
+  wa4r002-independent:
+    name: WA4-R-002 independent diagnostic / Windows
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Independent guarded diagnostic and adjacent regression
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task CODEX-WA4-R-002-INDEPENDENT --output "${{ runner.temp }}/wa4r002-focused" test_web_alarm_wa4r002_diagnostics test_web_alarm_reliability_wa017 test_web_alarm_projection_concurrency test_web_alarm_mutation_executor
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -c "import json,pathlib,sys; p=pathlib.Path(r'${{ runner.temp }}/wa4r002-focused/results.json'); d=json.loads(p.read_text(encoding='utf-8')); ids=[x['test'] for x in d['tests']]; new=[x for x in ids if x.startswith('test_web_alarm_wa4r002_diagnostics.')]; ok=(d['tests_run']==63 and d['passed']==63 and d['failures']==0 and d['errors']==0 and d['skips']==0 and not d['isolation_violations'] and len(ids)==len(set(ids)) and len(new)==8); print('WA4R002 independent collection',len(ids),'new',len(new),'validated',ok); sys.exit(0 if ok else 1)"
+      - name: Independent diagnostic negative controls
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B reports/CODEX-WA4-R-002/quality_controls.py "${{ runner.temp }}/wa4r002-quality"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload independent raw evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wa4r002-independent-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/wa4r002-focused/results.json
+            ${{ runner.temp }}/wa4r002-focused/isolation.jsonl
+            ${{ runner.temp }}/wa4r002-quality/results.json
+            ${{ runner.temp }}/wa4r002-quality/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
