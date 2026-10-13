@@ -4,6 +4,8 @@ aliases:
   - Тактический контекст
 ---
 
+**COMMIT DENSITY / 2026-10-13:** `DOC-COMMIT-01@1` (18) — одна TASK обычно один сквозной нумерованный commit; второй только для самостоятельного repair, более двух — по отдельному USER GO. Код, тесты, документацию и отчёт готовить одним проверенным пакетом. Не дробить на мелкие commit/push. После GitHub публикации обязателен крупный Pull сигнал.
+
 **SYNC NOTIFICATION / 2026-10-13:** ChatGPT после каждой успешной прямой GitHub-публикации ОБЯЗАН вывести крупный зелёный призыв **«🟢 ПРИМИ МОИ ИЗМЕНЕНИЯ ИЗ GITHUB»** в итоговом ответе, с веткой `main`, полным HEAD SHA, перечнем изменений и GitHub Desktop Fetch origin → Pull origin. Мелкая сноска не заменяет сигнал. До подтверждения пользователя статус только PUBLISHED ON GITHUB, не SYNCED LOCALLY. `rule-ref:DOC-GITHUB-HANDOFF-01@1`.
 
 **CURRENT TASK HANDOFF / 2026-10-13:** `rule-ref:DOC-TASK-BLOCK1-01@1` in 18. Always deliver large copyable БЛОК 1 and separate short chat launch for new agent TASK. Once launched, freeze that agent's БЛОК 1 until its report; only short TASK-ID AMENDMENT messages, unless USER explicitly requests replacement. Other agents may start separate parallel TASKs with their own two blocks. `CODEX-WA4-R-002` initial large task already issued; do not rewrite it before Codex reports.
