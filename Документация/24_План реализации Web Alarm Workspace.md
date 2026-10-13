@@ -1,5 +1,12 @@
 # План реализации Web Alarm Workspace
 
+### WA4-R stage update / independent OBSERVE acceptance (2026-10-13)
+
+**CURRENT VERIFIED UPDATE / 2026-10-13 / WEB_07 / CODEX-WA4-R-001:** bounded read-only **OBSERVE ACCEPTED WITH OPEN RISKS** after independent source/HTTP/CLI/test review and GitHub Windows job-log verification. Pinned source `7caee3af61679f963eb90a323e57a1015f9a565e`; Actions [38229502661](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38229502661), rerun job `115156352428`: WA4-A 167/167, WA4-O 29/29, OBSERVE 228/228, closeout diagnostic 20/20 (80 rounds), JS 23/23, full Web Alarm 750/750 PASS (zero FAIL/ERROR/SKIP). Astra [38258103453](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38258103453), job `115156365504`: P1–P3 3/3 and focused 103/103 PASS. Workflow artifacts and job logs confirmed; original artifact ZIP payloads not independently unpacked in this closeout. **Only bounded on-demand observation is accepted**, not filesystem watching, writer attribution, mutation gateway, enforcement, lifecycle transition or global STRICT acceptance. `DONE` receipts are historical evidence only, not proof of current bytes. F1 RC-5 Windows closeout, F2 direct-close vs MutationExecutor, F3 WA-017 crash race remain OPEN; historical CI failures are not erased by green reruns. `CODEX-WA4-R-001-DIAG-01` establishes a controlled native WinError 5 safe pre-move refusal, **not** the root cause or terminal invariants of the original red CI. WA4-R overall **IN PROGRESS / STRICT NOT VERIFIED**. **NEXT SAFE ACTION:** separately authorize F1–F3 deterministic raw-state/fresh-process evidence or next bounded rollout decision; **no automatic WARN / GATEWAY REQUIRED / STRICT / Final Audit**. Prior `NOT STARTED / NOT ASSIGNED` lines below are preserved as historical snapshots and superseded by this current update.
+
+**Plan gate:** OBSERVE accepted with open risks. WARN, GATEWAY REQUIRED, STRICT and Final Audit remain separately gated future stages. F1–F3 evidence/recovery work must not be silently considered complete.
+
+
 ## Статус документа
 
 **IMPLEMENTATION PLAN / ACTIVE — WA-1 + WA-2 + WA-3 DONE / VERIFIED; RT-001 RECOVERY CLOSURE ROUTE APPROVED.**
