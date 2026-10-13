@@ -25,6 +25,186 @@
 
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
+**TASK:** CODEX-WA4-R-002. Полная первоначальная утверждённая постановка сохранена дословно. Во время исполнения БЛОК 1 не переписывался.
+**AMENDMENT:** EVIDENCE HANDOFF пользователя/WEB_07 по F1/F2 CI jobs и отсутствующему первоначальному F3 red run сохранён отдельно в разделе AMENDMENT отчёта `reports/CODEX-WA4-R-002/report.md`. Scope не расширен, production repair не разрешён.
+
+``````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-002
+
+**Название:** Historical Race Evidence & Recovery Proof  
+**Исполнитель:** Codex  
+**ARCH CLASS:** Web Alarm Workspace  
+**Статус:** USER APPROVED — START  
+**Режим:** Evidence-first / bounded diagnostic
+
+## 1. Цель
+
+Провести техническую диагностику трёх исторических race failures F1–F3, установить реальные причины, получить независимые доказательства корректности или некорректности состояния и определить минимальные необходимые исправления.
+
+Это продолжение WA4-R после принятого bounded OBSERVE, **не разрешение на WARN или STRICT**.
+
+## 2. Обязательный вход
+
+Прочитать в установленном порядке:
+
+- `Документация/08_Старт.md`
+    
+- `Документация/000_Задачи для агента.md`
+    
+- `Документация/34_TACTICAL_CONTEXT.md`
+    
+- `Документация/18_Регламент сопровождения документации.md`
+    
+- `Документация/01_Архитектура и текущее состояние.md`
+    
+- `Документация/23`, `24`, `25`
+    
+- `Документация/36`, `36.1`, `36.2`
+    
+- Персональную карточку `000_Задачи Codex.md`.
+    
+
+Базовая контрольная точка GitHub: коммит №302, `11f0a0a47518619119a5d60685abe852da915f10`. Локальную ревизию сверять без самостоятельных Git-команд; при необходимости запрашивать сведения у координатора.
+
+Использовать существующие отчёты `CODEX-WA4-R-001`, `CODEX-WA4-R-001-DIAG-01`, `ASTRA-WEB02-TEST-ARCH-001`, первоначальные FAIL и соответствующие тесты.
+
+## 3. Диагностика
+
+**F1 — RC-5 Closeout**
+
+Проверить natural pre-move и post-move/status-pending окна, `WinError 5`, сохранность активной TASK, состояние после перемещения и восстановление в новом процессе.
+
+**F2 — TaskStore.complete_task vs MutationExecutor**
+
+Установить детерминированный порядок `STARTED → apply → move → DONE`. Проверить operation/events/receipt, реальные байты файлов, checkpoint/manifest и состояние после восстановления. Не считать `FileNotFoundError` ни доказательством незаконной записи, ни доказательством безопасности.
+
+**F3 — WA-017 completion crash-race**
+
+Зафиксировать достижение конкретной crash-phase, terminal outcome, отсутствие недопустимых повторных эффектов и восстановление после fresh-process restart.
+
+Для каждой гонки сохранить исходный FAIL, воспроизведение, raw-state oracle, результат и отдельно оставшуюся неопределённость.
+
+## 4. Обязательный аудит актуальности тестов
+
+Перед изменениями составить карту:
+
+`инвариант → production-контракт → существующий тест → oracle → статус актуальности`.
+
+Для каждого затронутого теста определить:
+
+- **CURRENT** — соответствует действующему контракту.
+    
+- **NEEDS UPDATE** — контракт изменился или проверка устарела.
+    
+- **INSUFFICIENT** — тест актуален, но не покрывает критический сценарий.
+    
+- **OBSOLETE** — требование больше не действует, с доказательством причины.
+    
+
+Если изменяется контракт или поведение, обязательно пересмотреть существующие тесты, дополнить или исправить их в рамках разрешённого scope. Не подгонять ожидания под текущий результат реализации.
+
+Новые тесты должны быть детерминированными, изолированными, иметь проверяемый oracle и включаться в накопительную регрессию. Повторный PASS не отменяет предыдущий FAIL.
+
+Следовать правилам `TEST-DEV-01`, `TEST-COV-01`, `TEST-EXEC-01`, `TEST-QA-01`, `TEST-FLAKY-01`, `TEST-EVID-01`, `TEST-SCOPE-01` из 36.1 и профильным требованиям 36.2.
+
+**При любом будущем изменении production-кода этот аудит актуальности тестов является обязательной частью разработки, а не отдельной необязательной задачей.**
+
+## 5. Разрешённые действия
+
+- Читать исходники, тесты, локальные отчёты и каноническую документацию.
+    
+- Проводить ограниченные диагностические проверки только на одноразовых изолированных fixtures.
+    
+- Добавлять или корректировать необходимые диагностические тесты в рамках F1–F3.
+    
+- Сохранять минимальные raw evidence и отчёт для независимой приёмки.
+    
+
+## 6. Запреты
+
+- Не менять production-код без отдельного согласования repair scope.
+    
+- Не менять реальные TASK/storage и пользовательские данные.
+    
+- Не запускать rollout WARN, GATEWAY REQUIRED, STRICT.
+    
+- Не выполнять Git/GitHub-команды, commit, push, merge или самостоятельные CI-запуски.
+    
+- Не удалять исторические FAIL, не маскировать flaky и не заменять raw evidence выводами тестового runner.
+    
+- Не изменять Ultra и UI backlog.
+    
+- Не присваивать WA4-R статус DONE.
+    
+
+Если для доказательства требуется production repair или выход за scope — остановить соответствующую часть, предоставить минимальное обоснование и запросить разрешение.
+
+## 7. Результат
+
+Предоставить единый отчёт с:
+
+1. Таблицей F1/F2/F3: доказано, не доказано, root cause, severity, состояние после restart.
+    
+2. Картой актуальности существующих тестов и списком необходимых изменений.
+    
+3. Точными тестовыми командами, результатами, числом PASS/FAIL/SKIP, доказательствами изоляции.
+    
+4. Ссылками на исходные и новые evidence.
+    
+5. Минимальным repair proposal, если требуется.
+    
+6. DOC IMPACT и NEXT SAFE ACTION.
+    
+
+**Статус результата:** `READY FOR INDEPENDENT REVIEW`, не `VERIFIED`.
+
+После завершения передать результат WEB_07. Канонические документы и публикацию обновляет координатор после независимой приёмки.
+
+---
+
+**Codex: задача утверждена пользователем. Прочитай постановку и приступай к исполнению в указанных границах. Дополнительного подтверждения для разрешённой диагностики не требуется.**
+
+---
+
+``````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-002  
+**STATUS:** READY FOR INDEPENDENT REVIEW  
+**DATE:** 2026-10-13, Asia/Yekaterinburg  
+**ARCH CLASS:** Web Alarm Workspace, PRIMARY PROFILE 23; test profile 36.2.  
+**INDEPENDENT REVIEWER / RECEIVER:** WEB_07.
+
+[Полный отчёт](../reports/CODEX-WA4-R-002/report.md), рядом `checks.json`, `evidence.json`, `versions.json`, `quality_controls.py`. Новый source: `test_web_alarm_wa4r002_diagnostics.py`, 8 auto-discovered methods. Старые tests, production, runner, workflows и общая документация не изменялись.
+
+Перед добавлением tests сохранена карта invariant → production contract → existing test → oracle → CURRENT/INSUFFICIENT; после pilot отдельно отмечены checkpoint controls и необходимость адресного review classification ветки F1. Оснований OBSOLETE и смены runtime-контракта нет. Строгие прежние assertions не ослаблены.
+
+F1: штатный native pre-move test PASS. Контролируемый native post-move/task.json WinError 5 воспроизведён; raw completed-only/PLANNED, исходные records/restore point/RAW/bytes сохранены, новый mutation request REFUSED. Fresh gated completion восстанавливает COMPLETED/MOVED_STATUS_PENDING; повтор REJECTED, один completion event. Это доказательство конкретной ветки, не первопричина исторического CI по одному assertion active=False.
+
+F2: детерминированно воспроизведены TaskStoreError/FileNotFoundError при cached acquire task.md и EventCheckpointStoreError/FileNotFoundError при release event после durable DONE. В первой ветке PRE/INTENT/no receipt/0 apply, fresh replay REFUSED; во второй POST/DONE/exact receipt/released claim/1 apply, fresh replay REPLAYED без второй записи. Отдельный projection snapshot read выдаёт raw FileNotFoundError без потери checkpoint; fresh validation STALE/authoritative=false. Executor restore_plan отказывает typed REFUSED при том же классе окна. Lock probe подтверждает, что direct move не проходит между STARTED и DONE внутри реального physical mutation boundary. Эти диагностические PASS воспроизводят дефекты, а не означают production repair.
+
+F3: реальный move + достигнутый crash marker + exit91, late writers отвергнуты, late records/physical effects отсутствуют; fresh gated completion и повтор доказаны raw states. Writer-first negative phase control даёт REJECTED без crash marker. Первоначальный red F3 run не идентифицирован: INCONCLUSIVE; прежние 80-round PASS не закрывают его.
+
+Проверки: pilot-1 предыдущей revision 7 PASS/0 FAIL/0 ERROR/0 SKIP (10.756 s); финальный focused 63 PASS/0 FAIL/0 ERROR/0 SKIP (97.003 s), включая 8 новых и 55 прежних; negative controls 2 PASS (2.303 s), внутренние испорченные сценарии ожидаемо FAIL. Все exit0, guard violations=0. Exact collection без потерь/дубликатов. Whole-project FULL/stress NOT RUN — bounded diagnostic без production change. 753 старых methods + 8 новых = 761 static inventory, не runtime PASS.
+
+Все fixtures disposable TEMP; внешние HTTP/Git/native shell/live storage не использовались. Source baseline №302 получен из TASK, локальная Git equivalence UNVERIFIED. До ротации все 158 preexisting контрольных файлов неизменны; production hashes совпали также с прежним локальным DIAG manifest. Оригинальные CI ZIP не получены, входные FAIL/job locators и AMENDMENT сохранены. Raw paths/hash и 24 дедуплицированных raw states доступны в evidence; TEMP logs отдельно, source sealing — координатор.
+
+DOC IMPACT: SHARED DOC DELTA / DOC CLOSEOUT INCOMPLETE для 23/24/25, 36.2, общего routing/history после независимой приёмки. Minimal repair proposal есть в отчёте: typed acquire refusal/consistent read, release event handling с сохранением durable outcome, snapshot error boundaries и lock order operations → mutation → target. Production repair не выполнялся и требует отдельного утверждённого scope. WARN/GATEWAY REQUIRED/STRICT, Ultra/UI backlog и следующие задачи не запускались. WA4-R overall DONE/VERIFIED не присваивался.
+
+NEXT: WEB_07 независимо проверяет source/evidence, получает original F1/F2 artifacts и отсутствующий F3 red run, решает необходимый repair scope. БЛОК 1 освобождён только после сохранения постановки, AMENDMENT reference и factual result; прежняя история ниже сохранена побайтово.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и история
+
+Дословный архив, не действующая постановка и не новые полномочия.
+
+``````````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
 **TASK:** ASTRA-TEST-ARCH-REVIEW-001. Полная утверждённая постановка сохранена дословно. AMENDMENT: новых уточнений во время аудита не поступало.
 
 `````````````text
@@ -2722,3 +2902,5 @@ Codex: задача утверждена пользователем. Прочи�
 ````````````
 
 `````````````
+
+``````````````
