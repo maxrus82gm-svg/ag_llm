@@ -342,6 +342,7 @@ function statusClass(s){
   return s==='VERIFIED'||s==='VALID'?'good':['ACTIVE','READY','STARTED'].includes(s)?'active':['FAILED','FAILED_VERIFICATION','CORRUPT','INCONSISTENT','PROJECTION_BLOCKED','BLOCKED_PREPARE'].includes(s)?'bad':s.includes('UNKNOWN')||s.includes('PARTIAL')?'unknown':['STALE','DONE','RECOVERY_REQUIRED','NOT_VERIFIED'].includes(s)?'warn':''
 }
 const LABELS={PLANNED:'Запланировано',READY:'Готово к работе',ACTIVE:'В работе',STARTED:'Операция начата',DONE:'Выполнено · ждёт проверки',VERIFIED:'Подтверждено',COMPLETED:'Завершено',ARCHIVED:'В архиве',UNKNOWN_AFTER_DISCONNECT:'Исход неизвестен после обрыва',UNKNOWN:'Исход неизвестен',RECOVERY_REQUIRED:'Требует восстановления',NORMAL:'Восстановление не требуется',FAILED:'Ошибка',FAILED_VERIFICATION:'Проверка не пройдена',VALID:'Актуален',STALE:'Устарел',CORRUPT:'Повреждён',NOT_PREPARED:'Не подготовлен',NOT_VERIFIED:'Не подтверждено',INCONSISTENT:'Противоречивое состояние',PROJECTION_BLOCKED:'Состояние не подтверждено',BLOCKED_PREPARE:'Подготовка заблокирована',PARTIAL:'Частичный результат',NOT_CREATED:'Не создан',MISSING:'Отсутствует',RESOLUTION_STALE:'Решение устарело'};
+LABELS.RECONCILIATION_REQUIRED='Нужна сверка состояния';
 function statusLabel(value){return LABELS[value]||value}
 function badge(s){
   const value=String(s??'Неизвестно');
@@ -474,9 +475,10 @@ function showDraft(){
   $('taskRaw').readOnly=!view.draftWritable||Boolean(d.registration);
   $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh;
   $('discardDraft').disabled=!view.draftWritable||view.creating||Boolean(pending);
-  const state=d.registration?(d.registration.state==='confirmed'?'Сервер подтвердил регистрацию '+d.registration.task_id+'. Откройте TASK справа.':'Исход регистрации неизвестен. Текст защищён; повторная отправка заблокирована. Обновите список TASK и сверьте его с постановкой.'):
+  const state=d.registration?(d.registration.state==='confirmed'?'Локальная запись: сервер ранее подтвердил TASK '+d.registration.task_id+'. Текущее состояние смотрите в карточке справа.':d.registration.state==='pending'&&view.creating?'Ожидаем подтверждение сервера. Постановка защищена локально.':'Исход регистрации неизвестен. Текст защищён; повторная отправка заблокирована. Обновите список TASK и сверьте его с постановкой.'):
     d.dirty?'Не сохранён · только в памяти этой страницы. Скопируйте текст.':d.text.trim()?'Черновик сохранён в этом браузере · '+new Date(d.updated_at).toLocaleTimeString('ru-RU'):'Пустая форма · ничего не сохранено';
   text('draftStatus',state);text('draftWorkspace',currentWorkspace()?.display_name||'');
+  text('discardDraft',d.text.trim()?'Удалить локальный черновик':'Закрыть пустую форму');
 }
 function persistDraft(){
   const d=view.draft;if(!d||!view.draftWritable)return false;
@@ -580,7 +582,7 @@ function render(v){
     field(dl,'Receipt',r.receipt?(r.receipt.receipt_type||r.receipt.proof_kind||'Persistent receipt')+' · исторический':'Отсутствует');
     field(dl,'Post-state',r.receipt?'Proof при записи receipt: '+String(r.receipt.matches_expected_post)+'; текущие bytes не проверены':'Не доказан');
     field(dl,'Replay',current.replay_confirmed?'Подтверждённое событие OPERATION_REPLAY в истории':'Нет подтверждающего события; доставка ответа неизвестна');
-    field(dl,'Reconciliation',current.projection.recovery?.state||'Нет требования в Projection')
+    field(dl,'Reconciliation',statusLabel(current.projection.recovery?.state)||'Нет требования в Projection')
   }
   else{
     field(dl,'Операция','Не определена');
@@ -594,7 +596,7 @@ function render(v){
   }
   ))])facts.append(element('p',b.code+': '+b.reason,'notice'));
   for(const op of p.operations.filter(op=>op.recovery)){
-    facts.append(element('p',op.operation_id+' · '+op.recovery.state+' · '+(op.recovery.next_safe_action||v.next_safe_action),'notice info'));
+    facts.append(element('p',op.operation_id+' · '+statusLabel(op.recovery.state)+' · '+(op.recovery.next_safe_action||v.next_safe_action),'notice info'));
     for(const r of op.resolutions||[])facts.append(element('p','Resolver: '+r.action+' · '+r.result+' · '+(r.fresh?'fresh':r.freshness_code||'stale'),'muted spaced'))
   }
   for(const rb of p.rollbacks)facts.append(element('p','Rollback '+rb.rollback_id+' · '+rb.status,'notice'));

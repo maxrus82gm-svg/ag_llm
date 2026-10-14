@@ -346,3 +346,17 @@ test('UX task response arriving after plus never paints over the blank composer'
   const h=harness();await settle();const d=deferred();h.routes.set('/tasks/task_a/ui',()=>d.promise);const pending=h.run("selectTask('task_a')");h.run('openDraft()');await settle();d.resolve(task());await pending;
   assert.equal(h.el('draftPanel').hidden,false);assert.equal(h.el('detail').hidden,true);assert.equal(h.run('view.data'),null);
 });
+test('UX UNKNOWN recovery is human readable without changing the machine state',async()=>{
+  const h=harness();await settle();const v=task();v.recovery_state='RECONCILIATION_REQUIRED';v.operator.stages[1].status='UNKNOWN_AFTER_DISCONNECT';
+  h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+  assert.equal(h.el('recoveryBadge').textContent,'Нужна сверка состояния');assert.match(h.el('timeline').textContent,/Исход неизвестен после обрыва/);
+  assert.equal(h.el('recoveryBadge').children[0].getAttribute('title'),'RECONCILIATION_REQUIRED');assert.equal(h.run('view.data.operator.stages[1].status'),'UNKNOWN_AFTER_DISCONNECT');
+});
+test('UX workspace registration cannot discard an unsaved active draft',async()=>{
+  const h=harness();await settle();h.writeFail=true;await draft(h,'Unsaved text');h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new'}}:{workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'}]});
+  await h.run("create('workspace')");assert.equal(h.el('taskRaw').value,'Unsaved text');assert.equal(h.run('view.mode'),'draft');assert.equal(h.run('view.draft.dirty'),true);
+});
+test('UX failed local cleanup after confirmed creation never enables duplicate registration',async()=>{
+  const h=harness();await settle();await draft(h,'Known acknowledgement');h.removeFail=true;await h.run("create('task')");
+  h.run('openDraft()');await settle();assert.match(h.el('draftStatus').textContent,/ранее подтвердил/);assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
