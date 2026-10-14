@@ -44,7 +44,11 @@ function harness(saved=null,storage=new Map(),locks=new Map()) {
   const rows=[{task_id:'task_a',workspace_id:'ws_a',title:'task_a',status:'ACTIVE',current_microtask_id:'m2',current_status:'DONE',blockers:[],recovery_state:'NORMAL',created_at:'2020-01-01'},
     {task_id:'task_b',workspace_id:'ws_b',title:'task_b',status:'PLANNED',current_microtask_id:'m1',current_status:'PLANNED',blockers:[],recovery_state:'NORMAL',created_at:'2020-01-02'}];
   const created=new Map();
+  const workspaces=[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'},{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}];
   const defaultRoute=(url,opts)=>{
+    if(url==='/workspaces'&&opts.method==='POST'){
+      const body=JSON.parse(opts.body),workspace={workspace_id:'ws_created_'+workspaces.length,...body};workspaces.push(workspace);return {workspace};
+    }
     if(url==='/tasks'&&opts.method==='POST'){
       const body=JSON.parse(opts.body),tid='task_created_'+created.size,v=task(tid,body.workspace_id);
       Object.assign(v.task_state.task,body,{task_id:tid,status:'PLANNED'});
@@ -54,7 +58,8 @@ function harness(saved=null,storage=new Map(),locks=new Map()) {
       return {task:v.task_state.task};
     }
     if(url==='/status')return {service:'web_alarm_server',mode:'server',api_version:1};
-    if(url==='/workspaces')return {workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'},{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}]};
+    if(url==='/workspaces')return {workspaces};
+    if(url==='/ui/capabilities')return {folder_picker:{available:false,reason:'disabled'}};
     if(url==='/ui/tasks')return {active:rows,completed:[],errors:[]};
     const id=url.split('/')[2];return created.get(id)||(url.includes('task_b')?task('task_b','ws_b'):task());
   };
@@ -68,7 +73,7 @@ function harness(saved=null,storage=new Map(),locks=new Map()) {
       if(locks.has(key))return fn(null);const lock={name:key};locks.set(key,lock);
       try{return await fn(lock)}finally{if(locks.get(key)===lock)locks.delete(key)}
     }},clipboard:{writeText:async s=>{if(h.clipboardFail)throw Error('no clipboard');h.copied.push(s)}}},
-    fetch:async(url,opts)=>{h.calls.push({url,method:opts.method||'GET',body:opts.body});const value=h.routes.has(url)?await h.routes.get(url)(opts):defaultRoute(url,opts);if(value?.httpError)return {ok:false,status:value.status||409,json:async()=>value.data};return {ok:true,status:200,json:async()=>clone(value)}}});
+    fetch:async(url,opts)=>{h.calls.push({url,method:opts.method||'GET',body:opts.body,headers:opts.headers});const value=h.routes.has(url)?await h.routes.get(url)(opts):defaultRoute(url,opts);if(value?.httpError)return {ok:false,status:value.status||409,json:async()=>value.data};return {ok:true,status:200,json:async()=>clone(value)}}});
   h.el=id=>elements[id];
   h.run=code=>vm.runInContext(code,h.context);
   vm.runInContext(script,h.context);
@@ -354,7 +359,7 @@ test('UX UNKNOWN recovery is human readable without changing the machine state',
   assert.equal(h.el('recoveryBadge').children[0].getAttribute('title'),'RECONCILIATION_REQUIRED');assert.equal(h.run('view.data.operator.stages[1].status'),'UNKNOWN_AFTER_DISCONNECT');
 });
 test('UX workspace registration cannot discard an unsaved active draft',async()=>{
-  const h=harness();await settle();h.writeFail=true;await draft(h,'Unsaved text');h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new'}}:{workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'}]});
+  const h=harness();await settle();h.writeFail=true;await draft(h,'Unsaved text');h.el('wsName').value='New';h.el('wsRoot').value='temp New';h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new',display_name:'New',workspace_root:'temp New'}}:{workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'}]});
   await h.run("create('workspace')");assert.equal(h.el('taskRaw').value,'Unsaved text');assert.equal(h.run('view.mode'),'draft');assert.equal(h.run('view.draft.dirty'),true);
 });
 test('UX failed local cleanup after confirmed creation never enables duplicate registration',async()=>{
@@ -439,4 +444,131 @@ test('UX-001-A submit guard independently rejects stale selected-workspace bindi
   h.run("view.workspace='ws_b';view.catalogFresh=true;showDraft()");
   assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
   assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(key)).text,'Never send A while B is selected');
+});
+
+function workspaceForm(h,name='123',root='M:\\Disposable\\123'){h.el('wsName').value=name;h.el('wsRoot').value=root;}
+test('UX-002-A workspace success is central green status with precise action and no execution claim',async()=>{
+  const h=harness();await settle();workspaceForm(h);await h.run("create('workspace')");
+  assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.equal(h.el('formError').getAttribute('role'),'status');
+  assert.equal(h.el('formError').textContent,'Workspace «123» успешно зарегистрирован.');
+  assert.doesNotMatch(h.el('formError').textContent,/исполн|запуск|TASK/);assert.match(h.el('formError').className,/success/);
+  assert.equal(h.el('serverStatus').getAttribute('data-state'),'online');
+});
+test('UX-002-A task success is a distinct exact registration result',async()=>{
+  const h=harness();await settle();await draft(h,'Точная TASK');await h.run("create('task')");
+  assert.equal(h.el('formError').textContent,'TASK «Точная TASK» успешно зарегистрирована.');
+  assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.doesNotMatch(h.el('formError').textContent,/исполн|Workspace/);
+});
+test('UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error',async()=>{
+  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{httpError:true,status:400,data:{error:{code:'invalid_field',message:'root missing'}}}:{workspaces:[]});
+  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'error');assert.equal(h.el('formError').getAttribute('role'),'alert');
+  assert.match(h.el('formError').textContent,/invalid_field: root missing/);assert.equal(h.el('serverStatus').getAttribute('data-state'),'online');
+  await h.run('refresh()');assert.equal(h.el('formError').hidden,true);
+});
+test('UX-002-A lost workspace response is a warning retained across GET without retry',async()=>{
+  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>{if(opts.method==='POST')throw TypeError('response lost');return {workspaces:[]}});
+  await h.run("create('workspace')");await h.run('refresh()');
+  assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/Исход регистрации Workspace неизвестен/);
+  assert.doesNotMatch(h.el('formError').textContent,/успешно/);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
+test('UX-002-A task unknown stays protected while central warning describes the operation',async()=>{
+  const h=harness();await settle();await draft(h,'Pinned unknown');h.routes.set('/tasks',()=>{throw TypeError('lost')});
+  h.routes.set('/status',()=>{throw TypeError('offline')});
+  await h.run("create('task')");assert.equal(h.el('freshness').hidden,false);
+  h.routes.delete('/status');await h.run('refresh()');await h.run("create('task')");
+  assert.equal(h.el('freshness').hidden,true);assert.equal(h.run('view.fresh'),false);
+  assert.equal(h.el('copyNext').disabled,true);assert.equal(h.el('copyContext').disabled,true);
+  assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/Исход регистрации TASK неизвестен/);
+  assert.equal(h.run('view.draft.registration.state'),'unknown');assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
+test('UX-002-A internal server error does not claim definitive failure or success',async()=>{
+  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{httpError:true,status:500,data:{error:{code:'storage_error',message:'outcome uncertain'}}}:{workspaces:[]});
+  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/storage_error/);
+});
+test('UX-002-A a pending result is replaced once by success and repeated refresh does not make it red',async()=>{
+  const h=harness();await settle();workspaceForm(h);const d=deferred();h.routes.set('/workspaces',opts=>opts.method==='POST'?d.promise:{workspaces:[]});
+  const pending=h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'info');await h.run("create('workspace')");
+  d.resolve({workspace:{workspace_id:'new',display_name:'123',workspace_root:'M:\\Disposable\\123'}});await pending;
+  await h.run('refresh()');await h.run('refresh()');assert.equal(h.el('formError').getAttribute('data-level'),'success');
+  assert.equal(h.el('formError').children.length,0);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
+test('UX-002-A confirmed success survives a failed followup catalog read as a separate fact',async()=>{
+  const h=harness();await settle();workspaceForm(h);h.routes.set('/ui/tasks',()=>{throw Error('catalog unavailable')});
+  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.match(h.el('navigationError').textContent,/catalog unavailable/);
+});
+test('UX-002-A malformed workspace acknowledgement cannot become success',async()=>{
+  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new'}}:{workspaces:[]});
+  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.doesNotMatch(h.el('formError').textContent,/успешно/);
+});
+test('UX-002-A names in operation messages remain inert text',async()=>{
+  const h=harness();await settle();workspaceForm(h,'<svg onload=bad()>');await h.run("create('workspace')");
+  assert.equal(h.el('formError').textContent,'Workspace «<svg onload=bad()>» успешно зарегистрирован.');assert.equal(h.el('formError').children.length,0);
+});
+
+async function folderForm(h){
+  workspaceForm(h);h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true,token:'offline-capability-token-32-characters-long'}}));
+  await h.el('addWorkspace').onclick();await settle();
+}
+test('UX-002-B unavailable picker is explicit and manual path remains usable',async()=>{
+  const h=harness();await settle();workspaceForm(h);await h.el('addWorkspace').onclick();
+  assert.equal(h.el('browseWorkspace').disabled,true);assert.match(h.el('folderPickerNotice').textContent,/вручную/);
+  assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');assert.ok(h.calls.every(c=>c.method==='GET'));
+});
+test('UX-002-B selected path uses protected JSON request and does not register before confirmation',async()=>{
+  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'SELECTED',workspace_root:'M:\\TEMP\\Выбранная папка'}));
+  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\TEMP\\Выбранная папка');
+  const picked=h.calls.find(c=>c.url==='/ui/pick-workspace-folder');assert.equal(picked.method,'POST');assert.equal(picked.body,'{}');
+  assert.equal(picked.headers['X-WebAlarm-Folder-Token'],'offline-capability-token-32-characters-long');assert.equal(picked.headers['Content-Type'],'application/json');
+  assert.equal(h.calls.filter(c=>c.url==='/workspaces'&&c.method==='POST').length,0);
+  h.confirm=false;await h.run("create('workspace')");assert.equal(h.calls.filter(c=>c.url==='/workspaces'&&c.method==='POST').length,0);
+  h.confirm=true;await h.run("create('workspace')");assert.equal(JSON.parse(h.calls.find(c=>c.url==='/workspaces'&&c.method==='POST').body).workspace_root,'M:\\TEMP\\Выбранная папка');
+});
+test('UX-002-B cancellation leaves manual root and catalog untouched',async()=>{
+  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'CANCELLED'}));
+  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');
+  assert.match(h.el('folderPickerNotice').textContent,/отменён/);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+  assert.equal(h.el('formError').hidden,true);
+});
+test('UX-002-B picker failure preserves input and offers manual alternative',async()=>{
+  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({httpError:true,status:504,data:{error:{code:'folder_picker_timeout',message:'dialog closed'}}}));
+  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');assert.match(h.el('folderPickerNotice').textContent,/вручную/);
+  assert.equal(h.el('browseWorkspace').disabled,false);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
+test('UX-002-B late selection cannot replace manually edited path',async()=>{
+  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
+  const picking=h.el('browseWorkspace').onclick();h.el('wsRoot').value='M:\\Manually edited';h.el('wsRoot').oninput();
+  d.resolve({status:'SELECTED',workspace_root:'M:\\Old selection'});await picking;
+  assert.equal(h.el('wsRoot').value,'M:\\Manually edited');assert.match(h.el('folderPickerNotice').textContent,/изменён/);
+});
+test('UX-002-B closed and reopened workspace form ignores old picker response',async()=>{
+  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
+  const picking=h.el('browseWorkspace').onclick();h.el('cancelWorkspace').onclick();await h.el('addWorkspace').onclick();h.el('wsRoot').value='M:\\New form';
+  d.resolve({status:'SELECTED',workspace_root:'M:\\Old form'});await picking;
+  assert.equal(h.el('wsRoot').value,'M:\\New form');assert.equal(h.el('workspaceFormPanel').hidden,false);
+});
+test('UX-002-B duplicate pick and registration during dialog do not issue additional POST',async()=>{
+  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
+  const picking=h.el('browseWorkspace').onclick();await h.el('browseWorkspace').onclick();await h.run("create('workspace')");
+  assert.equal(h.el('createWorkspace').disabled,true);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+  d.resolve({status:'CANCELLED'});await picking;assert.equal(h.el('createWorkspace').disabled,false);
+});
+test('UX-002-B malformed capability or relative result never grants picker authority',async()=>{
+  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'SELECTED',workspace_root:'untrusted-relative'}));
+  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');
+  h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true}}));await h.el('addWorkspace').onclick();assert.equal(h.el('browseWorkspace').disabled,true);
+});
+
+test('UX-002-B restarted server renews capability after refusal without automatic dialog retry',async()=>{
+  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true,token:'new-offline-capability-token-32-characters'}}));
+  h.routes.set('/ui/pick-workspace-folder',()=>({httpError:true,status:403,data:{error:{code:'folder_picker_forbidden',message:'old capability'}}}));
+  await h.el('browseWorkspace').onclick();assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+  h.routes.set('/ui/pick-workspace-folder',()=>({status:'CANCELLED'}));await h.el('browseWorkspace').onclick();
+  assert.equal(h.calls.filter(c=>c.url==='/ui/pick-workspace-folder').at(-1).headers['X-WebAlarm-Folder-Token'],'new-offline-capability-token-32-characters');
+});
+test('UX-002-A late workspace acknowledgement cannot close a newer form',async()=>{
+  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/workspaces',opts=>opts.method==='POST'?d.promise:{workspaces:[]});
+  const creation=h.run("create('workspace')");h.el('cancelWorkspace').onclick();await h.el('addWorkspace').onclick();h.el('wsRoot').value='M:\\New form';
+  d.resolve({workspace:{workspace_id:'new',display_name:'123',workspace_root:'M:\\Disposable\\123'}});await creation;
+  assert.equal(h.el('workspaceFormPanel').hidden,false);assert.equal(h.el('wsRoot').value,'M:\\New form');
+  assert.equal(h.el('formError').textContent,'Workspace «123» успешно зарегистрирован.');
 });

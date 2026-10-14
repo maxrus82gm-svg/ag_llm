@@ -1,0 +1,898 @@
+--- before/web_alarm/ui.py
++++ after/web_alarm/ui.py
+@@ -82,6 +82,7 @@
+ .notice{padding:12px 14px;border:1px solid #795d37;background:#31291c;color:var(--amber);border-radius:9px;font-size:13px;line-height:1.5;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+ .notice.error{border-color:#8b5661;background:#322129;color:#ffbbbb}
+ .notice.info{border-color:#526c85;background:#1b2d3c;color:#c4def7}
++.notice.success{border-color:#3b7360;background:#19362d;color:var(--green)}
+ .empty{padding:44px 24px;text-align:center;color:var(--muted);border:1px dashed #526579;border-radius:14px}
+ .empty h2{color:var(--text);margin-bottom:12px}
+ .evidence details{border-top:1px solid var(--line);padding:13px 0}
+@@ -112,6 +113,7 @@
+ .draft-row{border:1px dashed #6d879e}.form-panel{padding-top:8px;border-top:1px solid var(--line)}
+ .connection{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:6px 10px;max-width:300px}
+ .connection[data-state=online]{color:var(--green)}.connection[data-state=offline]{color:var(--amber)}
++.path-row{display:flex;gap:8px;align-items:center}.path-row input{min-width:0;flex:1}.path-row button{flex-shrink:0;white-space:nowrap}
+ .mobile-toggle{display:none}.report-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+ @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
+ @media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}}
+@@ -144,16 +146,16 @@
+ <div id="workspaceFormPanel" class="form-panel" hidden>
+ <h3>Добавить Workspace</h3><form id="workspaceForm">
+ <label for="wsName">Название проекта</label><input id="wsName" required maxlength="300">
+-<label for="wsRoot">Абсолютный путь к папке</label><input id="wsRoot" required placeholder="M:\Projects\project">
+-<p class="muted spaced">Нативный выбор папки пока не поддерживается API. Укажите существующую локальную папку.</p>
++<label for="wsRoot">Абсолютный путь к папке</label><div class="path-row"><input id="wsRoot" required placeholder="M:\Projects\project"><button id="browseWorkspace" type="button" disabled>Обзор…</button></div>
++<p id="folderPickerNotice" class="muted spaced" role="status">Можно ввести абсолютный путь вручную. Выбор папки проверяется при открытии формы.</p>
+ <div class="row spaced"><button id="createWorkspace" type="submit">Добавить</button><button type="button" id="cancelWorkspace">Закрыть</button></div></form></div>
+-<div id="formError" class="notice error" role="alert" hidden></div>
+ </aside>
+ <main id="main" tabindex="-1">
+ <div class="section-head">
+ <span class="eyebrow">Операторская панель</span>
+ <span id="readTime" class="live" role="status">Нет выбранной TASK</span>
+ </div>
++<div id="formError" class="notice info" role="status" aria-live="polite" aria-label="Результат операции" hidden></div>
+ <div id="detailError" class="notice error" role="alert" hidden>
+ </div>
+ <div id="freshness" class="notice" role="status" hidden>
+@@ -322,7 +324,7 @@
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const view={
+-  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null,mode:"task",draft:null,draftWritable:false,releaseDraft:null,catalogFresh:false,restoredDraft:false,healthAt:0
++  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null,mode:"task",draft:null,draftWritable:false,releaseDraft:null,catalogFresh:false,restoredDraft:false,healthAt:0,folderCaps:null,pickingFolder:false,wsFormGeneration:0,wsRootRevision:0
+ }
+ ;
+ function text(id,value){
+@@ -331,6 +333,11 @@
+ function notice(id,value){
+   text(id,value);
+   $(id).hidden=!value
++}
++function operationNotice(level,message,phase=''){
++  const n=$('formError');n.className='notice '+(level||'info');n.setAttribute('data-level',level||'');
++  n.setAttribute('role',level==='error'?'alert':'status');n.setAttribute('aria-live',level==='error'?'assertive':'polite');
++  notice('formError',message);view.operationResult=message?{level,phase}:null;
+ }
+ function element(tag,value,cls){
+   const e=document.createElement(tag);
+@@ -352,17 +359,18 @@
+ async function api(path,options={
+ }
+ ){
++  const {timeoutMs=15000,...requestOptions}=options;
+   const controller=new AbortController();
+-  const timer=setTimeout(()=>controller.abort(),15000);
++  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+   try{
+     const opts={
+-      ...options,signal:controller.signal,cache:'no-store'
++      ...requestOptions,signal:controller.signal,cache:'no-store'
+     }
+     ;
+     if(opts.body){
+       opts.body=JSON.stringify(opts.body);
+       opts.headers={
+-        'Content-Type':'application/json'
++        ...opts.headers,'Content-Type':'application/json'
+       }
+     }
+     const r=await fetch(path,opts);
+@@ -669,6 +677,7 @@
+     if(w.status==='rejected'||t.status==='rejected')throw w.reason||t.reason;
+     if(!Array.isArray(w.value.workspaces)||!Array.isArray(t.value.active)||!Array.isArray(t.value.completed))throw Error('Некорректный список Workspace / TASK');
+     view.workspaces=w.value.workspaces;view.tasks=t.value;view.catalogFresh=true;
++    if(view.operationResult?.phase==='rejected')operationNotice(null,'');
+     // Keep every editor bound to its original ID/root, including an empty one.
+     // Another Workspace may be selected only by an explicit user action.
+     if(view.mode==='draft'&&view.draft&&!draftWorkspaceConfirmed()){
+@@ -680,20 +689,22 @@
+     if(view.task&&![...view.tasks.active,...view.tasks.completed].some(t=>t.task_id===view.task&&t.workspace_id===view.workspace)){view.task=null;clearDetail()}
+     notice('navigationError','');renderNavigation();saveSelection();
+     if(view.restoredDraft){view.restoredDraft=false;openDraft()}
+-    else if(view.mode==='draft')showDraft();else await loadDetail(epoch);
++    else if(view.mode==='draft'){setFresh(false);showDraft()}else await loadDetail(epoch);
+   }catch(e){if(epoch!==view.epoch)return;view.catalogFresh=false;notice('navigationError',e.message);setFresh(false,view.data?'Связь или данные недоступны. Показан предыдущий снимок; NEXT SAFE ACTION устарел.':'Данные сервера недоступны. Обновите после восстановления связи.');if(view.mode==='draft')showDraft()}
+   finally{view.refreshing=false;$('refresh').disabled=false}
+ }
+ async function create(kind){
+   if(view.creating)return;
+-  if(view.refreshing){notice(kind==='workspace'?'formError':'draftError','Дождитесь завершения обновления.');return}
+-  const ws=kind==='workspace',d=view.draft,epoch=view.epoch;
++  if(kind==='workspace'&&view.pickingFolder){operationNotice('warning','Завершите выбор папки перед регистрацией Workspace.','rejected');return}
++  if(view.refreshing){operationNotice('warning','Дождитесь завершения обновления.','rejected');return}
++  const ws=kind==='workspace',d=view.draft,epoch=view.epoch,formGeneration=view.wsFormGeneration;
+   if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh||!draftWorkspaceConfirmed()))return;
+   const raw=d?.text.trim(),body=ws?{display_name:$('wsName').value,workspace_root:$('wsRoot').value}:
+     {workspace_id:d.workspace_id,title:Array.from(raw.split(/\r?\n/)[0]).slice(0,120).join(''),goal:raw,raw_task:raw};
+   if(ws&&!window.confirm('Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?'))return;
+   if(!ws){d.registration={state:'pending',submitted_at:new Date().toISOString()};if(!persistDraft()){d.registration=null;showDraft();return}}
+-  view.creating=true;$('createWorkspace').disabled=true;if(!ws)showDraft();notice(ws?'formError':'draftError','');
++  view.creating=true;folderControls();if(!ws)showDraft();notice('draftError','');
++  operationNotice('info',ws?'Регистрируем Workspace «'+body.display_name+'»…':'Регистрируем TASK «'+body.title+'»…','pending');
+   try{
+     const data=await api(ws?'/workspaces':'/tasks',{method:'POST',body});
+     if(!ws){const t=data.task;if(!t||typeof t.task_id!=='string'||t.workspace_id!==body.workspace_id||t.raw_task!==raw||t.title!==body.title||t.goal!==body.goal)throw Error('Ответ регистрации не подтверждает исходную постановку');
+@@ -701,13 +712,19 @@
+       // Never remove another draft if selection changed while POST was in flight.
+       if(view.draft===d){persistDraft();try{localStorage.removeItem(d.key)}catch(_){}if(epoch===view.epoch){const id=t.task_id;d.dirty=false;await selectTask(id)}}
+ 
+-    }else if(epoch===view.epoch&&view.mode!=='draft'){view.epoch++;view.workspace=data.workspace.workspace_id;view.task=null;view.mode='task';clearDetail();saveSelection();$('workspaceFormPanel').hidden=true}
+-    await refresh();notice('formError','Сервер подтвердил регистрацию. Исполнение не запускалось.');
++    }else{
++      const w=data.workspace;
++      if(!w||typeof w.workspace_id!=='string'||!w.workspace_id||w.display_name!==body.display_name.trim()||typeof w.workspace_root!=='string'||!w.workspace_root.trim())throw Error('Ответ регистрации Workspace не подтверждает проект');
++      if(epoch===view.epoch&&formGeneration===view.wsFormGeneration&&view.mode!=='draft'){view.epoch++;view.workspace=w.workspace_id;view.task=null;view.mode='task';clearDetail();saveSelection();$('workspaceFormPanel').hidden=true}
++    }
++    await refresh();operationNotice('success',ws?'Workspace «'+data.workspace.display_name+'» успешно зарегистрирован.':'TASK «'+data.task.title+'» успешно зарегистрирована.','success');
+   }catch(e){
+     if(!ws){d.registration={...d.registration,state:'unknown'};if(view.draft===d){persistDraft();notice('draftError',e.message+'\nИсход регистрации неизвестен. Автоматического повтора нет; проверьте список TASK.');showDraft()}}
+-    else notice('formError',e.message+'\nПроверьте список Workspace перед повтором; автоматического повтора нет.');
+     await refresh();
+-  }finally{view.creating=false;$('createWorkspace').disabled=false;if(view.mode==='draft')showDraft()}
++    const rejected=e.serverRejected&&e.httpStatus<500;
++    operationNotice(rejected?'error':'warning',rejected?'Сервер отклонил регистрацию '+(ws?'Workspace':'TASK')+': '+e.message:
++      'Исход регистрации '+(ws?'Workspace':'TASK')+' неизвестен. '+e.message+'\nПроверьте каталог и исходную постановку; автоматического повтора нет.',rejected?'rejected':'unknown');
++  }finally{view.creating=false;folderControls();if(view.mode==='draft')showDraft()}
+ }
+ async function copy(value){
+   try{
+@@ -718,8 +735,45 @@
+     text('copyStatus','Копирование недоступно. Выделите текст и скопируйте вручную.')
+   }
+ }
+-$('addWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=false;$('wsName').focus()};
+-$('cancelWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=true};
++function folderNotice(level,message){$('folderPickerNotice').className='notice '+level;notice('folderPickerNotice',message)}
++function folderControls(){
++  $('browseWorkspace').disabled=view.pickingFolder||view.creating||!view.folderCaps;
++  $('browseWorkspace').textContent=view.pickingFolder?'Выбираем…':'Обзор…';
++  $('createWorkspace').disabled=view.creating||view.pickingFolder;
++}
++async function loadFolderCapabilities(){
++  const generation=view.wsFormGeneration;view.folderCaps=null;folderControls();folderNotice('info','Проверяем доступность выбора папки…');
++  try{
++    const response=await api('/ui/capabilities'),cap=response.folder_picker;
++    if(generation!==view.wsFormGeneration||$('workspaceFormPanel').hidden)return;
++    if(cap?.available===true&&typeof cap.token==='string'&&cap.token.length>=32){view.folderCaps=cap;folderNotice('info','Обзор откроет системный выбор папки. Ручной ввод также доступен.')}
++    else folderNotice('warning','Нативный выбор папки недоступен в этом запуске. Введите абсолютный путь вручную.');
++  }catch(e){if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden)folderNotice('warning','Не удалось проверить выбор папки. Введите путь вручную. '+e.message)}
++  finally{folderControls()}
++}
++async function pickWorkspaceFolder(){
++  if(view.pickingFolder||view.creating||!view.folderCaps||$('workspaceFormPanel').hidden)return;
++  const generation=view.wsFormGeneration,revision=view.wsRootRevision,previous=$('wsRoot').value,token=view.folderCaps.token;
++  view.pickingFolder=true;folderControls();folderNotice('info','Выберите папку в окне Windows или нажмите «Отмена». Путь ещё не изменён.');
++  try{
++    const result=await api('/ui/pick-workspace-folder',{method:'POST',body:{},headers:{'X-WebAlarm-Folder-Token':token},timeoutMs:125000});
++    if(generation!==view.wsFormGeneration||$('workspaceFormPanel').hidden)return;
++    if(revision!==view.wsRootRevision||$('wsRoot').value!==previous){folderNotice('warning','Путь уже изменён вручную. Результат старого выбора не применён.');return}
++    if(result.status==='CANCELLED'&&!('workspace_root' in result)){folderNotice('info','Выбор папки отменён. Путь не изменён.');return}
++    if(result.status!=='SELECTED'||typeof result.workspace_root!=='string'||! /^(?:[A-Za-z]:[\\/]|\\\\)/.test(result.workspace_root))throw Error('Некорректный ответ выбора папки');
++    $('wsRoot').value=result.workspace_root;view.wsRootRevision++;
++    folderNotice('info','Папка выбрана. Проверьте название и подтвердите регистрацию Workspace отдельно.');
++  }catch(e){
++    if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden){
++      if(e.httpStatus===403)await loadFolderCapabilities();
++      if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden)folderNotice('warning','Путь не изменён. Введите его вручную или повторите выбор. '+e.message);
++    }
++  }finally{view.pickingFolder=false;folderControls()}
++}
++$('addWorkspace').onclick=async()=>{view.wsFormGeneration++;$('workspaceFormPanel').hidden=false;$('wsName').focus();await loadFolderCapabilities()};
++$('cancelWorkspace').onclick=()=>{view.wsFormGeneration++;$('workspaceFormPanel').hidden=true};
++$('wsRoot').oninput=()=>{view.wsRootRevision++};
++$('browseWorkspace').onclick=pickWorkspaceFolder;
+ $('newTask').onclick=openDraft;$('discardDraft').onclick=discardDraft;
+ $('taskRaw').oninput=()=>{if(view.draft&&view.draftWritable&&!view.draft.registration){view.draft.text=$('taskRaw').value;view.draft.dirty=true;persistDraft()}};
+ $('copyDraft').onclick=()=>copy(view.draft?.text||$('taskRaw').value);
+--- before/web_alarm/server.py
++++ after/web_alarm/server.py
+@@ -9,7 +9,9 @@
+ from __future__ import annotations
+ 
+ import argparse
++import ipaddress
+ import json
++import secrets
+ import sys
+ from dataclasses import asdict, is_dataclass
+ from http import HTTPStatus
+@@ -21,6 +23,7 @@
+ from .closeout import CloseoutError, CloseoutService
+ from .context_pack import EntryContextPackBuilder
+ from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
++from .folder_picker import FolderPicker, FolderPickerError
+ from .manifest_store import ManifestSnapshotStore, ManifestStoreError
+ from .models import SCHEMA_VERSION, record_to_dict
+ from .mutation_executor import MutationExecutor, MutationExecutorError, MutationRequestError
+@@ -1050,12 +1053,60 @@
+         self.send_header("Content-Type", "text/html; charset=utf-8")
+         self.send_header("Content-Length", str(len(raw)))
+         self.send_header("Cache-Control", "no-store")
++        self.send_header("X-Frame-Options", "DENY")
+         self.end_headers()
+         self.wfile.write(raw)
++
++    def _folder_picker_request(self, path: str) -> None:
++        # This capability is local UI transport, never a WebAlarmApi authority route.
++        port = self.server.server_port
++        hosts = self.headers.get_all('Host', [])
++        peer = ipaddress.ip_address(self.client_address[0])
++        bound = ipaddress.ip_address(self.server.server_address[0])
++        if (not peer.is_loopback or not bound.is_loopback or len(hosts) != 1
++                or hosts[0] not in {f'127.0.0.1:{port}', f'localhost:{port}'}):
++            raise ApiError(403, 'folder_picker_forbidden', 'Folder picker requires its exact local origin')
++        origins = self.headers.get_all('Origin', [])
++        sites = self.headers.get_all('Sec-Fetch-Site', [])
++        if (len(origins) > 1 or (origins and origins[0] != 'http://' + hosts[0])
++                or len(sites) > 1 or (sites and sites[0] not in {'same-origin', 'none'})):
++            raise ApiError(403, 'folder_picker_forbidden', 'Foreign or opaque origins are not allowed')
++        if urlsplit(self.path).query:
++            raise ApiError(400, 'invalid_folder_picker_request', 'Query parameters are not supported')
++        picker = self.server.web_alarm_folder_picker
++        if path == '/ui/capabilities':
++            if self.command != 'GET':
++                raise ApiError(405, 'method_not_allowed', 'Capabilities are read-only')
++            capability = picker.capabilities()
++            self._send_json(200, {'folder_picker': {**capability, 'token': picker.token if capability['available'] else None}})
++            return
++        if self.command != 'POST':
++            raise ApiError(405, 'method_not_allowed', 'Folder selection requires an explicit POST')
++        tokens = self.headers.get_all('X-WebAlarm-Folder-Token', [])
++        if (len(origins) != 1 or len(tokens) != 1 or len(tokens[0]) > 200 or not tokens[0].isascii()
++                or not secrets.compare_digest(tokens[0], picker.token)):
++            raise ApiError(403, 'folder_picker_forbidden', 'A same-origin capability is required')
++        lengths = self.headers.get_all('Content-Length', [])
++        if (len(lengths) != 1 or len(lengths[0]) > 3 or not lengths[0].isdigit() or not 0 < int(lengths[0]) <= 64
++                or self.headers.get('Transfer-Encoding') is not None):
++            raise ApiError(400, 'invalid_folder_picker_request', 'A small fixed JSON request is required')
++        if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
++            raise ApiError(415, 'unsupported_media_type', 'Content-Type must be application/json')
++        if self._read_body() != {}:
++            raise ApiError(400, 'invalid_folder_picker_request', 'Folder picker accepts only an empty object')
++        try:
++            result = picker.pick()
++        except FolderPickerError as exc:
++            status = 409 if exc.code == 'folder_picker_busy' else 504 if exc.code == 'folder_picker_timeout' else 503
++            raise ApiError(status, exc.code, str(exc)) from exc
++        self._send_json(200, result)
+ 
+     def _run(self) -> None:
+         try:
+             path = urlsplit(self.path).path
++            if path in {'/ui/capabilities', '/ui/pick-workspace-folder'}:
++                self._folder_picker_request(path)
++                return
+             if self.command == "GET" and path in {"/", "/ui"}:
+                 self._send_html(INDEX_HTML)
+                 return
+@@ -1110,6 +1161,8 @@
+     host: str = "127.0.0.1",
+     port: int = 8765,
+     allow_non_loopback: bool = False,
++    enable_folder_picker: bool = False,
++    folder_picker_timeout: float = 120,
+ ) -> ThreadingHTTPServer:
+     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
+         raise ValueError(
+@@ -1119,15 +1172,18 @@
+     class Handler(_JsonHandler):
+         pass
+ 
++    picker = FolderPicker(enabled=enable_folder_picker and host in LOOPBACK_HOSTS, timeout=folder_picker_timeout)
+     server = ThreadingHTTPServer((host, port), Handler)
+     server.daemon_threads = True
+     server.web_alarm_api = api  # type: ignore[attr-defined]
++    server.web_alarm_folder_picker = picker  # type: ignore[attr-defined]
+     return server
+ 
+ 
+ def build_parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(prog="webalarm-server")
+     parser.add_argument("--storage-root")
++    parser.add_argument("--enable-folder-picker", action="store_true", help="Enable protected Windows-native folder selection for the local UI")
+     parser.add_argument("--host", default="127.0.0.1")
+     parser.add_argument("--port", type=int, default=8765)
+     parser.add_argument("--allow-non-loopback", action="store_true")
+@@ -1143,6 +1199,7 @@
+             host=args.host,
+             port=args.port,
+             allow_non_loopback=args.allow_non_loopback,
++            enable_folder_picker=args.enable_folder_picker,
+         )
+     except (OSError, ValueError) as exc:
+         print(f"ERROR: {exc}", file=sys.stderr)
+--- before/web_alarm/folder_picker.py
++++ after/web_alarm/folder_picker.py
+@@ -0,0 +1,110 @@
++"""Opt-in local folder selection. No registry, task, or project writes."""
++from __future__ import annotations
++
++import importlib.util
++import json
++import os
++from pathlib import Path
++import secrets
++import subprocess
++import sys
++import threading
++
++
++class FolderPickerError(RuntimeError):
++    def __init__(self, code: str, message: str):
++        super().__init__(message)
++        self.code = code
++
++
++class FolderPicker:
++    def __init__(self, *, enabled: bool = False, timeout: float = 120):
++        if not 0 < timeout <= 120:
++            raise ValueError('folder picker timeout must be in (0, 120] seconds')
++        self.enabled = enabled
++        self.timeout = timeout
++        self.token = secrets.token_urlsafe(32)
++        self._lock = threading.Lock()
++
++    def capabilities(self) -> dict:
++        reason = ('disabled' if not self.enabled else 'windows_required' if sys.platform != 'win32'
++                  else 'tk_unavailable' if importlib.util.find_spec('tkinter') is None else None)
++        return {'available': reason is None, 'reason': reason}
++
++    def pick(self) -> dict:
++        if not self.capabilities()['available']:
++            raise FolderPickerError('folder_picker_unavailable', 'Native folder selection is unavailable; enter the path manually')
++        if not self._lock.acquire(blocking=False):
++            raise FolderPickerError('folder_picker_busy', 'Another folder selection is in progress')
++        try:
++            try:
++                result = subprocess.run(
++                    [sys.executable, '-B', str(Path(__file__).resolve()), '--native-worker'],
++                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++                    encoding='utf-8', errors='strict', timeout=self.timeout, check=False,
++                    creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
++                )
++            except subprocess.TimeoutExpired as exc:
++                # run() kills and reaps its own child before raising TimeoutExpired.
++                raise FolderPickerError('folder_picker_timeout', 'Folder selection timed out; the dialog was closed') from exc
++            except (OSError, UnicodeError) as exc:
++                raise FolderPickerError('folder_picker_unavailable', 'Cannot start native folder selection') from exc
++            if result.returncode != 0 or len(result.stdout) > 65536:
++                raise FolderPickerError('folder_picker_unavailable', 'Native folder selection did not return a valid result')
++            try:
++                payload = json.loads(result.stdout)
++                if not isinstance(payload, dict):
++                    raise ValueError('not an object')
++                if payload.get('status') == 'CANCELLED' and set(payload) == {'status'}:
++                    return {'status': 'CANCELLED'}
++                if payload.get('status') != 'SELECTED' or set(payload) != {'status', 'workspace_root'}:
++                    raise ValueError('unexpected result')
++                raw = payload['workspace_root']
++                if not isinstance(raw, str) or not raw or not Path(raw).is_absolute():
++                    raise ValueError('not an absolute path')
++                directory = Path(raw).resolve(strict=True)
++                if not directory.is_dir():
++                    raise ValueError('not a directory')
++            except (ValueError, OSError, TypeError) as exc:
++                raise FolderPickerError('folder_picker_invalid_result', 'The selected directory could not be validated') from exc
++            return {'status': 'SELECTED', 'workspace_root': str(directory)}
++        finally:
++            self._lock.release()
++
++
++def native_selection() -> dict:
++    """Runs only in the bounded helper's main thread, after authorized POST."""
++    if sys.platform != 'win32':
++        return {'status': 'UNAVAILABLE'}
++    owner = None
++    try:
++        import tkinter
++        from tkinter import filedialog
++        owner = tkinter.Tk()
++        owner.withdraw()
++        owner.attributes('-topmost', True)
++        selected = filedialog.askdirectory(parent=owner, title='Выберите папку Workspace', mustexist=True)
++        return {'status': 'SELECTED', 'workspace_root': selected} if selected else {'status': 'CANCELLED'}
++    except Exception:
++        return {'status': 'UNAVAILABLE'}
++    finally:
++        if owner is not None:
++            try:
++                owner.destroy()
++            except Exception:
++                pass
++
++
++if __name__ == '__main__':
++    if sys.argv[1:] != ['--native-worker']:
++        raise SystemExit(2)
++    # Bound the native UI even if the server itself disappears before its timeout.
++    watchdog = threading.Timer(125, lambda: os._exit(3))
++    watchdog.daemon = True
++    watchdog.start()
++    try:
++        value = native_selection()
++    finally:
++        watchdog.cancel()
++    print(json.dumps(value, ensure_ascii=True), flush=True)
++    raise SystemExit(1 if value['status'] == 'UNAVAILABLE' else 0)
+--- before/wa4o_ui_demo.py
++++ after/wa4o_ui_demo.py
+@@ -58,7 +58,7 @@
+     parser.add_argument('--root', required=True)
+     parser.add_argument('--port', type=int, default=0)
+     args = parser.parse_args()
+-    server = create_server(build_fixture(args.root),port=args.port)
++    server = create_server(build_fixture(args.root),port=args.port,enable_folder_picker=True)
+     print(json.dumps({'url':'http://127.0.0.1:'+str(server.server_port), 'root':str(Path(args.root).resolve())}),flush=True)
+     try:
+         server.serve_forever()
+--- before/test_web_alarm_operator_ui.js
++++ after/test_web_alarm_operator_ui.js
+@@ -44,7 +44,11 @@
+   const rows=[{task_id:'task_a',workspace_id:'ws_a',title:'task_a',status:'ACTIVE',current_microtask_id:'m2',current_status:'DONE',blockers:[],recovery_state:'NORMAL',created_at:'2020-01-01'},
+     {task_id:'task_b',workspace_id:'ws_b',title:'task_b',status:'PLANNED',current_microtask_id:'m1',current_status:'PLANNED',blockers:[],recovery_state:'NORMAL',created_at:'2020-01-02'}];
+   const created=new Map();
++  const workspaces=[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'},{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}];
+   const defaultRoute=(url,opts)=>{
++    if(url==='/workspaces'&&opts.method==='POST'){
++      const body=JSON.parse(opts.body),workspace={workspace_id:'ws_created_'+workspaces.length,...body};workspaces.push(workspace);return {workspace};
++    }
+     if(url==='/tasks'&&opts.method==='POST'){
+       const body=JSON.parse(opts.body),tid='task_created_'+created.size,v=task(tid,body.workspace_id);
+       Object.assign(v.task_state.task,body,{task_id:tid,status:'PLANNED'});
+@@ -54,7 +58,8 @@
+       return {task:v.task_state.task};
+     }
+     if(url==='/status')return {service:'web_alarm_server',mode:'server',api_version:1};
+-    if(url==='/workspaces')return {workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'},{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}]};
++    if(url==='/workspaces')return {workspaces};
++    if(url==='/ui/capabilities')return {folder_picker:{available:false,reason:'disabled'}};
+     if(url==='/ui/tasks')return {active:rows,completed:[],errors:[]};
+     const id=url.split('/')[2];return created.get(id)||(url.includes('task_b')?task('task_b','ws_b'):task());
+   };
+@@ -68,7 +73,7 @@
+       if(locks.has(key))return fn(null);const lock={name:key};locks.set(key,lock);
+       try{return await fn(lock)}finally{if(locks.get(key)===lock)locks.delete(key)}
+     }},clipboard:{writeText:async s=>{if(h.clipboardFail)throw Error('no clipboard');h.copied.push(s)}}},
+-    fetch:async(url,opts)=>{h.calls.push({url,method:opts.method||'GET',body:opts.body});const value=h.routes.has(url)?await h.routes.get(url)(opts):defaultRoute(url,opts);if(value?.httpError)return {ok:false,status:value.status||409,json:async()=>value.data};return {ok:true,status:200,json:async()=>clone(value)}}});
++    fetch:async(url,opts)=>{h.calls.push({url,method:opts.method||'GET',body:opts.body,headers:opts.headers});const value=h.routes.has(url)?await h.routes.get(url)(opts):defaultRoute(url,opts);if(value?.httpError)return {ok:false,status:value.status||409,json:async()=>value.data};return {ok:true,status:200,json:async()=>clone(value)}}});
+   h.el=id=>elements[id];
+   h.run=code=>vm.runInContext(code,h.context);
+   vm.runInContext(script,h.context);
+@@ -354,7 +359,7 @@
+   assert.equal(h.el('recoveryBadge').children[0].getAttribute('title'),'RECONCILIATION_REQUIRED');assert.equal(h.run('view.data.operator.stages[1].status'),'UNKNOWN_AFTER_DISCONNECT');
+ });
+ test('UX workspace registration cannot discard an unsaved active draft',async()=>{
+-  const h=harness();await settle();h.writeFail=true;await draft(h,'Unsaved text');h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new'}}:{workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'}]});
++  const h=harness();await settle();h.writeFail=true;await draft(h,'Unsaved text');h.el('wsName').value='New';h.el('wsRoot').value='temp New';h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new',display_name:'New',workspace_root:'temp New'}}:{workspaces:[{workspace_id:'ws_a',display_name:'A',workspace_root:'temp A'}]});
+   await h.run("create('workspace')");assert.equal(h.el('taskRaw').value,'Unsaved text');assert.equal(h.run('view.mode'),'draft');assert.equal(h.run('view.draft.dirty'),true);
+ });
+ test('UX failed local cleanup after confirmed creation never enables duplicate registration',async()=>{
+@@ -440,3 +445,130 @@
+   assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
+   assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(key)).text,'Never send A while B is selected');
+ });
++
++function workspaceForm(h,name='123',root='M:\\Disposable\\123'){h.el('wsName').value=name;h.el('wsRoot').value=root;}
++test('UX-002-A workspace success is central green status with precise action and no execution claim',async()=>{
++  const h=harness();await settle();workspaceForm(h);await h.run("create('workspace')");
++  assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.equal(h.el('formError').getAttribute('role'),'status');
++  assert.equal(h.el('formError').textContent,'Workspace «123» успешно зарегистрирован.');
++  assert.doesNotMatch(h.el('formError').textContent,/исполн|запуск|TASK/);assert.match(h.el('formError').className,/success/);
++  assert.equal(h.el('serverStatus').getAttribute('data-state'),'online');
++});
++test('UX-002-A task success is a distinct exact registration result',async()=>{
++  const h=harness();await settle();await draft(h,'Точная TASK');await h.run("create('task')");
++  assert.equal(h.el('formError').textContent,'TASK «Точная TASK» успешно зарегистрирована.');
++  assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.doesNotMatch(h.el('formError').textContent,/исполн|Workspace/);
++});
++test('UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error',async()=>{
++  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{httpError:true,status:400,data:{error:{code:'invalid_field',message:'root missing'}}}:{workspaces:[]});
++  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'error');assert.equal(h.el('formError').getAttribute('role'),'alert');
++  assert.match(h.el('formError').textContent,/invalid_field: root missing/);assert.equal(h.el('serverStatus').getAttribute('data-state'),'online');
++  await h.run('refresh()');assert.equal(h.el('formError').hidden,true);
++});
++test('UX-002-A lost workspace response is a warning retained across GET without retry',async()=>{
++  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>{if(opts.method==='POST')throw TypeError('response lost');return {workspaces:[]}});
++  await h.run("create('workspace')");await h.run('refresh()');
++  assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/Исход регистрации Workspace неизвестен/);
++  assert.doesNotMatch(h.el('formError').textContent,/успешно/);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++});
++test('UX-002-A task unknown stays protected while central warning describes the operation',async()=>{
++  const h=harness();await settle();await draft(h,'Pinned unknown');h.routes.set('/tasks',()=>{throw TypeError('lost')});
++  h.routes.set('/status',()=>{throw TypeError('offline')});
++  await h.run("create('task')");assert.equal(h.el('freshness').hidden,false);
++  h.routes.delete('/status');await h.run('refresh()');await h.run("create('task')");
++  assert.equal(h.el('freshness').hidden,true);assert.equal(h.run('view.fresh'),false);
++  assert.equal(h.el('copyNext').disabled,true);assert.equal(h.el('copyContext').disabled,true);
++  assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/Исход регистрации TASK неизвестен/);
++  assert.equal(h.run('view.draft.registration.state'),'unknown');assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++});
++test('UX-002-A internal server error does not claim definitive failure or success',async()=>{
++  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{httpError:true,status:500,data:{error:{code:'storage_error',message:'outcome uncertain'}}}:{workspaces:[]});
++  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.match(h.el('formError').textContent,/storage_error/);
++});
++test('UX-002-A a pending result is replaced once by success and repeated refresh does not make it red',async()=>{
++  const h=harness();await settle();workspaceForm(h);const d=deferred();h.routes.set('/workspaces',opts=>opts.method==='POST'?d.promise:{workspaces:[]});
++  const pending=h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'info');await h.run("create('workspace')");
++  d.resolve({workspace:{workspace_id:'new',display_name:'123',workspace_root:'M:\\Disposable\\123'}});await pending;
++  await h.run('refresh()');await h.run('refresh()');assert.equal(h.el('formError').getAttribute('data-level'),'success');
++  assert.equal(h.el('formError').children.length,0);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++});
++test('UX-002-A confirmed success survives a failed followup catalog read as a separate fact',async()=>{
++  const h=harness();await settle();workspaceForm(h);h.routes.set('/ui/tasks',()=>{throw Error('catalog unavailable')});
++  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'success');assert.match(h.el('navigationError').textContent,/catalog unavailable/);
++});
++test('UX-002-A malformed workspace acknowledgement cannot become success',async()=>{
++  const h=harness();await settle();workspaceForm(h);h.routes.set('/workspaces',opts=>opts.method==='POST'?{workspace:{workspace_id:'new'}}:{workspaces:[]});
++  await h.run("create('workspace')");assert.equal(h.el('formError').getAttribute('data-level'),'warning');assert.doesNotMatch(h.el('formError').textContent,/успешно/);
++});
++test('UX-002-A names in operation messages remain inert text',async()=>{
++  const h=harness();await settle();workspaceForm(h,'<svg onload=bad()>');await h.run("create('workspace')");
++  assert.equal(h.el('formError').textContent,'Workspace «<svg onload=bad()>» успешно зарегистрирован.');assert.equal(h.el('formError').children.length,0);
++});
++
++async function folderForm(h){
++  workspaceForm(h);h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true,token:'offline-capability-token-32-characters-long'}}));
++  await h.el('addWorkspace').onclick();await settle();
++}
++test('UX-002-B unavailable picker is explicit and manual path remains usable',async()=>{
++  const h=harness();await settle();workspaceForm(h);await h.el('addWorkspace').onclick();
++  assert.equal(h.el('browseWorkspace').disabled,true);assert.match(h.el('folderPickerNotice').textContent,/вручную/);
++  assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');assert.ok(h.calls.every(c=>c.method==='GET'));
++});
++test('UX-002-B selected path uses protected JSON request and does not register before confirmation',async()=>{
++  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'SELECTED',workspace_root:'M:\\TEMP\\Выбранная папка'}));
++  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\TEMP\\Выбранная папка');
++  const picked=h.calls.find(c=>c.url==='/ui/pick-workspace-folder');assert.equal(picked.method,'POST');assert.equal(picked.body,'{}');
++  assert.equal(picked.headers['X-WebAlarm-Folder-Token'],'offline-capability-token-32-characters-long');assert.equal(picked.headers['Content-Type'],'application/json');
++  assert.equal(h.calls.filter(c=>c.url==='/workspaces'&&c.method==='POST').length,0);
++  h.confirm=false;await h.run("create('workspace')");assert.equal(h.calls.filter(c=>c.url==='/workspaces'&&c.method==='POST').length,0);
++  h.confirm=true;await h.run("create('workspace')");assert.equal(JSON.parse(h.calls.find(c=>c.url==='/workspaces'&&c.method==='POST').body).workspace_root,'M:\\TEMP\\Выбранная папка');
++});
++test('UX-002-B cancellation leaves manual root and catalog untouched',async()=>{
++  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'CANCELLED'}));
++  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');
++  assert.match(h.el('folderPickerNotice').textContent,/отменён/);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++  assert.equal(h.el('formError').hidden,true);
++});
++test('UX-002-B picker failure preserves input and offers manual alternative',async()=>{
++  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({httpError:true,status:504,data:{error:{code:'folder_picker_timeout',message:'dialog closed'}}}));
++  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');assert.match(h.el('folderPickerNotice').textContent,/вручную/);
++  assert.equal(h.el('browseWorkspace').disabled,false);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++});
++test('UX-002-B late selection cannot replace manually edited path',async()=>{
++  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
++  const picking=h.el('browseWorkspace').onclick();h.el('wsRoot').value='M:\\Manually edited';h.el('wsRoot').oninput();
++  d.resolve({status:'SELECTED',workspace_root:'M:\\Old selection'});await picking;
++  assert.equal(h.el('wsRoot').value,'M:\\Manually edited');assert.match(h.el('folderPickerNotice').textContent,/изменён/);
++});
++test('UX-002-B closed and reopened workspace form ignores old picker response',async()=>{
++  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
++  const picking=h.el('browseWorkspace').onclick();h.el('cancelWorkspace').onclick();await h.el('addWorkspace').onclick();h.el('wsRoot').value='M:\\New form';
++  d.resolve({status:'SELECTED',workspace_root:'M:\\Old form'});await picking;
++  assert.equal(h.el('wsRoot').value,'M:\\New form');assert.equal(h.el('workspaceFormPanel').hidden,false);
++});
++test('UX-002-B duplicate pick and registration during dialog do not issue additional POST',async()=>{
++  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/ui/pick-workspace-folder',()=>d.promise);
++  const picking=h.el('browseWorkspace').onclick();await h.el('browseWorkspace').onclick();await h.run("create('workspace')");
++  assert.equal(h.el('createWorkspace').disabled,true);assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++  d.resolve({status:'CANCELLED'});await picking;assert.equal(h.el('createWorkspace').disabled,false);
++});
++test('UX-002-B malformed capability or relative result never grants picker authority',async()=>{
++  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/pick-workspace-folder',()=>({status:'SELECTED',workspace_root:'untrusted-relative'}));
++  await h.el('browseWorkspace').onclick();assert.equal(h.el('wsRoot').value,'M:\\Disposable\\123');
++  h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true}}));await h.el('addWorkspace').onclick();assert.equal(h.el('browseWorkspace').disabled,true);
++});
++
++test('UX-002-B restarted server renews capability after refusal without automatic dialog retry',async()=>{
++  const h=harness();await settle();await folderForm(h);h.routes.set('/ui/capabilities',()=>({folder_picker:{available:true,token:'new-offline-capability-token-32-characters'}}));
++  h.routes.set('/ui/pick-workspace-folder',()=>({httpError:true,status:403,data:{error:{code:'folder_picker_forbidden',message:'old capability'}}}));
++  await h.el('browseWorkspace').onclick();assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
++  h.routes.set('/ui/pick-workspace-folder',()=>({status:'CANCELLED'}));await h.el('browseWorkspace').onclick();
++  assert.equal(h.calls.filter(c=>c.url==='/ui/pick-workspace-folder').at(-1).headers['X-WebAlarm-Folder-Token'],'new-offline-capability-token-32-characters');
++});
++test('UX-002-A late workspace acknowledgement cannot close a newer form',async()=>{
++  const h=harness();await settle();await folderForm(h);const d=deferred();h.routes.set('/workspaces',opts=>opts.method==='POST'?d.promise:{workspaces:[]});
++  const creation=h.run("create('workspace')");h.el('cancelWorkspace').onclick();await h.el('addWorkspace').onclick();h.el('wsRoot').value='M:\\New form';
++  d.resolve({workspace:{workspace_id:'new',display_name:'123',workspace_root:'M:\\Disposable\\123'}});await creation;
++  assert.equal(h.el('workspaceFormPanel').hidden,false);assert.equal(h.el('wsRoot').value,'M:\\New form');
++  assert.equal(h.el('formError').textContent,'Workspace «123» успешно зарегистрирован.');
++});
+--- before/test_web_alarm_ui_ux.py
++++ after/test_web_alarm_ui_ux.py
+@@ -24,6 +24,24 @@
+ 
+ 
+ class OperatorUxTests(OperatorFixture, unittest.TestCase):
++    def test_operation_notice_is_in_main_before_cards_and_does_not_mutate_fixture(self):
++        before = tree(self.root)
++        with urllib.request.urlopen(self.url + '/', timeout=5) as response:
++            parsed = Surface()
++            parsed.feed(response.read().decode('utf-8'))
++        slots = [(i, attrs, parents) for i, (_, attrs, parents) in enumerate(parsed.nodes)
++                 if attrs.get('id') == 'formError']
++        self.assertEqual(len(slots), 1)
++        i, attrs, parents = slots[0]
++        self.assertIn('main', parents)
++        self.assertNotIn('workspacesPanel', parents)
++        self.assertEqual(attrs['role'], 'status')
++        self.assertNotIn('error', attrs['class'].split())
++        first_card = next(j for j, (_, a, _) in enumerate(parsed.nodes)
++                          if a.get('id') == 'emptyDetail')
++        self.assertLess(i, first_card)
++        self.assertEqual(tree(self.root), before)
++
+     def test_http_three_regions_single_input_and_no_obsolete_creation_fields(self):
+         before = tree(self.root)
+         with urllib.request.urlopen(self.url + '/', timeout=5) as response:
+--- before/test_web_alarm_folder_picker.py
++++ after/test_web_alarm_folder_picker.py
+@@ -0,0 +1,266 @@
++"""Native picker boundary: loopback HTTP, no real dialog, disposable bytes."""
++import http.client
++import json
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import threading
++import types
++import unittest
++from unittest.mock import Mock, patch
++
++from web_alarm.folder_picker import FolderPicker, FolderPickerError, native_selection
++from web_alarm.server import WebAlarmApi, create_server
++from test_web_alarm_operator_ui import tree
++
++
++def completed(value):
++    return subprocess.CompletedProcess([], 0, json.dumps(value), '')
++
++
++class PickerHttpTests(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(prefix='wa4ux002_')
++        self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.selected = self.root/'Выбор папки with spaces'
++        self.selected.mkdir()
++        (self.selected/'untouched.txt').write_bytes(b'original')
++        self.api = WebAlarmApi(self.root/'storage')
++        self.server = create_server(self.api, port=0, enable_folder_picker=True)
++        self.picker = self.server.web_alarm_folder_picker
++        self.cap = patch.object(self.picker, 'capabilities', return_value={'available': True, 'reason': None}).start()
++        self.addCleanup(patch.stopall)
++        self.run = patch('web_alarm.folder_picker.subprocess.run', return_value=completed({'status': 'SELECTED', 'workspace_root': str(self.selected)})).start()
++        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
++        self.thread.start()
++        self.addCleanup(self.stop)
++        self.origin = 'http://127.0.0.1:'+str(self.server.server_port)
++
++    def stop(self):
++        self.server.shutdown()
++        self.server.server_close()
++        self.thread.join(3)
++        self.assertFalse(self.thread.is_alive())
++
++    def request(self, method='POST', path='/ui/pick-workspace-folder', body=b'{}', changes=None, omit=(), extra=()):
++        headers = {'Host': self.origin.removeprefix('http://')}
++        if method == 'POST':
++            headers.update({'Origin': self.origin, 'Content-Type': 'application/json',
++                            'Content-Length': str(len(body)), 'X-WebAlarm-Folder-Token': self.picker.token})
++        headers.update(changes or {})
++        for key in omit:
++            headers.pop(key, None)
++        conn = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=5)
++        try:
++            conn.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
++            for k, v in [*headers.items(), *extra]:
++                conn.putheader(k, v)
++            conn.endheaders(body if method == 'POST' else None)
++            response = conn.getresponse()
++            raw = response.read()
++            return response.status, json.loads(raw) if response.getheader('Content-Type', '').startswith('application/json') else raw
++        finally:
++            conn.close()
++
++    def test_capability_get_is_pure_and_does_not_open_dialog(self):
++        before = tree(self.root)
++        code, value = self.request('GET', '/ui/capabilities')
++        self.assertEqual(code, 200)
++        self.assertTrue(value['folder_picker']['available'])
++        self.assertEqual(value['folder_picker']['token'], self.picker.token)
++        self.run.assert_not_called()
++        self.assertEqual(tree(self.root), before)
++
++    def test_selected_path_and_cancel_do_not_register_or_mutate(self):
++        before = tree(self.root)
++        with patch.object(self.api.registry, 'register', side_effect=AssertionError('unexpected registration')), patch.object(self.api.tasks, 'create_task', side_effect=AssertionError('unexpected task')):
++            code, value = self.request()
++            self.assertEqual((code, value), (200, {'status': 'SELECTED', 'workspace_root': str(self.selected.resolve())}))
++            self.run.return_value = completed({'status': 'CANCELLED'})
++            self.assertEqual(self.request(), (200, {'status': 'CANCELLED'}))
++        self.assertEqual(tree(self.root), before)
++
++    def test_wrong_origin_host_token_and_fetch_metadata_never_reach_helper(self):
++        cases = [({'Origin': 'https://foreign.example'}, (), ()), ({'Origin': 'null'}, (), ()),
++                 ({}, ('Origin',), ()), ({'Origin': self.origin+'/'}, (), ()),
++                 ({'Host': 'foreign.example:'+str(self.server.server_port)}, (), ()),
++                 ({'Host': '127.0.0.1:1'}, (), ()), ({}, ('Host',), ()),
++                 ({'X-WebAlarm-Folder-Token': 'wrong'}, (), ()), ({}, ('X-WebAlarm-Folder-Token',), ()),
++                 ({'Sec-Fetch-Site': 'cross-site'}, (), ()), ({'Sec-Fetch-Site': 'same-site'}, (), ()),
++                 ({}, (), (('Host', 'foreign.example'),)), ({}, (), (('Origin', self.origin),)),
++                 ({'Sec-Fetch-Site': 'same-origin'}, (), (('Sec-Fetch-Site', 'cross-site'),)),
++                 ({}, (), (('X-WebAlarm-Folder-Token', self.picker.token),))]
++        before = tree(self.root)
++        for changes, omit, extra in cases:
++            with self.subTest(changes=changes, omit=omit, duplicate=[k for k, _ in extra]):
++                code, _ = self.request(changes=changes, omit=omit, extra=extra)
++                self.assertEqual(code, 403)
++        self.run.assert_not_called()
++        self.assertEqual(tree(self.root), before)
++
++    def test_foreign_capability_get_does_not_disclose_token(self):
++        code, value = self.request('GET', '/ui/capabilities', changes={'Origin': 'https://foreign.example'})
++        self.assertEqual(code, 403)
++        self.assertNotIn(self.picker.token, json.dumps(value))
++        self.run.assert_not_called()
++
++    def test_non_ascii_capability_is_rejected_before_native_helper(self):
++        self.assertEqual(self.request(changes={'X-WebAlarm-Folder-Token': 'invalid-é'})[0], 403)
++        self.run.assert_not_called()
++
++    def test_native_route_rejects_other_methods(self):
++        for method in ('GET', 'PUT', 'PATCH', 'DELETE'):
++            with self.subTest(method=method):
++                self.assertEqual(self.request(method)[0], 405)
++        self.assertEqual(self.request('POST', '/ui/capabilities')[0], 405)
++        self.run.assert_not_called()
++
++    def test_body_and_media_type_are_strict(self):
++        for raw in (b'[]', b'null', b'{broken', b'{"workspace_root":"C:/untrusted"}', b' '*65):
++            with self.subTest(raw=raw):
++                self.assertEqual(self.request(body=raw)[0], 400)
++        self.assertEqual(self.request(changes={'Content-Type': 'text/plain'})[0], 415)
++        self.assertEqual(self.request(omit=('Content-Length',))[0], 400)
++        self.assertEqual(self.request(extra=(('Content-Length', '2'),))[0], 400)
++        self.assertEqual(self.request(changes={'Content-Length': '9'*100})[0], 400)
++        self.assertEqual(self.request(path='/ui/pick-workspace-folder?path=bad')[0], 400)
++        self.run.assert_not_called()
++
++    def test_disabled_mode_is_unavailable_without_side_effects(self):
++        self.cap.return_value = {'available': False, 'reason': 'disabled'}
++        self.assertEqual(self.request()[0], 503)
++        value = self.request('GET', '/ui/capabilities')[1]['folder_picker']
++        self.assertFalse(value['available'])
++        self.assertIsNone(value['token'])
++        self.run.assert_not_called()
++
++    def test_remote_bind_metadata_is_rejected_even_for_loopback_client(self):
++        address = self.server.server_address
++        try:
++            self.server.server_address = ('0.0.0.0', address[1])
++            self.assertEqual(self.request()[0], 403)
++        finally:
++            self.server.server_address = address
++        self.run.assert_not_called()
++
++    def test_single_flight_and_release_after_completion(self):
++        entered, release = threading.Event(), threading.Event()
++        def native(*args, **kwargs):
++            entered.set()
++            if not release.wait(4):
++                raise AssertionError('test barrier timed out')
++            return completed({'status': 'CANCELLED'})
++        self.run.side_effect = native
++        first = []
++        worker = threading.Thread(target=lambda: first.append(self.request()))
++        worker.start()
++        try:
++            self.assertTrue(entered.wait(2))
++            self.assertEqual(self.request()[0], 409)
++            self.assertEqual(self.run.call_count, 1)
++        finally:
++            release.set()
++            worker.join(5)
++        self.assertFalse(worker.is_alive())
++        self.assertEqual(first, [(200, {'status': 'CANCELLED'})])
++        self.assertEqual(self.request()[0], 200)
++
++    def test_timeout_and_startup_failure_are_honest_and_release_lock(self):
++        self.run.side_effect = subprocess.TimeoutExpired('owned helper', 0.05)
++        self.assertEqual(self.request()[0], 504)
++        self.run.side_effect = OSError('unavailable')
++        self.assertEqual(self.request()[0], 503)
++        self.run.side_effect = None
++        self.assertEqual(self.request()[0], 200)
++
++    def test_ui_cannot_be_framed_by_external_site(self):
++        conn = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=5)
++        try:
++            conn.request('GET', '/')
++            response = conn.getresponse()
++            self.assertEqual(response.getheader('X-Frame-Options'), 'DENY')
++            response.read()
++        finally:
++            conn.close()
++
++
++class PickerWorkerTests(unittest.TestCase):
++    def test_default_server_and_broker_are_disabled(self):
++        self.assertFalse(FolderPicker().capabilities()['available'])
++        with tempfile.TemporaryDirectory(prefix='wa4ux002_default_') as directory:
++            server = create_server(WebAlarmApi(Path(directory)/'storage'), port=0)
++            try:
++                self.assertFalse(server.web_alarm_folder_picker.enabled)
++            finally:
++                server.server_close()
++
++    def test_invalid_native_outputs_fail_closed_without_writes(self):
++        with tempfile.TemporaryDirectory(prefix='wa4ux002_invalid_') as directory:
++            root = Path(directory)
++            file = root/'file.txt'
++            file.write_bytes(b'untouched')
++            before = tree(root)
++            picker = FolderPicker(enabled=True)
++            values = [[], {'status': 'SELECTED', 'workspace_root': 'relative'},
++                      {'status': 'SELECTED', 'workspace_root': str(file)},
++                      {'status': 'SELECTED', 'workspace_root': str(root/'missing')},
++                      {'status': 'CANCELLED', 'workspace_root': str(root)}, {'status': 'UNKNOWN'}]
++            with patch.object(picker, 'capabilities', return_value={'available': True}), patch('web_alarm.folder_picker.subprocess.run') as run:
++                for value in values:
++                    with self.subTest(value=value):
++                        run.return_value = completed(value)
++                        with self.assertRaises(FolderPickerError):
++                            picker.pick()
++                run.return_value = subprocess.CompletedProcess([], 0, '{broken', '')
++                with self.assertRaises(FolderPickerError):
++                    picker.pick()
++                run.return_value = subprocess.CompletedProcess([], 1, '', 'private error')
++                with self.assertRaisesRegex(FolderPickerError, 'valid result'):
++                    picker.pick()
++            self.assertEqual(tree(root), before)
++
++    def test_real_bounded_subprocess_is_killed_and_reaped(self):
++        picker = FolderPicker(enabled=True, timeout=0.1)
++        real_popen, children = subprocess.Popen, []
++        def capture(_args, **kwargs):
++            child = real_popen([sys.executable, '-B', '-c', 'import time;time.sleep(10)'], **kwargs)
++            children.append(child)
++            return child
++        try:
++            with patch.object(picker, 'capabilities', return_value={'available': True}), patch('web_alarm.folder_picker.subprocess.Popen', side_effect=capture):
++                with self.assertRaises(FolderPickerError) as caught:
++                    picker.pick()
++            self.assertEqual(caught.exception.code, 'folder_picker_timeout')
++            self.assertEqual(len(children), 1)
++            self.assertIsNotNone(children[0].poll())
++            self.assertEqual(children[0].wait(timeout=1), children[0].returncode)
++        finally:
++            for child in children:
++                if child.poll() is None:
++                    child.kill()
++                    child.wait(timeout=2)
++
++    def test_native_selection_uses_existing_directory_dialog_and_destroys_owner(self):
++        owner, dialog = Mock(), Mock()
++        tk = types.ModuleType('tkinter')
++        tk.Tk = Mock(return_value=owner)
++        tk.filedialog = types.SimpleNamespace(askdirectory=dialog)
++        for selected in ('M:/TEMP/Выбор', ''):
++            with self.subTest(selected=selected), patch.dict(sys.modules, {'tkinter': tk}), patch('web_alarm.folder_picker.sys.platform', 'win32'):
++                owner.reset_mock()
++                dialog.return_value = selected
++                result = native_selection()
++                self.assertEqual(result['status'], 'SELECTED' if selected else 'CANCELLED')
++                self.assertTrue(dialog.call_args.kwargs['mustexist'])
++                owner.destroy.assert_called_once()
++        with patch.dict(sys.modules, {'tkinter': tk}), patch('web_alarm.folder_picker.sys.platform', 'win32'):
++            owner.reset_mock()
++            dialog.side_effect = RuntimeError('GUI unavailable')
++            self.assertEqual(native_selection(), {'status': 'UNAVAILABLE'})
++            owner.destroy.assert_called_once()
++
++
++if __name__ == '__main__':
++    unittest.main()

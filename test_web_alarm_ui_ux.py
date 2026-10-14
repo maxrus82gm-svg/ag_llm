@@ -24,6 +24,24 @@ class Surface(HTMLParser):
 
 
 class OperatorUxTests(OperatorFixture, unittest.TestCase):
+    def test_operation_notice_is_in_main_before_cards_and_does_not_mutate_fixture(self):
+        before = tree(self.root)
+        with urllib.request.urlopen(self.url + '/', timeout=5) as response:
+            parsed = Surface()
+            parsed.feed(response.read().decode('utf-8'))
+        slots = [(i, attrs, parents) for i, (_, attrs, parents) in enumerate(parsed.nodes)
+                 if attrs.get('id') == 'formError']
+        self.assertEqual(len(slots), 1)
+        i, attrs, parents = slots[0]
+        self.assertIn('main', parents)
+        self.assertNotIn('workspacesPanel', parents)
+        self.assertEqual(attrs['role'], 'status')
+        self.assertNotIn('error', attrs['class'].split())
+        first_card = next(j for j, (_, a, _) in enumerate(parsed.nodes)
+                          if a.get('id') == 'emptyDetail')
+        self.assertLess(i, first_card)
+        self.assertEqual(tree(self.root), before)
+
     def test_http_three_regions_single_input_and_no_obsolete_creation_fields(self):
         before = tree(self.root)
         with urllib.request.urlopen(self.url + '/', timeout=5) as response:

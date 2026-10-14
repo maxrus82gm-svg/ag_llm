@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--root', required=True)
     parser.add_argument('--port', type=int, default=0)
     args = parser.parse_args()
-    server = create_server(build_fixture(args.root),port=args.port)
+    server = create_server(build_fixture(args.root),port=args.port,enable_folder_picker=True)
     print(json.dumps({'url':'http://127.0.0.1:'+str(server.server_port), 'root':str(Path(args.root).resolve())}),flush=True)
     try:
         server.serve_forever()

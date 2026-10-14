@@ -1,0 +1,88 @@
+{
+  "task": "CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "files": {
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/browser.json": {
+      "sha256": "9127beeafcc4b4d677fa361392ddb474cc62a0c5d0823ce4f493c9d197c9eba4",
+      "bytes": 24887
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/checks.json": {
+      "sha256": "817511ba9341cc5096f4f2b32d3313392d007f2bfc1cdd277ed4b7c5341c1a43",
+      "bytes": 155485
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/evidence.zip": {
+      "sha256": "5f39a1de3b396b3f320c6441822aef795803108a1368364a3d42aa9459a54cd7",
+      "bytes": 473397
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/folder-picker-proposal.md": {
+      "sha256": "3bf7ccdaea4393eaae3c5f40d8b109997f534444e16bc4a197f63d63964ccc8a",
+      "bytes": 8330
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/folder-picker-timeout.png": {
+      "sha256": "41158060941b1b631898f5a750044345c071fefa3c1419a5396da7ab4f3a36f5",
+      "bytes": 81965
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/manual-review.md": {
+      "sha256": "76df747890d3ee728efe351bdde3f3c7df7e693045f79712b52d3d6d71614ba9",
+      "bytes": 7406
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/quality_controls.js": {
+      "sha256": "7e181b1bb276fec6545ffe8b65232721cd655d7079a9c7688afe36988d8c91da",
+      "bytes": 2287
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/quality_native.py": {
+      "sha256": "949f693d488ff6699843da68a811bded39c954d03c62d1e1061e5a35680ae7a4",
+      "bytes": 2080
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/recovered-draft.png": {
+      "sha256": "c04db8b4a0ee23949b8c79d4ca9c9c2f9c70264e77770e508b7a686286b0113a",
+      "bytes": 81911
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/report.md": {
+      "sha256": "520d218b56843708eeaf464f520bc2e32b09dad8c462461c175b8bbde2fb6da7",
+      "bytes": 21290
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/rotation.json": {
+      "sha256": "e910fe066f7e9b127c51bad76a1fc59295b293639e9b6aa9064d34ea46930363",
+      "bytes": 1174
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/source-changes.diff": {
+      "sha256": "1a113609862dca34ea483d1a205b4c711a72f2c5bba60e7604ef3e3a0113bb60",
+      "bytes": 61497
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/task-success.png": {
+      "sha256": "6ea73967a0e70930117b94e17b567e0973ea56efd2d7a625e5937871609159cb",
+      "bytes": 108254
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/unknown-operation.png": {
+      "sha256": "564eb164a2d1251bbe8e0edc14cd316c3eae2bd82f7934759d587d658b4e4ad6",
+      "bytes": 106741
+    },
+    "reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/versions.json": {
+      "sha256": "06257328ed20667eab33d71bb34ba9d5ee15b0c295a982334f3174d296d4f332",
+      "bytes": 8896
+    }
+  },
+  "source_sha256": {
+    "web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "web_alarm/server.py": "44987c05e6343facdef2d488aad4575cf4f4f4b923ed177f279006eef40e0fb6",
+    "web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "wa4o_ui_demo.py": "fc762d3d1ae6a0e55e5abb3b6faec46931b715074f437629e8b86ebe8a59a0bd",
+    "test_web_alarm_operator_ui.js": "f8252b165dbfaadc99f1221300c54cda5831e107eb311da3e93729250ec70a41",
+    "test_web_alarm_ui_ux.py": "2eb379d90a8f2f0b121a1e55c350d6273241ba784acd33ab001e920cdc81cf96",
+    "test_web_alarm_folder_picker.py": "ec46dbad11f5e18bce7fd3cb55523e45654224b69b1193499ee1be29b5b7a97e"
+  },
+  "personal_card": {
+    "path": "Документация/000_Задачи Codex.md",
+    "sha256": "6b8a58348a645a7c2803296bcb549a9906e64d268fcc40d01d094b8e09c2c33c"
+  },
+  "verification": {
+    "final_test_unique_ids": 788,
+    "source_matches_final_regression": true,
+    "zip_crc": true,
+    "zip_results_equal_raw": true,
+    "original_assignment_and_previous_history_preserved": true,
+    "all_protected_baseline_files_unchanged_except_parallel_Claude_card": true,
+    "browser_isolation": 0
+  }
+}

@@ -9,7 +9,9 @@ RC-3 ownership and RC-4 rollback contracts. WA4-R OBSERVE is read-only diagnosti
 from __future__ import annotations
 
 import argparse
+import ipaddress
 import json
+import secrets
 import sys
 from dataclasses import asdict, is_dataclass
 from http import HTTPStatus
@@ -21,6 +23,7 @@ from urllib.parse import parse_qs, urlsplit
 from .closeout import CloseoutError, CloseoutService
 from .context_pack import EntryContextPackBuilder
 from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
+from .folder_picker import FolderPicker, FolderPickerError
 from .manifest_store import ManifestSnapshotStore, ManifestStoreError
 from .models import SCHEMA_VERSION, record_to_dict
 from .mutation_executor import MutationExecutor, MutationExecutorError, MutationRequestError
@@ -1050,12 +1053,60 @@ class _JsonHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Frame-Options", "DENY")
         self.end_headers()
         self.wfile.write(raw)
+
+    def _folder_picker_request(self, path: str) -> None:
+        # This capability is local UI transport, never a WebAlarmApi authority route.
+        port = self.server.server_port
+        hosts = self.headers.get_all('Host', [])
+        peer = ipaddress.ip_address(self.client_address[0])
+        bound = ipaddress.ip_address(self.server.server_address[0])
+        if (not peer.is_loopback or not bound.is_loopback or len(hosts) != 1
+                or hosts[0] not in {f'127.0.0.1:{port}', f'localhost:{port}'}):
+            raise ApiError(403, 'folder_picker_forbidden', 'Folder picker requires its exact local origin')
+        origins = self.headers.get_all('Origin', [])
+        sites = self.headers.get_all('Sec-Fetch-Site', [])
+        if (len(origins) > 1 or (origins and origins[0] != 'http://' + hosts[0])
+                or len(sites) > 1 or (sites and sites[0] not in {'same-origin', 'none'})):
+            raise ApiError(403, 'folder_picker_forbidden', 'Foreign or opaque origins are not allowed')
+        if urlsplit(self.path).query:
+            raise ApiError(400, 'invalid_folder_picker_request', 'Query parameters are not supported')
+        picker = self.server.web_alarm_folder_picker
+        if path == '/ui/capabilities':
+            if self.command != 'GET':
+                raise ApiError(405, 'method_not_allowed', 'Capabilities are read-only')
+            capability = picker.capabilities()
+            self._send_json(200, {'folder_picker': {**capability, 'token': picker.token if capability['available'] else None}})
+            return
+        if self.command != 'POST':
+            raise ApiError(405, 'method_not_allowed', 'Folder selection requires an explicit POST')
+        tokens = self.headers.get_all('X-WebAlarm-Folder-Token', [])
+        if (len(origins) != 1 or len(tokens) != 1 or len(tokens[0]) > 200 or not tokens[0].isascii()
+                or not secrets.compare_digest(tokens[0], picker.token)):
+            raise ApiError(403, 'folder_picker_forbidden', 'A same-origin capability is required')
+        lengths = self.headers.get_all('Content-Length', [])
+        if (len(lengths) != 1 or len(lengths[0]) > 3 or not lengths[0].isdigit() or not 0 < int(lengths[0]) <= 64
+                or self.headers.get('Transfer-Encoding') is not None):
+            raise ApiError(400, 'invalid_folder_picker_request', 'A small fixed JSON request is required')
+        if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+            raise ApiError(415, 'unsupported_media_type', 'Content-Type must be application/json')
+        if self._read_body() != {}:
+            raise ApiError(400, 'invalid_folder_picker_request', 'Folder picker accepts only an empty object')
+        try:
+            result = picker.pick()
+        except FolderPickerError as exc:
+            status = 409 if exc.code == 'folder_picker_busy' else 504 if exc.code == 'folder_picker_timeout' else 503
+            raise ApiError(status, exc.code, str(exc)) from exc
+        self._send_json(200, result)
 
     def _run(self) -> None:
         try:
             path = urlsplit(self.path).path
+            if path in {'/ui/capabilities', '/ui/pick-workspace-folder'}:
+                self._folder_picker_request(path)
+                return
             if self.command == "GET" and path in {"/", "/ui"}:
                 self._send_html(INDEX_HTML)
                 return
@@ -1110,6 +1161,8 @@ def create_server(
     host: str = "127.0.0.1",
     port: int = 8765,
     allow_non_loopback: bool = False,
+    enable_folder_picker: bool = False,
+    folder_picker_timeout: float = 120,
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
@@ -1119,15 +1172,18 @@ def create_server(
     class Handler(_JsonHandler):
         pass
 
+    picker = FolderPicker(enabled=enable_folder_picker and host in LOOPBACK_HOSTS, timeout=folder_picker_timeout)
     server = ThreadingHTTPServer((host, port), Handler)
     server.daemon_threads = True
     server.web_alarm_api = api  # type: ignore[attr-defined]
+    server.web_alarm_folder_picker = picker  # type: ignore[attr-defined]
     return server
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="webalarm-server")
     parser.add_argument("--storage-root")
+    parser.add_argument("--enable-folder-picker", action="store_true", help="Enable protected Windows-native folder selection for the local UI")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--allow-non-loopback", action="store_true")
@@ -1143,6 +1199,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             host=args.host,
             port=args.port,
             allow_non_loopback=args.allow_non_loopback,
+            enable_folder_picker=args.enable_folder_picker,
         )
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

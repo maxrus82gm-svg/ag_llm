@@ -82,6 +82,7 @@ main{min-width:0;min-height:0;overflow:auto;scrollbar-gutter:stable;padding:26px
 .notice{padding:12px 14px;border:1px solid #795d37;background:#31291c;color:var(--amber);border-radius:9px;font-size:13px;line-height:1.5;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .notice.error{border-color:#8b5661;background:#322129;color:#ffbbbb}
 .notice.info{border-color:#526c85;background:#1b2d3c;color:#c4def7}
+.notice.success{border-color:#3b7360;background:#19362d;color:var(--green)}
 .empty{padding:44px 24px;text-align:center;color:var(--muted);border:1px dashed #526579;border-radius:14px}
 .empty h2{color:var(--text);margin-bottom:12px}
 .evidence details{border-top:1px solid var(--line);padding:13px 0}
@@ -112,6 +113,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .draft-row{border:1px dashed #6d879e}.form-panel{padding-top:8px;border-top:1px solid var(--line)}
 .connection{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:6px 10px;max-width:300px}
 .connection[data-state=online]{color:var(--green)}.connection[data-state=offline]{color:var(--amber)}
+.path-row{display:flex;gap:8px;align-items:center}.path-row input{min-width:0;flex:1}.path-row button{flex-shrink:0;white-space:nowrap}
 .mobile-toggle{display:none}.report-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
 @media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}}
@@ -144,16 +146,16 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div id="workspaceFormPanel" class="form-panel" hidden>
 <h3>Добавить Workspace</h3><form id="workspaceForm">
 <label for="wsName">Название проекта</label><input id="wsName" required maxlength="300">
-<label for="wsRoot">Абсолютный путь к папке</label><input id="wsRoot" required placeholder="M:\Projects\project">
-<p class="muted spaced">Нативный выбор папки пока не поддерживается API. Укажите существующую локальную папку.</p>
+<label for="wsRoot">Абсолютный путь к папке</label><div class="path-row"><input id="wsRoot" required placeholder="M:\Projects\project"><button id="browseWorkspace" type="button" disabled>Обзор…</button></div>
+<p id="folderPickerNotice" class="muted spaced" role="status">Можно ввести абсолютный путь вручную. Выбор папки проверяется при открытии формы.</p>
 <div class="row spaced"><button id="createWorkspace" type="submit">Добавить</button><button type="button" id="cancelWorkspace">Закрыть</button></div></form></div>
-<div id="formError" class="notice error" role="alert" hidden></div>
 </aside>
 <main id="main" tabindex="-1">
 <div class="section-head">
 <span class="eyebrow">Операторская панель</span>
 <span id="readTime" class="live" role="status">Нет выбранной TASK</span>
 </div>
+<div id="formError" class="notice info" role="status" aria-live="polite" aria-label="Результат операции" hidden></div>
 <div id="detailError" class="notice error" role="alert" hidden>
 </div>
 <div id="freshness" class="notice" role="status" hidden>
@@ -322,7 +324,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 'use strict';
 const $=id=>document.getElementById(id);
 const view={
-  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null,mode:"task",draft:null,draftWritable:false,releaseDraft:null,catalogFresh:false,restoredDraft:false,healthAt:0
+  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null,mode:"task",draft:null,draftWritable:false,releaseDraft:null,catalogFresh:false,restoredDraft:false,healthAt:0,folderCaps:null,pickingFolder:false,wsFormGeneration:0,wsRootRevision:0
 }
 ;
 function text(id,value){
@@ -331,6 +333,11 @@ function text(id,value){
 function notice(id,value){
   text(id,value);
   $(id).hidden=!value
+}
+function operationNotice(level,message,phase=''){
+  const n=$('formError');n.className='notice '+(level||'info');n.setAttribute('data-level',level||'');
+  n.setAttribute('role',level==='error'?'alert':'status');n.setAttribute('aria-live',level==='error'?'assertive':'polite');
+  notice('formError',message);view.operationResult=message?{level,phase}:null;
 }
 function element(tag,value,cls){
   const e=document.createElement(tag);
@@ -352,17 +359,18 @@ function badge(s){
 async function api(path,options={
 }
 ){
+  const {timeoutMs=15000,...requestOptions}=options;
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),15000);
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
     const opts={
-      ...options,signal:controller.signal,cache:'no-store'
+      ...requestOptions,signal:controller.signal,cache:'no-store'
     }
     ;
     if(opts.body){
       opts.body=JSON.stringify(opts.body);
       opts.headers={
-        'Content-Type':'application/json'
+        ...opts.headers,'Content-Type':'application/json'
       }
     }
     const r=await fetch(path,opts);
@@ -669,6 +677,7 @@ async function refresh(){
     if(w.status==='rejected'||t.status==='rejected')throw w.reason||t.reason;
     if(!Array.isArray(w.value.workspaces)||!Array.isArray(t.value.active)||!Array.isArray(t.value.completed))throw Error('Некорректный список Workspace / TASK');
     view.workspaces=w.value.workspaces;view.tasks=t.value;view.catalogFresh=true;
+    if(view.operationResult?.phase==='rejected')operationNotice(null,'');
     // Keep every editor bound to its original ID/root, including an empty one.
     // Another Workspace may be selected only by an explicit user action.
     if(view.mode==='draft'&&view.draft&&!draftWorkspaceConfirmed()){
@@ -680,20 +689,22 @@ async function refresh(){
     if(view.task&&![...view.tasks.active,...view.tasks.completed].some(t=>t.task_id===view.task&&t.workspace_id===view.workspace)){view.task=null;clearDetail()}
     notice('navigationError','');renderNavigation();saveSelection();
     if(view.restoredDraft){view.restoredDraft=false;openDraft()}
-    else if(view.mode==='draft')showDraft();else await loadDetail(epoch);
+    else if(view.mode==='draft'){setFresh(false);showDraft()}else await loadDetail(epoch);
   }catch(e){if(epoch!==view.epoch)return;view.catalogFresh=false;notice('navigationError',e.message);setFresh(false,view.data?'Связь или данные недоступны. Показан предыдущий снимок; NEXT SAFE ACTION устарел.':'Данные сервера недоступны. Обновите после восстановления связи.');if(view.mode==='draft')showDraft()}
   finally{view.refreshing=false;$('refresh').disabled=false}
 }
 async function create(kind){
   if(view.creating)return;
-  if(view.refreshing){notice(kind==='workspace'?'formError':'draftError','Дождитесь завершения обновления.');return}
-  const ws=kind==='workspace',d=view.draft,epoch=view.epoch;
+  if(kind==='workspace'&&view.pickingFolder){operationNotice('warning','Завершите выбор папки перед регистрацией Workspace.','rejected');return}
+  if(view.refreshing){operationNotice('warning','Дождитесь завершения обновления.','rejected');return}
+  const ws=kind==='workspace',d=view.draft,epoch=view.epoch,formGeneration=view.wsFormGeneration;
   if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh||!draftWorkspaceConfirmed()))return;
   const raw=d?.text.trim(),body=ws?{display_name:$('wsName').value,workspace_root:$('wsRoot').value}:
     {workspace_id:d.workspace_id,title:Array.from(raw.split(/\r?\n/)[0]).slice(0,120).join(''),goal:raw,raw_task:raw};
   if(ws&&!window.confirm('Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?'))return;
   if(!ws){d.registration={state:'pending',submitted_at:new Date().toISOString()};if(!persistDraft()){d.registration=null;showDraft();return}}
-  view.creating=true;$('createWorkspace').disabled=true;if(!ws)showDraft();notice(ws?'formError':'draftError','');
+  view.creating=true;folderControls();if(!ws)showDraft();notice('draftError','');
+  operationNotice('info',ws?'Регистрируем Workspace «'+body.display_name+'»…':'Регистрируем TASK «'+body.title+'»…','pending');
   try{
     const data=await api(ws?'/workspaces':'/tasks',{method:'POST',body});
     if(!ws){const t=data.task;if(!t||typeof t.task_id!=='string'||t.workspace_id!==body.workspace_id||t.raw_task!==raw||t.title!==body.title||t.goal!==body.goal)throw Error('Ответ регистрации не подтверждает исходную постановку');
@@ -701,13 +712,19 @@ async function create(kind){
       // Never remove another draft if selection changed while POST was in flight.
       if(view.draft===d){persistDraft();try{localStorage.removeItem(d.key)}catch(_){}if(epoch===view.epoch){const id=t.task_id;d.dirty=false;await selectTask(id)}}
 
-    }else if(epoch===view.epoch&&view.mode!=='draft'){view.epoch++;view.workspace=data.workspace.workspace_id;view.task=null;view.mode='task';clearDetail();saveSelection();$('workspaceFormPanel').hidden=true}
-    await refresh();notice('formError','Сервер подтвердил регистрацию. Исполнение не запускалось.');
+    }else{
+      const w=data.workspace;
+      if(!w||typeof w.workspace_id!=='string'||!w.workspace_id||w.display_name!==body.display_name.trim()||typeof w.workspace_root!=='string'||!w.workspace_root.trim())throw Error('Ответ регистрации Workspace не подтверждает проект');
+      if(epoch===view.epoch&&formGeneration===view.wsFormGeneration&&view.mode!=='draft'){view.epoch++;view.workspace=w.workspace_id;view.task=null;view.mode='task';clearDetail();saveSelection();$('workspaceFormPanel').hidden=true}
+    }
+    await refresh();operationNotice('success',ws?'Workspace «'+data.workspace.display_name+'» успешно зарегистрирован.':'TASK «'+data.task.title+'» успешно зарегистрирована.','success');
   }catch(e){
     if(!ws){d.registration={...d.registration,state:'unknown'};if(view.draft===d){persistDraft();notice('draftError',e.message+'\nИсход регистрации неизвестен. Автоматического повтора нет; проверьте список TASK.');showDraft()}}
-    else notice('formError',e.message+'\nПроверьте список Workspace перед повтором; автоматического повтора нет.');
     await refresh();
-  }finally{view.creating=false;$('createWorkspace').disabled=false;if(view.mode==='draft')showDraft()}
+    const rejected=e.serverRejected&&e.httpStatus<500;
+    operationNotice(rejected?'error':'warning',rejected?'Сервер отклонил регистрацию '+(ws?'Workspace':'TASK')+': '+e.message:
+      'Исход регистрации '+(ws?'Workspace':'TASK')+' неизвестен. '+e.message+'\nПроверьте каталог и исходную постановку; автоматического повтора нет.',rejected?'rejected':'unknown');
+  }finally{view.creating=false;folderControls();if(view.mode==='draft')showDraft()}
 }
 async function copy(value){
   try{
@@ -718,8 +735,45 @@ async function copy(value){
     text('copyStatus','Копирование недоступно. Выделите текст и скопируйте вручную.')
   }
 }
-$('addWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=false;$('wsName').focus()};
-$('cancelWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=true};
+function folderNotice(level,message){$('folderPickerNotice').className='notice '+level;notice('folderPickerNotice',message)}
+function folderControls(){
+  $('browseWorkspace').disabled=view.pickingFolder||view.creating||!view.folderCaps;
+  $('browseWorkspace').textContent=view.pickingFolder?'Выбираем…':'Обзор…';
+  $('createWorkspace').disabled=view.creating||view.pickingFolder;
+}
+async function loadFolderCapabilities(){
+  const generation=view.wsFormGeneration;view.folderCaps=null;folderControls();folderNotice('info','Проверяем доступность выбора папки…');
+  try{
+    const response=await api('/ui/capabilities'),cap=response.folder_picker;
+    if(generation!==view.wsFormGeneration||$('workspaceFormPanel').hidden)return;
+    if(cap?.available===true&&typeof cap.token==='string'&&cap.token.length>=32){view.folderCaps=cap;folderNotice('info','Обзор откроет системный выбор папки. Ручной ввод также доступен.')}
+    else folderNotice('warning','Нативный выбор папки недоступен в этом запуске. Введите абсолютный путь вручную.');
+  }catch(e){if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden)folderNotice('warning','Не удалось проверить выбор папки. Введите путь вручную. '+e.message)}
+  finally{folderControls()}
+}
+async function pickWorkspaceFolder(){
+  if(view.pickingFolder||view.creating||!view.folderCaps||$('workspaceFormPanel').hidden)return;
+  const generation=view.wsFormGeneration,revision=view.wsRootRevision,previous=$('wsRoot').value,token=view.folderCaps.token;
+  view.pickingFolder=true;folderControls();folderNotice('info','Выберите папку в окне Windows или нажмите «Отмена». Путь ещё не изменён.');
+  try{
+    const result=await api('/ui/pick-workspace-folder',{method:'POST',body:{},headers:{'X-WebAlarm-Folder-Token':token},timeoutMs:125000});
+    if(generation!==view.wsFormGeneration||$('workspaceFormPanel').hidden)return;
+    if(revision!==view.wsRootRevision||$('wsRoot').value!==previous){folderNotice('warning','Путь уже изменён вручную. Результат старого выбора не применён.');return}
+    if(result.status==='CANCELLED'&&!('workspace_root' in result)){folderNotice('info','Выбор папки отменён. Путь не изменён.');return}
+    if(result.status!=='SELECTED'||typeof result.workspace_root!=='string'||! /^(?:[A-Za-z]:[\\/]|\\\\)/.test(result.workspace_root))throw Error('Некорректный ответ выбора папки');
+    $('wsRoot').value=result.workspace_root;view.wsRootRevision++;
+    folderNotice('info','Папка выбрана. Проверьте название и подтвердите регистрацию Workspace отдельно.');
+  }catch(e){
+    if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden){
+      if(e.httpStatus===403)await loadFolderCapabilities();
+      if(generation===view.wsFormGeneration&&!$('workspaceFormPanel').hidden)folderNotice('warning','Путь не изменён. Введите его вручную или повторите выбор. '+e.message);
+    }
+  }finally{view.pickingFolder=false;folderControls()}
+}
+$('addWorkspace').onclick=async()=>{view.wsFormGeneration++;$('workspaceFormPanel').hidden=false;$('wsName').focus();await loadFolderCapabilities()};
+$('cancelWorkspace').onclick=()=>{view.wsFormGeneration++;$('workspaceFormPanel').hidden=true};
+$('wsRoot').oninput=()=>{view.wsRootRevision++};
+$('browseWorkspace').onclick=pickWorkspaceFolder;
 $('newTask').onclick=openDraft;$('discardDraft').onclick=discardDraft;
 $('taskRaw').oninput=()=>{if(view.draft&&view.draftWritable&&!view.draft.registration){view.draft.text=$('taskRaw').value;view.draft.dirty=true;persistDraft()}};
 $('copyDraft').onclick=()=>copy(view.draft?.text||$('taskRaw').value);
