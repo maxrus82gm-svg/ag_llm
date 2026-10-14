@@ -1,0 +1,45 @@
+{
+  "task": "CODEX-WA4-UX-001-OPERATOR-REDESIGN",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "integrity": "PASS",
+  "source_pins": {
+    "test_web_alarm_operator_ui.js": "76e9e3aaf32d0c40445075161298a01c8928a217b2a2992888dbb13f553a71dd",
+    "web_alarm/ui.py": "3e61922180e82a904414f096f3d1eb066b510cb6643e5c9872d1af4c16be2441"
+  },
+  "scope_changes": [
+    "web_alarm/ui.py",
+    "test_web_alarm_operator_ui.js",
+    "Документация/000_Задачи Codex.md",
+    "own repair-ux001 artifacts"
+  ],
+  "original_evidence_files_preserved": true,
+  "card_amendment": {
+    "before_sha256": "f19060b2f71c3f7c3606a3ab35e0dabc581a761c7647781008a1f0b20699c517",
+    "after_sha256": "c4cb54ecfd3caf47ed12822b79ad761f5b7a641e6d93749327a9b1a0d1585f2a",
+    "inserted_bytes": 2587,
+    "previous_bytes_preserved": true,
+    "block1_and_block2_unchanged": true
+  },
+  "files": {
+    "changes.patch": {
+      "sha256": "54ecc00cf1f1fd4897b32fa4f1696bfc590e9747902229e05cab4adddfa54a6e",
+      "bytes": 13131
+    },
+    "evidence.json": {
+      "sha256": "b0bf4de1c621465898528a31cf9e82e8706de5d0a5898de206e3d122685a2bab",
+      "bytes": 43541
+    },
+    "quality.json": {
+      "sha256": "d5a576f9699a1c5f489082404d1e5fe805d59efa119139626b6dc5f6c6936dfa",
+      "bytes": 8212
+    },
+    "quality_controls.js": {
+      "sha256": "74281ecfa8e964997f220c917dd41a2160d6ffb87f1093a81fe1315618cdfaad",
+      "bytes": 1708
+    },
+    "report.md": {
+      "sha256": "b9b9098c2bf179aa6c7fa1d6daa403eb03d45255bbded14c724179d99ad90a84",
+      "bytes": 9967
+    }
+  }
+}

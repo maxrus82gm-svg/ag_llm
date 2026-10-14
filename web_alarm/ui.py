@@ -441,6 +441,10 @@ function taskButton(t){
   b.onclick=()=>selectTask(t.task_id);return b;
 }
 function currentWorkspace(){return view.workspaces.find(w=>w.workspace_id===view.workspace)}
+function draftWorkspaceConfirmed(){
+  const d=view.draft,ws=currentWorkspace();
+  return Boolean(view.mode==='draft'&&d&&ws&&d.workspace_id===view.workspace&&d.workspace_root===ws.workspace_root);
+}
 function draftKey(ws=currentWorkspace()){return ws?'webAlarm.draft.v1.'+encodeURIComponent(ws.workspace_id)+'|'+encodeURIComponent(ws.workspace_root):null}
 function readDraft(ws=currentWorkspace()){
   const key=draftKey(ws);if(!key)return null;
@@ -475,11 +479,11 @@ function showDraft(){
   const d=view.draft;if(!d)return;
   if($('taskRaw').value!==d.text)$('taskRaw').value=d.text;const pending=d.registration&&d.registration.state!=='confirmed';
   $('taskRaw').readOnly=!view.draftWritable||Boolean(d.registration);
-  $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh;
+  $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh||!draftWorkspaceConfirmed();
   $('discardDraft').disabled=!view.draftWritable||view.creating||Boolean(pending);
   const state=d.registration?(d.registration.state==='confirmed'?'Локальная запись: сервер ранее подтвердил TASK '+d.registration.task_id+'. Текущее состояние смотрите в карточке справа.':d.registration.state==='pending'&&view.creating?'Ожидаем подтверждение сервера. Постановка защищена локально.':'Исход регистрации неизвестен. Текст защищён; повторная отправка заблокирована. Обновите список TASK и сверьте его с постановкой.'):
     d.dirty?'Не сохранён · только в памяти этой страницы. Скопируйте текст.':d.text.trim()?'Черновик сохранён в этом браузере · '+new Date(d.updated_at).toLocaleTimeString('ru-RU'):'Пустая форма · ничего не сохранено';
-  text('draftStatus',state);text('draftWorkspace',currentWorkspace()?.display_name||'');
+  text('draftStatus',state);text('draftWorkspace',draftWorkspaceConfirmed()?currentWorkspace().display_name:d.workspace_id+' · Workspace не подтверждён');
   text('discardDraft',d.text.trim()?'Удалить локальный черновик':'Закрыть пустую форму');
 }
 function persistDraft(){
@@ -529,9 +533,9 @@ function render(v){
   text('taskGoalText',t.goal===t.raw_task?'Постановка сохранена. План и исполнение формируются отдельно.':t.goal);
   text('taskDescription',t.raw_task);
   $('taskBadge').replaceChildren(badge(t.status));
-  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.total===0?'План ещё не содержит этапов.':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
+  text('progressText',!o.coherent||o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.total===0?'План ещё не содержит этапов.':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
   text('doneText',o.progress.done+' выполнено · ожидает проверки');
-  const known=o.progress.verified!=null&&o.progress.total>0;
+  const known=o.coherent&&o.progress.verified!=null&&o.progress.total>0;
   text('progressFill','');
   $('progressFill').style.width=known?(100*o.progress.verified/o.progress.total)+'%':'0%';
   $('progressTrack').setAttribute('aria-valuemax',String(o.progress.total||1));
@@ -569,7 +573,7 @@ function render(v){
     d.append(s,body);
     $('timeline').append(d)
   }
-  if(!o.stages.length)$('timeline').append(element('p','План ещё не содержит этапов.','empty'));
+  if(!o.stages.length)$('timeline').append(element('p',o.coherent?'План ещё не содержит этапов.':'Состав плана не подтверждён. Обновите состояние.','empty'));
   const current=o.current_operation;
   $('operationBadge').replaceChildren(...(current?[badge(current.record.status)]:[]));
   text('operationReason',o.current_operation_reason);
@@ -665,8 +669,12 @@ async function refresh(){
     if(w.status==='rejected'||t.status==='rejected')throw w.reason||t.reason;
     if(!Array.isArray(w.value.workspaces)||!Array.isArray(t.value.active)||!Array.isArray(t.value.completed))throw Error('Некорректный список Workspace / TASK');
     view.workspaces=w.value.workspaces;view.tasks=t.value;view.catalogFresh=true;
+    // Keep every editor bound to its original ID/root, including an empty one.
+    // Another Workspace may be selected only by an explicit user action.
+    if(view.mode==='draft'&&view.draft&&!draftWorkspaceConfirmed()){
+      view.catalogFresh=false;renderNavigation();showDraft();notice('navigationError','Workspace черновика больше не подтверждён сервером или изменил путь. Текст остаётся в исходном черновике; регистрация заблокирована. Выберите проект явно и обновите данные.');return;
+    }
     if(!currentWorkspace()){
-      if(view.mode==='draft'&&view.draft?.text.trim()){notice('navigationError','Workspace больше не подтверждён сервером. Черновик сохранён локально; регистрация заблокирована.');view.catalogFresh=false;showDraft();return}
       view.workspace=view.workspaces[0]?.workspace_id||null;view.task=null;clearDetail();
     }
     if(view.task&&![...view.tasks.active,...view.tasks.completed].some(t=>t.task_id===view.task&&t.workspace_id===view.workspace)){view.task=null;clearDetail()}
@@ -680,7 +688,7 @@ async function create(kind){
   if(view.creating)return;
   if(view.refreshing){notice(kind==='workspace'?'formError':'draftError','Дождитесь завершения обновления.');return}
   const ws=kind==='workspace',d=view.draft,epoch=view.epoch;
-  if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh))return;
+  if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh||!draftWorkspaceConfirmed()))return;
   const raw=d?.text.trim(),body=ws?{display_name:$('wsName').value,workspace_root:$('wsRoot').value}:
     {workspace_id:d.workspace_id,title:Array.from(raw.split(/\r?\n/)[0]).slice(0,120).join(''),goal:raw,raw_task:raw};
   if(ws&&!window.confirm('Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?'))return;

@@ -296,6 +296,23 @@ NEXT SAFE ACTION: ChatGPT / WEB_07 независимо проверяет diff/
 
 ---
 
+## AMENDMENT / UX-001-A/B REPAIR — 2026-10-14
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION — LOCAL ONLY / NOT SYNCED.
+
+Независимый SOURCE REVIEW: CHANGES REQUESTED. Оба finding подтверждены. UX-001-A: пустой editor A после refresh мог показывать B, отправляя workspace_id=A; теперь draft удерживает исходные ID/root, регистрация отдельно проверяет binding, исчезновение/смена root блокирует POST без миграции текста. UX-001-B: прежний progress repair не покрывал timeline; теперь incoherent empty stages не объявляются подтверждённым отсутствием плана. Прежний отчёт сохранён как история, его широкая формулировка уточнена новым отчётом.
+
+WRITE: web_alarm/ui.py, test_web_alarm_operator_ui.js, собственный repair-ux001 report/evidence, это дополнение. Backend/Ultra/WA4-R/shared docs/runners/CI не изменены; Git/GitHub не использовались. БЛОКИ 1/2 и прежние записи БЛОКА 3 не переписаны.
+
+RED BEFORE REPAIR: JS57 = 52 PASS / 5 FAIL; изолированный probe подтвердил POST A при отображаемом B и ложный empty timeline. FINAL: JS57 PASS; focused Python/HTTP36 PASS / 0 FAIL/ERROR/SKIP, isolation0; controls6/6 PASS (прежние4 + новые2), syntax PASS. Full backend discovery и новый визуальный browser audit NOT RUN по адресному client-only scope; прежний full не выдан за новый. Demo перезапущено на current UI, /ui == INDEX_HTML,73 файла fixture unchanged.
+
+REPORT: reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/repair-ux001/report.md; evidence.json, quality.json, changes.patch, manifest.json. Raw: C:/Users/REX/AppData/Local/Temp/codex-wa4ux001-repair-3ew7rtbi. Source pins в отчёте/evidence. SHARED DOC DELTA для23/24/25/36.2 предложена, общие документы не правились. Ограничения browser-local drafts, unknown POST и backend GET→POST root CAS остаются.
+
+NEXT SAFE ACTION: повторная независимая проверка ChatGPT / WEB_07. DONE / VERIFIED не присвоен; следующие стадии не запущены.
+
+---
+
 ## Архив прежних БЛОКОВ 2–3 (дословно, без переоценки исторических статусов)
 
 ````````````````text

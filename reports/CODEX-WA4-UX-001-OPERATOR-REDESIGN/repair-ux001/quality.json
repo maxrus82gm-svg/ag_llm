@@ -1,0 +1,87 @@
+{
+  "controls": [
+    {
+      "id": "draft-workspace-submit",
+      "selector": "UX-001-A submit guard independently",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-001-A submit guard independently rejects stale selected-workspace binding\n  ---\n  duration_ms: 21.4529\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-draft-workspace-submit.js:437:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-draft-workspace-submit.js:441:10)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 87.1689\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "incoherent-empty-timeline",
+      "selector": "UX incoherent empty plan",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX incoherent empty plan never asserts that the plan is known empty\n  ---\n  duration_ms: 22.9574\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-incoherent-empty-timeline.js:376:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    The input was expected to not match the regular expression /План ещё не содержит этапов/. Input:\n    \n    'План ещё не содержит этапов.'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected:\n  actual: 'План ещё не содержит этапов.'\n  operator: 'doesNotMatch'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-incoherent-empty-timeline.js:380:12)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 87.7937\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "read-under-lock",
+      "selector": "UX-C draft snapshot is reread inside acquired lock",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap\n  ---\n  duration_ms: 6.0015\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-read-under-lock.js:283:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + ''\n    - 'Changed before acquisition'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'Changed before acquisition'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-read-under-lock.js:288:30)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 67.7966\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "durable-pending-before-post",
+      "selector": "UX-C quota failure warns and prevents POST",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C quota failure warns and prevents POST and accidental unsaved navigation\n  ---\n  duration_ms: 23.1026\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-durable-pending-before-post.js:253:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-durable-pending-before-post.js:258:40)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 85.1534\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "fresh-copy",
+      "selector": "O5 offline retains last snapshot visibly stale",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - O5 offline retains last snapshot visibly stale and disables copying NEXT\n  ---\n  duration_ms: 20.7845\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-fresh-copy.js:108:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-fresh-copy.js:114:49)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 83.0901\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "unknown-blocks-repeat",
+      "selector": "UX-C lost POST survives reload as unknown",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C lost POST survives reload as unknown; never resubmit or delete automatically\n  ---\n  duration_ms: 22.9377\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-repair-3ew7rtbi\\\\quality\\\\quality-unknown-blocks-repeat.js:303:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    2 !== 1\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 1\n  actual: 2\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-repair-3ew7rtbi\\quality\\quality-unknown-blocks-repeat.js:306:10)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 88.1542\n",
+      "stderr": "",
+      "control_passed": true
+    }
+  ],
+  "passed": 6,
+  "source_sha256": {
+    "web_alarm/ui.py": "3e61922180e82a904414f096f3d1eb066b510cb6643e5c9872d1af4c16be2441",
+    "test_web_alarm_operator_ui.js": "76e9e3aaf32d0c40445075161298a01c8928a217b2a2992888dbb13f553a71dd"
+  }
+}

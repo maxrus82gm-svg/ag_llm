@@ -371,10 +371,16 @@ test('UX unplanned task has no invented completion progress and explains absent 
   assert.equal(h.el('progressText').textContent,'План ещё не содержит этапов.');
   assert.equal(h.el('progressTrack').getAttribute('aria-valuenow'),null);
   assert.equal(h.el('snapshotBadge').textContent,'Нет текущего этапа');
+  assert.equal(h.el('timeline').textContent,'План ещё не содержит этапов.');
 });
 test('UX incoherent empty plan never asserts that the plan is known empty',async()=>{
-  const h=harness();await settle();const v=task();v.operator.coherent=false;v.operator.progress={verified:null,total:0,done:0};h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
-  assert.match(h.el('progressText').textContent,/не подтверждён/);assert.equal(h.el('copyNext').disabled,true);
+  for(const verified of [null,0]){
+    const h=harness();await settle();const v=task();v.operator.coherent=false;v.operator.stages=[];v.operator.progress={verified,total:0,done:0};h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+    assert.match(h.el('progressText').textContent,/не подтверждён/);assert.equal(h.el('copyNext').disabled,true);
+    assert.doesNotMatch(h.el('timeline').textContent,/План ещё не содержит этапов/);
+    assert.match(h.el('timeline').textContent,/плана не подтверждён/);
+    assert.equal(h.el('progressTrack').getAttribute('aria-valuenow'),null);
+  }
 });
 test('UX null health response clears the previously online signal',async()=>{
   const h=harness();await settle();h.routes.set('/status',()=>null);await h.run('refresh()');
@@ -389,4 +395,48 @@ test('UX malformed progress or coherence cannot become a fresh authoritative vie
 test('UX failed rendering hides the partial snapshot and never retains it for export',async()=>{
   const h=harness();await settle();const v=task();v.operator.stages[0].prerequisites=null;h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
   assert.equal(h.el('detail').hidden,true);assert.equal(h.run('view.data'),null);assert.equal(h.el('copyContext').disabled,true);
+});
+
+test('UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection',async()=>{
+  const h=harness();await settle();h.run('openDraft()');await settle();const keyA=h.run('view.draft.key');
+  h.routes.set('/workspaces',()=>({workspaces:[{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}]}));await h.run('refresh()');
+  assert.equal(h.run('view.workspace'),'ws_a');assert.equal(h.run('view.draft.workspace_id'),'ws_a');
+  assert.equal(h.el('draftPanel').hidden,false);assert.equal(h.storage.has(keyA),false);
+  h.el('taskRaw').value='A: сохранить без миграции';h.el('taskRaw').oninput();
+  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
+  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(keyA)).text,'A: сохранить без миграции');
+  assert.match(h.el('navigationError').textContent,/больше не подтверждён/);
+  assert.match(h.el('workspaceList').textContent,/B/);
+  h.run("selectWorkspace('ws_b')");await draft(h,'');assert.equal(h.el('taskRaw').value,'');
+  const keyB=h.run('view.draft.key');assert.notEqual(keyA,keyB);await h.run('refresh()');
+  h.el('taskRaw').value='B: осознанно выбран';h.el('taskRaw').oninput();await h.run("create('task')");
+  const posts=h.calls.filter(c=>c.method==='POST');assert.equal(posts.length,1);assert.equal(JSON.parse(posts[0].body).workspace_id,'ws_b');
+  assert.equal(JSON.parse(h.storage.get(keyA)).text,'A: сохранить без миграции');
+});
+
+test('UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns',async()=>{
+  const h=harness();await settle();h.run('openDraft()');await settle();const key=h.run('view.draft.key');
+  h.routes.set('/workspaces',()=>({workspaces:[]}));await h.run('refresh()');
+  assert.equal(h.run('view.workspace'),'ws_a');assert.equal(h.storage.has(key),false);
+  h.el('taskRaw').value='A после исчезновения каталога';h.el('taskRaw').oninput();await h.run("create('task')");
+  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(h.el('createTask').disabled,true);
+  h.routes.delete('/workspaces');await h.run('refresh()');assert.equal(h.el('createTask').disabled,false);
+  assert.equal(JSON.parse(h.storage.get(key)).text,'A после исчезновения каталога');await h.run("create('task')");
+  assert.equal(JSON.parse(h.calls.find(c=>c.method==='POST').body).workspace_id,'ws_a');
+});
+
+test('UX-001-A changed root blocks old draft and preserves its text under the original key',async()=>{
+  const h=harness();await settle();await draft(h,'Source tied to old root');const key=h.run('view.draft.key'),saved=h.storage.get(key);
+  h.routes.set('/workspaces',()=>({workspaces:[{workspace_id:'ws_a',display_name:'Moved A',workspace_root:'different root'}]}));await h.run('refresh()');
+  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+  assert.equal(h.storage.get(key),saved);assert.equal(h.el('taskRaw').value,'Source tied to old root');
+  h.run("selectWorkspace('ws_a')");await draft(h,'');assert.notEqual(h.run('view.draft.key'),key);
+  assert.equal(h.el('taskRaw').value,'');assert.equal(h.storage.get(key),saved);
+});
+
+test('UX-001-A submit guard independently rejects stale selected-workspace binding',async()=>{
+  const h=harness();await settle();await draft(h,'Never send A while B is selected');const key=h.run('view.draft.key');
+  h.run("view.workspace='ws_b';view.catalogFresh=true;showDraft()");
+  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
+  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(key)).text,'Never send A while B is selected');
 });

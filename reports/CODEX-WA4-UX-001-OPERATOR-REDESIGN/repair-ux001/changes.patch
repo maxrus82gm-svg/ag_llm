@@ -1,0 +1,140 @@
+--- before/web_alarm/ui.py
++++ after/web_alarm/ui.py
+@@ -441,6 +441,10 @@
+   b.onclick=()=>selectTask(t.task_id);return b;
+ }
+ function currentWorkspace(){return view.workspaces.find(w=>w.workspace_id===view.workspace)}
++function draftWorkspaceConfirmed(){
++  const d=view.draft,ws=currentWorkspace();
++  return Boolean(view.mode==='draft'&&d&&ws&&d.workspace_id===view.workspace&&d.workspace_root===ws.workspace_root);
++}
+ function draftKey(ws=currentWorkspace()){return ws?'webAlarm.draft.v1.'+encodeURIComponent(ws.workspace_id)+'|'+encodeURIComponent(ws.workspace_root):null}
+ function readDraft(ws=currentWorkspace()){
+   const key=draftKey(ws);if(!key)return null;
+@@ -475,11 +479,11 @@
+   const d=view.draft;if(!d)return;
+   if($('taskRaw').value!==d.text)$('taskRaw').value=d.text;const pending=d.registration&&d.registration.state!=='confirmed';
+   $('taskRaw').readOnly=!view.draftWritable||Boolean(d.registration);
+-  $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh;
++  $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh||!draftWorkspaceConfirmed();
+   $('discardDraft').disabled=!view.draftWritable||view.creating||Boolean(pending);
+   const state=d.registration?(d.registration.state==='confirmed'?'Локальная запись: сервер ранее подтвердил TASK '+d.registration.task_id+'. Текущее состояние смотрите в карточке справа.':d.registration.state==='pending'&&view.creating?'Ожидаем подтверждение сервера. Постановка защищена локально.':'Исход регистрации неизвестен. Текст защищён; повторная отправка заблокирована. Обновите список TASK и сверьте его с постановкой.'):
+     d.dirty?'Не сохранён · только в памяти этой страницы. Скопируйте текст.':d.text.trim()?'Черновик сохранён в этом браузере · '+new Date(d.updated_at).toLocaleTimeString('ru-RU'):'Пустая форма · ничего не сохранено';
+-  text('draftStatus',state);text('draftWorkspace',currentWorkspace()?.display_name||'');
++  text('draftStatus',state);text('draftWorkspace',draftWorkspaceConfirmed()?currentWorkspace().display_name:d.workspace_id+' · Workspace не подтверждён');
+   text('discardDraft',d.text.trim()?'Удалить локальный черновик':'Закрыть пустую форму');
+ }
+ function persistDraft(){
+@@ -529,9 +533,9 @@
+   text('taskGoalText',t.goal===t.raw_task?'Постановка сохранена. План и исполнение формируются отдельно.':t.goal);
+   text('taskDescription',t.raw_task);
+   $('taskBadge').replaceChildren(badge(t.status));
+-  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.total===0?'План ещё не содержит этапов.':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
++  text('progressText',!o.coherent||o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.total===0?'План ещё не содержит этапов.':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
+   text('doneText',o.progress.done+' выполнено · ожидает проверки');
+-  const known=o.progress.verified!=null&&o.progress.total>0;
++  const known=o.coherent&&o.progress.verified!=null&&o.progress.total>0;
+   text('progressFill','');
+   $('progressFill').style.width=known?(100*o.progress.verified/o.progress.total)+'%':'0%';
+   $('progressTrack').setAttribute('aria-valuemax',String(o.progress.total||1));
+@@ -569,7 +573,7 @@
+     d.append(s,body);
+     $('timeline').append(d)
+   }
+-  if(!o.stages.length)$('timeline').append(element('p','План ещё не содержит этапов.','empty'));
++  if(!o.stages.length)$('timeline').append(element('p',o.coherent?'План ещё не содержит этапов.':'Состав плана не подтверждён. Обновите состояние.','empty'));
+   const current=o.current_operation;
+   $('operationBadge').replaceChildren(...(current?[badge(current.record.status)]:[]));
+   text('operationReason',o.current_operation_reason);
+@@ -665,8 +669,12 @@
+     if(w.status==='rejected'||t.status==='rejected')throw w.reason||t.reason;
+     if(!Array.isArray(w.value.workspaces)||!Array.isArray(t.value.active)||!Array.isArray(t.value.completed))throw Error('Некорректный список Workspace / TASK');
+     view.workspaces=w.value.workspaces;view.tasks=t.value;view.catalogFresh=true;
++    // Keep every editor bound to its original ID/root, including an empty one.
++    // Another Workspace may be selected only by an explicit user action.
++    if(view.mode==='draft'&&view.draft&&!draftWorkspaceConfirmed()){
++      view.catalogFresh=false;renderNavigation();showDraft();notice('navigationError','Workspace черновика больше не подтверждён сервером или изменил путь. Текст остаётся в исходном черновике; регистрация заблокирована. Выберите проект явно и обновите данные.');return;
++    }
+     if(!currentWorkspace()){
+-      if(view.mode==='draft'&&view.draft?.text.trim()){notice('navigationError','Workspace больше не подтверждён сервером. Черновик сохранён локально; регистрация заблокирована.');view.catalogFresh=false;showDraft();return}
+       view.workspace=view.workspaces[0]?.workspace_id||null;view.task=null;clearDetail();
+     }
+     if(view.task&&![...view.tasks.active,...view.tasks.completed].some(t=>t.task_id===view.task&&t.workspace_id===view.workspace)){view.task=null;clearDetail()}
+@@ -680,7 +688,7 @@
+   if(view.creating)return;
+   if(view.refreshing){notice(kind==='workspace'?'formError':'draftError','Дождитесь завершения обновления.');return}
+   const ws=kind==='workspace',d=view.draft,epoch=view.epoch;
+-  if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh))return;
++  if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh||!draftWorkspaceConfirmed()))return;
+   const raw=d?.text.trim(),body=ws?{display_name:$('wsName').value,workspace_root:$('wsRoot').value}:
+     {workspace_id:d.workspace_id,title:Array.from(raw.split(/\r?\n/)[0]).slice(0,120).join(''),goal:raw,raw_task:raw};
+   if(ws&&!window.confirm('Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?'))return;
+--- before/test_web_alarm_operator_ui.js
++++ after/test_web_alarm_operator_ui.js
+@@ -371,10 +371,16 @@
+   assert.equal(h.el('progressText').textContent,'План ещё не содержит этапов.');
+   assert.equal(h.el('progressTrack').getAttribute('aria-valuenow'),null);
+   assert.equal(h.el('snapshotBadge').textContent,'Нет текущего этапа');
++  assert.equal(h.el('timeline').textContent,'План ещё не содержит этапов.');
+ });
+ test('UX incoherent empty plan never asserts that the plan is known empty',async()=>{
+-  const h=harness();await settle();const v=task();v.operator.coherent=false;v.operator.progress={verified:null,total:0,done:0};h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+-  assert.match(h.el('progressText').textContent,/не подтверждён/);assert.equal(h.el('copyNext').disabled,true);
++  for(const verified of [null,0]){
++    const h=harness();await settle();const v=task();v.operator.coherent=false;v.operator.stages=[];v.operator.progress={verified,total:0,done:0};h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
++    assert.match(h.el('progressText').textContent,/не подтверждён/);assert.equal(h.el('copyNext').disabled,true);
++    assert.doesNotMatch(h.el('timeline').textContent,/План ещё не содержит этапов/);
++    assert.match(h.el('timeline').textContent,/плана не подтверждён/);
++    assert.equal(h.el('progressTrack').getAttribute('aria-valuenow'),null);
++  }
+ });
+ test('UX null health response clears the previously online signal',async()=>{
+   const h=harness();await settle();h.routes.set('/status',()=>null);await h.run('refresh()');
+@@ -390,3 +396,47 @@
+   const h=harness();await settle();const v=task();v.operator.stages[0].prerequisites=null;h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+   assert.equal(h.el('detail').hidden,true);assert.equal(h.run('view.data'),null);assert.equal(h.el('copyContext').disabled,true);
+ });
++
++test('UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection',async()=>{
++  const h=harness();await settle();h.run('openDraft()');await settle();const keyA=h.run('view.draft.key');
++  h.routes.set('/workspaces',()=>({workspaces:[{workspace_id:'ws_b',display_name:'B',workspace_root:'temp B'}]}));await h.run('refresh()');
++  assert.equal(h.run('view.workspace'),'ws_a');assert.equal(h.run('view.draft.workspace_id'),'ws_a');
++  assert.equal(h.el('draftPanel').hidden,false);assert.equal(h.storage.has(keyA),false);
++  h.el('taskRaw').value='A: сохранить без миграции';h.el('taskRaw').oninput();
++  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
++  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(keyA)).text,'A: сохранить без миграции');
++  assert.match(h.el('navigationError').textContent,/больше не подтверждён/);
++  assert.match(h.el('workspaceList').textContent,/B/);
++  h.run("selectWorkspace('ws_b')");await draft(h,'');assert.equal(h.el('taskRaw').value,'');
++  const keyB=h.run('view.draft.key');assert.notEqual(keyA,keyB);await h.run('refresh()');
++  h.el('taskRaw').value='B: осознанно выбран';h.el('taskRaw').oninput();await h.run("create('task')");
++  const posts=h.calls.filter(c=>c.method==='POST');assert.equal(posts.length,1);assert.equal(JSON.parse(posts[0].body).workspace_id,'ws_b');
++  assert.equal(JSON.parse(h.storage.get(keyA)).text,'A: сохранить без миграции');
++});
++
++test('UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns',async()=>{
++  const h=harness();await settle();h.run('openDraft()');await settle();const key=h.run('view.draft.key');
++  h.routes.set('/workspaces',()=>({workspaces:[]}));await h.run('refresh()');
++  assert.equal(h.run('view.workspace'),'ws_a');assert.equal(h.storage.has(key),false);
++  h.el('taskRaw').value='A после исчезновения каталога';h.el('taskRaw').oninput();await h.run("create('task')");
++  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(h.el('createTask').disabled,true);
++  h.routes.delete('/workspaces');await h.run('refresh()');assert.equal(h.el('createTask').disabled,false);
++  assert.equal(JSON.parse(h.storage.get(key)).text,'A после исчезновения каталога');await h.run("create('task')");
++  assert.equal(JSON.parse(h.calls.find(c=>c.method==='POST').body).workspace_id,'ws_a');
++});
++
++test('UX-001-A changed root blocks old draft and preserves its text under the original key',async()=>{
++  const h=harness();await settle();await draft(h,'Source tied to old root');const key=h.run('view.draft.key'),saved=h.storage.get(key);
++  h.routes.set('/workspaces',()=>({workspaces:[{workspace_id:'ws_a',display_name:'Moved A',workspace_root:'different root'}]}));await h.run('refresh()');
++  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
++  assert.equal(h.storage.get(key),saved);assert.equal(h.el('taskRaw').value,'Source tied to old root');
++  h.run("selectWorkspace('ws_a')");await draft(h,'');assert.notEqual(h.run('view.draft.key'),key);
++  assert.equal(h.el('taskRaw').value,'');assert.equal(h.storage.get(key),saved);
++});
++
++test('UX-001-A submit guard independently rejects stale selected-workspace binding',async()=>{
++  const h=harness();await settle();await draft(h,'Never send A while B is selected');const key=h.run('view.draft.key');
++  h.run("view.workspace='ws_b';view.catalogFresh=true;showDraft()");
++  assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");
++  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);assert.equal(JSON.parse(h.storage.get(key)).text,'Never send A while B is selected');
++});
