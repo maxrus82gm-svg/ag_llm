@@ -1,7 +1,7 @@
-"""CODEX-WA4-R-002: bounded diagnostic schedules, never production repair.
+"""WA4-R bounded diagnostic schedules; R-004 adds nonempty closeout evidence.
 
-Expected API errors are asserted as reproduced defects, not accepted business
-outcomes. Safety/restart oracles read raw files; actors use real production APIs.
+Expected API failures require exact phase/type/raw-state proof, never blanket
+acceptance. Safety/restart oracles read raw files; actors use real production APIs.
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def read_json(path):
+def parse_json(raw):
     def pairs(items):
         value = {}
         for key, item in items:
@@ -37,7 +37,11 @@ def read_json(path):
                 raise ValueError('duplicate JSON key: ' + key)
             value[key] = item
         return value
-    return json.loads(Path(path).read_text(encoding='utf8'), object_pairs_hook=pairs)
+    return json.loads(raw, object_pairs_hook=pairs)
+
+
+def read_json(path):
+    return parse_json(Path(path).read_text(encoding='utf8'))
 
 
 def error_chain(exc):
@@ -61,6 +65,33 @@ def wait(path, processes=()):
         time.sleep(.005)
 
 
+def raw_state(storage, project):
+    """Quiescent byte/JSON oracle; independent of production projection/state enums."""
+    storage, project = Path(storage), Path(project)
+    active, completed = storage / 'tasks/active' / TASK, storage / 'tasks/completed' / TASK
+    location = active if active.exists() else completed
+    files = {p.relative_to(location).as_posix(): sha(p.read_bytes())
+             for p in location.rglob('*') if p.is_file()}
+    def records(folder):
+        return {p.stem: read_json(p) for p in folder.glob('*.json')}
+    events = location / 'events.jsonl'
+    event_bytes = events.read_bytes() if events.exists() else b''
+    target = (project / 'data.bin').read_bytes()
+    return dict(locations={'active': active.is_dir(), 'completed': completed.is_dir()},
+                task=read_json(location / 'task.json') if (location / 'task.json').exists() else None,
+                plan=read_json(location / 'plan.json') if (location / 'plan.json').exists() else None,
+                operations=records(location / 'operations'), microtasks=records(location / 'microtasks'),
+                events=[parse_json(line) for line in event_bytes.decode('utf8').splitlines()],
+                events_hex=event_bytes.hex(),
+                checkpoint=read_json(location / 'checkpoint.json') if (location / 'checkpoint.json').exists() else None,
+                files_sha256=files, claims=records(storage / 'target_claims'),
+                restore_records={p.relative_to(location).as_posix(): read_json(p)
+                                 for p in location.glob('microtasks/*/restore_point/**/*.json')},
+                snapshot_hex={p.relative_to(location).as_posix(): p.read_bytes().hex()
+                              for p in location.glob('microtasks/*/restore_point/snapshots/*.bin')},
+                target_sha256=sha(target), target_size=len(target), target_hex=target.hex())
+
+
 def worker(config_path):
     from web_alarm.closeout import CloseoutService
     from web_alarm.event_checkpoint_store import EventCheckpointStore
@@ -75,7 +106,7 @@ def worker(config_path):
     armed = {'acquire': False, 'event': None, 'paused': False}
     def mark(phase, **facts):
         with (base / (name + '.trace')).open('a', encoding='utf8') as stream:
-            stream.write(json.dumps(dict(phase=phase, **facts)) + '\n')
+            stream.write(json.dumps(dict(phase=phase, pid=os.getpid(), **facts)) + '\n')
             stream.flush()
         (base / (name + '.' + phase)).touch()
     def pause(phase, **facts):
@@ -88,6 +119,7 @@ def worker(config_path):
     actual_apply, actual_transition = MutationExecutor._apply, OperationStore._transition_locked
     actual_replace, actual_lock, actual_write = os.replace, TaskStore.mutation_lock, TaskStore._write_task
     actual_lock_acquire = InterProcessLock.acquire
+    actual_verdict = CloseoutService.verdict
     def text(path, *args, **kwargs):
         if mode == 'held_RAW_read' and not armed['paused'] and path.name == 'task.md' and 'active' in path.parts:
             armed['paused'] = True
@@ -138,9 +170,16 @@ def worker(config_path):
         return result
     def replace(src, dst):
         moving = Path(src) == storage / 'tasks/active' / TASK and Path(dst) == storage / 'tasks/completed' / TASK
-        if moving and mode == 'close_trace':
+        if moving and mode in ('close_trace', 'completion_gate', 'native_pre', 'reject_gate'):
             op_path=storage/'tasks/active'/TASK/'operations/op_diag.json'
             mark('before_directory_move', operation=read_json(op_path) if op_path.exists() else None)
+        if moving and mode == 'completion_gate':
+            pause('fresh_gate_before_move')
+        if moving and mode == 'native_pre':
+            # A real no-delete-share Windows RAW handle, not an injected exception.
+            with (Path(src) / 'task.md').open('rb'):
+                mark('native_pre_handle_open', path=str(Path(src) / 'task.md'))
+                return actual_replace(src, dst)
         result = actual_replace(src, dst)
         if moving:
             mark('directory_moved')
@@ -166,9 +205,19 @@ def worker(config_path):
                 pause('mutation_lock_acquired')
             yield
     def lock_acquire(lock):
-        if mode == 'close_trace' and lock.path == storage/'locks/operations'/f'{TASK}.lock':
+        traced = mode in ('close_trace', 'completion_gate', 'reject_gate', 'held_RAW_read') and lock.path == storage/'locks/operations'/f'{TASK}.lock'
+        if traced:
             mark('operations_lock_attempt')
-        return actual_lock_acquire(lock)
+        result = actual_lock_acquire(lock)
+        if traced:
+            mark('operations_lock_acquired')
+        return result
+    def verdict(projection):
+        value = actual_verdict(projection)
+        if mode == 'reject_gate':
+            pause('fresh_reject_gate', eligible=value['eligible'],
+                  blocker_codes=[b['code'] for b in value['blockers']])
+        return value
 
     try:
         with mock.patch.object(Path, 'read_text', text), mock.patch.object(Path, 'read_bytes', binary), \
@@ -180,11 +229,13 @@ def worker(config_path):
              mock.patch.object(os, 'replace', replace), \
              mock.patch.object(TaskStore, '_write_task', write_task), \
              mock.patch.object(TaskStore, 'mutation_lock', lock), \
-             mock.patch.object(InterProcessLock, 'acquire', lock_acquire):
+             mock.patch.object(InterProcessLock, 'acquire', lock_acquire), \
+             mock.patch.object(CloseoutService, 'verdict', staticmethod(verdict)):
             action = cfg['action']
             mark('actor_enter', action=action, mode=mode)
-            if action == 'mutate':
-                result = MutationExecutor(storage).execute(TASK, 'm1', 'op_diag', 'write', 'data.bin', payload=POST)
+            if action in ('mutate', 'mutate_late'):
+                op = 'op_diag' if action == 'mutate' else 'op_late'
+                result = MutationExecutor(storage).execute(TASK, 'm1', op, 'write', 'data.bin', payload=POST)
                 result = {key: result.get(key) for key in ('result', 'result_code', 'receipt', 'claim_release')}
             elif action == 'direct_close':
                 result = {'result': TaskStore(storage).complete_task(TASK).status.value}
@@ -202,6 +253,8 @@ def worker(config_path):
                 service = ProjectionService(storage)
                 projection = service.build(TASK)
                 result = {'checkpoint': service.validate_checkpoint(TASK, projection)}
+            elif action == 'raw_read':
+                result = raw_state(storage, cfg['project'])
             else:
                 raise ValueError('unknown action')
         print(json.dumps(result))
@@ -248,23 +301,7 @@ class RaceEvidenceTests(unittest.TestCase):
         self.facts.append({'PRE': self.initial})
 
     def observe(self):
-        active = self.storage / 'tasks/active' / TASK
-        completed = self.storage / 'tasks/completed' / TASK
-        location = active if active.exists() else completed
-        tree = {p.relative_to(location).as_posix(): sha(p.read_bytes()) for p in location.rglob('*') if p.is_file()}
-        def records(folder):
-            return {p.stem: read_json(p) for p in folder.glob('*.json')}
-        events = location / 'events.jsonl'
-        return dict(locations={'active': active.is_dir(), 'completed': completed.is_dir()},
-                    task=read_json(location / 'task.json') if (location / 'task.json').exists() else None,
-                    plan=read_json(location / 'plan.json') if (location / 'plan.json').exists() else None,
-                    operations=records(location / 'operations'), microtasks=records(location / 'microtasks'),
-                    events=[json.loads(line) for line in events.read_text(encoding='utf8').splitlines()] if events.exists() else [],
-                    checkpoint=read_json(location / 'checkpoint.json') if (location / 'checkpoint.json').exists() else None,
-                    files_sha256=tree,
-                    claims=records(self.storage / 'target_claims'),
-                    target_sha256=sha((self.project / 'data.bin').read_bytes()),
-                    target_size=(self.project / 'data.bin').stat().st_size)
+        return raw_state(self.storage, self.project)
 
     def state(self, label):
         value = self.observe()
@@ -272,7 +309,8 @@ class RaceEvidenceTests(unittest.TestCase):
         return value
 
     def start(self, name, action, mode='normal'):
-        cfg = dict(base=str(self.base), storage=str(self.storage), name=name, action=action, mode=mode)
+        cfg = dict(base=str(self.base), storage=str(self.storage), project=str(self.project),
+                   name=name, action=action, mode=mode)
         path = self.base / (name + '.json')
         path.write_text(json.dumps(cfg), encoding='utf8')
         process = subprocess.Popen([sys.executable, '-B', str(Path(__file__).resolve()), '--worker', str(path)],
@@ -284,7 +322,8 @@ class RaceEvidenceTests(unittest.TestCase):
         out, err = process.communicate(timeout=TIMEOUT+5)
         path = self.base / (name + '.trace')
         trace = [json.loads(line) for line in path.read_text(encoding='utf8').splitlines()] if path.exists() else []
-        self.facts.append({'worker': name, 'exit': process.returncode, 'stdout': out, 'stderr': err, 'trace': trace})
+        self.facts.append({'worker': name, 'pid': process.pid, 'exit': process.returncode,
+                           'stdout': out, 'stderr': err, 'trace': trace})
         self.assertEqual(process.returncode, exit_code, (out, err))
         if exit_code == 91:
             self.assertEqual(out, '')
@@ -308,6 +347,7 @@ class RaceEvidenceTests(unittest.TestCase):
         self.assertEqual(state['plan'], self.initial['plan'])
         self.assertEqual(state['microtasks'], self.initial['microtasks'])
         self.assertEqual(state['events'][:len(self.initial['events'])], self.initial['events'])
+        self.assertTrue(state['events_hex'].startswith(self.initial['events_hex']), 'historical event prefix bytes changed')
         for path, digest in self.initial['files_sha256'].items():
             if path.startswith('microtasks/m1/restore_point/') or path == 'task.md':
                 self.assertEqual(state['files_sha256'].get(path), digest, path)
@@ -326,24 +366,169 @@ class RaceEvidenceTests(unittest.TestCase):
         return sum(json.loads(line)['phase']=='apply_enter' for path in self.base.glob('*.trace')
                    for line in path.read_text(encoding='utf8').splitlines())
 
+    def setup_closeout_evidence(self):
+        """Use one actual apply and independently checked bytes, never synthetic receipts."""
+        from web_alarm.operation_store import OperationStore
+        from web_alarm.state_machine import ServerStateMachine
+        from web_alarm.projection import ProjectionService
+        self.facts.append({'execution_task': 'CODEX-WA4-R-004-F1-CLOSEOUT-GATE',
+                           'input_quality': 'one real tracked apply; nonempty receipt/checkpoint/snapshot'})
+        self.setup_fixture()
+        self.assertEqual(self.run_actor('fixture_apply', 'mutate')['result'], 'EXECUTED')
+        OperationStore(self.storage).transition(TASK, 'op_diag', 'VERIFIED')
+        machine = ServerStateMachine(self.storage)
+        machine.transition(TASK, 'm1', 'DONE')
+        machine.transition(TASK, 'm1', 'VERIFIED', verification_evidence='independent POST bytes checked')
+        ProjectionService(self.storage).rebuild_checkpoint(TASK)
+        self.initial = self.state('F1_quiescent_PRE_with_receipt_checkpoint_snapshot')
+        receipt = self.initial['operations']['op_diag']['receipt']
+        self.assertEqual((receipt['exists'], receipt['size'], receipt['sha256']), (True, len(POST), sha(POST)))
+        self.assertIs(receipt['matches_expected_post'], True)
+        self.assertEqual(self.initial['operations']['op_diag']['status'], 'VERIFIED')
+        self.assertEqual(self.initial['target_hex'], POST.hex())
+        self.assertIn(PRE.hex(), self.initial['snapshot_hex'].values())
+        self.assertTrue(self.initial['restore_records'])
+        self.assertEqual(self.initial['checkpoint']['last_verified_microtask_id'], 'm1')
+        self.assertTrue(self.initial['claims'])
+        self.assertTrue(all(c['active'] is None for c in self.initial['claims'].values()))
+        self.assertEqual(self.apply_count(), 1)
+
+    def assert_closeout_evidence(self, state, *, completed=False):
+        self.unchanged_evidence(state, POST)
+        for field in ('operations', 'checkpoint', 'restore_records', 'snapshot_hex', 'claims', 'target_hex'):
+            self.assertEqual(state[field], self.initial[field], field)
+        self.assertEqual(set(state['files_sha256']), set(self.initial['files_sha256']))
+        for path, digest in self.initial['files_sha256'].items():
+            if not completed or path not in ('task.json', 'events.jsonl'):
+                self.assertEqual(state['files_sha256'][path], digest, path)
+        if completed:
+            self.assertEqual(state['locations'], {'active': False, 'completed': True})
+            self.assertEqual(state['task']['status'], 'COMPLETED')
+            before, after = dict(self.initial['task']), dict(state['task'])
+            before.pop('status'); before.pop('updated_at'); after.pop('status'); after.pop('updated_at')
+            self.assertEqual(before, after)
+            tail = state['events'][len(self.initial['events']):]
+            self.assertEqual([e['event_type'] for e in tail], ['TASK_COMPLETED'])
+        else:
+            self.assertEqual(state['task'], self.initial['task'])
+            self.assertEqual(state['events'], self.initial['events'])
+        self.assertEqual(self.apply_count(), 1)
+
+    def assert_fresh_closed_evidence(self):
+        state = self.state('after_fresh_process_completion')
+        self.assert_closeout_evidence(state, completed=True)
+        self.assertEqual(self.run_actor('raw_reopen', 'raw_read'), state)
+        replay = self.run_actor('historical_replay', 'mutate')
+        self.assertEqual((replay['result'], replay['receipt']),
+                         ('REPLAYED', self.initial['operations']['op_diag']['receipt']))
+        self.assertEqual(self.observe(), state)
+        self.assertEqual(self.apply_count(), 1)
+
+    @unittest.skipUnless(sys.platform == 'win32', 'requires native Windows reader/replace semantics')
+    def test_F1_native_pre_move_refusal_preserves_nonempty_evidence_and_fresh_retry(self):
+        self.setup_closeout_evidence()
+        out = self.run_actor('close', 'complete', 'native_pre', 2)
+        self.assert_error(out, 'CloseoutError', deepest='PermissionError')
+        self.assertIn(out['error'][-1]['winerror'], (5, 32))
+        self.assertTrue((self.base / 'close.native_pre_handle_open').is_file())
+        self.assertFalse((self.base / 'close.directory_moved').exists())
+        self.assertEqual(self.state('native_pre_move_refusal'), self.initial)
+        self.assertEqual(self.run_actor('raw_before_retry', 'raw_read'), self.initial)
+        result = self.run_actor('fresh_retry', 'complete')
+        self.assertEqual((result['result'], result['resumed']), ('COMPLETED', None))
+        self.assert_fresh_closed_evidence()
+
     @unittest.skipUnless(sys.platform == 'win32', 'requires native Windows reader/replace semantics')
     def test_F1_native_post_move_status_failure_and_fresh_recovery(self):
-        self.setup_fixture(verified=True)
+        self.setup_closeout_evidence()
         out = self.run_actor('close', 'complete', 'native_status', 2)
         self.assert_error(out, 'CloseoutError', deepest='PermissionError')
         self.assertIn(out['error'][-1]['winerror'], (5,32))
         pending = self.state('status_pending_before_recovery')
-        self.assert_closed(pending, PRE, 'PLANNED')
-        self.assertEqual(pending['task'], self.initial['task'])
-        self.assertFalse(any(path.endswith('.tmp') for path in pending['files_sha256']))
-        denied = self.run_actor('late', 'mutate')
+        self.assert_closed(pending, POST, 'PLANNED')
+        self.assert_closeout_evidence(pending)
+        self.assertTrue((self.base / 'close.directory_moved').is_file())
+        self.assertTrue((self.base / 'close.status_write_with_native_reader').is_file())
+        from web_alarm.task_store import TaskStore
+        self.assertEqual(TaskStore(self.storage).completion_state(TASK), 'MOVED_STATUS_PENDING')
+        self.assertEqual(self.run_actor('raw_pending', 'raw_read'), pending)
+        denied = self.run_actor('late', 'mutate_late')
         self.assertEqual(denied['result'], 'REFUSED')
+        replay = self.run_actor('pending_replay', 'mutate')
+        self.assertEqual((replay['result'], replay['receipt']),
+                         ('REPLAYED', self.initial['operations']['op_diag']['receipt']))
+        self.assertEqual(self.observe(), pending)
         recovered = self.run_actor('recover', 'complete')
         self.assertEqual((recovered['result'], recovered['resumed']), ('COMPLETED','MOVED_STATUS_PENDING'))
-        self.assert_closed(self.state('after_fresh_recovery'), PRE)
+        self.assert_fresh_closed_evidence()
         self.assertEqual(self.run_actor('again','complete')['result'], 'REJECTED')
         self.assertEqual(sum(e['event_type']=='TASK_COMPLETED' for e in self.observe()['events']),1)
-        self.assertEqual(self.apply_count(), 0)
+        self.assertEqual(self.apply_count(), 1)
+
+    def test_F1_completion_first_serializes_RAW_admission_plan_and_new_mutation(self):
+        from web_alarm.store_lock import InterProcessLock, StoreLockTimeout
+        from web_alarm.task_store import TaskStore, TaskStoreError
+        self.setup_closeout_evidence()
+        closer = self.start('close', 'complete', 'completion_gate')
+        self.phase('close', 'fresh_gate_before_move', closer)
+        self.assertEqual(self.state('fresh_gate_under_both_locks'), self.initial)
+        with self.assertRaises(StoreLockTimeout):
+            with InterProcessLock(self.storage/'locks/operations'/f'{TASK}.lock', timeout=.05):
+                self.fail('closeout did not hold the operations lock')
+        with self.assertRaises(TaskStoreError):
+            with TaskStore(self.storage, lock_timeout=.05).mutation_lock(TASK):
+                self.fail('closeout did not hold the mutation lock')
+        reader = self.start('reader', 'begin', 'held_RAW_read')
+        self.phase('reader', 'operations_lock_attempt', reader)
+        plan = self.start('plan', 'microtask', 'lock_trace')
+        self.phase('plan', 'mutation_lock_attempt', plan)
+        writer = self.start('writer', 'mutate_late')
+        self.phase('writer', 'actor_enter', writer)
+        self.release('close')
+        self.assertEqual(self.finish('close', closer)['result'], 'COMPLETED')
+        self.assert_error(self.finish('reader', reader, 2), 'TaskStoreError')
+        self.assert_error(self.finish('plan', plan, 2), 'TaskStoreError')
+        self.assertEqual(self.finish('writer', writer)['result'], 'REFUSED')
+        self.assertFalse((self.base/'reader.held_RAW_read').exists())
+        self.assert_fresh_closed_evidence()
+
+    def test_F1_admission_first_rejects_closeout_without_touching_existing_evidence(self):
+        self.setup_closeout_evidence()
+        reader = self.start('reader', 'begin', 'held_RAW_read')
+        self.phase('reader', 'held_RAW_read', reader)
+        closer = self.start('close', 'complete', 'reject_gate')
+        self.phase('close', 'operations_lock_attempt', closer)
+        self.assertFalse((self.base/'close.before_directory_move').exists())
+        self.release('reader')
+        self.assertEqual(self.finish('reader', reader)['result'], 'BEGUN')
+        self.phase('close', 'fresh_reject_gate', closer)
+        admitted = self.state('admission_committed_before_closeout_refusal')
+        self.assertEqual(admitted['operations']['op_late']['status'], 'INTENT')
+        self.assertIsNone(admitted['operations']['op_late']['receipt'])
+        self.assertEqual(admitted['operations']['op_diag'], self.initial['operations']['op_diag'])
+        # Admission is allowed to refresh its derived checkpoint before closeout.
+        self.assertEqual(admitted['checkpoint']['last_operation_id'], 'op_late')
+        self.assertEqual(admitted['checkpoint']['last_verified_microtask_id'], 'm1')
+        self.assertEqual(set(admitted['files_sha256']),
+                         set(self.initial['files_sha256']) | {'operations/op_late.json'})
+        for path, digest in self.initial['files_sha256'].items():
+            if path not in ('events.jsonl', 'checkpoint.json', 'checkpoint.md'):
+                self.assertEqual(admitted['files_sha256'][path], digest, path)
+        self.release('close')
+        result = self.finish('close', closer)
+        self.assertEqual((result['result'], result['resumed']), ('REJECTED', None))
+        gates = [json.loads(line) for line in (self.base/'close.trace').read_text(encoding='utf8').splitlines()
+                 if json.loads(line)['phase'] == 'fresh_reject_gate']
+        self.assertEqual(len(gates), 1)
+        self.assertIs(gates[0]['eligible'], False)
+        self.assertIn('OPERATION_OPEN', gates[0]['blocker_codes'])
+        self.assertFalse((self.base/'close.before_directory_move').exists())
+        self.assertEqual(self.observe(), admitted)
+        self.assertEqual(self.run_actor('raw_rejected', 'raw_read'), admitted)
+        self.assertEqual(admitted['locations'], {'active': True, 'completed': False})
+        self.unchanged_evidence(admitted, POST)
+        self.assertEqual(admitted['claims'], self.initial['claims'])
+        self.assertEqual(self.apply_count(), 1)
 
     def moved_reader(self, mode, phase):
         self.setup_fixture()

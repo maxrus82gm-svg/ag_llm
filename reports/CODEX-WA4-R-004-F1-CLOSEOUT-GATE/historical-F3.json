@@ -1,0 +1,92 @@
+{
+  "provenance": {
+    "run": "38379575748",
+    "artifact": "11802732223",
+    "local_zip": "C:\\Users\\REX\\Downloads\\wa4r002-independent-38379575748-1.zip",
+    "zip_sha256": "020d2770b48f90e0d24df071b10c2ad5fe5caa2972d8d3070445ac875963e120",
+    "member": "wa4r002-focused/results.json"
+  },
+  "selector": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+  "status": "FAIL",
+  "round0": {
+    "round": 0,
+    "workers": {
+      "c0": {
+        "returncode": 0,
+        "stderr": "",
+        "name": "c0",
+        "result": "FAILED:CloseoutError",
+        "error": [
+          {
+            "type": "web_alarm.closeout.CloseoutError",
+            "message": "cannot move task to completed: task_w",
+            "errno": null,
+            "winerror": null,
+            "frames": [
+              "  File \"<string>\", line 35, in <module>\n",
+              "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\closeout.py\", line 102, in complete\n    raise CloseoutError(str(exc)) from exc\n"
+            ]
+          },
+          {
+            "type": "web_alarm.task_store.TaskStoreError",
+            "message": "cannot move task to completed: task_w",
+            "errno": null,
+            "winerror": null,
+            "frames": [
+              "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\closeout.py\", line 100, in complete\n    task = self.tasks.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\task_store.py\", line 566, in complete_task_locked\n    raise TaskStoreError(f\"cannot move task to completed: {task_id}\") from exc\n"
+            ]
+          },
+          {
+            "type": "builtins.PermissionError",
+            "message": "[WinError 5] Access is denied: 'D:\\\\a\\\\_temp\\\\tmpsyr3j4f0\\\\state\\\\tasks\\\\active\\\\task_w' -> 'D:\\\\a\\\\_temp\\\\tmpsyr3j4f0\\\\state\\\\tasks\\\\completed\\\\task_w'",
+            "errno": 13,
+            "winerror": 5,
+            "frames": [
+              "  File \"D:\\a\\ag_llm\\ag_llm\\web_alarm\\task_store.py\", line 564, in complete_task_locked\n    os.replace(task_dir, destination)\n",
+              "  File \"<string>\", line 20, in replace\n"
+            ]
+          }
+        ]
+      },
+      "b1": {
+        "returncode": 0,
+        "stderr": "",
+        "name": "b1",
+        "result": "BEGUN",
+        "error": null
+      },
+      "b2": {
+        "returncode": 0,
+        "stderr": "",
+        "name": "b2",
+        "result": "BEGUN",
+        "error": null
+      },
+      "m3": {
+        "returncode": 0,
+        "stderr": "",
+        "name": "m3",
+        "result": "CREATED",
+        "error": null
+      }
+    },
+    "terminal": {
+      "active": true,
+      "completed": false,
+      "task_status": "PLANNED",
+      "operation_ids": [
+        "op_b1",
+        "op_b2"
+      ],
+      "plan_ids": [
+        "m1",
+        "late_m3"
+      ],
+      "event_count": 7,
+      "project_one": "6f6e652e7478740a",
+      "project_two": "74776f2e7478740a"
+    }
+  },
+  "interpretation": "Historical native pre-move refusal, not historical F1 post-move proof"
+}

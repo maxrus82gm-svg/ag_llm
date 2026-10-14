@@ -152,6 +152,8 @@ MAX_FINAL_AUDIT_CONTEXT_BYTES = 1024 * 1024
 MAX_FINAL_AUDIT_NEW_FILE_BYTES = MAX_VERIFY_OUTPUT_BYTES
 MAX_FINAL_AUDIT_TOOL_MATERIAL_ITEM_BYTES = 8 * 1024
 MAX_FINAL_AUDIT_TOOL_MATERIAL_BYTES = 32 * 1024
+# Discovery evidence is proven by its own server-observed tool result, never by Git state.
+FINAL_AUDIT_DISCOVERY_TOOLS = frozenset({"list_dir", "find_text"})
 FINAL_AUDIT_CORRECTION_LIMIT = 2
 EXECUTION_CONSISTENCY_SERVER_RETRY_LIMIT = 1
 EXECUTION_CONSISTENCY_CORRECTION_LIMIT = 1
@@ -2549,8 +2551,16 @@ def _collect_final_audit_task_paths(
     verification_state: dict,
     tool_facts: list[dict],
 ) -> tuple[list[str], list[str]]:
-    """Build deterministic task-scoped paths for Final Audit observations."""
-    candidates: list[object] = []
+    """Build deterministic task-scoped paths for Final Audit observations.
+
+    Git observes only file targets whose state the audit checks: artifacts, RUN-owned
+    mutations, verification targets and file-level evidence requirements. Discovery
+    requirements (list_dir/find_text) and requirement paths that are directories are
+    still READ-scope validated, but their evidence is their own server-observed result:
+    observing them through Git would import every unrelated change beneath them.
+    """
+    candidates: list[tuple[object, bool]] = []  # (path, from an evidence requirement)
+    discovery: list[object] = []
 
     if isinstance(task_plan_evidence, dict):
         for stage in task_plan_evidence.get("stages") or []:
@@ -2558,23 +2568,32 @@ def _collect_final_audit_task_paths(
                 continue
             for artifact in stage.get("artifacts") or []:
                 if isinstance(artifact, dict):
-                    candidates.append(artifact.get("path"))
+                    candidates.append((artifact.get("path"), False))
             for requirement in stage.get("evidence_requirements") or []:
                 if not isinstance(requirement, dict):
                     continue
                 arguments = requirement.get("arguments")
                 if not isinstance(arguments, dict):
                     continue
+                requirement_paths = []
                 if "path" in arguments:
-                    candidates.append(arguments.get("path"))
+                    requirement_paths.append(arguments.get("path"))
                 if isinstance(arguments.get("paths"), list):
-                    candidates.extend(arguments["paths"])
+                    requirement_paths.extend(arguments["paths"])
+                if requirement.get("tool") in FINAL_AUDIT_DISCOVERY_TOOLS:
+                    discovery.extend(requirement_paths)
+                else:
+                    candidates.extend((path, True) for path in requirement_paths)
 
     for key in ("changed_files", "new_files", "deleted_files"):
-        candidates.extend(mutation_facts.get(key) or [])
-    candidates.extend((run_owned_state or {}).keys())
-    candidates.extend(verification_state.get("changed_python_paths") or [])
-    candidates.extend(verification_state.get("deleted_python_paths") or [])
+        candidates.extend((path, False) for path in mutation_facts.get(key) or [])
+    candidates.extend((path, False) for path in (run_owned_state or {}).keys())
+    candidates.extend(
+        (path, False) for path in verification_state.get("changed_python_paths") or []
+    )
+    candidates.extend(
+        (path, False) for path in verification_state.get("deleted_python_paths") or []
+    )
 
     # Arbitrary exploratory tool calls do not expand task scope. Relevant
     # dependencies must be present in the accepted contract/evidence targets;
@@ -2583,7 +2602,14 @@ def _collect_final_audit_task_paths(
     paths: list[str] = []
     invalid: list[str] = []
     seen: set[str] = set()
-    for candidate in candidates:
+    for candidate in discovery:
+        if not isinstance(candidate, str) or not candidate.strip():
+            continue
+        try:
+            _require_operation_permission(root, candidate.strip(), "read", policy)
+        except Exception:
+            invalid.append(str(candidate)[:300])
+    for candidate, from_requirement in candidates:
         if not isinstance(candidate, str) or not candidate.strip():
             continue
         try:
@@ -2593,6 +2619,12 @@ def _collect_final_audit_task_paths(
             relative = resolved.relative_to(root).as_posix()
         except Exception:
             invalid.append(str(candidate)[:300])
+            continue
+        if resolved.is_dir():
+            # Never observe a directory through Git; artifacts and RUN-owned targets
+            # must be files, so a directory there is a malformed contract/state.
+            if not from_requirement:
+                invalid.append(str(candidate)[:300])
             continue
         if relative not in seen:
             seen.add(relative)
@@ -2829,6 +2861,25 @@ def _final_audit_requirement_coverage(
     }
 
 
+def _final_audit_git_not_applicable(check: str, reason: str, policy: dict) -> dict:
+    """Explicit NOT_APPLICABLE Git observation; produced without running Git."""
+    return {
+        "available": True,
+        "ok": True,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "truncated": False,
+        "stdout_bytes": 0,
+        "stderr_bytes": 0,
+        "paths": [],
+        "check": check,
+        "read_scope": policy.get("read_scope"),
+        "not_applicable": True,
+        "reason": reason,
+    }
+
+
 def _collect_final_audit_evidence(
     *,
     root: Path,
@@ -2859,6 +2910,12 @@ def _collect_final_audit_evidence(
         str(item.get("tool")) for item in (tool_facts or []) if item.get("tool")
     }
     task_scoped = isinstance(task_plan_evidence, dict)
+    # Git evidence is path-scoped in every RUN: the Planner contract plus RUN-owned
+    # mutation/verification targets, or only the latter without a Task Plan. Workspace
+    # changes outside that scope are never collected, so unrelated (possibly sensitive)
+    # work can neither reach the verifier nor inflate the packet.
+    git_scope_mode = "task_scoped_v1" if task_scoped else "run_scoped_v1"
+    no_scoped_paths_reason = "no_task_scoped_paths" if task_scoped else "no_run_scoped_paths"
     task_paths, invalid_task_paths = _collect_final_audit_task_paths(
         root=root,
         policy=policy,
@@ -2903,6 +2960,12 @@ def _collect_final_audit_evidence(
         reason = "task_scope_contains_unreadable_or_out_of_scope_paths"
         incomplete_reasons.append(reason)
         critical_reasons.append(reason)
+    elif is_mutating_run and not task_paths:
+        # Server state says this RUN wrote, yet no RUN-owned path exists to observe:
+        # an inconsistent ledger must not yield an evidence-free audit.
+        reason = "mutating_run_without_scoped_paths"
+        incomplete_reasons.append(reason)
+        critical_reasons.append(reason)
     if requirement_coverage.get("required") and not requirement_coverage.get("complete"):
         for requirement_id in requirement_coverage.get("missing") or []:
             reason = f"requirement_evidence_missing:{requirement_id}"
@@ -2938,41 +3001,27 @@ def _collect_final_audit_evidence(
         # remains authoritative and is enforced by the existing primitives.
         audit_policy = dict(policy)
         audit_policy["allow_verify"] = True
-        try:
-            if task_scoped:
-                status_result = _agent_git_status(
-                    root, audit_policy, task_paths
-                )
-            else:
-                status_result = _agent_git_status(root, audit_policy)
-            fresh_status = {"available": bool(status_result.get("ok")), **status_result}
-        except Exception as exc:
-            fresh_status = {"available": False, "reason": type(exc).__name__}
-        try:
-            if task_scoped and not task_paths:
-                diff_result = {
-                    "ok": True,
-                    "exit_code": 0,
-                    "stdout": "",
-                    "stderr": "",
-                    "truncated": False,
-                    "stdout_bytes": 0,
-                    "stderr_bytes": 0,
-                    "paths": [],
-                    "check": "git_diff",
-                    "not_applicable": True,
-                    "reason": "no_task_scoped_paths",
-                }
-            else:
+        if not task_paths:
+            # Nothing is in this RUN's scope: no Git process runs at all.
+            fresh_status = _final_audit_git_not_applicable(
+                "git_status", no_scoped_paths_reason, policy
+            )
+            fresh_diff = _final_audit_git_not_applicable(
+                "git_diff", no_scoped_paths_reason, policy
+            )
+        else:
+            try:
+                status_result = _agent_git_status(root, audit_policy, task_paths)
+                fresh_status = {"available": bool(status_result.get("ok")), **status_result}
+            except Exception as exc:
+                fresh_status = {"available": False, "reason": type(exc).__name__}
+            try:
                 diff_result = _agent_git_diff(
-                    root,
-                    task_paths if task_scoped else [],
-                    audit_policy,
-                    allow_missing=task_scoped,
+                    root, task_paths, audit_policy, allow_missing=True
                 )
-            fresh_diff = {"available": bool(diff_result.get("ok")), **diff_result}
-        except Exception as exc:
-            fresh_diff = {"available": False, "reason": type(exc).__name__}
+                fresh_diff = {"available": bool(diff_result.get("ok")), **diff_result}
+            except Exception as exc:
+                fresh_diff = {"available": False, "reason": type(exc).__name__}
         for label, evidence in (
             ("fresh_git_status", fresh_status),
             ("fresh_git_diff", fresh_diff),
@@ -2980,12 +3029,13 @@ def _collect_final_audit_evidence(
             if not evidence.get("ok"):
                 evidence.setdefault("reason", f"{label}_unavailable")
             if evidence.get("truncated"):
+                # Scoped output only covers this RUN's own paths: truncation hides
+                # mandatory evidence with or without a Planner.
                 any_truncated = True
                 truncated_reason = f"{label}_truncated"
                 evidence.setdefault("reason", truncated_reason)
-                if task_scoped:
-                    incomplete_reasons.append(truncated_reason)
-                    critical_reasons.append(truncated_reason)
+                incomplete_reasons.append(truncated_reason)
+                critical_reasons.append(truncated_reason)
     else:
         unavailable = {
             "available": False,
@@ -3049,7 +3099,7 @@ def _collect_final_audit_evidence(
         new_file_evidence.append(item)
 
     unattributed_git_status = []
-    if task_scoped and fresh_status.get("ok"):
+    if fresh_status.get("ok") and not fresh_status.get("not_applicable"):
         run_owned_mutation_paths = set().union(
             mutation_facts["changed_files"],
             mutation_facts["new_files"],
@@ -3262,9 +3312,11 @@ def _collect_final_audit_evidence(
                 "and logical content hashes; no file content is included."
             ),
             "fresh_git_state": (
-                "Task-scoped observation for Planner-enabled RUNs; legacy direct "
-                "RUNs may retain workspace-scope compatibility. Git may include "
-                "pre-existing or external changes."
+                "Path-scoped observation in every RUN: task_scoped_v1 (Planner "
+                "contract plus RUN-owned paths) or run_scoped_v1 (RUN-owned "
+                "mutation/verification paths only). Workspace changes outside these "
+                "paths are intentionally not collected; their absence is not a defect. "
+                "Within scope Git may include pre-existing or external changes."
             ),
             "git_attribution_rule": (
                 "Do not attribute a Git change to the current RUN unless it is "
@@ -3307,7 +3359,7 @@ def _collect_final_audit_evidence(
             "snapshot": copy.deepcopy(freshness_snapshot),
         },
         "task_scope": {
-            "mode": "task_scoped_v1" if task_scoped else "legacy_workspace_compat",
+            "mode": git_scope_mode,
             "paths": task_paths,
             "invalid_paths": invalid_task_paths,
             "unattributed_git_status": unattributed_git_status,

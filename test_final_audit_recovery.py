@@ -331,7 +331,10 @@ class FinalAuditRecoveryIntegrationTests(unittest.IsolatedAsyncioTestCase):
         ])
         self.assertEqual(result, "Finished")
         packet = json.loads(audit.await_args.kwargs["verification_context"])
-        self.assertEqual(packet["task_scope"]["paths"], ["pkg"])
+        # FA-M1: a discovery requirement on a directory is proven by its own server-observed
+        # listing + freshness below, not by Git state of every file under "pkg".
+        self.assertEqual(packet["task_scope"]["paths"], [])
+        self.assertTrue(packet["fresh_git_status"]["not_applicable"])
         coverage = packet["requirement_coverage"]["requirements"][1]
         self.assertTrue(coverage["covered"])
         self.assertIsNotNone(coverage["target_state_sha256"])

@@ -1,0 +1,69 @@
+{
+  "task": "CODEX-WA4-R-004-F1-CLOSEOUT-GATE",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "files": {
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/checks.json": {
+      "sha256": "afc02c56a06ef5a2c892caa0b15019c458cfbe7eaa25225325f94181516126fa",
+      "bytes": 183868
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/evidence.zip": {
+      "sha256": "a28f1df2fdc4cb5b5a7fddff9ce6635dc4d5344cba4ed57acd001850b9cb40b5",
+      "bytes": 1297650
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/historical-F3.json": {
+      "sha256": "6befd553956fc14280b387da5d277673c358c4277ef0f669094429b1ef408315",
+      "bytes": 3294
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/progress.json": {
+      "sha256": "72f8dc6c0e5b2dad8284aaf0706c68a52a4cd8d8d1d8860cbd3101d294eae522",
+      "bytes": 1978
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/quality_controls.py": {
+      "sha256": "1986a4be1e6e12674872cde2978e43a241fc970f03750bf634f85046c5d6a750",
+      "bytes": 8780
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/report.md": {
+      "sha256": "ab5463daebd46cbefc49d283c03a56d9a6a4a964d4c47455cc558fd28242b5bc",
+      "bytes": 24782
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/rotation.json": {
+      "sha256": "d6e87cf7a540f4ba13f21fd87ee1e61846f52a008718182b36dc5b83ec1787e5",
+      "bytes": 1167
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/source-changes.diff": {
+      "sha256": "92980823ecf578458b2cfb79a6bb682009ba1ba741b1274ed260d16509d1a0cf",
+      "bytes": 23328
+    },
+    "reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/versions.json": {
+      "sha256": "46f1e776c92031868b113e8e12046f9e45813252b4438e0f0d01ef42e8234d74",
+      "bytes": 104908
+    }
+  },
+  "source_sha256": {
+    "web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "web_alarm/task_store.py": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+    "web_alarm/operation_store.py": "d7088a782c280fca4423f681d23657e88ea1d8e021bdb43ca449bb4875316764",
+    "web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "test_web_alarm_wa4r002_diagnostics.py": "1d7a23480b726b4835692b53b3e80b72ead980907e145a3ffdbb85ff74083254",
+    "test_web_alarm_reliability_wa017.py": "edb7d2b0bc65568d3be3fc33f39b3c808f790c4906991e4b63c17c974489fabd",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+  },
+  "personal_card": {
+    "path": "Документация/000_Задачи Codex.md",
+    "sha256": "0584719896ee24dd62c576b227df476a1b28f7a17a73efe796f752dc2afeaca5"
+  },
+  "verification": {
+    "final_source_match": true,
+    "zip_crc_and_checks_match": true,
+    "original_historical_zip_digest_match": true,
+    "lossless_rotation": true,
+    "protected_files_unchanged_except_parallel_Claude_card": true,
+    "final_focused": 92,
+    "final_bounded": 8,
+    "final_quality": 6,
+    "full_execution": "NOT RUN",
+    "full_collection_only": 791,
+    "final_isolation_violations": 0
+  }
+}

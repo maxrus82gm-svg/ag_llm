@@ -21,10 +21,178 @@
 
 **Статус:** WAITING FOR NEW TASK.
 
-CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER передана как RESULT READY / AWAITING INDEPENDENT VERIFICATION. Следующие стадии не запускать без новой утверждённой постановки.
+CODEX-WA4-R-004-F1-CLOSEOUT-GATE передана как RESULT READY / AWAITING INDEPENDENT VERIFICATION. Ожидать независимой приёмки WEB_07; следующие стадии не запускать.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-004-F1-CLOSEOUT-GATE. Полная исходная утверждённая постановка сохранена дословно; БЛОК 1 не менялся во время работы.
+
+``````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-004-F1-CLOSEOUT-GATE
+
+**ARCH CLASS:** Web Alarm Workspace / WA4-R Reliability  
+**STATUS:** ASSIGNED FOR IMPLEMENTATION AND EVIDENCE  
+**AGENT:** Codex 007  
+**INDEPENDENT VERIFIER:** ChatGPT / WEB_07
+
+Уважаемый агент 007, предлагаю начать выполнение задачи `CODEX-WA4-R-004-F1-CLOSEOUT-GATE`.
+
+## 1. Цель
+
+Закрыть доказательственный и, при наличии подтверждённого дефекта, программный пробел **F1 — Windows TASK closeout**, не изменяя без необходимости действующую архитектуру Web Alarm.
+
+Это следующий этап проверки WA4-R, а **не разрешение на WARN, GATEWAY REQUIRED, STRICT или эксплуатационный rollout**.
+
+## 2. Исходное состояние
+
+- OBSERVE — ранее принят в ограниченном read-only объёме.
+    
+- UX-002 — bounded independent acceptance: ChatGPT повторно выполнил JavaScript 77/77 PASS и Python focused 53/53 PASS, проверил SHA-256 семи файлов; GUI SELECTED/CANCELLED подтверждены пользователем. Full regression 787 PASS / 1 SKIP — reported Codex, не независимый повтор.
+    
+- F2/F3 — `CODEX-WA4-R-003-F2F3-LOCAL-REPAIR` сообщил успешный repair, однако независимая runtime-приёмка всей области ещё не завершена.
+    
+- F1 — OPEN.
+    
+- WA4-R — IN PROGRESS / STRICT NOT VERIFIED.
+    
+
+Исторический Windows CI:
+
+- Run: `38379575748`
+    
+- Artifact: `11802732223`
+    
+- ZIP SHA-256: `020d2770b48f90e0d24df071b10c2ad5fe5caa2972d8d3070445ac875963e120`
+    
+- Внутри `results.json`: 63 tests, 62 PASS / 1 FAIL.
+    
+- Красный F3 case: `FAILED:CloseoutError` вместо ожидаемого `REJECTED`; цепочка `CloseoutError → TaskStoreError → PermissionError`, `WinError 5` в `os.replace(active → completed)`.
+    
+- Снимок терминального состояния: `active=true`, `completed=false`, `PLANNED`; исходные project bytes сохранились.
+    
+
+**Запрещено** трактовать любое `CloseoutError` как допустимый `REJECTED` или считать поздний зелёный прогон опровержением исторического FAIL.
+
+## 3. Обязательная инженерная работа
+
+1. Пройти актуальный маршрут 08 → собственная карточка 000 → 34 → 18 → 01 → 23/24/25 → 36/36.1/36.2.
+    
+2. Зафиксировать исходные source SHA-256 и проверить текущую совместимость с F2/F3 repair. Не перезаписывать первоначальный БЛОК 1.
+    
+3. Построить отдельные детерминированные Windows-сценарии:
+    
+    - **Pre-move refusal:** нативный отказ `os.replace`, TASK остаётся active, исходные bytes/plan/checkpoint/operations/events корректны.
+        
+    - **Post-move status failure:** каталог уже completed, но статус ещё PLANNED; состояние явно определяется как `MOVED_STATUS_PENDING`, а не ложный success.
+        
+    - **Fresh-process recovery:** новый процесс восстанавливает допустимое состояние, без повторного physical apply, потери receipt и возврата TASK в active.
+        
+    - **Concurrent admission / completion:** операции, RAW readers и закрытие подчиняются единому lock order; нет нового write после commit point.
+        
+4. Для каждого сценария предъявить raw PRE, достигнутую фазу, worker exit, terminal files, actual target bytes/hashes, operation/receipt history, checkpoint и результат повторного открытия.
+    
+5. Проверить существующие тесты F1/F2/F3 на пробелы. Не плодить дубли, не ослаблять строгие assertions.
+    
+6. Если подтверждён runtime-дефект, выполнить минимальный scoped repair. Если дефекта не обнаружено — предоставить полноценное evidence без искусственных изменений кода.
+    
+7. Провести независимую инженерную самопроверку по TEST-ENG-01, включая adversarial walkthrough и отрицательные контроли, которые действительно падают при внесении соответствующего нарушения.
+    
+
+## 4. Write-scope
+
+Разрешены исключительно:
+
+- `web_alarm/closeout.py`
+    
+- `web_alarm/task_store.py`
+    
+- `test_web_alarm_wa4r002_diagnostics.py`
+    
+- `test_web_alarm_reliability_wa017.py`
+    
+- Собственная папка `reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/`
+    
+- Собственная карточка агента и её регламентная ротация.
+    
+
+Производственные файлы изменять **только после конкретного воспроизводимого дефекта**. Если необходимы `operation_store.py`, `mutation_executor.py`, дополнительные тесты или изменения общей инфраструктуры, остановиться и запросить отдельный AMENDMENT с обоснованием.
+
+Общие документы 000/05/06/23/24/25/34/36.x — read-only. Ultra, Git/GitHub, workflows/CI, live Workspace и пользовательские проекты не изменять.
+
+## 5. Тесты и evidence
+
+- Только disposable TEMP fixtures.
+    
+- Windows Python 3.12 с наследуемым `PYTHONUTF8=1`.
+    
+- Использовать актуальный `wa4a_acceptance.py` и существующий профиль 36.2.
+    
+- Сначала адресные и отрицательные проверки; затем focused F1/F2/F3 regression.
+    
+- При изменении runtime — полный Web Alarm regression и ограниченный deterministic race/stress, сохраняя каждый исходный FAIL.
+    
+- Проверить collection IDs, exit codes, isolation violations, source hashes, предыдущее покрытие и raw evidence.
+    
+- Не запускать destructively на пользовательском проекте, не использовать реальные сетевые LLM-вызовы.
+    
+
+## 6. Критерий сдачи
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION` только после доказательства:
+
+- pre-move отказ сохраняет корректную активную TASK;
+    
+- post-move interruption сохраняет корректное закрытое, но ожидающее финализации состояние;
+    
+- fresh-process recovery воспроизводим и не создаёт второй mutation;
+    
+- history/receipts/checkpoint/manifest не теряются и не фальсифицируются;
+    
+- F2/F3 invariants не ухудшились;
+    
+- тесты и negative controls имеют точные raw результаты.
+    
+
+Отчёт: `report.md`, `checks.json`, `versions.json`, переносимые логи/evidence, список реально изменённых файлов, отдельные red/green attempts, технические ограничения и **SHARED DOC DELTA**.
+
+**NEXT:** передать результат WEB_07. Не объявлять F1 VERIFIED самостоятельно; не запускать следующую ступень WA4-R без решения независимого проверяющего и пользователя.
+
+---
+
+**Приоритет:** адресная надёжность и доказательства. Не превращать эту задачу в переписывание Web Alarm или начало интеграции Ultra.
+
+---
+
+``````````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-004-F1-CLOSEOUT-GATE · 2026-10-14 · Codex 007.
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION · LOCAL ONLY / NOT SYNCED. Verifier — WEB_07. Не DONE/VERIFIED.
+
+**Вывод:** в проверенных F1 ветвях новый runtime-дефект не подтверждён; production-код не изменён. Закрыт пробел тестового evidence: существующий post-move F1 теперь использует одну реальную выполненную/VERIFIED operation, непустой receipt/checkpoint/manifest/snapshot; добавлены native pre-move и два порядка concurrent admission/closeout. Общий файл test_web_alarm_wa4r002_diagnostics.py: 15 прежних selectors сохранены, 3 новых; старые F2/F3 test bodies AST unchanged. closeout.py/task_store.py/operation_store.py/mutation_executor.py совпали с reported F2/F3 final hashes. WA-017 не менялся. Git/GitHub, Ultra, CI/runners, общие документы и rollout не затрагивались.
+
+**Фактические проверки final source:** focused F1/F2/F3 и stores — 92 PASS / 0 FAIL / 0 ERROR / 0 SKIP, isolation 0; два bounded F1 repeats — 8/8 PASS; quality — 6/6 outer PASS, каждый с ровно одним ожидаемым inner assertion FAIL, без ERROR/SKIP. Native Windows ошибки реально вызваны open-handle/replace, не подменены blanket REJECTED. Fresh processes сохраняют closed/pending state, receipt/checkpoint/manifest/точный event byte prefix и target/snapshot bytes; physical apply остаётся один. False-success mutant COMPLETED при completed+PLANNED отвергнут тестом.
+
+**Collection/static:** 791 distinct root Web Alarm IDs = 788 retained +3 new; syntax двух изменённых Python modules PASS. Full Web Alarm execution NOT RUN: runtime repair отсутствует, условный полный gate исходной TASK не наступил. Collection 791 не выдаётся за 791 PASS; прежний UX full не используется как новый тест.
+
+**Исходные красные evidence:** F1-first 3 PASS /1 FAIL — ошибка нового checkpoint oracle (законная admission обновляет derived checkpoint). FAIL/source/raw сохранены; исправлено post-admission barrier + exact no-closeout-change, не production repair. Collection/export setup error: TEMP-only guard блокировал разрешённый report export внутри guarded процесса, audit1 сохранён; финальный export отделён, final collection isolation0. Нативный historical F3 ZIP run38379575748/artifact11802732223 действительно прочитан адресно, digest020d2770b48f90e0d24df071b10c2ad5fe5caa2972d8d3070445ac875963e120 совпал; исходный 62 PASS/1 FAIL, native pre-move WinError5/active PLANNED и frames сохранены. Старый FAIL не переименован в PASS.
+
+**REPORT / EVIDENCE:** [report](../reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/report.md); рядом checks.json, versions.json, historical-F3.json, quality_controls.py, source-changes.diff, evidence.zip, rotation.json, manifest.json. Пакет содержит raw PRE/phase/PID/exit/terminal/records/hashes, source snapshots, original/red/green attempts и original historical ZIP. Локальные TEMP не удаляются; Git-синхронизация не заявлена.
+
+**MANUAL ENGINEERING REVIEW / пределы:** изучены gate/commit point, operations→mutation lock order, RAW admission, atomic status failure, fresh recovery, replay и immutable history. Полная ревизия/альтернативы в report §7. Нативный handle — controlled reproduction, не установленный исторический owner; original F1 raw artifact не получен. Нет доказательства всех внешних writer/antivirus/kernel/power-loss случаев. Low-level locked primitive требует правильного caller lock. F2/F3 independent acceptance и общий STRICT не присвоены.
+
+**DOC IMPACT / SHARED DOC DELTA:** после WEB_07 verdict — 36.2 (4 F1 scenarios, 6 controls, nonempty fixture, exact event prefix, post-admission checkpoint baseline), 23/24/25 bounded evidence без смены authority, маршруты/статусы 000/05/06/34/01 по необходимости. Самостоятельно общие нормы не редактировались.
+
+**NEXT:** пользователь публикует local result штатно; WEB_07 независимо проверяет source/input/phase/raw/controls/collection/source pins. F1 не объявлять VERIFIED до независимой приёмки. Следующие ступени WA4-R, WARN/GATEWAY REQUIRED/STRICT/rollout/Ultra не запускать.
+
+## Архив прежних БЛОКОВ 2–3 (дословно, исторические статусы не переоцениваются)
+
+``````````````````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
 
 **TASK:** CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER. Постановка сохранена дословно; разрешение четырёх дополнительных файлов и контракта — отдельный AMENDMENT.
@@ -3787,3 +3955,5 @@ Codex: задача утверждена пользователем. Прочи�
 ````````````````
 
 `````````````````
+
+``````````````````

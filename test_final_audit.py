@@ -1542,8 +1542,16 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(
             context["deterministic_verification"]["missing_requirements"], []
         )
-        self.assertEqual(context["fresh_git_status"]["stdout"], " M server.py")
-        self.assertEqual(context["fresh_git_diff"]["stdout"], " M server.py")
+        # FA-M1: a RUN without mutations has no RUN-scoped paths, so workspace Git output
+        # (the mocked " M server.py") must not reach the verifier; the previous oracle
+        # required exactly that unrelated workspace state.
+        self.assertEqual(context["task_scope"]["mode"], "run_scoped_v1")
+        for key in ("fresh_git_status", "fresh_git_diff"):
+            self.assertTrue(context[key]["not_applicable"], key)
+            self.assertEqual(context[key]["reason"], "no_run_scoped_paths")
+            self.assertEqual(context[key]["stdout"], "")
+        self.assertNotIn("server.py", json.dumps(context["fresh_git_status"]))
+        self.assertNotIn("server.py", json.dumps(context["fresh_git_diff"]))
 
     async def test_final_fact_conflict_blocks_fabricated_zero_tool_pass(self) -> None:
         client = FakeClient([FakeResponse(
@@ -1612,7 +1620,10 @@ class FinalAuditRuntimeTests(unittest.IsolatedAsyncioTestCase):
             context["mutation_facts"],
             {"changed_files": [], "new_files": [], "deleted_files": []},
         )
-        self.assertEqual(context["fresh_git_status"]["stdout"], " M server.py")
+        # FA-M1: Git state outside the RUN's paths is not collected at all.
+        self.assertIn("run_scoped_v1", semantics["fresh_git_state"])
+        self.assertTrue(context["fresh_git_status"]["not_applicable"])
+        self.assertEqual(context["fresh_git_status"]["stdout"], "")
 
     def test_new_file_evidence_includes_current_content(self) -> None:
         new_file = self.workspace / "new_module.py"

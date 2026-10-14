@@ -1,0 +1,52 @@
+{
+  "task": "CODEX-WA4-R-004-F1-CLOSEOUT-GATE",
+  "temp": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r004-_fq7_1ip",
+  "report": "M:\\GitHub\\ag_llm\\reports\\CODEX-WA4-R-004-F1-CLOSEOUT-GATE",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "win32",
+  "git_access": "PROHIBITED",
+  "read_scope": "current Web Alarm source/tests, task route, historical local evidence",
+  "write_scope": [
+    "web_alarm/closeout.py",
+    "web_alarm/task_store.py",
+    "test_web_alarm_wa4r002_diagnostics.py",
+    "test_web_alarm_reliability_wa017.py",
+    "own report/card rotation"
+  ],
+  "snapshot_files": [
+    "web_alarm/closeout.py",
+    "web_alarm/task_store.py",
+    "test_web_alarm_wa4r002_diagnostics.py",
+    "test_web_alarm_reliability_wa017.py",
+    "Документация/000_Задачи Codex.md"
+  ],
+  "phase": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "production_changed": false,
+  "changed_common_tests": [
+    "test_web_alarm_wa4r002_diagnostics.py"
+  ],
+  "first_red": {
+    "attempt": "F1-first",
+    "classification": "TEST/ORACLE DEFECT: lawful pre-closeout admission refreshes checkpoint",
+    "counts": "3 PASS / 1 FAIL / 0 ERROR / 0 SKIP",
+    "preserved": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r004-_fq7_1ip\\F1-first"
+  },
+  "corrected_F1": "4 PASS, isolation 0",
+  "negative_controls": "4 outer PASS, each exactly one expected inner assertion FAIL, isolation 0",
+  "next_steps": [
+    "WEB_07 independent verification; no next stage"
+  ],
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "final_summary": {
+    "focused_pass": 92,
+    "focused_fail": 0,
+    "focused_error": 0,
+    "focused_skip": 0,
+    "bounded_pass_executions": 8,
+    "quality_outer_pass": 6,
+    "expected_quality_inner_failures": 6,
+    "final_isolation_violations": 0,
+    "production_changed": false,
+    "full_collected_not_executed": 791
+  }
+}
