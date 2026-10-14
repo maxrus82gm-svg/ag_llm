@@ -49,6 +49,7 @@ function harness(saved=null,storage=new Map(),locks=new Map()) {
       const body=JSON.parse(opts.body),tid='task_created_'+created.size,v=task(tid,body.workspace_id);
       Object.assign(v.task_state.task,body,{task_id:tid,status:'PLANNED'});
       v.operator.stages=[];v.operator.progress={verified:0,total:0,done:0};created.set(tid,v);
+      v.current_microtask_id=null;v.task_state.projection.position={current_status:null};v.task_state.projection.restore_point={status:'NOT_APPLICABLE'};
       rows.push({task_id:tid,...body,status:'PLANNED',current_status:'PLANNED',recovery_state:'NORMAL',created_at:'2026-10-14'});
       return {task:v.task_state.task};
     }
@@ -62,7 +63,7 @@ function harness(saved=null,storage=new Map(),locks=new Map()) {
     localStorage:{getItem:key=>{if(h.readFail)throw Error('storage read denied');return storage.get(key)??null},
       setItem:(key,s)=>{if(h.writeFail)throw Error('quota exceeded');storage.set(key,s);if(key==='webAlarm.selection')h.saved=JSON.parse(s)},
       removeItem:key=>{if(h.removeFail)throw Error('remove denied');storage.delete(key)}},
-    window:{confirm:s=>{h.confirms.push(s);return h.confirm},matchMedia:()=>({matches:h.width<=760}),addEventListener:(e,fn)=>h.events[e]=fn},
+    window:{confirm:s=>{h.confirms.push(s);return h.confirm},matchMedia:()=>({matches:h.width<=850}),scrollTo:(x,y)=>{h.scrollY=y},addEventListener:(e,fn)=>h.events[e]=fn},
     navigator:{locks:{request:async(key,opts,fn)=>{
       if(locks.has(key))return fn(null);const lock={name:key};locks.set(key,lock);
       try{return await fn(lock)}finally{if(locks.get(key)===lock)locks.delete(key)}
@@ -359,4 +360,33 @@ test('UX workspace registration cannot discard an unsaved active draft',async()=
 test('UX failed local cleanup after confirmed creation never enables duplicate registration',async()=>{
   const h=harness();await settle();await draft(h,'Known acknowledgement');h.removeFail=true;await h.run("create('task')");
   h.run('openDraft()');await settle();assert.match(h.el('draftStatus').textContent,/ранее подтвердил/);assert.equal(h.el('createTask').disabled,true);await h.run("create('task')");assert.equal(h.calls.filter(c=>c.method==='POST').length,1);
+});
+test('UX new card resets old scroll while refresh preserves the current reading position',async()=>{
+  const h=harness();await settle();h.width=390;h.el('main').scrollTop=340;await h.run("selectTask('task_a')");
+  assert.equal(h.el('main').scrollTop,0);assert.equal(h.scrollY,0);
+  h.el('main').scrollTop=180;await h.run('refresh()');assert.equal(h.el('main').scrollTop,180);
+});
+test('UX unplanned task has no invented completion progress and explains absent restore point',async()=>{
+  const h=harness();await settle();await draft(h,'No plan yet');await h.run("create('task')");
+  assert.equal(h.el('progressText').textContent,'План ещё не содержит этапов.');
+  assert.equal(h.el('progressTrack').getAttribute('aria-valuenow'),null);
+  assert.equal(h.el('snapshotBadge').textContent,'Нет текущего этапа');
+});
+test('UX incoherent empty plan never asserts that the plan is known empty',async()=>{
+  const h=harness();await settle();const v=task();v.operator.coherent=false;v.operator.progress={verified:null,total:0,done:0};h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+  assert.match(h.el('progressText').textContent,/не подтверждён/);assert.equal(h.el('copyNext').disabled,true);
+});
+test('UX null health response clears the previously online signal',async()=>{
+  const h=harness();await settle();h.routes.set('/status',()=>null);await h.run('refresh()');
+  assert.equal(h.el('serverStatus').getAttribute('data-state'),'offline');
+});
+test('UX malformed progress or coherence cannot become a fresh authoritative view',async()=>{
+  for(const mutate of [v=>v.operator.progress.verified=9,v=>v.operator.progress.total='2',v=>v.operator.coherent='false']){
+    const h=harness();await settle();const v=task();mutate(v);h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+    assert.equal(h.el('detail').hidden,true);assert.equal(h.el('copyNext').disabled,true);assert.match(h.el('detailError').textContent,/Некоррект/);
+  }
+});
+test('UX failed rendering hides the partial snapshot and never retains it for export',async()=>{
+  const h=harness();await settle();const v=task();v.operator.stages[0].prerequisites=null;h.routes.set('/tasks/task_a/ui',()=>v);await h.run("selectTask('task_a')");
+  assert.equal(h.el('detail').hidden,true);assert.equal(h.run('view.data'),null);assert.equal(h.el('copyContext').disabled,true);
 });

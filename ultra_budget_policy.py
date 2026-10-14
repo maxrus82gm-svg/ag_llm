@@ -65,6 +65,7 @@ ROUTES: Mapping[str, RouteSpec] = {
         RouteSpec("oauth", "auth", SCOPE_NONE, CLASS_AUTH, "ACTIVE"),
     )
 }
+PROFILE_KEYS = frozenset(spec.role for spec in ROUTES.values() if spec.scope != SCOPE_NONE)
 
 # ---------------------------------------------------------------------------------------------
 # Exact measurement of the request that will be sent
@@ -88,14 +89,18 @@ class RequestMeasure:
 
 
 def measure_request(route_id: str, body: Mapping[str, Any]) -> RequestMeasure:
-    data = serialize_request_body(body)
+    if not isinstance(body, Mapping):
+        raise PolicyInputError("body must be a JSON object")
+    try:
+        data = serialize_request_body(body)
+    except (TypeError, ValueError) as exc:   # NaN/inf, non-JSON values, lone surrogates (UnicodeEncodeError)
+        raise PolicyInputError(f"body cannot be serialized as the sent JSON ({type(exc).__name__})") from exc
     max_tokens = body.get("max_tokens")
-    if not _is_int(max_tokens) or max_tokens < 1:
+    if not _is_int(max_tokens) or not 1 <= max_tokens <= MAX_SANE_TOKENS:
         raise PolicyInputError("max_tokens must be a positive integer to reserve output tokens")
-    model = body.get("model")
-    if not isinstance(model, str) or not model:
+    if _text_problem(body.get("model")):
         raise PolicyInputError("model must be a non-empty provider model id")
-    return RequestMeasure(route_id, model, len(data), hashlib.sha256(data).hexdigest(), max_tokens)
+    return RequestMeasure(route_id, body["model"], len(data), hashlib.sha256(data).hexdigest(), max_tokens)
 
 
 # ---------------------------------------------------------------------------------------------
@@ -180,19 +185,49 @@ class PolicySnapshot:
     revision_sha256: str
 
 
+MAX_TEXT_CHARS = 200
+
+
 def _is_int(value) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
+def _show(value) -> str:
+    """Bounded, always-encodable rendering of untrusted input for error texts."""
+    try:
+        text = repr(value)                     # escapes lone surrogates; may refuse a gigantic int
+    except Exception:                          # noqa: BLE001 - any repr failure must not escape validation
+        text = f"<{type(value).__name__}>"
+    return text if len(text) <= 60 else text[:57] + "..."
+
+
+def _text_problem(value, *, max_chars: int = MAX_TEXT_CHARS) -> str | None:
+    """Identifier/label text: non-empty str, bounded, UTF-8 encodable (json.loads yields lone surrogates)."""
+    if not isinstance(value, str) or not value.strip():
+        return f"ожидается непустая строка, получено {_show(value)}"
+    if len(value) > max_chars:
+        return f"строка длиннее {max_chars} символов"
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        return f"строка не кодируется в UTF-8 (одиночный суррогат): {_show(value)}"
+    return None
+
+
+def _is_sha256_hex(value) -> bool:
+    return isinstance(value, str) and len(value) == 64 and all(c in "0123456789abcdef" for c in value)
+
+
 def _check_keys(obj, path: str, required: set, optional: set, problems: list[str]) -> bool:
     if not isinstance(obj, Mapping):
-        problems.append(f"{path}: ожидается объект")
+        problems.append(f"{path}: ожидается объект, получено {_show(obj)}")
         return False
     keys = set(obj)
     for missing in sorted(required - keys):
         problems.append(f"{path}.{missing}: обязательное поле отсутствует")
-    for unknown in sorted(keys - required - optional):
-        problems.append(f"{path}.{unknown}: неизвестное поле (опечатка или неподдерживаемая единица)")
+    for unknown in sorted(keys - required - optional, key=_show):   # keys of mixed types are not orderable
+        name = unknown if isinstance(unknown, str) and not _text_problem(unknown) else _show(unknown)
+        problems.append(f"{path}.{name}: неизвестное поле (опечатка или неподдерживаемая единица)")
     return True
 
 
@@ -202,10 +237,10 @@ def _int_field(obj, key: str, path: str, problems: list[str], *, minimum: int, m
     if value is None and allow_none and key in obj:
         return None
     if not _is_int(value):
-        problems.append(f"{path}.{key}: ожидается целое число в единицах поля, получено {value!r}")
+        problems.append(f"{path}.{key}: ожидается целое число в единицах поля, получено {_show(value)}")
         return None
     if value < minimum or value > maximum:
-        problems.append(f"{path}.{key}: значение {value} вне допустимого диапазона [{minimum}, {maximum}]")
+        problems.append(f"{path}.{key}: значение {_show(value)} вне допустимого диапазона [{minimum}, {maximum}]")
         return None
     return value
 
@@ -220,8 +255,9 @@ def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
     if raw.get("schema_version") != POLICY_SCHEMA_VERSION or not _is_int(raw.get("schema_version")):
         problems.append(f"policy.schema_version: поддерживается только {POLICY_SCHEMA_VERSION}")
     label = raw.get("revision_label")
-    if not isinstance(label, str) or not label.strip() or len(label) > 200:
-        problems.append("policy.revision_label: непустая строка до 200 символов")
+    label_problem = _text_problem(label)
+    if label_problem:
+        problems.append(f"policy.revision_label: непустая строка до {MAX_TEXT_CHARS} символов ({label_problem})")
 
     run_raw = raw.get("run")
     run_keys = {"max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
@@ -290,26 +326,27 @@ def validate_policy(raw: Mapping[str, Any]) -> PolicySnapshot:
             model, key = item.get("provider_model_id"), item.get("profile_key")
             bpt = item.get("bytes_per_token")
             ok = True
-            if not isinstance(model, str) or not model:
-                problems.append(f"{path}.provider_model_id: непустая строка")
+            model_problem = _text_problem(model)
+            if model_problem:
+                problems.append(f"{path}.provider_model_id: непустая строка ({model_problem})")
                 ok = False
-            if key not in {spec.role for spec in ROUTES.values() if spec.scope != SCOPE_NONE}:
-                problems.append(f"{path}.profile_key: неизвестная роль {key!r}")
+            if not isinstance(key, str) or key not in PROFILE_KEYS:   # type first: a list/dict is unhashable
+                problems.append(f"{path}.profile_key: неизвестная роль {_show(key)}")
                 ok = False
-            if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not math.isfinite(bpt) \
-                    or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
+            # range before any float conversion: math.isfinite(10**400) raises OverflowError; NaN/inf fail the range
+            if isinstance(bpt, bool) or not isinstance(bpt, (int, float)) or not 0 < bpt <= MAX_SANE_BYTES_PER_TOKEN:
                 problems.append(f"{path}.bytes_per_token: конечное число в (0, {MAX_SANE_BYTES_PER_TOKEN}]")
                 ok = False
             samples = _int_field(item, "samples", path, problems, minimum=1, maximum=10 ** 9)
             sha = item.get("source_sha256")
-            if not (isinstance(sha, str) and len(sha) == 64 and all(c in "0123456789abcdef" for c in sha)):
+            if not _is_sha256_hex(sha):
                 problems.append(f"{path}.source_sha256: 64 hex символа")
                 ok = False
-            if (model, key) in seen:
+            if ok and (model, key) in seen:
                 problems.append(f"{path}: повторный профиль для ({model}, {key})")
                 ok = False
-            seen.add((model, key))
             if ok and samples is not None:
+                seen.add((model, key))
                 profiles.append(TokenProfile(model, key, float(bpt), samples, sha))
 
     output_reserve = raw.get("output_reserve")
@@ -387,9 +424,14 @@ def estimate_input_tokens(snapshot: PolicySnapshot, provider_model_id: str, prof
     NEEDS_CALIBRATION: no usable profile and the policy forbids the hard bound.
     A profile whose estimate was exceeded by a provider-known value in this RUN is not used again.
     """
-    if not _is_int(wire_bytes) or wire_bytes < 0:
-        raise PolicyInputError("wire_bytes must be a non-negative integer")
-    breached = set(breached)
+    if not isinstance(provider_model_id, str) or not isinstance(profile_key, str):
+        raise PolicyInputError("provider_model_id and profile_key must be strings")
+    if not _is_int(wire_bytes) or not 0 <= wire_bytes <= MAX_SANE_BYTES:   # a float division must not overflow
+        raise PolicyInputError(f"wire_bytes must be an integer in [0, {MAX_SANE_BYTES}]")
+    try:
+        breached = set(breached)
+    except TypeError as exc:
+        raise PolicyInputError("breached must hold (provider_model_id, profile_key) pairs") from exc
     profile = next((p for p in snapshot.profiles
                     if p.provider_model_id == provider_model_id and p.profile_key == profile_key), None)
     if profile is not None and (provider_model_id, profile_key) not in breached:
@@ -418,6 +460,24 @@ def processed_input_tokens(row: CalibrationRow) -> int:
     return row.prompt_tokens + (row.precached_prompt_tokens or 0)
 
 
+def _calibration_row_problem(row) -> str | None:
+    if not isinstance(row, CalibrationRow):
+        return f"ожидается CalibrationRow, получено {_show(row)}"
+    if _text_problem(row.provider_model_id):
+        return f"provider_model_id {_show(row.provider_model_id)}"
+    if not isinstance(row.profile_key, str) or row.profile_key not in PROFILE_KEYS:
+        return f"profile_key {_show(row.profile_key)}"
+    if not _is_int(row.wire_bytes) or not 0 <= row.wire_bytes <= MAX_SANE_BYTES:
+        return f"wire_bytes {_show(row.wire_bytes)}"
+    for name in ("prompt_tokens", "completion_tokens", "precached_prompt_tokens"):
+        value = getattr(row, name)
+        if value is None and name == "precached_prompt_tokens":
+            continue
+        if not _is_int(value) or not 0 <= value <= MAX_SANE_TOKENS:
+            return f"{name} {_show(value)}"
+    return None
+
+
 def calibrate_profiles(rows: Iterable[CalibrationRow], *, margin: float, source_sha256: str,
                        min_samples: int) -> tuple[list[dict], list[dict]]:
     """Profiles from the observed lower envelope of bytes/token, divided by (1 + margin).
@@ -429,6 +489,13 @@ def calibrate_profiles(rows: Iterable[CalibrationRow], *, margin: float, source_
         raise PolicyInputError("margin must be a number in [0, 10]")
     if not _is_int(min_samples) or min_samples < 1:
         raise PolicyInputError("min_samples must be a positive integer")
+    if not _is_sha256_hex(source_sha256):
+        raise PolicyInputError("source_sha256 must be 64 lowercase hex characters")
+    rows = list(rows)
+    for index, row in enumerate(rows):
+        problem = _calibration_row_problem(row)
+        if problem:
+            raise PolicyInputError(f"calibration row {index}: {problem}")
     groups: dict[tuple[str, str], list[CalibrationRow]] = {}
     for row in rows:
         if processed_input_tokens(row) > 0:
@@ -489,15 +556,20 @@ def validate_usage(raw: Any) -> tuple[str, Usage | None, str]:
     for key in ("prompt_tokens", "completion_tokens"):
         value = raw.get(key)
         if not _is_int(value) or value < 0:
-            return "INVALID", None, f"{key}={value!r} не является неотрицательным целым"
+            return "INVALID", None, f"{key}={_show(value)} не является неотрицательным целым"
         values[key] = value
     precached = raw.get("precached_prompt_tokens") if "precached_prompt_tokens" in raw else None
     if "precached_prompt_tokens" in raw and (not _is_int(precached) or precached < 0):
-        return "INVALID", None, f"precached_prompt_tokens={precached!r} некорректен"
+        return "INVALID", None, f"precached_prompt_tokens={_show(precached)} некорректен"
     total = raw.get("total_tokens")
     if "total_tokens" in raw and (not _is_int(total) or total != values["prompt_tokens"] + values["completion_tokens"]):
-        return "INVALID", None, f"total_tokens={total!r} не равен prompt + completion"
+        return "INVALID", None, f"total_tokens={_show(total)} не равен prompt + completion"
     return "KNOWN", Usage(values["prompt_tokens"], values["completion_tokens"], precached), ""
+
+
+# A provider answer was received (2xx or an HTTP error status) vs. no answer was observed.
+RESPONSE_OUTCOMES = ("completed", "parse_error", "provider_error")
+NO_RESPONSE_OUTCOMES = ("timeout", "transport_error", "cancelled")
 
 
 @dataclass(frozen=True)
@@ -510,21 +582,23 @@ class AttemptRecord:
     reserved_output_tokens: int
     state: str = RESERVED
     usage: Usage | None = None
-    terminal_outcomes: tuple[str, ...] = ()
+    terminal_outcomes: tuple[str, ...] = ()                          # every terminal received, in order
     anomalies: tuple[str, ...] = ()
+    terminal_events: tuple[tuple[str, Usage | None], ...] = ()       # distinct accepted (outcome, usage) facts
 
     @property
     def reserved_liability_tokens(self) -> int:
         return self.reserved_input_tokens_est + self.reserved_output_tokens
 
+    def _input_of(self, usage: Usage) -> int:
+        if usage.precached_prompt_tokens is None:
+            # cached part not reported: the estimate stays the upper side of the input
+            return max(usage.prompt_tokens, self.reserved_input_tokens_est)
+        return usage.prompt_tokens + usage.precached_prompt_tokens
+
     @property
     def known_input_tokens(self) -> int | None:
-        if self.usage is None:
-            return None
-        if self.usage.precached_prompt_tokens is None:
-            # cached part not reported: the estimate stays the upper side of the input
-            return max(self.usage.prompt_tokens, self.reserved_input_tokens_est)
-        return self.usage.prompt_tokens + self.usage.precached_prompt_tokens
+        return None if self.usage is None else self._input_of(self.usage)
 
     @property
     def liability_tokens(self) -> int:
@@ -532,9 +606,10 @@ class AttemptRecord:
             return 0
         if self.state in (KNOWN_TERMINAL, RECONCILED):
             return self.known_input_tokens + self.usage.completion_tokens
-        if self.state == ANOMALY and self.usage is not None:
-            return max(self.reserved_liability_tokens, self.known_input_tokens + self.usage.completion_tokens)
-        return self.reserved_liability_tokens  # RESERVED, SENT, UNKNOWN_TERMINAL, ANOMALY without usage
+        if self.state == ANOMALY:   # contradictory claims: the largest of the reservation and every claim
+            claims = [u for u in (self.usage, *(u for _o, u in self.terminal_events)) if u is not None]
+            return max([self.reserved_liability_tokens] + [self._input_of(u) + u.completion_tokens for u in claims])
+        return self.reserved_liability_tokens  # RESERVED, SENT, UNKNOWN_TERMINAL
 
     @property
     def estimate_breached(self) -> bool:
@@ -567,41 +642,58 @@ def mark_not_sent(record: AttemptRecord) -> AttemptRecord:
     return replace(record, state=NOT_SENT)
 
 
+def _refines(previous_outcome: str, outcome: str) -> bool:
+    """The only way an UNKNOWN attempt may change its terminal outcome: the same outcome (now with usage),
+    or a late provider answer after a no-response outcome (B2 §4: late known corrects the same attempt)."""
+    return outcome == previous_outcome or (previous_outcome in NO_RESPONSE_OUTCOMES and outcome in RESPONSE_OUTCOMES)
+
+
 def apply_terminal(record: AttemptRecord, outcome: str, raw_usage: Any) -> AttemptRecord:
-    """Settle a terminal event idempotently; never lowers liability on contradictory data."""
-    if outcome not in TERMINAL_OUTCOMES:
-        return replace(record, state=ANOMALY, anomalies=record.anomalies + (f"unknown outcome {outcome!r}",),
-                       terminal_outcomes=record.terminal_outcomes + (str(outcome),))
+    """Settle one terminal event. One physical attempt has one terminal truth:
+    - a replay of an already accepted (outcome, usage) event is idempotent (at-least-once delivery);
+    - an UNKNOWN attempt may be refined (see _refines): with usage it becomes RECONCILED;
+    - anything else contradicts what is already settled -> ANOMALY, whose liability is the largest of the
+      reservation and every claim (never lowered by contradictory data); ANOMALY is absorbing.
+    """
+    if not isinstance(outcome, str) or outcome not in TERMINAL_OUTCOMES:
+        return replace(record, state=ANOMALY, anomalies=record.anomalies + (f"unknown outcome {_show(outcome)}",),
+                       terminal_outcomes=record.terminal_outcomes
+                       + (outcome if isinstance(outcome, str) else _show(outcome),))
     status, usage, why = validate_usage(raw_usage)
     outcomes = record.terminal_outcomes + (outcome,)
-    if record.state in (RESERVED, NOT_SENT):
-        return replace(record, state=ANOMALY, terminal_outcomes=outcomes,
-                       anomalies=record.anomalies + (f"terminal before SENT ({record.state})",),
-                       usage=usage if status == "KNOWN" else record.usage)
     if status == "INVALID":
         return replace(record, state=ANOMALY, terminal_outcomes=outcomes, anomalies=record.anomalies + (why,))
+    event = (outcome, usage)                                   # usage is None when the provider gave none
+    events = record.terminal_events + (event,)
+    if record.state in (RESERVED, NOT_SENT):
+        return replace(record, state=ANOMALY, terminal_outcomes=outcomes, terminal_events=events,
+                       anomalies=record.anomalies + (f"terminal before SENT ({record.state})",),
+                       usage=usage if usage is not None else record.usage)
     if record.state == SENT:
-        if status == "KNOWN":
-            return replace(record, state=KNOWN_TERMINAL, usage=usage, terminal_outcomes=outcomes)
-        return replace(record, state=UNKNOWN_TERMINAL, terminal_outcomes=outcomes)
-    if record.state == UNKNOWN_TERMINAL:
-        if status == "KNOWN":   # late known usage corrects the same attempt (B2 §4)
-            return replace(record, state=RECONCILED, usage=usage, terminal_outcomes=outcomes)
-        return replace(record, terminal_outcomes=outcomes)  # duplicate UNKNOWN: idempotent
-    if record.state in (KNOWN_TERMINAL, RECONCILED):
-        if status == "KNOWN" and usage != record.usage:
-            return replace(record, state=ANOMALY, terminal_outcomes=outcomes,
-                           anomalies=record.anomalies + ("conflicting known usage",))
-        return replace(record, terminal_outcomes=outcomes)  # identical or UNKNOWN duplicate: idempotent
-    return replace(record, terminal_outcomes=outcomes)      # ANOMALY stays ANOMALY
+        return replace(record, state=KNOWN_TERMINAL if usage is not None else UNKNOWN_TERMINAL, usage=usage,
+                       terminal_outcomes=outcomes, terminal_events=events)
+    if event in record.terminal_events:                        # the same fact delivered again
+        return replace(record, terminal_outcomes=outcomes)
+    if record.state == ANOMALY:
+        return replace(record, terminal_outcomes=outcomes, terminal_events=events)
+    previous = record.terminal_events[-1][0] if record.terminal_events else None
+    if record.state == UNKNOWN_TERMINAL and previous is not None and _refines(previous, outcome):
+        return replace(record, state=RECONCILED if usage is not None else UNKNOWN_TERMINAL, usage=usage,
+                       terminal_outcomes=outcomes, terminal_events=events)
+    usage_note = "с usage" if usage is not None else "без usage"
+    return replace(record, state=ANOMALY, terminal_outcomes=outcomes, terminal_events=events,
+                   anomalies=record.anomalies + (f"противоречивый terminal {outcome} ({usage_note}) после "
+                                                 f"{previous} в состоянии {record.state}",))
 
 
 def orphan_terminal_record(attempt_id: str, scope_id: str, outcome: str, raw_usage: Any) -> AttemptRecord:
     """A terminal without a known reservation is a ledger anomaly: it blocks new sends in its scope."""
     status, usage, _why = validate_usage(raw_usage)
-    return AttemptRecord(attempt_id, "<orphan>", "<unknown>", scope_id, 0, 0, state=ANOMALY,
-                         usage=usage if status == "KNOWN" else None, terminal_outcomes=(str(outcome),),
-                         anomalies=("terminal without reservation",))
+    usage = usage if status == "KNOWN" else None
+    return AttemptRecord(attempt_id, "<orphan>", "<unknown>", scope_id, 0, 0, state=ANOMALY, usage=usage,
+                         terminal_outcomes=(_show(outcome) if not isinstance(outcome, str) else outcome,),
+                         anomalies=("terminal without reservation",),
+                         terminal_events=((outcome, usage),) if isinstance(outcome, str) else ())
 
 
 # ---------------------------------------------------------------------------------------------
@@ -648,6 +740,41 @@ class Decision:
     consequence: str | None = None
 
 
+def _usage_problem(usage) -> str | None:
+    if not isinstance(usage, Usage):
+        return f"usage {_show(usage)}"
+    for name in ("prompt_tokens", "completion_tokens", "precached_prompt_tokens"):
+        value = getattr(usage, name)
+        if not (value is None and name == "precached_prompt_tokens") and (not _is_int(value) or value < 0):
+            return f"usage.{name} {_show(value)}"
+    return None
+
+
+def _record_problem(record: AttemptRecord) -> str | None:
+    """Structural check of a record (S3a will rehydrate them from storage); None when it is well-formed."""
+    for name in ("attempt_id", "route_id", "provider_model_id", "state"):
+        if not isinstance(getattr(record, name), str):
+            return f"{name} {_show(getattr(record, name))}"
+    for name in ("reserved_input_tokens_est", "reserved_output_tokens"):
+        value = getattr(record, name)
+        if not _is_int(value) or value < 0:
+            return f"{name} {_show(value)}"
+    if record.usage is not None and _usage_problem(record.usage):
+        return _usage_problem(record.usage)
+    if record.state in (KNOWN_TERMINAL, RECONCILED) and record.usage is None:
+        return f"{record.state} без usage"
+    for name in ("terminal_outcomes", "anomalies"):
+        value = getattr(record, name)
+        if not isinstance(value, tuple) or not all(isinstance(item, str) for item in value):
+            return f"{name} {_show(value)}"
+    events = record.terminal_events
+    if not isinstance(events, tuple) or not all(
+            isinstance(e, tuple) and len(e) == 2 and isinstance(e[0], str)
+            and (e[1] is None or not _usage_problem(e[1])) for e in events):
+        return f"terminal_events {_show(events)}"
+    return None
+
+
 def budget_view(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], scope_id: str,
                 *, final_audit_enabled: bool) -> BudgetView:
     known = in_flight = unknown = anomaly = used = 0
@@ -655,11 +782,20 @@ def budget_view(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], sco
     anomalies: list[str] = []
     breached = set()
     for record in attempts:
+        if not isinstance(record, AttemptRecord):   # its scope is unknowable: it blocks every scope
+            anomalies.append(f"не запись попытки: {_show(record)}")
+            continue
         if record.scope_id != scope_id:
+            continue
+        problem = _record_problem(record)
+        if problem:   # never trust a malformed record's numbers; keep what can be read, then block
+            anomalies.append(f"{_show(record.attempt_id)}: повреждённая запись ({problem})")
+            if _is_int(record.reserved_input_tokens_est) and _is_int(record.reserved_output_tokens):
+                anomaly += max(record.reserved_input_tokens_est, 0) + max(record.reserved_output_tokens, 0)
             continue
         spec = ROUTES.get(record.route_id)
         if spec is None:
-            anomalies.append(f"{record.attempt_id}: неизвестный маршрут {record.route_id!r}")
+            anomalies.append(f"{record.attempt_id}: неизвестный маршрут {_show(record.route_id)}")
             anomaly += record.liability_tokens
             continue
         if record.state != NOT_SENT:
@@ -680,7 +816,7 @@ def budget_view(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], sco
             pass   # proven not sent (S3b): the reservation is released, liability 0
         else:   # e.g. a corrupt state rehydrated by a future ledger: keep the reservation and block
             anomaly += liability
-            anomalies.append(f"{record.attempt_id}: неизвестное состояние {record.state!r}")
+            anomalies.append(f"{record.attempt_id}: неизвестное состояние {_show(record.state)}")
         if record.estimate_breached:
             breached.add((record.provider_model_id, spec.role))
     reserve = snapshot.run.verification_reserve_tokens if final_audit_enabled else 0
@@ -690,14 +826,13 @@ def budget_view(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], sco
 
 def _measure_problem(measure: RequestMeasure) -> str | None:
     """A hand-built measure must not lower liability (e.g. a negative output reserve) or dodge the estimate."""
-    if not _is_int(measure.wire_bytes) or measure.wire_bytes < 0:
-        return f"wire_bytes={measure.wire_bytes!r}"
-    if not _is_int(measure.output_reserve_tokens) or measure.output_reserve_tokens < 1:
-        return f"output_reserve_tokens={measure.output_reserve_tokens!r}"
-    if not isinstance(measure.provider_model_id, str) or not measure.provider_model_id:
-        return "пустой provider_model_id"
-    sha = measure.wire_sha256
-    if not (isinstance(sha, str) and len(sha) == 64 and all(c in "0123456789abcdef" for c in sha)):
+    if not _is_int(measure.wire_bytes) or not 0 <= measure.wire_bytes <= MAX_SANE_BYTES:
+        return f"wire_bytes={_show(measure.wire_bytes)}"
+    if not _is_int(measure.output_reserve_tokens) or not 1 <= measure.output_reserve_tokens <= MAX_SANE_TOKENS:
+        return f"output_reserve_tokens={_show(measure.output_reserve_tokens)}"
+    if _text_problem(measure.provider_model_id):
+        return f"provider_model_id: {_text_problem(measure.provider_model_id)}"
+    if not _is_sha256_hex(measure.wire_sha256):
         return "wire_sha256 не является SHA-256"
     return None
 
@@ -706,9 +841,9 @@ def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord]
                      context: RunContext) -> Decision:
     """Pure pre-send decision for ONE physical attempt. S3b must call it with the exact wire measure."""
     attempts = list(attempts)
-    spec = ROUTES.get(measure.route_id)
+    spec = ROUTES.get(measure.route_id) if isinstance(measure.route_id, str) else None   # a list is unhashable
     if spec is None:
-        return Decision(DENY, (_reason("UNKNOWN_ROUTE", f"маршрут {measure.route_id!r} не инвентаризирован"),),
+        return Decision(DENY, (_reason("UNKNOWN_ROUTE", f"маршрут {_show(measure.route_id)} не инвентаризирован"),),
                         measure.route_id)
     if spec.scope == SCOPE_NONE:
         return Decision(NOT_APPLICABLE, (_reason("NOT_LLM_TRAFFIC", "OAuth не расходует токены модели"),),

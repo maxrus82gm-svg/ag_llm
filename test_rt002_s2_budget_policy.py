@@ -416,6 +416,7 @@ MANIFEST = (
     "CalibrationTests.test_calibrated_estimate_covers_every_observation_and_hard_bound_holds",
     "CalibrationTests.test_calibrated_lower_envelopes",
     "CalibrationTests.test_calibration_input_validation",
+    "CalibrationTests.test_calibration_and_estimate_inputs_are_validated",
     "CalibrationTests.test_embedded_dataset_is_pinned",
     "CalibrationTests.test_estimation_modes",
     "CalibrationTests.test_profile_divisor_is_never_rounded_up",
@@ -437,6 +438,8 @@ MANIFEST = (
     "LiabilityTests.test_estimate_breach_without_reported_precached",
     "DecisionTests.test_preflight_warnings_for_ui_preview",
     "DecisionTests.test_malformed_measure_is_denied_not_trusted",
+    "DecisionTests.test_unhashable_or_oversized_measure_is_denied_not_raised",
+    "DecisionTests.test_corrupt_records_block_instead_of_crashing",
     "IsolationTests.test_manifest_matches_the_loaded_collection",
     "IsolationTests.test_no_production_module_imports_the_policy_yet",
     "IsolationTests.test_policy_evaluation_does_not_mutate_inputs",
@@ -452,6 +455,9 @@ MANIFEST = (
     "LiabilityTests.test_r026_shaped_second_terminal_is_an_anomaly",
     "LiabilityTests.test_reservation_release_requires_proven_not_sent",
     "LiabilityTests.test_unknown_is_never_zero",
+    "LiabilityTests.test_terminal_event_matrix",
+    "LiabilityTests.test_reconciled_attempt_accepts_only_replays_of_its_own_events",
+    "LiabilityTests.test_conflicting_claims_never_lower_liability",
     "PolicyValidationTests.test_cross_field_rules",
     "PolicyValidationTests.test_errors_are_human_readable_with_field_paths",
     "PolicyValidationTests.test_no_implicit_defaults_every_section_is_required",
@@ -461,6 +467,8 @@ MANIFEST = (
     "PolicyValidationTests.test_units_types_and_ranges_are_strict",
     "PolicyValidationTests.test_unknown_fields_and_versions_are_rejected",
     "PolicyValidationTests.test_valid_policy_and_revision_identity",
+    "PolicyValidationTests.test_reviewer_profile_type_cases_are_policy_errors_naming_the_field",
+    "PolicyValidationTests.test_wrong_json_types_anywhere_are_policy_errors_never_crashes",
     "SyntheticRunTests.test_candidates_stop_the_heavy_runs_and_never_block_normal_ones",
     "SyntheticRunTests.test_greetings_and_live_benches_complete_under_every_candidate",
     "SyntheticRunTests.test_unknown_terminal_keeps_liability_in_replay",
@@ -470,6 +478,7 @@ MANIFEST = (
     "WireMeasureTests.test_invalid_output_reserve_or_model_is_rejected",
     "WireMeasureTests.test_measure_is_exact_and_bound_to_the_sent_bytes",
     "WireMeasureTests.test_serialized_body_is_byte_identical_to_the_httpx_wire",
+    "WireMeasureTests.test_unserializable_body_is_a_policy_input_error",
 )
 
 
@@ -514,6 +523,54 @@ def policy_dict(**run_overrides):
 def snapshot(**run_overrides):
     import ultra_budget_policy as b
     return b.validate_policy(policy_dict(**run_overrides))
+
+
+# JSON-shaped wrong values (json.loads can produce every one of them, including a lone surrogate)
+BAD_JSON_VALUES = ([], {}, ["executor"], {"a": 1}, None, True, 1.5, -1, 10 ** 400, float("nan"), float("inf"),
+                   "", " ", "x\ud800", "x" * 300)
+
+
+def _json_paths(value, path=()):
+    """Every node of a JSON document, containers included (the root is the empty path)."""
+    yield path
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield from _json_paths(item, path + (key,))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            yield from _json_paths(item, path + (index,))
+
+
+def _at(document, path):
+    for key in path:
+        document = document[key]
+    return document
+
+
+def _replaced(document, path, value):
+    if not path:
+        return copy.deepcopy(value)
+    result = copy.deepcopy(document)
+    _at(result, path[:-1])[path[-1]] = copy.deepcopy(value)
+    return result
+
+
+def _assert_complete_snapshot(case, b, snap):
+    case.assertIsInstance(snap, b.PolicySnapshot)
+    for name in ("schema_version", "revision_label", "run", "missing_profile", "output_reserve", "compressor", "mcp",
+                 "max_full_read_bytes", "revision_sha256"):
+        case.assertIsNotNone(getattr(snap, name), name)
+    for name in ("max_request_bytes", "max_request_input_tokens_est", "max_verification_request_bytes",
+                 "max_verification_request_input_tokens_est", "max_run_liability_tokens", "max_run_attempts",
+                 "verification_reserve_tokens", "verification_reserve_attempts"):
+        case.assertTrue(b._is_int(getattr(snap.run, name)), name)
+    case.assertEqual(set(snap.run.max_attempts_per_role), {"planner", "executor", "dredd"})
+    for profile in snap.profiles:
+        case.assertIsInstance(profile.provider_model_id, str)
+        profile.provider_model_id.encode("utf-8")
+        case.assertIn(profile.profile_key, {"executor", "planner", "dredd", "compressor", "mcp"})
+        case.assertTrue(math.isfinite(profile.bytes_per_token) and profile.bytes_per_token > 0)
+    snap.revision_label.encode("utf-8")
 
 
 # Candidate limit sets for the USER DECISION (derived from calibration; NOT defaults, not shipped)
@@ -608,6 +665,17 @@ class WireMeasureTests(unittest.TestCase):
             with self.subTest(body=bad):
                 with self.assertRaises(b.PolicyInputError):
                     b.measure_request("executor", bad)
+
+    def test_unserializable_body_is_a_policy_input_error(self):
+        """httpx would refuse these bodies too; the measure must fail in its own documented way."""
+        import ultra_budget_policy as b
+        base = {"model": "m", "max_tokens": 5}
+        for label, body in (("list body", [base]), ("NaN", dict(base, x=float("nan"))),
+                            ("infinity", dict(base, x=float("inf"))), ("lone surrogate", dict(base, x="a\ud800")),
+                            ("set value", dict(base, x={1})), ("object value", dict(base, x=object()))):
+            with self.subTest(case=label):
+                with self.assertRaises(b.PolicyInputError):
+                    b.measure_request("executor", body)
 
 
 # --------------------------------------------------------------------------- policy schema
@@ -709,6 +777,43 @@ class PolicyValidationTests(unittest.TestCase):
         for forbidden in ("planner_enabled", "final_audit_enabled", "history_enabled", "dredd_enabled"):
             self.assertNotIn(forbidden, flat)
 
+    def test_reviewer_profile_type_cases_are_policy_errors_naming_the_field(self):
+        for key in ("provider_model_id", "profile_key"):
+            for value in ([], {}, ["executor"], {"executor": 1}, "x\ud800"):
+                with self.subTest(field=key, value=repr(value)):
+                    raw = policy_dict()
+                    raw["estimation"]["profiles"][0][key] = value
+                    self.assert_invalid(raw, f"policy.estimation.profiles[0].{key}")
+
+    def test_wrong_json_types_anywhere_are_policy_errors_never_crashes(self):
+        """Every node of a valid policy replaced by every JSON-shaped wrong value: either a complete snapshot
+        (the value happens to be legal there) or PolicyValidationError — never another exception."""
+        import ultra_budget_policy as b
+        base = policy_dict()
+        checked = 0
+        for path in _json_paths(base):
+            for bad in BAD_JSON_VALUES:
+                raw = _replaced(base, path, bad)
+                with self.subTest(path=path, value=repr(bad)[:24]):
+                    try:
+                        snap = b.validate_policy(raw)
+                    except b.PolicyValidationError as exc:
+                        self.assertTrue(exc.problems)
+                    else:
+                        _assert_complete_snapshot(self, b, snap)
+                    checked += 1
+        for path in _json_paths(base):
+            if not isinstance(_at(base, path), dict):
+                continue
+            for keys in ({1: 1, "zz": 2}, {(1, 2): 1}, {"k\ud800": 1}, {None: 1, 2.5: 2}):
+                raw = copy.deepcopy(base)
+                _at(raw, path).update(keys)
+                with self.subTest(path=path, extra_keys=repr(list(keys))):
+                    with self.assertRaises(b.PolicyValidationError):
+                        b.validate_policy(raw)
+                    checked += 1
+        self.assertGreater(checked, 600)
+
 
 # --------------------------------------------------------------------------- estimation and calibration
 
@@ -795,6 +900,29 @@ class CalibrationTests(unittest.TestCase):
             rows, margin=0.0, source_sha256=DATASET_SHA256, min_samples=5)[0] if p["provider_model_id"] == "M"),
             2.4771)
 
+    def test_calibration_and_estimate_inputs_are_validated(self):
+        import ultra_budget_policy as b
+        good = b.CalibrationRow("M", "executor", 1000, 200, 0, 5)
+        for label, row in (("prompt as text", replace(good, prompt_tokens="7")),
+                           ("bool bytes", replace(good, wire_bytes=True)),
+                           ("negative bytes", replace(good, wire_bytes=-1)),
+                           ("negative precached", replace(good, precached_prompt_tokens=-1)),
+                           ("list model", replace(good, provider_model_id=[])),
+                           ("dict role", replace(good, profile_key={})),
+                           ("not a row", ("M", "executor", 1000, 200, 0, 5))):
+            with self.subTest(row=label):
+                with self.assertRaises(b.PolicyInputError):
+                    b.calibrate_profiles([good, row], margin=0.1, source_sha256=DATASET_SHA256, min_samples=1)
+        with self.assertRaises(b.PolicyInputError):
+            b.calibrate_profiles([good], margin=0.1, source_sha256="not-a-sha", min_samples=1)
+        snap = snapshot()
+        for label, args in (("list model", ([], "executor", 10)), ("list role", ("GigaChat-3-Ultra", [], 10)),
+                            ("huge bytes", ("GigaChat-3-Ultra", "executor", 10 ** 400)),
+                            ("bool bytes", ("GigaChat-3-Ultra", "executor", True))):
+            with self.subTest(estimate=label):
+                with self.assertRaises(b.PolicyInputError):
+                    b.estimate_input_tokens(snap, *args)
+
     def test_estimation_modes(self):
         import ultra_budget_policy as b
         snap = snapshot()
@@ -880,6 +1008,69 @@ class LiabilityTests(unittest.TestCase):
                 settled = b.apply_terminal(b.mark_sent(self.record()), "completed", bad)
                 self.assertEqual(settled.state, b.ANOMALY)
                 self.assertGreaterEqual(settled.liability_tokens, 1500)
+
+    def test_terminal_event_matrix(self):
+        """One physical attempt has one terminal truth. Only a replay of an already seen (outcome, usage) event is
+        idempotent; the only refinement is an UNKNOWN attempt learning its usage (same outcome) or a late response
+        after a no-response outcome. Every other second terminal contradicts the first: ANOMALY, never silence."""
+        import ultra_budget_policy as b
+        u1 = {"prompt_tokens": 400, "completion_tokens": 50, "precached_prompt_tokens": 0}
+        K, U, R, A = b.KNOWN_TERMINAL, b.UNKNOWN_TERMINAL, b.RECONCILED, b.ANOMALY
+        table = [
+            (("completed", u1), ("completed", u1), K, 450),         # replay
+            (("completed", u1), ("timeout", None), A, 1500),        # response seen, then "no response"
+            (("completed", u1), ("parse_error", u1), A, 1500),      # same usage, other classification
+            (("completed", u1), ("provider_error", None), A, 1500),
+            (("completed", u1), ("completed", None), A, 1500),      # not the same event: usage vanished
+            (("timeout", None), ("timeout", None), U, 1500),        # replay
+            (("timeout", None), ("cancelled", None), A, 1500),      # two different no-response claims
+            (("timeout", None), ("transport_error", None), A, 1500),
+            (("timeout", None), ("completed", u1), R, 450),         # late known (B2 §4)
+            (("timeout", None), ("provider_error", None), U, 1500),  # late response, usage still unknown
+            (("timeout", None), ("timeout", u1), R, 450),           # usage learned for the same outcome
+            (("cancelled", None), ("parse_error", u1), R, 450),
+            (("completed", None), ("completed", u1), R, 450),
+            (("completed", None), ("timeout", None), A, 1500),      # response, then "no response"
+            (("completed", None), ("parse_error", None), A, 1500),
+            (("provider_error", None), ("completed", u1), A, 1500),  # HTTP error, then a completion
+        ]
+        for first, second, state, liability in table:
+            with self.subTest(first=(first[0], bool(first[1])), second=(second[0], bool(second[1]))):
+                settled = b.apply_terminal(b.apply_terminal(b.mark_sent(self.record()), *first), *second)
+                self.assertEqual((settled.state, settled.liability_tokens), (state, liability))
+                if state == A:
+                    self.assertTrue(any(second[0] in a for a in settled.anomalies), settled.anomalies)
+                self.assertEqual(settled.terminal_outcomes, (first[0], second[0]))
+
+    def test_reconciled_attempt_accepts_only_replays_of_its_own_events(self):
+        import ultra_budget_policy as b
+        u1 = {"prompt_tokens": 400, "completion_tokens": 50, "precached_prompt_tokens": 0}
+        u2 = dict(u1, prompt_tokens=401)
+        events = [("timeout", None), ("provider_error", None), ("provider_error", u1)]
+        record = b.mark_sent(self.record())
+        for event, state in zip(events, (b.UNKNOWN_TERMINAL, b.UNKNOWN_TERMINAL, b.RECONCILED)):
+            record = b.apply_terminal(record, *event)
+            self.assertEqual(record.state, state)
+        for event in events:  # at-least-once redelivery of any earlier event, in any order
+            with self.subTest(replay=event):
+                self.assertEqual(b.apply_terminal(record, *event).state, b.RECONCILED)
+        for event in (("cancelled", None), ("completed", u1), ("provider_error", u2), ("timeout", u1)):
+            with self.subTest(contradiction=event):
+                self.assertEqual(b.apply_terminal(record, *event).state, b.ANOMALY)
+
+    def test_conflicting_claims_never_lower_liability(self):
+        import ultra_budget_policy as b
+        small = {"prompt_tokens": 400, "completion_tokens": 50, "precached_prompt_tokens": 0}
+        large = {"prompt_tokens": 90000, "completion_tokens": 50, "precached_prompt_tokens": 0}
+        known = b.apply_terminal(b.mark_sent(self.record()), "completed", small)
+        conflict = b.apply_terminal(known, "completed", large)
+        self.assertEqual((conflict.state, conflict.liability_tokens), (b.ANOMALY, 90050))  # largest claim, not 1500
+        late = b.apply_terminal(b.apply_terminal(b.mark_sent(self.record()), "timeout", None), "completed", large)
+        self.assertEqual((late.state, late.liability_tokens), (b.RECONCILED, 90050))  # late known above reserve
+        back = b.apply_terminal(late, "completed", small)
+        self.assertEqual((back.state, back.liability_tokens), (b.ANOMALY, 90050))
+        later = b.apply_terminal(back, "timeout", None)
+        self.assertEqual((later.state, later.liability_tokens), (b.ANOMALY, 90050))  # ANOMALY is absorbing
 
     def test_r026_shaped_second_terminal_is_an_anomaly(self):
         import ultra_budget_policy as b
@@ -1125,6 +1316,39 @@ class DecisionTests(unittest.TestCase):
                 decision = self.decide(replace(good, **{field: value}))
                 self.assertEqual((decision.verdict, [r.code for r in decision.reasons]), (b.DENY, ["INVALID_MEASURE"]))
                 self.assertIsNone(decision.reservation_liability_tokens)
+
+    def test_unhashable_or_oversized_measure_is_denied_not_raised(self):
+        import ultra_budget_policy as b
+        good = self.measure(wire_bytes=4000)
+        for field, value, code in (("route_id", [], "UNKNOWN_ROUTE"), ("route_id", {"executor": 1}, "UNKNOWN_ROUTE"),
+                                   ("wire_bytes", 10 ** 400, "INVALID_MEASURE"),
+                                   ("output_reserve_tokens", 10 ** 400, "INVALID_MEASURE"),
+                                   ("provider_model_id", ["GigaChat-3-Ultra"], "INVALID_MEASURE"),
+                                   ("provider_model_id", "M\ud800", "INVALID_MEASURE")):
+            with self.subTest(field=field, value=repr(value)[:20]):
+                decision = self.decide(replace(good, **{field: value}))
+                self.assertEqual((decision.verdict, [r.code for r in decision.reasons]), (b.DENY, [code]))
+
+    def test_corrupt_records_block_instead_of_crashing(self):
+        """Records will be rehydrated by S3a: any malformed field must become LEDGER_ANOMALY, not an exception."""
+        import ultra_budget_policy as b
+        usage = {"prompt_tokens": 5000, "completion_tokens": 1, "precached_prompt_tokens": 0}
+        known = b.apply_terminal(b.mark_sent(b.reserve_attempt(
+            "k", self.measure(wire_bytes=4000), b.TokenEstimate(1000, b.EST_CALIBRATED, None, ""), "run")),
+            "completed", usage)
+        self.assertTrue(known.estimate_breached)
+        for field, value in (("route_id", []), ("route_id", None), ("state", []), ("attempt_id", None),
+                             ("provider_model_id", []), ("reserved_input_tokens_est", "x"),
+                             ("reserved_output_tokens", -5), ("reserved_input_tokens_est", True),
+                             ("usage", dict(usage)), ("usage", None), ("anomalies", 5), ("anomalies", None),
+                             ("terminal_outcomes", "completed"), ("terminal_events", "x"),
+                             ("terminal_events", (("completed", usage),))):
+            with self.subTest(field=field, value=repr(value)[:24]):
+                record = replace(known, **{field: value})
+                view = b.budget_view(snapshot(), [record], "run", final_audit_enabled=True)
+                self.assertTrue(view.anomalies)
+                decision = self.decide(self.measure(wire_bytes=4000), [record])
+                self.assertEqual((decision.verdict, decision.reasons[0].code), (b.DENY, "LEDGER_ANOMALY"))
 
     def test_full_read_contract_for_s4(self):
         import ultra_budget_policy as b

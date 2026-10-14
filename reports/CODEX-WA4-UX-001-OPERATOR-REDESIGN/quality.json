@@ -1,0 +1,61 @@
+{
+  "controls": [
+    {
+      "id": "read-under-lock",
+      "selector": "UX-C draft snapshot is reread inside acquired lock",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap\n  ---\n  duration_ms: 7.0261\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-md3m9ccc\\\\quality-final-reviewed\\\\quality-read-under-lock.js:283:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    + actual - expected\n    \n    + ''\n    - 'Changed before acquisition'\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 'Changed before acquisition'\n  actual: ''\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-md3m9ccc\\quality-final-reviewed\\quality-read-under-lock.js:288:30)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 70.0701\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "durable-pending-before-post",
+      "selector": "UX-C quota failure warns and prevents POST",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C quota failure warns and prevents POST and accidental unsaved navigation\n  ---\n  duration_ms: 23.5088\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-md3m9ccc\\\\quality-final-reviewed\\\\quality-durable-pending-before-post.js:253:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-md3m9ccc\\quality-final-reviewed\\quality-durable-pending-before-post.js:258:40)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 87.0102\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "fresh-copy",
+      "selector": "O5 offline retains last snapshot visibly stale",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - O5 offline retains last snapshot visibly stale and disables copying NEXT\n  ---\n  duration_ms: 22.0186\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-md3m9ccc\\\\quality-final-reviewed\\\\quality-fresh-copy.js:108:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    1 !== 0\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 0\n  actual: 1\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-md3m9ccc\\quality-final-reviewed\\quality-fresh-copy.js:114:49)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 84.8578\n",
+      "stderr": "",
+      "control_passed": true
+    },
+    {
+      "id": "unknown-blocks-repeat",
+      "selector": "UX-C lost POST survives reload as unknown",
+      "expected": "one targeted inner assertion FAIL",
+      "exit": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0,
+      "trigger_reached": true,
+      "error_excerpt": "not ok 1 - UX-C lost POST survives reload as unknown; never resubmit or delete automatically\n  ---\n  duration_ms: 21.9983\n  type: 'test'\n  location: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\codex-wa4ux001-md3m9ccc\\\\quality-final-reviewed\\\\quality-unknown-blocks-repeat.js:303:1'\n  failureType: 'testCodeFailure'\n  error: |-\n    Expected values to be strictly equal:\n    \n    2 !== 1\n    \n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: 1\n  actual: 2\n  operator: 'strictEqual'\n  stack: |-\n    TestContext.<anonymous> (C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4ux001-md3m9ccc\\quality-final-reviewed\\quality-unknown-blocks-repeat.js:306:10)\n    async Test.run (node:internal/test_runner/test:1054:7)\n    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 86.2706\n",
+      "stderr": "",
+      "control_passed": true
+    }
+  ],
+  "passed": 4,
+  "source_sha256": {
+    "web_alarm/ui.py": "eb4b54035664560897aba2d1a8cea2420fa78fbe2c250ee24e7d449e305cf420",
+    "test_web_alarm_operator_ui.js": "5f25b1763ef43a07f12fa71c32d3f439d458013b78a9dd0360d777cdbca1dc0e"
+  }
+}

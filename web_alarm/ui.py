@@ -343,6 +343,7 @@ function statusClass(s){
 }
 const LABELS={PLANNED:'Запланировано',READY:'Готово к работе',ACTIVE:'В работе',STARTED:'Операция начата',DONE:'Выполнено · ждёт проверки',VERIFIED:'Подтверждено',COMPLETED:'Завершено',ARCHIVED:'В архиве',UNKNOWN_AFTER_DISCONNECT:'Исход неизвестен после обрыва',UNKNOWN:'Исход неизвестен',RECOVERY_REQUIRED:'Требует восстановления',NORMAL:'Восстановление не требуется',FAILED:'Ошибка',FAILED_VERIFICATION:'Проверка не пройдена',VALID:'Актуален',STALE:'Устарел',CORRUPT:'Повреждён',NOT_PREPARED:'Не подготовлен',NOT_VERIFIED:'Не подтверждено',INCONSISTENT:'Противоречивое состояние',PROJECTION_BLOCKED:'Состояние не подтверждено',BLOCKED_PREPARE:'Подготовка заблокирована',PARTIAL:'Частичный результат',NOT_CREATED:'Не создан',MISSING:'Отсутствует',RESOLUTION_STALE:'Решение устарело'};
 LABELS.RECONCILIATION_REQUIRED='Нужна сверка состояния';
+LABELS.NOT_APPLICABLE='Нет текущего этапа';
 function statusLabel(value){return LABELS[value]||value}
 function badge(s){
   const value=String(s??'Неизвестно');
@@ -427,7 +428,8 @@ async function selectTask(id){
   closeMobilePanels();await loadDetail(view.epoch);
 }
 function closeMobilePanels(){
-  $('layout').className='layout';if(window.matchMedia('(max-width:850px)').matches)$('main').focus({preventScroll:true});
+  $('layout').className='layout';$('main').scrollTop=0;
+  if(window.matchMedia('(max-width:850px)').matches){window.scrollTo(0,0);$('main').focus({preventScroll:true})}
 }
 function taskButton(t){
   const b=element('button',null,'task-button');b.type='button';b.dataset.task=t.task_id;
@@ -527,7 +529,7 @@ function render(v){
   text('taskGoalText',t.goal===t.raw_task?'Постановка сохранена. План и исполнение формируются отдельно.':t.goal);
   text('taskDescription',t.raw_task);
   $('taskBadge').replaceChildren(badge(t.status));
-  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
+  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.total===0?'План ещё не содержит этапов.':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
   text('doneText',o.progress.done+' выполнено · ожидает проверки');
   const known=o.progress.verified!=null&&o.progress.total>0;
   text('progressFill','');
@@ -634,9 +636,11 @@ async function loadDetail(epoch){
     const v=await api('/tasks/'+encodeURIComponent(task)+'/ui');
     if(epoch!==view.epoch)return;
     if(v.task_state?.task.task_id!==task||v.workspace?.workspace_id!==workspace||!v.operator)throw new Error('Ответ не соответствует выбранным Workspace / TASK');
+    const p=v.operator.progress;
+    if(typeof v.operator.coherent!=='boolean'||!p||!Number.isInteger(p.total)||p.total<0||!Number.isInteger(p.done)||p.done<0||p.done>p.total||p.verified!==null&&(!Number.isInteger(p.verified)||p.verified<0||p.verified>p.total))throw new Error('Некорректные данные прогресса или согласованности снимка');
+    try{render(v)}catch(e){clearDetail();throw new Error('Некорректный снимок скрыт: '+e.message)}
     view.data=v;
     view.loadedAt=Date.now();
-    render(v);
     notice('detailError','');
     setFresh(v.operator.coherent,v.operator.coherent?'':'Состояние изменилось во время чтения. Этот снимок не подтверждён; обновите данные.')
   }
@@ -654,7 +658,7 @@ async function refresh(){
   try{
     const [health,w,t]=await Promise.allSettled([api('/status'),api('/workspaces'),api('/ui/tasks')]);
     if(epoch!==view.epoch)return;
-    const online=health.status==='fulfilled'&&health.value.service==='web_alarm_server';
+    const online=health.status==='fulfilled'&&health.value?.service==='web_alarm_server';
     view.healthAt=Date.now();text('serverStatus',online?'Сервер доступен':'Нет свежего соединения');$('serverStatus').setAttribute('data-state',online?'online':'offline');
     $('serverStatus').setAttribute('title',online?health.value.service+' · '+health.value.mode+' · API '+health.value.api_version:'Проверка GET /status не дала свежего ответа');
     if(!online)throw health.reason||Error('Некорректный health ответ');
