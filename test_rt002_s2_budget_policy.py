@@ -16,6 +16,7 @@ from __future__ import annotations
 import ast
 import copy
 from dataclasses import replace
+from fractions import Fraction
 import glob
 import hashlib
 import json
@@ -417,6 +418,9 @@ MANIFEST = (
     "CalibrationTests.test_calibrated_lower_envelopes",
     "CalibrationTests.test_calibration_input_validation",
     "CalibrationTests.test_calibration_and_estimate_inputs_are_validated",
+    "CalibrationTests.test_tiny_positive_divisors_never_overflow_and_fail_closed",
+    "CalibrationTests.test_estimate_is_the_exact_ceiling_never_float_rounded_down",
+    "CalibrationTests.test_hand_built_profile_numbers_are_input_errors",
     "CalibrationTests.test_embedded_dataset_is_pinned",
     "CalibrationTests.test_estimation_modes",
     "CalibrationTests.test_profile_divisor_is_never_rounded_up",
@@ -440,6 +444,9 @@ MANIFEST = (
     "DecisionTests.test_malformed_measure_is_denied_not_trusted",
     "DecisionTests.test_unhashable_or_oversized_measure_is_denied_not_raised",
     "DecisionTests.test_corrupt_records_block_instead_of_crashing",
+    "DecisionTests.test_record_with_malformed_scope_blocks_every_scope",
+    "DecisionTests.test_well_formed_scopes_stay_isolated",
+    "DecisionTests.test_malformed_run_context_is_denied",
     "IsolationTests.test_manifest_matches_the_loaded_collection",
     "IsolationTests.test_no_production_module_imports_the_policy_yet",
     "IsolationTests.test_policy_evaluation_does_not_mutate_inputs",
@@ -923,6 +930,61 @@ class CalibrationTests(unittest.TestCase):
                 with self.assertRaises(b.PolicyInputError):
                     b.estimate_input_tokens(snap, *args)
 
+    def profiled(self, bpt, key="executor"):
+        import ultra_budget_policy as b
+        raw = policy_dict()
+        raw["estimation"]["profiles"] = [{"provider_model_id": "GigaChat-3-Ultra", "profile_key": key,
+                                          "bytes_per_token": bpt, "samples": 5, "source_sha256": DATASET_SHA256}]
+        return b.validate_policy(raw)
+
+    def test_tiny_positive_divisors_never_overflow_and_fail_closed(self):
+        """A positive divisor down to the smallest subnormal is a legal (if absurd) profile: the estimate stays an
+        exact integer >= bytes and the request is denied by its own caps, never an OverflowError."""
+        import ultra_budget_policy as b
+        for bpt in (5e-324, 2.225073858507201e-308, 2.2250738585072014e-308, 1e-300, 1e-12, 0.0001, 0.5):
+            snap = self.profiled(bpt)
+            with self.subTest(bpt=bpt):
+                for wire in (0, 1, 4000, b.MAX_SANE_BYTES):
+                    estimate = b.estimate_input_tokens(snap, "GigaChat-3-Ultra", "executor", wire)
+                    self.assertEqual(estimate.tokens, math.ceil(Fraction(wire) / Fraction(bpt)))  # independent oracle
+                    self.assertGreaterEqual(estimate.tokens, wire)
+                decision = b.evaluate_request(snap, [], b.RequestMeasure("executor", "GigaChat-3-Ultra", 4000, "0" * 64,
+                                                                         32768), b.RunContext("run", True))
+                self.assertEqual(decision.verdict, b.DENY if bpt < 0.1 else b.ALLOW)
+                if decision.verdict == b.DENY:
+                    self.assertEqual(decision.reasons[0].code, "REQUEST_TOKENS_EXCEEDED")
+                    self.assertLess(len(decision.reasons[0].text), 400)  # a 330-digit estimate is not dumped
+                self.assertIn("PROFILE_STRICTER_THAN_HARD_BOUND",
+                              [r.code for r in b.preflight_run(snap, b.RunContext("run", True))])
+
+    def test_estimate_is_the_exact_ceiling_never_float_rounded_down(self):
+        import ultra_budget_policy as b
+        # float division rounds 10269 / 4.1076 to 2500.0; the stored divisor is below 4.1076, the exact ceiling is 2501
+        snap = self.profiled(4.1076)
+        self.assertEqual(b.estimate_input_tokens(snap, "GigaChat-3-Ultra", "executor", 10269).tokens, 2501)
+        for bpt in [p["bytes_per_token"] for p in profiles()] + [4.1, 3.3, 0.7, 1.1, 1.0, 63.99999999999999, 64.0]:
+            snap = self.profiled(bpt)
+            with self.subTest(bpt=bpt):
+                for wire in list(range(0, 50001, 7)) + [b.MAX_SANE_BYTES - 1, b.MAX_SANE_BYTES]:
+                    tokens = b.estimate_input_tokens(snap, "GigaChat-3-Ultra", "executor", wire).tokens
+                    if tokens != math.ceil(Fraction(wire) / Fraction(bpt)):
+                        self.fail(f"bpt={bpt} wire={wire}: {tokens}")
+        self.assertEqual(b.estimate_input_tokens(self.profiled(64.0), "GigaChat-3-Ultra", "executor",
+                                                 b.MAX_SANE_BYTES).tokens, 1 << 24)
+        self.assertNotIn("PROFILE_STRICTER_THAN_HARD_BOUND",
+                         [r.code for r in b.preflight_run(self.profiled(1.0), b.RunContext("run", True))])
+
+    def test_hand_built_profile_numbers_are_input_errors(self):
+        """validate_policy is the only constructor of a sound snapshot; a hand-built one must not crash oddly."""
+        import ultra_budget_policy as b
+        good = snapshot()
+        for bpt in (0.0, -1.0, float("nan"), float("inf"), "4", None, True):
+            broken = replace(good, profiles=(replace(good.profiles[1], bytes_per_token=bpt),))
+            with self.subTest(bpt=bpt):
+                with self.assertRaises(b.PolicyInputError):
+                    b.estimate_input_tokens(broken, good.profiles[1].provider_model_id,
+                                            good.profiles[1].profile_key, 4000)
+
     def test_estimation_modes(self):
         import ultra_budget_policy as b
         snap = snapshot()
@@ -1162,11 +1224,14 @@ class DecisionTests(unittest.TestCase):
         over = self.decide(self.measure(wire_bytes=100001), snap=snap)
         self.assertEqual([r.code for r in over.reasons], ["REQUEST_BYTES_EXCEEDED"])
         bpt = next(p.bytes_per_token for p in snap.profiles if p.profile_key == "executor")
-        limit_bytes = math.floor(20000 * bpt)
+        # exact oracle: the stored 4.1076 is 4.10759999999999969..., so 20000 * bpt rounds UP to 82152.0 in float;
+        # the largest request whose exact estimate fits 20000 tokens is 82151 bytes (REPAIR-002 corrected oracle)
+        limit_bytes = math.floor(Fraction(20000) * Fraction(bpt))
+        self.assertEqual(limit_bytes, 82151)
         snap_tokens = snapshot(max_request_bytes=524288, max_request_input_tokens_est=20000)
         self.assertEqual(self.decide(self.measure(wire_bytes=limit_bytes), snap=snap_tokens).verdict, b.ALLOW)
         self.assertIn("REQUEST_TOKENS_EXCEEDED",
-                      [r.code for r in self.decide(self.measure(wire_bytes=limit_bytes + 5), snap=snap_tokens).reasons])
+                      [r.code for r in self.decide(self.measure(wire_bytes=limit_bytes + 1), snap=snap_tokens).reasons])
 
     def test_run_liability_includes_unknown_and_in_flight(self):
         import ultra_budget_policy as b
@@ -1349,6 +1414,54 @@ class DecisionTests(unittest.TestCase):
                 self.assertTrue(view.anomalies)
                 decision = self.decide(self.measure(wire_bytes=4000), [record])
                 self.assertEqual((decision.verdict, decision.reasons[0].code), (b.DENY, "LEDGER_ANOMALY"))
+
+    MALFORMED_SCOPES = (None, "", "   ", [], {}, ("run",), 0, "run\ud800", "x" * 201)
+
+    def heavy(self, scope):
+        """A settled attempt (no estimate breach) whose 200000 known tokens make the next executor request exceed
+        the RUN cap: a DENY caused by the debt itself."""
+        import ultra_budget_policy as b
+        return b.apply_terminal(b.mark_sent(b.reserve_attempt(
+            "h", self.measure(wire_bytes=4000), b.TokenEstimate(200000, b.EST_CALIBRATED, None, ""), scope)),
+            "completed", {"prompt_tokens": 200000, "completion_tokens": 0, "precached_prompt_tokens": 0})
+
+    def test_record_with_malformed_scope_blocks_every_scope(self):
+        """Its owner cannot be established, so it may be ours: never silently dropped, never an ALLOW."""
+        import ultra_budget_policy as b
+        baseline = self.decide(self.measure(), [self.heavy("run")])
+        self.assertEqual((baseline.verdict, baseline.reasons[0].code), (b.DENY, "RUN_LIABILITY_EXCEEDED"))
+        for bad in self.MALFORMED_SCOPES:
+            record = replace(self.heavy("run"), scope_id=bad)
+            for scope in ("run", "other-run", "compress-job"):
+                with self.subTest(scope_id=repr(bad)[:20], evaluated=scope):
+                    view = b.budget_view(snapshot(), [record], scope, final_audit_enabled=True)
+                    self.assertTrue(view.anomalies)
+                    self.assertGreaterEqual(view.committed_liability_tokens, 200000 + 32768)  # its readable reserve
+                    decision = self.decide(self.measure(), [record], scope=scope)
+                    self.assertEqual((decision.verdict, decision.reasons[0].code), (b.DENY, "LEDGER_ANOMALY"))
+
+    def test_well_formed_scopes_stay_isolated(self):
+        import ultra_budget_policy as b
+        heavy_a = self.heavy("run-a")
+        self.assertEqual(self.decide(self.measure(), [heavy_a], scope="run-a").reasons[0].code, "RUN_LIABILITY_EXCEEDED")
+        other = self.decide(self.measure(), [heavy_a], scope="run-b")
+        self.assertEqual((other.verdict, other.view.committed_liability_tokens), (b.ALLOW, 0))
+        broken_a = replace(heavy_a, route_id=[])   # malformed, but its owner is known: it blocks run-a only
+        self.assertEqual(self.decide(self.measure(), [broken_a], scope="run-a").reasons[0].code, "LEDGER_ANOMALY")
+        self.assertEqual(self.decide(self.measure(), [broken_a], scope="run-b").verdict, b.ALLOW)
+
+    def test_malformed_run_context_is_denied(self):
+        import ultra_budget_policy as b
+        history = [self.heavy("run")]
+        for label, context in [(f"scope={s!r}"[:24], b.RunContext(s, True)) for s in self.MALFORMED_SCOPES] + [
+                (f"final_audit={f!r}", b.RunContext("run", f)) for f in (None, "false", 0, 1, "True")] + [
+                ("not a RunContext", ("run", True))]:
+            with self.subTest(context=label):
+                decision = b.evaluate_request(snapshot(), history, self.measure(), context)
+                self.assertEqual((decision.verdict, [r.code for r in decision.reasons]), (b.DENY, ["INVALID_CONTEXT"]))
+                self.assertIn("INVALID_CONTEXT", [r.code for r in b.preflight_run(snapshot(), context)])
+        view = b.budget_view(snapshot(), history, None, final_audit_enabled=True)
+        self.assertTrue(view.anomalies)  # a malformed requested scope cannot match anything: it must not look empty
 
     def test_full_read_contract_for_s4(self):
         import ultra_budget_policy as b

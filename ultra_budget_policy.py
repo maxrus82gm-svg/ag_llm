@@ -435,9 +435,15 @@ def estimate_input_tokens(snapshot: PolicySnapshot, provider_model_id: str, prof
     profile = next((p for p in snapshot.profiles
                     if p.provider_model_id == provider_model_id and p.profile_key == profile_key), None)
     if profile is not None and (provider_model_id, profile_key) not in breached:
-        return TokenEstimate(math.ceil(wire_bytes / profile.bytes_per_token), EST_CALIBRATED, profile,
+        bpt = profile.bytes_per_token
+        if not isinstance(bpt, float) or not math.isfinite(bpt) or bpt <= 0:   # only validate_policy builds profiles
+            raise PolicyInputError(f"profile bytes_per_token {_show(bpt)} is not a positive finite float")
+        # exact integer ceiling of wire_bytes / bpt for the stored binary value: a float quotient overflows to inf
+        # for tiny divisors and can round DOWN by one token (10269 / 4.1076 -> 2500.0, exact ceiling 2501)
+        numerator, denominator = bpt.as_integer_ratio()
+        return TokenEstimate(-(-(wire_bytes * denominator) // numerator), EST_CALIBRATED, profile,
                              f"калиброванный профиль {provider_model_id}/{profile_key}, "
-                             f"{profile.bytes_per_token:.3f} байт/токен, n={profile.samples}")
+                             f"{bpt:.6g} байт/токен, n={profile.samples}")
     why = "оценка ранее превышена фактом" if profile is not None else "нет профиля"
     if snapshot.missing_profile == "HARD_BOUND":
         return TokenEstimate(wire_bytes, EST_HARD_BOUND, None,
@@ -752,6 +758,8 @@ def _usage_problem(usage) -> str | None:
 
 def _record_problem(record: AttemptRecord) -> str | None:
     """Structural check of a record (S3a will rehydrate them from storage); None when it is well-formed."""
+    if _text_problem(record.scope_id):
+        return f"scope_id {_show(record.scope_id)}"
     for name in ("attempt_id", "route_id", "provider_model_id", "state"):
         if not isinstance(getattr(record, name), str):
             return f"{name} {_show(getattr(record, name))}"
@@ -775,23 +783,37 @@ def _record_problem(record: AttemptRecord) -> str | None:
     return None
 
 
+def _readable_reserve(record: AttemptRecord) -> int:
+    """The part of a malformed record's reservation that can still be read (its other numbers are not trusted)."""
+    values = (record.reserved_input_tokens_est, record.reserved_output_tokens)
+    return sum(max(v, 0) for v in values) if all(_is_int(v) for v in values) else 0
+
+
 def budget_view(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], scope_id: str,
                 *, final_audit_enabled: bool) -> BudgetView:
+    """Liability of one scope. Ownership is decided before anything is skipped: a well-formed record of another
+    scope is isolated; a record whose scope identity is malformed may be ours, so it counts and blocks everywhere."""
     known = in_flight = unknown = anomaly = used = 0
     by_role: dict[str, int] = {}
     anomalies: list[str] = []
     breached = set()
+    if _text_problem(scope_id):   # it would match nothing and look like an empty, affordable budget
+        anomalies.append(f"некорректный scope_id запроса: {_show(scope_id)}")
     for record in attempts:
         if not isinstance(record, AttemptRecord):   # its scope is unknowable: it blocks every scope
             anomalies.append(f"не запись попытки: {_show(record)}")
+            continue
+        if _text_problem(record.scope_id):
+            anomalies.append(f"{_show(record.attempt_id)}: повреждённый scope_id {_show(record.scope_id)}, "
+                             "владелец неизвестен")
+            anomaly += _readable_reserve(record)
             continue
         if record.scope_id != scope_id:
             continue
         problem = _record_problem(record)
         if problem:   # never trust a malformed record's numbers; keep what can be read, then block
             anomalies.append(f"{_show(record.attempt_id)}: повреждённая запись ({problem})")
-            if _is_int(record.reserved_input_tokens_est) and _is_int(record.reserved_output_tokens):
-                anomaly += max(record.reserved_input_tokens_est, 0) + max(record.reserved_output_tokens, 0)
+            anomaly += _readable_reserve(record)
             continue
         spec = ROUTES.get(record.route_id)
         if spec is None:
@@ -837,6 +859,22 @@ def _measure_problem(measure: RequestMeasure) -> str | None:
     return None
 
 
+def _context_problem(context: RunContext) -> str | None:
+    """A malformed scope would hide the whole history; a non-bool flag would silently drop the reserve."""
+    if not isinstance(context, RunContext):
+        return f"ожидается RunContext, получено {_show(context)}"
+    if _text_problem(context.scope_id):
+        return f"scope_id: {_text_problem(context.scope_id)}"
+    if not isinstance(context.final_audit_enabled, bool):
+        return f"final_audit_enabled должен быть bool, получено {_show(context.final_audit_enabled)}"
+    return None
+
+
+def _count(value: int) -> str:
+    """An integer for a human message; an astronomic estimate (a tiny divisor) is abbreviated, never dumped."""
+    return str(value) if value.bit_length() <= 60 else f"~10^{int(math.log10(value))}"
+
+
 def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord], measure: RequestMeasure,
                      context: RunContext) -> Decision:
     """Pure pre-send decision for ONE physical attempt. S3b must call it with the exact wire measure."""
@@ -851,6 +889,10 @@ def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord]
     problem = _measure_problem(measure)
     if problem:
         return Decision(DENY, (_reason("INVALID_MEASURE", f"измерение запроса некорректно: {problem}"),),
+                        measure.route_id)
+    problem = _context_problem(context)
+    if problem:
+        return Decision(DENY, (_reason("INVALID_CONTEXT", f"контекст запроса некорректен: {problem}"),),
                         measure.route_id)
     reasons: list[Reason] = []
     if spec.scope == SCOPE_RUN:
@@ -888,13 +930,13 @@ def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord]
                         measure.route_id, estimate=estimate, view=view)
     if estimate.tokens > max_request_tokens:
         reasons.append(_reason("REQUEST_TOKENS_EXCEEDED",
-                               f"оценка входа {estimate.tokens} токенов больше лимита {max_request_tokens}"))
+                               f"оценка входа {_count(estimate.tokens)} токенов больше лимита {max_request_tokens}"))
     liability = estimate.tokens + measure.output_reserve_tokens
     mandatory = spec.budget_class == CLASS_MANDATORY_VERIFICATION
     protected_tokens = 0 if mandatory or not final_audit else view.protected_reserve_tokens
     protected_attempts = 0 if mandatory or not final_audit else snapshot.run.verification_reserve_attempts
     if view.committed_liability_tokens + liability + protected_tokens > limit_tokens:
-        detail = (f"после запроса обязательства {view.committed_liability_tokens + liability} "
+        detail = (f"после запроса обязательства {_count(view.committed_liability_tokens + liability)} "
                   f"(+ резерв проверки {protected_tokens}) больше лимита {limit_tokens}")
         reasons.append(_reason("RUN_LIABILITY_EXCEEDED" if not protected_tokens or
                                view.committed_liability_tokens + liability > limit_tokens
@@ -918,6 +960,9 @@ def evaluate_request(snapshot: PolicySnapshot, attempts: Iterable[AttemptRecord]
 
 def preflight_run(snapshot: PolicySnapshot, context: RunContext) -> tuple[Reason, ...]:
     """Human-readable warnings for a RUN start / UI preview (S5). Never changes the policy."""
+    problem = _context_problem(context)
+    if problem:
+        return (_reason("INVALID_CONTEXT", f"контекст RUN некорректен: {problem}"),)
     warnings = []
     if context.final_audit_enabled and snapshot.run.verification_reserve_tokens == 0:
         warnings.append(_reason("RESERVE_ZERO_WITH_FINAL_AUDIT",
@@ -935,6 +980,12 @@ def preflight_run(snapshot: PolicySnapshot, context: RunContext) -> tuple[Reason
     if snapshot.missing_profile == "HARD_BOUND":
         warnings.append(_reason("HARD_BOUND_FALLBACK",
                                 "для моделей без калибровки используется грубая граница токены <= байты"))
+    for profile in snapshot.profiles:   # legal and safe (over-estimates), but likely tokens/byte typed as bytes/token
+        if isinstance(profile.bytes_per_token, float) and profile.bytes_per_token < 1.0:
+            warnings.append(_reason("PROFILE_STRICTER_THAN_HARD_BOUND",
+                                    f"профиль {profile.provider_model_id}/{profile.profile_key}: "
+                                    f"{profile.bytes_per_token:.6g} байт/токен < 1 — оценка выше грубой границы "
+                                    "токены <= байты; проверьте единицы (байт на токен)"))
     if snapshot.mcp.mode == "DENY":
         warnings.append(_reason("MCP_DISABLED", "прямой MCP-чат запрещён политикой"))
     if snapshot.compressor.mode == "DENY":
