@@ -10,7 +10,7 @@ INDEX_HTML = r'''<!doctype html>
 :root{color-scheme:dark;--bg:#10151d;--panel:#17212c;--line:#344454;--text:#edf3fa;--muted:#adbdcd;--blue:#8ec9ff;--green:#8ee0ba;--amber:#ffd28e;--red:#ffaaaa;--purple:#d1b4ff;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
 
 *{box-sizing:border-box}
-body{margin:0}
+body{margin:0;height:100vh;overflow:hidden}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 button,input,select,textarea,summary{border-radius:8px}
@@ -33,9 +33,9 @@ small,.muted{color:var(--muted);font-size:13px;line-height:1.5}
 .top-actions,.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .top label{display:flex;align-items:center;gap:7px;margin:0}
 .top input{width:auto}
-.layout{display:grid;grid-template-columns:300px minmax(0,1fr);max-width:1700px;margin:auto;min-height:calc(100vh - 73px)}
-aside{padding:22px 16px;border-right:1px solid var(--line);background:#121c27}
-main{min-width:0;padding:26px 30px 44px}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr) 286px;max-width:2000px;margin:auto;height:calc(100dvh - 73px);min-height:0}
+aside{padding:20px 14px;background:#121c27;min-height:0;display:flex;flex-direction:column;gap:12px;overflow:auto}.workspaces{border-right:1px solid var(--line)}.tasks{border-left:1px solid var(--line)}
+main{min-width:0;min-height:0;overflow:auto;scrollbar-gutter:stable;padding:26px 28px 44px}
 .eyebrow{color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
 .section-head h2{font-size:16px}
@@ -98,31 +98,23 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .skip{position:absolute;left:12px;top:-80px}
 .skip:focus{top:12px;z-index:10;background:var(--panel);padding:12px;color:var(--text)}
 
-.mobile-nav{display:none}
-
-@media(max-width:1150px){.columns{grid-template-columns:1fr}
-.layout{grid-template-columns:260px minmax(0,1fr)}
-main{padding:22px 20px}
-}
-
-@media(max-width:760px){.mobile-nav{display:list-item;font-weight:700;padding:8px 0}
-#navigatorPanel:not([open])>*:not(summary){display:none}
-.top{position:static;padding:14px 16px;align-items:flex-start;flex-wrap:wrap}
-.top-actions{width:100%;justify-content:space-between}
-.layout{grid-template-columns:1fr}
-aside{border-right:0;border-bottom:1px solid var(--line);padding:18px}
-.task-list{max-height:270px;overflow:auto}
-main{padding:20px 14px}
-.card{padding:16px}
-.overview h2{font-size:23px}
-.overview-top{flex-wrap:wrap}
-.stage summary{gap:8px;flex-wrap:wrap}
-.stage summary .title{flex-basis:45%}
-.stage-body{padding-left:16px}
-.facts{gap:14px}
-.operation-grid{grid-template-columns:90px minmax(0,1fr)}
-}
-
+/* Each desktop column owns its scroll; mobile panels precede the card. */
+.side-scroll{min-height:0;overflow:auto;flex:1;scrollbar-gutter:stable}
+.workspace-button{width:100%;text-align:left;margin-bottom:8px;overflow-wrap:anywhere}
+.workspace-button[aria-current=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.side-title{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.plus{font-size:22px;line-height:1;padding:6px 11px}.task-list{margin:8px 0 18px}
+.task-button strong{font-size:14px}.task-button .tag{margin-top:7px;font-family:inherit}
+.source-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;font-size:15px;max-height:none;background:transparent;padding:0;font-family:inherit}
+.source-card{border-left:3px solid var(--blue)}.source-card h2{margin-bottom:14px}
+.composer textarea{min-height:320px;line-height:1.65;resize:vertical}.composer .row{margin-top:18px}
+.draft-state{color:var(--muted);font-size:13px;line-height:1.6;margin:16px 0}
+.draft-row{border:1px dashed #6d879e}.form-panel{padding-top:8px;border-top:1px solid var(--line)}
+.connection{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:6px 10px;max-width:300px}
+.connection[data-state=online]{color:var(--green)}.connection[data-state=offline]{color:var(--amber)}
+.mobile-toggle{display:none}.report-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+@media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
+@media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}}
 </style>
 </head>
 <body>
@@ -132,72 +124,30 @@ main{padding:20px 14px}
 <span class="logo" aria-hidden="true">WA</span>
 <div>
 <h1>Web Alarm Workspace</h1>
-<div class="live" id="serverStatus" role="status">Подключение…</div>
+<div class="live">Постановки · этапы · восстановление</div>
 </div>
 </div>
 <div class="top-actions">
+<span class="connection" id="serverStatus" role="status" data-state="checking">Проверяем соединение…</span>
+<button class="mobile-toggle" id="showWorkspaces" aria-controls="workspacesPanel">Проекты</button>
+<button class="mobile-toggle" id="showTasks" aria-controls="tasksPanel">Задачи</button>
 <label>
 <input type="checkbox" id="autoRefresh"> Наблюдать · 15 с</label>
 <button id="refresh">↻ Обновить</button>
 </div>
 </header>
-<div class="layout">
-<aside aria-label="Workspace и TASK">
-<details id="navigatorPanel" open>
-<summary class="mobile-nav">Навигатор Workspace / TASK</summary>
-<div class="section-head">
-<h2>Рабочие пространства</h2>
-<span class="eyebrow">Навигатор</span>
-</div>
-<label for="workspaceSelect">Workspace</label>
-<select id="workspaceSelect">
-<option value="">Загрузка…</option>
-</select>
-<p class="muted spaced" id="workspacePath">
-</p>
-<div id="navigationError" class="notice error" role="alert" hidden>
-</div>
-<h3 class="spaced">Активные TASK</h3>
-<div id="activeTasks" class="task-list">
-</div>
-<details id="completedGroup">
-<summary>Завершённые TASK <span id="completedCount">
-</span>
-</summary>
-<div id="completedTasks" class="task-list">
-</div>
-</details>
-<details class="creation">
-<summary>Добавить Workspace</summary>
-<form id="workspaceForm">
-<label for="wsName">Название</label>
-<input id="wsName" required maxlength="300" placeholder="Название проекта">
-<label for="wsRoot">Локальный путь</label>
-<input id="wsRoot" required placeholder="M:\Projects\project">
-<button id="createWorkspace" type="submit">Добавить Workspace</button>
-</form>
-</details>
-<details class="creation">
-<summary>Новая TASK</summary>
-<form id="taskForm">
-<label for="taskWorkspace">Workspace</label>
-<select id="taskWorkspace" required>
-</select>
-<label for="taskTitle">Название</label>
-<input id="taskTitle" required maxlength="500">
-<label for="taskGoal">Цель</label>
-<textarea id="taskGoal" required>
-</textarea>
-<label for="taskRaw">RAW TASK</label>
-<textarea id="taskRaw" required placeholder="Исходная постановка целиком">
-</textarea>
-<button id="createTask" type="submit">Создать TASK</button>
-</form>
-</details>
-<div id="formError" class="notice error" role="alert" hidden>
-</div>
-<p class="muted spaced">Создание — после подтверждения. Состояние исполнения управляется сервером.</p>
-</details>
+<div class="layout" id="layout">
+<aside class="workspaces" id="workspacesPanel" aria-label="Рабочие пространства">
+<div class="section-head"><div><p class="side-title">WORKSPACES</p><h2>Проекты</h2></div><button class="plus" id="addWorkspace" aria-label="Добавить Workspace" title="Зарегистрировать существующую папку">+</button></div>
+<div id="workspaceList" class="side-scroll" aria-label="Список Workspace"></div>
+<details id="workspaceInfo"><summary>О выбранном проекте</summary><p class="id spaced" id="workspacePath"></p><p class="muted">Путь проверяет сервер. Регистрация не разрешает запись в проект.</p></details>
+<div id="workspaceFormPanel" class="form-panel" hidden>
+<h3>Добавить Workspace</h3><form id="workspaceForm">
+<label for="wsName">Название проекта</label><input id="wsName" required maxlength="300">
+<label for="wsRoot">Абсолютный путь к папке</label><input id="wsRoot" required placeholder="M:\Projects\project">
+<p class="muted spaced">Нативный выбор папки пока не поддерживается API. Укажите существующую локальную папку.</p>
+<div class="row spaced"><button id="createWorkspace" type="submit">Добавить</button><button type="button" id="cancelWorkspace">Закрыть</button></div></form></div>
+<div id="formError" class="notice error" role="alert" hidden></div>
 </aside>
 <main id="main" tabindex="-1">
 <div class="section-head">
@@ -210,8 +160,17 @@ main{padding:20px 14px}
 </div>
 <div id="emptyDetail" class="empty">
 <h2>Выберите TASK</h2>
-<p>Откройте рабочее пространство и задачу слева.<br>Прогресс, текущая операция и безопасный следующий шаг появятся здесь.</p>
+<p>Выберите проект слева и задачу справа.<br>Или нажмите + у списка задач, чтобы ввести новую постановку.</p>
 </div>
+<section id="draftPanel" class="card composer" aria-labelledby="draftHeading" hidden>
+<p class="eyebrow" id="draftWorkspace"></p><h2 id="draftHeading">Новая TASK</h2>
+<p class="muted spaced">Одна постановка целиком. Пустая форма исчезнет при уходе; серверная TASK от нажатия + не создаётся.</p>
+<form id="taskForm"><label for="taskRaw">Что нужно сделать?</label><textarea id="taskRaw" placeholder="Опишите задачу, ограничения и желаемый результат…"></textarea>
+<p id="draftStatus" class="draft-state" role="status"></p><div id="draftError" class="notice error" role="alert" hidden></div>
+<div class="row"><button id="createTask" type="submit" disabled>Зарегистрировать постановку</button><button id="copyDraft" type="button">Копировать текст</button><button id="discardDraft" type="button">Удалить локальный черновик</button></div></form>
+<p class="muted spaced">Черновик хранится только в браузере на этом адресе, не на сервере. Очистка данных браузера удалит его; важный текст сохраните отдельно. Планировщика в API пока нет.</p>
+<details class="spaced"><summary>Что делает регистрация?</summary><p class="muted spaced">Сервер сохранит TASK без плана и без запуска исполнения. В текущем API название берётся из первой строки, цель — из постановки; внешние пробелы API удаляет. Это перенос текста, а не автоматическое планирование. ID и состояние подтверждает сервер.</p></details>
+</section>
 <div id="detail" hidden aria-busy="false">
 <section class="card overview" aria-labelledby="taskHeading">
 <div class="overview-top">
@@ -256,8 +215,9 @@ main{padding:20px 14px}
 </div>
 </div>
 </section>
+<section class="card source-card" aria-labelledby="sourceHeading"><h2 id="sourceHeading">Исходная постановка</h2><div id="taskDescription" class="source-text"></div></section>
 <section class="card next-card" aria-labelledby="nextHeading">
-<h2 id="nextHeading">NEXT SAFE ACTION</h2>
+<h2 id="nextHeading">Следующий безопасный шаг · NEXT SAFE ACTION</h2>
 <p id="nextSafeAction" class="next-text">
 </p>
 <div class="next-footer">
@@ -273,7 +233,7 @@ main{padding:20px 14px}
 <h2 id="timelineHeading">Этапы TASK</h2>
 <span class="muted">По порядку плана</span>
 </div>
-<p class="muted">DONE — ожидает проверки. VERIFIED — подтверждённый этап.</p>
+<p class="muted">Выполнено (DONE) — ожидает проверки. Подтверждено (VERIFIED) — проверенный этап.</p>
 <div id="timeline">
 </div>
 </section>
@@ -291,7 +251,7 @@ main{padding:20px 14px}
 </section>
 <section class="card" aria-labelledby="recoveryHeading">
 <div class="section-head">
-<h2 id="recoveryHeading">Recovery state</h2>
+<h2 id="recoveryHeading">Восстановление · Recovery state</h2>
 <div id="recoveryBadge">
 </div>
 </div>
@@ -352,12 +312,17 @@ main{padding:20px 14px}
 <div id="copyStatus" class="live" role="status">
 </div>
 </main>
+<aside class="tasks" id="tasksPanel" aria-label="Задачи выбранного проекта">
+<div class="section-head"><div><p class="side-title">TASKS</p><h2>Задачи</h2></div><button class="plus" id="newTask" aria-label="Новая TASK" title="Открыть пустую постановку">+</button></div>
+<p id="taskWorkspaceName" class="muted"></p><div id="navigationError" class="notice error" role="alert" hidden></div>
+<div class="side-scroll"><div id="draftEntry"></div><h3 class="side-title spaced">Текущие и ожидающие</h3><div id="activeTasks" class="task-list"></div><h3 class="side-title">Завершённые <span id="completedCount"></span></h3><div id="completedTasks" class="task-list"></div></div>
+</aside>
 </div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
 const view={
-  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null
+  workspace:null,task:null,data:null,loadedAt:0,fresh:false,epoch:0,refreshing:false,creating:false,workspaces:[],tasks:null,mode:"task",draft:null,draftWritable:false,releaseDraft:null,catalogFresh:false,restoredDraft:false,healthAt:0
 }
 ;
 function text(id,value){
@@ -376,9 +341,11 @@ function element(tag,value,cls){
 function statusClass(s){
   return s==='VERIFIED'||s==='VALID'?'good':['ACTIVE','READY','STARTED'].includes(s)?'active':['FAILED','FAILED_VERIFICATION','CORRUPT','INCONSISTENT','PROJECTION_BLOCKED','BLOCKED_PREPARE'].includes(s)?'bad':s.includes('UNKNOWN')||s.includes('PARTIAL')?'unknown':['STALE','DONE','RECOVERY_REQUIRED','NOT_VERIFIED'].includes(s)?'warn':''
 }
+const LABELS={PLANNED:'Запланировано',READY:'Готово к работе',ACTIVE:'В работе',STARTED:'Операция начата',DONE:'Выполнено · ждёт проверки',VERIFIED:'Подтверждено',COMPLETED:'Завершено',ARCHIVED:'В архиве',UNKNOWN_AFTER_DISCONNECT:'Исход неизвестен после обрыва',UNKNOWN:'Исход неизвестен',RECOVERY_REQUIRED:'Требует восстановления',NORMAL:'Восстановление не требуется',FAILED:'Ошибка',FAILED_VERIFICATION:'Проверка не пройдена',VALID:'Актуален',STALE:'Устарел',CORRUPT:'Повреждён',NOT_PREPARED:'Не подготовлен',NOT_VERIFIED:'Не подтверждено',INCONSISTENT:'Противоречивое состояние',PROJECTION_BLOCKED:'Состояние не подтверждено',BLOCKED_PREPARE:'Подготовка заблокирована',PARTIAL:'Частичный результат',NOT_CREATED:'Не создан',MISSING:'Отсутствует',RESOLUTION_STALE:'Решение устарело'};
+function statusLabel(value){return LABELS[value]||value}
 function badge(s){
   const value=String(s??'Неизвестно');
-  return element('span',value,'tag '+statusClass(value))
+  const b=element('span',statusLabel(value),'tag '+statusClass(value));b.setAttribute('title',value);return b
 }
 async function api(path,options={
 }
@@ -406,7 +373,7 @@ async function api(path,options={
     }
     if(!r.ok){
       const e=new Error((data.error?.code||'HTTP '+r.status)+': '+(data.error?.message||'Запрос отклонён'));
-      e.details=data.error?.details;
+      e.details=data.error?.details;e.code=data.error?.code;e.httpStatus=r.status;
       e.serverRejected=true;
       throw e
     }
@@ -419,7 +386,7 @@ async function api(path,options={
 function saveSelection(){
   try{
     localStorage.setItem('webAlarm.selection',JSON.stringify({
-      workspace:view.workspace,task:view.task
+      workspace:view.workspace,task:view.task,draft:view.mode==='draft'&&Boolean(view.draft?.text.trim())
     }
     ))
   }
@@ -439,69 +406,110 @@ function clearDetail(){
   view.loadedAt=0;
   setFresh(false);
   $('detail').hidden=true;
-  $('emptyDetail').hidden=false;
+  $('emptyDetail').hidden=view.mode==='draft';
+  $('draftPanel').hidden=view.mode!=='draft';
   notice('detailError','');
   text('readTime',view.task?'Загрузка выбранной TASK…':'Нет выбранной TASK')
 }
+function leaveDraft(){
+  if(view.mode==='draft'&&view.draft?.dirty&&!window.confirm('Текст не сохранён в браузере. Скопируйте его перед уходом. Всё равно уйти?'))return false;
+  if(view.releaseDraft)view.releaseDraft();view.releaseDraft=null;view.draftWritable=false;view.draft=null;return true;
+}
 function selectWorkspace(id){
-  view.epoch++;
-  view.workspace=id||null;
-  view.task=null;
-  saveSelection();
-  clearDetail();
-  renderNavigation()
+  if(!leaveDraft())return false;
+  view.epoch++;view.mode='task';view.workspace=id||null;view.task=null;
+  saveSelection();clearDetail();renderNavigation();return true;
 }
 async function selectTask(id){
-  view.epoch++;
-  view.task=id;
-  saveSelection();
-  clearDetail();
-  renderNavigation();
-  if(window.matchMedia('(max-width:760px)').matches){
-    $('navigatorPanel').open=false;
-    $('main').focus({
-      preventScroll:true
-    }
-    );
-  }
-  await loadDetail(view.epoch)
+  if(!leaveDraft())return;
+  view.epoch++;view.mode='task';view.task=id;saveSelection();clearDetail();renderNavigation();
+  closeMobilePanels();await loadDetail(view.epoch);
+}
+function closeMobilePanels(){
+  $('layout').className='layout';if(window.matchMedia('(max-width:850px)').matches)$('main').focus({preventScroll:true});
 }
 function taskButton(t){
-  const b=element('button',null,'task-button');
-  b.type='button';
-  b.dataset.task=t.task_id;
-  b.setAttribute('aria-current',String(view.task===t.task_id));
-  b.append(element('strong',t.title),element('small',t.task_id,'id'),badge(t.status),element('small','Этап: '+(t.current_microtask_id||'не определён')+' · '+t.current_status));
+  const b=element('button',null,'task-button');b.type='button';b.dataset.task=t.task_id;
+  b.setAttribute('aria-current',String(view.mode==='task'&&view.task===t.task_id));
+  b.setAttribute('title',t.task_id+' · '+t.status+' · '+t.current_status);
+  b.append(element('strong',t.title),badge(t.status),element('small','Этап: '+statusLabel(t.current_status)));
   if(t.blockers?.length)b.append(element('small','Блокер: '+t.blockers[0].code));
-  else if(t.recovery_state!=='NORMAL')b.append(element('small','Recovery: '+t.recovery_state));
-  b.onclick=()=>selectTask(t.task_id);
-  return b
+  else if(t.recovery_state!=='NORMAL')b.append(element('small',statusLabel(t.recovery_state)));
+  b.onclick=()=>selectTask(t.task_id);return b;
+}
+function currentWorkspace(){return view.workspaces.find(w=>w.workspace_id===view.workspace)}
+function draftKey(ws=currentWorkspace()){return ws?'webAlarm.draft.v1.'+encodeURIComponent(ws.workspace_id)+'|'+encodeURIComponent(ws.workspace_root):null}
+function readDraft(ws=currentWorkspace()){
+  const key=draftKey(ws);if(!key)return null;
+  const raw=localStorage.getItem(key);if(!raw)return null;const d=JSON.parse(raw);
+  if(d.schema!==1||d.workspace_id!==ws.workspace_id||d.workspace_root!==ws.workspace_root||typeof d.text!=='string')throw Error('Формат локального черновика не распознан. Исходные данные не перезаписаны.');
+  if(d.registration!=null&&!['pending','unknown','confirmed'].includes(d.registration.state))throw Error('Неизвестное состояние регистрации черновика.');
+  return {...d,key,dirty:false};
 }
 function renderNavigation(){
-  const focused=document.activeElement?.dataset?.task;
-  const ws=view.workspaces.find(w=>w.workspace_id===view.workspace);
-  text('workspacePath',ws?.workspace_root||'Нет зарегистрированных Workspace');
-  $('workspaceSelect').value=view.workspace||'';
-  const rows=view.tasks||{
-    active:[],completed:[],errors:[]
-  }
-  ;
-  const stable=a=>a.filter(t=>t.workspace_id===view.workspace).sort((a,b)=>a.created_at.localeCompare(b.created_at)||a.task_id.localeCompare(b.task_id));
+  const focused=document.activeElement?.dataset?.task,ws=currentWorkspace();
+  $('workspaceList').replaceChildren(...view.workspaces.map(w=>{
+    const b=element('button',w.display_name,'workspace-button');b.type='button';b.dataset.workspace=w.workspace_id;
+    b.setAttribute('aria-current',String(w.workspace_id===view.workspace));b.setAttribute('title',w.workspace_root);b.onclick=()=>selectWorkspace(w.workspace_id);return b;
+  }));
+  if(!view.workspaces.length)$('workspaceList').append(element('p','Зарегистрированных проектов нет. Добавьте Workspace.','muted'));
+  text('workspacePath',ws?.workspace_root||'Проект не выбран');text('taskWorkspaceName',ws?.display_name||'Сначала выберите проект');$('newTask').disabled=!ws;
+  const rows=view.tasks||{active:[],completed:[],errors:[]};
   for(const key of ['active','completed']){
-    const tasks=stable(rows[key]);
-    $(key+'Tasks').replaceChildren(...(tasks.length?tasks.map(taskButton):[element('p',key==='active'?'Активных TASK нет':'Завершённых TASK нет','muted')]));
-    if(key==='completed'){
-      text('completedCount','('+tasks.length+')');
-      if(tasks.some(t=>t.task_id===view.task))$('completedGroup').open=true
-    }
+    const tasks=rows[key].filter(t=>t.workspace_id===view.workspace).sort((a,b)=>a.created_at.localeCompare(b.created_at)||a.task_id.localeCompare(b.task_id));
+    $(key+'Tasks').replaceChildren(...(tasks.length?tasks.map(taskButton):[element('p',key==='active'?'Текущих TASK нет':'Завершённых TASK нет','muted')]));
+    if(key==='completed')text('completedCount','('+tasks.length+')');
   }
-  if(focused){
-    for(const b of document.querySelectorAll('[data-task]'))if(b.dataset.task===focused)b.focus({
-      preventScroll:true
-    }
-    )
-  }
-  if(rows.errors?.length)notice('navigationError','Недоступные TASK (Workspace не подтверждён):\n'+rows.errors.map(e=>e.task_id+': '+e.reason).join('\n'))
+  $('draftEntry').replaceChildren();
+  try{const d=view.mode==='draft'?view.draft:readDraft();if(d?.text.trim()){
+    const b=element('button',null,'task-button draft-row');b.type='button';b.setAttribute('aria-current',String(view.mode==='draft'));
+    b.append(element('strong',d.text.trim().split(/\r?\n/)[0].slice(0,70)),element('small','Черновик · только этот браузер'));b.onclick=openDraft;$('draftEntry').append(b);
+  }}catch(_){$('draftEntry').append(element('p','Локальный черновик недоступен. Откройте + для диагностики.','muted'))}
+  if(focused)for(const b of document.querySelectorAll('[data-task]'))if(b.dataset.task===focused)b.focus({preventScroll:true});
+  if(rows.errors?.length)notice('navigationError','Недоступные TASK (Workspace не подтверждён):\n'+rows.errors.map(e=>e.task_id+': '+e.reason).join('\n'));
+}
+function showDraft(){
+  const d=view.draft;if(!d)return;
+  if($('taskRaw').value!==d.text)$('taskRaw').value=d.text;const pending=d.registration&&d.registration.state!=='confirmed';
+  $('taskRaw').readOnly=!view.draftWritable||Boolean(d.registration);
+  $('createTask').disabled=!view.draftWritable||!d.text.trim()||Boolean(d.registration)||view.creating||!view.catalogFresh;
+  $('discardDraft').disabled=!view.draftWritable||view.creating||Boolean(pending);
+  const state=d.registration?(d.registration.state==='confirmed'?'Сервер подтвердил регистрацию '+d.registration.task_id+'. Откройте TASK справа.':'Исход регистрации неизвестен. Текст защищён; повторная отправка заблокирована. Обновите список TASK и сверьте его с постановкой.'):
+    d.dirty?'Не сохранён · только в памяти этой страницы. Скопируйте текст.':d.text.trim()?'Черновик сохранён в этом браузере · '+new Date(d.updated_at).toLocaleTimeString('ru-RU'):'Пустая форма · ничего не сохранено';
+  text('draftStatus',state);text('draftWorkspace',currentWorkspace()?.display_name||'');
+}
+function persistDraft(){
+  const d=view.draft;if(!d||!view.draftWritable)return false;
+  try{
+    if(!d.text.trim()&&!d.registration)localStorage.removeItem(d.key);
+    else{const saved={schema:1,workspace_id:d.workspace_id,workspace_root:d.workspace_root,text:d.text,registration:d.registration,updated_at:new Date().toISOString()};localStorage.setItem(d.key,JSON.stringify(saved));d.updated_at=saved.updated_at;}
+    d.dirty=false;notice('draftError','');showDraft();saveSelection();renderNavigation();return true;
+  }catch(e){d.dirty=true;notice('draftError','Браузер не сохранил текст: '+e.message+'. Скопируйте его в отдельный документ.');showDraft();return false}
+}
+function openDraft(){
+  const ws=currentWorkspace();if(view.mode==='draft'&&view.releaseDraft){$('taskRaw').focus();return}if(!ws||!leaveDraft())return;
+  view.epoch++;const epoch=view.epoch;view.mode='draft';view.task=null;clearDetail();closeMobilePanels();
+  try{view.draft=readDraft(ws)||{schema:1,workspace_id:ws.workspace_id,workspace_root:ws.workspace_root,key:draftKey(ws),text:'',registration:null,dirty:false};
+    if(view.draft.registration?.state==='pending')view.draft.registration.state='unknown';
+  }catch(e){view.draft=null;notice('draftError',e.message);$('taskRaw').value='';$('taskRaw').readOnly=true;$('createTask').disabled=true;$('discardDraft').disabled=true;text('draftStatus','Данные не изменены. Восстановите локальный черновик перед редактированием.');return}
+  view.draftWritable=false;notice('draftError','');showDraft();saveSelection();renderNavigation();
+  // Web Locks prevents two tabs from overwriting the same local draft.
+  if(!navigator.locks?.request){notice('draftError','Браузер не поддерживает защиту черновика между вкладками. Доступны чтение и копирование; используйте Chrome/Edge.');return}
+  navigator.locks.request(view.draft.key,{ifAvailable:true},lock=>{
+    if(epoch!==view.epoch)return;
+    if(!lock){notice('draftError','Этот черновик уже открыт в другой вкладке. Здесь доступны чтение и копирование. Закройте другой редактор и снова нажмите +.');showDraft();return}
+    // The record may have changed between the initial read and acquiring the lock.
+    // Reread before enabling input, so a newly released tab's text cannot be lost.
+    try{view.draft=readDraft(ws)||view.draft;if(view.draft.registration?.state==='pending')view.draft.registration.state='unknown'}
+    catch(e){notice('draftError',e.message);showDraft();return}
+    view.draftWritable=true;showDraft();$('taskRaw').focus({preventScroll:true});
+    return new Promise(resolve=>{view.releaseDraft=resolve});
+  }).catch(e=>{if(epoch===view.epoch){view.draftWritable=false;notice('draftError','Защита черновика недоступна: '+e.message);showDraft()}});
+}
+function discardDraft(){
+  if(!view.draftWritable||!view.draft||view.creating||view.draft.registration&&view.draft.registration.state!=='confirmed')return;
+  if(view.draft.text.trim()&&!window.confirm('Удалить только локальный черновик? Зарегистрированные TASK и их evidence останутся.'))return;
+  try{localStorage.removeItem(view.draft.key);view.draft.text='';view.draft.registration=null;view.draft.dirty=false;selectWorkspace(view.workspace)}catch(e){notice('draftError','Не удалось удалить локальный черновик: '+e.message)}
 }
 function field(dl,name,value){
   dl.append(element('dt',name),element('dd',value??'Не определено'))
@@ -514,10 +522,11 @@ function render(v){
   text('taskLocation',v.workspace.display_name+' · '+(p.task.location==='active'?'Активная TASK':'Историческая TASK'));
   text('taskHeading',t.title);
   text('taskIdentity',t.task_id+' / '+t.workspace_id);
-  text('taskGoalText',t.goal);
+  text('taskGoalText',t.goal===t.raw_task?'Постановка сохранена. План и исполнение формируются отдельно.':t.goal);
+  text('taskDescription',t.raw_task);
   $('taskBadge').replaceChildren(badge(t.status));
-  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':o.progress.verified+' / '+o.progress.total+' VERIFIED');
-  text('doneText',o.progress.done+' DONE · ожидает проверки');
+  text('progressText',o.progress.verified==null?'VERIFIED-прогресс не подтверждён':'Подтверждено '+o.progress.verified+' / '+o.progress.total);
+  text('doneText',o.progress.done+' выполнено · ожидает проверки');
   const known=o.progress.verified!=null&&o.progress.total>0;
   text('progressFill','');
   $('progressFill').style.width=known?(100*o.progress.verified/o.progress.total)+'%':'0%';
@@ -530,7 +539,7 @@ function render(v){
     $('progressTrack').removeAttribute('aria-valuenow');
     $('progressTrack').setAttribute('aria-valuetext','Подтверждённый прогресс неизвестен')
   }
-  text('currentStage',v.current_microtask_id?(v.current_microtask_id+' · '+p.position.current_status):'Не определён');
+  text('currentStage',v.current_microtask_id?(v.current_microtask_id+' · '+statusLabel(p.position.current_status)):'Не определён');
   $('checkpointBadge').replaceChildren(badge(v.checkpoint_validation.status));
   $('snapshotBadge').replaceChildren(badge(p.restore_point.status));
   text('nextSafeAction',v.next_safe_action);
@@ -546,6 +555,7 @@ function render(v){
     body.append(element('p',m.goal),element('p',m.microtask_id,'id muted'),element('p','Предыдущие этапы плана: '+(m.prerequisites.join(', ')||'нет'),'muted'));
     if(m.blockers.length)body.append(element('p',m.blockers.map(b=>b.code+': '+b.reason).join('\n'),'notice error'));
     for(const op of m.operations)body.append(element('p',op.record.operation_id+' · '+op.record.action+' → '+op.record.target+' · '+op.record.status,'id'));
+    for(const report of m.events.filter(e=>e.event_type==='REPORT')){const r=element('details');r.open=true;r.append(element('summary','Отчёт этапа'),element('p',report.payload?.report||'Текст отчёта недоступен','report-text'));body.append(r)}
     const e=element('details');
     e.append(element('summary','Evidence этапа ('+m.events.length+' событий)'),element('pre',JSON.stringify({
       events:m.events,operations:m.operations,recovery_reports:m.recovery_reports
@@ -615,7 +625,7 @@ function render(v){
   text('readTime','Серверный снимок: '+new Date(o.read_at).toLocaleTimeString('ru-RU'));
 }
 async function loadDetail(epoch){
-  if(!view.task)return;
+  if(!view.task||view.mode!=='task')return;
   const task=view.task,workspace=view.workspace;
   $('detail').setAttribute('aria-busy','true');
   try{
@@ -638,90 +648,52 @@ async function loadDetail(epoch){
   }
 }
 async function refresh(){
-  if(view.refreshing)return;
-  view.refreshing=true;
-  $('refresh').disabled=true;
-  const epoch=view.epoch;
+  if(view.refreshing)return;view.refreshing=true;$('refresh').disabled=true;const epoch=view.epoch;
   try{
-    const [s,w,t]=await Promise.all([api('/status'),api('/workspaces'),api('/ui/tasks')]);
+    const [health,w,t]=await Promise.allSettled([api('/status'),api('/workspaces'),api('/ui/tasks')]);
     if(epoch!==view.epoch)return;
-    text('serverStatus',s.service+' · '+s.mode+' · API '+s.api_version);
-    view.workspaces=w.workspaces;
-    view.tasks=t;
-    for(const id of ['workspaceSelect','taskWorkspace']){
-      const old=$(id).value;
-      $(id).replaceChildren(...w.workspaces.map(ws=>{
-        const opt=element('option',ws.display_name);
-        opt.value=ws.workspace_id;
-        return opt
-      }
-      ));
-      if(w.workspaces.some(ws=>ws.workspace_id===old))$(id).value=old
+    const online=health.status==='fulfilled'&&health.value.service==='web_alarm_server';
+    view.healthAt=Date.now();text('serverStatus',online?'Сервер доступен':'Нет свежего соединения');$('serverStatus').setAttribute('data-state',online?'online':'offline');
+    $('serverStatus').setAttribute('title',online?health.value.service+' · '+health.value.mode+' · API '+health.value.api_version:'Проверка GET /status не дала свежего ответа');
+    if(!online)throw health.reason||Error('Некорректный health ответ');
+    if(w.status==='rejected'||t.status==='rejected')throw w.reason||t.reason;
+    if(!Array.isArray(w.value.workspaces)||!Array.isArray(t.value.active)||!Array.isArray(t.value.completed))throw Error('Некорректный список Workspace / TASK');
+    view.workspaces=w.value.workspaces;view.tasks=t.value;view.catalogFresh=true;
+    if(!currentWorkspace()){
+      if(view.mode==='draft'&&view.draft?.text.trim()){notice('navigationError','Workspace больше не подтверждён сервером. Черновик сохранён локально; регистрация заблокирована.');view.catalogFresh=false;showDraft();return}
+      view.workspace=view.workspaces[0]?.workspace_id||null;view.task=null;clearDetail();
     }
-    if(!w.workspaces.some(ws=>ws.workspace_id===view.workspace)){
-      view.workspace=w.workspaces[0]?.workspace_id||null;
-      view.task=null;
-      clearDetail()
-    }
-    $('workspaceSelect').value=view.workspace||'';
-    if(!$('taskWorkspace').value)$('taskWorkspace').value=view.workspace||'';
-    notice('navigationError','');
-    renderNavigation();
-    saveSelection();
-    await loadDetail(epoch)
-  }
-  catch(e){
-    if(epoch!==view.epoch)return;
-    text('serverStatus','Нет свежего соединения');
-    notice('navigationError',e.message);
-    setFresh(false,view.data?'Связь недоступна. Показан предыдущий снимок; NEXT SAFE ACTION устарел.':'Данные сервера недоступны. Обновите после восстановления связи.')
-  }
-  finally{
-    view.refreshing=false;
-    $('refresh').disabled=false
-  }
+    if(view.task&&![...view.tasks.active,...view.tasks.completed].some(t=>t.task_id===view.task&&t.workspace_id===view.workspace)){view.task=null;clearDetail()}
+    notice('navigationError','');renderNavigation();saveSelection();
+    if(view.restoredDraft){view.restoredDraft=false;openDraft()}
+    else if(view.mode==='draft')showDraft();else await loadDetail(epoch);
+  }catch(e){if(epoch!==view.epoch)return;view.catalogFresh=false;notice('navigationError',e.message);setFresh(false,view.data?'Связь или данные недоступны. Показан предыдущий снимок; NEXT SAFE ACTION устарел.':'Данные сервера недоступны. Обновите после восстановления связи.');if(view.mode==='draft')showDraft()}
+  finally{view.refreshing=false;$('refresh').disabled=false}
 }
 async function create(kind){
   if(view.creating)return;
-  if(view.refreshing){
-    notice('formError','Дождитесь завершения обновления.');
-    return;
-  }
-  const ws=kind==='workspace';
-  const body=ws?{
-    display_name:$('wsName').value,workspace_root:$('wsRoot').value
-  }
-  :{
-    workspace_id:$('taskWorkspace').value,title:$('taskTitle').value,goal:$('taskGoal').value,raw_task:$('taskRaw').value
-  }
-  ;
-  if(!window.confirm(ws?'Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?':'Создать TASK «'+body.title+'» в Workspace '+body.workspace_id+'?'))return;
-  view.creating=true;
-  $('createWorkspace').disabled=true;
-  $('createTask').disabled=true;
-  notice('formError','');
+  if(view.refreshing){notice(kind==='workspace'?'formError':'draftError','Дождитесь завершения обновления.');return}
+  const ws=kind==='workspace',d=view.draft,epoch=view.epoch;
+  if(!ws&&(!d||!view.draftWritable||!d.text.trim()||d.registration||!view.catalogFresh))return;
+  const raw=d?.text.trim(),body=ws?{display_name:$('wsName').value,workspace_root:$('wsRoot').value}:
+    {workspace_id:d.workspace_id,title:Array.from(raw.split(/\r?\n/)[0]).slice(0,120).join(''),goal:raw,raw_task:raw};
+  if(ws&&!window.confirm('Добавить Workspace «'+body.display_name+'» по пути '+body.workspace_root+'?'))return;
+  if(!ws){d.registration={state:'pending',submitted_at:new Date().toISOString()};if(!persistDraft()){d.registration=null;showDraft();return}}
+  view.creating=true;$('createWorkspace').disabled=true;if(!ws)showDraft();notice(ws?'formError':'draftError','');
   try{
-    const data=await api(ws?'/workspaces':'/tasks',{
-      method:'POST',body
-    }
-    );
-    view.epoch++;
-    view.workspace=ws?data.workspace.workspace_id:body.workspace_id;
-    view.task=ws?null:data.task.task_id;
-    clearDetail();
-    saveSelection();
+    const data=await api(ws?'/workspaces':'/tasks',{method:'POST',body});
+    if(!ws){const t=data.task;if(!t||typeof t.task_id!=='string'||t.workspace_id!==body.workspace_id||t.raw_task!==raw||t.title!==body.title||t.goal!==body.goal)throw Error('Ответ регистрации не подтверждает исходную постановку');
+      d.registration={state:'confirmed',task_id:t.task_id};
+      // Never remove another draft if selection changed while POST was in flight.
+      if(view.draft===d){persistDraft();try{localStorage.removeItem(d.key)}catch(_){}if(epoch===view.epoch){const id=t.task_id;d.dirty=false;await selectTask(id)}}
+
+    }else if(epoch===view.epoch&&view.mode!=='draft'){view.epoch++;view.workspace=data.workspace.workspace_id;view.task=null;view.mode='task';clearDetail();saveSelection();$('workspaceFormPanel').hidden=true}
+    await refresh();notice('formError','Сервер подтвердил регистрацию. Исполнение не запускалось.');
+  }catch(e){
+    if(!ws){d.registration={...d.registration,state:'unknown'};if(view.draft===d){persistDraft();notice('draftError',e.message+'\nИсход регистрации неизвестен. Автоматического повтора нет; проверьте список TASK.');showDraft()}}
+    else notice('formError',e.message+'\nПроверьте список Workspace перед повтором; автоматического повтора нет.');
     await refresh();
-    notice('formError','Сервер подтвердил создание '+(ws?data.workspace.workspace_id:data.task.task_id)+'.')
-  }
-  catch(e){
-    notice('formError',e.message+(e.serverRejected?'\nСервер отклонил запрос.':'\nРезультат создания неизвестен. Проверьте список перед повторным созданием; автоматического повтора нет.'));
-    await refresh()
-  }
-  finally{
-    view.creating=false;
-    $('createWorkspace').disabled=false;
-    $('createTask').disabled=false
-  }
+  }finally{view.creating=false;$('createWorkspace').disabled=false;if(view.mode==='draft')showDraft()}
 }
 async function copy(value){
   try{
@@ -732,18 +704,17 @@ async function copy(value){
     text('copyStatus','Копирование недоступно. Выделите текст и скопируйте вручную.')
   }
 }
-$('workspaceSelect').onchange=e=>selectWorkspace(e.target.value);
+$('addWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=false;$('wsName').focus()};
+$('cancelWorkspace').onclick=()=>{$('workspaceFormPanel').hidden=true};
+$('newTask').onclick=openDraft;$('discardDraft').onclick=discardDraft;
+$('taskRaw').oninput=()=>{if(view.draft&&view.draftWritable&&!view.draft.registration){view.draft.text=$('taskRaw').value;view.draft.dirty=true;persistDraft()}};
+$('copyDraft').onclick=()=>copy(view.draft?.text||$('taskRaw').value);
 $('refresh').onclick=refresh;
-$('workspaceForm').onsubmit=e=>{
-  e.preventDefault();
-  create('workspace')
-}
-;
-$('taskForm').onsubmit=e=>{
-  e.preventDefault();
-  create('task')
-}
-;
+$('showWorkspaces').onclick=()=>{$('layout').className=$('layout').className==='layout show-workspaces'?'layout':'layout show-workspaces'};
+$('showTasks').onclick=()=>{$('layout').className=$('layout').className==='layout show-tasks'?'layout':'layout show-tasks'};
+$('workspaceForm').onsubmit=e=>{e.preventDefault();create('workspace')};
+$('taskForm').onsubmit=e=>{e.preventDefault();create('task')};
+window.addEventListener('beforeunload',e=>{if(view.mode==='draft'&&view.draft?.dirty){e.preventDefault();e.returnValue=''}});
 $('copyNext').onclick=()=>{
   if(view.fresh&&view.data?.operator.coherent)copy(view.data.next_safe_action)
 }
@@ -754,21 +725,19 @@ $('copyContext').onclick=()=>{
     return
   }
   const v=view.data;
-  copy(['TASK: '+v.task_state.task.task_id,'Workspace: '+v.workspace.workspace_id,'Снимок: '+v.operator.read_at,'Свежий: '+view.fresh,'Статус: '+v.task_state.task.status,'Этап: '+v.current_microtask_id,'Recovery: '+v.recovery_state,'NEXT SAFE ACTION: '+v.next_safe_action].join('\n'))
+  copy(['TASK: '+v.task_state.task.task_id,'Workspace: '+v.workspace.workspace_id,'Снимок: '+v.operator.read_at,'Свежий: '+view.fresh,'Статус: '+v.task_state.task.status,'Исходная постановка: '+v.task_state.task.raw_task,'Цель: '+v.task_state.task.goal,'План: '+JSON.stringify(v.task_state.plan),'Отчёты этапов: '+JSON.stringify(v.reports),'Этап: '+v.current_microtask_id,'Recovery: '+v.recovery_state,'NEXT SAFE ACTION: '+v.next_safe_action].join('\n'))
 }
 ;
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
   if(typeof saved.workspace==='string')view.workspace=saved.workspace;
-  if(typeof saved.task==='string')view.task=saved.task
+  if(typeof saved.task==='string')view.task=saved.task;view.restoredDraft=saved.draft===true
 }
 catch(_){
 }
-window.addEventListener('resize',()=>{
-  if(!window.matchMedia('(max-width:760px)').matches)$('navigatorPanel').open=true;
-});
 setInterval(()=>{
   if($('autoRefresh').checked&&!document.hidden&&!view.creating)refresh();
+  if(view.healthAt&&Date.now()-view.healthAt>45000){text('serverStatus','Проверка связи устарела');$('serverStatus').setAttribute('data-state','checking')}
   if(view.loadedAt&&Date.now()-view.loadedAt>45000&&view.fresh)setFresh(false,'Снимок старше 45 секунд. Обновите перед использованием NEXT SAFE ACTION.')
 }
 ,15000);
