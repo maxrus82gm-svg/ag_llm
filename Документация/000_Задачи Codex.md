@@ -19,6 +19,20 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.** Исполнение CODEX-WA4-UX-001-OPERATOR-REDESIGN завершено локально. Результат: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Полная постановка — БЛОК 2, factual result — БЛОК 3. Следующие стадии не начинать без новой утверждённой постановки.
+
+---
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+
+Полная исходная постановка сохранена дословно. AMENDMENT пользователя: отдельно разрешено адресное изменение test_web_alarm_operator_ui.js; БЛОК 1 во время работы не переписывался.
+
+````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
 Уважаемый агент 007 (Codex), предлагаю начать выполнение новой самостоятельной инженерной задачи по Web Alarm Workspace.
 
 # TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
@@ -253,6 +267,38 @@ ChatGPT не является автором твоего кода. Он про�
 
 ---
 
+````````````````
+
+---
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+DATE: 2026-10-14
+ARCH CLASS: Web Alarm Workspace / Operator UI / UX; PRIMARY 23; IMPLEMENTATION 24 A/B/C; TEST 36/36.1/36.2.
+
+FACT: рабочие три области Workspace/main/TASK, полноценные RAW/этапы/REPORT/recovery/NEXT, RU labels, GET health/freshness, адаптивность. UX-C: один textarea, пустая форма ephemeral, browser-local autosave/reload + Web Locks, явная регистрация через прежний API без planner/operations. Неопределённый POST сохраняет текст и блокирует повтор; backend receipt/idempotency остаётся BLOCKED/PROPOSAL.
+
+WRITE: web_alarm/ui.py; test_web_alarm_operator_ui.js (явный AMENDMENT); новый test_web_alarm_ui_ux.py; собственная папка reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/; эта ротация. Backend/WA4-R/Ultra/shared docs/runner/CI/launcher не изменены. Git/GitHub не использовались. Внешняя работа Claude сохранена.
+
+CHECKS: baseline Python 34 PASS и JS23 PASS. Финальный focused Python/HTTP 36 PASS; full Web Alarm 771 IDs = 770 PASS / 0 FAIL / 0 ERROR / 1 SKIP (Windows symlink permissions), exit0, isolation0. JS53 PASS / 0 FAIL / 0 SKIP. Negative controls4/4 PASS с ожидаемым внутренним FAIL каждого mutant. Collection769→771, без удалённых Python IDs; JS23→53, два переименования и 30 новых сценариев. Первые красные прогоны сохранены.
+
+BROWSER: desktop1440×1000 и narrow390×844, реальный reload draft, два Workspace, независимый scroll, server stop/reopen/stale export guard. Просмотр сохранил70 файлов; регистрация добавила только3 Task-файла без operations; последующий fresh reopen/final checks сохранил73 файла byte-identical. /ui совпал с финальным INDEX_HTML. Demo http://127.0.0.1:53833/ в disposable TEMP; обычный запуск Start_WebAlarm_Demo.cmd.
+
+MANUAL ENGINEERING REVIEW: authority, async identity, draft locks/read-acquire gap, uncertain registration, corruption/quota, real fixture bytes и побочные эффекты проверены отдельно. Найдены и исправлены четыре invalid API display defects; независимая приёмка этим не заменена.
+
+EVIDENCE: reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/report.md — полный отчёт; checks.json / versions.json / quality.json / browser.json / first-reds.json / source-evidence.zip / rotation.json / manifest.json; три PNG. Raw outputs и fixtures: C:/Users/REX/AppData/Local/Temp/codex-wa4ux001-md3m9ccc. Source pins и ограничения в отчёте. Исторические F1–F3/STRICT/CI не закрываются этим PASS.
+
+DOC IMPACT: YES; CURRENT STATE YES; ARCHITECTURE YES (browser/UI); CONTEXT LIBRARY NO; REGISTRY/ROUTING YES (handoff); NEW CANONICAL DOCUMENT NO. SHARED DOC DELTA для23/24/25/36.2/01/05/06/34/global000 предложена в отчёте, не внесена. LOSS CHECK подтверждён rotation.json; прежние блоки сохранены ниже дословно.
+
+NEXT SAFE ACTION: ChatGPT / WEB_07 независимо проверяет diff/oracles/evidence; пользователь принимает визуальную часть. Shared docs синхронизирует координатор после решения. Codex остановлен, следующую стадию не начинает. DONE / VERIFIED не присвоен.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 (дословно, без переоценки исторических статусов)
+
+````````````````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 **TASK:** CODEX-WA4-R-003-F2F3-LOCAL-REPAIR. Исходный БЛОК 1 сохранён дословно, до отчёта не изменялся.
@@ -3436,3 +3482,4 @@ Codex: задача утверждена пользователем. Прочи�
 
 ``````````````
 ```````````````
+````````````````

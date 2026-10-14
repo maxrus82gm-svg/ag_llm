@@ -269,7 +269,7 @@
     "Start_WebAlarm_Demo.cmd": "51bb15c69fac8eb8dac045d4c4b8de8c7b37b569074021c1c19684f8c524aec5",
     "Документация/000_Задачи ChatGPT.md": "f39123f855b5ed3d692e0d02eab7aa9f3ee4136500d18bbf01f14bb351135a53",
     "Документация/000_Задачи Claude.md": "ddf483f157219a6ad731a4bce2402d6a2df856a2a056e9b7b5104f7601a63c85",
-    "Документация/000_Задачи Codex.md": "cfb348c253f2069c83fea9a9c357ddd2442b790c95170fab5077c7bc8f1b3447",
+    "Документация/000_Задачи Codex.md": "f19060b2f71c3f7c3606a3ab35e0dabc581a761c7647781008a1f0b20699c517",
     "Документация/000_Задачи для агента.md": "cd30df4debd1b376e28e117c3d1994f3b5a91d3dda8dbbaedbc2d033c92ed384",
     "Документация/001_История выполненных задач Claude.md": "c8a53f1afbe59908aae23fedb3bcd9869b8150c03b4f8c865d92120fce488503",
     "Документация/00_Главная - карта проекта.md": "9fe0c40e81acc4880b4346fdba7d63c14904fbca4aa5a9ba5cc803ba3c927b4f",
@@ -340,6 +340,11 @@
     "test_web_alarm_operator_ui.js": {
       "before": "f1eb1e1b4234fc563805b2adf14ab542cce563ce8a5684f2d36cc033f9e8d637",
       "after": "5f25b1763ef43a07f12fa71c32d3f439d458013b78a9dd0360d777cdbca1dc0e"
+    },
+    "Документация/000_Задачи Codex.md": {
+      "before": "cfb348c253f2069c83fea9a9c357ddd2442b790c95170fab5077c7bc8f1b3447",
+      "after": "f19060b2f71c3f7c3606a3ab35e0dabc581a761c7647781008a1f0b20699c517",
+      "reason": "authorized two-phase lossless rotation"
     }
   },
   "external_drift_owner": "Claude personal card changed independently; no rollback or writes by this task",
@@ -497,5 +502,6 @@
       "O9 repeated creation submits once and confirmation captures intent"
     ]
   },
-  "block1_frozen_until_rotation": true
+  "block1_frozen_until_rotation": true,
+  "personal_rotation": "rotation.json"
 }
