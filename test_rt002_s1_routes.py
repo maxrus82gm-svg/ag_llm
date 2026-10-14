@@ -90,6 +90,12 @@ MANIFEST = (
     "AccountingSemanticsTests.test_out_of_band_stream_append_does_not_reach_summary",
     "AccountingSemanticsTests.test_precached_tokens_are_not_aggregated",
     "AccountingSemanticsTests.test_unknown_usage_is_not_zero",
+    "EndpointFlowTests.test_repair001_rule_misses_these_scenarios_and_the_new_rule_flags_them",
+    "EndpointFlowTests.test_same_line_uses_are_judged_independently",
+    "EndpointFlowTests.test_aliases_attributes_multiline_and_keyword_urls_are_inventoried_as_llm",
+    "EndpointFlowTests.test_any_other_endpoint_flow_is_unexplained",
+    "EndpointFlowTests.test_shadowing_and_unrelated_urls_are_not_endpoint_flow",
+    "EndpointFlowTests.test_real_source_endpoint_flow_mutations_are_detected",
     "EvidenceGateTests.test_manifest_matches_the_loaded_collection",
     "EvidenceGateTests.test_pinned_evidence_snapshot_is_complete_and_verified",
     "EvidenceGateTests.test_require_evidence_raises_failure_not_skip",
@@ -968,15 +974,88 @@ def _owners(tree: ast.Module):
     yield "<module>", ast.Module(body=module_body, type_ignores=[])
 
 
-def scan_send_sites(module_name: str, source: str) -> list[dict]:
-    """Conservative static inventory of every physical network send construction.
+ENDPOINT_HOST_MARKERS = ("api.giga.chat", "ngw.devices.sberbank.ru")
 
-    Every site is kept (multiplicity preserved). A site is LLM/OAUTH only when its URL is the
-    canonical CHAT_URL/OAUTH_URL constant imported from gigachat_transport (or server) and not
-    rebound in the module; everything else is UNKNOWN and must be explicitly inventoried.
+
+def _scope_aliases(scope_node, inherited: dict, ref_class, params=frozenset(), *, module_scope=False,
+                   canonical=frozenset()):
+    """Endpoint aliases visible in one scope: Name -> class; plus ambiguous names and alias RHS nodes.
+
+    A Name bound only to endpoint references is an alias; one bound to both an endpoint and anything
+    else is ambiguous (still tracked, never classified); one bound only to other values, or a
+    parameter, shadows an inherited alias inside a function. At module scope rebinding an imported
+    constant is ambiguous (both values are live at different times). Canonical definitions are skipped.
+    """
+    endpoint_bindings: dict[str, set] = {}
+    other_bindings: set[str] = set()
+    assignments = []
+    for sub in ast.walk(scope_node):
+        if isinstance(sub, (ast.Assign, ast.AnnAssign, ast.NamedExpr, ast.AugAssign)):
+            targets = sub.targets if isinstance(sub, ast.Assign) else [sub.target]
+            if id(getattr(sub, "value", None)) in canonical:
+                continue
+            for target in targets:
+                for name in (n for n in ast.walk(target) if isinstance(n, ast.Name)):
+                    assignments.append((name.id, target, sub))
+        elif isinstance(sub, (ast.For, ast.AsyncFor, ast.comprehension)):
+            for name in (n for n in ast.walk(sub.target) if isinstance(n, ast.Name)):
+                other_bindings.add(name.id)
+        elif isinstance(sub, (ast.With, ast.AsyncWith)):
+            for item in sub.items:
+                if item.optional_vars is not None:
+                    other_bindings |= {n.id for n in ast.walk(item.optional_vars) if isinstance(n, ast.Name)}
+    aliases = {k: v for k, v in inherited.items() if k not in params}
+    alias_rhs: set[int] = set()
+    changed = True
+    while changed:  # fixpoint: a = CHAT_URL; b = a; ...
+        changed = False
+        for name, target, statement in assignments:
+            value = getattr(statement, "value", None)
+            pure = (isinstance(target, ast.Name) and value is not None and not isinstance(statement, ast.AugAssign)
+                    and ref_class(value, aliases) is not None)
+            if pure:
+                cls = ref_class(value, aliases)
+                if cls not in endpoint_bindings.setdefault(name, set()):
+                    endpoint_bindings[name].add(cls)
+                    changed = True
+                if id(value) not in alias_rhs:
+                    alias_rhs.add(id(value))
+                    changed = True
+                if aliases.get(name) != cls and len(endpoint_bindings[name]) == 1:
+                    aliases[name] = cls
+                    changed = True
+    for name, target, statement in assignments:
+        value = getattr(statement, "value", None)
+        if not (isinstance(target, ast.Name) and value is not None and id(value) in alias_rhs):
+            other_bindings.add(name)
+    ambiguous = {n for n, classes in endpoint_bindings.items() if len(classes) > 1 or n in other_bindings}
+    for name in other_bindings - set(endpoint_bindings):
+        if module_scope and name in inherited:
+            ambiguous.add(name)  # module-level rebinding of an imported endpoint constant
+        else:
+            aliases.pop(name, None)  # function-local rebinding shadows the inherited alias
+    for name in ambiguous:
+        aliases[name] = "AMBIGUOUS"  # tracked as an endpoint reference, never classified
+    return aliases, ambiguous, alias_rhs
+
+
+def analyze_module(module_name: str, source: str) -> dict:
+    """Single-parse static model: physical send sites + endpoint-value flow.
+
+    sites: every physical network send construction, multiplicity preserved. A site is LLM/OAUTH only
+    when its URL argument is a pure (non-ambiguous) reference to CHAT_URL/OAUTH_URL: the distinctive
+    names themselves (also after `import *`), `from <any module> import CHAT_URL as X`, attribute
+    access `<anything>.CHAT_URL`, or function-local Name aliases; anything else is UNKNOWN.
+    unexplained: every endpoint reference, endpoint-name string or endpoint-host literal that is not
+    exactly the URL argument node of an LLM/OAUTH site, nor the right-hand side of a function-local
+    pure alias, nor the canonical definition in gigachat_transport.py. Module-level aliases elsewhere
+    are unexplained because they would re-export the endpoint under a new, untracked name. Matching
+    is by AST node identity, so several uses on one line are judged independently.
     """
     tree = ast.parse(source)
-    httpx_names, factory_names, url_imports, url_assigned = set(), set(), {}, set()
+    httpx_names, factory_names = set(), set()
+    module_names: dict[str, str] = dict(URL_CLASSES)  # distinctive names; also covers `from x import *`
+    canonical_values: set[int] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
@@ -985,21 +1064,23 @@ def scan_send_sites(module_name: str, source: str) -> list[dict]:
         elif isinstance(node, ast.ImportFrom):
             if node.module == "httpx":
                 factory_names |= {a.asname or a.name for a in node.names if a.name in CLIENT_FACTORIES}
-            if node.module in URL_ORIGINS:
-                for alias in node.names:
-                    if alias.name in URL_CLASSES:
-                        url_imports[alias.asname or alias.name] = alias.name
-        elif isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store) and node.id in URL_CLASSES:
-            url_assigned.add(node.id)
+            for alias in node.names:  # from ANY module: re-exports keep the constant's name or an alias
+                if alias.name in URL_CLASSES:
+                    module_names[alias.asname or alias.name] = URL_CLASSES[alias.name]
+    if module_name == "gigachat_transport.py":
+        for statement in tree.body:
+            if (isinstance(statement, ast.Assign) and len(statement.targets) == 1
+                    and isinstance(statement.targets[0], ast.Name) and statement.targets[0].id in URL_CLASSES
+                    and isinstance(statement.value, ast.Constant) and isinstance(statement.value.value, str)):
+                module_names[statement.targets[0].id] = URL_CLASSES[statement.targets[0].id]
+                canonical_values.add(id(statement.value))
 
-    def classify(url):
-        if not isinstance(url, ast.Name):
-            return "UNKNOWN"
-        if module_name == "gigachat_transport.py" and url.id in URL_CLASSES:
-            return URL_CLASSES[url.id]  # the canonical definitions live here
-        if url.id in url_imports and url.id not in url_assigned:
-            return URL_CLASSES[url_imports[url.id]]
-        return "UNKNOWN"
+    def ref_class(expr, aliases):
+        if isinstance(expr, ast.Name) and isinstance(expr.ctx, ast.Load) and expr.id in aliases:
+            return aliases[expr.id]
+        if isinstance(expr, ast.Attribute) and isinstance(expr.ctx, ast.Load) and expr.attr in URL_CLASSES:
+            return URL_CLASSES[expr.attr]  # gigachat_transport.CHAT_URL, gt.CHAT_URL, pkg.mod.CHAT_URL, ...
+        return None
 
     def url_argument(call, verb):
         keyword = next((k.value for k in call.keywords if k.arg == "url"), None)
@@ -1017,8 +1098,27 @@ def scan_send_sites(module_name: str, source: str) -> list[dict]:
     def callee_name(func):
         return func.id if isinstance(func, ast.Name) else func.attr if isinstance(func, ast.Attribute) else None
 
-    sites = []
-    for owner, node in _owners(tree):
+    owners = list(_owners(tree))
+    module_scope = next(node for owner, node in owners if owner == "<module>")
+    module_aliases, module_ambiguous, module_rhs = _scope_aliases(
+        module_scope, module_names, ref_class, module_scope=True, canonical=frozenset(canonical_values))
+    sites, references, allowed = [], [], set(canonical_values)
+    if module_name == "gigachat_transport.py":
+        allowed |= module_rhs  # only the owning module may define module-level endpoint names
+    for owner, node in owners:
+        if owner == "<module>":
+            aliases, ambiguous = module_aliases, module_ambiguous
+        else:
+            params = frozenset(a.arg for a in [*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs,
+                                                *filter(None, [node.args.vararg, node.args.kwarg])])
+            aliases, ambiguous, rhs = _scope_aliases(node, module_aliases, ref_class, params,
+                                                     canonical=frozenset(canonical_values))
+            allowed |= rhs
+
+        def classify(url):
+            cls = ref_class(url, aliases) if url is not None else None
+            return cls if cls in {"LLM", "OAUTH"} else "UNKNOWN"
+
         clients: set[str] = set()
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for arg in [*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs]:
@@ -1032,7 +1132,7 @@ def scan_send_sites(module_name: str, source: str) -> list[dict]:
             return (isinstance(expr, ast.Name) and expr.id in clients) or is_factory_call(expr)
 
         changed = True
-        while changed:  # fixpoint over client bindings and aliases inside the owner
+        while changed:
             changed = False
             for sub in ast.walk(node):
                 if isinstance(sub, (ast.With, ast.AsyncWith)):
@@ -1084,9 +1184,13 @@ def scan_send_sites(module_name: str, source: str) -> list[dict]:
                   and id(sub) not in call_funcs and id(sub) not in alias_value_nodes):
                 kind = "method-ref." + sub.attr  # e.g. functools.partial(client.post, ...)
             if kind is not None:
-                sites.append({"module": module_name, "owner": owner, "kind": kind,
-                              "traffic": classify(url) if url is not None else "UNKNOWN",
+                traffic = classify(url)
+                sites.append({"module": module_name, "owner": owner, "kind": kind, "traffic": traffic,
                               "line": getattr(sub, "lineno", 0)})
+                if traffic in {"LLM", "OAUTH"}:
+                    allowed.add(id(url))
+            if ref_class(sub, aliases) is not None:
+                references.append((sub, owner))
     for node in ast.walk(tree):  # importing another network stack is itself an inventory event
         names = []
         if isinstance(node, ast.Import):
@@ -1098,25 +1202,30 @@ def scan_send_sites(module_name: str, source: str) -> list[dict]:
                                                                           "websockets", "pycurl", "grpc"}:
                 sites.append({"module": module_name, "owner": "<import>", "kind": "import:" + name,
                               "traffic": "UNKNOWN", "line": node.lineno})
-    return sites
+    unexplained = []
+    seen = set()
+    for ref, owner in references:
+        if id(ref) in allowed or id(ref) in seen:
+            continue
+        seen.add(id(ref))
+        unexplained.append((module_name, ref.lineno, ref.col_offset, "endpoint reference " + ast.unparse(ref)))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in canonical_values:
+            if node.value in URL_CLASSES:
+                unexplained.append((module_name, node.lineno, node.col_offset, "endpoint name string " + node.value))
+            elif any(marker in node.value for marker in ENDPOINT_HOST_MARKERS):
+                unexplained.append((module_name, node.lineno, node.col_offset, "endpoint host literal"))
+    return {"sites": sites, "unexplained": sorted(unexplained)}
+
+
+def scan_send_sites(module_name: str, source: str) -> list[dict]:
+    """Every physical network send construction (multiplicity preserved), classified LLM/OAUTH/UNKNOWN."""
+    return analyze_module(module_name, source)["sites"]
 
 
 def unexplained_endpoint_reads(module_name: str, source: str) -> list[tuple]:
-    """Every read of CHAT_URL/OAUTH_URL must be the URL argument of an inventoried LLM/OAuth send."""
-    tree = ast.parse(source)
-    send_lines = {s["line"] for s in scan_send_sites(module_name, source) if s["traffic"] in {"LLM", "OAUTH"}}
-    found, arguments = [], set()
-    for call in ast.walk(tree):
-        if isinstance(call, ast.Call):
-            for arg in [*call.args, *(k.value for k in call.keywords)]:
-                arguments.add(id(arg))
-                if isinstance(arg, ast.Name) and arg.id in URL_CLASSES and call.lineno not in send_lines:
-                    found.append((module_name, call.lineno, "argument of " + ast.unparse(call.func)))
-    for node in ast.walk(tree):
-        if (isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load) and node.id in URL_CLASSES
-                and id(node) not in arguments):
-            found.append((module_name, node.lineno, "non-argument read of " + node.id))
-    return sorted(found)
+    """Endpoint values may only reach the URL argument of an inventoried LLM/OAUTH send."""
+    return analyze_module(module_name, source)["unexplained"]
 
 
 def site_multiset(sites: list[dict]) -> dict[tuple, int]:
@@ -1184,7 +1293,8 @@ class StaticRouteInventoryTests(unittest.TestCase):
                   "LOG = CHAT_URL\n")
         self.assertEqual(scan_send_sites("synthetic.py", source), [])  # receiver scan cannot see `http`
         self.assertEqual(unexplained_endpoint_reads("synthetic.py", source), [
-            ("synthetic.py", 3, "argument of http.post"), ("synthetic.py", 4, "non-argument read of CHAT_URL")])
+            ("synthetic.py", 3, 27, "endpoint reference CHAT_URL"),
+            ("synthetic.py", 4, 6, "endpoint reference CHAT_URL")])  # module-level re-export alias
 
     def test_canonical_url_constants_are_defined_once_and_never_rebound(self):
         for module in _production_modules():
@@ -1344,6 +1454,143 @@ class StaticRouteInventoryTests(unittest.TestCase):
                       and any(getattr(t, "id", None) == "required_event" for t in n.targets))
         literal = next(n for n in ast.walk(assign.value) if isinstance(n, ast.Set))
         self.assertEqual({ast.literal_eval(e) for e in literal.elts}, {"tool_started", "final_audit_passed"})
+
+
+def _legacy_r001_endpoint_net(source: str) -> list[tuple]:
+    """Exact reconstruction of the CLAUDE-RT002-S1-REPAIR-001 endpoint rule (module 58dffff0…):
+    only Names literally spelled CHAT_URL/OAUTH_URL were checked, and an argument was 'explained'
+    whenever its call shared a LINE with an inventoried LLM/OAUTH send. Kept only as a negative oracle."""
+    tree = ast.parse(source)
+    send_lines = {s["line"] for s in scan_send_sites("synthetic.py", source) if s["traffic"] in {"LLM", "OAUTH"}}
+    found, arguments = [], set()
+    for call in ast.walk(tree):
+        if isinstance(call, ast.Call):
+            for arg in [*call.args, *(k.value for k in call.keywords)]:
+                arguments.add(id(arg))
+                if isinstance(arg, ast.Name) and arg.id in URL_CLASSES and call.lineno not in send_lines:
+                    found.append(("synthetic.py", call.lineno, "argument of " + ast.unparse(call.func)))
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load) and node.id in URL_CLASSES
+                and id(node) not in arguments):
+            found.append(("synthetic.py", node.lineno, "non-argument read of " + node.id))
+    return sorted(found)
+
+
+class EndpointFlowTests(unittest.TestCase):
+    """REPAIR-002: endpoint-value flow is tracked through aliases/attributes and judged per AST node."""
+
+    HEAD = "import httpx\nfrom gigachat_transport import CHAT_URL\n"
+
+    def analyze(self, source):
+        result = analyze_module("synthetic.py", source)
+        return site_multiset(result["sites"]), [u[1:] for u in result["unexplained"]]
+
+    def test_repair001_rule_misses_these_scenarios_and_the_new_rule_flags_them(self):
+        scenarios = {
+            "import alias + unknown receiver":
+                "from gigachat_transport import CHAT_URL as U\nasync def f(http):\n    return await http.post(U)\n",
+            "module attribute + unknown receiver":
+                "import gigachat_transport as gt\nasync def f(http):\n    return await http.post(gt.CHAT_URL)\n",
+            "second use on the same line":
+                self.HEAD + "async def f(http):\n    async with httpx.AsyncClient() as client:\n"
+                "        a = await client.post(CHAT_URL); b = await http.post(CHAT_URL)\n",
+            "endpoint host literal":
+                "async def f(http):\n    return await http.post('https://api.giga.chat/v1/chat/completions')\n",
+            "getattr by endpoint name":
+                "import gigachat_transport\nasync def f(http):\n"
+                "    return await http.post(getattr(gigachat_transport, 'CHAT_URL'))\n",
+            "re-export through another module":
+                "from planner_runtime import CHAT_URL as ENDPOINT\nasync def f(http):\n    return await http.post(ENDPOINT)\n",
+        }
+        for name, source in scenarios.items():
+            with self.subTest(scenario=name):
+                self.assertEqual(_legacy_r001_endpoint_net(source), [], "legacy rule was expected to miss this")
+                self.assertNotEqual(unexplained_endpoint_reads("synthetic.py", source), [])
+
+    def test_same_line_uses_are_judged_independently(self):
+        sites, unexplained = self.analyze(
+            self.HEAD + "async def f(http):\n    async with httpx.AsyncClient() as client:\n"
+            "        a = await client.post(CHAT_URL); b = await http.post(CHAT_URL)\n")
+        self.assertEqual(sites, {("synthetic.py", "f", "client.post", "LLM"): 1})
+        self.assertEqual(unexplained, [(5, 61, "endpoint reference CHAT_URL")])
+        sites, unexplained = self.analyze(
+            self.HEAD + "async def f():\n    async with httpx.AsyncClient() as client:\n"
+            "        a = await client.post(CHAT_URL); b = await client.post(CHAT_URL)\n")
+        self.assertEqual((sites, unexplained), ({("synthetic.py", "f", "client.post", "LLM"): 2}, []))
+
+    def test_aliases_attributes_multiline_and_keyword_urls_are_inventoried_as_llm(self):
+        known = "async def f():\n    async with httpx.AsyncClient() as client:\n        return await client.post({})\n"
+        cases = {
+            "module attribute": ("import httpx\nimport gigachat_transport\n", "", "gigachat_transport.CHAT_URL"),
+            "import alias": ("import httpx\nfrom gigachat_transport import CHAT_URL as U\n", "", "U"),
+            "re-export alias": ("import httpx\nfrom server import CHAT_URL as S\n", "", "S"),
+            "local alias chain": (self.HEAD, "    a = CHAT_URL\n    b = a\n", "b"),
+            "keyword url": (self.HEAD, "", "url=CHAT_URL"),
+            "multiline": (self.HEAD, "", "\n            CHAT_URL,\n            json={},\n        "),
+        }
+        for name, (head, prelude, url) in cases.items():
+            with self.subTest(case=name):
+                body = known.format(url).replace("async def f():\n", "async def f():\n" + prelude, 1)
+                self.assertEqual(self.analyze(head + body), ({("synthetic.py", "f", "client.post", "LLM"): 1}, []))
+
+    def test_any_other_endpoint_flow_is_unexplained(self):
+        cases = {
+            "base_url on a client factory": self.HEAD + "async def f():\n"
+                "    async with httpx.AsyncClient(base_url=CHAT_URL) as client:\n        return await client.post('')\n",
+            "container": self.HEAD + "def f():\n    return {'url': CHAT_URL}\n",
+            "attribute target": self.HEAD + "class K:\n    def m(self):\n        self.url = CHAT_URL\n",
+            "tuple unpacking": self.HEAD + "def f():\n    a, b = CHAT_URL, 1\n    return a\n",
+            "default parameter": self.HEAD + "async def f(url=CHAT_URL):\n    return url\n",
+            "f-string": self.HEAD + "def f():\n    return f'{CHAT_URL}/x'\n",
+            "concatenation": self.HEAD + "def f():\n    return CHAT_URL + '/x'\n",
+            "httpx.Request": self.HEAD + "async def f(http):\n    return await http.send(httpx.Request('POST', CHAT_URL))\n",
+            "urllib Request": "import urllib.request\nfrom gigachat_transport import CHAT_URL\n"
+                              "def f():\n    return urllib.request.Request(CHAT_URL)\n",
+            "module-level re-export": self.HEAD + "ENDPOINT = CHAT_URL\n",
+            "star import + unknown receiver": "from server import *\nasync def f(http):\n    return await http.post(CHAT_URL)\n",
+            "ambiguous local": self.HEAD + "async def f(x):\n    url = CHAT_URL\n    url = x\n"
+                               "    async with httpx.AsyncClient() as client:\n        return await client.post(url)\n",
+            "augmented assignment": self.HEAD + "def f():\n    url = CHAT_URL\n    url += '/x'\n    return url\n",
+            "module-level rebinding": self.HEAD + "CHAT_URL = 'https://example.invalid'\n"
+                                      "async def f(http):\n    return await http.post(CHAT_URL)\n",
+            "OAuth endpoint to unknown receiver": "from gigachat_transport import OAUTH_URL\n"
+                                                  "async def f(http):\n    return await http.post(OAUTH_URL)\n",
+        }
+        for name, source in cases.items():
+            with self.subTest(case=name):
+                self.assertNotEqual(unexplained_endpoint_reads("synthetic.py", source), [], source)
+
+    def test_shadowing_and_unrelated_urls_are_not_endpoint_flow(self):
+        shadow = self.HEAD + "async def f(CHAT_URL):\n    async with httpx.AsyncClient() as client:\n" \
+                             "        return await client.post(CHAT_URL)\n"
+        self.assertEqual(self.analyze(shadow), ({("synthetic.py", "f", "client.post", "UNKNOWN"): 1}, []))
+        unrelated = "import httpx\nOTHER = 'https://example.invalid'\nasync def f():\n" \
+                    "    async with httpx.AsyncClient() as client:\n        return await client.post(OTHER)\n"
+        self.assertEqual(self.analyze(unrelated), ({("synthetic.py", "f", "client.post", "UNKNOWN"): 1}, []))
+
+    def test_real_source_endpoint_flow_mutations_are_detected(self):
+        import server
+        import verifier_runtime
+        verifier = Path(verifier_runtime.__file__).read_text(encoding="utf-8")
+        srv = Path(server.__file__).read_text(encoding="utf-8")
+        send = "            response = await client.post(CHAT_URL, headers=headers, json=body)\n"
+        self.assertEqual(verifier.count(send), 1)
+        self.assertEqual(unexplained_endpoint_reads("verifier_runtime.py", verifier), [])
+        self.assertEqual(unexplained_endpoint_reads("server.py", srv), [])
+        mutations = {
+            "same-line hidden second send": ("verifier_runtime.py", verifier.replace(
+                send, send.rstrip("\n") + "; _x = await _h.post(CHAT_URL)\n", 1)),
+            "import alias + unknown receiver": ("verifier_runtime.py", verifier
+                + "\nfrom gigachat_transport import CHAT_URL as _ALT\nasync def _sneaky(http):\n    return await http.post(_ALT)\n"),
+            "module attribute + unknown receiver": ("server.py", srv
+                + "\nimport gigachat_transport as _gt\nasync def _sneaky(http):\n    return await http.post(_gt.CHAT_URL)\n"),
+            "endpoint host literal": ("server.py", srv
+                + "\nasync def _sneaky(http):\n    return await http.post('https://api.giga.chat/v1/chat/completions')\n"),
+            "module-level re-export": ("server.py", srv + "\n_ENDPOINT = CHAT_URL\n"),
+        }
+        for name, (module, mutated) in mutations.items():
+            with self.subTest(mutation=name):
+                self.assertNotEqual(unexplained_endpoint_reads(module, mutated), [])
 
 
 class GuardNegativeControlTests(unittest.TestCase):
