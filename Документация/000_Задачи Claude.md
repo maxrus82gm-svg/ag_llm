@@ -38,6 +38,205 @@ TASK: —
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 ---
 
+### CLAUDE-RT002-S1-001 — RT-002/B2 S1: Baseline and Routes
+
+**Статус постановки:** БЛОК 1 (PREPARED / AWAITING USER ASSIGNMENT). Назначение — пересылка стартовой команды пользователем в чат 2026-10-14; выполнена агентом 008 (Claude) 2026-10-14; AMENDMENT во время работы не было; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
+Уважаемый агент 008 (Claude), предлагаю начать выполнение задачи **`CLAUDE-RT002-S1-001` — RT-002/B2 S1: Baseline and Routes** после её подтверждения и запуска пользователем.
+
+**Статус:** PREPARED / AWAITING USER ASSIGNMENT
+**Проект:** ag_llm / GigaChat Ultra
+**ARCH CLASS:** Ultra / Agent Runtime / RT-002 B2
+**PRIMARY PROFILE:** `20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md`, §5а
+**SECONDARY PROFILES:** `01`, `09`, `13`, `21`, `36.3`
+**Исполнитель:** агент 008 — Claude
+**Независимый verifier:** ChatGPT / LLM_11
+**Тип:** Evidence Research + Reproducible Offline Tests
+**Репозиторий:** `maxrus82gm-svg/ag_llm`
+**GitHub baseline:** `main@e60c196d994c6756a90f19de474cf802f9dadbe9` — контрольная точка координатора, не разрешение на Git-операции.
+
+### 1. Исходное состояние
+
+RT-002/FINAL-B2 утверждён пользователем. S0 независимо принят в ограниченном guarded OFFLINE scope: 166/166 PASS. S1 ещё не был выполнен или принят.
+
+Предварительная разведка `CLAUDE-RT002-S1-RECON-001` завершена, отчёт находится по пути:
+
+`Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-RECON-001/recon_report.md`
+
+ChatGPT независимо проверил основные количественные находки, включая:
+
+- R-031: 668 898 total tokens; повторное включение двух крупных function messages по схеме 8+3.
+- Семь известных физических точек LLM POST.
+- Несовпадение SHA-256 канонического JSON и отправленного HTTP-тела.
+- 116 provider attempts с известным usage; у одного фактический prompt превышает оценку bytes/4.
+- R-026: два terminal records для одного attempt ID; происхождение второй записи остаётся UNRESOLVED.
+
+Предыдущую разведку использовать как входные данные, **не повторять её полностью без необходимости**. Каждую существенную находку всё равно проверить в рамках требований S1.
+
+### 2. Обязательный маршрут
+
+Прочитать актуальные локальные документы:
+
+`08 → 000 → 34 → 18 → 01 → 09/13 → 20 §5а → 21 → 36 → 36.1 → 36.3`
+
+Прочитать персональную карточку `000_Задачи Claude.md`, прежде всего активный БЛОК 1.
+
+Применять `DOC-GIT-01@1`, `DOC-PARALLEL-01@1`, `DOC-TASK-BLOCK1-01@1`, `TEST-COLLAB-01@1`, `TEST-AREA-01@1`, `TEST-ENG-01@1`.
+
+До выполнения проверок установить текущие SHA-256 релевантных runtime-файлов обычным чтением файлов. Не читать `.git`, не запускать Git даже из тестовых сценариев. Если исходники отличаются от исследовательского baseline и различие влияет на выводы, зафиксировать DRIFT и запросить reconciliation.
+
+### 3. Цель S1
+
+Сформировать проверенную базовую карту:
+
+**RAW RUN evidence → Context Assembly → Physical LLM Routes → Accounting → Failure/UNKNOWN States.**
+
+Результат должен быть пригоден для следующего этапа S2 — проектирования политики бюджетов — без повторного исследования всей архитектуры.
+
+В этой задаче не реализовывать ограничения бюджета, транспортный refactor или новый механизм контекстов.
+
+### 4. Обязательные направления
+
+**A. R-031 / разрастание контекста**
+
+- Воспроизвести offline схему 8+3 непосредственно по raw streams Run Store.
+- Построить матрицу всех 15 Executor calls: размер запроса, крупные блоки, повторения, stage, relevant source references.
+- Сопоставить реальные READ events с включёнными function messages.
+- Разобрать текущие режимы DIRECT и Planner ON, включая reset на границах stage.
+- Определить, какие механизмы вызывают накопление, а какие лишь увеличивают расход.
+- Не изменять исторические RAW данные и не считать summary достаточным доказательством.
+
+**B. Инвентаризация физических отправок LLM**
+
+Проверить семь найденных POST sites и всех непосредственных/косвенных callers:
+
+1. MCP `ask_gigachat`.
+2. Audit diagnostic.
+3. Executor.
+4. PlannerSession.
+5. Direct `run_planner`.
+6. Verifier / Dredd, включая planner review.
+7. Compressor.
+
+Проверить не только текстовые `.post()`, но и возможные `send`, `stream`, wrappers и альтернативные transport paths в production scope.
+
+Для каждого маршрута сохранить role, mode, entrypoint, body assembly, transport, timeout, retry, context sources, accounting, status of reachability, source locator.
+
+Недостижимый в штатном UI путь не исключать из карты автоматически: явно различать `ACTIVE`, `LEGACY/REACHABLE`, `UNREACHABLE PROVEN`, `UNKNOWN`.
+
+**C. Границы контекстов и учёта**
+
+Отдельно исследовать:
+
+- Chat history → Executor seed.
+- PlannerSession и его ограничения.
+- Executor stage/reset и function messages.
+- Verifier / Final Audit / permission / planner review.
+- Compressor и отдельное хранилище его usage.
+- MCP, прямые API-вызовы и вызовы без Run Store.
+
+Для каждого маршрута определить, какие данные о физическом запросе, usage, cached/precached, terminal, interruption и UNKNOWN существуют и насколько надёжно сохраняются.
+
+Не считать `UNKNOWN` нулевым расходом.
+
+**D. Точность HTTP evidence**
+
+Проверить offline на fake transport:
+
+- JSON canonical snapshot versus фактически отправленные байты.
+- Длину и SHA-256.
+- Поведение с различным порядком ключей, UTF-8, tool schemas.
+- Возможность точной привязки одного request body к одному physical attempt.
+
+Документировать требования к S3b, но не изменять транспорт в S1.
+
+**E. R-026 и accounting anomalies**
+
+Повторно проверить записи terminal seq 146/147 и отличие raw events от summary.
+
+Установить, что доказано, а что остаётся гипотезой. Если конкретный источник внешней recovery-записи определить нельзя — сохранить `UNRESOLVED`, не объявлять атрибуцию завершённой.
+
+### 5. Тестирование
+
+В этой TASK разрешается создать один новый Ultra-specific offline test module:
+
+`test_rt002_s1_routes.py`
+
+**Разрешённая запись:** только этот тестовый модуль, собственный отчёт и регламентная ротация собственной карточки. Не создавать дополнительные tracked-файлы без предварительного согласования.
+
+Тесты должны покрывать по возможности:
+
+- Детерминированную матрицу R-031 на read-only frozen evidence либо безопасных синтетических fixtures.
+- Oracle повторного включения больших блоков.
+- Контроль физических маршрутов с fake/mocked HTTP transport.
+- Несовпадение canonical/request wire SHA.
+- Случаи отсутствующего usage / UNKNOWN / duplicated terminal.
+- Negative controls, при которых неверный маршрут или неверный accounting даёт FAIL.
+
+Использовать disposable TEMP и no-network guard. Реальные RAW данные не копировать целиком в тестовый модуль или отчёт, если достаточно безопасных locators и хешей.
+
+**Важно:** тестирование не должно запускать платные LLM, обращаться к Git, менять Workspace, реальные RUN stores или Web Alarm. Не запускать небезопасный full `test_final_audit` без доказанной изоляции его Git paths.
+
+Агент самостоятельно выполняет разрешённые локальные тесты и указывает точную collection, PASS/FAIL/ERROR/SKIP, exit code, версии, trigger и independent oracle. Если часть маршрутов невозможно безопасно протестировать, указать `NOT RUN / BLOCKED` с причиной, а не фиктивный PASS.
+
+### 6. Инженерная проверка
+
+До `RESULT READY` провести отдельный `MANUAL ENGINEERING REVIEW`, независимо от автоматических тестов.
+
+Проверить альтернативные объяснения R-031, непросмотренные transport paths, повторные отправки, cancel/timeout, partial events, cached usage, устаревшие исходники и возможные ложноположительные результаты тестов.
+
+Для каждого серьёзного вывода указать:
+
+`Claim → Code/RAW Source → Independent Oracle → Result → Remaining Uncertainty`.
+
+### 7. Параллельность и запреты
+
+Codex работает в отдельном контуре Web Alarm. **Не изменять его файлы и активную карточку.**
+
+Запрещены:
+
+- Изменения production runtime: `server.py`, `planner_runtime.py`, `verifier_runtime.py`, `compressor_runtime.py`, `provider_accounting.py`, `ultra_ui.py` и соседних модулей.
+- Изменения файлов `web_alarm/`, `test_web_alarm_*`, общих runner/CI/workflows.
+- Изменения общих документов `000`, `01`, `05`, `06`, `13`, `18`, `20`, `21`, `34`, `36*`.
+- Любые Git/GitHub операции, включая чтение `.git`.
+- Paid/live model calls, реальные destructive tests, rollout и запуск следующих RT-002 этапов.
+- Изменение утверждённого B2 и его predecessors.
+
+При обнаружении необходимости расширить write-scope — остановить только конфликтующую операцию и вынести `PROPOSAL / USER DECISION REQUIRED`.
+
+### 8. Артефакты
+
+Основной отчёт:
+
+`Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-001/s1_report.md`
+
+Отчёт обязан содержать:
+
+1. Исходные версии и provenance.
+2. R-031 reproducible matrix и численные результаты.
+3. Route inventory, включая UNKNOWN и непроверенные вызовы.
+4. Context/accounting boundaries.
+5. HTTP wire evidence.
+6. Результаты offline tests с точными числами.
+7. `MANUAL ENGINEERING REVIEW`.
+8. Findings, blockers, risks и S2 prerequisites.
+9. `DOC IMPACT / SHARED DOC DELTA` для координатора.
+10. Итог: `S1 RESULT READY / AWAITING INDEPENDENT VERIFICATION` либо `PARTIAL/BLOCKED` с точными причинами.
+
+После фактического завершения выполнить штатную ротацию собственной карточки: первоначальный БЛОК 1 → БЛОК 2, factual result → БЛОК 3, затем БЛОК 1 → `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+
+Финальный ответ Claude — один копируемый `text`-блок с результатом, evidence, точными проверками и NEXT.
+
+### 9. Критерий завершения
+
+S1 готова к независимой приёмке, когда её основные утверждения воспроизводимы, маршруты классифицированы, данные accounting отделены от предположений, неизвестные состояния явно зафиксированы, а S2 получает конкретный список необходимых контрактов.
+
+**S1 не означает реализации бюджетов. S2 не назначается автоматически.**
+
+После отчёта ChatGPT самостоятельно проводит независимый source/test/evidence review в разрешённом scope. Только независимая приёмка и дальнейшее решение пользователя могут открыть S2.
+```
+
 ### CLAUDE-RT002-S1-RECON-001 — предварительное исследование Ultra перед S1
 
 **Статус постановки:** БЛОК 1 (PROPOSED; «запуск только после назначения пользователем»). Запуск — поручение пользователя в чате 2026-10-13; выполнена агентом 008 (Claude) 2026-10-13; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
@@ -5687,6 +5886,52 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-RT002-S1-001 — RT-002/B2 S1: Baseline and Routes — результат
+
+**TASK:** CLAUDE-RT002-S1-001 (БЛОК 1, PREPARED / AWAITING USER ASSIGNMENT). Назначение — пересылка стартовой команды пользователем в чат 2026-10-14. Исполнитель — агент 008 (Claude); verifier — ChatGPT / LLM_11.
+
+- **Статус:** S1 RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE / VERIFIED. Бюджеты, транспорт и контекст не реализовывались; S2 не начат.
+- **Baseline:** `server.py` `44d8cc8a…59f54` (= версия S0); остальные хеши — в отчёте, §1. DRIFT относительно RECON-001 нет. Git и `.git` не использовались.
+- **R-031 (только RAW):**
+  - 15 executor calls в `stage_1`; function messages растут от 0 до 14 без сброса;
+  - крупный блок A — в calls 8–15, B — в 13–15: **8 + 3 = 11**;
+  - блоки привязаны через replay `base + delta` к `read_file("ultra_ui.py")` tool #7 и #12;
+  - Executor по RAW: prompt 664 439, precached 179 456, completion 1 066.
+- **Механизм R-031:** полный tool result в живом `messages` (server.py:5929–5950, :4687) без сброса внутри stage; в DIRECT сброса нет совсем (:4493). Подтверждено и динамически на fake provider:
+  - DIRECT: 12 083 → 221 048 → 222 016 B;
+  - Planner ON: на границе stage ровно один reset, большой файл уходит из контекста.
+- **Маршруты:** AST — ровно 7 LLM POST + OAuth, других путей отправки нет.
+  - ACTIVE: audit diagnostic, Executor, PlannerSession, Verifier (FINAL / PERMISSION / review), Compressor;
+  - LEGACY / REACHABLE: MCP `ask_gigachat`, без учёта;
+  - UNREACHABLE PROVEN: `run_planner` без сессии.
+- **Учёт (доказано тестами):**
+  - сбой хранения provider attempt не останавливает платный запрос — SUCCESS, а в summary 0 attempts;
+  - timeout / 500 → UNKNOWN (не ноль);
+  - verifier теряет usage при protocol error;
+  - запись в поток в обход API не меняет summary;
+  - precached не агрегируется;
+  - роль compressor вне Run Store.
+- **HTTP wire:** длина снимка = длине отправленного тела, хеш — нет (sort_keys против порядка httpx 0.28.1). Требование S3b — хешировать отправляемые байты.
+- **R-026:** seq 146 timeout + seq 147 `aborted_external_recovery` для одного attempt. Текущий builder такой исход отклоняет; summary расходится с raw. **Источник записи — UNRESOLVED**.
+- **Тесты:** `test_rt002_s1_routes.py` (новый, SHA-256 `20a54a0e…a86c0`).
+  - Команда: `.venv/Scripts/python.exe -B test_rt002_s1_routes.py` (Python 3.12.10).
+  - Итог: **39 PASS / 0 FAIL / 0 ERROR / 0 SKIP**, exit 0, isolation violations 0, evidence problems 0, 7.362 с.
+  - Прогон 1 (33 теста: 2 FAIL + 2 ERROR — дефекты тестов) сохранён в отчёте.
+  - Sensitivity-прогон: 3 ожидаемых FAIL из 4.
+- **Для S2:** 10 контрактов (§8 отчёта) — единый pre-HTTP узел, durable reserve и обязательные attempt-события, консервативные единицы (не «байты/4»), резерв на выход по маршрутам, UNKNOWN как резерв, cached отдельно, wire-хеш, бюджет не сбрасывается вместе с контекстом, учёт по вызовам, recovery только через API.
+- **Открыто:** атрибуция R-026 (`GIT_DATA_REQUIRED`); практическое использование MCP — USER DECISION.
+- **Изменённые файлы:**
+  - `test_rt002_s1_routes.py` (новый);
+  - `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-001/s1_report.md` (новый);
+  - эта карточка (ротация).
+
+  Runtime, Web Alarm, файлы Codex и общие документы не менялись.
+- **DOC IMPACT (координатору):** `21` (запись S1), `20` §5а (статус S1), `36.3` (новая guarded-команда), `13` (обязательная долговечность attempt-событий, wire-хеш).
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-001/s1_report.md`.
+- **NEXT:** независимая проверка ChatGPT → решение пользователя по S2.
+
 ---
 
 ### CLAUDE-RT002-S1-RECON-001 — предварительное исследование Ultra перед S1 — результат
