@@ -1,3 +1,12 @@
+### WEB_08 / 2026-10-15 / GitHub-only evidence handoff decision — PREPARED, NOT ASSIGNED
+
+**Latest source:** GitHub `main@38e7164b1ab3af6131d65cfc9dc8760ee426dd1e` (#336) checked, with #336 documentation-only relative to F1/F2/F3. On 2026-10-15 ChatGPT reviewed R-004/R-003 source, tests, metadata and `36/36.1/36.2` over GitHub. R-004 matched final 7 source SHA with LF/Windows CRLF normalization; its 12 attempt records show final 92 focused PASS, 4+4 bounded PASS, six quality outer PASS and 791 **collected only**, NOT RUN; these remain **Codex-reported**, not independent Windows executions. R-003 self-reported 768 PASS / 1 SKIP full, six controls and native PRE-move F3 reproducer; this is not independent runtime verification. No new confirmed runtime defect, and historical WinError 5 remains an original red case.
+
+**Transport obstacle, not runtime defect:** GitHub connector reads text source, `checks.json`, `versions.json` and `manifest.json` successfully but cannot expose binary R-004 / R-003 `evidence.zip` for independent raw phase/receipt/checkpoint oracle review. Both R-004 and R-003 ZIPs exist as GitHub repo files; no verified GitHub Actions runs on the current R-004 source SHA. Do not turn report counters into independent PASS. User has requested GitHub-first approach and avoiding Desktop Commander except last resort.
+
+**NEXT task candidate:** `CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE` (evidence transport only; PREPARED, NOT ASSIGNED until user places the long Block 1 and starts Codex 007). Codex to read unchanged R-003 / R-004 ZIPs and publish **minimal lossless, text-readable, synthetic-TEMP-only raw evidence with original archive/member SHA, phase/PID/exit, operation receipt/checkpoint/snapshot, literal PRE/POST and exact original event prefixes and negative controls** in its own report folder and rotate only its own card. Do not modify production/test/CI or shared docs. This enables independent GitHub-based verification without new replay. If archive is incomplete, fail honestly as EVIDENCE MISSING and request narrow rerun via approved scope; don't generate fake raw evidence. After user publishing, ChatGPT to independently compare source pins and raw text and issue bounded per-finding F1/F2/F3 verdict, then separately choose rollout gate with user. No WARN/GATEWAY REQUIRED/STRICT now.
+
+---
 ## WEB_08 HANDOFF / 2026-10-14 / WEB_07 — READ THIS FIRST (supersedes older CURRENT labels only where specified)
 
 ### WEB_07 R-004 INDEPENDENT SOURCE CHECKPOINT / 2026-10-14 — NOT RUNTIME ACCEPTED
