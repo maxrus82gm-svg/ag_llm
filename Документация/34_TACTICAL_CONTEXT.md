@@ -11,6 +11,16 @@
 
 ---
 
+## WEB_08 / 2026-10-16 / USER DIRECTION — MCP FIRST FEASIBILITY + CODEX CHAT RELAY
+
+**Приоритет после WEB_08 closeout:** пользователь подтвердил, что первым новым исследовательским вопросом при переходе к Web Alarm Ultra должен стать **локальный MCP-мост: обычный ChatGPT Desktop (Windows) → узкий adapter → Web Alarm / будущий Web Alarm Ultra**. Это позволит ChatGPT читать локальные разрешённые контексты, TASK/status/evidence без обязательного промежуточного GitHub. Предыдущая стратегическая очередь сохраняется: **сначала фактическое завершение WEB_08 по gates**, затем адресное WUA-0/feasibility по отдельному USER GO; старую Ultra/Tkinter не переписывать. Источник подробного целевого дизайна — раздел 9 документа №37 и переданный `WEB_08_Handoff_MCP_Ultra_2026-10-15(1).md`. Собственный MCP на данном ПК и в обычном Desktop Chat ещё **НЕ ПРОВЕРЕН**.
+
+**Новая важная находка / подтверждённый минимум:** в начальном smoke пользователь поручил агенту из AG LLM через Codex отправить сообщение в уже существующий чат «Сервер WEB_08». Сообщение поступило, ChatGPT ответил, а следующее переданное поручение привело к документальному действию через GitHub; это уже записано ниже как **AG LLM → WEB_08 — INITIAL MESSAGE RELAY SMOKE / SUCCESS (BOUNDED)**. Значит, продемонстрирован именно **agent → existing ChatGPT chat message → task handling**, что потенциально пригодно для сигнала `TASK_COMPLETED` от Web Alarm через Codex. **Не подтверждены** автоматическая отправка по окончании любой TASK, устойчивый wake-up закрытого чата, транспорт/identity, обратный readback и сопряжение с локальным MCP. Точная цель — разделить сигнал пробуждения и получение контекста; Codex может быть заменяемым relay, а Web Alarm остаётся authoritative TASK/approval/STOP controller.
+
+**Статус:** `USER ARCHITECTURE DIRECTION / DOC ONLY / FEASIBILITY PENDING / NO IMPLEMENTATION GO`. Ни Codeх/Claude, ни сервер не получили новых TASK или разрешений на сетевые, Git, production либо модельные изменения. Переход к read-only MCP smoke и автономным циклам только после отдельного решения пользователя.
+
+---
+
 ## WEB_08 / 2026-10-15 / ChatGPT Desktop ↔ MCP ↔ Ultra — FUTURE FEASIBILITY CONCEPT
 
 **SOURCE / STATUS:** пользователь передал в WEB_08 краткий handoff для `WEB_08_Handoff_MCP_Ultra_2026-10-15.md`; сам полный Markdown-файл в этом чате не прикреплён и не прочитан дословно. Здесь фиксируется **архитектурная идея**, а не приёмка работ: `PROPOSAL / RESEARCH CANDIDATE / NOT ASSIGNED / NOT IMPLEMENTED`. Не заменять документ №37, контракт внешних интеграций №19 или действующий WEB_08/WA4-R.
