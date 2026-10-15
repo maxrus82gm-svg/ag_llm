@@ -1,0 +1,29 @@
+{
+  "origin": {
+    "id": "R008",
+    "attempt": "lock-identity-before",
+    "archive": "evidence.zip",
+    "member": "attempts/lock-identity-before/results.json",
+    "member_sha256": "a1062bf25a5bc56fbc974e46d2986a1d5feda63cf2f3e5151ba506544be6ccbf",
+    "member_bytes": 12407,
+    "pointer": "/tests/0",
+    "selector": "__main__.LockIdentity.test_invalid_identity_does_not_create_outside_operations_lock",
+    "original_status": "FAIL",
+    "canonical_record_sha256": "9aea0b47ce8a560623da12d53402858b724a77822a7f60ab750e1d30566e23cb",
+    "file": "records/R008.json",
+    "classification": "ORIGINAL_RED"
+  },
+  "raw": {
+    "test": "__main__.LockIdentity.test_invalid_identity_does_not_create_outside_operations_lock",
+    "status": "FAIL",
+    "error": "Traceback (most recent call last):\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\probe_lock_identity.py\", line 11, in test_invalid_identity_does_not_create_outside_operations_lock\n    self.assertFalse((root/\"locks/outside.lock\").exists(),\"invalid closeout task_id escaped operations lock directory before validation\")\nAssertionError: True is not false : invalid closeout task_id escaped operations lock directory before validation\n",
+    "facts": [
+      {
+        "outside_lock_exists": true,
+        "locks": [
+          "locks/outside.lock"
+        ]
+      }
+    ]
+  }
+}

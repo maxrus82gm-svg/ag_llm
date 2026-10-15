@@ -1,0 +1,1310 @@
+{
+  "origin": {
+    "id": "R044",
+    "attempt": "bounded-release",
+    "archive": "evidence.zip",
+    "member": "attempts/bounded-release/results.json",
+    "member_sha256": "7ce112a73cbce44f64041f2636882d93273a48ff938dec8373bfe817d6a5e2e8",
+    "member_bytes": 102615,
+    "pointer": "/tests/0",
+    "selector": "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+    "original_status": "PASS",
+    "canonical_record_sha256": "3bde4b47b50d3f342714744241fbbb1c973879486c0e65863e57c16794d17ebd",
+    "file": "records/R044.json",
+    "classification": "FINAL_RUNTIME_RECORD"
+  },
+  "raw": {
+    "test": "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+    "status": "PASS",
+    "facts": [
+      {
+        "worker": "w",
+        "exit": 0,
+        "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"physical_mutation_performed\": true, \"receipt\": {\"exists\": true, \"size\": 14, \"sha256\": \"440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e\", \"eol\": \"lf\", \"bom\": false, \"normalized_sha256\": \"440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-15T15:54:47.968116+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}, \"apply_count\": 1}\n",
+        "stderr": ""
+      },
+      {
+        "worker": "close",
+        "exit": 0,
+        "stdout": "{\"result\": \"CLOSED\"}\n",
+        "stderr": ""
+      },
+      {
+        "round": 0,
+        "workers": {
+          "w": {
+            "result": "EXECUTED",
+            "result_code": "EXACT_POST_STATE_PROVED",
+            "physical_mutation_performed": true,
+            "receipt": {
+              "exists": true,
+              "size": 14,
+              "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+              "eol": "lf",
+              "bom": false,
+              "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-15T15:54:47.968116+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            },
+            "apply_count": 1
+          },
+          "close": {
+            "result": "CLOSED"
+          }
+        },
+        "terminal_raw": {
+          "active": false,
+          "completed": true,
+          "task": {
+            "task_id": "task_e",
+            "workspace_id": "ws_e",
+            "title": "task_e",
+            "raw_task": "RAW TASK",
+            "goal": "WA4-E",
+            "status": "COMPLETED",
+            "plan_revision": 3,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:46.377015+00:00",
+            "updated_at": "2026-10-15T15:54:48.085703+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_c713e803993c4d899a4a51c6678acebb",
+            "task_id": "task_e",
+            "revision": 3,
+            "microtask_ids": [
+              "m1",
+              "m2"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:46.377015+00:00",
+            "updated_at": "2026-10-15T15:54:46.872032+00:00"
+          },
+          "operations": {
+            "op_1": {
+              "operation_id": "op_1",
+              "task_id": "task_e",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "a.txt",
+              "status": "DONE",
+              "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+              "expected_precondition_sha256": null,
+              "result_summary": "WA4-E: executed; exact post-state proved by the server",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.242240+00:00",
+              "updated_at": "2026-10-15T15:54:47.968116+00:00",
+              "contract_version": 2,
+              "revision": 3,
+              "contract": {
+                "workspace_id": "ws_e",
+                "target_key": "a.txt",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:54:47.242240+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": {
+                "exists": true,
+                "size": 14,
+                "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                "eol": "lf",
+                "bom": false,
+                "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                "source": "server_observed_at_done",
+                "observed_at": "2026-10-15T15:54:47.968116+00:00",
+                "revision": 3,
+                "matches_expected_post": true,
+                "eol_only_drift": false
+              },
+              "recovery_settlement": null
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_7dcc628425714d38949065fb316bef9b",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_126bcd4fdf89420eb6ffb95fac52d943",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:54:46.667824+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:46.667824+00:00",
+              "updated_at": "2026-10-15T15:54:46.667824+00:00"
+            },
+            {
+              "event_id": "event_43aed2e245cc4ccc8f451ddea4cd46ac",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:46.792048+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:46.792048+00:00",
+              "updated_at": "2026-10-15T15:54:46.792048+00:00"
+            },
+            {
+              "event_id": "event_8276026545294a9d8cb9afa7fefaa2fa",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:46.878081+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:46.878081+00:00",
+              "updated_at": "2026-10-15T15:54:46.878081+00:00"
+            },
+            {
+              "event_id": "event_36ccd6f29f6f4088b7aef031fff0b418",
+              "task_id": "task_e",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "action": "write",
+                "target": "a.txt",
+                "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "a.txt",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "payload": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:54:47.255570+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.255570+00:00",
+              "updated_at": "2026-10-15T15:54:47.255570+00:00"
+            },
+            {
+              "event_id": "event_4eebd010f43842c1890f23542418a639",
+              "task_id": "task_e",
+              "event_type": "TARGET_CLAIM_ACQUIRED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_40427e1c2682178dc93e44dd21144919",
+                "target": "a.txt",
+                "target_hash": "5cbe954c882a5afa9e3bd727d9f048ac2501a97a2cac100a86af9bf23eed815e",
+                "operation_revision": 1,
+                "cas_basis": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:47.371010+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.371010+00:00",
+              "updated_at": "2026-10-15T15:54:47.371010+00:00"
+            },
+            {
+              "event_id": "event_c88eb3c890c9447884d0e53d2a02a237",
+              "task_id": "task_e",
+              "event_type": "MUTATION_AUTHORIZED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_40427e1c2682178dc93e44dd21144919",
+                "authorization_id": "auth_a87fa1daeef7423a9208359ebda63085",
+                "result_code": "CAS_BASIS_HOLDS",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:47.399912+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.399912+00:00",
+              "updated_at": "2026-10-15T15:54:47.399912+00:00"
+            },
+            {
+              "event_id": "event_cc402c14e84a454ca03130a8f7406354",
+              "task_id": "task_e",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "from": "INTENT",
+                "to": "STARTED",
+                "result_summary": "WA4-E: authoritative execution started",
+                "revision": 2
+              },
+              "recorded_at": "2026-10-15T15:54:47.428109+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.428109+00:00",
+              "updated_at": "2026-10-15T15:54:47.428109+00:00"
+            },
+            {
+              "event_id": "event_06bf5ce8df9945cf8599561f58b4601d",
+              "task_id": "task_e",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "from": "STARTED",
+                "to": "DONE",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 3,
+                "receipt": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "matches_expected_post": true
+                }
+              },
+              "recorded_at": "2026-10-15T15:54:47.970112+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:47.970112+00:00",
+              "updated_at": "2026-10-15T15:54:47.970112+00:00"
+            },
+            {
+              "event_id": "event_edd305cedfa341a18cc63dee634e6ece",
+              "task_id": "task_e",
+              "event_type": "MUTATION_EXECUTED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "mutation_kind": "WRITE",
+                "receipt": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "retry_resolution_id": null
+              },
+              "recorded_at": "2026-10-15T15:54:48.062198+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:48.062198+00:00",
+              "updated_at": "2026-10-15T15:54:48.062198+00:00"
+            },
+            {
+              "event_id": "event_b5da1168088e46fd9d19993b2e748712",
+              "task_id": "task_e",
+              "event_type": "TARGET_CLAIM_RELEASED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_40427e1c2682178dc93e44dd21144919",
+                "target_hash": "5cbe954c882a5afa9e3bd727d9f048ac2501a97a2cac100a86af9bf23eed815e",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:48.077124+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:48.077124+00:00",
+              "updated_at": "2026-10-15T15:54:48.077124+00:00"
+            }
+          ],
+          "file_sha256": {
+            "checkpoint.json": "58615c45dfb2a68da27492dc53fd0a7fd6d87535cf0453312228794c31dfd4a2",
+            "checkpoint.md": "b04ec596cda9899cc72a92b6a1ee084017ecb24b9aa7974ff995d7e11a699359",
+            "events.jsonl": "835b4c7e58e8c537d43fb7294121a87abf46042ed65268842165325a036fae5f",
+            "plan.json": "78f00daf8ba8fc9b6ec0c662a500930adc291054fe2048a03eee27c2c4f5dbac",
+            "task.json": "36f936465b08b9ac1a7901d766b0513c69fbf494d5b93849d72b3c025001dc5b",
+            "task.md": "194058705d04b1e5523d407489c32e706e4535ebb1acc4a40198487b10d9d0f4",
+            "microtasks/m1.json": "5092b93010a95d6da0f86742fa6712ee14e848c36da81323e8f6638fdedaa4ac",
+            "microtasks/m2.json": "ecaecdf606db03b4e5e2ecbdac76390ee6fdbb8a0e10a5d56ef3646c9eeb21dc",
+            "operations/op_1.json": "b798ba34ac495b15aab2fdddeb14ae4ac1085678eb0febfae4c3dc0045330b2b",
+            "payloads/440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e.bin": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+            "microtasks/m1/restore_point/manifest.json": "02892a1a990f76542ce3221bb457ddf0b43784a4cdc90a7dea0958583a52a8fe",
+            "microtasks/m1/restore_point/manifest_entries/manifest_43fc0228dd944f7b9c9feb9d62ec70b7.json": "6be5a8a32b1896b4a0268cf0c9856b7e6b7331f5564326e75302505bc4db2f2e",
+            "microtasks/m1/restore_point/manifest_entries/manifest_502715b758774a7bad787a2aca07c09e.json": "b55c059ccb3629af61f4d5792e189b167dc3af21f310432815240a823dde8ded",
+            "microtasks/m1/restore_point/manifest_entries/manifest_6f08626f0e154c94823366cff7a9dc51.json": "ae6e34988e5f83aec5a21a2c5471be6f986abdcbfff910b4b4d17d41008b8848",
+            "microtasks/m1/restore_point/manifest_entries/manifest_7cfb2fc9ec684507979523b3481d6574.json": "88aa6f16d15eab7b1bbae35466f2f337af8a73d44e6ab31b00bb6c93a7e23024",
+            "microtasks/m1/restore_point/manifest_entries/manifest_7f6ebc936a6a46f59f3e4ea9411b3164.json": "2d996f81cc0d75680698922cebc9c1d9906e7346b63740ee92f7bf9d49dd2f51",
+            "microtasks/m1/restore_point/manifest_entries/manifest_a70e00abdb534de1a319a3f14c0ae302.json": "f5b6780cb1c53f37848c28950cd1138754f95c5759ead3ce85b39f8cf2487c6f",
+            "microtasks/m1/restore_point/manifest_entries/manifest_b9c939a87d574099b6be18df7da6828d.json": "30d7c0da06558fab09cba24ecbce1d518fda8093d2b87b517af40f5d48998df9",
+            "microtasks/m1/restore_point/manifest_entries/manifest_caaeb0ec53284218ad990666958ebf0e.json": "e77fd4505b32e9dfcf63f7092b2e71f2d13909e189d5f860255325cd7b316539",
+            "microtasks/m1/restore_point/manifest_entries/manifest_e593c04c5f4a4785a98df936803771d4.json": "67202a6dbbc89cdfa9752b3729926e91bec50f494ad0c480afb983c3547edee8",
+            "microtasks/m1/restore_point/snapshots/snapshot_529a48fa330943108fbaa49e3fe01279.json": "96129f17448e45dacd6a6df85b13164000c5968ceffe8fc400e66cdaa8c12c8f",
+            "microtasks/m1/restore_point/snapshots/snapshot_7533e87c9a59432880a9edf4bee5b3f6.json": "08232496d7f92e5fc478b51ea42706991662d6672f7666e5850cfe406a0fc5af",
+            "microtasks/m1/restore_point/snapshots/snapshot_8c2800bfaf5443dcac862930ed6373fd.bin": "f721166071c491fd38ac82a8432ecc349f39f537a969054ab2c8d3175c731e7e",
+            "microtasks/m1/restore_point/snapshots/snapshot_8c2800bfaf5443dcac862930ed6373fd.json": "72020f7dfaabef36721c32d93d3c8d75c9dde786dbcc5dbf250af9f9197ba8f9",
+            "microtasks/m1/restore_point/snapshots/snapshot_97208f63b11f4a68afa39d398be10dc3.bin": "b60af87edb9fed6d3a0fe5d4713c59c86b8f77f15718d3d9cd22e17aae3f7f67",
+            "microtasks/m1/restore_point/snapshots/snapshot_97208f63b11f4a68afa39d398be10dc3.json": "3cb336adf5a47db8d53c4ac90d09443a7546a76ada5e46a55db568b03e77ed37",
+            "microtasks/m1/restore_point/snapshots/snapshot_98f3269ec0924a78917278aefbea1cb3.bin": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85",
+            "microtasks/m1/restore_point/snapshots/snapshot_98f3269ec0924a78917278aefbea1cb3.json": "ab1427576f46a4d30a011ca1343b393b221c9a6272f6ebef882989b7a11bd14b",
+            "microtasks/m1/restore_point/snapshots/snapshot_a4c150b395af4616bed5dc0ffa4c5364.json": "997522a672b89364d071bc6072ce24da7c492af6c527791a3df01db994ced252",
+            "microtasks/m1/restore_point/snapshots/snapshot_acd83e4a83e84529839aa4b01e072fb7.json": "e19fcacaedf68e25a43df6e1de47ed7c57047541455978ff806f35b47005af24",
+            "microtasks/m1/restore_point/snapshots/snapshot_c81fc52909fc440f941d7f9dc870f64a.bin": "4b9f2c32577beb1ebc8ab2a1e226faaa9176a81cd4eedbaa22f8a0db919972b5",
+            "microtasks/m1/restore_point/snapshots/snapshot_c81fc52909fc440f941d7f9dc870f64a.json": "deefd025cf14b2e0d5622be38cd2cb305a66b0319d8e7e6b077ec3b17504e183",
+            "microtasks/m1/restore_point/snapshots/snapshot_fc8b857270214c848ca99bc839777eb3.bin": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "microtasks/m1/restore_point/snapshots/snapshot_fc8b857270214c848ca99bc839777eb3.json": "c569fad9a6c1b23febd26d6a6b4c964add1c13397539afe028c1e9864d5f41d0"
+          },
+          "target_hex": "61667465722d636f6e74656e740a"
+        }
+      },
+      {
+        "worker": "w",
+        "exit": 0,
+        "stdout": "{\"result\": \"REFUSED\", \"result_code\": \"RESTORE_POINT_NOT_VERIFIED\", \"physical_mutation_performed\": false, \"receipt\": null, \"apply_count\": 0}\n",
+        "stderr": ""
+      },
+      {
+        "worker": "close",
+        "exit": 0,
+        "stdout": "{\"result\": \"CLOSED\"}\n",
+        "stderr": ""
+      },
+      {
+        "round": 1,
+        "workers": {
+          "w": {
+            "result": "REFUSED",
+            "result_code": "RESTORE_POINT_NOT_VERIFIED",
+            "physical_mutation_performed": false,
+            "receipt": null,
+            "apply_count": 0
+          },
+          "close": {
+            "result": "CLOSED"
+          }
+        },
+        "terminal_raw": {
+          "active": false,
+          "completed": true,
+          "task": {
+            "task_id": "task_e",
+            "workspace_id": "ws_e",
+            "title": "task_e",
+            "raw_task": "RAW TASK",
+            "goal": "WA4-E",
+            "status": "COMPLETED",
+            "plan_revision": 3,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:48.143647+00:00",
+            "updated_at": "2026-10-15T15:54:49.119833+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_d357c4f6f51148ae93bd6c32913272ac",
+            "task_id": "task_e",
+            "revision": 3,
+            "microtask_ids": [
+              "m1",
+              "m2"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:48.143647+00:00",
+            "updated_at": "2026-10-15T15:54:48.655512+00:00"
+          },
+          "operations": {
+            "op_1": {
+              "operation_id": "op_1",
+              "task_id": "task_e",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "a.txt",
+              "status": "INTENT",
+              "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+              "expected_precondition_sha256": null,
+              "result_summary": null,
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.016691+00:00",
+              "updated_at": "2026-10-15T15:54:49.016691+00:00",
+              "contract_version": 2,
+              "revision": 1,
+              "contract": {
+                "workspace_id": "ws_e",
+                "target_key": "a.txt",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:54:49.016691+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": null,
+              "recovery_settlement": null
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_87ebb7063f6f476ead0494073f72b4b4",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_4e13f5e9af514b64b83bfd2b363c78f0",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:54:48.465624+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:48.465624+00:00",
+              "updated_at": "2026-10-15T15:54:48.465624+00:00"
+            },
+            {
+              "event_id": "event_28a6c21eecdd4320894cca16ea1a87b8",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:48.578133+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:48.578133+00:00",
+              "updated_at": "2026-10-15T15:54:48.578133+00:00"
+            },
+            {
+              "event_id": "event_9bcdccc1205c4aed96d41ad1a6839de2",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:48.661512+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:48.661512+00:00",
+              "updated_at": "2026-10-15T15:54:48.661512+00:00"
+            },
+            {
+              "event_id": "event_bfd16548e9134f7eaf5563b6701aa4dc",
+              "task_id": "task_e",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "action": "write",
+                "target": "a.txt",
+                "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "a.txt",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "payload": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:54:49.025136+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.025136+00:00",
+              "updated_at": "2026-10-15T15:54:49.025136+00:00"
+            }
+          ],
+          "file_sha256": {
+            "checkpoint.json": "ad39515ab47ba7ebba85ab82f6deb39c95e7fffd6a2d8ed716a2b4061506ef72",
+            "checkpoint.md": "d7c1748b876128f0d7bf722fe72213df36a754d90c6ff6f9dade356ce48aa03b",
+            "events.jsonl": "cd3d4ca1ff57aeaa04894b4435779a4dc95b02ff4313d46f7048cb680c662a13",
+            "plan.json": "d56ce63bc8634f4954ce84137faaa31b405ff328d4200019661f4acd706c3860",
+            "task.json": "9ce08f9a93eafd84766b5c695550eb329fa9705c38b556c35c69ee36c67f4457",
+            "task.md": "194058705d04b1e5523d407489c32e706e4535ebb1acc4a40198487b10d9d0f4",
+            "microtasks/m1.json": "d78046c9c45d6e917b551b8d2dd331cc1c94b3459e7180f8e36d1a510551caf8",
+            "microtasks/m2.json": "9b1973e803796c9e4fd9d138d7a6ab9a6e7c5a3dbd9721d9ed2a94e90a5e7866",
+            "operations/op_1.json": "20f4ca238c0a65905ba2b2077fb7ecee64c75b504ee89188365d9bb452a4e068",
+            "payloads/440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e.bin": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+            "microtasks/m1/restore_point/manifest.json": "2f2c59dc2867607aee40f9f90bf762ab0552005723f6816b3fa7eae12502e413",
+            "microtasks/m1/restore_point/manifest_entries/manifest_0ce69f2d11cc46e6aba54ff1e09d660f.json": "84abab1cef944e3d0c5225fd7742b5de35094d83cd87a12886df8ae0a34e2e71",
+            "microtasks/m1/restore_point/manifest_entries/manifest_317734b5e272496ab9e6df824d94b9c8.json": "f2f27f274efa72ea753e37cc3f8b613c655f13b872a40371cf5662c264f7169f",
+            "microtasks/m1/restore_point/manifest_entries/manifest_346ccc9d4fc14c069c6de12777fb4cea.json": "49809ec436c7db530007107fec249c241725ebfa34a4f06f8d578566c8da2fb7",
+            "microtasks/m1/restore_point/manifest_entries/manifest_3f22cea98361426c9e5d30ad04d2efce.json": "f330e8200605592a69121a822b48eb4cadf361c2f1ff28939e41f42eb2360584",
+            "microtasks/m1/restore_point/manifest_entries/manifest_4778f3a99a6d4c4d95dc6ec823e5a4bf.json": "1a191c2f240d05b91d6996a21f59352c3bda6c2f41ac87b489fc167b5bd0ef0d",
+            "microtasks/m1/restore_point/manifest_entries/manifest_63635015a39849b8a2f29b525a2ea4e2.json": "19facf01e7684dd287131d94ba52c8880dd4611c350cfb6e02cff99de4efdbf4",
+            "microtasks/m1/restore_point/manifest_entries/manifest_79145c4241c54c819613e3ee755db3b9.json": "76bbff2cb4c7d70ed7b6267392191a46b4229bca59b2e84bfbd2292fcd7dca28",
+            "microtasks/m1/restore_point/manifest_entries/manifest_ba1f6dba8b0d42448ff175b2bf852f8d.json": "3dfd66411a76455743aaeb34ecc8ed6f9c5b5f6ee4f895eced3bb197e1d690e2",
+            "microtasks/m1/restore_point/manifest_entries/manifest_ca095454a02545b1a3fa234108268431.json": "a62edc4a658f82c31308fc1e0331ff5ce6b1347783fad84d5570098467a8da71",
+            "microtasks/m1/restore_point/snapshots/snapshot_13fa48a7b68443028b5c8eb311e11dce.bin": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "microtasks/m1/restore_point/snapshots/snapshot_13fa48a7b68443028b5c8eb311e11dce.json": "5af5cf9e12e9fe1f7625c0ec5040a6df54e5191d3ed7229a890a08af1d1a2a6e",
+            "microtasks/m1/restore_point/snapshots/snapshot_21d6126c3b6d409d8893c7952f6baead.json": "75bf42a708eadf03e1580c163ad3e782833c307042d508e02f1529138309f46f",
+            "microtasks/m1/restore_point/snapshots/snapshot_270ff47c428142f2827a02251fc9d746.bin": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85",
+            "microtasks/m1/restore_point/snapshots/snapshot_270ff47c428142f2827a02251fc9d746.json": "3c0bcba79e50c5e616c35f265edd102e86311c4cf134c14c3947eb86069ea1f9",
+            "microtasks/m1/restore_point/snapshots/snapshot_4a94c943399242c2a9929c03c5d1531f.json": "09a67413897426eafab49122225f95e3b6e3e65de00a96a70eaf29ec92b1a35b",
+            "microtasks/m1/restore_point/snapshots/snapshot_4bdaa71a95294717a4022b2b6945b08c.bin": "b60af87edb9fed6d3a0fe5d4713c59c86b8f77f15718d3d9cd22e17aae3f7f67",
+            "microtasks/m1/restore_point/snapshots/snapshot_4bdaa71a95294717a4022b2b6945b08c.json": "271efdbb37bcc11c395280bbf661dc155f322ea09b5b6bc226c7823d3fe65131",
+            "microtasks/m1/restore_point/snapshots/snapshot_70f7114e8c1e4923b6ed7e857fcc2b44.json": "212378d61ebc0e09f673a9d71c86c47df6163e4718f8a6fe43e16dd1b13bec26",
+            "microtasks/m1/restore_point/snapshots/snapshot_bb7f1a4fe12246c2a9e9f496f4322dc5.bin": "4b9f2c32577beb1ebc8ab2a1e226faaa9176a81cd4eedbaa22f8a0db919972b5",
+            "microtasks/m1/restore_point/snapshots/snapshot_bb7f1a4fe12246c2a9e9f496f4322dc5.json": "9c5558a725c2db22024117e962daec815778990bfe827ef806340b18eeb1984c",
+            "microtasks/m1/restore_point/snapshots/snapshot_f8e6aa7a07ff4db89b9358e6a4d0a277.json": "72ebbc3ffa9784f03e74d74cd8576771e901ec5e144b2cf5fdfadaa35b104252",
+            "microtasks/m1/restore_point/snapshots/snapshot_fa8bba55380d4cfcb66e022966b73581.bin": "f721166071c491fd38ac82a8432ecc349f39f537a969054ab2c8d3175c731e7e",
+            "microtasks/m1/restore_point/snapshots/snapshot_fa8bba55380d4cfcb66e022966b73581.json": "d39572049eaf659e48ce9eb1d99ffe145f72cd68c7e9f0094b4cfbab8322fc0d"
+          },
+          "target_hex": "6265666f72650a"
+        }
+      },
+      {
+        "worker": "w",
+        "exit": 0,
+        "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"physical_mutation_performed\": true, \"receipt\": {\"exists\": true, \"size\": 14, \"sha256\": \"440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e\", \"eol\": \"lf\", \"bom\": false, \"normalized_sha256\": \"440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-15T15:54:50.723496+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}, \"apply_count\": 1}\n",
+        "stderr": ""
+      },
+      {
+        "worker": "close",
+        "exit": 0,
+        "stdout": "{\"result\": \"CLOSED\"}\n",
+        "stderr": ""
+      },
+      {
+        "round": 2,
+        "workers": {
+          "w": {
+            "result": "EXECUTED",
+            "result_code": "EXACT_POST_STATE_PROVED",
+            "physical_mutation_performed": true,
+            "receipt": {
+              "exists": true,
+              "size": 14,
+              "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+              "eol": "lf",
+              "bom": false,
+              "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+              "source": "server_observed_at_done",
+              "observed_at": "2026-10-15T15:54:50.723496+00:00",
+              "revision": 3,
+              "matches_expected_post": true,
+              "eol_only_drift": false
+            },
+            "apply_count": 1
+          },
+          "close": {
+            "result": "CLOSED"
+          }
+        },
+        "terminal_raw": {
+          "active": false,
+          "completed": true,
+          "task": {
+            "task_id": "task_e",
+            "workspace_id": "ws_e",
+            "title": "task_e",
+            "raw_task": "RAW TASK",
+            "goal": "WA4-E",
+            "status": "COMPLETED",
+            "plan_revision": 3,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:49.172889+00:00",
+            "updated_at": "2026-10-15T15:54:50.841884+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_2e47ea23a010431ebc9a60c0d9d34d0a",
+            "task_id": "task_e",
+            "revision": 3,
+            "microtask_ids": [
+              "m1",
+              "m2"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:49.172889+00:00",
+            "updated_at": "2026-10-15T15:54:49.651983+00:00"
+          },
+          "operations": {
+            "op_1": {
+              "operation_id": "op_1",
+              "task_id": "task_e",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "a.txt",
+              "status": "DONE",
+              "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+              "expected_precondition_sha256": null,
+              "result_summary": "WA4-E: executed; exact post-state proved by the server",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.997655+00:00",
+              "updated_at": "2026-10-15T15:54:50.723496+00:00",
+              "contract_version": 2,
+              "revision": 3,
+              "contract": {
+                "workspace_id": "ws_e",
+                "target_key": "a.txt",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:54:49.997655+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": {
+                "exists": true,
+                "size": 14,
+                "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                "eol": "lf",
+                "bom": false,
+                "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                "source": "server_observed_at_done",
+                "observed_at": "2026-10-15T15:54:50.723496+00:00",
+                "revision": 3,
+                "matches_expected_post": true,
+                "eol_only_drift": false
+              },
+              "recovery_settlement": null
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_8dd98252a06c4b00bd7f04430d53988c",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_31b2a2fa3eb34eeeb9e755338ef8bb97",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:54:49.463632+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.463632+00:00",
+              "updated_at": "2026-10-15T15:54:49.463632+00:00"
+            },
+            {
+              "event_id": "event_df1c1c42ba30486fb0121809c916d5fa",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:49.576102+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.576102+00:00",
+              "updated_at": "2026-10-15T15:54:49.576102+00:00"
+            },
+            {
+              "event_id": "event_50d2b86f899f4dcf8c874f888b425697",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:49.662054+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:49.662054+00:00",
+              "updated_at": "2026-10-15T15:54:49.662054+00:00"
+            },
+            {
+              "event_id": "event_a678c2e1803b4f5682955af7de857427",
+              "task_id": "task_e",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "action": "write",
+                "target": "a.txt",
+                "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "a.txt",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "payload": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:54:50.008115+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.008115+00:00",
+              "updated_at": "2026-10-15T15:54:50.008115+00:00"
+            },
+            {
+              "event_id": "event_37fd41c2cad64f8fbd59cdb85ea14d0e",
+              "task_id": "task_e",
+              "event_type": "TARGET_CLAIM_ACQUIRED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_9741c8b8f7ede5888253af5d28e6c057",
+                "target": "a.txt",
+                "target_hash": "2027cbed07964703e4077e47dda6b552634b73c8741af6cebd835a5b897324b9",
+                "operation_revision": 1,
+                "cas_basis": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:50.125176+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.125176+00:00",
+              "updated_at": "2026-10-15T15:54:50.125176+00:00"
+            },
+            {
+              "event_id": "event_32e22886536246f788ec82f058a696af",
+              "task_id": "task_e",
+              "event_type": "MUTATION_AUTHORIZED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_9741c8b8f7ede5888253af5d28e6c057",
+                "authorization_id": "auth_c3748549c529dafeda92ea1d080c4670",
+                "result_code": "CAS_BASIS_HOLDS",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:50.153714+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.153714+00:00",
+              "updated_at": "2026-10-15T15:54:50.153714+00:00"
+            },
+            {
+              "event_id": "event_5caa412182994dfead02bd9c603a9c26",
+              "task_id": "task_e",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "from": "INTENT",
+                "to": "STARTED",
+                "result_summary": "WA4-E: authoritative execution started",
+                "revision": 2
+              },
+              "recorded_at": "2026-10-15T15:54:50.185074+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.185074+00:00",
+              "updated_at": "2026-10-15T15:54:50.185074+00:00"
+            },
+            {
+              "event_id": "event_6d6b40c77d6b4eb19c6c3aadf9bce069",
+              "task_id": "task_e",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "from": "STARTED",
+                "to": "DONE",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 3,
+                "receipt": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "matches_expected_post": true
+                }
+              },
+              "recorded_at": "2026-10-15T15:54:50.725492+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.725492+00:00",
+              "updated_at": "2026-10-15T15:54:50.725492+00:00"
+            },
+            {
+              "event_id": "event_388c88cc7b4a4f3689a7668770119c18",
+              "task_id": "task_e",
+              "event_type": "MUTATION_EXECUTED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "mutation_kind": "WRITE",
+                "receipt": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "retry_resolution_id": null
+              },
+              "recorded_at": "2026-10-15T15:54:50.817038+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.817038+00:00",
+              "updated_at": "2026-10-15T15:54:50.817038+00:00"
+            },
+            {
+              "event_id": "event_8d7ef427410245b0a5dc57a971f5260b",
+              "task_id": "task_e",
+              "event_type": "TARGET_CLAIM_RELEASED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_9741c8b8f7ede5888253af5d28e6c057",
+                "target_hash": "2027cbed07964703e4077e47dda6b552634b73c8741af6cebd835a5b897324b9",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:50.832842+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:50.832842+00:00",
+              "updated_at": "2026-10-15T15:54:50.832842+00:00"
+            }
+          ],
+          "file_sha256": {
+            "checkpoint.json": "ea553b340eb865f51840ba98eb6049971959b8fd7620943ab20ef68f7f8ee814",
+            "checkpoint.md": "4afaa4d273e9ffa75619089a2a541663ffe3dcae34b76c0970346ea9fc12e65d",
+            "events.jsonl": "c359e739eba88bf6db4cdff36822726a45aa385d7308fe7a9794bfa973d7d3bc",
+            "plan.json": "098453dc5326e35084f190cd9b8733e1a31e691084ee34c408be69e9216b2543",
+            "task.json": "1e1b2f56535c8eb52d17c4bcce3ba22428d510546d5c79ea68329ecb605a09fb",
+            "task.md": "194058705d04b1e5523d407489c32e706e4535ebb1acc4a40198487b10d9d0f4",
+            "microtasks/m1.json": "835ebd9f1b903e92871c2d00b8cc7a11639179e6f6a1d495644bbd4714262ea5",
+            "microtasks/m2.json": "c6f98518a99b563232d3edd9f47de82258ac22224c6ac557db1d67fc592f8321",
+            "operations/op_1.json": "4703c9a38c99d79376a706ce49e0eeb3f7794b263692fca6cc6656e091ebab6c",
+            "payloads/440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e.bin": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+            "microtasks/m1/restore_point/manifest.json": "a9bd4d8c8d3a22a142c7d5654f745105cfb298400a1a4fbb5814f39ec2e45e43",
+            "microtasks/m1/restore_point/manifest_entries/manifest_1a54b52872ec4b92802fe6b7141efda5.json": "f7ac5e4341d82e08abbb9709cb46596d306d66e50428af024f730c0a9551a61c",
+            "microtasks/m1/restore_point/manifest_entries/manifest_4de15aeb310c4270a2355a11351b8061.json": "d90698ee61d2507fbcbf6286664ea9cdbb107fda6710ad8cdd8c88b5e66db7d8",
+            "microtasks/m1/restore_point/manifest_entries/manifest_852cf52300b246a3aecdba51257a200f.json": "aa8b524edf293d9c3f89b6694abd993e8525be8bbbcfa8d2d0692934c1890a2c",
+            "microtasks/m1/restore_point/manifest_entries/manifest_876f709314034a05a7ccade14aae37d0.json": "f73fb4771ab9295933312736d8eee674d47328b38afc8dd407e5f46d7320ccf6",
+            "microtasks/m1/restore_point/manifest_entries/manifest_a8daa6da4e8d4a36851173f7cfb309ef.json": "9b1d74e5a7ce5dba0da98d85ee199422493b36f002929a3819d40b6f37fe6cf4",
+            "microtasks/m1/restore_point/manifest_entries/manifest_bb8691c631124bb88186216ef0db3dfb.json": "215a65f9dc228967d51a034fa6968fb9c8bdfd392dca05ca9927379e91863ab4",
+            "microtasks/m1/restore_point/manifest_entries/manifest_c0de67845e504f3f8193cb68c74cc850.json": "d7f1166b3717274d265c1342f421251d72b8bc752ae61de237433fc507f03bbb",
+            "microtasks/m1/restore_point/manifest_entries/manifest_d3ea354ca2e04a5fa58ee81888ff5dea.json": "39f3bb9deac6be43326cbe18fe153dadc95025424fb9e60afb2e24563d2d7691",
+            "microtasks/m1/restore_point/manifest_entries/manifest_f484425bcc134e2e9322a58b9c921526.json": "fc04274ecf10aa43a42c7bfe7535d16f15231818a71d4db8028efb0e84c12b6e",
+            "microtasks/m1/restore_point/snapshots/snapshot_0b2b5b469d1540dea95e47940646b371.bin": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "microtasks/m1/restore_point/snapshots/snapshot_0b2b5b469d1540dea95e47940646b371.json": "213319aaac8b9c30637304d09a88d93fc5b9ce91417f0dd57eda51fd338d6977",
+            "microtasks/m1/restore_point/snapshots/snapshot_1a33ae8e80a743b9a93c56139f4e62a5.bin": "b60af87edb9fed6d3a0fe5d4713c59c86b8f77f15718d3d9cd22e17aae3f7f67",
+            "microtasks/m1/restore_point/snapshots/snapshot_1a33ae8e80a743b9a93c56139f4e62a5.json": "5c1dc531c630e9d969314a812bd165c3f9c6e66d7ad5e5d2f8d4f8be5aa14b05",
+            "microtasks/m1/restore_point/snapshots/snapshot_20e57db881c744aabf5729fb0e801a2e.bin": "f721166071c491fd38ac82a8432ecc349f39f537a969054ab2c8d3175c731e7e",
+            "microtasks/m1/restore_point/snapshots/snapshot_20e57db881c744aabf5729fb0e801a2e.json": "a226447e417b92f212d23147204aad615c1191179543d6e0a73812b3f596d972",
+            "microtasks/m1/restore_point/snapshots/snapshot_44436102102b4a5c9095d863456b9a09.bin": "4b9f2c32577beb1ebc8ab2a1e226faaa9176a81cd4eedbaa22f8a0db919972b5",
+            "microtasks/m1/restore_point/snapshots/snapshot_44436102102b4a5c9095d863456b9a09.json": "ec32b8ab880699fb55a7e1c0d3471fba778c1c53590e821c62d60d0e4109142c",
+            "microtasks/m1/restore_point/snapshots/snapshot_6115c47de2874e918d375acb6f9ad04e.json": "19ac160dc748112e24548d8552e9887778cf5023811acd16558e1a3d91262c13",
+            "microtasks/m1/restore_point/snapshots/snapshot_90f129b609444dc3a681f57a139b7f1c.json": "094f3add34ede9e8674a5ac834cb86328a880fab178655bebe23f6398fac7fc3",
+            "microtasks/m1/restore_point/snapshots/snapshot_af6443820e374b5b9d530cd07acf5624.bin": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85",
+            "microtasks/m1/restore_point/snapshots/snapshot_af6443820e374b5b9d530cd07acf5624.json": "a05a649a458737a61a3401be3c0e427355c1706fd3940714d204fdbe48ec60cf",
+            "microtasks/m1/restore_point/snapshots/snapshot_c658909db20e4c6197d1042e81135b1f.json": "1ea0c25344449ab4d482c1ce690191995e020d6976ef240309ebccc749dc838e",
+            "microtasks/m1/restore_point/snapshots/snapshot_d0b9d50617424d87a090f2b51bd3a137.json": "8d3a4cac87988a3a9aefeca40095f44b05bccdd4006e146d23e40a23c8d3380d"
+          },
+          "target_hex": "61667465722d636f6e74656e740a"
+        }
+      },
+      {
+        "worker": "w",
+        "exit": 0,
+        "stdout": "{\"result\": \"REFUSED\", \"result_code\": \"TASK_CLOSED\", \"physical_mutation_performed\": false, \"receipt\": null, \"apply_count\": 0}\n",
+        "stderr": ""
+      },
+      {
+        "worker": "close",
+        "exit": 0,
+        "stdout": "{\"result\": \"CLOSED\"}\n",
+        "stderr": ""
+      },
+      {
+        "round": 3,
+        "workers": {
+          "w": {
+            "result": "REFUSED",
+            "result_code": "TASK_CLOSED",
+            "physical_mutation_performed": false,
+            "receipt": null,
+            "apply_count": 0
+          },
+          "close": {
+            "result": "CLOSED"
+          }
+        },
+        "terminal_raw": {
+          "active": false,
+          "completed": true,
+          "task": {
+            "task_id": "task_e",
+            "workspace_id": "ws_e",
+            "title": "task_e",
+            "raw_task": "RAW TASK",
+            "goal": "WA4-E",
+            "status": "COMPLETED",
+            "plan_revision": 3,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:50.897065+00:00",
+            "updated_at": "2026-10-15T15:54:51.865487+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_13dd6e96cc1347d7a8b5d199cd5d630c",
+            "task_id": "task_e",
+            "revision": 3,
+            "microtask_ids": [
+              "m1",
+              "m2"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:54:50.897065+00:00",
+            "updated_at": "2026-10-15T15:54:51.389036+00:00"
+          },
+          "operations": {
+            "op_1": {
+              "operation_id": "op_1",
+              "task_id": "task_e",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "a.txt",
+              "status": "INTENT",
+              "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+              "expected_precondition_sha256": null,
+              "result_summary": null,
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.731799+00:00",
+              "updated_at": "2026-10-15T15:54:51.731799+00:00",
+              "contract_version": 2,
+              "revision": 1,
+              "contract": {
+                "workspace_id": "ws_e",
+                "target_key": "a.txt",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:54:51.731799+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": null,
+              "recovery_settlement": null
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_512a9f05335e4dfcbfc36e2f6c66299b",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_1f783fdff2f743e2b7081fbf6a46f9fe",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:54:51.193952+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.193952+00:00",
+              "updated_at": "2026-10-15T15:54:51.193952+00:00"
+            },
+            {
+              "event_id": "event_3380f924b8e44719808fb83b902e0857",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:51.311269+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.311269+00:00",
+              "updated_at": "2026-10-15T15:54:51.311269+00:00"
+            },
+            {
+              "event_id": "event_645554c79b5e4d34930c14bebc880186",
+              "task_id": "task_e",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:54:51.395476+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.395476+00:00",
+              "updated_at": "2026-10-15T15:54:51.395476+00:00"
+            },
+            {
+              "event_id": "event_1ea2489e57cd43038e56ca9a5057bddb",
+              "task_id": "task_e",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "action": "write",
+                "target": "a.txt",
+                "request_fingerprint": "b150cf5c1df1fca462073a0e12c2363cb18919422911840c9de355cbf4a9cc54",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "a.txt",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 14,
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e"
+                },
+                "payload": {
+                  "sha256": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+                  "size": 14
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:54:51.739909+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.739909+00:00",
+              "updated_at": "2026-10-15T15:54:51.739909+00:00"
+            },
+            {
+              "event_id": "event_2d207df9e65946a7a03a3ca7c1838a4e",
+              "task_id": "task_e",
+              "event_type": "TARGET_CLAIM_ACQUIRED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_9ffa5fe7637dac74e98cc12bcafe9267",
+                "target": "a.txt",
+                "target_hash": "ce4e31ea741d0734b30284a2906c53411b092ccc8b823eff3d70fbb8efab5f55",
+                "operation_revision": 1,
+                "cas_basis": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb"
+                },
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:51.859994+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.859994+00:00",
+              "updated_at": "2026-10-15T15:54:51.859994+00:00"
+            },
+            {
+              "event_id": "event_39f42b19b77b425dabc4abd39b558d4c",
+              "task_id": "task_e",
+              "event_type": "MUTATION_DENIED",
+              "microtask_id": "m1",
+              "operation_id": "op_1",
+              "payload": {
+                "claim_id": "claim_9ffa5fe7637dac74e98cc12bcafe9267",
+                "authorization_id": "auth_862c0cc3c26d679eb6350ffb61ae6063",
+                "result_code": "TASK_CLOSED",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:54:51.900776+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:54:51.900776+00:00",
+              "updated_at": "2026-10-15T15:54:51.900776+00:00"
+            }
+          ],
+          "file_sha256": {
+            "checkpoint.json": "6ad2ee84e4e719a1c69153e191f97313935cb723e09a091f81a60198ef5970c3",
+            "checkpoint.md": "954be0862a9e343869643c6e8c12a5769cb7dbfc9582bc60b8547894bf592eab",
+            "events.jsonl": "5149a321dcd4a95ac0ddc0cac0423641586619d05b484e74a22afda05f852634",
+            "plan.json": "29c70fc71e93d3e1eb9420fefdede6ab6f0f382d9ec27210ca2ff9ad233ac37e",
+            "task.json": "bc8541b434c144a581fe9fa9af5144d9cd920830d6e476f6054e3d1f82db3f09",
+            "task.md": "194058705d04b1e5523d407489c32e706e4535ebb1acc4a40198487b10d9d0f4",
+            "microtasks/m1.json": "65c7207b3b8abf1e950df0a7d53bd8efeac3665bf6315c2011395c13a9f86778",
+            "microtasks/m2.json": "f28a4ec9ee4482d55d4d5c8f8640d8c97f90e9382e6f1a83ee1de56a4622323f",
+            "operations/op_1.json": "c9f21389fe40888ce91edca393bb3709e2dfddd636ac1750c7e1af2f4a864047",
+            "payloads/440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e.bin": "440d229b9fec05d306b02d2b057d3dc9a1a956670ff73ddd9a623e76c5fdb88e",
+            "microtasks/m1/restore_point/manifest.json": "16e7e2884e7053e9b901d0a69f8b2139e710d485bc2cfb51dfed03278969f77e",
+            "microtasks/m1/restore_point/manifest_entries/manifest_1925c5e97e9d471e97b15bb6950598ab.json": "5f41ec222d8f3acfe236cf853da7b7c2e5c43a7c7c0b5f93a405e805f39ed2fa",
+            "microtasks/m1/restore_point/manifest_entries/manifest_1d6b12f70be74039a26417ecb664732b.json": "3d942c52cca0f35c8121aac7ac0e313453485a36e6551173ddae02da359fd641",
+            "microtasks/m1/restore_point/manifest_entries/manifest_1e9193cf8a82424c9d3ad56145725492.json": "2174c47779b0341d9e0e58c649cbe5c734e2ba67285893d9e04ac66bbc832920",
+            "microtasks/m1/restore_point/manifest_entries/manifest_5c6e88329d7c482f9851cfd2177ed5f2.json": "52272adce525c2d3f35dce73d1746bc42e82ea7df9be7674502642e865010d33",
+            "microtasks/m1/restore_point/manifest_entries/manifest_73b8ca1472c64bf3a3a6ad001a402ed9.json": "bb3fc5787143acbf6e419e4e3a97959fc66d5d56fb57c869caef0e6ace9ae694",
+            "microtasks/m1/restore_point/manifest_entries/manifest_a1410629da6c4eaa891eaf6b41cdb277.json": "c6c35a968db143e90b168a237fd7657cf0236f36ff319fa64d25091d5fe73c82",
+            "microtasks/m1/restore_point/manifest_entries/manifest_b3760450f6394b3a862c2a31013dc25c.json": "c9e7799039745abe60d8c7f04d1125ce0f1f4ee38dee0f978e5f70d0027b60e5",
+            "microtasks/m1/restore_point/manifest_entries/manifest_e6d438810c5546caa85bcbfe6ecea11d.json": "ba2807138394b27df21f5fa8dfb2a8ca77f79718f5f55dc7201eb201033d4ef5",
+            "microtasks/m1/restore_point/manifest_entries/manifest_e76b8b6d73bc45099c3a68139987d869.json": "9056dfd534a039b53078536a34ed75700de578339d4aabe2239016abaccc3451",
+            "microtasks/m1/restore_point/snapshots/snapshot_0d7c7016057c466bbd004dbc52540742.json": "50847d507fbf262a1ee5c7f1e11e08214a8263143480219eeb1ede20a2dbba9c",
+            "microtasks/m1/restore_point/snapshots/snapshot_3cd17b8427e2428b8920c5e5b070dff9.bin": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85",
+            "microtasks/m1/restore_point/snapshots/snapshot_3cd17b8427e2428b8920c5e5b070dff9.json": "61bd21c979b2be3d7ccb6bd6464cb2251a4c8d8ed4f5c2301296353743480d5b",
+            "microtasks/m1/restore_point/snapshots/snapshot_4f5ea51bfe3542fbbe4d9c92839d711c.bin": "4b9f2c32577beb1ebc8ab2a1e226faaa9176a81cd4eedbaa22f8a0db919972b5",
+            "microtasks/m1/restore_point/snapshots/snapshot_4f5ea51bfe3542fbbe4d9c92839d711c.json": "16b0d6cd5862833a34c5fbdf29b269f5274e6b46107b45042c362e83d98644c8",
+            "microtasks/m1/restore_point/snapshots/snapshot_849b3aa2e8324ce9af7aebdb55daf3a0.bin": "9160d4be34c8695bd172a76c7c7966587ea5a4d991ad22c87b2b91af54aa9ebb",
+            "microtasks/m1/restore_point/snapshots/snapshot_849b3aa2e8324ce9af7aebdb55daf3a0.json": "649aa5c58453b139e21f42a1af6cced0df3256c50710a78088f927448d3c5587",
+            "microtasks/m1/restore_point/snapshots/snapshot_863d8821eecd4e4680437af6f777a821.json": "81578f9ad22cd6a7361d53cac2e2bc148c37f962a33646361fed3336139139d0",
+            "microtasks/m1/restore_point/snapshots/snapshot_8b422fdb3c02485f9aef4d73c57c5b25.bin": "b60af87edb9fed6d3a0fe5d4713c59c86b8f77f15718d3d9cd22e17aae3f7f67",
+            "microtasks/m1/restore_point/snapshots/snapshot_8b422fdb3c02485f9aef4d73c57c5b25.json": "4fae79af39e9669a3683adda044ece74de8749ee5563eda8fe53d2cc3b65f0bf",
+            "microtasks/m1/restore_point/snapshots/snapshot_dcbdf8330b444615b08197401105baef.json": "1a1d477ddbc4e46b1fdaf71cc4c5f85529b9050aa7ee962c9e9679072cd33581",
+            "microtasks/m1/restore_point/snapshots/snapshot_e235058c4e8b4a6db1e516abbb64fd4e.bin": "f721166071c491fd38ac82a8432ecc349f39f537a969054ab2c8d3175c731e7e",
+            "microtasks/m1/restore_point/snapshots/snapshot_e235058c4e8b4a6db1e516abbb64fd4e.json": "a128020ed768fd3a84aea3bf0377f06692424cddbf61d9e24842a901a67d466f",
+            "microtasks/m1/restore_point/snapshots/snapshot_fe9a4768a3be4e0985a5ff26dc5c8662.json": "468a1860b0d7584b5b21443b65019d23c655ec2a57f4fdcb74d99b6ac686e425"
+          },
+          "target_hex": "6265666f72650a"
+        }
+      }
+    ]
+  }
+}

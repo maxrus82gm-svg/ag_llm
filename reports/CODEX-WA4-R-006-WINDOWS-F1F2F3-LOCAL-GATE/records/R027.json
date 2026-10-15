@@ -1,0 +1,880 @@
+{
+  "origin": {
+    "id": "R027",
+    "attempt": "full-release",
+    "archive": "evidence.zip",
+    "member": "attempts/full-release/results.json",
+    "member_sha256": "87e4a3f4a3ec19d0b1449a0677aceab9049ea81f9666e8bee6da05ed7a61a59e",
+    "member_bytes": 3979867,
+    "pointer": "/tests/775",
+    "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_move_between_destination_and_source_probe_is_resolved",
+    "original_status": "PASS",
+    "canonical_record_sha256": "aae14d7cbc9c3094067890895aa234d44892fb97513ae5f83cbc1edf5818710c",
+    "file": "records/R027.json",
+    "classification": "FINAL_RUNTIME_RECORD"
+  },
+  "raw": {
+    "test": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_move_between_destination_and_source_probe_is_resolved",
+    "status": "PASS",
+    "facts": [
+      {
+        "task": "CODEX-WA4-R-002",
+        "test": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_move_between_destination_and_source_probe_is_resolved",
+        "oracle": "raw files, literal expected bytes"
+      },
+      {
+        "PRE": {
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "PLANNED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.442185+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_21fa4db7cc444895a6feb2c5b1c1834c",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.664641+00:00"
+          },
+          "operations": {},
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.438533+00:00",
+              "updated_at": "2026-10-15T15:51:58.795232+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_b42e15ca25b847ffa1cab2a32b987219",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:51:58.529276+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.529276+00:00",
+              "updated_at": "2026-10-15T15:51:58.529276+00:00"
+            },
+            {
+              "event_id": "event_ba36cc999a594b80a4c0a78eaa798f7f",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.604942+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.604942+00:00",
+              "updated_at": "2026-10-15T15:51:58.604942+00:00"
+            },
+            {
+              "event_id": "event_6ff91f25b7034487a44d301f072ea692",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.671250+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.671250+00:00",
+              "updated_at": "2026-10-15T15:51:58.671250+00:00"
+            },
+            {
+              "event_id": "event_f287a8b5d7494bbd9d7895afc5eb53f8",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.734739+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.734739+00:00",
+              "updated_at": "2026-10-15T15:51:58.734739+00:00"
+            },
+            {
+              "event_id": "event_ab93ceee81e84bc2a7b8b8d1bdc6b4bd",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "fixture verified"
+              },
+              "recorded_at": "2026-10-15T15:51:58.798225+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.798225+00:00",
+              "updated_at": "2026-10-15T15:51:58.798225+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f6234326531356361323562383437666661316361623261333262393837323139222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3738316131383134316235663462356438373938646334646233323138623130222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030227d0a7b226576656e745f6964223a226576656e745f6261333663633939396135393462383061346330613738656161373938663766222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3666663931663235623730333434383761343464333031663037326561363932222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030227d0a7b226576656e745f6964223a226576656e745f6632383761386235643734393462626439643738393561666335656235336638222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030227d0a7b226576656e745f6964223a226576656e745f6162393363656565383165383462633261376238623864316264633662346264222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a2266697874757265207665726966696564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_e4807df66d3640aa9711209cadb98b74",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": null,
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.560806+00:00",
+            "updated_at": "2026-10-15T15:51:58.823449+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "85d1ced8f0bd612ac1bf2e2fd13b6b74ba1154226138dbd6f90511da142e7871",
+              "projection_fingerprint": "6a7fd51d239233433a28875ad592e86024bf7ec65e377fa718dbf10111a4f6ef",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "cad6038b08c6dc395e08226a0b8f4413b321631367a44d86145fa380da2d77aa",
+            "checkpoint.md": "14ce15d1b5e9b7eb1c653c28724c8f22906b2bbd6f2b3c6fd36b26c245e48b34",
+            "events.jsonl": "5d412a8b72c71dddbb2f9b7a295c9f98c2b65ca476d60bda7ded517710c34035",
+            "plan.json": "02e31dd54f1d95c0755abe78dc091a8beb28d5930fdc961f4e006cc19a7d0126",
+            "task.json": "64b11c36ea561d35fab4fb5ef70fbda9b58bb2b33b45ff54bcde4311749b0341",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "44def9fc3fee763b2b2c9fbfeca6c8f50c93efaf51b0a618796edf113afc0e60",
+            "microtasks/m1/restore_point/manifest.json": "ce8e65a0aa6d1b04efea450ddb450d6a5d3f7bf0ff776ad8b95cd794296d2f24",
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": "acb2a768477036752b5e2948944a572dcc9ae76d60f72f498749c402c83ceed6",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": "4b3cc4c79a070240747f5582e0d261204fd4101be6e32225e79e53483abfd6c0"
+          },
+          "claims": {},
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_39bacc40a5b54effb12c5bae5f14eddc"
+              ],
+              "snapshot_ids": [
+                "snapshot_87709f8d70214037ac517d1e10c64122"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.475579+00:00",
+              "updated_at": "2026-10-15T15:51:58.491161+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": {
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": {
+              "snapshot_id": "snapshot_87709f8d70214037ac517d1e10c64122",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "captured_at": "2026-10-15T15:51:58.486178+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_size": 7,
+          "target_hex": "5052450d0a00ff"
+        }
+      },
+      {
+        "phase": "move_after_destination_false_before_source_probe",
+        "raw": {
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "COMPLETED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.875700+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_21fa4db7cc444895a6feb2c5b1c1834c",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.664641+00:00"
+          },
+          "operations": {},
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.438533+00:00",
+              "updated_at": "2026-10-15T15:51:58.795232+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_b42e15ca25b847ffa1cab2a32b987219",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:51:58.529276+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.529276+00:00",
+              "updated_at": "2026-10-15T15:51:58.529276+00:00"
+            },
+            {
+              "event_id": "event_ba36cc999a594b80a4c0a78eaa798f7f",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.604942+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.604942+00:00",
+              "updated_at": "2026-10-15T15:51:58.604942+00:00"
+            },
+            {
+              "event_id": "event_6ff91f25b7034487a44d301f072ea692",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.671250+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.671250+00:00",
+              "updated_at": "2026-10-15T15:51:58.671250+00:00"
+            },
+            {
+              "event_id": "event_f287a8b5d7494bbd9d7895afc5eb53f8",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.734739+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.734739+00:00",
+              "updated_at": "2026-10-15T15:51:58.734739+00:00"
+            },
+            {
+              "event_id": "event_ab93ceee81e84bc2a7b8b8d1bdc6b4bd",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "fixture verified"
+              },
+              "recorded_at": "2026-10-15T15:51:58.798225+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.798225+00:00",
+              "updated_at": "2026-10-15T15:51:58.798225+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f6234326531356361323562383437666661316361623261333262393837323139222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3738316131383134316235663462356438373938646334646233323138623130222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030227d0a7b226576656e745f6964223a226576656e745f6261333663633939396135393462383061346330613738656161373938663766222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3666663931663235623730333434383761343464333031663037326561363932222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030227d0a7b226576656e745f6964223a226576656e745f6632383761386235643734393462626439643738393561666335656235336638222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030227d0a7b226576656e745f6964223a226576656e745f6162393363656565383165383462633261376238623864316264633662346264222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a2266697874757265207665726966696564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_e4807df66d3640aa9711209cadb98b74",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": null,
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.560806+00:00",
+            "updated_at": "2026-10-15T15:51:58.823449+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "85d1ced8f0bd612ac1bf2e2fd13b6b74ba1154226138dbd6f90511da142e7871",
+              "projection_fingerprint": "6a7fd51d239233433a28875ad592e86024bf7ec65e377fa718dbf10111a4f6ef",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "cad6038b08c6dc395e08226a0b8f4413b321631367a44d86145fa380da2d77aa",
+            "checkpoint.md": "14ce15d1b5e9b7eb1c653c28724c8f22906b2bbd6f2b3c6fd36b26c245e48b34",
+            "events.jsonl": "5d412a8b72c71dddbb2f9b7a295c9f98c2b65ca476d60bda7ded517710c34035",
+            "plan.json": "02e31dd54f1d95c0755abe78dc091a8beb28d5930fdc961f4e006cc19a7d0126",
+            "task.json": "15133ecdbf304b7807258c6b29dc62d83959e1c0d0858f0f727ac43b453ba75d",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "44def9fc3fee763b2b2c9fbfeca6c8f50c93efaf51b0a618796edf113afc0e60",
+            "microtasks/m1/restore_point/manifest.json": "ce8e65a0aa6d1b04efea450ddb450d6a5d3f7bf0ff776ad8b95cd794296d2f24",
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": "acb2a768477036752b5e2948944a572dcc9ae76d60f72f498749c402c83ceed6",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": "4b3cc4c79a070240747f5582e0d261204fd4101be6e32225e79e53483abfd6c0"
+          },
+          "claims": {},
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_39bacc40a5b54effb12c5bae5f14eddc"
+              ],
+              "snapshot_ids": [
+                "snapshot_87709f8d70214037ac517d1e10c64122"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.475579+00:00",
+              "updated_at": "2026-10-15T15:51:58.491161+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": {
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": {
+              "snapshot_id": "snapshot_87709f8d70214037ac517d1e10c64122",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "captured_at": "2026-10-15T15:51:58.486178+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_size": 7,
+          "target_hex": "5052450d0a00ff"
+        }
+      },
+      {
+        "resolved_move_gap": {
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "COMPLETED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.875700+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_21fa4db7cc444895a6feb2c5b1c1834c",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.664641+00:00"
+          },
+          "operations": {},
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.438533+00:00",
+              "updated_at": "2026-10-15T15:51:58.795232+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_b42e15ca25b847ffa1cab2a32b987219",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:51:58.529276+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.529276+00:00",
+              "updated_at": "2026-10-15T15:51:58.529276+00:00"
+            },
+            {
+              "event_id": "event_ba36cc999a594b80a4c0a78eaa798f7f",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.604942+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.604942+00:00",
+              "updated_at": "2026-10-15T15:51:58.604942+00:00"
+            },
+            {
+              "event_id": "event_6ff91f25b7034487a44d301f072ea692",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.671250+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.671250+00:00",
+              "updated_at": "2026-10-15T15:51:58.671250+00:00"
+            },
+            {
+              "event_id": "event_f287a8b5d7494bbd9d7895afc5eb53f8",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.734739+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.734739+00:00",
+              "updated_at": "2026-10-15T15:51:58.734739+00:00"
+            },
+            {
+              "event_id": "event_ab93ceee81e84bc2a7b8b8d1bdc6b4bd",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "fixture verified"
+              },
+              "recorded_at": "2026-10-15T15:51:58.798225+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.798225+00:00",
+              "updated_at": "2026-10-15T15:51:58.798225+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f6234326531356361323562383437666661316361623261333262393837323139222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3738316131383134316235663462356438373938646334646233323138623130222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030227d0a7b226576656e745f6964223a226576656e745f6261333663633939396135393462383061346330613738656161373938663766222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3666663931663235623730333434383761343464333031663037326561363932222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030227d0a7b226576656e745f6964223a226576656e745f6632383761386235643734393462626439643738393561666335656235336638222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030227d0a7b226576656e745f6964223a226576656e745f6162393363656565383165383462633261376238623864316264633662346264222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a2266697874757265207665726966696564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_e4807df66d3640aa9711209cadb98b74",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": null,
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.560806+00:00",
+            "updated_at": "2026-10-15T15:51:58.823449+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "85d1ced8f0bd612ac1bf2e2fd13b6b74ba1154226138dbd6f90511da142e7871",
+              "projection_fingerprint": "6a7fd51d239233433a28875ad592e86024bf7ec65e377fa718dbf10111a4f6ef",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "cad6038b08c6dc395e08226a0b8f4413b321631367a44d86145fa380da2d77aa",
+            "checkpoint.md": "14ce15d1b5e9b7eb1c653c28724c8f22906b2bbd6f2b3c6fd36b26c245e48b34",
+            "events.jsonl": "5d412a8b72c71dddbb2f9b7a295c9f98c2b65ca476d60bda7ded517710c34035",
+            "plan.json": "02e31dd54f1d95c0755abe78dc091a8beb28d5930fdc961f4e006cc19a7d0126",
+            "task.json": "15133ecdbf304b7807258c6b29dc62d83959e1c0d0858f0f727ac43b453ba75d",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "44def9fc3fee763b2b2c9fbfeca6c8f50c93efaf51b0a618796edf113afc0e60",
+            "microtasks/m1/restore_point/manifest.json": "ce8e65a0aa6d1b04efea450ddb450d6a5d3f7bf0ff776ad8b95cd794296d2f24",
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": "acb2a768477036752b5e2948944a572dcc9ae76d60f72f498749c402c83ceed6",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": "4b3cc4c79a070240747f5582e0d261204fd4101be6e32225e79e53483abfd6c0"
+          },
+          "claims": {},
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_39bacc40a5b54effb12c5bae5f14eddc"
+              ],
+              "snapshot_ids": [
+                "snapshot_87709f8d70214037ac517d1e10c64122"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.475579+00:00",
+              "updated_at": "2026-10-15T15:51:58.491161+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": {
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": {
+              "snapshot_id": "snapshot_87709f8d70214037ac517d1e10c64122",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "captured_at": "2026-10-15T15:51:58.486178+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_size": 7,
+          "target_hex": "5052450d0a00ff"
+        }
+      },
+      {
+        "terminal": {
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "COMPLETED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.875700+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_21fa4db7cc444895a6feb2c5b1c1834c",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.414835+00:00",
+            "updated_at": "2026-10-15T15:51:58.664641+00:00"
+          },
+          "operations": {},
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.438533+00:00",
+              "updated_at": "2026-10-15T15:51:58.795232+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_b42e15ca25b847ffa1cab2a32b987219",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:51:58.529276+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.529276+00:00",
+              "updated_at": "2026-10-15T15:51:58.529276+00:00"
+            },
+            {
+              "event_id": "event_ba36cc999a594b80a4c0a78eaa798f7f",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.604942+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.604942+00:00",
+              "updated_at": "2026-10-15T15:51:58.604942+00:00"
+            },
+            {
+              "event_id": "event_6ff91f25b7034487a44d301f072ea692",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.671250+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.671250+00:00",
+              "updated_at": "2026-10-15T15:51:58.671250+00:00"
+            },
+            {
+              "event_id": "event_f287a8b5d7494bbd9d7895afc5eb53f8",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:51:58.734739+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.734739+00:00",
+              "updated_at": "2026-10-15T15:51:58.734739+00:00"
+            },
+            {
+              "event_id": "event_ab93ceee81e84bc2a7b8b8d1bdc6b4bd",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "fixture verified"
+              },
+              "recorded_at": "2026-10-15T15:51:58.798225+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.798225+00:00",
+              "updated_at": "2026-10-15T15:51:58.798225+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f6234326531356361323562383437666661316361623261333262393837323139222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3738316131383134316235663462356438373938646334646233323138623130222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3532393237362b30303a3030227d0a7b226576656e745f6964223a226576656e745f6261333663633939396135393462383061346330613738656161373938663766222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3630343934322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3666663931663235623730333434383761343464333031663037326561363932222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3637313235302b30303a3030227d0a7b226576656e745f6964223a226576656e745f6632383761386235643734393462626439643738393561666335656235336638222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3733343733392b30303a3030227d0a7b226576656e745f6964223a226576656e745f6162393363656565383165383462633261376238623864316264633662346264222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a2266697874757265207665726966696564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35313a35382e3739383232352b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_e4807df66d3640aa9711209cadb98b74",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": null,
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:51:58.560806+00:00",
+            "updated_at": "2026-10-15T15:51:58.823449+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "85d1ced8f0bd612ac1bf2e2fd13b6b74ba1154226138dbd6f90511da142e7871",
+              "projection_fingerprint": "6a7fd51d239233433a28875ad592e86024bf7ec65e377fa718dbf10111a4f6ef",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "cad6038b08c6dc395e08226a0b8f4413b321631367a44d86145fa380da2d77aa",
+            "checkpoint.md": "14ce15d1b5e9b7eb1c653c28724c8f22906b2bbd6f2b3c6fd36b26c245e48b34",
+            "events.jsonl": "5d412a8b72c71dddbb2f9b7a295c9f98c2b65ca476d60bda7ded517710c34035",
+            "plan.json": "02e31dd54f1d95c0755abe78dc091a8beb28d5930fdc961f4e006cc19a7d0126",
+            "task.json": "15133ecdbf304b7807258c6b29dc62d83959e1c0d0858f0f727ac43b453ba75d",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "44def9fc3fee763b2b2c9fbfeca6c8f50c93efaf51b0a618796edf113afc0e60",
+            "microtasks/m1/restore_point/manifest.json": "ce8e65a0aa6d1b04efea450ddb450d6a5d3f7bf0ff776ad8b95cd794296d2f24",
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": "acb2a768477036752b5e2948944a572dcc9ae76d60f72f498749c402c83ceed6",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": "4b3cc4c79a070240747f5582e0d261204fd4101be6e32225e79e53483abfd6c0"
+          },
+          "claims": {},
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_781a18141b5f4b5d8798dc4db3218b10",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_39bacc40a5b54effb12c5bae5f14eddc"
+              ],
+              "snapshot_ids": [
+                "snapshot_87709f8d70214037ac517d1e10c64122"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.475579+00:00",
+              "updated_at": "2026-10-15T15:51:58.491161+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_39bacc40a5b54effb12c5bae5f14eddc.json": {
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.json": {
+              "snapshot_id": "snapshot_87709f8d70214037ac517d1e10c64122",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_39bacc40a5b54effb12c5bae5f14eddc",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_87709f8d70214037ac517d1e10c64122.bin",
+              "captured_at": "2026-10-15T15:51:58.486178+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:51:58.486178+00:00",
+              "updated_at": "2026-10-15T15:51:58.486178+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_87709f8d70214037ac517d1e10c64122.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_size": 7,
+          "target_hex": "5052450d0a00ff"
+        }
+      }
+    ]
+  }
+}

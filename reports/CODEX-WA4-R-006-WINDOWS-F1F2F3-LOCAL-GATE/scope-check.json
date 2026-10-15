@@ -1,0 +1,84 @@
+{
+  "task": "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+  "status": "PASS",
+  "protected_initial_files": 243,
+  "changed_existing": [
+    {
+      "path": "web_alarm/event_checkpoint_store.py",
+      "before": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+      "after": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad"
+    },
+    {
+      "path": "web_alarm/operation_store.py",
+      "before": "d7088a782c280fca4423f681d23657e88ea1d8e021bdb43ca449bb4875316764",
+      "after": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360"
+    },
+    {
+      "path": "web_alarm/task_store.py",
+      "before": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+      "after": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "before": "21544aaac9f2448eb31b51aba43c69acf10ed7ff32828d962d16f73d82e83d41",
+      "after": "786e824a0ecab020735f33f2ab9cef3d8fc6010ce736d4c2fd17215cdf8fa5b1"
+    }
+  ],
+  "unexpected_existing_changes": [],
+  "sealed_R003_R004_R005_unchanged": true,
+  "shared_docs_runner_CI_unchanged": true,
+  "ordinary_source_pin_check": "102 final full source files matched; verify_package.py",
+  "syntax": [
+    {
+      "file": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/collect_evidence.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/quality_controls.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/review_saved_raw.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/validate_r005_transport.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/verify_package.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "test_web_alarm_wa4r006_local_gate.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "web_alarm/task_store.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "web_alarm/operation_store.py",
+      "status": "PASS; AST parse"
+    },
+    {
+      "file": "web_alarm/event_checkpoint_store.py",
+      "status": "PASS; AST parse"
+    }
+  ],
+  "content_scan": {
+    "hits": [],
+    "patterns": [
+      "private_key",
+      "github_token",
+      "openai_key",
+      "bearer_credential"
+    ],
+    "scope": "selected report texts plus every new ZIP member; synthetic fixture/locator review; not universal secret detection"
+  },
+  "write_scope": "three related runtime modules, one new root test, own report and personal rotation",
+  "temp_retained": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov",
+  "incomplete_parent_cleanup": "No blanket cleanup; isolated interrupted-parent TEMP remnants may remain",
+  "personal_rotation": "PASS; full assignment/history preserved, B1 WAITING",
+  "final_protected_unchanged_outside_scope": 239
+}

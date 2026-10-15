@@ -1,0 +1,422 @@
+{
+  "origin": {
+    "id": "R021",
+    "attempt": "full-release",
+    "archive": "evidence.zip",
+    "member": "attempts/full-release/results.json",
+    "member_sha256": "87e4a3f4a3ec19d0b1449a0677aceab9049ea81f9666e8bee6da05ed7a61a59e",
+    "member_bytes": 3979867,
+    "pointer": "/tests/568",
+    "selector": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+    "original_status": "PASS",
+    "canonical_record_sha256": "d29d0ff3dc25b2fe8177b92fb8fbfe0eb3be22ac6f6c8317457eabbe0f5fed7a",
+    "file": "records/R021.json",
+    "classification": "FINAL_RUNTIME_RECORD"
+  },
+  "raw": {
+    "test": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+    "status": "PASS",
+    "facts": [
+      {
+        "round": 0,
+        "workers": {
+          "c0": {
+            "returncode": 9,
+            "stderr": "",
+            "result": "EXIT 9",
+            "trace": [
+              {
+                "phase": "before_directory_move",
+                "pid": 12788
+              },
+              {
+                "phase": "directory_moved",
+                "pid": 12788
+              },
+              {
+                "phase": "crash_exit_9",
+                "pid": 12788
+              }
+            ]
+          },
+          "b1": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b1",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "b2": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b2",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "m3": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "m3",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 48, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 470, in create_microtask\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          }
+        },
+        "terminal": {
+          "active": false,
+          "completed": true,
+          "task_status": "PLANNED",
+          "operation_ids": [],
+          "plan_ids": [
+            "m1"
+          ],
+          "event_count": 5,
+          "project_one": "6f6e652e7478740a",
+          "project_two": "74776f2e7478740a"
+        }
+      },
+      {
+        "round": 1,
+        "workers": {
+          "c0": {
+            "returncode": 9,
+            "stderr": "",
+            "result": "EXIT 9",
+            "trace": [
+              {
+                "phase": "before_directory_move",
+                "pid": 6924
+              },
+              {
+                "phase": "directory_moved",
+                "pid": 6924
+              },
+              {
+                "phase": "crash_exit_9",
+                "pid": 6924
+              }
+            ]
+          },
+          "b1": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b1",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "b2": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b2",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "m3": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "m3",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 48, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 470, in create_microtask\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          }
+        },
+        "terminal": {
+          "active": false,
+          "completed": true,
+          "task_status": "PLANNED",
+          "operation_ids": [],
+          "plan_ids": [
+            "m1"
+          ],
+          "event_count": 5,
+          "project_one": "6f6e652e7478740a",
+          "project_two": "74776f2e7478740a"
+        }
+      },
+      {
+        "round": 2,
+        "workers": {
+          "c0": {
+            "returncode": 9,
+            "stderr": "",
+            "result": "EXIT 9",
+            "trace": [
+              {
+                "phase": "before_directory_move",
+                "pid": 10484
+              },
+              {
+                "phase": "directory_moved",
+                "pid": 10484
+              },
+              {
+                "phase": "crash_exit_9",
+                "pid": 10484
+              }
+            ]
+          },
+          "b1": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b1",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "b2": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b2",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "m3": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "m3",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 48, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 470, in create_microtask\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          }
+        },
+        "terminal": {
+          "active": false,
+          "completed": true,
+          "task_status": "PLANNED",
+          "operation_ids": [],
+          "plan_ids": [
+            "m1"
+          ],
+          "event_count": 5,
+          "project_one": "6f6e652e7478740a",
+          "project_two": "74776f2e7478740a"
+        }
+      },
+      {
+        "round": 3,
+        "workers": {
+          "c0": {
+            "returncode": 9,
+            "stderr": "",
+            "result": "EXIT 9",
+            "trace": [
+              {
+                "phase": "before_directory_move",
+                "pid": 1704
+              },
+              {
+                "phase": "directory_moved",
+                "pid": 1704
+              },
+              {
+                "phase": "crash_exit_9",
+                "pid": 1704
+              }
+            ]
+          },
+          "b1": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b1",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "b2": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "b2",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 44, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\operation_store.py\", line 436, in begin\n    self.tasks.task_directory(task_id, active_only=True)\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 322, in task_directory\n    return self._active_task_dir(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 262, in _active_task_dir\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          },
+          "m3": {
+            "returncode": 0,
+            "stderr": "",
+            "name": "m3",
+            "result": "FAILED:TaskStoreError",
+            "error": [
+              {
+                "type": "web_alarm.task_store.TaskStoreError",
+                "message": "unknown active task_id: task_w",
+                "errno": null,
+                "winerror": null,
+                "frames": [
+                  "  File \"<string>\", line 48, in <module>\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 470, in create_microtask\n    task_dir = self._task_path(task_id, active_only=True)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+                  "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 185, in _task_path\n    raise TaskStoreError(f\"unknown {'active ' if active_only else ''}task_id: {task_id}\")\n"
+                ]
+              }
+            ],
+            "trace": []
+          }
+        },
+        "terminal": {
+          "active": false,
+          "completed": true,
+          "task_status": "PLANNED",
+          "operation_ids": [],
+          "plan_ids": [
+            "m1"
+          ],
+          "event_count": 5,
+          "project_one": "6f6e652e7478740a",
+          "project_two": "74776f2e7478740a"
+        }
+      }
+    ]
+  }
+}

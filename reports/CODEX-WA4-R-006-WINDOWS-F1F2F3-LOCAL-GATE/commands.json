@@ -1,0 +1,291 @@
+{
+  "runtime_commands": [
+    {
+      "attempt": "baseline-focused",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\baseline-focused",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "test_web_alarm_wa4r002_diagnostics",
+        "test_web_alarm_reliability_wa017",
+        "test_web_alarm_projection_concurrency",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_task_store",
+        "test_web_alarm_operation_store_concurrency",
+        "test_web_alarm_target_claims_concurrency"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\baseline-focused.log"
+    },
+    {
+      "attempt": "adversarial-before",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\adversarial-before",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "test_web_alarm_wa4r006_local_gate"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\adversarial-before.log"
+    },
+    {
+      "attempt": "adversarial-after",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\adversarial-after",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "test_web_alarm_wa4r006_local_gate"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\adversarial-after.log"
+    },
+    {
+      "attempt": "lock-identity-before",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\probe_lock_identity.py",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\lock-identity-before"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\lock-identity-before.log"
+    },
+    {
+      "attempt": "quality",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\quality",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "reports.CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE.quality_controls.Sensitivity",
+        "reports.CODEX-WA4-R-004-F1-CLOSEOUT-GATE.quality_controls.Sensitivity"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\quality.log"
+    },
+    {
+      "attempt": "quality-final",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\quality-final",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "reports.CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE.quality_controls.Sensitivity",
+        "reports.CODEX-WA4-R-004-F1-CLOSEOUT-GATE.quality_controls.Sensitivity"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\quality-final.log"
+    },
+    {
+      "attempt": "full-release",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\full-release",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "all"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\full-release.log"
+    },
+    {
+      "attempt": "bounded-release",
+      "cwd": "M:\\GitHub\\ag_llm",
+      "environment": {
+        "PYTHONUTF8": "1"
+      },
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "wa4a_acceptance.py",
+        "--output",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\bounded-release",
+        "--task",
+        "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+        "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+        "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task"
+      ],
+      "stdout_stderr_log": "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\bounded-release.log"
+    }
+  ],
+  "incomplete_commands": {
+    "full-final": [
+      ".venv/Scripts/python.exe",
+      "-X",
+      "utf8",
+      "-B",
+      "wa4a_acceptance.py",
+      "--output",
+      "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\full-final",
+      "--task",
+      "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+      "all"
+    ],
+    "focused-final": [
+      ".venv/Scripts/python.exe",
+      "-X",
+      "utf8",
+      "-B",
+      "wa4a_acceptance.py",
+      "--output",
+      "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov\\focused-final",
+      "--task",
+      "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+      "test_web_alarm_wa4r006_local_gate",
+      "test_web_alarm_wa4r002_diagnostics",
+      "test_web_alarm_reliability_wa017",
+      "test_web_alarm_projection_concurrency",
+      "test_web_alarm_mutation_executor",
+      "test_web_alarm_task_store",
+      "test_web_alarm_operation_store_concurrency",
+      "test_web_alarm_target_claims_concurrency"
+    ]
+  },
+  "processing_commands": [
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/validate_export.py",
+        "--sources",
+        "M:\\GitHub\\ag_llm",
+        "--self-check"
+      ]
+    },
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/validate_r005_transport.py",
+        "--package",
+        "reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE",
+        "--sources",
+        "M:\\GitHub\\ag_llm",
+        "--manifest-sha256",
+        "f594e6c315b638fcb61ce35f683cc07c3a8f04316be196a1d86821aabf0b6e64",
+        "--simulate-lf"
+      ]
+    },
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/validate_r005_transport.py",
+        "--package",
+        "reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE",
+        "--sources",
+        "M:\\GitHub\\ag_llm",
+        "--manifest-sha256",
+        "f594e6c315b638fcb61ce35f683cc07c3a8f04316be196a1d86821aabf0b6e64"
+      ]
+    },
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/review_saved_raw.py",
+        "--temp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov"
+      ]
+    },
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/collect_evidence.py",
+        "--temp",
+        "C:\\Users\\REX\\AppData\\Local\\Temp\\codex-wa4r006-lwgw7sov"
+      ]
+    },
+    {
+      "argv": [
+        ".venv/Scripts/python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/verify_package.py",
+        "--source-check",
+        "M:\\GitHub\\ag_llm",
+        "--self-check"
+      ]
+    }
+  ],
+  "collection_command": {
+    "argv": [
+      ".venv/Scripts/python.exe",
+      "-X",
+      "utf8",
+      "-B",
+      "-"
+    ],
+    "input": "PowerShell here-string; existing wa4a_acceptance.GUARD then unittest.TestLoader().discover(ROOT, pattern=\"test_web_alarm*.py\"); recursive ids/count/source map saved in collection/collection.json; no test execution"
+  }
+}

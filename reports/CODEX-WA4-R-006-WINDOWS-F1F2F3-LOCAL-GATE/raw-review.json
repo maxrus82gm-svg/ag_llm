@@ -1,0 +1,92 @@
+{
+  "task": "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+  "status": "PASS",
+  "checks": [
+    {
+      "case": "native recovery refuses twice, then fresh completion",
+      "status": "PASS",
+      "worker_pids": {
+        "fixture_apply": 14224,
+        "initial_fault": 30252,
+        "recovery_fault": 26964,
+        "late": 13636,
+        "recover": 25392,
+        "raw_reopen": 18624,
+        "historical_replay": 16684,
+        "again": 8824
+      },
+      "winerrors": {
+        "initial_fault": 5,
+        "recovery_fault": 5
+      },
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_fresh_recovery_can_fail_again_without_success_or_second_apply"
+    },
+    {
+      "case": "forced death on STARTED/before_apply",
+      "status": "PASS",
+      "killed_pid": 30660,
+      "exit": 1,
+      "physical_target": "5052450d0a00ff",
+      "physical_effects": "No apply_exit; actual PRE unchanged; recorded apply_enter is not an effect count",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_killed_started_worker_releases_locks_without_blind_repeat"
+    },
+    {
+      "case": "post-DONE exception / fresh known-receipt replay",
+      "status": "PASS",
+      "parent_pid": "NOT PRESENT IN SOURCE",
+      "replay_pid": 9008,
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_exception_after_durable_done_replays_without_second_apply"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_task_identity_mismatch_blocks_gated_and_direct_completion",
+      "status": "PASS"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_plan_identity_mismatch_blocks_gated_completion",
+      "status": "PASS"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_foreign_microtask_parent_refuses_before_intent_and_apply",
+      "status": "PASS"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_microtask_record_id_mismatch_refuses_before_intent_and_apply",
+      "status": "PASS"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_unterminated_event_read_and_append_fail_without_modifying_prefix",
+      "status": "PASS"
+    },
+    {
+      "case": "initial RED preserved / final PASS",
+      "before": "FAIL",
+      "after": "PASS",
+      "source_selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_unterminated_events_block_closeout_and_known_receipt_replay",
+      "status": "PASS"
+    },
+    {
+      "case": "quality accounting",
+      "status": "PASS",
+      "outer_pass": 12,
+      "intentional_inner_failures": 12,
+      "inner_errors": 0,
+      "inner_skips": 0
+    }
+  ],
+  "scope": "Recalculation from saved RAW only; not a second runtime execution or independent acceptance"
+}

@@ -1,0 +1,1407 @@
+{
+  "origin": {
+    "id": "R040",
+    "attempt": "full-release",
+    "archive": "evidence.zip",
+    "member": "attempts/full-release/results.json",
+    "member_sha256": "87e4a3f4a3ec19d0b1449a0677aceab9049ea81f9666e8bee6da05ed7a61a59e",
+    "member_bytes": 3979867,
+    "pointer": "/tests/790",
+    "selector": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_task_identity_mismatch_blocks_gated_and_direct_completion",
+    "original_status": "PASS",
+    "canonical_record_sha256": "b0f37096abfcd4d988c15b67d679abaaa4c8f34a723f82e9fe16373df6e20db4",
+    "file": "records/R040.json",
+    "classification": "FINAL_RUNTIME_RECORD"
+  },
+  "raw": {
+    "test": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_task_identity_mismatch_blocks_gated_and_direct_completion",
+    "status": "PASS",
+    "facts": [
+      {
+        "task": "CODEX-WA4-R-002",
+        "test": "test_web_alarm_wa4r006_local_gate.LocalGateTests.test_task_identity_mismatch_blocks_gated_and_direct_completion",
+        "oracle": "raw files, literal expected bytes",
+        "execution_task": "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE"
+      },
+      {
+        "execution_task": "CODEX-WA4-R-004-F1-CLOSEOUT-GATE",
+        "input_quality": "one real tracked apply; nonempty receipt/checkpoint/snapshot"
+      },
+      {
+        "PRE": {
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "PLANNED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.016145+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_f48810aea2e14e799a3e5bd5c23b66c8",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.242804+00:00"
+          },
+          "operations": {},
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "ACTIVE",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.012826+00:00",
+              "updated_at": "2026-10-15T15:52:21.246832+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_0ad0c524db2c4cb0b20f29c7c940f74a",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:52:21.105698+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.105698+00:00",
+              "updated_at": "2026-10-15T15:52:21.105698+00:00"
+            },
+            {
+              "event_id": "event_13adf9f748c74a4681ec17dfd1d54838",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.181440+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.181440+00:00",
+              "updated_at": "2026-10-15T15:52:21.181440+00:00"
+            },
+            {
+              "event_id": "event_07c3210edaf94f84af63716fb5da96a2",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.250110+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.250110+00:00",
+              "updated_at": "2026-10-15T15:52:21.250110+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_0964690f5c5842668df7219964793786",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": null,
+            "current_microtask_id": "m1",
+            "current_status": "ACTIVE",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": null,
+            "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:21.139398+00:00",
+            "updated_at": "2026-10-15T15:52:21.278576+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "aad733c163390fc0e4e31ef5f77c9d8949c5e3056320cdad0f84a35f30da628c",
+              "projection_fingerprint": "4c334d2693e978ee83aab4c6c3a12ab2a56a3b4030f7f7e453a9d3b0792595e3",
+              "authority_source": "lifecycle"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "e9b4afd0bd2dec8f664c43a151006f0aa59c223472d8aa1a24357e64a3217ef8",
+            "checkpoint.md": "ef1df0534505d98a488f58e1a35be992612ea83b3b5d027a5638b561cfd12afd",
+            "events.jsonl": "025cb3f4d475bb95ae814e13e35613a630efd53a5563d20c234567187921baa8",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "b331664a2030b8987840c81529ef0b648cb842e930cdbd1be56189a69af6d715",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "f252ed2f6b1cfd6498ee2fb546342f123d3a44622ec35ad1d22b17ad8b14bc3e",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "claims": {},
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_290205c674a241388552a08d9422b3c0"
+              ],
+              "snapshot_ids": [
+                "snapshot_3810d560083a4f12bd0c83f79f20f8f9"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.050822+00:00",
+              "updated_at": "2026-10-15T15:52:21.065040+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": {
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": {
+              "snapshot_id": "snapshot_3810d560083a4f12bd0c83f79f20f8f9",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "captured_at": "2026-10-15T15:52:21.059828+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_size": 7,
+          "target_hex": "5052450d0a00ff"
+        }
+      },
+      {
+        "worker": "fixture_apply",
+        "pid": 23444,
+        "exit": 0,
+        "stdout": "{\"result\": \"EXECUTED\", \"result_code\": \"EXACT_POST_STATE_PROVED\", \"receipt\": {\"exists\": true, \"size\": 7, \"sha256\": \"bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f\", \"eol\": \"lf\", \"bom\": false, \"normalized_sha256\": \"bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f\", \"source\": \"server_observed_at_done\", \"observed_at\": \"2026-10-15T15:52:21.921355+00:00\", \"revision\": 3, \"matches_expected_post\": true, \"eol_only_drift\": false}, \"claim_release\": {\"result\": \"RELEASED\", \"result_code\": \"OWNER_RELEASED\"}}\n",
+        "stderr": "",
+        "trace": [
+          {
+            "phase": "actor_enter",
+            "pid": 1788,
+            "action": "mutate",
+            "mode": "normal"
+          },
+          {
+            "phase": "durable_STARTED",
+            "pid": 1788
+          },
+          {
+            "phase": "apply_enter",
+            "pid": 1788,
+            "path": "C:\\Users\\REX\\AppData\\Local\\Temp\\wa4r002_p6yclaps\\project\\data.bin"
+          },
+          {
+            "phase": "apply_exit",
+            "pid": 1788,
+            "file_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f"
+          },
+          {
+            "phase": "durable_DONE",
+            "pid": 1788
+          }
+        ]
+      },
+      {
+        "F1_quiescent_PRE_with_receipt_checkpoint_snapshot": {
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "PLANNED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.016145+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_f48810aea2e14e799a3e5bd5c23b66c8",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.242804+00:00"
+          },
+          "operations": {
+            "op_diag": {
+              "operation_id": "op_diag",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "data.bin",
+              "status": "VERIFIED",
+              "request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+              "expected_precondition_sha256": null,
+              "result_summary": "WA4-E: executed; exact post-state proved by the server",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.648548+00:00",
+              "updated_at": "2026-10-15T15:52:22.065967+00:00",
+              "contract_version": 2,
+              "revision": 4,
+              "contract": {
+                "workspace_id": "ws_diag",
+                "target_key": "data.bin",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "037c6c13f6a778cbf04b773880b8397fb3d95c6609b73397c6df9c6007a23839",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:52:21.648548+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "size": 7,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": {
+                "exists": true,
+                "size": 7,
+                "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "eol": "lf",
+                "bom": false,
+                "normalized_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "source": "server_observed_at_done",
+                "observed_at": "2026-10-15T15:52:21.921355+00:00",
+                "revision": 3,
+                "matches_expected_post": true,
+                "eol_only_drift": false
+              },
+              "recovery_settlement": null
+            }
+          },
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.012826+00:00",
+              "updated_at": "2026-10-15T15:52:22.248695+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_0ad0c524db2c4cb0b20f29c7c940f74a",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:52:21.105698+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.105698+00:00",
+              "updated_at": "2026-10-15T15:52:21.105698+00:00"
+            },
+            {
+              "event_id": "event_13adf9f748c74a4681ec17dfd1d54838",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.181440+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.181440+00:00",
+              "updated_at": "2026-10-15T15:52:21.181440+00:00"
+            },
+            {
+              "event_id": "event_07c3210edaf94f84af63716fb5da96a2",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.250110+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.250110+00:00",
+              "updated_at": "2026-10-15T15:52:21.250110+00:00"
+            },
+            {
+              "event_id": "event_4c76fea06bfc443ca79e610523e13e77",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "action": "write",
+                "target": "data.bin",
+                "request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "data.bin",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f"
+                },
+                "payload": {
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "size": 7
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:52:21.658624+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.658624+00:00",
+              "updated_at": "2026-10-15T15:52:21.658624+00:00"
+            },
+            {
+              "event_id": "event_1e678d5f5802477497cdd9386c7fc8f1",
+              "task_id": "task_diag",
+              "event_type": "TARGET_CLAIM_ACQUIRED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "target": "data.bin",
+                "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+                "operation_revision": 1,
+                "cas_basis": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                },
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:21.754623+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.754623+00:00",
+              "updated_at": "2026-10-15T15:52:21.754623+00:00"
+            },
+            {
+              "event_id": "event_cc963abd21174a1d8602d12ab0a4a229",
+              "task_id": "task_diag",
+              "event_type": "MUTATION_AUTHORIZED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "authorization_id": "auth_bc5955a3e6d5fd59f5d9096ac6057ee7",
+                "result_code": "CAS_BASIS_HOLDS",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:21.782833+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.782833+00:00",
+              "updated_at": "2026-10-15T15:52:21.782833+00:00"
+            },
+            {
+              "event_id": "event_95521963c7b044e9a4eb01b2fe3438fa",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "INTENT",
+                "to": "STARTED",
+                "result_summary": "WA4-E: authoritative execution started",
+                "revision": 2
+              },
+              "recorded_at": "2026-10-15T15:52:21.804162+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.804162+00:00",
+              "updated_at": "2026-10-15T15:52:21.804162+00:00"
+            },
+            {
+              "event_id": "event_65481d9b42ab4348902891cb035fb369",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "STARTED",
+                "to": "DONE",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 3,
+                "receipt": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "matches_expected_post": true
+                }
+              },
+              "recorded_at": "2026-10-15T15:52:21.926828+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.926828+00:00",
+              "updated_at": "2026-10-15T15:52:21.926828+00:00"
+            },
+            {
+              "event_id": "event_83ba5b77b7f7407c832acf7834842e34",
+              "task_id": "task_diag",
+              "event_type": "MUTATION_EXECUTED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "mutation_kind": "WRITE",
+                "receipt": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f"
+                },
+                "retry_resolution_id": null
+              },
+              "recorded_at": "2026-10-15T15:52:22.013611+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.013611+00:00",
+              "updated_at": "2026-10-15T15:52:22.013611+00:00"
+            },
+            {
+              "event_id": "event_b96ebd853cd74cf9a82a43c83b4db24f",
+              "task_id": "task_diag",
+              "event_type": "TARGET_CLAIM_RELEASED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:22.031730+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.031730+00:00",
+              "updated_at": "2026-10-15T15:52:22.031730+00:00"
+            },
+            {
+              "event_id": "event_2f0a0cf5e7c14b1c978885967457ba05",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 4
+              },
+              "recorded_at": "2026-10-15T15:52:22.068582+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.068582+00:00",
+              "updated_at": "2026-10-15T15:52:22.068582+00:00"
+            },
+            {
+              "event_id": "event_427dcbb98f3c4df4be316563131cd07b",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:22.158195+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.158195+00:00",
+              "updated_at": "2026-10-15T15:52:22.158195+00:00"
+            },
+            {
+              "event_id": "event_9eb037e33cc44c26915fa7f1ecc1a3c3",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "independent POST bytes checked"
+              },
+              "recorded_at": "2026-10-15T15:52:22.251741+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.251741+00:00",
+              "updated_at": "2026-10-15T15:52:22.251741+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3463373666656130366266633434336361373965363130353233653133653737222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f494e54454e54222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22616374696f6e223a227772697465222c22746172676574223a22646174612e62696e222c22726571756573745f66696e6765727072696e74223a2238623330353936363264393336313766363863373665623030386265383964386234373035613931353639346635373661363335366230313562343938656366222c22636f6e74726163745f76657273696f6e223a322c227265766973696f6e223a312c227461726765745f6b6579223a22646174612e62696e222c227072655f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c2265787065637465645f706f73745f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c227061796c6f6164223a7b22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c2273697a65223a377d2c22636f6e74726163745f636f6d706c657465223a747275657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030227d0a7b226576656e745f6964223a226576656e745f3165363738643566353830323437373439376364643933383663376663386631222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f4143515549524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22746172676574223a22646174612e62696e222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c226f7065726174696f6e5f7265766973696f6e223a312c226361735f6261736973223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030227d0a7b226576656e745f6964223a226576656e745f6363393633616264323131373461316438363032643132616230613461323239222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f415554484f52495a4544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22617574686f72697a6174696f6e5f6964223a22617574685f6263353935356133653664356664353966356439303936616336303537656537222c22726573756c745f636f6465223a224341535f42415349535f484f4c4453222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030227d0a7b226576656e745f6964223a226576656e745f3935353231393633633762303434653961346562303162326665333433386661222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22494e54454e54222c22746f223a2253544152544544222c22726573756c745f73756d6d617279223a225741342d453a20617574686f726974617469766520657865637574696f6e2073746172746564222c227265766973696f6e223a327d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3635343831643962343261623433343839303238393163623033356662333639222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a2253544152544544222c22746f223a22444f4e45222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a332c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c226d6174636865735f65787065637465645f706f7374223a747275657d7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3833626135623737623766373430376338333261636637383334383432653334222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f4558454355544544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b226d75746174696f6e5f6b696e64223a225752495445222c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c2272657472795f7265736f6c7574696f6e5f6964223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030227d0a7b226576656e745f6964223a226576656e745f6239366562643835336364373463663961383261343363383362346462323466222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f52454c4541534544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3266306130636635653763313462316339373838383539363734353762613035222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a347d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3432376463626239386633633464663462653331363536333133316364303762222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030227d0a7b226576656e745f6964223a226576656e745f3965623033376533336363343463323639313566613766316563633161336333222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a22696e646570656e64656e7420504f535420627974657320636865636b6564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_0964690f5c5842668df7219964793786",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": "op_diag",
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:21.139398+00:00",
+            "updated_at": "2026-10-15T15:52:22.346521+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "e622ff6d929a911dcc66699ecc816659ca4a5eeb3b1cf423c77a94aafeaaa3b4",
+              "projection_fingerprint": "ae9418e1bf599dad76c0bb0e2fb6f728e3bc2a295a83965df137dc922bfcdccc",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "e9e3f4d7d9114d9a5b27ce8714309b70453dcca6807e64d29373ee2a0d56032e",
+            "checkpoint.md": "cb788aede4b28a0672417e99734a46350d5c908ba01838ce507ebb7b6a21f014",
+            "events.jsonl": "5bbb8a586a31915e50bf857f07028b31a967868088ff5c44cc0d03ac269f4c05",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "b331664a2030b8987840c81529ef0b648cb842e930cdbd1be56189a69af6d715",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "fd4191b7a0d605b3df72d0920b92ae890f304b9ec4ca3a838658b1dd7c8c86f9",
+            "operations/op_diag.json": "d3c98cbf44816b7f4e5d3671584843112046a98ae7b1add8334439c383c8abbd",
+            "payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "claims": {
+            "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238": {
+              "claim_store_version": 1,
+              "schema_version": 1,
+              "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+              "physical_key": "c:/users/rex/appdata/local/temp/wa4r002_p6yclaps/project/data.bin",
+              "next_generation": 2,
+              "active": null,
+              "history": [
+                {
+                  "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                  "generation": 1,
+                  "task_id": "task_diag",
+                  "microtask_id": "m1",
+                  "operation_id": "op_diag",
+                  "workspace_id": "ws_diag",
+                  "target": "data.bin",
+                  "target_key": "data.bin",
+                  "operation_revision": 1,
+                  "operation_request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+                  "contract_version": 2,
+                  "cas_basis": {
+                    "exists": true,
+                    "size": 7,
+                    "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                  },
+                  "status": "RELEASED",
+                  "created_at": "2026-10-15T15:52:21.751129+00:00",
+                  "provenance": {
+                    "agent": null,
+                    "channel": null,
+                    "authority": "claimed"
+                  },
+                  "ended_at": "2026-10-15T15:52:22.029231+00:00",
+                  "end_reason": "WA4E_EXECUTED",
+                  "ended_by": {
+                    "agent": null,
+                    "channel": "wa4e_executor",
+                    "authority": "claimed"
+                  },
+                  "superseded_by": null,
+                  "authorizations": [
+                    {
+                      "authorization_id": "auth_bc5955a3e6d5fd59f5d9096ac6057ee7",
+                      "result": "AUTHORIZED",
+                      "result_code": "CAS_BASIS_HOLDS",
+                      "operation_revision": 1,
+                      "observed": {
+                        "exists": true,
+                        "size": 7,
+                        "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                      },
+                      "at": "2026-10-15T15:52:21.779843+00:00"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_290205c674a241388552a08d9422b3c0"
+              ],
+              "snapshot_ids": [
+                "snapshot_3810d560083a4f12bd0c83f79f20f8f9"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.050822+00:00",
+              "updated_at": "2026-10-15T15:52:21.065040+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": {
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": {
+              "snapshot_id": "snapshot_3810d560083a4f12bd0c83f79f20f8f9",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "captured_at": "2026-10-15T15:52:21.059828+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_size": 7,
+          "target_hex": "504f53540a00fe"
+        }
+      },
+      {
+        "fault": {
+          "file": "task.json",
+          "field": "task_id",
+          "value": "foreign_task",
+          "before_sha256": "b331664a2030b8987840c81529ef0b648cb842e930cdbd1be56189a69af6d715",
+          "fault_bytes_hex": "7b227461736b5f6964223a2022666f726569676e5f7461736b222c2022776f726b73706163655f6964223a202277735f64696167222c20227469746c65223a2022646961676e6f73746963222c20227261775f7461736b223a202273796e74686574696320524157205441534b222c2022676f616c223a202272616365222c2022737461747573223a2022504c414e4e4544222c2022706c616e5f7265766973696f6e223a20322c2022736368656d615f76657273696f6e223a20312c2022637265617465645f6174223a2022323032362d31302d31355431353a35323a32302e3938313137342b30303a3030222c2022757064617465645f6174223a2022323032362d31302d31355431353a35323a32312e3031363134352b30303a3030227d"
+        }
+      },
+      {
+        "identity_fault_PRE": {
+          "active": true,
+          "completed": false,
+          "target_hex": "504f53540a00fe",
+          "files_sha256": {
+            "checkpoint.json": "e9e3f4d7d9114d9a5b27ce8714309b70453dcca6807e64d29373ee2a0d56032e",
+            "checkpoint.md": "cb788aede4b28a0672417e99734a46350d5c908ba01838ce507ebb7b6a21f014",
+            "events.jsonl": "5bbb8a586a31915e50bf857f07028b31a967868088ff5c44cc0d03ac269f4c05",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "c2501d4c3eabc852b043766d7329e43b79fa5057450fdadc39478421aeec446c",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "fd4191b7a0d605b3df72d0920b92ae890f304b9ec4ca3a838658b1dd7c8c86f9",
+            "operations/op_diag.json": "d3c98cbf44816b7f4e5d3671584843112046a98ae7b1add8334439c383c8abbd",
+            "payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "task_json_hex": "7b227461736b5f6964223a2022666f726569676e5f7461736b222c2022776f726b73706163655f6964223a202277735f64696167222c20227469746c65223a2022646961676e6f73746963222c20227261775f7461736b223a202273796e74686574696320524157205441534b222c2022676f616c223a202272616365222c2022737461747573223a2022504c414e4e4544222c2022706c616e5f7265766973696f6e223a20322c2022736368656d615f76657273696f6e223a20312c2022637265617465645f6174223a2022323032362d31302d31355431353a35323a32302e3938313137342b30303a3030222c2022757064617465645f6174223a2022323032362d31302d31355431353a35323a32312e3031363134352b30303a3030227d",
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3463373666656130366266633434336361373965363130353233653133653737222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f494e54454e54222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22616374696f6e223a227772697465222c22746172676574223a22646174612e62696e222c22726571756573745f66696e6765727072696e74223a2238623330353936363264393336313766363863373665623030386265383964386234373035613931353639346635373661363335366230313562343938656366222c22636f6e74726163745f76657273696f6e223a322c227265766973696f6e223a312c227461726765745f6b6579223a22646174612e62696e222c227072655f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c2265787065637465645f706f73745f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c227061796c6f6164223a7b22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c2273697a65223a377d2c22636f6e74726163745f636f6d706c657465223a747275657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030227d0a7b226576656e745f6964223a226576656e745f3165363738643566353830323437373439376364643933383663376663386631222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f4143515549524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22746172676574223a22646174612e62696e222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c226f7065726174696f6e5f7265766973696f6e223a312c226361735f6261736973223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030227d0a7b226576656e745f6964223a226576656e745f6363393633616264323131373461316438363032643132616230613461323239222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f415554484f52495a4544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22617574686f72697a6174696f6e5f6964223a22617574685f6263353935356133653664356664353966356439303936616336303537656537222c22726573756c745f636f6465223a224341535f42415349535f484f4c4453222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030227d0a7b226576656e745f6964223a226576656e745f3935353231393633633762303434653961346562303162326665333433386661222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22494e54454e54222c22746f223a2253544152544544222c22726573756c745f73756d6d617279223a225741342d453a20617574686f726974617469766520657865637574696f6e2073746172746564222c227265766973696f6e223a327d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3635343831643962343261623433343839303238393163623033356662333639222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a2253544152544544222c22746f223a22444f4e45222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a332c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c226d6174636865735f65787065637465645f706f7374223a747275657d7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3833626135623737623766373430376338333261636637383334383432653334222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f4558454355544544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b226d75746174696f6e5f6b696e64223a225752495445222c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c2272657472795f7265736f6c7574696f6e5f6964223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030227d0a7b226576656e745f6964223a226576656e745f6239366562643835336364373463663961383261343363383362346462323466222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f52454c4541534544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3266306130636635653763313462316339373838383539363734353762613035222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a347d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3432376463626239386633633464663462653331363536333133316364303762222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030227d0a7b226576656e745f6964223a226576656e745f3965623033376533336363343463323639313566613766316563633161336333222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a22696e646570656e64656e7420504f535420627974657320636865636b6564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030227d0a"
+        }
+      },
+      {
+        "completion_attempt": "gated",
+        "error": [
+          {
+            "type": "CloseoutError",
+            "message": "TASK identity does not match directory: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4r002_p6yclaps\\state\\tasks\\active\\task_diag",
+            "errno": null,
+            "winerror": null,
+            "frames": [
+              "  File \"M:\\GitHub\\ag_llm\\test_web_alarm_wa4r006_local_gate.py\", line 75, in test_task_identity_mismatch_blocks_gated_and_direct_completion\n    result = call()\n             ^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\test_web_alarm_wa4r006_local_gate.py\", line 70, in <lambda>\n    (\"gated\", lambda: CloseoutService(self.h.storage).complete(TASK), CloseoutError),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 102, in complete\n    raise CloseoutError(str(exc)) from exc\n"
+            ]
+          },
+          {
+            "type": "TaskStoreError",
+            "message": "TASK identity does not match directory: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4r002_p6yclaps\\state\\tasks\\active\\task_diag",
+            "errno": null,
+            "winerror": null,
+            "frames": [
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\closeout.py\", line 90, in complete\n    state = self.tasks.completion_state(task_id)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 567, in completion_state\n    closed = self._load_task_from(task_dir).status in _CLOSED\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 195, in _load_task_from\n    raise TaskStoreError(f\"TASK identity does not match directory: {task_dir}\")\n"
+            ]
+          }
+        ],
+        "returned": null
+      },
+      {
+        "identity_fault_after_gated": {
+          "active": true,
+          "completed": false,
+          "target_hex": "504f53540a00fe",
+          "files_sha256": {
+            "checkpoint.json": "e9e3f4d7d9114d9a5b27ce8714309b70453dcca6807e64d29373ee2a0d56032e",
+            "checkpoint.md": "cb788aede4b28a0672417e99734a46350d5c908ba01838ce507ebb7b6a21f014",
+            "events.jsonl": "5bbb8a586a31915e50bf857f07028b31a967868088ff5c44cc0d03ac269f4c05",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "c2501d4c3eabc852b043766d7329e43b79fa5057450fdadc39478421aeec446c",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "fd4191b7a0d605b3df72d0920b92ae890f304b9ec4ca3a838658b1dd7c8c86f9",
+            "operations/op_diag.json": "d3c98cbf44816b7f4e5d3671584843112046a98ae7b1add8334439c383c8abbd",
+            "payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "task_json_hex": "7b227461736b5f6964223a2022666f726569676e5f7461736b222c2022776f726b73706163655f6964223a202277735f64696167222c20227469746c65223a2022646961676e6f73746963222c20227261775f7461736b223a202273796e74686574696320524157205441534b222c2022676f616c223a202272616365222c2022737461747573223a2022504c414e4e4544222c2022706c616e5f7265766973696f6e223a20322c2022736368656d615f76657273696f6e223a20312c2022637265617465645f6174223a2022323032362d31302d31355431353a35323a32302e3938313137342b30303a3030222c2022757064617465645f6174223a2022323032362d31302d31355431353a35323a32312e3031363134352b30303a3030227d",
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3463373666656130366266633434336361373965363130353233653133653737222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f494e54454e54222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22616374696f6e223a227772697465222c22746172676574223a22646174612e62696e222c22726571756573745f66696e6765727072696e74223a2238623330353936363264393336313766363863373665623030386265383964386234373035613931353639346635373661363335366230313562343938656366222c22636f6e74726163745f76657273696f6e223a322c227265766973696f6e223a312c227461726765745f6b6579223a22646174612e62696e222c227072655f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c2265787065637465645f706f73745f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c227061796c6f6164223a7b22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c2273697a65223a377d2c22636f6e74726163745f636f6d706c657465223a747275657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030227d0a7b226576656e745f6964223a226576656e745f3165363738643566353830323437373439376364643933383663376663386631222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f4143515549524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22746172676574223a22646174612e62696e222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c226f7065726174696f6e5f7265766973696f6e223a312c226361735f6261736973223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030227d0a7b226576656e745f6964223a226576656e745f6363393633616264323131373461316438363032643132616230613461323239222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f415554484f52495a4544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22617574686f72697a6174696f6e5f6964223a22617574685f6263353935356133653664356664353966356439303936616336303537656537222c22726573756c745f636f6465223a224341535f42415349535f484f4c4453222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030227d0a7b226576656e745f6964223a226576656e745f3935353231393633633762303434653961346562303162326665333433386661222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22494e54454e54222c22746f223a2253544152544544222c22726573756c745f73756d6d617279223a225741342d453a20617574686f726974617469766520657865637574696f6e2073746172746564222c227265766973696f6e223a327d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3635343831643962343261623433343839303238393163623033356662333639222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a2253544152544544222c22746f223a22444f4e45222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a332c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c226d6174636865735f65787065637465645f706f7374223a747275657d7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3833626135623737623766373430376338333261636637383334383432653334222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f4558454355544544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b226d75746174696f6e5f6b696e64223a225752495445222c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c2272657472795f7265736f6c7574696f6e5f6964223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030227d0a7b226576656e745f6964223a226576656e745f6239366562643835336364373463663961383261343363383362346462323466222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f52454c4541534544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3266306130636635653763313462316339373838383539363734353762613035222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a347d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3432376463626239386633633464663462653331363536333133316364303762222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030227d0a7b226576656e745f6964223a226576656e745f3965623033376533336363343463323639313566613766316563633161336333222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a22696e646570656e64656e7420504f535420627974657320636865636b6564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030227d0a"
+        }
+      },
+      {
+        "completion_attempt": "direct",
+        "error": [
+          {
+            "type": "TaskStoreError",
+            "message": "TASK identity does not match directory: C:\\Users\\REX\\AppData\\Local\\Temp\\wa4r002_p6yclaps\\state\\tasks\\active\\task_diag",
+            "errno": null,
+            "winerror": null,
+            "frames": [
+              "  File \"M:\\GitHub\\ag_llm\\test_web_alarm_wa4r006_local_gate.py\", line 75, in test_task_identity_mismatch_blocks_gated_and_direct_completion\n    result = call()\n             ^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\test_web_alarm_wa4r006_local_gate.py\", line 71, in <lambda>\n    (\"direct\", lambda: TaskStore(self.h.storage).complete_task(TASK), TaskStoreError),\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 560, in complete_task\n    return self.complete_task_locked(task_id)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 584, in complete_task_locked\n    state = self.completion_state(task_id)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 567, in completion_state\n    closed = self._load_task_from(task_dir).status in _CLOSED\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+              "  File \"M:\\GitHub\\ag_llm\\web_alarm\\task_store.py\", line 195, in _load_task_from\n    raise TaskStoreError(f\"TASK identity does not match directory: {task_dir}\")\n"
+            ]
+          }
+        ],
+        "returned": null
+      },
+      {
+        "identity_fault_after_direct": {
+          "active": true,
+          "completed": false,
+          "target_hex": "504f53540a00fe",
+          "files_sha256": {
+            "checkpoint.json": "e9e3f4d7d9114d9a5b27ce8714309b70453dcca6807e64d29373ee2a0d56032e",
+            "checkpoint.md": "cb788aede4b28a0672417e99734a46350d5c908ba01838ce507ebb7b6a21f014",
+            "events.jsonl": "5bbb8a586a31915e50bf857f07028b31a967868088ff5c44cc0d03ac269f4c05",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "c2501d4c3eabc852b043766d7329e43b79fa5057450fdadc39478421aeec446c",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "fd4191b7a0d605b3df72d0920b92ae890f304b9ec4ca3a838658b1dd7c8c86f9",
+            "operations/op_diag.json": "d3c98cbf44816b7f4e5d3671584843112046a98ae7b1add8334439c383c8abbd",
+            "payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "task_json_hex": "7b227461736b5f6964223a2022666f726569676e5f7461736b222c2022776f726b73706163655f6964223a202277735f64696167222c20227469746c65223a2022646961676e6f73746963222c20227261775f7461736b223a202273796e74686574696320524157205441534b222c2022676f616c223a202272616365222c2022737461747573223a2022504c414e4e4544222c2022706c616e5f7265766973696f6e223a20322c2022736368656d615f76657273696f6e223a20312c2022637265617465645f6174223a2022323032362d31302d31355431353a35323a32302e3938313137342b30303a3030222c2022757064617465645f6174223a2022323032362d31302d31355431353a35323a32312e3031363134352b30303a3030227d",
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3463373666656130366266633434336361373965363130353233653133653737222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f494e54454e54222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22616374696f6e223a227772697465222c22746172676574223a22646174612e62696e222c22726571756573745f66696e6765727072696e74223a2238623330353936363264393336313766363863373665623030386265383964386234373035613931353639346635373661363335366230313562343938656366222c22636f6e74726163745f76657273696f6e223a322c227265766973696f6e223a312c227461726765745f6b6579223a22646174612e62696e222c227072655f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c2265787065637465645f706f73745f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c227061796c6f6164223a7b22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c2273697a65223a377d2c22636f6e74726163745f636f6d706c657465223a747275657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030227d0a7b226576656e745f6964223a226576656e745f3165363738643566353830323437373439376364643933383663376663386631222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f4143515549524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22746172676574223a22646174612e62696e222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c226f7065726174696f6e5f7265766973696f6e223a312c226361735f6261736973223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030227d0a7b226576656e745f6964223a226576656e745f6363393633616264323131373461316438363032643132616230613461323239222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f415554484f52495a4544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22617574686f72697a6174696f6e5f6964223a22617574685f6263353935356133653664356664353966356439303936616336303537656537222c22726573756c745f636f6465223a224341535f42415349535f484f4c4453222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030227d0a7b226576656e745f6964223a226576656e745f3935353231393633633762303434653961346562303162326665333433386661222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22494e54454e54222c22746f223a2253544152544544222c22726573756c745f73756d6d617279223a225741342d453a20617574686f726974617469766520657865637574696f6e2073746172746564222c227265766973696f6e223a327d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3635343831643962343261623433343839303238393163623033356662333639222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a2253544152544544222c22746f223a22444f4e45222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a332c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c226d6174636865735f65787065637465645f706f7374223a747275657d7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3833626135623737623766373430376338333261636637383334383432653334222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f4558454355544544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b226d75746174696f6e5f6b696e64223a225752495445222c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c2272657472795f7265736f6c7574696f6e5f6964223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030227d0a7b226576656e745f6964223a226576656e745f6239366562643835336364373463663961383261343363383362346462323466222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f52454c4541534544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3266306130636635653763313462316339373838383539363734353762613035222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a347d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3432376463626239386633633464663462653331363536333133316364303762222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030227d0a7b226576656e745f6964223a226576656e745f3965623033376533336363343463323639313566613766316563633161336333222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a22696e646570656e64656e7420504f535420627974657320636865636b6564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030227d0a"
+        }
+      },
+      {
+        "terminal": {
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "task": {
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "title": "diagnostic",
+            "raw_task": "synthetic RAW TASK",
+            "goal": "race",
+            "status": "PLANNED",
+            "plan_revision": 2,
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.016145+00:00"
+          },
+          "plan": {
+            "plan_id": "plan_f48810aea2e14e799a3e5bd5c23b66c8",
+            "task_id": "task_diag",
+            "revision": 2,
+            "microtask_ids": [
+              "m1"
+            ],
+            "current_microtask_id": "m1",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:20.981174+00:00",
+            "updated_at": "2026-10-15T15:52:21.242804+00:00"
+          },
+          "operations": {
+            "op_diag": {
+              "operation_id": "op_diag",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "action": "write",
+              "target": "data.bin",
+              "status": "VERIFIED",
+              "request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+              "expected_precondition_sha256": null,
+              "result_summary": "WA4-E: executed; exact post-state proved by the server",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.648548+00:00",
+              "updated_at": "2026-10-15T15:52:22.065967+00:00",
+              "contract_version": 2,
+              "revision": 4,
+              "contract": {
+                "workspace_id": "ws_diag",
+                "target_key": "data.bin",
+                "mutation_kind": "WRITE",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+                  "eol": "crlf",
+                  "bom": false,
+                  "normalized_sha256": "037c6c13f6a778cbf04b773880b8397fb3d95c6609b73397c6df9c6007a23839",
+                  "source": "server_observed_at_intent",
+                  "observed_at": "2026-10-15T15:52:21.648548+00:00"
+                },
+                "declared_pre_state": null,
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "source": "payload"
+                },
+                "payload_ref": {
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "size": 7,
+                  "store": "task_payloads",
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "provenance": {
+                  "agent": null,
+                  "channel": null,
+                  "authority": "claimed"
+                },
+                "policy": {
+                  "secret_pattern": null,
+                  "secret_override": false,
+                  "max_payload_bytes": 1048576,
+                  "retention": "KEEP_UNTIL_EXPLICIT_CLEANUP"
+                },
+                "fingerprint_version": 2,
+                "complete": true,
+                "issues": []
+              },
+              "receipt": {
+                "exists": true,
+                "size": 7,
+                "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "eol": "lf",
+                "bom": false,
+                "normalized_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                "source": "server_observed_at_done",
+                "observed_at": "2026-10-15T15:52:21.921355+00:00",
+                "revision": 3,
+                "matches_expected_post": true,
+                "eol_only_drift": false
+              },
+              "recovery_settlement": null
+            }
+          },
+          "microtasks": {
+            "m1": {
+              "microtask_id": "m1",
+              "task_id": "task_diag",
+              "sequence": 1,
+              "title": "one",
+              "goal": "one",
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.012826+00:00",
+              "updated_at": "2026-10-15T15:52:22.248695+00:00"
+            }
+          },
+          "events": [
+            {
+              "event_id": "event_0ad0c524db2c4cb0b20f29c7c940f74a",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_PREPARED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "status": "BACKUP_VERIFIED",
+                "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+                "snapshot_status": "VERIFIED"
+              },
+              "recorded_at": "2026-10-15T15:52:21.105698+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.105698+00:00",
+              "updated_at": "2026-10-15T15:52:21.105698+00:00"
+            },
+            {
+              "event_id": "event_13adf9f748c74a4681ec17dfd1d54838",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "BACKUP_VERIFIED",
+                "to": "READY",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.181440+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.181440+00:00",
+              "updated_at": "2026-10-15T15:52:21.181440+00:00"
+            },
+            {
+              "event_id": "event_07c3210edaf94f84af63716fb5da96a2",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "READY",
+                "to": "ACTIVE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:21.250110+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.250110+00:00",
+              "updated_at": "2026-10-15T15:52:21.250110+00:00"
+            },
+            {
+              "event_id": "event_4c76fea06bfc443ca79e610523e13e77",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_INTENT",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "action": "write",
+                "target": "data.bin",
+                "request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+                "contract_version": 2,
+                "revision": 1,
+                "target_key": "data.bin",
+                "pre_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                },
+                "expected_post_state": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f"
+                },
+                "payload": {
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "size": 7
+                },
+                "contract_complete": true
+              },
+              "recorded_at": "2026-10-15T15:52:21.658624+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.658624+00:00",
+              "updated_at": "2026-10-15T15:52:21.658624+00:00"
+            },
+            {
+              "event_id": "event_1e678d5f5802477497cdd9386c7fc8f1",
+              "task_id": "task_diag",
+              "event_type": "TARGET_CLAIM_ACQUIRED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "target": "data.bin",
+                "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+                "operation_revision": 1,
+                "cas_basis": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                },
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:21.754623+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.754623+00:00",
+              "updated_at": "2026-10-15T15:52:21.754623+00:00"
+            },
+            {
+              "event_id": "event_cc963abd21174a1d8602d12ab0a4a229",
+              "task_id": "task_diag",
+              "event_type": "MUTATION_AUTHORIZED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "authorization_id": "auth_bc5955a3e6d5fd59f5d9096ac6057ee7",
+                "result_code": "CAS_BASIS_HOLDS",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:21.782833+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.782833+00:00",
+              "updated_at": "2026-10-15T15:52:21.782833+00:00"
+            },
+            {
+              "event_id": "event_95521963c7b044e9a4eb01b2fe3438fa",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "INTENT",
+                "to": "STARTED",
+                "result_summary": "WA4-E: authoritative execution started",
+                "revision": 2
+              },
+              "recorded_at": "2026-10-15T15:52:21.804162+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.804162+00:00",
+              "updated_at": "2026-10-15T15:52:21.804162+00:00"
+            },
+            {
+              "event_id": "event_65481d9b42ab4348902891cb035fb369",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "STARTED",
+                "to": "DONE",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 3,
+                "receipt": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+                  "matches_expected_post": true
+                }
+              },
+              "recorded_at": "2026-10-15T15:52:21.926828+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.926828+00:00",
+              "updated_at": "2026-10-15T15:52:21.926828+00:00"
+            },
+            {
+              "event_id": "event_83ba5b77b7f7407c832acf7834842e34",
+              "task_id": "task_diag",
+              "event_type": "MUTATION_EXECUTED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "mutation_kind": "WRITE",
+                "receipt": {
+                  "exists": true,
+                  "size": 7,
+                  "sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f"
+                },
+                "retry_resolution_id": null
+              },
+              "recorded_at": "2026-10-15T15:52:22.013611+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.013611+00:00",
+              "updated_at": "2026-10-15T15:52:22.013611+00:00"
+            },
+            {
+              "event_id": "event_b96ebd853cd74cf9a82a43c83b4db24f",
+              "task_id": "task_diag",
+              "event_type": "TARGET_CLAIM_RELEASED",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+                "physical_mutation_performed": false
+              },
+              "recorded_at": "2026-10-15T15:52:22.031730+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.031730+00:00",
+              "updated_at": "2026-10-15T15:52:22.031730+00:00"
+            },
+            {
+              "event_id": "event_2f0a0cf5e7c14b1c978885967457ba05",
+              "task_id": "task_diag",
+              "event_type": "OPERATION_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": "op_diag",
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "result_summary": "WA4-E: executed; exact post-state proved by the server",
+                "revision": 4
+              },
+              "recorded_at": "2026-10-15T15:52:22.068582+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.068582+00:00",
+              "updated_at": "2026-10-15T15:52:22.068582+00:00"
+            },
+            {
+              "event_id": "event_427dcbb98f3c4df4be316563131cd07b",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null
+              },
+              "recorded_at": "2026-10-15T15:52:22.158195+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.158195+00:00",
+              "updated_at": "2026-10-15T15:52:22.158195+00:00"
+            },
+            {
+              "event_id": "event_9eb037e33cc44c26915fa7f1ecc1a3c3",
+              "task_id": "task_diag",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "independent POST bytes checked"
+              },
+              "recorded_at": "2026-10-15T15:52:22.251741+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:22.251741+00:00",
+              "updated_at": "2026-10-15T15:52:22.251741+00:00"
+            }
+          ],
+          "events_hex": "7b226576656e745f6964223a226576656e745f3061643063353234646232633463623062323066323963376339343066373461222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5052455041524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b22737461747573223a224241434b55505f5645524946494544222c226d616e69666573745f6964223a226d616e69666573747365745f3635333663643439386536643434373538393863343964626161373163626165222c22736e617073686f745f737461747573223a225645524946494544227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3130353639382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3133616466396637343863373461343638316563313764666431643534383338222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a224241434b55505f5645524946494544222c22746f223a225245414459222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3138313434302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3037633332313065646166393466383461663633373136666235646139366132222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a225245414459222c22746f223a22414354495645222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3235303131302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3463373666656130366266633434336361373965363130353233653133653737222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f494e54454e54222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22616374696f6e223a227772697465222c22746172676574223a22646174612e62696e222c22726571756573745f66696e6765727072696e74223a2238623330353936363264393336313766363863373665623030386265383964386234373035613931353639346635373661363335366230313562343938656366222c22636f6e74726163745f76657273696f6e223a322c227265766973696f6e223a312c227461726765745f6b6579223a22646174612e62696e222c227072655f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c2265787065637465645f706f73745f7374617465223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c227061796c6f6164223a7b22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c2273697a65223a377d2c22636f6e74726163745f636f6d706c657465223a747275657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3635383632342b30303a3030227d0a7b226576656e745f6964223a226576656e745f3165363738643566353830323437373439376364643933383663376663386631222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f4143515549524544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22746172676574223a22646174612e62696e222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c226f7065726174696f6e5f7265766973696f6e223a312c226361735f6261736973223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2266363232396133393133653539623439656533363830303463343865326365343166633163343666363031316534623435333331613939396535616563383965227d2c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3735343632332b30303a3030227d0a7b226576656e745f6964223a226576656e745f6363393633616264323131373461316438363032643132616230613461323239222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f415554484f52495a4544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c22617574686f72697a6174696f6e5f6964223a22617574685f6263353935356133653664356664353966356439303936616336303537656537222c22726573756c745f636f6465223a224341535f42415349535f484f4c4453222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3738323833332b30303a3030227d0a7b226576656e745f6964223a226576656e745f3935353231393633633762303434653961346562303162326665333433386661222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22494e54454e54222c22746f223a2253544152544544222c22726573756c745f73756d6d617279223a225741342d453a20617574686f726974617469766520657865637574696f6e2073746172746564222c227265766973696f6e223a327d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3830343136322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3635343831643962343261623433343839303238393163623033356662333639222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a2253544152544544222c22746f223a22444f4e45222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a332c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866222c226d6174636865735f65787065637465645f706f7374223a747275657d7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32312e3932363832382b30303a3030227d0a7b226576656e745f6964223a226576656e745f3833626135623737623766373430376338333261636637383334383432653334222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d55544154494f4e5f4558454355544544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b226d75746174696f6e5f6b696e64223a225752495445222c2272656365697074223a7b22657869737473223a747275652c2273697a65223a372c22736861323536223a2262643562343438323463356233643039306163356166363132626664313866376534626530663062366532353461373132666563373237353137616164343866227d2c2272657472795f7265736f6c7574696f6e5f6964223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3031333631312b30303a3030227d0a7b226576656e745f6964223a226576656e745f6239366562643835336364373463663961383261343363383362346462323466222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a225441524745545f434c41494d5f52454c4541534544222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b22636c61696d5f6964223a22636c61696d5f3630656135306161626135393034643362376336336232303461393838393931222c227461726765745f68617368223a2230363931386665623164346661316635333464316663623063376238626361326335646265643763613666666436383030303332376230623166363935323338222c22706879736963616c5f6d75746174696f6e5f706572666f726d6564223a66616c73657d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3033313733302b30303a3030227d0a7b226576656e745f6964223a226576656e745f3266306130636635653763313462316339373838383539363734353762613035222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224f5045524154494f4e5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a226f705f64696167222c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22726573756c745f73756d6d617279223a225741342d453a2065786563757465643b20657861637420706f73742d73746174652070726f7665642062792074686520736572766572222c227265766973696f6e223a347d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3036383538322b30303a3030227d0a7b226576656e745f6964223a226576656e745f3432376463626239386633633464663462653331363536333133316364303762222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22414354495645222c22746f223a22444f4e45222c22766572696669636174696f6e5f65766964656e6365223a6e756c6c7d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3135383139352b30303a3030227d0a7b226576656e745f6964223a226576656e745f3965623033376533336363343463323639313566613766316563633161336333222c227461736b5f6964223a227461736b5f64696167222c226576656e745f74797065223a224d4943524f5441534b5f5452414e534954494f4e222c226d6963726f7461736b5f6964223a226d31222c226f7065726174696f6e5f6964223a6e756c6c2c227061796c6f6164223a7b2266726f6d223a22444f4e45222c22746f223a225645524946494544222c22766572696669636174696f6e5f65766964656e6365223a22696e646570656e64656e7420504f535420627974657320636865636b6564227d2c227265636f726465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22736368656d615f76657273696f6e223a312c22637265617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030222c22757064617465645f6174223a22323032362d31302d31355431353a35323a32322e3235313734312b30303a3030227d0a",
+          "checkpoint": {
+            "checkpoint_id": "checkpoint_0964690f5c5842668df7219964793786",
+            "task_id": "task_diag",
+            "workspace_id": "ws_diag",
+            "last_verified_microtask_id": "m1",
+            "current_microtask_id": "m1",
+            "current_status": "VERIFIED",
+            "snapshot_status": "VERIFIED",
+            "last_operation_id": "op_diag",
+            "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+            "schema_version": 1,
+            "created_at": "2026-10-15T15:52:21.139398+00:00",
+            "updated_at": "2026-10-15T15:52:22.346521+00:00",
+            "projection": {
+              "projection_version": 1,
+              "source_fingerprint": "e622ff6d929a911dcc66699ecc816659ca4a5eeb3b1cf423c77a94aafeaaa3b4",
+              "projection_fingerprint": "ae9418e1bf599dad76c0bb0e2fb6f728e3bc2a295a83965df137dc922bfcdccc",
+              "authority_source": "closeout_gate"
+            }
+          },
+          "files_sha256": {
+            "checkpoint.json": "e9e3f4d7d9114d9a5b27ce8714309b70453dcca6807e64d29373ee2a0d56032e",
+            "checkpoint.md": "cb788aede4b28a0672417e99734a46350d5c908ba01838ce507ebb7b6a21f014",
+            "events.jsonl": "5bbb8a586a31915e50bf857f07028b31a967868088ff5c44cc0d03ac269f4c05",
+            "plan.json": "dcec379ad045e2ad184f1af5b5a79159f013975035c5e3411ea9ba81307bcefd",
+            "task.json": "b331664a2030b8987840c81529ef0b648cb842e930cdbd1be56189a69af6d715",
+            "task.md": "f30fd4d345cd7d89104a9a1dfac86c5c0017bfb4d7ad5596fac5d5c525e6822b",
+            "microtasks/m1.json": "fd4191b7a0d605b3df72d0920b92ae890f304b9ec4ca3a838658b1dd7c8c86f9",
+            "operations/op_diag.json": "d3c98cbf44816b7f4e5d3671584843112046a98ae7b1add8334439c383c8abbd",
+            "payloads/bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f.bin": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+            "microtasks/m1/restore_point/manifest.json": "e037389e47a3d4495648a072568c69b321d1512322ae791a6ab6c7f8e3742361",
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": "36c6c342e87927974c68555983e3255a5740795c84fd69d4a316014796e65c10",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": "1c61c45cb77c89986f0143ad4faff9bedd973d0e32668c624efbb2cf04ec5cf7"
+          },
+          "claims": {
+            "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238": {
+              "claim_store_version": 1,
+              "schema_version": 1,
+              "target_hash": "06918feb1d4fa1f534d1fcb0c7b8bca2c5dbed7ca6ffd68000327b0b1f695238",
+              "physical_key": "c:/users/rex/appdata/local/temp/wa4r002_p6yclaps/project/data.bin",
+              "next_generation": 2,
+              "active": null,
+              "history": [
+                {
+                  "claim_id": "claim_60ea50aaba5904d3b7c63b204a988991",
+                  "generation": 1,
+                  "task_id": "task_diag",
+                  "microtask_id": "m1",
+                  "operation_id": "op_diag",
+                  "workspace_id": "ws_diag",
+                  "target": "data.bin",
+                  "target_key": "data.bin",
+                  "operation_revision": 1,
+                  "operation_request_fingerprint": "8b3059662d93617f68c76eb008be89d8b4705a915694f576a6356b015b498ecf",
+                  "contract_version": 2,
+                  "cas_basis": {
+                    "exists": true,
+                    "size": 7,
+                    "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                  },
+                  "status": "RELEASED",
+                  "created_at": "2026-10-15T15:52:21.751129+00:00",
+                  "provenance": {
+                    "agent": null,
+                    "channel": null,
+                    "authority": "claimed"
+                  },
+                  "ended_at": "2026-10-15T15:52:22.029231+00:00",
+                  "end_reason": "WA4E_EXECUTED",
+                  "ended_by": {
+                    "agent": null,
+                    "channel": "wa4e_executor",
+                    "authority": "claimed"
+                  },
+                  "superseded_by": null,
+                  "authorizations": [
+                    {
+                      "authorization_id": "auth_bc5955a3e6d5fd59f5d9096ac6057ee7",
+                      "result": "AUTHORIZED",
+                      "result_code": "CAS_BASIS_HOLDS",
+                      "operation_revision": 1,
+                      "observed": {
+                        "exists": true,
+                        "size": 7,
+                        "sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e"
+                      },
+                      "at": "2026-10-15T15:52:21.779843+00:00"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "restore_records": {
+            "microtasks/m1/restore_point/manifest.json": {
+              "manifest_id": "manifestset_6536cd498e6d4475898c49dbaa71cbae",
+              "task_id": "task_diag",
+              "microtask_id": "m1",
+              "entry_ids": [
+                "manifest_290205c674a241388552a08d9422b3c0"
+              ],
+              "snapshot_ids": [
+                "snapshot_3810d560083a4f12bd0c83f79f20f8f9"
+              ],
+              "status": "VERIFIED",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.050822+00:00",
+              "updated_at": "2026-10-15T15:52:21.065040+00:00"
+            },
+            "microtasks/m1/restore_point/manifest_entries/manifest_290205c674a241388552a08d9422b3c0.json": {
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "microtask_id": "m1",
+              "source_path": "data.bin",
+              "expected_change": "edit",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            },
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.json": {
+              "snapshot_id": "snapshot_3810d560083a4f12bd0c83f79f20f8f9",
+              "microtask_id": "m1",
+              "manifest_entry_id": "manifest_290205c674a241388552a08d9422b3c0",
+              "source_path": "data.bin",
+              "exists_before": true,
+              "size_before": 7,
+              "sha256_before": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+              "snapshot_path": "snapshots\\snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin",
+              "captured_at": "2026-10-15T15:52:21.059828+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-15T15:52:21.059828+00:00",
+              "updated_at": "2026-10-15T15:52:21.059828+00:00"
+            }
+          },
+          "snapshot_hex": {
+            "microtasks/m1/restore_point/snapshots/snapshot_3810d560083a4f12bd0c83f79f20f8f9.bin": "5052450d0a00ff"
+          },
+          "target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_size": 7,
+          "target_hex": "504f53540a00fe"
+        }
+      }
+    ]
+  }
+}

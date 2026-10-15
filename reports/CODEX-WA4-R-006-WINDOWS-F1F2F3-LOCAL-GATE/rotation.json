@@ -1,0 +1,29 @@
+{
+  "task": "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+  "status": "PASS",
+  "before_sha256": "21544aaac9f2448eb31b51aba43c69acf10ed7ff32828d962d16f73d82e83d41",
+  "after_sha256": "786e824a0ecab020735f33f2ab9cef3d8fc6010ce736d4c2fd17215cdf8fa5b1",
+  "prefix_sha256": "f5053f86f8e1c0a5899aebcebc666b1b034ecddd19dfdaf55c587b616b380bbc",
+  "assignment_sha256": "5877909e40b7f3edf2d9836fe31529e60aba38da71f997c48cf3136ac9672e4c",
+  "history_sha256": "97a27526bfde55151625cd8277f5e7dcd7760ec5c72b4b42504afce5f9b219ea",
+  "assignment_bytes": 18161,
+  "previous_B2_B3_bytes": 373455,
+  "outer_fence_length": 20,
+  "three_top_level_blocks": true,
+  "full_original_reconstructable": true,
+  "assignment_occurrences": 1,
+  "history_occurrences": 1,
+  "B1_WAITING": true,
+  "attempts": [
+    {
+      "phase": "save_B2_B3",
+      "attempt": 1,
+      "result": "SUCCESS"
+    },
+    {
+      "phase": "release_B1",
+      "attempt": 1,
+      "result": "SUCCESS"
+    }
+  ]
+}

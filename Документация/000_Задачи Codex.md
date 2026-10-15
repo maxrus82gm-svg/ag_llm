@@ -19,6 +19,17 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+**Статус:** ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
+
+CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка/отчёт сохранены в БЛОКАХ 2–3; ожидается независимая приёмка WEB_08. Следующие TASK и rollout не запускать.
+
+---
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+````````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
 Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE`.
 
 # TASK: CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE
@@ -383,6 +394,40 @@ GitHub baseline, независимо зафиксированный коорд�
 
 ---
 
+````````````````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+PUBLICATION: LOCAL ONLY / NOT SYNCED
+ARCH CLASS: Web Alarm Workspace / WA4-R Reliability / Windows Local Gate; PRIMARY PROFILE 23, TEST PROFILE 36.2.
+
+Исправлены три подтверждённые связанные причины: (1) foreign TASK/plan/microtask identity принималась authoritative readers, вплоть до false COMPLETED и физического EXECUTED; (2) JSONL без финального delimiter допускала склеивающий append и false clean closeout; (3) public operations lock path создавался до проверки TASK ID. Изменены только web_alarm/task_store.py, event_checkpoint_store.py, operation_store.py; добавлен test_web_alarm_wa4r006_local_gate.py (11 методов). MutationExecutor/CloseoutService/shared runner/CI/Ultra/Voice и старые evidence не менялись.
+
+ФИНАЛЬНЫЕ ПРОВЕРКИ Windows/Python .venv 3.12.10:
+- full-release: 802 tests, 801 PASS / 0 FAIL / 0 ERROR / 1 SKIP, isolation 0, exit 0; 791.165 s.
+- адресный subset внутри full: 103/103 PASS, включая 11 новых; это НЕ отдельный завершённый focused run.
+- quality-final: 12 outer PASS, каждый 1 intentional inner FAIL / 0 ERROR / 0 SKIP; isolation 0.
+- bounded-release: 2 PASS / 0 FAIL/ERROR/SKIP, 8 внутренних раундов F2/F3; isolation 0.
+- initial baseline: 92 PASS; initial adversarial: 3 PASS / 6 FAIL / 1 test-helper ERROR; invalid-lock reproducer: 1 FAIL. Все initial RED сохранены.
+- R005 --sources --self-check PASS; LF transport restoration ровно 7 файлов по SHA+size в disposable TEMP; source packages неизменны.
+- RAW review 10 checks PASS; 45 прямых текстовых records равны original ZIP subtrees; 102 финальных source pins сверены. Manifest/CRC/порча данных проверены.
+
+Evidence/report: reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/report.md, checks/versions/provenance/raw-index/raw-review/transport-check/scope-check/rotation/manifest и новый evidence.zip только с R006. Полный сохранённый TEMP: C:\Users\REX\AppData\Local\Temp\codex-wa4r006-lwgw7sov. Исторический F3 original FAIL — прежний R005 E043, не перезаписан.
+
+ОГРАНИЧЕНИЯ: symlink creation запрещён средой, один тест SKIP; historical handle owner неизвестен, original F1 artifact/F2 80-round ZIP не получены; WinError 32 отдельно не воспроизводился. Read-only Projection cached-path I/O race сохраняется. Power loss/external noncompliant writers не сертифицированы. Незавершённые full-final/focused-final сохранены, не засчитаны PASS. Новый independent Windows CI NOT RUN.
+
+SOURCE: supplied main@df3250140c987876771fe2f899f80acaf38fd920; Git equivalence не проверялась, локальный Git/GitHub не использован. Final byte pins: task_store fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac; event_checkpoint_store 7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad; operation_store bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360.
+
+DOC IMPACT / SHARED DOC DELTA: только own report и safe rotation. WEB_08 после independent PASS адресно обновляет 23/36.2 и 25/05/06/34/общий 000, при необходимости 01/24; 18/36/36.1 contract NO CHANGE. Подробный manual engineering review и NEXT в report.md.
+NEXT: пользователь публикует завершённый пакет/code/tests; WEB_08 независимо проверяет source/RAW/quality и даёт отдельные F1/F2/F3 verdicts. Не запускать следующие TASK, WARN/GATEWAY REQUIRED/STRICT или rollout. DONE/VERIFIED агентом не присвоены.
+AMENDMENT: пользовательский вопрос о недостающем опубликованном report учтён как status clarification; scope/исходный БЛОК 1 не менялись.
+
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-R-006
+
+````````````````````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
 ```````````````````text
@@ -4504,3 +4549,5 @@ Codex: задача утверждена пользователем. Прочи�
 ``````````````````
 
 ```````````````````
+
+````````````````````
