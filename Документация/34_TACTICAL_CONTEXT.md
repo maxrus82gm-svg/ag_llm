@@ -30,6 +30,16 @@
 
 ---
 
+### WEB_08 / 2026-10-16 / AG LLM → WEB_08 — INITIAL MESSAGE RELAY SMOKE
+
+**STATUS: SUCCESS (BOUNDED: CHAT RECEIPT + GITHUB DOCUMENTATION WRITE).** По сообщению пользователя, в чате AG LLM агенту Codex поручили отправить сообщение в существующий чат «Сервер WEB_08». В этот чат действительно поступило сообщение «Привет, как дела? Я из AG LLM. Ответь, пожалуйста», после чего ChatGPT ответил. Затем поступило ещё одно сообщение с прямым поручением от имени пользователя зафиксировать результат здесь. ChatGPT получил второе сообщение, проверил канонический `34_TACTICAL_CONTEXT.md` и выполнил адресную документальную запись через подключённый GitHub в `main`. **Критерий именно начального эксперимента — поступление сообщения и инициированное/успешное GitHub-обновление документа — выполнен.** Источник запроса описан по тексту сообщения и словам пользователя, а не по криптографически подтверждённой идентичности отправителя.
+
+**Что НЕ доказано:** не установлен технический путь передачи из Codex/AG LLM в ChatGPT (управление GUI, интеграционный API, иной механизм); не проверены MCP-транспорт, самостоятельное пробуждение неактивного чата по событию, получение агентом ответа ChatGPT, двусторонний unattended loop, повторяемость после перезапуска и надёжная аутентификация отправителя. Сообщение, пришедшее в чат, само по себе не является доверенным серверным сигналом и не предоставляет новых полномочий на code/production/Git/rollout. **SUCCESS относится только к ограниченному communication/documentation smoke, не к полноценной интеграции.**
+
+**FUTURE / NOT ASSIGNED:** по отдельному согласию пользователя проверить точный транспорт, request_id/TASK ID, источник/права команды, подтверждённый readback результата Codex/Claude, идемпотентность, таймауты и механизмы возобновления. В целевой модели Web Alarm остаётся authoritative диспетчером TASK, approvals, evidence и recovery; Codex/Claude могут служить исполнителями или ограниченными транспортными посредниками, а ChatGPT — ручным/доступным Planner/Reviewer. Не запускать эту реализацию до самостоятельного GO; текущие WA4-R/R-006 gates и роли исполнителей не меняются.
+
+---
+
 ### WEB_08 / 2026-10-15 / GitHub-only evidence handoff decision — PREPARED, NOT ASSIGNED
 
 **Latest source:** GitHub `main@38e7164b1ab3af6131d65cfc9dc8760ee426dd1e` (#336) checked, with #336 documentation-only relative to F1/F2/F3. On 2026-10-15 ChatGPT reviewed R-004/R-003 source, tests, metadata and `36/36.1/36.2` over GitHub. R-004 matched final 7 source SHA with LF/Windows CRLF normalization; its 12 attempt records show final 92 focused PASS, 4+4 bounded PASS, six quality outer PASS and 791 **collected only**, NOT RUN; these remain **Codex-reported**, not independent Windows executions. R-003 self-reported 768 PASS / 1 SKIP full, six controls and native PRE-move F3 reproducer; this is not independent runtime verification. No new confirmed runtime defect, and historical WinError 5 remains an original red case.
