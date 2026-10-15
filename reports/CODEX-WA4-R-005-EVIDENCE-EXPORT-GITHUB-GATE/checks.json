@@ -1,0 +1,205 @@
+{
+  "mode": "ORIGINAL_ZIP_EQUALITY",
+  "roots": 43,
+  "nodes": 1230,
+  "json_jsonl_files_parsed": 52,
+  "F1_roots": 4,
+  "controls": [
+    {
+      "id": "E021",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "NOT PRESENT IN SOURCE"
+    },
+    {
+      "id": "E022",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "NOT PRESENT IN SOURCE"
+    },
+    {
+      "id": "E023",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "PRESENT"
+    },
+    {
+      "id": "E024",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "NOT PRESENT IN SOURCE"
+    },
+    {
+      "id": "E025",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "NOT PRESENT IN SOURCE"
+    },
+    {
+      "id": "E026",
+      "archive": "R003",
+      "outer": "PASS",
+      "inner_trace": "/facts/0/intentional_inner_red",
+      "inner_counters": "NOT PRESENT IN SOURCE",
+      "inner_raw_facts": "NOT PRESENT IN SOURCE"
+    },
+    {
+      "id": "E027",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    },
+    {
+      "id": "E028",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    },
+    {
+      "id": "E029",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    },
+    {
+      "id": "E030",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    },
+    {
+      "id": "E031",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    },
+    {
+      "id": "E032",
+      "archive": "R004",
+      "outer": "PASS",
+      "inner_tests": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "inner_skips": 0,
+      "inner_trace": "/facts/0/failure"
+    }
+  ],
+  "F1_saved_raw_analysis": [
+    {
+      "id": "E001",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_admission_first_rejects_closeout_without_touching_existing_evidence",
+      "observed_apply_enter": 1,
+      "original_operation_unchanged": true,
+      "receipt_matches_actual_target": true,
+      "snapshot_matches_initial_target": true,
+      "raw_event_prefix_exact": true,
+      "checkpoint_preserved_from_applicable_barrier": true,
+      "terminal_completion_events": 0,
+      "fresh_process_raw_equals_terminal": true,
+      "fresh_worker_pid": 39032,
+      "native_winerror": "NOT PRESENT IN SOURCE",
+      "limit": "Analysis of saved synthetic fixtures only, not a new runtime test or historical closure."
+    },
+    {
+      "id": "E002",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_completion_first_serializes_RAW_admission_plan_and_new_mutation",
+      "observed_apply_enter": 1,
+      "original_operation_unchanged": true,
+      "receipt_matches_actual_target": true,
+      "snapshot_matches_initial_target": true,
+      "raw_event_prefix_exact": true,
+      "checkpoint_preserved_from_applicable_barrier": true,
+      "terminal_completion_events": 1,
+      "fresh_process_raw_equals_terminal": true,
+      "fresh_worker_pid": 42168,
+      "native_winerror": "NOT PRESENT IN SOURCE",
+      "limit": "Analysis of saved synthetic fixtures only, not a new runtime test or historical closure."
+    },
+    {
+      "id": "E003",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_native_post_move_status_failure_and_fresh_recovery",
+      "observed_apply_enter": 1,
+      "original_operation_unchanged": true,
+      "receipt_matches_actual_target": true,
+      "snapshot_matches_initial_target": true,
+      "raw_event_prefix_exact": true,
+      "checkpoint_preserved_from_applicable_barrier": true,
+      "terminal_completion_events": 1,
+      "fresh_process_raw_equals_terminal": true,
+      "fresh_worker_pid": 41192,
+      "native_winerror": 5,
+      "limit": "Analysis of saved synthetic fixtures only, not a new runtime test or historical closure."
+    },
+    {
+      "id": "E004",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_native_pre_move_refusal_preserves_nonempty_evidence_and_fresh_retry",
+      "observed_apply_enter": 1,
+      "original_operation_unchanged": true,
+      "receipt_matches_actual_target": true,
+      "snapshot_matches_initial_target": true,
+      "raw_event_prefix_exact": true,
+      "checkpoint_preserved_from_applicable_barrier": true,
+      "terminal_completion_events": 1,
+      "fresh_process_raw_equals_terminal": true,
+      "fresh_worker_pid": 41280,
+      "native_winerror": 5,
+      "limit": "Analysis of saved synthetic fixtures only, not a new runtime test or historical closure."
+    }
+  ],
+  "derived_observations_checked": 22,
+  "original_red": 11,
+  "manifest_checked": false,
+  "replay": "NOT RUN; no runtime/test modules imported",
+  "adversarial": [
+    {
+      "control": "changed raw status / unchanged text pin",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "status": "PASS"
+    },
+    {
+      "control": "changed raw status / recalculated node hash",
+      "expected": "REJECT",
+      "observed": "Root canonical mismatch",
+      "status": "PASS"
+    },
+    {
+      "control": "omitted RAW node",
+      "observed": "REJECT missing shape child",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "production_tests": "NOT RUN",
+  "git_used": false
+}

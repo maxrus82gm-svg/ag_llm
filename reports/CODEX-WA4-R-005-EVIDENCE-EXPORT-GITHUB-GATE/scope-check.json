@@ -1,0 +1,31 @@
+{
+  "task": "CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE",
+  "protected_files_checked": 184,
+  "protected_changed": [],
+  "protected_status": "PASS",
+  "original_reports_and_archives_changed": [],
+  "syntax": [
+    {
+      "file": "export_evidence.py",
+      "status": "PASS; AST parse only"
+    },
+    {
+      "file": "validate_export.py",
+      "status": "PASS; AST parse only"
+    }
+  ],
+  "content_scan": {
+    "patterns": [
+      "private_key",
+      "bearer_credential",
+      "github_token",
+      "openai_token"
+    ],
+    "hits": [],
+    "limit": "Addressed synthetic fixture export; not a universal secret/live-data detector. Original TEMP/source locators in error frames retained."
+  },
+  "python_cache_cleanup": "AUTO-APPROVAL REJECTED: blocked by policy; own cache left and excluded from publication",
+  "production_tests": "NOT RUN",
+  "scope_writes": "Only own report + personal card; two-phase rotation complete",
+  "final_protected_reread": "PASS: 184/184 unchanged"
+}

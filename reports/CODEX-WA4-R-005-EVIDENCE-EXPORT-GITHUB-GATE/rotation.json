@@ -1,0 +1,33 @@
+{
+  "task": "CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE",
+  "status": "PASS",
+  "before_sha256": "d3d3e139e15244ede62332ed9d3af0b7fe0ce368984ce1df0ff15b1fde11561d",
+  "phase1_sha256": "1c6c85057f2564d01240f85a618e1d97351778c4c9a5e8741a918787bba892e6",
+  "after_sha256": "91373ab83f3e5407d49f17e0e9091156306ddc555c2d9c293ea9d2ed61619d70",
+  "prefix_sha256": "f5053f86f8e1c0a5899aebcebc666b1b034ecddd19dfdaf55c587b616b380bbc",
+  "assignment_sha256": "541e12dea93ca13f9cef9899a5085bc6ea3f0c78eb621ed90687ae4fc410aa20",
+  "previous_B2_B3_sha256": "6e236ad75f7cca0e481e1801cdff746c3fed8b90927667f4f79fc368c8739f6e",
+  "assignment_bytes": 9093,
+  "previous_history_bytes": 360808,
+  "two_phase_atomic_rotation": true,
+  "phase1_saved_assignment_result_before_releasing_B1": true,
+  "full_original_reconstructable": true,
+  "top_level_blocks": 3,
+  "previous_history_occurrences": 1,
+  "assignment_occurrences": 1,
+  "waiting": true,
+  "phase2_transient_access_refusal_recovered": true,
+  "attempts": [
+    {
+      "phase": "clear_B1",
+      "attempt": 1,
+      "result": "PermissionError WinError 5",
+      "source": "Prior tool traceback; phase1 persisted, final staged tmp retained"
+    },
+    {
+      "phase": "clear_B1",
+      "attempt": 2,
+      "result": "SUCCESS"
+    }
+  ]
+}

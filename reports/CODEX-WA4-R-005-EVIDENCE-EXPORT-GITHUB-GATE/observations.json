@@ -1,0 +1,1736 @@
+{
+  "task": "CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE",
+  "meaning": "DERIVED ONLY, never substitutes RAW; pointers relative to selected original test root.",
+  "records": [
+    {
+      "id": "E001",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_admission_first_rejects_closeout_without_touching_existing_evidence",
+      "raw_states": [
+        {
+          "pointer": "/facts/2/PRE",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "5052450d0a00ff",
+          "computed_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "recorded_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "a85e0be7ddbe09ad5f2b119e3111b0cfd804fa7367e57530dfb7abc084ebf989",
+          "operations": [],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/4/F1_quiescent_PRE_with_receipt_checkpoint_snapshot",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "a34ecf2ef61b30952fdf7d3518079d161a73fe3bc41f72fae38f18a385c6193f",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/6/admission_committed_before_closeout_refusal",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "b36dbdb1d473a3083eb8e0c057cb66f65772e9ea484e490876aafe88a20da7b0",
+          "operations": [
+            "op_diag",
+            "op_late"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/9/terminal",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "b36dbdb1d473a3083eb8e0c057cb66f65772e9ea484e490876aafe88a20da7b0",
+          "operations": [
+            "op_diag",
+            "op_late"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        }
+      ],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "fixture_apply",
+          "pid": 34760,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "reader",
+          "pid": 35668,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "close",
+          "pid": 39728,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/8",
+          "worker": "raw_rejected",
+          "pid": 39032,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/8/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "fixture_apply",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "reader",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "operations_lock_acquired",
+            "held_RAW_read"
+          ]
+        },
+        {
+          "pointer": "/facts/7/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "operations_lock_acquired",
+            "fresh_reject_gate"
+          ]
+        },
+        {
+          "pointer": "/facts/8/trace",
+          "worker": "raw_rejected",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E002",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_completion_first_serializes_RAW_admission_plan_and_new_mutation",
+      "raw_states": [
+        {
+          "pointer": "/facts/2/PRE",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "5052450d0a00ff",
+          "computed_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "recorded_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "5c68931e4391c444a4f3e71cb80a251de0c864c9b0a4c632154f0c8db3dc2754",
+          "operations": [],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/4/F1_quiescent_PRE_with_receipt_checkpoint_snapshot",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "fad6ea6a64d999ebb5cdd622230cbab3bfcd208d6d9f2ec0e7e39b11339a0a42",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/5/fresh_gate_under_both_locks",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "fad6ea6a64d999ebb5cdd622230cbab3bfcd208d6d9f2ec0e7e39b11339a0a42",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/10/after_fresh_process_completion",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "14f030e9e120417c2d307911321f28e1826b9888bcb0c8526f6f38082553ec0d",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/13/terminal",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "14f030e9e120417c2d307911321f28e1826b9888bcb0c8526f6f38082553ec0d",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        }
+      ],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "fixture_apply",
+          "pid": 41760,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/6",
+          "worker": "close",
+          "pid": 37148,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/6/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "reader",
+          "pid": 41560,
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/8",
+          "worker": "plan",
+          "pid": 30132,
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/8/stdout"
+        },
+        {
+          "pointer": "/facts/9",
+          "worker": "writer",
+          "pid": 18744,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/9/stdout"
+        },
+        {
+          "pointer": "/facts/11",
+          "worker": "raw_reopen",
+          "pid": 42168,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/11/stdout"
+        },
+        {
+          "pointer": "/facts/12",
+          "worker": "historical_replay",
+          "pid": 42680,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/12/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "fixture_apply",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/6/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "operations_lock_acquired",
+            "before_directory_move",
+            "fresh_gate_before_move",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/7/trace",
+          "worker": "reader",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "operations_lock_acquired"
+          ]
+        },
+        {
+          "pointer": "/facts/8/trace",
+          "worker": "plan",
+          "phases": [
+            "actor_enter",
+            "mutation_lock_attempt",
+            "mutation_lock_acquired"
+          ]
+        },
+        {
+          "pointer": "/facts/9/trace",
+          "worker": "writer",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/11/trace",
+          "worker": "raw_reopen",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/12/trace",
+          "worker": "historical_replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E003",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_native_post_move_status_failure_and_fresh_recovery",
+      "raw_states": [
+        {
+          "pointer": "/facts/2/PRE",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "5052450d0a00ff",
+          "computed_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "recorded_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "0e7e7354e03735e803bbf3d3ad93e1804eca00390d96582d86c0acae96eb9393",
+          "operations": [],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/4/F1_quiescent_PRE_with_receipt_checkpoint_snapshot",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "e015366305c548579b229f9ccc9e4be2c4e0257bbdde3f8d3292b23fc6fef762",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/6/status_pending_before_recovery",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "e015366305c548579b229f9ccc9e4be2c4e0257bbdde3f8d3292b23fc6fef762",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/11/after_fresh_process_completion",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "3cf1109c3107ccbd8542e7c444dacc87b8fbd503f33abbbd6bed8c880d5fd52a",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/15/terminal",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "3cf1109c3107ccbd8542e7c444dacc87b8fbd503f33abbbd6bed8c880d5fd52a",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        }
+      ],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "fixture_apply",
+          "pid": 42712,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "close",
+          "pid": 23264,
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "raw_pending",
+          "pid": 42936,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/8",
+          "worker": "late",
+          "pid": 40868,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/8/stdout"
+        },
+        {
+          "pointer": "/facts/9",
+          "worker": "pending_replay",
+          "pid": 38652,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/9/stdout"
+        },
+        {
+          "pointer": "/facts/10",
+          "worker": "recover",
+          "pid": 33700,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/10/stdout"
+        },
+        {
+          "pointer": "/facts/12",
+          "worker": "raw_reopen",
+          "pid": 41192,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/12/stdout"
+        },
+        {
+          "pointer": "/facts/13",
+          "worker": "historical_replay",
+          "pid": 42036,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/13/stdout"
+        },
+        {
+          "pointer": "/facts/14",
+          "worker": "again",
+          "pid": 21284,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/14/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "fixture_apply",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "directory_moved",
+            "status_write_with_native_reader"
+          ]
+        },
+        {
+          "pointer": "/facts/7/trace",
+          "worker": "raw_pending",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/8/trace",
+          "worker": "late",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/9/trace",
+          "worker": "pending_replay",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/10/trace",
+          "worker": "recover",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/12/trace",
+          "worker": "raw_reopen",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/13/trace",
+          "worker": "historical_replay",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/14/trace",
+          "worker": "again",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E004",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F1_native_pre_move_refusal_preserves_nonempty_evidence_and_fresh_retry",
+      "raw_states": [
+        {
+          "pointer": "/facts/2/PRE",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "5052450d0a00ff",
+          "computed_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "recorded_target_sha256": "f6229a3913e59b49ee368004c48e2ce41fc1c46f6011e4b45331a999e5aec89e",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "643479b346169cc41d0fed6cc6985d98ca41023fdb966b7541e886915832a7d0",
+          "operations": [],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/4/F1_quiescent_PRE_with_receipt_checkpoint_snapshot",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "9a1bef458a0a723f43cfdc094299654e045b389158f200938967cd964e3bbc60",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/6/native_pre_move_refusal",
+          "locations": {
+            "active": true,
+            "completed": false
+          },
+          "status": "PLANNED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 0,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "9a1bef458a0a723f43cfdc094299654e045b389158f200938967cd964e3bbc60",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/9/after_fresh_process_completion",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "8f9ddb12691a3e670b4a7ebf024de72eb10db2ec8a2996b73cca765da9308350",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        },
+        {
+          "pointer": "/facts/12/terminal",
+          "locations": {
+            "active": false,
+            "completed": true
+          },
+          "status": "COMPLETED",
+          "target_hex": "504f53540a00fe",
+          "computed_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "recorded_target_sha256": "bd5b44824c5b3d090ac5af612bfd18f7e4be0f0b6e254a712fec727517aad48f",
+          "target_sha256_matches": true,
+          "completion_event_count_from_parsed_records": 1,
+          "events_hex": "PRESENT",
+          "computed_events_bytes_sha256": "8f9ddb12691a3e670b4a7ebf024de72eb10db2ec8a2996b73cca765da9308350",
+          "operations": [
+            "op_diag"
+          ],
+          "checkpoint": "PRESENT",
+          "snapshot_hex": "PRESENT",
+          "restore_records": "PRESENT",
+          "claims": "PRESENT",
+          "task_json_original_bytes": "NOT PRESENT IN SOURCE"
+        }
+      ],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "fixture_apply",
+          "pid": 42156,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "close",
+          "pid": 40924,
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "raw_before_retry",
+          "pid": 40248,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/8",
+          "worker": "fresh_retry",
+          "pid": 30728,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/8/stdout"
+        },
+        {
+          "pointer": "/facts/10",
+          "worker": "raw_reopen",
+          "pid": 41280,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/10/stdout"
+        },
+        {
+          "pointer": "/facts/11",
+          "worker": "historical_replay",
+          "pid": 40604,
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/11/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "fixture_apply",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "before_directory_move",
+            "native_pre_handle_open"
+          ]
+        },
+        {
+          "pointer": "/facts/7/trace",
+          "worker": "raw_before_retry",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/8/trace",
+          "worker": "fresh_retry",
+          "phases": [
+            "actor_enter",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/10/trace",
+          "worker": "raw_reopen",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/11/trace",
+          "worker": "historical_replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E005",
+      "selector": "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/0",
+          "worker": "w",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/0/stdout"
+        },
+        {
+          "pointer": "/facts/1",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/1/stdout"
+        },
+        {
+          "pointer": "/facts/3",
+          "worker": "w",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        },
+        {
+          "pointer": "/facts/6",
+          "worker": "w",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/6/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/9",
+          "worker": "w",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/9/stdout"
+        },
+        {
+          "pointer": "/facts/10",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/10/stdout"
+        }
+      ],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E006",
+      "selector": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E007",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_cached_acquire_task_read_reproduces_error_but_preserves_PRE",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/2",
+          "worker": "mutation",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/2/stdout"
+        },
+        {
+          "pointer": "/facts/3",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "replay",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/2/trace",
+          "worker": "mutation",
+          "phases": [
+            "actor_enter",
+            "cached_task_read",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "before_directory_move",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/2/trace/3"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E008",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_cached_snapshot_read_is_refused_without_physical_effect",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/2",
+          "worker": "mutation",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/2/stdout"
+        },
+        {
+          "pointer": "/facts/3",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "replay",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/2/trace",
+          "worker": "mutation",
+          "phases": [
+            "actor_enter",
+            "cached_snapshot_read",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "before_directory_move",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/2/trace/3"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E009",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_completion_lock_timeout_writes_nothing_and_releases_locks",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/4",
+          "worker": "complete",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "complete",
+          "phases": [
+            "actor_enter",
+            "directory_moved"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E010",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_directory_probes_do_not_invent_duplicate_during_real_move",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E011",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_genuine_duplicate_directory_still_fails_closed",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/2",
+          "worker": "mutate",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/2/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/2/trace",
+          "worker": "mutate",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E012",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_invalid_completion_identity_creates_no_lock_files",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E013",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_move_between_destination_and_source_probe_is_resolved",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E014",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_move_cannot_interleave_START_APPLY_DONE_boundary",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "mutation",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        },
+        {
+          "pointer": "/facts/6",
+          "worker": "replay",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/6/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "mutation",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "before_apply",
+            "apply_exit",
+            "durable_DONE"
+          ]
+        },
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "before_directory_move",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/6/trace",
+          "worker": "replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E015",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_preflight_lock_failure_refuses_without_apply_and_replay_is_safe",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E016",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_projection_cached_snapshot_error_preserves_checkpoint_and_raw_state",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "projection",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        },
+        {
+          "pointer": "/facts/6",
+          "worker": "fresh_projection",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/6/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "projection",
+          "phases": [
+            "actor_enter",
+            "cached_snapshot_read"
+          ]
+        },
+        {
+          "pointer": "/facts/6/trace",
+          "worker": "fresh_projection",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E017",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F2_release_event_error_after_DONE_is_replayed_without_second_apply",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "mutation",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        },
+        {
+          "pointer": "/facts/6",
+          "worker": "replay",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/6/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "mutation",
+          "phases": [
+            "actor_enter",
+            "durable_STARTED",
+            "apply_enter",
+            "apply_exit",
+            "durable_DONE",
+            "cached_release_event"
+          ]
+        },
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "operations_lock_attempt",
+            "before_directory_move",
+            "directory_moved"
+          ]
+        },
+        {
+          "pointer": "/facts/6/trace",
+          "worker": "replay",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [
+        "/facts/3/trace/2"
+      ],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 1,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E018",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F3_RAW_reader_is_inside_operations_lock_before_admission",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "begin",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "begin",
+          "phases": [
+            "actor_enter",
+            "held_RAW_read"
+          ]
+        },
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E019",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F3_marked_post_move_crash_late_writers_and_fresh_completion",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/3",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 91,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        },
+        {
+          "pointer": "/facts/4",
+          "worker": "begin",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/4/stdout"
+        },
+        {
+          "pointer": "/facts/5",
+          "worker": "micro",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 2,
+          "stderr": "",
+          "stdout_pointer": "/facts/5/stdout"
+        },
+        {
+          "pointer": "/facts/7",
+          "worker": "recover",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/7/stdout"
+        },
+        {
+          "pointer": "/facts/9",
+          "worker": "again",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/9/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter",
+            "directory_moved",
+            "crash_phase_reached"
+          ]
+        },
+        {
+          "pointer": "/facts/4/trace",
+          "worker": "begin",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/5/trace",
+          "worker": "micro",
+          "phases": [
+            "actor_enter",
+            "mutation_lock_attempt",
+            "mutation_lock_acquired"
+          ]
+        },
+        {
+          "pointer": "/facts/7/trace",
+          "worker": "recover",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/9/trace",
+          "worker": "again",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E020",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F3_writer_first_refusal_does_not_claim_crash_phase",
+      "raw_states": [],
+      "workers": [
+        {
+          "pointer": "/facts/2",
+          "worker": "begin",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/2/stdout"
+        },
+        {
+          "pointer": "/facts/3",
+          "worker": "close",
+          "pid": "NOT PRESENT IN SOURCE",
+          "exit": 0,
+          "stderr": "",
+          "stdout_pointer": "/facts/3/stdout"
+        }
+      ],
+      "phase_sequences": [
+        {
+          "pointer": "/facts/2/trace",
+          "worker": "begin",
+          "phases": [
+            "actor_enter"
+          ]
+        },
+        {
+          "pointer": "/facts/3/trace",
+          "worker": "close",
+          "phases": [
+            "actor_enter"
+          ]
+        }
+      ],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E034",
+      "selector": "test_web_alarm_wa4r002_diagnostics.RaceEvidenceTests.test_F3_RAW_reader_is_inside_operations_lock_before_admission",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    },
+    {
+      "id": "E043",
+      "selector": "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+      "raw_states": [],
+      "workers": [],
+      "phase_sequences": [],
+      "apply_markers": [],
+      "missing": [
+        "Global wall-clock ordering across workers: NOT PRESENT IN SOURCE",
+        "Historical handle owner: NOT PRESENT IN SOURCE",
+        "Raw TASK JSON bytes (parsed objects and file hashes are preserved where present): NOT PRESENT IN SOURCE"
+      ],
+      "apply_enter_count_in_recorded_trace": 0,
+      "apply_count_limit": "Recorded instrumentation only; absence is not proof against uninstrumented effects."
+    }
+  ]
+}

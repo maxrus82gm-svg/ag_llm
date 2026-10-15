@@ -19,12 +19,199 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-**Статус:** WAITING FOR NEW TASK.
+**Статус:** ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.
 
-CODEX-WA4-R-004-F1-CLOSEOUT-GATE передана как RESULT READY / AWAITING INDEPENDENT VERIFICATION. Ожидать независимой приёмки WEB_07; следующие стадии не запускать.
+CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE: RESULT READY / AWAITING INDEPENDENT VERIFICATION. Постановка и factual report сохранены ниже. Следующие задачи и rollout не запускать.
 
 ---
 
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+```````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE`.
+
+# TASK: CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE
+
+**ARCH CLASS:** Web Alarm Workspace / WA4-R Reliability / Evidence Handoff  
+**EXECUTOR:** Codex 007  
+**INDEPENDENT VERIFIER:** ChatGPT / WEB_07 → WEB_08  
+**STATUS:** ASSIGNED UPON USER LAUNCH  
+**PRIORITY:** Завершение независимой приёмки F1/F2/F3 без изменения production-кода.
+
+## 1. Цель
+
+Подготовить компактный, пригодный для чтения через GitHub **текстовый пакет первичных доказательств** из уже созданных R-003 и R-004 ZIP-архивов.
+
+Не повторять выполненный repair. Не проводить rollout. Не менять архитектуру.
+
+Сейчас GitHub предоставляет координатору текстовые `report.md`, `checks.json`, `versions.json`, но не позволяет независимо прочитать бинарные `evidence.zip`.
+
+Нужно устранить именно этот доказательственный разрыв.
+
+## 2. Источники
+
+Обязательно прочитать действующий маршрут:
+
+`08 → 000 → 34 → 18 → 01 → 23/24/25 → 36/36.1/36.2`.
+
+Исходные задачи и архивы:
+
+- `reports/CODEX-WA4-R-003-F2F3-LOCAL-REPAIR/`
+- `reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/`
+
+В том числе `report.md`, `checks.json`, `versions.json`, `manifest.json`, `evidence.zip`, negative controls, historical evidence.
+
+Обязательно сверить исходные SHA-256 и точные имена архивных members.
+
+Актуальный опубликованный source baseline перед новой документационной записью: GitHub `main@38e7164b1ab3af6131d65cfc9dc8760ee426dd1e` (#336). Последующий коммит ChatGPT №337 изменяет только тактическую документацию. Локальный агент **не использует Git/GitHub**, а сверяет доступные локальные файлы и документированные контрольные суммы.
+
+## 3. Результат — текстовый evidence package
+
+Создать:
+
+`reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/`
+
+Внутри сформировать:
+
+- `report.md` — выводы, ограничения, полный индекс первоисточников.
+- `provenance.json` — source archive SHA-256, member path, member SHA-256, source file pins, размеры, версии.
+- `f1-raw.jsonl` — F1 phase/raw evidence из R-004.
+- `f2f3-raw.jsonl` — адресные F2/F3 records из R-003.
+- `negative-controls.jsonl` — фактические inner RED и outer PASS.
+- `checks.json` — проверка корректности экспорта.
+- `manifest.json` — SHA-256 каждого экспортированного файла.
+
+При необходимости разбить длинные JSONL на отдельные небольшие файлы по сценарию.
+
+Не заменять отсутствующие RAW-данные пересказом из `report.md`. Если первоисточник не содержит нужного поля, записать `NOT PRESENT IN SOURCE`.
+
+## 4. Обязательная матрица F1
+
+Экспортировать для четырёх final F1-сценариев:
+
+1. Native pre-move refusal.
+2. Native post-move status failure + fresh-process recovery.
+3. Completion-first admission/plan/executor race.
+4. Admission-first closeout rejection.
+
+Для каждого сохранить при наличии в первоисточнике:
+
+- исходный test selector и attempt;
+- PRE, intermediate и terminal raw states;
+- фазовые маркеры в исходном порядке;
+- worker PID, exit, stdout/stderr, error chain и WinError;
+- active/completed location и task status;
+- реальные target bytes/hex/SHA-256;
+- operation, receipt, checkpoint, snapshot, claims;
+- исходные events bytes/prefix и completion-event count;
+- fresh-process reread/recovery;
+- доказательство отсутствия второго physical apply.
+
+Контрольные значения должны воспроизводиться **непосредственно из оригинальных данных**, а не создаваться по ожидаемой логике теста.
+
+## 5. Обязательная матрица F2/F3
+
+Из R-003 экспортировать наиболее важные первичные записи:
+
+- phantom duplicate и real move;
+- bounded destination recheck;
+- direct close / operations-lock serialization;
+- RAW read-before-lock native Windows refusal;
+- исправленный locked admission;
+- executor preflight authority / отказ без apply;
+- WA-017 crash race и terminal state;
+- ограничения исторического Windows CI.
+
+Сохранить исходные красные результаты, где они имеются.
+
+Исторический F2 80-round архив и исходный F1 artifact **не считать полученными**, если их фактически нет.
+
+## 6. Проверки качества экспорта
+
+Проверить:
+
+- исходные ZIP SHA совпадают с опубликованными manifest;
+- каждый JSONL record ссылается на реальный исходный member и selector;
+- значения PRE/POST, статусы и timestamps не реконструированы вручную;
+- все экспортированные JSON/JSONL корректно парсятся;
+- контрольные суммы текста и исходных записей фиксируются отдельно;
+- шесть R-004 и шесть R-003 negative controls представлены без подмены intentional RED продуктовым FAIL;
+- исходные ZIP и ранее сохранённые отчёты остаются неизменными;
+- нет секретов, live Workspace данных и избыточных персональных путей.
+
+Желательно выполнить adversarial self-check: намеренно исказить одно экспортированное поле в disposable TEMP и доказать, что проверка provenance/integrity обнаруживает изменение.
+
+При отсутствии данных не запускать автоматически новые тесты для «достраивания» evidence: сначала зафиксировать пробел и обосновать необходимость отдельного rerun.
+
+## 7. Scope
+
+**Разрешённая запись:**
+
+- только новая собственная папка `reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/`;
+- персональная карточка `Документация/000_Задачи Codex.md` по действующему регламенту ротации.
+
+**Read-only:** R-003, R-004, все production/test files, архитектурная и тактическая документация.
+
+Запрещено изменять:
+
+- `web_alarm/`;
+- корневые `test_web_alarm_*.py/js`;
+- общие runners и CI;
+- Ultra;
+- Git/GitHub;
+- существующие R-003/R-004 evidence;
+- общий `34_TACTICAL_CONTEXT.md`.
+
+Не обращаться к пользовательскому live storage. Не запускать платные LLM.
+
+## 8. Сдача
+
+Статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+Отдельно указать:
+
+- какие raw records удалось получить и связать с источниками;
+- какие записи отсутствуют;
+- какие целостностные проверки выполнены;
+- source SHA и размер каждого артефакта;
+- сохраняется ли необходимость дополнительного Windows CI.
+
+В конце — `SHARED DOC DELTA` для WEB_08.
+
+**NEXT:** пользователь публикует пакет штатным способом; ChatGPT независимо проверяет GitHub-тексты и выдаёт отдельные F1/F2/F3 verdicts. Без этого не объявлять STRICT VERIFIED.
+
+Главная задача — **сделать уже существующие доказательства независимо проверяемыми**, не выполнять повторно весь инженерный цикл.
+
+---
+
+```````````````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+PUBLICATION: LOCAL ONLY / NOT SYNCED
+ARCH CLASS: Web Alarm Workspace / WA4-R Reliability / Evidence Handoff; PRIMARY PROFILE 23 / TEST PROFILE 36.2.
+
+Подготовлен текстовый пакет reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/: report.md, provenance.json, четыре JSONL-индекса, 43 адресных RAW файла, observations/checks/scope/rotation/final-validation/manifest и два offline export/validation скрипта. 4 final F1 + 16 F2/F3 + 12 negative controls + 11 original RED; 1230 RAW/STRUCTURE nodes. Источники неизменны, значения не реконструированы.
+
+ПРОВЕРКИ: ZIP SHA/size совпали с локальными manifest, CRC PASS; 43/43 исходных test records восстановлены и сравнены с ZIP; 12/12 controls сохранены с intentional inner RED/outer PASS, недостающие inner counters R-003 явно отмечены. Три adversarial export controls PASS/0 FAIL/0 SKIP. Сверены F1 receipt/target/snapshot/checkpoint/exact events prefix/fresh process raw; source/text режимы и финальный manifest проверены. Exact команды, числа и hashes: checks.json, final-validation.json, manifest.json. Production/regression R-003/R-004 NOT RUN по scope. Семь final R-004 file pins совпали с локальными.
+
+РИСКИ: original F1 artifact и historical F2 80-round ZIP отсутствуют в разрешённых источниках; historical F3 handle owner/PID/trace/stdout/full raw tree не записаны. Старые event bytes/PID R-003 не достроены из parsed state. R-003 UI/server/diagnostic pins отличаются от текущего дерева; старый full PASS на него не перенесён. Новый независимый Windows CI на final source не подтверждён. Cache cleanup отклонён автоматической проверкой blocked by policy; собственный Python cache оставлен и исключён из manifest.
+
+DOC IMPACT: только новая own report папка и safe rotation этой карточки. 184 защищённых файла, включая старые evidence/reports, runtime/tests/CI/shared docs, сверены без изменений; общие документы READ-ONLY. SHARED DOC DELTA для WEB_08 в report.md, общего DOC closeout/VERIFIED нет. Git/GitHub, live storage, Ultra, production repair и rollout не использовались.
+
+NEXT: пользователь публикует только manifest-listed тексты; WEB_08 независимо проверяет RAW/source/control пакет, принимает раздельные решения F1/F2/F3 и назначает нужный Windows gate. Не начинать следующую задачу, не присваивать DONE / VERIFIED / STRICT VERIFIED.
+AMENDMENT: новых указаний во время R-005 не поступало.
+
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-R-005
+
+```````````````````text
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
 
 **TASK:** CODEX-WA4-R-004-F1-CLOSEOUT-GATE. Полная исходная утверждённая постановка сохранена дословно; БЛОК 1 не менялся во время работы.
@@ -3957,3 +4144,5 @@ Codex: задача утверждена пользователем. Прочи�
 `````````````````
 
 ``````````````````
+
+```````````````````
