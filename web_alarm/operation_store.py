@@ -84,6 +84,8 @@ def _safe_component(name: str, value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise OperationStoreError(f"{name} must be a non-empty string")
     value = value.strip()
+    if value in (".", ".."):
+        raise OperationStoreError(f"{name} must not be a relative path component")
     if Path(value).name != value or "/" in value or "\\" in value:
         raise OperationStoreError(f"{name} must not contain path separators")
     return value
@@ -156,6 +158,9 @@ class OperationStore:
     @contextmanager
     def _serialized(self, task_id: str) -> Iterator[None]:
         """Serialize read-check-write of one TASK's operations across processes."""
+        # Public callers (including closeout/claims) enter here before any
+        # record lookup. Reject path components before creating a lock file.
+        task_id = _safe_component("task_id", task_id)
         lock = InterProcessLock(
             self.tasks.storage_root / "locks" / "operations" / f"{task_id}.lock",
             timeout=self.lock_timeout,

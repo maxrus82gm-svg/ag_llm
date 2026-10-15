@@ -82,8 +82,15 @@ class EventCheckpointStore:
         path = self._events_path(task_id)
         line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(",", ":")) + "\n"
         try:
-            with path.open("a", encoding="utf-8", newline="\n") as handle:
-                handle.write(line)
+            # A crash may leave a complete JSON object without its delimiter.
+            # Never join the next record onto it or silently repair history.
+            with path.open("a+b") as handle:
+                handle.seek(0, os.SEEK_END)
+                if handle.tell():
+                    handle.seek(-1, os.SEEK_END)
+                    if handle.read(1) != b"\n":
+                        raise EventCheckpointStoreError(f"unterminated event log: {path}")
+                handle.write(line.encode("utf-8"))
                 handle.flush()
                 os.fsync(handle.fileno())
         except OSError as exc:
@@ -96,9 +103,12 @@ class EventCheckpointStore:
             return []
         records: list[EventRecord] = []
         try:
-            lines = path.read_text(encoding="utf-8").splitlines()
-        except OSError as exc:
+            data = path.read_bytes()
+            lines = data.decode("utf-8").splitlines()
+        except (OSError, UnicodeDecodeError) as exc:
             raise EventCheckpointStoreError(f"cannot read event log: {path}") from exc
+        if data and not data.endswith(b"\n"):
+            raise EventCheckpointStoreError(f"unterminated event log: {path}")
         for index, line in enumerate(lines, start=1):
             if not line.strip():
                 raise EventCheckpointStoreError(f"blank event line at {index}")

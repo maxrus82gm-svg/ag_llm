@@ -66,6 +66,8 @@ class MicrotaskStatusConflict(TaskStoreError):
 def _safe_id(name: str, value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise TaskStoreError(f"{name} must be a non-empty string")
+    if value in (".", ".."):
+        raise TaskStoreError(f"{name} must not be a relative path component")
     if Path(value).name != value or "/" in value or "\\" in value:
         raise TaskStoreError(f"{name} must not contain path separators")
     return value
@@ -189,6 +191,8 @@ class TaskStore:
             record = TaskRecord(**raw)
         except (KeyError, TypeError, ValueError) as exc:
             raise TaskStoreError(f"invalid task record: {task_dir}") from exc
+        if record.task_id != task_dir.name:
+            raise TaskStoreError(f"TASK identity does not match directory: {task_dir}")
         source_path = task_dir / "task.md"
         try:
             source = source_path.read_text(encoding="utf-8")
@@ -201,9 +205,12 @@ class TaskStore:
     def _load_plan_from(self, task_dir: Path) -> TaskPlanRecord:
         raw = _read_json(task_dir / "plan.json")
         try:
-            return TaskPlanRecord(**raw)
+            record = TaskPlanRecord(**raw)
         except (TypeError, ValueError) as exc:
             raise TaskStoreError(f"invalid task plan: {task_dir}") from exc
+        if record.task_id != task_dir.name:
+            raise TaskStoreError(f"plan TASK identity does not match directory: {task_dir}")
+        return record
 
     def _microtask_path(self, task_dir: Path, microtask_id: str) -> Path:
         return task_dir / "microtasks" / f"{_safe_id('microtask_id', microtask_id)}.json"
@@ -220,9 +227,12 @@ class TaskStore:
         raw = _read_json(path)
         try:
             raw["status"] = MicrotaskStatus(raw["status"])
-            return MicrotaskRecord(**raw)
+            record = MicrotaskRecord(**raw)
         except (KeyError, TypeError, ValueError) as exc:
             raise TaskStoreError(f"invalid microtask record: {path}") from exc
+        if record.task_id != task_dir.name or record.microtask_id != microtask_id:
+            raise TaskStoreError(f"microtask identity does not match requested record: {path}")
+        return record
 
     def _write_task(self, task_dir: Path, record: TaskRecord) -> None:
         _atomic_write_json(task_dir / "task.json", record_to_dict(record))

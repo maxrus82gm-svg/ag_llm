@@ -1,0 +1,104 @@
+--- before/web_alarm/task_store.py
++++ after/web_alarm/task_store.py
+@@ -66,6 +66,8 @@
+ def _safe_id(name: str, value: str) -> str:
+     if not isinstance(value, str) or not value.strip():
+         raise TaskStoreError(f"{name} must be a non-empty string")
++    if value in (".", ".."):
++        raise TaskStoreError(f"{name} must not be a relative path component")
+     if Path(value).name != value or "/" in value or "\\" in value:
+         raise TaskStoreError(f"{name} must not contain path separators")
+     return value
+@@ -189,6 +191,8 @@
+             record = TaskRecord(**raw)
+         except (KeyError, TypeError, ValueError) as exc:
+             raise TaskStoreError(f"invalid task record: {task_dir}") from exc
++        if record.task_id != task_dir.name:
++            raise TaskStoreError(f"TASK identity does not match directory: {task_dir}")
+         source_path = task_dir / "task.md"
+         try:
+             source = source_path.read_text(encoding="utf-8")
+@@ -201,9 +205,12 @@
+     def _load_plan_from(self, task_dir: Path) -> TaskPlanRecord:
+         raw = _read_json(task_dir / "plan.json")
+         try:
+-            return TaskPlanRecord(**raw)
++            record = TaskPlanRecord(**raw)
+         except (TypeError, ValueError) as exc:
+             raise TaskStoreError(f"invalid task plan: {task_dir}") from exc
++        if record.task_id != task_dir.name:
++            raise TaskStoreError(f"plan TASK identity does not match directory: {task_dir}")
++        return record
+ 
+     def _microtask_path(self, task_dir: Path, microtask_id: str) -> Path:
+         return task_dir / "microtasks" / f"{_safe_id('microtask_id', microtask_id)}.json"
+@@ -220,9 +227,12 @@
+         raw = _read_json(path)
+         try:
+             raw["status"] = MicrotaskStatus(raw["status"])
+-            return MicrotaskRecord(**raw)
++            record = MicrotaskRecord(**raw)
+         except (KeyError, TypeError, ValueError) as exc:
+             raise TaskStoreError(f"invalid microtask record: {path}") from exc
++        if record.task_id != task_dir.name or record.microtask_id != microtask_id:
++            raise TaskStoreError(f"microtask identity does not match requested record: {path}")
++        return record
+ 
+     def _write_task(self, task_dir: Path, record: TaskRecord) -> None:
+         _atomic_write_json(task_dir / "task.json", record_to_dict(record))
+--- before/web_alarm/event_checkpoint_store.py
++++ after/web_alarm/event_checkpoint_store.py
+@@ -82,8 +82,15 @@
+         path = self._events_path(task_id)
+         line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(",", ":")) + "\n"
+         try:
+-            with path.open("a", encoding="utf-8", newline="\n") as handle:
+-                handle.write(line)
++            # A crash may leave a complete JSON object without its delimiter.
++            # Never join the next record onto it or silently repair history.
++            with path.open("a+b") as handle:
++                handle.seek(0, os.SEEK_END)
++                if handle.tell():
++                    handle.seek(-1, os.SEEK_END)
++                    if handle.read(1) != b"\n":
++                        raise EventCheckpointStoreError(f"unterminated event log: {path}")
++                handle.write(line.encode("utf-8"))
+                 handle.flush()
+                 os.fsync(handle.fileno())
+         except OSError as exc:
+@@ -96,9 +103,12 @@
+             return []
+         records: list[EventRecord] = []
+         try:
+-            lines = path.read_text(encoding="utf-8").splitlines()
+-        except OSError as exc:
++            data = path.read_bytes()
++            lines = data.decode("utf-8").splitlines()
++        except (OSError, UnicodeDecodeError) as exc:
+             raise EventCheckpointStoreError(f"cannot read event log: {path}") from exc
++        if data and not data.endswith(b"\n"):
++            raise EventCheckpointStoreError(f"unterminated event log: {path}")
+         for index, line in enumerate(lines, start=1):
+             if not line.strip():
+                 raise EventCheckpointStoreError(f"blank event line at {index}")
+--- before/web_alarm/operation_store.py
++++ after/web_alarm/operation_store.py
+@@ -84,6 +84,8 @@
+     if not isinstance(value, str) or not value.strip():
+         raise OperationStoreError(f"{name} must be a non-empty string")
+     value = value.strip()
++    if value in (".", ".."):
++        raise OperationStoreError(f"{name} must not be a relative path component")
+     if Path(value).name != value or "/" in value or "\\" in value:
+         raise OperationStoreError(f"{name} must not contain path separators")
+     return value
+@@ -156,6 +158,9 @@
+     @contextmanager
+     def _serialized(self, task_id: str) -> Iterator[None]:
+         """Serialize read-check-write of one TASK's operations across processes."""
++        # Public callers (including closeout/claims) enter here before any
++        # record lookup. Reject path components before creating a lock file.
++        task_id = _safe_component("task_id", task_id)
+         lock = InterProcessLock(
+             self.tasks.storage_root / "locks" / "operations" / f"{task_id}.lock",
+             timeout=self.lock_timeout,

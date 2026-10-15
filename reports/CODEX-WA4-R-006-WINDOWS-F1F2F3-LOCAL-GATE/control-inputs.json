@@ -1,0 +1,44 @@
+{
+  "_load_task_from": {
+    "file": "web_alarm/task_store.py",
+    "file_sha256": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+    "class": "TaskStore",
+    "method": "_load_task_from",
+    "code": "    def _load_task_from(self, task_dir: Path) -> TaskRecord:\n        raw = _read_json(task_dir / \"task.json\")\n        try:\n            raw[\"status\"] = TaskStatus(raw[\"status\"])\n            record = TaskRecord(**raw)\n        except (KeyError, TypeError, ValueError) as exc:\n            raise TaskStoreError(f\"invalid task record: {task_dir}\") from exc\n        source_path = task_dir / \"task.md\"\n        try:\n            source = source_path.read_text(encoding=\"utf-8\")\n        except OSError as exc:\n            raise TaskStoreError(f\"cannot read RAW TASK: {source_path}\") from exc\n        if source != record.raw_task:\n            raise TaskStoreError(f\"RAW TASK drift detected for {record.task_id}\")\n        return record\n"
+  },
+  "_load_plan_from": {
+    "file": "web_alarm/task_store.py",
+    "file_sha256": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+    "class": "TaskStore",
+    "method": "_load_plan_from",
+    "code": "    def _load_plan_from(self, task_dir: Path) -> TaskPlanRecord:\n        raw = _read_json(task_dir / \"plan.json\")\n        try:\n            return TaskPlanRecord(**raw)\n        except (TypeError, ValueError) as exc:\n            raise TaskStoreError(f\"invalid task plan: {task_dir}\") from exc\n"
+  },
+  "_load_microtask_from": {
+    "file": "web_alarm/task_store.py",
+    "file_sha256": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+    "class": "TaskStore",
+    "method": "_load_microtask_from",
+    "code": "    def _load_microtask_from(\n        self, task_dir: Path, microtask_id: str\n    ) -> MicrotaskRecord:\n        path = self._microtask_path(task_dir, microtask_id)\n        if not path.is_file():\n            raise TaskStoreError(f\"unknown microtask_id: {microtask_id}\")\n        raw = _read_json(path)\n        try:\n            raw[\"status\"] = MicrotaskStatus(raw[\"status\"])\n            return MicrotaskRecord(**raw)\n        except (KeyError, TypeError, ValueError) as exc:\n            raise TaskStoreError(f\"invalid microtask record: {path}\") from exc\n"
+  },
+  "append_event": {
+    "file": "web_alarm/event_checkpoint_store.py",
+    "file_sha256": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+    "class": "EventCheckpointStore",
+    "method": "append_event",
+    "code": "    def append_event(\n        self,\n        task_id: str,\n        event_type: str,\n        *,\n        microtask_id: str | None = None,\n        operation_id: str | None = None,\n        payload: dict[str, Any] | None = None,\n        event_id: str | None = None,\n    ) -> EventRecord:\n        record = EventRecord(\n            event_id=event_id or new_id(\"event\"),\n            task_id=task_id,\n            event_type=event_type,\n            microtask_id=microtask_id,\n            operation_id=operation_id,\n            payload=dict(payload or {}),\n        )\n        path = self._events_path(task_id)\n        line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(\",\", \":\")) + \"\\n\"\n        try:\n            with path.open(\"a\", encoding=\"utf-8\", newline=\"\\n\") as handle:\n                handle.write(line)\n                handle.flush()\n                os.fsync(handle.fileno())\n        except OSError as exc:\n            raise EventCheckpointStoreError(f\"cannot append event: {path}\") from exc\n        return record\n"
+  },
+  "read_events": {
+    "file": "web_alarm/event_checkpoint_store.py",
+    "file_sha256": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+    "class": "EventCheckpointStore",
+    "method": "read_events",
+    "code": "    def read_events(self, task_id: str) -> list[EventRecord]:\n        path = self._events_path(task_id)\n        if not path.exists():\n            return []\n        records: list[EventRecord] = []\n        try:\n            lines = path.read_text(encoding=\"utf-8\").splitlines()\n        except OSError as exc:\n            raise EventCheckpointStoreError(f\"cannot read event log: {path}\") from exc\n        for index, line in enumerate(lines, start=1):\n            if not line.strip():\n                raise EventCheckpointStoreError(f\"blank event line at {index}\")\n            try:\n                raw = json.loads(line)\n            except json.JSONDecodeError as exc:\n                raise EventCheckpointStoreError(f\"invalid event JSON at line {index}\") from exc\n            if not isinstance(raw, dict) or raw.get(\"schema_version\") != SCHEMA_VERSION:\n                raise EventCheckpointStoreError(f\"invalid event schema at line {index}\")\n            try:\n                record = EventRecord(**raw)\n            except (TypeError, ValueError) as exc:\n                raise EventCheckpointStoreError(f\"invalid event record at line {index}\") from exc\n            if record.task_id != task_id:\n                raise EventCheckpointStoreError(f\"event task mismatch at line {index}\")\n            records.append(record)\n        return records\n"
+  },
+  "_serialized": {
+    "file": "web_alarm/operation_store.py",
+    "file_sha256": "d7088a782c280fca4423f681d23657e88ea1d8e021bdb43ca449bb4875316764",
+    "class": "OperationStore",
+    "method": "_serialized",
+    "code": "    @contextmanager\n    def _serialized(self, task_id: str) -> Iterator[None]:\n        \"\"\"Serialize read-check-write of one TASK's operations across processes.\"\"\"\n        lock = InterProcessLock(\n            self.tasks.storage_root / \"locks\" / \"operations\" / f\"{task_id}.lock\",\n            timeout=self.lock_timeout,\n        )\n        with self._lock:\n            try:\n                lock.acquire()\n            except StoreLockTimeout as exc:\n                raise OperationStoreError(str(exc)) from exc\n            try:\n                yield\n            finally:\n                lock.release()\n"
+  }
+}
