@@ -31,8 +31,50 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
+# TASK: CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001
+
+**Получатель:** агент 008 (Claude Desktop/Code).  
+**Источник:** пользовательское решение 2026-10-16 о двух независимых дорожках.  
+**ARCH CLASS:** Web Alarm Workspace / RT-001 / WA4-R reliability acceptance / R-006.  
+**Приоритет:** HIGH — сначала завершить контрольный этап F1–F3 перед WARN.  
+**Статус:** USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE.  
+**Verifier / Planner:** ChatGPT (независимая финальная приёмка); authority по TASK/STOP — Web Alarm/пользователь.  
+**Параллельная дорожка:** Codex 007 отдельно исследует ChatGPT Desktop MCP; Claude не вмешивается в неё.
+
+## 1. Цель
+
+Выполнить самостоятельный независимый инженерный аудит **уже опубликованной** сдачи `CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE` и определить **раздельно для F1, F2, F3**, достаточна ли фактическая проверка, чтобы закрыть соответствующие evidence gates RT-001 / WA4-R. Исходные документы: `08_Старт`, `000_Задачи для агента`, `18`, `01`, `23`, `24`, `25`, `34`, `36/36.1/36.2`, `000_Задачи Claude`, R-003/R-004/R-005/R-006.
+
+**Важно:** эта TASK — самостоятельный verifier-gate, **не разрешение** уже включать WARN, GATEWAY REQUIRED, STRICT или Final Audit. После отчёта и независимой приёмки ChatGPT следующий этап будет задан пользователем отдельно.
+
+## 2. База и проверяемые факты
+
+- Канонический пакет: `reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/`: `report.md`, `manifest.json`, `checks.json`, `versions.json`, `provenance.json`, `raw-index.jsonl`, `raw-review.json`, `transport-check.json`, `scope-check.json`, `records/`, `verify_package.py`, `evidence.zip` и связанный тест `test_web_alarm_wa4r006_local_gate.py`.
+- R-006 заявляет 802 executed / 801 PASS / 0 FAIL / 0 ERROR / 1 SKIP; адресные 103 PASS **в составе того же full-release**, 12 outer PASS quality, 2 bounded PASS, 8 дополнительных внутренних раундов F2/F3. Эти значения считать CLAIMED до собственной проверки.
+- Исправления затрагивают `web_alarm/task_store.py`, `web_alarm/event_checkpoint_store.py`, `web_alarm/operation_store.py` и новый тест. Сравнить исходные bytes/SHA-256 с pinned R-006 `versions.json`/manifest. **Если локальная база не соответствует зафиксированному исходнику — BLOCKED для зависящих от неё тестов, а не молчаливое тестирование неизвестной версии.** Получить обновление локальной копии только через пользователя/координатора по существующим правилам; локальный Git запрещён.
+- Исторические original F1 artifact, F2 80-round ZIP и F3 handle ownership остаются возможными evidence gaps; старые FAIL не превращать в PASS.
+
+## 3. Обязательные проверки
+
+1. Изучить первичные RAW R-006, `records/`, oracle, phase/order, source provenance, исходные неудачи и финальный repair; удостовериться, что PASS не выведен из самоподтверждающих production projections и что контрольные суммы относятся к проверяемым файлам. CRLF→LF в GitHub не путать с повреждением данных; байтовые ZIP проверять byte-safe методом.
+2. Адресно проверить **F1** (closeout vs admission/microtask, foreign identity, native pre/post move отказ, fresh-recovery), **F2** (direct close vs mutation executor, запись/приёмка, receipt/replay, genuine/phantom duplicates, lock/ownership) и **F3** (WA-017 crash race, pending metadata, post-move и fresh-process recovery). Проверить negative controls, quality mutants, тайминги, bounded races, остаточный cached-path read-only race.
+3. Безопасными изолированными offline-тестами в disposable TEMP **по возможности независимо воспроизвести релевантные R-006 селекторы и отдельные контрпримеры**. Не заявлять повторный Windows полный прогон, если его не выполнял; фактические counts/exit/skip/длительность писать отдельно от исходных 802.
+4. Дать отдельный verdict по F1/F2/F3 и общему WA4-R readiness: `PASS BOUNDED`, `PARTIAL`, `BLOCKED` или `REWORK REQUIRED`, с точной привязкой к raw/source/risk; сформулировать минимальные условия следующего `WARN` gate. Не интерпретировать OBSERVE как уже действующий STRICT.
+5. Сделать собственный adversarial review: попытаться опровергнуть ключевые инварианты lifecycle, fail-closed, никакого повторного physical apply, replay/idempotency и отсутствие обхода permission/ownership. Найденное вне read-only scope — `FINDING + reproducible evidence + proposed repair`, **без** изменения production-кода.
+6. Убедиться, что параллельная MCP-дорожка Codex изолирована; не писать в MCP adapter, `reports/CODEX-WUA-*`, UI, Ultra/Tkinter, глобальную документацию или чужие agent-cards.
+
+## 4. Scope и запреты
+
+**READ:** релевантный код `web_alarm/`, WA4 tests и runners, документы, опубликованные `reports/CODEX-WA4-R-006*/` и предыдущие R-003/R-005.  
+**EXECUTE:** исключительно изолированные безопасные offline tests/diagnostics на disposable fixtures, без live storage, реальных TASK и внешних сетей.  
+**WRITE:** собственный отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001/report.md` и его минимальные проверки/evidence, TEMP; своя карточка `Документация/000_Задачи Claude.md` — **только ротация БЛОКОВ 1–3 после фактического результата**.  
+**DENY:** Git/GitHub включая `status/diff/log/show`, `add/commit/push` (`DOC-GIT-01@1`), production source edits, общие docs/CI/runners, чужие задачи и карточки, установка плагинов, сетевые/платные вызовы, включение WARN/GATEWAY REQUIRED/STRICT, rollout, повторная миграция Web Alarm Ultra. Разрешение на самостоятельный publish Codex (`DOC-CODEX-SELF-PUBLISH-01@1`) **не распространяется на Claude**. Если нужны локальные изменения исходников для отдельного исправления — предложить отдельную TASK/AMENDMENT пользователю, не выходить за audit scope.
+
+## 5. Отчёт и handoff
+
+Отчёт обязан включать: source pinned revision/actual hashes; F1, F2, F3 раздельно; evidence chain и raw records; что независимо воспроизведено vs только сверено; точные tests/counts/exit и ограничения; реальные defects/gaps; дальнейший `WARN` proposal с acceptance criteria; DOC IMPACT/permissions/concurrency и `NEXT`. Статус **`RESULT READY / AWAITING INDEPENDENT VERIFICATION`**, не `DONE/VERIFIED`.
+
+По штатному правилу карточки сохранить постановку в БЛОКЕ 2, factual closeout в БЛОКЕ 3 и только затем освободить БЛОК 1. В ответном **чате Claude** дать один самостоятельный копируемый `text`-блок с тем же TASK ID и содержательным итогом, чтобы пользователь передал его ChatGPT. Прямую отправку из Claude в ChatGPT не считать доказанной; если недоступна, действует ручная передача. **Сдача агентом не является independent acceptance.**
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
