@@ -1,3 +1,15 @@
+## 2026-10-16 — CLAUDE-WA4-R-AUD010205-REPAIR-001 / independent bounded source+evidence review
+
+**SOURCE:** [user commit #352](https://github.com/maxrus82gm-svg/ag_llm/commit/7778c9e255ee6982391c58e30c77d89f296cd0e0) / Claude `CLAUDE-WA4-R-AUD010205-REPAIR-001` report + tests + evidence. **INDEPENDENT ChatGPT BOUNDED SOURCE/EVIDENCE ACCEPTED** for AUD-01/02/05, no independent full Windows execution or new clean CI. Claude-reported 822 = 821 PASS / 0 FAIL / 0 ERROR / 1 SKIP; repair 20/20, 4/4 RAM mutants, R-006 11/11, quality 12/12, focused 3×172 and bounded race 5×2 PASS. Existing historical FAIL unchanged. WA4-R **PARTIAL**; only bounded OBSERVE accepted, WARN/GATEWAY REQUIRED/STRICT/Final Audit **NOT AUTHORIZED**.
+
+**Repair:** `event_checkpoint_store.py` physical-LF framing, Unicode escaping and legacy compatibility; `operation_store.py` pre-durable history admission check under existing locks; `projection.py` unreadable-history fail-closed closeout blocker. Changed exactly 3 named production files and added `test_web_alarm_aud010205_repair.py`. Baseline 19 tests 5 PASS / 13 FAIL / 1 ERROR; final 20/20 PASS; four sensitivity mutants PASS; 99/102 original pinned unchanged and rollback documented. Published report, scoped diff, raw-derived `evidence.json`, `gate-e.json` are in `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001/`. Claude's 21 summarized attempts checked by ChatGPT; **do not call that independently rerun 822 Windows tests or clean CI**.
+
+**OPEN findings:** AUD-01T HIGH in `web_alarm/transport_event_store.py`: global transport JSONL reader splits U+2028 payloads, blocking future reads/writes, and an unterminated tail can splice with append; two red TEMP probes. AUD-02b MEDIUM in `web_alarm/state_machine.py`: microtask status can persist before history append refusal; one red TEMP probe. Both **not repaired**. Prior AUD-03 crash INTENT/event orphan and AUD-04 pre-validation lock creation still OPEN. Claude's next task candidate is scoped engineering on 01T/02b, assigned manually by user. Clean CI exact SHA and explicit read-only live-storage preflight are separate future gates.
+
+**DOC IMPACT:** shared docs corrected by coordinator; Claude personal B1/B2/B3 and `001_История выполненных задач Claude.md` intentionally not edited (latter requires strict DONE/VERIFIED). History below preserved. Codex WUA no overlap.
+
+---
+
 # Журнал Web Alarm Workspace — выполненные задачи и аудит
 
 ## 2026-10-13 — WEB07-WA4-R-OBSERVE-CLOSEOUT-001 / independent OBSERVE acceptance
