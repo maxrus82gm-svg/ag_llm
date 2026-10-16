@@ -1,3 +1,19 @@
+## WEB_09 / 2026-10-16 / CURRENT — Claude bounded repair review + two independent streams
+
+**WEB_09 status 2026-10-16 / published source #352 7778c9e255ee6982391c58e30c77d89f296cd0e0:** Claude 008 `CLAUDE-WA4-R-AUD010205-REPAIR-001` repair AUD-01/02/05 reviewed by ChatGPT as **BOUNDED SOURCE/EVIDENCE ACCEPTED**. This is NOT independently executed Windows suite or clean CI. Claude reported full 822 = 821 PASS / 0 FAIL / 0 ERROR / 1 SKIP (symlink), 20/20 focused repair, 4/4 quality mutants, 11/11 R-006, 12/12 old quality, 3×172 focused, 5×2 race repetitions. **WA4-R PARTIAL**; OBSERVE bounded; WARN/GATEWAY REQUIRED/STRICT/Final Audit NOT AUTHORIZED. Historical failed CI evidence remains historical.
+
+**Implemented:** per-TASK JSONL physical-LF reader and escaped U+0085/U+2028/U+2029 writer; operation `begin()` checks history under current locks before durable admission; projection/closeout rejects unreadable history with `HISTORY_UNREADABLE` / `PROJECTION_HISTORY_UNREADABLE` even when no operations. Old raw-Unicode valid logs stay readable. Three runtime source files + one `test_web_alarm_aud010205_repair.py` new test, 99/102 pin unchanged. `MOVED_STATUS_PENDING` retains status-only recovery. Findings and reports in `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001/`.
+
+**OPEN:** AUD-01T HIGH global `transport_event_store.py` accepts U+2028 which breaks transport events reads/future appends and splices torn tails; AUD-02b MEDIUM `state_machine.py` may persist microtask status DONE while event append fails. Isolated negative probes 2/2 and 1/1 expected FAIL, **not fixed**. AUD-03 INTENT/event crash gap and AUD-04 pre-validation lock also OPEN. New Claude task for AUD-01T/02b is **proposal only until manual user assignment**; clean exact-SHA CI and separately approved read-only live-storage preflight later.
+
+**SCOPE/OWNER:** ChatGPT = shared canonical documentation, independent source/evidence verification and planning; user inserts full TASK into agent БЛОК 1 and sends short start manually; Claude = Web Alarm assigned code/tests + own `000_Задачи Claude.md` rotation/report; Codex = WUA MCP plugin + own card/report. Their default permissions do not include editing shared 08/000/01/18/23/24/25/34/36.2/05/06. Claude B1 now waiting for new TASK. Codex WUA 0.2.1 local gates A–D PASS; bounded activation authorized by user, **ordinary ChatGPT Desktop E2E NOT VERIFIED**.
+
+**FUTURE / Blueprint:** periodically read `37_Старт перехода - Web Alarm Ultra.md`, `Blueprint LLM.md` and `Blueprint LLM - тактический контекст.md`; ChatGPT proposes useful ideas with benefits/risks, the user decides and only after approval should the main Blueprint concept be amended. Document 37 describes future Ultra Tab, separate connection profiles, initial GigaChat Chat, LLM Node then Codex adapter, NOT current coding/rollout GO.
+
+**Next:** ChatGPT gives one full and one short Claude task text to USER in chat; agent B1 not changed by ChatGPT. Claude historical `001_История выполненных задач Claude.md` not updated because strict DONE/VERIFIED gate not established. Older CURRENT sections below are date-scoped records, not the latest status.
+
+---
+
 ## WEB_09 / 2026-10-16 / CONTEXT TRANSFER — WA4-R + MCP (coordination only)
 
 **SOURCE / STATUS:** user-authorized tactical handoff from WEB_08 to new chat WEB_09 on 2026-10-16. This is a context update only, **not** WA4-R closeout, WARN/STRICT GO, production change, or new agent TASK. New chat reads 08 → 000 → 34 → 18 → 01 and 36/36.1/36.2 (Web Alarm) or 36.3 (Ultra), and verifies current cards, revisions and raw evidence before any acceptance. The name WEB_09 does not imply WEB_08 acceptance is finished.

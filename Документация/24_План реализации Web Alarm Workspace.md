@@ -1,3 +1,9 @@
+### WA4-R current stage / 2026-10-16 — bounded repair, rollout withheld
+
+**SOURCE:** [user commit #352](https://github.com/maxrus82gm-svg/ag_llm/commit/7778c9e255ee6982391c58e30c77d89f296cd0e0) / Claude `CLAUDE-WA4-R-AUD010205-REPAIR-001` report + tests + evidence. **INDEPENDENT ChatGPT BOUNDED SOURCE/EVIDENCE ACCEPTED** for AUD-01/02/05, no independent full Windows execution or new clean CI. Claude-reported 822 = 821 PASS / 0 FAIL / 0 ERROR / 1 SKIP; repair 20/20, 4/4 RAM mutants, R-006 11/11, quality 12/12, focused 3×172 and bounded race 5×2 PASS. Existing historical FAIL unchanged. WA4-R **PARTIAL**; only bounded OBSERVE accepted, WARN/GATEWAY REQUIRED/STRICT/Final Audit **NOT AUTHORIZED**.
+
+**Completed engineering in bounded review:** AUD-01, AUD-02 and AUD-05 repairs and 20 regression tests. **Proposed next Claude engineering step, NOT YET ASSIGNED:** investigate and repair AUD-01T transport-event integrity + AUD-02b microtask/event ordering, with autonomous adversarial review, isolated evidence and no MCP write-scope. AUD-03/04 need separate user/scope decision after engineering analysis. Next independent gates include source+tests review, new clean CI exact commit, and separately authorized read-only live-storage preflight. OBSERVE is bounded, not automatic WARN. Codex WUA MCP track is independent; local loader PASS not ordinary ChatGPT Desktop E2E. Future Ultra Tab/Blueprint roadmap doc 37 is not part of WA4-R coding scope.
+
 # План реализации Web Alarm Workspace
 
 ### Direction and sequencing / 2026-10-14 — approved priorities, no rescope
