@@ -1,0 +1,39 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "inspection_kind": "READ ONLY",
+  "local_plugin_id": "wua-desktop-readonly@wua-desktop-e2e-local",
+  "local_enabled": true,
+  "local_cache_present": true,
+  "local_source_cache_exact_match_files": 47,
+  "chatgpt_permissions_lookup": {
+    "tool": "mcp__codex_apps__plugin_management_get_app_permissions",
+    "app_id": "wua-desktop-readonly@wua-desktop-e2e-local",
+    "status": "not_installed",
+    "global_permission": "Allow low-risk actions",
+    "is_permission_denial": false,
+    "interpretation": "Separate service does not resolve this local plugin ID. Does not disprove local installation or establish the cause of missing Chat tools."
+  },
+  "cli": {
+    "path": "C:/Users/REX/AppData/Local/OpenAI/Codex/bin/9614f1d9b40d9c4f/codex.exe",
+    "version": "codex-cli 0.162.0-alpha.17.2",
+    "powershell_get_command_matches": true,
+    "wua_marketplace_considered": false,
+    "working_directories_checked": [
+      "M:/GitHub/ag_llm",
+      "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001"
+    ],
+    "result_in_both_directories": "Only three built-in marketplaces; WUA installed and available lists empty",
+    "machine_readable_primary_snapshot": "installation_diagnostic_01.json"
+  },
+  "current_existing_agent_session": {
+    "wua_tools_exposed": 0,
+    "limitation": "Existing session is not a fresh local host control and does not prove new sessions cannot load WUA."
+  },
+  "permissions_changed": false,
+  "marketplace_registered_by_agent": false,
+  "plugin_reinstalled_by_agent": false,
+  "app_restarted_by_agent": false,
+  "desktop_ui_automated": false,
+  "github_actions": 0,
+  "network_settings_changed": false
+}

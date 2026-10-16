@@ -1,0 +1,44 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "checked_utc": "2026-10-16T09:35:32.567386+00:00",
+  "cli_listing_wua": {
+    "name": "wua_desktop_readonly",
+    "enabled": true,
+    "disabled_reason": null,
+    "transport": {
+      "type": "stdio",
+      "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+      "args": [
+        "-I",
+        "-X",
+        "utf8",
+        "-B",
+        "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/server.py"
+      ],
+      "env": null,
+      "env_vars": [],
+      "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin"
+    },
+    "startup_timeout_sec": null,
+    "tool_timeout_sec": null,
+    "auth_status": "unsupported"
+  },
+  "configured_server_names_only": [
+    "astro_modeler",
+    "code-review",
+    "codex_app",
+    "cua_repl",
+    "gigachat_ultra",
+    "node_repl",
+    "wua_desktop_readonly"
+  ],
+  "rollback_readiness": {
+    "rollback_ready": true,
+    "exact_before_sha256": "b1f68a1c96da9f6329c5a5f9156b81255b2b695e4a1c8d9b7787d50dd7ce5ecc",
+    "config_path": "C:\\Users\\REX\\.codex\\config.toml",
+    "mutated": false
+  },
+  "rollback_applied": false,
+  "ordinary_chat_real_tool_calls": 0,
+  "desktop_e2e": "NOT VERIFIED"
+}

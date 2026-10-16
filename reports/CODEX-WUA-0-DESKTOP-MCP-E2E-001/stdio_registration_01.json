@@ -1,0 +1,61 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "config_path": "C:\\Users\\REX\\.codex\\config.toml",
+  "backup_path": "C:\\Users\\REX\\.codex\\backups\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\20261016T093101Z-01d1331b\\config.before.toml",
+  "appended_path": "C:\\Users\\REX\\.codex\\backups\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\20261016T093101Z-01d1331b\\wua.appended.bin",
+  "before_sha256": "b1f68a1c96da9f6329c5a5f9156b81255b2b695e4a1c8d9b7787d50dd7ce5ecc",
+  "after_sha256": "514639478eb7678592b6330c7e6ad54113a5199e1c8fd78c24d0c499b14bd6db",
+  "source_mcp_sha256": "eb47a926e5d9524c3b352b38bbcb3e8d8e02f4f1fe3fe5b0ca106f59a718e523",
+  "added_key": "wua_desktop_readonly",
+  "entry": {
+    "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+    "args": [
+      "-I",
+      "-X",
+      "utf8",
+      "-B",
+      "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/server.py"
+    ],
+    "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin"
+  },
+  "registered_utc": "2026-10-16T09:31:01.453336+00:00",
+  "method": "Official documented ~/.codex/config.toml, append-only new MCP table",
+  "supported_scope": "ChatGPT Desktop / CLI / IDE sharing same local Codex host; ordinary Chat exposure unverified",
+  "backup_state_path": "C:\\Users\\REX\\.codex\\backups\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\20261016T093101Z-01d1331b\\state.json",
+  "original_bytes_preserved_as_prefix": true,
+  "all_existing_settings_unchanged": true,
+  "existing_mcp_servers_unchanged": [
+    "astro_modeler",
+    "gigachat_ultra",
+    "node_repl"
+  ],
+  "cli_get": {
+    "name": "wua_desktop_readonly",
+    "enabled": true,
+    "disabled_reason": null,
+    "transport": {
+      "type": "stdio",
+      "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+      "args": [
+        "-I",
+        "-X",
+        "utf8",
+        "-B",
+        "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/server.py"
+      ],
+      "env": null,
+      "env_vars": [],
+      "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin"
+    },
+    "enabled_tools": null,
+    "disabled_tools": null,
+    "startup_timeout_sec": null,
+    "tool_timeout_sec": null
+  },
+  "desktop_e2e": "NOT VERIFIED / MCP TOOLS UNAVAILABLE",
+  "ordinary_chat_real_tool_calls": 0,
+  "app_restarted": false,
+  "permissions_changed": false,
+  "network_settings_changed": false,
+  "github_actions": 0
+}

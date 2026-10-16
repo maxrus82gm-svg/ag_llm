@@ -1,0 +1,24 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "source": "direct user report in current chat",
+  "plugin_visible": true,
+  "version": "0.2.0",
+  "target": "ordinary ChatGPT Desktop Chat",
+  "status": "DESKTOP E2E NOT VERIFIED / MCP TOOLS UNAVAILABLE",
+  "ordinary_chat_real_tool_calls": 0,
+  "tools": {
+    "ping": "UNAVAILABLE / NOT CALLED",
+    "list_capabilities": "UNAVAILABLE / NOT CALLED",
+    "read_synthetic_context(synthetic_wua_desktop_001)": "NOT CALLED",
+    "read_synthetic_context(other_task)": "NOT CALLED"
+  },
+  "task_id_received": false,
+  "session_id_received": false,
+  "nonce_received": false,
+  "context_sha256_received": false,
+  "proof_path_received": false,
+  "refusal_code_received": false,
+  "human_initial_installation_report": "Installed and available in ordinary Chat; will send result",
+  "subsequent_actual_test_supersedes_visibility_as_success": "UI visibility did not establish tools exposure",
+  "independent_acceptance": "NOT CLAIMED"
+}

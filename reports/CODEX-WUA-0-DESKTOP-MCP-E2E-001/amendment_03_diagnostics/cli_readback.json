@@ -1,0 +1,62 @@
+{
+  "wua_direct": {
+    "exit_code": 0,
+    "result": {
+      "name": "wua_desktop_readonly",
+      "enabled": true,
+      "disabled_reason": null,
+      "transport": {
+        "type": "stdio",
+        "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+        "args": [
+          "-I",
+          "-X",
+          "utf8",
+          "-B",
+          "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/server.py"
+        ],
+        "env": null,
+        "env_vars": [],
+        "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin"
+      },
+      "enabled_tools": null,
+      "disabled_tools": null,
+      "startup_timeout_sec": null,
+      "tool_timeout_sec": null
+    },
+    "stderr": ""
+  },
+  "wua_plugins": {
+    "exit_code": 0,
+    "result": {
+      "installed": [],
+      "available": []
+    },
+    "stderr": ""
+  },
+  "marketplaces": {
+    "exit_code": 0,
+    "result": {
+      "marketplaces": [
+        {
+          "name": "openai-primary-runtime",
+          "root": "C:\\Users\\REX\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime"
+        },
+        {
+          "name": "openai-bundled",
+          "root": "C:\\Users\\REX\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled"
+        },
+        {
+          "name": "openai-curated",
+          "root": "C:\\Users\\REX\\.codex\\.tmp\\plugins"
+        }
+      ]
+    },
+    "stderr": ""
+  },
+  "version": {
+    "exit_code": 0,
+    "result": "codex-cli 0.162.0-alpha.17.2",
+    "stderr": ""
+  }
+}

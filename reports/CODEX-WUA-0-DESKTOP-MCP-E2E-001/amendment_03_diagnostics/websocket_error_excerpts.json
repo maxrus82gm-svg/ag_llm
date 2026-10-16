@@ -1,0 +1,416 @@
+[
+  {
+    "id": 12125086,
+    "at_utc": "2026-10-16T05:00:27+00:00",
+    "level": "WARN",
+    "target": "codex_core::session::startup_prewarm",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:regular_task.prepare_run_turn:startup_prewarm.resolve: startup websocket prewarm setup failed: stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125160,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125162,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (1/5 in 219ms)... turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125168,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125170,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (2/5 in 364ms)... turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125189,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125191,
+    "at_utc": "2026-10-16T05:00:28+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (3/5 in 873ms)... turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 retries=3 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125217,
+    "at_utc": "2026-10-16T05:00:29+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125219,
+    "at_utc": "2026-10-16T05:00:29+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (4/5 in 1.535s)... turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 retries=4 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125250,
+    "at_utc": "2026-10-16T05:00:31+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125252,
+    "at_utc": "2026-10-16T05:00:31+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (5/5 in 3.509s)... turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 retries=5 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12125260,
+    "at_utc": "2026-10-16T05:00:34+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a14315-3b17-7511-b115-e1544be427ce}:submission_dispatch{otel.name=\"op.dispatch.inter_agent_communication\" submission.id=\"01a14315-3bec-76c0-b277-4d1e862ec026\" codex.op=\"inter_agent_communication\"}:turn{otel.name=\"session_task.turn\" thread.id=01a14315-3b17-7511-b115-e1544be427ce turn.id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a14315-3bec-76c0-b277-4d1e862ec026 model=qwen3-coder:30b}:stream_request:model_client.stream_responses_websocket{model=qwen3-coder:30b wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a14315-3b17-7511-b115-e1544be427ce",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12137940,
+    "at_utc": "2026-10-16T06:21:08+00:00",
+    "level": "WARN",
+    "target": "codex_core::session::startup_prewarm",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:regular_task.prepare_run_turn:startup_prewarm.resolve: startup websocket prewarm setup failed: stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12137988,
+    "at_utc": "2026-10-16T06:21:10+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:run_turn:run_pre_sampling_compact:run_auto_compact{reason=ModelDownshift phase=PreTurn}:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12137990,
+    "at_utc": "2026-10-16T06:21:10+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:run_turn:run_pre_sampling_compact:run_auto_compact{reason=ModelDownshift phase=PreTurn}: remote compaction v2 stream failed; retrying request after delay turn_id=01a1435f-1b77-7741-8eb4-3293e72df63e retries=1 max_retries=2 compact_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12137993,
+    "at_utc": "2026-10-16T06:21:10+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:run_turn:run_pre_sampling_compact:run_auto_compact{reason=ModelDownshift phase=PreTurn}:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12137995,
+    "at_utc": "2026-10-16T06:21:10+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:run_turn:run_pre_sampling_compact:run_auto_compact{reason=ModelDownshift phase=PreTurn}: remote compaction v2 stream failed; retrying request after delay turn_id=01a1435f-1b77-7741-8eb4-3293e72df63e retries=2 max_retries=2 compact_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12138032,
+    "at_utc": "2026-10-16T06:21:10+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=\"01a1435f-1b77-7741-8eb4-3293e72df63e\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1435f-1b5f-7eb3-9ea2-b092fbf22421 turn.id=01a1435f-1b77-7741-8eb4-3293e72df63e model=gpt-6-luna codex.turn.reasoning_effort=low}:session_task.run:run_turn:run_pre_sampling_compact:run_auto_compact{reason=ModelDownshift phase=PreTurn}:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1435f-1b5f-7eb3-9ea2-b092fbf22421",
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12146829,
+    "at_utc": "2026-10-16T08:35:08+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "app_server.request{otel.kind=\"server\" otel.name=\"thread/start\" rpc.system=\"jsonrpc\" rpc.method=\"thread/start\" rpc.transport=\"stdio\" rpc.request_id=8988a4c7-61d0-4f0e-ad87-95238a30d505 app_server.connection_id=0 app_server.api_version=\"v2\" app_server.client_name=\"Codex Desktop\" app_server.client_version=\"26.1007.71326\"}:app_server.thread_start.create_thread{otel.name=\"app_server.thread_start.create_thread\" thread_start.dynamic_tool_count=0}:thread_spawn{otel.name=\"thread_spawn\"}:session_init:startup_prewarm{otel.name=\"startup_prewarm\" thread.id=01a143d9-c6bd-7690-b045-3461ecd7b539 prewarm.input=\"base\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": null,
+    "process_uuid": "pid:22848:ce09960e-094e-4ffb-b1de-a1a9edb2d2f7"
+  },
+  {
+    "id": 12147874,
+    "at_utc": "2026-10-16T08:49:01+00:00",
+    "level": "WARN",
+    "target": "codex_core::session::startup_prewarm",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:regular_task.prepare_run_turn:startup_prewarm.resolve: startup websocket prewarm setup failed: stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147931,
+    "at_utc": "2026-10-16T08:49:02+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147933,
+    "at_utc": "2026-10-16T08:49:02+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (1/5 in 199ms)... turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 retries=1 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147972,
+    "at_utc": "2026-10-16T08:49:02+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147974,
+    "at_utc": "2026-10-16T08:49:02+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (2/5 in 414ms)... turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 retries=2 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147989,
+    "at_utc": "2026-10-16T08:49:03+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12147991,
+    "at_utc": "2026-10-16T08:49:03+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (3/5 in 747ms)... turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 retries=3 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12148034,
+    "at_utc": "2026-10-16T08:49:03+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12148036,
+    "at_utc": "2026-10-16T08:49:03+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (4/5 in 1.501s)... turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 retries=4 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12148100,
+    "at_utc": "2026-10-16T08:49:05+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12148102,
+    "at_utc": "2026-10-16T08:49:05+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (5/5 in 3.326s)... turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 retries=5 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12148150,
+    "at_utc": "2026-10-16T08:49:08+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a143e6-7f08-7cc3-90c4-b8bd49054029\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a143e6-7f08-7cc3-90c4-b8bd49054029 model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12151162,
+    "at_utc": "2026-10-16T09:54:45+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "app_server.request{otel.kind=\"server\" otel.name=\"thread/start\" rpc.system=\"jsonrpc\" rpc.method=\"thread/start\" rpc.transport=\"stdio\" rpc.request_id=4a4ef676-e751-4d02-8eaf-756882e95b5a app_server.connection_id=0 app_server.api_version=\"v2\" app_server.client_name=\"Codex Desktop\" app_server.client_version=\"26.1007.71326\"}:app_server.thread_start.create_thread{otel.name=\"app_server.thread_start.create_thread\" thread_start.dynamic_tool_count=0}:thread_spawn{otel.name=\"thread_spawn\"}:session_init:startup_prewarm{otel.name=\"startup_prewarm\" thread.id=01a14422-ac49-7452-9e2a-7a509d988f7f prewarm.input=\"base\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": null,
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12151451,
+    "at_utc": "2026-10-16T10:01:47+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "app_server.request{otel.kind=\"server\" otel.name=\"thread/start\" rpc.system=\"jsonrpc\" rpc.method=\"thread/start\" rpc.transport=\"stdio\" rpc.request_id=c3896763-73b3-467b-bc7b-f80f3b916741 app_server.connection_id=0 app_server.api_version=\"v2\" app_server.client_name=\"Codex Desktop\" app_server.client_version=\"26.1007.71326\"}:app_server.thread_start.create_thread{otel.name=\"app_server.thread_start.create_thread\" thread_start.dynamic_tool_count=0}:thread_spawn{otel.name=\"thread_spawn\"}:session_init:startup_prewarm{otel.name=\"startup_prewarm\" thread.id=01a14429-1c6e-7272-9f63-777d2f6e7e30 prewarm.input=\"base\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": null,
+    "process_uuid": "pid:13804:912cb0d0-0e3c-4303-94a4-d4fcf5071627"
+  },
+  {
+    "id": 12153734,
+    "at_utc": "2026-10-16T13:14:48+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "app_server.request{otel.kind=\"server\" otel.name=\"thread/start\" rpc.system=\"jsonrpc\" rpc.method=\"thread/start\" rpc.transport=\"stdio\" rpc.request_id=62def417-c9bb-4a6d-9c50-e0fb8372f3b9 app_server.connection_id=0 app_server.api_version=\"v2\" app_server.client_name=\"Codex Desktop\" app_server.client_version=\"26.1007.71326\"}:app_server.thread_start.create_thread{otel.name=\"app_server.thread_start.create_thread\" thread_start.dynamic_tool_count=0}:thread_spawn{otel.name=\"thread_spawn\"}:session_init:startup_prewarm{otel.name=\"startup_prewarm\" thread.id=01a144d9-cf24-7ef1-b96c-888fea52769b prewarm.input=\"base\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": null,
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153846,
+    "at_utc": "2026-10-16T13:15:03+00:00",
+    "level": "WARN",
+    "target": "codex_core::session::startup_prewarm",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:regular_task.prepare_run_turn:startup_prewarm.resolve: startup websocket prewarm setup failed: stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153888,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153890,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (1/5 in 198ms)... turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe retries=1 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153901,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153903,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (2/5 in 412ms)... turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe retries=2 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153909,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153911,
+    "at_utc": "2026-10-16T13:15:04+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (3/5 in 790ms)... turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe retries=3 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153965,
+    "at_utc": "2026-10-16T13:15:05+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153967,
+    "at_utc": "2026-10-16T13:15:05+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (4/5 in 1.648s)... turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe retries=4 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153988,
+    "at_utc": "2026-10-16T13:15:07+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12153990,
+    "at_utc": "2026-10-16T13:15:07+00:00",
+    "level": "WARN",
+    "target": "codex_core::responses_retry",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}: stream disconnected - retrying sampling request (5/5 in 3.189s)... turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe retries=5 max_retries=5 sampling_error=stream disconnected before completion: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013)",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  },
+  {
+    "id": 12154048,
+    "at_utc": "2026-10-16T13:15:10+00:00",
+    "level": "ERROR",
+    "target": "codex_api::endpoint::responses_websocket",
+    "body": "session_loop{thread_id=01a1407b-08b1-7360-9979-23c93793c3c7}:submission_dispatch{otel.name=\"op.dispatch.turn_input\" submission.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\" codex.op=\"turn_input\"}:codex.turn_input{conversation.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=\"01a144da-0d6e-7402-ae46-8a7b9ff48bfe\"}:turn{otel.name=\"session_task.turn\" thread.id=01a1407b-08b1-7360-9979-23c93793c3c7 turn.id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol codex.turn.reasoning_effort=xhigh}:session_task.run:run_turn:run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol cwd=M:\\GitHub\\ag_llm}:try_run_sampling_request{turn_id=01a144da-0d6e-7402-ae46-8a7b9ff48bfe model=gpt-6.1-sol}:stream_request:model_client.stream_responses_websocket{model=gpt-6.1-sol wire_api=responses transport=\"responses_websocket\" turn.has_metadata_header=true websocket.warmup=false api.path=\"/responses\"}:model_client.websocket_connection{provider=OpenAI wire_api=responses transport=\"responses_websocket\" api.path=\"/responses\" turn.has_metadata_header=true}:responses_websocket.connect{transport=\"responses_websocket\" api.path=\"/responses\"}: failed to connect to websocket: IO error: Сделана попытка доступа к сокету методом, запрещенным правами доступа. (os error 10013), url: wss://chatgpt.com/backend-api/codex/responses",
+    "thread_id": "01a1407b-08b1-7360-9979-23c93793c3c7",
+    "process_uuid": "pid:1472:d23cbf6f-6bed-4ec2-bfd1-b0218aee4773"
+  }
+]

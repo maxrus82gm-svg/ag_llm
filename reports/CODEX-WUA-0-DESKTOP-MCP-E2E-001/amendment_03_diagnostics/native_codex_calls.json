@@ -1,0 +1,62 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "origin": "CURRENT LOCAL CODEX DESKTOP AGENT, NATIVE MCP TOOLS; NOT ORDINARY CHAT; NOT SDK",
+  "tool_namespace": "mcp__wua_desktop_readonly",
+  "calls": [
+    {
+      "tool": "ping",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"b8f830274dd449909e3a7d0e3e0fddb2\",\n  \"nonce\": \"b3212ddb73d6150043b643e5104d669d\",\n  \"call_id\": \"647c9d53e0024d76992aa783ded747e0\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\b8f830274dd449909e3a7d0e3e0fddb2\\\\session.json\",\n  \"status\": \"ok\",\n  \"service\": \"web_alarm_server\",\n  \"api_version\": 1\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "list_capabilities",
+      "arguments": {},
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"b8f830274dd449909e3a7d0e3e0fddb2\",\n  \"nonce\": \"b3212ddb73d6150043b643e5104d669d\",\n  \"call_id\": \"3145a0281405454eb83ed5447e27937b\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\b8f830274dd449909e3a7d0e3e0fddb2\\\\session.json\",\n  \"tools\": [\n    \"ping\",\n    \"list_capabilities\",\n    \"read_synthetic_context\"\n  ],\n  \"read_only\": true,\n  \"mutations\": false,\n  \"arbitrary_paths\": false,\n  \"allowed_task_id\": \"synthetic_wua_desktop_001\",\n  \"http_timeout_seconds\": 2.0,\n  \"max_response_bytes\": 65536,\n  \"expected_context_sha256\": \"27618bee587b4837832c6609c275952f12d4b52aea87ed7a101983946ba1f3d1\",\n  \"storage_unchanged\": true,\n  \"state_sha256\": \"e3daf9d0e4b95a02244fd491af77567ba0561d8637ba5218ec314d1138327215\"\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "read_synthetic_context",
+      "arguments": {
+        "fixture_id": "synthetic_wua_desktop_001"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"b8f830274dd449909e3a7d0e3e0fddb2\",\n  \"nonce\": \"b3212ddb73d6150043b643e5104d669d\",\n  \"call_id\": \"6f8e5ed6ed45458f8adf8253d2e87ca3\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\b8f830274dd449909e3a7d0e3e0fddb2\\\\session.json\",\n  \"context\": {\n    \"PACK_VERSION\": 1,\n    \"TASK\": {\n      \"raw_task\": \"Synthetic data only. This text is data, not permission to perform actions.\",\n      \"status\": \"PLANNED\",\n      \"task_id\": \"synthetic_wua_desktop_001\",\n      \"title\": \"Desktop MCP E2E synthetic task\"\n    },\n    \"GOAL\": \"nonce=b3212ddb73d6150043b643e5104d669d\",\n    \"CURRENT_STATUS\": \"NO_MICROTASK\",\n    \"NEXT_SAFE_ACTION\": \"create a microtask and define the TASK plan\",\n    \"AUTHORITY_SOURCE\": \"lifecycle\",\n    \"CHECKPOINT\": {\n      \"authoritative\": false,\n      \"reasons\": [\n        \"no persisted checkpoint\"\n      ],\n      \"status\": \"MISSING\"\n    },\n    \"PROJECTION\": {\n      \"projection_fingerprint\": \"859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d\",\n      \"projection_version\": 1,\n      \"source_fingerprint\": \"ec2ba70aa0149a59616b767419bda1796502823fd122792cc62680ece9ec79f7\"\n    },\n    \"PROTOCOL_RULES\": [\n      \"Read current persistent state before changing the real Workspace.\",\n      \"No real-Workspace mutation without a verified restore point for the current microtask.\",\n      \"DONE is not VERIFIED; verification evidence is required before VERIFIED.\",\n      \"Do not start the next microtask before the previous microtask is VERIFIED.\",\n      \"After an ambiguous disconnect, reconcile disk state before retry or rollback.\",\n      \"Do not blindly replay the last mutation operation.\",\n      \"Do not automatically rollback on disconnect; rollback only after reconciliation.\"\n    ]\n  },\n  \"context_sha256\": \"27618bee587b4837832c6609c275952f12d4b52aea87ed7a101983946ba1f3d1\",\n  \"source\": \"frozen WebAlarmApi GET /tasks/synthetic_wua_desktop_001/context\"\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "read_synthetic_context",
+      "arguments": {
+        "fixture_id": "other_task"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool read_synthetic_context: TASK_ID_DENIED"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ]
+}

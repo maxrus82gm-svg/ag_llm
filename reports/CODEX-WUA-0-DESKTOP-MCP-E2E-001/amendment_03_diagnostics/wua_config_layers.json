@@ -1,0 +1,20 @@
+{
+  "direct_wua_only": {
+    "wua_desktop_readonly": {
+      "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+      "args": [
+        "-I",
+        "-X",
+        "utf8",
+        "-B",
+        "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/server.py"
+      ],
+      "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin"
+    }
+  },
+  "plugin_wua_only": {
+    "wua-desktop-readonly@wua-desktop-e2e-local": {
+      "enabled": true
+    }
+  }
+}

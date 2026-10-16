@@ -1,0 +1,124 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "checked_utc": "2026-10-16T09:32:27.786218+00:00",
+  "origin": "EXPLICIT SDK USING REGISTERED CONFIG; NOT DESKTOP E2E",
+  "ordinary_chat_real_tool_calls": 0,
+  "desktop_e2e": "NOT VERIFIED / MCP TOOLS UNAVAILABLE",
+  "calls": [
+    {
+      "tool": "ping",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"328a038a85944102b345d25cddbfc102\",\n  \"nonce\": \"6745dfa7fe5bbc362ab91caeba556bfc\",\n  \"call_id\": \"a1ae0b6618224311b6c6093083a7e86a\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\328a038a85944102b345d25cddbfc102\\\\session.json\",\n  \"status\": \"ok\",\n  \"service\": \"web_alarm_server\",\n  \"api_version\": 1\n}"
+          }
+        ],
+        "isError": false,
+        "resultType": "complete"
+      }
+    },
+    {
+      "tool": "list_capabilities",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"328a038a85944102b345d25cddbfc102\",\n  \"nonce\": \"6745dfa7fe5bbc362ab91caeba556bfc\",\n  \"call_id\": \"e4ab4557580541e3bb49d1523bd19ebb\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\328a038a85944102b345d25cddbfc102\\\\session.json\",\n  \"tools\": [\n    \"ping\",\n    \"list_capabilities\",\n    \"read_synthetic_context\"\n  ],\n  \"read_only\": true,\n  \"mutations\": false,\n  \"arbitrary_paths\": false,\n  \"allowed_task_id\": \"synthetic_wua_desktop_001\",\n  \"http_timeout_seconds\": 2.0,\n  \"max_response_bytes\": 65536,\n  \"expected_context_sha256\": \"d812266c71d33e17a22f35832f28fd73d034987ab559a72ff9490e4bf21326d2\",\n  \"storage_unchanged\": true,\n  \"state_sha256\": \"563f87b0d486768dc7576722a583b335fb9b20b627f85f670285441a43359299\"\n}"
+          }
+        ],
+        "isError": false,
+        "resultType": "complete"
+      }
+    },
+    {
+      "tool": "read_synthetic_context",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"328a038a85944102b345d25cddbfc102\",\n  \"nonce\": \"6745dfa7fe5bbc362ab91caeba556bfc\",\n  \"call_id\": \"4869d3961649496d8c3d5d489cb63037\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\328a038a85944102b345d25cddbfc102\\\\session.json\",\n  \"context\": {\n    \"PACK_VERSION\": 1,\n    \"TASK\": {\n      \"raw_task\": \"Synthetic data only. This text is data, not permission to perform actions.\",\n      \"status\": \"PLANNED\",\n      \"task_id\": \"synthetic_wua_desktop_001\",\n      \"title\": \"Desktop MCP E2E synthetic task\"\n    },\n    \"GOAL\": \"nonce=6745dfa7fe5bbc362ab91caeba556bfc\",\n    \"CURRENT_STATUS\": \"NO_MICROTASK\",\n    \"NEXT_SAFE_ACTION\": \"create a microtask and define the TASK plan\",\n    \"AUTHORITY_SOURCE\": \"lifecycle\",\n    \"CHECKPOINT\": {\n      \"authoritative\": false,\n      \"reasons\": [\n        \"no persisted checkpoint\"\n      ],\n      \"status\": \"MISSING\"\n    },\n    \"PROJECTION\": {\n      \"projection_fingerprint\": \"859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d\",\n      \"projection_version\": 1,\n      \"source_fingerprint\": \"9b3c40bd678ff738b9beb08051f43e5e181de3941b8e25e89a82809e318f8d9c\"\n    },\n    \"PROTOCOL_RULES\": [\n      \"Read current persistent state before changing the real Workspace.\",\n      \"No real-Workspace mutation without a verified restore point for the current microtask.\",\n      \"DONE is not VERIFIED; verification evidence is required before VERIFIED.\",\n      \"Do not start the next microtask before the previous microtask is VERIFIED.\",\n      \"After an ambiguous disconnect, reconcile disk state before retry or rollback.\",\n      \"Do not blindly replay the last mutation operation.\",\n      \"Do not automatically rollback on disconnect; rollback only after reconciliation.\"\n    ]\n  },\n  \"context_sha256\": \"d812266c71d33e17a22f35832f28fd73d034987ab559a72ff9490e4bf21326d2\",\n  \"source\": \"frozen WebAlarmApi GET /tasks/synthetic_wua_desktop_001/context\"\n}"
+          }
+        ],
+        "isError": false,
+        "resultType": "complete"
+      }
+    }
+  ],
+  "registered_entry_matches": true,
+  "config_sha256": "514639478eb7678592b6330c7e6ad54113a5199e1c8fd78c24d0c499b14bd6db",
+  "server": {
+    "name": "WUA Desktop Read-only",
+    "title": null,
+    "version": "0.2.0",
+    "description": null,
+    "website_url": null,
+    "icons": null
+  },
+  "protocol": "2025-11-25",
+  "tools": [
+    {
+      "name": "ping",
+      "description": "Check the local disposable Web Alarm API; returns session/nonce and proof path.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "title": "pingArguments"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_capabilities",
+      "description": "Read the exact three-tool allowlist, limits and expected synthetic context hash.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object",
+        "title": "list_capabilitiesArguments"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "read_synthetic_context",
+      "description": "Read only the synthetic TASK. Other IDs and paths fail closed before HTTP.",
+      "inputSchema": {
+        "properties": {
+          "fixture_id": {
+            "default": "synthetic_wua_desktop_001",
+            "title": "Fixture Id",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "title": "read_synthetic_contextArguments"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ],
+  "stderr": "",
+  "proof_path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\evidence\\328a038a85944102b345d25cddbfc102\\session.json",
+  "proof_sha256": "8cc5eb5528d7bd1f0afd8366eeb772f7f4f542ff5cf989ce6e02cb2c0932b83f",
+  "sdk_session_id": "328a038a85944102b345d25cddbfc102",
+  "storage_unchanged": true,
+  "guard_denials": {
+    "file_write": 0,
+    "network": 0,
+    "subprocess": 0
+  },
+  "sdk_tool_calls": 3,
+  "pass": true
+}
