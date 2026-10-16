@@ -42,3 +42,16 @@ logs/
 # Local Ultra workspace runtime / conversation diagnostics
 .ultra/audit/
 .ultra/chats/
+
+# WUA Desktop MCP: keep large portable runtimes and disposable host/CLI fixtures local.
+# Deliberately retain source, manifests, reports, verifier scripts and summaries for review.
+# These rules affect only untracked files; already tracked receipts need a separate decision.
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/runtime/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/CODEX-WUA-0-DESKTOP-MCP-E2E-001/evidence/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/evidence/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/test_environment/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/cli_pair/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/negative_runtime/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/schemas/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/rollback/plugin/
+/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/downloads/

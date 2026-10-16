@@ -1,0 +1,56 @@
+{
+ "pinned": 102,
+ "pinned_unchanged": 99,
+ "pinned_changed": [
+  "web_alarm/event_checkpoint_store.py",
+  "web_alarm/operation_store.py",
+  "web_alarm/projection.py"
+ ],
+ "pinned_missing": [],
+ "changed_equals_allowed": true,
+ "unpinned_local": [
+  "test_web_alarm_aud010205_repair.py"
+ ],
+ "unpinned_is_only_new_test": true,
+ "files": {
+  "web_alarm/event_checkpoint_store.py": {
+   "before": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "after": "7342b221e6663bee65bef116f57507b0de84b74269cb7541f4955b527eb91304",
+   "bytes": 9601,
+   "eol": "LF"
+  },
+  "web_alarm/operation_store.py": {
+   "before": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "after": "acb1e4c9ccc6a9ee70684f852c48cf8ba815ea67548781f2e1e53e535468826a",
+   "bytes": 38022,
+   "eol": "LF"
+  },
+  "web_alarm/projection.py": {
+   "before": "1d788d2153621fb0aba9ed19ac2dbb3b74758bb78e3a4548c08dab295bf09af0",
+   "after": "e4503ce955a41d8e9891bc429db4f145b32027a838334081688a4d662426f4e1",
+   "bytes": 73094,
+   "eol": "LF"
+  },
+  "test_web_alarm_aud010205_repair.py": {
+   "before": null,
+   "after": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+   "bytes": 22192,
+   "eol": "LF"
+  }
+ },
+ "baseline_copies_equal_pins": {
+  "web_alarm/event_checkpoint_store.py": true,
+  "web_alarm/operation_store.py": true,
+  "web_alarm/projection.py": true
+ },
+ "rollback_reproduces_pins": true,
+ "r006_package": {
+  "manifest_sha256": "b14c366452547de2d4a102a5c50b4c7da0ad01dc539e7ded629f1a3fee46f84e",
+  "exact": 64,
+  "listed": 64
+ },
+ "diff_lines_added": 33,
+ "diff_lines_removed": 4,
+ "source_changes_diff_sha256": "cf64a42fc8e544a9d5c7528840d40acd590173593c11e1d139c6d7a21213848a",
+ "verdict": "PASS"
+}

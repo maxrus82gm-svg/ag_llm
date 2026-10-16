@@ -1,39 +1,14 @@
-# Следующий gate после AMENDMENT 03 — предложение, не исполнение
+# Следующий gate после AMENDMENT 04
 
-DESKTOP E2E NOT VERIFIED. Действует READ-ONLY DIAGNOSTICS.
-Прежняя инструкция Restart временно не применяется: пользователь прямо запретил
-перезапуск ChatGPT Desktop и существующих MCP-процессов без согласования.
+Кандидат WUA 0.2.1 локально готов, Gate A–D PASS. Отчёт:
+amendment_04/report.md. DESKTOP E2E NOT VERIFIED.
 
-Уже подтверждено: четыре настоящих native MCP-вызова текущего local Codex,
-включая TASK_ID_DENIED для other_task. Полный отчёт A–E и evidence —
-amendment_03_diagnostics/report.md.
+Следующее необходимое решение — отдельное разрешение пользователя на установку
+и активацию кандидата 0.2.1 в действующем Desktop. Сейчас этого разрешения нет;
+установленный cache 0.2.0, config.toml, глобальный required и процессы не меняются.
 
-## Минимальная следующая проверка CLI, после отдельного разрешения
-
-Новый независимый CLI-run с единственным временным override
-mcp_servers.wua_desktop_readonly.required=true, sandbox read-only и --ephemeral.
-Команда приведена в разделе D отчёта. Она здесь не запускалась.
-Не меняет постоянный config.toml/регистрацию и не перезапускает существующие
-процессы. Цель — проверить старт WUA до построения каталога tools.
-
-Нужны настоящий initialize/tools-list trace, JSON tool-call events и server receipt;
-сообщение модели об отсутствии tools само по себе не является raw catalog.
-Выдержка для отчёта содержит только WUA и не включает secrets других серверов.
-
-## Ordinary Chat gate
-
-В обычном ChatGPT-чате запросить настоящие MCP-вызовы:
-
-```text
-Вызови доступные MCP-инструменты WUA Desktop Read-only: ping, list_capabilities,
-read_synthetic_context(fixture_id="synthetic_wua_desktop_001"), затем
-read_synthetic_context(fixture_id="other_task"). Используй реальные имена
-инструментов, предоставленные этому чату. Покажи session_id, nonce,
-context_sha256, proof_path и настоящий код отказа для other_task.
-Если tools недоступны, сообщи об этом без SDK, терминала или имитации.
-```
-
-Фиксировать фактический режим/время/host, затем независимый verifier сверяет
-receipt, call_id/nonce/hash/storage и код TASK_ID_DENIED. Local Codex или SDK
-не заменяют ordinary Chat. Никакой перезапуск, установка, изменение permissions
-или сети этой инструкцией не разрешаются.
+После разрешённой активации нужны настоящие обычные ChatGPT MCP-вызовы ping,
+list_capabilities, read_synthetic_context(synthetic_wua_desktop_001) и
+read_synthetic_context(other_task). Независимый verifier сверяет receipt,
+session_id/nonce/hash/call_id/storage и TASK_ID_DENIED. Local Codex, host RPC и SDK
+не заменяют ordinary Chat. Git-публикация остаётся запрещена.

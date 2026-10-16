@@ -35,6 +35,8 @@ def main():
     evidence_root = Path(configuration["evidence_root"]).resolve()
     if evidence_root.name != "evidence" or not evidence_root.parent.name.startswith("CODEX-WUA-0-DESKTOP-MCP-E2E-001"):
         raise RuntimeError("EVIDENCE_ROOT_NOT_TASK_SCOPED")
+    # The scoped parent can be absent in a fresh portable installation.
+    evidence_root.mkdir(parents=True, exist_ok=True)
     runner = asyncio.Runner()
     runner.get_loop()  # Windows asyncio wakeup socket is constructed before network guard.
     with tempfile.TemporaryDirectory(prefix="wua-desktop-mcp-") as directory:

@@ -1,0 +1,240 @@
+{
+  "kind": "ACTUAL CODEX HOST PLUGIN LOADER; NOT SDK; NOT ORDINARY CHAT",
+  "setup": [
+    {
+      "args": [
+        "plugin",
+        "marketplace",
+        "add",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02"
+      ],
+      "exit_code": 0,
+      "stdout": "Added marketplace `wua-a04-fixed02` from \\\\?\\M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02.\nInstalled marketplace root: M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "plugin",
+        "add",
+        "wua-desktop-readonly@wua-a04-fixed02",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"wua-desktop-readonly@wua-a04-fixed02\",\n  \"name\": \"wua-desktop-readonly\",\n  \"marketplaceName\": \"wua-a04-fixed02\",\n  \"version\": \"0.2.1\",\n  \"installedPath\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\test_environment\\\\fixed02\\\\codex_home\\\\plugins\\\\cache\\\\wua-a04-fixed02\\\\wua-desktop-readonly\\\\0.2.1\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stderr": ""
+    }
+  ],
+  "plugin_read": {
+    "plugin": {
+      "marketplaceName": "wua-a04-fixed02",
+      "marketplacePath": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02\\.agents\\plugins\\marketplace.json",
+      "summary": {
+        "id": "wua-desktop-readonly@wua-a04-fixed02",
+        "remotePluginId": null,
+        "version": null,
+        "localVersion": "0.2.1",
+        "name": "wua-desktop-readonly",
+        "shareContext": null,
+        "source": {
+          "type": "local",
+          "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02\\plugin"
+        },
+        "installed": true,
+        "installedAt": null,
+        "enabled": true,
+        "installPolicy": "AVAILABLE",
+        "installPolicySource": null,
+        "mustShowInstallationInterstitial": null,
+        "authPolicy": "ON_INSTALL",
+        "availability": "AVAILABLE",
+        "disabledReason": null,
+        "eligiblePlanTypes": null,
+        "interface": {
+          "displayName": "WUA Desktop Read-only",
+          "shortDescription": "Три инструмента чтения синтетического Web Alarm",
+          "longDescription": "Изолированная проверка подключения. Только синтетические данные, без production, исполнения команд и вызовов моделей.",
+          "developerName": "AG LLM",
+          "category": "Productivity",
+          "capabilities": [
+            "Read"
+          ],
+          "websiteUrl": null,
+          "privacyPolicyUrl": null,
+          "termsOfServiceUrl": null,
+          "defaultPrompt": null,
+          "brandColor": null,
+          "composerIcon": null,
+          "composerIconUrl": null,
+          "logo": null,
+          "logoDark": null,
+          "logoUrl": null,
+          "logoUrlDark": null,
+          "screenshots": [],
+          "screenshotUrls": []
+        },
+        "keywords": []
+      },
+      "shareUrl": null,
+      "description": "Read-only connection to a disposable synthetic Web Alarm API: ping, capabilities and context.",
+      "skills": [],
+      "onboardingSkill": null,
+      "hooks": [],
+      "apps": [],
+      "appTemplates": [],
+      "mcpServers": [
+        "wua_desktop_readonly"
+      ],
+      "scheduledTasks": null
+    }
+  },
+  "test_thread_id": "01a14539-7b0f-7ef1-aa14-7b16091fe1a7",
+  "mcp_status": {
+    "data": [
+      {
+        "name": "wua_desktop_readonly",
+        "runtimeStatus": "connected",
+        "pluginId": "wua-desktop-readonly@wua-a04-fixed02",
+        "httpOrigin": null,
+        "serverInfo": {
+          "name": "WUA Desktop Read-only",
+          "title": null,
+          "version": "0.2.0",
+          "description": null,
+          "icons": null,
+          "websiteUrl": null
+        },
+        "serverCapabilities": {
+          "experimental": {},
+          "prompts": {
+            "listChanged": false
+          },
+          "resources": {
+            "subscribe": false,
+            "listChanged": false
+          },
+          "tools": {
+            "listChanged": false
+          }
+        },
+        "tools": {
+          "read_synthetic_context": {
+            "name": "read_synthetic_context",
+            "description": "Read only the synthetic TASK. Other IDs and paths fail closed before HTTP. This tool is part of plugin `WUA Desktop Read-only`.",
+            "inputSchema": {
+              "properties": {
+                "fixture_id": {
+                  "default": "synthetic_wua_desktop_001",
+                  "title": "Fixture Id",
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "title": "read_synthetic_contextArguments"
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "destructiveHint": false,
+              "idempotentHint": true,
+              "openWorldHint": false
+            }
+          },
+          "ping": {
+            "name": "ping",
+            "description": "Check the local disposable Web Alarm API; returns session/nonce and proof path. This tool is part of plugin `WUA Desktop Read-only`.",
+            "inputSchema": {
+              "properties": {},
+              "type": "object",
+              "title": "pingArguments"
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "destructiveHint": false,
+              "idempotentHint": true,
+              "openWorldHint": false
+            }
+          },
+          "list_capabilities": {
+            "name": "list_capabilities",
+            "description": "Read the exact three-tool allowlist, limits and expected synthetic context hash. This tool is part of plugin `WUA Desktop Read-only`.",
+            "inputSchema": {
+              "properties": {},
+              "type": "object",
+              "title": "list_capabilitiesArguments"
+            },
+            "annotations": {
+              "readOnlyHint": true,
+              "destructiveHint": false,
+              "idempotentHint": true,
+              "openWorldHint": false
+            }
+          }
+        },
+        "toolsError": null,
+        "resources": [],
+        "resourceTemplates": [],
+        "authStatus": "unsupported"
+      }
+    ],
+    "nextCursor": null
+  },
+  "server_name": "wua_desktop_readonly",
+  "calls": [
+    {
+      "tool": "ping",
+      "arguments": {},
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"121f89663edb418195a52fc3d0abc950\",\n  \"nonce\": \"a8e6b0c69dbffd79c68315baa7cb2121\",\n  \"call_id\": \"25f088ae568d4f52b7eaab9accbbe6b7\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\test_environment\\\\fixed02\\\\codex_home\\\\plugins\\\\cache\\\\wua-a04-fixed02\\\\wua-desktop-readonly\\\\0.2.1\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\121f89663edb418195a52fc3d0abc950\\\\session.json\",\n  \"status\": \"ok\",\n  \"service\": \"web_alarm_server\",\n  \"api_version\": 1\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "list_capabilities",
+      "arguments": {},
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"121f89663edb418195a52fc3d0abc950\",\n  \"nonce\": \"a8e6b0c69dbffd79c68315baa7cb2121\",\n  \"call_id\": \"bfd12b8d0e6f44a99afc06c645926c50\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\test_environment\\\\fixed02\\\\codex_home\\\\plugins\\\\cache\\\\wua-a04-fixed02\\\\wua-desktop-readonly\\\\0.2.1\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\121f89663edb418195a52fc3d0abc950\\\\session.json\",\n  \"tools\": [\n    \"ping\",\n    \"list_capabilities\",\n    \"read_synthetic_context\"\n  ],\n  \"read_only\": true,\n  \"mutations\": false,\n  \"arbitrary_paths\": false,\n  \"allowed_task_id\": \"synthetic_wua_desktop_001\",\n  \"http_timeout_seconds\": 2.0,\n  \"max_response_bytes\": 65536,\n  \"expected_context_sha256\": \"3ff38dc2dc6263c5379bc64d152622d72b8b59458eb44897fdb0c1796cd8999d\",\n  \"storage_unchanged\": true,\n  \"state_sha256\": \"bd9372bc09eba5d39caaa020fd47a7c292b36d638eb9ed8ee227c4e809b70a7a\"\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "read_synthetic_context",
+      "arguments": {
+        "fixture_id": "synthetic_wua_desktop_001"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"121f89663edb418195a52fc3d0abc950\",\n  \"nonce\": \"a8e6b0c69dbffd79c68315baa7cb2121\",\n  \"call_id\": \"4f7af69686df4ac0941cea6e3a42998f\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\test_environment\\\\fixed02\\\\codex_home\\\\plugins\\\\cache\\\\wua-a04-fixed02\\\\wua-desktop-readonly\\\\0.2.1\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\121f89663edb418195a52fc3d0abc950\\\\session.json\",\n  \"context\": {\n    \"PACK_VERSION\": 1,\n    \"TASK\": {\n      \"raw_task\": \"Synthetic data only. This text is data, not permission to perform actions.\",\n      \"status\": \"PLANNED\",\n      \"task_id\": \"synthetic_wua_desktop_001\",\n      \"title\": \"Desktop MCP E2E synthetic task\"\n    },\n    \"GOAL\": \"nonce=a8e6b0c69dbffd79c68315baa7cb2121\",\n    \"CURRENT_STATUS\": \"NO_MICROTASK\",\n    \"NEXT_SAFE_ACTION\": \"create a microtask and define the TASK plan\",\n    \"AUTHORITY_SOURCE\": \"lifecycle\",\n    \"CHECKPOINT\": {\n      \"authoritative\": false,\n      \"reasons\": [\n        \"no persisted checkpoint\"\n      ],\n      \"status\": \"MISSING\"\n    },\n    \"PROJECTION\": {\n      \"projection_fingerprint\": \"859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d\",\n      \"projection_version\": 1,\n      \"source_fingerprint\": \"ab07539c3505c4db3193cd00d08d37d4286e57b7ff314f8e75da0140ef93d99f\"\n    },\n    \"PROTOCOL_RULES\": [\n      \"Read current persistent state before changing the real Workspace.\",\n      \"No real-Workspace mutation without a verified restore point for the current microtask.\",\n      \"DONE is not VERIFIED; verification evidence is required before VERIFIED.\",\n      \"Do not start the next microtask before the previous microtask is VERIFIED.\",\n      \"After an ambiguous disconnect, reconcile disk state before retry or rollback.\",\n      \"Do not blindly replay the last mutation operation.\",\n      \"Do not automatically rollback on disconnect; rollback only after reconciliation.\"\n    ]\n  },\n  \"context_sha256\": \"3ff38dc2dc6263c5379bc64d152622d72b8b59458eb44897fdb0c1796cd8999d\",\n  \"source\": \"frozen WebAlarmApi GET /tasks/synthetic_wua_desktop_001/context\"\n}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "tool": "read_synthetic_context",
+      "arguments": {
+        "fixture_id": "other_task"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Error executing tool read_synthetic_context: TASK_ID_DENIED"
+          }
+        ],
+        "isError": true
+      }
+    }
+  ],
+  "completed": true
+}

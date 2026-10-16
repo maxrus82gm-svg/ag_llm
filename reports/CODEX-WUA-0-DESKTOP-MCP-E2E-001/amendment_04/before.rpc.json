@@ -1,0 +1,285 @@
+[
+  {
+    "direction": "test_to_host",
+    "message": {
+      "id": 1,
+      "method": "initialize",
+      "params": {
+        "clientInfo": {
+          "name": "wua_a04_isolated_host",
+          "version": "0.2.1"
+        },
+        "capabilities": {
+          "experimentalApi": true
+        }
+      }
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "id": 1,
+      "result": {
+        "userAgent": "Codex Desktop/0.162.0-alpha.17.2 (Windows 10.0.19045; x86_64) dumb (wua_a04_isolated_host; 0.2.1)",
+        "codexHome": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before\\codex_home",
+        "platformFamily": "windows",
+        "platformOs": "windows"
+      }
+    }
+  },
+  {
+    "direction": "test_to_host",
+    "message": {
+      "method": "initialized"
+    }
+  },
+  {
+    "direction": "test_to_host",
+    "message": {
+      "id": 2,
+      "method": "plugin/read",
+      "params": {
+        "marketplacePath": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before\\.agents\\plugins\\marketplace.json",
+        "pluginName": "wua-desktop-readonly"
+      }
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "DESKTOP-SC96D3U",
+        "installationId": "764475db-b1d6-4782-a56b-637b3a39a279",
+        "environmentId": null
+      },
+      "emittedAtMs": 1792162534307
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "id": 2,
+      "result": {
+        "plugin": {
+          "marketplaceName": "wua-a04-before",
+          "marketplacePath": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before\\.agents\\plugins\\marketplace.json",
+          "summary": {
+            "id": "wua-desktop-readonly@wua-a04-before",
+            "remotePluginId": null,
+            "version": null,
+            "localVersion": "0.2.0",
+            "name": "wua-desktop-readonly",
+            "shareContext": null,
+            "source": {
+              "type": "local",
+              "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before\\plugin"
+            },
+            "installed": true,
+            "installedAt": null,
+            "enabled": true,
+            "installPolicy": "AVAILABLE",
+            "installPolicySource": null,
+            "mustShowInstallationInterstitial": null,
+            "authPolicy": "ON_INSTALL",
+            "availability": "AVAILABLE",
+            "disabledReason": null,
+            "eligiblePlanTypes": null,
+            "interface": {
+              "displayName": "WUA Desktop Read-only",
+              "shortDescription": "Три инструмента чтения синтетического Web Alarm",
+              "longDescription": "Изолированная проверка подключения. Только синтетические данные, без production, исполнения команд и вызовов моделей.",
+              "developerName": "AG LLM",
+              "category": "Productivity",
+              "capabilities": [
+                "Read"
+              ],
+              "websiteUrl": null,
+              "privacyPolicyUrl": null,
+              "termsOfServiceUrl": null,
+              "defaultPrompt": null,
+              "brandColor": null,
+              "composerIcon": null,
+              "composerIconUrl": null,
+              "logo": null,
+              "logoDark": null,
+              "logoUrl": null,
+              "logoUrlDark": null,
+              "screenshots": [],
+              "screenshotUrls": []
+            },
+            "keywords": []
+          },
+          "shareUrl": null,
+          "description": "Read-only connection to a disposable synthetic Web Alarm API: ping, capabilities and context.",
+          "skills": [],
+          "onboardingSkill": null,
+          "hooks": [],
+          "apps": [],
+          "appTemplates": [],
+          "mcpServers": [],
+          "scheduledTasks": null
+        }
+      }
+    }
+  },
+  {
+    "direction": "test_to_host",
+    "message": {
+      "id": 3,
+      "method": "thread/start",
+      "params": {
+        "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+        "ephemeral": true,
+        "sandbox": "read-only",
+        "approvalPolicy": "never",
+        "experimentalRawEvents": false
+      }
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "id": 3,
+      "result": {
+        "thread": {
+          "id": "01a14536-13e5-71e0-8552-60bdf1ece286",
+          "environments": [
+            {
+              "environmentId": "local",
+              "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+              "runtimeWorkspaceRoots": [
+                "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before"
+              ]
+            }
+          ],
+          "extra": null,
+          "sessionId": "01a14536-13e5-71e0-8552-60bdf1ece286",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": true,
+          "section": null,
+          "sectionEnteredAt": null,
+          "projectId": null,
+          "historyMode": "paginated",
+          "modelProvider": "openai",
+          "model": "gpt-6.1-sol",
+          "reasoningEffort": null,
+          "createdAt": 1792162534,
+          "updatedAt": 1792162534,
+          "recencyAt": 1792162534,
+          "status": {
+            "type": "idle"
+          },
+          "path": null,
+          "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+          "cliVersion": "0.162.0-alpha.17.2",
+          "originator": "Codex Desktop",
+          "source": "vscode",
+          "canAcceptDirectInput": true,
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "daybreakEnabled": null,
+          "turns": []
+        },
+        "model": "gpt-6.1-sol",
+        "modelProvider": "openai",
+        "serviceTier": null,
+        "disabledPluginIds": [],
+        "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+        "runtimeWorkspaceRoots": [
+          "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before"
+        ],
+        "instructionSources": [],
+        "approvalPolicy": "never",
+        "approvalsReviewer": "user",
+        "sandbox": {
+          "type": "readOnly",
+          "networkAccess": false
+        },
+        "activePermissionProfile": null,
+        "reasoningEffort": null,
+        "multiAgentMode": "explicitRequestOnly"
+      }
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "method": "thread/started",
+      "params": {
+        "thread": {
+          "id": "01a14536-13e5-71e0-8552-60bdf1ece286",
+          "environments": [
+            {
+              "environmentId": "local",
+              "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+              "runtimeWorkspaceRoots": [
+                "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before"
+              ]
+            }
+          ],
+          "extra": null,
+          "sessionId": "01a14536-13e5-71e0-8552-60bdf1ece286",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": true,
+          "section": null,
+          "sectionEnteredAt": null,
+          "projectId": null,
+          "historyMode": "paginated",
+          "modelProvider": "openai",
+          "model": "gpt-6.1-sol",
+          "reasoningEffort": null,
+          "createdAt": 1792162534,
+          "updatedAt": 1792162534,
+          "recencyAt": 1792162534,
+          "status": {
+            "type": "idle"
+          },
+          "path": null,
+          "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\before",
+          "cliVersion": "0.162.0-alpha.17.2",
+          "originator": "Codex Desktop",
+          "source": "vscode",
+          "canAcceptDirectInput": true,
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "daybreakEnabled": null,
+          "turns": []
+        }
+      },
+      "emittedAtMs": 1792162534405
+    }
+  },
+  {
+    "direction": "test_to_host",
+    "message": {
+      "id": 4,
+      "method": "mcpServerStatus/list",
+      "params": {
+        "threadId": "01a14536-13e5-71e0-8552-60bdf1ece286",
+        "detail": "toolsAndAuthOnly"
+      }
+    }
+  },
+  {
+    "direction": "host_to_test",
+    "message": {
+      "id": 4,
+      "result": {
+        "data": [],
+        "nextCursor": null
+      }
+    }
+  }
+]

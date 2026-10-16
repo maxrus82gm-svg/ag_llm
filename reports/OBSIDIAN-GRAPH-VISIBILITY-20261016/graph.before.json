@@ -1,0 +1,93 @@
+{
+  "collapse-filter": false,
+  "search": "-path:\"Alarm/\" -path:.venv -path:.pytest_cache -path:.ultra -path:sandbox_verify -path:_ultra_agent_test",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "file:\"Blueprint LLM\"",
+      "color": {
+        "a": 1,
+        "rgb": 4251856
+      }
+    },
+    {
+      "query": "file:\"01_Архитектура и текущее состояние\" OR file:\"11_Мультимодельная архитектура и назначение LLM\" OR file:\"12_Архитектура голосового ввода и распознавания речи\" OR file:\"13_Архитектура оперативной верификации и контроля выполнения задач\" OR file:\"17_Архитектура межчатового контекста и Cross-Chat Context Broker\" OR file:\"19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP\" OR file:\"23_Архитектура Web Alarm Workspace\" OR file:\"Архитектурное решение - управляемое сжатие контекста\"",
+      "color": {
+        "a": 1,
+        "rgb": 16726832
+      }
+    },
+    {
+      "query": "file:\"AG LLM Connect\"",
+      "color": {
+        "a": 1,
+        "rgb": 16726832
+      }
+    },
+    {
+      "query": "file:\"AG LLM Unreal\" OR file:\"AG LLM Godot\" OR file:\"AG LLM Blender\"",
+      "color": {
+        "a": 1,
+        "rgb": 3113197
+      }
+    },
+    {
+      "query": "file:\"20_Программа качественного перехода - оптимизация runtime, контекстов и памяти\" OR file:\"21_Журнал качественного перехода - решения, метрики и аудит\"",
+      "color": {
+        "a": 1,
+        "rgb": 4886754
+      }
+    },
+    {
+      "query": "file:\"000_Задачи для агента\" OR file:\"000_Задачи Claude\" OR file:\"001_История выполненных задач Claude\"",
+      "color": {
+        "a": 1,
+        "rgb": 2600544
+      }
+    },
+    {
+      "query": "file:\"34_TACTICAL_CONTEXT\"",
+      "color": {
+        "a": 1,
+        "rgb": 16766287
+      }
+    },
+    {
+      "query": "file:\"33_Круглый стол - план исполнения\" OR file:\"33.3_Круглый стол - итоговый план\" OR file:\"31.1_Круглый стол - проверка синтеза Claude\" OR file:\"31.2_Круглый стол - проверка синтеза Codex\" OR file:\"33.1_Круглый стол - альтернативное планирование A\" OR file:\"33.2_Круглый стол - альтернативное планирование B\"",
+      "color": {
+        "a": 1,
+        "rgb": 15022389
+      }
+    },
+    {
+      "query": "file:\"Круглый стол\"",
+      "color": {
+        "a": 1,
+        "rgb": 16761856
+      }
+    },
+    {
+      "query": "file:\"22_Техническая информация\" OR file:\"26_Журнал наблюдений Remote - обрывы, transport и recovery evidence\" OR file:\"27_Claude\"",
+      "color": {
+        "a": 1,
+        "rgb": 15911244
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -1.3,
+  "nodeSizeMultiplier": 0.961443902439024,
+  "lineSizeMultiplier": 1.02263414634146,
+  "collapse-forces": false,
+  "centerStrength": 0.188292682926829,
+  "repelStrength": 10.7274767880828,
+  "linkStrength": 0.875121951219512,
+  "linkDistance": 275,
+  "scale": 0.9999999999998598,
+  "close": false
+}

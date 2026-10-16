@@ -3,9 +3,9 @@
   "mcpServers": {
     "wua_desktop_readonly": {
       "type": "stdio",
-      "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
-      "args": ["-I", "-X", "utf8", "-B", "${PLUGIN_ROOT}/server.py"],
-      "cwd": "${PLUGIN_ROOT}"
+      "command": "./runtime/python.exe",
+      "args": ["-I", "-X", "utf8", "-B", "./server.py"],
+      "cwd": "./"
     }
   }
 }

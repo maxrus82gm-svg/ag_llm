@@ -434,6 +434,15 @@ class OperationStore:
             # direct completion and CloseoutService take these in this order.
             self.tasks.open_microtask(task_id, microtask_id)
             self.tasks.task_directory(task_id, active_only=True)
+            # AUD-02: admission writes payload, INTENT record and its event in that
+            # order. Prove the TASK history readable and LF-terminated first, under
+            # these same locks, so refusing an unreadable history writes nothing.
+            try:
+                self.events.read_events(task_id)
+            except EventCheckpointStoreError as exc:
+                raise OperationStoreError(
+                    f"operation admission refused: TASK event history is unreadable: {exc}"
+                ) from exc
             path = self._path(task_id, chosen_id, active_only=True)
             if path.exists():
                 existing = self._load_path(path, task_id, chosen_id)

@@ -1,0 +1,116 @@
+{
+  "created_utc": "20261016T153559Z",
+  "purpose": "Remove only the graph edges requested in the two user screenshots; preserve all prose as inline-code references.",
+  "files": [
+    {
+      "path": "M:\\GitHub\\ag_llm\\Документация\\00_Главная - карта проекта.md",
+      "backup": "M:\\GitHub\\ag_llm\\reports\\OBSIDIAN-GRAPH-LINKS-20261016T153559Z\\backup\\00_Главная - карта проекта.md.bak",
+      "before_sha256": "f3706ffeb1cb211767ee8b7c3774c0e8651a45c8dae8af94a1ae691a825673c6",
+      "after_sha256": "d0b3e092e2c210d4ce633494a332a92ffec786601e348e9f1b60ace550e65a28"
+    },
+    {
+      "path": "M:\\GitHub\\ag_llm\\Документация\\08_Старт.md",
+      "backup": "M:\\GitHub\\ag_llm\\reports\\OBSIDIAN-GRAPH-LINKS-20261016T153559Z\\backup\\08_Старт.md.bak",
+      "before_sha256": "87b43a10bc84736df33d5387a4354f2640e1b589fe0134895e36c49034732624",
+      "after_sha256": "239a89c4607b15ed29975ce0439ff61158a4342038e4edc5151747f594527258"
+    },
+    {
+      "path": "M:\\GitHub\\ag_llm\\Документация\\37_Старт перехода - Web Alarm Ultra.md",
+      "backup": "M:\\GitHub\\ag_llm\\reports\\OBSIDIAN-GRAPH-LINKS-20261016T153559Z\\backup\\37_Старт перехода - Web Alarm Ultra.md.bak",
+      "before_sha256": "fbc3cf86c7e13bdc65b66d3a07046b887765be0503aeea42378525b5a4688490",
+      "after_sha256": "f7146774532b64e708b73a69d46cd4035e18811dfdcb14a2efb9c47292553b67"
+    },
+    {
+      "path": "M:\\GitHub\\ag_llm\\Документация\\Blueprint LLM - тактический контекст.md",
+      "backup": "M:\\GitHub\\ag_llm\\reports\\OBSIDIAN-GRAPH-LINKS-20261016T153559Z\\backup\\Blueprint LLM - тактический контекст.md.bak",
+      "before_sha256": "8bb377cca54899d21761bf0b3187aa768d1a303c9ca68cf0053ee7dc9ce35492",
+      "after_sha256": "56964f3fac5bc259f0aeaeadd45570b49f772a1668d16fdfa5c605067ed1ba4c"
+    }
+  ],
+  "replacements": [
+    {
+      "source": "00_Главная - карта проекта.md",
+      "target": "Blueprint LLM",
+      "occurrences": 1
+    },
+    {
+      "source": "00_Главная - карта проекта.md",
+      "target": "Blueprint LLM - тактический контекст",
+      "occurrences": 1
+    },
+    {
+      "source": "08_Старт.md",
+      "target": "Blueprint LLM",
+      "occurrences": 1
+    },
+    {
+      "source": "08_Старт.md",
+      "target": "Blueprint LLM - тактический контекст",
+      "occurrences": 2
+    },
+    {
+      "source": "37_Старт перехода - Web Alarm Ultra.md",
+      "target": "Blueprint LLM - тактический контекст",
+      "occurrences": 1
+    },
+    {
+      "source": "37_Старт перехода - Web Alarm Ultra.md",
+      "target": "36_Единая архитектура тестирования",
+      "occurrences": 1
+    },
+    {
+      "source": "Blueprint LLM - тактический контекст.md",
+      "target": "37_Старт перехода - Web Alarm Ultra",
+      "occurrences": 2
+    }
+  ],
+  "removed_unique_pairs": [
+    [
+      "00_Главная - карта проекта",
+      "Blueprint LLM"
+    ],
+    [
+      "00_Главная - карта проекта",
+      "Blueprint LLM - тактический контекст"
+    ],
+    [
+      "08_Старт",
+      "Blueprint LLM"
+    ],
+    [
+      "08_Старт",
+      "Blueprint LLM - тактический контекст"
+    ],
+    [
+      "36_Единая архитектура тестирования",
+      "37_Старт перехода - Web Alarm Ultra"
+    ],
+    [
+      "37_Старт перехода - Web Alarm Ultra",
+      "Blueprint LLM - тактический контекст"
+    ]
+  ],
+  "preserved_chain": [
+    [
+      "37_Старт перехода - Web Alarm Ultra",
+      "Blueprint LLM"
+    ],
+    [
+      "Blueprint LLM",
+      "Blueprint LLM - тактический контекст"
+    ],
+    [
+      "00_Главная - карта проекта",
+      "36_Единая архитектура тестирования"
+    ]
+  ],
+  "checks": {
+    "only_requested_link_tokens_changed": true,
+    "all_other_wikilinks_preserved": true,
+    "removed_pairs_absent_in_both_directions": true,
+    "graph_settings_unchanged": true,
+    "readback_matches": true
+  },
+  "rollback": "Restore each file byte-for-byte from its corresponding .bak only after checking its current SHA-256 still matches after_sha256.",
+  "live_obsidian_view_checked": false
+}

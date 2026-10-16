@@ -1,0 +1,176 @@
+{
+  "kind": "REAL INDEPENDENT CODEX CLI RUNS; NOT SDK; NOT ORDINARY CHAT",
+  "global_config_before_sha256": "2435299d7a3de17b18c4e1b1064db9f7065094f6a727eab65df7d4ef227e5c72",
+  "isolation": "Ignore user config and plugins in NEW process; only one explicit WUA server; own copied candidate",
+  "entry": {
+    "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+    "args": [
+      "-I",
+      "-X",
+      "utf8",
+      "-B",
+      "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\plugin\\server.py"
+    ],
+    "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\plugin"
+  },
+  "cases": [
+    {
+      "label": "default",
+      "exit_code": 0,
+      "elapsed_seconds": 16.891,
+      "mcp_call_event_items": [],
+      "agent_messages": [
+        "I’ll check for the native `wua_desktop_readonly` tools and use only those if available.",
+        "Unavailable: no native `wua_desktop_readonly` tools are exposed in this session. No calls were simulated.\n\n`session_id`, `nonce`, `context_sha256`, `proof_path`, and the real denial code are unavailable."
+      ],
+      "stdout": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\default.jsonl",
+      "stderr": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\default.stderr.log"
+    },
+    {
+      "label": "required",
+      "exit_code": 0,
+      "elapsed_seconds": 31.625,
+      "mcp_call_event_items": [
+        {
+          "id": "item_2",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "ping",
+          "arguments": {},
+          "result": null,
+          "error": null,
+          "status": "in_progress"
+        },
+        {
+          "id": "item_2",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "ping",
+          "arguments": {},
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"ae45acce1255467caae4e18c263ce38b\",\n  \"nonce\": \"b2fd04bb42c9c5a048482b68c7cba4c9\",\n  \"call_id\": \"1440085e2b014efd900c3b7baf763517\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\cli_pair\\\\plugin\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\ae45acce1255467caae4e18c263ce38b\\\\session.json\",\n  \"status\": \"ok\",\n  \"service\": \"web_alarm_server\",\n  \"api_version\": 1\n}"
+              }
+            ],
+            "structured_content": null
+          },
+          "error": null,
+          "status": "completed"
+        },
+        {
+          "id": "item_3",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "list_capabilities",
+          "arguments": {},
+          "result": null,
+          "error": null,
+          "status": "in_progress"
+        },
+        {
+          "id": "item_3",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "list_capabilities",
+          "arguments": {},
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"ae45acce1255467caae4e18c263ce38b\",\n  \"nonce\": \"b2fd04bb42c9c5a048482b68c7cba4c9\",\n  \"call_id\": \"503dc617e520433c8d50849928458a26\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\cli_pair\\\\plugin\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\ae45acce1255467caae4e18c263ce38b\\\\session.json\",\n  \"tools\": [\n    \"ping\",\n    \"list_capabilities\",\n    \"read_synthetic_context\"\n  ],\n  \"read_only\": true,\n  \"mutations\": false,\n  \"arbitrary_paths\": false,\n  \"allowed_task_id\": \"synthetic_wua_desktop_001\",\n  \"http_timeout_seconds\": 2.0,\n  \"max_response_bytes\": 65536,\n  \"expected_context_sha256\": \"be40e98fed04845879cd8918cfb3a0174cb0a40883b99d527703cce5108dba09\",\n  \"storage_unchanged\": true,\n  \"state_sha256\": \"7d6b3319f4a0b3c9683d7dfae5b17097788a682609eda1299f050585f699c348\"\n}"
+              }
+            ],
+            "structured_content": null
+          },
+          "error": null,
+          "status": "completed"
+        },
+        {
+          "id": "item_4",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "read_synthetic_context",
+          "arguments": {
+            "fixture_id": "synthetic_wua_desktop_001"
+          },
+          "result": null,
+          "error": null,
+          "status": "in_progress"
+        },
+        {
+          "id": "item_4",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "read_synthetic_context",
+          "arguments": {
+            "fixture_id": "synthetic_wua_desktop_001"
+          },
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"ae45acce1255467caae4e18c263ce38b\",\n  \"nonce\": \"b2fd04bb42c9c5a048482b68c7cba4c9\",\n  \"call_id\": \"4c94b0b4795a4177945fd6ace20c5fa7\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\cli_pair\\\\plugin\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\ae45acce1255467caae4e18c263ce38b\\\\session.json\",\n  \"context\": {\n    \"PACK_VERSION\": 1,\n    \"TASK\": {\n      \"raw_task\": \"Synthetic data only. This text is data, not permission to perform actions.\",\n      \"status\": \"PLANNED\",\n      \"task_id\": \"synthetic_wua_desktop_001\",\n      \"title\": \"Desktop MCP E2E synthetic task\"\n    },\n    \"GOAL\": \"nonce=b2fd04bb42c9c5a048482b68c7cba4c9\",\n    \"CURRENT_STATUS\": \"NO_MICROTASK\",\n    \"NEXT_SAFE_ACTION\": \"create a microtask and define the TASK plan\",\n    \"AUTHORITY_SOURCE\": \"lifecycle\",\n    \"CHECKPOINT\": {\n      \"authoritative\": false,\n      \"reasons\": [\n        \"no persisted checkpoint\"\n      ],\n      \"status\": \"MISSING\"\n    },\n    \"PROJECTION\": {\n      \"projection_fingerprint\": \"859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d\",\n      \"projection_version\": 1,\n      \"source_fingerprint\": \"3160082b97f21fff0983ad29aae1f97d3c519402f1954aed7da5ce4166bf5c2d\"\n    },\n    \"PROTOCOL_RULES\": [\n      \"Read current persistent state before changing the real Workspace.\",\n      \"No real-Workspace mutation without a verified restore point for the current microtask.\",\n      \"DONE is not VERIFIED; verification evidence is required before VERIFIED.\",\n      \"Do not start the next microtask before the previous microtask is VERIFIED.\",\n      \"After an ambiguous disconnect, reconcile disk state before retry or rollback.\",\n      \"Do not blindly replay the last mutation operation.\",\n      \"Do not automatically rollback on disconnect; rollback only after reconciliation.\"\n    ]\n  },\n  \"context_sha256\": \"be40e98fed04845879cd8918cfb3a0174cb0a40883b99d527703cce5108dba09\",\n  \"source\": \"frozen WebAlarmApi GET /tasks/synthetic_wua_desktop_001/context\"\n}"
+              }
+            ],
+            "structured_content": null
+          },
+          "error": null,
+          "status": "completed"
+        },
+        {
+          "id": "item_5",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "read_synthetic_context",
+          "arguments": {
+            "fixture_id": "other_task"
+          },
+          "result": null,
+          "error": null,
+          "status": "in_progress"
+        },
+        {
+          "id": "item_5",
+          "type": "mcp_tool_call",
+          "server": "wua_desktop_readonly",
+          "tool": "read_synthetic_context",
+          "arguments": {
+            "fixture_id": "other_task"
+          },
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Error executing tool read_synthetic_context: TASK_ID_DENIED"
+              }
+            ],
+            "structured_content": null
+          },
+          "error": null,
+          "status": "failed"
+        }
+      ],
+      "agent_messages": [
+        "I’ll check whether the native `wua_desktop_readonly` tools are exposed and use only those tools if available.",
+        "All four native MCP calls completed. `other_task` returned the real denial code `TASK_ID_DENIED`.\n\n```json\n{\n  \"session_id\": \"ae45acce1255467caae4e18c263ce38b\",\n  \"nonce\": \"b2fd04bb42c9c5a048482b68c7cba4c9\",\n  \"context_sha256\": \"be40e98fed04845879cd8918cfb3a0174cb0a40883b99d527703cce5108dba09\",\n  \"proof_path\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\cli_pair\\\\plugin\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\evidence\\\\ae45acce1255467caae4e18c263ce38b\\\\session.json\",\n  \"denial_code\": \"TASK_ID_DENIED\"\n}\n```"
+      ],
+      "stdout": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\required.jsonl",
+      "stderr": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\required.stderr.log"
+    },
+    {
+      "label": "default_after_required",
+      "exit_code": 0,
+      "elapsed_seconds": 18.937,
+      "mcp_call_event_items": [],
+      "agent_messages": [
+        "I’ll check whether the native `wua_desktop_readonly` tools are exposed and use only those tools if available.",
+        "Unavailable. No native `wua_desktop_readonly` tools are exposed to me in this session, so no calls were made.\n\n`session_id`, `nonce`, `context_sha256`, `proof_path`, and the real denial code are unavailable."
+      ],
+      "stdout": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\default_after_required.jsonl",
+      "stderr": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\cli_pair\\default_after_required.stderr.log"
+    }
+  ],
+  "global_config_unchanged": true
+}

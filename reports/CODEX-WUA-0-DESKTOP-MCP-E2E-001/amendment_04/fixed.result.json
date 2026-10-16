@@ -1,0 +1,109 @@
+{
+  "kind": "ACTUAL CODEX HOST PLUGIN LOADER; NOT SDK; NOT ORDINARY CHAT",
+  "setup": [
+    {
+      "args": [
+        "plugin",
+        "marketplace",
+        "add",
+        "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed"
+      ],
+      "exit_code": 0,
+      "stdout": "Added marketplace `wua-a04-fixed` from \\\\?\\M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed.\nInstalled marketplace root: M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "plugin",
+        "add",
+        "wua-desktop-readonly@wua-a04-fixed",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"wua-desktop-readonly@wua-a04-fixed\",\n  \"name\": \"wua-desktop-readonly\",\n  \"marketplaceName\": \"wua-a04-fixed\",\n  \"version\": \"0.2.1\",\n  \"installedPath\": \"M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\\\amendment_04\\\\test_environment\\\\fixed\\\\codex_home\\\\plugins\\\\cache\\\\wua-a04-fixed\\\\wua-desktop-readonly\\\\0.2.1\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stderr": ""
+    }
+  ],
+  "plugin_read": {
+    "plugin": {
+      "marketplaceName": "wua-a04-fixed",
+      "marketplacePath": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed\\.agents\\plugins\\marketplace.json",
+      "summary": {
+        "id": "wua-desktop-readonly@wua-a04-fixed",
+        "remotePluginId": null,
+        "version": null,
+        "localVersion": "0.2.1",
+        "name": "wua-desktop-readonly",
+        "shareContext": null,
+        "source": {
+          "type": "local",
+          "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed\\plugin"
+        },
+        "installed": true,
+        "installedAt": null,
+        "enabled": true,
+        "installPolicy": "AVAILABLE",
+        "installPolicySource": null,
+        "mustShowInstallationInterstitial": null,
+        "authPolicy": "ON_INSTALL",
+        "availability": "AVAILABLE",
+        "disabledReason": null,
+        "eligiblePlanTypes": null,
+        "interface": {
+          "displayName": "WUA Desktop Read-only",
+          "shortDescription": "Три инструмента чтения синтетического Web Alarm",
+          "longDescription": "Изолированная проверка подключения. Только синтетические данные, без production, исполнения команд и вызовов моделей.",
+          "developerName": "AG LLM",
+          "category": "Productivity",
+          "capabilities": [
+            "Read"
+          ],
+          "websiteUrl": null,
+          "privacyPolicyUrl": null,
+          "termsOfServiceUrl": null,
+          "defaultPrompt": null,
+          "brandColor": null,
+          "composerIcon": null,
+          "composerIconUrl": null,
+          "logo": null,
+          "logoDark": null,
+          "logoUrl": null,
+          "logoUrlDark": null,
+          "screenshots": [],
+          "screenshotUrls": []
+        },
+        "keywords": []
+      },
+      "shareUrl": null,
+      "description": "Read-only connection to a disposable synthetic Web Alarm API: ping, capabilities and context.",
+      "skills": [],
+      "onboardingSkill": null,
+      "hooks": [],
+      "apps": [],
+      "appTemplates": [],
+      "mcpServers": [
+        "wua_desktop_readonly"
+      ],
+      "scheduledTasks": null
+    }
+  },
+  "test_thread_id": "01a14536-3362-7392-a0d2-005f0acf50f3",
+  "mcp_status": {
+    "data": [
+      {
+        "name": "wua_desktop_readonly",
+        "runtimeStatus": "failed",
+        "pluginId": "wua-desktop-readonly@wua-a04-fixed",
+        "httpOrigin": null,
+        "serverInfo": null,
+        "serverCapabilities": null,
+        "tools": {},
+        "toolsError": "MCP startup failed: handshaking with MCP server failed: connection closed: initialize response: connection closed: initialize response",
+        "resources": [],
+        "resourceTemplates": [],
+        "authStatus": "unsupported"
+      }
+    ],
+    "nextCursor": null
+  }
+}

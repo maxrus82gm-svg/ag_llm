@@ -1,0 +1,20 @@
+{
+  "gate_A": "PASS: actual host parser, old failure reproduced, new plugin/read and connected MCP accepted",
+  "gate_B": "PASS: actual host initialize, exactly 3 tools",
+  "gate_C": "PASS: 3 OK + TASK_ID_DENIED; receipt identities/hash/state match",
+  "session_id": "121f89663edb418195a52fc3d0abc950",
+  "nonce": "a8e6b0c69dbffd79c68315baa7cb2121",
+  "context_sha256": "3ff38dc2dc6263c5379bc64d152622d72b8b59458eb44897fdb0c1796cd8999d",
+  "protocol": "2025-06-18",
+  "event_total": 11,
+  "proof_path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\test_environment\\fixed02\\codex_home\\plugins\\cache\\wua-a04-fixed02\\wua-desktop-readonly\\0.2.1\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\evidence\\121f89663edb418195a52fc3d0abc950\\session.json",
+  "receipt_sha256": "edb097f337c5aa86714b8ffdddf711339e394b8a48074de16ac8368fb76b0565",
+  "storage_unchanged": true,
+  "guard_denials": {
+    "file_write": 0,
+    "network": 0,
+    "subprocess": 0
+  },
+  "origin": "Actual isolated Codex app-server plugin host RPC, not SDK direct launch and not ordinary Chat",
+  "desktop_e2e": "DESKTOP E2E NOT VERIFIED"
+}

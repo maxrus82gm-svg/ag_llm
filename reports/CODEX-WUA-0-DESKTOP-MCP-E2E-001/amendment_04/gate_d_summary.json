@@ -1,0 +1,46 @@
+{
+  "cases": [
+    {
+      "case": "default",
+      "exit_code": 0,
+      "completed_native_tool_calls": 0,
+      "tools": [],
+      "catalog_evidence": [
+        "2026-10-16T15:00:57.355242Z TRACE capture_binding_with_metadata: codex_mcp::connection_manager::tool_catalog: omitting pending optional MCP server server_name=wua_desktop_readonly"
+      ],
+      "elapsed_seconds": 16.891
+    },
+    {
+      "case": "required",
+      "exit_code": 0,
+      "completed_native_tool_calls": 4,
+      "tools": [
+        "ping",
+        "list_capabilities",
+        "read_synthetic_context",
+        "read_synthetic_context"
+      ],
+      "catalog_evidence": [],
+      "elapsed_seconds": 31.625,
+      "session_id": "ae45acce1255467caae4e18c263ce38b",
+      "nonce": "b2fd04bb42c9c5a048482b68c7cba4c9",
+      "context_sha256": "be40e98fed04845879cd8918cfb3a0174cb0a40883b99d527703cce5108dba09",
+      "denial": "TASK_ID_DENIED",
+      "event_total": 11,
+      "receipt_validated": true
+    },
+    {
+      "case": "default_after_required",
+      "exit_code": 0,
+      "completed_native_tool_calls": 0,
+      "tools": [],
+      "catalog_evidence": [
+        "2026-10-16T15:03:48.940096Z TRACE capture_binding_with_metadata: codex_mcp::connection_manager::tool_catalog: omitting pending optional MCP server server_name=wua_desktop_readonly"
+      ],
+      "elapsed_seconds": 18.937
+    }
+  ],
+  "temporary_override_only": true,
+  "config_unchanged": true,
+  "original_unsaved_cli_trace_reconstructed": false
+}

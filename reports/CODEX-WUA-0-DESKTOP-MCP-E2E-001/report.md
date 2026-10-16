@@ -1,3 +1,20 @@
+# AMENDMENT 04 — актуальный локальный результат
+
+**AMENDMENT 04 LOCAL COMPLETE. DESKTOP E2E NOT VERIFIED.**
+
+Кандидат portable WUA 0.2.1 исправлен. Gate A–D PASS: реальный plugin loader,
+initialize/tools/list, четыре host MCP-вызова с receipt и независимые CLI
+контроли default → required=true → default (0 → 4 → 0 calls).
+Подтверждён механизм omitted pending optional MCP в новом эксперименте.
+Глобальный config, установленный cache 0.2.0 и существующая direct-регистрация
+сохранены; исправление не устанавливалось в действующий Desktop.
+
+Полный отчёт, источники, hashes, безопасность и откат:
+[amendment_04/report.md](M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/report.md).
+Установка/активация и ordinary Chat gate ждут отдельного решения пользователя.
+Прежние результаты ниже сохранены как история. Первоначальный отрицательный CLI
+trace не восстановлен; его уточнённое время — 18:11–18:12.
+
 # AMENDMENT 03 — актуальный результат диагностики
 
 **DESKTOP E2E NOT VERIFIED.** Режим: READ-ONLY DIAGNOSTICS, 2026-10-16.

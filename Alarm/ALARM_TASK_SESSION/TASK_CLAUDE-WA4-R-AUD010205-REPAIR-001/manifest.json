@@ -1,0 +1,121 @@
+{
+ "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "task_folder": "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "files": {
+  "baseline/web_alarm/event_checkpoint_store.py": {
+   "bytes": 8880,
+   "sha256": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "eol": "LF"
+  },
+  "baseline/web_alarm/operation_store.py": {
+   "bytes": 37491,
+   "sha256": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "eol": "LF"
+  },
+  "baseline/web_alarm/projection.py": {
+   "bytes": 72610,
+   "sha256": "1d788d2153621fb0aba9ed19ac2dbb3b74758bb78e3a4548c08dab295bf09af0",
+   "eol": "LF"
+  },
+  "evidence.json": {
+   "bytes": 525753,
+   "sha256": "4ba952df7afca9c5a955de8f538dea40b43a40fcedfaa07571a91a7532503dfa",
+   "eol": "LF"
+  },
+  "gate-e.json": {
+   "bytes": 1737,
+   "sha256": "7b9cc845f2bc6099d4596f085120f57d341fa3741147ebce4707b872e9cca49e",
+   "eol": "LF"
+  },
+  "probes/quality_controls_aud010205.py": {
+   "bytes": 4566,
+   "sha256": "075f8e5d0edbcb2fa5fb7cf3436eca891241044bba6776b97b3ff14712f9b5ba",
+   "eol": "LF"
+  },
+  "probes/test_aud01t_transport_finding.py": {
+   "bytes": 3373,
+   "sha256": "d36af1253984d1355139edec45f9c2b8bc38676bb15d257bc598adb6425644ce",
+   "eol": "LF"
+  },
+  "probes/test_aud02b_microtask_finding.py": {
+   "bytes": 3145,
+   "sha256": "cfb524041f010b60b0f92395889142d80fc548044c9f639436b41fc9cc9bdeaa",
+   "eol": "LF"
+  },
+  "probes/test_rollback_compatibility.py": {
+   "bytes": 1916,
+   "sha256": "cf09dfd274e6fdc119009d3e7bcba41a1a4a0ef5f573fae1c128bbd936a0c59d",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 30811,
+   "sha256": "039406109143ba172546b6822f22f04ef7136fc5c2757a67786dabe223364444",
+   "eol": "LF"
+  },
+  "scope.md": {
+   "bytes": 4540,
+   "sha256": "a86678c3f762acb1894f4932f9aed17cd2207e8b9aa95a01c24a287a678bc28a",
+   "eol": "LF"
+  },
+  "source-changes.diff": {
+   "bytes": 4135,
+   "sha256": "cf64a42fc8e544a9d5c7528840d40acd590173593c11e1d139c6d7a21213848a",
+   "eol": "LF"
+  },
+  "tools/annotate_evidence.py": {
+   "bytes": 2134,
+   "sha256": "330869186a4d4d344c687705dcac5d20097f65172d4b095b82e943a79a887446",
+   "eol": "LF"
+  },
+  "tools/collect_evidence.py": {
+   "bytes": 3134,
+   "sha256": "803da75b24a73e6dc1cdd626c9251cd856fc0575a1c1c0b78e65b0c7826de5d2",
+   "eol": "LF"
+  },
+  "tools/fix_raw_separators.py": {
+   "bytes": 1015,
+   "sha256": "9b2aca1146bce9a3308e87c37bff4fcf4309354d37fa77d5ae4f72165c2b51cb",
+   "eol": "LF"
+  },
+  "tools/gate_e_integrity.py": {
+   "bytes": 4402,
+   "sha256": "cbe7efe4a28ab86dc7fb998e8ef7b6886a161033247291768cf4ad352ce55875",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 1685,
+   "sha256": "792dbab5c57392d0d71c384c164d195c27fae9ef962d3e8aaadf2f862e4f32db",
+   "eol": "LF"
+  },
+  "tools/run_gate.py": {
+   "bytes": 2920,
+   "sha256": "44f44139865bed32428a4252f0cd02176236ded36d6c75e10a6d15531812c5fd",
+   "eol": "LF"
+  }
+ },
+ "repository_files": {
+  "web_alarm/event_checkpoint_store.py": {
+   "bytes": 9601,
+   "sha256": "7342b221e6663bee65bef116f57507b0de84b74269cb7541f4955b527eb91304",
+   "eol": "LF"
+  },
+  "web_alarm/operation_store.py": {
+   "bytes": 38022,
+   "sha256": "acb1e4c9ccc6a9ee70684f852c48cf8ba815ea67548781f2e1e53e535468826a",
+   "eol": "LF"
+  },
+  "web_alarm/projection.py": {
+   "bytes": 73094,
+   "sha256": "e4503ce955a41d8e9891bc429db4f145b32027a838334081688a4d662426f4e1",
+   "eol": "LF"
+  },
+  "test_web_alarm_aud010205_repair.py": {
+   "bytes": 22192,
+   "sha256": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+   "eol": "LF"
+  }
+ }
+}

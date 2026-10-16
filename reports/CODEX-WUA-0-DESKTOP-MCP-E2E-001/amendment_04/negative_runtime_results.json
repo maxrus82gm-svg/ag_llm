@@ -1,0 +1,15 @@
+{
+  "controls": [
+    {
+      "case": "missing_required_sdk_version",
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\r\n  File \"M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\negative_runtime\\server.py\", line 89, in <module>\r\n    main()\r\n  File \"M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\negative_runtime\\server.py\", line 26, in main\r\n    vendor_hash = verify_bundle()\r\n                  ^^^^^^^^^^^^^^^\r\n  File \"M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\amendment_04\\negative_runtime\\server.py\", line 21, in verify_bundle\r\n    raise RuntimeError(\"UNVERIFIED_MCP_SDK_VERSION; required 2.2.0\")\r\nRuntimeError: UNVERIFIED_MCP_SDK_VERSION; required 2.2.0\r\n"
+    },
+    {
+      "case": "missing_contained_runtime",
+      "result": "FAIL CLOSED / executable absent; no PATH fallback",
+      "winerror": 2
+    }
+  ],
+  "no_fixture_receipts_created": true
+}

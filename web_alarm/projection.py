@@ -882,6 +882,14 @@ class ProjectionService:
         if claims_error is not None:
             basis["claims_error"] = claims_error
             diagnostics.append(_item("CLAIMS_UNREADABLE", claims_error))
+        # AUD-05: the event history is the TASK audit trail. An unreadable one blocks
+        # (closeout gate included) even when no operation would have read it. The
+        # basis gains a key only then, so readable-history fingerprints are unchanged.
+        try:
+            self.state.read_events(task_id)
+        except EventCheckpointStoreError as exc:
+            basis["history"] = ["UNREADABLE", str(exc)]
+            blockers.append(_item("HISTORY_UNREADABLE", str(exc)))
 
         views: list[dict[str, Any]] = []
         basis_resolutions: list[Any] = []

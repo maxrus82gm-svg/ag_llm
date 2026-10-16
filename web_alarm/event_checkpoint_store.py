@@ -23,6 +23,12 @@ class EventCheckpointStoreError(RuntimeError):
     """Raised when event/checkpoint state is invalid or cannot be persisted."""
 
 
+# AUD-01: json.dumps(ensure_ascii=False) leaves U+0085/U+2028/U+2029 raw inside
+# strings, while str.splitlines() readers (older code, tools) cut lines at them.
+# Writing them escaped keeps one record per physical LF for every reader.
+_ESCAPED_LINE_BOUNDARIES = str.maketrans({"\u0085": "\\u0085", "\u2028": "\\u2028", "\u2029": "\\u2029"})
+
+
 def _atomic_write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.parent / f".{path.name}.{new_id('tmp')}.tmp"
@@ -80,7 +86,8 @@ class EventCheckpointStore:
             payload=dict(payload or {}),
         )
         path = self._events_path(task_id)
-        line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(",", ":")) + "\n"
+        line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(",", ":"))
+        line = line.translate(_ESCAPED_LINE_BOUNDARIES) + "\n"
         try:
             # A crash may leave a complete JSON object without its delimiter.
             # Never join the next record onto it or silently repair history.
@@ -104,12 +111,17 @@ class EventCheckpointStore:
         records: list[EventRecord] = []
         try:
             data = path.read_bytes()
-            lines = data.decode("utf-8").splitlines()
-        except (OSError, UnicodeDecodeError) as exc:
+        except OSError as exc:
             raise EventCheckpointStoreError(f"cannot read event log: {path}") from exc
         if data and not data.endswith(b"\n"):
             raise EventCheckpointStoreError(f"unterminated event log: {path}")
-        for index, line in enumerate(lines, start=1):
+        # AUD-01: one physical LF ends one record (a CRLF record drops its CR).
+        # Unicode line boundaries inside a JSON string are data, not delimiters.
+        for index, chunk in enumerate(data.split(b"\n")[:-1], start=1):
+            try:
+                line = chunk.removesuffix(b"\r").decode("utf-8")
+            except UnicodeDecodeError as exc:
+                raise EventCheckpointStoreError(f"cannot read event log: {path}") from exc
             if not line.strip():
                 raise EventCheckpointStoreError(f"blank event line at {index}")
             try:
