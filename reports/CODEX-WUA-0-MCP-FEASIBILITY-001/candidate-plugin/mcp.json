@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "web_alarm_synthetic": {
+      "type": "stdio",
+      "command": "M:/GitHub/ag_llm/.venv/Scripts/python.exe",
+      "args": ["-B", "M:/GitHub/ag_llm/reports/CODEX-WUA-0-MCP-FEASIBILITY-001/adapter.py"],
+      "cwd": "M:/GitHub/ag_llm/reports/CODEX-WUA-0-MCP-FEASIBILITY-001"
+    }
+  }
+}

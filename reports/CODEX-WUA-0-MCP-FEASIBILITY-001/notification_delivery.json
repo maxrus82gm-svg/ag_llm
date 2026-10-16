@@ -1,0 +1,50 @@
+{
+  "task_id": "CODEX-WUA-0-MCP-FEASIBILITY-001",
+  "target_chat_title": "Сервер WEB_08",
+  "target_thread_id": "6acfcf40-e98c-83ed-b435-cc0eb062b996",
+  "probe": {
+    "event_id": "CODEX-WUA-0-MCP-FEASIBILITY-001:delivery-probe:20261016:01",
+    "send_attempts": 1,
+    "send_result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"threadId\":\"6acfcf40-e98c-83ed-b435-cc0eb062b996\"}"
+        }
+      ],
+      "isError": false
+    },
+    "transport_accepted": true,
+    "message_readback_confirmed": false,
+    "receiver_ack_confirmed": false,
+    "readback_note": "Two bounded latest-turn reads did not contain the probe event; recent agent responses were returned as content references. No blind resend."
+  },
+  "final_report": {
+    "event_id": "CODEX-WUA-0-MCP-FEASIBILITY-001:final-report:20261016:01",
+    "send_attempts": 1,
+    "report_sha256": "fcaaca408a6f46940d6aab79446303e198dd6a2b03e18c279c70165afc829157",
+    "send_result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"threadId\":\"6acfcf40-e98c-83ed-b435-cc0eb062b996\"}"
+        }
+      ],
+      "isError": false
+    },
+    "status": "TRANSPORT_ACCEPTED",
+    "message_readback_confirmed": true,
+    "receiver_ack_confirmed": false,
+    "readback_note": "Complete sent message body, including event ID, report hash header and full report, matched a userMessage in the target chat. This does not constitute receiver ACK or independent acceptance.",
+    "full_report_readback_equals_sent": true,
+    "readback_records": [
+      {
+        "turn_id": "bed226fe-5d7a-4cbe-94e8-f10beb8f0a79",
+        "message_id": "bed226fe-5d7a-4cbe-94e8-f10beb8f0a79",
+        "full_body_equals_sent": true,
+        "body_characters": 12480
+      }
+    ]
+  },
+  "independent_acceptance": "NOT CLAIMED"
+}

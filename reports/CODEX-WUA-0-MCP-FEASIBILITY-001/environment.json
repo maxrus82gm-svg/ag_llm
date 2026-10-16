@@ -1,0 +1,22 @@
+{
+  "task_id": "CODEX-WUA-0-MCP-FEASIBILITY-001",
+  "date_local": "2026-10-16",
+  "timezone": "Asia/Yekaterinburg",
+  "observed_app_executable": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1007.9446.0_x64__2p2nqsd0c76g0/app/ChatGPT.exe",
+  "app_version_evidence": "Package directory of running process; not an update check or account entitlement check",
+  "python": "3.12.10",
+  "packages": {"mcp": "2.2.0", "httpx": "0.28.1", "pydantic": "2.13.5"},
+  "configured_stdio_mcp_names": ["node_repl", "astro_modeler", "gigachat_ultra"],
+  "web_alarm_mcp_in_current_codex_configuration": false,
+  "ordinary_chat_mcp_registration": "UNVERIFIED; Codex configuration does not establish ordinary ChatGPT Chat capabilities",
+  "account_plan": "NOT CHECKED; no inference of Plus/Pro/workspace eligibility",
+  "appx_inventory": "Get-AppxPackage unavailable: Appx module Operation is not supported on this platform (0x80131539); used process executable path instead",
+  "plugin_directory_search": "Search Web Alarm returned unrelated public plugins; no exact match. Directory is non-exhaustive and not an installed-plugin inventory.",
+  "ui_check": "NOT RUN: computer-use guidance forbids automation of ChatGPT Desktop UI; no alternative UI bypass attempted",
+  "ui_rule_source": "C:/Users/REX/.codex/plugins/cache/openai-bundled/computer-use/26.1007.71326/docs/guidance.md",
+  "ui_rule_quote": "Do not automate the ChatGPT desktop app UI or Codex CLI or Codex extensions within Windows apps.",
+  "local_helper": "simple_local unavailable: qwen3-coder:30b is not supported when using Codex with a ChatGPT account; main model retained",
+  "model_api_calls_by_poc": 0,
+  "production_mutations_by_poc": 0,
+  "git_deviation": "Before card read: git status --short and git log -1 --format=...; read-only but forbidden by DOC-GIT-01@1. No Git writes; no later Git/GitHub operations."
+}
