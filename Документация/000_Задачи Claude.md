@@ -31,8 +31,100 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
+Статус: USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE
+
+# TASK: CLAUDE-WA4-R-AUD010205-REPAIR-001 — Event History & Closeout Reliability Repair
+
+**Исполнитель:** агент 008 (Claude Desktop/Code).
+**Решение пользователя:** 2026-10-16, утверждён приоритет AUD-01/02/05.
+**ARCH CLASS:** Web Alarm Workspace / RT-001 / WA4-R reliability / post-R006 repair.
+**Приоритет:** HIGH, до обсуждения WARN.
+**Статус:** USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE.
+**Planner / независимый verifier:** ChatGPT. Authority по TASK/STOP и rollout — пользователь.
+**Параллельно:** Codex 007 выполняет CODEX-WUA-0-DESKTOP-MCP-E2E-001 / AMENDMENT 04; его MCP-дорожка полностью исключена из scope Claude.
+
+## 1. Цель
+
+Самостоятельно спроектировать, реализовать и проверить минимально достаточный ремонт **AUD-01, AUD-02, AUD-05**, выявленных в независимом аудите R-006. Сохранить все достигнутые гарантии WA4-R F1/F2/F3, безопасность, replay, identity/ownership, порядок lock, crash recovery и fail-closed.
+
+Это **ремонт исходников с изолированными тестами**, а не разрешение включать WARN, GATEWAY REQUIRED, STRICT или запускать rollout. Все пять находок AUD-01…05 остаются отдельными; AUD-03/04 не объявлять исправленными в этой TASK.
+
+## 2. Источники и фиксированная база
+
+Обязательно прочитать:
+- Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001/report.md (§4–12), evidence.json, package-audit.json, probes/test_claude_r006_independent.py и claude_probe_worker.py;
+- reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/ (report, versions, manifest, checks, evidence и исходные regression selectors);
+- нормативные документы: 08_Старт, 000_Задачи для агента, 18 (DOC-GIT-01@1), 01, 23, 24, 25, 34, 36, 36.1, 36.2, персональная карточка Claude;
+- runtime: web_alarm/event_checkpoint_store.py, web_alarm/operation_store.py, web_alarm/closeout.py, web_alarm/projection.py; соседние admission / transport / recovery модули по необходимости.
+
+GitHub commit №349 df09b0439cc6a2ab63c735d830d4dfb62b1ea314 — только координаторский ориентир, НЕ доказательство совпадения рабочего дерева. Сначала побайтно сверить актуальные файлы с R-006 pins и проверить отсутствие чужих параллельных изменений; записать SHA-256. При расхождении, относящемся к целевым модулям, остановить мутации и сообщить BLOCKED; не делать локальный Git/pull.
+
+**Исходный аудит:** 802 = 801 PASS / 0 FAIL / 0 ERROR / 1 SKIP; F1, F2 race/ownership, F3 = PASS BOUNDED, framing-часть F2 = PARTIAL. Это исходные факты аудита, не результат нового прогона.
+
+## 3. Обязательные инварианты ремонта
+
+**AUD-01 — JSONL framing.**
+- Writer и reader должны одинаково понимать физические границы записей: ровно LF (допустим корректный CRLF при чтении). Символы U+0085, U+2028 и U+2029 внутри JSON-полей не должны разрывать логические события.
+- Закрыть обе ветви: корректное кодирование новых записей и безопасное чтение существующих записей. Не исправлять историю молча; повреждённый хвост, пустая строка, неверная схема/identity должны давать контролируемый fail-closed.
+- Regression: P1, P1b, P1c; дополнительно Unicode, старые валидные LF/CRLF, malformed/torn history, контроль отсутствия незаметной нормализации.
+- Проверить соседние JSONL reader/writer, включая transport_event_store; если уязвимость того же класса доказана и исправление укладывается в узкий scope — добавить targeted test и ремонт; всё прочее — FINDING, без самовольного расширения.
+
+**AUD-02 — durable admission до проверки истории.**
+- Новая мутация при нечитаемой/оборванной истории не должна создавать новые payload/INTENT/operation metadata/event/checkpoint и не должна менять цель.
+- Префлайт читаемости/хвоста выполнять **под существующим правильным TASK lock** и до первой durable-записи; избежать TOCTOU и изменения порядка lock.
+- При отказе HTTP/API формулировка и код должны соответствовать реальному durable state; никаких ложных «nothing was written».
+- Regression: P2, HTTP/API path, replay/idempotency, параллельный closeout/admission, корректный полный лог.
+- Не скрывать и не автоисправлять старые orphan INTENT: см. границу AUD-03.
+
+**AUD-05 — closeout не должен завершать TASK с нечитаемой историей.**
+- ACTIVE TASK, в том числе без операций, при torn/framing-corrupt/mismatched истории должен получить детерминированный блокер HISTORY_UNREADABLE и не должен перемещаться в completed.
+- И inspection, и authoritative completion gate под lock должны вести себя согласованно; если read-only inspect имеет иной race профиль — явно задокументировать.
+- Не менять доказанную семантику MOVED_STATUS_PENDING / STATUS_WRITTEN_NOT_MOVED, статусной докрутки после commit point и F3 fresh recovery. Не допустить ложного повторного apply или двойной записи TASK_COMPLETED.
+- Regression: P6, P1c + штатные closeout/crash/replay/identity tests.
+
+**AUD-03, AUD-04 — вне scope реализации.**
+- Не пытаться автоматически восстанавливать уже существующие INTENT без события, не добавлять новые lifecycle states, миграции и эвристику удаления.
+- Не выполнять ремонт prepare locks / validation для AUD-04.
+- Если исправление AUD-02 требует нового контракта по AUD-03 — остановить соответствующую часть с PROPOSAL/DECISION, но выполнить безопасно отделимые AUD-01/05 и дать частичный честный статус.
+
+## 4. Инженерная самостоятельность и тесты
+
+Claude — самостоятельный инженер: сначала воспроизвести осмысленные FAIL на исходном pinned коде собственными независимыми byte-level оракулами, сохранить before-факты; затем минимальный patch и regression; затем собственный adversarial pass. Списком тестов не ограничиваться.
+
+Обязательный минимум:
+1. Положительные и отрицательные варианты P1/P1b/P1c/P2/P6 до и после; проверить, что P3 не ухудшен и остаётся известным ограничением.
+2. Целевые существующие модули EventCheckpoint/OperationStore/Closeout/Projection/Transport, R-006 11 selectors, F1–F3, WA-017, replay, recovery и negative controls.
+3. При допустимых ресурсах — полный guarded Web Alarm suite, отдельный итог P/F/E/S, exit, skip, isolation; результат 802 старой версии не выдавать за новый. Если полный прогон невозможен — явно PARTIAL.
+4. Повторяемые bounded concurrency/crash тесты с бюджетом и trace, включая незавершённую историю, чужой handle, closeout после move и admission-first.
+5. Проверить pin/source-map до и после, отсутствие недозволенных изменений и точную область diff без Git; сохранить SHA-256 и машинно-читаемые evidence.
+
+Тесты запускать **только на disposable TEMP fixtures** через действующий guarded runner; LOCALAPPDATA/APPDATA/pycache перенаправить в TEMP. Запрещены live storage, настоящие TASK, внешняя сеть, платные модели и UI.
+
+## 5. Разрешённые изменения и строгие границы
+
+**READ:** нужные Web Alarm исходники/тесты/документы и опубликованные audit/R-006 evidence.
+**WRITE code:** только адресно затронутые AUD-01/02/05 модули: web_alarm/event_checkpoint_store.py, operation_store.py, closeout.py, projection.py, при доказанной необходимости — mutation_executor.py и transport_event_store.py. Если требуется иной production модуль или изменение публичного контракта — сначала обосновать и запросить AMENDMENT, а не молча расширять scope.
+**WRITE tests:** только относящиеся к этому ремонту test_web_alarm*.py; новые targeted regression допускаются.
+**WRITE evidence:** новая папка Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001/, TEMP и штатная ротация только собственной карточки Claude по регламенту после фактического результата.
+
+**DENY:** весь MCP кандидат/плагин/скрипты/отчёты Codex (reports/CODEX-WUA-0-*, .codex, plugin cache, config.toml), другие MCP, Git/GitHub включая status/diff/add/commit/push по DOC-GIT-01@1, сеть/VPN/proxy/firewall, общий server.py/Ultra/Tkinter, CI-конфигурации, глобальные документы 18/23/24/25/34/36*/000 кроме собственных БЛОКОВ 1–3, живой Web Alarm Workspace, rollout, WARN/GATEWAY REQUIRED/STRICT, миграции, чужие карточки.
+
+В одном локальном рабочем дереве работают два агента: перед каждой записью подтвердить SHA выбранного целевого файла, избегать обработки случайного чужого diff. При появлении конкурирующего изменения/конфликта — STOP и отчёт, не перетирать. Codex 007 занимается только MCP; его процессы, файлы и evidence не затрагивать.
+
+## 6. Сдача, критерии успеха и регламент
+
+PASS только если AUD-01/02/05 воспроизведены и устранены, все их regression tests проходят, нет побочных durable записей при отказе, F1/F2/F3 сохраняют bounded гарантии, локальные исходники после ремонта однозначно идентифицированы, все изменения в scope, evidence воспроизводимы.
+
+Отдельно оценить AUD-03/04 как OPEN и WARN-readiness как PARTIAL, пока пользователь не подтвердил дополнительные gates. При неполных доказательствах — PARTIAL/BLOCKED, не фиктивный PASS.
+
+Отчёт в Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001/report.md: причина каждого AUD, before/after diff с byte SHA, сырые оракулы, результаты каждого тестового этапа, число тестов/раундов, другие findings, точный список файлов, границы, DOC IMPACT, оставшиеся риски, NEXT. В чат Claude — один самостоятельный копируемый блок с TASK ID, статусом RESULT READY / AWAITING INDEPENDENT VERIFICATION, результатами, файлами, цифрами, блокерами и путём отчёта.
+
+Персональная карточка: БЛОК 1 -> БЛОК 2 (полная постановка) и БЛОК 3 (факты), затем БЛОК 1 -> ОЖИДАНИЕ НОВОЙ ЗАДАЧИ **только после** контроля сохранности. До перезаписи БЛОКОВ 2–3 убедиться, что предыдущая R-006 audit TASK внесена в постоянную append-only историю; если нет — остановить только ротацию и сообщить координатору, не уничтожать прежнюю постановку. Историю/канонические документы обновляет ChatGPT после независимой проверки.
+
+Никаких commit/push от Claude. Доставка изменений в GitHub — отдельно через координатора/пользователя после независимой проверки и согласования публикации.
+
+**Конечный статус TASK до вердикта ChatGPT: RESULT READY / AWAITING INDEPENDENT VERIFICATION.**
+**WA4-R rollout остаётся OFF; WARN/GATEWAY REQUIRED/STRICT не включать.**
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
