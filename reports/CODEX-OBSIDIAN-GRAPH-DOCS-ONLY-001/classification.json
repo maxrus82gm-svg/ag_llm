@@ -1,0 +1,39 @@
+{
+  "task_id": "CODEX-OBSIDIAN-GRAPH-DOCS-ONLY-001",
+  "created_utc": "2026-10-16T16:28:11.541794+00:00",
+  "markdown_by_top_folder": {
+    "(root)": 2,
+    ".pytest_cache": 1,
+    ".ultra": 6,
+    ".venv": 11,
+    "Alarm": 251,
+    "Dev-archive": 3,
+    "reports": 924,
+    "sandbox_verify": 1,
+    "_ultra_agent_test": 1,
+    "Документация": 62,
+    "Чат_pro": 1
+  },
+  "include": {
+    "Документация/": "All 62 canonical project Markdown documents, including agent cards, architecture, plans, tactical context, testing profiles, Blueprint, AG LLM and SAFE_MODE_v1_README; retain disconnected notes."
+  },
+  "outside_documentation": {
+    "README.md": "8 bytes: heading # ag_llm only; no separate user documentation.",
+    "Wiki Links.md": "Empty, 0 bytes; no separate user documentation.",
+    "Dev-archive/": "Archived patches, snapshots and historical test/install notes; explicitly marked not current runtime.",
+    "Alarm/": "Legacy task/session handoffs, baselines, evidence and dependency licenses; current project Web Alarm docs are 23-25 and related canonical files in Документация/.",
+    "reports/": "Task reports, assignments, manual gates, adapter candidates, bundled runtime dependencies, licenses and isolated test environments.",
+    ".venv/": "Python dependency license Markdown.",
+    ".ultra/ and Чат_pro/.ultra/": "Runtime project context and historical context snapshots, rather than the canonical documentation map.",
+    ".pytest_cache/, sandbox_verify/, _ultra_agent_test/": "Cache notes and test fixtures."
+  },
+  "external_allowlist_exceptions": [],
+  "intended_search": "path:/^Документация\\//",
+  "showTags": false,
+  "showOrphans": true,
+  "all_previous_document_contents_and_links_to_be_preserved": true,
+  "source_docs": [
+    "https://obsidian.md/help/plugins/search",
+    "https://obsidian.md/help/plugins/graph"
+  ]
+}

@@ -1,0 +1,1789 @@
+"""RC-6 project-level bounded recovery/resume orchestration.
+
+The coordinator never executes a normal Workspace mutation. It composes the
+authoritative RC-5 projection with existing Resolver, RC-3 ownership and RC-4
+rollback services, performs only already-authorized recovery/administrative
+steps, rebuilds the projection after every step and stops at a safe boundary.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from contextlib import ExitStack
+from pathlib import Path
+from typing import Any
+
+from .manifest_store import ManifestStoreError
+from .microtask_gate import (
+    PRE_EXECUTION_STATUSES,
+    authoritative_action,
+    disposition_actions,
+    effective_settlement_target,
+    execution_refusal,
+    pre_execution_next_action,
+    pre_execution_settlement,
+    rollback_refusal,
+)
+from .models import MicrotaskStatus, TaskStatus
+from .operation_store import OperationStore, OperationStoreError, OperationTransitionError
+from .projection import (
+    ProjectionError,
+    ProjectionService,
+    current_settlements_by_microtask,
+    settlement_lifecycle_satisfied,
+    settlement_lifecycle_target,
+)
+from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
+from .resolver_service import ResolverError, ResolverService
+from .rollback_service import (
+    BLOCKED,
+    REJECTED,
+    RollbackError,
+    RollbackService,
+    rollback_needs_rc4_finalize,
+)
+from .rollback_store import (
+    APPLYING,
+    AUTHORIZED,
+    CLOSED,
+    PRESERVATION_FAILED,
+    PRESERVED,
+    VERIFIED,
+    RollbackStoreError,
+)
+from .target_claim_service import TargetClaimError, TargetClaimService
+from .target_claim_store import TargetClaimStoreError, physical_target_key, target_lock_order
+from .target_identity import TargetIdentityError, canonical_target
+from .task_store import TaskStore, TaskStoreError
+from .workspace_registry import WorkspaceRegistryError
+
+READY_FOR_EXECUTION = "READY_FOR_EXECUTION"
+READY_FOR_VERIFICATION = "READY_FOR_VERIFICATION"
+MANUAL_DECISION_REQUIRED = "MANUAL_DECISION_REQUIRED"
+RECOVERY_IN_PROGRESS = "RECOVERY_IN_PROGRESS"
+RECOVERY_BLOCKED = "RECOVERY_BLOCKED"
+TASK_COMPLETED = "TASK_COMPLETED"
+TASK_READY_TO_CLOSE = "TASK_READY_TO_CLOSE"
+NO_ACTION_REQUIRED = "NO_ACTION_REQUIRED"
+FAIL_CLOSED = "FAIL_CLOSED"
+
+_SETTLED_ROLLBACK = {CLOSED, PRESERVATION_FAILED}
+_RECOVERY_MICRO = {
+    MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT.value,
+    MicrotaskStatus.RECOVERY_REQUIRED.value,
+    MicrotaskStatus.FAILED_VERIFICATION.value,
+}
+# Lifecycle statuses from which the single aggregated settlement disposition of
+# a microtask (projection.settlement_lifecycle_target) may be applied.
+_TO_DONE_FROM = {
+    MicrotaskStatus.ACTIVE,
+    MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT,
+    MicrotaskStatus.RECOVERY_REQUIRED,
+    MicrotaskStatus.DONE,
+}
+_TO_RECOVERY_REQUIRED_FROM = {
+    MicrotaskStatus.ACTIVE,
+    MicrotaskStatus.DONE,
+    MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT,
+    MicrotaskStatus.RECOVERY_REQUIRED,
+    MicrotaskStatus.FAILED_VERIFICATION,
+}
+# RC-4 phases in which rollback apply() can still perform a per-target restore
+_ROLLBACK_RESTORE_PHASES = {PRESERVED, AUTHORIZED, APPLYING}
+# RC-4 step outcomes that are terminal for the current recover invocation
+_STEP_BLOCKED_RESULTS = {BLOCKED, REJECTED}
+# Repair #4: how long recover waits for a running restore-point preparation
+_PREPARE_LOCK_WAIT_SECONDS = 1.0
+# RC-6 Repair #4A: a microtask that has never been ACTIVE (microtask_gate)
+_PRE_EXECUTION = PRE_EXECUTION_STATUSES
+# sources from which an ABORT-only disposition may set RECOVERY_REQUIRED besides
+# _TO_RECOVERY_REQUIRED_FROM (never PREPARING: that preparation is reconciled first)
+_ABORT_FROM_PRE_EXECUTION = {
+    MicrotaskStatus.PLANNED,
+    MicrotaskStatus.BACKUP_VERIFIED,
+    MicrotaskStatus.READY,
+    MicrotaskStatus.BLOCKED_PREPARE,
+}
+
+
+def _digest(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+class RecoveryCoordinatorError(RuntimeError):
+    """Authoritative recovery state cannot be safely read or advanced."""
+
+
+class RecoveryCoordinatorBlocked(RecoveryCoordinatorError):
+    """A proven ownership/recovery conflict blocks automatic continuation."""
+
+
+class RecoveryCoordinator:
+    """One bounded project-level recovery entry point for one TASK."""
+
+    def __init__(
+        self,
+        storage_root: str | Path | None = None,
+        *,
+        lock_timeout: float | None = None,
+        default_max_steps: int = 8,
+    ) -> None:
+        if isinstance(default_max_steps, bool) or not isinstance(default_max_steps, int) or default_max_steps < 1:
+            raise ValueError("default_max_steps must be a positive integer")
+        self.default_max_steps = default_max_steps
+        self.projection = ProjectionService(storage_root, lock_timeout=lock_timeout)
+        root = self.projection.tasks.storage_root
+        if lock_timeout is None:
+            self.operations = OperationStore(root)
+            self.tasks = TaskStore(root)
+            self.rollbacks = RollbackService(root)
+            self.claims = TargetClaimService(root)
+        else:
+            self.operations = OperationStore(root, lock_timeout=lock_timeout)
+            self.tasks = TaskStore(root, lock_timeout=lock_timeout)
+            self.rollbacks = RollbackService(root, lock_timeout=lock_timeout)
+            self.claims = TargetClaimService(root, lock_timeout=lock_timeout)
+        self.resolver = ResolverService(root)
+
+    @staticmethod
+    def _step_summary(value: Any) -> dict[str, Any]:
+        if not isinstance(value, dict):
+            return {"result": type(value).__name__}
+        keys = (
+            "result",
+            "result_code",
+            "reason",
+            "changed",
+            "replayed",
+            "settlement",
+            "resolution_id",
+            "next_safe_action",
+        )
+        return {key: value[key] for key in keys if key in value}
+
+    @staticmethod
+    def _view(projection: dict[str, Any], operation_id: str | None) -> dict[str, Any] | None:
+        if operation_id is None:
+            return None
+        return next(
+            (item for item in projection["operations"] if item["operation_id"] == operation_id),
+            None,
+        )
+
+    @staticmethod
+    def _rollback(projection: dict[str, Any], rollback_id: str | None) -> dict[str, Any] | None:
+        if rollback_id is None:
+            return None
+        return next(
+            (item for item in projection["rollbacks"] if item["rollback_id"] == rollback_id),
+            None,
+        )
+
+    @staticmethod
+    def _unexpected_claims(
+        projection: dict[str, Any],
+        *,
+        expected_operation_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        result = []
+        for claim in projection["ownership"]["active_claims"]:
+            owner = claim.get("owner") or {}
+            if owner.get("kind") == "ROLLBACK":
+                result.append(claim)
+                continue
+            if expected_operation_id is not None and claim["operation_id"] == expected_operation_id:
+                continue
+            result.append(claim)
+        return result
+
+    def _accepted_resolution_locked(
+        self,
+        task_id: str,
+        operation_id: str,
+        resolution_id: str,
+        expected_action: ResolutionAction,
+        *,
+        require_fresh: bool,
+    ):
+        try:
+            record = self.resolver.store.get(task_id, resolution_id)
+        except ResolutionStoreError as exc:
+            raise RecoveryCoordinatorError(str(exc)) from exc
+        if record.operation_id != operation_id or record.action is not expected_action:
+            raise RecoveryCoordinatorError("resolution identity/action changed before recovery step")
+        if record.result is not ResolutionResult.ACCEPTED:
+            raise RecoveryCoordinatorError("recovery step no longer has an accepted resolution")
+        if require_fresh:
+            fresh = self.resolver.freshness(record)
+            if not fresh["fresh"]:
+                raise RecoveryCoordinatorError(
+                    f"{expected_action.value} resolution is stale ({fresh['code']})"
+                )
+        try:
+            facts = self.resolver.report_facts(
+                task_id, record.microtask_id, operation_id
+            )
+        except ResolverError as exc:
+            raise RecoveryCoordinatorError(str(exc)) from exc
+        authoritative = facts["next_safe_action"]
+        if authoritative is None or authoritative["resolution_id"] != resolution_id:
+            chosen = authoritative["resolution_id"] if authoritative is not None else "none"
+            raise RecoveryCoordinatorError(
+                f"resolution {resolution_id} is no longer authoritative; current is {chosen}"
+            )
+        return record
+
+    @staticmethod
+    def _rollback_open(record: dict[str, Any]) -> bool:
+        return not (
+            record["status"] in _SETTLED_ROLLBACK
+            or (record["status"] == VERIFIED and record["claims_released"])
+        )
+
+    def _no_open_rollback_locked(self, task_id: str, operation_id: str) -> None:
+        try:
+            open_sessions = [
+                item
+                for item in self.rollbacks.store.list(task_id, operation_id=operation_id)
+                if self._rollback_open(item)
+            ]
+        except RollbackStoreError as exc:
+            raise RecoveryCoordinatorError(str(exc)) from exc
+        if open_sessions:
+            raise RecoveryCoordinatorError(
+                "tracked rollback is still open: "
+                + ", ".join(item["rollback_id"] for item in open_sessions)
+            )
+
+    def _preflight_micro_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        target: MicrotaskStatus,
+        *,
+        allowed_from: set[MicrotaskStatus],
+        additionally_satisfied: set[MicrotaskStatus] | None = None,
+    ):
+        """Prove a recovery lifecycle update before any settlement write."""
+        current = self.tasks.open_microtask(task_id, microtask_id)
+        satisfied = additionally_satisfied or set()
+        if current.status is target or current.status in satisfied:
+            return current
+        if current.status not in allowed_from:
+            raise RecoveryCoordinatorError(
+                f"microtask {microtask_id} is {current.status.value}; "
+                f"cannot recovery-set it to {target.value}"
+            )
+        return current
+
+    def _set_micro_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        target: MicrotaskStatus,
+        *,
+        allowed_from: set[MicrotaskStatus],
+        additionally_satisfied: set[MicrotaskStatus] | None = None,
+    ) -> dict[str, Any]:
+        current = self._preflight_micro_locked(
+            task_id,
+            microtask_id,
+            target,
+            allowed_from=allowed_from,
+            additionally_satisfied=additionally_satisfied,
+        )
+        satisfied = additionally_satisfied or set()
+        if current.status is target or current.status in satisfied:
+            return {
+                "changed": False,
+                "replayed": True,
+                "microtask_status": current.status.value,
+            }
+        updated = self.tasks.set_microtask_status_locked(task_id, microtask_id, target)
+        return {"changed": True, "replayed": False, "microtask_status": updated.status.value}
+
+    def _manifest_target_set(self, task_id: str, plan: dict[str, Any]) -> tuple[list[str], dict[str, str]]:
+        """Physical keys (canonical lock order) of every restore-point target."""
+        try:
+            task = self.tasks.open_task(task_id)
+            workspace = self.operations.registry.get(task.workspace_id)
+            root = Path(workspace.workspace_root)
+            unique: dict[str, str] = {}
+            for item in plan["items"]:
+                canonical = canonical_target(root, item["source_path"])
+                unique.setdefault(physical_target_key(canonical.path), item["source_path"])
+        except (
+            TaskStoreError,
+            WorkspaceRegistryError,
+            TargetIdentityError,
+            KeyError,
+            TypeError,
+        ) as exc:
+            raise RecoveryCoordinatorBlocked(
+                f"restore point is not safe for execution: {exc}"
+            ) from exc
+        return target_lock_order(unique), unique
+
+    def _lock_manifest_targets(
+        self,
+        stack: ExitStack,
+        task_id: str,
+        microtask_id: str,
+    ) -> tuple[dict[str, Any], list[str]]:
+        """Pure final READY proof over every restore-point target.
+
+        Any active RC-3 owner is incompatible with a normal not-yet-authorized
+        execution boundary.  Target locks are ephemeral and no claim is written.
+        """
+        try:
+            plan = self.projection.manifests.restore_plan(task_id, microtask_id)
+        except ManifestStoreError as exc:
+            raise RecoveryCoordinatorBlocked(
+                f"restore point is not safe for execution: {exc}"
+            ) from exc
+        ordered, unique = self._manifest_target_set(task_id, plan)
+        for physical_key in ordered:
+            stack.enter_context(self.claims._target_lock(physical_key))
+            try:
+                data = self.claims.claims.load(physical_key)
+            except TargetClaimStoreError as exc:
+                raise RecoveryCoordinatorError(str(exc)) from exc
+            active = data["active"]
+            if active is not None:
+                raise RecoveryCoordinatorBlocked(
+                    "execution target is already owned: "
+                    f"{unique[physical_key]} -> "
+                    f"{active.get('task_id')}/{active.get('operation_id')}"
+                )
+        return plan, ordered
+
+    @staticmethod
+    def _proof(
+        kind: str,
+        task_id: str,
+        micro,
+        plan: dict[str, Any],
+        target_keys: list[str],
+        *,
+        operation=None,
+        resolution_id: str | None = None,
+    ) -> dict[str, Any]:
+        """Immutable identity of what a protected READY proof actually proved."""
+        return {
+            "result": "READY_PROVED",
+            "kind": kind,
+            "task_id": task_id,
+            "microtask_id": micro.microtask_id,
+            "microtask_status": micro.status.value,
+            "microtask_updated_at": micro.updated_at,
+            "manifest_id": plan["manifest_id"],
+            "restore_point_fingerprint": plan["restore_point_fingerprint"],
+            "target_set_fingerprint": _digest(target_keys),
+            "operation_id": operation.operation_id if operation is not None else None,
+            "operation_revision": operation.revision if operation is not None else None,
+            "resolution_id": resolution_id,
+            "physical_mutation_performed": False,
+        }
+
+    @staticmethod
+    def _proof_matches(proof: dict[str, Any], projection: dict[str, Any]) -> bool:
+        """Does the fresh projection expose exactly the proved execution basis? (R3)
+
+        The content identities (restore-point fingerprint, locked target set)
+        are compared by re-deriving the whole proof in ``_confirm_ready``; here
+        every proof field the projection itself carries is compared.
+        """
+        position = projection["position"]
+        if position["current_microtask_id"] != proof["microtask_id"]:
+            return False
+        rows = projection["source_basis"].get("microtasks")
+        row = next(
+            (r for r in rows if isinstance(r, list) and r and r[0] == proof["microtask_id"]),
+            None,
+        ) if isinstance(rows, list) else None
+        if row is None or row[2] != proof["microtask_status"] or row[3] != proof["microtask_updated_at"]:
+            return False
+        restore_point = projection["restore_point"]
+        if restore_point.get("status") != "VERIFIED" or restore_point.get("manifest_id") != proof["manifest_id"]:
+            return False
+        if proof["kind"] == "RETRY":
+            recovery = projection["recovery"]
+            view = next(
+                (v for v in projection["operations"] if v["operation_id"] == proof["operation_id"]),
+                None,
+            )
+            return (
+                recovery.get("operation_id") == proof["operation_id"]
+                and recovery.get("resolution_id") == proof["resolution_id"]
+                and view is not None
+                and view["microtask_id"] == proof["microtask_id"]
+                and view["revision"] == proof["operation_revision"]
+            )
+        return projection["recovery"]["state"] == "NORMAL"
+
+    def _require_execution_gate_locked(self, task_id: str, microtask_id: str) -> None:
+        """F-C: the one rule RC-3 ``mutation_boundary`` applies to mutation authority."""
+        refusal = execution_refusal(
+            task_id,
+            microtask_id,
+            tasks=self.tasks,
+            operations=self.operations,
+            resolver=self.resolver,
+            rollbacks=self.rollbacks.store,
+        )
+        if refusal is not None:
+            raise RecoveryCoordinatorBlocked(
+                f"execution gate refused ({refusal[0]}): {refusal[1]}"
+            )
+
+    def _normal_basis_locked(
+        self,
+        stack: ExitStack,
+        task_id: str,
+        microtask_id: str,
+    ) -> dict[str, Any]:
+        """NORMAL READY proof body; the caller holds the TASK + mutation locks."""
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        if micro.status is not MicrotaskStatus.ACTIVE:
+            raise RecoveryCoordinatorBlocked(
+                f"microtask {microtask_id} is no longer ACTIVE"
+            )
+        self._require_execution_gate_locked(task_id, microtask_id)
+        plan, target_keys = self._lock_manifest_targets(stack, task_id, microtask_id)
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        if micro.status is not MicrotaskStatus.ACTIVE:
+            raise RecoveryCoordinatorBlocked(
+                f"microtask {microtask_id} changed during READY proof"
+            )
+        # Re-read integrity after the target set is protected; the locked set
+        # must be exactly the set the re-read restore point names (R3).
+        plan = self.projection.manifests.restore_plan(task_id, microtask_id)
+        if self._manifest_target_set(task_id, plan)[0] != target_keys:
+            raise RecoveryCoordinatorBlocked(
+                f"restore point target set of {microtask_id} changed during READY proof"
+            )
+        return self._proof("NORMAL", task_id, micro, plan, target_keys)
+
+    def _prove_normal_ready(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+    ) -> dict[str, Any]:
+        microtask_id = projection["position"]["current_microtask_id"]
+        if microtask_id is None:
+            raise RecoveryCoordinatorError("normal READY proof has no current microtask")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                with ExitStack() as target_stack:
+                    return self._normal_basis_locked(target_stack, task_id, microtask_id)
+
+    def _retry_basis_locked(
+        self,
+        stack: ExitStack,
+        task_id: str,
+        operation_id: str,
+        resolution_id: str,
+        microtask_id: str,
+    ) -> dict[str, Any]:
+        """RETRY READY proof body; the caller holds the TASK + mutation locks."""
+        resolution = self._accepted_resolution_locked(
+            task_id,
+            operation_id,
+            resolution_id,
+            ResolutionAction.RETRY,
+            require_fresh=True,
+        )
+        self._no_open_rollback_locked(task_id, operation_id)
+        operation = self.operations.get(task_id, operation_id)
+        if operation.microtask_id != microtask_id:
+            raise RecoveryCoordinatorError("operation microtask identity changed")
+        if operation.revision != resolution.basis["operation_revision"]:
+            raise RecoveryCoordinatorError("operation revision changed before RETRY READY proof")
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        if micro.status is not MicrotaskStatus.ACTIVE:
+            raise RecoveryCoordinatorBlocked(
+                f"RETRY operation microtask {microtask_id} is {micro.status.value}, not ACTIVE"
+            )
+        self._require_no_manual_disposition_locked(task_id, microtask_id, "RETRY READY")
+        self._require_execution_gate_locked(task_id, microtask_id)
+        try:
+            self.projection.manifests.verify_restore_point(task_id, microtask_id)
+        except ManifestStoreError as exc:
+            raise RecoveryCoordinatorBlocked(
+                f"restore point is not verified for RETRY: {exc}"
+            ) from exc
+
+        target_keys = self._lock_resolution_targets(stack, task_id, operation_id, resolution)
+        resolution = self._accepted_resolution_locked(
+            task_id,
+            operation_id,
+            resolution_id,
+            ResolutionAction.RETRY,
+            require_fresh=True,
+        )
+        operation = self.operations.get(task_id, operation_id)
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        if operation.revision != resolution.basis["operation_revision"]:
+            raise RecoveryCoordinatorError(
+                "operation revision changed at RETRY READY boundary"
+            )
+        if micro.status is not MicrotaskStatus.ACTIVE:
+            raise RecoveryCoordinatorBlocked(
+                f"RETRY operation microtask {microtask_id} changed during READY proof"
+            )
+        if self._resolution_target_set(task_id, operation_id, resolution)[0] != target_keys:
+            raise RecoveryCoordinatorBlocked(
+                f"RETRY target set of {operation_id} changed during READY proof"
+            )
+        try:
+            plan = self.projection.manifests.restore_plan(task_id, microtask_id)
+        except ManifestStoreError as exc:
+            raise RecoveryCoordinatorBlocked(
+                f"restore point changed during RETRY READY proof: {exc}"
+            ) from exc
+        return self._proof(
+            "RETRY",
+            task_id,
+            micro,
+            plan,
+            target_keys,
+            operation=operation,
+            resolution_id=resolution_id,
+        )
+
+    def _prove_retry_ready(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+    ) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        operation_id = recovery["operation_id"]
+        resolution_id = recovery["resolution_id"]
+        view = self._view(projection, operation_id)
+        if view is None or resolution_id is None:
+            raise RecoveryCoordinatorError("projection lost RETRY readiness identity")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                with ExitStack() as target_stack:
+                    return self._retry_basis_locked(
+                        target_stack, task_id, operation_id, resolution_id, view["microtask_id"]
+                    )
+
+    def _confirm_ready(
+        self,
+        task_id: str,
+        proof: dict[str, Any],
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """R3: re-derive the whole proof and build the final projection in one protected section.
+
+        Same TASK + mutation + target locks as the proof. Returns (re-derived
+        proof, projection). READY is reported only if the re-derived proof is
+        identical to the one proved (restore-point content fingerprint, locked
+        target set, microtask status/updated_at, operation revision, resolution)
+        and the projection still shows exactly that basis, so a change between
+        proof and final classification, an ABA back to the same surface values
+        included, can never yield READY for a basis that was not protected.
+        """
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                with ExitStack() as target_stack:
+                    if proof["kind"] == "RETRY":
+                        derived = self._retry_basis_locked(
+                            target_stack,
+                            task_id,
+                            proof["operation_id"],
+                            proof["resolution_id"],
+                            proof["microtask_id"],
+                        )
+                    else:
+                        derived = self._normal_basis_locked(target_stack, task_id, proof["microtask_id"])
+                    fresh = self.projection.build(task_id)
+        return derived, fresh
+
+    def _resolution_target_set(self, task_id: str, operation_id: str, resolution) -> tuple[list[str], dict[str, str]]:
+        """Physical keys (canonical lock order) of a Resolver basis target set."""
+        try:
+            operation = self.operations.get(task_id, operation_id)
+            contract = operation.contract or {}
+            workspace = self.operations.registry.get(contract["workspace_id"])
+            root = Path(workspace.workspace_root)
+            unique: dict[str, str] = {}
+            for source_path in resolution.basis["affected_targets"]:
+                canonical = canonical_target(root, source_path)
+                unique.setdefault(physical_target_key(canonical.path), source_path)
+        except (
+            OperationStoreError,
+            WorkspaceRegistryError,
+            TargetIdentityError,
+            KeyError,
+            TypeError,
+        ) as exc:
+            raise RecoveryCoordinatorError(
+                f"cannot lock recovery target set: {exc}"
+            ) from exc
+        return target_lock_order(unique), unique
+
+    def _lock_resolution_targets(
+        self,
+        stack: ExitStack,
+        task_id: str,
+        operation_id: str,
+        resolution,
+    ) -> list[str]:
+        """Lock every Resolver-basis target and reject foreign RC-3 ownership.
+
+        The order is the canonical cross-subsystem target lock order
+        (target_claim_store.target_lock_order, the one RC-4 uses), so neither a
+        coordinator nor a rollback of another TASK touching the same targets can
+        form a wait cycle with it. The caller already holds this TASK's
+        operation lock. Returns the locked physical keys in lock order.
+        """
+        ordered, unique = self._resolution_target_set(task_id, operation_id, resolution)
+        for physical_key in ordered:
+            stack.enter_context(self.claims._target_lock(physical_key))
+            try:
+                data = self.claims.claims.load(physical_key)
+            except TargetClaimStoreError as exc:
+                raise RecoveryCoordinatorError(str(exc)) from exc
+            active = data["active"]
+            if active is None:
+                continue
+            ours = (
+                active.get("owner") is None
+                and active["task_id"] == task_id
+                and active["operation_id"] == operation_id
+            )
+            if not ours:
+                raise RecoveryCoordinatorBlocked(
+                    "recovery target is owned by another operation: "
+                    f"{unique[physical_key]} -> "
+                    f"{active.get('task_id')}/{active.get('operation_id')}"
+                )
+        return ordered
+
+    def _settlement_target_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        pending: str | None = None,
+    ) -> MicrotaskStatus:
+        return self._settlement_disposition_locked(task_id, microtask_id, pending)[0]
+
+    def _settlement_disposition_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        pending: str | None = None,
+    ) -> tuple[MicrotaskStatus, list[str]]:
+        """R2: the one disposition all settlements of this microtask require.
+
+        Read from the persistent operation and Resolver records under the
+        caller's TASK lock (same rule as the projection), plus the settlement
+        about to be written (``pending``). Repair #3 (F-B): for a microtask
+        that is already VERIFIED a non-destructive disposition is VERIFIED
+        itself: the settlement is administrative and nothing is written to
+        the microtask (the caller also holds the mutation lock, and VERIFIED
+        has no exit, so this cannot change before the settlement is written).
+        """
+        actions = self._current_settlements_locked(task_id, microtask_id)
+        if pending is not None:
+            actions.append(pending)
+        micro = self.tasks.open_microtask(task_id, microtask_id)
+        target = effective_settlement_target(actions, micro.status)
+        if target is None:
+            raise RecoveryCoordinatorError(
+                f"microtask {microtask_id} has no recovery settlement to apply"
+            )
+        return target, actions
+
+    def _require_no_manual_disposition_locked(self, task_id: str, microtask_id: str, what: str) -> None:
+        """R2: an ABORT/ROLLBACK disposition keeps its microtask at the manual boundary.
+
+        Repair #3: judged with the execution gate's rule, i.e. also an accepted
+        ABORT/ROLLBACK not settled yet and an open RC-4 session of another
+        operation of the microtask, so a RETRY re-arm never writes ACTIVE for
+        a microtask whose execution the gate would refuse anyway.
+        """
+        try:
+            actions = disposition_actions(
+                task_id,
+                microtask_id,
+                operations=self.operations,
+                resolver=self.resolver,
+                rollbacks=self.rollbacks.store,
+            )
+        except (ResolverError, ResolutionStoreError, RollbackStoreError, OperationStoreError) as exc:
+            raise RecoveryCoordinatorError(str(exc)) from exc
+        if settlement_lifecycle_target(actions) is MicrotaskStatus.RECOVERY_REQUIRED:
+            raise RecoveryCoordinatorBlocked(
+                f"{what} refused (MICROTASK_RECOVERY_REQUIRED): microtask {microtask_id} carries an "
+                "ABORT/ROLLBACK recovery disposition of another operation and stays at the manual "
+                "RECOVERY_REQUIRED boundary until an explicit project-level decision"
+            )
+
+    def _deferred_by_preparation_locked(self, task_id: str, microtask_id: str, action: str) -> dict[str, Any] | None:
+        """Repair #4A: a settlement never starts over a PREPARING microtask.
+
+        Between the projection that chose the step and this locked section a
+        concurrent restore-point preparation may have moved the microtask to
+        PREPARING. Nothing is written; the loop re-projects, and the
+        preparation is reconciled first (or stops recover as in progress).
+        """
+        if self.tasks.open_microtask(task_id, microtask_id).status is MicrotaskStatus.PREPARING:
+            return {
+                "result": "DEFERRED_BY_PREPARATION",
+                "reason": (
+                    f"microtask {microtask_id} became PREPARING; its preparation is reconciled before "
+                    f"the {action} settlement"
+                ),
+                "physical_mutation_performed": False,
+            }
+        return None
+
+    def _current_settlements_locked(self, task_id: str, microtask_id: str) -> list[str]:
+        pairs = []
+        for record in self.operations.list(task_id):
+            if record.microtask_id != microtask_id or not record.recovery_settlement:
+                continue
+            try:
+                facts = self.resolver.report_facts(task_id, microtask_id, record.operation_id)
+            except ResolverError as exc:
+                raise RecoveryCoordinatorError(str(exc)) from exc
+            pairs.append((record, authoritative_action(facts)))
+        return current_settlements_by_microtask(pairs).get(microtask_id, [])
+
+    @staticmethod
+    def _settlement_rule(
+        target: MicrotaskStatus,
+        *,
+        finishing: bool,
+        actions: tuple[str, ...] | list[str] = (),
+    ) -> dict[str, Any]:
+        """allowed_from / additionally_satisfied for applying a settlement disposition.
+
+        Repair #4A: an ABORT-only RECOVERY_REQUIRED disposition may also start
+        from a microtask that never executed (``_ABORT_FROM_PRE_EXECUTION``).
+        Such a microtask can have no operation effect (no mutation authority
+        before ACTIVE), RECOVERY_REQUIRED is the stricter manual boundary, and
+        without it an accepted ABORT would have no completion path. PREPARING
+        is never a source: an interrupted preparation is reconciled first. A
+        disposition that includes ROLLBACK keeps the old sources (RC-6 never
+        rolls back a stage that never executed).
+        """
+        if target is MicrotaskStatus.VERIFIED:
+            # absorbed by a VERIFIED microtask (effective_settlement_target): nothing to write
+            return {"allowed_from": set(), "additionally_satisfied": None}
+        if target is MicrotaskStatus.DONE:
+            return {
+                "allowed_from": _TO_DONE_FROM,
+                # Verification may legitimately win the race after the
+                # settlement/micro update but before claim release.  A new
+                # settlement of an already VERIFIED microtask gets the
+                # VERIFIED target instead (Repair #3, never a DONE write).
+                "additionally_satisfied": {MicrotaskStatus.VERIFIED} if finishing else None,
+            }
+        allowed = set(_TO_RECOVERY_REQUIRED_FROM)
+        if actions and all(action == "ABORT" for action in actions):
+            allowed |= _ABORT_FROM_PRE_EXECUTION
+        return {"allowed_from": allowed, "additionally_satisfied": None}
+
+    def _apply_settlement_lifecycle_locked(
+        self,
+        task_id: str,
+        microtask_id: str,
+        target: MicrotaskStatus,
+        *,
+        finishing: bool,
+        preflight_only: bool = False,
+        actions: tuple[str, ...] | list[str] = (),
+    ):
+        rule = self._settlement_rule(target, finishing=finishing, actions=actions)
+        if preflight_only:
+            return self._preflight_micro_locked(task_id, microtask_id, target, **rule)
+        return self._set_micro_locked(task_id, microtask_id, target, **rule)
+
+    def _rollback_stage_preflight(
+        self,
+        task_id: str,
+        operation_id: str,
+        action: str,
+        rollback_id: str | None,
+    ) -> None:
+        """R1 defense in depth: no destructive rollback step for a protected stage.
+
+        Re-proved from persistent facts under the TASK serialization right
+        before RC-4 prepare/apply, independent of the projection that chose the
+        step. Steps in which RC-4 restores nothing (release-only of a VERIFIED
+        session, finalize of a persisted DRIFTED/FAILED outcome, apply under an
+        accepted ABORT which RC-4 refuses to continue) are not destructive.
+
+        Repair #4B: the rule is ``microtask_gate.rollback_refusal``, the one
+        RC-4 applies itself too: a VERIFIED or non-current stage, or a
+        microtask that has never executed (been ACTIVE), is never rolled back.
+
+        Repair #2A: before a destructive apply the microtask is put at the
+        RECOVERY_REQUIRED boundary in this same locked section (the status the
+        ROLLBACK settlement gives it anyway).  The state machine has no exit
+        from RECOVERY_REQUIRED and its transitions are compare-and-set, so a
+        verification decided on the earlier status can no longer land while
+        RC-4 restores: no VERIFIED stage is ever rolled back by RC-6.
+        """
+        if action == "APPLY_ROLLBACK" and rollback_id is None:
+            raise RecoveryCoordinatorError("rollback action has no rollback_id")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                if action == "APPLY_ROLLBACK":
+                    try:
+                        session = self.rollbacks.store.get(task_id, rollback_id)
+                        aborted = any(
+                            record.action is ResolutionAction.ABORT
+                            and record.result is ResolutionResult.ACCEPTED
+                            for record in self.resolver.store.list(task_id, operation_id=operation_id)
+                        )
+                    except (RollbackStoreError, ResolutionStoreError) as exc:
+                        raise RecoveryCoordinatorError(str(exc)) from exc
+                    if (
+                        session["status"] not in _ROLLBACK_RESTORE_PHASES
+                        or rollback_needs_rc4_finalize(session)
+                        or aborted
+                    ):
+                        return
+                operation = self.operations.get(task_id, operation_id)
+                # Repair #4B: one rule with RC-4 itself: only the lifecycle-current
+                # stage that has actually executed (been ACTIVE) is rolled back
+                refusal = rollback_refusal(
+                    task_id, operation.microtask_id, tasks=self.tasks, operations=self.operations
+                )
+                if refusal is not None:
+                    raise RecoveryCoordinatorBlocked(
+                        f"{action} refused before any rollback step ({refusal[0]}): operation {operation_id} "
+                        f"of microtask {operation.microtask_id}: {refusal[1]}"
+                    )
+                micro = self.tasks.open_microtask(task_id, operation.microtask_id)
+                if action == "APPLY_ROLLBACK":
+                    if micro.status not in _TO_RECOVERY_REQUIRED_FROM:
+                        raise RecoveryCoordinatorBlocked(
+                            f"{action} refused before any rollback step: microtask {operation.microtask_id} "
+                            f"is {micro.status.value}; a destructive rollback runs only for a microtask that "
+                            "can be put at the RECOVERY_REQUIRED boundary first"
+                        )
+                    self._set_micro_locked(
+                        task_id,
+                        operation.microtask_id,
+                        MicrotaskStatus.RECOVERY_REQUIRED,
+                        allowed_from=_TO_RECOVERY_REQUIRED_FROM,
+                    )
+
+    def _settle_resolution(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+        action: ResolutionAction,
+    ) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        operation_id = recovery["operation_id"]
+        resolution_id = recovery["resolution_id"]
+        view = self._view(projection, operation_id)
+        if view is None or resolution_id is None:
+            raise RecoveryCoordinatorError("projection lost recovery operation/resolution identity")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                resolution = self._accepted_resolution_locked(
+                    task_id,
+                    operation_id,
+                    resolution_id,
+                    action,
+                    require_fresh=(action is ResolutionAction.ADOPT),
+                )
+                self._no_open_rollback_locked(task_id, operation_id)
+                deferred = self._deferred_by_preparation_locked(task_id, view["microtask_id"], action.value)
+                if deferred is not None:
+                    return deferred
+
+                # Prove the operation's own microtask lifecycle before the
+                # durable settlement write.  A later/current TASK microtask is
+                # never a substitute for the operation's microtask, and the
+                # status written is the microtask's single aggregated
+                # disposition including this settlement (R2).
+                target, actions = self._settlement_disposition_locked(
+                    task_id, view["microtask_id"], pending=action.value
+                )
+                observed = self._apply_settlement_lifecycle_locked(
+                    task_id, view["microtask_id"], target, finishing=False, preflight_only=True,
+                    actions=actions,
+                ).status.value
+                if action is ResolutionAction.ADOPT:
+                    with ExitStack() as target_stack:
+                        self._lock_resolution_targets(
+                            target_stack, task_id, operation_id, resolution
+                        )
+                        # Re-prove authority/freshness after every affected
+                        # target is protected from compliant RC-3 writers.
+                        resolution = self._accepted_resolution_locked(
+                            task_id,
+                            operation_id,
+                            resolution_id,
+                            action,
+                            require_fresh=True,
+                        )
+                        outcome = self.operations._settle_recovery_locked(
+                            task_id,
+                            operation_id,
+                            action.value,
+                            resolution_id=resolution_id,
+                            expected_revision=resolution.basis["operation_revision"],
+                            microtask_status=observed,
+                        )
+                        micro = self._apply_settlement_lifecycle_locked(
+                            task_id, view["microtask_id"], target, finishing=False, actions=actions
+                        )
+                else:
+                    outcome = self.operations._settle_recovery_locked(
+                        task_id,
+                        operation_id,
+                        action.value,
+                        resolution_id=resolution_id,
+                        expected_revision=resolution.basis["operation_revision"],
+                        microtask_status=observed,
+                    )
+                    micro = self._apply_settlement_lifecycle_locked(
+                        task_id, view["microtask_id"], target, finishing=False, actions=actions
+                    )
+        release = self.claims.release(
+            task_id,
+            operation_id,
+            reason=f"RC6_{action.value}_SETTLED",
+            channel="recovery_coordinator",
+        )
+        return {
+            "result": "SETTLED",
+            "settlement": action.value,
+            "resolution_id": resolution_id,
+            "operation": self._step_summary(outcome),
+            "microtask": micro,
+            "claim_release": self._step_summary(release),
+        }
+
+    def _finish_settlement(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+    ) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        operation_id = recovery["operation_id"]
+        view = self._view(projection, operation_id)
+        if view is None or view["recovery_settlement"] is None:
+            raise RecoveryCoordinatorError("settlement projection has no durable settlement")
+        action = view["recovery_settlement"]["action"]
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                current = self.operations.get(task_id, operation_id)
+                settlement = current.recovery_settlement
+                if settlement is None or settlement["action"] != action:
+                    raise RecoveryCoordinatorError("recovery settlement changed while finishing it")
+                deferred = self._deferred_by_preparation_locked(task_id, view["microtask_id"], action)
+                if deferred is not None:
+                    return deferred
+                # R2: finish towards the microtask's one aggregated disposition,
+                # so sibling settlements can never steer it back and forth.
+                target, actions = self._settlement_disposition_locked(task_id, view["microtask_id"])
+                micro = self._apply_settlement_lifecycle_locked(
+                    task_id, view["microtask_id"], target, finishing=True, actions=actions
+                )
+        if recovery["state"] == "ABORT_OVER_SETTLEMENT":
+            action = "ABORT_OVER_" + action  # Repair #3: a later ABORT completed administratively
+        release = self.claims.release(
+            task_id,
+            operation_id,
+            reason=f"RC6_{action}_SETTLED",
+            channel="recovery_coordinator",
+        )
+        return {
+            "result": "SETTLEMENT_FINISHED",
+            "settlement": action,
+            "microtask": micro,
+            "claim_release": self._step_summary(release),
+        }
+
+    def _rearm_retry(self, task_id: str, projection: dict[str, Any]) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        operation_id = recovery["operation_id"]
+        resolution_id = recovery["resolution_id"]
+        view = self._view(projection, operation_id)
+        if view is None or resolution_id is None:
+            raise RecoveryCoordinatorError("projection lost RETRY identity")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                resolution = self._accepted_resolution_locked(
+                    task_id,
+                    operation_id,
+                    resolution_id,
+                    ResolutionAction.RETRY,
+                    require_fresh=True,
+                )
+                self._no_open_rollback_locked(task_id, operation_id)
+                operation = self.operations.get(task_id, operation_id)
+                if operation.revision != resolution.basis["operation_revision"]:
+                    raise RecoveryCoordinatorError("operation revision changed before RETRY re-arm")
+                with ExitStack() as target_stack:
+                    self._lock_resolution_targets(
+                        target_stack, task_id, operation_id, resolution
+                    )
+                    # The accepted RETRY must still be the current authority on
+                    # the same protected target set at the re-arm boundary.
+                    resolution = self._accepted_resolution_locked(
+                        task_id,
+                        operation_id,
+                        resolution_id,
+                        ResolutionAction.RETRY,
+                        require_fresh=True,
+                    )
+                    operation = self.operations.get(task_id, operation_id)
+                    if operation.revision != resolution.basis["operation_revision"]:
+                        raise RecoveryCoordinatorError(
+                            "operation revision changed at RETRY re-arm boundary"
+                        )
+                    self._require_no_manual_disposition_locked(
+                        task_id, view["microtask_id"], "RETRY re-arm"
+                    )
+                    micro = self._set_micro_locked(
+                        task_id,
+                        view["microtask_id"],
+                        MicrotaskStatus.ACTIVE,
+                        allowed_from={
+                            MicrotaskStatus.ACTIVE,
+                            MicrotaskStatus.UNKNOWN_AFTER_DISCONNECT,
+                            MicrotaskStatus.RECOVERY_REQUIRED,
+                            MicrotaskStatus.FAILED_VERIFICATION,
+                        },
+                    )
+        return {
+            "result": "REARMED",
+            "resolution_id": resolution_id,
+            "operation_id": operation_id,
+            "microtask": micro,
+            "physical_mutation_performed": False,
+        }
+
+    def _reconcile_preparation(self, task_id: str, projection: dict[str, Any]) -> dict[str, Any]:
+        """Repair #4: finish or discard a restore-point preparation that died.
+
+        ManifestSnapshotStore decides from persistent evidence under the
+        preparation lock (W2 published -> re-verified -> BACKUP_VERIFIED or
+        fail-closed BLOCKED_PREPARE; W1 unpublished -> BLOCKED_PREPARE, to be
+        prepared again). The microtask is never ACTIVE here, so the execution
+        gate refuses normal mutation throughout. The outcome is recorded as an
+        event so a discarded capture is never silent.
+        """
+        focus = self._view(projection, projection["recovery"].get("operation_id"))
+        if focus is not None and focus["microtask_status"] == MicrotaskStatus.PREPARING.value:
+            microtask_id = focus["microtask_id"]  # Repair #4A: the focused operation's microtask
+        else:
+            microtask_id = projection["position"]["current_microtask_id"]
+        if microtask_id is None:
+            raise RecoveryCoordinatorError("preparation reconcile has no current microtask")
+        try:
+            outcome = self.projection.manifests.reconcile_interrupted_preparation(
+                task_id, microtask_id, lock_timeout=_PREPARE_LOCK_WAIT_SECONDS
+            )
+        except ManifestStoreError as exc:
+            raise RecoveryCoordinatorError(f"preparation reconcile failed: {exc}") from exc
+        if outcome["result"] in {"PREPARATION_COMPLETED", "PREPARATION_DISCARDED", "PREPARATION_BLOCKED"}:
+            self.operations.events.append_event(
+                task_id,
+                "RESTORE_POINT_PREPARATION_RECONCILED",
+                microtask_id=microtask_id,
+                payload=dict(outcome),
+            )
+        return outcome
+
+    def _settle_verified_rollback(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+    ) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        operation_id = recovery["operation_id"]
+        rollback_id = recovery["rollback_id"]
+        view = self._view(projection, operation_id)
+        if view is None or rollback_id is None:
+            raise RecoveryCoordinatorError("projection lost verified rollback identity")
+        with self.operations.task_lock(task_id):
+            with self.tasks.mutation_lock(task_id):
+                try:
+                    session = self.rollbacks.store.get(task_id, rollback_id)
+                except RollbackStoreError as exc:
+                    raise RecoveryCoordinatorError(str(exc)) from exc
+                if session["status"] != VERIFIED or not session["claims_released"]:
+                    raise RecoveryCoordinatorError("rollback is not durably VERIFIED with ownership released")
+                if session["operation_id"] != operation_id:
+                    raise RecoveryCoordinatorError("rollback operation identity changed")
+                target = self._settlement_target_locked(
+                    task_id, view["microtask_id"], pending="ROLLBACK"
+                )
+                observed = self._apply_settlement_lifecycle_locked(
+                    task_id, view["microtask_id"], target, finishing=False, preflight_only=True
+                ).status.value
+                outcome = self.operations._settle_recovery_locked(
+                    task_id,
+                    operation_id,
+                    "ROLLBACK",
+                    resolution_id=session["resolution_id"],
+                    expected_revision=session["basis"]["operation_revision"],
+                    microtask_status=observed,
+                )
+                micro = self._apply_settlement_lifecycle_locked(
+                    task_id, view["microtask_id"], target, finishing=False
+                )
+        return {
+            "result": "SETTLED",
+            "settlement": "ROLLBACK",
+            "resolution_id": session["resolution_id"],
+            "operation": self._step_summary(outcome),
+            "microtask": micro,
+        }
+
+    def _perform(
+        self,
+        task_id: str,
+        projection: dict[str, Any],
+        action: str,
+    ) -> dict[str, Any]:
+        recovery = projection["recovery"]
+        rollback_id = recovery.get("rollback_id")
+        if action in ("PREPARE_ROLLBACK", "APPLY_ROLLBACK"):
+            # R1: re-proved from persistent facts before the first RC-4 step.
+            self._rollback_stage_preflight(task_id, recovery["operation_id"], action, rollback_id)
+        if action == "SETTLE_ADOPT":
+            return self._settle_resolution(task_id, projection, ResolutionAction.ADOPT)
+        if action == "SETTLE_ABORT":
+            return self._settle_resolution(task_id, projection, ResolutionAction.ABORT)
+        if action == "FINISH_SETTLEMENT":
+            return self._finish_settlement(task_id, projection)
+        if action == "REARM_RETRY":
+            return self._rearm_retry(task_id, projection)
+        if action == "RECONCILE_PREPARATION":
+            return self._reconcile_preparation(task_id, projection)
+        if action == "PREPARE_ROLLBACK":
+            view = self._view(projection, recovery["operation_id"])
+            if view is None:
+                raise RecoveryCoordinatorError("rollback operation view is missing")
+            return self.rollbacks.prepare(
+                task_id,
+                view["microtask_id"],
+                recovery["operation_id"],
+                recovery["resolution_id"],
+                channel="recovery_coordinator",
+            )
+        if rollback_id is None:
+            raise RecoveryCoordinatorError("rollback action has no rollback_id")
+        if action == "APPLY_ROLLBACK":
+            return self.rollbacks.apply(task_id, rollback_id)
+        if action == "CLOSE_ROLLBACK":
+            return self.rollbacks.close(task_id, rollback_id, reason="RC6_RECOVERY_CLOSURE")
+        if action == "SETTLE_ROLLBACK":
+            return self._settle_verified_rollback(task_id, projection)
+        raise RecoveryCoordinatorError(f"unknown coordinator step: {action}")
+
+    def _classify(self, projection: dict[str, Any]) -> dict[str, Any]:
+        task = projection["task"]
+        position = projection["position"]
+        recovery = projection["recovery"]
+        state = recovery["state"]
+
+        if task["location"] != "active" or task["status"] in {
+            TaskStatus.COMPLETED.value,
+            TaskStatus.ARCHIVED.value,
+        }:
+            return {"stop": TASK_COMPLETED, "reason": projection["next_safe_action"]}
+
+        if projection["blockers"]:
+            first = projection["blockers"][0]
+            return {
+                "stop": FAIL_CLOSED,
+                "reason": f"{first['code']}: {first['reason']}",
+                "requires_human": True,
+            }
+        dangerous_diagnostics = [
+            item for item in projection["diagnostics"]
+            if item["code"] in {"CLAIMS_UNREADABLE", "ORPHAN_MICROTASKS"}
+        ]
+        if dangerous_diagnostics:
+            first = dangerous_diagnostics[0]
+            return {
+                "stop": FAIL_CLOSED,
+                "reason": f"{first['code']}: {first['reason']}",
+                "requires_human": True,
+            }
+
+        focus = self._view(projection, recovery.get("operation_id"))
+        if (
+            state != "NORMAL"
+            and focus is not None
+            and focus["microtask_status"] == MicrotaskStatus.PREPARING.value
+        ):
+            # Repair #4A: a recovery decision about an operation whose microtask
+            # is PREPARING first needs that preparation reconciled (W1 / W2):
+            # no settlement starts from PREPARING, and a running preparation
+            # stops recover with RECOVERY_IN_PROGRESS instead
+            return {"step": "RECONCILE_PREPARATION"}
+
+        if state == "RETRY_ACCEPTED":
+            view = self._view(projection, recovery["operation_id"])
+            if view is None:
+                return {
+                    "stop": FAIL_CLOSED,
+                    "reason": "accepted RETRY has no operation view",
+                    "requires_human": True,
+                }
+            op_micro_status = view["microtask_status"]
+            if view.get("microtask_disposition") == MicrotaskStatus.RECOVERY_REQUIRED.value:
+                return {
+                    "stop": RECOVERY_BLOCKED,
+                    "reason": (
+                        f"accepted RETRY cannot proceed: microtask {view['microtask_id']} carries an "
+                        "ABORT/ROLLBACK recovery settlement of another operation and stays "
+                        "RECOVERY_REQUIRED until an explicit project-level decision"
+                    ),
+                    "requires_human": True,
+                }
+            if op_micro_status == MicrotaskStatus.ACTIVE.value:
+                if position["current_microtask_id"] != view["microtask_id"]:
+                    return {
+                        "stop": RECOVERY_BLOCKED,
+                        "reason": (
+                            f"accepted RETRY belongs to historical microtask {view['microtask_id']}, "
+                            f"while current microtask is {position['current_microtask_id']}"
+                        ),
+                        "requires_human": True,
+                    }
+                # Global target ownership and restore-point integrity are not
+                # provable from task-local Projection alone; perform a pure
+                # lock/read proof immediately before returning READY.
+                return {"proof": "RETRY_READY"}
+            if op_micro_status in _RECOVERY_MICRO:
+                if position["current_microtask_id"] != view["microtask_id"]:
+                    return {
+                        "stop": RECOVERY_BLOCKED,
+                        "reason": (
+                            f"accepted RETRY belongs to non-current microtask {view['microtask_id']} "
+                            f"({op_micro_status})"
+                        ),
+                        "requires_human": True,
+                    }
+                return {"step": "REARM_RETRY"}
+            if op_micro_status in _PRE_EXECUTION:
+                return {
+                    "stop": RECOVERY_BLOCKED,
+                    "reason": self._not_executed_reason(view, "RETRY"),
+                    "requires_human": True,
+                }
+            return {
+                "stop": RECOVERY_BLOCKED,
+                "reason": (
+                    f"accepted RETRY cannot re-arm operation microtask {view['microtask_id']} "
+                    f"from {op_micro_status}"
+                ),
+                "requires_human": True,
+            }
+
+        if state == "ROLLBACK_ACCEPTED" and focus is not None:
+            before = pre_execution_settlement(
+                view["recovery_settlement"]
+                for view in projection["operations"]
+                if view["microtask_id"] == focus["microtask_id"]
+            )
+            if before is not None:
+                # Repair #4B: an ABORT settled before the microtask was ever ACTIVE
+                # (it is RECOVERY_REQUIRED through Repair #4A) means no operation of
+                # it had an authorized effect: its restore point is never restored
+                # over the current files (RC-4 refuses it too, rollback_refusal)
+                return {
+                    "stop": MANUAL_DECISION_REQUIRED,
+                    "reason": self._never_executed_rollback_reason(focus, before),
+                    "requires_human": True,
+                }
+        if state in {"ADOPT_ACCEPTED", "ROLLBACK_ACCEPTED"} and focus is not None and (
+            focus["microtask_status"] in _PRE_EXECUTION
+        ):
+            # Repair #4A: an ADOPT / ROLLBACK of an operation whose microtask has
+            # never been ACTIVE cannot be settled now (no DONE without
+            # execution; RC-6 never rolls back a stage that never executed)
+            # but stays completable: an explicit manual boundary, not a step
+            # that fails closed forever
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": self._not_executed_reason(focus, state.split("_")[0]),
+                "requires_human": True,
+            }
+        if state == "ADOPT_ACCEPTED":
+            return {"step": "SETTLE_ADOPT"}
+        if state == "ABORT_ACCEPTED":
+            return {"step": "SETTLE_ABORT"}
+        if state == "ROLLBACK_ACCEPTED":
+            return {"step": "PREPARE_ROLLBACK"}
+
+        if state in {"ADOPT_SETTLED", "ABORT_SETTLED", "ROLLBACK_SETTLED", "ABORT_OVER_SETTLEMENT"}:
+            view = self._view(projection, recovery["operation_id"])
+            if view is None:
+                return {
+                    "stop": FAIL_CLOSED,
+                    "reason": "settled recovery has no operation view",
+                    "requires_human": True,
+                }
+            own_claim = any(
+                claim["operation_id"] == recovery["operation_id"]
+                and not (claim.get("owner") or {}).get("rollback_id")
+                for claim in projection["ownership"]["active_claims"]
+            )
+            op_micro_status = view["microtask_status"]
+            # R2: judged against the microtask's single aggregated disposition.
+            target = MicrotaskStatus(
+                recovery.get("lifecycle_target")
+                or (
+                    MicrotaskStatus.DONE.value
+                    if state == "ADOPT_SETTLED"
+                    else MicrotaskStatus.RECOVERY_REQUIRED.value
+                )
+            )
+            admin_satisfied = settlement_lifecycle_satisfied(target, op_micro_status)
+            if not admin_satisfied or own_claim:
+                return {"step": "FINISH_SETTLEMENT"}
+            # A fully completed settlement should normally have been demoted to
+            # history by Projection.  Keep this fallback conservative.
+            if target is MicrotaskStatus.VERIFIED:
+                return {"stop": NO_ACTION_REQUIRED, "reason": projection["next_safe_action"]}
+            if target is MicrotaskStatus.DONE:
+                if op_micro_status == MicrotaskStatus.DONE.value:
+                    return {
+                        "stop": READY_FOR_VERIFICATION,
+                        "reason": projection["next_safe_action"],
+                    }
+                return {
+                    "stop": NO_ACTION_REQUIRED,
+                    "reason": projection["next_safe_action"],
+                }
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+
+        if state in {"RECONCILIATION_REQUIRED", "RESOLUTION_STALE"} or state.endswith("_REJECTED"):
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+
+        if state in {
+            "ROLLBACK_STAGE_PROTECTED",
+            "SETTLEMENT_CONTRADICTION",
+            "ROLLBACK_MULTIPLE_OPEN",
+            "ROLLBACK_SUPERSEDED_IN_FLIGHT",
+            "ROLLBACK_STALE_IN_FLIGHT",
+            "ROLLBACK_SUPERSEDED_AFTER_EFFECTS",
+            "ROLLBACK_ABORTED_AFTER_EFFECTS",
+            "ROLLBACK_SUPERSEDED_UNSAFE_FINAL",
+            "ROLLBACK_ABORTED_UNSAFE_FINAL",
+        }:
+            return {
+                "stop": RECOVERY_BLOCKED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+
+        if state in {
+            "ROLLBACK_ABORTED_IN_FLIGHT",
+            "ROLLBACK_ABORTED_NEEDS_FINALIZE",
+            "ROLLBACK_SUPERSEDED_NEEDS_FINALIZE",
+            "ROLLBACK_ABORTED_RELEASE_PENDING",
+            "ROLLBACK_SUPERSEDED_RELEASE_PENDING",
+        }:
+            return {"step": "APPLY_ROLLBACK"}
+        if state == "ROLLBACK_ABORTED_OPEN" or state == "ROLLBACK_STALE_OPEN":
+            return {"step": "CLOSE_ROLLBACK"}
+        if state.startswith("ROLLBACK_SUPERSEDED_BY_"):
+            return {"step": "CLOSE_ROLLBACK"}
+
+        if state == "ROLLBACK_PREPARED":
+            return {"step": "PREPARE_ROLLBACK"}
+        if state in {"ROLLBACK_PRESERVED", "ROLLBACK_AUTHORIZED", "ROLLBACK_APPLYING"}:
+            return {"step": "APPLY_ROLLBACK"}
+        if state == "ROLLBACK_VERIFIED":
+            session = self._rollback(projection, recovery["rollback_id"])
+            if session is None:
+                return {"stop": FAIL_CLOSED, "reason": "verified rollback record is missing"}
+            if session["claims_released"]:
+                return {"step": "SETTLE_ROLLBACK"}
+            return {"step": "APPLY_ROLLBACK"}
+        if state in {"ROLLBACK_PARTIAL", "ROLLBACK_FAILED"}:
+            # RC-4 has already recorded a non-verified physical outcome.  Do
+            # not release ownership automatically; a human/new recovery
+            # decision must precede close.
+            return {
+                "stop": RECOVERY_BLOCKED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+        if state in {"ROLLBACK_CLOSED", "ROLLBACK_PRESERVATION_FAILED"}:
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+
+        if state != "NORMAL":
+            return {
+                "stop": RECOVERY_BLOCKED,
+                "reason": f"unhandled recovery state {state}: {projection['next_safe_action']}",
+                "requires_human": True,
+            }
+
+        if position["all_verified"]:
+            if projection["closeout"]:
+                return {"stop": NO_ACTION_REQUIRED, "reason": projection["next_safe_action"]}
+            return {"stop": TASK_READY_TO_CLOSE, "reason": projection["next_safe_action"]}
+
+        status = position["current_status"]
+        if status == MicrotaskStatus.ACTIVE.value:
+            if projection["restore_point"]["status"] != "VERIFIED":
+                return {
+                    "stop": RECOVERY_BLOCKED,
+                    "reason": (
+                        "current ACTIVE microtask has no verified restore point: "
+                        f"{projection['restore_point']['reason'] or projection['restore_point']['status']}"
+                    ),
+                    "requires_human": True,
+                }
+            unexpected = self._unexpected_claims(projection)
+            if unexpected:
+                return {
+                    "stop": RECOVERY_BLOCKED,
+                    "reason": "unexpected recovery ownership remains before execution",
+                    "requires_human": True,
+                }
+            return {"proof": "NORMAL_READY"}
+        if status == MicrotaskStatus.DONE.value:
+            return {"stop": READY_FOR_VERIFICATION, "reason": projection["next_safe_action"]}
+        if status in _RECOVERY_MICRO:
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+        if status == MicrotaskStatus.PREPARING.value:
+            # Repair #4: a running preparation holds its lock; an interrupted one
+            # is reconciled from persistent evidence
+            return {"step": "RECONCILE_PREPARATION"}
+        if (
+            status == MicrotaskStatus.BLOCKED_PREPARE.value
+            and projection["restore_point"]["status"] != "NOT_PREPARED"
+        ):
+            # a blocked restore point is kept as evidence: prepare is refused
+            # while it exists, only a manual repair can continue
+            return {
+                "stop": MANUAL_DECISION_REQUIRED,
+                "reason": projection["next_safe_action"],
+                "requires_human": True,
+            }
+        return {"stop": NO_ACTION_REQUIRED, "reason": projection["next_safe_action"]}
+
+    @staticmethod
+    def _never_executed_rollback_reason(view: dict[str, Any], before: dict[str, Any]) -> str:
+        return (
+            f"accepted ROLLBACK of operation {view['operation_id']} is not carried out: recovery of an operation "
+            f"of microtask {view['microtask_id']} ({view['microtask_status']}) was settled ({before['action']} via "
+            f"{before['resolution_id']}) while the microtask was {before['microtask_status']} and had never been "
+            "ACTIVE, so none of its operations can have had a server-authorized effect. Its restore point is not "
+            "restored over the current files: review them manually, record ABORT for the operation, or replan"
+        )
+
+    @staticmethod
+    def _not_executed_reason(view: dict[str, Any], action: str) -> str:
+        return pre_execution_next_action(
+            view["operation_id"], view["microtask_id"], view["microtask_status"], action
+        )
+
+    @staticmethod
+    def _result(
+        initial: dict[str, Any],
+        final: dict[str, Any],
+        *,
+        state: str,
+        reason: str,
+        steps: list[dict[str, Any]],
+        requires_human: bool = False,
+        error: str | None = None,
+        ready_proof: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "state": state,
+            "reason": reason,
+            "requires_human": requires_human,
+            "ready_for_execution": state == READY_FOR_EXECUTION,
+            # identity of the execution basis a READY was proved for (R3);
+            # WA4-E must still re-acquire and re-check before any write
+            "ready_proof": ready_proof if state == READY_FOR_EXECUTION else None,
+            "initial_projection_fingerprint": initial["projection_fingerprint"],
+            "final_projection_fingerprint": final["projection_fingerprint"],
+            "performed_steps": steps,
+            "blocked_by": (
+                [item["code"] for item in final["blockers"]]
+                if final["blockers"]
+                else []
+            ),
+            "next_safe_action": final["next_safe_action"],
+            "authority_source": final["authority_source"],
+            "task_id": final["task"]["task_id"],
+            "recovery_state": final["recovery"]["state"],
+            "projection": final,
+            "error": error,
+        }
+
+    def recover(
+        self,
+        task_id: str,
+        *,
+        max_recovery_steps: int | None = None,
+    ) -> dict[str, Any]:
+        """Run bounded safe recovery and stop before any WA4-E normal mutation."""
+        limit = self.default_max_steps if max_recovery_steps is None else max_recovery_steps
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            raise ValueError("max_recovery_steps must be a positive integer")
+        try:
+            initial = self.projection.build(task_id)
+        except (ProjectionError, TaskStoreError, OperationStoreError, ValueError, OSError) as exc:
+            raise RecoveryCoordinatorError(str(exc)) from exc
+
+        current = initial
+        steps: list[dict[str, Any]] = []
+        # F-E: a step RC-4 refused (BLOCKED/REJECTED) is not repeated within
+        # one invocation; key -> the refusing outcome
+        refused: dict[tuple[Any, ...], dict[str, Any]] = {}
+        for index in range(limit + 1):
+            decision = self._classify(current)
+            if "stop" in decision:
+                return self._result(
+                    initial,
+                    current,
+                    state=decision["stop"],
+                    reason=decision["reason"],
+                    steps=steps,
+                    requires_human=decision.get("requires_human", False),
+                )
+
+            if "proof" in decision:
+                proof = decision["proof"]
+                basis = current["source_fingerprint"]
+                try:
+                    if proof == "RETRY_READY":
+                        proved = self._prove_retry_ready(task_id, current)
+                    elif proof == "NORMAL_READY":
+                        proved = self._prove_normal_ready(task_id, current)
+                    else:
+                        raise RecoveryCoordinatorError(
+                            f"unknown READY proof: {proof}"
+                        )
+                    try:
+                        derived, fresh = self._confirm_ready(task_id, proved)
+                    except (
+                        RecoveryCoordinatorError,
+                        ResolverError,
+                        ResolutionStoreError,
+                        TargetClaimError,
+                        OperationStoreError,
+                        TaskStoreError,
+                        ManifestStoreError,
+                        ValueError,
+                        OSError,
+                    ):
+                        # The proved basis no longer holds at the confirm
+                        # boundary (it moved on, or became unprovable): never
+                        # READY; classify the fresh state again instead.
+                        derived, fresh = None, self.projection.build(task_id)
+                except RecoveryCoordinatorBlocked as exc:
+                    try:
+                        current = self.projection.build(task_id)
+                    except Exception:
+                        current = current
+                    return self._result(
+                        initial,
+                        current,
+                        state=RECOVERY_BLOCKED,
+                        reason=f"{proof} blocked: {exc}",
+                        steps=steps,
+                        requires_human=True,
+                        error=type(exc).__name__,
+                    )
+                except (
+                    RecoveryCoordinatorError,
+                    ResolverError,
+                    ResolutionStoreError,
+                    RollbackError,
+                    RollbackStoreError,
+                    TargetClaimError,
+                    OperationStoreError,
+                    OperationTransitionError,
+                    TaskStoreError,
+                    ProjectionError,
+                    ManifestStoreError,
+                    ValueError,
+                    OSError,
+                ) as exc:
+                    try:
+                        current = self.projection.build(task_id)
+                    except Exception:
+                        current = current
+                    return self._result(
+                        initial,
+                        current,
+                        state=FAIL_CLOSED,
+                        reason=f"{proof} failed closed: {exc}",
+                        steps=steps,
+                        requires_human=True,
+                        error=type(exc).__name__,
+                    )
+
+                # R3: READY only for exactly the basis the protected proof
+                # covered.  ``_confirm_ready`` re-derived the whole proof and
+                # built ``fresh`` under the same locks; if anything changed
+                # between the projection that chose the proof and that
+                # protected section (another microtask became current, restore
+                # point content, locked target set, microtask, operation or
+                # resolution), classify again and prove the new basis instead
+                # of reusing this proof.  Whatever happens after the confirm
+                # section is a later race that WA4-E re-checks inside RC-3
+                # ``mutation_boundary`` (same execution gate) before any write.
+                current = fresh
+                after = self._classify(current)
+                if (
+                    after.get("proof") == proof
+                    and current["source_fingerprint"] == basis
+                    and derived == proved
+                    and self._proof_matches(proved, current)
+                ):
+                    return self._result(
+                        initial,
+                        current,
+                        state=READY_FOR_EXECUTION,
+                        reason=current["next_safe_action"],
+                        steps=steps,
+                        ready_proof=dict(proved, source_fingerprint=basis),
+                    )
+                continue
+
+            action = decision["step"]
+            step_key = (
+                action,
+                current["recovery"].get("operation_id"),
+                current["recovery"].get("rollback_id"),
+            )
+            if step_key in refused:
+                outcome = refused[step_key]
+                return self._result(
+                    initial,
+                    current,
+                    state=RECOVERY_BLOCKED,
+                    reason=(
+                        f"{action} was refused by RC-4 in this recover call "
+                        f"({outcome.get('result_code')}: {outcome.get('reason')}); "
+                        "it is not repeated: resolve the blocker, then call recover again"
+                    ),
+                    steps=steps,
+                    requires_human=True,
+                    error="RECOVERY_STEP_REFUSED",
+                )
+
+            if index >= limit:
+                return self._result(
+                    initial,
+                    current,
+                    state=FAIL_CLOSED,
+                    reason=f"recovery step budget exhausted after {limit} step(s)",
+                    steps=steps,
+                    requires_human=True,
+                    error="RECOVERY_STEP_BUDGET_EXHAUSTED",
+                )
+
+            before = current["projection_fingerprint"]
+            try:
+                outcome = self._perform(task_id, current, action)
+                current = self.projection.build(task_id)
+            except RecoveryCoordinatorBlocked as exc:
+                try:
+                    current = self.projection.build(task_id)
+                except Exception:
+                    current = current
+                return self._result(
+                    initial,
+                    current,
+                    state=RECOVERY_BLOCKED,
+                    reason=f"{action} blocked: {exc}",
+                    steps=steps,
+                    requires_human=True,
+                    error=type(exc).__name__,
+                )
+            except (
+                RecoveryCoordinatorError,
+                ResolverError,
+                ResolutionStoreError,
+                RollbackError,
+                RollbackStoreError,
+                TargetClaimError,
+                OperationStoreError,
+                OperationTransitionError,
+                TaskStoreError,
+                ProjectionError,
+                ValueError,
+                OSError,
+            ) as exc:
+                try:
+                    current = self.projection.build(task_id)
+                except Exception:
+                    current = current
+                return self._result(
+                    initial,
+                    current,
+                    state=FAIL_CLOSED,
+                    reason=f"{action} failed closed: {exc}",
+                    steps=steps,
+                    requires_human=True,
+                    error=type(exc).__name__,
+                )
+            steps.append(
+                {
+                    "index": index + 1,
+                    "action": action,
+                    "before_projection_fingerprint": before,
+                    "after_projection_fingerprint": current["projection_fingerprint"],
+                    "outcome": self._step_summary(outcome),
+                }
+            )
+            if isinstance(outcome, dict) and outcome.get("result") in _STEP_BLOCKED_RESULTS:
+                refused[step_key] = outcome
+            if isinstance(outcome, dict) and outcome.get("result") == "PREPARATION_IN_PROGRESS":
+                return self._result(
+                    initial,
+                    current,
+                    state=RECOVERY_IN_PROGRESS,
+                    reason=(
+                        f"restore-point preparation of {outcome.get('microtask_id')} is running in another "
+                        "process (its preparation lock is held); nothing was changed: call recover again "
+                        "after it finishes"
+                    ),
+                    steps=steps,
+                )
+
+        return self._result(
+            initial,
+            current,
+            state=FAIL_CLOSED,
+            reason="recovery loop bound reached without a terminal state or a stable READY basis",
+            steps=steps,
+            requires_human=True,
+            error="RECOVERY_LOOP_INTERNAL",
+        )

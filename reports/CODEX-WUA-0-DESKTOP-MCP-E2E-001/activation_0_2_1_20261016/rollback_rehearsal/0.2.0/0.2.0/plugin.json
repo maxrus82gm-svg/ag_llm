@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "wua-desktop-readonly",
+  "version": "0.2.0",
+  "description": "Read-only connection to a disposable synthetic Web Alarm API: ping, capabilities and context.",
+  "author": {"name": "AG LLM"},
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "WUA Desktop Read-only",
+        "shortDescription": "Три инструмента чтения синтетического Web Alarm",
+        "longDescription": "Изолированная проверка подключения. Только синтетические данные, без production, исполнения команд и вызовов моделей.",
+        "developerName": "AG LLM",
+        "category": "Productivity",
+        "capabilities": ["Read"]
+      }
+    }
+  }
+}

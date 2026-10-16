@@ -1,3 +1,23 @@
+# WUA 0.2.1 — установлен разрешённый кандидат
+
+**INSTALLED / ENABLED В КОНФИГУРАЦИИ. DESKTOP E2E NOT VERIFIED.**
+
+16.10.2026: штатные CLI marketplace add / plugin add завершены. Кэш 0.2.1
+совпадает с 1 675 sealed файлами кандидата; 0.2.0 сохранён в точном backup.
+Direct MCP, global required, прочие настройки config и AMENDMENT 04 сохранены.
+Позднее отмечено изменение timestamps 18 remote-plugin install markers;
+атрибуция refresh не установлена, чужие маркеры не откатывались.
+
+Подхват обновления работающим Desktop ещё не доказан. Один ручной шаг:
+после завершения работы активных агентов полностью закрыть и открыть Desktop.
+Затем нужны четыре MCP-вызова из ordinary Chat и независимая сверка receipt.
+Агент не перезапускал Desktop и не объявлял независимую приёмку.
+
+Полный отчёт: [activation_0_2_1_20261016/report.md](M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/report.md).
+Запрос и verifier checklist: [DESKTOP_GATE.md](M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/DESKTOP_GATE.md).
+
+Ниже — сохранённая история предыдущих этапов.
+
 # AMENDMENT 04 — актуальный локальный результат
 
 **AMENDMENT 04 LOCAL COMPLETE. DESKTOP E2E NOT VERIFIED.**
