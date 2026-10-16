@@ -31,14 +31,26 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
+Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+TASK: —
+
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+---
+
+### CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001 — Independent audit of Codex R-006 (F1/F2/F3)
+
+**Статус постановки:** БЛОК 1 (USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE). Назначение — стартовое сообщение пользователя в чат 2026-10-16; выполнена агентом 008 (Claude) 2026-10-16; AMENDMENT во время работы не было; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
 # TASK: CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001
 
-**Получатель:** агент 008 (Claude Desktop/Code).  
-**Источник:** пользовательское решение 2026-10-16 о двух независимых дорожках.  
-**ARCH CLASS:** Web Alarm Workspace / RT-001 / WA4-R reliability acceptance / R-006.  
-**Приоритет:** HIGH — сначала завершить контрольный этап F1–F3 перед WARN.  
-**Статус:** USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE.  
-**Verifier / Planner:** ChatGPT (независимая финальная приёмка); authority по TASK/STOP — Web Alarm/пользователь.  
+**Получатель:** агент 008 (Claude Desktop/Code).
+**Источник:** пользовательское решение 2026-10-16 о двух независимых дорожках.
+**ARCH CLASS:** Web Alarm Workspace / RT-001 / WA4-R reliability acceptance / R-006.
+**Приоритет:** HIGH — сначала завершить контрольный этап F1–F3 перед WARN.
+**Статус:** USER APPROVED / READY FOR LAUNCH VIA SHORT CHAT MESSAGE.
+**Verifier / Planner:** ChatGPT (независимая финальная приёмка); authority по TASK/STOP — Web Alarm/пользователь.
 **Параллельная дорожка:** Codex 007 отдельно исследует ChatGPT Desktop MCP; Claude не вмешивается в неё.
 
 ## 1. Цель
@@ -65,9 +77,9 @@
 
 ## 4. Scope и запреты
 
-**READ:** релевантный код `web_alarm/`, WA4 tests и runners, документы, опубликованные `reports/CODEX-WA4-R-006*/` и предыдущие R-003/R-005.  
-**EXECUTE:** исключительно изолированные безопасные offline tests/diagnostics на disposable fixtures, без live storage, реальных TASK и внешних сетей.  
-**WRITE:** собственный отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001/report.md` и его минимальные проверки/evidence, TEMP; своя карточка `Документация/000_Задачи Claude.md` — **только ротация БЛОКОВ 1–3 после фактического результата**.  
+**READ:** релевантный код `web_alarm/`, WA4 tests и runners, документы, опубликованные `reports/CODEX-WA4-R-006*/` и предыдущие R-003/R-005.
+**EXECUTE:** исключительно изолированные безопасные offline tests/diagnostics на disposable fixtures, без live storage, реальных TASK и внешних сетей.
+**WRITE:** собственный отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001/report.md` и его минимальные проверки/evidence, TEMP; своя карточка `Документация/000_Задачи Claude.md` — **только ротация БЛОКОВ 1–3 после фактического результата**.
 **DENY:** Git/GitHub включая `status/diff/log/show`, `add/commit/push` (`DOC-GIT-01@1`), production source edits, общие docs/CI/runners, чужие задачи и карточки, установка плагинов, сетевые/платные вызовы, включение WARN/GATEWAY REQUIRED/STRICT, rollout, повторная миграция Web Alarm Ultra. Разрешение на самостоятельный publish Codex (`DOC-CODEX-SELF-PUBLISH-01@1`) **не распространяется на Claude**. Если нужны локальные изменения исходников для отдельного исправления — предложить отдельную TASK/AMENDMENT пользователю, не выходить за audit scope.
 
 ## 5. Отчёт и handoff
@@ -75,10 +87,7 @@
 Отчёт обязан включать: source pinned revision/actual hashes; F1, F2, F3 раздельно; evidence chain и raw records; что независимо воспроизведено vs только сверено; точные tests/counts/exit и ограничения; реальные defects/gaps; дальнейший `WARN` proposal с acceptance criteria; DOC IMPACT/permissions/concurrency и `NEXT`. Статус **`RESULT READY / AWAITING INDEPENDENT VERIFICATION`**, не `DONE/VERIFIED`.
 
 По штатному правилу карточки сохранить постановку в БЛОКЕ 2, factual closeout в БЛОКЕ 3 и только затем освободить БЛОК 1. В ответном **чате Claude** дать один самостоятельный копируемый `text`-блок с тем же TASK ID и содержательным итогом, чтобы пользователь передал его ChatGPT. Прямую отправку из Claude в ChatGPT не считать доказанной; если недоступна, действует ручная передача. **Сдача агентом не является independent acceptance.**
-
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
+```
 
 ### CLAUDE-RT002-FA-M1-001 — Final Audit Evidence Containment, Security & Regression Hardening
 
@@ -7167,6 +7176,46 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001 — Independent audit of Codex R-006 (F1/F2/F3) — результат
+
+**TASK:** CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001 (БЛОК 1, USER APPROVED). Назначение — стартовое сообщение пользователя 2026-10-16. Исполнитель — агент 008 (Claude); verifier — ChatGPT. AMENDMENT не было.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE/VERIFIED. WARN, GATEWAY REQUIRED и STRICT не включались, rollout не запускался.
+- **Вердикты:**
+  - целостность пакета R-006 — PASS;
+  - **F1** — PASS BOUNDED;
+  - **F2** — PASS BOUNDED (race/replay/ownership); ремонт framing R006-F02 — PARTIAL;
+  - **F3** — PASS BOUNDED;
+  - **общая готовность WA4-R** — PARTIAL.
+- **Источник:** 102/102 pinned-исходника R-006 совпали побайтно (повторно — после прогонов). 64/64 файла манифеста совпали; ZIP CRC/inventory корректны; 45 RAW = оригиналы; diff восстановлен из ZIP и совпал. Все 6 мутантов — дословно код до исправления. `manifest.json` = `b14c3664…` (внешней печати нет). Git-эквивалентность не проверялась.
+- **Независимые прогоны** (guarded runner, Windows 10 19045, Python 3.12.10; LOCALAPPDATA и pycache в TEMP):
+  - полный: **802 — 801 PASS / 0 / 0 / 1 SKIP**, exit 0, изоляция 0, 868 с; те же 802 ID с теми же статусами, что у R-006; 103/103 адресных PASS;
+  - модуль R-006: 11/11 (и 11/11 на Python 3.13.8);
+  - quality: 12/12 outer PASS;
+  - bounded: 6/6 (32 раунда F2/F3 вместе с полным прогоном).
+- **Собственные probes** (14; своя фикстура и сырые оракулы):
+  - 7 PASS: 6 gate-проверок F1/F2/F3 (нативный WinError 5 до и после move с handle в другом процессе, гибель процесса после commit point и после DONE, сериализация direct close ↔ executor) и P5 — Windows-алиасы TASK закрыты R-006;
+  - 7 FAIL = подтверждённые дефекты; на коде до R-006 те же (то есть давние);
+  - попытка 1 дала ERROR из-за дефекта моего набора — сохранена и перепрогнана.
+- **FINDINGS** (production не менялся; ложного apply или записи в закрытую TASK нет):
+  - **AUD-01 MEDIUM-HIGH.** Framing событий: writer пишет U+0085/U+2028/U+2029 «сырыми», а `splitlines()` при чтении режет по ним. Обычный HTTP-запрос (target или `verification_evidence`) делает историю нечитаемой и навсегда блокирует closeout либо даёт COMPLETED с нечитаемым audit trail; ответ «nothing was written» ложен.
+  - **AUD-02 MEDIUM.** При оборванном хвосте admission сохраняет INTENT и payload, затем отказывает; операция без истории.
+  - **AUD-03 MEDIUM.** Crash между записью INTENT и событием INTENT — тупик восстановления.
+  - **AUD-04 LOW.** Lock prepare в ManifestSnapshotStore/CLI создаётся до валидации `..` (класс R006-F03).
+  - **AUD-05 MEDIUM.** Closeout завершает TASK без операций при оборванной или нечитаемой истории.
+  - Наблюдения O1–O4: обрезка пробелов в ID, lock-free читатели вызывают безопасный нативный отказ, TASK_COMPLETED пишется вне lock, изоляция среды Codex.
+- **Предложение WARN** (решает пользователь):
+  - W1 — чистое исполнение на точных pin (CI или чистая машина, не меньше 20 bounded-раундов);
+  - W2 — ремонт AUD-01/02/05 до WARN, AUD-03/04 — до GATEWAY REQUIRED;
+  - W3 — read-only preflight live storage;
+  - W4 — счётчики WARN и acceptance;
+  - W5 — документы только после приёмки.
+- **Записано:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001/` — `report.md`, `evidence.json`, `package-audit.json`, `probes/`, `tools/`; плюс ротация этой карточки. Production, тесты, CI и общие документы не менялись. Git, сеть и платные вызовы не использовались.
+- **DOC IMPACT** (предложения): 23 (identity, framing, история в closeout), 36.2 (селекторы), 24 (WARN), 25/05/06/34/000 (статусы); 18/36/36.1 — NO CHANGE.
+- **NEXT:** независимая проверка ChatGPT. Решения пользователя: ремонтная TASK по AUD, чистый CI, preflight; WARN — только после них.
+
 ---
 
 ### CLAUDE-RT002-FA-M1-001 — Final Audit Evidence Containment, Security & Regression Hardening — результат

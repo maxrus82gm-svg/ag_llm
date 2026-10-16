@@ -1,0 +1,656 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "test_kind": "LOCAL SDK/HTTP; NOT DESKTOP E2E",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "mcp": "2.2.0",
+  "counts": {
+    "collected": 15,
+    "PASS": 15,
+    "FAIL": 0,
+    "ERROR": 0,
+    "SKIP": 0
+  },
+  "tests": [
+    {
+      "id": "__main__.BridgeTests.test_bounded_receipts_survive_fixture_shutdown",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_http_write_requests_are_rejected_without_dispatch",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_other_task_traversal_absolute_and_invalid_type_fail_before_http",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_three_reads_match_server_bytes_and_durable_receipts",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_unavailable_api_blocks_health_capabilities_and_context",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_unexpected_synthetic_storage_change_fails_closed",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.BridgeTests.test_unknown_http_route_is_refused",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.HttpBoundaryTests.test_http_error_status_is_not_success",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.HttpBoundaryTests.test_http_timeout_is_bounded",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.HttpBoundaryTests.test_invalid_json_and_wrong_shape_are_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.HttpBoundaryTests.test_oversized_http_response_is_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.HttpBoundaryTests.test_redirect_cannot_create_outbound_connection",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PackageTests.test_actual_audit_hook_blocks_external_network_write_and_process",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PackageTests.test_real_mcp_from_relocated_package",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PackageTests.test_vendor_drift_refuses_startup",
+      "status": "PASS"
+    }
+  ],
+  "details": {
+    "wire_results": [
+      {
+        "tool": "ping",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"94e42f50c9304a6ab9fb1e4eeb6cc39f\",\n  \"nonce\": \"9fda9afdb3dad373583e4090f400a226\",\n  \"call_id\": \"e026d0781b5543d2896241b933d28b23\",\n  \"proof_path\": \"C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wua-desktop-relocation-jyu8cgau\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001-local-tests\\\\evidence\\\\94e42f50c9304a6ab9fb1e4eeb6cc39f\\\\session.json\",\n  \"status\": \"ok\",\n  \"service\": \"web_alarm_server\",\n  \"api_version\": 1\n}"
+            }
+          ],
+          "isError": false,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "list_capabilities",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"94e42f50c9304a6ab9fb1e4eeb6cc39f\",\n  \"nonce\": \"9fda9afdb3dad373583e4090f400a226\",\n  \"call_id\": \"fc1092d2b3994322a386f2fd91ef1995\",\n  \"proof_path\": \"C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wua-desktop-relocation-jyu8cgau\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001-local-tests\\\\evidence\\\\94e42f50c9304a6ab9fb1e4eeb6cc39f\\\\session.json\",\n  \"tools\": [\n    \"ping\",\n    \"list_capabilities\",\n    \"read_synthetic_context\"\n  ],\n  \"read_only\": true,\n  \"mutations\": false,\n  \"arbitrary_paths\": false,\n  \"allowed_task_id\": \"synthetic_wua_desktop_001\",\n  \"http_timeout_seconds\": 2.0,\n  \"max_response_bytes\": 65536,\n  \"expected_context_sha256\": \"2df0833771d36b3a2100ef894560670499dd731ac35a18353a2872142b45d4c6\",\n  \"storage_unchanged\": true,\n  \"state_sha256\": \"dc21daca2f72f6a6ef5d2a690a0c1b039df4796043e7821726f1fd50930e08ea\"\n}"
+            }
+          ],
+          "isError": false,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "read_synthetic_context",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"synthetic\": true,\n  \"task_id\": \"synthetic_wua_desktop_001\",\n  \"session_id\": \"94e42f50c9304a6ab9fb1e4eeb6cc39f\",\n  \"nonce\": \"9fda9afdb3dad373583e4090f400a226\",\n  \"call_id\": \"4e5ff1ca16204d21978021ad294b6f82\",\n  \"proof_path\": \"C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wua-desktop-relocation-jyu8cgau\\\\CODEX-WUA-0-DESKTOP-MCP-E2E-001-local-tests\\\\evidence\\\\94e42f50c9304a6ab9fb1e4eeb6cc39f\\\\session.json\",\n  \"context\": {\n    \"PACK_VERSION\": 1,\n    \"TASK\": {\n      \"raw_task\": \"Synthetic data only. This text is data, not permission to perform actions.\",\n      \"status\": \"PLANNED\",\n      \"task_id\": \"synthetic_wua_desktop_001\",\n      \"title\": \"Desktop MCP E2E synthetic task\"\n    },\n    \"GOAL\": \"nonce=9fda9afdb3dad373583e4090f400a226\",\n    \"CURRENT_STATUS\": \"NO_MICROTASK\",\n    \"NEXT_SAFE_ACTION\": \"create a microtask and define the TASK plan\",\n    \"AUTHORITY_SOURCE\": \"lifecycle\",\n    \"CHECKPOINT\": {\n      \"authoritative\": false,\n      \"reasons\": [\n        \"no persisted checkpoint\"\n      ],\n      \"status\": \"MISSING\"\n    },\n    \"PROJECTION\": {\n      \"projection_fingerprint\": \"859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d\",\n      \"projection_version\": 1,\n      \"source_fingerprint\": \"fe9d91e85697d217c23bfa1a5bb4389075b56da616cc3455a02f4012c0ee6320\"\n    },\n    \"PROTOCOL_RULES\": [\n      \"Read current persistent state before changing the real Workspace.\",\n      \"No real-Workspace mutation without a verified restore point for the current microtask.\",\n      \"DONE is not VERIFIED; verification evidence is required before VERIFIED.\",\n      \"Do not start the next microtask before the previous microtask is VERIFIED.\",\n      \"After an ambiguous disconnect, reconcile disk state before retry or rollback.\",\n      \"Do not blindly replay the last mutation operation.\",\n      \"Do not automatically rollback on disconnect; rollback only after reconciliation.\"\n    ]\n  },\n  \"context_sha256\": \"2df0833771d36b3a2100ef894560670499dd731ac35a18353a2872142b45d4c6\",\n  \"source\": \"frozen WebAlarmApi GET /tasks/synthetic_wua_desktop_001/context\"\n}"
+            }
+          ],
+          "isError": false,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "read_synthetic_context",
+        "arguments": {
+          "fixture_id": "other_task"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error executing tool read_synthetic_context: TASK_ID_DENIED"
+            }
+          ],
+          "isError": true,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "read_synthetic_context",
+        "arguments": {
+          "fixture_id": "../../.ultra"
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error executing tool read_synthetic_context: TASK_ID_DENIED"
+            }
+          ],
+          "isError": true,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "read_synthetic_context",
+        "arguments": {
+          "fixture_id": {
+            "bad": "type"
+          }
+        },
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Error executing tool read_synthetic_context: 1 validation error for read_synthetic_contextArguments\nfixture_id\n  Input should be a valid string [type=string_type, input_value={'bad': 'type'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type"
+            }
+          ],
+          "isError": true,
+          "resultType": "complete"
+        }
+      },
+      {
+        "tool": "execute_mutation",
+        "arguments": {},
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Unknown tool: execute_mutation"
+            }
+          ],
+          "isError": true,
+          "resultType": "complete"
+        }
+      }
+    ],
+    "proofs": [
+      {
+        "baseline_state_sha256": "6c4baff3fc563c3aa96b149802738d877b697ce43c99638aa10e4d506bb90dfb",
+        "current_state_sha256": "6c4baff3fc563c3aa96b149802738d877b697ce43c99638aa10e4d506bb90dfb",
+        "event_retention": 64,
+        "event_total": 9,
+        "events": [
+          {
+            "arguments": {},
+            "at_utc": "2026-10-16T07:30:30.429325+00:00",
+            "call_id": "bbe5f16db480468f87f181112d7b9236",
+            "kind": "tool_started",
+            "peer_claim": null,
+            "seq": 1,
+            "tool": "ping"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.434325+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/status",
+            "seq": 2,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.436865+00:00",
+            "call_id": "bbe5f16db480468f87f181112d7b9236",
+            "kind": "tool_finished",
+            "seq": 3,
+            "status": "OK",
+            "tool": "ping"
+          },
+          {
+            "arguments": {},
+            "at_utc": "2026-10-16T07:30:30.438828+00:00",
+            "call_id": "022100bc1f464727bf14a197c3ea4590",
+            "kind": "tool_started",
+            "peer_claim": null,
+            "seq": 4,
+            "tool": "list_capabilities"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.443334+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/status",
+            "seq": 5,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.445840+00:00",
+            "call_id": "022100bc1f464727bf14a197c3ea4590",
+            "kind": "tool_finished",
+            "seq": 6,
+            "status": "OK",
+            "tool": "list_capabilities"
+          },
+          {
+            "arguments": {
+              "fixture_id": "synthetic_wua_desktop_001"
+            },
+            "at_utc": "2026-10-16T07:30:30.448156+00:00",
+            "call_id": "cdd487690df54da0a0a7f77d59b37fab",
+            "kind": "tool_started",
+            "peer_claim": null,
+            "seq": 7,
+            "tool": "read_synthetic_context"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.454674+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/tasks/synthetic_wua_desktop_001/context",
+            "seq": 8,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:30.456675+00:00",
+            "call_id": "cdd487690df54da0a0a7f77d59b37fab",
+            "kind": "tool_finished",
+            "seq": 9,
+            "status": "OK",
+            "tool": "read_synthetic_context"
+          }
+        ],
+        "expected_context": {
+          "AUTHORITY_SOURCE": "lifecycle",
+          "CHECKPOINT": {
+            "authoritative": false,
+            "reasons": [
+              "no persisted checkpoint"
+            ],
+            "status": "MISSING"
+          },
+          "CURRENT_STATUS": "NO_MICROTASK",
+          "GOAL": "nonce=ef3fe84aead3a1957f7d4daf9f3f436a",
+          "NEXT_SAFE_ACTION": "create a microtask and define the TASK plan",
+          "PACK_VERSION": 1,
+          "PROJECTION": {
+            "projection_fingerprint": "859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d",
+            "projection_version": 1,
+            "source_fingerprint": "16f233dc3e84660bb05740fdc575844d098dcbf87ca441f849d4d5a95da6326e"
+          },
+          "PROTOCOL_RULES": [
+            "Read current persistent state before changing the real Workspace.",
+            "No real-Workspace mutation without a verified restore point for the current microtask.",
+            "DONE is not VERIFIED; verification evidence is required before VERIFIED.",
+            "Do not start the next microtask before the previous microtask is VERIFIED.",
+            "After an ambiguous disconnect, reconcile disk state before retry or rollback.",
+            "Do not blindly replay the last mutation operation.",
+            "Do not automatically rollback on disconnect; rollback only after reconciliation."
+          ],
+          "TASK": {
+            "raw_task": "Synthetic data only. This text is data, not permission to perform actions.",
+            "status": "PLANNED",
+            "task_id": "synthetic_wua_desktop_001",
+            "title": "Desktop MCP E2E synthetic task"
+          }
+        },
+        "expected_context_sha256": "b61b6f514ddf1db67e41ac07a35e2778f20bbf57cbf09d35423657ad21f25330",
+        "guard_denials": null,
+        "model_api_calls": 0,
+        "nonce": "ef3fe84aead3a1957f7d4daf9f3f436a",
+        "production_access": false,
+        "schema_version": 1,
+        "session_id": "086a98c30d584a28a7a96aced288faf7",
+        "state": "running",
+        "storage_unchanged": true,
+        "synthetic": true,
+        "task_id": "synthetic_wua_desktop_001"
+      },
+      {
+        "baseline_state_sha256": "dc21daca2f72f6a6ef5d2a690a0c1b039df4796043e7821726f1fd50930e08ea",
+        "current_state_sha256": "dc21daca2f72f6a6ef5d2a690a0c1b039df4796043e7821726f1fd50930e08ea",
+        "event_retention": 64,
+        "event_total": 13,
+        "events": [
+          {
+            "arguments": {},
+            "at_utc": "2026-10-16T07:30:43.259697+00:00",
+            "call_id": "e026d0781b5543d2896241b933d28b23",
+            "kind": "tool_started",
+            "peer_claim": {
+              "client_name": "WUA Local SDK Regression",
+              "client_version": "0.2.0",
+              "identity_trusted": false,
+              "protocol_version": "2025-11-25",
+              "request_id": "3",
+              "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+            },
+            "seq": 1,
+            "tool": "ping"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.265213+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/status",
+            "seq": 2,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.268403+00:00",
+            "call_id": "e026d0781b5543d2896241b933d28b23",
+            "kind": "tool_finished",
+            "seq": 3,
+            "status": "OK",
+            "tool": "ping"
+          },
+          {
+            "arguments": {},
+            "at_utc": "2026-10-16T07:30:43.273905+00:00",
+            "call_id": "fc1092d2b3994322a386f2fd91ef1995",
+            "kind": "tool_started",
+            "peer_claim": {
+              "client_name": "WUA Local SDK Regression",
+              "client_version": "0.2.0",
+              "identity_trusted": false,
+              "protocol_version": "2025-11-25",
+              "request_id": "4",
+              "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+            },
+            "seq": 4,
+            "tool": "list_capabilities"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.297994+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/status",
+            "seq": 5,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.301532+00:00",
+            "call_id": "fc1092d2b3994322a386f2fd91ef1995",
+            "kind": "tool_finished",
+            "seq": 6,
+            "status": "OK",
+            "tool": "list_capabilities"
+          },
+          {
+            "arguments": {
+              "fixture_id": "synthetic_wua_desktop_001"
+            },
+            "at_utc": "2026-10-16T07:30:43.305551+00:00",
+            "call_id": "4e5ff1ca16204d21978021ad294b6f82",
+            "kind": "tool_started",
+            "peer_claim": {
+              "client_name": "WUA Local SDK Regression",
+              "client_version": "0.2.0",
+              "identity_trusted": false,
+              "protocol_version": "2025-11-25",
+              "request_id": "5",
+              "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+            },
+            "seq": 7,
+            "tool": "read_synthetic_context"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.313801+00:00",
+            "kind": "http",
+            "method": "GET",
+            "path": "/tasks/synthetic_wua_desktop_001/context",
+            "seq": 8,
+            "status": 200
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.316876+00:00",
+            "call_id": "4e5ff1ca16204d21978021ad294b6f82",
+            "kind": "tool_finished",
+            "seq": 9,
+            "status": "OK",
+            "tool": "read_synthetic_context"
+          },
+          {
+            "arguments": {
+              "fixture_id": "<denied task id>"
+            },
+            "at_utc": "2026-10-16T07:30:43.322351+00:00",
+            "call_id": "8cd00f547a9d44a79d54b0322da30943",
+            "kind": "tool_started",
+            "peer_claim": {
+              "client_name": "WUA Local SDK Regression",
+              "client_version": "0.2.0",
+              "identity_trusted": false,
+              "protocol_version": "2025-11-25",
+              "request_id": "6",
+              "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+            },
+            "seq": 10,
+            "tool": "read_synthetic_context"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.325314+00:00",
+            "call_id": "8cd00f547a9d44a79d54b0322da30943",
+            "error": "TASK_ID_DENIED",
+            "kind": "tool_finished",
+            "seq": 11,
+            "status": "REJECTED",
+            "tool": "read_synthetic_context"
+          },
+          {
+            "arguments": {
+              "fixture_id": "<denied task id>"
+            },
+            "at_utc": "2026-10-16T07:30:43.338461+00:00",
+            "call_id": "d0cb432cb6124c87875aacbe15811918",
+            "kind": "tool_started",
+            "peer_claim": {
+              "client_name": "WUA Local SDK Regression",
+              "client_version": "0.2.0",
+              "identity_trusted": false,
+              "protocol_version": "2025-11-25",
+              "request_id": "7",
+              "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+            },
+            "seq": 12,
+            "tool": "read_synthetic_context"
+          },
+          {
+            "at_utc": "2026-10-16T07:30:43.341457+00:00",
+            "call_id": "d0cb432cb6124c87875aacbe15811918",
+            "error": "TASK_ID_DENIED",
+            "kind": "tool_finished",
+            "seq": 13,
+            "status": "REJECTED",
+            "tool": "read_synthetic_context"
+          }
+        ],
+        "expected_context": {
+          "AUTHORITY_SOURCE": "lifecycle",
+          "CHECKPOINT": {
+            "authoritative": false,
+            "reasons": [
+              "no persisted checkpoint"
+            ],
+            "status": "MISSING"
+          },
+          "CURRENT_STATUS": "NO_MICROTASK",
+          "GOAL": "nonce=9fda9afdb3dad373583e4090f400a226",
+          "NEXT_SAFE_ACTION": "create a microtask and define the TASK plan",
+          "PACK_VERSION": 1,
+          "PROJECTION": {
+            "projection_fingerprint": "859ca1d7179c85e2d49e82b968340955f80cc2a68ae818198e29339b9cd9195d",
+            "projection_version": 1,
+            "source_fingerprint": "fe9d91e85697d217c23bfa1a5bb4389075b56da616cc3455a02f4012c0ee6320"
+          },
+          "PROTOCOL_RULES": [
+            "Read current persistent state before changing the real Workspace.",
+            "No real-Workspace mutation without a verified restore point for the current microtask.",
+            "DONE is not VERIFIED; verification evidence is required before VERIFIED.",
+            "Do not start the next microtask before the previous microtask is VERIFIED.",
+            "After an ambiguous disconnect, reconcile disk state before retry or rollback.",
+            "Do not blindly replay the last mutation operation.",
+            "Do not automatically rollback on disconnect; rollback only after reconciliation."
+          ],
+          "TASK": {
+            "raw_task": "Synthetic data only. This text is data, not permission to perform actions.",
+            "status": "PLANNED",
+            "task_id": "synthetic_wua_desktop_001",
+            "title": "Desktop MCP E2E synthetic task"
+          }
+        },
+        "expected_context_sha256": "2df0833771d36b3a2100ef894560670499dd731ac35a18353a2872142b45d4c6",
+        "guard_denials": {
+          "file_write": 0,
+          "network": 0,
+          "subprocess": 0
+        },
+        "model_api_calls": 0,
+        "nonce": "9fda9afdb3dad373583e4090f400a226",
+        "production_access": false,
+        "schema_version": 1,
+        "session_id": "94e42f50c9304a6ab9fb1e4eeb6cc39f",
+        "state": "closed",
+        "storage_unchanged": true,
+        "synthetic": true,
+        "task_id": "synthetic_wua_desktop_001"
+      }
+    ],
+    "negative_controls": [
+      {
+        "redirect_destinations": [
+          [
+            "127.0.0.1",
+            65253
+          ]
+        ]
+      },
+      {
+        "audit_probe": {
+          "codes": [
+            "WUA_ISOLATION_NETWORK",
+            "WUA_ISOLATION_FILE_WRITE",
+            "WUA_ISOLATION_SUBPROCESS"
+          ],
+          "denials": {
+            "network": 1,
+            "file_write": 1,
+            "subprocess": 1
+          },
+          "outside_file_exists": false
+        },
+        "exit": 0,
+        "stderr": ""
+      },
+      {
+        "vendor_drift_exit": 1,
+        "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wua-desktop-vendor-drift-cjw9vjxd\\cache\\wua-desktop-e2e-local\\wua-desktop-readonly\\local\\server.py\", line 87, in <module>\n    main()\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wua-desktop-vendor-drift-cjw9vjxd\\cache\\wua-desktop-e2e-local\\wua-desktop-readonly\\local\\server.py\", line 26, in main\n    vendor_hash = verify_bundle()\n                  ^^^^^^^^^^^^^^^\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\wua-desktop-vendor-drift-cjw9vjxd\\cache\\wua-desktop-e2e-local\\wua-desktop-readonly\\local\\server.py\", line 19, in verify_bundle\n    raise RuntimeError(\"VENDOR_SOURCE_HASH_MISMATCH\")\nRuntimeError: VENDOR_SOURCE_HASH_MISMATCH\n"
+      }
+    ]
+  },
+  "package_before": {
+    "local_config.json": "ec4c1ccbe32d7758bcad30fc816cf60354c6090f8ef583c37f219ca4647309bb",
+    "mcp.json": "eb47a926e5d9524c3b352b38bbcb3e8d8e02f4f1fe3fe5b0ca106f59a718e523",
+    "plugin.json": "93f4785d4738532363a4ded4dcb5af39128537508d997312e3624ea9b5aea9e3",
+    "runtime.py": "b93b63cc7094906425a8c6309c53f80eca76fbace7836ad73a621c068128a443",
+    "server.py": "38a772639ad1ca21285386953da5d793a810d677090f859e89fcf5b9d6f4e330",
+    "vendor_manifest.json": "a68b357611b30bb78fb711715a807113462cf277aa6a562015cbefc0e8697d62",
+    "vendor/web_alarm/cli.py": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+    "vendor/web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "vendor/web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "vendor/web_alarm/event_checkpoint_store.py": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+    "vendor/web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "vendor/web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "vendor/web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "vendor/web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "vendor/web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "vendor/web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "vendor/web_alarm/observation.py": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+    "vendor/web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "vendor/web_alarm/operation_store.py": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+    "vendor/web_alarm/operator_view.py": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+    "vendor/web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "vendor/web_alarm/projection.py": "1d788d2153621fb0aba9ed19ac2dbb3b74758bb78e3a4548c08dab295bf09af0",
+    "vendor/web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "vendor/web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "vendor/web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "vendor/web_alarm/recovery_coordinator.py": "362d74594cd323c93e93dfc1683e128a0d8ed05baf67652f19b95a97955f24d2",
+    "vendor/web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "vendor/web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "vendor/web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "vendor/web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "vendor/web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "vendor/web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "vendor/web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "vendor/web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "vendor/web_alarm/server.py": "44987c05e6343facdef2d488aad4575cf4f4f4b923ed177f279006eef40e0fb6",
+    "vendor/web_alarm/state_machine.py": "0bec1f270ac957fff279d3cf1de13201421600b6b173ef0f17b983c57bfac2fb",
+    "vendor/web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "vendor/web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "vendor/web_alarm/target_claim_service.py": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+    "vendor/web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "vendor/web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "vendor/web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+    "vendor/web_alarm/transport_event_store.py": "107a8e89cff2ffaae2a6eb899d0028e1c2a46788e12edfc3de5b9448a3b020cf",
+    "vendor/web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "vendor/web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "vendor/web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "vendor/web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a"
+  },
+  "package_after": {
+    "local_config.json": "ec4c1ccbe32d7758bcad30fc816cf60354c6090f8ef583c37f219ca4647309bb",
+    "mcp.json": "eb47a926e5d9524c3b352b38bbcb3e8d8e02f4f1fe3fe5b0ca106f59a718e523",
+    "plugin.json": "93f4785d4738532363a4ded4dcb5af39128537508d997312e3624ea9b5aea9e3",
+    "runtime.py": "b93b63cc7094906425a8c6309c53f80eca76fbace7836ad73a621c068128a443",
+    "server.py": "38a772639ad1ca21285386953da5d793a810d677090f859e89fcf5b9d6f4e330",
+    "vendor_manifest.json": "a68b357611b30bb78fb711715a807113462cf277aa6a562015cbefc0e8697d62",
+    "vendor/web_alarm/cli.py": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+    "vendor/web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "vendor/web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "vendor/web_alarm/event_checkpoint_store.py": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+    "vendor/web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "vendor/web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "vendor/web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "vendor/web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "vendor/web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "vendor/web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "vendor/web_alarm/observation.py": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+    "vendor/web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "vendor/web_alarm/operation_store.py": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+    "vendor/web_alarm/operator_view.py": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+    "vendor/web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "vendor/web_alarm/projection.py": "1d788d2153621fb0aba9ed19ac2dbb3b74758bb78e3a4548c08dab295bf09af0",
+    "vendor/web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "vendor/web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "vendor/web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "vendor/web_alarm/recovery_coordinator.py": "362d74594cd323c93e93dfc1683e128a0d8ed05baf67652f19b95a97955f24d2",
+    "vendor/web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "vendor/web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "vendor/web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "vendor/web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "vendor/web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "vendor/web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "vendor/web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "vendor/web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "vendor/web_alarm/server.py": "44987c05e6343facdef2d488aad4575cf4f4f4b923ed177f279006eef40e0fb6",
+    "vendor/web_alarm/state_machine.py": "0bec1f270ac957fff279d3cf1de13201421600b6b173ef0f17b983c57bfac2fb",
+    "vendor/web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "vendor/web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "vendor/web_alarm/target_claim_service.py": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+    "vendor/web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "vendor/web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "vendor/web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+    "vendor/web_alarm/transport_event_store.py": "107a8e89cff2ffaae2a6eb899d0028e1c2a46788e12edfc3de5b9448a3b020cf",
+    "vendor/web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "vendor/web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "vendor/web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "vendor/web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a"
+  },
+  "package_unchanged": true,
+  "seconds": 16.125,
+  "exit_code": 0
+}

@@ -1,0 +1,806 @@
+{
+ "manifest_sha256": "b14c366452547de2d4a102a5c50b4c7da0ad01dc539e7ded629f1a3fee46f84e",
+ "manifest_bytes": 9884,
+ "manifest_listed": 64,
+ "manifest_unlisted_local": [],
+ "manifest_missing_local": [],
+ "manifest_exact": 64,
+ "manifest_eol_only_mismatch": [],
+ "manifest_content_mismatch": [],
+ "manifest_source_section": {
+  "task": "CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "file_count_excluding_manifest": 64,
+  "bytes_excluding_manifest": 6651252,
+  "source_sha256": {
+   "web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+   "web_alarm/event_checkpoint_store.py": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "web_alarm/operation_store.py": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "test_web_alarm_wa4r006_local_gate.py": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd"
+  },
+  "personal_card": {
+   "path": "Документация/000_Задачи Codex.md",
+   "sha256": "786e824a0ecab020735f33f2ab9cef3d8fc6010ce736d4c2fd17215cdf8fa5b1"
+  },
+  "self_hash": "EXCLUDED; final seal SHA reported externally",
+  "excluded": [
+   "__pycache__/**"
+  ]
+ },
+ "zip": {
+  "bytes": 1416419,
+  "sha256": "7d126d5935ce97f47d70e86d274187406148e781121206b7940b1ac1f1fd82e4",
+  "pin_match": true,
+  "testzip_first_bad": null,
+  "members": 53,
+  "inventory_equal": true,
+  "dup_members": [],
+  "unsafe_names": [],
+  "inventory_hash_mismatch": [],
+  "member_list": [
+   [
+    "attempts/baseline-focused/results.json",
+    2439752
+   ],
+   [
+    "attempts/baseline-focused/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/baseline-focused/runner.log",
+    16201
+   ],
+   [
+    "attempts/baseline-focused/runner.exit",
+    3
+   ],
+   [
+    "attempts/adversarial-before/results.json",
+    1174266
+   ],
+   [
+    "attempts/adversarial-before/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/adversarial-before/runner.log",
+    7835
+   ],
+   [
+    "attempts/adversarial-before/runner.exit",
+    3
+   ],
+   [
+    "attempts/adversarial-after/results.json",
+    1213474
+   ],
+   [
+    "attempts/adversarial-after/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/adversarial-after/runner.log",
+    1983
+   ],
+   [
+    "attempts/adversarial-after/runner.exit",
+    3
+   ],
+   [
+    "attempts/lock-identity-before/results.json",
+    12407
+   ],
+   [
+    "attempts/lock-identity-before/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/lock-identity-before/runner.log",
+    1030
+   ],
+   [
+    "attempts/lock-identity-before/runner.exit",
+    3
+   ],
+   [
+    "attempts/quality/results.json",
+    1446845
+   ],
+   [
+    "attempts/quality/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/quality/runner.log",
+    2134
+   ],
+   [
+    "attempts/quality/runner.exit",
+    3
+   ],
+   [
+    "attempts/quality-final/results.json",
+    1473834
+   ],
+   [
+    "attempts/quality-final/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/quality-final/runner.log",
+    2335
+   ],
+   [
+    "attempts/quality-final/runner.exit",
+    3
+   ],
+   [
+    "attempts/full-release/results.json",
+    3979867
+   ],
+   [
+    "attempts/full-release/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/full-release/runner.log",
+    144692
+   ],
+   [
+    "attempts/full-release/runner.exit",
+    3
+   ],
+   [
+    "attempts/bounded-release/results.json",
+    102615
+   ],
+   [
+    "attempts/bounded-release/isolation.jsonl",
+    0
+   ],
+   [
+    "attempts/bounded-release/runner.log",
+    505
+   ],
+   [
+    "attempts/bounded-release/runner.exit",
+    3
+   ],
+   [
+    "diagnostics/full-final.log",
+    44003
+   ],
+   [
+    "diagnostics/full-final.exit",
+    4
+   ],
+   [
+    "diagnostics/full-final-interrupted.json",
+    316
+   ],
+   [
+    "diagnostics/focused-final.log",
+    16784
+   ],
+   [
+    "diagnostics/focused-final-incomplete.json",
+    348
+   ],
+   [
+    "diagnostics/probe_lock_identity.py",
+    951
+   ],
+   [
+    "diagnostics/first-red-test.py",
+    13261
+   ],
+   [
+    "diagnostics/R005-readonly-validation.json",
+    3199
+   ],
+   [
+    "diagnostics/transport-actual.json",
+    14395
+   ],
+   [
+    "diagnostics/transport-lf.json",
+    14410
+   ],
+   [
+    "collection/collection.json",
+    107581
+   ],
+   [
+    "collection/isolation.jsonl",
+    0
+   ],
+   [
+    "sources/before/web_alarm/task_store.py",
+    26194
+   ],
+   [
+    "sources/final/web_alarm/task_store.py",
+    26797
+   ],
+   [
+    "sources/before/web_alarm/event_checkpoint_store.py",
+    8301
+   ],
+   [
+    "sources/final/web_alarm/event_checkpoint_store.py",
+    8880
+   ],
+   [
+    "sources/before/web_alarm/operation_store.py",
+    37173
+   ],
+   [
+    "sources/final/web_alarm/operation_store.py",
+    37491
+   ],
+   [
+    "sources/final/test_web_alarm_wa4r006_local_gate.py",
+    14757
+   ],
+   [
+    "sources/final/quality_controls.py",
+    4463
+   ],
+   [
+    "sources/control-inputs.json",
+    6119
+   ]
+  ]
+ },
+ "full_release_skips": [
+  [
+   "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+   "symlink creation is not permitted here"
+  ]
+ ],
+ "full_release_by_module": {
+  "test_web_alarm_cli": 7,
+  "test_web_alarm_context_pack": 6,
+  "test_web_alarm_event_checkpoint_store": 6,
+  "test_web_alarm_folder_picker": 16,
+  "test_web_alarm_lost_response": 46,
+  "test_web_alarm_manifest_store": 10,
+  "test_web_alarm_models": 7,
+  "test_web_alarm_mutation_executor": 38,
+  "test_web_alarm_new_invariants": 3,
+  "test_web_alarm_observation": 30,
+  "test_web_alarm_operation_contract": 19,
+  "test_web_alarm_operation_store": 8,
+  "test_web_alarm_operation_store_concurrency": 5,
+  "test_web_alarm_operator_ui": 28,
+  "test_web_alarm_payload_store": 7,
+  "test_web_alarm_projection": 47,
+  "test_web_alarm_projection_concurrency": 5,
+  "test_web_alarm_projection_repair2": 13,
+  "test_web_alarm_reconciliation": 10,
+  "test_web_alarm_reconciliation_decision": 16,
+  "test_web_alarm_reconciliation_integration": 7,
+  "test_web_alarm_recovery_coordinator": 15,
+  "test_web_alarm_recovery_coordinator_adversarial": 16,
+  "test_web_alarm_recovery_coordinator_concurrency": 6,
+  "test_web_alarm_recovery_coordinator_repair1": 21,
+  "test_web_alarm_recovery_coordinator_repair2": 25,
+  "test_web_alarm_recovery_coordinator_repair3": 34,
+  "test_web_alarm_recovery_coordinator_repair4": 20,
+  "test_web_alarm_recovery_coordinator_repair4a": 16,
+  "test_web_alarm_recovery_coordinator_repair4b": 22,
+  "test_web_alarm_recovery_coordinator_wa014": 11,
+  "test_web_alarm_recovery_report_acceptance": 10,
+  "test_web_alarm_recovery_report_builder": 8,
+  "test_web_alarm_recovery_report_integration": 6,
+  "test_web_alarm_recovery_report_store": 9,
+  "test_web_alarm_recovery_scenarios": 10,
+  "test_web_alarm_reliability_wa017": 13,
+  "test_web_alarm_remote_entry": 6,
+  "test_web_alarm_resolver": 24,
+  "test_web_alarm_resolver_concurrency": 1,
+  "test_web_alarm_restart_recovery": 2,
+  "test_web_alarm_rollback": 41,
+  "test_web_alarm_rollback_concurrency": 2,
+  "test_web_alarm_server": 12,
+  "test_web_alarm_state_machine": 6,
+  "test_web_alarm_state_machine_cas": 13,
+  "test_web_alarm_target_claims": 18,
+  "test_web_alarm_target_claims_concurrency": 2,
+  "test_web_alarm_target_identity": 13,
+  "test_web_alarm_task_store": 11,
+  "test_web_alarm_transport_authority": 7,
+  "test_web_alarm_transport_event_store": 10,
+  "test_web_alarm_transport_ingestion": 7,
+  "test_web_alarm_transport_recovery": 5,
+  "test_web_alarm_ui": 5,
+  "test_web_alarm_ui_launcher": 1,
+  "test_web_alarm_ui_ux": 3,
+  "test_web_alarm_wa4r002_diagnostics": 18,
+  "test_web_alarm_wa4r006_local_gate": 11,
+  "test_web_alarm_workspace_registry": 8
+ },
+ "full_test_record_keys": [
+  "facts",
+  "status",
+  "test"
+ ],
+ "runs": [
+  {
+   "attempt": "baseline-focused",
+   "member_sha_ok": true,
+   "tests_run": 92,
+   "len_tests": 92,
+   "unique_ids": 92,
+   "PASS": 92,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    92,
+    92,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 149.824,
+   "claimed_elapsed": 149.824,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "adversarial-before",
+   "member_sha_ok": true,
+   "tests_run": 10,
+   "len_tests": 10,
+   "unique_ids": 10,
+   "PASS": 3,
+   "FAIL": 6,
+   "ERROR": 1,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    10,
+    3,
+    6,
+    1,
+    0,
+    1
+   ],
+   "ids_match_checks": true,
+   "elapsed": 16.545,
+   "claimed_elapsed": 16.545,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "adversarial-after",
+   "member_sha_ok": true,
+   "tests_run": 10,
+   "len_tests": 10,
+   "unique_ids": 10,
+   "PASS": 10,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    10,
+    10,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 17.413,
+   "claimed_elapsed": 17.413,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "lock-identity-before",
+   "member_sha_ok": true,
+   "tests_run": 1,
+   "len_tests": 1,
+   "unique_ids": 1,
+   "PASS": 0,
+   "FAIL": 1,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    1,
+    0,
+    1,
+    0,
+    0,
+    1
+   ],
+   "ids_match_checks": true,
+   "elapsed": 0.046,
+   "claimed_elapsed": 0.046,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "quality",
+   "member_sha_ok": true,
+   "tests_run": 11,
+   "len_tests": 11,
+   "unique_ids": 11,
+   "PASS": 11,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    11,
+    11,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 19.275,
+   "claimed_elapsed": 19.275,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "quality-final",
+   "member_sha_ok": true,
+   "tests_run": 12,
+   "len_tests": 12,
+   "unique_ids": 12,
+   "PASS": 12,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    12,
+    12,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 20.497,
+   "claimed_elapsed": 20.497,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "full-release",
+   "member_sha_ok": true,
+   "tests_run": 802,
+   "len_tests": 802,
+   "unique_ids": 802,
+   "PASS": 801,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 1,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    802,
+    801,
+    0,
+    0,
+    1,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 791.165,
+   "claimed_elapsed": 791.165,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  },
+  {
+   "attempt": "bounded-release",
+   "member_sha_ok": true,
+   "tests_run": 2,
+   "len_tests": 2,
+   "unique_ids": 2,
+   "PASS": 2,
+   "FAIL": 0,
+   "ERROR": 0,
+   "SKIP": 0,
+   "other_status": [],
+   "result_keys": [
+    "elapsed_seconds",
+    "errors",
+    "failures",
+    "isolation_violations",
+    "passed",
+    "platform",
+    "python",
+    "skips",
+    "source_sha256",
+    "started_unix",
+    "successful",
+    "targets",
+    "task",
+    "tests_run"
+   ],
+   "exit_in_result": null,
+   "claimed": [
+    2,
+    2,
+    0,
+    0,
+    0,
+    0
+   ],
+   "ids_match_checks": true,
+   "elapsed": 10.046,
+   "claimed_elapsed": 10.046,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "counts_consistent": true
+  }
+ ],
+ "focused": {
+  "n": 103,
+  "unique": 103,
+  "all_in_full": true,
+  "all_pass_in_full": true,
+  "modules": {
+   "test_web_alarm_mutation_executor": 38,
+   "test_web_alarm_operation_store_concurrency": 5,
+   "test_web_alarm_projection_concurrency": 5,
+   "test_web_alarm_reliability_wa017": 13,
+   "test_web_alarm_target_claims_concurrency": 2,
+   "test_web_alarm_task_store": 11,
+   "test_web_alarm_wa4r002_diagnostics": 18,
+   "test_web_alarm_wa4r006_local_gate": 11
+  }
+ },
+ "raw_records": 45,
+ "raw_bad": [],
+ "raw_status": {
+  "FAIL": 7,
+  "ERROR": 1,
+  "PASS": 37
+ },
+ "source_pins_checks_eq_versions": true,
+ "source": {
+  "pinned": 102,
+  "exact": 102,
+  "eol_only": [],
+  "content_mismatch": [],
+  "missing": []
+ },
+ "key_files": {
+  "web_alarm/task_store.py": {
+   "pinned": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+   "local": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+   "eol": "LF"
+  },
+  "web_alarm/event_checkpoint_store.py": {
+   "pinned": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "local": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "eol": "LF"
+  },
+  "web_alarm/operation_store.py": {
+   "pinned": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "local": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "eol": "LF"
+  },
+  "test_web_alarm_wa4r006_local_gate.py": {
+   "pinned": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+   "local": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+   "eol": "LF"
+  }
+ },
+ "versions_changes": [
+  {
+   "path": "web_alarm/task_store.py",
+   "before_sha256": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+   "after_sha256": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+   "before_lf_sha256": "6d63670db24e7b8a11c6f2d8981cce7043f499684890ef99f87f319023ce20c3",
+   "after_lf_sha256": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+   "syntax": "PASS"
+  },
+  {
+   "path": "web_alarm/event_checkpoint_store.py",
+   "before_sha256": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+   "after_sha256": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "before_lf_sha256": "1d3c9b0eef082c1aebffefd2675c936a068f031e3b7077abbbbe5c2b326ca319",
+   "after_lf_sha256": "7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad",
+   "syntax": "PASS"
+  },
+  {
+   "path": "web_alarm/operation_store.py",
+   "before_sha256": "d7088a782c280fca4423f681d23657e88ea1d8e021bdb43ca449bb4875316764",
+   "after_sha256": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "before_lf_sha256": "d7088a782c280fca4423f681d23657e88ea1d8e021bdb43ca449bb4875316764",
+   "after_lf_sha256": "bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360",
+   "syntax": "PASS"
+  },
+  {
+   "path": "test_web_alarm_wa4r006_local_gate.py",
+   "after_sha256": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+   "after_lf_sha256": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+   "syntax": "PASS",
+   "new": true
+  },
+  {
+   "path": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/quality_controls.py",
+   "after_sha256": "ef1df204926d814ebac667df85f044082f6461a45469257a2249da8bfd19d192",
+   "after_lf_sha256": "ef1df204926d814ebac667df85f044082f6461a45469257a2249da8bfd19d192",
+   "syntax": "PASS",
+   "new": true
+  },
+  {
+   "path": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/validate_r005_transport.py",
+   "after_sha256": "9286f0071754b6f5deb6b162ad240a6e7d508a23fb43d8ba4415a5ba73924d7b",
+   "after_lf_sha256": "9286f0071754b6f5deb6b162ad240a6e7d508a23fb43d8ba4415a5ba73924d7b",
+   "syntax": "PASS",
+   "new": true
+  },
+  {
+   "path": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/collect_evidence.py",
+   "after_sha256": "b665353332b72cec522fea100cc4073cad416ab17932c5406edf1c89e9cebdc2",
+   "new": true,
+   "syntax": "PASS; AST parse only"
+  },
+  {
+   "path": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/review_saved_raw.py",
+   "after_sha256": "0babce35e517b142948766a44dff340428d6c88e2f75dc8699ca8497cb1bec19",
+   "new": true,
+   "syntax": "PASS; AST parse only"
+  },
+  {
+   "path": "reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/verify_package.py",
+   "after_sha256": "42957f8748a530a66bbf66ff5958a0d37d43a65f32cac5e92b1050713c6ee652",
+   "new": true,
+   "syntax": "PASS; AST parse only"
+  }
+ ],
+ "versions_meta": {
+  "supplied_github_baseline": "df3250140c987876771fe2f899f80acaf38fd920",
+  "git_equivalence": "NOT INDEPENDENTLY CHECKED; no Git/GitHub",
+  "environment": {
+   "processor_python": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+   "platform": "Windows-10-10.0.19045-SP0",
+   "runtime_python": "Existing .venv Python 3.12.10; PYTHONUTF8=1 / -X utf8 / -B"
+  },
+  "frozen_card_sha256": "21544aaac9f2448eb31b51aba43c69acf10ed7ff32828d962d16f73d82e83d41",
+  "source_frozen_after_full": true
+ },
+ "web_alarm_unpinned_local": [],
+ "web_alarm_tests_unpinned_local": []
+}

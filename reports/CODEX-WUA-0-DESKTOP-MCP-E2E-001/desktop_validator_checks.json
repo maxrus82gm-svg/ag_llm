@@ -1,0 +1,39 @@
+{
+  "kind": "SYNTHETIC VALIDATOR TESTS; NOT DESKTOP E2E",
+  "checks": [
+    {
+      "id": "actual_sdk_proof_cannot_pass_desktop_gate",
+      "PASS": true
+    },
+    {
+      "id": "synthetic_positive_validator_control_only",
+      "PASS": true
+    },
+    {
+      "id": "reject_ordinary_desktop_chat_confirmed_by_user",
+      "PASS": true
+    },
+    {
+      "id": "reject_nonce",
+      "PASS": true
+    },
+    {
+      "id": "reject_context_sha256",
+      "PASS": true
+    },
+    {
+      "id": "reject_task_id",
+      "PASS": true
+    },
+    {
+      "id": "reject_changed_storage",
+      "PASS": true
+    },
+    {
+      "id": "reject_missing_receipts",
+      "PASS": true
+    }
+  ],
+  "PASS": 8,
+  "desktop_e2e": "NOT RUN"
+}
