@@ -1,0 +1,50 @@
+Sample: sample_mcp_enterprise_proxy
+Summary: HTTP or stdio MCP target for outbound proxies or private PKI environments
+Use when: Use this when tunnel-client must egress through a corporate HTTP(S) proxy, trust a private CA bundle, or keep runtime and admin credentials clearly separated for operators.
+Required:
+  - --tunnel-id
+  - exactly one of --mcp-server-url or --mcp-command
+Optional:
+  - --control-plane-base-url
+  - --control-plane-url-path
+  - --control-plane-api-key-ref
+  - --health-listen-addr
+  - --open-web-ui
+Notes:
+  - The profile pins a global explicit proxy via env:HTTPS_PROXY so control-plane, MCP HTTP, and Harpoon traffic use the same outbound route.
+  - The CA bundle is loaded from env:ENTERPRISE_CA_BUNDLE; unset or remove that line if your environment uses public trust only.
+  - OPENAI_ADMIN_KEY is documented in the sample comments for admin flows, but tunnel-client run only consumes the runtime key reference.
+
+# Enterprise sample for environments with outbound HTTP(S) proxies or private PKI.
+# Runtime key used by `tunnel-client run`:
+#   export CONTROL_PLANE_API_KEY="sk-..."
+# Optional admin key for `tunnel-client admin tunnels ...`:
+#   export OPENAI_ADMIN_KEY="sk-admin-..."
+# Explicit proxy route used by this profile:
+#   export HTTPS_PROXY="http://proxy.internal.example.com:8080"
+# Private root bundle for the proxy or internal PKI:
+#   export ENTERPRISE_CA_BUNDLE="/etc/ssl/certs/proxy-root.pem"
+config_version: 1
+ca_bundle: "env:ENTERPRISE_CA_BUNDLE"
+http_proxy: "env:HTTPS_PROXY"
+control_plane:
+  base_url: "https://api.openai.com"
+
+  tunnel_id: "tunnel_0123456789abcdef0123456789abcdef"
+  api_key: "env:CONTROL_PLANE_API_KEY"
+health:
+  # Keep a fixed port when you want a stable local admin URL.
+  # For concurrent or clean-room runs, switch listen_addr to "127.0.0.1:0" and
+  # set url_file so another process can discover the resolved /healthz, /readyz,
+  # /metrics, and /ui base URL.
+  listen_addr: "127.0.0.1:8080"
+  # url_file: "/tmp/tunnel-client-health.url"
+admin_ui:
+  open_browser: false
+log:
+  level: info
+  format: json
+mcp:
+  server_urls:
+    - channel: main
+      url: "https://mcp.internal.example.com/mcp"

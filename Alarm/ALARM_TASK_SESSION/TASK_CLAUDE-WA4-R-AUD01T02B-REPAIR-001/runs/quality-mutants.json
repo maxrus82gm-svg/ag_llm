@@ -1,0 +1,291 @@
+{
+ "repo": "M:\\GitHub\\ag_llm",
+ "python": "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+ "module_sha256": "b96c2b0cec62b05998075e068a4c13edb0969dadfa6210d20aecd53b25ff0ef3",
+ "source_sha256": {
+  "web_alarm/transport_event_store.py": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+  "web_alarm/state_machine.py": "3164383a1a881c6dfcac86678b746d01c038f1b4ccb988fbda5a6074a262f408",
+  "web_alarm/event_checkpoint_store.py": "9cf9e3ed45a415bfcab139bdb24fc88af65c7ece8723f1f5192c3e9a0ab8bf45"
+ },
+ "controls": [
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event",
+   "passed": true,
+   "seconds": 4.48,
+   "tail": "test_concurrent_reports_from_processes_lose_no_event (test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 3.873s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event",
+   "passed": true,
+   "seconds": 2.27,
+   "tail": "eb_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event)\r\nVERIFIED of the last microtask: closeout must not complete the TASK in between. ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.749s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed",
+   "passed": true,
+   "seconds": 1.35,
+   "tail": "test_history_failure_after_commit_is_reported_as_committed (test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.807s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock",
+   "passed": true,
+   "seconds": 1.33,
+   "tail": ".MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock)\r\nDeterministic stale write: another writer moves m1 after the decision, before the locked commit. ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.796s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused",
+   "passed": true,
+   "seconds": 2.48,
+   "tail": "repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused)\r\nThe readability check is repeated under the lock of the compare-and-set (every commit path). ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.937s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes",
+   "passed": true,
+   "seconds": 2.32,
+   "tail": "nvalid_line_history_refuses_steps_and_rejections_without_writes (test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.776s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point",
+   "passed": true,
+   "seconds": 1.26,
+   "tail": "test_prepare_on_unreadable_history_writes_no_restore_point (test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.721s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write",
+   "passed": true,
+   "seconds": 1.85,
+   "tail": "test_unencodable_text_is_refused_before_any_write (test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.313s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "passed": true,
+   "seconds": 4.08,
+   "tail": "test_concurrent_processes_lose_no_transport_event (test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 3.554s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported",
+   "passed": true,
+   "seconds": 0.69,
+   "tail": "test_failed_durable_append_is_rolled_back_and_reported (test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.172s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable",
+   "passed": true,
+   "seconds": 1.21,
+   "tail": "rator_text_keeps_transport_evidence_readable_and_appendable (test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.625s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable",
+   "passed": true,
+   "seconds": 0.67,
+   "tail": "w_separator_and_crlf_records_stay_readable_and_appendable (test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.151s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced",
+   "passed": true,
+   "seconds": 1.16,
+   "tail": "test_unterminated_tail_is_refused_never_spliced (test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.628s\r\n\r\nOK\r\n"
+  },
+  {
+   "selector": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock",
+   "passed": true,
+   "seconds": 1.36,
+   "tail": "st_f4_activation_rechecks_earlier_microtasks_under_the_lock (test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.677s\r\n\r\nOK\r\n"
+  }
+ ],
+ "mutants": [
+  {
+   "mutant": "T1 reader splits on str.splitlines (pre-repair framing)",
+   "file": "web_alarm/transport_event_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 0.9,
+   "expected_found": [
+    "invalid transport event JSON"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "-olskfsso\\test_web_alarm_aud01t02b_repair.py\", line 225, in test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable\r\n    events = self.store().read_events()\r\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-olskfsso\\web_alarm\\transport_event_store.py\", line 241, in read_events\r\n    raise TransportEventStoreError(\r\nweb_alarm.transport_event_store.TransportEventStoreError: invalid transport event JSON at line 1\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.364s\r\n\r\nFAILED (errors=1)\r\n"
+  },
+  {
+   "mutant": "T2 reader accepts an unterminated tail",
+   "file": "web_alarm/transport_event_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 0.9,
+   "expected_found": [
+    "TransportEventStoreError not raised"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "_refused_never_spliced\r\n    self.assert_refused_unchanged(good[:-1], \"complete_record_without_lf\")\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-u3ebajdf\\test_web_alarm_aud01t02b_repair.py\", line 169, in assert_refused_unchanged\r\n    with self.assertRaises(TransportEventStoreError, msg=f\"{name}: read\"):\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: TransportEventStoreError not raised : complete_record_without_lf: read\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.365s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "T3 writer leaves U+0085/U+2028/U+2029 raw",
+   "file": "web_alarm/transport_event_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.4,
+   "expected_found": [
+    "raw line separator written into the transport log"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "\\xc2\\x85\\xe2\\x80\\xa8\\xe2\\x80\\xa9b\",\"key\\xe2\\x80\\xa9\":\"\\xc2\\x85\"},\"recorded_at\":\"2026-10-16T18:47:37.299348+00:00\",\"schema_version\":1}\\n{\"event_id\":\"sep_2\",\"event_type\":\"REMOTE_RECOVERED\",\"task_id\":null,\"microtask_id\":null,\"operation_id\":null,\"remote_call_kind\":null,\"error_class\":null,\"process_id\":null,\"process_start_time\":null,\"payload\":{\"note\":\"plain\"},\"recorded_at\":\"2026-10-16T18:47:37.492774+00:00\",\"schema_version\":1}\\n' : raw line separator written into the transport log\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.866s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "T4 append without the store lock",
+   "file": "web_alarm/transport_event_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.84,
+   "expected_found": [
+    "racing appends tore or spliced transport records"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "---\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-6j7bxewg\\test_web_alarm_aud01t02b_repair.py\", line 313, in test_concurrent_processes_lose_no_transport_event\r\n    self.assertEqual((invalid, tail), (0, 0), \"racing appends tore or spliced transport records\")\r\nAssertionError: Tuples differ: (1, 0) != (0, 0)\r\n\r\nFirst differing element 0:\r\n1\r\n0\r\n\r\n- (1, 0)\r\n?  ^\r\n\r\n+ (0, 0)\r\n?  ^\r\n : racing appends tore or spliced transport records\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.301s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "T5 failed append is not rolled back",
+   "file": "web_alarm/transport_event_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 0.94,
+   "expected_found": [
+    "a failed durable append left its bytes in the log"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "back (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-p4v75f8r\\test_web_alarm_aud01t02b_repair.py\", line 351, in test_failed_durable_append_is_rolled_back_and_reported\r\n    self.assertEqual(self.log.read_bytes(), good, \"a failed durable append left its bytes in the log\")\r\nAssertionError: b'{\"e[552 chars]:1}\\n{\"event_id\":\"lost_fsync\",\"event_type\":\"RE[240 chars]1}\\n' != b'{\"e[552 chars]:1}\\n' : a failed durable append left its bytes in the log\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.388s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "E1 TASK history append without the events lock",
+   "file": "web_alarm/event_checkpoint_store.py",
+   "selector": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 2.51,
+   "expected_found": [
+    "racing appends tore or spliced TASK history records"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "eback (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-0_p26dox\\test_web_alarm_aud01t02b_repair.py\", line 710, in test_concurrent_reports_from_processes_lose_no_event\r\n    self.assertEqual((invalid, tail), (0, 0), \"racing appends tore or spliced TASK history records\")\r\nAssertionError: Tuples differ: (1, 0) != (0, 0)\r\n\r\nFirst differing element 0:\r\n1\r\n0\r\n\r\n- (1, 0)\r\n?  ^\r\n\r\n+ (0, 0)\r\n?  ^\r\n : racing appends tore or spliced TASK history records\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.953s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S1 no history check at transition entry",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 2.61,
+   "expected_found": [],
+   "verdict": "NOT_CAUGHT",
+   "tail": "\n    self.assertEqual(outcome[:2], list(code), f\"{label}: {outcome}\")\r\nAssertionError: Lists differ: [409, 'transition_rejected'] != [409, 'state_machine_error']\r\n\r\nFirst differing element 1:\r\n'transition_rejected'\r\n'state_machine_error'\r\n\r\n- [409, 'transition_rejected']\r\n+ [409, 'state_machine_error'] : stale expected_status: [409, 'transition_rejected', 'ACTIVE -> DONE rejected: stale transition: the caller observed READY, but the microtask is ACTIVE; nothing was written']\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 2.079s\r\n\r\nFAILED (failures=2)\r\n"
+  },
+  {
+   "mutant": "S2 plain/ACTIVE commit without the in-lock history check",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 2.64,
+   "expected_found": [],
+   "verdict": "NOT_CAUGHT",
+   "tail": "p\\\\wa_aud02b_3qfablym\\\\toctou_ACTIVE\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl', 'next_safe_action': 'the transition to ACTIVE IS persisted, but its history event was not recorded (EventCheckpointStoreError: unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_3qfablym\\\\toctou_ACTIVE\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl); do not repeat the transition: repair or reconcile the TASK event history by manual review, then re-read the projection'}]\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 2.101s\r\n\r\nFAILED (failures=2)\r\n"
+  },
+  {
+   "mutant": "S3 activation commit without the locked activation rules (activate=False)",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.58,
+   "expected_found": [
+    "TransitionRejected not raised"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "icrotasks_under_the_lock)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-lby65334\\test_web_alarm_recovery_coordinator_repair3.py\", line 636, in test_f4_activation_rechecks_earlier_microtasks_under_the_lock\r\n    with self.assertRaises(TransitionRejected) as refused:\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: TransitionRejected not raised\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.664s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S9 plain commit accepts any current status (no compare-and-set)",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.43,
+   "expected_found": [
+    "transition_rejected"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "created_at': '2026-10-16T18:47:51.199725+00:00', 'updated_at': '2026-10-16T18:47:51.589852+00:00', 'projection': {'projection_version': 1, 'source_fingerprint': '7ec93484169e06386ff2dc9c1aa915a751fff60baa51e26b4ee0e168d548e4cf', 'projection_fingerprint': '3721adfa67fe8eff685349494a137f941313a2a2b6dc93fc93bdb9ac5292f26e', 'authority_source': 'lifecycle'}}, 'event_recorded': True, 'next_safe_action': 'run verification and transition m1 to VERIFIED with verification_evidence'}]\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.892s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S4 VERIFIED commit without the in-lock history check",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 2.58,
+   "expected_found": [
+    "DONE->VERIFIED"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "aud02b_mkto8u_y\\\\toctou_VERIFIED\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl', 'next_safe_action': 'the transition to VERIFIED IS persisted, but its history event was not recorded (EventCheckpointStoreError: unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_mkto8u_y\\\\toctou_VERIFIED\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl); do not repeat the transition: repair or reconcile the TASK event history by manual review, then re-read the projection'}]\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 2.024s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S5 VERIFIED event appended after the locks are released (pre-repair order)",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.29,
+   "expected_found": [
+    "closeout completed the TASK between a status and its event"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "----------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-s178uqtn\\test_web_alarm_aud01t02b_repair.py\", line 693, in test_closeout_cannot_interleave_between_status_and_its_event\r\n    self.assertFalse(closed_while_paused, \"closeout completed the TASK between a status and its event\")\r\nAssertionError: True is not false : closeout completed the TASK between a status and its event\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.755s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S6 history failure after commit raised as a refusal",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.4,
+   "expected_found": [
+    "a committed step was reported as refused"
+   ],
+   "verdict": "CAUGHT",
+   "tail": "----------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\REX\\AppData\\Local\\Temp\\aud01t02b-mutant-hwf5tp_u\\test_web_alarm_aud01t02b_repair.py\", line 600, in test_history_failure_after_commit_is_reported_as_committed\r\n    self.assertEqual(outcome[0], 200, f\"a committed step was reported as refused: {outcome}\")\r\nAssertionError: 409 != 200 : a committed step was reported as refused: [409, 'state_error', 'injected: cannot append event']\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.858s\r\n\r\nFAILED (failures=1)\r\n"
+  },
+  {
+   "mutant": "S7 unencodable text not checked before the commit",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 2.2,
+   "expected_found": [],
+   "verdict": "NOT_CAUGHT",
+   "tail": "t_recorded': False, 'history_error': \"UnicodeEncodeError: 'utf-8' codec can't encode character '\\\\ud800' in position 224: surrogates not allowed\", 'next_safe_action': \"the transition to VERIFIED IS persisted, but its history event was not recorded (UnicodeEncodeError: 'utf-8' codec can't encode character '\\\\ud800' in position 224: surrogates not allowed); do not repeat the transition: repair or reconcile the TASK event history by manual review, then re-read the projection\"}]\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.652s\r\n\r\nFAILED (failures=2)\r\n"
+  },
+  {
+   "mutant": "S8 prepare without the history check",
+   "file": "web_alarm/state_machine.py",
+   "selector": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point",
+   "snippet_occurrences": 1,
+   "returncode": 1,
+   "seconds": 1.55,
+   "expected_found": [
+    "state_machine_error"
+   ],
+   "verdict": "CAUGHT",
+   "tail": ", 'projection': {'projection_version': 1, 'source_fingerprint': 'a1aa97674cba8f03bbe0aa8ff2e524d085c1da55d9fce4b0cedf73f6a6b8656e', 'projection_fingerprint': '4195304d669f35dd88e38f60c3421d83a642467b7bb4a53ae4958f5b3d5dfc04', 'authority_source': 'projection_blocker'}}, 'event_recorded': False, 'history_error': 'EventCheckpointStoreError: unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_ridaagl5\\\\prepare\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl'}]\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 1.017s\r\n\r\nFAILED (failures=1)\r\n"
+  }
+ ],
+ "controls_all_pass": true,
+ "mutants_caught": 12,
+ "mutants_total": 15,
+ "verdict": "FAIL"
+}

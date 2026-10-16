@@ -1,3 +1,40 @@
+# Актуальное ограничение: только V2Ray, запуск отложен — 2026-10-16
+
+**HOSTED TUNNEL ON HOLD BY USER / V2RAY ROUTE NOT VERIFIED / PROXY FAIL-CLOSED NOT VERIFIED.**
+**DESKTOP E2E NOT VERIFIED; ordinary Chat 0 calls.**
+
+Пользователь проверит Platform Tunnels самостоятельно; подтверждённого tunnel_id нет.
+Действующий туннель не создавать. Конфигурацию, сеть, V2Ray и другие подключения не
+менять. Следующий этап согласуется отдельно после проверки доступа. Наличие tunnel_id
+само по себе не открывает запуск: сначала нужны доказанный V2Ray-маршрут и fail-closed.
+
+Полный текущий отчёт: [v2ray_proxy_constraints_20261016/report.md](v2ray_proxy_constraints_20261016/report.md).
+Launcher заблокирован до credentials и Popen; YAML-шаблон и предыдущие evidence
+сохранены. Новые параметры прокси не применены. Исторические инструкции ниже
+не выполнять как текущий план. Текущий gate — [NEXT_MANUAL_GATE.md](NEXT_MANUAL_GATE.md).
+
+---
+
+# Актуальный результат после полного перезапуска — 2026-10-16
+
+**DESKTOP E2E NOT VERIFIED / ordinary Chat 0 calls / AFTER FULL RESTART.**
+Пользователь уже выполнил повторные полные перезапуски; повторять ручной ввод @ и
+установку не требуется. Исследованный Desktop допускает локальный executor только
+в Work/TPP. Найден и локально подготовлен официальный Secure MCP Tunnel для обычного
+Chat. Локальный официальный tunnel bridge прошёл четыре настоящих вызова и сверку
+receipt; это не обычный Chat. Ресурс OpenAI, runtime key и новое ручное
+ChatGPT-подключение ещё отсутствуют.
+
+Полный отчёт A–E: [post_restart_diagnostics_20261016/report.md](post_restart_diagnostics_20261016/report.md).
+Подготовка: [secure_tunnel_preparation/README.md](secure_tunnel_preparation/README.md).
+Следующий gate: [NEXT_MANUAL_GATE.md](NEXT_MANUAL_GATE.md).
+Действующая конфигурация и AMENDMENT 04 этим этапом не изменялись. Git/GitHub-публикации нет.
+
+Далее сохранён исторический отчёт предыдущего этапа; его ожидание перезапуска
+заменено результатом выше.
+
+---
+
 # WUA 0.2.1 — установлен разрешённый кандидат
 
 **INSTALLED / ENABLED В КОНФИГУРАЦИИ. DESKTOP E2E NOT VERIFIED.**

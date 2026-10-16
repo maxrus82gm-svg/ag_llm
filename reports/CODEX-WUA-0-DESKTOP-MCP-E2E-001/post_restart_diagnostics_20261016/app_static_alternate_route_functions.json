@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Gin",
+    "offset": 1794302,
+    "code": "function Gin({config:e,isEverydayWorkMode:t,isTemporaryChat:n}){if(n)return[];let r=t?`Work mode`:`Codex`;return[{description:Iin(e.toolDescription,r),name:Kin,params:[{name:`prompt`,required:!0,type:{description:Iin(e.toolPromptParamDescription,r),type:`string`}},{name:`reason`,required:!0,type:{description:Iin(e.toolReasonParamDescription,r),type:`string`}}],type:`kwargs`}]}var Kin;"
+  },
+  {
+    "name": "Nai",
+    "offset": 4124199,
+    "code": "function Nai(e,t){if(e==null||t==null)return e;let n=new Map(Object.values(e).map(e=>[bg(e.system_hint.slice(e.system_hint.indexOf(`:`)+1)),e])),r={...e};for(let e of t){let t=e.canonicalAppId?.trim()||e.plugin.remotePluginId,i=t==null?void 0:n.get(bg(t));if(i!=null){if(e.plugin.enabled&&e.plugin.availability!==`DISABLED_BY_ADMIN`&&e.keywords?.length){i={...i,keyword_invocations:[...new Set([...i.keyword_invocations??[],...e.keywords])]};let t=i.system_hint.slice(i.system_hint.indexOf(`:`)+1);n.set(bg(t),i),r[ep(t)]=i}r[Lf(e.plugin.id)]=i}}return r}"
+  },
+  {
+    "name": "Iai",
+    "offset": 4125016,
+    "code": "function Iai(e,t,n,r=!1,i,{locked:a=!1,systemHintSurface:o=`chat`,conversation:s}={}){let c=new Map(Object.values(n??{}).map(e=>[e.system_hint,e])),l=r?Uun(t,Object.values(n??{}),i):t;if(a)return vA(l,!0);for(let t of Dp(e)){let e=Zd(t.path),a=et(e),s=n?.[a==null?e:Lf(a)];if(a!==Rai&&(s==null||s.surfaces!=null&&!s.surfaces.includes(o)||r&&!Hun(s,i)))continue;let u=a===Rai?zai:s?.system_hint;u!=null&&u!==`sketch`&&!l.includes(u)&&(l=l.filter(e=>{if(!e.startsWith(`plugin:`)&&!e.startsWith(`connector:`))return!0;let t=c.get(e);return!s?.mutually_exclusive&&!t?.mutually_exclusive}),l=[...l,u])}for(let t of Lai(e)){let e=e=>t===`site`?kai(e,`site`):e===`plugin:connector_76869538009648d5b282a4bb21c3d157`||e===`connector:connector_76869538009648d5b282a4bb21c3d157`;if(l.some(e))continue;let a=Object.values(n??{}).find(t=>e(t.system_hint)&&t.is_connected===!0&&Vun(t,{conversation:{gizmoId:null,isProjectMode:!1,modelSlug:void 0,enabledTools:void 0,...s,surface:o},isTemporaryChat:r,temporaryChatRequestsPersonalization:i}));a!=null&&a.system_hint!==`sketch`&&(l=[...l,a.system_hint])}return l}"
+  },
+  {
+    "name": "Pai",
+    "offset": 4124754,
+    "code": "function Pai(e){return e.query.snapshot(bm,e.get(Bai))}"
+  }
+]

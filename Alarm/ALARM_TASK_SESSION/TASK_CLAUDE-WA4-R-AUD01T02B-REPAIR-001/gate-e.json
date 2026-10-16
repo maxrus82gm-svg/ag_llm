@@ -1,0 +1,79 @@
+{
+ "pre_repair_map_files": 103,
+ "unchanged": 98,
+ "changed": [
+  "test_web_alarm_recovery_coordinator_repair3.py",
+  "test_web_alarm_state_machine_cas.py",
+  "web_alarm/event_checkpoint_store.py",
+  "web_alarm/state_machine.py",
+  "web_alarm/transport_event_store.py"
+ ],
+ "missing": [],
+ "changed_equals_allowed": true,
+ "new_local_files": [
+  "test_web_alarm_aud01t02b_repair.py"
+ ],
+ "new_is_only_the_repair_test": true,
+ "files": {
+  "web_alarm/event_checkpoint_store.py": {
+   "before": "7342b221e6663bee65bef116f57507b0de84b74269cb7541f4955b527eb91304",
+   "after": "9cf9e3ed45a415bfcab139bdb24fc88af65c7ece8723f1f5192c3e9a0ab8bf45",
+   "bytes": 10479,
+   "eol": "LF",
+   "raw_separators": 0
+  },
+  "web_alarm/state_machine.py": {
+   "before": "0bec1f270ac957fff279d3cf1de13201421600b6b173ef0f17b983c57bfac2fb",
+   "after": "3164383a1a881c6dfcac86678b746d01c038f1b4ccb988fbda5a6074a262f408",
+   "bytes": 31246,
+   "eol": "LF",
+   "raw_separators": 0
+  },
+  "web_alarm/transport_event_store.py": {
+   "before": "107a8e89cff2ffaae2a6eb899d0028e1c2a46788e12edfc3de5b9448a3b020cf",
+   "after": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+   "bytes": 11736,
+   "eol": "LF",
+   "raw_separators": 0
+  },
+  "test_web_alarm_recovery_coordinator_repair3.py": {
+   "before": "bf316497034a0f28f211ad27e25e079dc2bf3f3dd575a72aeff08c7e2d983811",
+   "after": "76244e276ffeb53737723a361c26b52479c39302b3d93ce68f22e074dc3b3016",
+   "bytes": 37339,
+   "eol": "LF",
+   "raw_separators": 0
+  },
+  "test_web_alarm_state_machine_cas.py": {
+   "before": "7a2ce35e5342667d490c3494666fbec0b43af4d883f815f23a472f6d092e1dff",
+   "after": "e00c5f1bbce9c5900887b767bc52195737a783f3cac15baa8f84459e55ca7e77",
+   "bytes": 17567,
+   "eol": "LF",
+   "raw_separators": 0
+  },
+  "test_web_alarm_aud01t02b_repair.py": {
+   "before": null,
+   "after": "b96c2b0cec62b05998075e068a4c13edb0969dadfa6210d20aecd53b25ff0ef3",
+   "bytes": 41845,
+   "eol": "LF",
+   "raw_separators": 0
+  }
+ },
+ "files_clean": true,
+ "baseline_copies_equal_pre_repair": {
+  "web_alarm/event_checkpoint_store.py": true,
+  "web_alarm/state_machine.py": true,
+  "web_alarm/transport_event_store.py": true,
+  "test_web_alarm_recovery_coordinator_repair3.py": true,
+  "test_web_alarm_state_machine_cas.py": true
+ },
+ "rollback_reproduces_pre_repair": true,
+ "r006_package": {
+  "manifest_sha256": "b14c366452547de2d4a102a5c50b4c7da0ad01dc539e7ded629f1a3fee46f84e",
+  "exact": 64,
+  "listed": 64
+ },
+ "diff_lines_added": 325,
+ "diff_lines_removed": 104,
+ "source_changes_diff_sha256": "4842f8a2e1fa78c82a375fd8fc84594e455523de7ebd33ba6d74bbba9e8508ca",
+ "verdict": "PASS"
+}

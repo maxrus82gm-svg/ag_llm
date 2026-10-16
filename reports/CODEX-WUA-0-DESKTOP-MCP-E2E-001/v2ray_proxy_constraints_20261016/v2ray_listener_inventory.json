@@ -1,0 +1,25 @@
+{
+  "processes": [
+    {
+      "Name": "v2rayN.exe",
+      "ProcessId": 27300
+    },
+    {
+      "Name": "sing-box.exe",
+      "ProcessId": 10276
+    }
+  ],
+  "tcp_listeners": [
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 10813,
+      "OwningProcess": 10276
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 10808,
+      "OwningProcess": 10276
+    }
+  ],
+  "scope": "Read-only process names/PIDs/listeners; no process args, config or subscription data; no connection attempts"
+}

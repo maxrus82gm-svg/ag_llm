@@ -1,0 +1,56 @@
+[
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function pZc(",
+    "offset": 10546135,
+    "text": "function pZc(e,t){return!1}"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function Jwn(",
+    "offset": 2213093,
+    "text": "function Jwn(e){let t=qwn(e).flatMap(({plugin:e,extensions:t,canonicalAppId:n})=>(t?.entrypoints??[]).map(t=>({pluginId:e.id,entrypoint:t,isCanonicalApp:n===t.appId}))),n=new Map;for(let e of t){let t=JSON.stringify([e.entrypoint.appId,e.entrypoint.toolName,e.entrypoint.type]);(!n.get(t)?.isCanonicalApp||e.isCanonicalApp)&&n.set(t,e)}return n}"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function Uwn(",
+    "offset": 2211001,
+    "text": "function Uwn(e,t,n){let r=tYe({server:n,tool:e})??void 0;return r==null?$te(t):{connectorId:r}}"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function WZc(",
+    "offset": 10561476,
+    "text": "function WZc(e,t,n,r,i,a){if(e.plugin.availability===iQc)return!1;if(n!=null){let t=r?.[Lf(e.plugin.id)];if((e.canonicalAppId||e.plugin.remotePluginId)&&(r==null||a&&t?.is_connected!==!0)||t!=null&&(t.surfaces!=null&&!t.surfaces.includes(n)||i?.(t)===!1))return!1}return e.plugin.enabled?!0:!e.plugin.installed&&t.includes(e.plugin.name)}"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function iAo(",
+    "offset": 7146387,
+    "text": "function iAo({availablePlugins:e,createdByMeRemotePlugins:t,homeDirectory:n,pluginShares:r,storefrontPlugins:i}){let a=e.find(e=>nKt(n,e.marketplacePath)),o=a==null?null:N0e(a),s=i.filter(e=>o!=null&&N0e(e)===o),c=aAo(t,r,s);return{marketplaceFilterValue:o,plugins:[...s,...c]}}"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "function": "function qwn(",
+    "offset": 2212985,
+    "text": "function qwn(e){return e.filter(({plugin:e})=>e.installed&&e.enabled&&e.availability!==`DISABLED_BY_ADMIN`)}"
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "function": "function Jwn(",
+    "offset": 3437408,
+    "text": "function Jwn(e){let t=dTn.safeParse(e);return t.success?t.data:null}"
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "function": "function Uwn(",
+    "offset": 3433417,
+    "text": "function Uwn(e){let t=lG,n=_G,r=()=>e==null||lG===t&&t?.isActive()===!0&&_G===n;try{let t=new URL(cG,window.location.origin),n=await fetch(t,{credentials:`include`,headers:{[iTn]:t.pathname,[aTn]:cG}});if(!r())return null;if(!n.ok)return dG=e==null?null:void 0,null;let i=await n.json();if(gG||!r())return null;let a=Gwn(i);return gG=a==null&&cTn.safeParse(i).success,dG=a==null?null:nG(a,`sessionEndpoint`,rG()?.statsigContext),e!=null&&a==null&&!gG?(dG=void 0,null):(e!=null&&(dG?.accountId!==e.accountId||dG?.userId!==e.userId)&&(dG=null),dG)}catch{return r()&&(dG=e==null?null:void 0),null}finally{r()&&($W(),e??(fG=null))}}async "
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "function": "function qwn(",
+    "offset": 3437338,
+    "text": "function qwn(e){let t=uTn.safeParse(e);return t.success?t.data:void 0}"
+  }
+]

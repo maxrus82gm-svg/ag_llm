@@ -1,0 +1,31 @@
+{
+  "app_executable": "C:/Program Files/WindowsApps/OpenAI.Codex_26.1007.9446.0_x64__2p2nqsd0c76g0/app/ChatGPT.exe",
+  "asset": "webview/assets/app-initial-102e45562729.js",
+  "asset_sha256": "c59b2a0be6c13496b30ebda167925cdccab26799cae350c62d2b37afe3589b57",
+  "local_execution_builder": {
+    "function": "lln",
+    "offset": 1908159,
+    "result_kind": "local_executor",
+    "included_fields": [
+      "mcp_servers",
+      "selected_capability_roots"
+    ]
+  },
+  "submission_guard": {
+    "offset": 4483600,
+    "exact_condition": "if(ie!=null&&N!==`tpp`)throw Error(`Local execution targets require a TPP conversation`);",
+    "interpretation": "A local executor target is rejected unless conversationOrigin is tpp."
+  },
+  "work_origin_mapping": {
+    "file": "webview/assets/chatgpt-moderation-disclaimers-859ce33e9e09.js",
+    "offset": 6952,
+    "observation": "isWorkConversation is true for tpp or flora. The local execution guard allows tpp only."
+  },
+  "mention_ui": {
+    "function": "pZc",
+    "offset": 10546135,
+    "body": "function pZc(e,t){return!1}",
+    "limitation": "This composer filtering function does not reject based on requiresLocalExecutor. A chip alone is not tool discovery proof."
+  },
+  "scope": "Static analysis of the installed build, corroborated by user negative Chat gate. No exact ordinary Chat outbound request trace was obtained. Do not claim universal behavior of all releases/accounts."
+}

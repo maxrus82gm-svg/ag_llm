@@ -38,6 +38,8 @@ SM_CHILD = """
             return real(self, *args, **kwargs)
         return gated
     TaskStore.compare_and_set_microtask_status = barrier(TaskStore.compare_and_set_microtask_status)
+    # AUD-02b: the history check, the compare-and-set and its event form one locked section
+    ServerStateMachine._commit = barrier(ServerStateMachine._commit)
     ServerStateMachine._admit_verified = barrier(ServerStateMachine._admit_verified)
     try:
         ServerStateMachine({storage!r}).transition({task!r}, "m1", {target!r}, verification_evidence="looked fine")

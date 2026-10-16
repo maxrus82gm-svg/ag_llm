@@ -1,0 +1,145 @@
+[
+ {
+  "case": "ACTIVE->DONE torn",
+  "http": [
+   409,
+   "state_error",
+   "unterminated event log: C:\\Users\\REX\\AppData\\Local\\Temp\\aud02b-explore-uytdqu8x\\state\\tasks\\active\\task_x\\events.jsonl"
+  ],
+  "m1_status_after": "DONE",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "ACTIVE->DONE middle",
+  "http": [
+   200,
+   "DONE"
+  ],
+  "m1_status_after": "DONE",
+  "changed": [
+   "tasks/active/task_x/checkpoint.json",
+   "tasks/active/task_x/checkpoint.md",
+   "tasks/active/task_x/events.jsonl",
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "READY->ACTIVE torn",
+  "http": [
+   409,
+   "state_error",
+   "unterminated event log: C:\\Users\\REX\\AppData\\Local\\Temp\\aud02b-explore-4j47z984\\state\\tasks\\active\\task_x\\events.jsonl"
+  ],
+  "m1_status_after": "ACTIVE",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json",
+   "tasks/active/task_x/plan.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "DONE->VERIFIED torn",
+  "http": [
+   409,
+   "state_error",
+   "unterminated event log: C:\\Users\\REX\\AppData\\Local\\Temp\\aud02b-explore-9rgct1pl\\state\\tasks\\active\\task_x\\events.jsonl"
+  ],
+  "m1_status_after": "VERIFIED",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "BACKUP_VERIFIED->READY torn",
+  "http": [
+   409,
+   "state_error",
+   "unterminated event log: C:\\Users\\REX\\AppData\\Local\\Temp\\aud02b-explore-rrm9hnxz\\state\\tasks\\active\\task_x\\events.jsonl"
+  ],
+  "m1_status_after": "READY",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "ACTIVE->VERIFIED (disallowed) middle",
+  "http": [
+   409,
+   "transition_rejected",
+   "ACTIVE -> VERIFIED rejected: transition is not allowed by the server state machine"
+  ],
+  "m1_status_after": "ACTIVE",
+  "changed": [
+   "tasks/active/task_x/checkpoint.json",
+   "tasks/active/task_x/checkpoint.md",
+   "tasks/active/task_x/events.jsonl"
+  ],
+  "added": []
+ },
+ {
+  "case": "DONE->VERIFIED lone surrogate evidence",
+  "http": [
+   400,
+   "invalid_value",
+   "'utf-8' codec can't encode character '\\ud800' in position 216: surrogates not allowed"
+  ],
+  "m1_status_after": "VERIFIED",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "ACTIVE->DONE lone surrogate operation_id",
+  "http": [
+   400,
+   "invalid_value",
+   "'utf-8' codec can't encode character '\\udc00' in position 146: surrogates not allowed"
+  ],
+  "m1_status_after": "DONE",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json"
+  ],
+  "added": []
+ },
+ {
+  "case": "prepare torn",
+  "http": [
+   409,
+   "state_error",
+   "unterminated event log: C:\\Users\\REX\\AppData\\Local\\Temp\\aud02b-explore-zi1w4nbt\\state\\tasks\\active\\task_x\\events.jsonl"
+  ],
+  "m1_status_after": "BACKUP_VERIFIED",
+  "changed": [
+   "tasks/active/task_x/microtasks/m1.json",
+   "tasks/active/task_x/microtasks/m1/restore_point/manifest.json",
+   "tasks/active/task_x/microtasks/m1/restore_point/manifest_entries/manifest_908af91c6b9c4a559bb2d1471bbfe40d.json",
+   "tasks/active/task_x/microtasks/m1/restore_point/snapshots/snapshot_39be8cf2d4be4f7d848a37ff286251b5.bin",
+   "tasks/active/task_x/microtasks/m1/restore_point/snapshots/snapshot_39be8cf2d4be4f7d848a37ff286251b5.json"
+  ],
+  "added": [
+   "tasks/active/task_x/microtasks/m1/restore_point/manifest.json",
+   "tasks/active/task_x/microtasks/m1/restore_point/manifest_entries/manifest_908af91c6b9c4a559bb2d1471bbfe40d.json",
+   "tasks/active/task_x/microtasks/m1/restore_point/snapshots/snapshot_39be8cf2d4be4f7d848a37ff286251b5.bin",
+   "tasks/active/task_x/microtasks/m1/restore_point/snapshots/snapshot_39be8cf2d4be4f7d848a37ff286251b5.json"
+  ]
+ },
+ {
+  "case": "report middle",
+  "http": [
+   201,
+   null
+  ],
+  "m1_status_after": "ACTIVE",
+  "changed": [
+   "tasks/active/task_x/events.jsonl"
+  ],
+  "added": []
+ }
+]

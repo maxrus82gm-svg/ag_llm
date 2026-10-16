@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-16T18:09:03.772229+00:00",
+  "config_sha256_start": "42d764ff21d7e91abe06a02af64368914742903e0e4514eeffe71147c10987b4",
+  "config_sha256_end": "42d764ff21d7e91abe06a02af64368914742903e0e4514eeffe71147c10987b4",
+  "config_unchanged_this_diagnostic_stage": true,
+  "amendment_04_protected_unchanged": {
+    "report.md": true,
+    "candidate_manifest.json": true,
+    "integrity.json": true
+  },
+  "installed_sealed_files_checked": 1675,
+  "installed_sealed_mismatches": [],
+  "prepared_sealed_payload_mismatches": [],
+  "previous_receipts_checked": 76,
+  "previous_receipt_mismatches": [],
+  "historical_1802_receipts_preserved": {
+    "18771be5e4e944bda650db3f81bda963": true,
+    "6a23a2f3f6d04ca4b0d46ff1c1cb8d92": true
+  },
+  "installed_cache_receipts": 0,
+  "hosted_tunnel_gate_receipts": 0,
+  "local_offline_bridge_validation": "PASS",
+  "existing_processes_restarted_by_agent": false,
+  "network_settings_permissions_git_operations": 0,
+  "ordinary_chat_calls": 0,
+  "desktop_e2e": "DESKTOP E2E NOT VERIFIED",
+  "integrity_status": "PASS",
+  "bounded_test_process_cleanup": {
+    "test_pid_absent": true,
+    "cloudflared_processes": 0,
+    "task_tunnel_python_processes": 0,
+    "source": "Win32_Process read-only snapshot following bounded test expiry"
+  }
+}

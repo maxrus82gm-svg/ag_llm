@@ -1,0 +1,17 @@
+{
+  "environment_presence_only": {
+    "CONTROL_PLANE_API_KEY": false,
+    "OPENAI_API_KEY": false,
+    "OPENAI_ADMIN_KEY": false,
+    "CONTROL_PLANE_TUNNEL_ID": false,
+    "TUNNEL_ID": false,
+    "TUNNEL_CLIENT_CONFIG": false,
+    "TUNNEL_CLIENT_PROFILE": false,
+    "TUNNEL_CLIENT_PROFILE_FILE": false,
+    "TUNNEL_CLIENT_PROFILE_DIR": false,
+    "CLOUDFLARED_MANAGED": false,
+    "CLOUDFLARED_TUNNEL_TOKEN": false
+  },
+  "values_not_collected": true,
+  "no_secret_file_search": true
+}

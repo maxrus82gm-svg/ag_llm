@@ -1,0 +1,38 @@
+Sample: sample_mcp_stdio_local
+Summary: Local stdio MCP server with the shortest first-use tunnel-client path
+Use when: Use this when you already have a local MCP command and want the fastest path to a healthy tunnel daemon without any HTTP or OAuth discovery setup.
+Required:
+  - --tunnel-id
+  - --mcp-command
+Optional:
+  - --control-plane-base-url
+  - --control-plane-url-path
+  - --control-plane-api-key-ref
+  - --health-listen-addr
+  - --open-web-ui
+Notes:
+  - Stdio transports skip HTTP OAuth discovery because there is no PRMD endpoint to fetch.
+  - The command is always bound to channel=main.
+
+config_version: 1
+control_plane:
+  base_url: "https://api.openai.com"
+
+  tunnel_id: "tunnel_0123456789abcdef0123456789abcdef"
+  api_key: "env:CONTROL_PLANE_API_KEY"
+health:
+  # Keep a fixed port when you want a stable local admin URL.
+  # For concurrent or clean-room runs, switch listen_addr to "127.0.0.1:0" and
+  # set url_file so another process can discover the resolved /healthz, /readyz,
+  # /metrics, and /ui base URL.
+  listen_addr: "127.0.0.1:8080"
+  # url_file: "/tmp/tunnel-client-health.url"
+admin_ui:
+  open_browser: false
+log:
+  level: info
+  format: json
+mcp:
+  commands:
+    - channel: main
+      command: "python /path/to/server.py"

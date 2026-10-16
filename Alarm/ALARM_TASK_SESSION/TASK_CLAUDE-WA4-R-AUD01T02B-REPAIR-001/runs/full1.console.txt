@@ -1,0 +1,44 @@
+{
+ "label": "full1",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "M:\\GitHub\\ag_llm\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+  "--output",
+  "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-full1-aks13_mj\\out",
+  "all"
+ ],
+ "exit": 1,
+ "wall_seconds": 975.806,
+ "base": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-full1-aks13_mj",
+ "tests_run": 846,
+ "passed": 843,
+ "failures": 2,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 974.615,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock",
+   "FAIL",
+   " File \"M:\\GitHub\\ag_llm\\test_web_alarm_recovery_coordinator_repair3.py\", line 633, in test_f4_activation_rechecks_earlier_microtasks_under_the_lock\n    with self.assertRaises(TransitionRejected) as refused:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransitionRejected not raised\n"
+  ],
+  [
+   "test_web_alarm_state_machine_cas.StaleTransitionTests.test_c_two_transitions_from_one_observed_status_only_one_applies",
+   "FAIL",
+   "_status_only_one_applies\n    self.wait_flag(\"y_read\", fail)\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_recovery_coordinator_repair2.py\", line 172, in wait_flag\n    self.fail(f\"child exited before {name}: {proc.communicate()}\")\nAssertionError: child exited before y_read: ('{\"result\": \"APPLIED\"}\\n', '')\n"
+  ],
+  [
+   "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+   "SKIP",
+   "symlink creation is not permitted here"
+  ]
+ ]
+}

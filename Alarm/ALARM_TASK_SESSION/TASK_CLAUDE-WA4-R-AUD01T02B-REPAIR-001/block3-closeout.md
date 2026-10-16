@@ -1,0 +1,47 @@
+### CLAUDE-WA4-R-AUD01T02B-REPAIR-001 — Global Transport History & Microtask Transition Integrity — результат
+
+**TASK:** CLAUDE-WA4-R-AUD01T02B-REPAIR-001 (БЛОК 1, USER-DIRECTED). Назначение — стартовое сообщение пользователя 2026-10-16. Исполнитель — агент 008 (Claude); verifier — ChatGPT. AMENDMENT не было.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE/VERIFIED, LOCAL ONLY. WARN/GATEWAY/STRICT не включались, **WA4-R остаётся PARTIAL**.
+- **Baseline gate до правок:** PASS — 103/103 файла ожидаемой карты (pin R-006 + прошлый ремонт), пакет R-006 64/64. Пересечения с Codex нет: его БЛОК 1 запрещает ему менять `web_alarm/*.py`.
+- **AUD-01T — FIXED / VERIFIED LOCALLY:**
+  - разбор только по физическому LF (CRLF совместим), U+0085/U+2028/U+2029 экранируются;
+  - оборванный хвост → отказ без склейки;
+  - read-check-append под межпроцессным lock;
+  - неудачная запись откатывается;
+  - невалидный UTF-8 → 409, непарный суррогат → 400 без записи.
+- **AUD-02b — FIXED / VERIFIED LOCALLY** (отказ до commit):
+  - нечитаемая история или некодируемый текст → отказ до любой записи, в том числе до REJECTED-события, на всех путях, включая READY→ACTIVE, DONE→VERIFIED и prepare;
+  - статус и событие пишутся в одной заблокированной секции;
+  - сбой истории после CAS → 200 с `event_recorded=false`.
+- **Связанные исправления:**
+  - потеря событий TASK при параллельных писателях: leaf-lock в `append_event`; платформа: 8×250 записей без lock → выжило 826/2000;
+  - closeout между статусом и событием VERIFIED;
+  - непарный суррогат сохранял VERIFIED/DONE.
+- **Изменено:**
+  - `web_alarm/transport_event_store.py` (`cbd74a25…`), `state_machine.py` (`3164383a…`), `event_checkpoint_store.py` (`9cf9e3ed…`);
+  - новый `test_web_alarm_aud01t02b_repair.py` (`b96c2b0c…`, 27 тестов);
+  - в двух существующих тестах (`state_machine_cas` `e00c5f1b…`, `recovery_coordinator_repair3` `76244e27…`) перенесена только точка инъекции на новую секцию `ServerStateMachine._commit`.
+  - Diff +325/−104; Gate E PASS, откат воспроизводит исходные байты.
+- **Проверки** (guarded runner, Windows 10, Python 3.12.10, изоляция 0 везде):
+  - FAIL-first финального модуля на исходных байтах: 2 PASS (контроли) / 21 FAIL / 4 ERROR;
+  - после ремонта 27/27;
+  - **полный набор 849 — 848 PASS / 0 / 0 / 1 SKIP**: все 822 прежних ID с прежними статусами + 27 новых, exit 0;
+  - мутанты 15/15 пойманы;
+  - R-006 11/11, quality R-006/R-004 12/12, quality прошлого ремонта 4/4;
+  - прежние probes AUD-01T/AUD-02b теперь 3/3 PASS;
+  - focused 3 × 320/320, гонки 5 × 9/9;
+  - probes аудита 12/14 (P3/P4 = AUD-03/04, вне ремонта).
+  - Предварительный полный прогон до переноса шва: 2 FAIL (сохранён в evidence).
+- **OPEN FINDING:**
+  - **AUD-02b-R MEDIUM** — гибель процесса между CAS и событием: статус есть, события нет, не обнаруживается (воспроизведено);
+  - **AUD-01T-R MEDIUM** — crash посреди transport-append оставляет хвост, всё transport-evidence закрыто до ручного ремонта;
+  - **AUD-02c LOW-MEDIUM** — `POST …/report` (`server.py`) дописывает в историю с невалидной строкой;
+  - LOW: O(n) transport-append, Python-равенство identity replay, events-lock timeout;
+  - AUD-03/04 без изменений.
+- **NEEDS USER DECISION:** контракт для AUD-02b-R/AUD-03 (например, `pending_event_id` + проверка в projection); процедура ремонта transport-журнала; ремонт AUD-02c.
+- **API:** в ответах transition/prepare новое поле `event_recorded` (+ `history_error`). Отказ по истории — 409 `state_machine_error`.
+- **Ограничения:** одна машина, чистого CI нет; live storage не сканировался — уже повреждённые журналы теперь блокируют переходы и transport до ручного восстановления; атомарность чтения без lock измерена только на этой NTFS.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001/report.md`; рядом `evidence.json`, `manifest.json`, `scope.md`, `baseline-gate.json`, `gate-e.json`, `source-changes.diff`, `baseline/`, `probes/`, `runs/`, `tools/`.
+- **DOC IMPACT** (предложения): 23 (контракты transport и истории TASK, `event_recorded`, остаточное окно), 36.2 (модуль 27, мутанты 15, перенос шва), 25/05/06/34/000 (статусы и находки); 24/18/36/36.1 — NO CHANGE.
+- **NEXT:** независимая проверка ChatGPT; решения пользователя по AUD-02b-R/AUD-03, AUD-01T-R, AUD-02c, AUD-04; чистый CI (W1) и preflight live storage (W3) до решения о WARN.

@@ -1,0 +1,22 @@
+{
+  "recorded_local": "2026-10-16T23:13:01.936297+05:00",
+  "user_constraints": [
+    "No live hosted tunnel until separate agreement",
+    "Mandatory V2Ray routing; no direct internet egress from tunnel-client",
+    "Proxy routing and fail-closed must be proven before activation",
+    "No changes to live config, network, V2Ray, existing connections",
+    "Tunnels access not checked; no confirmed tunnel_id; no API keys in chat"
+  ],
+  "config_sha256_start": "42d764ff21d7e91abe06a02af64368914742903e0e4514eeffe71147c10987b4",
+  "own_artifacts_before": {
+    "status.json": "8a4e0586bfc4046e5c929c333a39177824391b80208c9576ad1f0a089f98e1b2",
+    "NEXT_MANUAL_GATE.md": "5144e6d4c11402fdcbfb75c3e1cb68eb4bafb196ec631e17952f654d2bcf9179",
+    "report.md": "6d385eb1cf4c6fdc3c1e012fbc481890dc64e312f79e7209177972fd799c847c",
+    "INSTALL.md": "7020dd589c3448e71b0655f6513cd6f8574c3f8acd9c20713ff751287351d0e5",
+    "secure_tunnel_preparation/README.md": "06de45c17340242c606237e85b17fc3291825a4fdceee7de56df3441acb8d434",
+    "secure_tunnel_preparation/start_tunnel.py": "e5ba6699c1c63cea9bcdb72b263a6660783c5c71d47d620ead93512f0109f39d",
+    "secure_tunnel_preparation/Start-WUA-Tunnel.cmd": "88e12deb8c67c364362ca7718572880f9ba3fb5a052bf31f8964c49504340a89",
+    "secure_tunnel_preparation/wua-stdio.template.yaml": "512f2b6395353e50f79690e62808972b3db9bf51e5805dfd18b4e933673d3463",
+    "post_restart_diagnostics_20261016/report.md": "02107ad59e52e27f39ae5e82ffff60588a56494c2b0af482070565881fa9d02d"
+  }
+}

@@ -1,0 +1,19 @@
+Create a runnable first-use tunnel-client profile
+
+Usage:
+  tunnel-client init [flags]
+
+Flags:
+      --control-plane-api-key-ref string   Secret reference for the runtime control-plane API key (default "env:CONTROL_PLANE_API_KEY")
+      --control-plane-base-url string      Control-plane base URL to write into the generated profile (default "https://api.openai.com")
+      --control-plane-url-path string      Optional control-plane URL path to write into the generated profile
+      --force                              Replace an existing profile
+      --health-listen-addr string          Health listener address to write into the generated profile. Use :0 to request an ephemeral port at runtime. (default "127.0.0.1:8080")
+  -h, --help                               help for init
+      --mcp-command string                 MCP command for the generated profile
+      --mcp-server-url string              MCP server URL for the generated profile
+      --open-web-ui                        Set admin_ui.open_browser=true in the generated profile
+      --profile string                     Profile name to create (default "sample_mcp_with_dcr")
+      --profile-dir string                 Profile directory override
+      --sample string                      Built-in sample to materialize (auto-selects sample_mcp_stdio_local for --mcp-command, otherwise sample_mcp_with_dcr)
+      --tunnel-id string                   Tunnel ID to write into the generated profile

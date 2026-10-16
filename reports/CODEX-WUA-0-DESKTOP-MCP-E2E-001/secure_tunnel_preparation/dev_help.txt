@@ -1,0 +1,13 @@
+Developer helpers for local tunnel-client validation
+
+Usage:
+  tunnel-client dev [command]
+
+Available Commands:
+  mcp-stub    Run a local MCP + OAuth stub for first-use tunnel-client validation
+  proxy       Run a local in-memory tunnel control plane plus tunnel-client
+
+Flags:
+  -h, --help   help for dev
+
+Use "tunnel-client dev [command] --help" for more information about a command.

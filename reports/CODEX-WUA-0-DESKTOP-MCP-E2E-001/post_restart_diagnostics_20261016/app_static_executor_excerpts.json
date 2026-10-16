@@ -1,0 +1,116 @@
+[
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "needle": "mcp_extension_server_tools_empty",
+    "offset": 3472832,
+    "context": "()}),dDn=H({extensions:Vu(z(),Au()).optional(),experimental:Vu(z(),Au()).optional()})})))()}function pDn(e,t){for(let n of t){let t={hostId:e,server:n.name,pluginId:n.pluginId};if(n.toolsError!=null){zf.warning(`mcp_extension_tool_discovery_failed`,{safe:{authStatus:n.authStatus},sensitive:{...t,error:n.toolsError}});continue}Object.keys(n.tools).length===0&&zf.info(`mcp_extension_server_tools_empty`,{safe:{authStatus:n.authStatus},sensitive:{...t,runtimeStatus:n.runtimeStatus}});let r=iDn(n.serverCapabilities);if(r!=null){if(!r.success)zf.warning(`mcp_extension_settings_rejected`,{safe:{reason:`invalid_settings_capability`,description:`Plugin settings are unavailable: the openai/settings capability has an invalid declaration.`},sensitive:{...t,validationErrors:tt(r.error)}});else{let{readTool:e,updateTool:i}=r.data,a=_bn(n.tools);(e===i||!a.some(t=>t.name===e)||!a.some(e=>e.name===i))&&zf.warning(`mcp_extension_settings_rejected`,{safe:{reason:`missing_invalid_or_duplicate_settings_tools`,description:`Plugin settings are unavailable: r"
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 5418359,
+    "context": "p:KZr(e),extensions:DZr(`extensions`in e?e.extensions:void 0),servicePlugin:e,description:t.short_description??e.release.description,displayName:e.release.display_name,composerIconPath:t.composer_icon_url??null,logoDarkPath:t.logo_url_dark??null,logoPath:t.logo_url,marketplaceDisplayName:null,marketplaceName:eM,marketplacePath:null,remoteMarketplaceName:eM,keywords:r,requiresLocalExecutor:e.release.requires_local_executor===!0,plugin:{authPolicy:e.authentication_policy??`ON_USE`,installedAt:n&&e.installed_at!=null?Date.parse(e.installed_at)/1e3:null,disabledReason:e.disabled_reason??(e.status===`DISABLED_BY_ADMIN`?`disabled_by_admin`:null),eligiblePlanTypes:e.eligible_plan_types??null,availability:e.status===`DISABLED_BY_ADMIN`?`DISABLED_BY_ADMIN`:`AVAILABLE`,enabled:n&&e.enabled,id:`${e.name}@${eM}`,installed:n,installPolicy:e.installation_policy??`AVAILABLE`,installPolicySource:e.installation_policy_source??null,interface:{brandColor:t.brand_color??null,capabilities:t.capabilities,category:t.category,composerIcon:null,compo"
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 5423309,
+    "context": "!p||k!=null,te=T&&m!=null&&N!=null&&!p,ne=p?EW.FIVE_MINUTES:0,re;t[24]!==F||t[25]!==ee||t[26]!==te||t[27]!==ne?(re={...F,subscribed:ee,enabled:te,staleTime:ne},t[24]=F,t[25]=ee,t[26]=te,t[27]=ne,t[28]=re):re=t[28];let{data:I,error:L,isLoading:R}=VP(re);if(!T){let e;return t[29]===w?e=t[30]:(e={errorMessage:null,hostedPlugin:null,ownership:null,isLoading:w,plugin:null,requiresLocalExecutor:!1,refetch:iQr},t[29]=w,t[30]=e),e}let ie=p||P?I?.plugin.release.app_templates:void 0,ae=p||P?I?.plugin.canonical_app_id:void 0,oe=A?.message??null,se=p?I?.plugin??null:null,ce;t[31]!==I?.plugin||t[32]!==p?(ce=p?KZr(I?.plugin):null,t[31]=I?.plugin,t[32]=p,t[33]=ce):ce=t[33];let le=j||p&&!1,ue=k??null,de;t[34]!==k||t[35]!==I||t[36]!==p?(de=I?.plugin.release.app_manifest?.apps!=null&&(p||k?.summary.version!=null&&k.summary.version===I.plugin.release.version)?new Map(Object.entries(I.plugin.release.app_manifest.apps).map(rQr)):void 0,t[34]=k,t[35]=I,t[36]=p,t[37]=de):de=t[37];let fe;t[38]===ie?fe=t[39]:(fe=ie==null?void 0:new Set(ie.filter(nQr)"
+  },
+  {
+    "file": "webview/assets/app-shared-30671c57ec82.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 5424520,
+    "context": "ait M()},t[40]=M,t[41]=he);let ge;return t[42]!==ie||t[43]!==ae||t[44]!==oe||t[45]!==se||t[46]!==ce||t[47]!==le||t[48]!==ue||t[49]!==de||t[50]!==fe||t[51]!==pe||t[52]!==me||t[53]!==he?(ge={canonicalAppId:ae,errorMessage:oe,hostedPlugin:se,ownership:ce,isLoading:le,plugin:ue,mcpAppIdsByServerKey:de,setupEligibleAppTemplateIds:fe,serviceAppTemplates:ie,servicePlugin:pe,requiresLocalExecutor:me,refetch:he},t[42]=ie,t[43]=ae,t[44]=oe,t[45]=se,t[46]=ce,t[47]=le,t[48]=ue,t[49]=de,t[50]=fe,t[51]=pe,t[52]=me,t[53]=he,t[54]=ge):ge=t[54],ge}function tQr(e){return e.template_id}function nQr(e){return e.can_setup===!0}function rQr(e){let[t,n]=e;return[t,n.id]}async function iQr(){}function aQr({scope:e,accountId:t,hostId:n,marketplacePath:r,pluginName:i,queryClient:a,remoteMarketplaceName:o,requestOptions:s,productContext:c,localMarketplaceName:l,roots:u}){let d=U2(n),f=e.get(gQ)??void 0,p=d&&t===void 0?f:t;return UP({queryKey:sQr({accountId:p,hostId:n,marketplacePath:r,pluginName:i,remoteMarketplaceName:o,localMarketplaceName:l,roots:u,"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 2207336,
+    "context": ".entrypoint.type]);return{id:t,legacyId:n===t?void 0:n,title:e.title,icon:e.icon,path:Wh(e.server,e.tool.name),source:Own(e)}}function Own(e){let t=`tool`in e?tYe(e):e.connectorId;return`appId`in e&&(t=e.appId),{hostId:e.hostId,server:e.server,pluginId:e.pluginId,connectorId:t??e.icon?.connectorId}}function kwn(e,t,n,r){return(0,Qwn.default)(qwn(n).flatMap(({plugin:n,requiresLocalExecutor:i,hostedThreadEntrypoints:a})=>i?[]:(a??[]).map(i=>({appId:i.appId,toolName:i.toolName,resourceUri:i.resourceUri,title:i.title,icon:i.icon,hostId:e,accountId:t,productContext:r,pluginId:n.remotePluginId??n.id,server:i.appId,connectorId:i.appId}))),({appId:e,toolName:t})=>JSON.stringify([e,t]))}function Awn(e,t){return t==null?void 0:jwn(e,t)!=null}function jwn(e,t){return t==null?void 0:qwn(t).find(({plugin:t,requiresLocalExecutor:n})=>!n&&(t.remotePluginId??t.id)===e.pluginId)?.hostedThreadEntrypoints?.find(t=>t.appId===e.appId&&t.toolName===e.toolName)}function Mwn(e){return(0,Qwn.default)(e.flatMap(({plugin:e,requiresLocalExecutor:t,servi"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 2207771,
+    "context": ".map(i=>({appId:i.appId,toolName:i.toolName,resourceUri:i.resourceUri,title:i.title,icon:i.icon,hostId:e,accountId:t,productContext:r,pluginId:n.remotePluginId??n.id,server:i.appId,connectorId:i.appId}))),({appId:e,toolName:t})=>JSON.stringify([e,t]))}function Awn(e,t){return t==null?void 0:jwn(e,t)!=null}function jwn(e,t){return t==null?void 0:qwn(t).find(({plugin:t,requiresLocalExecutor:n})=>!n&&(t.remotePluginId??t.id)===e.pluginId)?.hostedThreadEntrypoints?.find(t=>t.appId===e.appId&&t.toolName===e.toolName)}function Mwn(e){return(0,Qwn.default)(e.flatMap(({plugin:e,requiresLocalExecutor:t,servicePlugin:n})=>e.installed&&e.enabled&&e.availability!==`DISABLED_BY_ADMIN`&&!t&&n!=null&&`extensions`in n?(n.extensions?.entrypoints??[]).map(t=>({entrypoint:t,pluginId:e.id,remotePluginId:RXe(e)})):[]),({entrypoint:{app_id:e,tool_name:t}})=>JSON.stringify([e,t])).map(({entrypoint:e,pluginId:t,remotePluginId:n})=>({id:JSON.stringify([`mcp-global`,e.app_id,e.tool_name,`global`]),title:e.title,icon:Zwn(e.icons),path:Wh(e.app_id,e.too"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 2207978,
+    "context": "appId:e,toolName:t})=>JSON.stringify([e,t]))}function Awn(e,t){return t==null?void 0:jwn(e,t)!=null}function jwn(e,t){return t==null?void 0:qwn(t).find(({plugin:t,requiresLocalExecutor:n})=>!n&&(t.remotePluginId??t.id)===e.pluginId)?.hostedThreadEntrypoints?.find(t=>t.appId===e.appId&&t.toolName===e.toolName)}function Mwn(e){return(0,Qwn.default)(e.flatMap(({plugin:e,requiresLocalExecutor:t,servicePlugin:n})=>e.installed&&e.enabled&&e.availability!==`DISABLED_BY_ADMIN`&&!t&&n!=null&&`extensions`in n?(n.extensions?.entrypoints??[]).map(t=>({entrypoint:t,pluginId:e.id,remotePluginId:RXe(e)})):[]),({entrypoint:{app_id:e,tool_name:t}})=>JSON.stringify([e,t])).map(({entrypoint:e,pluginId:t,remotePluginId:n})=>({id:JSON.stringify([`mcp-global`,e.app_id,e.tool_name,`global`]),title:e.title,icon:Zwn(e.icons),path:Wh(e.app_id,e.tool_name),hostedEntrypoint:e,hostedPluginId:t,remotePluginId:n}))}function Nwn(e){return e.flatMap(({name:e,pluginId:t,serverInfo:n,tools:r,serverCapabilities:i})=>{let a=qwe(i,`openai/mentions`,N),o=a?.succes"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 2212468,
+    "context": "let{readTool:u,updateTool:d}=l.data,f=c.find(e=>e.name===u);return f==null||u===d||!c.some(e=>e.name===d)?[]:[{hostId:e,icon:$te(a),pluginId:i,server:t,connectorId:tYe({server:t,tool:f})??void 0,title:a?.title??a?.name??t,readTool:u,updateTool:d,transport:{type:`app-server`,tools:c},entrypoint:{type:`settings`}}]})}function Gwn(e,t,n){return qwn(n).flatMap(({plugin:n,requiresLocalExecutor:r,extensions:i})=>r?[]:(i?.settings??[]).map(r=>({hostId:e,server:r.appId,connectorId:r.appId,pluginId:n.remotePluginId??n.id,icon:{connectorId:r.appId},title:n.interface?.displayName??n.name,readTool:r.readToolName,updateTool:r.updateToolName,transport:{type:`hosted`,accountId:t},entrypoint:{type:`settings`}})))}function Kwn(e){let t=Du(e.server)?yce(e.tool):null;return JSON.stringify([`mcp-global`,t?.connectorId??Own(e).connectorId??e.server,t?.actionName??e.tool.name,e.entrypoint.type])}function qwn(e){return e.filter(({plugin:e})=>e.installed&&e.enabled&&e.availability!==`DISABLED_BY_ADMIN`)}function Jwn(e){let t=qwn(e).flatMap(({plugin:"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 7150232,
+    "context": "emotePluginId)===!0}var pAo,mAo,hAo,gAo;function _Ao(){return(_Ao=e((()=>{pAo=t(An(),1),hg(),dKt(),Nc(),Ip(),Vko(),mAo=`/.agents/plugins/marketplace.json`,hAo=`/marketplace.json`,gAo=[`computer-use@${cRe}`,`${nCe}@${cRe}`,`chrome@${cRe}`,`chrome-internal@${cRe}`,`spreadsheets@openai-primary-runtime`,`presentations@openai-primary-runtime`]})))()}function vAo(e){return{requiresLocalExecutor:e.requiresLocalExecutor,category:e.plugin.interface?.category??null,creatorName:e.plugin.shareContext?.creatorName?.trim()||null,description:e.description,disabledReason:e.plugin.disabledReason??null,displayName:e.displayName??e.plugin.name,enabled:e.plugin.enabled,id:$Ze(e.plugin),installed:e.plugin.installed,installedPlugin:e,keywords:e.keywords??[],logoDarkPath:e.logoDarkPath,logoPath:e.logoPath,marketplaceDisplayName:e.marketplaceDisplayName,marketplaceName:e.marketplaceName,marketplacePath:e.marketplacePath,name:e.plugin.name,origin:TAo(e.marketplaceName),pluginId:e.plugin.id,pluginSourceType:e.plugin.source.type,remoteMarketplaceName:e"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 7150256,
+    "context": "pAo,mAo,hAo,gAo;function _Ao(){return(_Ao=e((()=>{pAo=t(An(),1),hg(),dKt(),Nc(),Ip(),Vko(),mAo=`/.agents/plugins/marketplace.json`,hAo=`/marketplace.json`,gAo=[`computer-use@${cRe}`,`${nCe}@${cRe}`,`chrome@${cRe}`,`chrome-internal@${cRe}`,`spreadsheets@openai-primary-runtime`,`presentations@openai-primary-runtime`]})))()}function vAo(e){return{requiresLocalExecutor:e.requiresLocalExecutor,category:e.plugin.interface?.category??null,creatorName:e.plugin.shareContext?.creatorName?.trim()||null,description:e.description,disabledReason:e.plugin.disabledReason??null,displayName:e.displayName??e.plugin.name,enabled:e.plugin.enabled,id:$Ze(e.plugin),installed:e.plugin.installed,installedPlugin:e,keywords:e.keywords??[],logoDarkPath:e.logoDarkPath,logoPath:e.logoPath,marketplaceDisplayName:e.marketplaceDisplayName,marketplaceName:e.marketplaceName,marketplacePath:e.marketplacePath,name:e.plugin.name,origin:TAo(e.marketplaceName),pluginId:e.plugin.id,pluginSourceType:e.plugin.source.type,remoteMarketplaceName:e.remoteMarketplaceName??"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 7152004,
+    "context": "ilable:i,isInAppBrowserUseAvailable:a,isMessagesAvailable:o,plugins:e}),n,t)).filter(e=>{if(!Wko(e))return!1;if(!oo(e.marketplaceName))return!0;let t=ife(e.plugin.name);return t?.installWhenMissing!==!0||t.installWhenMissingRequiresOptIn===!0})}function xAo(e,t){let n=e.release.interface,r;return e.scope===`WORKSPACE`?r=`workspace`:e.scope===`USER`&&(r=`user-cloud`),{requiresLocalExecutor:e.release.requires_local_executor===!0,category:n.category??t?.plugin.interface?.category??null,connectionAppId:e.canonical_app_id??void 0,creatorName:((`creator_name`in e?e.creator_name:null)??t?.plugin.shareContext?.creatorName)?.trim()||null,description:n.short_description??e.release.description,disabledReason:e.disabled_reason??t?.plugin.disabledReason??null,displayName:e.release.display_name,enabled:t?.plugin.enabled??!1,id:e.id,installed:t?.plugin.installed??!1,installationPolicy:e.installation_policy,installedPlugin:t,keywords:n.capabilities,logoDarkPath:n.logo_url_dark??t?.logoDarkPath??null,logoPath:n.logo_url??t?.logoPath??null,mar"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 7154286,
+    "context": "tMap(({plugin:e})=>{let t=e.remotePluginId??e.shareContext?.remotePluginId;return t==null?[]:[t]}));return[...eAo({plugins:r,query:``}).map(e=>({...vAo(e),origin:`local`})),...i.flatMap(t=>{let n=a.get(t.id)??null;return s.has(t.id)||o.has(t.id)||n!=null&&o.has(n.plugin.id)?[]:(s.add(t.id),[{...xAo(t,n),origin:e?`user-cloud`:`workspace`}])})]}function wAo(e,t){return{requiresLocalExecutor:e.requires_local_executor??t?.requiresLocalExecutor,category:t?.plugin.interface?.category??null,description:e.short_description??null,disabledReason:e.disabled_reason??t?.plugin.disabledReason??null,displayName:e.display_name,enabled:t?.plugin.enabled??!1,id:e.id,installed:t===void 0?void 0:t?.plugin.installed??!1,installedPlugin:t,keywords:e.keywords??t?.keywords??[],logoDarkPath:e.icon_url_dark??t?.logoDarkPath??null,logoPath:e.icon_url??t?.logoPath??null,marketplaceDisplayName:t?.marketplaceDisplayName??null,marketplaceName:t?.marketplaceName??null,marketplacePath:t?.marketplacePath??null,name:t?.plugin.name??null,origin:TAo(t?.marketpla"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 7154338,
+    "context": "ontext?.remotePluginId;return t==null?[]:[t]}));return[...eAo({plugins:r,query:``}).map(e=>({...vAo(e),origin:`local`})),...i.flatMap(t=>{let n=a.get(t.id)??null;return s.has(t.id)||o.has(t.id)||n!=null&&o.has(n.plugin.id)?[]:(s.add(t.id),[{...xAo(t,n),origin:e?`user-cloud`:`workspace`}])})]}function wAo(e,t){return{requiresLocalExecutor:e.requires_local_executor??t?.requiresLocalExecutor,category:t?.plugin.interface?.category??null,description:e.short_description??null,disabledReason:e.disabled_reason??t?.plugin.disabledReason??null,displayName:e.display_name,enabled:t?.plugin.enabled??!1,id:e.id,installed:t===void 0?void 0:t?.plugin.installed??!1,installedPlugin:t,keywords:e.keywords??t?.keywords??[],logoDarkPath:e.icon_url_dark??t?.logoDarkPath??null,logoPath:e.icon_url??t?.logoPath??null,marketplaceDisplayName:t?.marketplaceDisplayName??null,marketplaceName:t?.marketplaceName??null,marketplacePath:t?.marketplacePath??null,name:t?.plugin.name??null,origin:TAo(t?.marketplaceName),pluginId:t?.plugin.id??null,pluginSourceType"
+  },
+  {
+    "file": "webview/assets/app-initial-102e45562729.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 10557065,
+    "context": "|t[38]!==L||t[39]!==B.isLoading||t[40]!==U.isLoading||t[41]!==ne.isLoading||t[42]!==H.isLoading||t[43]!==ye||t[44]!==P?(we=de||P&&L||ye.some(HZc)||B.isLoading||U.isLoading||ne.isLoading||H.isLoading,t[37]=de,t[38]=L,t[39]=B.isLoading,t[40]=U.isLoading,t[41]=ne.isLoading,t[42]=H.isLoading,t[43]=ye,t[44]=P,t[45]=we):we=t[45];let Te=we,Ee=OFe(x),De=Ce.filter(e=>!pZc(_,e.requiresLocalExecutor)&&WZc(e,oe,P?v:null,fe,s,g)&&(o?.(e)??!0)),Oe=HIc(De),ke=Oe!=null,Ae;t[46]===ke?Ae=t[47]:(Ae={enabled:ke},t[46]=ke,t[47]=Ae);let{nativeApps:je,isLoading:Me}=LWc(Ae),Ne=ue?.find(VZc)??null,Pe=!D||Ne?.plugin.enabled===!1||Ne!=null&&o?.(Ne)===!1?null:Ne??De.find(BZc)??null,Fe=Pd?.chromiumBrowser,Ie=Pe!=null&&Fe!=null,Le,Re;t[48]===Symbol.for(`react.memo_cache_sentinel`)?(Le=async()=>await Fe?.getInstalledBrowserFamilies()??[],Re=[`chromium-browser`,`installed-browser-families`],t[48]=Le,t[49]=Re):(Le=t[48],Re=t[49]);let ze;t[50]===Ie?ze=t[51]:(ze={enabled:Ie,queryFn:Le,queryKey:Re,retry:!1,staleTime:qg.FIVE_SECONDS},t[50]=Ie,t[51]=ze);let{data:"
+  },
+  {
+    "file": "webview/assets/queries-c0a885227570.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 36024,
+    "context": "ted?[]:[...new Set(l.filter(e=>e!=null))],f=async()=>{let a=G(await e.queryClient.fetchQuery(X(r)),r.accountId,i).slice(0,Q),o={accountId:r.accountId,hostId:n,roots:void 0},c=e.query.getOptions(u,o),f=Y(r,A),p=[...(Z(e.queryClient,f.queryKey,6e5)?e.queryClient.getQueryData(f.queryKey)??[]:[]).map(e=>({id:e.id,canonicalAppId:e.canonical_app_id,isTemplate:e.is_template,requiresLocalExecutor:e.release.requires_local_executor})),...(Z(e.queryClient,c.queryKey,6e4)?e.query.getData(u,o)??[]:[]).flatMap(({plugin:e,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r})=>e.remotePluginId==null?[]:[{id:e.remotePluginId,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r}])];s.throwIfAborted();let h=a.map(async e=>{let n=p.find(t=>m(t.id)===m(e)||t.canonicalAppId!=null&&m(t.canonicalAppId)===m(e));if(n!=null)return n;try{let{plugin:n}=await t.safeGet(`/ps/plugins/canonical-app/{app_id}`,{surface:`onboarding`,additionalHeaders:{\"ChatGPT-Account-ID\":r.accountId},parameters:{path:{app_id:e},query:{includeDownloadUrls:!1}},signal:s});ret"
+  },
+  {
+    "file": "webview/assets/queries-c0a885227570.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 36197,
+    "context": "c=e.query.getOptions(u,o),f=Y(r,A),p=[...(Z(e.queryClient,f.queryKey,6e5)?e.queryClient.getQueryData(f.queryKey)??[]:[]).map(e=>({id:e.id,canonicalAppId:e.canonical_app_id,isTemplate:e.is_template,requiresLocalExecutor:e.release.requires_local_executor})),...(Z(e.queryClient,c.queryKey,6e4)?e.query.getData(u,o)??[]:[]).flatMap(({plugin:e,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r})=>e.remotePluginId==null?[]:[{id:e.remotePluginId,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r}])];s.throwIfAborted();let h=a.map(async e=>{let n=p.find(t=>m(t.id)===m(e)||t.canonicalAppId!=null&&m(t.canonicalAppId)===m(e));if(n!=null)return n;try{let{plugin:n}=await t.safeGet(`/ps/plugins/canonical-app/{app_id}`,{surface:`onboarding`,additionalHeaders:{\"ChatGPT-Account-ID\":r.accountId},parameters:{path:{app_id:e},query:{includeDownloadUrls:!1}},signal:s});return n==null?null:{id:n.id,isTemplate:n.is_template,requiresLocalExecutor:n.release.requires_local_executor}}catch{return s.throwIfAborted(),null}});return await Promise.all("
+  },
+  {
+    "file": "webview/assets/queries-c0a885227570.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 36302,
+    "context": "eryKey)??[]:[]).map(e=>({id:e.id,canonicalAppId:e.canonical_app_id,isTemplate:e.is_template,requiresLocalExecutor:e.release.requires_local_executor})),...(Z(e.queryClient,c.queryKey,6e4)?e.query.getData(u,o)??[]:[]).flatMap(({plugin:e,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r})=>e.remotePluginId==null?[]:[{id:e.remotePluginId,canonicalAppId:t,isTemplate:n,requiresLocalExecutor:r}])];s.throwIfAborted();let h=a.map(async e=>{let n=p.find(t=>m(t.id)===m(e)||t.canonicalAppId!=null&&m(t.canonicalAppId)===m(e));if(n!=null)return n;try{let{plugin:n}=await t.safeGet(`/ps/plugins/canonical-app/{app_id}`,{surface:`onboarding`,additionalHeaders:{\"ChatGPT-Account-ID\":r.accountId},parameters:{path:{app_id:e},query:{includeDownloadUrls:!1}},signal:s});return n==null?null:{id:n.id,isTemplate:n.is_template,requiresLocalExecutor:n.release.requires_local_executor}}catch{return s.throwIfAborted(),null}});return await Promise.all(h.map(async(e,t)=>{let n=await e;!s.aborted&&n!=null&&!n.isTemplate&&!n.requiresLocalExecutor&&(l[t]=n.id"
+  },
+  {
+    "file": "webview/assets/queries-c0a885227570.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 36746,
+    "context": "=p.find(t=>m(t.id)===m(e)||t.canonicalAppId!=null&&m(t.canonicalAppId)===m(e));if(n!=null)return n;try{let{plugin:n}=await t.safeGet(`/ps/plugins/canonical-app/{app_id}`,{surface:`onboarding`,additionalHeaders:{\"ChatGPT-Account-ID\":r.accountId},parameters:{path:{app_id:e},query:{includeDownloadUrls:!1}},signal:s});return n==null?null:{id:n.id,isTemplate:n.is_template,requiresLocalExecutor:n.release.requires_local_executor}}catch{return s.throwIfAborted(),null}});return await Promise.all(h.map(async(e,t)=>{let n=await e;!s.aborted&&n!=null&&!n.isTemplate&&!n.requiresLocalExecutor&&(l[t]=n.id)})),d()};try{return await Promise.race([f(),new Promise(e=>{c=setTimeout(()=>e(d()),2500)})])}catch{return[]}finally{clearTimeout(c),o.abort()}}})}function Z(e,t,n){let r=e.getQueryState(t);return r?.status===`success`&&!r.isInvalidated&&Date.now()-r.dataUpdatedAt<n}function te(e,n){return f({queryKey:[`plugins`,`enterprise-onboarding-featured`,e,n],staleTime:3e5,retry:!1,queryFn:async({signal:i,client:o})=>{let[s,c]=await Promise.all([t.s"
+  },
+  {
+    "file": "webview/assets/queries-c0a885227570.js",
+    "needle": "requiresLocalExecutor",
+    "offset": 36940,
+    "context": "ditionalHeaders:{\"ChatGPT-Account-ID\":r.accountId},parameters:{path:{app_id:e},query:{includeDownloadUrls:!1}},signal:s});return n==null?null:{id:n.id,isTemplate:n.is_template,requiresLocalExecutor:n.release.requires_local_executor}}catch{return s.throwIfAborted(),null}});return await Promise.all(h.map(async(e,t)=>{let n=await e;!s.aborted&&n!=null&&!n.isTemplate&&!n.requiresLocalExecutor&&(l[t]=n.id)})),d()};try{return await Promise.race([f(),new Promise(e=>{c=setTimeout(()=>e(d()),2500)})])}catch{return[]}finally{clearTimeout(c),o.abort()}}})}function Z(e,t,n){let r=e.getQueryState(t);return r?.status===`success`&&!r.isInvalidated&&Date.now()-r.dataUpdatedAt<n}function te(e,n){return f({queryKey:[`plugins`,`enterprise-onboarding-featured`,e,n],staleTime:3e5,retry:!1,queryFn:async({signal:i,client:o})=>{let[s,c]=await Promise.all([t.safeGet(`/plugins/featured`,{parameters:{query:{platform:`work`}},signal:i}).catch(()=>(i.throwIfAborted(),[])),(async()=>{let r=[],a;for(let o=0;o<20;o+=1){let{plugins:o,pagination:s}=await t.sa"
+  }
+]

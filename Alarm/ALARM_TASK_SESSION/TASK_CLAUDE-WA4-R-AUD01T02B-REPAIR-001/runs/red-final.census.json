@@ -1,0 +1,47 @@
+{
+ "results_json": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-red-final-aca168tm\\out\\results.json",
+ "results_sha256": "95f85e2ab559de3932c65a624848a987c53daf53f029e836c5e1b87a3670a9ce",
+ "runner_reported": {
+  "tests_run": 27,
+  "passed": -10,
+  "failures": 32,
+  "errors": 5,
+  "skips": 0,
+  "successful": false
+ },
+ "isolation_violations": 0,
+ "entries": 39,
+ "methods": 27,
+ "method_counts": {
+  "FAIL": 21,
+  "ERROR": 4,
+  "PASS": 2
+ },
+ "non_pass_methods": {
+  "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event": "FAIL",
+  "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_transitions_racing_with_reports_keep_every_transition_event": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_events_lock_held_elsewhere_refuses_the_append_without_writing": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_healthy_steps_record_their_events": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock": "ERROR",
+  "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_prepare_history_failure_after_commit_is_reported_as_committed": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_torn_history_refuses_ACTIVE_to_DONE_without_writes": "FAIL",
+  "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_replay_of_one_event_id_is_stored_once": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_lock_held_by_another_process_refuses_without_writing": "ERROR",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_corrupt_log_fails_closed_without_writes": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_fresh_processes_write_and_read_separator_events": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable": "ERROR",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_replay_identity_and_conflict_survive_reopen": "ERROR",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unencodable_text_is_refused_before_any_write": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced": "FAIL"
+ }
+}

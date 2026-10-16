@@ -1,0 +1,17 @@
+# TASK-only template: a real tunnel_id is supplied at launch, not fabricated here.
+config_version: 1
+control_plane:
+  base_url: "https://api.openai.com"
+  tunnel_id: ""
+  api_key: "env:WUA_TUNNEL_RUNTIME_KEY"
+health:
+  listen_addr: "127.0.0.1:0"
+admin_ui:
+  open_browser: false
+log:
+  level: info
+  format: json
+mcp:
+  commands:
+    - channel: main
+      command: "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/package/plugin/runtime/python.exe -I -X utf8 -B M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/package/plugin/server.py"

@@ -1,0 +1,39 @@
+{
+ "label": "green1",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "M:\\GitHub\\ag_llm\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+  "--output",
+  "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-green1-3bs6swg2\\out",
+  "test_web_alarm_aud01t02b_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 32.139,
+ "base": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-green1-3bs6swg2",
+ "tests_run": 24,
+ "passed": 22,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 31.587,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event",
+   "FAIL",
+   " 'r_0_1', 'r_0_10', 'r_0_11', 'r_0_12',[1687 chars]5_9'] != ['r_0_0\\x85', 'r_0_10\\x85', 'r_0_11\\x85', 'r_0_1[2407 chars]x85']\n\nFirst differing element 0:\n'r_0_0'\n'r_0_0\\x85'\n\nDiff is 7128 characters long. Set self.maxDiff to None to see it. : concurrent appends lost or overwrote TASK history events\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable",
+   "FAIL",
+   "last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_aud01t02b_repair.py\", line 201, in test_http_separator_text_keeps_transport_evidence_readable_and_appendable\n    self.assertEqual(events[0][\"error_class\"], \"drop\" + SEPARATORS[1])\nAssertionError: 'drop' != 'drop\\u2028'\n- drop\n?     ^\n+ drop\u2028?     ^\n+ \n\n"
+  ]
+ ]
+}

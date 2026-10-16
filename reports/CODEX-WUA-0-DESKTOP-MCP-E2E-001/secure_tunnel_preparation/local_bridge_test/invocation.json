@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\tools\\tunnel-client.exe",
+    "dev",
+    "proxy",
+    "--backend",
+    "go",
+    "--engine-queue-backend",
+    "inmem",
+    "--listen",
+    "127.0.0.1:0",
+    "--duration",
+    "45s",
+    "--readiness-timeout",
+    "12s",
+    "--mcp-command",
+    "M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/package/plugin/runtime/python.exe -I -X utf8 -B M:/GitHub/ag_llm/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/activation_0_2_1_20261016/package/plugin/server.py",
+    "--url-file",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\local_bridge_test\\connection.json",
+    "--print-json"
+  ],
+  "cwd": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\local_bridge_test",
+  "mode": "LOCAL LOOPBACK DEV PROXY; NO HOSTED OPENAI CONNECTION",
+  "ordinary_chat": false
+}

@@ -1,0 +1,16 @@
+Manage tunnel-client YAML profiles
+
+Usage:
+  tunnel-client profiles [command]
+
+Available Commands:
+  add         Add a profile from a file or sample
+  edit        Edit a profile and validate it before saving
+  list        List configured profiles
+  samples     List or inspect built-in tunnel-client profile samples
+
+Flags:
+  -h, --help                 help for profiles
+      --profile-dir string   Profile directory override
+
+Use "tunnel-client profiles [command] --help" for more information about a command.

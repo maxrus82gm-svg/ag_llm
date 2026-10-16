@@ -621,15 +621,18 @@ class CrashConsistencyTests(Repair3Fixture):
         self.write("b.txt", BEFORE)
         self.machine.prepare_microtask(TASK, "m2", [("b.txt", "edit")])
         self.machine.transition(TASK, "m2", MicrotaskStatus.READY)
-        real = TaskStore.compare_and_set_microtask_status
+        from web_alarm.state_machine import ServerStateMachine
+        # AUD-02b: the activation compare-and-set runs in ServerStateMachine._commit (one
+        # mutation-locked section with the history check and the event); enter it late
+        real = ServerStateMachine._commit
 
-        def reorder_meanwhile(store, task_id, microtask_id, **kwargs):
+        def reorder_meanwhile(machine, task_id, microtask_id, *args, **kwargs):
             # a concurrent replan puts the unprepared m3 before m2 after the state
             # machine's unlocked "previous VERIFIED" check
             TaskStore(self.storage).set_plan(TASK, ["m1", "m3", "m2"])
-            return real(store, task_id, microtask_id, **kwargs)
+            return real(machine, task_id, microtask_id, *args, **kwargs)
 
-        with mock.patch.object(TaskStore, "compare_and_set_microtask_status", reorder_meanwhile):
+        with mock.patch.object(ServerStateMachine, "_commit", reorder_meanwhile):
             with self.assertRaises(TransitionRejected) as refused:
                 self.machine.transition(TASK, "m2", MicrotaskStatus.ACTIVE)
 

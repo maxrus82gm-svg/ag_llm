@@ -1,0 +1,18 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "reported_at_local": "2026-10-16T22:48:03.244545+05:00",
+  "source": "User directly confirms repeated full application shutdown/relaunch and supplies ordinary Chat diagnostic output. Agent did not automate or independently observe that Chat UI.",
+  "plugin_mention": "plugin://wua-desktop-readonly@wua-desktop-e2e-local",
+  "full_desktop_restart_confirmed_by_user": true,
+  "plugin_mention_recognized_reported": true,
+  "tools_unavailable_reported": [
+    "ping",
+    "list_capabilities",
+    "read_synthetic_context"
+  ],
+  "ordinary_chat_real_calls_reported": 0,
+  "ordinary_chat_result": "DESKTOP E2E NEGATIVE / 0 CALLS / AFTER FULL RESTART",
+  "overall_status": "DESKTOP E2E NOT VERIFIED",
+  "repeat_install_restart_at_requests_required": false,
+  "client_request_trace_available": false
+}

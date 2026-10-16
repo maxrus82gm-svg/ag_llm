@@ -1,0 +1,182 @@
+[
+ {
+  "label": "r006mod-final",
+  "targets": [
+   "test_web_alarm_wa4r006_local_gate"
+  ]
+ },
+ {
+  "label": "quality-r006-r004",
+  "targets": [
+   "reports.CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE.quality_controls.Sensitivity",
+   "reports.CODEX-WA4-R-004-F1-CLOSEOUT-GATE.quality_controls.Sensitivity"
+  ]
+ },
+ {
+  "label": "quality-aud010205",
+  "targets": [
+   "quality_controls_aud010205"
+  ],
+  "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001\\probes"
+ },
+ {
+  "label": "prior-findings",
+  "targets": [
+   "test_aud01t_transport_finding",
+   "test_aud02b_microtask_finding"
+  ],
+  "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001\\probes"
+ },
+ {
+  "label": "auditprobes-final",
+  "targets": [
+   "test_claude_r006_independent"
+  ],
+  "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001\\probes"
+ },
+ {
+  "label": "own-probes",
+  "targets": [
+   "test_aud01t02b_rollback_compat",
+   "test_aud02b_residual_window"
+  ],
+  "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001\\probes"
+ },
+ {
+  "label": "focused1",
+  "targets": [
+   "test_web_alarm_operation_store_concurrency",
+   "test_web_alarm_projection_concurrency",
+   "test_web_alarm_reliability_wa017",
+   "test_web_alarm_mutation_executor",
+   "test_web_alarm_wa4r002_diagnostics",
+   "test_web_alarm_wa4r006_local_gate",
+   "test_web_alarm_target_claims_concurrency",
+   "test_web_alarm_task_store",
+   "test_web_alarm_lost_response",
+   "test_web_alarm_new_invariants",
+   "test_web_alarm_aud010205_repair",
+   "test_web_alarm_transport_event_store",
+   "test_web_alarm_transport_ingestion",
+   "test_web_alarm_transport_recovery",
+   "test_web_alarm_transport_authority",
+   "test_web_alarm_recovery_report_store",
+   "test_web_alarm_recovery_report_builder",
+   "test_web_alarm_recovery_report_acceptance",
+   "test_web_alarm_recovery_report_integration",
+   "test_web_alarm_event_checkpoint_store",
+   "test_web_alarm_state_machine",
+   "test_web_alarm_state_machine_cas",
+   "test_web_alarm_recovery_coordinator_repair3",
+   "test_web_alarm_aud01t02b_repair"
+  ]
+ },
+ {
+  "label": "focused2",
+  "targets": [
+   "test_web_alarm_operation_store_concurrency",
+   "test_web_alarm_projection_concurrency",
+   "test_web_alarm_reliability_wa017",
+   "test_web_alarm_mutation_executor",
+   "test_web_alarm_wa4r002_diagnostics",
+   "test_web_alarm_wa4r006_local_gate",
+   "test_web_alarm_target_claims_concurrency",
+   "test_web_alarm_task_store",
+   "test_web_alarm_lost_response",
+   "test_web_alarm_new_invariants",
+   "test_web_alarm_aud010205_repair",
+   "test_web_alarm_transport_event_store",
+   "test_web_alarm_transport_ingestion",
+   "test_web_alarm_transport_recovery",
+   "test_web_alarm_transport_authority",
+   "test_web_alarm_recovery_report_store",
+   "test_web_alarm_recovery_report_builder",
+   "test_web_alarm_recovery_report_acceptance",
+   "test_web_alarm_recovery_report_integration",
+   "test_web_alarm_event_checkpoint_store",
+   "test_web_alarm_state_machine",
+   "test_web_alarm_state_machine_cas",
+   "test_web_alarm_recovery_coordinator_repair3",
+   "test_web_alarm_aud01t02b_repair"
+  ]
+ },
+ {
+  "label": "focused3",
+  "targets": [
+   "test_web_alarm_operation_store_concurrency",
+   "test_web_alarm_projection_concurrency",
+   "test_web_alarm_reliability_wa017",
+   "test_web_alarm_mutation_executor",
+   "test_web_alarm_wa4r002_diagnostics",
+   "test_web_alarm_wa4r006_local_gate",
+   "test_web_alarm_target_claims_concurrency",
+   "test_web_alarm_task_store",
+   "test_web_alarm_lost_response",
+   "test_web_alarm_new_invariants",
+   "test_web_alarm_aud010205_repair",
+   "test_web_alarm_transport_event_store",
+   "test_web_alarm_transport_ingestion",
+   "test_web_alarm_transport_recovery",
+   "test_web_alarm_transport_authority",
+   "test_web_alarm_recovery_report_store",
+   "test_web_alarm_recovery_report_builder",
+   "test_web_alarm_recovery_report_acceptance",
+   "test_web_alarm_recovery_report_integration",
+   "test_web_alarm_event_checkpoint_store",
+   "test_web_alarm_state_machine",
+   "test_web_alarm_state_machine_cas",
+   "test_web_alarm_recovery_coordinator_repair3",
+   "test_web_alarm_aud01t02b_repair"
+  ]
+ },
+ {
+  "label": "bounded1",
+  "targets": [
+   "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+   "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests",
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests",
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+  ]
+ },
+ {
+  "label": "bounded2",
+  "targets": [
+   "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+   "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests",
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests",
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+  ]
+ },
+ {
+  "label": "bounded3",
+  "targets": [
+   "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+   "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests",
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests",
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+  ]
+ },
+ {
+  "label": "bounded4",
+  "targets": [
+   "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+   "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests",
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests",
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+  ]
+ },
+ {
+  "label": "bounded5",
+  "targets": [
+   "test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task",
+   "test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task",
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests",
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests",
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+  ]
+ }
+]

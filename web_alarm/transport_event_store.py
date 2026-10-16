@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import SCHEMA_VERSION, new_id, utc_now_iso
+from .store_lock import DEFAULT_LOCK_TIMEOUT_SECONDS, InterProcessLock, StoreLockTimeout
 from .workspace_registry import default_storage_root
 
 
@@ -65,6 +66,15 @@ class TransportEventRecord:
             raise ValueError("unsupported schema_version")
 
 
+# AUD-01T: the per-TASK history framing contract (AUD-01) for the global log too.
+# json.dumps(ensure_ascii=False) leaves U+0085/U+2028/U+2029 raw inside strings,
+# and str.splitlines() readers (older code, tools) cut a record at them; written
+# escaped they are the same JSON string and one physical LF stays one record.
+_ESCAPED_LINE_BOUNDARIES = str.maketrans(
+    {chr(code): chr(92) + "u" + format(code, "04x") for code in (0x85, 0x2028, 0x2029)}
+)
+
+
 def _record_to_dict(record: TransportEventRecord) -> dict[str, Any]:
     data = asdict(record)
     data["event_type"] = record.event_type.value
@@ -77,15 +87,38 @@ def _request_identity(record: TransportEventRecord) -> dict[str, Any]:
     return data
 
 
+def _encode_record(record: TransportEventRecord) -> bytes:
+    line = json.dumps(_record_to_dict(record), ensure_ascii=False, separators=(",", ":"))
+    try:
+        return (line.translate(_ESCAPED_LINE_BOUNDARIES) + "\n").encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ValueError("transport event text is not valid Unicode (unpaired surrogate)") from exc
+
+
 class TransportEventStore:
-    """Global append-only transport evidence; never mutates workflow state."""
+    """Global append-only transport evidence; never mutates workflow state.
+
+    AUD-01T: one store lock serializes read-check-append across processes and
+    threads, so replay/conflict detection sees every committed record and
+    concurrent appends cannot overwrite each other (O_APPEND is not atomic
+    between processes on Windows). Readers stay lock-free: a record is a single
+    write call. A torn or unparsable log fails closed and is never repaired.
+    """
 
     RELATIVE_PATH = Path("transport") / "transport_events.jsonl"
+    LOCK_RELATIVE_PATH = Path("locks") / "transport" / "transport_events.lock"
 
-    def __init__(self, storage_root: str | os.PathLike[str] | None = None) -> None:
+    def __init__(
+        self,
+        storage_root: str | os.PathLike[str] | None = None,
+        *,
+        lock_timeout: float = DEFAULT_LOCK_TIMEOUT_SECONDS,
+    ) -> None:
         root = Path(storage_root) if storage_root is not None else default_storage_root()
         self.storage_root = root.expanduser().resolve(strict=False)
         self.events_path = self.storage_root / self.RELATIVE_PATH
+        self.lock_path = self.storage_root / self.LOCK_RELATIVE_PATH
+        self.lock_timeout = lock_timeout
         self.events_path.parent.mkdir(parents=True, exist_ok=True)
 
     def append(
@@ -114,42 +147,90 @@ class TransportEventStore:
             process_start_time=process_start_time,
             payload=dict(payload or {}),
         )
-        for existing in self.read_events():
-            if existing.event_id != record.event_id:
-                continue
-            if _request_identity(existing) == _request_identity(record):
-                return existing
-            raise TransportEventConflictError(
-                f"event_id replay conflict: {record.event_id}"
-            )
-        line = json.dumps(
-            _record_to_dict(record),
-            ensure_ascii=False,
-            separators=(",", ":"),
-        ) + "\n"
+        data = _encode_record(record)  # invalid text is refused before any lock or write
+        lock = InterProcessLock(self.lock_path, timeout=self.lock_timeout)
         try:
-            with self.events_path.open("a", encoding="utf-8", newline="\n") as handle:
-                handle.write(line)
-                handle.flush()
-                os.fsync(handle.fileno())
+            lock.acquire()
+        except (StoreLockTimeout, OSError) as exc:
+            raise TransportEventStoreError(f"cannot lock transport events: {exc}") from exc
+        try:
+            for existing in self.read_events():
+                if existing.event_id != record.event_id:
+                    continue
+                if _request_identity(existing) == _request_identity(record):
+                    return existing
+                raise TransportEventConflictError(
+                    f"event_id replay conflict: {record.event_id}"
+                )
+            self._append_locked(data)
+        finally:
+            lock.release()
+        return record
+
+    def _append_locked(self, data: bytes) -> None:
+        """Append one record while holding the store lock.
+
+        A crash may leave a complete JSON object without its delimiter: never
+        join the next record onto it. A failed write/fsync is rolled back to the
+        previous end before the lock is released, so one failed append does not
+        leave a torn tail that would block all transport evidence.
+        """
+        try:
+            with self.events_path.open("a+b", buffering=0) as handle:
+                size = handle.seek(0, os.SEEK_END)
+                if size:
+                    handle.seek(-1, os.SEEK_END)
+                    if handle.read(1) != b"\n":
+                        raise TransportEventStoreError(
+                            f"unterminated transport event log: {self.events_path}"
+                        )
+                try:
+                    view = memoryview(data)
+                    while view:
+                        view = view[handle.write(view):]
+                    os.fsync(handle.fileno())
+                except OSError as exc:
+                    try:
+                        handle.truncate(size)
+                        os.fsync(handle.fileno())
+                        outcome = f"rolled back to {size} bytes"
+                    except OSError as undo:
+                        outcome = (
+                            f"rollback to {size} bytes failed ({undo}); a torn tail keeps "
+                            "transport evidence fail-closed until manual repair"
+                        )
+                    raise TransportEventStoreError(
+                        f"cannot append transport event: {self.events_path}; {outcome}"
+                    ) from exc
         except OSError as exc:
             raise TransportEventStoreError(
                 f"cannot append transport event: {self.events_path}"
             ) from exc
-        return record
 
     def read_events(self) -> list[TransportEventRecord]:
-        if not self.events_path.exists():
-            return []
         try:
-            lines = self.events_path.read_text(encoding="utf-8").splitlines()
+            data = self.events_path.read_bytes()
+        except FileNotFoundError:
+            return []
         except OSError as exc:
             raise TransportEventStoreError(
                 f"cannot read transport events: {self.events_path}"
             ) from exc
+        if data and not data.endswith(b"\n"):
+            raise TransportEventStoreError(
+                f"unterminated transport event log: {self.events_path}"
+            )
 
         records: list[TransportEventRecord] = []
-        for index, line in enumerate(lines, start=1):
+        # AUD-01T: one physical LF ends one record (a CRLF record drops its CR);
+        # Unicode line boundaries inside a JSON string are data, not delimiters.
+        for index, chunk in enumerate(data.split(b"\n")[:-1], start=1):
+            try:
+                line = chunk.removesuffix(b"\r").decode("utf-8")
+            except UnicodeDecodeError as exc:
+                raise TransportEventStoreError(
+                    f"invalid transport event UTF-8 at line {index}"
+                ) from exc
             if not line.strip():
                 raise TransportEventStoreError(
                     f"blank transport event line at {index}"

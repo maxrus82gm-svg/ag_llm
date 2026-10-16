@@ -1,0 +1,16 @@
+Add a profile from a file or sample
+
+Usage:
+  tunnel-client profiles add <name> [flags]
+
+Flags:
+      --force                   Replace an existing profile
+      --from-file string        Copy profile YAML from this path
+  -h, --help                    help for add
+      --mcp-command string      MCP command for generated sample profiles
+      --mcp-server-url string   MCP server URL for generated sample profiles
+      --sample string           Generate a named sample profile
+      --tunnel-id string        Tunnel ID for generated sample profiles
+
+Global Flags:
+      --profile-dir string   Profile directory override

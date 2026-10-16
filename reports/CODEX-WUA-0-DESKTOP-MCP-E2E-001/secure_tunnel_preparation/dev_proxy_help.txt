@@ -1,0 +1,29 @@
+Run a local in-memory tunnel control plane and an in-process tunnel-client runtime.
+
+This mode is for local MCP integration tests that need an MCP URL without a
+hosted tunnel control plane or a separate control-plane process.
+
+Usage:
+  tunnel-client dev proxy [flags]
+
+Flags:
+      --backend string                      Local proxy backend: auto, go, or rust (default "auto")
+      --client-last-seen-timeout duration   How recently tunnel-client must poll to be considered connected (default 20s)
+      --duration duration                   Run for a bounded duration, then exit
+      --engine-queue-backend string         Local proxy queue backend: inmem or redis (default "inmem")
+      --engine-redis-url string             Redis URL for --engine-queue-backend redis; defaults to TUNNEL_ENGINE_REDIS_URL
+      --health-listen-addr string           Optional tunnel-client health/admin listen address; omit to run without a health/admin listener
+      --health-url-file string              Write the tunnel-client health base URL to this file; enables an ephemeral health/admin listener when --health-listen-addr is omitted
+  -h, --help                                help for proxy
+      --listen string                       Loopback address for local MCP ingress (default "127.0.0.1:0")
+      --listen-unix-socket string           Unix socket path for local MCP ingress
+      --mcp-command stringArray             Command to launch a stdio MCP server; repeat for channel bindings using command=...,channel=...
+      --mcp-server-url stringArray          Target MCP server URL; repeat for channel bindings using url=...,channel=...
+      --print-json                          Print local proxy connection JSON after readiness
+      --profile string                      Tunnel-client profile name to load
+      --profile-dir string                  Directory containing tunnel-client profiles
+      --profile-file string                 Path to a tunnel-client profile YAML file
+      --readiness-timeout duration          Maximum time to wait for tunnel-client and MCP readiness (default 10s)
+      --response-timeout duration           Maximum time local MCP ingress waits for a tunnel-client response (default 30s)
+      --tunnel-id string                    Tunnel id exposed by the local proxy (default "tunnel_22222222222222222222222222222222")
+      --url-file string                     Write the local proxy connection JSON to this file

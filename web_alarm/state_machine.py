@@ -48,6 +48,20 @@ class SnapshotNotVerified(ServerStateMachineError):
         self.reason = reason
 
 
+class HistoryUnreadable(ServerStateMachineError):
+    """AUD-02b: the TASK event history is unreadable; the step was refused before any write."""
+
+    def __init__(self, task_id: str, microtask_id: str, step: str, reason: str) -> None:
+        super().__init__(
+            f"{step} step of {task_id}/{microtask_id} refused: the TASK event history is unreadable "
+            f"({reason}); nothing was written"
+        )
+        self.task_id = task_id
+        self.microtask_id = microtask_id
+        self.step = step
+        self.reason = reason
+
+
 class ServerStateMachine:
     """Authoritative WA-2.2 policy for Server-side microtask transitions."""
 
@@ -170,17 +184,84 @@ class ServerStateMachine:
         self.last_checkpoint_error = None
         return checkpoint
 
-    def _transition_result(self, microtask: MicrotaskRecord, checkpoint: CheckpointRecord | None) -> dict[str, object]:
-        result: dict[str, object] = {"microtask": microtask, "checkpoint": checkpoint}
-        if checkpoint is not None:
+    def _transition_result(
+        self,
+        microtask: MicrotaskRecord,
+        checkpoint: CheckpointRecord | None,
+        history_error: str | None = None,
+    ) -> dict[str, object]:
+        result: dict[str, object] = {
+            "microtask": microtask,
+            "checkpoint": checkpoint,
+            "event_recorded": history_error is None,
+        }
+        if checkpoint is None:
+            result["checkpoint_error"] = self.last_checkpoint_error
+        if history_error is not None:
+            result["history_error"] = history_error
+            result["next_safe_action"] = (
+                f"the transition to {microtask.status.value} IS persisted, but its history event was not "
+                f"recorded ({history_error}); do not repeat the transition: repair or reconcile the TASK "
+                "event history by manual review, then re-read the projection"
+            )
+        elif checkpoint is not None:
             result["next_safe_action"] = checkpoint.next_safe_action
         else:
             result["next_safe_action"] = (
                 "the state change is persistent but its checkpoint projection was not refreshed "
                 f"({self.last_checkpoint_error}); rebuild the checkpoint, then re-read the projection"
             )
-            result["checkpoint_error"] = self.last_checkpoint_error
         return result
+
+    def _require_readable_history(self, task_id: str, microtask_id: str, step: str) -> None:
+        """AUD-02b: a lifecycle step is admitted only over a readable TASK history.
+
+        Checked before the first durable write of a step, before any rejection
+        event (which would be appended to a damaged log), and again under the
+        lock of the compare-and-set: a status is never persisted while its
+        history event is already known to be impossible.
+        """
+        try:
+            self.state.read_events(task_id)
+        except EventCheckpointStoreError as exc:
+            raise HistoryUnreadable(task_id, microtask_id, step, str(exc)) from exc
+
+    @staticmethod
+    def _require_encodable(**fields: object) -> None:
+        """Text recorded in the history must be valid Unicode (no unpaired surrogate)."""
+        for name, value in fields.items():
+            if isinstance(value, str):
+                try:
+                    value.encode("utf-8")
+                except UnicodeEncodeError as exc:
+                    raise ValueError(
+                        f"{name} is not valid Unicode text (unpaired surrogate); nothing was written"
+                    ) from exc
+
+    def _record_transition(
+        self,
+        task_id: str,
+        microtask_id: str,
+        operation_id: str | None,
+        payload: dict[str, object],
+    ) -> str | None:
+        """Append the event of a committed step while its compare-and-set lock is held.
+
+        Returns None when recorded, else why not. The status IS persisted (the
+        commit point passed), so this failure is reported with the result and
+        never turned into a refusal of a step that already happened.
+        """
+        try:
+            self.state.append_event(
+                task_id,
+                "MICROTASK_TRANSITION",
+                microtask_id=microtask_id,
+                operation_id=operation_id,
+                payload=payload,
+            )
+        except (EventCheckpointStoreError, UnicodeEncodeError) as exc:
+            return f"{type(exc).__name__}: {exc}"
+        return None
 
     def _reject(
         self,
@@ -286,6 +367,11 @@ class ServerStateMachine:
         operation_id: str | None = None,
     ) -> dict[str, object]:
         micro = self.tasks.open_microtask(task_id, microtask_id)
+        # AUD-02b: no restore point, status or rejection event over a history
+        # that could not record the step. The manifest store takes its own
+        # locks, so this is an entry check; a later history failure is reported.
+        self._require_encodable(operation_id=operation_id)
+        self._require_readable_history(task_id, microtask_id, "prepare")
         if micro.status not in {
             MicrotaskStatus.PLANNED,
             MicrotaskStatus.BLOCKED_PREPARE,
@@ -327,17 +413,21 @@ class ServerStateMachine:
             raise
 
         micro = self.tasks.open_microtask(task_id, microtask_id)
-        self.state.append_event(
-            task_id,
-            "MICROTASK_PREPARED",
-            microtask_id=microtask_id,
-            operation_id=operation_id,
-            payload={
-                "status": micro.status.value,
-                "manifest_id": manifest.manifest_id,
-                "snapshot_status": "VERIFIED",
-            },
-        )
+        history_error = None
+        try:  # the restore point and its status are persisted: report, never refuse
+            self.state.append_event(
+                task_id,
+                "MICROTASK_PREPARED",
+                microtask_id=microtask_id,
+                operation_id=operation_id,
+                payload={
+                    "status": micro.status.value,
+                    "manifest_id": manifest.manifest_id,
+                    "snapshot_status": "VERIFIED",
+                },
+            )
+        except EventCheckpointStoreError as exc:
+            history_error = f"{type(exc).__name__}: {exc}"
         checkpoint = self._write_checkpoint(
             task_id,
             microtask_id,
@@ -347,9 +437,12 @@ class ServerStateMachine:
             "manifest": manifest,
             "microtask": micro,
             "checkpoint": checkpoint,
+            "event_recorded": history_error is None,
         }
         if checkpoint is None:
             result["checkpoint_error"] = self.last_checkpoint_error
+        if history_error is not None:
+            result["history_error"] = history_error
         return result
 
     def verify_snapshot(
@@ -396,7 +489,9 @@ class ServerStateMachine:
         task_id: str,
         microtask_id: str,
         current: MicrotaskStatus,
-    ) -> tuple[str | None, MicrotaskRecord | None]:
+        payload: dict[str, object],
+        operation_id: str | None,
+    ) -> tuple[str | None, MicrotaskRecord | None, str | None]:
         """Repair #3 (F-B): VERIFIED only for a microtask without open recovery.
 
         The recovery picture is the canonical projection built while holding
@@ -404,9 +499,11 @@ class ServerStateMachine:
         lifecycle) and the mutation lock (microtask lifecycle), and the
         compare-and-set happens in that same section: an accepted recovery
         action and the verification of the same microtask can no longer race.
-        Returns (refusal reason, None) or (None, updated record); the caller
-        rejects only after the locks are released (``_reject`` rebuilds the
-        checkpoint under the TASK lock).
+        AUD-02b: the history is checked and the transition event appended in
+        that section too. Returns (refusal reason, None, None) or (None,
+        updated record, history error or None); the caller rejects only after
+        the locks are released (``_reject`` rebuilds the checkpoint under the
+        TASK lock).
         """
         from .microtask_gate import verification_refusal
         from .projection import ProjectionService
@@ -416,27 +513,30 @@ class ServerStateMachine:
         service = self._projection
         with service.operations.task_lock(task_id):
             with self.tasks.mutation_lock(task_id):
+                self._require_readable_history(task_id, microtask_id, MicrotaskStatus.VERIFIED.value)
                 try:
                     projection = service.build(task_id)
                 except Exception as exc:  # unprovable recovery picture: fail closed
-                    return f"recovery facts are unavailable: {type(exc).__name__}: {exc}", None
+                    return f"recovery facts are unavailable: {type(exc).__name__}: {exc}", None, None
                 refusal = verification_refusal(projection, microtask_id)
                 if refusal is not None:
-                    return f"open recovery blocks VERIFIED ({refusal[0]}): {refusal[1]}", None
+                    return f"open recovery blocks VERIFIED ({refusal[0]}): {refusal[1]}", None, None
                 try:
                     updated = self.tasks.compare_and_set_microtask_status_locked(
                         task_id, microtask_id, expected=current, status=MicrotaskStatus.VERIFIED
                     )
                 except MicrotaskStatusConflict as exc:
-                    return self._stale_reason(current, MicrotaskStatus.VERIFIED, exc), None
-        return None, updated
+                    return self._stale_reason(current, MicrotaskStatus.VERIFIED, exc), None, None
+                return None, updated, self._record_transition(task_id, microtask_id, operation_id, payload)
 
     def _admit_active(
         self,
         task_id: str,
         microtask_id: str,
         current: MicrotaskStatus,
-    ) -> tuple[str | None, MicrotaskRecord | None]:
+        payload: dict[str, object],
+        operation_id: str | None,
+    ) -> tuple[str | None, MicrotaskRecord | None, str | None]:
         """WA-014: ACTIVE only for a microtask that can still get mutation authority.
 
         The recovery disposition (``microtask_gate.activation_refusal``) is read
@@ -446,9 +546,11 @@ class ServerStateMachine:
         it re-checks the earlier microtasks and the single ACTIVE one, F4)
         happens inside that same TASK-locked section: an ABORT/ROLLBACK
         accepted before the activation refuses it, one accepted after it found
-        an ACTIVE stage that could have had authority. Returns (refusal reason,
-        None) or (None, updated record); the caller rejects only after the
-        lock is released.
+        an ACTIVE stage that could have had authority. AUD-02b: the history is
+        checked and the transition event appended under the same mutation lock
+        as the compare-and-set. Returns (refusal reason, None, None) or (None,
+        updated record, history error or None); the caller rejects only after
+        the lock is released.
         """
         from .microtask_gate import activation_refusal
         from .projection import ProjectionService
@@ -465,14 +567,38 @@ class ServerStateMachine:
                 rollbacks=service.rollbacks,
             )
             if refusal is not None:
-                return f"recovery disposition blocks ACTIVE ({refusal[0]}): {refusal[1]}", None
+                return f"recovery disposition blocks ACTIVE ({refusal[0]}): {refusal[1]}", None, None
+            return self._commit(
+                task_id, microtask_id, current, MicrotaskStatus.ACTIVE, payload, operation_id, activate=True
+            )
+
+    def _commit(
+        self,
+        task_id: str,
+        microtask_id: str,
+        current: MicrotaskStatus,
+        requested: MicrotaskStatus,
+        payload: dict[str, object],
+        operation_id: str | None,
+        *,
+        activate: bool = False,
+    ) -> tuple[str | None, MicrotaskRecord | None, str | None]:
+        """AUD-02b: the locked commit of a step that is not VERIFIED.
+
+        History check, compare-and-set (with ``activate`` the activation rules
+        and plan pointer, F4) and the transition event under one mutation lock.
+        Returns (refusal reason, None, None) or (None, updated record, history
+        error or None).
+        """
+        with self.tasks.mutation_lock(task_id):
+            self._require_readable_history(task_id, microtask_id, requested.value)
             try:
-                updated = self.tasks.compare_and_set_microtask_status(
-                    task_id, microtask_id, expected=current, status=MicrotaskStatus.ACTIVE, activate=True
+                updated = self.tasks.compare_and_set_microtask_status_locked(
+                    task_id, microtask_id, expected=current, status=requested, activate=activate
                 )
             except MicrotaskStatusConflict as exc:
-                return self._stale_reason(current, MicrotaskStatus.ACTIVE, exc), None
-        return None, updated
+                return self._stale_reason(current, requested, exc), None, None
+            return None, updated, self._record_transition(task_id, microtask_id, operation_id, payload)
 
     def transition(
         self,
@@ -494,10 +620,19 @@ class ServerStateMachine:
         that decided on an earlier observation pin that basis explicitly.
         VERIFIED is additionally admitted only while no operation of the
         microtask has an open recovery (Repair #3, ``_admit_verified``).
+
+        AUD-02b: the status and its MICROTASK_TRANSITION event are written in
+        one locked section. A step whose event could not be recorded (text
+        that is not valid Unicode, a history that is already unreadable) is
+        refused before any write, a rejection event included; a history
+        failure after the compare-and-set is reported as committed
+        (``event_recorded`` false), never as a refusal.
         """
         requested = MicrotaskStatus(requested_status)
         micro = self.tasks.open_microtask(task_id, microtask_id)
         current = micro.status
+        self._require_encodable(verification_evidence=verification_evidence, operation_id=operation_id)
+        self._require_readable_history(task_id, microtask_id, requested.value)
 
         if expected_status is not None and MicrotaskStatus(expected_status) is not current:
             self._reject(
@@ -570,6 +705,16 @@ class ServerStateMachine:
                     )
             # the current pointer moves inside the locked compare-and-set below
 
+        payload: dict[str, object] = {
+            "from": current.value,
+            "to": requested.value,
+            "verification_evidence": (
+                verification_evidence.strip()
+                if isinstance(verification_evidence, str)
+                and verification_evidence.strip()
+                else None
+            ),
+        }
         if requested == MicrotaskStatus.VERIFIED:
             if (
                 not isinstance(verification_evidence, str)
@@ -582,49 +727,23 @@ class ServerStateMachine:
                     "verification_evidence is required for VERIFIED",
                     operation_id=operation_id,
                 )
-            refusal, updated = self._admit_verified(task_id, microtask_id, current)
-            if refusal is not None:
-                self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
+            refusal, updated, history_error = self._admit_verified(
+                task_id, microtask_id, current, payload, operation_id
+            )
         elif requested == MicrotaskStatus.ACTIVE:
             # WA-014: no ACTIVE over an ABORT/ROLLBACK disposition (checked under the locks)
-            refusal, updated = self._admit_active(task_id, microtask_id, current)
-            if refusal is not None:
-                self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
+            refusal, updated, history_error = self._admit_active(
+                task_id, microtask_id, current, payload, operation_id
+            )
         else:
-            try:
-                updated = self.tasks.compare_and_set_microtask_status(
-                    task_id,
-                    microtask_id,
-                    expected=current,
-                    status=requested,
-                )
-            except MicrotaskStatusConflict as exc:
-                self._reject(
-                    task_id,
-                    microtask_id,
-                    requested,
-                    self._stale_reason(current, requested, exc),
-                    operation_id=operation_id,
-                )
-        self.state.append_event(
-            task_id,
-            "MICROTASK_TRANSITION",
-            microtask_id=microtask_id,
-            operation_id=operation_id,
-            payload={
-                "from": current.value,
-                "to": requested.value,
-                "verification_evidence": (
-                    verification_evidence.strip()
-                    if isinstance(verification_evidence, str)
-                    and verification_evidence.strip()
-                    else None
-                ),
-            },
-        )
+            refusal, updated, history_error = self._commit(
+                task_id, microtask_id, current, requested, payload, operation_id
+            )
+        if refusal is not None:
+            self._reject(task_id, microtask_id, requested, refusal, operation_id=operation_id)
         checkpoint = self._write_checkpoint(
             task_id,
             microtask_id,
             last_operation_id=operation_id,
         )
-        return self._transition_result(updated, checkpoint)
+        return self._transition_result(updated, checkpoint, history_error)

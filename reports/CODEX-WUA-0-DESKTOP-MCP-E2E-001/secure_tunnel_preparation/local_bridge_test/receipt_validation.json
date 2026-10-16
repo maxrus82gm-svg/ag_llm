@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "checks": {
+    "exact_three_tool_catalog": true,
+    "four_completed_server_calls": true,
+    "three_ok_one_rejected": true,
+    "single_fixture_session": true,
+    "single_fixture_nonce": true,
+    "context_sha256_matches": true,
+    "call_ids_match_server_receipt": true,
+    "other_task_denied": true,
+    "storage_unchanged": true,
+    "get_only": true,
+    "no_guard_violation": true,
+    "no_production_or_model_calls": true,
+    "receipt_stable_during_read": true
+  },
+  "session_id": "3688d2f72d3d40babe3837a4aed1a5e4",
+  "nonce": "c599185b79f7f1207b5c65afc33bccaa",
+  "context_sha256": "040e036d0309f69652fd52cafdc3c88e747635d77f79db623f924bdb0aa18598",
+  "proof_path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\local_bridge_test\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\evidence\\3688d2f72d3d40babe3837a4aed1a5e4\\session.json",
+  "proof_sha256": "659b10d898bb95f7023b0e890a84f35d1e4173b73f1c195a24e36b8f0e1e1b83",
+  "server_peer_claims_untrusted": [
+    {
+      "client_name": "WUA OFFLINE TUNNEL TRANSPORT DIAGNOSTIC",
+      "client_version": "1.0",
+      "identity_trusted": false,
+      "protocol_version": "2025-06-18",
+      "request_id": "4",
+      "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+    },
+    {
+      "client_name": "WUA OFFLINE TUNNEL TRANSPORT DIAGNOSTIC",
+      "client_version": "1.0",
+      "identity_trusted": false,
+      "protocol_version": "2025-06-18",
+      "request_id": "5",
+      "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+    },
+    {
+      "client_name": "WUA OFFLINE TUNNEL TRANSPORT DIAGNOSTIC",
+      "client_version": "1.0",
+      "identity_trusted": false,
+      "protocol_version": "2025-06-18",
+      "request_id": "6",
+      "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+    },
+    {
+      "client_name": "WUA OFFLINE TUNNEL TRANSPORT DIAGNOSTIC",
+      "client_version": "1.0",
+      "identity_trusted": false,
+      "protocol_version": "2025-06-18",
+      "request_id": "7",
+      "vendor_sha256": "3e7f075eae87f8ffae3c2a3f8eaf3140f018105ace38581080dc3534a74a613d"
+    }
+  ],
+  "bounded_dev_proxy_listener_stopped": true,
+  "hosted_openai_tunnel_started": false,
+  "ordinary_chat_calls": 0,
+  "desktop_e2e": "DESKTOP E2E NOT VERIFIED",
+  "independent_acceptance": "NOT CLAIMED"
+}

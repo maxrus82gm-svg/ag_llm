@@ -1,0 +1,306 @@
+{
+ "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "task_folder": "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "files": {
+  "baseline/tests/test_web_alarm_recovery_coordinator_repair3.py": {
+   "bytes": 37113,
+   "sha256": "bf316497034a0f28f211ad27e25e079dc2bf3f3dd575a72aeff08c7e2d983811",
+   "eol": "LF"
+  },
+  "baseline/tests/test_web_alarm_state_machine_cas.py": {
+   "bytes": 17406,
+   "sha256": "7a2ce35e5342667d490c3494666fbec0b43af4d883f815f23a472f6d092e1dff",
+   "eol": "LF"
+  },
+  "baseline/web_alarm/event_checkpoint_store.py": {
+   "bytes": 9601,
+   "sha256": "7342b221e6663bee65bef116f57507b0de84b74269cb7541f4955b527eb91304",
+   "eol": "LF"
+  },
+  "baseline/web_alarm/state_machine.py": {
+   "bytes": 25477,
+   "sha256": "0bec1f270ac957fff279d3cf1de13201421600b6b173ef0f17b983c57bfac2fb",
+   "eol": "LF"
+  },
+  "baseline/web_alarm/transport_event_store.py": {
+   "bytes": 7702,
+   "sha256": "107a8e89cff2ffaae2a6eb899d0028e1c2a46788e12edfc3de5b9448a3b020cf",
+   "eol": "LF"
+  },
+  "baseline-gate.json": {
+   "bytes": 12037,
+   "sha256": "b87022a6f8b1c90b6ae4ced623a667f1f9c8e30bd25bc2e995c7a18e03797b96",
+   "eol": "LF"
+  },
+  "block3-closeout.md": {
+   "bytes": 5973,
+   "sha256": "19c19136fa510c5c8b29de9e5ca9ae49782b23fec100eb43241e169bf1ba3254",
+   "eol": "LF"
+  },
+  "card-rotation.json": {
+   "bytes": 542,
+   "sha256": "87adfe57c3b870fe57aeb2bb9ffcd2c6584cad08663485a0418b4628413dfa75",
+   "eol": "LF"
+  },
+  "evidence.json": {
+   "bytes": 399045,
+   "sha256": "94b6547b7c85cc8086ab8db6e3ad5091e311097f1190ea8bb717cf0dd85fc04a",
+   "eol": "LF"
+  },
+  "gate-e.json": {
+   "bytes": 2637,
+   "sha256": "8bb8eac37f49bf36e20913645b944c70ce9a7a1dac5b51cc9ba519eb59206703",
+   "eol": "LF"
+  },
+  "probes/explore_aud02b_paths.py": {
+   "bytes": 4855,
+   "sha256": "6f755da4ec7f5ecbd3cd789db03dad9805615ee7163bb7a3ccd86b1a73a00122",
+   "eol": "LF"
+  },
+  "probes/probe_append_atomicity.py": {
+   "bytes": 3021,
+   "sha256": "43934253808106d72a15879ce91a894d721a1724a63fd6a050e23f9bc4ab98fc",
+   "eol": "LF"
+  },
+  "probes/probe_read_during_append.py": {
+   "bytes": 2967,
+   "sha256": "a9df9eb5e0e2edc9646932c8109f5a9950e7c65fd6552ff1dcb442d3ac17659c",
+   "eol": "LF"
+  },
+  "probes/quality_mutants_aud01t02b.py": {
+   "bytes": 11191,
+   "sha256": "08224f0cf7605526d3596f18c5dc84d4c772dc0b1e770effa08774b1de7567f0",
+   "eol": "LF"
+  },
+  "probes/test_aud01t02b_rollback_compat.py": {
+   "bytes": 4752,
+   "sha256": "6562f4f676adfed20410f0dea15c24e5bda66bf11a97bb49e7fbd3b12ec32ffd",
+   "eol": "LF"
+  },
+  "probes/test_aud02b_residual_window.py": {
+   "bytes": 4119,
+   "sha256": "53dba8267184b26df2021c4dd6f13462e236ea9959c1192b9e3c4919ab2aa42f",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 46771,
+   "sha256": "3a61d6856e1cbbf42d359609845c5d600113862e1c14c5467a37e23f62ba874b",
+   "eol": "LF"
+  },
+  "runs/append-atomicity-binary.json": {
+   "bytes": 418,
+   "sha256": "cb8b4c2421aa2590c8d309f2d1829868d09f9e99990e39b98a1334435a3fca84",
+   "eol": "LF"
+  },
+  "runs/append-atomicity-text.json": {
+   "bytes": 416,
+   "sha256": "984b977b1f4b8bd1924787666ad689e554389fbf836fc1111e88ccd96cc2a981",
+   "eol": "LF"
+  },
+  "runs/explore-aud02b-baseline.json": {
+   "bytes": 3962,
+   "sha256": "3662b8cc9733f17fd74d44b4d2fb786fc89981a30195e98d3565c0604c1634d4",
+   "eol": "LF"
+  },
+  "runs/full-final.census.json": {
+   "bytes": 571,
+   "sha256": "b47063b7b71947f4c7d2bb8250067437fdac2395b35e0ace975db792d4b1ccd9",
+   "eol": "LF"
+  },
+  "runs/full-final.console.txt": {
+   "bytes": 875,
+   "sha256": "e4bafdbe787d95349830d4cae00b67e7351f94f3fcf1759fb9aac1dd5d3f5c3c",
+   "eol": "LF"
+  },
+  "runs/full-final.summary.json": {
+   "bytes": 875,
+   "sha256": "e4bafdbe787d95349830d4cae00b67e7351f94f3fcf1759fb9aac1dd5d3f5c3c",
+   "eol": "LF"
+  },
+  "runs/full-final.vs-aud010205.json": {
+   "bytes": 3713,
+   "sha256": "280362c8a1f1f12697546d71c392b4768c397255135b48850a1eed3b50db4244",
+   "eol": "LF"
+  },
+  "runs/full1.console.txt": {
+   "bytes": 1798,
+   "sha256": "1a254d8ad88d84e32d1e92de7879deb10668b145c1e6c98613794cdd44616263",
+   "eol": "LF"
+  },
+  "runs/gateB.attempts.json": {
+   "bytes": 3410,
+   "sha256": "90ecb099e8b275b8dcf63fd9b8013ed65d65738f4b1fc9292436fd685e54d312",
+   "eol": "LF"
+  },
+  "runs/gateB.console.txt": {
+   "bytes": 3085,
+   "sha256": "7653a5156c1b34097a92bba6885b80b01df9062ef9e91094bb4c4b5067fac7ff",
+   "eol": "LF"
+  },
+  "runs/gateC.attempts.json": {
+   "bytes": 486,
+   "sha256": "c4ac41ca26bad0125c927f7f92ec26bf3d54d93e048d89c6f56fccc289867045",
+   "eol": "LF"
+  },
+  "runs/green1.census.json": {
+   "bytes": 728,
+   "sha256": "8cb87d53b19d8a6590481f1bd6ea7ee38968eebb066406d0981e4751d263333c",
+   "eol": "LF"
+  },
+  "runs/green1.summary.json": {
+   "bytes": 1667,
+   "sha256": "7942015dacda2f49852d5c4e3ccfb1605319335693a93f71f13f58a73a98bfb6",
+   "eol": "LF"
+  },
+  "runs/green2.census.json": {
+   "bytes": 450,
+   "sha256": "2f9a8cdcceaa61e275fb10198bc7e003eb827835057256cfbcfffa0246c3dbd6",
+   "eol": "LF"
+  },
+  "runs/green2.summary.json": {
+   "bytes": 729,
+   "sha256": "1d87bd134b4c53aaaadadc70039b7ef99d8ea451f892d2ec212fb27cbd134017",
+   "eol": "LF"
+  },
+  "runs/quality-mutants.json": {
+   "bytes": 23530,
+   "sha256": "14397e365eb5c2de4fce01edcea001372ac1da1aa8fbd3e3712878bfefddfd28",
+   "eol": "LF"
+  },
+  "runs/quality-mutants2.json": {
+   "bytes": 23697,
+   "sha256": "53ffeb557c6f0a049797b141a30c9f7e66e7ee31ba9d8ca9066e810b3b245809",
+   "eol": "LF"
+  },
+  "runs/read-during-append.json": {
+   "bytes": 404,
+   "sha256": "97cd310fddebcde6b26a91dba613127650e0422a0c0e6961b20ce1ba00ee9a5b",
+   "eol": "LF"
+  },
+  "runs/red-baseline.summary.json": {
+   "bytes": 15714,
+   "sha256": "4d1e746a585b59ab9a435e02a999823b626f3f3411600db4dedfdccd350dcdb3",
+   "eol": "LF"
+  },
+  "runs/red-baseline2.census.json": {
+   "bytes": 3223,
+   "sha256": "2c7f716538c85e6d2c93b9e0930ada58787c40d6848f8a568378b04ae15deae6",
+   "eol": "LF"
+  },
+  "runs/red-baseline2.summary.json": {
+   "bytes": 15724,
+   "sha256": "c5d6824236b47e75af56d27742dc29f2776c7700acc9724e69d3412109b0599a",
+   "eol": "LF"
+  },
+  "runs/red-final.census.json": {
+   "bytes": 3622,
+   "sha256": "c9ba153baed70fab625d8e8eb443db1a369fd19131b2ddb8a4fdb1765d98a68d",
+   "eol": "LF"
+  },
+  "scope.md": {
+   "bytes": 11564,
+   "sha256": "ebca9e795e89e6221fc6d7c6bc44badefc6db94a8da7d91af9ab1efabcafc6a7",
+   "eol": "LF"
+  },
+  "source-changes.diff": {
+   "bytes": 30318,
+   "sha256": "4842f8a2e1fa78c82a375fd8fc84594e455523de7ebd33ba6d74bbba9e8508ca",
+   "eol": "LF"
+  },
+  "tools/baseline_gate.py": {
+   "bytes": 3982,
+   "sha256": "1477d65a9c03e93c86c0f1d80a1cad37d8ad87ded8233f234efbba4146767a24",
+   "eol": "LF"
+  },
+  "tools/byte_scan.py": {
+   "bytes": 1029,
+   "sha256": "a9b1024fbd1798bc94fb4efcbb15b16ec12a60d80a2ffbf77375e93bf6e3b0c7",
+   "eol": "LF"
+  },
+  "tools/collect_evidence.py": {
+   "bytes": 4143,
+   "sha256": "9de6cd46cedf2b521fed91a7f8b171483c72e3216b7298fefe635b6bd3dbef1b",
+   "eol": "LF"
+  },
+  "tools/compare_full_runs.py": {
+   "bytes": 1270,
+   "sha256": "80eed5eb4586e0964680ac9bd55fd34468525e7c279a7be6eaaaf68c0ce83c36",
+   "eol": "LF"
+  },
+  "tools/gate_e_integrity.py": {
+   "bytes": 5182,
+   "sha256": "c07dabbcbd6ac72fd64775ab36ae4c9167703ad8168669d31b2974ed11ae4ab9",
+   "eol": "LF"
+  },
+  "tools/make_baseline_mirror.py": {
+   "bytes": 1316,
+   "sha256": "77bdb60696d784760444af114eade98041bbf65efacf12cf1fab16eb4fd7437f",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 1694,
+   "sha256": "ba48a538bcac14e6c401fff5d7d8f98f937829c4aa5418cec92c9121c100ec1b",
+   "eol": "LF"
+  },
+  "tools/normalize_task_files.py": {
+   "bytes": 1413,
+   "sha256": "ebeaca4cd9cced70907adf04535c38566cff648d7b396e41bfcba81dd627b8e5",
+   "eol": "LF"
+  },
+  "tools/rotate_card.py": {
+   "bytes": 5227,
+   "sha256": "1fd0fd97646f69b54373a991cbe46073e5158c48337e0a2e784ac8ab4676fb1b",
+   "eol": "LF"
+  },
+  "tools/run_gate.py": {
+   "bytes": 2961,
+   "sha256": "b7f0d54f7a9b6fff0a9b06011cc8ea8e21150a8e738a8fe59083fe90d48cd3ff",
+   "eol": "LF"
+  },
+  "tools/run_gate_batch.py": {
+   "bytes": 2162,
+   "sha256": "6c8c91c375a7648bdbbb830caa9d299b2de517d01e2ef5eeda43fcdf7e9e1541",
+   "eol": "LF"
+  },
+  "tools/spec-gateB.json": {
+   "bytes": 7063,
+   "sha256": "46a9d34e058ce57918bc3e414d993d453dc88fe2c742f9d1e720c95e97a1aefc",
+   "eol": "LF"
+  },
+  "tools/spec-gateC.json": {
+   "bytes": 418,
+   "sha256": "9b13a3fe63e8acd63c376bfd9e0fee65fadd24a5ef0be2487834e7a0a84bd667",
+   "eol": "LF"
+  },
+  "tools/summarize_results.py": {
+   "bytes": 1931,
+   "sha256": "5db32aedb4f573c8bb5805118ed8b05d5147d868937c2cb4f9b4308f587533a4",
+   "eol": "LF"
+  }
+ },
+ "repository_files": {
+  "web_alarm/transport_event_store.py": {
+   "bytes": 11736,
+   "sha256": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+   "eol": "LF"
+  },
+  "web_alarm/state_machine.py": {
+   "bytes": 31246,
+   "sha256": "3164383a1a881c6dfcac86678b746d01c038f1b4ccb988fbda5a6074a262f408",
+   "eol": "LF"
+  },
+  "web_alarm/event_checkpoint_store.py": {
+   "bytes": 10479,
+   "sha256": "9cf9e3ed45a415bfcab139bdb24fc88af65c7ece8723f1f5192c3e9a0ab8bf45",
+   "eol": "LF"
+  },
+  "test_web_alarm_aud01t02b_repair.py": {
+   "bytes": 41845,
+   "sha256": "b96c2b0cec62b05998075e068a4c13edb0969dadfa6210d20aecd53b25ff0ef3",
+   "eol": "LF"
+  }
+ }
+}

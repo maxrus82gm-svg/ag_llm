@@ -1,0 +1,23 @@
+{
+ "results_json": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-green1-3bs6swg2\\out\\results.json",
+ "results_sha256": "25a35459406e7589d3eedc9406a11446a1f697748adf5697d282a1887117894b",
+ "runner_reported": {
+  "tests_run": 24,
+  "passed": 22,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "successful": false
+ },
+ "isolation_violations": 0,
+ "entries": 24,
+ "methods": 24,
+ "method_counts": {
+  "FAIL": 2,
+  "PASS": 22
+ },
+ "non_pass_methods": {
+  "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event": "FAIL",
+  "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable": "FAIL"
+ }
+}

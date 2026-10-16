@@ -1,0 +1,189 @@
+{
+ "label": "red-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "M:\\GitHub\\ag_llm\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+  "--output",
+  "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-red-baseline-79hj0qay\\out",
+  "test_web_alarm_aud01t02b_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 24.514,
+ "base": "C:\\Users\\REX\\AppData\\Local\\Temp\\claude-aud01t02b-red-baseline-79hj0qay",
+ "tests_run": 24,
+ "passed": -8,
+ "failures": 26,
+ "errors": 6,
+ "skips": 0,
+ "elapsed_seconds": 23.545,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event",
+   "ERROR",
+   "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\decoder.py\", line 356, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_transitions_racing_with_reports_keep_every_transition_event",
+   "ERROR",
+   "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\decoder.py\", line 356, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event",
+   "FAIL",
+   "larm_aud01t02b_repair.py\", line 601, in test_closeout_cannot_interleave_between_status_and_its_event\n    self.assertFalse(closed_while_paused, \"closeout completed the TASK between a status and its event\")\nAssertionError: True is not false : closeout completed the TASK between a status and its event\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_healthy_steps_record_their_events",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_aud01t02b_repair.py\", line 524, in test_healthy_steps_record_their_events\n    self.assertIs(done[1].get(\"event_recorded\"), True)\nAssertionError: None is not True\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed",
+   "FAIL",
+   "air.py\", line 555, in test_history_failure_after_commit_is_reported_as_committed\n    self.assertEqual(outcome[0], 200, f\"a committed step was reported as refused: {outcome}\")\nAssertionError: 409 != 200 : a committed step was reported as refused: [409, 'state_error', 'injected: cannot append event']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [BACKUP_VERIFIED->READY]",
+   "FAIL",
+   "state_machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : BACKUP_VERIFIED->READY: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\BACKUP_VERIFIED_READY\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [READY->ACTIVE]",
+   "FAIL",
+   "1:\n'state_error'\n'state_machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : READY->ACTIVE: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\READY_ACTIVE\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [ACTIVE->UNKNOWN_AFTER_DISCONNECT]",
+   "FAIL",
+   "\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : ACTIVE->UNKNOWN_AFTER_DISCONNECT: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\ACTIVE_UNKNOWN_AFTER_DISCONNECT\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [DONE->VERIFIED]",
+   "FAIL",
+   "\n'state_error'\n'state_machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : DONE->VERIFIED: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\DONE_VERIFIED\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [DONE->FAILED_VERIFICATION]",
+   "FAIL",
+   "machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : DONE->FAILED_VERIFICATION: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\DONE_FAILED_VERIFICATION\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [FAILED_VERIFICATION->ACTIVE]",
+   "FAIL",
+   "ine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : FAILED_VERIFICATION->ACTIVE: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\FAILED_VERIFICATION_ACTIVE\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history [UNKNOWN_AFTER_DISCONNECT->RECOVERY_REQUIRED]",
+   "FAIL",
+   "']\n+ [409, 'state_machine_error']\n?            ++++++++\n : UNKNOWN_AFTER_DISCONNECT->RECOVERY_REQUIRED: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_sos0k_gp\\\\UNKNOWN_AFTER_DISCONNECT_RECOVERY_REQUIRED\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused",
+   "FAIL",
+   "nt': '958327914dfc2e45f5f879d8c5501f4f3f0b17140c7366394182d06f5ff9824a', 'projection_fingerprint': 'ae85393140a4236d387e420140e0881a038b806107e73cdc55a9432f94f9609f', 'authority_source': 'lifecycle'}}, 'next_safe_action': 'run verification and transition m1 to VERIFIED with verification_evidence'}]\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes [allowed ACTIVE->DONE]",
+   "FAIL",
+   "print': '112b187b54f6eee51b9b73c640c77acd6a8d2c0154f5580eb616e7799f47790c', 'authority_source': 'projection_blocker'}}, 'next_safe_action': 'projection is blocked (HISTORY_UNREADABLE: invalid event JSON at line 2); persistent state is inconsistent � repair it by manual review before any mutation'}]\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes [disallowed ACTIVE->VERIFIED]",
+   "FAIL",
+   "print': '99fb6a733b55c5f615cc8b11072a72465575cc039f198fe914dcee7b92f70cbe', 'authority_source': 'projection_blocker'}}, 'next_safe_action': 'projection is blocked (HISTORY_UNREADABLE: invalid event JSON at line 2); persistent state is inconsistent � repair it by manual review before any mutation'}]\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes [stale expected_status]",
+   "FAIL",
+   "g element 1:\n'transition_rejected'\n'state_machine_error'\n\n- [409, 'transition_rejected']\n+ [409, 'state_machine_error'] : stale expected_status: [409, 'transition_rejected', 'VERIFIED -> DONE rejected: stale transition: the caller observed READY, but the microtask is VERIFIED; nothing was written']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point",
+   "FAIL",
+   "ng element 1:\n'state_error'\n'state_machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : prepare: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_0owyg2dl\\\\prepare\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_torn_history_refuses_ACTIVE_to_DONE_without_writes",
+   "FAIL",
+   " element 1:\n'state_error'\n'state_machine_error'\n\n- [409, 'state_error']\n+ [409, 'state_machine_error']\n?            ++++++++\n : ACTIVE->DONE: [409, 'state_error', 'unterminated event log: C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud02b_cabbgk0f\\\\main\\\\state\\\\tasks\\\\active\\\\task_t02b\\\\events.jsonl']\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write [ACTIVE->DONE]",
+   "FAIL",
+   "rtionError: Lists differ: ['tasks/active/task_t02b/microtasks/m1.json'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'tasks/active/task_t02b/microtasks/m1.json'\n\n- ['tasks/active/task_t02b/microtasks/m1.json']\n+ [] : ACTIVE->DONE: a refused lifecycle step persisted state\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write [DONE->VERIFIED]",
+   "FAIL",
+   "ionError: Lists differ: ['tasks/active/task_t02b/microtasks/m1.json'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'tasks/active/task_t02b/microtasks/m1.json'\n\n- ['tasks/active/task_t02b/microtasks/m1.json']\n+ [] : DONE->VERIFIED: a refused lifecycle step persisted state\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "FAIL",
+   "rror: Lists differ: [[409, 'transport_evidence_error', 'invali[18202 chars] 2']] != []\n\nFirst list contains 237 additional elements.\nFirst extra element 0:\n[409, 'transport_evidence_error', 'invalid transport event JSON at line 2']\n\nDiff is 18965 characters long. Set self.maxDiff to None to see it.\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_replay_of_one_event_id_is_stored_once",
+   "FAIL",
+   "onError: Lists differ: [[409, 'transport_evidence_error', 'invali[2186 chars] 1']] != []\n\nFirst list contains 29 additional elements.\nFirst extra element 0:\n[409, 'transport_evidence_error', 'invalid transport event JSON at line 1']\n\nDiff is 2325 characters long. Set self.maxDiff to None to see it.\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported",
+   "FAIL",
+   "olled_back_and_reported\n    self.assertEqual(self.log.read_bytes(), good, \"a failed durable append left its bytes in the log\")\nAssertionError: b'{\"e[552 chars]:1}\\n{\"event_id\":\"lost_fsync\",\"event_type\":\"RE[240 chars]1}\\n' != b'{\"e[552 chars]:1}\\n' : a failed durable append left its bytes in the log\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_lock_held_by_another_process_refuses_without_writing",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\test_web_alarm_aud01t02b_repair.py\", line 144, in store\n    return TransportEventStore(self.storage, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: TransportEventStore.__init__() got an unexpected keyword argument 'lock_timeout'\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_corrupt_log_fails_closed_without_writes [invalid_utf8]",
+   "FAIL",
+   "^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1028, in read_text\n    return f.read()\n           ^^^^^^^^\n  File \"<frozen codecs>\", line 322, in decode\nUnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 279: invalid start byte\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_corrupt_log_fails_closed_without_writes [two_records_on_one_line]",
+   "FAIL",
+   "_alarm_aud01t02b_repair.py\", line 156, in assert_refused_unchanged\n    with self.assertRaises(TransportEventStoreError, msg=f\"{name}: read\"):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportEventStoreError not raised : two_records_on_one_line: read\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_fresh_processes_write_and_read_separator_events",
+   "FAIL",
+   "or existing in self.read_events():\r\n                    ^^^^^^^^^^^^^^^^^^\r\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\transport_event_store.py\", line 160, in read_events\r\n    raise TransportEventStoreError(\r\nweb_alarm.transport_event_store.TransportEventStoreError: invalid transport event JSON at line 1\r\n\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable",
+   "FAIL",
+   "r.py\", line 183, in test_http_separator_text_keeps_transport_evidence_readable_and_appendable\n    self.assertEqual(listing[0], 200, \"one accepted transport event made all transport evidence unreadable\")\nAssertionError: 409 != 200 : one accepted transport event made all transport evidence unreadable\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable",
+   "ERROR",
+   "    events = self.store().read_events()\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\transport_event_store.py\", line 160, in read_events\n    raise TransportEventStoreError(\nweb_alarm.transport_event_store.TransportEventStoreError: invalid transport event JSON at line 1\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_replay_identity_and_conflict_survive_reopen",
+   "ERROR",
+   "\n    for existing in self.read_events():\n                    ^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\web_alarm\\transport_event_store.py\", line 160, in read_events\n    raise TransportEventStoreError(\nweb_alarm.transport_event_store.TransportEventStoreError: invalid transport event JSON at line 1\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unencodable_text_is_refused_before_any_write",
+   "FAIL",
+   "\\GitHub\\ag_llm\\test_web_alarm_aud01t02b_repair.py\", line 272, in test_unencodable_text_is_refused_before_any_write\n    self.assertFalse(self.log.exists(), \"a refused event created or touched the transport log\")\nAssertionError: True is not false : a refused event created or touched the transport log\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced",
+   "FAIL",
+   "arm_aud01t02b_repair.py\", line 156, in assert_refused_unchanged\n    with self.assertRaises(TransportEventStoreError, msg=f\"{name}: read\"):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportEventStoreError not raised : complete_record_without_lf: read\n"
+  ]
+ ]
+}

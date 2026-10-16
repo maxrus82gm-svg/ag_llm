@@ -16,6 +16,7 @@ from .models import (
     record_to_dict,
     utc_now_iso,
 )
+from .store_lock import InterProcessLock, StoreLockTimeout
 from .task_store import TaskStore, TaskStoreError
 
 
@@ -87,7 +88,20 @@ class EventCheckpointStore:
         )
         path = self._events_path(task_id)
         line = json.dumps(record_to_dict(record), ensure_ascii=False, separators=(",", ":"))
-        line = line.translate(_ESCAPED_LINE_BOUNDARIES) + "\n"
+        data = (line.translate(_ESCAPED_LINE_BOUNDARIES) + "\n").encode("utf-8")  # before any lock or open
+        # AUD-02b: O_APPEND is not atomic between processes on Windows, and the
+        # writers of one TASK history hold different locks (or none), so racing
+        # appends could overwrite each other: a persisted status would silently
+        # lose its event. This leaf lock (no other lock is taken under it)
+        # serializes the appends of one TASK; readers stay lock-free.
+        lock = InterProcessLock(
+            self.task_store.storage_root / "locks" / "events" / f"{task_id}.lock",
+            timeout=self.task_store.lock_timeout,
+        )
+        try:
+            lock.acquire()
+        except (StoreLockTimeout, OSError) as exc:
+            raise EventCheckpointStoreError(f"cannot lock event log: {path}: {exc}") from exc
         try:
             # A crash may leave a complete JSON object without its delimiter.
             # Never join the next record onto it or silently repair history.
@@ -97,11 +111,13 @@ class EventCheckpointStore:
                     handle.seek(-1, os.SEEK_END)
                     if handle.read(1) != b"\n":
                         raise EventCheckpointStoreError(f"unterminated event log: {path}")
-                handle.write(line.encode("utf-8"))
+                handle.write(data)
                 handle.flush()
                 os.fsync(handle.fileno())
         except OSError as exc:
             raise EventCheckpointStoreError(f"cannot append event: {path}") from exc
+        finally:
+            lock.release()
         return record
 
     def read_events(self, task_id: str) -> list[EventRecord]:
