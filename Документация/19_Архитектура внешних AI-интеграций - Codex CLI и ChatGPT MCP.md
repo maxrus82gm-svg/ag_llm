@@ -6,6 +6,10 @@
 
 Направления ниже архитектурно одобрены, но не являются CURRENT runtime. Документ владеет транспортом и способами подключения внешних AI-систем к Agent Runtime. Роли моделей, Model Assignment, Planner / Executor / Dredd и model/provider isolation принадлежат `11_Мультимодельная архитектура и назначение LLM.md`.
 
+### WUA MCP / Secure Tunnel AMENDMENT 05 — bounded evidence, 2026-10-17
+
+**NOT PRODUCTION / NO HOSTED ACTIVATION GO.** For the dedicated Web Alarm MCP direction owned by WEB_10, Codex 007 published `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_preflight_20261017/` at [#360](https://github.com/maxrus82gm-svg/ag_llm/commit/2a263a6a75999228d542ce579048f65bb8058984). GitHub-first independent bounded review: 40/40 manifest paths present, 8/8 sampled key source/evidence UTF-8 byte-size and SHA-256 matches (with original LF/CRLF), isolated **Python reference** 19/19 Codex-reported PASS and internally consistent raw result counts; no independent Windows rerun. SOCKS5 greeting at 127.0.0.1:10808 is established; saved OpenAI PROXY GUI rule is **not** the running outbound. Eight **native Go tunnel-client** fault groups BLOCKED/NOT EXECUTED. `V2RAY REMOTE ROUTE NOT VERIFIED`, `REAL CLIENT FAIL-CLOSED NOT VERIFIED`, hosted tunnel `ON HOLD`, ordinary ChatGPT MCP calls `0/4`. The reference TLS/CONNECT model and its quality controls must never be cited as proof of native-Go or V2Ray route/fail-closed. Next candidate: exact official source and config/transport audit; isolated native offline network-fault testing only with separately proven egress containment and authorized scope. No launcher, network, DNS, firewall, proxy, server runtime, Workspace or Web Alarm shared-contract changes; those remain under their respective owners.
+
 ## 1. Два независимых направления
 
 Документ разделяет разные механизмы:
