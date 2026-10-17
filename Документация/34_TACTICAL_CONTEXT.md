@@ -1,3 +1,14 @@
+## CURRENT / 2026-10-17 / USER WORKSTREAM CORRECTION — LLM12=WEB ALARM; WEB_09=MCP
+
+**LATEST USER DECISION (overrides older LLM12 Ultra MVP handoff below):**
+- `Сервер LLM 12` — продолжение *основного Web Alarm*: проверить незакрытые пункты исходного плана по 23/24/25/36.2, вести независимую приёмку текущего WA4-R результата Claude, решения по AUD-02b-R/AUD-01T-R/AUD-02c/AUD-03/AUD-04, будущие CI W1 / отдельный read-only W3, затем планировать аккуратный поэтапный перенос пригодных частей старой Ultra. **Новую вкладку Ultra / GigaChat MVP и WUA-0 сейчас не начинать.**
+- `Сервер WEB_09` — MCP / подключение ChatGPT к Web Alarm, Secure MCP Tunnel, V2Ray-only/fail-closed. Не дублировать WA4-R приёмку в WEB_09; shared Web Alarm files требуют согласования параллельности.
+- `37` остаётся отложенной архитектурной концепцией; `38_Контекст передачи в Сервер LLM12 - Web Alarm Ultra MVP.md` исправлен по содержанию под новое разделение; **имя файла историческое и сохранено для существующих ссылок**. `38` — разовый handoff, `34` — единственный общий текущий тактический контекст.
+- **GitHub discovery 2026-10-17:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001/report.md`, `manifest.json` и `evidence.json` уже доступны в репозитории, несмотря на исторический `LOCAL ONLY / NOT SYNCED` внутри сдачи Claude. **Доступность файлов ≠ независимая приёмка или полный SHA/scope audit.** Последний предъявленный Claude локальный прогон: 849 total / 848 PASS / 0 FAIL / 0 ERROR / 1 SKIP; статус всё ещё RESULT READY / AWAITING INDEPENDENT VERIFICATION; WA4-R PARTIAL, WARN/GATEWAY/STRICT/Final Audit NOT AUTHORIZED.
+- Никакого нового engineering/task/rollout GO этим уточнением не дано; отчёты внутри `ag_llm`, пользовательский push и правила Git-доступа агентов сохраняются.
+
+---
+
 ## LLM12 / 2026-10-17 / CONTEXT TRANSFER — WEB ALARM ULTRA MVP (READ ONLY, NO GO)
 
 **User request:** перейти с отдельной дискуссией о Web Alarm Ultra MVP в чат «Сервер LLM 12», оставив Claude WA4-R reliability/independent review в WEB_09. Канонический самостоятельный handoff: `38_Контекст передачи в Сервер LLM12 - Web Alarm Ultra MVP.md`; концепция MVP — `37`. Первый согласованный предмет исследования — **WUA-0 feasibility**, не WUA-1+ code GO; не переносить старую Tkinter Ultra/RT-002/B2 и не смешивать полномочия Web Alarm.
