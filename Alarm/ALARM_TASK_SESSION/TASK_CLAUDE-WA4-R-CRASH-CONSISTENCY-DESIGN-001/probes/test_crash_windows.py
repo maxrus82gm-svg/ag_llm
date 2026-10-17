@@ -226,7 +226,7 @@ class W2IntentEventWindow(Fixture):
         self.crash_intent()
         report = self.reopen({"kind": "get_operation", "operation": "op_c"},
                              {"kind": "resolve", "microtask": "m1", "operation": "op_c", "action": "ABORT",
-                              "revision": 1},
+                              "revision": 1, "evidence_fingerprint": "0" * 64},
                              {"kind": "recover"})
         outcomes = [f["outcome"] for f in report["followups"]]
         self.facts.append({"recovery_paths": outcomes})
@@ -252,6 +252,28 @@ class W2IntentEventWindow(Fixture):
         self.assertEqual(self.applies(), 0)
         self.assertIn("ok", report["followups"][0]["outcome"],
                       "an admission whose INTENT event failed (process alive) left an unreadable orphan record")
+
+
+class W3OperationTransitionWindow(Fixture):
+    """Comparison: the operation store already tolerates a missing post-INTENT event by design."""
+
+    def test_TRIGGER_and_SAFETY_lost_DONE_event_is_tolerated_and_replay_never_reapplies(self):
+        self.build("ACTIVE")
+        crash = self.worker("crash_op_done", "crash_after_op_done", "mutate", body=body("op_d"))
+        report = self.reopen({"kind": "mutate", "body": body("op_d")}, {"kind": "recover"})
+        before = report["before"]
+        replay = report["followups"][0]
+        self.facts.append({"replay": replay["outcome"], "recover": report["followups"][1]["outcome"]})
+        self.assertEqual(crash["exit"], 79, crash["stderr_tail"])
+        self.assertEqual(crash["phases"], ["actor_enter", "apply_enter", "op_done_persisted_event_pending"])
+        self.assertEqual((crash["trace"][-1]["persisted_status"], crash["trace"][-1]["receipt"]), ("DONE", True))
+        self.assertEqual(before["raw"]["operations"]["op_d"]["status"], "DONE")
+        self.assertFalse([e for e in before["raw"]["events"]
+                          if e[0] == "OPERATION_TRANSITION" and e[2] == "op_d" and e[4] == "DONE"])
+        self.assertEqual(before["views"]["operations_list"], {"ok": ["op_d"]},
+                         "a lost post-INTENT event is a tolerated crash window (record is authority)")
+        self.assertEqual(self.applies(), 1, "the replay re-applied an already executed mutation")
+        self.assertEqual(replay["raw_after"]["target_sha256"], before["raw"]["target_sha256"])
 
 
 if __name__ == "__main__":

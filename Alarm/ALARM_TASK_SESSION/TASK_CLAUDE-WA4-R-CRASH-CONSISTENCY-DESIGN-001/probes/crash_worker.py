@@ -7,6 +7,8 @@ Runs ONE production call against a disposable TEMP storage with an optional faul
                          (proves INTENT is durable), write a marker, os._exit(78)
   raise_after_status / raise_after_intent -- same phase, but an injected EventCheckpointStoreError (the
                          process survives): to separate an exception from a real process death
+  crash_after_op_done -- OPERATION_TRANSITION ...->DONE is about to be appended: re-read the operation record
+                         (DONE + receipt durable, the physical apply already happened), os._exit(79)
   none                -- healthy control
 Every physical apply of the executor is traced (apply_enter) so the parent counts real applies.
 Usage: crash_worker.py <repo-root> <cfg.json>; prints one JSON line (result or error chain).
@@ -63,6 +65,12 @@ def main():
             if mode == "crash_after_intent":
                 os._exit(78)
             raise EventCheckpointStoreError("injected: OPERATION_INTENT append failed after INTENT record")
+        if (kind == "OPERATION_TRANSITION" and mode == "crash_after_op_done"
+                and (kw.get("payload") or {}).get("to") == "DONE"):
+            op = json.loads((task_dir / "operations" / f"{kw['operation_id']}.json").read_bytes())
+            mark("op_done_persisted_event_pending", persisted_status=op["status"], revision=op["revision"],
+                 receipt=op.get("receipt") is not None)
+            os._exit(79)
         return real_event(store, task_id, kind, **kw)
 
     def apply(kind, path, data):

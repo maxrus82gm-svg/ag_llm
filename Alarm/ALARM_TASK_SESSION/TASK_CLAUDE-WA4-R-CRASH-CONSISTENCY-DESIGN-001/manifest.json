@@ -1,0 +1,215 @@
+{
+ "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION - DESIGN PROPOSAL",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "task_folder": "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "repository_files_changed": [],
+ "repository_source_gate": {
+  "verdict": "PASS",
+  "files": 104,
+  "drift": [],
+  "missing": [],
+  "unexpected": []
+ },
+ "also_changed_outside_folder": [
+  "Документация/000_Задачи Claude.md (card rotation only)"
+ ],
+ "files": {
+  "block3-closeout.md": {
+   "bytes": 4776,
+   "sha256": "8b8622c06de3c6ce9c8bc97c3113a1b1b552369b181ba1f1df3cb80c8c7a98d7",
+   "eol": "LF"
+  },
+  "card-rotation.json": {
+   "bytes": 556,
+   "sha256": "e80aecabb7789b769bd51364c2adec224d463763f002b2ffac7f17d0afb97dfb",
+   "eol": "CR_PRESENT"
+  },
+  "evidence.json": {
+   "bytes": 12441,
+   "sha256": "9b3c8cd1a5c258b93c1b8be4a5d3c52cd6d61f7d51e277110624f844414cf1ea",
+   "eol": "LF"
+  },
+  "probes/crash_worker.py": {
+   "bytes": 5599,
+   "sha256": "499f7f660aa4242f82e321ff5c6a554d12f8e644f76d5f70c0f20b86f9dbb417",
+   "eol": "LF"
+  },
+  "probes/reopen_inspector.py": {
+   "bytes": 8208,
+   "sha256": "df354f754e62a5c7cbad782386d15c67af47a922362264b4cbfe397eb5fb72b6",
+   "eol": "LF"
+  },
+  "probes/test_crash_windows.py": {
+   "bytes": 16222,
+   "sha256": "0e794fa194b4de799cdb16f2c31f34166ed1f1ba190420ca60d8c80f00f05b4f",
+   "eol": "LF"
+  },
+  "probes/test_schema_compat.py": {
+   "bytes": 6960,
+   "sha256": "9572525d98abe1986e0e2c0d48ed4bcad9a548bead56a384b59c6ac6b3b24637",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 38776,
+   "sha256": "d434af030822c3d108c847c8e9985795c3f055b0b24eea17791f95b4a7a883fe",
+   "eol": "LF"
+  },
+  "runs/compat.attempts.json": {
+   "bytes": 205,
+   "sha256": "f78621b004c8f4582a9230be53e746d0600aa09701fee315699c6a3bde0f3e08",
+   "eol": "LF"
+  },
+  "runs/compat1/results.json": {
+   "bytes": 13944,
+   "sha256": "c7dceb95fb84477521bd2396662ee0f4d7ea8cfd963d5f4f120e61df3cfa83f3",
+   "eol": "LF"
+  },
+  "runs/compat1/summary.json": {
+   "bytes": 633,
+   "sha256": "766f11a5b8e4b9d863b29a69ec0918f92bc11c397cd2e8081d72390b0f9328c8",
+   "eol": "LF"
+  },
+  "runs/compat2/results.json": {
+   "bytes": 15574,
+   "sha256": "0d63330e03b2abd4f2103dabcbe8c93f1756ca14961abee7c1009a8dd6ca40a0",
+   "eol": "LF"
+  },
+  "runs/compat2/summary.json": {
+   "bytes": 634,
+   "sha256": "687f988eddc6fbc0dad9e50fc5669d1fc641ab75bb5876ff6b8c228caeb5c14b",
+   "eol": "LF"
+  },
+  "runs/compat2.attempts.json": {
+   "bytes": 205,
+   "sha256": "35854ac62aec1805bbf09d5829245579847f5dcb6719a32cde557f278aa30121",
+   "eol": "LF"
+  },
+  "runs/probes1/results.json": {
+   "bytes": 118455,
+   "sha256": "bc72d62d62d8b9ade40fe1d4efc34a7e11ef162742365e08ab37496d6efe41df",
+   "eol": "LF"
+  },
+  "runs/probes1/summary.json": {
+   "bytes": 2859,
+   "sha256": "644ba3403f9de7f31c5e7208556cc32e7f474f8499fd1a93a71cebc3ae627208",
+   "eol": "LF"
+  },
+  "runs/probes1.attempts.json": {
+   "bytes": 207,
+   "sha256": "68cd726016480a995386c6d863ad4e5169ce78bb96fccdb9b9c7a839ac80f36b",
+   "eol": "LF"
+  },
+  "runs/probes2.attempts.json": {
+   "bytes": 621,
+   "sha256": "e981ee277423315421954192d8a040510498fd25973ae17f454240b1336540d4",
+   "eol": "LF"
+  },
+  "runs/probes2a/results.json": {
+   "bytes": 134432,
+   "sha256": "3aa97fe7c351fd73d696d6950cf40e96866393e5b405bc03779e1da3fcb4b532",
+   "eol": "LF"
+  },
+  "runs/probes2a/summary.json": {
+   "bytes": 2862,
+   "sha256": "2b52bfa568f4ef582bb33c626ec603e771fa3cbb5bf2b96a527487c1ee4a6d8d",
+   "eol": "LF"
+  },
+  "runs/probes2b/results.json": {
+   "bytes": 134430,
+   "sha256": "2722d58985f91e6c68795f22804e9b151939a213247ad4252bd9f20ad36e934e",
+   "eol": "LF"
+  },
+  "runs/probes2b/summary.json": {
+   "bytes": 2862,
+   "sha256": "2947fdfa9d223f9c1a07fb57064098bdef3713aa4dc7c4ab50b9db4b36a0eb7b",
+   "eol": "LF"
+  },
+  "runs/probes2c/results.json": {
+   "bytes": 134433,
+   "sha256": "57893ca132925253c3a50ee9f2d7240766905c933835832b60d801607df968e4",
+   "eol": "LF"
+  },
+  "runs/probes2c/summary.json": {
+   "bytes": 2861,
+   "sha256": "e17145096cd9643af1b2759fbb51e4b63a208e831aaca8b45c8c033b335b366a",
+   "eol": "LF"
+  },
+  "scope.md": {
+   "bytes": 3104,
+   "sha256": "d13f0d1f25ac32171cd9bafb81c44f082de0b523c2a74b0838d4cbbbbdc9c4e7",
+   "eol": "LF"
+  },
+  "source-gate.json": {
+   "bytes": 11442,
+   "sha256": "72547a898b72091e49f0f98c501452d8695ca4e3ba95455d2bc3f02c0bb82c01",
+   "eol": "LF"
+  },
+  "tools/byte_scan.py": {
+   "bytes": 1029,
+   "sha256": "a9b1024fbd1798bc94fb4efcbb15b16ec12a60d80a2ffbf77375e93bf6e3b0c7",
+   "eol": "LF"
+  },
+  "tools/collect_evidence.py": {
+   "bytes": 3480,
+   "sha256": "4b9caf9096ef1a1e4aeee30e1387a543007b4d17758c476a34568afcae76af3b",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 1787,
+   "sha256": "26a79c9a2f59eefb0526f83c2d305e4b22f199273a48fc0ef2eafaaf907d2288",
+   "eol": "LF"
+  },
+  "tools/rotate_card.py": {
+   "bytes": 5238,
+   "sha256": "04e96b75a9c2dba4fa4673fd03b93c81b35e3ed3517a9b7e76e64ec468fa1e70",
+   "eol": "LF"
+  },
+  "tools/run_gate.py": {
+   "bytes": 2961,
+   "sha256": "b7f0d54f7a9b6fff0a9b06011cc8ea8e21150a8e738a8fe59083fe90d48cd3ff",
+   "eol": "LF"
+  },
+  "tools/run_gate_batch.py": {
+   "bytes": 2168,
+   "sha256": "ecb987eaad1839250a6de0bfddb6dac0ddcc27a7152916ba782eba0ac124b110",
+   "eol": "LF"
+  },
+  "tools/sanitize_paths.py": {
+   "bytes": 680,
+   "sha256": "eb712a4f5edff3e57f3e2d31366b9037e2451bfe4b48a028c298773fe3beb2fb",
+   "eol": "LF"
+  },
+  "tools/show_facts.py": {
+   "bytes": 1205,
+   "sha256": "0749e69d978a4dea096d073048bfc31e2ab28406122b58662f5a5454a65006e9",
+   "eol": "LF"
+  },
+  "tools/source_gate.py": {
+   "bytes": 2013,
+   "sha256": "dc79e6e58ff820ff2c25f78ee112223060c5b845570d6f46c683ded06d4f97d3",
+   "eol": "LF"
+  },
+  "tools/spec-compat.json": {
+   "bytes": 180,
+   "sha256": "06c0026419c224f62725519e5bb929d4e2eb87c68466893fd6bae7e4a32e640b",
+   "eol": "LF"
+  },
+  "tools/spec-probes1.json": {
+   "bytes": 180,
+   "sha256": "69d1b9b544eccf53171c88344bf2a2df82f2d271f86cdce31660b29317a3bc20",
+   "eol": "LF"
+  },
+  "tools/spec-probes2.json": {
+   "bytes": 537,
+   "sha256": "ddb329f85af32a8ac14832b75d43dabdd7ac797a898a3dcc37579f7c2d744edd",
+   "eol": "LF"
+  },
+  "tools/summarize_results.py": {
+   "bytes": 1931,
+   "sha256": "5db32aedb4f573c8bb5805118ed8b05d5147d868937c2cb4f9b4308f587533a4",
+   "eol": "LF"
+  }
+ }
+}

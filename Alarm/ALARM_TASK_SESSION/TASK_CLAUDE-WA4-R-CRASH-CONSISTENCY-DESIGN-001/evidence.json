@@ -1,0 +1,223 @@
+{
+ "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001",
+ "attempts": [
+  {
+   "label": "probes1",
+   "results.json": {
+    "original_sha256": "ab3052f7afab25d82680d272528de51773324a23825f074448136191c88a69ec",
+    "published_sha256": "bc72d62d62d8b9ade40fe1d4efc34a7e11ef162742365e08ab37496d6efe41df",
+    "published_path": "runs/probes1/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "223915d4038bfc4df4c43534b9e954e9fe70f598375fa656638bc0d085226618",
+    "published_sha256": "644ba3403f9de7f31c5e7208556cc32e7f474f8499fd1a93a71cebc3ae627208",
+    "published_path": "runs/probes1/summary.json"
+   },
+   "tests_run": 12,
+   "exit": 1,
+   "elapsed_seconds": 32.669,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_healthy_steps_record_events_and_close": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_injected_exception_is_reported_but_leaves_the_same_divergence": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_reopen_reports_a_status_without_its_event": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_verified_without_recorded_evidence_never_closes": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_activation_dies_after_durable_ACTIVE_and_plan_pointer": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_process_dies_after_durable_DONE_before_its_event": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_CONTROL_healthy_mutation_records_intent_and_executes_once": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_a_lost_intent_event_does_not_blind_the_rest_of_the_task": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_injected_intent_event_failure_leaves_no_unreadable_orphan": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_orphan_intent_has_a_server_recovery_path": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_SAFETY_reopen_never_turns_the_orphan_into_a_mutation_or_a_closed_task": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_TRIGGER_process_dies_after_durable_INTENT_before_its_event": "PASS"
+   },
+   "method_counts": {
+    "PASS": 7,
+    "FAIL": 5
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  },
+  {
+   "label": "probes2a",
+   "results.json": {
+    "original_sha256": "aedd671798816a763d7c9092eebc95e0437bb08f34da439f285ddbdd4338ce76",
+    "published_sha256": "3aa97fe7c351fd73d696d6950cf40e96866393e5b405bc03779e1da3fcb4b532",
+    "published_path": "runs/probes2a/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "b788cd47f71b7fde415ede132b9fa67c56df8fbe462ed55d8f98a73f287f8dd4",
+    "published_sha256": "2b52bfa568f4ef582bb33c626ec603e771fa3cbb5bf2b96a527487c1ee4a6d8d",
+    "published_path": "runs/probes2a/summary.json"
+   },
+   "tests_run": 13,
+   "exit": 1,
+   "elapsed_seconds": 33.945,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_healthy_steps_record_events_and_close": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_injected_exception_is_reported_but_leaves_the_same_divergence": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_reopen_reports_a_status_without_its_event": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_verified_without_recorded_evidence_never_closes": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_activation_dies_after_durable_ACTIVE_and_plan_pointer": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_process_dies_after_durable_DONE_before_its_event": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_CONTROL_healthy_mutation_records_intent_and_executes_once": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_a_lost_intent_event_does_not_blind_the_rest_of_the_task": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_injected_intent_event_failure_leaves_no_unreadable_orphan": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_orphan_intent_has_a_server_recovery_path": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_SAFETY_reopen_never_turns_the_orphan_into_a_mutation_or_a_closed_task": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_TRIGGER_process_dies_after_durable_INTENT_before_its_event": "PASS",
+    "test_crash_windows.W3OperationTransitionWindow.test_TRIGGER_and_SAFETY_lost_DONE_event_is_tolerated_and_replay_never_reapplies": "PASS"
+   },
+   "method_counts": {
+    "PASS": 8,
+    "FAIL": 5
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  },
+  {
+   "label": "probes2b",
+   "results.json": {
+    "original_sha256": "390225b8fe40f81d0f5dd153553fa4a846563be3a47b1238397a7fb0c7dab12b",
+    "published_sha256": "2722d58985f91e6c68795f22804e9b151939a213247ad4252bd9f20ad36e934e",
+    "published_path": "runs/probes2b/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "4595edd865d3da645e22a8efec3c00327a37e35593300fa2230e16549908807b",
+    "published_sha256": "2947fdfa9d223f9c1a07fb57064098bdef3713aa4dc7c4ab50b9db4b36a0eb7b",
+    "published_path": "runs/probes2b/summary.json"
+   },
+   "tests_run": 13,
+   "exit": 1,
+   "elapsed_seconds": 33.307,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_healthy_steps_record_events_and_close": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_injected_exception_is_reported_but_leaves_the_same_divergence": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_reopen_reports_a_status_without_its_event": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_verified_without_recorded_evidence_never_closes": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_activation_dies_after_durable_ACTIVE_and_plan_pointer": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_process_dies_after_durable_DONE_before_its_event": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_CONTROL_healthy_mutation_records_intent_and_executes_once": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_a_lost_intent_event_does_not_blind_the_rest_of_the_task": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_injected_intent_event_failure_leaves_no_unreadable_orphan": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_orphan_intent_has_a_server_recovery_path": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_SAFETY_reopen_never_turns_the_orphan_into_a_mutation_or_a_closed_task": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_TRIGGER_process_dies_after_durable_INTENT_before_its_event": "PASS",
+    "test_crash_windows.W3OperationTransitionWindow.test_TRIGGER_and_SAFETY_lost_DONE_event_is_tolerated_and_replay_never_reapplies": "PASS"
+   },
+   "method_counts": {
+    "PASS": 8,
+    "FAIL": 5
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  },
+  {
+   "label": "probes2c",
+   "results.json": {
+    "original_sha256": "7cfd970b677e9a90a9b458e47c51f46d6dc87a39dadef5d1972c47ed0b3749ab",
+    "published_sha256": "57893ca132925253c3a50ee9f2d7240766905c933835832b60d801607df968e4",
+    "published_path": "runs/probes2c/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "0aed51ef4219fe6b5659cb909103c8d6a689a47d8889e9a5aef6ac5a7128a91e",
+    "published_sha256": "e17145096cd9643af1b2759fbb51e4b63a208e831aaca8b45c8c033b335b366a",
+    "published_path": "runs/probes2c/summary.json"
+   },
+   "tests_run": 13,
+   "exit": 1,
+   "elapsed_seconds": 34.422,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_healthy_steps_record_events_and_close": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_CONTROL_injected_exception_is_reported_but_leaves_the_same_divergence": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_reopen_reports_a_status_without_its_event": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_INVARIANT_verified_without_recorded_evidence_never_closes": "FAIL",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_activation_dies_after_durable_ACTIVE_and_plan_pointer": "PASS",
+    "test_crash_windows.W1StatusEventWindow.test_TRIGGER_process_dies_after_durable_DONE_before_its_event": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_CONTROL_healthy_mutation_records_intent_and_executes_once": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_a_lost_intent_event_does_not_blind_the_rest_of_the_task": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_injected_intent_event_failure_leaves_no_unreadable_orphan": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_INVARIANT_orphan_intent_has_a_server_recovery_path": "FAIL",
+    "test_crash_windows.W2IntentEventWindow.test_SAFETY_reopen_never_turns_the_orphan_into_a_mutation_or_a_closed_task": "PASS",
+    "test_crash_windows.W2IntentEventWindow.test_TRIGGER_process_dies_after_durable_INTENT_before_its_event": "PASS",
+    "test_crash_windows.W3OperationTransitionWindow.test_TRIGGER_and_SAFETY_lost_DONE_event_is_tolerated_and_replay_never_reapplies": "PASS"
+   },
+   "method_counts": {
+    "PASS": 8,
+    "FAIL": 5
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  },
+  {
+   "label": "compat1",
+   "results.json": {
+    "original_sha256": "1c66c7ddd50cef733e68176974b7dc1ccc6a2e883bd85c747fdb9019cccf82c8",
+    "published_sha256": "c7dceb95fb84477521bd2396662ee0f4d7ea8cfd963d5f4f120e61df3cfa83f3",
+    "published_path": "runs/compat1/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "ec1b8df7763a10d8e755f0edb512d8024d6a7faa3096f9a03f6936ed04784b7d",
+    "published_sha256": "766f11a5b8e4b9d863b29a69ec0918f92bc11c397cd2e8081d72390b0f9328c8",
+    "published_path": "runs/compat1/summary.json"
+   },
+   "tests_run": 3,
+   "exit": 0,
+   "elapsed_seconds": 1.932,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_schema_compat.SchemaCompat.test_FACT_current_microtask_reader_rejects_an_unknown_field": "PASS",
+    "test_schema_compat.SchemaCompat.test_FACT_current_operation_reader_rejects_an_unknown_field": "PASS",
+    "test_schema_compat.SchemaCompat.test_FACT_operation_intent_event_is_derivable_from_the_durable_record": "PASS"
+   },
+   "method_counts": {
+    "PASS": 3
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  },
+  {
+   "label": "compat2",
+   "results.json": {
+    "original_sha256": "67415da7188711bdcfc48e15f45a1e1a4de965d063cd9cac9e2378b7d89b2d77",
+    "published_sha256": "0d63330e03b2abd4f2103dabcbe8c93f1756ca14961abee7c1009a8dd6ca40a0",
+    "published_path": "runs/compat2/results.json"
+   },
+   "summary.json": {
+    "original_sha256": "a517245372958259337fedf5cafe0ac89d58147a0c117d152bb581a3a272fcb0",
+    "published_sha256": "687f988eddc6fbc0dad9e50fc5669d1fc641ab75bb5876ff6b8c228caeb5c14b",
+    "published_path": "runs/compat2/summary.json"
+   },
+   "tests_run": 4,
+   "exit": 0,
+   "elapsed_seconds": 2.454,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "isolation_violations": 0,
+   "method_status": {
+    "test_schema_compat.SchemaCompat.test_FACT_current_code_tolerates_new_event_types_and_extra_event_fields": "PASS",
+    "test_schema_compat.SchemaCompat.test_FACT_current_microtask_reader_rejects_an_unknown_field": "PASS",
+    "test_schema_compat.SchemaCompat.test_FACT_current_operation_reader_rejects_an_unknown_field": "PASS",
+    "test_schema_compat.SchemaCompat.test_FACT_operation_intent_event_is_derivable_from_the_durable_record": "PASS"
+   },
+   "method_counts": {
+    "PASS": 4
+   },
+   "source_map_files": 104,
+   "source_map_diff_vs_gate": []
+  }
+ ]
+}

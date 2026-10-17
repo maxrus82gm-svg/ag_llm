@@ -32,6 +32,18 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
+Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+TASK: —
+
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+---
+
+### CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001 — Web Alarm Reliability — Durable State/Event Crash Consistency, AUD-02b-R + AUD-03
+
+**Статус постановки:** БЛОК 1 (USER ASSIGNED, размещён пользователем). Назначение — стартовое сообщение пользователя в чат 2026-10-17; выполнена агентом 008 (Claude) 2026-10-17; AMENDMENT во время работы не было; результат — в БЛОКЕ 3. Полная постановка из БЛОКА 1 дословно (хвостовые пробелы сняты):
+
+```text
 # БЛОК 1 — НОВАЯ ЗАДАЧА CLAUDE 008
 
 Уважаемый агент 008 (Claude), поручаем вам самостоятельное инженерное исследование аварийной согласованности состояния Web Alarm Workspace.
@@ -55,9 +67,9 @@
 Исследовать и воспроизвести два незакрытых дефекта:
 
 - **AUD-02b-R:** процесс погибает после durable CAS статуса микрозадачи, но до записи `MICROTASK_TRANSITION` в журнал. Статус сохранён, событие отсутствует; после нового запуска discrepancy может остаться необнаруженной.
-    
+
 - **AUD-03:** аналогичное crash-window между сохранением durable operation INTENT/контракта и событием `OPERATION_INTENT`.
-    
+
 
 Требуется установить точные commit points и построить инженерно обоснованный контракт, по которому Web Alarm сможет после аварии достоверно распознать неполную операцию, не перепутать её с успешно завершённой и не выдать повторное mutation-разрешение.
 
@@ -70,13 +82,13 @@
 Перед работой прочитать актуальные локальные копии:
 
 - `08_Старт.md`, `000_Задачи для агента.md`, личную `000_Задачи Claude.md`, `34_TACTICAL_CONTEXT.md`, `18_Регламент сопровождения документации.md`.
-    
+
 - `01_Архитектура и текущее состояние.md`, `23`, `24`, `25`, `36`, `36.1`, `36.2`.
-    
+
 - Предыдущий отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001/report.md`, его `scope.md`, `manifest.json`, `evidence.json`, `gate-e.json`, а также `probes/test_aud02b_residual_window.py`.
-    
+
 - Адресно изучить `web_alarm/state_machine.py`, `operation_store.py`, `event_checkpoint_store.py`, `task_store.py`, `projection.py`, `closeout.py`, `recovery_coordinator.py`, `microtask_gate.py` и связанные проверки.
-    
+
 
 Самостоятельно расширять read-only инженерный анализ смежных модулей разрешено в пределах Web Alarm. Это не расширяет write-scope.
 
@@ -85,21 +97,21 @@
 ### Фаза A — самостоятельная диагностика
 
 1. Восстановить реальные durable commit points, lock ordering, replay identity, checkpoint/projection authority и recovery paths.
-    
+
 2. Проанализировать, какие состояния сохраняются до события и какие операции возможны после восстановления процесса.
-    
+
 3. Проверить обнаружимость отсутствующего события: что видно в authoritative store, что видно в JSONL, что сообщает projection, что допускает closeout.
-    
+
 4. Проверить как минимум два окна:
-    
+
     - `status CAS persisted → процесс погиб → event missing`;
-        
+
     - `operation INTENT persisted → процесс погиб → event missing`.
-        
+
 5. Разделять injected exception, реальную остановку дочернего процесса и power loss. Не считать их эквивалентными.
-    
+
 6. Проверить совместимость с RC-1…RC-6, WA4-E, WA4-A, принятыми legacy records и существующими событиями.
-    
+
 
 ### Фаза B — независимые isolated probes
 
@@ -108,17 +120,17 @@
 Обязательны:
 
 - реальное аварийное завершение **только дочернего тестового процесса** после конкретного durable write;
-    
+
 - fresh-process reopen из второго процесса;
-    
+
 - raw byte/oracle для persisted status, operation record, `events.jsonl`, projection и closeout;
-    
+
 - здоровый контроль без аварии;
-    
+
 - отрицательная проверка, показывающая отсутствие false-safe результата;
-    
+
 - воспроизводимость с проверкой фактического triggering fault phase.
-    
+
 
 Если часть проверок не может быть выполнена безопасно — `NOT RUN / BLOCKED`, с причиной. Не имитировать PASS.
 
@@ -139,25 +151,25 @@ C. Отдельный fail-closed reconciliation contract, который выя
 Для каждого оценить:
 
 - crash-consistency и гарантии после reopen;
-    
+
 - safety vs availability;
-    
+
 - compatibility старых записей;
-    
+
 - необходимость миграции schema;
-    
+
 - lock ordering / deadlock / race;
-    
+
 - replay/idempotency;
-    
+
 - взаимодействие с projection, closeout и Recovery Coordinator;
-    
+
 - размер и сложность будущего diff;
-    
+
 - обратимость и rollback;
-    
+
 - тестовые оракулы, которые могут опровергнуть решение.
-    
+
 
 Не навязывать предпочтительный подход до анализа фактического кода.
 
@@ -166,21 +178,21 @@ C. Отдельный fail-closed reconciliation contract, который выя
 Представить один рекомендуемый вариант с точными инвариантами:
 
 - какие факты должны быть durable до и после commit;
-    
+
 - какой источник считается authority;
-    
+
 - как обнаруживается отсутствие события;
-    
+
 - когда требуется `RECOVERY_REQUIRED` или аналогичный fail-closed blocker;
-    
+
 - что разрешено восстановить автоматически, а что только после решения оператора;
-    
+
 - как запрещается повторный physical mutation после неизвестного исхода;
-    
+
 - какие компоненты придётся изменить в будущей implementation TASK;
-    
+
 - как гарантировать совместимость с существующими storage records и старым recovery evidence.
-    
+
 
 Отдельно указать, какие решения требуют утверждения пользователя. **До такого утверждения production-код не изменять.**
 
@@ -197,23 +209,23 @@ C. Отдельный fail-closed reconciliation contract, который выя
 ## 5. Запрещено
 
 - Изменять любые `web_alarm/*.py`, корневые `test_web_alarm_*.py`, `wa4a_acceptance.py`, CI/workflows, production schema или миграции.
-    
+
 - Менять общие документы `08/18/23/24/25/34/36.x/05/06` и другие архитектуры.
-    
+
 - Использовать Git/GitHub, включая `git status`, `diff`, `log`, `show`, commit, push или API, без отдельного USER GO.
-    
+
 - Использовать сеть, MCP, Secure Tunnel, V2Ray, ChatGPT Desktop plugin или область Codex 007.
-    
+
 - Трогать live Workspace, production storage, пользовательские файлы, credentials, firewall или системные настройки.
-    
+
 - Запускать rollout WARN / GATEWAY REQUIRED / STRICT / Final Audit.
-    
+
 - Начинать Ultra Tab / GigaChat MVP.
-    
+
 - Автоматически «чинить» отсутствующее событие без утверждённого recovery-контракта.
-    
+
 - Считать завершённой всю WA4-R или прежнюю Claude TASK.
-    
+
 
 ## 6. Самостоятельный adversarial review
 
@@ -226,30 +238,28 @@ C. Отдельный fail-closed reconciliation contract, который выя
 Результат должен содержать:
 
 1. Подтверждённую карту двух crash windows.
-    
+
 2. Минимум два воспроизводящих negative scenarios с raw-state/fresh-process evidence либо точный BLOCKED.
-    
+
 3. Не менее трёх вариантов контракта и сравнение.
-    
+
 4. Один рекомендуемый вариант, с доказательной аргументацией и оценкой изменений в будущей TASK.
-    
+
 5. Полную матрицу тестов: команды, test IDs, PASS/FAIL/ERROR/SKIP, fault trigger, negative controls, source hashes, isolation, NOT RUN.
-    
+
 6. Отдельный список OPEN findings и необходимые решения пользователя.
-    
+
 7. `DOC IMPACT / SHARED DOC DELTA`, точные пути к отчёту, manifest/evidence и состав файлов, который пользователь должен опубликовать.
-    
+
 8. Явное подтверждение, что production, CI, MCP, live storage и чужие TASK не изменялись.
-    
+
 
 **Итоговый статус:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION — DESIGN PROPOSAL`; не `REPAIR VERIFIED`.
 
 Пользователь выполняет commit/push подготовленного комплекта, ChatGPT проводит независимую приёмку. Только после архитектурного решения будет отдельно утверждена реализационная TASK.
 
 **NEXT:** представить отчёт и дождаться решения пользователя; не начинать следующий инженерный этап самостоятельно.
----
-# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
----
+```
 
 ### CLAUDE-WA4-R-AUD01T02B-REPAIR-001 — Web Alarm Reliability: Global Transport History & Microtask Transition Integrity
 
@@ -8076,6 +8086,34 @@ RC-6 НЕ НАЧИНАТЬ.
 
 ---
 # БЛОК 3 — РЕЗУЛЬТАТ ПОСЛЕДНЕЙ ВЫПОЛНЕННОЙ ЗАДАЧИ
+---
+
+### CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001 — Durable State/Event Crash Consistency (AUD-02b-R + AUD-03) — результат
+
+**TASK:** CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001 (БЛОК 1, USER ASSIGNED). Назначение — стартовое сообщение пользователя 2026-10-17. Исполнитель — агент 008 (Claude); verifier — ChatGPT. AMENDMENT не было.
+
+- **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION — DESIGN PROPOSAL. Не REPAIR VERIFIED, LOCAL ONLY. Production-код, тесты, runner, CI и общая документация не менялись; WA4-R остаётся PARTIAL.
+- **Source gate:** PASS — 104/104 исходника = итог прошлого ремонта (№354); повтор в конце — PASS.
+- **Воспроизведено** (реальная гибель дочернего процесса после durable-записи с маркером фазы + fresh reopen непатченным процессом):
+  - **AUD-02b-R (W1) — false-safe:** расхождение невидимо (projection без блокеров); после потерянного события VERIFIED closeout завершает TASK, хотя verification evidence нигде не сохранился; после потерянной активации mutation выполняется.
+  - **AUD-03 (W2) — safe, но тупик:** get/resolve/recover недоступны (FAIL_CLOSED), одна сирота делает нечитаемыми все операции TASK; та же сирота возникает и при I/O-ошибке живого процесса (409 `state_error`).
+  - **W3 (контроль):** потерянное событие DONE операции допускается по замыслу, replay не повторяет apply.
+- **Пробы:**
+  - `test_crash_windows` 13 проб × 3 прогона = 8 PASS (CONTROL/TRIGGER/SAFETY) + 5 FAIL (все INVARIANT — воспроизведённые дефекты), детерминированно;
+  - `test_schema_compat` 4/4: новое поле в записи текущий код отвергает (откат ломается), новые типы событий игнорирует; `OPERATION_INTENT` выводится из записи 10/10;
+  - изоляция 0; source map 104 = gate.
+- **Варианты:** A (`pending_event_id`), B (write-ahead намерение в журнале), B' (sidecar WAL), C (только сверка), D (outbox в записи) — сравнены по 10 критериям.
+- **Рекомендация (нужно утверждение пользователя):**
+  - **R-OP** для операций — без схемы: сирота узкой формы = `INTENT_EVENT_PENDING`, событие детерминированно дописывается из записи под lock, блокер только для этой операции, ABORT возможен;
+  - **R-MT** для микрозадач — `MICROTASK_TRANSITION_INTENT` до CAS, commit с `intent_id` после; разрешение по authoritative-статусу (abandon / roll-forward / оператор); evidence durable до статуса; откат безопасен.
+  - Adversarial review — 15 атак.
+- **OPEN / новые наблюдения:** HIST-POL (непоследовательная политика отставания истории), RC6-NOEVT (RC-6 меняет статусы без событий), PAY-ORPH, PWR-01 (`os.replace` без write-through), LOCK-T x AUD-03; AUD-01T-R, AUD-02c, AUD-04 — без изменений.
+- **NEEDS USER DECISION:** R-OP; R-MT vs D; авто-разрешение vs только оператор; блок closeout на legacy-VERIFIED без evidence; RC-6/manifest-store в фазе 1; PWR-01 отдельно.
+- **NOT RUN:** power loss, внешний писатель, W4/W5 пробами, полный suite (код не менялся), чистый CI (W1), preflight live storage (W3), Python 3.13.
+- **Отчёт:** `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001/report.md`; рядом `scope.md`, `manifest.json`, `evidence.json`, `source-gate.json`, `probes/`, `runs/` (очищенные сырые `results.json`), `tools/`.
+- **DOC IMPACT** (предложения): 23 (authority/история, протоколы R-OP/R-MT после утверждения), 24 (implementation TASK), 25, 36.2 (crash-window пробы), 34/05/06; 18/36/36.1 — NO CHANGE.
+- **NEXT:** независимая проверка ChatGPT → решения пользователя → отдельная implementation TASK.
+
 ---
 
 ### CLAUDE-WA4-R-AUD01T02B-REPAIR-001 — Global Transport History & Microtask Transition Integrity — результат

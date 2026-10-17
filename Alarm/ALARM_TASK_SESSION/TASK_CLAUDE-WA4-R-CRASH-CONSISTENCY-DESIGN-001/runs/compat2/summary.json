@@ -1,0 +1,28 @@
+{
+ "label": "compat2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001",
+  "--output",
+  "<TEMP>\\claude-crashcc-compat2-rd5zcjil\\out",
+  "test_schema_compat"
+ ],
+ "exit": 0,
+ "wall_seconds": 3.062,
+ "base": "<TEMP>\\claude-crashcc-compat2-rd5zcjil",
+ "tests_run": 4,
+ "passed": 4,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 2.454,
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}
