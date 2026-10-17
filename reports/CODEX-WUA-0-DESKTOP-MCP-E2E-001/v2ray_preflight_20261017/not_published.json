@@ -1,0 +1,23 @@
+{
+  "items": [
+    {
+      "source_alias": "private V2RayN GUI configuration",
+      "sha256": "b792f3929ad8c781137086df74ab31ea70c68fa42e70d1464b90e5440fdd10a8",
+      "status": "EVIDENCE NOT PUBLISHED",
+      "reason": "Raw source contains private credentials/settings; read in place; only allowlisted sanitized fields published",
+      "sanitized_copy": "gui_policy.sanitized.json"
+    },
+    {
+      "source_alias": "private V2RayN profile database",
+      "sha256": "6329919a789c17c6cfbe336857b226043414bc378c9d8b01fce813dfb9e4db0a",
+      "status": "EVIDENCE NOT PUBLISHED",
+      "reason": "Subscriptions and secrets not selected/exported; ro+immutable read of routing fields only",
+      "sanitized_copy": "gui_policy.sanitized.json"
+    },
+    {
+      "source_alias": "disposable synthetic TLS private key",
+      "status": "EVIDENCE NOT PUBLISHED",
+      "reason": "TEMP-only and deleted after tests; public certificate digest is in isolated_results.json"
+    }
+  ]
+}

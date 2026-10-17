@@ -1,0 +1,15 @@
+{
+  "test": "read-only inbound SOCKS5 method negotiation only",
+  "destination": [
+    "127.0.0.1",
+    10808
+  ],
+  "sent_hex": "050100",
+  "connect_request_sent": false,
+  "remote_target_supplied": false,
+  "credentials_sent": false,
+  "timeout_seconds": 2,
+  "received_hex": "0500",
+  "status": "PASS",
+  "interpretation": "SOCKS5 no-auth method accepted; no SOCKS CONNECT command sent"
+}

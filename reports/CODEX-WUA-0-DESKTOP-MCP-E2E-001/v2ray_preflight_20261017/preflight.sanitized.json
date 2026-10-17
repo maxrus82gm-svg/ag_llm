@@ -1,0 +1,50 @@
+{
+  "processes": [
+    {
+      "name": "v2rayN.exe",
+      "pid": 14456,
+      "parent_pid": 9644,
+      "listeners": [],
+      "executable_sha256": "02c40d6f0b70b9495c084003dec55a8b6fd7152bc7af3fdbe4055132bac086bb"
+    },
+    {
+      "name": "sing-box.exe",
+      "pid": 6984,
+      "parent_pid": 14456,
+      "listeners": [
+        {
+          "address": "127.0.0.1",
+          "port": 10813
+        },
+        {
+          "address": "127.0.0.1",
+          "port": 10808
+        }
+      ],
+      "executable_sha256": "ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3"
+    }
+  ],
+  "configs": [
+    {
+      "process_pid": 6984,
+      "status": "ACTIVE_CONFIG_PATH_NOT_RESOLVED"
+    }
+  ],
+  "environment": {
+    "HTTP_PROXY": {
+      "present": false
+    },
+    "HTTPS_PROXY": {
+      "present": false
+    },
+    "ALL_PROXY": {
+      "present": false
+    },
+    "NO_PROXY": {
+      "present": false
+    }
+  },
+  "external_requests": 0,
+  "live_config_writes": 0,
+  "subscriptions_or_raw_credentials_exported": false
+}

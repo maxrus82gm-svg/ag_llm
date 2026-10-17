@@ -1,0 +1,54 @@
+{
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "python_executable_sha256": "0b471133e110cfb53a061cad528ce8e517d7b9ac41a0a396c39ad795a487fc14",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "openssl": "OpenSSL 3.0.16 11 Feb 2025",
+  "cryptography": "50.0.1",
+  "tunnel_client_sha256": "4226bb74a72388147882881f29f79801b95e285d731a138071812e3aa6766571",
+  "official_help_invocations": [
+    {
+      "name": "official_version",
+      "argv": [
+        "<sealed tunnel-client.exe>",
+        "--version"
+      ],
+      "exit_code": 0,
+      "network_transport_started": false
+    },
+    {
+      "name": "official_run_help",
+      "argv": [
+        "<sealed tunnel-client.exe>",
+        "run",
+        "--help"
+      ],
+      "exit_code": 0,
+      "network_transport_started": false
+    },
+    {
+      "name": "official_dev_proxy_help",
+      "argv": [
+        "<sealed tunnel-client.exe>",
+        "dev",
+        "proxy",
+        "--help"
+      ],
+      "exit_code": 0,
+      "network_transport_started": false
+    },
+    {
+      "name": "official_proxy_sample",
+      "argv": [
+        "<sealed tunnel-client.exe>",
+        "profiles",
+        "samples",
+        "show",
+        "sample_mcp_enterprise_proxy"
+      ],
+      "exit_code": 0,
+      "network_transport_started": false
+    }
+  ],
+  "real_client_transport_executed": false,
+  "external_documentation_fetch": "NOT RUN; forbidden external requests; use previously fetched OpenAI documentation dated 2026-10-16 plus local verified binary help"
+}

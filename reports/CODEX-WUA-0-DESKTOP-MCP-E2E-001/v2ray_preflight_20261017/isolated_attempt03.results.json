@@ -1,0 +1,969 @@
+{
+  "suite": "ISOLATED TLS/CONNECT REFERENCE POLICY; NOT tunnel-client",
+  "collected": 19,
+  "pass": 19,
+  "fail": 0,
+  "error": 0,
+  "skip": 0,
+  "results": [
+    {
+      "id": "S01_success",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "success",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S01_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S01_success",
+          "host": "127.0.0.1",
+          "port": 54156
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S01_success",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S01_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S01_success",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S01_success",
+          "local_port": 54158,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S01_success",
+          "path": "/S01_success/ok",
+          "peer_port": 54158,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S02_port_not_listening",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "refused",
+      "expected": "refusal",
+      "error_type": "TimeoutError",
+      "error_message": "timed out",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S02_port_not_listening"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S02_port_not_listening",
+          "host": "127.0.0.1",
+          "port": 54159
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S03_explicit_refusal",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "reject",
+      "expected": "refusal",
+      "error_type": "OSError",
+      "error_message": "Tunnel connection failed: 503 Synthetic refusal",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S03_explicit_refusal"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S03_explicit_refusal",
+          "host": "127.0.0.1",
+          "port": 54165
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S03_explicit_refusal",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "reject"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S04_accept_then_close",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "close",
+      "expected": "refusal",
+      "error_type": "RemoteDisconnected",
+      "error_message": "Remote end closed connection without response",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S04_accept_then_close"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S04_accept_then_close",
+          "host": "127.0.0.1",
+          "port": 54167
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S04_accept_then_close",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "close"
+        },
+        {
+          "kind": "proxy_injected_disconnect",
+          "role": "proxy",
+          "case": "S04_accept_then_close"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S05_timeout",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "timeout",
+      "expected": "refusal",
+      "error_type": "TimeoutError",
+      "error_message": "timed out",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S05_timeout"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S05_timeout",
+          "host": "127.0.0.1",
+          "port": 54169
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S05_timeout",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "timeout"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S06_retry_refused",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "refused",
+      "expected": "refusal",
+      "error_type": "TimeoutError",
+      "error_message": "timed out",
+      "client_connect_attempts": 3,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S06_retry_refused"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S06_retry_refused",
+          "host": "127.0.0.1",
+          "port": 54171
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S06_retry_refused"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S06_retry_refused",
+          "host": "127.0.0.1",
+          "port": 54171
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S06_retry_refused"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S06_retry_refused",
+          "host": "127.0.0.1",
+          "port": 54171
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S07_drop_after_success",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "drop_after_success",
+      "expected": "drop_after_success",
+      "error_type": "RemoteDisconnected",
+      "error_message": "Remote end closed connection without response",
+      "client_connect_attempts": 3,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S07_drop_after_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S07_drop_after_success",
+          "host": "127.0.0.1",
+          "port": 54176
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S07_drop_after_success",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "drop_after_success"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S07_drop_after_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S07_drop_after_success",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S07_drop_after_success",
+          "local_port": 54178,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S07_drop_after_success",
+          "path": "/S07_drop_after_success/ok",
+          "peer_port": 54178,
+          "server_port": 54154
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S07_drop_after_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S07_drop_after_success",
+          "host": "127.0.0.1",
+          "port": 54176
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S07_drop_after_success",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 2,
+          "mode": "drop_after_success"
+        },
+        {
+          "kind": "proxy_injected_disconnect",
+          "role": "proxy",
+          "case": "S07_drop_after_success"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S07_drop_after_success"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S07_drop_after_success",
+          "host": "127.0.0.1",
+          "port": 54176
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S07_drop_after_success",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 3,
+          "mode": "drop_after_success"
+        },
+        {
+          "kind": "proxy_injected_disconnect",
+          "role": "proxy",
+          "case": "S07_drop_after_success"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S08_origin_redirect",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "success",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 2,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 2,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S08_origin_redirect"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S08_origin_redirect",
+          "host": "127.0.0.1",
+          "port": 54181
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S08_origin_redirect"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "local_port": 54183,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S08_origin_redirect",
+          "path": "/S08_origin_redirect/redirect",
+          "peer_port": 54183,
+          "server_port": 54154
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S08_origin_redirect"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S08_origin_redirect",
+          "host": "127.0.0.1",
+          "port": 54181
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "request": "CONNECT 127.0.0.1:54155 HTTP/1.1",
+          "ordinal": 2,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S08_origin_redirect"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "host": "127.0.0.1",
+          "port": 54155
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S08_origin_redirect",
+          "local_port": 54185,
+          "target_port": 54155
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S08_origin_redirect",
+          "path": "/S08_origin_redirect/ok",
+          "peer_port": 54185,
+          "server_port": 54155
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S09_proxy_redirect_rejected",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "redirect",
+      "expected": "refusal",
+      "error_type": "OSError",
+      "error_message": "Tunnel connection failed: 302 Found",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S09_proxy_redirect_rejected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S09_proxy_redirect_rejected",
+          "host": "127.0.0.1",
+          "port": 54186
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S09_proxy_redirect_rejected",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "redirect"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S10_no_proxy_all",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "success",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S10_no_proxy_all"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S10_no_proxy_all",
+          "host": "127.0.0.1",
+          "port": 54188
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S10_no_proxy_all",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S10_no_proxy_all"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S10_no_proxy_all",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S10_no_proxy_all",
+          "local_port": 54190,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S10_no_proxy_all",
+          "path": "/S10_no_proxy_all/ok",
+          "peer_port": 54190,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S10_no_proxy_literal",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "success",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S10_no_proxy_literal"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S10_no_proxy_literal",
+          "host": "127.0.0.1",
+          "port": 54191
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S10_no_proxy_literal",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S10_no_proxy_literal"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S10_no_proxy_literal",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S10_no_proxy_literal",
+          "local_port": 54193,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S10_no_proxy_literal",
+          "path": "/S10_no_proxy_literal/ok",
+          "peer_port": 54193,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S10_no_proxy_named",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "success",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S10_no_proxy_named"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S10_no_proxy_named",
+          "host": "127.0.0.1",
+          "port": 54195
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S10_no_proxy_named",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S10_no_proxy_named"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S10_no_proxy_named",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S10_no_proxy_named",
+          "local_port": 54197,
+          "target_port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "S10_no_proxy_named",
+          "path": "/S10_no_proxy_named/ok",
+          "peer_port": 54197,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S11_component_override_rejected",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "policy_rejection",
+      "error_type": "PolicyError",
+      "error_message": "CONFLICTING_COMPONENT_PROXY",
+      "client_connect_attempts": 0,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": false,
+      "events": [],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S12_missing_explicit_proxy",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "policy_rejection",
+      "error_type": "PolicyError",
+      "error_message": "EXPLICIT_PROXY_REQUIRED",
+      "client_connect_attempts": 0,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": false,
+      "events": [],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S13_hostname_dns_rejected",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "policy_rejection",
+      "error_type": "PolicyError",
+      "error_message": "TARGET_NOT_OWNED_LITERAL_LOOPBACK",
+      "client_connect_attempts": 0,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": false,
+      "events": [],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S14_extra_transport_rejected",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "policy_rejection",
+      "error_type": "PolicyError",
+      "error_message": "EXTRA_TRANSPORT_NOT_APPROVED",
+      "client_connect_attempts": 0,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": false,
+      "events": [],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "S15_untrusted_tls_rejected",
+      "status": "PASS",
+      "layer": "ISOLATED_REFERENCE_MODEL",
+      "mode": "forward",
+      "expected": "refusal",
+      "error_type": "SSLCertVerificationError",
+      "error_message": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1010)",
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 0,
+      "proxy_only_oracle": true,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "S15_untrusted_tls_rejected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "S15_untrusted_tls_rejected",
+          "host": "127.0.0.1",
+          "port": 54202
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "S15_untrusted_tls_rejected",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "forward"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "proxy",
+          "case": "S15_untrusted_tls_rejected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "proxy",
+          "case": "S15_untrusted_tls_rejected",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "proxy_forward_socket",
+          "role": "proxy",
+          "case": "S15_untrusted_tls_rejected",
+          "local_port": 54204,
+          "target_port": 54154
+        },
+        {
+          "kind": "server_handler_error",
+          "role": "proxy",
+          "case": "S15_untrusted_tls_rejected",
+          "error_type": "ConnectionResetError"
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": true,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "Q01_direct_fallback_detected",
+      "status": "PASS",
+      "layer": "QUALITY",
+      "mode": "close",
+      "expected": "quality_detect_direct",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 2,
+      "proxy_fault_reached": true,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": false,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "Q01_direct_fallback_detected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "Q01_direct_fallback_detected",
+          "host": "127.0.0.1",
+          "port": 54205
+        },
+        {
+          "kind": "proxy_connect_received",
+          "role": "proxy",
+          "case": "Q01_direct_fallback_detected",
+          "request": "CONNECT 127.0.0.1:54154 HTTP/1.1",
+          "ordinal": 1,
+          "mode": "close"
+        },
+        {
+          "kind": "proxy_injected_disconnect",
+          "role": "proxy",
+          "case": "Q01_direct_fallback_detected"
+        },
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "Q01_direct_fallback_detected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "Q01_direct_fallback_detected",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "Q01_direct_fallback_detected",
+          "path": "/Q01_direct_fallback_detected/ok",
+          "peer_port": 54207,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": false,
+      "real_tunnel_client_test": false
+    },
+    {
+      "id": "Q02_ambient_no_proxy_detected",
+      "status": "PASS",
+      "layer": "QUALITY",
+      "mode": "forward",
+      "expected": "quality_detect_direct",
+      "error_type": null,
+      "error_message": null,
+      "client_connect_attempts": 1,
+      "proxy_fault_reached": false,
+      "origin_http_requests": 1,
+      "proxy_only_oracle": false,
+      "events": [
+        {
+          "kind": "literal_address_resolution",
+          "role": "client",
+          "case": "Q02_ambient_no_proxy_detected"
+        },
+        {
+          "kind": "connect_attempt",
+          "role": "client",
+          "case": "Q02_ambient_no_proxy_detected",
+          "host": "127.0.0.1",
+          "port": 54154
+        },
+        {
+          "kind": "origin_request",
+          "role": "origin",
+          "case": "Q02_ambient_no_proxy_detected",
+          "path": "/Q02_ambient_no_proxy_detected/ok",
+          "peer_port": 54209,
+          "server_port": 54154
+        }
+      ],
+      "origin_peer_correlated_with_proxy_forward_socket": false,
+      "real_tunnel_client_test": false
+    }
+  ],
+  "certificate_sha256": "bbf6dfb6e1abdd52fd24af5e26c036ff651c59d0149697db5a7b04f5a6c78627",
+  "synthetic_private_key_published": false,
+  "temporary_fixture_removed": true,
+  "resource_cleanup": {
+    "owned_ports_remaining": 0,
+    "serving_and_handler_threads_joined": true
+  },
+  "isolation": {
+    "all_connected_hosts": [
+      "127.0.0.1"
+    ],
+    "child_processes": 0,
+    "external_requests": 0,
+    "existing_v2ray_listener_used": false,
+    "guard": "Python audit: literal loopback, process-owned ports, no hostname resolution, no subprocess"
+  },
+  "real_client_fail_closed": "NOT VERIFIED",
+  "ordinary_chat_e2e": "NOT VERIFIED"
+}

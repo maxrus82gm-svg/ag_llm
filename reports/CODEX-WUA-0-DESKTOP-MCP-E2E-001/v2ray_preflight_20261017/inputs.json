@@ -1,0 +1,123 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "05",
+  "arch_class": "External AI Integration / WUA MCP / Network Security",
+  "local_time": "2026-10-17T13:00:00.302171+05:00",
+  "write_scope": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_preflight_20261017/",
+  "source_revision_coordinator_provided": "917dcec28e5732da96c8ec9eedc774d04f317921",
+  "source_revision_independently_verified": false,
+  "git_github_calls": 0,
+  "live_codex_config_sha256": "062150e5b9e1b8e8b786e0baaad1ccacdeff4a7f3d500044258965eebb8ac1ba",
+  "inputs": [
+    {
+      "path": "Документация/08_Старт.md",
+      "sha256": "0805c6d79a2a379df281bca3f9beab527b069954424992e470f59f890546bcf0",
+      "bytes": 97105
+    },
+    {
+      "path": "Документация/000_Задачи для агента.md",
+      "sha256": "36be171b407495fd22e60011093eff944c0d1cb97d4ffa50b76b639eb0e34ca0",
+      "bytes": 28056
+    },
+    {
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "sha256": "780ee4bab0de05b556afaddb19bf9af9a1ed696cd83c397b5b248b540e857d22",
+      "bytes": 131692
+    },
+    {
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "bytes": 122292
+    },
+    {
+      "path": "Документация/01_Архитектура и текущее состояние.md",
+      "sha256": "91530faa602da984e5eaadcef24ee04dd38d4fee272cf6eb3166bc5ce5b39919",
+      "bytes": 64554
+    },
+    {
+      "path": "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md",
+      "sha256": "465d060f304483bf7ed82af534930fd5fadba8fd68ef420e75733e8237a89472",
+      "bytes": 54949
+    },
+    {
+      "path": "Документация/23_Архитектура Web Alarm Workspace.md",
+      "sha256": "37eefabb322dc27a57abf3e31cda1b65da995aa555b13c613fbb7e5b1b599d15",
+      "bytes": 68068
+    },
+    {
+      "path": "Документация/36_Единая архитектура тестирования.md",
+      "sha256": "fce677c685960f812cfb496b5d7d9cea2becf6cfd583f5f30bbd189262217f18",
+      "bytes": 26505
+    },
+    {
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "bytes": 30121
+    },
+    {
+      "path": "Документация/36.2_Профиль тестирования Web Alarm Workspace.md",
+      "sha256": "44d120a84928d54617c9ba2c8f02dda56bf823fd70e56a049299a54a154ea372",
+      "bytes": 23343
+    },
+    {
+      "path": "Документация/37_Старт перехода - Web Alarm Ultra.md",
+      "sha256": "c5276c9942108c19233cfd2ab285d78b8a884f699e652d93b1cb06fa24186e97",
+      "bytes": 27364
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "sha256": "953a03cf8091a0589da1cdae4d48dfb22d3f072a615435648c01f2c7441fabdf",
+      "bytes": 430628
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_proxy_constraints_20261016/report.md",
+      "sha256": "77905b41c0bccd3850b286b5c6b7203a89505738fef1251d507491359a0f503c",
+      "bytes": 11941
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/post_restart_diagnostics_20261016/report.md",
+      "sha256": "02107ad59e52e27f39ae5e82ffff60588a56494c2b0af482070565881fa9d02d",
+      "bytes": 18209
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/NEXT_MANUAL_GATE.md",
+      "sha256": "13ed62ac40854405260996d5029967b838561b6076da92e6ee9c7bd7c8698491",
+      "bytes": 2820
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/README.md",
+      "sha256": "89a03fd50641ca24ea180770384f8655a30dc428174dd1f1dac63d088dcc0117",
+      "bytes": 3013
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/start_tunnel.py",
+      "sha256": "421d90df0cbf2af6a382b8ec312ea4dd7726cbccb71bf93eebeab20adc545a2e",
+      "bytes": 5642
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/wua-stdio.template.yaml",
+      "sha256": "512f2b6395353e50f79690e62808972b3db9bf51e5805dfd18b4e933673d3463",
+      "bytes": 622
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/tools/tunnel-client.exe",
+      "sha256": "4226bb74a72388147882881f29f79801b95e285d731a138071812e3aa6766571",
+      "bytes": 22591488
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/local_bridge_test/receipt_validation.json",
+      "sha256": "4fd99bbd1bdcc4b62d2663dae25558168abf7b2f28e01e92b2029f76efad6125",
+      "bytes": 2481
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/local_bridge_test/receipt.original.json",
+      "sha256": "659b10d898bb95f7023b0e890a84f35d1e4173b73f1c195a24e36b8f0e1e1b83",
+      "bytes": 4680
+    },
+    {
+      "path": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/candidate_manifest.json",
+      "sha256": "8dec310416c50130ec6f944c5d70292bc6065d2aa2907c4a64f5f4f37e681c11",
+      "bytes": 222213
+    }
+  ]
+}

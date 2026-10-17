@@ -1,0 +1,5 @@
+Initial preflight execution: exit 1, no inventory or configuration read occurred.
+SyntaxError: closing parenthesis '}' does not match opening parenthesis '(' on line 109.
+Classification: HARNESS DEFECT in new helper, not a V2Ray/tunnel-client finding.
+Correction: replace nested conditional generator with explicit branch comparisons.
+Original failure retained; subsequent execution is a separate result.

@@ -1,0 +1,224 @@
+{
+  "rules": [
+    {
+      "rule_id": "DOC-PARALLEL-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-PARALLEL-01 — Границы параллельных задач и контроль публикации",
+      "line_start": 36,
+      "line_end": 48,
+      "definition_sha256": "3b93293836bde53eb8760510ab4054ffe5641b0f9f28a8db39fed8e250b087f3",
+      "requires_metadata": [
+        "requires: [DOC-GIT-01, DOC-TASK-BLOCK1-01]"
+      ]
+    },
+    {
+      "rule_id": "DOC-GIT-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-GIT-01 — Доступ локальных агентов к Git и GitHub",
+      "line_start": 49,
+      "line_end": 64,
+      "definition_sha256": "cadc986b479cd554926e4ada74b226a9be6d54202841853d3b75d366b34c914f",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "DOC-LOCAL-REPORT-HANDOFF-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-LOCAL-REPORT-HANDOFF-01 — Отчёты исполнителей внутри ag_llm; GitHub под контролем пользователя и координатора",
+      "line_start": 77,
+      "line_end": 94,
+      "definition_sha256": "5e9b30828a83be5ecdc987c758bbedc3c649a689d69389aecebb8b7496d94075",
+      "requires_metadata": [
+        "requires: [DOC-GIT-01@1, DOC-PARALLEL-01@1, DOC-CHANGE-01@1, DOC-AGENT-REPORT-TRIGGER-01@1]"
+      ]
+    },
+    {
+      "rule_id": "DOC-READ-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-READ-01 — Адресное получение нормативных правил",
+      "line_start": 95,
+      "line_end": 111,
+      "definition_sha256": "241cdf8cfc682af6251e0fe3ca4f20408bfdc565588b291b7bff8e22225a7d0e",
+      "requires_metadata": [
+        "requires:\n  - DOC-VERSION-01@1"
+      ]
+    },
+    {
+      "rule_id": "DOC-VERSION-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-VERSION-01 — Версии, сохранение и восстановление",
+      "line_start": 112,
+      "line_end": 125,
+      "definition_sha256": "5fef470b574c45615ac8dd13648951cb25a8997d2c9945c4e9b53875d052b40e",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "DOC-CHANGE-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-CHANGE-01 — Проверка влияния документационной правки и порядок записи",
+      "line_start": 126,
+      "line_end": 156,
+      "definition_sha256": "f6cf07328b7d31d2a3b2b2272c438383d84043c5de9c98000c0350b4b3f26981",
+      "requires_metadata": [
+        "requires:\n  - DOC-GIT-01@1\n  - DOC-READ-01@1\n  - DOC-VERSION-01@1"
+      ]
+    },
+    {
+      "rule_id": "DOC-AGENT-REPORT-TRIGGER-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-AGENT-REPORT-TRIGGER-01 — Автозапуск независимой проверки по адресной сдаче агента в чат ChatGPT",
+      "line_start": 252,
+      "line_end": 274,
+      "definition_sha256": "266085c7ad6ff1af3fba0c99e0c5f74fcd715ebcad99ea31e72b8c71ca68c932",
+      "requires_metadata": [
+        "requires: [DOC-ENGINEERING-ROLES-01@1, DOC-TASK-BLOCK1-01@1, DOC-GIT-01@1, DOC-PARALLEL-01@1]"
+      ]
+    },
+    {
+      "rule_id": "DOC-ENGINEERING-ROLES-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-ENGINEERING-ROLES-01 — Самостоятельные инженеры и независимый verifier без изменения программного кода",
+      "line_start": 315,
+      "line_end": 333,
+      "definition_sha256": "2ded8dc267b70f7ea6abfcc8e148a4a5b2fcdeb0cce51d43b6facdc2c8cc6ad6",
+      "requires_metadata": [
+        "requires: [DOC-PARALLEL-01, DOC-TASK-BLOCK1-01]"
+      ]
+    },
+    {
+      "rule_id": "DOC-TASK-BLOCK1-01",
+      "contract": 1,
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "e87522de5d65940ae6bb3eb3b318efc1c37ca3f90590415a5ef69e0ef6dced36",
+      "selector": "## DOC-TASK-BLOCK1-01 — Ручное назначение и неизменность активной постановки",
+      "line_start": 334,
+      "line_end": 349,
+      "definition_sha256": "effe28c594f4105bd3456e0c78b6ed8f2cfa3b3dd1e8cf8c5617571c43b08cbd",
+      "requires_metadata": []
+    },
+    {
+      "rule_id": "TEST-COLLAB-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-COLLAB-01 — Общая накопительная база и двухэтапная независимая проверка",
+      "line_start": 8,
+      "line_end": 21,
+      "definition_sha256": "c542165550cb3cc4805b368fd52fa7786f751db8a9d1d9d4045f3b0dc36a3c5d",
+      "requires_metadata": [
+        "requires: [TEST-DEV-01, TEST-COV-01, TEST-EXEC-01, TEST-QA-01, TEST-EVID-01, TEST-SCOPE-01, TEST-ENG-01]"
+      ]
+    },
+    {
+      "rule_id": "TEST-ENG-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-ENG-01 — Самостоятельная инженерная проверка сверх автотестов",
+      "line_start": 34,
+      "line_end": 47,
+      "definition_sha256": "709ead7abf42e765027d1e0d6c6fc96277810cfe950ad7919d26bf6a5251e1db",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-DEV-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-DEV-01 — Тесты начинаются вместе с разработкой",
+      "line_start": 48,
+      "line_end": 62,
+      "definition_sha256": "87e3c91e565ded7b640e10fa9fec02de1c8f720cb749ba759bb5e7da15d0cb6b",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-COV-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-COV-01 — Изменение поведения требует оценки покрытия",
+      "line_start": 63,
+      "line_end": 76,
+      "definition_sha256": "8177259daf642a4faf0874cdc7e6ba6d632dc5e503216760d3a70d2f8d441687",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-EXEC-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-EXEC-01 — Накопительная проверка с различимыми слоями",
+      "line_start": 77,
+      "line_end": 90,
+      "definition_sha256": "305864a954dcf0afa2ecd372332cdd21d7116ab68272b737cf3600d62d11807d",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-QA-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-QA-01 — Тесты тоже проходят проверку качества",
+      "line_start": 91,
+      "line_end": 104,
+      "definition_sha256": "1ee2596d7311e2b1fa2c645c2f0962664fb1d5bc83ad507761573a1ba8c5aa41",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-EVID-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-EVID-01 — Честный итог и source provenance",
+      "line_start": 119,
+      "line_end": 143,
+      "definition_sha256": "fa2471d70fb801dae62e54a28dbac7a4cb096704623921981434556a5e4a77e6",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    },
+    {
+      "rule_id": "TEST-SCOPE-01",
+      "contract": 1,
+      "source": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "selector": "## TEST-SCOPE-01 — Не расширять полномочия тестированием",
+      "line_start": 165,
+      "line_end": 177,
+      "definition_sha256": "c783bb37a05fbf8beb2a01f38f123728073d3a6a6ea1a7c43fd0262db3a9ad8b",
+      "requires_metadata": [
+        "requires: []"
+      ]
+    }
+  ],
+  "user_amendment_precedence": "AMENDMENT 05 forbids Git/GitHub, direct ChatGPT messaging, frozen card edits and all writes outside this folder; overrides historical original TASK self-publish clauses"
+}

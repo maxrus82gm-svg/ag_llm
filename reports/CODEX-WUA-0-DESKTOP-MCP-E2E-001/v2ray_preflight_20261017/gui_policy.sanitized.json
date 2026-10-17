@@ -1,0 +1,650 @@
+{
+  "authority": "stored GUI policy only; loaded sing-box config and runtime selection NOT VERIFIED",
+  "gui_sha256": "b792f3929ad8c781137086df74ab31ea70c68fa42e70d1464b90e5440fdd10a8",
+  "tun_enabled": false,
+  "gui_clash_mode": "unrecognized-redacted",
+  "gui_clash_mode_present": false,
+  "gui_clash_mode_numeric": 0,
+  "routing_selection_id_present": false,
+  "domain_strategy": "AsIs",
+  "singbox_domain_strategy": null,
+  "system_proxy_mode_numeric": 1,
+  "system_proxy_exceptions_present": true,
+  "system_proxy_bypass_local": true,
+  "inbounds": [
+    {
+      "LocalPort": 10808,
+      "Protocol": "socks",
+      "UdpEnabled": true,
+      "SniffingEnabled": true,
+      "RouteOnly": false,
+      "AllowLANConn": false,
+      "SecondLocalPortEnabled": false
+    }
+  ],
+  "dns": {
+    "UseSystemHosts": false,
+    "AddCommonHosts": true,
+    "FakeIP": false,
+    "GlobalFakeIp": true,
+    "ServeStale": false,
+    "ParallelQuery": false,
+    "DirectDNS": {
+      "configured": true,
+      "scheme": "unspecified; address redacted"
+    },
+    "RemoteDNS": {
+      "configured": true,
+      "scheme": ""
+    },
+    "BootstrapDNS": {
+      "configured": true,
+      "scheme": "unspecified; address redacted"
+    }
+  },
+  "stored_routing_profiles": [
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "network",
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 5,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 9,
+          "openai_literal_condition": true,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 6,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "protocol"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "network",
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 8,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": false,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 2,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "network",
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain",
+            "ruletype"
+          ],
+          "domain_condition_count": 5,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain",
+            "ruletype"
+          ],
+          "domain_condition_count": 17,
+          "openai_literal_condition": true,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "network",
+            "ruletype"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "port",
+            "protocol"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "domain",
+            "port"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain",
+            "ip"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": false,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "protocol"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "block",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "network",
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "ip"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 1,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": true,
+          "process_condition_present": false
+        },
+        {
+          "enabled": true,
+          "outbound_semantic": "direct",
+          "condition_keys": [
+            "port"
+          ],
+          "domain_condition_count": 0,
+          "openai_literal_condition": false,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "is_active": true,
+      "rules": [
+        {
+          "enabled": true,
+          "outbound_semantic": "proxy",
+          "condition_keys": [
+            "domain"
+          ],
+          "domain_condition_count": 103,
+          "openai_literal_condition": true,
+          "external_ruleset_condition": false,
+          "process_condition_present": false
+        }
+      ]
+    }
+  ],
+  "database_sha256": "6329919a789c17c6cfbe336857b226043414bc378c9d8b01fce813dfb9e4db0a",
+  "selected_profile_type_numeric": [
+    7,
+    24
+  ],
+  "database_read_mode": "ro+immutable; no WAL/SHM creation; on-disk snapshot only",
+  "database_wal_present": false,
+  "database_shm_present": false,
+  "database_unchanged_during_read": true,
+  "gui_unchanged_during_read": true,
+  "remote_route_verified": false
+}
