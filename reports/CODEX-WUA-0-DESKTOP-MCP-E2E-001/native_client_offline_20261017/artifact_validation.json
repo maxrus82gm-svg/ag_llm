@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "timestamp_utc": "2026-10-17T08:53:55.103507+00:00",
+  "json_parse_files": [
+    "additional_archive_search.json",
+    "artifact_validation.json",
+    "binary_excerpts.json",
+    "binary_symbols.json",
+    "checks.json",
+    "environment_inventory.json",
+    "execution.json",
+    "inputs_before.json",
+    "integrity.json",
+    "manifest.json",
+    "native_gate_result.json",
+    "native_test_plan.json",
+    "publication_precheck.json",
+    "rules_read.json",
+    "source_search.json",
+    "static_audit.json",
+    "web10_review_excerpt.json"
+  ],
+  "syntax_files": [
+    {
+      "path": "native_test_gate.py",
+      "sha256": "0c56d6f68b714a94efd0078cde1081e176afa3dc17004cb281f40a768c68d699",
+      "status": "PASS"
+    },
+    {
+      "path": "static_audit.py",
+      "sha256": "1a36880a388c9078cef096136fd5aae0e0ba1eb39c4ccf18daf5457e2e89c02a",
+      "status": "PASS"
+    },
+    {
+      "path": "test_static_audit.py",
+      "sha256": "4f45cff4ac2314284ed8c86bbbf36878254d4e55891237a5005b5a77f3dae9c4",
+      "status": "PASS"
+    },
+    {
+      "path": "validate_artifacts.py",
+      "sha256": "e89e4d783a811279bd028d6e19e0fe84f1a82af16670c6f32056f87ae4e6eae1",
+      "status": "PASS"
+    }
+  ],
+  "text_secret_scan_files": 31,
+  "secret_patterns_detected": 0,
+  "secret_scan_limit": "Bounded pattern scan plus manual review; not a general DLP guarantee.",
+  "protected_files_unchanged": 70,
+  "evidence_rows": 26,
+  "evidence_counts": {
+    "PASS": 17,
+    "BLOCKED": 5,
+    "NOT RUN": 4
+  },
+  "unit_tests": "5/5 parser only",
+  "native_tests": "0 executed;18 blocked specifications",
+  "native_gate_exit": 3,
+  "evidence_locators_exist": true,
+  "report_identity_consistent": true,
+  "hosted_hold_literal_preserved": true,
+  "issues": [],
+  "original_validator_failure": "validation_attempt01.txt (codec name HARNESS DEFECT)",
+  "manifest_note": "Final manifest byte roundtrip checked after sealing; no subsequent file writes."
+}

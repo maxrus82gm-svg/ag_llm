@@ -1,0 +1,77 @@
+{
+  "static_audit": {
+    "exit_code": 0,
+    "native_processes_started": 0,
+    "command": "M:\\GitHub\\ag_llm/.venv/Scripts/python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\native_client_offline_20261017/static_audit.py"
+  },
+  "parser_unit_tests": {
+    "exit_code": 0,
+    "collected": 5,
+    "pass": 5,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "evidence": "static_parser_tests.txt",
+    "command": "M:\\GitHub\\ag_llm/.venv/Scripts/python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\native_client_offline_20261017/test_static_audit.py"
+  },
+  "native_gate": {
+    "exit_code": 3,
+    "interpretation": "EXPECTED BLOCKED, not product test failure",
+    "evidence": "native_gate_result.json",
+    "command": "M:\\GitHub\\ag_llm/.venv/Scripts/python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\native_client_offline_20261017/native_test_gate.py"
+  },
+  "environment_inventory": {
+    "exit_code": 0,
+    "wsl_status_exit": 50,
+    "command": "powershell: & M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\native_client_offline_20261017/environment_inventory.ps1"
+  },
+  "syntax": [
+    {
+      "path": "native_test_gate.py",
+      "sha256": "0c56d6f68b714a94efd0078cde1081e176afa3dc17004cb281f40a768c68d699",
+      "status": "PASS"
+    },
+    {
+      "path": "static_audit.py",
+      "sha256": "1a36880a388c9078cef096136fd5aae0e0ba1eb39c4ccf18daf5457e2e89c02a",
+      "status": "PASS"
+    },
+    {
+      "path": "test_static_audit.py",
+      "sha256": "4f45cff4ac2314284ed8c86bbbf36878254d4e55891237a5005b5a77f3dae9c4",
+      "status": "PASS"
+    },
+    {
+      "path": "validate_artifacts.py",
+      "sha256": "e89e4d783a811279bd028d6e19e0fe84f1a82af16670c6f32056f87ae4e6eae1",
+      "status": "PASS"
+    }
+  ],
+  "native_transport_tests": {
+    "collected": 0,
+    "executed": 0,
+    "pass": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "planned_contracts_blocked": 18
+  },
+  "wua_calls": 0,
+  "ordinary_chat_calls": 0,
+  "python_am05_model_rerun": false,
+  "git_github_operations": 0,
+  "hosted_tunnels_started": 0,
+  "api_keys_used": 0,
+  "artifact_validation_history": [
+    {
+      "attempt": 1,
+      "status": "HARNESS DEFECT",
+      "evidence": "validation_attempt01.txt"
+    },
+    {
+      "attempt": 2,
+      "source": "validate_artifacts.py",
+      "status": "PASS IF THIS RUN SEALS SUCCESSFULLY"
+    }
+  ]
+}

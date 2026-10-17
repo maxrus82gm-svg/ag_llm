@@ -1,0 +1,20 @@
+{
+  "method": "Plain file reads only; no Git/status/check-ignore/global excludes",
+  "project_ignore_files": [
+    {
+      "path": ".gitignore",
+      "sha256": "b6431afa9e91b5748582a20cdec23cb95d06ac63a4ce44d7556faf7092d6d9bb",
+      "text": "# Python virtual environment\n.venv/\nvenv/\n\n# Python cache\n__pycache__/\n*.py[cod]\n*$py.class\n\n# Test / tool caches\n.pytest_cache/\n.mypy_cache/\n.ruff_cache/\n\n# IDE / editor\n.vscode/\n.idea/\n\n# Local environment / secrets\n.env\n.env.*\n!.env.example\n\n# Logs and temporary files\n*.log\n*.tmp\n*.temp\n\n# Windows\nThumbs.db\nDesktop.ini\n\n# Local GigaChat certificate copy\nrussian_trusted_root_ca_pem.crt\n\n# Local Ultra agent test artifacts\n_ultra_agent_test/\n\n# Agent run logs\nlogs/\n\n# Local Ultra workspace runtime / conversation diagnostics\n.ultra/audit/\n.ultra/chats/\n\n# WUA Desktop MCP: keep large portable runtimes and disposable host/CLI fixtures local.\n# Deliberately retain source, manifests, reports, verifier scripts and summaries for review.\n# These rules affect only untracked files; already tracked receipts need a separate decision.\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/runtime/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/plugin/CODEX-WUA-0-DESKTOP-MCP-E2E-001/evidence/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/evidence/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/test_environment/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/cli_pair/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/negative_runtime/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/schemas/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/rollback/plugin/\n/reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/amendment_04/downloads/\n"
+    }
+  ],
+  "file_extensions_used": [
+    ".md",
+    ".txt",
+    ".json",
+    ".py",
+    ".ps1"
+  ],
+  "local_only": true,
+  "publication_status": "NOT PUBLISHED BY CODEX; user must inspect exact file list and publish",
+  "limitation": "Actual index/global excludes and GitHub completeness are not verified."
+}

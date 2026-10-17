@@ -1,0 +1,178 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "06",
+  "created_utc": "2026-10-17T08:51:25.303562+00:00",
+  "statuses": [
+    "SOURCE AUDIT PARTIAL",
+    "NATIVE OFFLINE TEST NOT VERIFIED",
+    "REAL CLIENT FAIL-CLOSED NOT VERIFIED",
+    "V2RAY REMOTE ROUTE NOT VERIFIED",
+    "HOSTED TUNNEL NOT STARTED",
+    "ORDINARY CHAT E2E NOT VERIFIED"
+  ],
+  "counts": {
+    "PASS": 17,
+    "BLOCKED": 5,
+    "NOT RUN": 4
+  },
+  "check_rows": 26,
+  "count_semantics": "Evidence review rows, NOT collected native transport tests. Parser unit tests separate:5/5. Native executed:0. Native blocked specifications:18.",
+  "checks": [
+    {
+      "id": "R01",
+      "status": "PASS",
+      "finding": "17 current Rule-ID/contract sources unchanged; frozen card read",
+      "evidence": "rules_read.json"
+    },
+    {
+      "id": "R02",
+      "status": "PASS",
+      "finding": "AM05 report/manual review and readable WEB_10 summary examined",
+      "evidence": "web10_review_excerpt.json"
+    },
+    {
+      "id": "R03",
+      "status": "BLOCKED",
+      "finding": "Full formal WEB_10 AM05 review returned only a content-reference placeholder",
+      "evidence": "web10_review_excerpt.json"
+    },
+    {
+      "id": "P01",
+      "status": "PASS",
+      "finding": "Installed EXE exact byte SHA-256 matches expected portable release file",
+      "evidence": "static_audit.json"
+    },
+    {
+      "id": "P02",
+      "status": "PASS",
+      "finding": "Cached release ZIP digest and retained published checksum match actual ZIP",
+      "evidence": "static_audit.json"
+    },
+    {
+      "id": "P03",
+      "status": "PASS",
+      "finding": "Executable inside ZIP byte-identical to installed executable",
+      "evidence": "static_audit.json"
+    },
+    {
+      "id": "P04",
+      "status": "PASS",
+      "finding": "Cached version plus commit literal found; no CLI execution this amendment",
+      "evidence": "static_audit.json"
+    },
+    {
+      "id": "P05",
+      "status": "PASS",
+      "finding": "Go build-info/PE and selected SPDX metadata read directly",
+      "evidence": "go_build_info.txt;static_audit.json"
+    },
+    {
+      "id": "P06",
+      "status": "BLOCKED",
+      "finding": "Source-to-binary correspondence: main module devel, no VCS build info/attestation, exact source absent",
+      "evidence": "source_request.md"
+    },
+    {
+      "id": "P07",
+      "status": "PASS",
+      "finding": "Exact runtime-source release asset locator/size/digest identified in retained metadata",
+      "evidence": "source_request.md"
+    },
+    {
+      "id": "B01",
+      "status": "PASS",
+      "finding": "177 source paths, 2340 project name entries and 43 network entries extracted; not source bodies",
+      "evidence": "binary_symbols.json"
+    },
+    {
+      "id": "B02",
+      "status": "PASS",
+      "finding": "Explicit-proxy/NO_PROXY documented contract extracted from exact EXE; runtime not tested",
+      "evidence": "binary_excerpts.json"
+    },
+    {
+      "id": "B03",
+      "status": "PASS",
+      "finding": "HTTP(S)-proxy validation literal found; stdlib SOCKS names do not override app contract",
+      "evidence": "binary_excerpts.json;proxy_path_audit.md"
+    },
+    {
+      "id": "B04",
+      "status": "BLOCKED",
+      "finding": "Complete routing/DNS/retry/redirect/OAuth/Harpoon/fallback source behavior not established",
+      "evidence": "proxy_path_audit.md"
+    },
+    {
+      "id": "I01",
+      "status": "PASS",
+      "finding": "Read-only inventory of currently discoverable isolation tools/features completed",
+      "evidence": "environment_inventory.json"
+    },
+    {
+      "id": "I02",
+      "status": "BLOCKED",
+      "finding": "Enforced loopback-only native/child-process boundary not proven",
+      "evidence": "isolation_design.md"
+    },
+    {
+      "id": "T01",
+      "status": "PASS",
+      "finding": "Five byte-parser unit tests passed; not native client tests",
+      "evidence": "static_parser_tests.txt;execution.json"
+    },
+    {
+      "id": "T02",
+      "status": "PASS",
+      "finding": "Four new Python sources parsed successfully (including final artifact validator)",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "T03",
+      "status": "PASS",
+      "finding": "Stop-only gate returned BLOCKED/3 without native execution; not product fail-closed",
+      "evidence": "native_gate_result.json"
+    },
+    {
+      "id": "T04",
+      "status": "BLOCKED",
+      "finding": "18 native case contracts not executed; fixture/driver implementation incomplete pending prerequisites",
+      "evidence": "native_test_plan.json"
+    },
+    {
+      "id": "S01",
+      "status": "PASS",
+      "finding": "70 protected file hashes unchanged, including Codex config/AM05/launcher/canonical files",
+      "evidence": "integrity.json"
+    },
+    {
+      "id": "S02",
+      "status": "PASS",
+      "finding": "Manual source/evidence/isolation review completed independently of parser test results",
+      "evidence": "manual_engineering_review.md"
+    },
+    {
+      "id": "S03",
+      "status": "NOT RUN",
+      "finding": "Live V2Ray remote route: outside offline scope",
+      "evidence": "report.md"
+    },
+    {
+      "id": "S04",
+      "status": "NOT RUN",
+      "finding": "Hosted tunnel: prohibited; zero native transport processes started by this amendment",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "S05",
+      "status": "NOT RUN",
+      "finding": "Ordinary Chat E2E: no ordinary Chat calls or verifier receipt",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "S06",
+      "status": "NOT RUN",
+      "finding": "Git/GitHub publication: forbidden to agent, user handoff only",
+      "evidence": "publication_precheck.json"
+    }
+  ]
+}

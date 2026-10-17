@@ -1,0 +1,21 @@
+{
+  "gate": "BLOCKED",
+  "exit_code": 3,
+  "reason_codes": [
+    "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+    "EXACT_SOURCE_CORRESPONDENCE_UNPROVEN",
+    "NATIVE_FIXTURE_DRIVER_NOT_IMPLEMENTED"
+  ],
+  "case_contracts": 18,
+  "native_collected": 0,
+  "native_executed": 0,
+  "native_pass": 0,
+  "native_fail": 0,
+  "native_error": 0,
+  "native_skip": 0,
+  "case_contracts_blocked": 18,
+  "tunnel_client_processes_started": 0,
+  "sockets_opened": 0,
+  "api_keys_read": 0,
+  "policy": "No native executor exists in this stop-only gate."
+}

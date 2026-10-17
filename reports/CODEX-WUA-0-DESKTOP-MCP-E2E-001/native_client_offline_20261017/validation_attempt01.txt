@@ -1,0 +1,19 @@
+AMENDMENT 06 — original final-artifact validation failure
+Classification: TEST/HARNESS DEFECT; NOT a tunnel-client/product/native failure.
+Invocation: .venv/Scripts/python.exe -I -X utf8 -B - (inline artifact validator).
+Faulting statement at inline line 23:
+    text = p.read_text(encoding='utf8-sig')
+Observed:
+Traceback (most recent call last):
+  File "<stdin>", line 23, in <module>
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+LookupError: unknown encoding: utf8-sig
+
+Cause: Python codec spelling in this inline validator. Correct: utf-8-sig.
+The validator stopped before secret scan/manifest sealing. It had only rechecked
+protected inputs and refreshed the owned integrity.json; no native execution.
+Fixed source/reproducer: validate_artifacts.py. First failure retained; it is
+separate from 5/5 parser tests and native 0-execution / BLOCKED.

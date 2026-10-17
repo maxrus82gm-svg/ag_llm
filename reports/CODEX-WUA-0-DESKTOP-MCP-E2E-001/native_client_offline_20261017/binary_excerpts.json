@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "EMBEDDED DOCUMENTATION (not executed behavior)",
+    "offset": 10349107,
+    "bytes": 945,
+    "text": "## Outbound proxy environments\n\nIf your network requires an outbound proxy, configure explicit proxy flags so\nthat control-plane, MCP, and Harpoon traffic routes through the proxy. Explicit\nproxy flags override environment proxy variables and ignore `NO_PROXY` for the\naffected targets.\n\nCommon options:\n\n- `--http-proxy=<url|env:VAR>` for a global proxy.\n- `--control-plane.http-proxy=<url|env:VAR>` to force control-plane traffic through a proxy.\n- `--mcp.http-proxy=<url|env:VAR>` or per-channel `--mcp.server-url=\"...,http-proxy=<url|env:VAR>\"`.\n- `--harpoon.http-proxy=<url|env:VAR>` for Harpoon outbound calls.\n\nWhen no explicit proxy is set for a target, standard `HTTP_PROXY` / `HTTPS_PROXY` / `NO_PROXY` semantics apply.\n\nFor a ready-made profile, `tunnel-client profiles add corp-proxy --sample sample_mcp_enterprise_proxy ...`\nmaterializes a YAML profile with `http_proxy: env:HTTPS_PROXY` and\n`ca_bundle: env:ENTERPRISE_CA_BUNDLE`.\n\n"
+  },
+  {
+    "kind": "BINARY ERROR LITERAL (branch not executed)",
+    "offset": 10154413,
+    "bytes": 46,
+    "text": "proxy URL scheme must be http or https, got %q"
+  }
+]

@@ -1,0 +1,25 @@
+CODEX 007 — AMENDMENT 06
+TASK: CODEX-WUA-0-DESKTOP-MCP-E2E-001
+Native Tunnel-Client Offline Verification; coordinator ChatGPT WEB_10.
+
+Read current regulations, personal card, AM05 and WEB_10 independent review.
+Establish installed native tunnel-client version, SHA-256 and provenance; compare
+to corresponding sources. Audit proxy paths: control-plane, MCP, Harpoon, OAuth,
+DNS, retries, redirects, environment overrides, fallback; determine SOCKS5/CONNECT
+compatibility. Prove loopback-only containment BEFORE starting the real client.
+Only then run native offline fault tests against disposable fake endpoints.
+If containment cannot be demonstrated: BLOCKED / NOT EXECUTED, with reasons and
+conditions. Separate MANUAL ENGINEERING REVIEW is required.
+
+Writes only within native_client_offline_20261017/. Required: report.md,
+checks.json, manifest.json, sanitized evidence and test sources.
+No hosted tunnel, real OpenAI transport connections, API keys, Git/GitHub
+operations, V2Ray/sing-box/firewall/DNS/live-network/permission changes.
+Frozen BLOCK 1 and LLM12/Claude/Web Alarm materials unchanged.
+Provide ordinary report to user for transmission to WEB_10 and independent review.
+
+Mandatory final statuses: SOURCE AUDIT VERIFIED / PARTIAL / BLOCKED;
+NATIVE OFFLINE TEST VERIFIED / NOT VERIFIED;
+REAL CLIENT FAIL-CLOSED VERIFIED / NOT VERIFIED;
+V2RAY REMOTE ROUTE NOT VERIFIED; HOSTED TUNNEL NOT STARTED;
+ORDINARY CHAT E2E NOT VERIFIED.

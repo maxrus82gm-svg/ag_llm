@@ -1,0 +1,228 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "06",
+  "kind": "SPECIFICATION ONLY; native fixtures/driver not implemented",
+  "case_contracts": 18,
+  "actual_native_collection": 0,
+  "actual_native_execution": 0,
+  "isolation_fixture_rule": "All destinations/proxies/control planes disposable, inside verified boundary. Never use live V2Ray listener or real OpenAI.",
+  "counts_rule": "Blocked specifications are NOT collected/passed/skipped transport tests.",
+  "cases": [
+    {
+      "id": "N01",
+      "title": "positive explicit-proxy baseline",
+      "trigger": "Each applicable control-plane/MCP HTTP/Harpoon path reaches an owned origin through its pinned fixture proxy.",
+      "oracle": "Correlate physical proxy forward socket with origin peer; component marker required.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N02",
+      "title": "proxy port unavailable",
+      "trigger": "Keep an owned port reserved but not listening; use exact native endpoint/config after source review.",
+      "oracle": "No origin request, no direct native dial; concrete Windows error observed, not guessed.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N03",
+      "title": "CONNECT refusal",
+      "trigger": "Fixture accepts CONNECT and returns 503.",
+      "oracle": "Observed CONNECT marker and native failure; no origin/direct fallback.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N04",
+      "title": "proxy timeout",
+      "trigger": "Fixture accepts CONNECT then withholds response within bounded harness timeout.",
+      "oracle": "Fault phase reached; retries/dials stay on pinned proxy, all workers reap.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N05",
+      "title": "success then disconnect",
+      "trigger": "First request forwards; subsequent proxy accepts close mid exchange.",
+      "oracle": "Only first expected origin request; every later attempt remains proxied.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N06",
+      "title": "retry and reconnect",
+      "trigger": "Inject repeatable refusal/disconnect with bounded observation budget.",
+      "oracle": "Record actual native attempt count/backoff/error chain; never infer retries from elapsed time alone.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N07",
+      "title": "origin redirect",
+      "trigger": "First origin redirects to another owned loopback fixture, same/different authority cases.",
+      "oracle": "Apply actual native redirect policy; every allowed hop remains pinned; prohibited hop returns exact error.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N08",
+      "title": "proxy CONNECT redirect",
+      "trigger": "Proxy returns 302 with owned local Location.",
+      "oracle": "Record reject/follow semantics and route of any follow-up; no unobserved direct connection.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N09",
+      "title": "explicit proxy versus NO_PROXY",
+      "trigger": "Child-only NO_PROXY/no_proxy: *, loopback IP, synthetic hostname; conflicting ambient HTTP(S)_PROXY.",
+      "oracle": "Explicit route remains pinned per bundled documented contract; inspect all relevant bindings.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N10",
+      "title": "ambient environment behavior",
+      "trigger": "No explicit proxy, finite child-only HTTP_PROXY/HTTPS_PROXY/NO_PROXY cases.",
+      "oracle": "Characterize documented ambient bypass separately; direct-by-design is not mislabeled automatic fail-closed.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N11",
+      "title": "DNS and address families",
+      "trigger": "Literal loopback proxy, synthetic .invalid target handled by fixture mapping, IPv4/IPv6 controls.",
+      "oracle": "Observe native resolver/dial attempts under enforced containment; no system DNS change or external lookup.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N12",
+      "title": "component and per-server override",
+      "trigger": "Controlled global/component/per-channel/env:VAR conflicts, empty and missing references.",
+      "oracle": "Derive exact expected precedence/errors from matching source; detect any default/direct route, do not assume from flag help.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N13",
+      "title": "OAuth discovery and redirects",
+      "trigger": "Fake resource/auth metadata, timeout/retry and trusted-origin redirect cases.",
+      "oracle": "Native endpoint contracts must be derived from exact source; no real credentials/issuer/token service.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N14",
+      "title": "Harpoon targets",
+      "trigger": "Owned local HTTP target/discovery and additional-transport configuration branches.",
+      "oracle": "Every applicable callout observed; disabled paths asserted; no real registration.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N15",
+      "title": "proxy-health background checks",
+      "trigger": "Bounded local configured routes and each proxy failure phase.",
+      "oracle": "Distinguish health bookkeeping from actual dial and fallback; observe all native sockets.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N16",
+      "title": "companion and child paths",
+      "trigger": "Controlled configuration proving optional Cloudflared/extra transports disabled.",
+      "oracle": "No companion process or hidden remote connector; no companion binary delivered to guest.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N17",
+      "title": "SOCKS5 URL validation",
+      "trigger": "Provide socks5/socks5h URLs only in the isolated native parser/config path.",
+      "oracle": "Observe exact rejection/acceptance and zero network activity; compiled stdlib SOCKS code alone is insufficient.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    },
+    {
+      "id": "N18",
+      "title": "TLS trust failure",
+      "trigger": "Untrusted disposable TLS origin through CONNECT; no system trust-store edits.",
+      "oracle": "Native TLS rejection with no direct retry; expected fixture reset distinguished from unexpected errors.",
+      "status": "BLOCKED",
+      "executed": false,
+      "blocked_by": [
+        "NO_ENFORCED_NATIVE_EGRESS_BOUNDARY",
+        "SOURCE_AND_NATIVE_DRIVER_INCOMPLETE"
+      ]
+    }
+  ]
+}
