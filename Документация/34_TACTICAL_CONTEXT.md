@@ -1,3 +1,11 @@
+## LLM12 / 2026-10-17 / CONTEXT TRANSFER — WEB ALARM ULTRA MVP (READ ONLY, NO GO)
+
+**User request:** перейти с отдельной дискуссией о Web Alarm Ultra MVP в чат «Сервер LLM 12», оставив Claude WA4-R reliability/independent review в WEB_09. Канонический самостоятельный handoff: `38_Контекст передачи в Сервер LLM12 - Web Alarm Ultra MVP.md`; концепция MVP — `37`. Первый согласованный предмет исследования — **WUA-0 feasibility**, не WUA-1+ code GO; не переносить старую Tkinter Ultra/RT-002/B2 и не смешивать полномочия Web Alarm.
+
+**Fresh Claude evidence — USER-REPORTED, LOCAL ONLY, UNPUBLISHED:** `CLAUDE-WA4-R-AUD01T02B-REPAIR-001` сдан Claude как RESULT READY / AWAITING INDEPENDENT VERIFICATION, 849 total = 848 PASS / 0 FAIL / 0 ERROR / 1 SKIP (Windows local), 27 новых PASS, card blocks 2/3 rotated and block 1 free. Отчёт `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001/report.md` пока не закоммичен пользователем. Открыты AUD-02b-R, AUD-01T-R, AUD-02c, AUD-03, AUD-04; WA4-R PARTIAL, WARN/GATEWAY/STRICT/Final Audit NOT AUTHORIZED. До независимой source/evidence/CI проверки нельзя выдавать DONE или считать локальные изменения опубликованными. Никакого нового engineering GO этим addendum не дано.
+
+---
+
 ## WEB_09 / 2026-10-17 / USER WORKFLOW OVERRIDE — LOCAL REPORTS, USER PUSH, GITHUB-FIRST COORDINATION
 
 **USER DECISION / DOCUMENTATION ONLY:** ChatGPT is the main Planner/coordinator and the authorized GitHub reader/writer for shared project documentation; user assigns tasks to local Claude 008 / Codex 007 / Astra or another executor and **normally performs local commit/push personally**. Local executors **do not use Git or GitHub by default**, including read-only commands, and **do not have a standing permission to message/access ChatGPT**. Any scoped Git or direct-message exception requires explicit user approval in the particular TASK/AMENDMENT; Codex self-publish norm `DOC-CODEX-SELF-PUBLISH-01@1` is **SUPERSEDED** by @2. Historical Codex → existing ChatGPT chat smoke remains a bounded observation, not operational authority or unattended relay.
