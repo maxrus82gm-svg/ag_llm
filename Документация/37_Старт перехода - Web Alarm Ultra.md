@@ -115,7 +115,7 @@ Provider Adapter → GigaChat API → Response + status/usage
 
 - [[00_Главная - карта проекта]] — главный индекс.
 - `08_Старт` — маршрут документации и полномочий.
-- `23_Архитектура Web Alarm Workspace` — действующая Web Alarm authority и безопасность.
+- [[23_Архитектура Web Alarm Workspace]] — действующая Web Alarm authority и безопасность.
 - [[24_План реализации Web Alarm Workspace]] — действующие задачи Web Alarm / WA4-R, не заменены этим документом.
 - `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP` — адаптеры Claude/Codex/ChatGPT, discovery и onboarding.
 - `11_Мультимодельная архитектура и назначение LLM` — модельные назначения.
