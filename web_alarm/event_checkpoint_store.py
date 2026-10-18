@@ -24,6 +24,112 @@ class EventCheckpointStoreError(RuntimeError):
     """Raised when event/checkpoint state is invalid or cannot be persisted."""
 
 
+class MicrotaskHistoryConflict(EventCheckpointStoreError):
+    """R-MT: journal and persisted status cannot be reconciled automatically (operator required)."""
+
+
+# R-MT (AUD-02b-R): a microtask lifecycle step is journaled as a write-ahead intent
+# (durable before the status compare-and-set, carrying the verification evidence),
+# then the status write, then a commit MICROTASK_TRANSITION with the same intent_id.
+MICROTASK_INTENT = "MICROTASK_TRANSITION_INTENT"
+MICROTASK_COMMIT = "MICROTASK_TRANSITION"
+MICROTASK_ABANDONED = "MICROTASK_TRANSITION_ABANDONED"
+MICROTASK_REAFFIRMED = "MICROTASK_VERIFICATION_REAFFIRMED"
+_VERIFIED = MicrotaskStatus.VERIFIED.value
+
+
+def _text(value: Any) -> str | None:
+    return value if isinstance(value, str) and value.strip() else None
+
+
+def microtask_journal(events: list[EventRecord], statuses: dict[str, tuple[str, str]]) -> dict[str, list]:
+    """Pure R-MT reading of one TASK history (no lock, no write).
+
+    ``statuses`` maps microtask_id -> (persisted status value, record updated_at).
+    Returns ``pending`` (one open intent per microtask with its deterministic
+    resolution), ``contradictions`` (operator required) and ``unproven_verified``
+    (VERIFIED with no recorded evidence: neither an evidence-bearing commit, nor
+    a reaffirmation, nor an open intent that will commit one).
+
+    Deterministic resolution of an open intent, decided by the authoritative
+    record only: status == intent.to -> COMMIT (rebuilt from the durable intent);
+    status == intent.from and the record untouched since the intent -> ABANDON
+    (the compare-and-set never happened); anything else -> contradiction.
+    """
+    intents: dict[str, dict[str, EventRecord]] = {}
+    closures: dict[str, dict[str, list[tuple[str, EventRecord]]]] = {}
+    proven: set[str] = set()
+    contradictions: list[dict[str, Any]] = []
+    for event in events:
+        mid = event.microtask_id
+        payload = event.payload if isinstance(event.payload, dict) else {}
+        if mid is None:
+            continue
+        if event.event_type == MICROTASK_INTENT:
+            intents.setdefault(mid, {})[event.event_id] = event
+        elif event.event_type in (MICROTASK_COMMIT, MICROTASK_ABANDONED):
+            intent_id = payload.get("intent_id")
+            if event.event_type == MICROTASK_COMMIT and payload.get("to") == _VERIFIED \
+                    and _text(payload.get("verification_evidence")):
+                proven.add(mid)
+            if intent_id is not None:
+                closures.setdefault(mid, {}).setdefault(intent_id, []).append((event.event_type, event))
+        elif event.event_type == MICROTASK_REAFFIRMED and _text(payload.get("verification_evidence")):
+            proven.add(mid)
+    pending: list[dict[str, Any]] = []
+    for mid in sorted(set(intents) | set(closures)):
+        own = intents.get(mid, {})
+        open_intents = []
+        for intent_id, items in closures.get(mid, {}).items():
+            intent = own.get(intent_id)
+            if intent is None:
+                contradictions.append({"microtask_id": mid, "intent_id": intent_id,
+                                       "reason": "a commit/abandon names an intent that is not recorded"})
+                continue
+            kinds = {kind for kind, _ in items}
+            if len(kinds) > 1:
+                contradictions.append({"microtask_id": mid, "intent_id": intent_id,
+                                       "reason": "the intent is both committed and abandoned"})
+            for kind, event in items:
+                if kind == MICROTASK_COMMIT and any(
+                    event.payload.get(key) != intent.payload.get(key)
+                    for key in ("from", "to", "verification_evidence")
+                ):
+                    contradictions.append({"microtask_id": mid, "intent_id": intent_id,
+                                           "reason": "the commit contradicts its durable intent"})
+        for intent_id, intent in own.items():
+            if intent_id not in closures.get(mid, {}):
+                open_intents.append(intent)
+        if not open_intents:
+            continue
+        if len(open_intents) > 1:
+            contradictions.append({"microtask_id": mid, "intent_id": None,
+                                   "reason": f"{len(open_intents)} open intents for one microtask"})
+            continue
+        intent = open_intents[0]
+        state = statuses.get(mid)
+        frm, to = intent.payload.get("from"), intent.payload.get("to")
+        if state is None:
+            contradictions.append({"microtask_id": mid, "intent_id": intent.event_id,
+                                   "reason": "the microtask record is not readable"})
+        elif to == _VERIFIED and not _text(intent.payload.get("verification_evidence")):
+            contradictions.append({"microtask_id": mid, "intent_id": intent.event_id,
+                                   "reason": "a VERIFIED intent without verification evidence"})
+        elif state[0] == to:
+            pending.append({"microtask_id": mid, "intent": intent, "resolution": "COMMIT"})
+        elif state[0] == frm and state[1] == intent.payload.get("basis_updated_at"):
+            pending.append({"microtask_id": mid, "intent": intent, "resolution": "ABANDON"})
+        else:
+            contradictions.append({"microtask_id": mid, "intent_id": intent.event_id,
+                                   "reason": f"the record changed since the intent ({frm} -> {to}): it is "
+                                             f"{state[0]}; the outcome is not provable"})
+    committing_verified = {p["microtask_id"] for p in pending
+                           if p["resolution"] == "COMMIT" and p["intent"].payload.get("to") == _VERIFIED}
+    unproven = sorted(mid for mid, state in statuses.items()
+                      if state[0] == _VERIFIED and mid not in proven and mid not in committing_verified)
+    return {"pending": pending, "contradictions": contradictions, "unproven_verified": unproven}
+
+
 # AUD-01: json.dumps(ensure_ascii=False) leaves U+0085/U+2028/U+2029 raw inside
 # strings, while str.splitlines() readers (older code, tools) cut lines at them.
 # Writing them escaped keeps one record per physical LF for every reader.
@@ -154,6 +260,52 @@ class EventCheckpointStore:
                 raise EventCheckpointStoreError(f"event task mismatch at line {index}")
             records.append(record)
         return records
+
+    def microtask_statuses(self, task_id: str) -> dict[str, tuple[str, str]]:
+        try:
+            return {m.microtask_id: (m.status.value, m.updated_at) for m in self.task_store.list_microtasks(task_id)}
+        except TaskStoreError as exc:
+            raise EventCheckpointStoreError(f"microtask records are unreadable: {exc}") from exc
+
+    def resolve_microtask_intents_locked(self, task_id: str, microtask_id: str | None = None) -> list[dict[str, Any]]:
+        """R-MT reconciliation; the caller holds the TASK mutation lock.
+
+        Every status writer holds that lock, so the persisted status cannot move
+        while an open intent is classified here. Only the deterministic outcomes
+        of ``microtask_journal`` are written (a commit rebuilt from the durable
+        intent, marked ``recovered_from_intent``; or an audited abandon); any
+        contradiction raises MicrotaskHistoryConflict and nothing is written.
+        """
+        events = self.read_events(task_id)
+        facts = microtask_journal(events, self.microtask_statuses(task_id))
+        conflicts = [c for c in facts["contradictions"] if microtask_id in (None, c["microtask_id"])]
+        if conflicts:
+            raise MicrotaskHistoryConflict(
+                "microtask history cannot be reconciled automatically: "
+                + "; ".join(f"{c['microtask_id']}: {c['reason']}" for c in conflicts)
+            )
+        outcomes: list[dict[str, Any]] = []
+        for item in facts["pending"]:
+            if microtask_id not in (None, item["microtask_id"]):
+                continue
+            intent = item["intent"]
+            frm, to = intent.payload.get("from"), intent.payload.get("to")
+            if item["resolution"] == "COMMIT":
+                self.append_event(
+                    task_id, MICROTASK_COMMIT, microtask_id=item["microtask_id"], operation_id=intent.operation_id,
+                    payload={"from": frm, "to": to,
+                             "verification_evidence": intent.payload.get("verification_evidence"),
+                             "intent_id": intent.event_id, "recovered_from_intent": True},
+                )
+            else:
+                self.append_event(
+                    task_id, MICROTASK_ABANDONED, microtask_id=item["microtask_id"], operation_id=intent.operation_id,
+                    payload={"intent_id": intent.event_id, "from": frm, "to": to, "recovered": True,
+                             "reason": "the record is unchanged since the intent: the compare-and-set never happened"},
+                )
+            outcomes.append({"microtask_id": item["microtask_id"], "intent_id": intent.event_id,
+                             "resolution": item["resolution"], "from": frm, "to": to})
+        return outcomes
 
     def write_checkpoint(self, record: CheckpointRecord) -> CheckpointRecord:
         task = self.task_store.open_task(record.task_id)

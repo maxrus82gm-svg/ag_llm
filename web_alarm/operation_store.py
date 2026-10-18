@@ -80,6 +80,64 @@ class OperationPayloadIntegrityError(OperationStoreError):
     """Stored payload bytes do not match the contract payload reference."""
 
 
+class OperationHistoryPending(RuntimeError):
+    """R-OP: the INTENT record is persisted but its OPERATION_INTENT was not recorded.
+
+    Deliberately not an OperationStoreError: callers that translate those into
+    "nothing was recorded or written" must not report this one that way.
+    Nothing was executed; replaying the same operation_id or recover reconciles it.
+    """
+
+    def __init__(self, task_id: str, operation_id: str, reason: str) -> None:
+        super().__init__(
+            f"operation {operation_id}: the INTENT record is persisted but its OPERATION_INTENT event was "
+            f"not recorded ({reason}); nothing was executed; replay the same operation_id or run recover "
+            "to reconcile the history"
+        )
+        self.task_id = task_id
+        self.operation_id = operation_id
+        self.reason = reason
+
+
+def pending_intent_operation_ids(records: list[OperationRecord], events: list[Any]) -> list[str]:
+    """Pure R-OP view: readable v2 INTENT records whose OPERATION_INTENT is missing.
+
+    ``records`` come from ``OperationStore.list`` (any other missing-intent shape
+    already failed there), ``events`` from the same TASK history.
+    """
+    recorded = {e.operation_id for e in events if e.event_type == "OPERATION_INTENT"}
+    return sorted(
+        r.operation_id for r in records
+        if r.contract_version != LEGACY_CONTRACT_VERSION and r.status is OperationStatus.INTENT
+        and r.operation_id not in recorded
+    )
+
+
+class OperationIntentReconciled(RuntimeError):
+    """R-OP: this call restored a lost OPERATION_INTENT; it never also starts the execution.
+
+    Restoring the audit fact of an intent is not permission to execute: the
+    request that reconciled it is refused, nothing was executed, and only a
+    separate later request may start the (never started) operation.
+    """
+
+    def __init__(self, task_id: str, operation_id: str) -> None:
+        super().__init__(
+            f"operation {operation_id}: its lost OPERATION_INTENT was restored from the durable record by this "
+            "call; nothing was executed; send the request again to execute it"
+        )
+        self.task_id = task_id
+        self.operation_id = operation_id
+
+
+# R-OP: events that imply a state after INTENT rev1; with any of them a missing
+# OPERATION_INTENT is a contradiction, never a reconstructible crash window.
+_PROGRESS_EVENTS = frozenset({
+    "OPERATION_TRANSITION", "OPERATION_TRANSITION_REPLAY", "OPERATION_RECOVERY_SETTLED",
+    "OPERATION_RECEIPT_MISMATCH", "MUTATION_EXECUTED", "MUTATION_RETRY_EXECUTING",
+})
+
+
 def _safe_component(name: str, value: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise OperationStoreError(f"{name} must be a non-empty string")
@@ -232,13 +290,18 @@ class OperationStore:
             self._validate_history(record)
         return record
 
-    def _validate_history(self, record: OperationRecord) -> None:
+    def _validate_history(self, record: OperationRecord) -> bool:
         """Reject contradictory persisted evidence before replay can append to it.
 
         The operation is committed before its event is appended. Missing final
         transition/execution events are therefore legitimate crash windows, not
         proof of failure. Existing events must nevertheless agree with the
         durable contract/receipt; they never grant mutation authority themselves.
+
+        R-OP (AUD-03): a missing OPERATION_INTENT is recoverable only in the
+        narrow shape the crash window leaves (``_intent_event_reconstructible``);
+        then True (INTENT_EVENT_PENDING) is returned instead of raising. Any other
+        missing-intent shape stays fail-closed.
         """
         try:
             events = self.events.read_events(record.task_id)
@@ -246,6 +309,7 @@ class OperationStore:
             raise OperationStoreError(f"cannot validate operation history: {exc}") from exc
         contract = record.contract
         intent_seen = False
+        progress_seen = False
         expected_intent = {
             "action": record.action, "target": record.target,
             "request_fingerprint": record.request_fingerprint,
@@ -262,6 +326,8 @@ class OperationStore:
             if not isinstance(event.payload, dict):
                 raise OperationStoreError("operation history payload is invalid")
             payload = event.payload
+            if event.event_type in _PROGRESS_EVENTS:
+                progress_seen = True
             if event.event_type == "OPERATION_INTENT":
                 if event.microtask_id != record.microtask_id or any(
                     key not in payload or payload[key] != value for key, value in expected_intent.items()
@@ -289,7 +355,79 @@ class OperationStore:
                         or payload.get("receipt") != authority_of(record.receipt)):
                     raise OperationStoreError("execution event contradicts durable receipt")
         if not intent_seen:
+            if not progress_seen and self._intent_event_reconstructible(record):
+                return True
             raise OperationStoreError("operation is missing durable intent history")
+        return False
+
+    @staticmethod
+    def _intent_event_reconstructible(record: OperationRecord) -> bool:
+        """R-OP: the exact shape of a lost OPERATION_INTENT (record persisted, event not).
+
+        INTENT, revision 1, a v2 contract that ``_load_path`` validated
+        (identity, workspace), no settlement and no receipt: nothing can have
+        happened after the record, so the intent event is fully determined by
+        it. Events implying any later state are excluded by the caller.
+        """
+        contract = record.contract or {}
+        return (
+            record.status is OperationStatus.INTENT
+            and record.revision == 1
+            and record.contract_version == OPERATION_CONTRACT_VERSION
+            and record.recovery_settlement is None
+            and record.receipt is None
+            and isinstance(contract.get("target_key"), str)
+            and "complete" in contract
+        )
+
+    @staticmethod
+    def _intent_payload(record: OperationRecord) -> dict[str, Any]:
+        """The OPERATION_INTENT payload, derived from the durable INTENT record only."""
+        contract = record.contract
+        payload_ref = contract.get("payload_ref")
+        return {
+            "action": record.action,
+            "target": record.target,
+            "request_fingerprint": record.request_fingerprint,
+            "contract_version": record.contract_version,
+            "revision": 1,
+            "target_key": contract["target_key"],
+            "pre_state": authority_of(contract["pre_state"]),
+            "expected_post_state": authority_of(contract["expected_post_state"]),
+            "payload": ({"sha256": payload_ref["sha256"], "size": payload_ref["size"]}
+                        if payload_ref is not None else None),
+            "contract_complete": contract["complete"],
+        }
+
+    def intent_event_pending(self, task_id: str, operation_id: str) -> bool:
+        """Pure: is this operation an INTENT whose OPERATION_INTENT event is missing (R-OP)?"""
+        record = self.get(task_id, operation_id)
+        if record.contract_version == LEGACY_CONTRACT_VERSION:
+            return False
+        return self._validate_history(record)
+
+    def _reconcile_intent_locked(self, task_id: str, record: OperationRecord) -> bool:
+        """R-OP: append the missing OPERATION_INTENT of ``record`` (caller holds the TASK lock).
+
+        Every writer of an operation record holds that lock, so the record cannot
+        move meanwhile; the event is rebuilt from the durable record and marked
+        ``reconstructed_from_record``. It restores the audit fact of the intent,
+        never evidence of execution. Returns True when an event was appended.
+        """
+        if record.contract_version == LEGACY_CONTRACT_VERSION or not self._validate_history(record):
+            return False
+        self.tasks.open_microtask(task_id, record.microtask_id)
+        try:
+            self.events.append_event(
+                task_id, "OPERATION_INTENT", microtask_id=record.microtask_id, operation_id=record.operation_id,
+                payload=dict(self._intent_payload(record), reconstructed_from_record=True),
+            )
+        except EventCheckpointStoreError as exc:
+            raise OperationStoreError(
+                f"operation {record.operation_id}: its INTENT is persisted but the reconstructed "
+                f"OPERATION_INTENT could not be recorded ({exc}); nothing was executed"
+            ) from exc
+        return True
 
     def get(self, task_id: str, operation_id: str) -> OperationRecord:
         operation_id = _safe_component("operation_id", operation_id)
@@ -471,6 +609,10 @@ class OperationStore:
                         task_id, microtask_id, action, target, **prepare_args
                     )
                     immutable_match = existing.request_fingerprint == request.fingerprint
+                # R-OP: a replay of a pending INTENT first restores its intent event, and
+                # that call executes nothing (a later separate request may)
+                if self._reconcile_intent_locked(task_id, existing) and immutable_match:
+                    raise OperationIntentReconciled(task_id, chosen_id)
                 if not immutable_match:
                     self.events.append_event(
                         task_id,
@@ -560,28 +702,17 @@ class OperationStore:
                 contract=contract,
             )
             _persist_record(path, record)
-            self.events.append_event(
-                task_id,
-                "OPERATION_INTENT",
-                microtask_id=microtask_id,
-                operation_id=chosen_id,
-                payload={
-                    "action": action,
-                    "target": record.target,
-                    "request_fingerprint": request.fingerprint,
-                    "contract_version": OPERATION_CONTRACT_VERSION,
-                    "revision": record.revision,
-                    "target_key": contract["target_key"],
-                    "pre_state": authority_of(contract["pre_state"]),
-                    "expected_post_state": authority_of(contract["expected_post_state"]),
-                    "payload": (
-                        {"sha256": planned_ref["sha256"], "size": planned_ref["size"]}
-                        if planned_ref is not None
-                        else None
-                    ),
-                    "contract_complete": contract["complete"],
-                },
-            )
+            try:
+                self.events.append_event(
+                    task_id,
+                    "OPERATION_INTENT",
+                    microtask_id=microtask_id,
+                    operation_id=chosen_id,
+                    payload=self._intent_payload(record),
+                )
+            except EventCheckpointStoreError as exc:
+                # the INTENT record is durable: say so (R-OP reconciles it later)
+                raise OperationHistoryPending(task_id, chosen_id, str(exc)) from exc
             self._touch_checkpoint(task_id, chosen_id)
             return {
                 "operation": record,
@@ -639,6 +770,10 @@ class OperationStore:
         operation_id = _safe_component("operation_id", operation_id)
         path = self._path(task_id, operation_id, active_only=True)
         record = self._load_path(path, task_id, operation_id)
+        # R-OP: no lifecycle step before a lost intent event is restored, and never
+        # STARTED in the same call that restored it
+        if self._reconcile_intent_locked(task_id, record) and requested is OperationStatus.STARTED:
+            raise OperationIntentReconciled(task_id, operation_id)
         current = record.status
 
         if requested == current:
@@ -759,6 +894,7 @@ class OperationStore:
         operation_id = _safe_component("operation_id", operation_id)
         path = self._path(task_id, operation_id, active_only=True)
         record = self._load_path(path, task_id, operation_id)
+        self._reconcile_intent_locked(task_id, record)  # R-OP: history before the settlement event
 
         resolution_id = resolution_id.strip()
         existing = record.recovery_settlement
