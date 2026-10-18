@@ -1,0 +1,186 @@
+{
+  "task_id": "CODEX-WUA-0-NATIVE-EGRESS-GATE-001",
+  "statuses": [
+    "SOURCE AUDIT PARTIAL",
+    "NATIVE EGRESS MAP PARTIAL",
+    "WINDOWS ISOLATION DESIGN PARTIAL",
+    "OS-ENFORCED EGRESS ISOLATION NOT VERIFIED",
+    "NATIVE CLIENT FAIL-CLOSED NOT VERIFIED",
+    "V2RAY REMOTE ROUTE NOT VERIFIED",
+    "HOSTED TUNNEL NOT STARTED",
+    "ORDINARY CHAT E2E NOT VERIFIED"
+  ],
+  "source_pack": "SOURCE PACK BLOCKED",
+  "native_gate": "BLOCKED",
+  "check_rows": 27,
+  "counts": {
+    "PASS": 15,
+    "BLOCKED": 6,
+    "NOT RUN": 6
+  },
+  "count_semantics": "Evidence/design rows; new synthetic tests separately22; actual native runs0.",
+  "checks": [
+    {
+      "id": "R01",
+      "status": "PASS",
+      "finding": "Current approved TASK/route/rules and coordinator AM07 bounded review read; previous incident not repaired",
+      "evidence": "assignment.md;rules_read.json;coordinator_findings.json"
+    },
+    {
+      "id": "A01",
+      "status": "BLOCKED",
+      "finding": "Exact official runtime-source archive absent in bounded local search; no transfer/download authorized",
+      "evidence": "source_pack_search.json"
+    },
+    {
+      "id": "A02",
+      "status": "PASS",
+      "finding": "Official-tag coordinator findings distinguished from local EXE byte identity and own missing source bodies",
+      "evidence": "native_egress_map.md"
+    },
+    {
+      "id": "A03",
+      "status": "BLOCKED",
+      "finding": "Complete native network graph/child/env/resolver/fallback source coverage and EXE attestation missing",
+      "evidence": "native_egress_map.md"
+    },
+    {
+      "id": "B01",
+      "status": "PASS",
+      "finding": "22 local Windows SDK declaration selectors plus CPython Popen-before-CreateProcess source ordering read",
+      "evidence": "windows_source_evidence.json"
+    },
+    {
+      "id": "B02",
+      "status": "PASS",
+      "finding": "Offline-VM and operational-WFP requirements, identity/port/child/lifecycle gaps and owned rollback contract designed",
+      "evidence": "isolation_design.md"
+    },
+    {
+      "id": "B03",
+      "status": "BLOCKED",
+      "finding": "Ready independently attested VM/process egress boundary not identified; no system changes allowed",
+      "evidence": "inventory.sanitized.json;isolation_design.md"
+    },
+    {
+      "id": "B04",
+      "status": "BLOCKED",
+      "finding": "WFP backend, process-tree membership, race/arbitration/crash/flow-revocation/rollback implementation not established",
+      "evidence": "isolation_design.md"
+    },
+    {
+      "id": "C01",
+      "status": "PASS",
+      "finding": "Current requested port owners recorded:10808 sing-box,10814 absent; actual sing-box also10813",
+      "evidence": "inventory.sanitized.json"
+    },
+    {
+      "id": "C02",
+      "status": "BLOCKED",
+      "finding": "Actual loaded config,HTTP/mixed protocol,DNS/DIRECT and remote outbound not attested; no live probe",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "C03",
+      "status": "PASS",
+      "finding": "Existing HTTP/mixed inbound preferred if attested; adapter not general HTTP/native confinement",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "D01",
+      "status": "PASS",
+      "finding": "22 NEW reference tests; prior suites not rerun; fixtures imported at pinned source hashes",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "D02",
+      "status": "PASS",
+      "finding": "Missing/bad endpoint,unknown port/identity/child and unsupported UDP/v6 config reject before API",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "D03",
+      "status": "PASS",
+      "finding": "Actual local connect/handshake faults trip model and prevent further root/child attempts",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "D04",
+      "status": "PASS",
+      "finding": "Route/monitor loss closes tracked helper sockets; no automatic retry or ambient-proxy renewal",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "D05",
+      "status": "PASS",
+      "finding": "Socket attempt denied before Winsock and Popen denied before CreateProcess distinguished from no attempt",
+      "evidence": "attempt01_results.json;windows_source_evidence.json"
+    },
+    {
+      "id": "D06",
+      "status": "PASS",
+      "finding": "Intentional allowed own-loopback orphan detected despite absent model intent; not an OS enforcement proof",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "D07",
+      "status": "PASS",
+      "finding": "2 expected Python guard denials,0 unexpected denials,0 fixture errors/ports/workers; env restored",
+      "evidence": "attempt01_results.json"
+    },
+    {
+      "id": "E01",
+      "status": "PASS",
+      "finding": "Independent-of-tests manual source/security review and future native acceptance/stop plan recorded",
+      "evidence": "manual_engineering_review.md;native_test_plan.md"
+    },
+    {
+      "id": "E02",
+      "status": "PASS",
+      "finding": "Protected source/config/launcher/AM05-AM07/current card byte hashes unchanged in this TASK",
+      "evidence": "integrity.json"
+    },
+    {
+      "id": "E03",
+      "status": "BLOCKED",
+      "finding": "Native execution requires independent OS isolation review and separate USER GO; neither supplied",
+      "evidence": "native_test_plan.md"
+    },
+    {
+      "id": "E04",
+      "status": "NOT RUN",
+      "finding": "Native tunnel-client/Cloudflared and actual child-network gate not executed",
+      "evidence": "native_test_plan.md"
+    },
+    {
+      "id": "E05",
+      "status": "NOT RUN",
+      "finding": "WFP/security API mutations,VM/feature/driver creation,network config changes not performed",
+      "evidence": "windows_source_evidence.json;isolation_design.md"
+    },
+    {
+      "id": "E06",
+      "status": "NOT RUN",
+      "finding": "Live V2Ray route and actual external/DNS probes forbidden",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "E07",
+      "status": "NOT RUN",
+      "finding": "Hosted tunnel and ordinary Chat E2E not executed",
+      "evidence": "native_test_plan.md"
+    },
+    {
+      "id": "E08",
+      "status": "NOT RUN",
+      "finding": "Git/GitHub publication/verification not authorized to local agent",
+      "evidence": "report.md"
+    },
+    {
+      "id": "E09",
+      "status": "NOT RUN",
+      "finding": "Personal card rotation not applied outside report-only write_scope; concrete handoff prepared",
+      "evidence": "card_handoff.md"
+    }
+  ]
+}

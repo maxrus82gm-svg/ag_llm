@@ -1,0 +1,217 @@
+{
+  "sdk_version": "10.0.19041.0",
+  "sdk_headers": [
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\fwpmu.h",
+      "sha256": "f96dd01748036265ee6d7115084c7acdd2b26989dfc666a55b0f49f3250bc007",
+      "selectors": [
+        {
+          "symbol": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+          "present": true,
+          "lines": [
+            459,
+            468
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_LAYER_ALE_AUTH_CONNECT_V6",
+          "present": true,
+          "lines": [
+            477,
+            486
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_ALE_APP_ID",
+          "present": true,
+          "lines": [
+            1863
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_ALE_PACKAGE_ID",
+          "present": true,
+          "lines": [
+            1195
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_ALE_USER_ID",
+          "present": true,
+          "lines": [
+            1885
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_IP_REMOTE_ADDRESS",
+          "present": true,
+          "lines": [
+            1375,
+            2091,
+            2100
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_IP_REMOTE_PORT",
+          "present": true,
+          "lines": [
+            1722,
+            1729
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_CONDITION_IP_PROTOCOL",
+          "present": true,
+          "lines": [
+            1702
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmGetAppIdFromFileName0",
+          "present": true,
+          "lines": [
+            4186
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmTransactionBegin0",
+          "present": true,
+          "lines": [
+            3359
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmTransactionCommit0",
+          "present": true,
+          "lines": [
+            3366
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmTransactionAbort0",
+          "present": true,
+          "lines": [
+            3370
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmFilterAdd0",
+          "present": true,
+          "lines": [
+            4066
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmFilterDeleteByKey0",
+          "present": true,
+          "lines": [
+            4082
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FwpmNetEventSubscribe0",
+          "present": true,
+          "lines": [
+            5001
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\shared\\fwpmtypes.h",
+      "sha256": "70fee183925d0947798b5cdc6aad4c712251de9f8264d3325e3ec77b114b7aa3",
+      "selectors": [
+        {
+          "symbol": "FWPM_SESSION_FLAG_DYNAMIC",
+          "present": true,
+          "lines": [
+            117
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_FILTER_FLAG_PERSISTENT",
+          "present": true,
+          "lines": [
+            450
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_FILTER_FLAG_BOOTTIME",
+          "present": true,
+          "lines": [
+            451
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_FILTER_FLAG_PERMIT_IF_CALLOUT_UNREGISTERED",
+          "present": true,
+          "lines": [
+            454
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWPM_NET_EVENT_TYPE_CLASSIFY_DROP",
+          "present": true,
+          "lines": [
+            719,
+            720,
+            725,
+            726
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\shared\\fwptypes.h",
+      "sha256": "5a4964e624d92ea3096c5bc1084ec58fc3e32abc979945986a4f2313e8f8a19d",
+      "selectors": [
+        {
+          "symbol": "FWP_ACTION_BLOCK",
+          "present": true,
+          "lines": [
+            301
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        },
+        {
+          "symbol": "FWP_ACTION_PERMIT",
+          "present": true,
+          "lines": [
+            302
+          ],
+          "kind": "SOURCE VERIFIED: local SDK declaration only, not runtime behavior"
+        }
+      ]
+    }
+  ],
+  "wfp_security_apis_invoked": 0,
+  "session_process_id_warning": "FWPM_SESSION0.processId is engine session metadata; not evidence of a descendant filter condition.",
+  "semantics_limit": "Header declarations do not prove filter precedence, loopback coverage, descendant inheritance, crash behavior or active installation.",
+  "subprocess_python_source": {
+    "path": "C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\subprocess.py",
+    "sha256": "e9886605ccac88bcfe2330a1b4cd8f132cbaf97ebb6834b1dcb5a69b127b8d5b",
+    "popen_audit_line": 1534,
+    "native_create_process_line": 1538,
+    "audit_precedes_create": true
+  }
+}

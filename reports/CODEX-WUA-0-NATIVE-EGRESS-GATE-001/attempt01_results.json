@@ -1,0 +1,1234 @@
+{
+  "task_id": "CODEX-WUA-0-NATIVE-EGRESS-GATE-001",
+  "scope": "CONTROL-POLICY REFERENCE / PYTHON GUARD ONLY; NOT OS/NATIVE",
+  "attempt": 1,
+  "status": "PASS",
+  "collected": 22,
+  "executed": 22,
+  "counts": {
+    "PASS": 22,
+    "FAIL": 0,
+    "ERROR": 0,
+    "SKIP": 0
+  },
+  "cases": [
+    {
+      "id": "test_01_approved_lease_control",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_01_approved_lease_control",
+            "event": "socket.connect",
+            "operation": "test_01_approved_lease_control:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63557
+          },
+          {
+            "case": "test_01_approved_lease_control",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "socks",
+            "host": "127.0.0.1",
+            "port": 63556
+          }
+        ],
+        "ledger": [
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_01_approved_lease_control:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_01_approved_lease_control:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_OK"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "origin_peer_ports": [
+          63559
+        ],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_02_missing_proxy_no_api_call",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_03_hostname_config_no_resolver_call",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_04_unapproved_owned_port_no_api_call",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_05_absent_endpoint_attempt_then_tree_stops",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_05_absent_endpoint_attempt_then_tree_stops",
+            "event": "socket.connect",
+            "operation": "synthetic-scope:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63565
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "synthetic-scope:1"
+          },
+          {
+            "code": "DIAL_FAILED",
+            "operation": "synthetic-scope:1",
+            "error_type": "TimeoutError"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "CONNECT_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_06_socks_refusal_revokes_tree",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_06_socks_refusal_revokes_tree",
+            "event": "socket.connect",
+            "operation": "test_06_socks_refusal_revokes_tree:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63568
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_06_socks_refusal_revokes_tree:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_06_socks_refusal_revokes_tree:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_FAILED",
+            "error_type": "ProtocolFailure"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "UPSTREAM_PROTOCOL_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_07_socks_timeout_revokes_tree",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_07_socks_timeout_revokes_tree",
+            "event": "socket.connect",
+            "operation": "test_07_socks_timeout_revokes_tree:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63571
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_07_socks_timeout_revokes_tree:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_07_socks_timeout_revokes_tree:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_FAILED",
+            "error_type": "TimeoutError"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "UPSTREAM_PROTOCOL_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_08_socks_disconnect_revokes_tree",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_08_socks_disconnect_revokes_tree",
+            "event": "socket.connect",
+            "operation": "test_08_socks_disconnect_revokes_tree:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63576
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_08_socks_disconnect_revokes_tree:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_08_socks_disconnect_revokes_tree:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_FAILED",
+            "error_type": "ProtocolFailure"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "UPSTREAM_PROTOCOL_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_09_malformed_socks_revokes_tree",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_09_malformed_socks_revokes_tree",
+            "event": "socket.connect",
+            "operation": "test_09_malformed_socks_revokes_tree:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63579
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_09_malformed_socks_revokes_tree:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_09_malformed_socks_revokes_tree:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_FAILED",
+            "error_type": "ProtocolFailure"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "UPSTREAM_PROTOCOL_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_10_trip_closes_existing_socket",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_10_trip_closes_existing_socket",
+            "event": "socket.connect",
+            "operation": "test_10_trip_closes_existing_socket:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63582
+          },
+          {
+            "case": "test_10_trip_closes_existing_socket",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "socks",
+            "host": "127.0.0.1",
+            "port": 63581
+          }
+        ],
+        "ledger": [
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_10_trip_closes_existing_socket:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_10_trip_closes_existing_socket:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_OK"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "ROUTE_LEASE_LOST"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "origin_peer_ports": [
+          63584
+        ],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_11_environment_cannot_renew_failed_lease",
+      "status": "PASS",
+      "observed": {
+        "environment_restored": true,
+        "api_events": [
+          {
+            "case": "test_11_environment_cannot_renew_failed_lease",
+            "event": "socket.connect",
+            "operation": "test_11_environment_cannot_renew_failed_lease:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63586
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_11_environment_cannot_renew_failed_lease:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_11_environment_cannot_renew_failed_lease:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_FAILED",
+            "error_type": "ProtocolFailure"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "UPSTREAM_PROTOCOL_FAILED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_12_unknown_child_no_create_and_lease_revocation",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_12_unknown_child_no_create_and_lease_revocation",
+            "event": "socket.connect",
+            "operation": "test_12_unknown_child_no_create_and_lease_revocation:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63589
+          },
+          {
+            "case": "test_12_unknown_child_no_create_and_lease_revocation",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "socks",
+            "host": "127.0.0.1",
+            "port": 63588
+          }
+        ],
+        "ledger": [
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_12_unknown_child_no_create_and_lease_revocation:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_12_unknown_child_no_create_and_lease_revocation:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_OK"
+          },
+          {
+            "code": "CHILD_REFUSED_NOT_CREATED"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "CHILD_NOT_AUTHORIZED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "origin_peer_ports": [
+          63591
+        ],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_13_controller_admitted_child_is_model_only",
+      "status": "PASS",
+      "observed": {
+        "native_processes_created": 0,
+        "api_events": [
+          {
+            "case": "test_13_controller_admitted_child_is_model_only",
+            "event": "socket.connect",
+            "operation": "test_13_controller_admitted_child_is_model_only:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63593
+          }
+        ],
+        "ledger": [
+          {
+            "code": "MODEL_CHILD_ADMITTED"
+          },
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_13_controller_admitted_child_is_model_only:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_13_controller_admitted_child_is_model_only:1"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "PEER_EOF"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_14_reused_name_different_generation_denied",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_15_bool_generation_is_not_valid_identity",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_16_udp_configuration_no_socket_attempt",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_17_ipv6_configuration_no_socket_attempt",
+      "status": "PASS",
+      "observed": {
+        "api_events": [],
+        "ledger": [],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_18_loopback_connect_attempt_blocked_before_winsock",
+      "status": "PASS",
+      "observed": {
+        "classification": "ATTEMPT_BLOCKED_BY_PYTHON_GUARD; NOT OS ENFORCEMENT",
+        "api_events": [
+          {
+            "case": "test_18_loopback_connect_attempt_blocked_before_winsock",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63601
+          }
+        ],
+        "ledger": [
+          {
+            "code": "UNBROKERED_API_ATTEMPT"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "AUDIT_MISMATCH"
+          }
+        ],
+        "python_guard_denials": [
+          {
+            "case": "test_18_loopback_connect_attempt_blocked_before_winsock",
+            "event": "socket.connect"
+          }
+        ],
+        "expected_denials": [
+          "socket.connect"
+        ],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_19_popen_attempt_blocked_before_createprocess",
+      "status": "PASS",
+      "observed": {
+        "classification": "POPEN_ATTEMPT_BLOCKED_BEFORE_CREATEPROCESS",
+        "native_processes_created": 0,
+        "api_events": [
+          {
+            "case": "test_19_popen_attempt_blocked_before_createprocess",
+            "event": "subprocess.Popen",
+            "operation": null,
+            "role": "driver"
+          }
+        ],
+        "ledger": [
+          {
+            "code": "UNBROKERED_API_ATTEMPT"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "AUDIT_MISMATCH"
+          }
+        ],
+        "python_guard_denials": [
+          {
+            "case": "test_19_popen_attempt_blocked_before_createprocess",
+            "event": "subprocess.Popen"
+          }
+        ],
+        "expected_denials": [
+          "subprocess.Popen"
+        ],
+        "socks_markers": [],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_20_unbrokered_success_oracle_is_not_a_false_no_attempt",
+      "status": "PASS",
+      "observed": {
+        "classification": "INTENTIONAL OWN-LOOPBACK UNBROKERED CONNECT DETECTED",
+        "api_events": [
+          {
+            "case": "test_20_unbrokered_success_oracle_is_not_a_false_no_attempt",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63605
+          }
+        ],
+        "ledger": [
+          {
+            "code": "UNBROKERED_API_ATTEMPT"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "AUDIT_MISMATCH"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [],
+        "origin_peer_ports": [
+          63607
+        ],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_21_monitor_loss_stops_open_lease",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_21_monitor_loss_stops_open_lease",
+            "event": "socket.connect",
+            "operation": "test_21_monitor_loss_stops_open_lease:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63609
+          },
+          {
+            "case": "test_21_monitor_loss_stops_open_lease",
+            "event": "socket.connect",
+            "operation": null,
+            "role": "socks",
+            "host": "127.0.0.1",
+            "port": 63608
+          }
+        ],
+        "ledger": [
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_21_monitor_loss_stops_open_lease:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_21_monitor_loss_stops_open_lease:1"
+          },
+          {
+            "code": "FIXTURE_HANDSHAKE_OK"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "MONITOR_LOST"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "IDENTITY_OR_EDGE_DENIED"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "origin_peer_ports": [
+          63611
+        ],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    },
+    {
+      "id": "test_22_stop_does_not_reconnect",
+      "status": "PASS",
+      "observed": {
+        "api_events": [
+          {
+            "case": "test_22_stop_does_not_reconnect",
+            "event": "socket.connect",
+            "operation": "test_22_stop_does_not_reconnect:1",
+            "role": "driver",
+            "host": "127.0.0.1",
+            "port": 63613
+          }
+        ],
+        "ledger": [
+          {
+            "code": "DIAL_API_INTENT",
+            "operation": "test_22_stop_does_not_reconnect:1"
+          },
+          {
+            "code": "CONNECTED",
+            "operation": "test_22_stop_does_not_reconnect:1"
+          },
+          {
+            "code": "CHAIN_TRIPPED",
+            "reason": "STOP"
+          },
+          {
+            "code": "REFUSED_BEFORE_DIAL"
+          }
+        ],
+        "python_guard_denials": [],
+        "expected_denials": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "PEER_EOF"
+        ],
+        "origin_peer_ports": [],
+        "fixture_errors": [],
+        "gate_sockets_remaining": 0
+      }
+    }
+  ],
+  "api_events": [
+    {
+      "case": "test_01_approved_lease_control",
+      "event": "socket.connect",
+      "operation": "test_01_approved_lease_control:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63557
+    },
+    {
+      "case": "test_01_approved_lease_control",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "socks",
+      "host": "127.0.0.1",
+      "port": 63556
+    },
+    {
+      "case": "test_05_absent_endpoint_attempt_then_tree_stops",
+      "event": "socket.connect",
+      "operation": "synthetic-scope:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63565
+    },
+    {
+      "case": "test_06_socks_refusal_revokes_tree",
+      "event": "socket.connect",
+      "operation": "test_06_socks_refusal_revokes_tree:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63568
+    },
+    {
+      "case": "test_07_socks_timeout_revokes_tree",
+      "event": "socket.connect",
+      "operation": "test_07_socks_timeout_revokes_tree:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63571
+    },
+    {
+      "case": "test_08_socks_disconnect_revokes_tree",
+      "event": "socket.connect",
+      "operation": "test_08_socks_disconnect_revokes_tree:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63576
+    },
+    {
+      "case": "test_09_malformed_socks_revokes_tree",
+      "event": "socket.connect",
+      "operation": "test_09_malformed_socks_revokes_tree:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63579
+    },
+    {
+      "case": "test_10_trip_closes_existing_socket",
+      "event": "socket.connect",
+      "operation": "test_10_trip_closes_existing_socket:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63582
+    },
+    {
+      "case": "test_10_trip_closes_existing_socket",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "socks",
+      "host": "127.0.0.1",
+      "port": 63581
+    },
+    {
+      "case": "test_11_environment_cannot_renew_failed_lease",
+      "event": "socket.connect",
+      "operation": "test_11_environment_cannot_renew_failed_lease:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63586
+    },
+    {
+      "case": "test_12_unknown_child_no_create_and_lease_revocation",
+      "event": "socket.connect",
+      "operation": "test_12_unknown_child_no_create_and_lease_revocation:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63589
+    },
+    {
+      "case": "test_12_unknown_child_no_create_and_lease_revocation",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "socks",
+      "host": "127.0.0.1",
+      "port": 63588
+    },
+    {
+      "case": "test_13_controller_admitted_child_is_model_only",
+      "event": "socket.connect",
+      "operation": "test_13_controller_admitted_child_is_model_only:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63593
+    },
+    {
+      "case": "test_18_loopback_connect_attempt_blocked_before_winsock",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63601
+    },
+    {
+      "case": "test_19_popen_attempt_blocked_before_createprocess",
+      "event": "subprocess.Popen",
+      "operation": null,
+      "role": "driver"
+    },
+    {
+      "case": "test_20_unbrokered_success_oracle_is_not_a_false_no_attempt",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63605
+    },
+    {
+      "case": "test_21_monitor_loss_stops_open_lease",
+      "event": "socket.connect",
+      "operation": "test_21_monitor_loss_stops_open_lease:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63609
+    },
+    {
+      "case": "test_21_monitor_loss_stops_open_lease",
+      "event": "socket.connect",
+      "operation": null,
+      "role": "socks",
+      "host": "127.0.0.1",
+      "port": 63608
+    },
+    {
+      "case": "test_22_stop_does_not_reconnect",
+      "event": "socket.connect",
+      "operation": "test_22_stop_does_not_reconnect:1",
+      "role": "driver",
+      "host": "127.0.0.1",
+      "port": 63613
+    }
+  ],
+  "socket_trace": [
+    {
+      "case": "test_01_approved_lease_control",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63557,
+      "allowed": true
+    },
+    {
+      "case": "test_01_approved_lease_control",
+      "role": "socks",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63556,
+      "allowed": true
+    },
+    {
+      "case": "test_05_absent_endpoint_attempt_then_tree_stops",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63565,
+      "allowed": true
+    },
+    {
+      "case": "test_06_socks_refusal_revokes_tree",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63568,
+      "allowed": true
+    },
+    {
+      "case": "test_07_socks_timeout_revokes_tree",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63571,
+      "allowed": true
+    },
+    {
+      "case": "test_08_socks_disconnect_revokes_tree",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63576,
+      "allowed": true
+    },
+    {
+      "case": "test_09_malformed_socks_revokes_tree",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63579,
+      "allowed": true
+    },
+    {
+      "case": "test_10_trip_closes_existing_socket",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63582,
+      "allowed": true
+    },
+    {
+      "case": "test_10_trip_closes_existing_socket",
+      "role": "socks",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63581,
+      "allowed": true
+    },
+    {
+      "case": "test_11_environment_cannot_renew_failed_lease",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63586,
+      "allowed": true
+    },
+    {
+      "case": "test_12_unknown_child_no_create_and_lease_revocation",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63589,
+      "allowed": true
+    },
+    {
+      "case": "test_12_unknown_child_no_create_and_lease_revocation",
+      "role": "socks",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63588,
+      "allowed": true
+    },
+    {
+      "case": "test_13_controller_admitted_child_is_model_only",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63593,
+      "allowed": true
+    },
+    {
+      "case": "test_18_loopback_connect_attempt_blocked_before_winsock",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63601,
+      "allowed": false
+    },
+    {
+      "case": "test_20_unbrokered_success_oracle_is_not_a_false_no_attempt",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63605,
+      "allowed": true
+    },
+    {
+      "case": "test_21_monitor_loss_stops_open_lease",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63609,
+      "allowed": true
+    },
+    {
+      "case": "test_21_monitor_loss_stops_open_lease",
+      "role": "socks",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63608,
+      "allowed": true
+    },
+    {
+      "case": "test_22_stop_does_not_reconnect",
+      "role": "driver",
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 63613,
+      "allowed": true
+    }
+  ],
+  "guard_denials": [
+    {
+      "case": "test_18_loopback_connect_attempt_blocked_before_winsock",
+      "event": "socket.connect"
+    },
+    {
+      "case": "test_19_popen_attempt_blocked_before_createprocess",
+      "event": "subprocess.Popen"
+    }
+  ],
+  "expected_guard_denials": 2,
+  "unexpected_guard_denials": 0,
+  "ports_remaining": [],
+  "worker_leaks": [],
+  "actual_native_processes_created": 0,
+  "native_tunnel_client_runs": 0,
+  "prior_suites_rerun": false,
+  "source_sha256": {
+    "egress_reference.py": "d97d08d35fbc1dc283eb64090a89cb565ef5e83e823496186ae09d7a2033a8ed",
+    "test_reference.py": "12ab3a45fdb2ded0f2849dc7dc9cd38f5fc1a58831d50eecd0e5df5469d03767"
+  },
+  "fixture_dependency_sha256": {
+    "adapter.py": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+    "test_adapter.py": "7f3298e453e4de4494865c1e773e6516e9c856c043c287b6c92069bedbd35bde"
+  }
+}

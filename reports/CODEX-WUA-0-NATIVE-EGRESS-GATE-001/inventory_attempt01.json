@@ -1,0 +1,97 @@
+{
+  "utc": "2026-10-18T16:56:18.759677+00:00",
+  "processes": [
+    {
+      "name": "v2rayN.exe",
+      "pid": 18032,
+      "parent_pid": 6128,
+      "executable_path_available": false,
+      "command_line_available": false,
+      "listeners": []
+    },
+    {
+      "name": "sing-box.exe",
+      "pid": 19124,
+      "parent_pid": 18032,
+      "executable_path_available": false,
+      "command_line_available": false,
+      "listeners": [
+        {
+          "address": "127.0.0.1",
+          "port": 10813
+        },
+        {
+          "address": "127.0.0.1",
+          "port": 10808
+        }
+      ]
+    }
+  ],
+  "feature_states": [
+    {
+      "Name": "Microsoft-Windows-Subsystem-Linux",
+      "InstallState": 2
+    },
+    {
+      "Name": "VirtualMachinePlatform",
+      "InstallState": 2
+    },
+    {
+      "Name": "Containers-DisposableClientVM",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V",
+      "InstallState": 2
+    },
+    {
+      "Name": "Containers",
+      "InstallState": 2
+    }
+  ],
+  "command_presence": [
+    {
+      "present": false,
+      "name": "Get-VM"
+    },
+    {
+      "present": false,
+      "name": "Get-VMNetworkAdapter"
+    },
+    {
+      "present": false,
+      "name": "docker"
+    },
+    {
+      "present": false,
+      "name": "podman"
+    },
+    {
+      "present": false,
+      "name": "WindowsSandbox"
+    },
+    {
+      "present": false,
+      "name": "hcsdiag"
+    },
+    {
+      "present": false,
+      "name": "VBoxManage"
+    },
+    {
+      "present": false,
+      "name": "vmrun"
+    }
+  ],
+  "bfe_service": {
+    "Name": "BFE",
+    "Status": "Running"
+  },
+  "sandbox_exe_present": false,
+  "loaded_config_attested": false,
+  "http_mixed_inbound_attested": false,
+  "process_cmdlines_exported": false,
+  "live_listener_probes": 0,
+  "isolation_verified": false,
+  "limitation": "Bounded presence/CIM inventory; not exhaustive VM inventory or packet/process containment proof."
+}

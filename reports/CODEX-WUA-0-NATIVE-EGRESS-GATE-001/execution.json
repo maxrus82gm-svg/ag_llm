@@ -1,0 +1,41 @@
+{
+  "task_id": "CODEX-WUA-0-NATIVE-EGRESS-GATE-001",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "windows_version": [
+    10,
+    0,
+    19045
+  ],
+  "commands": [
+    {
+      "purpose": "Read-only local inventory/SDK/source collection",
+      "command": "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-NATIVE-EGRESS-GATE-001\\collect_readonly.py",
+      "runs": 2,
+      "exit_codes": [
+        0,
+        0
+      ],
+      "reason_for_second": "Add all-listener ownership for requested10808/10814; first snapshot preserved."
+    },
+    {
+      "purpose": "New chain-lease reference tests only",
+      "command": "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-NATIVE-EGRESS-GATE-001\\test_reference.py",
+      "runs": 1,
+      "exit_code": 0
+    }
+  ],
+  "prior_suites_rerun": false,
+  "test_result": "attempt01_results.json",
+  "new_collected": 22,
+  "new_pass": 22,
+  "native_tunnel_client_runs": 0,
+  "cloudflared_runs": 0,
+  "test_probe_children_created": 0,
+  "inventory_powershell_subprocesses": 2,
+  "wfp_security_apis_invoked": 0,
+  "live_proxy_probes": 0,
+  "real_dns_probes": 0,
+  "hosted_tunnels_started": 0,
+  "git_github_operations": 0,
+  "model_changed": false
+}

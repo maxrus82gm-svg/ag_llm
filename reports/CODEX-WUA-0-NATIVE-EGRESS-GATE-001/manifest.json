@@ -1,0 +1,156 @@
+{
+  "task_id": "CODEX-WUA-0-NATIVE-EGRESS-GATE-001",
+  "date": "2026-10-18",
+  "scope": "reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/",
+  "status": "RESEARCH PARTIAL / RESULT READY / NATIVE EXECUTION BLOCKED / AWAITING INDEPENDENT REVIEW",
+  "statuses": [
+    "SOURCE AUDIT PARTIAL",
+    "NATIVE EGRESS MAP PARTIAL",
+    "WINDOWS ISOLATION DESIGN PARTIAL",
+    "OS-ENFORCED EGRESS ISOLATION NOT VERIFIED",
+    "NATIVE CLIENT FAIL-CLOSED NOT VERIFIED",
+    "V2RAY REMOTE ROUTE NOT VERIFIED",
+    "HOSTED TUNNEL NOT STARTED",
+    "ORDINARY CHAT E2E NOT VERIFIED"
+  ],
+  "source_pack": "SOURCE PACK BLOCKED",
+  "publication": "LOCAL ONLY / NOT PUBLISHED BY CODEX",
+  "source_revision": "Local byte hashes; coordinator statements only; no agent Git/GitHub verification",
+  "fixture_dependencies": {
+    "adapter.py": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+    "test_adapter.py": "7f3298e453e4de4494865c1e773e6516e9c856c043c287b6c92069bedbd35bde"
+  },
+  "manifest_self_hash": "Excluded; handed off separately",
+  "files": [
+    {
+      "path": "artifact_validation.json",
+      "bytes": 1540,
+      "sha256": "fd9bf0598543bdda3a67fa174d5ce9dab40c271fd5573ec73a42ce030c392264"
+    },
+    {
+      "path": "assignment.md",
+      "bytes": 17813,
+      "sha256": "f29b06f604ff0033bc50834b36905553f47cedee75fdb3220424d9988df60fa5"
+    },
+    {
+      "path": "attempt01_results.json",
+      "bytes": 34548,
+      "sha256": "db748fd5b7b3219e10460415ecaa25ebe63115b5f8c1fab58f842a689280ad2a"
+    },
+    {
+      "path": "card_handoff.md",
+      "bytes": 1328,
+      "sha256": "55674354441f1dea707fd7a4d5bec0facebf692ac48ba14c01f0c700121c989e"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 6715,
+      "sha256": "aaa7f6f43aa9467a0c6886d73012f1dd69ab0d80b4b5c45d7f05d78957400798"
+    },
+    {
+      "path": "collect_readonly.py",
+      "bytes": 9481,
+      "sha256": "25717b2875c65dfe7eae782b22a29a85f9b4dfea0bba9a42099819f2d48a3799"
+    },
+    {
+      "path": "coordinator_findings.json",
+      "bytes": 12162,
+      "sha256": "0a7a1e4780d1e194a682beaa316e642238fc7bc4e2df4d2040ef8d88780d2b6d"
+    },
+    {
+      "path": "egress_reference.py",
+      "bytes": 5788,
+      "sha256": "d97d08d35fbc1dc283eb64090a89cb565ef5e83e823496186ae09d7a2033a8ed"
+    },
+    {
+      "path": "execution.json",
+      "bytes": 1385,
+      "sha256": "906cd8bd3e11afd0f3c603c98979803dadb136dc8c6a83b199211dad74db4b51"
+    },
+    {
+      "path": "inputs_before.json",
+      "bytes": 27825,
+      "sha256": "172abc3a1100ab8ba01cdedb2a844ca85e7d346bbfcca84134b5d742087690f5"
+    },
+    {
+      "path": "integrity.json",
+      "bytes": 40234,
+      "sha256": "215ab6be163980854e1f8019b547ad63a9fc8fd78819b221520cd78d25981e09"
+    },
+    {
+      "path": "inventory.sanitized.json",
+      "bytes": 2237,
+      "sha256": "6449f4d977e532045845ce6193392ce4329079be69721c853fb718ae4bbc64d3"
+    },
+    {
+      "path": "inventory_attempt01.json",
+      "bytes": 2047,
+      "sha256": "680745088b9274bd15625b5c5d3312562579ac21cf98ccc18f4901c1a47a8eb8"
+    },
+    {
+      "path": "isolation_design.md",
+      "bytes": 7808,
+      "sha256": "6abdfd0cbdb0adf9e34f420de9c4bddcf8874277440a7dec4e8463d7efa7dc39"
+    },
+    {
+      "path": "manual_engineering_review.md",
+      "bytes": 7519,
+      "sha256": "eee2d097da456bc534510ffb01d15bd9329b5db63026736bc7e01a881bddff81"
+    },
+    {
+      "path": "native_egress_map.md",
+      "bytes": 6963,
+      "sha256": "4d2bc0136b54258457c05b53e8cb2fde4690ffe61f662d1fdaefe520e9675606"
+    },
+    {
+      "path": "native_gate_decision.json",
+      "bytes": 382,
+      "sha256": "71f400afb80b8aa1a428eb8731d5b2cfcf9b92113106d8486978807fe3de5bf5"
+    },
+    {
+      "path": "native_test_plan.md",
+      "bytes": 5323,
+      "sha256": "bc628a65285c24cdf6899986f8d485d2752b089c49cd5a636e0d5f6f07ef70ef"
+    },
+    {
+      "path": "proxy_options.md",
+      "bytes": 2780,
+      "sha256": "36d9d6d522760df6220a9f5dca3913bd8dddac14a0850e2448a999d8a157c954"
+    },
+    {
+      "path": "publication_precheck.json",
+      "bytes": 1953,
+      "sha256": "015ac7add4680902ce3a3abebaa344514418e0b0a607f85db15025d0eda4cd64"
+    },
+    {
+      "path": "report.md",
+      "bytes": 18756,
+      "sha256": "aba1fdd600420baa9c13e42f1c63b5a03128e5ed5798995731475dfac50caec0"
+    },
+    {
+      "path": "rules_read.json",
+      "bytes": 146857,
+      "sha256": "5f9f385ac8325eaf02a6f1d1277cc1c0dd0aa5b4537fc62959d2567e9ede7027"
+    },
+    {
+      "path": "source_pack_search.json",
+      "bytes": 400,
+      "sha256": "68ad3bab36694c41109511e1531b3166c864142aecf0e970ffb9bffb3c44ac1e"
+    },
+    {
+      "path": "test_reference.py",
+      "bytes": 14082,
+      "sha256": "12ab3a45fdb2ded0f2849dc7dc9cd38f5fc1a58831d50eecd0e5df5469d03767"
+    },
+    {
+      "path": "validate_bundle.py",
+      "bytes": 8237,
+      "sha256": "a4b526dac9d42b5d2c84a8775dc3649e203ea772efa042e913f8f9b258786ff6"
+    },
+    {
+      "path": "windows_source_evidence.json",
+      "bytes": 6887,
+      "sha256": "0c97c01510c7e1a4e3be7cfab11177d35e22bddd1ab36794313cbd56e40b26b4"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "utc": "2026-10-18T17:11:28.862607+00:00",
+  "protected_inputs_unchanged": 122,
+  "previous_am05_am06_am07_preserved": 105,
+  "json_parsed": [
+    "attempt01_results.json",
+    "checks.json",
+    "coordinator_findings.json",
+    "execution.json",
+    "inputs_before.json",
+    "integrity.json",
+    "inventory.sanitized.json",
+    "inventory_attempt01.json",
+    "native_gate_decision.json",
+    "rules_read.json",
+    "source_pack_search.json",
+    "windows_source_evidence.json"
+  ],
+  "syntax": [
+    {
+      "path": "collect_readonly.py",
+      "sha256": "25717b2875c65dfe7eae782b22a29a85f9b4dfea0bba9a42099819f2d48a3799",
+      "status": "PASS"
+    },
+    {
+      "path": "egress_reference.py",
+      "sha256": "d97d08d35fbc1dc283eb64090a89cb565ef5e83e823496186ae09d7a2033a8ed",
+      "status": "PASS"
+    },
+    {
+      "path": "test_reference.py",
+      "sha256": "12ab3a45fdb2ded0f2849dc7dc9cd38f5fc1a58831d50eecd0e5df5469d03767",
+      "status": "PASS"
+    },
+    {
+      "path": "validate_bundle.py",
+      "sha256": "a4b526dac9d42b5d2c84a8775dc3649e203ea772efa042e913f8f9b258786ff6",
+      "status": "PASS"
+    }
+  ],
+  "text_scans": 24,
+  "secret_pattern_issues": [],
+  "secret_scan_limit": "Bounded pattern scan + manual review, not a general DLP guarantee",
+  "tests": "22/22 new reference only",
+  "socket_attempts": 18,
+  "expected_python_denials": 2,
+  "native_runs": 0,
+  "sdk_header_sources_stable": true,
+  "manifest_self_hash_excluded": true
+}
