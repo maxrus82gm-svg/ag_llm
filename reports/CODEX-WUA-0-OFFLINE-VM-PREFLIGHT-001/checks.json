@@ -1,0 +1,165 @@
+{
+  "task_id": "CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001",
+  "kind": "evidence matrix, not test suite",
+  "checks": [
+    {
+      "id": "C01",
+      "status": "PASS",
+      "claim": "17 current rule source hashes and addressed routing/rotation review",
+      "evidence": "rules_read.json; shared_doc_delta.md"
+    },
+    {
+      "id": "C02",
+      "status": "PASS",
+      "claim": "Full assignment, own-card before bytes and explicit USER GO retained",
+      "evidence": "assignment.md; card_before.md; user_go_card_rotation.md"
+    },
+    {
+      "id": "C03",
+      "status": "BLOCKED",
+      "claim": "Official runtime source archive unavailable in bounded local roots",
+      "evidence": "local_file_inventory.json; source_pack_preflight.md"
+    },
+    {
+      "id": "C04",
+      "status": "PASS",
+      "claim": "Fresh installed EXE identity equals cached ZIP member",
+      "evidence": "provenance.json"
+    },
+    {
+      "id": "C05",
+      "status": "PASS",
+      "claim": "Fresh ZIP digest equals cached release digest and SHA256SUMS; no online attestation",
+      "evidence": "provenance.json"
+    },
+    {
+      "id": "C06",
+      "status": "BLOCKED",
+      "claim": "Full source-to-binary reproducible build/attestation absent",
+      "evidence": "source_pack_preflight.md; provenance.json"
+    },
+    {
+      "id": "C07",
+      "status": "PASS",
+      "claim": "Read-only OS/CPU virtualization metadata obtained",
+      "evidence": "host_inventory.json"
+    },
+    {
+      "id": "C08",
+      "status": "PASS",
+      "claim": "Bounded multi-source hypervisor/VM/media inventory saved; query errors 0",
+      "evidence": "host_inventory.json; local_file_inventory.json"
+    },
+    {
+      "id": "C09",
+      "status": "BLOCKED",
+      "claim": "Ready hypervisor and independently identified lab VM not found",
+      "evidence": "host_vm_inventory.md"
+    },
+    {
+      "id": "C10",
+      "status": "BLOCKED",
+      "claim": "Trusted Windows offline install media/baseline not found",
+      "evidence": "host_vm_inventory.md"
+    },
+    {
+      "id": "C11",
+      "status": "BLOCKED",
+      "claim": "Full offline dependency/observer/media closure not provided",
+      "evidence": "host_vm_inventory.md; offline_vm_design.md"
+    },
+    {
+      "id": "C12",
+      "status": "PASS",
+      "claim": "Platform comparison and conditional zero-NIC Hyper-V selection documented; design only",
+      "evidence": "vm_platform_comparison.md"
+    },
+    {
+      "id": "C13",
+      "status": "BLOCKED",
+      "claim": "Exact backend verifier and independent attempt observer not implemented/verified",
+      "evidence": "isolation_preflight_contract.md; preflight_decision.json"
+    },
+    {
+      "id": "C14",
+      "status": "PASS",
+      "claim": "Owner-only rollback, partial-failure and current-card rollback procedures documented",
+      "evidence": "rollback_plan.md"
+    },
+    {
+      "id": "C15",
+      "status": "PASS",
+      "claim": "16 native case contracts with preconditions/oracles/stops/cleanup prepared; not execution",
+      "evidence": "native_offline_test_plan.md"
+    },
+    {
+      "id": "C16",
+      "status": "PASS",
+      "claim": "Separate manual engineering/adversarial review completed by author",
+      "evidence": "manual_engineering_review.md"
+    },
+    {
+      "id": "C17",
+      "status": "NOT RUN",
+      "claim": "16 native cases; actual native executions 0",
+      "evidence": "native_offline_test_plan.md; preflight_decision.json"
+    },
+    {
+      "id": "C18",
+      "status": "NOT RUN",
+      "claim": "Actual OS/hypervisor isolation preflight; VM operations 0",
+      "evidence": "preflight_decision.json"
+    },
+    {
+      "id": "C19",
+      "status": "NOT RUN",
+      "claim": "Live V2Ray remote route",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "C20",
+      "status": "NOT RUN",
+      "claim": "Hosted tunnel activation",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "C21",
+      "status": "NOT RUN",
+      "claim": "Ordinary Chat MCP E2E / independent receipt",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "C22",
+      "status": "PASS",
+      "claim": "150/150 noncard protected hashes unchanged, 1 authorized own-card change",
+      "evidence": "integrity.json"
+    },
+    {
+      "id": "C23",
+      "status": "PASS",
+      "claim": "Staged B2/B3 readback, full assignment/amendment and old history preserved, B1 waiting",
+      "evidence": "card_rotation.json"
+    },
+    {
+      "id": "C24",
+      "status": "PASS",
+      "claim": "Complete package hash/size census and source/JSON parse; integrity only",
+      "evidence": "manifest.json; bundle_validation.json; validate_bundle.py"
+    },
+    {
+      "id": "C25",
+      "status": "PASS",
+      "claim": "Only approved local metadata/hash/design/card operations used; no native/VM/network mutations",
+      "evidence": "execution.json; saved source scripts; tool transcript"
+    }
+  ],
+  "counts": {
+    "PASS": 14,
+    "BLOCKED": 6,
+    "NOT RUN": 5
+  },
+  "native_plan_cases": {
+    "NOT RUN": 16
+  },
+  "prior_reference_suite_reruns": 0
+}

@@ -1,0 +1,119 @@
+{
+  "task_id": "CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001",
+  "created_utc": "2026-10-18T17:37:07.999070+00:00",
+  "roots": [
+    {
+      "root": "M:\\GitHub\\ag_llm\\reports",
+      "max_depth": 12,
+      "exists": true,
+      "visited_dirs": 1071,
+      "visited_files": 3391,
+      "errors": [],
+      "depth_pruned": 68,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\REX\\Downloads",
+      "max_depth": 5,
+      "exists": true,
+      "visited_dirs": 2,
+      "visited_files": 4,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\REX\\.codex\\attachments",
+      "max_depth": 5,
+      "exists": true,
+      "visited_dirs": 110,
+      "visited_files": 104,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\REX\\VirtualBox VMs",
+      "max_depth": 5,
+      "exists": false,
+      "visited_dirs": 0,
+      "visited_files": 0,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\REX\\Documents\\Virtual Machines",
+      "max_depth": 5,
+      "exists": false,
+      "visited_dirs": 0,
+      "visited_files": 0,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\Public\\Documents\\Hyper-V",
+      "max_depth": 5,
+      "exists": false,
+      "visited_dirs": 0,
+      "visited_files": 0,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\ProgramData\\Microsoft\\Windows\\Hyper-V",
+      "max_depth": 3,
+      "exists": false,
+      "visited_dirs": 0,
+      "visited_files": 0,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    },
+    {
+      "root": "C:\\Users\\REX\\.VirtualBox",
+      "max_depth": 2,
+      "exists": false,
+      "visited_dirs": 0,
+      "visited_files": 0,
+      "errors": [],
+      "depth_pruned": 0,
+      "reparse_or_offline_skipped": 0
+    }
+  ],
+  "found": [
+    {
+      "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\downloads\\tunnel-client-v0.0.16-windows-amd64.zip",
+      "kind": "source_candidate",
+      "bytes": 28122468,
+      "sha256": "edef7241b0c647fcb30f1a80ff376b6b25c51927960f257a3f01e21b17c2aba6",
+      "expected_source_match": false
+    }
+  ],
+  "source_pack_matches": [],
+  "executable": {
+    "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\tools\\tunnel-client.exe",
+    "exists": true,
+    "bytes": 22591488,
+    "sha256": "4226bb74a72388147882881f29f79801b95e285d731a138071812e3aa6766571",
+    "executed": false
+  },
+  "path_lookup_only": {
+    "VBoxManage": null,
+    "vmrun": null,
+    "vmware": null,
+    "qemu-system-x86_64": null,
+    "WindowsSandbox": null,
+    "hcsdiag": null,
+    "docker": null,
+    "podman": null
+  },
+  "limitations": [
+    "No whole-disk search",
+    "Filename candidates are not trusted Windows media",
+    "No VM state change or product launch",
+    "Absent PATH entry alone does not prove product absent"
+  ]
+}

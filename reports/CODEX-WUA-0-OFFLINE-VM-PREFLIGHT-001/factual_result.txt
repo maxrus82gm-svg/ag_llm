@@ -1,0 +1,22 @@
+TASK: CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001
+STATUS: PARTIAL / RESULT READY / AWAITING INDEPENDENT VERIFICATION
+OFFICIAL SOURCE PACK BLOCKED
+LOCAL SOURCE AUDIT PARTIAL
+VM PLATFORM INVENTORY PARTIAL
+OFFLINE VM DESIGN PARTIAL
+ISOLATION PREFLIGHT CONTRACT PARTIAL
+OS/HYPERVISOR ISOLATION NOT VERIFIED
+NATIVE CLIENT EXECUTION NOT STARTED
+NATIVE CLIENT FAIL-CLOSED NOT VERIFIED
+V2RAY REMOTE ROUTE NOT VERIFIED
+HOSTED TUNNEL NOT STARTED
+ORDINARY CHAT E2E NOT VERIFIED
+CARD ROTATION VERIFIED (local); B1 = ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+RESULT: локальная Windows/VM inventory и cached ZIP→EXE byte identity; conditional zero-NIC Windows VM design, I01–I12 contract, 16 future native cases, owned rollback, manual engineering review.
+CHECKS: 25 evidence rows = 14 PASS / 6 BLOCKED / 5 NOT RUN; 16 native cases NOT RUN; 0 native/VM/network executions; previous suites not rerun. 150/150 noncard protected files unchanged; own card changed under USER GO. Historical B2–B3 tail 405816 B preserved byte-for-byte.
+BLOCKERS/RISKS: exact source archive, build correspondence, ready lab platform/Windows media/dependencies and backend-specific isolation/attempt observers missing. No OS/native/V2Ray/Chat proof.
+DOC IMPACT: task report folder + own card only. SHARED DOC DELTA: shared_doc_delta.md for WEB_10; common docs unchanged.
+REPORT: M:\GitHub\ag_llm\reports\CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001\report.md
+EVIDENCE: manifest.json, checks.json, host_inventory.json, local_file_inventory.json, provenance.json, integrity.json, preflight_decision.json, card_rotation.json, bundle_validation.json in the same folder.
+NEXT/PROPOSAL ONLY: user supplies exact source archive and trusted offline lab host/media; separate scoped provisioning GO, independent isolation review, then separate native execution GO. No automatic platform installation.
+PUBLICATION: LOCAL ONLY / NOT VERIFIED; Git/GitHub not used; user forwards report to WEB_10.

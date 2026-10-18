@@ -1,0 +1,142 @@
+{
+  "task_id": "CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001",
+  "collected_utc": "2026-10-18T17:37:10.5739510Z",
+  "os": [
+    {
+      "Caption": "Майкрософт Windows 10 Pro",
+      "Version": "10.0.19045",
+      "BuildNumber": "19045",
+      "OSArchitecture": "64-разрядная"
+    }
+  ],
+  "system": [
+    {
+      "Manufacturer": "ASRock",
+      "Model": "Z790 Pro RS",
+      "HypervisorPresent": false,
+      "TotalPhysicalMemory": 34175574016
+    }
+  ],
+  "cpu": [
+    {
+      "Name": "12th Gen Intel(R) Core(TM) i5-12400F",
+      "AddressWidth": 64,
+      "VirtualizationFirmwareEnabled": true,
+      "VMMonitorModeExtensions": true,
+      "SecondLevelAddressTranslationExtensions": true
+    }
+  ],
+  "features": [
+    {
+      "Name": "Microsoft-Windows-Subsystem-Linux",
+      "InstallState": 2
+    },
+    {
+      "Name": "HypervisorPlatform",
+      "InstallState": 2
+    },
+    {
+      "Name": "VirtualMachinePlatform",
+      "InstallState": 2
+    },
+    {
+      "Name": "Containers-DisposableClientVM",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-All",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-Tools-All",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-Management-PowerShell",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-Hypervisor",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-Services",
+      "InstallState": 2
+    },
+    {
+      "Name": "Microsoft-Hyper-V-Management-Clients",
+      "InstallState": 2
+    },
+    {
+      "Name": "Containers",
+      "InstallState": 2
+    }
+  ],
+  "install_state_schema": [
+    {
+      "name": "ValueMap",
+      "value": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    }
+  ],
+  "installed_virtualization_products": [],
+  "services": [],
+  "drivers": [],
+  "hyperv_modules": [],
+  "known_binary_paths": [
+    {
+      "path": "C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Program Files\\VMware\\VMware Workstation\\vmware.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Program Files (x86)\\VMware\\VMware Workstation\\vmware.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Program Files\\qemu\\qemu-system-x86_64.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Windows\\System32\\WindowsSandbox.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Windows\\System32\\vmms.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    },
+    {
+      "path": "C:\\Windows\\System32\\vmcompute.exe",
+      "exists": false,
+      "file_version": null,
+      "executed": false
+    }
+  ],
+  "query_errors": [],
+  "mutations": 0,
+  "product_commands_executed": 0,
+  "limitation": "Read-only bounded metadata; no VM enumeration through a hypervisor daemon, no elevation, no network probes."
+}

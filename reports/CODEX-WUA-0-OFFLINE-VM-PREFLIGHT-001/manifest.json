@@ -1,0 +1,176 @@
+{
+  "task_id": "CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001",
+  "created_utc": "2026-10-18T17:49:05.916251+00:00",
+  "status": "PARTIAL / RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "scope": "new report folder plus explicitly authorized own card",
+  "files": [
+    {
+      "path": "assignment.md",
+      "bytes": 22435,
+      "sha256": "8aef0128903fd03656c0334340da0c77c1554e60ae453d4db769f4e28ea36ad4"
+    },
+    {
+      "path": "bundle_validation.json",
+      "bytes": 461,
+      "sha256": "4f58f96d7fcbfdc780c5c7e02207efcd37817ae5c0742058f27ae7e50a2f4ec1"
+    },
+    {
+      "path": "capture_inputs.py",
+      "bytes": 3221,
+      "sha256": "fac9f4a3375c649ba39720f12cd88244f38998da05460fbe064ff0f6efbc024a"
+    },
+    {
+      "path": "card_before.md",
+      "bytes": 434091,
+      "sha256": "fd1668b84b41aaabcc1e790db158b95280d2eec5b444d578ac54ed83af2baf0b"
+    },
+    {
+      "path": "card_rotation.json",
+      "bytes": 1171,
+      "sha256": "918bc9e52c137c7134e45e29dc4799b65e65eaa43c85e108b5c6fc9efe21458d"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 5089,
+      "sha256": "345ac516c0fc81dfc9c10d9685062f8898883e0a552aea7bb47e5506c757cba9"
+    },
+    {
+      "path": "collect_host.ps1",
+      "bytes": 4003,
+      "sha256": "2cc6dbbfda32e1a7d548cdda5ec2214140277f3ce9e840a661b0230536a7cce6"
+    },
+    {
+      "path": "collect_local_files.py",
+      "bytes": 4369,
+      "sha256": "ffe2355ec939b4e1b9f6b286eea23b8e391779b135d350ed2cf60b6c5b9ed871"
+    },
+    {
+      "path": "execution.json",
+      "bytes": 638,
+      "sha256": "3364e1d15f0a7d563475830168ac810247fa3a033a1999494e6dd77fd4d62ba3"
+    },
+    {
+      "path": "factual_result.txt",
+      "bytes": 1946,
+      "sha256": "fe395a58b69aa37e33ac3447708262f70f07c9f13ff7ebdbd208a26c5bcb36fe"
+    },
+    {
+      "path": "host_inventory.json",
+      "bytes": 3391,
+      "sha256": "7aa8b91ed751669d2499f8810c92a0df017ba70cd1f468af8b9dfb8e6e29022b"
+    },
+    {
+      "path": "host_vm_inventory.md",
+      "bytes": 4048,
+      "sha256": "c796387e9ea0733d9f10da3110350016b226faefe97489f87c911abbb7c3253d"
+    },
+    {
+      "path": "inputs_before.json",
+      "bytes": 38171,
+      "sha256": "966822b4f95f1ccb5e956e8af4e6ac1c4da834686238955c73308b4102fc2519"
+    },
+    {
+      "path": "integrity.json",
+      "bytes": 53393,
+      "sha256": "faaf83bc2675195010a54a7f7dc6ae0f5e0e35f3153b160f4ec0dc0760a64c32"
+    },
+    {
+      "path": "isolation_preflight_contract.md",
+      "bytes": 9414,
+      "sha256": "133718398b288ae0f3913b0d85cccc661d71e12610a0d70d185854717a675810"
+    },
+    {
+      "path": "local_file_inventory.json",
+      "bytes": 3322,
+      "sha256": "b19f0706e0f274294f1c8789038abf2b3d178c95652bbf9379dc73396843cf61"
+    },
+    {
+      "path": "manual_engineering_review.md",
+      "bytes": 8112,
+      "sha256": "9844ab4aeda1726b1a928a7897fd757dee1db4d17c3f64fcc4d64eb99a9f4d44"
+    },
+    {
+      "path": "native_offline_test_plan.md",
+      "bytes": 11798,
+      "sha256": "82b20a65110193a7378b76a8fe6696d2c70cf2e45b554dbee708784aab6399f2"
+    },
+    {
+      "path": "offline_vm_design.md",
+      "bytes": 7271,
+      "sha256": "e0560cb86f89b3bee4c97fa06fe888a3329d9ab465429b8cae4ff72b20930545"
+    },
+    {
+      "path": "preflight_decision.json",
+      "bytes": 1028,
+      "sha256": "7cb2fe6a3bf44475862f30b646a901607b462753b3c2567378b33743b94051cf"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 7601,
+      "sha256": "13797a7ecaf4ac3de61080d39d443a94601b9e5ef33d30e5b23a5d768df09d29"
+    },
+    {
+      "path": "publication_precheck.json",
+      "bytes": 460,
+      "sha256": "a69b80d515c0fcb5af9041a301dc3de3e37eb1e8217017579ab48dfeac54e550"
+    },
+    {
+      "path": "report.md",
+      "bytes": 11208,
+      "sha256": "2f8dc597f503a54891dd077de8367bf27f07f60c4bb51711cc949446e83b4d14"
+    },
+    {
+      "path": "rollback_plan.md",
+      "bytes": 8368,
+      "sha256": "073c8a9d004b5fb1448b6cc2b891d012ad6bad5c137f48cd71734c879a4061ef"
+    },
+    {
+      "path": "rotate_card.py",
+      "bytes": 9874,
+      "sha256": "6a5e663561d54c28904caf5c83bee5096140fb0290450c52f1b192c02f468e8f"
+    },
+    {
+      "path": "rules_read.json",
+      "bytes": 9427,
+      "sha256": "59d4c380124180123877d7fbf713a27fd2ab4f2570c3b3d1c1e68bbba0658392"
+    },
+    {
+      "path": "seal_bundle.py",
+      "bytes": 13459,
+      "sha256": "9e621603003ac05c8b2a0fbc2334b37d0da7ff3820628a2a3feb1b745f3f24b0"
+    },
+    {
+      "path": "shared_doc_delta.md",
+      "bytes": 3777,
+      "sha256": "1df78ba3afae382e809307a4b15dfae64a5153185ea72d67d39d39911e3dfae6"
+    },
+    {
+      "path": "source_pack_preflight.md",
+      "bytes": 8315,
+      "sha256": "436c2fe5105c12aff066868772dd6b13e8dd802adc3d485ca968a0e57f773d04"
+    },
+    {
+      "path": "user_go_card_rotation.md",
+      "bytes": 3863,
+      "sha256": "52e7a74d60dbdea0f15b35c1d05877e8711ed608b28f683f45b0564389cc9a0d"
+    },
+    {
+      "path": "validate_bundle.py",
+      "bytes": 2046,
+      "sha256": "cbc9ab9bba4f7f8d8d921922a963c08c5909989a3fab450e01bca01249b89573"
+    },
+    {
+      "path": "verify_provenance.py",
+      "bytes": 2901,
+      "sha256": "a159171316596d90022788fe09d557a57b43c7c98f8640919f55bade437ac86a"
+    },
+    {
+      "path": "vm_platform_comparison.md",
+      "bytes": 5436,
+      "sha256": "aeda6af24860049fa7b500dd59c9d3f415b3c1fe530f73b67ce71d8ba36a0ac9"
+    }
+  ],
+  "self_hash": "Manifest excluded from its own file list; SHA-256 returned by read-only validator",
+  "source_pin_user_supplied_not_git_verified": "795e1fddf6741169f006caf8ba9430e4d22fca0f",
+  "publication": "LOCAL ONLY / USER PUBLICATION NOT VERIFIED"
+}

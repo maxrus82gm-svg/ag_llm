@@ -1,0 +1,21 @@
+{
+  "task_id": "CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001",
+  "phase": "design_only",
+  "may_create_or_modify_vm": false,
+  "may_execute_native_client": false,
+  "native_cases_planned": 16,
+  "native_cases_executed": 0,
+  "source_archive_verified": false,
+  "exact_source_to_binary_attestation_verified": false,
+  "ready_hypervisor_found": false,
+  "trusted_windows_media_found": false,
+  "offline_dependency_closure_verified": false,
+  "hypervisor_vm_identity": null,
+  "backend_specific_device_and_ipc_verifier_verified": false,
+  "independent_guest_attempt_observer_verified": false,
+  "independent_isolation_review_received": false,
+  "native_execution_user_go_received": false,
+  "decision": "BLOCKED",
+  "sources": ["host_inventory.json", "local_file_inventory.json", "provenance.json", "assignment.md", "isolation_preflight_contract.md"],
+  "reason": "Current USER GO permits offline preflight/design and own-card rotation only. Actual source pack, lab platform/media, isolation proof and separate execution GO are absent."
+}
