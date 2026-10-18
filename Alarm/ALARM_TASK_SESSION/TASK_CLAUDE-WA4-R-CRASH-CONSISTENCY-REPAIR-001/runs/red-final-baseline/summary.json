@@ -1,0 +1,135 @@
+{
+ "label": "red-final-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-baseline\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-red-final-baseline-o0i2x69l\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 66.735,
+ "base": "<TEMP>\\claude-ccrepair-red-final-baseline-o0i2x69l",
+ "tests_run": 27,
+ "passed": 6,
+ "failures": 19,
+ "errors": 2,
+ "skips": 0,
+ "elapsed_seconds": 66.176,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record",
+   "FAIL",
+   "claude-ccrepair-mirror-baseline\\test_web_alarm_crash_consistency.py\", line 266, in test_death_after_intent_before_cas_is_abandoned_with_an_audit_record\n    self.assertEqual(crash[\"exit\"], 71, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 71 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence",
+   "FAIL",
+   "irror-baseline\\test_web_alarm_crash_consistency.py\", line 240, in test_death_after_verified_cas_never_closes_without_evidence\n    self.assertNotEqual(closeout[\"result\"], \"COMPLETED\",\nAssertionError: 'COMPLETED' == 'COMPLETED' : closeout completed a TASK whose VERIFIED stage has no recorded evidence\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing",
+   "FAIL",
+   "sers\\REX\\AppData\\Local\\Temp\\claude-ccrepair-mirror-baseline\\test_web_alarm_crash_consistency.py\", line 286, in test_death_before_intent_changes_nothing\n    self.assertEqual(crash[\"exit\"], 70, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 70 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction",
+   "FAIL",
+   "p\\claude-ccrepair-mirror-baseline\\test_web_alarm_crash_consistency.py\", line 325, in test_foreign_update_after_an_intent_is_a_fail_closed_contradiction\n    self.assertEqual(crash[\"exit\"], 71, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 71 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id",
+   "FAIL",
+   "ASK_TRANSITION'] != ['MICROTASK_TRANSITION_INTENT', 'MICROTASK_TRANSITION']\n\nFirst differing element 0:\n'MICROTASK_TRANSITION'\n'MICROTASK_TRANSITION_INTENT'\n\n- ['MICROTASK_TRANSITION', 'MICROTASK_TRANSITION']\n+ ['MICROTASK_TRANSITION_INTENT', 'MICROTASK_TRANSITION']\n?                       +++++++\n\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition",
+   "FAIL",
+   "E'), ('DONE', 'VERIFIED')]\n\nFirst differing element 0:\n('READY', 'ACTIVE')\n('ACTIVE', 'DONE')\n\n- [('READY', 'ACTIVE'), ('DONE', 'VERIFIED')]\n?   ---------\n\n+ [('ACTIVE', 'DONE'), ('DONE', 'VERIFIED')]\n?           ++++++++\n : the next transition ran on a status whose history was not reconciled first\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen",
+   "FAIL",
+   "_web_alarm_crash_consistency.py\", line 317, in test_projection_reports_a_pending_transition_after_reopen\n    self.assertTrue([c for c in codes if \"PENDING\" in c or \"HISTORY\" in c],\nAssertionError: [] is not true : a persisted status without its history event is invisible: ['MICROTASK_NOT_VERIFIED']\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent",
+   "FAIL",
+   "test_web_alarm_crash_consistency.py\", line 252, in test_reconciliation_restores_the_original_evidence_from_the_durable_intent\n    self.assertEqual(len(commits), 1, \"the lost VERIFIED event was not restored exactly once\")\nAssertionError: 0 != 1 : the lost VERIFIED event was not restored exactly once\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent",
+   "FAIL",
+   " Tuples differ: (409, 'state_error') != (409, 'operation_history_pending')\n\nFirst differing element 1:\n'state_error'\n'operation_history_pending'\n\n- (409, 'state_error')\n+ (409, 'operation_history_pending') : {'http': 409, 'code': 'state_error', 'message': 'injected: append failed', 'details': None}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported",
+   "FAIL",
+   "ne\\test_web_alarm_crash_consistency.py\", line 410, in test_lost_intent_event_keeps_the_task_readable_and_is_reported\n    self.assertEqual(out[\"results\"][0].get(\"list\"), [\"op_a\", \"op_b\"],\nAssertionError: None != ['op_a', 'op_b'] : one lost OPERATION_INTENT made every operation of the TASK unreadable\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once",
+   "FAIL",
+   "issing durable intent history', 'task_id': 'task_ccr', 'operation_id': 'op_c', 'operation_status': None, 'operation_revision': None, 'mutation_kind': None, 'target': None, 'receipt': None, 'physical_mutation_performed': False, 'next_safe_action': 'fix the request; nothing was recorded or written'}}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ccrepair-mirror-baseline\\test_web_alarm_crash_consistency.py\", line 423, in test_recover_reconstructs_the_intent_event_without_any_apply\n    self.assertEqual(len(intents), 1)\nAssertionError: 0 != 1\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout",
+   "FAIL",
+   ":\n  File \"<TEMP>\\claude-ccrepair-mirror-baseline\\test_web_alarm_crash_consistency.py\", line 348, in test_legacy_verified_without_evidence_blocks_closeout\n    self.assertNotEqual(out[\"results\"][0][\"closeout\"][\"result\"], \"COMPLETED\")\nAssertionError: 'COMPLETED' == 'COMPLETED'\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible",
+   "FAIL",
+   "sistency.py\", line 381, in test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible\n    self.assertEqual(out[\"results\"][0][\"http\"], 409, out[\"results\"][0])\nAssertionError: 404 != 409 : {'http': 404, 'code': 'not_found', 'message': 'unknown endpoint: /microtasks/m1/reaffirm', 'details': None}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout",
+   "FAIL",
+   "nsistency.py\", line 359, in test_reaffirmation_without_mutation_proves_and_allows_closeout\n    self.assertEqual(out[\"results\"][0][\"http\"], 200, out[\"results\"][0])\nAssertionError: 404 != 200 : {'http': 404, 'code': 'not_found', 'message': 'unknown endpoint: /microtasks/m1/reaffirm', 'details': None}\n"
+  ],
+  [
+   "test_adversarial_repair.CloseoutRace.test_closeout_cannot_slip_between_intent_and_compare_and_set",
+   "FAIL",
+   "t recent call last):\n  File \"<REPO>\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001\\probes\\test_adversarial_repair.py\", line 230, in test_closeout_cannot_slip_between_intent_and_compare_and_set\n    self.assertTrue(entered.wait(20))\nAssertionError: False is not true\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_conflicting_duplicate_commit_is_a_contradiction_and_blocks",
+   "FAIL",
+   "_TASK_SESSION\\TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001\\probes\\test_adversarial_repair.py\", line 117, in test_conflicting_duplicate_commit_is_a_contradiction_and_blocks\n    self.assertIn(\"MICROTASK_HISTORY_CONTRADICTION\", codes)\nAssertionError: 'MICROTASK_HISTORY_CONTRADICTION' not found in []\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_identical_duplicate_commit_is_tolerated_and_reconciliation_adds_nothing",
+   "ERROR",
+   "conciliation_adds_nothing\n    outcome = EventCheckpointStore(self.storage).resolve_microtask_intents_locked(TASK, \"m1\")\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'EventCheckpointStore' object has no attribute 'resolve_microtask_intents_locked'\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_two_open_intents_are_never_resolved_automatically",
+   "FAIL",
+   "AUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001\\probes\\test_adversarial_repair.py\", line 126, in test_two_open_intents_are_never_resolved_automatically\n    with self.assertRaises(ServerStateMachineError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ServerStateMachineError not raised\n"
+  ],
+  [
+   "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first",
+   "FAIL",
+   "([a[\"payload\"][\"intent_id\"] for a in abandons], [intent_id])\nAssertionError: Lists differ: [] != ['event_8f7a783422be46bd8b49bfe87d4d0b1e']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'event_8f7a783422be46bd8b49bfe87d4d0b1e'\n\n- []\n+ ['event_8f7a783422be46bd8b49bfe87d4d0b1e']\n"
+  ],
+  [
+   "test_adversarial_repair.RollbackCompatibility.test_pre_repair_projection_and_operations_read_repaired_histories",
+   "ERROR",
+   "probes\\test_adversarial_repair.py\", line 196, in test_pre_repair_projection_and_operations_read_repaired_histories\n    store._reconcile_intent_locked(TASK, store.get(TASK, \"op_r\"))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'OperationStore' object has no attribute '_reconcile_intent_locked'\n"
+  ]
+ ]
+}

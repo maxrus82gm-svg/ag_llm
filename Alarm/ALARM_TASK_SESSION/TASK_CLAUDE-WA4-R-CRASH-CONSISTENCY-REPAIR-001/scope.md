@@ -47,3 +47,12 @@ Lock order не меняется: operations TASK-lock → mutation lock → eve
 ## Не входит
 
 AUD-01T-R, AUD-02c, AUD-04, PWR-01; `mutation_executor.py`, `task_store.py`, `models.py`; runner/CI; общая документация; MCP/V2Ray/WEB_10/Codex; live storage; WARN/STRICT.
+
+## Итог реализации (дописано после результата)
+
+Отклонения от плана выше — только в сторону меньшего объёма:
+
+- **`CloseoutService.complete` не согласует историю** (строка карты писателей про closeout выше — план, не результат). Closeout остался pure gate: незакрытое намерение, противоречие, pending OPERATION_INTENT и VERIFIED без доказательства — closeout-блокеры через projection; согласование выполняют `recover` (шаг `RECONCILE_HISTORY`) и вход следующего перехода/prepare. Причина: closeout не должен писать историю, которую сам же затем доказывает; одна точка записи меньше. Гонку closeout ↔ переход между намерением и CAS исключает mutation lock (проба `CloseoutRace`).
+- **`closeout.py` и `manifest_store.py` не изменены** (SHA = baseline). Изменены 6 из 8 файлов write-scope: `state_machine.py`, `operation_store.py`, `projection.py`, `recovery_coordinator.py`, `event_checkpoint_store.py`, `server.py`.
+- Адресно изменён один существующий тест: `test_web_alarm_aud01t02b_repair.py` (оракул и эквивалентность — в `report.md`, байты до правки — `baseline/tests/`).
+- Схема записей не менялась; новые поля — только в payload событий (как согласовано выше).

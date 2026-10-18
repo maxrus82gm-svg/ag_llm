@@ -1,0 +1,54 @@
+{
+ "label": "design-probes-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-design-probes-baseline-0mh2kcb5\\out",
+  "test_crash_windows"
+ ],
+ "exit": 1,
+ "wall_seconds": 32.658,
+ "base": "<TEMP>\\claude-ccrepair-design-probes-baseline-0mh2kcb5",
+ "tests_run": 13,
+ "passed": 8,
+ "failures": 5,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 32.13,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_crash_windows.W1StatusEventWindow.test_INVARIANT_reopen_reports_a_status_without_its_event",
+   "FAIL",
+   "es\\test_crash_windows.py\", line 136, in test_INVARIANT_reopen_reports_a_status_without_its_event\n    self.assertTrue([c for c in codes if \"EVENT\" in c or \"HISTORY\" in c or \"UNRECORDED\" in c],\nAssertionError: [] is not true : a persisted status without its history event is invisible after reopen: []\n"
+  ],
+  [
+   "test_crash_windows.W1StatusEventWindow.test_INVARIANT_verified_without_recorded_evidence_never_closes",
+   "FAIL",
+   "sh_windows.py\", line 151, in test_INVARIANT_verified_without_recorded_evidence_never_closes\n    self.assertNotEqual((outcome.get(\"ok\") or {}).get(\"result\"), \"COMPLETED\",\nAssertionError: 'COMPLETED' == 'COMPLETED' : closeout completed a TASK whose VERIFIED stage has no recorded verification evidence\n"
+  ],
+  [
+   "test_crash_windows.W2IntentEventWindow.test_INVARIANT_a_lost_intent_event_does_not_blind_the_rest_of_the_task",
+   "FAIL",
+   "d_the_rest_of_the_task\n    self.assertIn(\"ok\", views[\"operations_list\"],\nAssertionError: 'ok' not found in {'error': [{'type': 'OperationStoreError', 'message': 'operation is missing durable intent history'}]} : one orphan INTENT makes every operation of the TASK unreadable (TASK-wide blast radius)\n"
+  ],
+  [
+   "test_crash_windows.W2IntentEventWindow.test_INVARIANT_injected_intent_event_failure_leaves_no_unreadable_orphan",
+   "FAIL",
+   "adable_orphan\n    self.assertIn(\"ok\", report[\"followups\"][0][\"outcome\"],\nAssertionError: 'ok' not found in {'error': [{'type': 'OperationStoreError', 'message': 'operation is missing durable intent history'}]} : an admission whose INTENT event failed (process alive) left an unreadable orphan record\n"
+  ],
+  [
+   "test_crash_windows.W2IntentEventWindow.test_INVARIANT_orphan_intent_has_a_server_recovery_path",
+   "FAIL",
+   "est_crash_windows.py\", line 233, in test_INVARIANT_orphan_intent_has_a_server_recovery_path\n    self.assertTrue(any(\"ok\" in o and o[\"ok\"] not in (None, False) for o in outcomes[:2]),\nAssertionError: False is not true : no server API can read, settle or abort an INTENT whose event was lost: dead end\n"
+  ]
+ ]
+}

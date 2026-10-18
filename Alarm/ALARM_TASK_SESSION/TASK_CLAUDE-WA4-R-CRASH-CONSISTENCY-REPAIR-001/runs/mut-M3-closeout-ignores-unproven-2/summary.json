@@ -1,0 +1,35 @@
+{
+ "label": "mut-M3-closeout-ignores-unproven-2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M3-closeout-ignores-unproven-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M3-closeout-ignores-unproven-2-id1lqop9\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 65.143,
+ "base": "<TEMP>\\claude-ccrepair-mut-M3-closeout-ignores-unproven-2-id1lqop9",
+ "tests_run": 31,
+ "passed": 30,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 64.577,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-ccrepair-mirror-M3-closeout-ignores-unproven-2\\test_web_alarm_crash_consistency.py\", line 387, in test_legacy_verified_without_evidence_blocks_closeout\n    self.assertNotEqual(out[\"results\"][0][\"closeout\"][\"result\"], \"COMPLETED\")\nAssertionError: 'COMPLETED' == 'COMPLETED'\n"
+  ]
+ ]
+}

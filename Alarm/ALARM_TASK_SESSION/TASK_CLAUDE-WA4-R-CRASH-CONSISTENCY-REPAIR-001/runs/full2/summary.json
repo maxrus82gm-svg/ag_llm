@@ -1,0 +1,34 @@
+{
+ "label": "full2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-full2-p01vmo6r\\out",
+  "all"
+ ],
+ "exit": 0,
+ "wall_seconds": 1031.227,
+ "base": "<TEMP>\\claude-ccrepair-full2-p01vmo6r",
+ "tests_run": 874,
+ "passed": 873,
+ "failures": 0,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 1030.115,
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+   "SKIP",
+   "symlink creation is not permitted here"
+  ]
+ ]
+}

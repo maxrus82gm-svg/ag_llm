@@ -1,0 +1,35 @@
+{
+ "label": "mut-M4-reconcile-then-execute",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M4-reconcile-then-execute\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M4-reconcile-then-execute-ho0961oa\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 52.938,
+ "base": "<TEMP>\\claude-ccrepair-mut-M4-reconcile-then-execute-ho0961oa",
+ "tests_run": 27,
+ "passed": 26,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 52.344,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once",
+   "FAIL",
+   "0-18T15:04:29.603768+00:00', 'revision': 3, 'matches_expected_post': True, 'eol_only_drift': False}, 'physical_mutation_performed': True, 'next_safe_action': 'verify the change and transition the operation DONE -> VERIFIED', 'claim_release': {'result': 'RELEASED', 'result_code': 'OWNER_RELEASED'}}}\n"
+  ]
+ ]
+}

@@ -1,0 +1,16 @@
+--- a/test_web_alarm_aud01t02b_repair.py
++++ b/test_web_alarm_aud01t02b_repair.py
+@@ -603,7 +603,12 @@
+         self.assertIn("persisted", outcome[1]["next_safe_action"])
+         self.assertEqual(outcome[1]["microtask"]["status"], "DONE")
+         self.assertEqual(self.status(self.storage), "DONE")
+-        self.assertEqual(self.events(self.storage), before, "the history gained an event although append failed")
++        # CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001 (R-MT): the write-ahead intent is durable before
++        # the status write by design; the refused commit event still must not appear (same oracle).
++        after = self.events(self.storage)
++        self.assertEqual(after[:len(before)], before)
++        self.assertEqual([e["event_type"] for e in after[len(before):]], ["MICROTASK_TRANSITION_INTENT"],
++                         "the history gained an event although append failed")
+ 
+     def test_prepare_history_failure_after_commit_is_reported_as_committed(self):
+         from web_alarm.event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError

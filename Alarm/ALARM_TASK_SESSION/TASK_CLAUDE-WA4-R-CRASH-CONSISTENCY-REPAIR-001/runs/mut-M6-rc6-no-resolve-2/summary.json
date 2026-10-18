@@ -1,0 +1,40 @@
+{
+ "label": "mut-M6-rc6-no-resolve-2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M6-rc6-no-resolve-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M6-rc6-no-resolve-2-3y2pddhy\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 63.768,
+ "base": "<TEMP>\\claude-ccrepair-mut-M6-rc6-no-resolve-2-3y2pddhy",
+ "tests_run": 31,
+ "passed": 29,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 63.195,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_recovery_status_write_closes_an_open_intent_first",
+   "FAIL",
+   "oad\"][\"intent_id\"] for a in abandons], [intent[\"event_id\"]])\nAssertionError: Lists differ: [] != ['event_f8fbf79d7d6e4c938ea9ea9f9db91f95']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'event_f8fbf79d7d6e4c938ea9ea9f9db91f95'\n\n- []\n+ ['event_f8fbf79d7d6e4c938ea9ea9f9db91f95']\n"
+  ],
+  [
+   "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first",
+   "FAIL",
+   "([a[\"payload\"][\"intent_id\"] for a in abandons], [intent_id])\nAssertionError: Lists differ: [] != ['event_d6f57bef418e4645965f1cda5740f833']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'event_d6f57bef418e4645965f1cda5740f833'\n\n- []\n+ ['event_d6f57bef418e4645965f1cda5740f833']\n"
+  ]
+ ]
+}

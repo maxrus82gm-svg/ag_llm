@@ -1,0 +1,38 @@
+{
+ "label": "prior-repair-modules",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-prior-repair-modules-49lorrc0\\out",
+  "test_web_alarm_aud01t02b_repair",
+  "test_web_alarm_aud010205_repair",
+  "test_web_alarm_state_machine",
+  "test_web_alarm_state_machine_cas",
+  "test_web_alarm_recovery_coordinator_repair3"
+ ],
+ "exit": 1,
+ "wall_seconds": 104.839,
+ "base": "<TEMP>\\claude-ccrepair-prior-repair-modules-49lorrc0",
+ "tests_run": 100,
+ "passed": 99,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 104.057,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed",
+   "FAIL",
+   "0:00'}, 'recorded_at': '2026-10-18T14:27:57.253075+00:00', 'schema_version': 1, 'created_at': '2026-10-18T14:27:57.253075+00:00', 'updated_at': '2026-10-18T14:27:57.253075+00:00'}\n\nDiff is 3512 characters long. Set self.maxDiff to None to see it. : the history gained an event although append failed\n"
+  ]
+ ]
+}

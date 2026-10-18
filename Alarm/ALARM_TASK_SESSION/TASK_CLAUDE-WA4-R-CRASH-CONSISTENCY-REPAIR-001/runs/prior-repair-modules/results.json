@@ -1,0 +1,1677 @@
+{
+  "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "targets": [
+    "test_web_alarm_aud01t02b_repair",
+    "test_web_alarm_aud010205_repair",
+    "test_web_alarm_state_machine",
+    "test_web_alarm_state_machine_cas",
+    "test_web_alarm_recovery_coordinator_repair3"
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "win32",
+  "started_unix": 1792333666.627829,
+  "elapsed_seconds": 104.057,
+  "tests_run": 100,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "passed": 99,
+  "successful": false,
+  "isolation_violations": [],
+  "source_sha256": {
+    "web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+    "web_alarm/cli.py": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+    "web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "web_alarm/event_checkpoint_store.py": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042",
+    "web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "web_alarm/observation.py": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+    "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "web_alarm/operation_store.py": "2b7c63fe01ab37c33a900123a452f7bacb408f33e17d261b9e5385697b2488de",
+    "web_alarm/operator_view.py": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+    "web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "web_alarm/projection.py": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5",
+    "web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "web_alarm/recovery_coordinator.py": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0",
+    "web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "web_alarm/server.py": "027800e3a280ef21ade34743c0e33ff448d3bcd79a2cfce1307a1ce2948aeb24",
+    "web_alarm/state_machine.py": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182",
+    "web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "web_alarm/target_claim_service.py": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+    "web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+    "web_alarm/transport_event_store.py": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+    "web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "test_web_alarm_aud010205_repair.py": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+    "test_web_alarm_aud01t02b_repair.py": "b96c2b0cec62b05998075e068a4c13edb0969dadfa6210d20aecd53b25ff0ef3",
+    "test_web_alarm_cli.py": "da16d5b886309d369c8607ab85ec7aab2c3a3bcfd89212429a941b431eeeca59",
+    "test_web_alarm_context_pack.py": "0775e6d15091e42f46b32a1349725fd90041aedb38a46e743199029e45766d52",
+    "test_web_alarm_crash_consistency.py": "ca95a9151f214379249c1e24c2f9a0ce3f7b56d76e7626291c0a0076045725d4",
+    "test_web_alarm_event_checkpoint_store.py": "de26ecc5698d8e90d7b7a00cc4675d281df01ce39093d7af9db1910e1675cb1c",
+    "test_web_alarm_folder_picker.py": "ec46dbad11f5e18bce7fd3cb55523e45654224b69b1193499ee1be29b5b7a97e",
+    "test_web_alarm_lost_response.py": "1f48a0b175c89feedd29aa9dbdd356e8d1c47cb2a88502949a5a646bb0448cea",
+    "test_web_alarm_manifest_store.py": "d35fb7538581e681a08022138fcbf3da407d759f5104c935a3a6e89b0c50009b",
+    "test_web_alarm_models.py": "da0b930d37f8b2fcf39bc89e2458d8eeaede163f154f2906eac27551a3964ac1",
+    "test_web_alarm_mutation_executor.py": "a7e5aa5e1b4c9e029cca19f68f6ad2def8109d7656a260355fc3bd8f8bafa6be",
+    "test_web_alarm_new_invariants.py": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+    "test_web_alarm_observation.py": "e895b409d4d63ac2d4a768eaedac0ccbc7fe3c24126704e034d9bc9155e70c9d",
+    "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+    "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba",
+    "test_web_alarm_operation_store_concurrency.py": "bab96f7d52a1f60085936c93c1cba7887a1b20dda05d8e92e6e8ba3e949a303b",
+    "test_web_alarm_operator_ui.py": "1ca15bb060a360b404cff4d5c45013340eb4ac805d4aeb39623eee29c695fc9a",
+    "test_web_alarm_payload_store.py": "9b232329cbe3fdf8b84091780967834537f447bc17c690b15a829a09f0303a0a",
+    "test_web_alarm_projection.py": "d338067a27db813dc0621ae4bb3264c7bc865c2c01d6f53653491e4c541cf7d9",
+    "test_web_alarm_projection_concurrency.py": "b3c257feb3a4a7da1c630e936f52583580d9188581e5f2301039138e3b10e09b",
+    "test_web_alarm_projection_repair2.py": "add847e7e4331ffc4e962948bd8bc94d9335ea15442827a04831c8715e0d23dc",
+    "test_web_alarm_reconciliation.py": "074b467b1b925aec12e12fe6e14dfa0f1223e48cf7f12675ae67034aa7e96605",
+    "test_web_alarm_reconciliation_decision.py": "4dd20a9a5bb58586dab2e6b47de09281ae62efdb37e50a5397032d4a89043b91",
+    "test_web_alarm_reconciliation_integration.py": "ced03d05078b77ebcbbd6f4b526806ee4a8e753bfcd40030df02ff7d6be8d334",
+    "test_web_alarm_recovery_coordinator.py": "c7408223f4ae462600a9c6384b6cc327068b1f8e54e5061b049c9c74770e8d7a",
+    "test_web_alarm_recovery_coordinator_adversarial.py": "0c6ff6cffefbbe4f7e5fe557b3a8f6bf1fd7e9ea47d09632b9aa95e8e55856ba",
+    "test_web_alarm_recovery_coordinator_concurrency.py": "9ed892335426f5813d960d522429a917616e8b1a9591d3d5110e0c2cd180658b",
+    "test_web_alarm_recovery_coordinator_repair1.py": "90be1c61284e78f199131d333368a645820cf5f5a392df8a7a49ded7d5057493",
+    "test_web_alarm_recovery_coordinator_repair2.py": "42be3c91ee5f9af7e97a86bc7653c01f1963390bba78fe7597a5fa7c27c51c66",
+    "test_web_alarm_recovery_coordinator_repair3.py": "76244e276ffeb53737723a361c26b52479c39302b3d93ce68f22e074dc3b3016",
+    "test_web_alarm_recovery_coordinator_repair4.py": "016ce8bfd5c00ff5cfe56444f76fff033c12967603fa67d1ef1206fde3107211",
+    "test_web_alarm_recovery_coordinator_repair4a.py": "2cf70b19aac76f1752a88b012f081204446f18e39cb985fdaf06649651df8015",
+    "test_web_alarm_recovery_coordinator_repair4b.py": "d61b004360aeef1404d19f84450f62f992f6a74734b6d573d91295f5d05e85f3",
+    "test_web_alarm_recovery_coordinator_wa014.py": "f8381c97b87e30335e56a1314d4e6f2cf6f421899f84e2984cab8b886b530758",
+    "test_web_alarm_recovery_report_acceptance.py": "14d562590eb844b4f02d77546dc49cf9a35d9c8c7588061c370d058ae7a54ac5",
+    "test_web_alarm_recovery_report_builder.py": "35a0b5cc3ddc32f8ac0bc28d42d7ba15d9adb552a1d3b6102b0fd937556de73b",
+    "test_web_alarm_recovery_report_integration.py": "a1189a9b2a17cffb21cf3dc1bed617851188793277c1939628254218d656e840",
+    "test_web_alarm_recovery_report_store.py": "9e0ae8ec8b6506df921fbacaac56fe359f7edd8d9bd436aab022d7ba0ec195e4",
+    "test_web_alarm_recovery_scenarios.py": "f9a6ab823f1bf908a58581f49d73d66a5a8a50d205ebccf8a20fb57ec9bb1093",
+    "test_web_alarm_reliability_wa017.py": "edb7d2b0bc65568d3be3fc33f39b3c808f790c4906991e4b63c17c974489fabd",
+    "test_web_alarm_remote_entry.py": "e8b956d296588672f9a893aff0e7cb5e9fa0a0ae918d09f52720b8ab430a4be0",
+    "test_web_alarm_resolver.py": "0b9cd46389b397ff97d2a3d3686d1887baee920459e3d969769ebac6a7b06bbc",
+    "test_web_alarm_resolver_concurrency.py": "2b51c468df66c0a9441040814c1f59b9e17e3b73f4b3b1a00a13e07e9dac8d96",
+    "test_web_alarm_restart_recovery.py": "11807f4a50ec11d22f37d68105d73380fc2a2f3151915a6136554056c1ce9a3c",
+    "test_web_alarm_rollback.py": "17f9145fd8b7e578ce3680c63fff04eb404553c564b1a0c6482d1da7799b6aaa",
+    "test_web_alarm_rollback_concurrency.py": "c12bfee5c4b09ae62c9a934079a9325612f6e331587ad13dacb3f836f263e8c4",
+    "test_web_alarm_server.py": "7aa4fd2a77daacb50e990355d82a1046c338fd3a90df4b179cd26c144d89ea3f",
+    "test_web_alarm_state_machine.py": "483e913b6e3ae4b8059511987e0cd09f64d4a1e494e2bd939740e900fa592bfb",
+    "test_web_alarm_state_machine_cas.py": "e00c5f1bbce9c5900887b767bc52195737a783f3cac15baa8f84459e55ca7e77",
+    "test_web_alarm_target_claims.py": "a6fd3b43880f26a22ee2dbbfb2d076a9e8385c6a8ed006c1d27540537e844616",
+    "test_web_alarm_target_claims_concurrency.py": "48443dc39e85f27c77d92ce8ff39cbea5f1f62fa1403034cb64da57fb3052484",
+    "test_web_alarm_target_identity.py": "f7ad1b7977454412ca2f2fed2736bf7d34edfd66161baa88dad992d4c1ab163c",
+    "test_web_alarm_task_store.py": "df3dd3bfbfa9d97329a8d5b4af915b3a994fde7dd4c8918219f08582098eae3b",
+    "test_web_alarm_transport_authority.py": "3b5218ee6f623f3b9c889032c38f324d2671f7c0f0fcfc638f2ef9c6abd95c53",
+    "test_web_alarm_transport_event_store.py": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849",
+    "test_web_alarm_transport_ingestion.py": "765fa85afb8846855e3de15bbe1fbd4a1b3d24aec62778ad5f70810635cf07eb",
+    "test_web_alarm_transport_recovery.py": "de660a794815e9d58b0648ab84ecc4e90e398134d9e83d79a71793be078f20b1",
+    "test_web_alarm_ui.py": "fcfa67c3e352422a15197423fcae3a4598625b66d6d14b2e4c6af066420cc1b7",
+    "test_web_alarm_ui_launcher.py": "b67083d89b019e400958f42fe6e48ea41fbb13ced2c196b527f01c6b45519dc6",
+    "test_web_alarm_ui_ux.py": "2eb379d90a8f2f0b121a1e55c350d6273241ba784acd33ab001e920cdc81cf96",
+    "test_web_alarm_wa4r002_diagnostics.py": "1d7a23480b726b4835692b53b3e80b72ead980907e145a3ffdbb85ff74083254",
+    "test_web_alarm_wa4r006_local_gate.py": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+    "test_web_alarm_workspace_registry.py": "16ac6c5b053cd8123b26004cda26dd080140d0332acea15ac5ecb760521984ed",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+  },
+  "tests": [
+    {
+      "test": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_concurrent_reports_from_processes_lose_no_event"
+        },
+        {
+          "errors": 0,
+          "first_errors": [],
+          "lf_lines": 185,
+          "parsed": 185,
+          "invalid_lines": 0,
+          "tail_bytes": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_transitions_racing_with_reports_keep_every_transition_event",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.HistoryConcurrencyTests.test_transitions_racing_with_reports_keep_every_transition_event"
+        },
+        {
+          "errors": 0,
+          "first_errors": [],
+          "transition_events": 18,
+          "records": 141,
+          "invalid_lines": 0,
+          "tail_bytes": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_closeout_cannot_interleave_between_status_and_its_event"
+        },
+        {
+          "closed_while_paused": false,
+          "tail": [
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "VERIFIED"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "VERIFIED"
+            ],
+            [
+              "TASK_COMPLETED",
+              null
+            ]
+          ],
+          "close": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_events_lock_held_elsewhere_refuses_the_append_without_writing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_events_lock_held_elsewhere_refuses_the_append_without_writing"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_healthy_steps_record_their_events",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_healthy_steps_record_their_events"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_aud01t02b_repair.py\", line 606, in test_history_failure_after_commit_is_reported_as_committed\n    self.assertEqual(self.events(self.storage), before, \"the history gained an event although append failed\")\nAssertionError: Lists differ: [{'ev[2355 chars]:00'}, {'event_id': 'event_251a3f3900df433994a[428 chars]00'}] != [{'ev[2355 chars]:00'}]\n\nFirst list contains 1 additional elements.\nFirst extra element 5:\n{'event_id': 'event_251a3f3900df433994aa24e1bac815d4', 'task_id': 'task_t02b', 'event_type': 'MICROTASK_TRANSITION_INTENT', 'microtask_id': 'm1', 'operation_id': None, 'payload': {'from': 'ACTIVE', 'to': 'DONE', 'verification_evidence': None, 'basis_updated_at': '2026-10-18T14:27:56.980147+00:00'}, 'recorded_at': '2026-10-18T14:27:57.253075+00:00', 'schema_version': 1, 'created_at': '2026-10-18T14:27:57.253075+00:00', 'updated_at': '2026-10-18T14:27:57.253075+00:00'}\n\nDiff is 3512 characters long. Set self.maxDiff to None to see it. : the history gained an event although append failed\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_history_failure_after_commit_is_reported_as_committed"
+        },
+        {
+          "http": 200,
+          "reply": {
+            "event_recorded": false,
+            "history_error": "EventCheckpointStoreError: injected: cannot append event",
+            "next_safe_action": "the transition to DONE IS persisted, but its history event was not recorded (EventCheckpointStoreError: injected: cannot append event); do not repeat the transition: repair or reconcile the TASK event history by manual review, then re-read the projection"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_plain_step_decided_on_a_stale_status_is_rejected_under_the_lock"
+        },
+        {
+          "http": [
+            409,
+            "transition_rejected"
+          ],
+          "message": "RECOVERY_REQUIRED -> DONE rejected: stale transition: ACTIVE -> DONE was decided on ACTIVE, but microtask task_t02b/m1 is RECOVERY_REQUIRED, not ACTIVE; the newer status was not overwritten"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_prepare_history_failure_after_commit_is_reported_as_committed",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_prepare_history_failure_after_commit_is_reported_as_committed"
+        },
+        {
+          "http": 200,
+          "event_recorded": false
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_stale_compare_and_set_is_still_rejected_with_its_event",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskCommitTests.test_stale_compare_and_set_is_still_rejected_with_its_event"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_every_public_transition_is_refused_on_torn_history"
+        },
+        {
+          "BACKUP_VERIFIED->READY": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "READY step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\BACKUP_VERIFIED_READY\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "READY->ACTIVE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "ACTIVE step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\READY_ACTIVE\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "ACTIVE->UNKNOWN_AFTER_DISCONNECT": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "UNKNOWN_AFTER_DISCONNECT step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\ACTIVE_UNKNOWN_AFTER_DISCONNECT\\state\\tasks\\active\\task_t02b\\events.json",
+            "changed": []
+          }
+        },
+        {
+          "DONE->VERIFIED": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "VERIFIED step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\DONE_VERIFIED\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "DONE->FAILED_VERIFICATION": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "FAILED_VERIFICATION step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\DONE_FAILED_VERIFICATION\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing ",
+            "changed": []
+          }
+        },
+        {
+          "FAILED_VERIFICATION->ACTIVE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "ACTIVE step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\FAILED_VERIFICATION_ACTIVE\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "UNKNOWN_AFTER_DISCONNECT->RECOVERY_REQUIRED": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "RECOVERY_REQUIRED step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_d2p03ljk\\UNKNOWN_AFTER_DISCONNECT_RECOVERY_REQUIRED\\state\\tasks\\active\\task_t02b\\events.",
+            "changed": []
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_history_turning_unreadable_before_the_commit_lock_is_refused"
+        },
+        {
+          "ACTIVE->DONE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "reads": 1,
+            "changed": [
+              "tasks/active/task_t02b/events.jsonl"
+            ]
+          }
+        },
+        {
+          "READY->ACTIVE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "reads": 1,
+            "changed": [
+              "tasks/active/task_t02b/events.jsonl"
+            ]
+          }
+        },
+        {
+          "DONE->VERIFIED": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "reads": 1,
+            "changed": [
+              "tasks/active/task_t02b/events.jsonl"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_invalid_line_history_refuses_steps_and_rejections_without_writes"
+        },
+        {
+          "allowed ACTIVE->DONE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "DONE step of task_t02b/m1 refused: the TASK event history is unreadable (invalid event JSON at line 2); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "disallowed ACTIVE->VERIFIED": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "VERIFIED step of task_t02b/m1 refused: the TASK event history is unreadable (invalid event JSON at line 2); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "stale expected_status": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "DONE step of task_t02b/m1 refused: the TASK event history is unreadable (invalid event JSON at line 2); nothing was written",
+            "changed": []
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_prepare_on_unreadable_history_writes_no_restore_point"
+        },
+        {
+          "prepare": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "prepare step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_wt1ingga\\prepare\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_torn_history_refuses_ACTIVE_to_DONE_without_writes",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_torn_history_refuses_ACTIVE_to_DONE_without_writes"
+        },
+        {
+          "ACTIVE->DONE": {
+            "http": [
+              409,
+              "state_machine_error"
+            ],
+            "message": "DONE step of task_t02b/m1 refused: the TASK event history is unreadable (unterminated event log: <TEMP>\\wa_aud02b_oapt160c\\main\\state\\tasks\\active\\task_t02b\\events.jsonl); nothing was written",
+            "changed": []
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-02b",
+          "test": "test_web_alarm_aud01t02b_repair.MicrotaskHistoryTests.test_unencodable_text_is_refused_before_any_write"
+        },
+        {
+          "ACTIVE->DONE": {
+            "http": [
+              400,
+              "invalid_value"
+            ],
+            "message": "operation_id is not valid Unicode text (unpaired surrogate); nothing was written",
+            "changed": []
+          }
+        },
+        {
+          "DONE->VERIFIED": {
+            "http": [
+              400,
+              "invalid_value"
+            ],
+            "message": "verification_evidence is not valid Unicode text (unpaired surrogate); nothing was written",
+            "changed": []
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event"
+        },
+        {
+          "errors": 0,
+          "first_errors": [],
+          "lf_lines": 240,
+          "parsed": 240,
+          "invalid_lines": 0,
+          "tail_bytes": 0
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_replay_of_one_event_id_is_stored_once",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_replay_of_one_event_id_is_stored_once"
+        },
+        {
+          "errors": 0,
+          "first_errors": [],
+          "records": 1,
+          "invalid_lines": 0,
+          "tail_bytes": 0,
+          "distinct_replies": [
+            "2026-10-18T14:28:16.107448+00:00"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_failed_durable_append_is_rolled_back_and_reported"
+        },
+        {
+          "error": "cannot append transport event: <TEMP>\\wa_aud01t_48s6rh9q\\state\\transport\\transport_events.jsonl; rolled back to 558 bytes",
+          "fsync_calls": 2
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_lock_held_by_another_process_refuses_without_writing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_lock_held_by_another_process_refuses_without_writing"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_corrupt_log_fails_closed_without_writes",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_corrupt_log_fails_closed_without_writes"
+        },
+        {
+          "invalid_json_line": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        },
+        {
+          "blank_line": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        },
+        {
+          "invalid_utf8": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        },
+        {
+          "two_records_on_one_line": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        },
+        {
+          "utf8_bom": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_fresh_processes_write_and_read_separator_events",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_fresh_processes_write_and_read_separator_events"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_http_separator_text_keeps_transport_evidence_readable_and_appendable"
+        },
+        {
+          "first": 201,
+          "get": 200,
+          "second": 201,
+          "lf_records": 2
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_pre_repair_raw_separator_and_crlf_records_stay_readable_and_appendable"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_read_on_fresh_storage_creates_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_read_on_fresh_storage_creates_nothing"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_replay_identity_and_conflict_survive_reopen",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_replay_identity_and_conflict_survive_reopen"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unencodable_text_is_refused_before_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unencodable_text_is_refused_before_any_write"
+        },
+        {
+          "http": [
+            400,
+            "invalid_value"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD01T02B-REPAIR-001",
+          "finding": "AUD-01T",
+          "test": "test_web_alarm_aud01t02b_repair.TransportFramingTests.test_unterminated_tail_is_refused_never_spliced"
+        },
+        {
+          "complete_record_without_lf": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        },
+        {
+          "partial_json_tail": {
+            "get": [
+              409,
+              "transport_evidence_error"
+            ],
+            "post": [
+              409,
+              "transport_evidence_error"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_begin_raises_operation_store_error_before_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_begin_raises_operation_store_error_before_any_write"
+        },
+        {
+          "torn_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "b2961656ce1adfe191525b553f25deb72070c8c69cef1a41c2d2e10e6045b05b",
+              "tasks/active/task_aud/checkpoint.md": "6b05d786bf5e126b93c652dad2d8bf53b4f9069642285cceafaf8646c711199a",
+              "tasks/active/task_aud/events.jsonl": "73df5d9c1564790c0a34129a731841d32eeec5ab4180ffe46034947165b27b91",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "033e69b7f783765d06db988f7ae961097de5cb6f90edb26c3360a51bdc564927",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_735faf656ea7441998e3a22824738b3f.json": "0a1c758f0dc5fbdd7c217702949aaf7b52dff5f0efe6db64a566fc00865df43d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_02eae53b87b84db4a980cd002ae99584.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_02eae53b87b84db4a980cd002ae99584.json": "e13593928fbf7abe2b4b1054d02f6d6253bdc3b008e9eed2a03df5fc9db24851",
+              "tasks/active/task_aud/microtasks/m1.json": "dee77581b3bb11b2463e90b275d716fed5c657d6282503d0e7ddef8092161879",
+              "tasks/active/task_aud/plan.json": "56921232baea08f4ace89c9a9ecb6f7da42ee23fb505310dd363c194ed51afdf",
+              "tasks/active/task_aud/task.json": "d88eeb512df52172603fe89bfbd6c59ec82c14256050222c54bf8b0ecf99b3e3",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "10c5eca794ba1aa94ed1b663ab7843bcf36b75f27409f8683a12f33fd6e7f411"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "after_begin": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "b2961656ce1adfe191525b553f25deb72070c8c69cef1a41c2d2e10e6045b05b",
+              "tasks/active/task_aud/checkpoint.md": "6b05d786bf5e126b93c652dad2d8bf53b4f9069642285cceafaf8646c711199a",
+              "tasks/active/task_aud/events.jsonl": "73df5d9c1564790c0a34129a731841d32eeec5ab4180ffe46034947165b27b91",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "033e69b7f783765d06db988f7ae961097de5cb6f90edb26c3360a51bdc564927",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_735faf656ea7441998e3a22824738b3f.json": "0a1c758f0dc5fbdd7c217702949aaf7b52dff5f0efe6db64a566fc00865df43d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_02eae53b87b84db4a980cd002ae99584.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_02eae53b87b84db4a980cd002ae99584.json": "e13593928fbf7abe2b4b1054d02f6d6253bdc3b008e9eed2a03df5fc9db24851",
+              "tasks/active/task_aud/microtasks/m1.json": "dee77581b3bb11b2463e90b275d716fed5c657d6282503d0e7ddef8092161879",
+              "tasks/active/task_aud/plan.json": "56921232baea08f4ace89c9a9ecb6f7da42ee23fb505310dd363c194ed51afdf",
+              "tasks/active/task_aud/task.json": "d88eeb512df52172603fe89bfbd6c59ec82c14256050222c54bf8b0ecf99b3e3",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "10c5eca794ba1aa94ed1b663ab7843bcf36b75f27409f8683a12f33fd6e7f411"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_healthy_history_admission_is_unchanged",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_healthy_history_admission_is_unchanged"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_http_mutation_on_torn_history_is_refused_without_artifacts",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_http_mutation_on_torn_history_is_refused_without_artifacts"
+        },
+        {
+          "torn_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "e42f9abb7463dde9f1c5f265b7e7551c3d953633c78fd4a4c09a792f1efdf9d4",
+              "tasks/active/task_aud/checkpoint.md": "08ef1b83906544c3e3061d7def20744699873658552f51921a354da2a8caaced",
+              "tasks/active/task_aud/events.jsonl": "f272d7863d1c36be57a57b528456a06edf76c4fa391c8a57a51bf4247fc86002",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "d9e3ef5e957320afb7f991e8ef3a427ced205649294756dcdb25836ba9ee029f",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_8a53104cc6b84b88a6c4c80a51ac53e2.json": "28a0f5051ad3e7623a745ffdeb0e363077f2ed1f73d10efdd504bfeafa3fc0dd",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_b3691bb56b864669b9d139577893a914.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_b3691bb56b864669b9d139577893a914.json": "88f1d3acb085afde552a223137ea213e7ae7426c501eb44ddea64a1464d6c164",
+              "tasks/active/task_aud/microtasks/m1.json": "adb80e1ac30bcd80248ed54d460b6fa397cd91b421229bf4739b1cf75aa708d6",
+              "tasks/active/task_aud/plan.json": "c508ac9b2b6e3dd815099dace77c81224d4515b48b69fc1d9f2f4c586f0ec5b5",
+              "tasks/active/task_aud/task.json": "cd8b9b284155520c00eac11156e690906002818a00b38634696fde1e7cfcd27f",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "84b50c8b51f881d4c98c65a5ef7c7472c8b9e06b6b96e2d5ec4e8b447b65a63b"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "http": [
+            409,
+            "mutation_refused",
+            "REQUEST_REJECTED"
+          ]
+        },
+        {
+          "after_http": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "e42f9abb7463dde9f1c5f265b7e7551c3d953633c78fd4a4c09a792f1efdf9d4",
+              "tasks/active/task_aud/checkpoint.md": "08ef1b83906544c3e3061d7def20744699873658552f51921a354da2a8caaced",
+              "tasks/active/task_aud/events.jsonl": "f272d7863d1c36be57a57b528456a06edf76c4fa391c8a57a51bf4247fc86002",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "d9e3ef5e957320afb7f991e8ef3a427ced205649294756dcdb25836ba9ee029f",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_8a53104cc6b84b88a6c4c80a51ac53e2.json": "28a0f5051ad3e7623a745ffdeb0e363077f2ed1f73d10efdd504bfeafa3fc0dd",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_b3691bb56b864669b9d139577893a914.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_b3691bb56b864669b9d139577893a914.json": "88f1d3acb085afde552a223137ea213e7ae7426c501eb44ddea64a1464d6c164",
+              "tasks/active/task_aud/microtasks/m1.json": "adb80e1ac30bcd80248ed54d460b6fa397cd91b421229bf4739b1cf75aa708d6",
+              "tasks/active/task_aud/plan.json": "c508ac9b2b6e3dd815099dace77c81224d4515b48b69fc1d9f2f4c586f0ec5b5",
+              "tasks/active/task_aud/task.json": "cd8b9b284155520c00eac11156e690906002818a00b38634696fde1e7cfcd27f",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "84b50c8b51f881d4c98c65a5ef7c7472c8b9e06b6b96e2d5ec4e8b447b65a63b"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_invalid_history_line_refuses_new_operation_without_artifacts",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_invalid_history_line_refuses_new_operation_without_artifacts"
+        },
+        {
+          "damaged_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "4b339c68601cf5f1da00c3b628819cf4d09bd77d6a559c04592461b878427d19",
+              "tasks/active/task_aud/checkpoint.md": "397c1ae4743cd21745e602df5ccde56aca82ca13c64b82f536d194df76a2ae16",
+              "tasks/active/task_aud/events.jsonl": "fc0b4325f86d75cf298d0f1c9643fedb97e9ce664b659d6e087575bb12bc6f44",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "f4415c43cda06fbb87ac5e6f0aa843c4d5d53b002539f2effc4cf14849250341",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_c5c62432f3e140cebb948a1b39ba3a32.json": "6f7af6208de3e15660a0350e09f88ee1a61a8043ef9b92d7920304bfabb64afb",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_12d00202613245b4bdf2b56e6f8b6603.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_12d00202613245b4bdf2b56e6f8b6603.json": "65075fee781cf8ab0e5012dbbd84c69ce6c3ad4d8bb15b3ef87dfaf9f37a0a46",
+              "tasks/active/task_aud/microtasks/m1.json": "f7e64b2eca610f4b08e65d9b21c109c18e4313b0a00fc5ee98245900790f3eec",
+              "tasks/active/task_aud/plan.json": "4f214202a95fb5fe170149fecc348235f01d523965bc6f662a951e3168ab1f04",
+              "tasks/active/task_aud/task.json": "edbd319c5aa4a05bcf7e8f8cc754d7e489c7171f1dd16bf1e289e4508fedb278",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "56abc69c18d310b52de44d01334af7a7f37259c27cd586131bdb11a06d33a1c0"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "outcome": {
+            "returned": {
+              "result": "REFUSED",
+              "result_code": "REQUEST_REJECTED",
+              "reason": "operation admission refused: TASK event history is unreadable: invalid event JSON at line 2"
+            }
+          }
+        },
+        {
+          "after_refused_admission": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "4b339c68601cf5f1da00c3b628819cf4d09bd77d6a559c04592461b878427d19",
+              "tasks/active/task_aud/checkpoint.md": "397c1ae4743cd21745e602df5ccde56aca82ca13c64b82f536d194df76a2ae16",
+              "tasks/active/task_aud/events.jsonl": "fc0b4325f86d75cf298d0f1c9643fedb97e9ce664b659d6e087575bb12bc6f44",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "f4415c43cda06fbb87ac5e6f0aa843c4d5d53b002539f2effc4cf14849250341",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_c5c62432f3e140cebb948a1b39ba3a32.json": "6f7af6208de3e15660a0350e09f88ee1a61a8043ef9b92d7920304bfabb64afb",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_12d00202613245b4bdf2b56e6f8b6603.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_12d00202613245b4bdf2b56e6f8b6603.json": "65075fee781cf8ab0e5012dbbd84c69ce6c3ad4d8bb15b3ef87dfaf9f37a0a46",
+              "tasks/active/task_aud/microtasks/m1.json": "f7e64b2eca610f4b08e65d9b21c109c18e4313b0a00fc5ee98245900790f3eec",
+              "tasks/active/task_aud/plan.json": "4f214202a95fb5fe170149fecc348235f01d523965bc6f662a951e3168ab1f04",
+              "tasks/active/task_aud/task.json": "edbd319c5aa4a05bcf7e8f8cc754d7e489c7171f1dd16bf1e289e4508fedb278",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "56abc69c18d310b52de44d01334af7a7f37259c27cd586131bdb11a06d33a1c0"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_replay_on_torn_history_writes_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_replay_on_torn_history_writes_nothing"
+        },
+        {
+          "torn_after_execution": {
+            "files": {
+              "target_claims/ec34490c0b702e4e830e472a37ee6248089f59d6147ad5deb983011088720222.json": "6a187d702999877e46efb88fc03739ed08c6a91c1e1f99862f3e6a9ab5e81b5b",
+              "tasks/active/task_aud/checkpoint.json": "e135659f90c41e592f25d8dc49117e8745d612ce4567f2fbb481624642fcbddd",
+              "tasks/active/task_aud/checkpoint.md": "6ff19f2b33977b9e05c1d38aff06f28d140e1b760ded55be08b05b54fabac06f",
+              "tasks/active/task_aud/events.jsonl": "0ca526fb228c57a3424427159cfcc1a7f830354198c305f9c01e24d446058832",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "7447be5dafc6c45b519d24c8660f36297c45695c0c4ed9866bade6d872896a15",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_b9aff86e5bdf4aafa273914c2d521ced.json": "602ea87ca36ae07448cdfca9b9f5cacde7fab972d8ae26265cca5e3c8e839e09",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_f0365af554074380b6e01e8e0bff2c4a.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_f0365af554074380b6e01e8e0bff2c4a.json": "44ed8bdb869f424b62018ffe7470477b8d88196814d8be9fd3f008963f788468",
+              "tasks/active/task_aud/microtasks/m1.json": "286e1beecdaa243a42eb887ae884d1baeac7506dba530d014406e956317fb05c",
+              "tasks/active/task_aud/operations/op_r.json": "c02d9f2ce5ba7291586df969760f24d05c4467bbf24935f329d121e880adcc6f",
+              "tasks/active/task_aud/payloads/acf6e15a79e7e0d2f593521d32364716a851fa7d37b2f5d2d679c473ddc47dd3.bin": "acf6e15a79e7e0d2f593521d32364716a851fa7d37b2f5d2d679c473ddc47dd3",
+              "tasks/active/task_aud/plan.json": "3114aff2fd1443ebef3f956d9e6b3c002fb3d51ed1c8b31bdc83d43abe4c6c6e",
+              "tasks/active/task_aud/task.json": "8067543d66561098b1527dd0f71e2ae6a5e48dec66692824c6653ca7db62c03f",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "7cd717ebcff34f2e9c39692798c4d8f581dc48b80537340ab18c2c850f032f7b"
+            },
+            "target_hex": "4155442d504f53540a007e",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "replay": {
+            "returned": {
+              "result": "REFUSED",
+              "result_code": "REQUEST_REJECTED",
+              "reason": "operation admission refused: TASK event history is unreadable: unterminated event log: <TEMP>\\wa_aud010205_jtcfduwj\\state\\tasks\\active\\task_aud\\events.jsonl"
+            }
+          }
+        },
+        {
+          "after_replay": {
+            "files": {
+              "target_claims/ec34490c0b702e4e830e472a37ee6248089f59d6147ad5deb983011088720222.json": "6a187d702999877e46efb88fc03739ed08c6a91c1e1f99862f3e6a9ab5e81b5b",
+              "tasks/active/task_aud/checkpoint.json": "e135659f90c41e592f25d8dc49117e8745d612ce4567f2fbb481624642fcbddd",
+              "tasks/active/task_aud/checkpoint.md": "6ff19f2b33977b9e05c1d38aff06f28d140e1b760ded55be08b05b54fabac06f",
+              "tasks/active/task_aud/events.jsonl": "0ca526fb228c57a3424427159cfcc1a7f830354198c305f9c01e24d446058832",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "7447be5dafc6c45b519d24c8660f36297c45695c0c4ed9866bade6d872896a15",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_b9aff86e5bdf4aafa273914c2d521ced.json": "602ea87ca36ae07448cdfca9b9f5cacde7fab972d8ae26265cca5e3c8e839e09",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_f0365af554074380b6e01e8e0bff2c4a.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_f0365af554074380b6e01e8e0bff2c4a.json": "44ed8bdb869f424b62018ffe7470477b8d88196814d8be9fd3f008963f788468",
+              "tasks/active/task_aud/microtasks/m1.json": "286e1beecdaa243a42eb887ae884d1baeac7506dba530d014406e956317fb05c",
+              "tasks/active/task_aud/operations/op_r.json": "c02d9f2ce5ba7291586df969760f24d05c4467bbf24935f329d121e880adcc6f",
+              "tasks/active/task_aud/payloads/acf6e15a79e7e0d2f593521d32364716a851fa7d37b2f5d2d679c473ddc47dd3.bin": "acf6e15a79e7e0d2f593521d32364716a851fa7d37b2f5d2d679c473ddc47dd3",
+              "tasks/active/task_aud/plan.json": "3114aff2fd1443ebef3f956d9e6b3c002fb3d51ed1c8b31bdc83d43abe4c6c6e",
+              "tasks/active/task_aud/task.json": "8067543d66561098b1527dd0f71e2ae6a5e48dec66692824c6653ca7db62c03f",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "7cd717ebcff34f2e9c39692798c4d8f581dc48b80537340ab18c2c850f032f7b"
+            },
+            "target_hex": "4155442d504f53540a007e",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_torn_history_refuses_new_operation_without_artifacts",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.AdmissionTests.test_torn_history_refuses_new_operation_without_artifacts"
+        },
+        {
+          "damaged_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "55775abc26995eff45560d1c93d34695b41efa6df725076480032ab52d0d0d5e",
+              "tasks/active/task_aud/checkpoint.md": "b983f6b5d85ae8bfd02987e054db1a847b14c69a1cc2b41b6cf145931b72627b",
+              "tasks/active/task_aud/events.jsonl": "62dc878972d5a11fa9448e3596602c2ac5b4bc9e1d742b191de7a1cc74c7a334",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "e95fcf800538424e0e19b16475d522e12402b8447b7b9ef99e9d866cb6528d9d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_3751910c609741d9abf59244c357ed3b.json": "e43cba77b9c0d415d3b347aad0135b127c537c5c7c58aefdc4b33ad061a633f8",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_26c51d2c09cf4efe9e45b8632c280922.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_26c51d2c09cf4efe9e45b8632c280922.json": "0030e13986d67f64b69d32daaab262536bb5454cbe0a1596fdf02f31387c0ec3",
+              "tasks/active/task_aud/microtasks/m1.json": "18b3691b8c36155c39bc9e42266abf631f7eaa7614396c64038d65eeddaa9f27",
+              "tasks/active/task_aud/plan.json": "17f44ed9f0092a8b3587112b3c4aa092991c7cada854e154dc91d75a037f75af",
+              "tasks/active/task_aud/task.json": "d649c0e2014460394d4449b6d6a46baeb47f0d262c41aad90b6a8365d1371cd2",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "df3b036d3064eacbbd503a4885dadbe237ce41a849dd6276381879f752b58208"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "outcome": {
+            "returned": {
+              "result": "REFUSED",
+              "result_code": "REQUEST_REJECTED",
+              "reason": "operation admission refused: TASK event history is unreadable: unterminated event log: <TEMP>\\wa_aud010205_wv266q4w\\state\\tasks\\active\\task_aud\\events.jsonl"
+            }
+          }
+        },
+        {
+          "after_refused_admission": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "55775abc26995eff45560d1c93d34695b41efa6df725076480032ab52d0d0d5e",
+              "tasks/active/task_aud/checkpoint.md": "b983f6b5d85ae8bfd02987e054db1a847b14c69a1cc2b41b6cf145931b72627b",
+              "tasks/active/task_aud/events.jsonl": "62dc878972d5a11fa9448e3596602c2ac5b4bc9e1d742b191de7a1cc74c7a334",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "e95fcf800538424e0e19b16475d522e12402b8447b7b9ef99e9d866cb6528d9d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_3751910c609741d9abf59244c357ed3b.json": "e43cba77b9c0d415d3b347aad0135b127c537c5c7c58aefdc4b33ad061a633f8",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_26c51d2c09cf4efe9e45b8632c280922.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_26c51d2c09cf4efe9e45b8632c280922.json": "0030e13986d67f64b69d32daaab262536bb5454cbe0a1596fdf02f31387c0ec3",
+              "tasks/active/task_aud/microtasks/m1.json": "18b3691b8c36155c39bc9e42266abf631f7eaa7614396c64038d65eeddaa9f27",
+              "tasks/active/task_aud/plan.json": "17f44ed9f0092a8b3587112b3c4aa092991c7cada854e154dc91d75a037f75af",
+              "tasks/active/task_aud/task.json": "d649c0e2014460394d4449b6d6a46baeb47f0d262c41aad90b6a8365d1371cd2",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "df3b036d3064eacbbd503a4885dadbe237ce41a849dd6276381879f752b58208"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_checkpoint_is_not_valid_after_history_becomes_unreadable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_checkpoint_is_not_valid_after_history_becomes_unreadable"
+        },
+        {
+          "checkpoint_after_tear": "STALE"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_healthy_closeout_and_projection_basis_are_unchanged",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_healthy_closeout_and_projection_basis_are_unchanged"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_invalid_history_line_without_operations_blocks_closeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_invalid_history_line_without_operations_blocks_closeout"
+        },
+        {
+          "damaged_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "e7afcfee02824dd1c48240bc17bdedbf32935cafa94cc237f90d93f19162070e",
+              "tasks/active/task_aud/checkpoint.md": "fb86d0a11327d58667e20cd2841f663b783f47443bd3f404c24c0a4cff747df3",
+              "tasks/active/task_aud/events.jsonl": "e7e7432536af054ecbf768d4256e8f67727cc5295591e3f04cfc54f517c2da91",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "03188812d6b19126830eac09078af585ee38adf39134f900b014c49463610f9e",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_6091228bc3014ec5a7c7e953b72de95c.json": "6f29aa3c50987f55c8217290fdb5bde70904866516d90360c666824a4ac6c183",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_c04579be2df44cf19dd7b0e60ca045c4.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_c04579be2df44cf19dd7b0e60ca045c4.json": "eab251e43e20fdb8d0d8052037a97760fb472f89a9cf61b8fb9d72fda07733b9",
+              "tasks/active/task_aud/microtasks/m1.json": "e8f8eb8869b6b09b800e95efd41e8d1b06d58fc031e3f8bbd721bbe35ba48395",
+              "tasks/active/task_aud/plan.json": "d532c06418978b2fad6066615cb5bedffbe2f2cd9f0c39b99c28e6f9c6b67741",
+              "tasks/active/task_aud/task.json": "87ca364c41b1d25af4329803e74df2c1b6a47220ef197bec2317f742c4a0efe1",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "a079365156bdc1276a8e49974f8a3bdb9348967163bb8565267d16df9be40726"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "closeout": [
+            "REJECTED",
+            [
+              "PROJECTION_HISTORY_UNREADABLE"
+            ]
+          ]
+        },
+        {
+          "after_rejected_closeout": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "e7afcfee02824dd1c48240bc17bdedbf32935cafa94cc237f90d93f19162070e",
+              "tasks/active/task_aud/checkpoint.md": "fb86d0a11327d58667e20cd2841f663b783f47443bd3f404c24c0a4cff747df3",
+              "tasks/active/task_aud/events.jsonl": "e7e7432536af054ecbf768d4256e8f67727cc5295591e3f04cfc54f517c2da91",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "03188812d6b19126830eac09078af585ee38adf39134f900b014c49463610f9e",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_6091228bc3014ec5a7c7e953b72de95c.json": "6f29aa3c50987f55c8217290fdb5bde70904866516d90360c666824a4ac6c183",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_c04579be2df44cf19dd7b0e60ca045c4.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_c04579be2df44cf19dd7b0e60ca045c4.json": "eab251e43e20fdb8d0d8052037a97760fb472f89a9cf61b8fb9d72fda07733b9",
+              "tasks/active/task_aud/microtasks/m1.json": "e8f8eb8869b6b09b800e95efd41e8d1b06d58fc031e3f8bbd721bbe35ba48395",
+              "tasks/active/task_aud/plan.json": "d532c06418978b2fad6066615cb5bedffbe2f2cd9f0c39b99c28e6f9c6b67741",
+              "tasks/active/task_aud/task.json": "87ca364c41b1d25af4329803e74df2c1b6a47220ef197bec2317f742c4a0efe1",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "a079365156bdc1276a8e49974f8a3bdb9348967163bb8565267d16df9be40726"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_moved_status_pending_still_finishes_when_history_is_unreadable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_moved_status_pending_still_finishes_when_history_is_unreadable"
+        },
+        {
+          "crash_child": [
+            77,
+            "",
+            ""
+          ]
+        },
+        {
+          "resumed": [
+            "COMPLETED",
+            "MOVED_STATUS_PENDING",
+            false
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_pre_wa017_status_written_not_moved_needs_readable_history_before_the_move",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_pre_wa017_status_written_not_moved_needs_readable_history_before_the_move"
+        },
+        {
+          "pre_wa017_torn_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "421f87174eb933b1c2290b6a82aefff9345d79d2c9d604870822087975fa4a68",
+              "tasks/active/task_aud/checkpoint.md": "4b43ae849560e30cf78fa3c9c65b18df44f5f9af1d83493d352bfd0ed5a86dc0",
+              "tasks/active/task_aud/events.jsonl": "6bac464ce246940497c62b87e65614797d17adbaa889ccffaf5e3fa33344393c",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "911f96ab5d050f2c440903217906ddb7520b1eaba286eb6a0d48c4d24dee4403",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_4784545588424324b94f859d102fc625.json": "e3837140eee7d69c56e206ce42555f66e246b8db82160b258184aeae59d7e01f",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_9090fb15a5e744ed94cafa2a3915b454.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_9090fb15a5e744ed94cafa2a3915b454.json": "56b7f819c90b169857ebb809c7e943cfc54a6da3e1ace69cb8135d2fa1e8d13e",
+              "tasks/active/task_aud/microtasks/m1.json": "722d5d10bd861ac46a491ee72f6b8097973bb56dd6adce60dacb7c0db0adbfcb",
+              "tasks/active/task_aud/plan.json": "9f48fc80744cb8557e23719fceb1613d70184677d630df59190a0d2debccfa66",
+              "tasks/active/task_aud/task.json": "0fa118d57e2d47347e2b79391d3408ead678fac69c264fa9a196e8a61de09b77",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "b540fadefeea9937a82e4a99a44874de4758d76a87cbbf7f393dee5f1411c6d3"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "closeout": [
+            "REJECTED",
+            [
+              "PROJECTION_HISTORY_UNREADABLE"
+            ]
+          ]
+        },
+        {
+          "after_rejected": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "421f87174eb933b1c2290b6a82aefff9345d79d2c9d604870822087975fa4a68",
+              "tasks/active/task_aud/checkpoint.md": "4b43ae849560e30cf78fa3c9c65b18df44f5f9af1d83493d352bfd0ed5a86dc0",
+              "tasks/active/task_aud/events.jsonl": "6bac464ce246940497c62b87e65614797d17adbaa889ccffaf5e3fa33344393c",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "911f96ab5d050f2c440903217906ddb7520b1eaba286eb6a0d48c4d24dee4403",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_4784545588424324b94f859d102fc625.json": "e3837140eee7d69c56e206ce42555f66e246b8db82160b258184aeae59d7e01f",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_9090fb15a5e744ed94cafa2a3915b454.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_9090fb15a5e744ed94cafa2a3915b454.json": "56b7f819c90b169857ebb809c7e943cfc54a6da3e1ace69cb8135d2fa1e8d13e",
+              "tasks/active/task_aud/microtasks/m1.json": "722d5d10bd861ac46a491ee72f6b8097973bb56dd6adce60dacb7c0db0adbfcb",
+              "tasks/active/task_aud/plan.json": "9f48fc80744cb8557e23719fceb1613d70184677d630df59190a0d2debccfa66",
+              "tasks/active/task_aud/task.json": "0fa118d57e2d47347e2b79391d3408ead678fac69c264fa9a196e8a61de09b77",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "b540fadefeea9937a82e4a99a44874de4758d76a87cbbf7f393dee5f1411c6d3"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_projection_is_fail_closed_and_names_the_blocker",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_projection_is_fail_closed_and_names_the_blocker"
+        },
+        {
+          "recovery": "PROJECTION_BLOCKED",
+          "next": "projection is blocked (HISTORY_UNREADABLE: unterminated event log: <TEMP>\\wa_aud010205_ag0f84s2\\state\\tasks\\active\\task_aud\\events.jsonl); persistent state is inconsistent — repair it by manual review before any mutation"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_rejected_closeout_completes_after_operator_restores_the_delimiter",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_rejected_closeout_completes_after_operator_restores_the_delimiter"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_torn_history_without_operations_blocks_closeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.CloseoutHistoryTests.test_torn_history_without_operations_blocks_closeout"
+        },
+        {
+          "damaged_PRE": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "462b2fdc277ab329fc674c5bb6331adf7ea18002af50ae83c193e2ab7b4dab62",
+              "tasks/active/task_aud/checkpoint.md": "7b33d85cab9164763638536524649b71730fdacd2bb5c7318cbdefba15a66328",
+              "tasks/active/task_aud/events.jsonl": "c7ae3866251631811f942c15a39ebc9b691d47f2fcb850d4a7799598ab061a17",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "e676b80c4653fd9c4349a271993f635e33d8ce36b13c8e9869a987825c4c5d1d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_789247ba932d4b75b6d9d8d0b0ec1558.json": "7085eeeca89f805dd89c591fb9b118226ac3f4e1ee6668a462b43208e706c683",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_da82526facd94072ba0c2a4eddce7c1f.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_da82526facd94072ba0c2a4eddce7c1f.json": "5094d24737736478ec05b75298ed36697009fc76f3ef3e08b7e2ddb4f8d0426a",
+              "tasks/active/task_aud/microtasks/m1.json": "a0cc56bf3297462a454a5ba4ee57af63ac2f676e4e9ee15b4acbee2c373d7274",
+              "tasks/active/task_aud/plan.json": "d2fd37da772b632da82bb39722f24ad38ffb45a6dc2e5037b27c2bf8d86effae",
+              "tasks/active/task_aud/task.json": "5fff2a4a775bb507612708a71847321b3df9d0756cb1736578a1caa068e4f3d7",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "544da363c7abdbdc7e658e04abd487a01b047a97b7d6118d4044d2a57575ba21"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        },
+        {
+          "closeout": [
+            "REJECTED",
+            [
+              "PROJECTION_HISTORY_UNREADABLE"
+            ]
+          ]
+        },
+        {
+          "after_rejected_closeout": {
+            "files": {
+              "tasks/active/task_aud/checkpoint.json": "462b2fdc277ab329fc674c5bb6331adf7ea18002af50ae83c193e2ab7b4dab62",
+              "tasks/active/task_aud/checkpoint.md": "7b33d85cab9164763638536524649b71730fdacd2bb5c7318cbdefba15a66328",
+              "tasks/active/task_aud/events.jsonl": "c7ae3866251631811f942c15a39ebc9b691d47f2fcb850d4a7799598ab061a17",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest.json": "e676b80c4653fd9c4349a271993f635e33d8ce36b13c8e9869a987825c4c5d1d",
+              "tasks/active/task_aud/microtasks/m1/restore_point/manifest_entries/manifest_789247ba932d4b75b6d9d8d0b0ec1558.json": "7085eeeca89f805dd89c591fb9b118226ac3f4e1ee6668a462b43208e706c683",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_da82526facd94072ba0c2a4eddce7c1f.bin": "ef347b0eb898d258ab3239da71b1d5f4a104a7b350d09f3103be5f75831a4019",
+              "tasks/active/task_aud/microtasks/m1/restore_point/snapshots/snapshot_da82526facd94072ba0c2a4eddce7c1f.json": "5094d24737736478ec05b75298ed36697009fc76f3ef3e08b7e2ddb4f8d0426a",
+              "tasks/active/task_aud/microtasks/m1.json": "a0cc56bf3297462a454a5ba4ee57af63ac2f676e4e9ee15b4acbee2c373d7274",
+              "tasks/active/task_aud/plan.json": "d2fd37da772b632da82bb39722f24ad38ffb45a6dc2e5037b27c2bf8d86effae",
+              "tasks/active/task_aud/task.json": "5fff2a4a775bb507612708a71847321b3df9d0756cb1736578a1caa068e4f3d7",
+              "tasks/active/task_aud/task.md": "5ee50f4794151374e7b698056d87e39b152721d450208d630fd35feb88370507",
+              "workspaces/ws_aud.json": "544da363c7abdbdc7e658e04abd487a01b047a97b7d6118d4044d2a57575ba21"
+            },
+            "target_hex": "4155442d5052450d0a02fd",
+            "active": true,
+            "completed": false
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_crlf_terminated_records_read_like_lf",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_crlf_terminated_records_read_like_lf"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_http_mutation_with_U2028_target_keeps_history_readable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_http_mutation_with_U2028_target_keeps_history_readable"
+        },
+        {
+          "http_error": [
+            409,
+            "mutation_refused",
+            "{'result': 'REFUSED', 'result_code': 'TARGET_NOT_IN_MANIFEST', 'reason': 'x\\u2028y.bin is not a target of the restore point of m1; a tracked mutation is admitted only for a target RC-4 can restore', 'task_id': 'task_aud', 'operation_id': 'op_u', 'operation_status': 'INTENT', 'operation_revision': 1,"
+          ]
+        },
+        {
+          "closeout_blockers": [
+            "MICROTASK_NOT_VERIFIED",
+            "OPERATION_OPEN"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_http_verification_evidence_with_U2029_is_preserved_and_closeout_is_clean",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_http_verification_evidence_with_U2029_is_preserved_and_closeout_is_clean"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_pre_repair_records_with_raw_separators_stay_readable",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_pre_repair_records_with_raw_separators_stay_readable"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_separator_characters_round_trip_and_are_escaped_on_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_separator_characters_round_trip_and_are_escaped_on_write"
+        },
+        {
+          "read_error": null
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_unreadable_history_is_refused_and_never_repaired",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-AUD010205-REPAIR-001",
+          "test": "test_web_alarm_aud010205_repair.EventFramingTests.test_unreadable_history_is_refused_and_never_repaired"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_corrupted_snapshot_blocks_ready_transition",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_failed_verification_can_reenter_active_only_with_snapshot",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_planned_to_active_is_physically_rejected",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_prepare_creates_backup_verified_checkpoint_and_event",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_second_microtask_cannot_prepare_before_previous_verified",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine.ServerStateMachineTests.test_valid_lifecycle_requires_verification_evidence",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.LockedLifecycleWriteTests.test_e_activation_is_refused_whole_when_another_microtask_is_active",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.LockedLifecycleWriteTests.test_f_snapshot_failure_inside_transition_does_not_overwrite_a_settlement",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.LockedLifecycleWriteTests.test_g_failed_prepare_never_blocks_a_status_beyond_preparation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.LockedLifecycleWriteTests.test_g_state_machine_prepare_never_rewinds_a_microtask_that_moved_on",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.RollbackVersusVerificationTests.test_a1_legacy_verified_shape_still_blocks_the_rollback",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.RollbackVersusVerificationTests.test_a1_verification_during_a_pending_rollback_is_refused_and_the_rollback_proceeds",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.RollbackVersusVerificationTests.test_a2_stale_verification_cannot_land_while_rc6_rolls_back",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.RollbackVersusVerificationTests.test_rollback_apply_marks_the_stage_before_any_restore",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.StaleTransitionTests.test_b_abort_settlement_is_not_overwritten_by_a_stale_verification",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.StaleTransitionTests.test_c_two_transitions_from_one_observed_status_only_one_applies",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.StaleTransitionTests.test_d1_delayed_transition_never_rewrites_the_newer_status",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.StaleTransitionTests.test_d2_replayed_request_with_an_old_observed_status_is_refused_in_a_fresh_process",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_state_machine_cas.StaleTransitionTests.test_d3_server_endpoint_maps_stale_and_invalid_basis",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_activation_rechecks_earlier_microtasks_under_the_lock",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f4_crash_between_pointer_and_status_is_a_recoverable_state",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f5_crash_between_manifest_and_status_block_is_recoverable",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f5_crash_window_never_opens_mutation",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f5_current_verification_failure_still_blocks_both",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.CrashConsistencyTests.test_f5_stale_failing_verification_never_blocks_an_advanced_restore_point",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_abort_accepted_after_verified_is_settled_administratively",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_abort_after_a_superseded_rollback_settlement_closes_the_retry",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_late_abort_after_adopt_on_a_verified_stage_is_absorbed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_late_abort_after_an_adopt_settlement_reaches_the_manual_boundary",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_legacy_verified_with_adopt_accepted_is_settled_without_moving_it",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_pure_rules",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_race_abort_accepted_first_then_verification_is_refused",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_race_verification_holds_the_lock_then_late_abort_is_absorbed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_rollback_of_a_verified_stage_waits_for_an_explicit_abort_which_closes_it",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_terminal_abort_of_a_failed_operation_settles_instead_of_failing_closed",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_verified_is_refused_while_an_accepted_abort_is_unsettled",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LateRecoveryVersusVerifiedTests.test_fb_verified_is_refused_while_an_operation_fate_is_open",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.LockOrderTests.test_boundary_and_foreign_rc6_proof_on_a_shared_target_do_not_deadlock",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_accepted_but_unsettled_abort_of_a_sibling_already_blocks_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_active_microtask_that_is_not_the_current_stage_gets_no_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_lifecycle_cannot_change_while_authority_is_held",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_new_operation_after_abort_gets_no_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_old_sibling_claim_gets_no_authority_after_abort",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_open_rollback_session_of_a_sibling_blocks_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_rc6_ready_and_rc3_authority_follow_the_same_gate",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_rc6_retry_ready_is_refused_by_the_gate_over_a_pending_sibling_abort",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_unreadable_lifecycle_facts_refuse_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.MutationAuthorityGateTests.test_fc_verified_and_not_yet_active_microtasks_give_no_authority",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.ReadyProofBasisTests.test_r3_aba_back_to_the_same_status_needs_a_new_proof",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.ReadyProofBasisTests.test_r3_foreign_ownership_after_the_proof_is_never_ready",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.ReadyProofBasisTests.test_r3_proof_matches_compares_every_projection_field",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.ReadyProofBasisTests.test_r3_restore_point_content_change_behind_the_same_surface_ids",
+      "status": "PASS",
+      "facts": []
+    },
+    {
+      "test": "test_web_alarm_recovery_coordinator_repair3.ReadyProofBasisTests.test_r3_retry_ready_proof_is_bound_to_operation_and_resolution",
+      "status": "PASS",
+      "facts": []
+    }
+  ]
+}

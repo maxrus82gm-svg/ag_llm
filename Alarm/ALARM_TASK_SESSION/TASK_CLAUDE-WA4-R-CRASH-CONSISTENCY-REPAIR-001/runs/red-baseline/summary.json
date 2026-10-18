@@ -1,0 +1,104 @@
+{
+ "label": "red-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-red-baseline-c99nrx98\\out",
+  "test_web_alarm_crash_consistency"
+ ],
+ "exit": 1,
+ "wall_seconds": 45.101,
+ "base": "<TEMP>\\claude-ccrepair-red-baseline-c99nrx98",
+ "tests_run": 20,
+ "passed": 5,
+ "failures": 15,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 43.33,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record",
+   "FAIL",
+   "last):\n  File \"<REPO>\\test_web_alarm_crash_consistency.py\", line 266, in test_death_after_intent_before_cas_is_abandoned_with_an_audit_record\n    self.assertEqual(crash[\"exit\"], 71, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 71 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence",
+   "FAIL",
+   "\\GitHub\\ag_llm\\test_web_alarm_crash_consistency.py\", line 240, in test_death_after_verified_cas_never_closes_without_evidence\n    self.assertNotEqual(closeout[\"result\"], \"COMPLETED\",\nAssertionError: 'COMPLETED' == 'COMPLETED' : closeout completed a TASK whose VERIFIED stage has no recorded evidence\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_crash_consistency.py\", line 284, in test_death_before_intent_changes_nothing\n    self.assertEqual(crash[\"exit\"], 70, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 70 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction",
+   "FAIL",
+   "l last):\n  File \"<REPO>\\test_web_alarm_crash_consistency.py\", line 323, in test_foreign_update_after_an_intent_is_a_fail_closed_contradiction\n    self.assertEqual(crash[\"exit\"], 71, f\"phase not reached: {crash['phases']} {crash['stderr']}\")\nAssertionError: 0 != 71 : phase not reached: [] \n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id",
+   "FAIL",
+   "ASK_TRANSITION'] != ['MICROTASK_TRANSITION_INTENT', 'MICROTASK_TRANSITION']\n\nFirst differing element 0:\n'MICROTASK_TRANSITION'\n'MICROTASK_TRANSITION_INTENT'\n\n- ['MICROTASK_TRANSITION', 'MICROTASK_TRANSITION']\n+ ['MICROTASK_TRANSITION_INTENT', 'MICROTASK_TRANSITION']\n?                       +++++++\n\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition",
+   "FAIL",
+   "E'), ('DONE', 'VERIFIED')]\n\nFirst differing element 0:\n('READY', 'ACTIVE')\n('ACTIVE', 'DONE')\n\n- [('READY', 'ACTIVE'), ('DONE', 'VERIFIED')]\n?   ---------\n\n+ [('ACTIVE', 'DONE'), ('DONE', 'VERIFIED')]\n?           ++++++++\n : the next transition ran on a status whose history was not reconciled first\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen",
+   "FAIL",
+   "_web_alarm_crash_consistency.py\", line 315, in test_projection_reports_a_pending_transition_after_reopen\n    self.assertTrue([c for c in codes if \"PENDING\" in c or \"HISTORY\" in c],\nAssertionError: [] is not true : a persisted status without its history event is invisible: ['MICROTASK_NOT_VERIFIED']\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent",
+   "FAIL",
+   "test_web_alarm_crash_consistency.py\", line 252, in test_reconciliation_restores_the_original_evidence_from_the_durable_intent\n    self.assertEqual(len(commits), 1, \"the lost VERIFIED event was not restored exactly once\")\nAssertionError: 0 != 1 : the lost VERIFIED event was not restored exactly once\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_explicit_replay_after_a_lost_intent_executes_exactly_once",
+   "FAIL",
+   "issing durable intent history', 'task_id': 'task_ccr', 'operation_id': 'op_c', 'operation_status': None, 'operation_revision': None, 'mutation_kind': None, 'target': None, 'receipt': None, 'physical_mutation_performed': False, 'next_safe_action': 'fix the request; nothing was recorded or written'}}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent",
+   "FAIL",
+   " Tuples differ: (409, 'state_error') != (409, 'operation_history_pending')\n\nFirst differing element 1:\n'state_error'\n'operation_history_pending'\n\n- (409, 'state_error')\n+ (409, 'operation_history_pending') : {'http': 409, 'code': 'state_error', 'message': 'injected: append failed', 'details': None}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported",
+   "FAIL",
+   "lm\\test_web_alarm_crash_consistency.py\", line 408, in test_lost_intent_event_keeps_the_task_readable_and_is_reported\n    self.assertEqual(out[\"results\"][0].get(\"list\"), [\"op_a\", \"op_b\"],\nAssertionError: None != ['op_a', 'op_b'] : one lost OPERATION_INTENT made every operation of the TASK unreadable\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_crash_consistency.py\", line 421, in test_recover_reconstructs_the_intent_event_without_any_apply\n    self.assertEqual(len(intents), 1)\nAssertionError: 0 != 1\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_crash_consistency.py\", line 346, in test_legacy_verified_without_evidence_blocks_closeout\n    self.assertNotEqual(out[\"results\"][0][\"closeout\"][\"result\"], \"COMPLETED\")\nAssertionError: 'COMPLETED' == 'COMPLETED'\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible",
+   "FAIL",
+   "sistency.py\", line 379, in test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible\n    self.assertEqual(out[\"results\"][0][\"http\"], 409, out[\"results\"][0])\nAssertionError: 404 != 409 : {'http': 404, 'code': 'not_found', 'message': 'unknown endpoint: /microtasks/m1/reaffirm', 'details': None}\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout",
+   "FAIL",
+   "nsistency.py\", line 357, in test_reaffirmation_without_mutation_proves_and_allows_closeout\n    self.assertEqual(out[\"results\"][0][\"http\"], 200, out[\"results\"][0])\nAssertionError: 404 != 200 : {'http': 404, 'code': 'not_found', 'message': 'unknown endpoint: /microtasks/m1/reaffirm', 'details': None}\n"
+  ]
+ ]
+}

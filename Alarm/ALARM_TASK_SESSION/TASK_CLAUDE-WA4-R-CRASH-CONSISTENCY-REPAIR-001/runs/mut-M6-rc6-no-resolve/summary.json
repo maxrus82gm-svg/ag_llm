@@ -1,0 +1,35 @@
+{
+ "label": "mut-M6-rc6-no-resolve",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M6-rc6-no-resolve\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M6-rc6-no-resolve-c0ew3lju\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 54.224,
+ "base": "<TEMP>\\claude-ccrepair-mut-M6-rc6-no-resolve-c0ew3lju",
+ "tests_run": 27,
+ "passed": 26,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 53.657,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first",
+   "FAIL",
+   "([a[\"payload\"][\"intent_id\"] for a in abandons], [intent_id])\nAssertionError: Lists differ: [] != ['event_98b2e457a09942e09c854c952f98a706']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'event_98b2e457a09942e09c854c952f98a706'\n\n- []\n+ ['event_98b2e457a09942e09c854c952f98a706']\n"
+  ]
+ ]
+}

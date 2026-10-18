@@ -1,0 +1,165 @@
+{
+ "label": "mut-M1-no-intent",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M1-no-intent\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M1-no-intent-0xb5gwmy\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 9.121,
+ "base": "<TEMP>\\claude-ccrepair-mut-M1-no-intent-0xb5gwmy",
+ "tests_run": 27,
+ "passed": 0,
+ "failures": 0,
+ "errors": 27,
+ "skips": 0,
+ "elapsed_seconds": 8.555,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_commit_fsync_failure_is_reported_and_reconciled_once",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_progress_event_is_not_reconstructed",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_executed_event_never_leads_to_a_second_apply",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_started_event_never_starts_a_physical_apply",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_healthy_verified_closes_without_reaffirmation",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.CloseoutRace.test_closeout_cannot_slip_between_intent_and_compare_and_set",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_conflicting_duplicate_commit_is_a_contradiction_and_blocks",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_identical_duplicate_commit_is_tolerated_and_reconciliation_adds_nothing",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.DuplicatesAndContradictions.test_two_open_intents_are_never_resolved_automatically",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.OtherWritersAndDamage.test_damaged_history_with_an_open_intent_refuses_without_writes",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ],
+  [
+   "test_adversarial_repair.RollbackCompatibility.test_pre_repair_projection_and_operations_read_repaired_histories",
+   "ERROR",
+   "ocked\n    raise MicrotaskHistoryContradiction(\nweb_alarm.state_machine.MicrotaskHistoryContradiction: ACTIVE step of task_adv/m1 refused: microtask history cannot be reconciled automatically: m1: a commit/abandon names an intent that is not recorded; nothing was written, operator review is required\n"
+  ]
+ ]
+}

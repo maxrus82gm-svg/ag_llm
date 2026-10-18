@@ -21,6 +21,7 @@ HERE = Path(__file__).resolve().parent
 BASELINE = HERE.parent / "baseline" / "web_alarm"
 TASK = "task_adv"
 EVIDENCE = "checked without mutation"
+NL = bytes([10])
 
 
 def lf(data: bytes) -> list[dict]:
@@ -66,6 +67,18 @@ class Fixture(unittest.TestCase):
                      "basis_updated_at": record.updated_at})
         return event.event_id
 
+    def snap(self, label: str) -> None:
+        """Raw facts for the evidence: history bytes/hash, persisted status, project bytes (no apply)."""
+        root = self.task_dir if self.task_dir.exists() else self.storage / "tasks" / "completed" / TASK
+        raw = (root / "events.jsonl").read_bytes()
+        record = json.loads((root / "microtasks" / "m1.json").read_bytes())
+        self.facts.append({label: {"events_sha256": hashlib.sha256(raw).hexdigest(), "events_bytes": len(raw),
+                                   "event_kinds_tail": ([e["event_type"] for e in lf(raw)[-5:]]
+                                                        if raw.endswith(NL) else "TORN_TAIL"),
+                                   "status": record["status"], "updated_at": record["updated_at"],
+                                   "project_sha256": hashlib.sha256((self.project / "data.bin").read_bytes()).hexdigest(),
+                                   "location": root.parent.name}})
+
     def journal(self) -> dict:
         from web_alarm.event_checkpoint_store import EventCheckpointStore, microtask_journal
         store = EventCheckpointStore(self.storage)
@@ -74,11 +87,13 @@ class Fixture(unittest.TestCase):
 
 class DuplicatesAndContradictions(Fixture):
     def test_identical_duplicate_commit_is_tolerated_and_reconciliation_adds_nothing(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.event_checkpoint_store import EventCheckpointStore
         self.machine.transition(TASK, "m1", "DONE")
         commit = [e for e in self.events() if e["event_type"] == "MICROTASK_TRANSITION"][-1]
         EventCheckpointStore(self.storage).append_event(TASK, "MICROTASK_TRANSITION", microtask_id="m1",
                                                         payload=commit["payload"])
+        self.snap("before")
         before = (self.task_dir / "events.jsonl").read_bytes()
         from web_alarm.task_store import TaskStore
         with TaskStore(self.storage).mutation_lock(TASK):
@@ -88,6 +103,7 @@ class DuplicatesAndContradictions(Fixture):
         self.assertEqual((self.task_dir / "events.jsonl").read_bytes(), before)
 
     def test_conflicting_duplicate_commit_is_a_contradiction_and_blocks(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.event_checkpoint_store import EventCheckpointStore
         from web_alarm.projection import ProjectionService
         self.machine.transition(TASK, "m1", "DONE")
@@ -95,14 +111,17 @@ class DuplicatesAndContradictions(Fixture):
         EventCheckpointStore(self.storage).append_event(
             TASK, "MICROTASK_TRANSITION", microtask_id="m1",
             payload=dict(commit["payload"], to="VERIFIED", verification_evidence="forged"))
+        self.snap("before")
         codes = [b["code"] for b in ProjectionService(self.storage).build(TASK)["blockers"]]
         self.facts.append({"blockers": codes})
         self.assertIn("MICROTASK_HISTORY_CONTRADICTION", codes)
 
     def test_two_open_intents_are_never_resolved_automatically(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.state_machine import ServerStateMachineError
         self.open_intent("DONE")
         self.open_intent("UNKNOWN_AFTER_DISCONNECT")
+        self.snap("before")
         before = (self.task_dir / "events.jsonl").read_bytes(), self.status()
         with self.assertRaises(ServerStateMachineError):
             self.machine.transition(TASK, "m1", "DONE")
@@ -111,9 +130,11 @@ class DuplicatesAndContradictions(Fixture):
 
 class OtherWritersAndDamage(Fixture):
     def test_rc6_status_write_closes_an_open_intent_first(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.models import MicrotaskStatus
         from web_alarm.recovery_coordinator import RecoveryCoordinator
         intent_id = self.open_intent("DONE")  # died after the intent, before the CAS
+        self.snap("before")
         coordinator = RecoveryCoordinator(self.storage)
         with coordinator.operations.task_lock(TASK):
             with coordinator.tasks.mutation_lock(TASK):
@@ -126,11 +147,13 @@ class OtherWritersAndDamage(Fixture):
         self.assertEqual(self.journal()["contradictions"], [], "the recovery write left an undecidable intent")
 
     def test_damaged_history_with_an_open_intent_refuses_without_writes(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.recovery_coordinator import RecoveryCoordinator
         from web_alarm.state_machine import ServerStateMachineError
         self.open_intent("DONE")
         path = self.task_dir / "events.jsonl"
         path.write_bytes(path.read_bytes()[:-1])  # torn tail
+        self.snap("before")
         before = path.read_bytes(), self.status()
         with self.assertRaises(ServerStateMachineError):
             self.machine.transition(TASK, "m1", "DONE")
@@ -151,6 +174,7 @@ class RollbackCompatibility(Fixture):
         return module
 
     def test_pre_repair_projection_and_operations_read_repaired_histories(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.operation_store import OperationStore
         from web_alarm.task_store import TaskStore
         self.machine.transition(TASK, "m1", "DONE")
@@ -171,6 +195,7 @@ class RollbackCompatibility(Fixture):
         with store.task_lock(TASK), TaskStore(self.storage).mutation_lock(TASK):
             store._reconcile_intent_locked(TASK, store.get(TASK, "op_r"))
         self.open_intent("VERIFIED")  # an open intent (left for the old reader)
+        self.snap("before")
         old_projection = self.load_baseline("projection")
         old_ops = self.load_baseline("operation_store")
         projection = old_projection.ProjectionService(self.storage).build(TASK)
@@ -182,6 +207,7 @@ class RollbackCompatibility(Fixture):
 
 class CloseoutRace(Fixture):
     def test_closeout_cannot_slip_between_intent_and_compare_and_set(self):
+        self.addCleanup(self.snap, "after")
         from web_alarm.closeout import CloseoutService
         from web_alarm.event_checkpoint_store import EventCheckpointStore
         self.machine.transition(TASK, "m1", "DONE")
@@ -195,6 +221,7 @@ class CloseoutRace(Fixture):
                 release.wait(20)
             return record
 
+        self.snap("before")
         out = {}
         with mock.patch.object(EventCheckpointStore, "append_event", pausing):
             verify = threading.Thread(target=lambda: out.setdefault("verify", self.machine.transition(

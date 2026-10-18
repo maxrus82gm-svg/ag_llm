@@ -1,0 +1,34 @@
+{
+ "label": "green5-completion",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-green5-completion-v9go1v7w\\out",
+  "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_death_during_completion_leaves_a_proven_read_only_history"
+ ],
+ "exit": 1,
+ "wall_seconds": 3.69,
+ "base": "<TEMP>\\claude-ccrepair-green5-completion-v9go1v7w",
+ "tests_run": 1,
+ "passed": 0,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 3.122,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_death_during_completion_leaves_a_proven_read_only_history",
+   "FAIL",
+   "completion_leaves_a_proven_read_only_history\n    self.assertEqual((self.task_dir() / \"events.jsonl\").read_bytes(), before,\nAssertionError: b'{\"e[4079 chars]0\"}\\n{\"event_id\":\"event_5f62096bd2264f2cbed064[483 chars]\"}\\n' != b'{\"e[4079 chars]0\"}\\n' : a reopen wrote into the history of a completed TASK\n"
+  ]
+ ]
+}

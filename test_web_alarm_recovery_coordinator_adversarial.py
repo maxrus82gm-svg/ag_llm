@@ -23,6 +23,7 @@ from web_alarm.recovery_coordinator import (
 from web_alarm.recovery_report_service import RecoveryReportService
 from web_alarm.resolver_service import ResolverService
 from web_alarm.rollback_service import RollbackService
+from web_alarm.state_machine import ServerStateMachine
 from web_alarm.target_claim_service import TargetClaimService
 from web_alarm.task_store import TaskStore
 from web_alarm.workspace_registry import WorkspaceRegistry
@@ -442,6 +443,12 @@ class RecoveryCoordinatorAdversarialTests(unittest.TestCase):
 
     def test_closeout_eligible_task_is_not_silently_completed(self):
         self.tasks.set_microtask_status(TASK, MICRO, MicrotaskStatus.VERIFIED)
+        # AUD-02b-R: a VERIFIED status written without recorded evidence is not closeout-eligible;
+        # the safe re-check (no mutation) records the proof that makes it eligible
+        unproven = self.coordinator().recover(TASK)
+        self.assertNotEqual(unproven["state"], TASK_READY_TO_CLOSE)
+        self.assertFalse(CloseoutService(self.storage).inspect(TASK)["eligible"])
+        ServerStateMachine(self.storage).reaffirm_verification(TASK, MICRO, "re-checked without mutation")
 
         result = self.coordinator().recover(TASK)
 

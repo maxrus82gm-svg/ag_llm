@@ -1,0 +1,40 @@
+{
+ "label": "mut-M5-no-progress-check-2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M5-no-progress-check-2-i302mbzp\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 64.806,
+ "base": "<TEMP>\\claude-ccrepair-mut-M5-no-progress-check-2-i302mbzp",
+ "tests_run": 31,
+ "passed": 29,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 64.234,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_replay_event_is_not_reconstructed",
+   "FAIL",
+   "test_web_alarm_crash_consistency.py\", line 515, in assert_progress_blocks_reconstruction\n    self.assertIn(\"raised\", out[\"results\"][0], \"a contradicting history was treated as recoverable\")\nAssertionError: 'raised' not found in {'list': ['op_c']} : a contradicting history was treated as recoverable\n"
+  ],
+  [
+   "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_an_unvalidated_progress_event_is_not_reconstructed",
+   "FAIL",
+   "test_web_alarm_crash_consistency.py\", line 515, in assert_progress_blocks_reconstruction\n    self.assertIn(\"raised\", out[\"results\"][0], \"a contradicting history was treated as recoverable\")\nAssertionError: 'raised' not found in {'list': ['op_c']} : a contradicting history was treated as recoverable\n"
+  ]
+ ]
+}

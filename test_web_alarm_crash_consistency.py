@@ -333,6 +333,45 @@ class MicrotaskIntentTests(Fixture):
         self.assertIn("MICROTASK_HISTORY_CONTRADICTION", follow["results"][2]["projection"]["blockers"])
         self.assertIs(follow["results"][1]["recover"]["requires_human"], True)
 
+    def test_a_refused_step_that_blocks_the_restore_point_closes_the_open_intent_first(self):
+        self.build("BACKUP_VERIFIED")
+        crash = self.child("crash", [self.transition_step("READY")],
+                           fault={"event": "MICROTASK_TRANSITION_INTENT", "when": "after"})
+        self.assertEqual(crash["exit"], 71, f"phase not reached: {crash['phases']} {crash['stderr']}")
+        intent = [e for e in self.events() if e["event_type"] == "MICROTASK_TRANSITION_INTENT"][-1]
+        restore = self.task_dir() / "microtasks" / "m1"
+        snapshots = [p for p in (restore / "restore_point").rglob("*") if p.is_file() and p.name != "manifest.json"]
+        self.assertTrue(snapshots, "fixture: no snapshot bytes to damage")
+        snapshots[0].write_bytes(b"corrupted")
+        # the next step meets a broken restore point: the manifest store writes BLOCKED_PREPARE
+        follow = self.child("next", [self.transition_step("READY"), {"kind": "projection"}])
+        self.facts.append({"follow": follow["results"], "status": self.status(), "kinds": self.kinds()})
+        self.assertEqual(follow["results"][0]["http"], 409)
+        self.assertEqual(self.status(), "BLOCKED_PREPARE")
+        abandons = [e for e in self.events() if e["event_type"] == "MICROTASK_TRANSITION_ABANDONED"]
+        self.assertEqual([a["payload"]["intent_id"] for a in abandons], [intent["event_id"]],
+                         "the open intent was not closed before another writer changed the status")
+        self.assertNotIn("MICROTASK_HISTORY_CONTRADICTION", follow["results"][1]["projection"]["blockers"])
+
+    def test_recovery_status_write_closes_an_open_intent_first(self):
+        from web_alarm.models import MicrotaskStatus
+        from web_alarm.recovery_coordinator import RecoveryCoordinator
+        self.build("ACTIVE")
+        crash = self.child("crash", [self.transition_step("DONE")],
+                           fault={"event": "MICROTASK_TRANSITION_INTENT", "when": "after"})
+        self.assertEqual(crash["exit"], 71, f"phase not reached: {crash['phases']} {crash['stderr']}")
+        intent = [e for e in self.events() if e["event_type"] == "MICROTASK_TRANSITION_INTENT"][-1]
+        coordinator = RecoveryCoordinator(self.storage)  # RC-6 writes statuses without an event of its own
+        with coordinator.operations.task_lock(TASK), coordinator.tasks.mutation_lock(TASK):
+            coordinator._set_micro_locked(TASK, "m1", MicrotaskStatus.RECOVERY_REQUIRED,
+                                          allowed_from={MicrotaskStatus.ACTIVE})
+        out = self.child("look", [{"kind": "projection"}])
+        self.facts.append({"look": out["results"], "status": self.status(), "kinds": self.kinds()})
+        self.assertEqual(self.status(), "RECOVERY_REQUIRED")
+        abandons = [e for e in self.events() if e["event_type"] == "MICROTASK_TRANSITION_ABANDONED"]
+        self.assertEqual([a["payload"]["intent_id"] for a in abandons], [intent["event_id"]])
+        self.assertNotIn("MICROTASK_HISTORY_CONTRADICTION", out["results"][0]["projection"]["blockers"])
+
 
 class VerificationEvidenceTests(Fixture):
     """Legacy VERIFIED without recorded evidence: no closeout until a safe re-verification."""
@@ -389,6 +428,31 @@ class VerificationEvidenceTests(Fixture):
         out = self.child("close", [self.transition_step("VERIFIED", verification_evidence=EVIDENCE),
                                    {"kind": "closeout"}])
         self.assertEqual(out["results"][1]["closeout"]["result"], "COMPLETED")
+
+    def test_death_during_completion_leaves_a_proven_read_only_history(self):
+        self.build("DONE")
+        crash = self.child("crash", [self.transition_step("VERIFIED", verification_evidence=EVIDENCE),
+                                     {"kind": "closeout"}],
+                           fault={"event": "TASK_COMPLETED", "when": "before"})
+        self.assertEqual(crash["exit"], 70, f"phase not reached: {crash['phases']} {crash['stderr']}")
+        self.assertEqual(self.task_dir().parent.name, "completed")
+        before = (self.task_dir() / "events.jsonl").read_bytes()
+        out = self.child("reopen", [{"kind": "projection"}, {"kind": "recover"},
+                                    self.transition_step("DONE"), {"kind": "closeout"}])
+        self.facts.append({"reopen": out["results"]})
+        projection = out["results"][0]["projection"]
+        self.assertFalse([c for c in projection["diagnostics"] + projection["blockers"] + projection["closeout"]
+                          if c.startswith(("MICROTASK_HISTORY", "MICROTASK_VERIFICATION", "OPERATION_INTENT"))])
+        self.assertEqual(out["results"][2]["http"], 409)
+        after = (self.task_dir() / "events.jsonl").read_bytes()
+        self.assertTrue(after.startswith(before), "the history of a completed TASK was rewritten")
+        added = [e["event_type"] for e in lf_records(after[len(before):])]
+        self.facts.append({"added_by_reopen": added})
+        # pre-existing: a refused step records its rejection; R-MT/R-OP write nothing into a closed TASK
+        self.assertEqual([k for k in added if k != "MICROTASK_TRANSITION_REJECTED"], [])
+        self.assertEqual([e["payload"].get("verification_evidence") for e in self.transitions_to("VERIFIED")],
+                         [EVIDENCE])
+        self.assertEqual(self.applies(), 0)
 
 
 class OperationIntentTests(Fixture):
@@ -454,12 +518,22 @@ class OperationIntentTests(Fixture):
         self.assertEqual(self.applies(), 0)
 
     def test_intent_with_a_progress_event_is_not_reconstructed(self):
+        self.assert_progress_blocks_reconstruction(
+            "OPERATION_TRANSITION", {"from": "INTENT", "to": "STARTED", "revision": 2})
+
+    def test_intent_with_an_unvalidated_progress_event_is_not_reconstructed(self):
+        # no revision/receipt check covers these kinds: only the progress rule keeps them fail-closed
+        self.assert_progress_blocks_reconstruction("MUTATION_RETRY_EXECUTING", {"attempt": 2})
+
+    def test_intent_with_a_replay_event_is_not_reconstructed(self):
+        self.assert_progress_blocks_reconstruction("OPERATION_TRANSITION_REPLAY", {"status": "STARTED"})
+
+    def assert_progress_blocks_reconstruction(self, kind: str, payload: dict) -> None:
         from web_alarm.event_checkpoint_store import EventCheckpointStore
         self.build("ACTIVE")
         self.crash_intent()
-        EventCheckpointStore(self.storage).append_event(TASK, "OPERATION_TRANSITION", microtask_id="m1",
-                                                        operation_id="op_c",
-                                                        payload={"from": "INTENT", "to": "STARTED", "revision": 2})
+        EventCheckpointStore(self.storage).append_event(TASK, kind, microtask_id="m1", operation_id="op_c",
+                                                        payload=payload)
         before = (self.task_dir() / "events.jsonl").read_bytes()
         out = self.child("look", [{"kind": "list_operations"}, {"kind": "recover"}, self.mutate_step("op_c")])
         self.facts.append({"results": out["results"]})

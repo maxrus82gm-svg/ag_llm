@@ -1,0 +1,89 @@
+--- a/web_alarm/recovery_coordinator.py
++++ b/web_alarm/recovery_coordinator.py
+@@ -14,6 +14,7 @@
+ from pathlib import Path
+ from typing import Any
+ 
++from .event_checkpoint_store import EventCheckpointStoreError
+ from .manifest_store import ManifestStoreError
+ from .microtask_gate import (
+     PRE_EXECUTION_STATUSES,
+@@ -302,6 +303,15 @@
+                 "replayed": True,
+                 "microtask_status": current.status.value,
+             }
++        # R-MT: every status writer closes an open transition intent of this microtask
++        # first (the caller holds the mutation lock), so no intent is ever decided on
++        # a status a recovery write changed afterwards.
++        try:
++            self.operations.events.resolve_microtask_intents_locked(task_id, microtask_id)
++        except EventCheckpointStoreError as exc:
++            raise RecoveryCoordinatorBlocked(
++                f"recovery write of {microtask_id} refused: its transition history is not reconcilable ({exc})"
++            ) from exc
+         updated = self.tasks.set_microtask_status_locked(task_id, microtask_id, target)
+         return {"changed": True, "replayed": False, "microtask_status": updated.status.value}
+ 
+@@ -1544,6 +1554,42 @@
+             "error": error,
+         }
+ 
++    @staticmethod
++    def _history_reconcilable(projection: dict[str, Any]) -> bool:
++        return any(item["code"] in ("MICROTASK_HISTORY_PENDING", "OPERATION_INTENT_PENDING")
++                   for item in projection["diagnostics"])
++
++    def _reconcile_history(self, task_id: str) -> dict[str, Any]:
++        """R-MT / R-OP bounded step: close interrupted journal entries from durable facts only.
++
++        Under the operation TASK lock and the mutation lock (every writer of an
++        operation record or a microtask status holds them). No physical mutation
++        and no record/status change: only the commit/abandon/intent events whose
++        content the authoritative records determine. A contradiction is left in
++        place for the projection (blocker -> FAIL_CLOSED, operator).
++        """
++        outcome: dict[str, Any] = {"result": "HISTORY_RECONCILED", "microtasks": [], "operations": [],
++                                   "physical_mutation_performed": False}
++        with self.operations.task_lock(task_id):
++            with self.tasks.mutation_lock(task_id):
++                events = self.operations.events
++                try:
++                    microtask_ids = sorted(events.microtask_statuses(task_id))
++                except EventCheckpointStoreError as exc:
++                    microtask_ids, outcome["microtask_error"] = [], str(exc)
++                for microtask_id in microtask_ids:
++                    try:
++                        outcome["microtasks"].extend(events.resolve_microtask_intents_locked(task_id, microtask_id))
++                    except EventCheckpointStoreError as exc:
++                        outcome.setdefault("left_for_operator", []).append(f"{microtask_id}: {exc}")
++                try:
++                    for record in self.operations.list(task_id):
++                        if self.operations._reconcile_intent_locked(task_id, record):
++                            outcome["operations"].append(record.operation_id)
++                except (OperationStoreError, TaskStoreError) as exc:
++                    outcome.setdefault("left_for_operator", []).append(str(exc))
++        return outcome
++
+     def recover(
+         self,
+         task_id: str,
+@@ -1561,6 +1607,19 @@
+ 
+         current = initial
+         steps: list[dict[str, Any]] = []
++        if self._history_reconcilable(initial):
++            outcome = self._reconcile_history(task_id)
++            try:
++                current = self.projection.build(task_id)
++            except (ProjectionError, TaskStoreError, OperationStoreError, ValueError, OSError) as exc:
++                raise RecoveryCoordinatorError(str(exc)) from exc
++            steps.append({
++                "index": 0,
++                "action": "RECONCILE_HISTORY",
++                "before_projection_fingerprint": initial["projection_fingerprint"],
++                "after_projection_fingerprint": current["projection_fingerprint"],
++                "outcome": outcome,
++            })
+         # F-E: a step RC-4 refused (BLOCKED/REJECTED) is not repeated within
+         # one invocation; key -> the refusing outcome
+         refused: dict[tuple[Any, ...], dict[str, Any]] = {}

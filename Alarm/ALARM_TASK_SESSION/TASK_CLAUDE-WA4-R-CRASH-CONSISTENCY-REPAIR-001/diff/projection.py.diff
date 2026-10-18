@@ -1,0 +1,96 @@
+--- a/web_alarm/projection.py
++++ b/web_alarm/projection.py
+@@ -50,7 +50,7 @@
+ from pathlib import Path
+ from typing import Any
+ 
+-from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
++from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError, microtask_journal
+ from .manifest_store import ManifestSnapshotStore, ManifestStoreError
+ from .microtask_gate import (  # noqa: F401  (R2 rules live there since Repair #3; re-exported)
+     authoritative_action,
+@@ -61,7 +61,7 @@
+     settlement_lifecycle_target,
+ )
+ from .models import CheckpointRecord, MicrotaskStatus, OperationStatus, TaskStatus, utc_now_iso
+-from .operation_store import OperationStore, OperationStoreError
++from .operation_store import OperationStore, OperationStoreError, pending_intent_operation_ids
+ from .reconciliation import ReconciliationEvidenceError
+ from .reconciliation_service import ReconciliationService
+ from .resolution_store import ResolutionAction, ResolutionResult, ResolutionStoreError
+@@ -886,10 +886,53 @@
+         # (closeout gate included) even when no operation would have read it. The
+         # basis gains a key only then, so readable-history fingerprints are unchanged.
+         try:
+-            self.state.read_events(task_id)
++            events = self.state.read_events(task_id)
+         except EventCheckpointStoreError as exc:
++            events = None
+             basis["history"] = ["UNREADABLE", str(exc)]
+             blockers.append(_item("HISTORY_UNREADABLE", str(exc)))
++        # R-MT / R-OP (CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001): status <-> history
++        # integrity, read only. Keys and items appear only when there is something to
++        # report, so the fingerprints of a TASK without such facts are unchanged.
++        integrity: dict[str, Any] = {}
++        if events is not None:
++            if records:
++                journal = microtask_journal(events, {m.microtask_id: (m.status.value, m.updated_at) for m in records})
++                for item in journal["contradictions"]:
++                    blockers.append(_item("MICROTASK_HISTORY_CONTRADICTION",
++                                          f"{item['microtask_id']}: {item['reason']}",
++                                          microtask_id=item["microtask_id"], intent_id=item["intent_id"]))
++                for item in journal["pending"]:
++                    intent = item["intent"]
++                    diagnostics.append(_item(
++                        "MICROTASK_HISTORY_PENDING",
++                        f"{item['microtask_id']}: transition {intent.payload.get('from')} -> "
++                        f"{intent.payload.get('to')} is not closed in the history ({item['resolution']} "
++                        "is decided by the persisted status)",
++                        microtask_id=item["microtask_id"], intent_id=intent.event_id, resolution=item["resolution"],
++                    ))
++                for mid in journal["unproven_verified"]:
++                    diagnostics.append(_item("MICROTASK_VERIFICATION_UNPROVEN",
++                                             f"{mid} is VERIFIED but no verification evidence is recorded",
++                                             microtask_id=mid))
++                if journal["contradictions"] or journal["pending"] or journal["unproven_verified"]:
++                    integrity["microtasks"] = {
++                        "contradictions": [[c["microtask_id"], c["intent_id"], c["reason"]]
++                                           for c in journal["contradictions"]],
++                        "pending": [[p["microtask_id"], p["intent"].event_id, p["resolution"]]
++                                    for p in journal["pending"]],
++                        "unproven_verified": journal["unproven_verified"],
++                    }
++            pending_ops = pending_intent_operation_ids(operations, events)
++            for op_id in pending_ops:
++                diagnostics.append(_item("OPERATION_INTENT_PENDING",
++                                         f"{op_id}: the INTENT record is persisted, its OPERATION_INTENT event is "
++                                         "missing (reconstructible from the record; nothing was executed)",
++                                         operation_id=op_id))
++            if pending_ops:
++                integrity["pending_operation_intents"] = pending_ops
++        if integrity:
++            basis["history_integrity"] = integrity
+ 
+         views: list[dict[str, Any]] = []
+         basis_resolutions: list[Any] = []
+@@ -1306,6 +1349,20 @@
+     for item in projection["diagnostics"]:
+         if item["code"] in ("ORPHAN_MICROTASKS", "CLAIMS_UNREADABLE"):
+             add(item["code"], item["reason"], "repair the persistent state by manual review")
++        # R-MT / R-OP: a result without its recorded proof never closes the TASK
++        elif item["code"] == "MICROTASK_HISTORY_PENDING":
++            add("MICROTASK_HISTORY_PENDING", item["reason"],
++                "run recover: it reconciles the interrupted transition from durable facts only (no mutation)",
++                microtask_id=item["microtask_id"])
++        elif item["code"] == "MICROTASK_VERIFICATION_UNPROVEN":
++            add("MICROTASK_VERIFICATION_UNPROVEN", item["reason"],
++                f"re-check {item['microtask_id']} without mutation and record new evidence through "
++                f"POST /microtasks/{item['microtask_id']}/reaffirm, or leave the decision to the operator",
++                microtask_id=item["microtask_id"])
++        elif item["code"] == "OPERATION_INTENT_PENDING":
++            add("OPERATION_INTENT_PENDING", item["reason"],
++                "run recover (or replay the same operation_id): the intent event is restored from the record",
++                operation_id=item["operation_id"])
+     if not position["microtasks"]:
+         add("NO_MICROTASKS", "the TASK plan has no microtask; nothing was verified", "create and verify microtasks")
+     for micro in position["microtasks"]:

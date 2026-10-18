@@ -1,0 +1,53 @@
+--- a/web_alarm/server.py
++++ b/web_alarm/server.py
+@@ -31,6 +31,8 @@
+ from .operation_store import (
+     OperationConflictError,
+     OperationContractRejected,
++    OperationHistoryPending,
++    OperationIntentReconciled,
+     OperationScopeRejected,
+     OperationStore,
+     OperationStoreError,
+@@ -893,6 +895,19 @@
+                 )
+                 return 200, _jsonable(result)
+ 
++            if len(parts) == 3 and parts[0] == "microtasks" and parts[2] == "reaffirm":
++                # R-MT: safe post-hoc re-verification of a VERIFIED microtask without recorded evidence
++                if method != "POST":
++                    raise ApiError(405, "method_not_allowed", "reaffirm endpoint requires POST")
++                data = _require_object(body)
++                result = self.machine.reaffirm_verification(
++                    _require_text(data, "task_id"),
++                    parts[1],
++                    _require_text(data, "verification_evidence"),
++                    operation_id=_optional_text(data, "operation_id"),
++                )
++                return 200, _jsonable(result)
++
+             if len(parts) == 3 and parts[0] == "microtasks" and parts[2] == "report":
+                 if method != "POST":
+                     raise ApiError(405, "method_not_allowed", "report endpoint requires POST")
+@@ -956,6 +971,21 @@
+             ) from exc
+         except ServerStateMachineError as exc:
+             raise ApiError(409, "state_machine_error", str(exc)) from exc
++        except OperationIntentReconciled as exc:
++            raise ApiError(
++                409,
++                "operation_intent_reconciled",
++                str(exc),
++                details={"operation_id": exc.operation_id, "physical_mutation_performed": False},
++            ) from exc
++        except OperationHistoryPending as exc:
++            raise ApiError(
++                409,
++                "operation_history_pending",
++                str(exc),
++                details={"operation_id": exc.operation_id, "intent_persisted": True,
++                         "physical_mutation_performed": False},
++            ) from exc
+         except ProjectionError as exc:
+             raise ApiError(409, "projection_error", str(exc)) from exc
+         except CloseoutError as exc:

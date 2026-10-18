@@ -1,0 +1,97 @@
+{
+ "web_alarm/closeout.py": {
+  "sha256_before": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+  "sha256_after": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+  "bytes_before": 5752,
+  "bytes_after": 5752,
+  "changed": false
+ },
+ "web_alarm/event_checkpoint_store.py": {
+  "sha256_before": "9cf9e3ed45a415bfcab139bdb24fc88af65c7ece8723f1f5192c3e9a0ab8bf45",
+  "sha256_after": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042",
+  "bytes_before": 10479,
+  "bytes_after": 19244,
+  "changed": true,
+  "added": 152,
+  "removed": 0
+ },
+ "web_alarm/manifest_store.py": {
+  "sha256_before": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+  "sha256_after": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+  "bytes_before": 36996,
+  "bytes_after": 36996,
+  "changed": false
+ },
+ "web_alarm/operation_store.py": {
+  "sha256_before": "acb1e4c9ccc6a9ee70684f852c48cf8ba815ea67548781f2e1e53e535468826a",
+  "sha256_after": "a36468717b8def5ca024cdaff751168fc86adbb6aad58f9679dbde2f4a626d48",
+  "bytes_before": 38022,
+  "bytes_after": 44850,
+  "changed": true,
+  "added": 159,
+  "removed": 23
+ },
+ "web_alarm/projection.py": {
+  "sha256_before": "e4503ce955a41d8e9891bc429db4f145b32027a838334081688a4d662426f4e1",
+  "sha256_after": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5",
+  "bytes_before": 73094,
+  "bytes_after": 77123,
+  "changed": true,
+  "added": 60,
+  "removed": 3
+ },
+ "web_alarm/recovery_coordinator.py": {
+  "sha256_before": "362d74594cd323c93e93dfc1683e128a0d8ed05baf67652f19b95a97955f24d2",
+  "sha256_after": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0",
+  "bytes_before": 80281,
+  "bytes_after": 83713,
+  "changed": true,
+  "added": 59,
+  "removed": 0
+ },
+ "web_alarm/server.py": {
+  "sha256_before": "44987c05e6343facdef2d488aad4575cf4f4f4b923ed177f279006eef40e0fb6",
+  "sha256_after": "7e8b2aab5e2a04e87a5b7dc28cd9c33adf3e0c93bc5dd86f65be4faccae70013",
+  "bytes_before": 57348,
+  "bytes_after": 58755,
+  "changed": true,
+  "added": 30,
+  "removed": 0
+ },
+ "web_alarm/state_machine.py": {
+  "sha256_before": "3164383a1a881c6dfcac86678b746d01c038f1b4ccb988fbda5a6074a262f408",
+  "sha256_after": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182",
+  "bytes_before": 31246,
+  "bytes_after": 39949,
+  "changed": true,
+  "added": 193,
+  "removed": 23
+ },
+ "test_web_alarm_aud01t02b_repair.py": {
+  "sha256_before": "b96c2b0cec62b05998075e068a4c13edb0969dadfa6210d20aecd53b25ff0ef3",
+  "sha256_after": "a1d7e25383afcf79c106f7d69d50c0d149ed2e73ed65a60214085357fa8e5136",
+  "bytes_before": 41845,
+  "bytes_after": 42213,
+  "changed": true,
+  "added": 6,
+  "removed": 1
+ },
+ "test_web_alarm_recovery_coordinator_adversarial.py": {
+  "sha256_before": "0c6ff6cffefbbe4f7e5fe557b3a8f6bf1fd7e9ea47d09632b9aa95e8e55856ba",
+  "sha256_after": "0998303cc315f32926aaa215c659a4a0a48d58035d19ef138717c61339d3fb8e",
+  "bytes_before": 19233,
+  "bytes_after": 19779,
+  "changed": true,
+  "added": 7,
+  "removed": 0
+ },
+ "test_web_alarm_crash_consistency.py": {
+  "sha256_before": null,
+  "sha256_after": "255b942fb0027c03fb373c5d4f5003e9d0885bb71b142113fb877e4197b44237",
+  "bytes_before": null,
+  "bytes_after": 34569,
+  "changed": true,
+  "added": 568,
+  "removed": 0
+ }
+}

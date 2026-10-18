@@ -1,0 +1,2877 @@
+{
+  "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "targets": [
+    "test_web_alarm_crash_consistency",
+    "test_adversarial_repair"
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "win32",
+  "started_unix": 1792336544.593455,
+  "elapsed_seconds": 64.234,
+  "tests_run": 31,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "passed": 29,
+  "successful": false,
+  "isolation_violations": [],
+  "source_sha256": {
+    "web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+    "web_alarm/cli.py": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+    "web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "web_alarm/event_checkpoint_store.py": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042",
+    "web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "web_alarm/observation.py": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+    "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "web_alarm/operation_store.py": "d81319e4a51a7afe0311c5aa58af09b0f96f51b527d621202d6a01e7e9b6b778",
+    "web_alarm/operator_view.py": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+    "web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "web_alarm/projection.py": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5",
+    "web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "web_alarm/recovery_coordinator.py": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0",
+    "web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "web_alarm/server.py": "7e8b2aab5e2a04e87a5b7dc28cd9c33adf3e0c93bc5dd86f65be4faccae70013",
+    "web_alarm/state_machine.py": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182",
+    "web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "web_alarm/target_claim_service.py": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+    "web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+    "web_alarm/transport_event_store.py": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+    "web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "test_web_alarm_aud010205_repair.py": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+    "test_web_alarm_aud01t02b_repair.py": "a1d7e25383afcf79c106f7d69d50c0d149ed2e73ed65a60214085357fa8e5136",
+    "test_web_alarm_cli.py": "da16d5b886309d369c8607ab85ec7aab2c3a3bcfd89212429a941b431eeeca59",
+    "test_web_alarm_context_pack.py": "0775e6d15091e42f46b32a1349725fd90041aedb38a46e743199029e45766d52",
+    "test_web_alarm_crash_consistency.py": "fab7cde9c1e1853a782b88aa9699b799fa80156c766b53c9e2a3a8caf1b91362",
+    "test_web_alarm_event_checkpoint_store.py": "de26ecc5698d8e90d7b7a00cc4675d281df01ce39093d7af9db1910e1675cb1c",
+    "test_web_alarm_folder_picker.py": "ec46dbad11f5e18bce7fd3cb55523e45654224b69b1193499ee1be29b5b7a97e",
+    "test_web_alarm_lost_response.py": "1f48a0b175c89feedd29aa9dbdd356e8d1c47cb2a88502949a5a646bb0448cea",
+    "test_web_alarm_manifest_store.py": "d35fb7538581e681a08022138fcbf3da407d759f5104c935a3a6e89b0c50009b",
+    "test_web_alarm_models.py": "da0b930d37f8b2fcf39bc89e2458d8eeaede163f154f2906eac27551a3964ac1",
+    "test_web_alarm_mutation_executor.py": "a7e5aa5e1b4c9e029cca19f68f6ad2def8109d7656a260355fc3bd8f8bafa6be",
+    "test_web_alarm_new_invariants.py": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+    "test_web_alarm_observation.py": "e895b409d4d63ac2d4a768eaedac0ccbc7fe3c24126704e034d9bc9155e70c9d",
+    "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+    "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba",
+    "test_web_alarm_operation_store_concurrency.py": "bab96f7d52a1f60085936c93c1cba7887a1b20dda05d8e92e6e8ba3e949a303b",
+    "test_web_alarm_operator_ui.py": "1ca15bb060a360b404cff4d5c45013340eb4ac805d4aeb39623eee29c695fc9a",
+    "test_web_alarm_payload_store.py": "9b232329cbe3fdf8b84091780967834537f447bc17c690b15a829a09f0303a0a",
+    "test_web_alarm_projection.py": "d338067a27db813dc0621ae4bb3264c7bc865c2c01d6f53653491e4c541cf7d9",
+    "test_web_alarm_projection_concurrency.py": "b3c257feb3a4a7da1c630e936f52583580d9188581e5f2301039138e3b10e09b",
+    "test_web_alarm_projection_repair2.py": "add847e7e4331ffc4e962948bd8bc94d9335ea15442827a04831c8715e0d23dc",
+    "test_web_alarm_reconciliation.py": "074b467b1b925aec12e12fe6e14dfa0f1223e48cf7f12675ae67034aa7e96605",
+    "test_web_alarm_reconciliation_decision.py": "4dd20a9a5bb58586dab2e6b47de09281ae62efdb37e50a5397032d4a89043b91",
+    "test_web_alarm_reconciliation_integration.py": "ced03d05078b77ebcbbd6f4b526806ee4a8e753bfcd40030df02ff7d6be8d334",
+    "test_web_alarm_recovery_coordinator.py": "c7408223f4ae462600a9c6384b6cc327068b1f8e54e5061b049c9c74770e8d7a",
+    "test_web_alarm_recovery_coordinator_adversarial.py": "0998303cc315f32926aaa215c659a4a0a48d58035d19ef138717c61339d3fb8e",
+    "test_web_alarm_recovery_coordinator_concurrency.py": "9ed892335426f5813d960d522429a917616e8b1a9591d3d5110e0c2cd180658b",
+    "test_web_alarm_recovery_coordinator_repair1.py": "90be1c61284e78f199131d333368a645820cf5f5a392df8a7a49ded7d5057493",
+    "test_web_alarm_recovery_coordinator_repair2.py": "42be3c91ee5f9af7e97a86bc7653c01f1963390bba78fe7597a5fa7c27c51c66",
+    "test_web_alarm_recovery_coordinator_repair3.py": "76244e276ffeb53737723a361c26b52479c39302b3d93ce68f22e074dc3b3016",
+    "test_web_alarm_recovery_coordinator_repair4.py": "016ce8bfd5c00ff5cfe56444f76fff033c12967603fa67d1ef1206fde3107211",
+    "test_web_alarm_recovery_coordinator_repair4a.py": "2cf70b19aac76f1752a88b012f081204446f18e39cb985fdaf06649651df8015",
+    "test_web_alarm_recovery_coordinator_repair4b.py": "d61b004360aeef1404d19f84450f62f992f6a74734b6d573d91295f5d05e85f3",
+    "test_web_alarm_recovery_coordinator_wa014.py": "f8381c97b87e30335e56a1314d4e6f2cf6f421899f84e2984cab8b886b530758",
+    "test_web_alarm_recovery_report_acceptance.py": "14d562590eb844b4f02d77546dc49cf9a35d9c8c7588061c370d058ae7a54ac5",
+    "test_web_alarm_recovery_report_builder.py": "35a0b5cc3ddc32f8ac0bc28d42d7ba15d9adb552a1d3b6102b0fd937556de73b",
+    "test_web_alarm_recovery_report_integration.py": "a1189a9b2a17cffb21cf3dc1bed617851188793277c1939628254218d656e840",
+    "test_web_alarm_recovery_report_store.py": "9e0ae8ec8b6506df921fbacaac56fe359f7edd8d9bd436aab022d7ba0ec195e4",
+    "test_web_alarm_recovery_scenarios.py": "f9a6ab823f1bf908a58581f49d73d66a5a8a50d205ebccf8a20fb57ec9bb1093",
+    "test_web_alarm_reliability_wa017.py": "edb7d2b0bc65568d3be3fc33f39b3c808f790c4906991e4b63c17c974489fabd",
+    "test_web_alarm_remote_entry.py": "e8b956d296588672f9a893aff0e7cb5e9fa0a0ae918d09f52720b8ab430a4be0",
+    "test_web_alarm_resolver.py": "0b9cd46389b397ff97d2a3d3686d1887baee920459e3d969769ebac6a7b06bbc",
+    "test_web_alarm_resolver_concurrency.py": "2b51c468df66c0a9441040814c1f59b9e17e3b73f4b3b1a00a13e07e9dac8d96",
+    "test_web_alarm_restart_recovery.py": "11807f4a50ec11d22f37d68105d73380fc2a2f3151915a6136554056c1ce9a3c",
+    "test_web_alarm_rollback.py": "17f9145fd8b7e578ce3680c63fff04eb404553c564b1a0c6482d1da7799b6aaa",
+    "test_web_alarm_rollback_concurrency.py": "c12bfee5c4b09ae62c9a934079a9325612f6e331587ad13dacb3f836f263e8c4",
+    "test_web_alarm_server.py": "7aa4fd2a77daacb50e990355d82a1046c338fd3a90df4b179cd26c144d89ea3f",
+    "test_web_alarm_state_machine.py": "483e913b6e3ae4b8059511987e0cd09f64d4a1e494e2bd939740e900fa592bfb",
+    "test_web_alarm_state_machine_cas.py": "e00c5f1bbce9c5900887b767bc52195737a783f3cac15baa8f84459e55ca7e77",
+    "test_web_alarm_target_claims.py": "a6fd3b43880f26a22ee2dbbfb2d076a9e8385c6a8ed006c1d27540537e844616",
+    "test_web_alarm_target_claims_concurrency.py": "48443dc39e85f27c77d92ce8ff39cbea5f1f62fa1403034cb64da57fb3052484",
+    "test_web_alarm_target_identity.py": "f7ad1b7977454412ca2f2fed2736bf7d34edfd66161baa88dad992d4c1ab163c",
+    "test_web_alarm_task_store.py": "df3dd3bfbfa9d97329a8d5b4af915b3a994fde7dd4c8918219f08582098eae3b",
+    "test_web_alarm_transport_authority.py": "3b5218ee6f623f3b9c889032c38f324d2671f7c0f0fcfc638f2ef9c6abd95c53",
+    "test_web_alarm_transport_event_store.py": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849",
+    "test_web_alarm_transport_ingestion.py": "765fa85afb8846855e3de15bbe1fbd4a1b3d24aec62778ad5f70810635cf07eb",
+    "test_web_alarm_transport_recovery.py": "de660a794815e9d58b0648ab84ecc4e90e398134d9e83d79a71793be078f20b1",
+    "test_web_alarm_ui.py": "fcfa67c3e352422a15197423fcae3a4598625b66d6d14b2e4c6af066420cc1b7",
+    "test_web_alarm_ui_launcher.py": "b67083d89b019e400958f42fe6e48ea41fbb13ced2c196b527f01c6b45519dc6",
+    "test_web_alarm_ui_ux.py": "2eb379d90a8f2f0b121a1e55c350d6273241ba784acd33ab001e920cdc81cf96",
+    "test_web_alarm_wa4r002_diagnostics.py": "1d7a23480b726b4835692b53b3e80b72ead980907e145a3ffdbb85ff74083254",
+    "test_web_alarm_wa4r006_local_gate.py": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+    "test_web_alarm_workspace_registry.py": "16ac6c5b053cd8123b26004cda26dd080140d0332acea15ac5ecb760521984ed",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+  },
+  "tests": [
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_a_refused_step_that_blocks_the_restore_point_closes_the_open_intent_first",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_a_refused_step_that_blocks_the_restore_point_closes_the_open_intent_first"
+        },
+        {
+          "child:crash": {
+            "exit": 71,
+            "phases": [
+              {
+                "phase": "died_after_append",
+                "event": "MICROTASK_TRANSITION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:next": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "transition_rejected",
+                "message": "BLOCKED_PREPARE -> READY rejected: verified restore point required: cannot read JSON record: <TEMP>\\wa_ccr_aqx605jz\\state\\tasks\\active\\task_ccr\\microtasks\\m1\\restore_point\\manifest_entries\\manifest_9907585cd3c3402880190eca97775192.json",
+                "details": {
+                  "current_status": "BLOCKED_PREPARE",
+                  "requested_status": "READY",
+                  "reason": "verified restore point required: cannot read JSON record: <TEMP>\\wa_ccr_aqx605jz\\state\\tasks\\active\\task_ccr\\microtasks\\m1\\restore_point\\manifest_entries\\manifest_9907585cd3c3402880190eca97775192.json",
+                  "next_safe_action": "the restore point of m1 failed verification and is kept as evidence (BLOCKED_PREPARE); prepare is refused while it exists: manual review and repair of the restore point is required"
+                }
+              },
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [],
+                  "closeout": [
+                    "MICROTASK_NOT_VERIFIED"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "the restore point of m1 failed verification and is kept as evidence (BLOCKED_PREPARE); prepare is refused while it exists: manual review and repair of the restore point is required"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "follow": [
+            {
+              "http": 409,
+              "code": "transition_rejected",
+              "message": "BLOCKED_PREPARE -> READY rejected: verified restore point required: cannot read JSON record: <TEMP>\\wa_ccr_aqx605jz\\state\\tasks\\active\\task_ccr\\microtasks\\m1\\restore_point\\manifest_entries\\manifest_9907585cd3c3402880190eca97775192.json",
+              "details": {
+                "current_status": "BLOCKED_PREPARE",
+                "requested_status": "READY",
+                "reason": "verified restore point required: cannot read JSON record: <TEMP>\\wa_ccr_aqx605jz\\state\\tasks\\active\\task_ccr\\microtasks\\m1\\restore_point\\manifest_entries\\manifest_9907585cd3c3402880190eca97775192.json",
+                "next_safe_action": "the restore point of m1 failed verification and is kept as evidence (BLOCKED_PREPARE); prepare is refused while it exists: manual review and repair of the restore point is required"
+              }
+            },
+            {
+              "projection": {
+                "blockers": [],
+                "diagnostics": [],
+                "closeout": [
+                  "MICROTASK_NOT_VERIFIED"
+                ],
+                "recovery_state": "NORMAL",
+                "next": "the restore point of m1 failed verification and is kept as evidence (BLOCKED_PREPARE); prepare is refused while it exists: manual review and repair of the restore point is required"
+              }
+            }
+          ],
+          "status": "BLOCKED_PREPARE",
+          "kinds": [
+            [
+              "MICROTASK_PREPARED",
+              null,
+              null
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION_ABANDONED",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION_REJECTED",
+              null,
+              null
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_commit_fsync_failure_is_reported_and_reconciled_once",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_commit_fsync_failure_is_reported_and_reconciled_once"
+        },
+        {
+          "child:fsync": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "DONE",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:47.450538+00:00",
+                    "updated_at": "2026-10-18T15:15:48.810066+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_a4dff6a948a84f1d893e8e5cb0501faf",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": null,
+                    "current_microtask_id": "m1",
+                    "current_status": "DONE",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:47.587354+00:00",
+                    "updated_at": "2026-10-18T15:15:48.863877+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "be32d065cd3bfb884cafe653e117ed452f6153868e8cdb07186037609b146511",
+                      "projection_fingerprint": "274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9",
+                      "authority_source": "lifecycle"
+                    }
+                  },
+                  "event_recorded": false,
+                  "history_error": "EventCheckpointStoreError: cannot append event: <TEMP>\\wa_ccr_5f0nlats\\state\\tasks\\active\\task_ccr\\events.jsonl",
+                  "next_safe_action": "the transition to DONE IS persisted, but its history event was not recorded (EventCheckpointStoreError: cannot append event: <TEMP>\\wa_ccr_5f0nlats\\state\\tasks\\active\\task_ccr\\events.jsonl); do not repeat the transition: repair or reconcile the TASK event history by manual review, then re-read the projection"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "child:again": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "recover": {
+                  "state": "READY_FOR_VERIFICATION",
+                  "reason": "run verification and transition m1 to VERIFIED with verification_evidence",
+                  "requires_human": false,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9",
+                  "final_projection_fingerprint": "274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9",
+                  "performed_steps": [],
+                  "blocked_by": [],
+                  "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'DONE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'DONE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_3a1f714b73de46faa6566bbb93ad69a5', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'run verification and transition m1 to VERIFIED with verification_evidence', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is DONE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:15:47.454137+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:15:47.714118+00:00'], 'microtasks': [['m1', 1, 'DONE', '2026-10-18T15:15:48.810066+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_3a1f714b73de46faa6566bbb93ad69a5', '2026-10-18T15:15:47.505740+00:00'], 'operations': [], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'be32d065cd3bfb884cafe653e117ed452f6153868e8cdb07186037609b146511', 'projection_fingerprint': '274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9', 'generated_at': '2026-10-18T15:15:49.985463+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "recover": {
+                  "state": "READY_FOR_VERIFICATION",
+                  "reason": "run verification and transition m1 to VERIFIED with verification_evidence",
+                  "requires_human": false,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9",
+                  "final_projection_fingerprint": "274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9",
+                  "performed_steps": [],
+                  "blocked_by": [],
+                  "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'DONE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'DONE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_3a1f714b73de46faa6566bbb93ad69a5', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'run verification and transition m1 to VERIFIED with verification_evidence', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is DONE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:15:47.454137+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:15:47.714118+00:00'], 'microtasks': [['m1', 1, 'DONE', '2026-10-18T15:15:48.810066+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_3a1f714b73de46faa6566bbb93ad69a5', '2026-10-18T15:15:47.505740+00:00'], 'operations': [], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'be32d065cd3bfb884cafe653e117ed452f6153868e8cdb07186037609b146511', 'projection_fingerprint': '274cd480fcfbeaddc7166220d4016f3047a2eacdd2ab127d7e2b12bdab5ae4a9', 'generated_at': '2026-10-18T15:15:50.044402+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [],
+                  "closeout": [
+                    "MICROTASK_NOT_VERIFIED"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "run verification and transition m1 to VERIFIED with verification_evidence"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "dones": [
+            {
+              "event_id": "event_3d880fd664a64acfb95b262316c551e9",
+              "task_id": "task_ccr",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "ACTIVE",
+                "to": "DONE",
+                "verification_evidence": null,
+                "intent_id": "event_ebbfb6ff46e44e9e87a95fc64cbd7346"
+              },
+              "recorded_at": "2026-10-18T15:15:48.813263+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-18T15:15:48.813263+00:00",
+              "updated_at": "2026-10-18T15:15:48.813263+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record"
+        },
+        {
+          "child:crash": {
+            "exit": 71,
+            "phases": [
+              {
+                "phase": "died_after_append",
+                "event": "MICROTASK_TRANSITION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:next": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "DONE",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:50.133235+00:00",
+                    "updated_at": "2026-10-18T15:15:52.539078+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_c83177aa6bae4abcaf0fed5323d27674",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": null,
+                    "current_microtask_id": "m1",
+                    "current_status": "DONE",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:50.272378+00:00",
+                    "updated_at": "2026-10-18T15:15:52.593931+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "7c05aca81300328d597db68d31d4db4e20178ce711cd11cb5322f2552fe1d003",
+                      "projection_fingerprint": "dfc81c283b443f03b3de3618f636e43c7c4fb32e123ce7ad0a10fea2ca399c2a",
+                      "authority_source": "lifecycle"
+                    }
+                  },
+                  "event_recorded": true,
+                  "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "kinds": [
+            [
+              "MICROTASK_PREPARED",
+              null,
+              null
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "READY",
+              "ACTIVE"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "READY",
+              "ACTIVE"
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "ACTIVE",
+              "DONE"
+            ],
+            [
+              "MICROTASK_TRANSITION_ABANDONED",
+              "ACTIVE",
+              "DONE"
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "ACTIVE",
+              "DONE"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "ACTIVE",
+              "DONE"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MICROTASK_TRANSITION"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:reopen": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [
+                    "MICROTASK_HISTORY_PENDING"
+                  ],
+                  "closeout": [
+                    "MICROTASK_HISTORY_PENDING"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "every microtask is VERIFIED but closeout is blocked (MICROTASK_HISTORY_PENDING): run recover: it reconciles the interrupted transition from durable facts only (no mutation)"
+                }
+              },
+              {
+                "closeout": {
+                  "result": "REJECTED",
+                  "blockers": [
+                    "MICROTASK_HISTORY_PENDING"
+                  ],
+                  "event_recorded": null
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MICROTASK_TRANSITION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction"
+        },
+        {
+          "child:crash": {
+            "exit": 71,
+            "phases": [
+              {
+                "phase": "died_after_append",
+                "event": "MICROTASK_TRANSITION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:next": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "state_machine_error",
+                "message": "DONE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable; nothing was written, operator review is required",
+                "details": null
+              },
+              {
+                "recover": {
+                  "state": "FAIL_CLOSED",
+                  "reason": "MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable",
+                  "requires_human": true,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa",
+                  "final_projection_fingerprint": "cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa",
+                  "performed_steps": [],
+                  "blocked_by": [
+                    "MICROTASK_HISTORY_CONTRADICTION"
+                  ],
+                  "next_safe_action": "projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation",
+                  "authority_source": "projection_blocker",
+                  "task_id": "task_ccr",
+                  "recovery_state": "PROJECTION_BLOCKED",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 4}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}, {'microtask_id': 'm2', 'sequence': 2, 'title': 'm2', 'status': 'PLANNED'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_19e3207a15774c18beb64301645017ac', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [{'code': 'MICROTASK_HISTORY_CONTRADICTION', 'reason': 'm1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable', 'microtask_id': 'm1', 'intent_id': 'event_a8982473c2c94a21b2c68f1527d80614'}], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'PROJECTION_BLOCKED', 'source': 'projection_blocker', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation', 'authority_source': 'projection_blocker', 'closeout': [{'code': 'PROJECTION_MICROTASK_HISTORY_CONTRADICTION', 'reason': 'm1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable', 'next': 'repair the persistent plan/state by manual review'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm2 is PLANNED', 'microtask_id': 'm2', 'next': 'bring m2 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 4, '2026-10-18T15:15:58.081561+00:00', 'active'], 'plan': [4, ['m1', 'm2'], 'm1', '2026-10-18T15:15:58.081561+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:15:58.074835+00:00'], ['m2', 2, 'PLANNED', '2026-10-18T15:15:58.078450+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_19e3207a15774c18beb64301645017ac', '2026-10-18T15:15:56.766122+00:00'], 'operations': [], 'rollbacks': [], 'claims': [], 'history_integrity': {'microtasks': {'contradictions': [['m1', 'event_a8982473c2c94a21b2c68f1527d80614', 'the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable']], 'pending': [], 'unproven_verified': []}}, 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '48e17522e965b27faada6fe1c9aabc367f528389e3402d1d913ce80a343a0208', 'projection_fingerprint': 'cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa', 'generated_at': '2026-10-18T15:15:59.198235+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "projection": {
+                  "blockers": [
+                    "MICROTASK_HISTORY_CONTRADICTION"
+                  ],
+                  "diagnostics": [],
+                  "closeout": [
+                    "PROJECTION_MICROTASK_HISTORY_CONTRADICTION",
+                    "MICROTASK_NOT_VERIFIED",
+                    "MICROTASK_NOT_VERIFIED"
+                  ],
+                  "recovery_state": "PROJECTION_BLOCKED",
+                  "next": "projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "follow": [
+            {
+              "http": 409,
+              "code": "state_machine_error",
+              "message": "DONE step of task_ccr/m1 refused: microtask history cannot be reconciled automatically: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable; nothing was written, operator review is required",
+              "details": null
+            },
+            {
+              "recover": {
+                "state": "FAIL_CLOSED",
+                "reason": "MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable",
+                "requires_human": true,
+                "ready_for_execution": false,
+                "ready_proof": null,
+                "initial_projection_fingerprint": "cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa",
+                "final_projection_fingerprint": "cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa",
+                "performed_steps": [],
+                "blocked_by": [
+                  "MICROTASK_HISTORY_CONTRADICTION"
+                ],
+                "next_safe_action": "projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation",
+                "authority_source": "projection_blocker",
+                "task_id": "task_ccr",
+                "recovery_state": "PROJECTION_BLOCKED",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 4}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}, {'microtask_id': 'm2', 'sequence': 2, 'title': 'm2', 'status': 'PLANNED'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_19e3207a15774c18beb64301645017ac', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [{'code': 'MICROTASK_HISTORY_CONTRADICTION', 'reason': 'm1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable', 'microtask_id': 'm1', 'intent_id': 'event_a8982473c2c94a21b2c68f1527d80614'}], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'PROJECTION_BLOCKED', 'source': 'projection_blocker', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation', 'authority_source': 'projection_blocker', 'closeout': [{'code': 'PROJECTION_MICROTASK_HISTORY_CONTRADICTION', 'reason': 'm1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable', 'next': 'repair the persistent plan/state by manual review'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm2 is PLANNED', 'microtask_id': 'm2', 'next': 'bring m2 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 4, '2026-10-18T15:15:58.081561+00:00', 'active'], 'plan': [4, ['m1', 'm2'], 'm1', '2026-10-18T15:15:58.081561+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:15:58.074835+00:00'], ['m2', 2, 'PLANNED', '2026-10-18T15:15:58.078450+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_19e3207a15774c18beb64301645017ac', '2026-10-18T15:15:56.766122+00:00'], 'operations': [], 'rollbacks': [], 'claims': [], 'history_integrity': {'microtasks': {'contradictions': [['m1', 'event_a8982473c2c94a21b2c68f1527d80614', 'the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable']], 'pending': [], 'unproven_verified': []}}, 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '48e17522e965b27faada6fe1c9aabc367f528389e3402d1d913ce80a343a0208', 'projection_fingerprint': 'cd62fffce871c5e63ec522246fb1e1814f5d0657017c28d99950cf0028749daa', 'generated_at': '2026-10-18T15:15:59.198235+00:00'}",
+                "error": null
+              }
+            },
+            {
+              "projection": {
+                "blockers": [
+                  "MICROTASK_HISTORY_CONTRADICTION"
+                ],
+                "diagnostics": [],
+                "closeout": [
+                  "PROJECTION_MICROTASK_HISTORY_CONTRADICTION",
+                  "MICROTASK_NOT_VERIFIED",
+                  "MICROTASK_NOT_VERIFIED"
+                ],
+                "recovery_state": "PROJECTION_BLOCKED",
+                "next": "projection is blocked (MICROTASK_HISTORY_CONTRADICTION: m1: the record changed since the intent (ACTIVE -> DONE): it is ACTIVE; the outcome is not provable); persistent state is inconsistent — repair it by manual review before any mutation"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id"
+        },
+        {
+          "child:done": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "DONE",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:59.292622+00:00",
+                    "updated_at": "2026-10-18T15:16:00.667401+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_30d0e30b8a984f27a6207bf1ce370862",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": null,
+                    "current_microtask_id": "m1",
+                    "current_status": "DONE",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:15:59.436033+00:00",
+                    "updated_at": "2026-10-18T15:16:00.724053+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "4a9c15ad180bf5fd5fcb96e0fe927e7b6a1c3c85044b633c05189f4138c7b8ba",
+                      "projection_fingerprint": "14e8bc124fcc1923f1416c36dab5f8a7418e2499889693f42b7348c2a39378aa",
+                      "authority_source": "lifecycle"
+                    }
+                  },
+                  "event_recorded": true,
+                  "next_safe_action": "run verification and transition m1 to VERIFIED with verification_evidence"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MICROTASK_TRANSITION"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:verify": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "VERIFIED",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:00.818691+00:00",
+                    "updated_at": "2026-10-18T15:16:03.267279+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_a5bfd21b4b674b0c93d6a6f05b4b3e95",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": "m1",
+                    "current_microtask_id": "m1",
+                    "current_status": "VERIFIED",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:00.953312+00:00",
+                    "updated_at": "2026-10-18T15:16:03.303442+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "4de992440d82d87a6b801354434baeb1caa5a606fddcc602dc5c5bafc25509a7",
+                      "projection_fingerprint": "3230da9834b1f8f5063d7d55b21ad740cc991ff8ec0fb0b5865d0da8f7f0a922",
+                      "authority_source": "closeout_gate"
+                    }
+                  },
+                  "event_recorded": true,
+                  "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MICROTASK_TRANSITION"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [
+                    "MICROTASK_HISTORY_PENDING"
+                  ],
+                  "closeout": [
+                    "MICROTASK_HISTORY_PENDING",
+                    "MICROTASK_NOT_VERIFIED"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "run verification and transition m1 to VERIFIED with verification_evidence"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MICROTASK_TRANSITION"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:recover": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "recover": {
+                  "state": "TASK_READY_TO_CLOSE",
+                  "reason": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                  "requires_human": false,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "d8e8da3ef40944f31b582d99c21438c1fbf296a60e577585573d3bc0b68705e0",
+                  "final_projection_fingerprint": "200a16c3ef256ad74894f214a28a7539222c82d48516e9e06303d784862bb2ae",
+                  "performed_steps": [
+                    {
+                      "index": 0,
+                      "action": "RECONCILE_HISTORY",
+                      "before_projection_fingerprint": "d8e8da3ef40944f31b582d99c21438c1fbf296a60e577585573d3bc0b68705e0",
+                      "after_projection_fingerprint": "200a16c3ef256ad74894f214a28a7539222c82d48516e9e06303d784862bb2ae",
+                      "outcome": {
+                        "result": "HISTORY_RECONCILED",
+                        "microtasks": [
+                          {
+                            "microtask_id": "m1",
+                            "intent_id": "event_33ea174da03f41a6b04e066563cbe7b9",
+                            "resolution": "COMMIT",
+                            "from": "DONE",
+                            "to": "VERIFIED"
+                          }
+                        ],
+                        "operations": [],
+                        "physical_mutation_performed": false
+                      }
+                    }
+                  ],
+                  "blocked_by": [],
+                  "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                  "authority_source": "closeout_gate",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'VERIFIED'}], 'last_verified': 'm1', 'current_microtask_id': 'm1', 'current_status': 'VERIFIED', 'all_verified': True, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_79e5a5a0fb59498d898413b13c3067b2', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask', 'authority_source': 'closeout_gate', 'closeout': [], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:05.887944+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:06.166179+00:00'], 'microtasks': [['m1', 1, 'VERIFIED', '2026-10-18T15:16:07.366840+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_79e5a5a0fb59498d898413b13c3067b2', '2026-10-18T15:16:05.945745+00:00'], 'operations': [], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '3808dfae668932165308de1f4310bcf3bffded15b885235cd4d54355a0b8bcc8', 'projection_fingerprint': '200a16c3ef256ad74894f214a28a7539222c82d48516e9e06303d784862bb2ae', 'generated_at': '2026-10-18T15:16:08.522046+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "closeout": {
+                  "result": "COMPLETED",
+                  "blockers": [],
+                  "event_recorded": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          "commits": [
+            {
+              "event_id": "event_6dc8147ac5f44389b1afe199eb541d01",
+              "task_id": "task_ccr",
+              "event_type": "MICROTASK_TRANSITION",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "from": "DONE",
+                "to": "VERIFIED",
+                "verification_evidence": "verified by inspection\u2028target matches",
+                "intent_id": "event_33ea174da03f41a6b04e066563cbe7b9",
+                "recovered_from_intent": true
+              },
+              "recorded_at": "2026-10-18T15:16:08.502480+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-18T15:16:08.502480+00:00",
+              "updated_at": "2026-10-18T15:16:08.502480+00:00"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_recovery_status_write_closes_an_open_intent_first",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_recovery_status_write_closes_an_open_intent_first"
+        },
+        {
+          "child:crash": {
+            "exit": 71,
+            "phases": [
+              {
+                "phase": "died_after_append",
+                "event": "MICROTASK_TRANSITION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [],
+                  "closeout": [
+                    "MICROTASK_NOT_VERIFIED"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "run recovery reconciliation; mutation is not allowed"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "look": [
+            {
+              "projection": {
+                "blockers": [],
+                "diagnostics": [],
+                "closeout": [
+                  "MICROTASK_NOT_VERIFIED"
+                ],
+                "recovery_state": "NORMAL",
+                "next": "run recovery reconciliation; mutation is not allowed"
+              }
+            }
+          ],
+          "status": "RECOVERY_REQUIRED",
+          "kinds": [
+            [
+              "MICROTASK_PREPARED",
+              null,
+              null
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "BACKUP_VERIFIED",
+              "READY"
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "READY",
+              "ACTIVE"
+            ],
+            [
+              "MICROTASK_TRANSITION",
+              "READY",
+              "ACTIVE"
+            ],
+            [
+              "MICROTASK_TRANSITION_INTENT",
+              "ACTIVE",
+              "DONE"
+            ],
+            [
+              "MICROTASK_TRANSITION_ABANDONED",
+              "ACTIVE",
+              "DONE"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_progress_event_is_not_reconstructed",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_progress_event_is_not_reconstructed"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "raised": "OperationStoreError",
+                "message": "operation history revision contradicts durable record",
+                "tb": "task_id, operation_id))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\web_alarm\\operation_store.py\", line 290, in _load_path\n    self._validate_history(record)\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\web_alarm\\operation_store.py\", line 340, in _validate_history\n    raise OperationStoreError(\"operation history revision contradicts durable record\")\nweb_alarm.operation_store.OperationStoreError: operation history revision contradicts durable record\n"
+              },
+              {
+                "recover": {
+                  "state": "FAIL_CLOSED",
+                  "reason": "OPERATIONS_UNREADABLE: operation history revision contradicts durable record",
+                  "requires_human": true,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9",
+                  "final_projection_fingerprint": "88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9",
+                  "performed_steps": [],
+                  "blocked_by": [
+                    "OPERATIONS_UNREADABLE"
+                  ],
+                  "next_safe_action": "projection is blocked (OPERATIONS_UNREADABLE: operation history revision contradicts durable record); persistent state is inconsistent — repair it by manual review before any mutation",
+                  "authority_source": "projection_blocker",
+                  "task_id": "task_ccr",
+                  "recovery_state": "PROJECTION_BLOCKED",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ff0fb1d9647b4840bd2b7d8ec4ff4de3', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [{'code': 'OPERATIONS_UNREADABLE', 'reason': 'operation history revision contradicts durable record'}], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'PROJECTION_BLOCKED', 'source': 'projection_blocker', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'projection is blocked (OPERATIONS_UNREADABLE: operation history revision contradicts durable record); persistent state is inconsistent — repair it by manual review before any mutation', 'authority_source': 'projection_blocker', 'closeout': [{'code': 'PROJECTION_OPERATIONS_UNREADABLE', 'reason': 'operation history revision contradicts durable record', 'next': 'repair the persistent plan/state by manual review'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:11.253005+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:11.520846+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:11.523847+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ff0fb1d9647b4840bd2b7d8ec4ff4de3', '2026-10-18T15:16:11.310622+00:00'], 'operations': ['UNREADABLE', 'operation history revision contradicts durable record'], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'f4e9b4e0c5a707e8ac0a1b8309af665f9bdab4c2b0baac9d689c2c6578ece8c1', 'projection_fingerprint': '88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9', 'generated_at': '2026-10-18T15:16:13.725940+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "http": 409,
+                "code": "mutation_refused",
+                "message": "operation history revision contradicts durable record",
+                "details": {
+                  "result": "REFUSED",
+                  "result_code": "REQUEST_REJECTED",
+                  "reason": "operation history revision contradicts durable record",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_c",
+                  "operation_status": null,
+                  "operation_revision": null,
+                  "mutation_kind": null,
+                  "target": null,
+                  "receipt": null,
+                  "physical_mutation_performed": false,
+                  "next_safe_action": "fix the request; nothing was recorded or written"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "raised": "OperationStoreError",
+              "message": "operation history revision contradicts durable record",
+              "tb": "task_id, operation_id))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\web_alarm\\operation_store.py\", line 290, in _load_path\n    self._validate_history(record)\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\web_alarm\\operation_store.py\", line 340, in _validate_history\n    raise OperationStoreError(\"operation history revision contradicts durable record\")\nweb_alarm.operation_store.OperationStoreError: operation history revision contradicts durable record\n"
+            },
+            {
+              "recover": {
+                "state": "FAIL_CLOSED",
+                "reason": "OPERATIONS_UNREADABLE: operation history revision contradicts durable record",
+                "requires_human": true,
+                "ready_for_execution": false,
+                "ready_proof": null,
+                "initial_projection_fingerprint": "88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9",
+                "final_projection_fingerprint": "88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9",
+                "performed_steps": [],
+                "blocked_by": [
+                  "OPERATIONS_UNREADABLE"
+                ],
+                "next_safe_action": "projection is blocked (OPERATIONS_UNREADABLE: operation history revision contradicts durable record); persistent state is inconsistent — repair it by manual review before any mutation",
+                "authority_source": "projection_blocker",
+                "task_id": "task_ccr",
+                "recovery_state": "PROJECTION_BLOCKED",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ff0fb1d9647b4840bd2b7d8ec4ff4de3', 'reason': None}, 'operations': [], 'last_operation_id': None, 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [{'code': 'OPERATIONS_UNREADABLE', 'reason': 'operation history revision contradicts durable record'}], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'PROJECTION_BLOCKED', 'source': 'projection_blocker', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'projection is blocked (OPERATIONS_UNREADABLE: operation history revision contradicts durable record); persistent state is inconsistent — repair it by manual review before any mutation', 'authority_source': 'projection_blocker', 'closeout': [{'code': 'PROJECTION_OPERATIONS_UNREADABLE', 'reason': 'operation history revision contradicts durable record', 'next': 'repair the persistent plan/state by manual review'}, {'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:11.253005+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:11.520846+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:11.523847+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ff0fb1d9647b4840bd2b7d8ec4ff4de3', '2026-10-18T15:16:11.310622+00:00'], 'operations': ['UNREADABLE', 'operation history revision contradicts durable record'], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'f4e9b4e0c5a707e8ac0a1b8309af665f9bdab4c2b0baac9d689c2c6578ece8c1', 'projection_fingerprint': '88385731cf3b2e68f7565ca714061b148b15a006ce4036172bce0c28b6d3a3d9', 'generated_at': '2026-10-18T15:16:13.725940+00:00'}",
+                "error": null
+              }
+            },
+            {
+              "http": 409,
+              "code": "mutation_refused",
+              "message": "operation history revision contradicts durable record",
+              "details": {
+                "result": "REFUSED",
+                "result_code": "REQUEST_REJECTED",
+                "reason": "operation history revision contradicts durable record",
+                "task_id": "task_ccr",
+                "operation_id": "op_c",
+                "operation_status": null,
+                "operation_revision": null,
+                "mutation_kind": null,
+                "target": null,
+                "receipt": null,
+                "physical_mutation_performed": false,
+                "next_safe_action": "fix the request; nothing was recorded or written"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_replay_event_is_not_reconstructed",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\test_web_alarm_crash_consistency.py\", line 504, in test_intent_with_a_replay_event_is_not_reconstructed\n    self.assert_progress_blocks_reconstruction(\"OPERATION_TRANSITION_REPLAY\", {\"status\": \"STARTED\"})\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\test_web_alarm_crash_consistency.py\", line 515, in assert_progress_blocks_reconstruction\n    self.assertIn(\"raised\", out[\"results\"][0], \"a contradicting history was treated as recoverable\")\nAssertionError: 'raised' not found in {'list': ['op_c']} : a contradicting history was treated as recoverable\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_replay_event_is_not_reconstructed"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "list": [
+                  "op_c"
+                ]
+              },
+              {
+                "recover": {
+                  "state": "READY_FOR_EXECUTION",
+                  "reason": "perform scoped implementation for m1, then transition to DONE",
+                  "requires_human": false,
+                  "ready_for_execution": true,
+                  "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:14.067689+00:00', 'manifest_id': 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', 'restore_point_fingerprint': 'cd934c865a574353ad95074eacbd8353f22470c134ab25657a88180aebbf2d2c', 'target_set_fingerprint': '6c947251bcd623933e601624ef0bcc7d7e60506307774625153e1368c4ad083c', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '298509ebb6a0fc656d1e81779190d99d1e8873387f8a284428d754999c643cf7'}",
+                  "initial_projection_fingerprint": "27a50aa3bab8811ec435394e7c427b4a5559c5d28f1e671123ab6b346406da53",
+                  "final_projection_fingerprint": "97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8",
+                  "performed_steps": [
+                    {
+                      "index": 0,
+                      "action": "RECONCILE_HISTORY",
+                      "before_projection_fingerprint": "27a50aa3bab8811ec435394e7c427b4a5559c5d28f1e671123ab6b346406da53",
+                      "after_projection_fingerprint": "97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8",
+                      "outcome": {
+                        "result": "HISTORY_RECONCILED",
+                        "microtasks": [],
+                        "operations": [
+                          "op_c"
+                        ],
+                        "physical_mutation_performed": false
+                      }
+                    }
+                  ],
+                  "blocked_by": [],
+                  "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:15.141269+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:15.141269+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:13.798269+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:14.064182+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:14.067689+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', '2026-10-18T15:16:13.852774+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:15.141269+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '298509ebb6a0fc656d1e81779190d99d1e8873387f8a284428d754999c643cf7', 'projection_fingerprint': '97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8', 'generated_at': '2026-10-18T15:16:16.331836+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "http": 200,
+                "reply": {
+                  "result": "EXECUTED",
+                  "result_code": "EXACT_POST_STATE_PROVED",
+                  "reason": "executed once; the receipt is the server-observed post-state",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_c",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:16.592896+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": true,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "RELEASED",
+                    "result_code": "OWNER_RELEASED"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "list": [
+                "op_c"
+              ]
+            },
+            {
+              "recover": {
+                "state": "READY_FOR_EXECUTION",
+                "reason": "perform scoped implementation for m1, then transition to DONE",
+                "requires_human": false,
+                "ready_for_execution": true,
+                "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:14.067689+00:00', 'manifest_id': 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', 'restore_point_fingerprint': 'cd934c865a574353ad95074eacbd8353f22470c134ab25657a88180aebbf2d2c', 'target_set_fingerprint': '6c947251bcd623933e601624ef0bcc7d7e60506307774625153e1368c4ad083c', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '298509ebb6a0fc656d1e81779190d99d1e8873387f8a284428d754999c643cf7'}",
+                "initial_projection_fingerprint": "27a50aa3bab8811ec435394e7c427b4a5559c5d28f1e671123ab6b346406da53",
+                "final_projection_fingerprint": "97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8",
+                "performed_steps": [
+                  {
+                    "index": 0,
+                    "action": "RECONCILE_HISTORY",
+                    "before_projection_fingerprint": "27a50aa3bab8811ec435394e7c427b4a5559c5d28f1e671123ab6b346406da53",
+                    "after_projection_fingerprint": "97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8",
+                    "outcome": {
+                      "result": "HISTORY_RECONCILED",
+                      "microtasks": [],
+                      "operations": [
+                        "op_c"
+                      ],
+                      "physical_mutation_performed": false
+                    }
+                  }
+                ],
+                "blocked_by": [],
+                "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                "authority_source": "lifecycle",
+                "task_id": "task_ccr",
+                "recovery_state": "NORMAL",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:15.141269+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:15.141269+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:13.798269+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:14.064182+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:14.067689+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ed485d44a7194049b0fd74700e0f9d3b', '2026-10-18T15:16:13.852774+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:15.141269+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '298509ebb6a0fc656d1e81779190d99d1e8873387f8a284428d754999c643cf7', 'projection_fingerprint': '97d5e660991c2bed6760e4c87e2c1c94ede36613329a17b7cf83f610dd3555f8', 'generated_at': '2026-10-18T15:16:16.331836+00:00'}",
+                "error": null
+              }
+            },
+            {
+              "http": 200,
+              "reply": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "task_ccr",
+                "operation_id": "op_c",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": {
+                  "exists": true,
+                  "size": 10,
+                  "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-18T15:16:16.592896+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_an_unvalidated_progress_event_is_not_reconstructed",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\test_web_alarm_crash_consistency.py\", line 501, in test_intent_with_an_unvalidated_progress_event_is_not_reconstructed\n    self.assert_progress_blocks_reconstruction(\"MUTATION_RETRY_EXECUTING\", {\"attempt\": 2})\n  File \"<TEMP>\\claude-ccrepair-mirror-M5-no-progress-check-2\\test_web_alarm_crash_consistency.py\", line 515, in assert_progress_blocks_reconstruction\n    self.assertIn(\"raised\", out[\"results\"][0], \"a contradicting history was treated as recoverable\")\nAssertionError: 'raised' not found in {'list': ['op_c']} : a contradicting history was treated as recoverable\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_an_unvalidated_progress_event_is_not_reconstructed"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "list": [
+                  "op_c"
+                ]
+              },
+              {
+                "recover": {
+                  "state": "READY_FOR_EXECUTION",
+                  "reason": "perform scoped implementation for m1, then transition to DONE",
+                  "requires_human": false,
+                  "ready_for_execution": true,
+                  "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:17.020254+00:00', 'manifest_id': 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', 'restore_point_fingerprint': 'ac0efd1314e4b36d20a0310e41e7ba5f9511f54b5db1025f9a559f6398b0715c', 'target_set_fingerprint': '456ff26d8b55f2079d72fa54b4ab738806fd1bd8ffe165c9d4e5600019d6cab5', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '431427f186a7cfe51105c0b31b4cb40e777b9cff1ebf632f42b0896dcabca779'}",
+                  "initial_projection_fingerprint": "441e6c31fb0f478b4b007ac18e9a76436314727ff08eb1e27d9ee05a8954f921",
+                  "final_projection_fingerprint": "205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6",
+                  "performed_steps": [
+                    {
+                      "index": 0,
+                      "action": "RECONCILE_HISTORY",
+                      "before_projection_fingerprint": "441e6c31fb0f478b4b007ac18e9a76436314727ff08eb1e27d9ee05a8954f921",
+                      "after_projection_fingerprint": "205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6",
+                      "outcome": {
+                        "result": "HISTORY_RECONCILED",
+                        "microtasks": [],
+                        "operations": [
+                          "op_c"
+                        ],
+                        "physical_mutation_performed": false
+                      }
+                    }
+                  ],
+                  "blocked_by": [],
+                  "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:18.124683+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:18.124683+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:16.759518+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:17.017239+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:17.020254+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', '2026-10-18T15:16:16.810413+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:18.124683+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '431427f186a7cfe51105c0b31b4cb40e777b9cff1ebf632f42b0896dcabca779', 'projection_fingerprint': '205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6', 'generated_at': '2026-10-18T15:16:19.321384+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "http": 200,
+                "reply": {
+                  "result": "EXECUTED",
+                  "result_code": "EXACT_POST_STATE_PROVED",
+                  "reason": "executed once; the receipt is the server-observed post-state",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_c",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:19.594153+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": true,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "RELEASED",
+                    "result_code": "OWNER_RELEASED"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "list": [
+                "op_c"
+              ]
+            },
+            {
+              "recover": {
+                "state": "READY_FOR_EXECUTION",
+                "reason": "perform scoped implementation for m1, then transition to DONE",
+                "requires_human": false,
+                "ready_for_execution": true,
+                "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:17.020254+00:00', 'manifest_id': 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', 'restore_point_fingerprint': 'ac0efd1314e4b36d20a0310e41e7ba5f9511f54b5db1025f9a559f6398b0715c', 'target_set_fingerprint': '456ff26d8b55f2079d72fa54b4ab738806fd1bd8ffe165c9d4e5600019d6cab5', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '431427f186a7cfe51105c0b31b4cb40e777b9cff1ebf632f42b0896dcabca779'}",
+                "initial_projection_fingerprint": "441e6c31fb0f478b4b007ac18e9a76436314727ff08eb1e27d9ee05a8954f921",
+                "final_projection_fingerprint": "205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6",
+                "performed_steps": [
+                  {
+                    "index": 0,
+                    "action": "RECONCILE_HISTORY",
+                    "before_projection_fingerprint": "441e6c31fb0f478b4b007ac18e9a76436314727ff08eb1e27d9ee05a8954f921",
+                    "after_projection_fingerprint": "205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6",
+                    "outcome": {
+                      "result": "HISTORY_RECONCILED",
+                      "microtasks": [],
+                      "operations": [
+                        "op_c"
+                      ],
+                      "physical_mutation_performed": false
+                    }
+                  }
+                ],
+                "blocked_by": [],
+                "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                "authority_source": "lifecycle",
+                "task_id": "task_ccr",
+                "recovery_state": "NORMAL",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:18.124683+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:18.124683+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:16.759518+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:17.017239+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:17.020254+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_c78a0d51d3c04cdc9e965c09f0f1fbac', '2026-10-18T15:16:16.810413+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:18.124683+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '431427f186a7cfe51105c0b31b4cb40e777b9cff1ebf632f42b0896dcabca779', 'projection_fingerprint': '205e77251dae904f1bc3c5db0188f9165a9e3fd9718b763d5fe1e997f8e927c6', 'generated_at': '2026-10-18T15:16:19.321384+00:00'}",
+                "error": null
+              }
+            },
+            {
+              "http": 200,
+              "reply": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "task_ccr",
+                "operation_id": "op_c",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": {
+                  "exists": true,
+                  "size": 10,
+                  "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-18T15:16:19.594153+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent"
+        },
+        {
+          "child:live": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "operation_history_pending",
+                "message": "operation op_l: the INTENT record is persisted but its OPERATION_INTENT event was not recorded (injected: append failed); nothing was executed; replay the same operation_id or run recover to reconcile the history",
+                "details": {
+                  "operation_id": "op_l",
+                  "intent_persisted": true,
+                  "physical_mutation_performed": false
+                }
+              },
+              {
+                "list": [
+                  "op_l"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 409,
+              "code": "operation_history_pending",
+              "message": "operation op_l: the INTENT record is persisted but its OPERATION_INTENT event was not recorded (injected: append failed); nothing was executed; replay the same operation_id or run recover to reconcile the history",
+              "details": {
+                "operation_id": "op_l",
+                "intent_persisted": true,
+                "physical_mutation_performed": false
+              }
+            },
+            {
+              "list": [
+                "op_l"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_executed_event_never_leads_to_a_second_apply",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_executed_event_never_leads_to_a_second_apply"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "MUTATION_EXECUTED"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:again": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "result": "REPLAYED",
+                  "result_code": "KNOWN_RECEIPT",
+                  "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_x",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:22.853973+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": false,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "RELEASED",
+                    "result_code": "OWNER_RELEASED"
+                  }
+                }
+              },
+              {
+                "recover": {
+                  "state": "READY_FOR_EXECUTION",
+                  "reason": "perform scoped implementation for m1, then transition to DONE",
+                  "requires_human": false,
+                  "ready_for_execution": true,
+                  "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:21.496004+00:00', 'manifest_id': 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', 'restore_point_fingerprint': '16b9da088e921ce99469d7ff792ee78f3f133c6bdb422473229e268d659c7915', 'target_set_fingerprint': '43b5ae84dd894f1af6a0ef2f38165cab3a4935e897e5cadee5d190370622014a', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': 'b821ee523e91fdf486fd6f7c658f76ce19cd2e67d66122dcf18f3a3442be7df6'}",
+                  "initial_projection_fingerprint": "3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb",
+                  "final_projection_fingerprint": "3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb",
+                  "performed_steps": [],
+                  "blocked_by": [],
+                  "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', 'reason': None}, 'operations': [{'operation_id': 'op_x', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'DONE', 'revision': 3, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:22.853973+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:22.853973+00:00'}], 'last_operation_id': 'op_x', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_NOT_VERIFIED', 'reason': 'op_x is DONE, not VERIFIED', 'operation_id': 'op_x', 'next': 'verify op_x and transition it DONE -> VERIFIED'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:21.234183+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:21.493751+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:21.496004+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', '2026-10-18T15:16:21.289799+00:00'], 'operations': [['op_x', 'm1', 'DONE', 3, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:22.853973+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'b821ee523e91fdf486fd6f7c658f76ce19cd2e67d66122dcf18f3a3442be7df6', 'projection_fingerprint': '3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb', 'generated_at': '2026-10-18T15:16:24.184078+00:00'}",
+                  "error": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 200,
+              "reply": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "task_ccr",
+                "operation_id": "op_x",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": {
+                  "exists": true,
+                  "size": 10,
+                  "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-18T15:16:22.853973+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              }
+            },
+            {
+              "recover": {
+                "state": "READY_FOR_EXECUTION",
+                "reason": "perform scoped implementation for m1, then transition to DONE",
+                "requires_human": false,
+                "ready_for_execution": true,
+                "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:21.496004+00:00', 'manifest_id': 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', 'restore_point_fingerprint': '16b9da088e921ce99469d7ff792ee78f3f133c6bdb422473229e268d659c7915', 'target_set_fingerprint': '43b5ae84dd894f1af6a0ef2f38165cab3a4935e897e5cadee5d190370622014a', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': 'b821ee523e91fdf486fd6f7c658f76ce19cd2e67d66122dcf18f3a3442be7df6'}",
+                "initial_projection_fingerprint": "3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb",
+                "final_projection_fingerprint": "3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb",
+                "performed_steps": [],
+                "blocked_by": [],
+                "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                "authority_source": "lifecycle",
+                "task_id": "task_ccr",
+                "recovery_state": "NORMAL",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', 'reason': None}, 'operations': [{'operation_id': 'op_x', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'DONE', 'revision': 3, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:22.853973+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:22.853973+00:00'}], 'last_operation_id': 'op_x', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_NOT_VERIFIED', 'reason': 'op_x is DONE, not VERIFIED', 'operation_id': 'op_x', 'next': 'verify op_x and transition it DONE -> VERIFIED'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:21.234183+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:21.493751+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:21.496004+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_eeaa0ce576364fdeb16ef82884357d2c', '2026-10-18T15:16:21.289799+00:00'], 'operations': [['op_x', 'm1', 'DONE', 3, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:22.853973+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': 'b821ee523e91fdf486fd6f7c658f76ce19cd2e67d66122dcf18f3a3442be7df6', 'projection_fingerprint': '3c8167cac019c01e7d9b63346527dd02268d59df2b24e74b2a2d6381bbe94edb', 'generated_at': '2026-10-18T15:16:24.184078+00:00'}",
+                "error": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported"
+        },
+        {
+          "child:first": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "result": "EXECUTED",
+                  "result_code": "EXACT_POST_STATE_PROVED",
+                  "reason": "executed once; the receipt is the server-observed post-state",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_a",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:25.867752+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": true,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "RELEASED",
+                    "result_code": "OWNER_RELEASED"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:look": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "list": [
+                  "op_a",
+                  "op_b"
+                ]
+              },
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [
+                    "OPERATION_INTENT_PENDING"
+                  ],
+                  "closeout": [
+                    "OPERATION_INTENT_PENDING",
+                    "MICROTASK_NOT_VERIFIED",
+                    "OPERATION_NOT_VERIFIED",
+                    "OPERATION_OPEN"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "perform scoped implementation for m1, then transition to DONE"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "list": [
+                "op_a",
+                "op_b"
+              ]
+            },
+            {
+              "projection": {
+                "blockers": [],
+                "diagnostics": [
+                  "OPERATION_INTENT_PENDING"
+                ],
+                "closeout": [
+                  "OPERATION_INTENT_PENDING",
+                  "MICROTASK_NOT_VERIFIED",
+                  "OPERATION_NOT_VERIFIED",
+                  "OPERATION_OPEN"
+                ],
+                "recovery_state": "NORMAL",
+                "next": "perform scoped implementation for m1, then transition to DONE"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_started_event_never_starts_a_physical_apply",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_started_event_never_starts_a_physical_apply"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_TRANSITION"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:again": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "mutation_reconciliation_required",
+                "message": "the operation is STARTED",
+                "details": {
+                  "result": "RECONCILIATION_REQUIRED",
+                  "result_code": "FATE_UNKNOWN",
+                  "reason": "the operation is STARTED",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_s",
+                  "operation_status": "STARTED",
+                  "operation_revision": 2,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": null,
+                  "physical_mutation_performed": false,
+                  "next_safe_action": "operation op_s: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/task_ccr/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                  "reconciliation": {
+                    "decision": "RETRY_SAFE",
+                    "reason_code": "PRE_STATE_AND_POST_NOT_REACHED",
+                    "evidence_fingerprint": "dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448"
+                  }
+                }
+              },
+              {
+                "recover": {
+                  "state": "MANUAL_DECISION_REQUIRED",
+                  "reason": "retry only through the replay-safe execution path using the same operation_id",
+                  "requires_human": true,
+                  "ready_for_execution": false,
+                  "ready_proof": null,
+                  "initial_projection_fingerprint": "f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141",
+                  "final_projection_fingerprint": "f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141",
+                  "performed_steps": [],
+                  "blocked_by": [],
+                  "next_safe_action": "retry only through the replay-safe execution path using the same operation_id",
+                  "authority_source": "reconciliation",
+                  "task_id": "task_ccr",
+                  "recovery_state": "RECONCILIATION_REQUIRED",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_708337477df44d56a66b83b3ede8a76a', 'reason': None}, 'operations': [{'operation_id': 'op_s', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'STARTED', 'revision': 2, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:29.669881+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': {'state': 'RECONCILIATION_REQUIRED', 'source': 'reconciliation', 'resolution_id': None, 'rollback_id': None, 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'decision': 'RETRY_SAFE'}, 'activity': '2026-10-18T15:16:29.669881+00:00'}], 'last_operation_id': 'op_s', 'rollbacks': [], 'ownership': {'active_claims': [{'target_hash': 'a129ce7bcc110d25214a6352ff7bf165919820ebbec14106e57f4ed6faeb0911', 'target': 'data.bin', 'claim_id': 'claim_85bf824fd16806279aefb8fc8769e1f2', 'generation': 1, 'operation_id': 'op_s', 'owner': {'kind': 'OPERATION'}}]}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {'op_s': {'SERVICE_VERSION': 1, 'MODE': 'READ_ONLY_RECONCILIATION', 'MUTATION_PERFORMED': False, 'TASK_ID': 'task_ccr', 'MICROTASK_ID': 'm1', 'OPERATION_ID': 'op_s', 'EVIDENCE': {'evidence_version': 1, 'task_id': 'task_ccr', 'microtask_id': 'm1', 'workspace_id': 'ws_ccr', 'workspace_root': 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_ccr_mi5zv7i1\\\\project', 'operation_id': 'op_s', 'operation_status': 'STARTED', 'operation_action': 'write', 'operation_target': 'data.bin', 'operation_request_fingerprint': '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', 'operation_expected_precondition_sha256': None, 'operation_result_summary': 'WA4-E: authoritative execution started', 'verification_evidence': None, 'manifest_status': 'VERIFIED', 'snapshot_status': 'VERIFIED', 'evidence_complete': True, 'expected_post_complete': True, 'errors': [], 'targets': [{'source_path': 'data.bin', 'expected_change': 'edit', 'exists_before': True, 'size_before': 10, 'sha256_before': '0f60d672da6c889359dce9fe57f7ed96dc1d664cc34b9ef04c0bdc10f1d88a0d', 'snapshot_path': 'snapshots\\\\snapshot_a66ac99bfde6446f815e4ff971e5bd34.bin', 'snapshot_valid': True, 'snapshot_error': None, 'current_exists': True, 'current_is_file': True, 'current_size': 10, 'current_sha256': '0f60d672da6c889359dce9fe57f7ed96dc1d664cc34b9ef04c0bdc10f1d88a0d', 'path_error': None, 'expected_post_exists': True, 'expected_post_sha256': '9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d', 'expected_post_source': 'operation.contract', 'operation_target': True, 'operation_precondition_matches_manifest': None, 'matches_pre_state': True, 'matches_expected_post_state': False, 'drift_detected': False, 'classification': 'PRE_STATE', 'missing_evidence': []}]}, 'DECISION': {'decision_version': 1, 'decision': 'RETRY_SAFE', 'reason_code': 'PRE_STATE_AND_POST_NOT_REACHED', 'reason': 'all targets exactly match pre-state and exact expected post-state is proven not to have been reached', 'evidence_fingerprint': 'dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'operation_id': 'op_s', 'operation_status': 'STARTED', 'target_counts': {'PRE_STATE': 1, 'EXPECTED_POST_STATE': 0, 'DRIFT': 0, 'CHANGED_UNCLASSIFIED': 0, 'MISSING_EVIDENCE': 0}, 'affected_targets': ['data.bin'], 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'automatic_mutation_authorized': False}, 'NEXT_SAFE_ACTION': 'retry only through the replay-safe execution path using the same operation_id'}}, 'recovery': {'state': 'RECONCILIATION_REQUIRED', 'source': 'reconciliation', 'operation_id': 'op_s', 'resolution_id': None, 'rollback_id': None, 'attention': ['op_s'], 'decision': 'RETRY_SAFE'}, 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'authority_source': 'reconciliation', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_UNRESOLVED', 'reason': 'op_s is STARTED: its mutation fate is open', 'operation_id': 'op_s', 'next': 'retry only through the replay-safe execution path using the same operation_id'}, {'code': 'ACTIVE_CLAIM', 'reason': 'target data.bin is owned by OPERATION (op_s, claim_85bf824fd16806279aefb8fc8769e1f2)', 'claim_id': 'claim_85bf824fd16806279aefb8fc8769e1f2', 'next': 'finish or release the owning operation / rollback first'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:28.172306+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:28.426119+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:28.429073+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_708337477df44d56a66b83b3ede8a76a', '2026-10-18T15:16:28.227018+00:00'], 'operations': [['op_s', 'm1', 'STARTED', 2, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:29.669881+00:00']], 'rollbacks': [], 'claims': [['a129ce7bcc110d25214a6352ff7bf165919820ebbec14106e57f4ed6faeb0911', 'claim_85bf824fd16806279aefb8fc8769e1f2', 1, 'op_s', {'kind': 'OPERATION'}]], 'resolutions': [], 'advisory_reconciliation': {'op_s': ['dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448', 'RETRY_SAFE', 'PRE_STATE_AND_POST_NOT_REACHED']}}, 'source_fingerprint': '6d6707f3ef2f85117117cdac86eaa90a8c597c8f819ce62215827c96cb22c294', 'projection_fingerprint': 'f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141', 'generated_at': '2026-10-18T15:16:30.892000+00:00'}",
+                  "error": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 409,
+              "code": "mutation_reconciliation_required",
+              "message": "the operation is STARTED",
+              "details": {
+                "result": "RECONCILIATION_REQUIRED",
+                "result_code": "FATE_UNKNOWN",
+                "reason": "the operation is STARTED",
+                "task_id": "task_ccr",
+                "operation_id": "op_s",
+                "operation_status": "STARTED",
+                "operation_revision": 2,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": null,
+                "physical_mutation_performed": false,
+                "next_safe_action": "operation op_s: its physical result is not proved, so it is never repeated blindly: reconcile it (POST /tasks/task_ccr/reconcile), record the Resolver decision on that evidence (ADOPT an applied effect, RETRY a proven-unapplied one, ROLLBACK, or ABORT) and run recover (RC-6); a fresh RETRY of a STARTED operation is executed again by this executor",
+                "reconciliation": {
+                  "decision": "RETRY_SAFE",
+                  "reason_code": "PRE_STATE_AND_POST_NOT_REACHED",
+                  "evidence_fingerprint": "dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448"
+                }
+              }
+            },
+            {
+              "recover": {
+                "state": "MANUAL_DECISION_REQUIRED",
+                "reason": "retry only through the replay-safe execution path using the same operation_id",
+                "requires_human": true,
+                "ready_for_execution": false,
+                "ready_proof": null,
+                "initial_projection_fingerprint": "f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141",
+                "final_projection_fingerprint": "f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141",
+                "performed_steps": [],
+                "blocked_by": [],
+                "next_safe_action": "retry only through the replay-safe execution path using the same operation_id",
+                "authority_source": "reconciliation",
+                "task_id": "task_ccr",
+                "recovery_state": "RECONCILIATION_REQUIRED",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_708337477df44d56a66b83b3ede8a76a', 'reason': None}, 'operations': [{'operation_id': 'op_s', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'STARTED', 'revision': 2, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:29.669881+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': {'state': 'RECONCILIATION_REQUIRED', 'source': 'reconciliation', 'resolution_id': None, 'rollback_id': None, 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'decision': 'RETRY_SAFE'}, 'activity': '2026-10-18T15:16:29.669881+00:00'}], 'last_operation_id': 'op_s', 'rollbacks': [], 'ownership': {'active_claims': [{'target_hash': 'a129ce7bcc110d25214a6352ff7bf165919820ebbec14106e57f4ed6faeb0911', 'target': 'data.bin', 'claim_id': 'claim_85bf824fd16806279aefb8fc8769e1f2', 'generation': 1, 'operation_id': 'op_s', 'owner': {'kind': 'OPERATION'}}]}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {'op_s': {'SERVICE_VERSION': 1, 'MODE': 'READ_ONLY_RECONCILIATION', 'MUTATION_PERFORMED': False, 'TASK_ID': 'task_ccr', 'MICROTASK_ID': 'm1', 'OPERATION_ID': 'op_s', 'EVIDENCE': {'evidence_version': 1, 'task_id': 'task_ccr', 'microtask_id': 'm1', 'workspace_id': 'ws_ccr', 'workspace_root': 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_ccr_mi5zv7i1\\\\project', 'operation_id': 'op_s', 'operation_status': 'STARTED', 'operation_action': 'write', 'operation_target': 'data.bin', 'operation_request_fingerprint': '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', 'operation_expected_precondition_sha256': None, 'operation_result_summary': 'WA4-E: authoritative execution started', 'verification_evidence': None, 'manifest_status': 'VERIFIED', 'snapshot_status': 'VERIFIED', 'evidence_complete': True, 'expected_post_complete': True, 'errors': [], 'targets': [{'source_path': 'data.bin', 'expected_change': 'edit', 'exists_before': True, 'size_before': 10, 'sha256_before': '0f60d672da6c889359dce9fe57f7ed96dc1d664cc34b9ef04c0bdc10f1d88a0d', 'snapshot_path': 'snapshots\\\\snapshot_a66ac99bfde6446f815e4ff971e5bd34.bin', 'snapshot_valid': True, 'snapshot_error': None, 'current_exists': True, 'current_is_file': True, 'current_size': 10, 'current_sha256': '0f60d672da6c889359dce9fe57f7ed96dc1d664cc34b9ef04c0bdc10f1d88a0d', 'path_error': None, 'expected_post_exists': True, 'expected_post_sha256': '9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d', 'expected_post_source': 'operation.contract', 'operation_target': True, 'operation_precondition_matches_manifest': None, 'matches_pre_state': True, 'matches_expected_post_state': False, 'drift_detected': False, 'classification': 'PRE_STATE', 'missing_evidence': []}]}, 'DECISION': {'decision_version': 1, 'decision': 'RETRY_SAFE', 'reason_code': 'PRE_STATE_AND_POST_NOT_REACHED', 'reason': 'all targets exactly match pre-state and exact expected post-state is proven not to have been reached', 'evidence_fingerprint': 'dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'operation_id': 'op_s', 'operation_status': 'STARTED', 'target_counts': {'PRE_STATE': 1, 'EXPECTED_POST_STATE': 0, 'DRIFT': 0, 'CHANGED_UNCLASSIFIED': 0, 'MISSING_EVIDENCE': 0}, 'affected_targets': ['data.bin'], 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'automatic_mutation_authorized': False}, 'NEXT_SAFE_ACTION': 'retry only through the replay-safe execution path using the same operation_id'}}, 'recovery': {'state': 'RECONCILIATION_REQUIRED', 'source': 'reconciliation', 'operation_id': 'op_s', 'resolution_id': None, 'rollback_id': None, 'attention': ['op_s'], 'decision': 'RETRY_SAFE'}, 'next_safe_action': 'retry only through the replay-safe execution path using the same operation_id', 'authority_source': 'reconciliation', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_UNRESOLVED', 'reason': 'op_s is STARTED: its mutation fate is open', 'operation_id': 'op_s', 'next': 'retry only through the replay-safe execution path using the same operation_id'}, {'code': 'ACTIVE_CLAIM', 'reason': 'target data.bin is owned by OPERATION (op_s, claim_85bf824fd16806279aefb8fc8769e1f2)', 'claim_id': 'claim_85bf824fd16806279aefb8fc8769e1f2', 'next': 'finish or release the owning operation / rollback first'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:28.172306+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:28.426119+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:28.429073+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_708337477df44d56a66b83b3ede8a76a', '2026-10-18T15:16:28.227018+00:00'], 'operations': [['op_s', 'm1', 'STARTED', 2, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:29.669881+00:00']], 'rollbacks': [], 'claims': [['a129ce7bcc110d25214a6352ff7bf165919820ebbec14106e57f4ed6faeb0911', 'claim_85bf824fd16806279aefb8fc8769e1f2', 1, 'op_s', {'kind': 'OPERATION'}]], 'resolutions': [], 'advisory_reconciliation': {'op_s': ['dc5fccd72cc1597bc2a34cb190a0851762ff469cc1d405293bf4ddc4be024448', 'RETRY_SAFE', 'PRE_STATE_AND_POST_NOT_REACHED']}}, 'source_fingerprint': '6d6707f3ef2f85117117cdac86eaa90a8c597c8f819ce62215827c96cb22c294', 'projection_fingerprint': 'f63082d574b9e5f0fc89b3f2765dd5390ec0d18bee39c96a5d015ef935c46141', 'generated_at': '2026-10-18T15:16:30.892000+00:00'}",
+                "error": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:replay1": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "operation_intent_reconciled",
+                "message": "operation op_c: its lost OPERATION_INTENT was restored from the durable record by this call; nothing was executed; send the request again to execute it",
+                "details": {
+                  "operation_id": "op_c",
+                  "physical_mutation_performed": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "first": {
+            "http": 409,
+            "code": "operation_intent_reconciled",
+            "message": "operation op_c: its lost OPERATION_INTENT was restored from the durable record by this call; nothing was executed; send the request again to execute it",
+            "details": {
+              "operation_id": "op_c",
+              "physical_mutation_performed": false
+            }
+          }
+        },
+        {
+          "child:replay2": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "result": "EXECUTED",
+                  "result_code": "EXACT_POST_STATE_PROVED",
+                  "reason": "executed once; the receipt is the server-observed post-state",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_c",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:34.647301+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": true,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "RELEASED",
+                    "result_code": "OWNER_RELEASED"
+                  }
+                }
+              },
+              {
+                "http": 200,
+                "reply": {
+                  "result": "REPLAYED",
+                  "result_code": "KNOWN_RECEIPT",
+                  "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                  "task_id": "task_ccr",
+                  "operation_id": "op_c",
+                  "operation_status": "DONE",
+                  "operation_revision": 3,
+                  "mutation_kind": "WRITE",
+                  "target": "data.bin",
+                  "receipt": {
+                    "exists": true,
+                    "size": 10,
+                    "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "eol": "lf",
+                    "bom": false,
+                    "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                    "source": "server_observed_at_done",
+                    "observed_at": "2026-10-18T15:16:34.647301+00:00",
+                    "revision": 3,
+                    "matches_expected_post": true,
+                    "eol_only_drift": false
+                  },
+                  "physical_mutation_performed": false,
+                  "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                  "claim_release": {
+                    "result": "REPLAYED",
+                    "result_code": "ALREADY_RELEASED"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 200,
+              "reply": {
+                "result": "EXECUTED",
+                "result_code": "EXACT_POST_STATE_PROVED",
+                "reason": "executed once; the receipt is the server-observed post-state",
+                "task_id": "task_ccr",
+                "operation_id": "op_c",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": {
+                  "exists": true,
+                  "size": 10,
+                  "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-18T15:16:34.647301+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": true,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "RELEASED",
+                  "result_code": "OWNER_RELEASED"
+                }
+              }
+            },
+            {
+              "http": 200,
+              "reply": {
+                "result": "REPLAYED",
+                "result_code": "KNOWN_RECEIPT",
+                "reason": "the operation is already DONE: its persisted receipt is returned, nothing is executed again",
+                "task_id": "task_ccr",
+                "operation_id": "op_c",
+                "operation_status": "DONE",
+                "operation_revision": 3,
+                "mutation_kind": "WRITE",
+                "target": "data.bin",
+                "receipt": {
+                  "exists": true,
+                  "size": 10,
+                  "sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "eol": "lf",
+                  "bom": false,
+                  "normalized_sha256": "9ae3a1ba3fc04f69bb0c35f00b58ea36187a7d6fec5d1e7be6ea803b135eee9d",
+                  "source": "server_observed_at_done",
+                  "observed_at": "2026-10-18T15:16:34.647301+00:00",
+                  "revision": 3,
+                  "matches_expected_post": true,
+                  "eol_only_drift": false
+                },
+                "physical_mutation_performed": false,
+                "next_safe_action": "verify the change and transition the operation DONE -> VERIFIED",
+                "claim_release": {
+                  "result": "REPLAYED",
+                  "result_code": "ALREADY_RELEASED"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply"
+        },
+        {
+          "child:crash": {
+            "exit": 70,
+            "phases": [
+              {
+                "phase": "died_before_append",
+                "event": "OPERATION_INTENT"
+              }
+            ],
+            "results": null
+          }
+        },
+        {
+          "child:recover": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "recover": {
+                  "state": "READY_FOR_EXECUTION",
+                  "reason": "perform scoped implementation for m1, then transition to DONE",
+                  "requires_human": false,
+                  "ready_for_execution": true,
+                  "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:35.172140+00:00', 'manifest_id': 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', 'restore_point_fingerprint': '72c853ec8025e10a59bd88f128277989747eb08f7e836f067814bb2fef0574cf', 'target_set_fingerprint': 'cb5b0cdc3a2ac171373ae71761c949bf6b93a349f27fcf4f80ce86879c2acf79', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '84f5d01a12336d29b029a4622f8fc909080323c2b3ccfc1bc14a7ce0a108180d'}",
+                  "initial_projection_fingerprint": "36f9ac7c3ac4d7ee3d46bf9f35b31fdc7954926c0827c10055bc5dce5f417da2",
+                  "final_projection_fingerprint": "2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc",
+                  "performed_steps": [
+                    {
+                      "index": 0,
+                      "action": "RECONCILE_HISTORY",
+                      "before_projection_fingerprint": "36f9ac7c3ac4d7ee3d46bf9f35b31fdc7954926c0827c10055bc5dce5f417da2",
+                      "after_projection_fingerprint": "2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc",
+                      "outcome": {
+                        "result": "HISTORY_RECONCILED",
+                        "microtasks": [],
+                        "operations": [
+                          "op_c"
+                        ],
+                        "physical_mutation_performed": false
+                      }
+                    }
+                  ],
+                  "blocked_by": [],
+                  "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                  "authority_source": "lifecycle",
+                  "task_id": "task_ccr",
+                  "recovery_state": "NORMAL",
+                  "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:36.248955+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:36.248955+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:34.910767+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:35.169141+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:35.172140+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', '2026-10-18T15:16:34.963964+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:36.248955+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '84f5d01a12336d29b029a4622f8fc909080323c2b3ccfc1bc14a7ce0a108180d', 'projection_fingerprint': '2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc', 'generated_at': '2026-10-18T15:16:37.426512+00:00'}",
+                  "error": null
+                }
+              },
+              {
+                "list": [
+                  "op_c"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "recover": {
+                "state": "READY_FOR_EXECUTION",
+                "reason": "perform scoped implementation for m1, then transition to DONE",
+                "requires_human": false,
+                "ready_for_execution": true,
+                "ready_proof": "{'result': 'READY_PROVED', 'kind': 'NORMAL', 'task_id': 'task_ccr', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_updated_at': '2026-10-18T15:16:35.172140+00:00', 'manifest_id': 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', 'restore_point_fingerprint': '72c853ec8025e10a59bd88f128277989747eb08f7e836f067814bb2fef0574cf', 'target_set_fingerprint': 'cb5b0cdc3a2ac171373ae71761c949bf6b93a349f27fcf4f80ce86879c2acf79', 'operation_id': None, 'operation_revision': None, 'resolution_id': None, 'physical_mutation_performed': False, 'source_fingerprint': '84f5d01a12336d29b029a4622f8fc909080323c2b3ccfc1bc14a7ce0a108180d'}",
+                "initial_projection_fingerprint": "36f9ac7c3ac4d7ee3d46bf9f35b31fdc7954926c0827c10055bc5dce5f417da2",
+                "final_projection_fingerprint": "2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc",
+                "performed_steps": [
+                  {
+                    "index": 0,
+                    "action": "RECONCILE_HISTORY",
+                    "before_projection_fingerprint": "36f9ac7c3ac4d7ee3d46bf9f35b31fdc7954926c0827c10055bc5dce5f417da2",
+                    "after_projection_fingerprint": "2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc",
+                    "outcome": {
+                      "result": "HISTORY_RECONCILED",
+                      "microtasks": [],
+                      "operations": [
+                        "op_c"
+                      ],
+                      "physical_mutation_performed": false
+                    }
+                  }
+                ],
+                "blocked_by": [],
+                "next_safe_action": "perform scoped implementation for m1, then transition to DONE",
+                "authority_source": "lifecycle",
+                "task_id": "task_ccr",
+                "recovery_state": "NORMAL",
+                "projection": "{'projection_version': 1, 'task': {'task_id': 'task_ccr', 'workspace_id': 'ws_ccr', 'status': 'PLANNED', 'location': 'active', 'plan_revision': 2}, 'position': {'microtasks': [{'microtask_id': 'm1', 'sequence': 1, 'title': 'm1', 'status': 'ACTIVE'}], 'last_verified': None, 'current_microtask_id': 'm1', 'current_status': 'ACTIVE', 'all_verified': False, 'plan_pointer': 'm1', 'plan_pointer_state': 'CORROBORATED'}, 'restore_point': {'microtask_id': 'm1', 'status': 'VERIFIED', 'manifest_id': 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', 'reason': None}, 'operations': [{'operation_id': 'op_c', 'microtask_id': 'm1', 'microtask_status': 'ACTIVE', 'microtask_disposition': None, 'status': 'INTENT', 'revision': 1, 'contract_version': 2, 'updated_at': '2026-10-18T15:16:36.248955+00:00', 'recovery_settlement': None, 'resolutions': [], 'rollback_ids': [], 'recovery': None, 'activity': '2026-10-18T15:16:36.248955+00:00'}], 'last_operation_id': 'op_c', 'rollbacks': [], 'ownership': {'active_claims': []}, 'blockers': [], 'diagnostics': [], 'advisory_reconciliation': {}, 'recovery': {'state': 'NORMAL', 'source': 'lifecycle', 'operation_id': None, 'resolution_id': None, 'rollback_id': None, 'attention': []}, 'next_safe_action': 'perform scoped implementation for m1, then transition to DONE', 'authority_source': 'lifecycle', 'closeout': [{'code': 'MICROTASK_NOT_VERIFIED', 'reason': 'm1 is ACTIVE', 'microtask_id': 'm1', 'next': 'bring m1 to VERIFIED through the server state machine'}, {'code': 'OPERATION_OPEN', 'reason': 'op_c is INTENT (declared, not executed)', 'operation_id': 'op_c', 'next': 'transition op_c to FAILED or record an accepted ABORT'}], 'source_basis': {'task': ['task_ccr', 'ws_ccr', 'PLANNED', 2, '2026-10-18T15:16:34.910767+00:00', 'active'], 'plan': [2, ['m1'], 'm1', '2026-10-18T15:16:35.169141+00:00'], 'microtasks': [['m1', 1, 'ACTIVE', '2026-10-18T15:16:35.172140+00:00']], 'orphan_microtasks': [], 'restore_point': ['VERIFIED', 'manifestset_ea8c1a7a11f5478f974b51d926a878e5', '2026-10-18T15:16:34.963964+00:00'], 'operations': [['op_c', 'm1', 'INTENT', 1, 2, '9cdb44303f370bf082d66f781d0416c1562020ebd097bd0ab11e950a75b3b4c4', None, '2026-10-18T15:16:36.248955+00:00']], 'rollbacks': [], 'claims': [], 'resolutions': [], 'advisory_reconciliation': {}}, 'source_fingerprint': '84f5d01a12336d29b029a4622f8fc909080323c2b3ccfc1bc14a7ce0a108180d', 'projection_fingerprint': '2ca74c46aeee9b84ee68b251a281a15af9b214a11ed006b6033ef8180b5751fc', 'generated_at': '2026-10-18T15:16:37.426512+00:00'}",
+                "error": null
+              }
+            },
+            {
+              "list": [
+                "op_c"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_healthy_verified_closes_without_reaffirmation",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_healthy_verified_closes_without_reaffirmation"
+        },
+        {
+          "child:close": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "VERIFIED",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:37.499780+00:00",
+                    "updated_at": "2026-10-18T15:16:38.940941+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_d001469b6e8c439a82939866c55845a3",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": "m1",
+                    "current_microtask_id": "m1",
+                    "current_status": "VERIFIED",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:37.632682+00:00",
+                    "updated_at": "2026-10-18T15:16:38.977083+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "3100159d09cb0f7f7e40184d3cba4c47645260b92b7dc5db38f282195e9b9434",
+                      "projection_fingerprint": "6ad3f55d55533be90cc42a537312bfddb90b8417ab86416021002b6e969c1ccd",
+                      "authority_source": "closeout_gate"
+                    }
+                  },
+                  "event_recorded": true,
+                  "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask"
+                }
+              },
+              {
+                "closeout": {
+                  "result": "COMPLETED",
+                  "blockers": [],
+                  "event_recorded": true
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout"
+        },
+        {
+          "child:close": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "closeout": {
+                  "result": "REJECTED",
+                  "blockers": [
+                    "MICROTASK_VERIFICATION_UNPROVEN"
+                  ],
+                  "event_recorded": null
+                }
+              },
+              {
+                "projection": {
+                  "blockers": [],
+                  "diagnostics": [
+                    "MICROTASK_VERIFICATION_UNPROVEN"
+                  ],
+                  "closeout": [
+                    "MICROTASK_VERIFICATION_UNPROVEN"
+                  ],
+                  "recovery_state": "NORMAL",
+                  "next": "every microtask is VERIFIED but closeout is blocked (MICROTASK_VERIFICATION_UNPROVEN): re-check m1 without mutation and record new evidence through POST /microtasks/m1/reaffirm, or leave the decision to the operator"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible"
+        },
+        {
+          "child:reaffirm": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 409,
+                "code": "state_machine_error",
+                "message": "reaffirm of task_ccr/m1 refused: a safe re-check is not possible (OPERATION_FATE_OPEN: operation op_open is STARTED: its mutation fate is open; reconcile it and settle its recovery before the microtask is verified); operator decision required; nothing was written",
+                "details": null
+              },
+              {
+                "http": 400,
+                "code": "invalid_field",
+                "message": "verification_evidence must be a non-empty string",
+                "details": null
+              },
+              {
+                "closeout": {
+                  "result": "REJECTED",
+                  "blockers": [
+                    "MICROTASK_VERIFICATION_UNPROVEN",
+                    "OPERATION_UNRESOLVED"
+                  ],
+                  "event_recorded": null
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 409,
+              "code": "state_machine_error",
+              "message": "reaffirm of task_ccr/m1 refused: a safe re-check is not possible (OPERATION_FATE_OPEN: operation op_open is STARTED: its mutation fate is open; reconcile it and settle its recovery before the microtask is verified); operator decision required; nothing was written",
+              "details": null
+            },
+            {
+              "http": 400,
+              "code": "invalid_field",
+              "message": "verification_evidence must be a non-empty string",
+              "details": null
+            },
+            {
+              "closeout": {
+                "result": "REJECTED",
+                "blockers": [
+                  "MICROTASK_VERIFICATION_UNPROVEN",
+                  "OPERATION_UNRESOLVED"
+                ],
+                "event_recorded": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout"
+        },
+        {
+          "child:reaffirm": {
+            "exit": 0,
+            "phases": [],
+            "results": [
+              {
+                "http": 200,
+                "reply": {
+                  "microtask": {
+                    "microtask_id": "m1",
+                    "task_id": "task_ccr",
+                    "sequence": 1,
+                    "title": "m1",
+                    "goal": "m1",
+                    "status": "VERIFIED",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:42.429679+00:00",
+                    "updated_at": "2026-10-18T15:16:42.834469+00:00"
+                  },
+                  "checkpoint": {
+                    "checkpoint_id": "checkpoint_a317b7f716374afc87c908edb6410dbc",
+                    "task_id": "task_ccr",
+                    "workspace_id": "ws_ccr",
+                    "last_verified_microtask_id": "m1",
+                    "current_microtask_id": "m1",
+                    "current_status": "VERIFIED",
+                    "snapshot_status": "VERIFIED",
+                    "last_operation_id": null,
+                    "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                    "schema_version": 1,
+                    "created_at": "2026-10-18T15:16:42.565622+00:00",
+                    "updated_at": "2026-10-18T15:16:43.919789+00:00",
+                    "projection": {
+                      "projection_version": 1,
+                      "source_fingerprint": "6555e4b390a8d00b4a5ef8f013d6de2b5e1c92a6899dfd1649c68d9558309d70",
+                      "projection_fingerprint": "2faa5fb63da6aeb07682fde561e7fe84401f401de0a2608e17dfcc7e66ba5deb",
+                      "authority_source": "closeout_gate"
+                    }
+                  },
+                  "event_id": "event_21a715c032674acc9efec54547c27355",
+                  "reaffirmed": true,
+                  "physical_mutation_performed": false
+                }
+              },
+              {
+                "closeout": {
+                  "result": "COMPLETED",
+                  "blockers": [],
+                  "event_recorded": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          "results": [
+            {
+              "http": 200,
+              "reply": {
+                "microtask": {
+                  "microtask_id": "m1",
+                  "task_id": "task_ccr",
+                  "sequence": 1,
+                  "title": "m1",
+                  "goal": "m1",
+                  "status": "VERIFIED",
+                  "schema_version": 1,
+                  "created_at": "2026-10-18T15:16:42.429679+00:00",
+                  "updated_at": "2026-10-18T15:16:42.834469+00:00"
+                },
+                "checkpoint": {
+                  "checkpoint_id": "checkpoint_a317b7f716374afc87c908edb6410dbc",
+                  "task_id": "task_ccr",
+                  "workspace_id": "ws_ccr",
+                  "last_verified_microtask_id": "m1",
+                  "current_microtask_id": "m1",
+                  "current_status": "VERIFIED",
+                  "snapshot_status": "VERIFIED",
+                  "last_operation_id": null,
+                  "next_safe_action": "every microtask is VERIFIED and the closeout gate is clean: complete the TASK through the gated `task complete`, or create the next planned microtask",
+                  "schema_version": 1,
+                  "created_at": "2026-10-18T15:16:42.565622+00:00",
+                  "updated_at": "2026-10-18T15:16:43.919789+00:00",
+                  "projection": {
+                    "projection_version": 1,
+                    "source_fingerprint": "6555e4b390a8d00b4a5ef8f013d6de2b5e1c92a6899dfd1649c68d9558309d70",
+                    "projection_fingerprint": "2faa5fb63da6aeb07682fde561e7fe84401f401de0a2608e17dfcc7e66ba5deb",
+                    "authority_source": "closeout_gate"
+                  }
+                },
+                "event_id": "event_21a715c032674acc9efec54547c27355",
+                "reaffirmed": true,
+                "physical_mutation_performed": false
+              }
+            },
+            {
+              "closeout": {
+                "result": "COMPLETED",
+                "blockers": [],
+                "event_recorded": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.CloseoutRace.test_closeout_cannot_slip_between_intent_and_compare_and_set",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.CloseoutRace.test_closeout_cannot_slip_between_intent_and_compare_and_set"
+        },
+        {
+          "before": {
+            "events_sha256": "654a010ff8242ec7115d51d405860418a588f47657bc7dedd21e94dd144238d2",
+            "events_bytes": 3110,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:44.406631+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "slipped": false,
+          "tail": [
+            "MICROTASK_TRANSITION",
+            "MICROTASK_TRANSITION_INTENT",
+            "MICROTASK_TRANSITION",
+            "TASK_COMPLETED"
+          ],
+          "close": "COMPLETED"
+        },
+        {
+          "after": {
+            "events_sha256": "eb4b238430c6abb64d566db3b0e9aa81b6fc4a487a3a9696c12b6b5713d1cd3b",
+            "events_bytes": 4486,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "TASK_COMPLETED"
+            ],
+            "status": "VERIFIED",
+            "updated_at": "2026-10-18T15:16:45.493308+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "completed"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.DuplicatesAndContradictions.test_conflicting_duplicate_commit_is_a_contradiction_and_blocks",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.DuplicatesAndContradictions.test_conflicting_duplicate_commit_is_a_contradiction_and_blocks"
+        },
+        {
+          "before": {
+            "events_sha256": "41401b3eb620324977ed73cace4ee4781b9412b03b4e8aef1be215cdcea0180b",
+            "events_bytes": 3555,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:45.974264+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "blockers": [
+            "MICROTASK_HISTORY_CONTRADICTION"
+          ]
+        },
+        {
+          "after": {
+            "events_sha256": "41401b3eb620324977ed73cace4ee4781b9412b03b4e8aef1be215cdcea0180b",
+            "events_bytes": 3555,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:45.974264+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.DuplicatesAndContradictions.test_identical_duplicate_commit_is_tolerated_and_reconciliation_adds_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.DuplicatesAndContradictions.test_identical_duplicate_commit_is_tolerated_and_reconciliation_adds_nothing"
+        },
+        {
+          "before": {
+            "events_sha256": "61aa4c4d8f5b874faabbad81161545cfb4b928f0f7ade442c5de074a91cb0b3f",
+            "events_bytes": 3547,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:46.447417+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "after": {
+            "events_sha256": "61aa4c4d8f5b874faabbad81161545cfb4b928f0f7ade442c5de074a91cb0b3f",
+            "events_bytes": 3547,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:46.447417+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.DuplicatesAndContradictions.test_two_open_intents_are_never_resolved_automatically",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.DuplicatesAndContradictions.test_two_open_intents_are_never_resolved_automatically"
+        },
+        {
+          "before": {
+            "events_sha256": "a5f777ae4a5b4517949b8f6b06bec1d3c2869ff374c700f6e4030170a9beacf1",
+            "events_bytes": 3138,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION_INTENT"
+            ],
+            "status": "ACTIVE",
+            "updated_at": "2026-10-18T15:16:46.831237+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "after": {
+            "events_sha256": "a5f777ae4a5b4517949b8f6b06bec1d3c2869ff374c700f6e4030170a9beacf1",
+            "events_bytes": 3138,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION_INTENT"
+            ],
+            "status": "ACTIVE",
+            "updated_at": "2026-10-18T15:16:46.831237+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.OtherWritersAndDamage.test_damaged_history_with_an_open_intent_refuses_without_writes",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.OtherWritersAndDamage.test_damaged_history_with_an_open_intent_refuses_without_writes"
+        },
+        {
+          "before": {
+            "events_sha256": "f594e5efa2bc6b02be23c8a6a22b77d02eeb3767a3cc851b3dd0d9bd5f6ba814",
+            "events_bytes": 2672,
+            "event_kinds_tail": "TORN_TAIL",
+            "status": "ACTIVE",
+            "updated_at": "2026-10-18T15:16:47.228370+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "recover": {
+            "state": "FAIL_CLOSED",
+            "requires_human": true
+          }
+        },
+        {
+          "after": {
+            "events_sha256": "f594e5efa2bc6b02be23c8a6a22b77d02eeb3767a3cc851b3dd0d9bd5f6ba814",
+            "events_bytes": 2672,
+            "event_kinds_tail": "TORN_TAIL",
+            "status": "ACTIVE",
+            "updated_at": "2026-10-18T15:16:47.228370+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.OtherWritersAndDamage.test_rc6_status_write_closes_an_open_intent_first"
+        },
+        {
+          "before": {
+            "events_sha256": "f000bc94041b8c807b2d4480169e2b32c7df704c5516279a636675eefdaf96ee",
+            "events_bytes": 2673,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT"
+            ],
+            "status": "ACTIVE",
+            "updated_at": "2026-10-18T15:16:47.667369+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "abandons": [
+            {
+              "event_id": "event_291a5b98c12c454580734c3cfd427495",
+              "task_id": "task_adv",
+              "event_type": "MICROTASK_TRANSITION_ABANDONED",
+              "microtask_id": "m1",
+              "operation_id": null,
+              "payload": {
+                "intent_id": "event_0376ccabfd5a40f2b2f76e3f939a4b3d",
+                "from": "ACTIVE",
+                "to": "DONE",
+                "recovered": true,
+                "reason": "the record is unchanged since the intent: the compare-and-set never happened"
+              },
+              "recorded_at": "2026-10-18T15:16:47.797569+00:00",
+              "schema_version": 1,
+              "created_at": "2026-10-18T15:16:47.797569+00:00",
+              "updated_at": "2026-10-18T15:16:47.797569+00:00"
+            }
+          ],
+          "status": "RECOVERY_REQUIRED"
+        },
+        {
+          "after": {
+            "events_sha256": "0295b987ecc320cbb1e34c1023f8c13d1af3350ac71a3cac21903aa667c2fdbf",
+            "events_bytes": 3196,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION_ABANDONED"
+            ],
+            "status": "RECOVERY_REQUIRED",
+            "updated_at": "2026-10-18T15:16:47.800657+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_adversarial_repair.RollbackCompatibility.test_pre_repair_projection_and_operations_read_repaired_histories",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+          "test": "test_adversarial_repair.RollbackCompatibility.test_pre_repair_projection_and_operations_read_repaired_histories"
+        },
+        {
+          "before": {
+            "events_sha256": "7aca139cfdb20e0b47dcc809ded0e9f137633bbe07e347ac004ca5297b682b70",
+            "events_bytes": 4457,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "OPERATION_INTENT",
+              "MICROTASK_TRANSITION_INTENT"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:48.200889+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        },
+        {
+          "old_blockers": [],
+          "old_op_status": "INTENT"
+        },
+        {
+          "after": {
+            "events_sha256": "7aca139cfdb20e0b47dcc809ded0e9f137633bbe07e347ac004ca5297b682b70",
+            "events_bytes": 4457,
+            "event_kinds_tail": [
+              "MICROTASK_TRANSITION",
+              "MICROTASK_TRANSITION_INTENT",
+              "MICROTASK_TRANSITION",
+              "OPERATION_INTENT",
+              "MICROTASK_TRANSITION_INTENT"
+            ],
+            "status": "DONE",
+            "updated_at": "2026-10-18T15:16:48.200889+00:00",
+            "project_sha256": "695252f664b93b2375fc1738693a32a19e8c722fe14e81a3d80cc5b85a923da0",
+            "location": "active"
+          }
+        }
+      ]
+    }
+  ]
+}

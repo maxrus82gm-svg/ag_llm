@@ -1,0 +1,90 @@
+[
+ {
+  "label": "red-final-baseline",
+  "base": "<TEMP>\\claude-ccrepair-red-final-baseline-o0i2x69l",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 19,
+  "errors": 2,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 66.8
+ },
+ {
+  "label": "mut-M1-no-intent",
+  "base": "<TEMP>\\claude-ccrepair-mut-M1-no-intent-0xb5gwmy",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 27,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 9.2
+ },
+ {
+  "label": "mut-M2-no-entry-resolve",
+  "base": "<TEMP>\\claude-ccrepair-mut-M2-no-entry-resolve-vayow6pz",
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 52.1
+ },
+ {
+  "label": "mut-M3-closeout-ignores-unproven",
+  "base": "<TEMP>\\claude-ccrepair-mut-M3-closeout-ignores-unproven-71ocqte2",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 53.3
+ },
+ {
+  "label": "mut-M4-reconcile-then-execute",
+  "base": "<TEMP>\\claude-ccrepair-mut-M4-reconcile-then-execute-ho0961oa",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 53.0
+ },
+ {
+  "label": "mut-M5-no-progress-check",
+  "base": "<TEMP>\\claude-ccrepair-mut-M5-no-progress-check-r037ai6c",
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 54.1
+ },
+ {
+  "label": "mut-M6-rc6-no-resolve",
+  "base": "<TEMP>\\claude-ccrepair-mut-M6-rc6-no-resolve-c0ew3lju",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 54.3
+ },
+ {
+  "label": "mut-M7-no-unproven",
+  "base": "<TEMP>\\claude-ccrepair-mut-M7-no-unproven-qqm6p5va",
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 53.6
+ }
+]

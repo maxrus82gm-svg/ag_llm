@@ -1,0 +1,43 @@
+{
+ "previous": {
+  "tests_run": 849,
+  "methods": 849
+ },
+ "current": {
+  "tests_run": 869,
+  "methods": 869
+ },
+ "removed": [],
+ "added": {
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_commit_fsync_failure_is_reported_and_reconciled_once": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_intent_before_cas_is_abandoned_with_an_audit_record": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_after_verified_cas_never_closes_without_evidence": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_death_before_intent_changes_nothing": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_foreign_update_after_an_intent_is_a_fail_closed_contradiction": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_healthy_transition_writes_intent_then_commit_with_one_intent_id": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_lost_done_commit_is_restored_before_the_next_transition": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_projection_reports_a_pending_transition_after_reopen": "PASS",
+  "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_reconciliation_restores_the_original_evidence_from_the_durable_intent": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_intent_with_a_progress_event_is_not_reconstructed": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_live_intent_event_failure_is_reported_as_persisted_intent": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_executed_event_never_leads_to_a_second_apply": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_intent_event_keeps_the_task_readable_and_is_reported": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_lost_started_event_never_starts_a_physical_apply": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_reconciling_replay_executes_nothing_and_a_later_request_executes_once": "PASS",
+  "test_web_alarm_crash_consistency.OperationIntentTests.test_recover_reconstructs_the_intent_event_without_any_apply": "PASS",
+  "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_healthy_verified_closes_without_reaffirmation": "PASS",
+  "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_legacy_verified_without_evidence_blocks_closeout": "PASS",
+  "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_is_refused_when_a_safe_recheck_is_impossible": "PASS",
+  "test_web_alarm_crash_consistency.VerificationEvidenceTests.test_reaffirmation_without_mutation_proves_and_allows_closeout": "PASS"
+ },
+ "status_changed": {
+  "test_web_alarm_recovery_coordinator_adversarial.RecoveryCoordinatorAdversarialTests.test_closeout_eligible_task_is_not_silently_completed": "PASS -> FAIL"
+ },
+ "current_non_pass": {
+  "test_web_alarm_recovery_coordinator_adversarial.RecoveryCoordinatorAdversarialTests.test_closeout_eligible_task_is_not_silently_completed": "FAIL",
+  "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP"
+ },
+ "previous_non_pass": {
+  "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP"
+ }
+}

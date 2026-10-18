@@ -1,0 +1,35 @@
+{
+ "label": "mut-M2-no-entry-resolve-2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ccrepair-mirror-M2-no-entry-resolve-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ccrepair-mut-M2-no-entry-resolve-2-nmswjpza\\out",
+  "test_web_alarm_crash_consistency",
+  "test_adversarial_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 64.695,
+ "base": "<TEMP>\\claude-ccrepair-mut-M2-no-entry-resolve-2-nmswjpza",
+ "tests_run": 31,
+ "passed": 30,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 64.125,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_crash_consistency.MicrotaskIntentTests.test_a_refused_step_that_blocks_the_restore_point_closes_the_open_intent_first",
+   "FAIL",
+   "r: Lists differ: [] != ['event_df06f5ff19a344d0998fa5f72cef054c']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'event_df06f5ff19a344d0998fa5f72cef054c'\n\n- []\n+ ['event_df06f5ff19a344d0998fa5f72cef054c'] : the open intent was not closed before another writer changed the status\n"
+  ]
+ ]
+}

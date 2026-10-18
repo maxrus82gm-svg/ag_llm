@@ -1,0 +1,280 @@
+--- a/web_alarm/state_machine.py
++++ b/web_alarm/state_machine.py
+@@ -6,7 +6,15 @@
+ from pathlib import Path
+ from typing import Iterable
+ 
+-from .event_checkpoint_store import EventCheckpointStore, EventCheckpointStoreError
++from .event_checkpoint_store import (
++    MICROTASK_ABANDONED,
++    MICROTASK_INTENT,
++    MICROTASK_REAFFIRMED,
++    EventCheckpointStore,
++    EventCheckpointStoreError,
++    MicrotaskHistoryConflict,
++    microtask_journal,
++)
+ from .manifest_store import ManifestSnapshotStore, ManifestStoreError
+ from .models import (
+     CheckpointRecord,
+@@ -60,6 +68,18 @@
+         self.microtask_id = microtask_id
+         self.step = step
+         self.reason = reason
++
++
++class MicrotaskHistoryContradiction(ServerStateMachineError):
++    """R-MT: an open transition intent cannot be resolved from durable facts; operator required."""
++
++
++class TransitionJournalUnavailable(ServerStateMachineError):
++    """R-MT: the write-ahead intent could not be recorded; the status was not changed."""
++
++
++class ReaffirmationRefused(ServerStateMachineError):
++    """A post-hoc re-verification was refused before any write (no proof is produced)."""
+ 
+ 
+ class ServerStateMachine:
+@@ -263,6 +283,87 @@
+             return f"{type(exc).__name__}: {exc}"
+         return None
+ 
++    # --- R-MT: journaled lifecycle steps (AUD-02b-R) ----------------------------------------
++    def _resolve_locked(self, task_id: str, microtask_id: str, step: str) -> list[dict[str, object]]:
++        """Reconcile open intents of this microtask (caller holds the mutation lock).
++
++        Reads the whole history, so it also proves it readable. Only the
++        deterministic outcomes are written (see ``microtask_journal``).
++        """
++        try:
++            return self.state.resolve_microtask_intents_locked(task_id, microtask_id)
++        except MicrotaskHistoryConflict as exc:
++            raise MicrotaskHistoryContradiction(
++                f"{step} step of {task_id}/{microtask_id} refused: {exc}; nothing was written, "
++                "operator review is required"
++            ) from exc
++        except EventCheckpointStoreError as exc:
++            raise HistoryUnreadable(task_id, microtask_id, step, str(exc)) from exc
++
++    def _resolve_entry(self, task_id: str, microtask_id: str, step: str) -> None:
++        """A step continues only from a proven state: reconcile before any check or write."""
++        with self.tasks.mutation_lock(task_id):
++            self._resolve_locked(task_id, microtask_id, step)
++
++    def _journaled_cas_locked(
++        self,
++        task_id: str,
++        microtask_id: str,
++        current: MicrotaskStatus,
++        requested: MicrotaskStatus,
++        payload: dict[str, object],
++        operation_id: str | None,
++        *,
++        activate: bool = False,
++    ) -> tuple[str | None, MicrotaskRecord | None, str | None]:
++        """intent -> compare-and-set -> commit, all under the mutation lock held by the caller.
++
++        The intent (from, to, verification evidence, the record's updated_at) is
++        durable before the status moves, so a process death at any point leaves
++        a state ``microtask_journal`` resolves from durable facts alone.
++        Returns (refusal reason, None, None) or (None, updated record, history
++        error or None).
++        """
++        self._resolve_locked(task_id, microtask_id, requested.value)
++        record = self.tasks.open_microtask(task_id, microtask_id)
++        if record.status is not current:
++            conflict = MicrotaskStatusConflict(task_id, microtask_id, {current}, record.status)
++            return self._stale_reason(current, requested, conflict), None, None
++        try:
++            intent = self.state.append_event(
++                task_id, MICROTASK_INTENT, microtask_id=microtask_id, operation_id=operation_id,
++                payload=dict(payload, basis_updated_at=record.updated_at),
++            )
++        except (EventCheckpointStoreError, UnicodeEncodeError) as exc:
++            raise TransitionJournalUnavailable(
++                f"{requested.value} step of {task_id}/{microtask_id} refused: its intent could not be "
++                f"recorded ({exc}); the status was not changed"
++            ) from exc
++
++        def abandon(reason: str) -> None:
++            try:
++                self.state.append_event(
++                    task_id, MICROTASK_ABANDONED, microtask_id=microtask_id, operation_id=operation_id,
++                    payload={"intent_id": intent.event_id, "from": current.value, "to": requested.value,
++                             "reason": reason},
++                )
++            except (EventCheckpointStoreError, UnicodeEncodeError):
++                pass  # stays open; resolved later from the unchanged record
++
++        try:
++            updated = self.tasks.compare_and_set_microtask_status_locked(
++                task_id, microtask_id, expected=current, status=requested, activate=activate
++            )
++        except MicrotaskStatusConflict as exc:
++            abandon(f"compare-and-set refused: {exc}")
++            return self._stale_reason(current, requested, exc), None, None
++        except Exception as exc:
++            abandon(f"status write failed: {type(exc).__name__}")
++            raise
++        return None, updated, self._record_transition(
++            task_id, microtask_id, operation_id, dict(payload, intent_id=intent.event_id)
++        )
++
+     def _reject(
+         self,
+         task_id: str,
+@@ -372,6 +473,7 @@
+         # locks, so this is an entry check; a later history failure is reported.
+         self._require_encodable(operation_id=operation_id)
+         self._require_readable_history(task_id, microtask_id, "prepare")
++        self._resolve_entry(task_id, microtask_id, "prepare")
+         if micro.status not in {
+             MicrotaskStatus.PLANNED,
+             MicrotaskStatus.BLOCKED_PREPARE,
+@@ -513,7 +615,7 @@
+         service = self._projection
+         with service.operations.task_lock(task_id):
+             with self.tasks.mutation_lock(task_id):
+-                self._require_readable_history(task_id, microtask_id, MicrotaskStatus.VERIFIED.value)
++                self._resolve_locked(task_id, microtask_id, MicrotaskStatus.VERIFIED.value)
+                 try:
+                     projection = service.build(task_id)
+                 except Exception as exc:  # unprovable recovery picture: fail closed
+@@ -521,13 +623,10 @@
+                 refusal = verification_refusal(projection, microtask_id)
+                 if refusal is not None:
+                     return f"open recovery blocks VERIFIED ({refusal[0]}): {refusal[1]}", None, None
+-                try:
+-                    updated = self.tasks.compare_and_set_microtask_status_locked(
+-                        task_id, microtask_id, expected=current, status=MicrotaskStatus.VERIFIED
+-                    )
+-                except MicrotaskStatusConflict as exc:
+-                    return self._stale_reason(current, MicrotaskStatus.VERIFIED, exc), None, None
+-                return None, updated, self._record_transition(task_id, microtask_id, operation_id, payload)
++                # R-MT: the verification evidence is durable (intent) before VERIFIED is
++                return self._journaled_cas_locked(
++                    task_id, microtask_id, current, MicrotaskStatus.VERIFIED, payload, operation_id
++                )
+ 
+     def _admit_active(
+         self,
+@@ -583,22 +682,18 @@
+         *,
+         activate: bool = False,
+     ) -> tuple[str | None, MicrotaskRecord | None, str | None]:
+-        """AUD-02b: the locked commit of a step that is not VERIFIED.
+-
+-        History check, compare-and-set (with ``activate`` the activation rules
+-        and plan pointer, F4) and the transition event under one mutation lock.
+-        Returns (refusal reason, None, None) or (None, updated record, history
+-        error or None).
++        """AUD-02b / R-MT: the locked commit of a step that is not VERIFIED.
++
++        Under one mutation lock: open intents reconciled (history proven
++        readable), write-ahead intent, compare-and-set (with ``activate`` the
++        activation rules and plan pointer, F4) and the commit event. Returns
++        (refusal reason, None, None) or (None, updated record, history error or
++        None).
+         """
+         with self.tasks.mutation_lock(task_id):
+-            self._require_readable_history(task_id, microtask_id, requested.value)
+-            try:
+-                updated = self.tasks.compare_and_set_microtask_status_locked(
+-                    task_id, microtask_id, expected=current, status=requested, activate=activate
+-                )
+-            except MicrotaskStatusConflict as exc:
+-                return self._stale_reason(current, requested, exc), None, None
+-            return None, updated, self._record_transition(task_id, microtask_id, operation_id, payload)
++            return self._journaled_cas_locked(
++                task_id, microtask_id, current, requested, payload, operation_id, activate=activate
++            )
+ 
+     def transition(
+         self,
+@@ -633,6 +728,8 @@
+         current = micro.status
+         self._require_encodable(verification_evidence=verification_evidence, operation_id=operation_id)
+         self._require_readable_history(task_id, microtask_id, requested.value)
++        # R-MT: continue only from a proven state (an interrupted step is reconciled first)
++        self._resolve_entry(task_id, microtask_id, requested.value)
+ 
+         if expected_status is not None and MicrotaskStatus(expected_status) is not current:
+             self._reject(
+@@ -747,3 +844,76 @@
+             last_operation_id=operation_id,
+         )
+         return self._transition_result(updated, checkpoint, history_error)
++
++    def reaffirm_verification(
++        self,
++        task_id: str,
++        microtask_id: str,
++        verification_evidence: str,
++        *,
++        operation_id: str | None = None,
++    ) -> dict[str, object]:
++        """Safe post-hoc re-verification of a VERIFIED microtask whose evidence is not recorded.
++
++        No physical mutation and no status change. The caller re-checked the
++        result without mutating it and supplies new evidence; the same VERIFIED
++        gates run under the same locks (no open operation fate or recovery for
++        this microtask). The new event says it is a later re-verification
++        (``original_evidence_recorded: false``): the lost original evidence is
++        never reconstructed. Refused before any write when the microtask is not
++        VERIFIED, already proven, or the gates do not hold.
++        """
++        from .microtask_gate import verification_refusal
++        from .projection import ProjectionService
++
++        if not isinstance(verification_evidence, str) or not verification_evidence.strip():
++            raise ValueError("verification_evidence must be a non-empty string")
++        self._require_encodable(verification_evidence=verification_evidence, operation_id=operation_id)
++        self._require_readable_history(task_id, microtask_id, "reaffirm")
++        if self._projection is None:
++            self._projection = ProjectionService(self.tasks.storage_root)
++        service = self._projection
++        with service.operations.task_lock(task_id):
++            with self.tasks.mutation_lock(task_id):
++                self._resolve_locked(task_id, microtask_id, "reaffirm")
++                record = self.tasks.open_microtask(task_id, microtask_id)
++                if record.status is not MicrotaskStatus.VERIFIED:
++                    raise ReaffirmationRefused(
++                        f"reaffirm of {task_id}/{microtask_id} refused: it is {record.status.value}, not VERIFIED; "
++                        "nothing was written"
++                    )
++                facts = microtask_journal(self.state.read_events(task_id), self.state.microtask_statuses(task_id))
++                if microtask_id not in facts["unproven_verified"]:
++                    raise ReaffirmationRefused(
++                        f"reaffirm of {task_id}/{microtask_id} refused: its verification evidence is already "
++                        "recorded; nothing was written"
++                    )
++                try:
++                    projection = service.build(task_id)
++                except Exception as exc:  # unprovable recovery picture: fail closed
++                    raise ReaffirmationRefused(
++                        f"reaffirm of {task_id}/{microtask_id} refused: recovery facts are unavailable "
++                        f"({type(exc).__name__}: {exc}); nothing was written"
++                    ) from exc
++                refusal = verification_refusal(projection, microtask_id)
++                if refusal is not None:
++                    raise ReaffirmationRefused(
++                        f"reaffirm of {task_id}/{microtask_id} refused: a safe re-check is not possible "
++                        f"({refusal[0]}: {refusal[1]}); operator decision required; nothing was written"
++                    )
++                try:
++                    event = self.state.append_event(
++                        task_id, MICROTASK_REAFFIRMED, microtask_id=microtask_id, operation_id=operation_id,
++                        payload={"verification_evidence": verification_evidence.strip(),
++                                 "original_evidence_recorded": False,
++                                 "status_updated_at": record.updated_at,
++                                 "kind": "post-hoc re-verification without mutation"},
++                    )
++                except EventCheckpointStoreError as exc:
++                    raise ReaffirmationRefused(
++                        f"reaffirm of {task_id}/{microtask_id} refused: the evidence could not be recorded "
++                        f"({exc}); nothing was proven"
++                    ) from exc
++        checkpoint = self._write_checkpoint(task_id, microtask_id, last_operation_id=operation_id)
++        return {"microtask": record, "checkpoint": checkpoint, "event_id": event.event_id,
++                "reaffirmed": True, "physical_mutation_performed": False}
