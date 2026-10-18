@@ -1,0 +1,8 @@
+{
+ "check": "card history intact before rotation",
+ "method": "current card with BLOCK 1 replaced by the waiting slot must equal the SHA recorded after the previous rotation (CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001 card-rotation.json after_sha256)",
+ "expected_sha256": "5e665d281a216e0d985f5cb53f634d7de1a7a88abf92bda1e62ace3a5064d16b",
+ "reconstructed_sha256": "5e665d281a216e0d985f5cb53f634d7de1a7a88abf92bda1e62ace3a5064d16b",
+ "card_sha256_at_start": "98823be71321d9f73cb2a767db5ff4b626f88bfbcbd910d0532920f44c648711",
+ "result": "MATCH: only BLOCK 1 changed since the previous rotation; previous BLOCK 2/3 intact"
+}

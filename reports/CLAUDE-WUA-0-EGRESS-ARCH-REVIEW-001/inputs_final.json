@@ -1,0 +1,136 @@
+{
+ "task": "CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001",
+ "mode": "read-only census, no execution of any input",
+ "inputs": {
+  "Документация/000_Задачи Claude.md": {
+   "bytes": 602198,
+   "sha256": "01c20408ce33648523dba1c291c772272ff57f9d78ae7867a78631594b38cd58",
+   "eol": "LF"
+  },
+  "Документация/000_Задачи для агента.md": {
+   "bytes": 32912,
+   "sha256": "beaddaf269a53898789cd8e4d2500490c312d112528cf922003153472d314d68",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/08_Старт.md": {
+   "bytes": 99200,
+   "sha256": "4ea4534af0ff0acd62fc0efee19418fc527ed9f0a2cf2f51300202ecf4611bfc",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/18_Регламент сопровождения документации.md": {
+   "bytes": 131560,
+   "sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md": {
+   "bytes": 67102,
+   "sha256": "57d3f3a83c4361742853537cf650d771a367a22130f6a4932835c6406c479c8b",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/34_TACTICAL_CONTEXT.md": {
+   "bytes": 160460,
+   "sha256": "8751033a0d352e96e79c05b7eb10cf4c5a25a3ebeea8fb770082b413cc403789",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/01_Архитектура и текущее состояние.md": {
+   "bytes": 64554,
+   "sha256": "91530faa602da984e5eaadcef24ee04dd38d4fee272cf6eb3166bc5ce5b39919",
+   "eol": "CR_PRESENT"
+  },
+  "Документация/36.1_Обязательный регламент тестирования для LLM.md": {
+   "bytes": 30121,
+   "sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+   "eol": "CR_PRESENT"
+  },
+  ".gitignore": {
+   "bytes": 1496,
+   "sha256": "b6431afa9e91b5748582a20cdec23cb95d06ac63a4ce44d7556faf7092d6d9bb",
+   "eol": "CR_PRESENT"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_proxy_constraints_20261016/report.md": {
+   "bytes": 11941,
+   "sha256": "77905b41c0bccd3850b286b5c6b7203a89505738fef1251d507491359a0f503c",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_preflight_20261017/report.md": {
+   "bytes": 21126,
+   "sha256": "01b187cc5888f33849bb8a3920ae243c9006330e0b522e5375b5d424bbef2342",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/native_client_offline_20261017/report.md": {
+   "bytes": 17156,
+   "sha256": "177b176efa6291c0d4931d46fd580f6d469598cb998359e32fcacf027f8e6fb4",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/native_client_offline_20261017/proxy_path_audit.md": {
+   "bytes": 8400,
+   "sha256": "5fe98906e7e60d008f740da0b570b72719e495e2be32e2975bbf17b279db8679",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/report.md": {
+   "bytes": 17639,
+   "sha256": "82b555c31c57ba2d74a4fa44ab146c766c58c520501d33f30a7313d144a24bf5",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/proxy_options.md": {
+   "bytes": 4818,
+   "sha256": "b7cfb454e3042869dd9e04303505694fd26b70212fc04681c73191bf9202acc4",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/source_audit.md": {
+   "bytes": 5591,
+   "sha256": "703fea3f3a412d609f460903c70c89d016d4ced1def37a37f558891397f3538b",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/run_help.txt": {
+   "bytes": 15359,
+   "sha256": "eb252ba52bc740f9794d2fb3f62056a1314ae9e066b52b963172ca55d4af3323",
+   "eol": "CR_PRESENT"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/offline_profiles/wua-stdio-prepared.yaml": {
+   "bytes": 622,
+   "sha256": "512f2b6395353e50f79690e62808972b3db9bf51e5805dfd18b4e933673d3463",
+   "eol": "CR_PRESENT"
+  },
+  "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/start_tunnel.py": {
+   "bytes": 5642,
+   "sha256": "421d90df0cbf2af6a382b8ec312ea4dd7726cbccb71bf93eebeab20adc545a2e",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/report.md": {
+   "bytes": 18756,
+   "sha256": "aba1fdd600420baa9c13e42f1c63b5a03128e5ed5798995731475dfac50caec0",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/isolation_design.md": {
+   "bytes": 7808,
+   "sha256": "6abdfd0cbdb0adf9e34f420de9c4bddcf8874277440a7dec4e8463d7efa7dc39",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/native_egress_map.md": {
+   "bytes": 6963,
+   "sha256": "4d2bc0136b54258457c05b53e8cb2fde4690ffe61f662d1fdaefe520e9675606",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/report.md": {
+   "bytes": 11208,
+   "sha256": "2f8dc597f503a54891dd077de8367bf27f07f60c4bb51711cc949446e83b4d14",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/vm_platform_comparison.md": {
+   "bytes": 5436,
+   "sha256": "aeda6af24860049fa7b500dd59c9d3f415b3c1fe530f73b67ce71d8ba36a0ac9",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/host_vm_inventory.md": {
+   "bytes": 4048,
+   "sha256": "c796387e9ea0733d9f10da3110350016b226faefe97489f87c911abbb7c3253d",
+   "eol": "LF"
+  },
+  "reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/isolation_preflight_contract.md": {
+   "bytes": 9414,
+   "sha256": "133718398b288ae0f3913b0d85cccc661d71e12610a0d70d185854717a675810",
+   "eol": "LF"
+  }
+ }
+}

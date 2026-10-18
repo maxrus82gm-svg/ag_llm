@@ -1,0 +1,64 @@
+{
+ "task": "CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "kind": "architecture review, READ-ONLY (0 network, 0 client/VM/Sandbox runs, 0 system queries/changes, 0 Git)",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "report_folder": "reports/CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "repository_files_changed_outside_folder": {
+  "Документация/000_Задачи Claude.md": {
+   "sha256_before": "98823be71321d9f73cb2a767db5ff4b626f88bfbcbd910d0532920f44c648711",
+   "sha256_after": "01c20408ce33648523dba1c291c772272ff57f9d78ae7867a78631594b38cd58",
+   "change": "BLOCK 1-3 rotation only (card-rotation.json, card_precheck.json)"
+  }
+ },
+ "inputs_read": 26,
+ "inputs_unchanged": 25,
+ "files": {
+  "block3-closeout.md": {
+   "bytes": 5088,
+   "sha256": "5741ba012679b8c3f45dc96649910148d68c07508ce725b5c8c7dd54137248ee",
+   "eol": "LF"
+  },
+  "card-rotation.json": {
+   "bytes": 542,
+   "sha256": "73222e6f46d26c12d3abcec035246cf5c9ab2daf971a318d004cdff651249b76",
+   "eol": "LF"
+  },
+  "card_precheck.json": {
+   "bytes": 623,
+   "sha256": "fdcb796285725f02845533289218bedf13b04d8ce53ca15c6af1fc867a3170ae",
+   "eol": "LF"
+  },
+  "inputs_final.json": {
+   "bytes": 5434,
+   "sha256": "50f430c5263ac337addc6c9447d38b39154cb12bb45b972946fc56c1b6400457",
+   "eol": "LF"
+  },
+  "inputs_read.json": {
+   "bytes": 5434,
+   "sha256": "f8dad5d6c19f1a7654f9f91ee864984b6542c7c05f449707ded3014f2791e19b",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 62468,
+   "sha256": "a8b6c39129685da396a1e8bc91596388e5dc8a707583a96801631c8607d9c8fb",
+   "eol": "LF"
+  },
+  "tools/hash_inputs.py": {
+   "bytes": 2973,
+   "sha256": "20b08dab11ea4ae002453b0d022c67008ed020ae2ff4d56e4b835744c1e12278",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 2443,
+   "sha256": "073613929ce74f4d25160ea5ae06d497e4eedba60284fb03f297bd92f323db1d",
+   "eol": "LF"
+  },
+  "tools/rotate_card.py": {
+   "bytes": 5446,
+   "sha256": "8c1eec3e1e6c61d8eaeb041cb12e1c9167d9094d8b4b70cb779058630a84d00a",
+   "eol": "LF"
+  }
+ }
+}
