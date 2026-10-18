@@ -1,0 +1,66 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "07",
+  "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "windows_version": [
+    10,
+    0,
+    19045
+  ],
+  "commands": [
+    {
+      "phase": "readonly preflight",
+      "command": "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\http_socks_adapter_20261018\\preflight_readonly.py",
+      "exit_code": 0
+    },
+    {
+      "phase": "synthetic test attempts 1/2/3",
+      "command": "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -I -X utf8 -B M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\http_socks_adapter_20261018\\test_adapter.py",
+      "attempt_exit_codes": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "historical_attempts": [
+    {
+      "file": "attempt01_results.json",
+      "counts": {
+        "PASS": 29,
+        "FAIL": 0,
+        "ERROR": 2,
+        "SKIP": 0
+      },
+      "collected": 31
+    },
+    {
+      "file": "attempt02_results.json",
+      "counts": {
+        "PASS": 32,
+        "FAIL": 0,
+        "ERROR": 0,
+        "SKIP": 0
+      },
+      "collected": 32
+    },
+    {
+      "file": "attempt03_results.json",
+      "counts": {
+        "PASS": 36,
+        "FAIL": 0,
+        "ERROR": 0,
+        "SKIP": 0
+      },
+      "collected": 36
+    }
+  ],
+  "setup_failure": "setup_attempt01.txt; HARNESS DEFECT unknown codec spelling before network tests",
+  "final_results": "attempt03_results.json",
+  "native_client_processes_started": 0,
+  "hosted_tunnels_started": 0,
+  "ordinary_chat_calls": 0,
+  "live_v2ray_socket_probes": 0,
+  "git_github_operations": 0,
+  "simple_local_helper": "Unavailable: account does not support qwen3-coder:30b; all work continued on main model. No helper writes."
+}

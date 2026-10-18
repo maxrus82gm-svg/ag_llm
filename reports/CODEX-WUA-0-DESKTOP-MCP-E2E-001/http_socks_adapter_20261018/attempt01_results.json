@@ -1,0 +1,1674 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "07",
+  "scope": "SYNTHETIC PYTHON ADAPTER ONLY; not native tunnel-client",
+  "attempt": 1,
+  "status": "FAIL",
+  "collected": 31,
+  "executed": 31,
+  "counts": {
+    "PASS": 29,
+    "FAIL": 0,
+    "ERROR": 2,
+    "SKIP": 0
+  },
+  "cases": [
+    {
+      "id": "test_01_success_domain_and_physical_proxy_path",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_01_success_domain_and_physical_proxy_path",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62177,
+            "allowed": true
+          },
+          {
+            "case": "test_01_success_domain_and_physical_proxy_path",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62176,
+            "allowed": true
+          },
+          {
+            "case": "test_01_success_domain_and_physical_proxy_path",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62175,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_EOF"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62175
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62180,
+            "origin_port": 62175
+          }
+        ],
+        "origin_peer_ports": [
+          62180
+        ],
+        "origin_received_bytes": 11,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_02_listener_unavailable",
+      "status": "PASS",
+      "observed": {
+        "http_status": 504,
+        "trace": [
+          {
+            "case": "test_02_listener_unavailable",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62183,
+            "allowed": true
+          },
+          {
+            "case": "test_02_listener_unavailable",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62182,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "TRANSPORT_TIMEOUT"
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_03_socks_refusal",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_03_socks_refusal",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62188,
+            "allowed": true
+          },
+          {
+            "case": "test_03_socks_refusal",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62187,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_REFUSED",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62186
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_04_socks_timeout",
+      "status": "PASS",
+      "observed": {
+        "http_status": 504,
+        "trace": [
+          {
+            "case": "test_04_socks_timeout",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62193,
+            "allowed": true
+          },
+          {
+            "case": "test_04_socks_timeout",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62192,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "TRANSPORT_TIMEOUT"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_05_socks_disconnect",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_05_socks_disconnect",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62199,
+            "allowed": true
+          },
+          {
+            "case": "test_05_socks_disconnect",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62198,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_TRUNCATED",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_06_bad_method",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_06_bad_method",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62204,
+            "allowed": true
+          },
+          {
+            "case": "test_06_bad_method",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62203,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_METHOD",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_07_truncated_method",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_07_truncated_method",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62209,
+            "allowed": true
+          },
+          {
+            "case": "test_07_truncated_method",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62208,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_TRUNCATED",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_08_bad_reply_version",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_08_bad_reply_version",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62214,
+            "allowed": true
+          },
+          {
+            "case": "test_08_bad_reply_version",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62213,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_VERSION",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62212
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_09_bad_reply_reserved",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_09_bad_reply_reserved",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62219,
+            "allowed": true
+          },
+          {
+            "case": "test_09_bad_reply_reserved",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62218,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_VERSION",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62217
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_10_unknown_reply_atyp",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_10_unknown_reply_atyp",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62224,
+            "allowed": true
+          },
+          {
+            "case": "test_10_unknown_reply_atyp",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62223,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_ATYP",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62222
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_11_truncated_bound_address",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_11_truncated_bound_address",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62229,
+            "allowed": true
+          },
+          {
+            "case": "test_11_truncated_bound_address",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62228,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_TRUNCATED",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62227
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_12_empty_bound_domain",
+      "status": "PASS",
+      "observed": {
+        "http_status": 502,
+        "trace": [
+          {
+            "case": "test_12_empty_bound_domain",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62234,
+            "allowed": true
+          },
+          {
+            "case": "test_12_empty_bound_domain",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62233,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_BOUND",
+            "status": 502
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "FAULT_REPLY"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62232
+          }
+        ],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_13_forbidden_destination",
+      "status": "PASS",
+      "observed": {
+        "http_status": 403,
+        "trace": [
+          {
+            "case": "test_13_forbidden_destination",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62239,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "DESTINATION_DENIED",
+            "status": 403
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_14_ip_target_direct_bypass_rejected",
+      "status": "PASS",
+      "observed": {
+        "http_status": 400,
+        "trace": [
+          {
+            "case": "test_14_ip_target_direct_bypass_rejected",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62243,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "AUTHORITY",
+            "status": 400
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_15_environment_no_proxy_and_decoy_are_ignored",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "environment_restored": true,
+        "trace": [
+          {
+            "case": "test_15_environment_no_proxy_and_decoy_are_ignored",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62247,
+            "allowed": true
+          },
+          {
+            "case": "test_15_environment_no_proxy_and_decoy_are_ignored",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62246,
+            "allowed": true
+          },
+          {
+            "case": "test_15_environment_no_proxy_and_decoy_are_ignored",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62245,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_EOF"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62245
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62250,
+            "origin_port": 62245
+          }
+        ],
+        "origin_peer_ports": [
+          62250
+        ],
+        "origin_received_bytes": 2,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_16_fragmented_socks_replies",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_16_fragmented_socks_replies",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62253,
+            "allowed": true
+          },
+          {
+            "case": "test_16_fragmented_socks_replies",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62252,
+            "allowed": true
+          },
+          {
+            "case": "test_16_fragmented_socks_replies",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62251,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_EOF"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62251
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62256,
+            "origin_port": 62251
+          }
+        ],
+        "origin_peer_ports": [
+          62256
+        ],
+        "origin_received_bytes": 2,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_17_disconnect_after_success_no_reconnect",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_17_disconnect_after_success_no_reconnect",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62259,
+            "allowed": true
+          },
+          {
+            "case": "test_17_disconnect_after_success_no_reconnect",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62258,
+            "allowed": true
+          },
+          {
+            "case": "test_17_disconnect_after_success_no_reconnect",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62257,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_EOF"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED",
+          "DISCONNECTED_AFTER_SUCCESS"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62257
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62262,
+            "origin_port": 62257
+          }
+        ],
+        "origin_peer_ports": [
+          62262
+        ],
+        "origin_received_bytes": 2,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_18_idle_timeout",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_18_idle_timeout",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62265,
+            "allowed": true
+          },
+          {
+            "case": "test_18_idle_timeout",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62264,
+            "allowed": true
+          },
+          {
+            "case": "test_18_idle_timeout",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62263,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_DEADLINE"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62263
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62268,
+            "origin_port": 62263
+          }
+        ],
+        "origin_peer_ports": [
+          62268
+        ],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_19_header_size_limit",
+      "status": "ERROR",
+      "observed": {
+        "trace": [
+          {
+            "case": "test_19_header_size_limit",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62271,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_SIZE",
+            "status": 431
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      },
+      "error": {
+        "type": "ConnectionResetError",
+        "frames": [
+          {
+            "file": "case.py",
+            "line": 58,
+            "function": "testPartExecutor"
+          },
+          {
+            "file": "case.py",
+            "line": 634,
+            "function": "run"
+          },
+          {
+            "file": "case.py",
+            "line": 589,
+            "function": "_callTestMethod"
+          },
+          {
+            "file": "test_adapter.py",
+            "line": 455,
+            "function": "test_19_header_size_limit"
+          },
+          {
+            "file": "test_adapter.py",
+            "line": 307,
+            "function": "status"
+          }
+        ]
+      }
+    },
+    {
+      "id": "test_20_header_count_limit",
+      "status": "PASS",
+      "observed": {
+        "http_status": 431,
+        "trace": [
+          {
+            "case": "test_20_header_count_limit",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62275,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_LIMIT",
+            "status": 431
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_21_slow_header_total_deadline",
+      "status": "PASS",
+      "observed": {
+        "http_status": 408,
+        "trace": [
+          {
+            "case": "test_21_slow_header_total_deadline",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62279,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_TIMEOUT",
+            "status": 408
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_22_concurrency_limit",
+      "status": "ERROR",
+      "observed": {
+        "trace": [
+          {
+            "case": "test_22_concurrency_limit",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62283,
+            "allowed": true
+          },
+          {
+            "case": "test_22_concurrency_limit",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62283,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "OVERLOAD"
+          },
+          {
+            "code": "HEADER_EOF",
+            "status": 400
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      },
+      "error": {
+        "type": "ConnectionResetError",
+        "frames": [
+          {
+            "file": "case.py",
+            "line": 58,
+            "function": "testPartExecutor"
+          },
+          {
+            "file": "case.py",
+            "line": 634,
+            "function": "run"
+          },
+          {
+            "file": "case.py",
+            "line": 589,
+            "function": "_callTestMethod"
+          },
+          {
+            "file": "test_adapter.py",
+            "line": 474,
+            "function": "test_22_concurrency_limit"
+          },
+          {
+            "file": "test_adapter.py",
+            "line": 307,
+            "function": "status"
+          }
+        ]
+      }
+    },
+    {
+      "id": "test_23_tunnel_byte_limit",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_23_tunnel_byte_limit",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62288,
+            "allowed": true
+          },
+          {
+            "case": "test_23_tunnel_byte_limit",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62287,
+            "allowed": true
+          },
+          {
+            "case": "test_23_tunnel_byte_limit",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62286,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_BYTE_LIMIT"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62286
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62291,
+            "origin_port": 62286
+          }
+        ],
+        "origin_peer_ports": [
+          62291
+        ],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_24_invalid_upstream_config_before_bind",
+      "status": "PASS",
+      "observed": {
+        "trace": [],
+        "adapter_events": [],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_25_missing_and_real_destination_config_rejected",
+      "status": "PASS",
+      "observed": {
+        "trace": [],
+        "adapter_events": [],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_26_invalid_resource_settings",
+      "status": "PASS",
+      "observed": {
+        "trace": [],
+        "adapter_events": [],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_27_method_and_absolute_uri_rejected",
+      "status": "PASS",
+      "observed": {
+        "http_status": 400,
+        "trace": [
+          {
+            "case": "test_27_method_and_absolute_uri_rejected",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62297,
+            "allowed": true
+          },
+          {
+            "case": "test_27_method_and_absolute_uri_rejected",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62297,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "METHOD",
+            "status": 405
+          },
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "AUTHORITY",
+            "status": 400
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_28_host_conflict_and_duplicate_headers",
+      "status": "PASS",
+      "observed": {
+        "http_status": 400,
+        "trace": [
+          {
+            "case": "test_28_host_conflict_and_duplicate_headers",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62302,
+            "allowed": true
+          },
+          {
+            "case": "test_28_host_conflict_and_duplicate_headers",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62302,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_CONFLICT",
+            "status": 400
+          },
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_DUPLICATE",
+            "status": 400
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_29_body_framing_rejected",
+      "status": "PASS",
+      "observed": {
+        "http_status": 400,
+        "trace": [
+          {
+            "case": "test_29_body_framing_rejected",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62307,
+            "allowed": true
+          },
+          {
+            "case": "test_29_body_framing_rejected",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62307,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_CONFLICT",
+            "status": 400
+          },
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "HEADER_CONFLICT",
+            "status": 400
+          }
+        ],
+        "socks_markers": [],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_30_auth_headers_not_forwarded_or_recorded",
+      "status": "PASS",
+      "observed": {
+        "http_status": 200,
+        "trace": [
+          {
+            "case": "test_30_auth_headers_not_forwarded_or_recorded",
+            "role": "driver",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62312,
+            "allowed": true
+          },
+          {
+            "case": "test_30_auth_headers_not_forwarded_or_recorded",
+            "role": "adapter",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62311,
+            "allowed": true
+          },
+          {
+            "case": "test_30_auth_headers_not_forwarded_or_recorded",
+            "role": "socks",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62310,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [
+          {
+            "code": "CLIENT_ACCEPTED"
+          },
+          {
+            "code": "SOCKS_CONNECTED"
+          },
+          {
+            "code": "SOCKS_GRANTED",
+            "atyp": 3
+          },
+          {
+            "code": "TUNNEL_ESTABLISHED"
+          },
+          {
+            "code": "RELAY_EOF"
+          }
+        ],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED",
+          "DOMAIN_CONNECT_RECEIVED",
+          "GRANTED"
+        ],
+        "socks_requests": [
+          {
+            "atyp": 3,
+            "synthetic_domain": "origin.invalid",
+            "port": 62310
+          }
+        ],
+        "proxy_forward_sockets": [
+          {
+            "local_port": 62315,
+            "origin_port": 62310
+          }
+        ],
+        "origin_peer_ports": [
+          62315
+        ],
+        "origin_received_bytes": 0,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    },
+    {
+      "id": "test_31_oracle_detects_intentional_fallback_after_fault",
+      "status": "PASS",
+      "observed": {
+        "intentional_fallback_detected": true,
+        "trace": [
+          {
+            "case": "test_31_oracle_detects_intentional_fallback_after_fault",
+            "role": "mutant",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62317,
+            "allowed": true
+          },
+          {
+            "case": "test_31_oracle_detects_intentional_fallback_after_fault",
+            "role": "mutant",
+            "event": "socket.connect",
+            "host": "127.0.0.1",
+            "port": 62316,
+            "allowed": true
+          }
+        ],
+        "adapter_events": [],
+        "socks_markers": [
+          "SOCKS_ACCEPT",
+          "METHOD_RECEIVED"
+        ],
+        "socks_requests": [],
+        "proxy_forward_sockets": [],
+        "origin_peer_ports": [
+          62320
+        ],
+        "origin_received_bytes": 2,
+        "adapter_unexpected": [],
+        "fixture_errors": [],
+        "expected_peer_resets": 0,
+        "cleanup_errors": []
+      }
+    }
+  ],
+  "socket_connect_attempts": 58,
+  "isolation_violations": [],
+  "ports_remaining": [],
+  "worker_leaks": [],
+  "source_sha256": {
+    "adapter.py": "1ba0aaec7c608397ce7705276e7e3982bff02e809de7f71ec510217f0eb31fd6",
+    "test_adapter.py": "386f446d7cc0339ccd487e9ec7f40493d41af92661c418c209bc9cb82718fbcf"
+  },
+  "payloads_headers_credentials_recorded": false,
+  "native_client_started": false
+}

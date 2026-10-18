@@ -1,0 +1,321 @@
+"""AM07 synthetic reference prototype, NOT installed/network-native containment.
+
+No CLI, environment proxy lookup, DNS lookup, direct target dial, retry, fallback,
+authentication, file configuration or body logging. Import only into owned tests.
+Only CONNECT to configured *.invalid authorities; upstream is ONE IPv4 loopback
+SOCKS5 endpoint. Does not constrain tunnel-client or any other native process.
+"""
+from dataclasses import dataclass
+import math
+import re
+import select
+import socket
+import threading
+import time
+
+
+class Rejected(Exception):
+    def __init__(self, code, status):
+        self.code, self.status = code, status
+
+
+def authority(text):
+    if not isinstance(text, str) or not re.fullmatch(r'[a-z0-9.-]+:[1-9][0-9]{0,4}', text):
+        raise ValueError('invalid synthetic authority')
+    host, port = text.rsplit(':', 1)
+    labels = host.split('.')
+    if (len(host) > 253 or not host.endswith('.invalid') or len(labels) < 2 or
+            any(not re.fullmatch(r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?', label) for label in labels) or
+            not 1 <= int(port) <= 65535):
+        raise ValueError('invalid synthetic authority')
+    return host, int(port)
+
+
+@dataclass(frozen=True)
+class Config:
+    socks_host: str
+    socks_port: int
+    allowlist: frozenset
+    listen_port: int = 0
+    max_connections: int = 2
+    max_header: int = 4096
+    max_headers: int = 24
+    handshake_timeout: float = 0.7
+    idle_timeout: float = 0.7
+    max_duration: float = 3.0
+    max_tunnel_bytes: int = 65536
+
+    def __post_init__(self):
+        if self.socks_host != '127.0.0.1':
+            raise ValueError('upstream must be literal IPv4 loopback')
+        for value, low, high in [(self.socks_port, 1, 65535), (self.listen_port, 0, 65535),
+                                 (self.max_connections, 1, 8), (self.max_header, 256, 8192),
+                                 (self.max_headers, 1, 64), (self.max_tunnel_bytes, 1, 1048576)]:
+            if type(value) is not int or not low <= value <= high:
+                raise ValueError('invalid bounded integer setting')
+        for value in (self.handshake_timeout, self.idle_timeout, self.max_duration):
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0.05 <= value <= 30:
+                raise ValueError('invalid bounded timeout')
+        if not isinstance(self.allowlist, frozenset) or not 1 <= len(self.allowlist) <= 16:
+            raise ValueError('explicit frozen synthetic allowlist required')
+        for item in self.allowlist:
+            authority(item)
+
+
+def close(sock):
+    if sock is not None:
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        sock.close()
+
+
+def recv_exact(sock, size, deadline):
+    data = bytearray()
+    while len(data) < size:
+        left = deadline - time.monotonic()
+        if left <= 0:
+            raise TimeoutError('bounded handshake timeout')
+        sock.settimeout(left)
+        part = sock.recv(size - len(data))
+        if not part:
+            raise Rejected('SOCKS_TRUNCATED', 502)
+        data.extend(part)
+    return bytes(data)
+
+
+class Adapter:
+    def __init__(self, config):
+        if not isinstance(config, Config):
+            raise ValueError('validated Config required')
+        self.config = config
+        self.events, self.unexpected = [], []
+        self.lock = threading.RLock()
+        self.stop_event = threading.Event()
+        self.slots = threading.BoundedSemaphore(config.max_connections)
+        self.workers, self.sockets = set(), set()
+        self.listener = None
+        self.accept_thread = None
+        self.port = None
+
+    def event(self, code, **fields):
+        # No arbitrary strings, headers, auth, request bodies or error messages.
+        with self.lock:
+            if len(self.events) < 128:
+                self.events.append({'code': code, **fields})
+
+    def start(self):
+        if self.listener is not None or self.stop_event.is_set():
+            raise ValueError('adapter lifecycle cannot be reused')
+        self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.listener.bind(('127.0.0.1', self.config.listen_port))
+        self.listener.listen(self.config.max_connections)
+        self.listener.settimeout(0.05)
+        self.port = self.listener.getsockname()[1]
+        self.accept_thread = threading.Thread(target=self._accept, name='adapter-accept')
+        self.accept_thread.start()
+        return self
+
+    def _track(self, sock):
+        with self.lock:
+            self.sockets.add(sock)
+
+    def _release(self, sock):
+        if sock is not None:
+            with self.lock:
+                self.sockets.discard(sock)
+            close(sock)
+
+    def _accept(self):
+        while not self.stop_event.is_set():
+            try:
+                client, _ = self.listener.accept()
+            except TimeoutError:
+                continue
+            except OSError:
+                if not self.stop_event.is_set():
+                    self.unexpected.append('ACCEPT_OS_ERROR')
+                break
+            if not self.slots.acquire(blocking=False):
+                self.event('OVERLOAD')
+                self._reply(client, 503)
+                close(client)
+                continue
+            self._track(client)
+            worker = threading.Thread(target=self._handle, args=(client,), name='adapter-worker')
+            with self.lock:
+                self.workers.add(worker)
+            worker.start()
+
+    @staticmethod
+    def _reply(client, status):
+        try:
+            client.settimeout(0.1)
+            client.sendall(('HTTP/1.1 %d Rejected\r\nContent-Length: 0\r\nConnection: close\r\n\r\n' % status).encode('ascii'))
+        except OSError:
+            pass
+
+    def _request(self, client):
+        deadline = time.monotonic() + self.config.handshake_timeout
+        data = bytearray()
+        while b'\r\n\r\n' not in data:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise Rejected('HEADER_TIMEOUT', 408)
+            client.settimeout(remaining)
+            try:
+                part = client.recv(min(1024, self.config.max_header + 1 - len(data)))
+            except TimeoutError:
+                raise Rejected('HEADER_TIMEOUT', 408) from None
+            if not part:
+                raise Rejected('HEADER_EOF', 400)
+            data.extend(part)
+            if len(data) > self.config.max_header:
+                raise Rejected('HEADER_SIZE', 431)
+        head, early = bytes(data).split(b'\r\n\r\n', 1)
+        if early:
+            raise Rejected('EARLY_DATA_UNSUPPORTED', 400)
+        try:
+            lines = head.decode('ascii').split('\r\n')
+        except UnicodeError:
+            raise Rejected('HEADER_ENCODING', 400) from None
+        if not lines or len(lines[0]) > 1024 or len(lines) - 1 > self.config.max_headers:
+            raise Rejected('HEADER_LIMIT', 431)
+        request = lines[0].split(' ')
+        if len(request) != 3 or request[2] != 'HTTP/1.1':
+            raise Rejected('REQUEST_LINE', 400)
+        if request[0] != 'CONNECT':
+            raise Rejected('METHOD', 405)
+        try:
+            destination = authority(request[1])
+        except ValueError:
+            raise Rejected('AUTHORITY', 400) from None
+        if request[1] not in self.config.allowlist:
+            raise Rejected('DESTINATION_DENIED', 403)
+        headers = {}
+        for line in lines[1:]:
+            if ':' not in line:
+                raise Rejected('HEADER_SYNTAX', 400)
+            name, value = line.split(':', 1)
+            if not re.fullmatch(r'[A-Za-z0-9-]+', name) or any(ord(c) < 32 or ord(c) == 127 for c in value):
+                raise Rejected('HEADER_SYNTAX', 400)
+            name = name.lower()
+            if name in headers:
+                raise Rejected('HEADER_DUPLICATE', 400)
+            headers[name] = value.strip()
+        if ('content-length' in headers or 'transfer-encoding' in headers or
+                ('host' in headers and headers['host'] != request[1])):
+            raise Rejected('HEADER_CONFLICT', 400)
+        return destination
+
+    def _socks(self, host, port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._track(sock)
+        try:
+            deadline = time.monotonic() + self.config.handshake_timeout
+            sock.settimeout(self.config.handshake_timeout)
+            # The ONLY outbound connect in the prototype. Never target or env.
+            sock.connect((self.config.socks_host, self.config.socks_port))
+            self.event('SOCKS_CONNECTED')
+            sock.sendall(b'\x05\x01\x00')
+            if recv_exact(sock, 2, deadline) != b'\x05\x00':
+                raise Rejected('SOCKS_METHOD', 502)
+            name = host.encode('ascii')
+            sock.sendall(b'\x05\x01\x00\x03' + bytes([len(name)]) + name + port.to_bytes(2, 'big'))
+            version, rep, reserved, atyp = recv_exact(sock, 4, deadline)
+            if version != 5 or reserved != 0:
+                raise Rejected('SOCKS_VERSION', 502)
+            if rep != 0:
+                raise Rejected('SOCKS_REFUSED', 502)
+            if atyp == 1:
+                size = 4
+            elif atyp == 4:
+                size = 16
+            elif atyp == 3:
+                size = recv_exact(sock, 1, deadline)[0]
+                if not size:
+                    raise Rejected('SOCKS_BOUND', 502)
+            else:
+                raise Rejected('SOCKS_ATYP', 502)
+            recv_exact(sock, size + 2, deadline)
+            self.event('SOCKS_GRANTED', atyp=3)
+            return sock
+        except BaseException:
+            self._release(sock)
+            raise
+
+    def _relay(self, client, upstream):
+        started = last = time.monotonic()
+        total = 0
+        client.settimeout(0.15)
+        upstream.settimeout(0.15)
+        while not self.stop_event.is_set():
+            now = time.monotonic()
+            if now - started >= self.config.max_duration or now - last >= self.config.idle_timeout:
+                self.event('RELAY_DEADLINE')
+                return
+            ready, _, _ = select.select([client, upstream], [], [], 0.03)
+            for source in ready:
+                data = source.recv(4096)
+                if not data:
+                    self.event('RELAY_EOF')
+                    return
+                if total + len(data) > self.config.max_tunnel_bytes:
+                    self.event('RELAY_BYTE_LIMIT')
+                    return
+                target = upstream if source is client else client
+                target.sendall(data)
+                total += len(data)
+                last = time.monotonic()
+
+    def _handle(self, client):
+        upstream = None
+        established = False
+        self.event('CLIENT_ACCEPTED')
+        try:
+            host, port = self._request(client)
+            upstream = self._socks(host, port)
+            client.sendall(b'HTTP/1.1 200 Connection Established\r\n\r\n')
+            established = True
+            self.event('TUNNEL_ESTABLISHED')
+            self._relay(client, upstream)
+        except Rejected as exc:
+            self.event(exc.code, status=exc.status)
+            if not established:
+                self._reply(client, exc.status)
+        except (TimeoutError, OSError) as exc:
+            self.event('TRANSPORT_TIMEOUT' if isinstance(exc, TimeoutError) else 'TRANSPORT_ERROR')
+            if not established:
+                self._reply(client, 504 if isinstance(exc, TimeoutError) else 502)
+        except Exception as exc:
+            # Unexpected faults must fail the test, never become expected PASS.
+            with self.lock:
+                self.unexpected.append(type(exc).__name__)
+            self.event('INTERNAL_ERROR')
+            if not established:
+                self._reply(client, 502)
+        finally:
+            self._release(upstream)
+            self._release(client)
+            self.slots.release()
+            with self.lock:
+                self.workers.discard(threading.current_thread())
+
+    def stop(self):
+        self.stop_event.set()
+        close(self.listener)
+        if self.accept_thread:
+            self.accept_thread.join(2)
+        with self.lock:
+            sockets, workers = list(self.sockets), list(self.workers)
+        for sock in sockets:
+            close(sock)
+        for worker in workers:
+            worker.join(2)
+        if (self.accept_thread and self.accept_thread.is_alive()) or any(w.is_alive() for w in workers):
+            raise RuntimeError('owned adapter thread did not stop')
+
+
+if __name__ == '__main__':
+    raise SystemExit('AM07 reference only. No standalone/live-network entry point.')

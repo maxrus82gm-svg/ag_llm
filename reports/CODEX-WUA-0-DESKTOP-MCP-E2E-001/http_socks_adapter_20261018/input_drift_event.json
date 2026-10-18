@@ -1,0 +1,12 @@
+{
+  "detected_utc": "2026-10-18T13:34:17.882473+00:00",
+  "classification": "NON-OWN INPUT DRIFT / AUTHOR UNVERIFIED",
+  "file": "Документация/000_Задачи Codex.md",
+  "before_sha256": "953a03cf8091a0589da1cdae4d48dfb22d3f072a615435648c01f2c7441fabdf",
+  "observed_sha256": "54164055d772a4b26870c4b0ca5e6688e232ec235820cd2355e8f03cc0ad49f6",
+  "current_b1_title": "НОВАЯ ЗАДАЧА CLAUDE 008",
+  "current_b1_task": "CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001",
+  "agent_card_writes": 0,
+  "agent_action": "Read mismatch; did not restore/rotate/change card or take foreign TASK. Continue only explicitly user-authorized AM07 owned folder.",
+  "impact": "No adapter/source test change; original AM07 direct user authorization unchanged. Whole-input immutability cannot be claimed."
+}

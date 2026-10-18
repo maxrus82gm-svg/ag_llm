@@ -1,0 +1,14 @@
+FINAL ARTIFACT VALIDATOR ATTEMPT 1 — HARNESS DEFECT, stale expected config hash.
+Command: .venv/Scripts/python.exe -I -X utf8 -B <AM07>/validate_bundle.py
+Exit: 1. Source snapshot: validator_attempt01.py.txt.
+Traceback (relevant frames; no private config contents):
+  validate_bundle.py:141, <module>: main()
+  validate_bundle.py:52, main:
+    assert config['unchanged'] and config['after_sha256'] == '062150e5b9e1b8e8b786e0baaad1ccacdeff4a7f3d500044258965eebb8ac1ba'
+AssertionError
+
+Observed AM07 inputs_before.json and final reread both:
+2a1745afe7818f69f564ea36d58f17adb1653edec9e711e3e1c8f8ee97565aa2
+unchanged=true. Historical AM06 hash is not the AM07 startup baseline.
+Config was not edited/restored; validator expectation corrected only.
+No manifest was sealed by failed attempt. No adapter/native/network test rerun.

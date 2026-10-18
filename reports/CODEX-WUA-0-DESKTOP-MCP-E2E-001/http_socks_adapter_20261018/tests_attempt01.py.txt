@@ -1,0 +1,614 @@
+"""Synthetic AM07 integration/fault/resource tests with actual socket audit.
+
+All sockets restricted to owned loopback fixture ports, no DNS, UDP, subprocess,
+ctypes/native execution. This is a guard for THIS Python stand, not OS egress
+isolation for arbitrary native code. No payload/header/auth logging.
+"""
+import dataclasses
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import select
+import socket
+import sys
+import threading
+import time
+import traceback
+import unittest
+
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('am07_adapter', HERE / 'adapter.py')
+adapter = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = adapter
+spec.loader.exec_module(adapter)
+close = adapter.close
+
+
+class IsolationError(RuntimeError):
+    pass
+
+
+class Guard:
+    def __init__(self):
+        self.ports = set()
+        self.allowed = {}
+        self.trace = []
+        self.violations = []
+        self.case = 'setup'
+        self.lock = threading.RLock()
+
+    def own(self, port):
+        with self.lock:
+            self.ports.add(port)
+
+    def allow(self, role, port):
+        with self.lock:
+            self.allowed.setdefault(role, set()).add(port)
+
+    def role(self):
+        name = threading.current_thread().name
+        for role in ('adapter', 'socks', 'origin', 'mutant'):
+            if name.startswith(role + '-'):
+                return role
+        return 'driver'
+
+    def deny(self, event):
+        with self.lock:
+            self.violations.append({'case': self.case, 'event': event})
+        raise IsolationError('ISOLATION_DENIED')
+
+    def audit(self, event, args):
+        if event.startswith(('subprocess.', 'ctypes.')) or event in ('os.system', 'os.spawn', 'os.posix_spawn'):
+            self.deny(event)
+        if event.startswith('socket.get') or event == 'socket.sendto':
+            self.deny(event)
+        if event == 'socket.__new__':
+            if args[1] != socket.AF_INET or args[2] != socket.SOCK_STREAM or args[3] not in (0, 6):
+                self.deny(event)
+        if event == 'socket.bind':
+            if args[1] != ('127.0.0.1', 0):
+                self.deny(event)
+        if event == 'socket.connect':
+            address = args[1]
+            role = self.role()
+            with self.lock:
+                ok = (isinstance(address, tuple) and address[0] == '127.0.0.1' and
+                      address[1] in self.ports and address[1] in self.allowed.get(role, set()))
+                if len(self.trace) >= 2000:
+                    self.deny('TRACE_LIMIT')
+                self.trace.append({'case': self.case, 'role': role, 'event': event,
+                                   'host': address[0] if isinstance(address, tuple) and address[0] == '127.0.0.1' else 'nonliteral-denied',
+                                   'port': address[1] if isinstance(address, tuple) else None,
+                                   'allowed': ok})
+            if not ok:
+                self.deny(event)
+
+    def reset_ports(self):
+        with self.lock:
+            self.ports.clear()
+            self.allowed.clear()
+
+
+GUARD = Guard()
+
+
+def until(predicate, timeout=1.5):
+    deadline = time.monotonic() + timeout
+    while not predicate():
+        if time.monotonic() >= deadline:
+            raise AssertionError('bounded condition not reached')
+        time.sleep(0.005)
+
+
+def read_n(sock, count):
+    data = bytearray()
+    while len(data) < count:
+        part = sock.recv(count - len(data))
+        if not part:
+            raise EOFError()
+        data.extend(part)
+    return bytes(data)
+
+
+class Fixture:
+    def __init__(self, role, mode='echo', origin=None):
+        self.role, self.mode, self.origin = role, mode, origin
+        self.stop_event = threading.Event()
+        self.lock = threading.Lock()
+        self.connections, self.workers = [], []
+        self.markers, self.requests, self.forwards, self.peers = [], [], [], []
+        self.bytes_received = 0
+        self.errors, self.expected_peer_resets = [], 0
+        self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.listener.bind(('127.0.0.1', 0))
+        self.port = self.listener.getsockname()[1]
+        GUARD.own(self.port)
+        self.listener.listen(4)
+        self.listener.settimeout(0.05)
+        self.thread = threading.Thread(target=self.accept, name=role + '-accept')
+        self.thread.start()
+
+    def mark(self, value):
+        with self.lock:
+            self.markers.append(value)
+
+    def accept(self):
+        while not self.stop_event.is_set():
+            try:
+                conn, peer = self.listener.accept()
+            except TimeoutError:
+                continue
+            except OSError:
+                if not self.stop_event.is_set():
+                    self.errors.append('ACCEPT_ERROR')
+                break
+            conn.settimeout(1.2)
+            self.peers.append(peer[1])
+            self.connections.append(conn)
+            if len(self.workers) >= 8:
+                self.errors.append('FIXTURE_CAPACITY')
+                close(conn)
+                continue
+            thread = threading.Thread(target=self.handle, args=(conn,), name=self.role + '-worker')
+            self.workers.append(thread)
+            thread.start()
+
+    def handle(self, conn):
+        try:
+            if self.role == 'origin':
+                while not self.stop_event.is_set():
+                    try:
+                        data = conn.recv(4096)
+                    except TimeoutError:
+                        continue
+                    if not data:
+                        break
+                    with self.lock:
+                        self.bytes_received += len(data)
+                    conn.sendall(data)
+            else:
+                self.socks(conn)
+        except EOFError:
+            self.mark('PEER_EOF')
+        except OSError as exc:
+            if isinstance(exc, (ConnectionResetError, ConnectionAbortedError)) or self.stop_event.is_set():
+                self.expected_peer_resets += 1
+            else:
+                self.errors.append(type(exc).__name__)
+        except Exception as exc:
+            self.errors.append(type(exc).__name__)
+        finally:
+            close(conn)
+
+    def socks(self, conn):
+        self.mark('SOCKS_ACCEPT')
+        if read_n(conn, 3) != b'\x05\x01\x00':
+            raise AssertionError('unexpected method greeting')
+        self.mark('METHOD_RECEIVED')
+        if self.mode == 'close':
+            return
+        if self.mode == 'timeout':
+            self.stop_event.wait(1.3)
+            return
+        if self.mode == 'bad_method':
+            conn.sendall(b'\x05\x02')
+            return
+        if self.mode == 'short_method':
+            conn.sendall(b'\x05')
+            return
+        if self.mode == 'fragment':
+            for byte in b'\x05\x00':
+                conn.sendall(bytes([byte]))
+                time.sleep(0.003)
+        else:
+            conn.sendall(b'\x05\x00')
+        version, command, reserved, atyp = read_n(conn, 4)
+        if (version, command, reserved, atyp) != (5, 1, 0, 3):
+            raise AssertionError('expected domain SOCKS CONNECT')
+        length = read_n(conn, 1)[0]
+        domain = read_n(conn, length).decode('ascii')
+        port = int.from_bytes(read_n(conn, 2), 'big')
+        self.requests.append({'atyp': atyp, 'synthetic_domain': domain, 'port': port})
+        self.mark('DOMAIN_CONNECT_RECEIVED')
+        if domain != 'origin.invalid' or port != self.origin.port:
+            raise AssertionError('fixture mapping mismatch')
+        failures = {'refuse': b'\x05\x05\x00\x01' + bytes(6),
+                    'bad_version': b'\x04\x00\x00\x01' + bytes(6),
+                    'bad_reserved': b'\x05\x00\x01\x01' + bytes(6),
+                    'bad_atyp': b'\x05\x00\x00\x09',
+                    'short_bound': b'\x05\x00\x00\x01\x7f',
+                    'empty_bound_domain': b'\x05\x00\x00\x03\x00'}
+        if self.mode in failures:
+            conn.sendall(failures[self.mode])
+            self.mark('FAULT_REPLY')
+            return
+        origin_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        origin_sock.settimeout(1)
+        self.connections.append(origin_sock)
+        try:
+            origin_sock.connect(('127.0.0.1', self.origin.port))
+            self.forwards.append({'local_port': origin_sock.getsockname()[1], 'origin_port': self.origin.port})
+            reply = b'\x05\x00\x00\x01\x7f\x00\x00\x01' + self.port.to_bytes(2, 'big')
+            if self.mode == 'fragment':
+                for byte in reply:
+                    conn.sendall(bytes([byte]))
+                    time.sleep(0.003)
+            else:
+                conn.sendall(reply)
+            self.mark('GRANTED')
+            if self.mode == 'disconnect':
+                data = conn.recv(1024)
+                origin_sock.sendall(data)
+                conn.sendall(read_n(origin_sock, len(data)))
+                self.mark('DISCONNECTED_AFTER_SUCCESS')
+                return
+            deadline = time.monotonic() + 4
+            while not self.stop_event.is_set() and time.monotonic() < deadline:
+                ready, _, _ = select.select([conn, origin_sock], [], [], 0.03)
+                for source in ready:
+                    data = source.recv(4096)
+                    if not data:
+                        return
+                    (origin_sock if source is conn else conn).sendall(data)
+        finally:
+            close(origin_sock)
+
+    def stop(self):
+        self.stop_event.set()
+        close(self.listener)
+        self.thread.join(2)
+        for conn in self.connections:
+            close(conn)
+        for worker in self.workers:
+            worker.join(2)
+        if self.thread.is_alive() or any(x.is_alive() for x in self.workers):
+            raise AssertionError('fixture worker leak')
+
+
+def direct_dials(trace, expected_proxy):
+    return [x for x in trace if x['role'] in ('adapter', 'mutant') and x['port'] != expected_proxy]
+
+
+class AdapterTests(unittest.TestCase):
+    def setUp(self):
+        GUARD.case = self._testMethodName
+        self.trace_start = len(GUARD.trace)
+        self.origin = Fixture('origin')
+        self.socks = None
+        self.proxy = None
+        self.clients, self.leases = [], []
+        self.observed = {}
+
+    def start(self, mode='echo', **settings):
+        self.socks = Fixture('socks', mode=mode, origin=self.origin)
+        GUARD.allow('socks', self.origin.port)
+        GUARD.allow('adapter', self.socks.port)
+        cfg = adapter.Config('127.0.0.1', self.socks.port,
+                             frozenset({'origin.invalid:%d' % self.origin.port}), **settings)
+        self.proxy = adapter.Adapter(cfg).start()
+        GUARD.own(self.proxy.port)
+        GUARD.allow('driver', self.proxy.port)
+
+    def client(self, request=None):
+        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        conn.settimeout(2)
+        self.clients.append(conn)
+        conn.connect(('127.0.0.1', self.proxy.port))
+        if request is None:
+            request = ('CONNECT origin.invalid:%d HTTP/1.1\r\nHost: origin.invalid:%d\r\n\r\n' % (self.origin.port, self.origin.port)).encode('ascii')
+        conn.sendall(request)
+        return conn
+
+    def status(self, conn):
+        head = bytearray()
+        while b'\r\n\r\n' not in head and len(head) <= 4096:
+            part = conn.recv(1)
+            if not part:
+                raise AssertionError('no HTTP status')
+            head.extend(part)
+        status = int(bytes(head).split(b' ')[1])
+        self.observed['http_status'] = status
+        return status
+
+    def rejected(self, mode, status=502, marker=None):
+        self.start(mode)
+        conn = self.client()
+        self.assertEqual(self.status(conn), status)
+        self.assertEqual(conn.recv(1), b'')
+        until(lambda: not self.proxy.workers)
+        if marker:
+            self.assertIn(marker, self.socks.markers)
+        self.assertEqual(self.origin.peers, [])
+        trace = GUARD.trace[self.trace_start:]
+        self.assertEqual(sum(x['role'] == 'adapter' for x in trace), 1)
+        self.assertEqual(direct_dials(trace, self.socks.port), [])
+
+    def tearDown(self):
+        errors = []
+        for client in self.clients:
+            close(client)
+        for obj in (self.proxy, self.socks, self.origin):
+            if obj:
+                try:
+                    obj.stop()
+                except Exception as exc:
+                    errors.append(type(exc).__name__)
+        for lease in self.leases:
+            close(lease)
+        trace = GUARD.trace[self.trace_start:]
+        self.observed.update({'trace': trace, 'adapter_events': self.proxy.events if self.proxy else [],
+                              'socks_markers': self.socks.markers if self.socks else [],
+                              'socks_requests': self.socks.requests if self.socks else [],
+                              'proxy_forward_sockets': self.socks.forwards if self.socks else [],
+                              'origin_peer_ports': self.origin.peers,
+                              'origin_received_bytes': self.origin.bytes_received,
+                              'adapter_unexpected': self.proxy.unexpected if self.proxy else [],
+                              'fixture_errors': (self.socks.errors if self.socks else []) + self.origin.errors,
+                              'expected_peer_resets': (self.socks.expected_peer_resets if self.socks else 0) + self.origin.expected_peer_resets,
+                              'cleanup_errors': errors})
+        GUARD.reset_ports()
+        self.assertEqual(errors, [])
+        self.assertEqual(self.observed['adapter_unexpected'], [])
+        self.assertEqual(self.observed['fixture_errors'], [])
+        self.assertEqual(GUARD.violations, [])
+
+    def test_01_success_domain_and_physical_proxy_path(self):
+        self.start()
+        conn = self.client()
+        self.assertEqual(self.status(conn), 200)
+        conn.sendall(b'\x00synthetic\xff')
+        self.assertEqual(read_n(conn, 11), b'\x00synthetic\xff')
+        until(lambda: bool(self.origin.peers))
+        self.assertEqual(self.origin.peers, [x['local_port'] for x in self.socks.forwards])
+        self.assertEqual(self.socks.requests[0]['atyp'], 3)
+        self.assertEqual(self.socks.requests[0]['synthetic_domain'], 'origin.invalid')
+
+    def test_02_listener_unavailable(self):
+        lease = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        lease.bind(('127.0.0.1', 0))
+        self.leases.append(lease)
+        port = lease.getsockname()[1]
+        GUARD.own(port)
+        GUARD.allow('adapter', port)
+        self.proxy = adapter.Adapter(adapter.Config('127.0.0.1', port, frozenset({'origin.invalid:%d' % self.origin.port}), handshake_timeout=0.25)).start()
+        GUARD.own(self.proxy.port)
+        GUARD.allow('driver', self.proxy.port)
+        self.assertIn(self.status(self.client()), (502, 504))
+        self.assertEqual(self.origin.peers, [])
+        until(lambda: not self.proxy.workers)
+        self.assertEqual(sum(x['role'] == 'adapter' for x in GUARD.trace[self.trace_start:]), 1)
+
+    def test_03_socks_refusal(self): self.rejected('refuse', marker='FAULT_REPLY')
+    def test_04_socks_timeout(self): self.rejected('timeout', status=504, marker='METHOD_RECEIVED')
+    def test_05_socks_disconnect(self): self.rejected('close', marker='METHOD_RECEIVED')
+    def test_06_bad_method(self): self.rejected('bad_method', marker='METHOD_RECEIVED')
+    def test_07_truncated_method(self): self.rejected('short_method', marker='METHOD_RECEIVED')
+    def test_08_bad_reply_version(self): self.rejected('bad_version', marker='FAULT_REPLY')
+    def test_09_bad_reply_reserved(self): self.rejected('bad_reserved', marker='FAULT_REPLY')
+    def test_10_unknown_reply_atyp(self): self.rejected('bad_atyp', marker='FAULT_REPLY')
+    def test_11_truncated_bound_address(self): self.rejected('short_bound', marker='FAULT_REPLY')
+    def test_12_empty_bound_domain(self): self.rejected('empty_bound_domain', marker='FAULT_REPLY')
+
+    def test_13_forbidden_destination(self):
+        self.start()
+        self.assertEqual(self.status(self.client(b'CONNECT denied.invalid:443 HTTP/1.1\r\n\r\n')), 403)
+        self.assertEqual(self.socks.markers, [])
+
+    def test_14_ip_target_direct_bypass_rejected(self):
+        self.start()
+        request = ('CONNECT 127.0.0.1:%d HTTP/1.1\r\n\r\n' % self.origin.port).encode('ascii')
+        self.assertEqual(self.status(self.client(request)), 400)
+        self.assertEqual(self.origin.peers, [])
+        self.assertEqual(self.socks.markers, [])
+
+    def test_15_environment_no_proxy_and_decoy_are_ignored(self):
+        names = ['HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','NO_PROXY','http_proxy','https_proxy','all_proxy','no_proxy']
+        before = {name: os.environ.get(name) for name in names}
+        self.start()
+        for name in names:
+            os.environ[name] = '*' if 'no_proxy' == name.lower() else 'http://127.0.0.1:%d' % self.origin.port
+        try:
+            conn = self.client()
+            self.assertEqual(self.status(conn), 200)
+            conn.sendall(b'ok')
+            self.assertEqual(read_n(conn, 2), b'ok')
+            self.assertEqual(direct_dials(GUARD.trace[self.trace_start:], self.socks.port), [])
+        finally:
+            for name, value in before.items():
+                if value is None: os.environ.pop(name, None)
+                else: os.environ[name] = value
+        self.assertEqual(before, {name: os.environ.get(name) for name in names})
+        self.observed['environment_restored'] = True
+
+    def test_16_fragmented_socks_replies(self):
+        self.start('fragment')
+        conn = self.client()
+        self.assertEqual(self.status(conn), 200)
+        conn.sendall(b'ok')
+        self.assertEqual(read_n(conn, 2), b'ok')
+
+    def test_17_disconnect_after_success_no_reconnect(self):
+        self.start('disconnect')
+        conn = self.client()
+        self.assertEqual(self.status(conn), 200)
+        conn.sendall(b'ok')
+        self.assertEqual(read_n(conn, 2), b'ok')
+        self.assertEqual(conn.recv(1), b'')
+        until(lambda: not self.proxy.workers)
+        self.assertIn('DISCONNECTED_AFTER_SUCCESS', self.socks.markers)
+        self.assertEqual(len(self.socks.forwards), 1)
+        self.assertEqual(sum(x['role'] == 'adapter' for x in GUARD.trace[self.trace_start:]), 1)
+
+    def test_18_idle_timeout(self):
+        self.start(idle_timeout=0.15)
+        conn = self.client()
+        self.assertEqual(self.status(conn), 200)
+        self.assertEqual(conn.recv(1), b'')
+        until(lambda: not self.proxy.workers)
+        self.assertIn('RELAY_DEADLINE', [x['code'] for x in self.proxy.events])
+
+    def test_19_header_size_limit(self):
+        self.start(max_header=256)
+        req = ('CONNECT origin.invalid:%d HTTP/1.1\r\nX-Limit: ' % self.origin.port).encode('ascii') + b'x' * 260 + b'\r\n\r\n'
+        self.assertEqual(self.status(self.client(req)), 431)
+        self.assertEqual(self.socks.markers, [])
+
+    def test_20_header_count_limit(self):
+        self.start(max_headers=1)
+        req = ('CONNECT origin.invalid:%d HTTP/1.1\r\nX-A: 1\r\nX-B: 2\r\n\r\n' % self.origin.port).encode('ascii')
+        self.assertEqual(self.status(self.client(req)), 431)
+
+    def test_21_slow_header_total_deadline(self):
+        self.start(handshake_timeout=0.15)
+        conn = self.client(b'CONNECT ')
+        self.assertEqual(self.status(conn), 408)
+        self.assertEqual(self.socks.markers, [])
+
+    def test_22_concurrency_limit(self):
+        self.start(max_connections=1, handshake_timeout=0.4)
+        first = self.client(b'CONNECT ')
+        until(lambda: bool(self.proxy.workers))
+        second = self.client()
+        self.assertEqual(self.status(second), 503)
+        self.assertEqual(self.status(first), 408)
+        self.assertIn('OVERLOAD', [x['code'] for x in self.proxy.events])
+
+    def test_23_tunnel_byte_limit(self):
+        self.start(max_tunnel_bytes=4)
+        conn = self.client()
+        self.assertEqual(self.status(conn), 200)
+        conn.sendall(b'12345')
+        while conn.recv(1024): pass
+        until(lambda: not self.proxy.workers)
+        self.assertIn('RELAY_BYTE_LIMIT', [x['code'] for x in self.proxy.events])
+        self.assertLessEqual(self.origin.bytes_received, 4)
+
+    def test_24_invalid_upstream_config_before_bind(self):
+        baseline = len(GUARD.trace)
+        for host in ('localhost', '::1', '192.0.2.1'):
+            with self.assertRaises(ValueError):
+                adapter.Config(host, 1, frozenset({'origin.invalid:443'}))
+        self.assertEqual(len(GUARD.trace), baseline)
+
+    def test_25_missing_and_real_destination_config_rejected(self):
+        for allowlist in (frozenset(), frozenset({'example.com:443'}), frozenset({'127.0.0.1:443'})):
+            with self.assertRaises(ValueError):
+                adapter.Config('127.0.0.1', 1, allowlist)
+
+    def test_26_invalid_resource_settings(self):
+        for fields in ({'socks_port': True}, {'max_connections': 0}, {'handshake_timeout': float('inf')}, {'max_header': 999999}):
+            with self.assertRaises(ValueError):
+                adapter.Config(**({'socks_host':'127.0.0.1','socks_port':1,'allowlist':frozenset({'origin.invalid:443'})} | fields))
+
+    def test_27_method_and_absolute_uri_rejected(self):
+        self.start()
+        self.assertEqual(self.status(self.client(b'GET / HTTP/1.1\r\n\r\n')), 405)
+        self.assertEqual(self.status(self.client(b'CONNECT http://origin.invalid:443 HTTP/1.1\r\n\r\n')), 400)
+        self.assertEqual(self.socks.markers, [])
+
+    def test_28_host_conflict_and_duplicate_headers(self):
+        self.start()
+        prefix = ('CONNECT origin.invalid:%d HTTP/1.1\r\n' % self.origin.port).encode('ascii')
+        self.assertEqual(self.status(self.client(prefix + b'Host: denied.invalid:443\r\n\r\n')), 400)
+        self.assertEqual(self.status(self.client(prefix + b'X-A: 1\r\nx-a: 2\r\n\r\n')), 400)
+
+    def test_29_body_framing_rejected(self):
+        self.start()
+        prefix = ('CONNECT origin.invalid:%d HTTP/1.1\r\n' % self.origin.port).encode('ascii')
+        self.assertEqual(self.status(self.client(prefix + b'Content-Length: 1\r\n\r\n')), 400)
+        self.assertEqual(self.status(self.client(prefix + b'Transfer-Encoding: chunked\r\n\r\n')), 400)
+
+    def test_30_auth_headers_not_forwarded_or_recorded(self):
+        self.start()
+        req = ('CONNECT origin.invalid:%d HTTP/1.1\r\nProxy-Authorization: synthetic-redaction-sentinel\r\nAuthorization: synthetic-redaction-sentinel\r\n\r\n' % self.origin.port).encode('ascii')
+        self.assertEqual(self.status(self.client(req)), 200)
+        safe = json.dumps(self.proxy.events) + json.dumps(self.socks.requests)
+        self.assertNotIn('synthetic-redaction-sentinel', safe)
+
+    def test_31_oracle_detects_intentional_fallback_after_fault(self):
+        self.start('close')
+        GUARD.allow('mutant', self.socks.port)
+        GUARD.allow('mutant', self.origin.port)
+        errors = []
+        def broken_client():
+            first = second = None
+            try:
+                first = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                first.settimeout(1)
+                first.connect(('127.0.0.1', self.socks.port))
+                first.sendall(b'\x05\x01\x00')
+                if first.recv(2) != b'':
+                    raise AssertionError('fault not reached')
+                second = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                second.settimeout(1)
+                second.connect(('127.0.0.1', self.origin.port))
+                second.sendall(b'qc')
+                if read_n(second, 2) != b'qc':
+                    raise AssertionError('negative-control origin not reached')
+            except Exception as exc:
+                errors.append(type(exc).__name__)
+            finally:
+                close(first)
+                close(second)
+        thread = threading.Thread(target=broken_client, name='mutant-worker')
+        thread.start()
+        thread.join(2)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
+        self.assertIn('METHOD_RECEIVED', self.socks.markers)
+        detected = direct_dials(GUARD.trace[self.trace_start:], self.socks.port)
+        self.assertEqual(len(detected), 1)
+        self.assertEqual(self.socks.forwards, [])
+        self.assertEqual(len(self.origin.peers), 1)
+        self.observed['intentional_fallback_detected'] = True
+
+
+class Result(unittest.TestResult):
+    def __init__(self):
+        super().__init__()
+        self.rows = []
+
+    def record(self, test, status, err=None):
+        row = {'id': test._testMethodName, 'status': status, 'observed': test.observed}
+        if err:
+            row['error'] = {'type': err[0].__name__, 'frames': [
+                {'file': Path(f.filename).name, 'line': f.lineno, 'function': f.name}
+                for f in traceback.extract_tb(err[2])[-8:]]}
+        self.rows.append(row)
+        if GUARD.violations:
+            self.stop()
+
+    def addSuccess(self, test): super().addSuccess(test); self.record(test, 'PASS')
+    def addFailure(self, test, err): super().addFailure(test, err); self.record(test, 'FAIL', err)
+    def addError(self, test, err): super().addError(test, err); self.record(test, 'ERROR', err)
+
+
+def main():
+    sys.addaudithook(GUARD.audit)
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(AdapterTests)
+    collected = suite.countTestCases()
+    result = Result()
+    suite.run(result)
+    counts = {s: sum(x['status'] == s for x in result.rows) for s in ('PASS','FAIL','ERROR','SKIP')}
+    leaks = [t.name for t in threading.enumerate() if t.name.startswith(('adapter-', 'socks-', 'origin-', 'mutant-'))]
+    status = 'PASS' if (collected == result.testsRun == counts['PASS'] == 31 and
+                        not GUARD.violations and not GUARD.ports and not leaks) else 'FAIL'
+    index = 1
+    while (HERE / ('attempt%02d_results.json' % index)).exists(): index += 1
+    summary = {'task_id':'CODEX-WUA-0-DESKTOP-MCP-E2E-001','amendment':'07',
+               'scope':'SYNTHETIC PYTHON ADAPTER ONLY; not native tunnel-client',
+               'attempt':index,'status':status,'collected':collected,'executed':result.testsRun,
+               'counts':counts,'cases':result.rows,'socket_connect_attempts':len(GUARD.trace),
+               'isolation_violations':GUARD.violations,'ports_remaining':sorted(GUARD.ports),
+               'worker_leaks':leaks,'source_sha256':{
+                   p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in [HERE/'adapter.py',Path(__file__)]},
+               'payloads_headers_credentials_recorded':False,'native_client_started':False}
+    target = HERE / ('attempt%02d_results.json' % index)
+    target.write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({k:summary[k] for k in ['attempt','status','collected','executed','counts','socket_connect_attempts','isolation_violations','ports_remaining','worker_leaks']}))
+    return 0 if status == 'PASS' else 1
+
+
+if __name__ == '__main__': raise SystemExit(main())

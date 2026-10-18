@@ -1,0 +1,141 @@
+"""AM07 offline artifact/identity validation and manifest sealing only.
+
+No socket, subprocess, Git, native execution, restore or edit outside this folder.
+Keeps original baseline/card drift; does not normalize it into an all-green hash.
+"""
+import ast
+import collections
+import datetime
+import hashlib
+import json
+from pathlib import Path
+import re
+
+OUT = Path(__file__).resolve().parent
+ROOT = OUT.parents[2]
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load(name):
+    return json.loads((OUT / name).read_text(encoding='utf-8'))
+
+
+def save(name, value):
+    path = OUT / name
+    assert path.parent == OUT
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
+def main():
+    records = []
+    before = load('inputs_before.json')
+    for item in before['inputs']:
+        path = Path(item['path'])
+        path = path if path.is_absolute() else ROOT / path
+        current = sha(path) if path.is_file() else None
+        records.append({'path': item['path'], 'before_sha256': item['sha256'],
+                        'after_sha256': current, 'unchanged': current == item['sha256']})
+    drift = [x for x in records if not x['unchanged']]
+    observed = load('input_drift_event.json')
+    assert all(x['path'] == observed['file'] and x['after_sha256'] == observed['observed_sha256'] for x in drift), 'NEW UNREVIEWED INPUT DRIFT'
+    integrity = {'protected_files': len(records), 'unchanged': sum(x['unchanged'] for x in records),
+                 'drift': drift, 'files': records,
+                 'note': 'Recorded non-own card drift retained; not an all-input immutability PASS or OS/network attestation.'}
+    save('integrity.json', integrity)
+    old_dirs = ('v2ray_preflight_20261017/', 'native_client_offline_20261017/')
+    previous = [x for x in records if any('/' + p in x['path'] for p in old_dirs)]
+    assert len(previous) == 72 and all(x['unchanged'] for x in previous)
+    config = next(x for x in records if x['path'].endswith('config.toml'))
+    assert config['unchanged'] and config['after_sha256'] == '2a1745afe7818f69f564ea36d58f17adb1653edec9e711e3e1c8f8ee97565aa2'
+    assert 'HOSTED_TUNNEL_ON_HOLD_BY_USER' in (OUT.parent / 'secure_tunnel_preparation/start_tunnel.py').read_text(encoding='utf-8')
+    assert sha(OUT.parent / 'secure_tunnel_preparation/tools/tunnel-client.exe') == '4226bb74a72388147882881f29f79801b95e285d731a138071812e3aa6766571'
+    checks, result = load('checks.json'), load('attempt03_results.json')
+    assert result['collected'] == result['executed'] == result['counts']['PASS'] == 36
+    assert result['counts'] == {'PASS': 36, 'FAIL': 0, 'ERROR': 0, 'SKIP': 0}
+    assert not result['isolation_violations'] and not result['ports_remaining'] and not result['worker_leaks']
+    trace = [x for row in result['cases'] for x in row['observed']['trace']]
+    assert len(trace) == result['socket_connect_attempts'] == 70
+    assert all(x['allowed'] and x['host'] == '127.0.0.1' and x['port'] not in (10808,10813,10814) for x in trace)
+    assert collections.Counter(x['role'] for x in trace) == {'driver':36,'adapter':22,'socks':10,'mutant':2}
+    assert all(not r['observed']['adapter_unexpected'] and not r['observed']['fixture_errors'] and not r['observed']['cleanup_errors'] for r in result['cases'])
+    assert sum(r['observed']['expected_peer_resets'] for r in result['cases']) == 1
+    by_id = {r['id']:r for r in result['cases']}
+    assert by_id['test_31_oracle_detects_intentional_fallback_after_fault']['observed']['intentional_fallback_detected']
+    positive = by_id['test_01_success_domain_and_physical_proxy_path']['observed']
+    assert positive['origin_peer_ports'] == [x['local_port'] for x in positive['proxy_forward_sockets']]
+    assert by_id['test_30_auth_headers_not_forwarded_or_recorded']['observed']['origin_received_bytes'] == 0
+    assert checks['checks_rows'] == 31 and checks['counts'] == dict(collections.Counter(r['status'] for r in checks['checks'])) == {'PASS':19,'BLOCKED':7,'NOT RUN':5}
+    for item in checks['checks']:
+        assert all((OUT / name).is_file() for name in item['evidence'].split(';'))
+    # Each historical source version remains recoverable, not silently overwritten.
+    source_versions = [
+        ('attempt01_results.json', 'adapter.py', 'adapter_attempt01.py.txt'),
+        ('attempt01_results.json', 'test_adapter.py', 'tests_attempt01.py.txt'),
+        ('attempt02_results.json', 'adapter.py', 'adapter.py'),
+        ('attempt02_results.json', 'test_adapter.py', 'tests_attempt02.py.txt'),
+        ('attempt03_results.json', 'adapter.py', 'adapter.py'),
+        ('attempt03_results.json', 'test_adapter.py', 'test_adapter.py')]
+    assert all(load(attempt)['source_sha256'][key] == sha(OUT / file) for attempt,key,file in source_versions)
+    json_files, syntax, scanned = [], [], []
+    issues = []
+    for path in sorted(OUT.iterdir()):
+        assert path.is_file() and not path.is_symlink(), 'Unexpected directory/symlink'
+        if path.suffix == '.json':
+            data = json.loads(path.read_text(encoding='utf-8'))
+            json_files.append(path.name)
+            assert 'synthetic-redaction-sentinel' not in path.read_text(encoding='utf-8'), 'AUTH SENTINEL IN EVIDENCE'
+        if path.suffix == '.py':
+            ast.parse(path.read_text(encoding='utf-8'), filename=str(path))
+            syntax.append({'file': path.name, 'sha256': sha(path), 'status': 'PASS'})
+        assert path.suffix in ('.md','.json','.py','.txt'), 'Unexpected publication extension'
+        text = path.read_text(encoding='utf-8-sig')
+        scanned.append(path.name)
+        for pattern in [r'\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}', r'\beyJ[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}',
+                        r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----']:
+            if re.search(pattern, text):
+                issues.append(path.name)
+    assert not issues, 'Potential secret pattern in artifacts'
+    report = (OUT / 'report.md').read_text(encoding='utf-8')
+    assert all(s in report for s in checks['statuses'])
+    ignore_sources = []
+    for parent in (ROOT, ROOT/'reports', OUT.parent, OUT):
+        path = parent / '.gitignore'
+        if path.is_file():
+            ignore_sources.append({'path':str(path.relative_to(ROOT)).replace('\\','/'),
+                                   'sha256':sha(path),'text':path.read_text(encoding='utf-8')})
+    save('publication_precheck.json', {'method':'Plain project .gitignore file reads, no Git operations',
+                                      'sources':ignore_sources,'scope':'AM07 folder only; do not automatically include changed card',
+                                      'known_project_rule_review':'No exclusion matching the new folder/text artifacts was identified',
+                                      'limitations':'Actual index/global excludes/GitHub completeness not checked; user checks before publication.'})
+    save('artifact_validation.json', {'status':'PASS WITH RECORDED NON-OWN INPUT DRIFT',
+                                      'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                                      'json_files':json_files,'syntax':syntax,'text_pattern_scans':len(scanned),
+                                      'secret_scan_issues':issues,'secret_scan_limit':'Bounded patterns + manual review, not a DLP guarantee.',
+                                      'evidence_locators_present':True,'source_versions_match':True,
+                                      'protected_inputs':len(records),'unchanged':integrity['unchanged'],'reviewed_card_drift':drift,
+                                      'previous_am05_am06_files_unchanged':72,'native_processes_started':0,
+                                      'reference_tests':'36/36 PASS; native NOT VERIFIED','manifest_self_hash_excluded':True})
+    files = [{'path':p.name,'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted(OUT.iterdir()) if p.name != 'manifest.json']
+    save('manifest.json', {'task_id':'CODEX-WUA-0-DESKTOP-MCP-E2E-001','amendment':'07',
+                          'date':'2026-10-18','scope':'reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/',
+                          'statuses':checks['statuses'],'source_pack':'SOURCE PACK BLOCKED',
+                          'status':'PARTIAL / SYNTHETIC ADAPTER RESULT READY / AWAITING INDEPENDENT REVIEW',
+                          'publication':'LOCAL ONLY / NOT PUBLISHED BY CODEX',
+                          'source_revision':'Local byte hashes; coordinator exact-tag findings only; no agent Git read',
+                          'manifest_self_hash':'Excluded; handed off separately','files':files})
+    sealed = load('manifest.json')
+    assert {p.name for p in OUT.iterdir() if p.name != 'manifest.json'} == {f['path'] for f in sealed['files']}
+    for item in sealed['files']:
+        path = OUT / item['path']
+        assert sha(path) == item['sha256'] and path.stat().st_size == item['bytes']
+    print(json.dumps({'status':'PASS WITH RECORDED NON-OWN INPUT DRIFT','files_covered':len(files),
+                      'total_files':len(files)+1,'report_sha256':sha(OUT/'report.md'),'manifest_sha256':sha(OUT/'manifest.json'),
+                      'protected':len(records),'unchanged':integrity['unchanged'],'drift_paths':[x['path'] for x in drift],
+                      'am05_am06_preserved':72,'reference_tests':'36/36 PASS','native_client_runs':0}))
+
+
+if __name__ == '__main__':
+    main()

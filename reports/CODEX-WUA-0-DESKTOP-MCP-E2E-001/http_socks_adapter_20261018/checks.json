@@ -1,0 +1,216 @@
+{
+  "task_id": "CODEX-WUA-0-DESKTOP-MCP-E2E-001",
+  "amendment": "07",
+  "statuses": [
+    "HTTP INBOUND NOT VERIFIED",
+    "SOURCE AUDIT PARTIAL",
+    "ADAPTER REFERENCE TEST VERIFIED",
+    "NATIVE CLIENT FAIL-CLOSED NOT VERIFIED",
+    "V2RAY REMOTE ROUTE NOT VERIFIED",
+    "HOSTED TUNNEL NOT STARTED",
+    "ORDINARY CHAT E2E NOT VERIFIED"
+  ],
+  "source_pack": "SOURCE PACK BLOCKED",
+  "reference_tests": {
+    "collected": 36,
+    "pass": 36,
+    "fail": 0,
+    "error": 0,
+    "skip": 0
+  },
+  "checks_rows": 31,
+  "counts": {
+    "PASS": 19,
+    "BLOCKED": 7,
+    "NOT RUN": 5
+  },
+  "count_semantics": "Evidence review rows, not network test collection. Earlier red attempt retained separately.",
+  "checks": [
+    {
+      "id": "R01",
+      "status": "PASS",
+      "finding": "Current regulations/profile route and coordinator findings read; own write scope only",
+      "evidence": "rules_read.json;coordinator_findings.json;document_route.json"
+    },
+    {
+      "id": "A01",
+      "status": "PASS",
+      "finding": "Historical AM05 facts separated from current CIM snapshot",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "A02",
+      "status": "PASS",
+      "finding": "Current sing-box owns 10808/10814 loopback listeners; 10813 absent in snapshot",
+      "evidence": "preflight.sanitized.json"
+    },
+    {
+      "id": "A03",
+      "status": "BLOCKED",
+      "finding": "Current process CommandLine/ExecutablePath unavailable; loaded config not read",
+      "evidence": "preflight.sanitized.json"
+    },
+    {
+      "id": "A04",
+      "status": "BLOCKED",
+      "finding": "Existing HTTP CONNECT/mixed inbound not established; live protocol probes prohibited",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "A05",
+      "status": "BLOCKED",
+      "finding": "Effective V2Ray outbound/DNS/DIRECT/fallback not verified",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "B01",
+      "status": "BLOCKED",
+      "finding": "Exact local source archive not found; no download authorized",
+      "evidence": "source_pack_search.json"
+    },
+    {
+      "id": "B02",
+      "status": "PASS",
+      "finding": "Coordinator exact-tag source findings read with provenance; not own source-code audit",
+      "evidence": "source_audit.md;coordinator_findings.json"
+    },
+    {
+      "id": "B03",
+      "status": "BLOCKED",
+      "finding": "Detailed own whole-native transport/fallback audit and global deny-direct setting unproven",
+      "evidence": "source_audit.md"
+    },
+    {
+      "id": "B04",
+      "status": "BLOCKED",
+      "finding": "Official tag to local EXE reproducible-build/attestation correspondence unproven",
+      "evidence": "source_audit.md"
+    },
+    {
+      "id": "C01",
+      "status": "PASS",
+      "finding": "Synthetic frozen authority allowlist and invalid config rejected before bind/connect",
+      "evidence": "adapter.py;attempt03_results.json"
+    },
+    {
+      "id": "C02",
+      "status": "PASS",
+      "finding": "Adapter only one loopback SOCKS upstream, no retry/alternative target dial",
+      "evidence": "adapter.py;attempt03_results.json"
+    },
+    {
+      "id": "C03",
+      "status": "PASS",
+      "finding": "SOCKS5 ATYP domain forwarding without local DNS; valid/truncated/malformed replies tested",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "C04",
+      "status": "PASS",
+      "finding": "36/36 synthetic reference tests passed; 70 loopback socket attempts, isolation 0",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D01",
+      "status": "PASS",
+      "finding": "Real echo plus physical forward/origin socket-port correlation",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D02",
+      "status": "PASS",
+      "finding": "Unavailable/refusal/timeout/disconnect fault markers reached; no adapter direct route",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D03",
+      "status": "PASS",
+      "finding": "Forbidden/IP target, malformed/body/duplicate headers and method errors reject",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D04",
+      "status": "PASS",
+      "finding": "Header size/count/total-drip deadline, capacity, byte/idle/active-duration limits exercised",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D05",
+      "status": "PASS",
+      "finding": "Upper/lower environment proxy variables ignored; NO_PROXY cannot cause fallback after refusal; environment restored",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D06",
+      "status": "PASS",
+      "finding": "Intentional fixture-only fallback after actual SOCKS fault detected by route oracle",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "D07",
+      "status": "PASS",
+      "finding": "No fixture/internal unexpected errors or worker/port leaks; one classified peer reset",
+      "evidence": "attempt03_results.json"
+    },
+    {
+      "id": "Q01",
+      "status": "PASS",
+      "finding": "Original 29 PASS/2 ERROR retained with original source hashes; bounded Windows reject-close fix passed exact assertions",
+      "evidence": "attempt01_results.json;adapter_attempt01.py.txt;tests_attempt01.py.txt;attempt02_results.json"
+    },
+    {
+      "id": "Q02",
+      "status": "PASS",
+      "finding": "Independent manual engineering source/oracle review; reference/native boundaries explicit",
+      "evidence": "manual_engineering_review.md"
+    },
+    {
+      "id": "I01",
+      "status": "PASS",
+      "finding": "Previous AM05/AM06 artifacts, config, launcher and other protected inputs unchanged except recorded card drift",
+      "evidence": "integrity.json"
+    },
+    {
+      "id": "I02",
+      "status": "BLOCKED",
+      "finding": "Whole 97-input byte immutability: Codex card B1 changed outside our writes during run",
+      "evidence": "input_drift_event.json;integrity.json"
+    },
+    {
+      "id": "I03",
+      "status": "PASS",
+      "finding": "Agent wrote only AM07 folder, did not rotate/restore personal card or touch foreign TASK",
+      "evidence": "manual_engineering_review.md"
+    },
+    {
+      "id": "S01",
+      "status": "NOT RUN",
+      "finding": "Native tunnel-client transport requires proven OS/process egress isolation",
+      "evidence": "source_audit.md"
+    },
+    {
+      "id": "S02",
+      "status": "NOT RUN",
+      "finding": "Live V2Ray remote/CONNECT/DNS/fault checks forbidden",
+      "evidence": "proxy_options.md"
+    },
+    {
+      "id": "S03",
+      "status": "NOT RUN",
+      "finding": "Hosted tunnel/OpenAI/API credentials not used",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "S04",
+      "status": "NOT RUN",
+      "finding": "Ordinary Chat E2E and independent receipt check not executed",
+      "evidence": "execution.json"
+    },
+    {
+      "id": "S05",
+      "status": "NOT RUN",
+      "finding": "Git/GitHub publication forbidden to agent; user handoff only",
+      "evidence": "execution.json"
+    }
+  ]
+}

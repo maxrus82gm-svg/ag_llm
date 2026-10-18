@@ -1,0 +1,35 @@
+{
+  "timestamp_utc": "2026-10-18T13:22:12.636486+00:00",
+  "processes": [
+    {
+      "name": "v2rayN.exe",
+      "pid": 18032,
+      "parent_pid": 6128,
+      "exe_sha256": null,
+      "listeners": []
+    },
+    {
+      "name": "sing-box.exe",
+      "pid": 27008,
+      "parent_pid": 18032,
+      "exe_sha256": null,
+      "listeners": [
+        {
+          "address": "127.0.0.1",
+          "port": 10814
+        },
+        {
+          "address": "127.0.0.1",
+          "port": 10808
+        }
+      ]
+    }
+  ],
+  "config_candidates": [],
+  "live_socket_probes": 0,
+  "gui_settings_are_loaded_core_evidence": false,
+  "http_inbound": "NOT VERIFIED",
+  "remote_route": "NOT VERIFIED",
+  "private_file_fingerprints": [],
+  "conclusion": "Listener ownership does not identify protocol. Relative config argument without actual cwd does not prove loaded config. GUI policy is only saved state."
+}

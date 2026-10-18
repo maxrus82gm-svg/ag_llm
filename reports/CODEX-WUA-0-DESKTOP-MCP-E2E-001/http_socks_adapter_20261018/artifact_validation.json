@@ -1,0 +1,61 @@
+{
+  "status": "PASS WITH RECORDED NON-OWN INPUT DRIFT",
+  "utc": "2026-10-18T13:39:00.957467+00:00",
+  "json_files": [
+    "attempt01_results.json",
+    "attempt02_results.json",
+    "attempt03_results.json",
+    "checks.json",
+    "coordinator_findings.json",
+    "document_route.json",
+    "execution.json",
+    "input_drift_event.json",
+    "inputs_before.json",
+    "integrity.json",
+    "preflight.sanitized.json",
+    "preflight_attempt01.json",
+    "rules_read.json",
+    "source_pack_search.json"
+  ],
+  "syntax": [
+    {
+      "file": "adapter.py",
+      "sha256": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+      "status": "PASS"
+    },
+    {
+      "file": "preflight_readonly.py",
+      "sha256": "b948a9df443d843fa2420f193cf6089099c7ca9467aea91a144b69892514b9c6",
+      "status": "PASS"
+    },
+    {
+      "file": "test_adapter.py",
+      "sha256": "7f3298e453e4de4494865c1e773e6516e9c856c043c287b6c92069bedbd35bde",
+      "status": "PASS"
+    },
+    {
+      "file": "validate_bundle.py",
+      "sha256": "17b6974f5a106643bd4730dfa392526dea955aa4c5f75f9adf813fc997db8ad3",
+      "status": "PASS"
+    }
+  ],
+  "text_pattern_scans": 30,
+  "secret_scan_issues": [],
+  "secret_scan_limit": "Bounded patterns + manual review, not a DLP guarantee.",
+  "evidence_locators_present": true,
+  "source_versions_match": true,
+  "protected_inputs": 97,
+  "unchanged": 96,
+  "reviewed_card_drift": [
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "before_sha256": "953a03cf8091a0589da1cdae4d48dfb22d3f072a615435648c01f2c7441fabdf",
+      "after_sha256": "54164055d772a4b26870c4b0ca5e6688e232ec235820cd2355e8f03cc0ad49f6",
+      "unchanged": false
+    }
+  ],
+  "previous_am05_am06_files_unchanged": 72,
+  "native_processes_started": 0,
+  "reference_tests": "36/36 PASS; native NOT VERIFIED",
+  "manifest_self_hash_excluded": true
+}
