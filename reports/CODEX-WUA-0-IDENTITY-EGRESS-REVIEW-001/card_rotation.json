@@ -1,0 +1,87 @@
+{
+  "task_id": "CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001",
+  "status": "CARD ROTATION VERIFIED",
+  "before_sha256": "cdb45bab16b5b346d9675b38915bc3117c792ec623a07bd0b651ed59d862cbc8",
+  "report_saved_before_rotation_sha256": "60083580304b76fe93d89845ebdaa5c48f56877a4c96bd07333e1b5ef0a46be2",
+  "manifest_saved_before_rotation_sha256": "cb75483b847d7d2f999df3e420d9614b4a6ac72a8a12d254d8684805ffe32eac",
+  "authority": "assignment.md sections 11/14; latest user startup instruction",
+  "card_rules_modified": false,
+  "b2_b3_readback_before_b1_clear": true,
+  "staged_sha256": "2ecdff186103764dca529c2d5713ac876ebcd7ea8279ebcbf12a00db71580c7b",
+  "previous_history_bytes": 435048,
+  "previous_history_sha256": "8e00a317cc94a4c94e487373c5d4385e30e2735ccdd96daa450953103e1f3723",
+  "error": "PermissionError",
+  "reason": "[WinError 5] Отказано в доступе: 'M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001\\\\card_rotation.pending' -> 'M:\\\\GitHub\\\\ag_llm\\\\Документация\\\\000_Задачи Codex.md'",
+  "actual_card_sha256": "2ecdff186103764dca529c2d5713ac876ebcd7ea8279ebcbf12a00db71580c7b",
+  "attempt01": {
+    "task_id": "CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001",
+    "status": "CARD ROTATION BLOCKED",
+    "before_sha256": "cdb45bab16b5b346d9675b38915bc3117c792ec623a07bd0b651ed59d862cbc8",
+    "report_saved_before_rotation_sha256": "60083580304b76fe93d89845ebdaa5c48f56877a4c96bd07333e1b5ef0a46be2",
+    "manifest_saved_before_rotation_sha256": "cb75483b847d7d2f999df3e420d9614b4a6ac72a8a12d254d8684805ffe32eac",
+    "authority": "assignment.md sections 11/14; latest user startup instruction",
+    "card_rules_modified": false,
+    "b2_b3_readback_before_b1_clear": true,
+    "staged_sha256": "2ecdff186103764dca529c2d5713ac876ebcd7ea8279ebcbf12a00db71580c7b",
+    "previous_history_bytes": 435048,
+    "previous_history_sha256": "8e00a317cc94a4c94e487373c5d4385e30e2735ccdd96daa450953103e1f3723",
+    "error": "PermissionError",
+    "reason": "[WinError 5] Отказано в доступе: 'M:\\\\GitHub\\\\ag_llm\\\\reports\\\\CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001\\\\card_rotation.pending' -> 'M:\\\\GitHub\\\\ag_llm\\\\Документация\\\\000_Задачи Codex.md'",
+    "actual_card_sha256": "2ecdff186103764dca529c2d5713ac876ebcd7ea8279ebcbf12a00db71580c7b"
+  },
+  "manifest_before_rotation": {
+    "task_id": "CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001",
+    "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+    "kind": "analysis only; 0 runtime/network/system tests",
+    "created_utc": "2026-10-19T07:24:05.133384+00:00",
+    "files": [
+      {
+        "path": "assignment.md",
+        "bytes": 25835,
+        "sha256": "5c84b39321580d943c19fbd996efdca13a76e2a79bab75c690e44aacd23bd092"
+      },
+      {
+        "path": "card_before.md",
+        "bytes": 467735,
+        "sha256": "cdb45bab16b5b346d9675b38915bc3117c792ec623a07bd0b651ed59d862cbc8"
+      },
+      {
+        "path": "inputs_before.json",
+        "bytes": 51448,
+        "sha256": "958476c29a795cb302aa5ab75274c8addcd22b27f939227124c4140abd3466b0"
+      },
+      {
+        "path": "report.md",
+        "bytes": 60339,
+        "sha256": "60083580304b76fe93d89845ebdaa5c48f56877a4c96bd07333e1b5ef0a46be2"
+      },
+      {
+        "path": "review_evidence.json",
+        "bytes": 9115,
+        "sha256": "00447f5aef8c33b8b8a82ca73f32a056310b364a74652dfdbab34d15c1a8da66"
+      },
+      {
+        "path": "review_tools.py",
+        "bytes": 15631,
+        "sha256": "00e23fd0dab70b2b3b443151ea3bc2e6e95de28f48c347a8213c3f43696314ca"
+      },
+      {
+        "path": "windows_static_evidence.json",
+        "bytes": 18217,
+        "sha256": "1f7644f7044b84aa3975f0cbee1dacc9576dc43340de8e309beff7a8bedb68f1"
+      }
+    ],
+    "self_hash": "excluded from own file list",
+    "publication": "LOCAL ONLY / USER PUBLICATION NOT VERIFIED"
+  },
+  "recovery_reason": "Readback proves unchanged staged B2/B3/history and exact prebuilt final candidate; file is not read-only. Single retry of remaining atomic commit only.",
+  "desired_final_sha256": "8f1f0705946099390147802164fc6886db94af90998e1900bfa7707e45dbca2b",
+  "recovery_attempts": 1,
+  "final_sha256": "8f1f0705946099390147802164fc6886db94af90998e1900bfa7707e45dbca2b",
+  "full_assignment_preserved": true,
+  "previous_history_byte_exact": true,
+  "b1_waiting": true,
+  "prefix_rules_byte_exact": true,
+  "recovery_result": "PASS",
+  "limitation": "Local filesystem recovery; reason for original WinError 5 unestablished; no global editor lock"
+}

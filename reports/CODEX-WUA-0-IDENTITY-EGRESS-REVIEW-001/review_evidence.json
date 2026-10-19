@@ -1,0 +1,197 @@
+{
+  "claude_manifest_validation": [
+    {
+      "path": "block3-closeout.md",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "card-rotation.json",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "card_precheck.json",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "inputs_final.json",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "inputs_read.json",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "report.md",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "tools/hash_inputs.py",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "tools/make_manifest.py",
+      "bytes_match": true,
+      "sha256_match": true
+    },
+    {
+      "path": "tools/rotate_card.py",
+      "bytes_match": true,
+      "sha256_match": true
+    }
+  ],
+  "all_claude_manifest_entries_match": true,
+  "rules": [
+    {
+      "id": "DOC-PARALLEL-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "a1ba2104d627cf59c925639b093b46d824496c2195779d197e9acb87bb329188",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-GIT-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "31f23921fe40353483a6375b20a0bf3dc50e115ed81d13d64508d4dd9f79a927",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-LOCAL-REPORT-HANDOFF-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "5e9b30828a83be5ecdc987c758bbedc3c649a689d69389aecebb8b7496d94075",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-READ-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "fbe4742636ff5831940e42ae915f75a8d817b5424ebf4994564e830388d7c9ce",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-VERSION-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "90adbe0705e0ed25fa67ddf24d8788661a254d99e43d2a0f098e45595ea89cdf",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-CHANGE-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "4d7721c415f39dadb96f763859e52a130823b7e96ddb976401b5b121267ad23a",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-AGENT-REPORT-TRIGGER-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "fbb056acb52b55db7eb1e967519fbca5838248d6a9d5f4bd50256a3cf43e873d",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-ENGINEERING-ROLES-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "59e7311c6fb77dde8c21ad7a5d7fa9977cd4dbd30a2928794233c575c08b330d",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "DOC-TASK-BLOCK1-01",
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "source_sha256": "460443a27e7bcc8d83f7e901cfc50c599941316261e0203eb4673944d5170424",
+      "definition_sha256_LF": "aae83bc14434f691c476ec36d49d83c6f3524152faa68ff216d080aeedc7abf4",
+      "same_normalized_definition_as_prior": false
+    },
+    {
+      "id": "TEST-COLLAB-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "3061948637e56347a826af7f321dc9ebe0d9ce0ce17b6955f084a4e0bb7ef6a9",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-ENG-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "0b37f79e5d2043eca1ce6664619a5b450254205719755ece2ad897ffea79192a",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-DEV-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "decc536f65de81f93be4f05a476901e0b216d62ef78ac6aa02b487a49c74e197",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-COV-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "02c08b520f18a6fda6c774c3c715164a891eb69b96fc507e98ad4ec32e906213",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-EXEC-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "9477f9fba9a7e3f8ea19be3406503747dea3b558827c532ddd66236112f0d6ea",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-QA-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "d0644d8826ed82918b0cb4e61c4e0646da2fcb7b5d60e3a5411b5d1fece62f55",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-EVID-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "26c57948b7a77c532b9e7509561e8de5aa49e6496ef9145c7870325c228aadc4",
+      "same_normalized_definition_as_prior": true
+    },
+    {
+      "id": "TEST-SCOPE-01",
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "source_sha256": "b2125ee98d72c8d6ea05e41ea6aadd222e884155c1aa3b79f0b22d9d9e401c4e",
+      "definition_sha256_LF": "2729fdf540012f3141d3d8c677afb3e591b3ec5385539a7fe6790a9d930a0329",
+      "same_normalized_definition_as_prior": true
+    }
+  ],
+  "source_archive_addressed_paths": [
+    {
+      "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001\\source_input\\tunnel-client-runtime-source-v0.0.16.tar.gz",
+      "exists": false
+    },
+    {
+      "path": "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-DESKTOP-MCP-E2E-001\\secure_tunnel_preparation\\downloads\\tunnel-client-runtime-source-v0.0.16.tar.gz",
+      "exists": false
+    }
+  ],
+  "separate_claude_WEB10_review_found_in_local_19_34": false,
+  "WEB10_firewall_concern_source": "approved current B1 section 4; separate current local review not found",
+  "preliminary_read_failure_retained": {
+    "operation": "inspect Claude manifest first entry",
+    "error": "KeyError: 0",
+    "cause": "files is a dict, not a list",
+    "resolution": "inspect schema and iterate named entries; no system/runtime execution"
+  },
+  "evidence_classes": {
+    "L": "local bytes/static declarations/help",
+    "C": "coordinator statement",
+    "K": "known documented semantics recalled, not fresh official-document read",
+    "P": "design/inference",
+    "N": "requires native/system verification"
+  },
+  "network_native_or_system_tests_executed": 0
+}

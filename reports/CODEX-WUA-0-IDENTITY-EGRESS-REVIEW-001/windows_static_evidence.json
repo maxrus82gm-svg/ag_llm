@@ -1,0 +1,448 @@
+{
+  "files": [
+    {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules\\NetSecurity\\NetFirewallRule.cmdletDefinition.cdxml",
+      "bytes": 32086,
+      "sha256": "89c89eaa5139ed008ad07c7d4d8a741c78c4603a880a2583b1e2ad150a4fa50a",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "cim:OperationOption:LocalUser",
+          "matches": [
+            {
+              "line": 273,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:LocalUser\">\n              <Type PSType=\"string\"/>\n              <CmdletParameterMetadata PSName=\"LocalUser\"/>"
+            },
+            {
+              "line": 524,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:LocalUser\">\n              <Type PSType=\"string\"/>\n              <CmdletParameterMetadata PSName=\"LocalUser\"/>"
+            }
+          ]
+        },
+        {
+          "selector": "cim:OperationOption:Authentication",
+          "matches": [
+            {
+              "line": 285,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:Authentication\">\n              <Type PSType=\"NetSecurity.Authentication\"/>\n              <CmdletParameterMetadata PSName=\"Authentication\"/>"
+            },
+            {
+              "line": 536,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:Authentication\">\n              <Type PSType=\"NetSecurity.Authentication\"/>\n              <CmdletParameterMetadata PSName=\"Authentication\"/>"
+            }
+          ]
+        },
+        {
+          "selector": "cim:OperationOption:OverrideBlockRules",
+          "matches": [
+            {
+              "line": 293,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:OverrideBlockRules\">\n              <Type PSType=\"boolean\"/>\n              <CmdletParameterMetadata PSName=\"OverrideBlockRules\"/>"
+            },
+            {
+              "line": 544,
+              "excerpt": "            </Parameter>\n            <Parameter ParameterName=\"cim:OperationOption:OverrideBlockRules\">\n              <Type PSType=\"boolean\"/>\n              <CmdletParameterMetadata PSName=\"OverrideBlockRules\"/>"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules\\NetSecurity\\NetFirewallSecurityFilter.cmdletDefinition.cdxml",
+      "bytes": 5554,
+      "sha256": "c3b985e9098c5842818fbf27d9a8b0993a6b3a0b167c160fffc35aa128af9bae",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "PropertyName=\"LocalUsers\"",
+          "matches": [
+            {
+              "line": 27,
+              "excerpt": "          </Property>\n          <Property PropertyName=\"LocalUsers\">\n            <Type PSType=\"string\"/>\n            <RegularQuery AllowGlobbing=\"true\">"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\fwpmu.h",
+      "bytes": 123920,
+      "sha256": "f96dd01748036265ee6d7115084c7acdd2b26989dfc666a55b0f49f3250bc007",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "FWPM_LAYER_ALE_AUTH_CONNECT_V4",
+          "matches": [
+            {
+              "line": 459,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_CONNECT_V4,\n   0xc38d57d1,\n   0x05a7,"
+            },
+            {
+              "line": 468,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_CONNECT_V4_DISCARD,\n   0xd632a801,\n   0xf5ba,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_LAYER_ALE_AUTH_CONNECT_V6",
+          "matches": [
+            {
+              "line": 477,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_CONNECT_V6,\n   0x4a72393b,\n   0x319f,"
+            },
+            {
+              "line": 486,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_CONNECT_V6_DISCARD,\n   0xc97bc3b8,\n   0xc9a3,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4",
+          "matches": [
+            {
+              "line": 423,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4,\n   0xe1cd9fe7,\n   0xf4b5,"
+            },
+            {
+              "line": 432,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4_DISCARD,\n   0x9eeaa99b,\n   0xbd22,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_LAYER_ALE_RESOURCE_ASSIGNMENT_V4",
+          "matches": [
+            {
+              "line": 351,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_RESOURCE_ASSIGNMENT_V4,\n   0x1247d66d,\n   0x0b60,"
+            },
+            {
+              "line": 360,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_RESOURCE_ASSIGNMENT_V4_DISCARD,\n   0x0b5812a2,\n   0xc3ff,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_LAYER_ALE_AUTH_LISTEN_V4",
+          "matches": [
+            {
+              "line": 387,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_LISTEN_V4,\n   0x88bb5dad,\n   0x76d7,"
+            },
+            {
+              "line": 396,
+              "excerpt": "DEFINE_GUID(\n   FWPM_LAYER_ALE_AUTH_LISTEN_V4_DISCARD,\n   0x371dfada,\n   0x9f26,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_CONDITION_ALE_USER_ID",
+          "matches": [
+            {
+              "line": 1885,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_ALE_USER_ID,\n   0xaf043a0a,\n   0xb34d,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_CONDITION_ALE_REMOTE_USER_ID",
+          "matches": [
+            {
+              "line": 1894,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_ALE_REMOTE_USER_ID,\n   0xf63073b7,\n   0x0189,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_CONDITION_IP_REMOTE_ADDRESS",
+          "matches": [
+            {
+              "line": 1375,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_IP_REMOTE_ADDRESS,\n   0xb235ae9a,\n   0x1d64,"
+            },
+            {
+              "line": 2091,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_IP_REMOTE_ADDRESS_V4,\n   0x1febb610,\n   0x3bcc,"
+            },
+            {
+              "line": 2100,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_IP_REMOTE_ADDRESS_V6,\n   0x246e1d8c,\n   0x8bee,"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_CONDITION_IP_REMOTE_PORT",
+          "matches": [
+            {
+              "line": 1722,
+              "excerpt": "DEFINE_GUID(\n   FWPM_CONDITION_IP_REMOTE_PORT,\n   0xc35a604d,\n   0xd22b,"
+            },
+            {
+              "line": 1729,
+              "excerpt": "\n#define FWPM_CONDITION_ICMP_CODE FWPM_CONDITION_IP_REMOTE_PORT\n\n// 4672a468-8a0a-4202-abb4-849e92e66809"
+            }
+          ]
+        },
+        {
+          "selector": "FwpmFilterAdd0",
+          "matches": [
+            {
+              "line": 4066,
+              "excerpt": "WINAPI\nFwpmFilterAdd0(\n   _In_ HANDLE engineHandle,\n   _In_ const FWPM_FILTER0* filter,"
+            }
+          ]
+        },
+        {
+          "selector": "FwpmTransactionCommit0",
+          "matches": [
+            {
+              "line": 3366,
+              "excerpt": "WINAPI\nFwpmTransactionCommit0(_In_ HANDLE engineHandle);\n\nDWORD"
+            }
+          ]
+        },
+        {
+          "selector": "FwpmGetAppIdFromFileName0",
+          "matches": [
+            {
+              "line": 4186,
+              "excerpt": "WINAPI\nFwpmGetAppIdFromFileName0(\n   _In_ PCWSTR fileName,\n   _Outptr_ FWP_BYTE_BLOB** appId"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\shared\\fwpmtypes.h",
+      "bytes": 45741,
+      "sha256": "70fee183925d0947798b5cdc6aad4c712251de9f8264d3325e3ec77b114b7aa3",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "FWPM_FILTER_FLAG_PERSISTENT",
+          "matches": [
+            {
+              "line": 450,
+              "excerpt": "#define FWPM_FILTER_FLAG_NONE (0x00000000)\n#define FWPM_FILTER_FLAG_PERSISTENT (0x00000001)\n#define FWPM_FILTER_FLAG_BOOTTIME (0x00000002)\n#define FWPM_FILTER_FLAG_HAS_PROVIDER_CONTEXT  (0x00000004)"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_FILTER_FLAG_BOOTTIME",
+          "matches": [
+            {
+              "line": 451,
+              "excerpt": "#define FWPM_FILTER_FLAG_PERSISTENT (0x00000001)\n#define FWPM_FILTER_FLAG_BOOTTIME (0x00000002)\n#define FWPM_FILTER_FLAG_HAS_PROVIDER_CONTEXT  (0x00000004)\n#define FWPM_FILTER_FLAG_CLEAR_ACTION_RIGHT (0x00000008)"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_FILTER_FLAG_CLEAR_ACTION_RIGHT",
+          "matches": [
+            {
+              "line": 453,
+              "excerpt": "#define FWPM_FILTER_FLAG_HAS_PROVIDER_CONTEXT  (0x00000004)\n#define FWPM_FILTER_FLAG_CLEAR_ACTION_RIGHT (0x00000008)\n#define FWPM_FILTER_FLAG_PERMIT_IF_CALLOUT_UNREGISTERED (0x00000010)\n#define FWPM_FILTER_FLAG_DISABLED (0x00000020)"
+            }
+          ]
+        },
+        {
+          "selector": "FWPM_SESSION_FLAG_DYNAMIC",
+          "matches": [
+            {
+              "line": 117,
+              "excerpt": "\n#define FWPM_SESSION_FLAG_DYNAMIC (0x00000001)\n#if (NTDDI_VERSION >= NTDDI_WIN7)\n#define FWPM_SESSION_FLAG_RESERVED (0x10000000)"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\shared\\fwptypes.h",
+      "bytes": 17962,
+      "sha256": "5a4964e624d92ea3096c5bc1084ec58fc3e32abc979945986a4f2313e8f8a19d",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "FWP_ACTRL_MATCH_FILTER",
+          "matches": [
+            {
+              "line": 231,
+              "excerpt": "\n#define FWP_ACTRL_MATCH_FILTER (0x00000001)\n\ntypedef struct FWP_CONDITION_VALUE0_"
+            }
+          ]
+        },
+        {
+          "selector": "FWP_ACTION_BLOCK",
+          "matches": [
+            {
+              "line": 301,
+              "excerpt": "\n#define FWP_ACTION_BLOCK  (0x00000001 | FWP_ACTION_FLAG_TERMINATING)\n#define FWP_ACTION_PERMIT (0x00000002 | FWP_ACTION_FLAG_TERMINATING)\n#define FWP_ACTION_CALLOUT_TERMINATING (0x00000003 | FWP_ACTION_FLAG_CALLOUT | FWP_ACTION_FLAG_TERMINATING)"
+            }
+          ]
+        },
+        {
+          "selector": "FWP_ACTION_PERMIT",
+          "matches": [
+            {
+              "line": 302,
+              "excerpt": "#define FWP_ACTION_BLOCK  (0x00000001 | FWP_ACTION_FLAG_TERMINATING)\n#define FWP_ACTION_PERMIT (0x00000002 | FWP_ACTION_FLAG_TERMINATING)\n#define FWP_ACTION_CALLOUT_TERMINATING (0x00000003 | FWP_ACTION_FLAG_CALLOUT | FWP_ACTION_FLAG_TERMINATING)\n#define FWP_ACTION_CALLOUT_INSPECTION (0x00000004 | FWP_ACTION_FLAG_CALLOUT | FWP_ACTION_FLAG_NON_TERMINATING)"
+            }
+          ]
+        },
+        {
+          "selector": "FWP_CONDITION_FLAG_IS_LOOPBACK",
+          "matches": [
+            {
+              "line": 310,
+              "excerpt": "#define FWP_ACTION_BITMAP_INDEX_SET (0x00000009)\n#define FWP_CONDITION_FLAG_IS_LOOPBACK              (0x00000001)\n#define FWP_CONDITION_FLAG_IS_IPSEC_SECURED         (0x00000002)\n#define FWP_CONDITION_FLAG_IS_REAUTHORIZE           (0x00000004)"
+            }
+          ]
+        },
+        {
+          "selector": "FWP_MATCH_NOT_EQUAL",
+          "matches": [
+            {
+              "line": 206,
+              "excerpt": "        FWP_MATCH_EQUAL_CASE_INSENSITIVE\t= ( FWP_MATCH_FLAGS_NONE_SET + 1 ) ,\n        FWP_MATCH_NOT_EQUAL\t= ( FWP_MATCH_EQUAL_CASE_INSENSITIVE + 1 ) ,\n        FWP_MATCH_PREFIX\t= ( FWP_MATCH_NOT_EQUAL + 1 ) ,\n        FWP_MATCH_NOT_PREFIX\t= ( FWP_MATCH_PREFIX + 1 ) ,"
+            },
+            {
+              "line": 207,
+              "excerpt": "        FWP_MATCH_NOT_EQUAL\t= ( FWP_MATCH_EQUAL_CASE_INSENSITIVE + 1 ) ,\n        FWP_MATCH_PREFIX\t= ( FWP_MATCH_NOT_EQUAL + 1 ) ,\n        FWP_MATCH_NOT_PREFIX\t= ( FWP_MATCH_PREFIX + 1 ) ,\n        FWP_MATCH_TYPE_MAX\t= ( FWP_MATCH_NOT_PREFIX + 1 ) "
+            }
+          ]
+        },
+        {
+          "selector": "FWP_SECURITY_DESCRIPTOR_TYPE",
+          "matches": [
+            {
+              "line": 119,
+              "excerpt": "        FWP_SID\t= ( FWP_BYTE_BLOB_TYPE + 1 ) ,\n        FWP_SECURITY_DESCRIPTOR_TYPE\t= ( FWP_SID + 1 ) ,\n        FWP_TOKEN_INFORMATION_TYPE\t= ( FWP_SECURITY_DESCRIPTOR_TYPE + 1 ) ,\n        FWP_TOKEN_ACCESS_INFORMATION_TYPE\t= ( FWP_TOKEN_INFORMATION_TYPE + 1 ) ,"
+            },
+            {
+              "line": 120,
+              "excerpt": "        FWP_SECURITY_DESCRIPTOR_TYPE\t= ( FWP_SID + 1 ) ,\n        FWP_TOKEN_INFORMATION_TYPE\t= ( FWP_SECURITY_DESCRIPTOR_TYPE + 1 ) ,\n        FWP_TOKEN_ACCESS_INFORMATION_TYPE\t= ( FWP_TOKEN_INFORMATION_TYPE + 1 ) ,\n        FWP_UNICODE_STRING_TYPE\t= ( FWP_TOKEN_ACCESS_INFORMATION_TYPE + 1 ) ,"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\processthreadsapi.h",
+      "bytes": 33699,
+      "sha256": "3965e5dbb6510efe9d8002a8e3efb0da1277d4eb5d7f36b0ccb563a2f4ee7bfc",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "CreateProcessAsUserW(",
+          "matches": [
+            {
+              "line": 478,
+              "excerpt": "WINAPI\nCreateProcessAsUserW(\n    _In_opt_ HANDLE hToken,\n    _In_opt_ LPCWSTR lpApplicationName,"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\WinBase.h",
+      "bytes": 261551,
+      "sha256": "e88115f7f18d8bcd6c2760ed177e3539914072c0c0ead60806c12d35422117c8",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "CreateProcessWithLogonW(",
+          "matches": [
+            {
+              "line": 7570,
+              "excerpt": "WINAPI\nCreateProcessWithLogonW(\n    _In_        LPCWSTR lpUsername,\n    _In_opt_    LPCWSTR lpDomain,"
+            }
+          ]
+        },
+        {
+          "selector": "LOGON_NETCREDENTIALS_ONLY",
+          "matches": [
+            {
+              "line": 7564,
+              "excerpt": "#define LOGON_WITH_PROFILE              0x00000001\n#define LOGON_NETCREDENTIALS_ONLY       0x00000002\n#define LOGON_ZERO_PASSWORD_BUFFER      0x80000000\n"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\taskschd.h",
+      "bytes": 391751,
+      "sha256": "63aa082e90f99bac6f65b117b6e92af156f9cee24133d7cefca887d8b9811c38",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "TASK_LOGON_PASSWORD",
+          "matches": [
+            {
+              "line": 737,
+              "excerpt": "        TASK_LOGON_NONE\t= 0,\n        TASK_LOGON_PASSWORD\t= 1,\n        TASK_LOGON_S4U\t= 2,\n        TASK_LOGON_INTERACTIVE_TOKEN\t= 3,"
+            }
+          ]
+        },
+        {
+          "selector": "TASK_LOGON_S4U",
+          "matches": [
+            {
+              "line": 738,
+              "excerpt": "        TASK_LOGON_PASSWORD\t= 1,\n        TASK_LOGON_S4U\t= 2,\n        TASK_LOGON_INTERACTIVE_TOKEN\t= 3,\n        TASK_LOGON_GROUP\t= 4,"
+            }
+          ]
+        },
+        {
+          "selector": "TASK_RUNLEVEL_LUA",
+          "matches": [
+            {
+              "line": 748,
+              "excerpt": "    {\n        TASK_RUNLEVEL_LUA\t= 0,\n        TASK_RUNLEVEL_HIGHEST\t= 1\n    } \tTASK_RUNLEVEL_TYPE;"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\winnt.h",
+      "bytes": 776716,
+      "sha256": "be490e4517ccd0d90d88b6e751f027babd501f704f53da5b596a5d88c718ee03",
+      "authorized_change": false,
+      "selectors": [
+        {
+          "selector": "JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE",
+          "matches": [
+            {
+              "line": 12379,
+              "excerpt": "#define JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK        0x00001000\n#define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE          0x00002000\n#define JOB_OBJECT_LIMIT_SUBSET_AFFINITY            0x00004000\n#define JOB_OBJECT_LIMIT_JOB_MEMORY_LOW             0x00008000"
+            }
+          ]
+        }
+      ],
+      "meaning": "Declaration/schema existence only, no live enforcement test"
+    }
+  ],
+  "no_policy_or_service_query": true,
+  "windows_api_calls": 0,
+  "not_proven": [
+    "LocalUser outgoing non-IPsec semantics",
+    "Firewall Block/Allow runtime",
+    "WFP arbitration and loopback coverage",
+    "BFE crash/boot persistence"
+  ],
+  "source_search_access_denied": {
+    "path": "C:\\Windows\\System32\\wbem\\MOF",
+    "action": "bounded filename discovery",
+    "result": "access denied, no escalation or bypass"
+  },
+  "local_firewallapi_mof_inspection": "Contains WPP EventTrace metadata, not operational rule precedence documentation"
+}

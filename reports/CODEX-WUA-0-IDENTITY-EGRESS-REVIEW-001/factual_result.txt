@@ -1,0 +1,12 @@
+TASK: CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+VERDICT: выделенные SID и запуск без второго рабочего стола пригодны как архитектурные принципы. P1 недостаточен; P2 не доказан. Основной T1-кандидат — два SID, disjoint user-mode WFP deny, exact loopback endpoint, dedicated HTTP CONNECT V2Ray broker с remote pin. Для T2 стандартной учётки недостаточно.
+PROVEN: 9/9 локальных Claude manifest entries совпали по размерам/SHA; статически прочитаны 9 Windows SDK/CDXML файлов. Это не enforcement proof. Health 127.0.0.1:0 создаёт ephemeral listener.
+RISKS: Block ALL не исключается обычным Allow; LocalUser/outbound и loopback arbitration требуют native proof. DNS/service delegation, listener takeover, BFE/boot/flow failures, actual broker route и source-to-binary соответствие остаются открыты. UI ChatGPT не покрывается SID C/B.
+NOT VERIFIED: OS egress isolation; native fail-closed; V2Ray remote route; ordinary Chat E2E. HOSTED TUNNEL NOT STARTED. Runtime/network/system tests 0, 7 будущих этапов NOT RUN; Git/GitHub 0.
+FILES: только reports/CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001/ и ротация собственной карточки. 206/206 noncard protected inputs неизменны.
+CARD: ROTATION VERIFIED locally; B1=ОЖИДАНИЕ НОВОЙ ЗАДАЧИ, полная постановка B2, результат B3, 435048 B старой истории сохранены. Первый WinError 5 сохранён, guarded recovery успешен.
+DOC IMPACT / SHARED DOC DELTA: точные предложения для 19/34 в report §J; общие документы, Claude/LLM12, Windows/V2Ray/launcher не изменены.
+REPORT: M:\GitHub\ag_llm\reports\CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001\report.md
+NEXT: после независимого review — один bounded implementation/proof package в доказанно изолированной Windows-лаборатории; exact source handoff и отдельные USER GO на system/native/live/E2E. Никакого direct native прогона на рабочем host.
+PUBLICATION: LOCAL ONLY / NOT VERIFIED; пользователь публикует и передаёт WEB_10. Агент не объявляет независимую приёмку.

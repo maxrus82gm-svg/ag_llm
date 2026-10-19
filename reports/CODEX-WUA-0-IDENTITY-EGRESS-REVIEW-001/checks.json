@@ -1,0 +1,42 @@
+{
+  "task_id": "CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001",
+  "scope": "analytical review and artifact integrity only",
+  "analysis_completed": true,
+  "claude_manifest_entries_verified": 9,
+  "claude_package_files_including_manifest": 10,
+  "windows_static_source_files": 9,
+  "normative_rule_definitions_checked": 17,
+  "unchanged_normalized_definitions": 16,
+  "changed_definition": "DOC-TASK-BLOCK1-01, reread current rotation clause",
+  "security_findings": 13,
+  "protected_baseline_files": 207,
+  "protected_noncard_unchanged": 206,
+  "runtime_unit_or_security_tests": 0,
+  "previous_reference_suite_reruns": 0,
+  "network_requests_native_probes_or_launches": 0,
+  "account_vm_firewall_acl_or_v2ray_changes": 0,
+  "git_github_operations": 0,
+  "future_stages": {
+    "count": 7,
+    "status": "NOT RUN"
+  },
+  "unverified": [
+    "LocalUser non-IPsec outbound semantics",
+    "WFP effective graph and loopback enforcement",
+    "BFE/boot/failure persistence and established flows",
+    "DNS/system delegation closure",
+    "loopback recipient/bind prevention",
+    "native fail-closed",
+    "V2Ray remote route",
+    "ordinary Chat E2E"
+  ],
+  "source_archive": "BLOCKED at two addressed expected local paths; no exhaustive whole-machine claim",
+  "card_rotation": {
+    "final": "VERIFIED locally",
+    "initial": "BLOCKED — WinError 5 at final replace; preserved in receipt",
+    "recovery": "one hash-guarded final commit, successful",
+    "history_bytes": 435048
+  },
+  "evidence_limits": "No fresh Microsoft/OpenAI/sing-box web documentation or operational system tests; known semantics are labeled K, assumptions P and required verification N in report",
+  "publication": "LOCAL ONLY / USER PUBLICATION NOT VERIFIED"
+}
