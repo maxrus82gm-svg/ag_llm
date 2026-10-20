@@ -1,0 +1,179 @@
+{
+  "total": 42,
+  "passed": 42,
+  "failed": 0,
+  "errors": 0,
+  "tests": [
+    {
+      "name": "test_all_permission_flags_do_not_activate",
+      "status": "PASS"
+    },
+    {
+      "name": "test_assets_unknown_origin_blocks_and_digest_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_config_changed_after_snapshot_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_credentials_and_real_profile_flags_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_deterministic_same_snapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "test_dry_plan_deterministic_and_no_apply",
+      "status": "PASS"
+    },
+    {
+      "name": "test_dry_plan_rejects_foreign_unsafe_root",
+      "status": "PASS"
+    },
+    {
+      "name": "test_enhanced_console_powershell_direct_and_guest_relay_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_even_disabled_NIC_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_fixture_unknown_receiver_or_upstream_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_guest_network_dns_proxy_and_nonloopback_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_guest_selfreport_without_independent_review_blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "test_image_chain_mismatch_and_shared_disk_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_incomplete_device_census_blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "test_json_size_depth_and_types",
+      "status": "PASS"
+    },
+    {
+      "name": "test_legacy_nic_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_lost_events_restart_or_missing_attempts_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_manifest_tamper_without_resigning",
+      "status": "PASS"
+    },
+    {
+      "name": "test_missing_host_guest_review_observations",
+      "status": "PASS"
+    },
+    {
+      "name": "test_missing_required_fact_blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "test_nat_bridge_hostonly_forwarding_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_no_lab_is_blocked_not_vacuous_pass",
+      "status": "PASS"
+    },
+    {
+      "name": "test_no_root_cannot_self_attest",
+      "status": "PASS"
+    },
+    {
+      "name": "test_one_actor_or_reused_key_not_independent",
+      "status": "PASS"
+    },
+    {
+      "name": "test_positive_all_twelve_independent_proofs",
+      "status": "PASS"
+    },
+    {
+      "name": "test_real_mode_rejects_synthetic_trust",
+      "status": "PASS"
+    },
+    {
+      "name": "test_rollback_unreviewed_or_wrong_owner",
+      "status": "PASS"
+    },
+    {
+      "name": "test_shared_folder_clipboard_and_device_relays_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_signature_copied_from_different_role",
+      "status": "PASS"
+    },
+    {
+      "name": "test_stale_heartbeat_and_clock_correlation_block",
+      "status": "PASS"
+    },
+    {
+      "name": "test_stale_request_and_future_decision_block",
+      "status": "PASS"
+    },
+    {
+      "name": "test_strict_duplicate_escaped_json_and_nonfinite",
+      "status": "PASS"
+    },
+    {
+      "name": "test_string_boolean_and_bool_count_not_coerced",
+      "status": "PASS"
+    },
+    {
+      "name": "test_trust_pin_mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "test_unapproved_descendants_cloudflared_and_outside_guest_fail",
+      "status": "PASS"
+    },
+    {
+      "name": "test_unknown_fact_fields_rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "test_unknown_observer_blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "test_vm_owner_config_identity_mismatch",
+      "status": "PASS"
+    },
+    {
+      "name": "test_watch_missing_or_heartbeat_loss_not_pass",
+      "status": "PASS"
+    },
+    {
+      "name": "test_write_output_never_overwrites",
+      "status": "PASS"
+    },
+    {
+      "name": "test_wrong_independent_snapshot_reference_fails",
+      "status": "PASS"
+    },
+    {
+      "name": "test_zero_packets_is_not_attempt_observer",
+      "status": "PASS"
+    }
+  ],
+  "synthetic": true,
+  "actual_vm_queries": 0,
+  "network_probes": 0
+}

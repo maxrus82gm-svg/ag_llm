@@ -1,0 +1,1058 @@
+{
+  "task_id": "CODEX-WUA-0-WINDOWS-LAB-GATE-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "files": [
+    {
+      "path": "adapters/Collect-Host.ps1",
+      "bytes": 4969,
+      "sha256": "ec67934f504eaa7c1572c31738ad7978aee6c73e763a199090de2a43f3f723ee"
+    },
+    {
+      "path": "adapters/Read-HyperVApproved.ps1",
+      "bytes": 6500,
+      "sha256": "187451076abb92fbe40410c49da3fb956fc05ef3c9fb5750e2aa417c117db3d6"
+    },
+    {
+      "path": "assignment.md",
+      "bytes": 21337,
+      "sha256": "26abe1ea439d9d46e180f018a0d049c41de18f3bc7bd318192b532e6f2f16741"
+    },
+    {
+      "path": "card_initial.json",
+      "bytes": 379,
+      "sha256": "ede5371be6c4abccfc5a6599d4f87f1ace535101afe75c75c89f7cb1c9d12fcf"
+    },
+    {
+      "path": "card_result.txt",
+      "bytes": 3083,
+      "sha256": "b7bcadbb243b063676bb47223ab276b20f4f4db7143577017193f83d97114e39"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 3117,
+      "sha256": "435c6ff2dd55079e4f2e26f1a1448adc6c81ecc85e9169d873ecab6cdfc75e6a"
+    },
+    {
+      "path": "contracts/isolation_contract.json",
+      "bytes": 3671,
+      "sha256": "e13bb7e2afab4648a102f59068ebea95ef289a21d2e1429a16615ad8ca802a04"
+    },
+    {
+      "path": "evidence/attempt01/run.json",
+      "bytes": 1388,
+      "sha256": "c173686a8690771b7e76dc7c2811a1de09a742c3feee03e5ec7891598d9774f2"
+    },
+    {
+      "path": "evidence/attempt01/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "572ae957737f751868309ddde8ca73de980045daf31f0ca492df15940ba17561"
+    },
+    {
+      "path": "evidence/attempt01/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt01/tests/positive_bundle.json",
+      "bytes": 12123,
+      "sha256": "2503003b5ff791288e67f39841a5462d271c9b267ccaca9056ed6a05d460c159"
+    },
+    {
+      "path": "evidence/attempt01/tests/results.json",
+      "bytes": 4145,
+      "sha256": "0fb946bb6f1fc9edf020d9df494c4b7c6f9a355a15692ba452b56413f24b9df3"
+    },
+    {
+      "path": "evidence/attempt01/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "38371ff8e695b45878781c8ef211dbaf9b82368dcaf5e5fe05907202a0a72d11"
+    },
+    {
+      "path": "evidence/attempt01/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "ad2011109b94a607186372e4ecdd793542d23b3f14ef1a586be6dd7320db9302"
+    },
+    {
+      "path": "evidence/attempt02/run.json",
+      "bytes": 1496,
+      "sha256": "fbea4507230300ff0de65f982adea9576f9a1cc35157854750f79e4bca613565"
+    },
+    {
+      "path": "evidence/attempt02/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "f2d503ab9811011c9ef825561a96ced741d62d58e124746e5a7c66bc946060f8"
+    },
+    {
+      "path": "evidence/attempt02/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt02/tests/positive_bundle.json",
+      "bytes": 12518,
+      "sha256": "7016dcbf8803cbec2a2d501d8edd8499404f1aec0da1484d1ef8af8944b65392"
+    },
+    {
+      "path": "evidence/attempt02/tests/results.json",
+      "bytes": 4672,
+      "sha256": "ef86e174cf45c23452046e412a0fb4cc0fd0fca11b1a0e8a1c43e8116a2ab774"
+    },
+    {
+      "path": "evidence/attempt02/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "39eb4a851a3a5eced823d934559d8cc0e268ed9280b39eb8e7d59fe8fa5c7024"
+    },
+    {
+      "path": "evidence/attempt02/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "c434d6b97c34945c7af8193b7a82cd4a1ba91d1ff3eb7f3e2a47894d22655d43"
+    },
+    {
+      "path": "evidence/attempt03/cli/bundle.json",
+      "bytes": 12518,
+      "sha256": "8a6760d4e398cfaa75b37df9a6efeb9fecb26db8531af098c19e854aee20c848"
+    },
+    {
+      "path": "evidence/attempt03/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt03/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "9bae7eb86c3982ffd478b78c82894367b58788cbc6e1d4d08e1b1347d846c569"
+    },
+    {
+      "path": "evidence/attempt03/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt03/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "3e3f5c837c9e54ae8c202e5327262d0fc05e885958527dc173ffbaa41242fb31"
+    },
+    {
+      "path": "evidence/attempt03/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "798e4eb9807aa8b83a1de5255f86fb57e2c03068e1ec33c752568e8c177a1d13"
+    },
+    {
+      "path": "evidence/attempt03/run.json",
+      "bytes": 1497,
+      "sha256": "9f4099a2f2d6595364ec572affc3aa7145b9733ed286584559ed28a2145db6b1"
+    },
+    {
+      "path": "evidence/attempt03/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "3e3f5c837c9e54ae8c202e5327262d0fc05e885958527dc173ffbaa41242fb31"
+    },
+    {
+      "path": "evidence/attempt03/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt03/tests/positive_bundle.json",
+      "bytes": 12518,
+      "sha256": "8a6760d4e398cfaa75b37df9a6efeb9fecb26db8531af098c19e854aee20c848"
+    },
+    {
+      "path": "evidence/attempt03/tests/results.json",
+      "bytes": 4785,
+      "sha256": "eb5cf701e9c030fba25d6fd540836ecc00a6263fb3b679c6aea5ddd1e9795514"
+    },
+    {
+      "path": "evidence/attempt03/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "fd6251a1c4f4ed82abfa51f2795921360202d84f3cd5cdca7e3b880ef3984dc5"
+    },
+    {
+      "path": "evidence/attempt03/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "798e4eb9807aa8b83a1de5255f86fb57e2c03068e1ec33c752568e8c177a1d13"
+    },
+    {
+      "path": "evidence/attempt04/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "fc391b44efc596d0d805940134d425e65207787168005fd1ff517fdfb77ab915"
+    },
+    {
+      "path": "evidence/attempt04/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt04/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "da866c3ae3647caa066109a9343095791e2c8ad06be26214e8531a7d5a95345a"
+    },
+    {
+      "path": "evidence/attempt04/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt04/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "382dad12cf3270c4d0cf6553343a74c2a4c2db7f8f0ec6ec60be9e264e63b666"
+    },
+    {
+      "path": "evidence/attempt04/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "4353c34c32d883ec284652c5d7855f2cd50c5077cae45f8fb5acfa41133fac77"
+    },
+    {
+      "path": "evidence/attempt04/run.json",
+      "bytes": 1497,
+      "sha256": "340c42c2ec8fe797d348016906561122a0795fc6cd63e8673588e7e6e5ccf483"
+    },
+    {
+      "path": "evidence/attempt04/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "382dad12cf3270c4d0cf6553343a74c2a4c2db7f8f0ec6ec60be9e264e63b666"
+    },
+    {
+      "path": "evidence/attempt04/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt04/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "fc391b44efc596d0d805940134d425e65207787168005fd1ff517fdfb77ab915"
+    },
+    {
+      "path": "evidence/attempt04/tests/results.json",
+      "bytes": 4982,
+      "sha256": "7229fabc5428964896ca07a7360c182f973d18df18db58a6d3e98085d2f3a5d6"
+    },
+    {
+      "path": "evidence/attempt04/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "91e34a2e8136d9cd4c840ec8f5f4f0c7507dd914eafb3d1aa7d14da9acd6dd7a"
+    },
+    {
+      "path": "evidence/attempt04/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "4353c34c32d883ec284652c5d7855f2cd50c5077cae45f8fb5acfa41133fac77"
+    },
+    {
+      "path": "evidence/attempt05/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "908f67fb71aa0d88f06ca02d2ce0185c840aee003a0c09a0ea81c72d8d0e8f8b"
+    },
+    {
+      "path": "evidence/attempt05/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt05/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "482a860ebf927e024bb7a5b05390861419d07457777d3417f522ad1bd5167d8a"
+    },
+    {
+      "path": "evidence/attempt05/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt05/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "d43e643bbbc3bfbcad61df31790730633b244f490378ec2985416d55a6a9d9ea"
+    },
+    {
+      "path": "evidence/attempt05/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "4c80efea44303a2ad88712514306034eb9be9af0e082163bf7cde504b19e2c81"
+    },
+    {
+      "path": "evidence/attempt05/run.json",
+      "bytes": 1497,
+      "sha256": "8dae06804fbc7ce3358641340e9a9a155b9d09c350f74a2fc71499e18a0ae5dc"
+    },
+    {
+      "path": "evidence/attempt05/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "d43e643bbbc3bfbcad61df31790730633b244f490378ec2985416d55a6a9d9ea"
+    },
+    {
+      "path": "evidence/attempt05/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt05/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "908f67fb71aa0d88f06ca02d2ce0185c840aee003a0c09a0ea81c72d8d0e8f8b"
+    },
+    {
+      "path": "evidence/attempt05/tests/results.json",
+      "bytes": 5113,
+      "sha256": "435ffc4326ad2b58b4785cb641e6d3134ee68daf722262bb1e8c04a0f36e4767"
+    },
+    {
+      "path": "evidence/attempt05/tests/runner.txt",
+      "bytes": 914,
+      "sha256": "d23f4a25446172a6d70110ef2cb4ba91efaafdad0be87ccef924ca069e24105d"
+    },
+    {
+      "path": "evidence/attempt05/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "4c80efea44303a2ad88712514306034eb9be9af0e082163bf7cde504b19e2c81"
+    },
+    {
+      "path": "evidence/attempt06/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "413ad2b8f4a9c1f07331f8d82118b288f31dd6239b95a224e9b9400abea7ca34"
+    },
+    {
+      "path": "evidence/attempt06/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt06/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "75ef09434966d9eb4224e6340ecb08f53a150ec75a546669b2e97b4fc63dd02b"
+    },
+    {
+      "path": "evidence/attempt06/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt06/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "36ea28b3eff7cf03069276d2c1437f9262fd1f82dcdb52c1d99ed7658dfa0300"
+    },
+    {
+      "path": "evidence/attempt06/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "99a43c4e52a636756531a57aa694ca3922c036b79089b76efca2718935df9252"
+    },
+    {
+      "path": "evidence/attempt06/run.json",
+      "bytes": 1497,
+      "sha256": "87cba8f67bf169753dc26ee23874ec21280fd042572c6c8c14fa14f1d82906ea"
+    },
+    {
+      "path": "evidence/attempt06/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "36ea28b3eff7cf03069276d2c1437f9262fd1f82dcdb52c1d99ed7658dfa0300"
+    },
+    {
+      "path": "evidence/attempt06/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt06/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "413ad2b8f4a9c1f07331f8d82118b288f31dd6239b95a224e9b9400abea7ca34"
+    },
+    {
+      "path": "evidence/attempt06/tests/results.json",
+      "bytes": 5086,
+      "sha256": "b208ed2f647c0241baa68114933cd4dc96f8d0040ab3cd8a8449089a2ecb9e2e"
+    },
+    {
+      "path": "evidence/attempt06/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "27124a75cd59fbd14370f767812bba1ce311aa7da92b8cf2ba5288b283b19b4e"
+    },
+    {
+      "path": "evidence/attempt06/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "99a43c4e52a636756531a57aa694ca3922c036b79089b76efca2718935df9252"
+    },
+    {
+      "path": "evidence/attempt07/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "22707866d5c22f5c6b8349761c045bff4d60e970bb42c8dbf0c7dbf4b0ff4f5a"
+    },
+    {
+      "path": "evidence/attempt07/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt07/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "7ac4916d3615aa6ddb2a8722ac115620b3440e0bf8b011597de0f5ff6380098a"
+    },
+    {
+      "path": "evidence/attempt07/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt07/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "d4e485feae3a862b42f149ffc22d98a4cadc3b0a8f34ca9d82eed0792f5bc758"
+    },
+    {
+      "path": "evidence/attempt07/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "12f015db4c2abfc6fc4a51ed2d1887dfbb0333839ac0ccf31155f61af4aaffd2"
+    },
+    {
+      "path": "evidence/attempt07/run.json",
+      "bytes": 1497,
+      "sha256": "235420d659f5ecfd7b4f20c760fa467a0751dbc6833a4deee3c8ef6fa20c5f2e"
+    },
+    {
+      "path": "evidence/attempt07/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "d4e485feae3a862b42f149ffc22d98a4cadc3b0a8f34ca9d82eed0792f5bc758"
+    },
+    {
+      "path": "evidence/attempt07/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt07/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "22707866d5c22f5c6b8349761c045bff4d60e970bb42c8dbf0c7dbf4b0ff4f5a"
+    },
+    {
+      "path": "evidence/attempt07/tests/results.json",
+      "bytes": 5086,
+      "sha256": "b208ed2f647c0241baa68114933cd4dc96f8d0040ab3cd8a8449089a2ecb9e2e"
+    },
+    {
+      "path": "evidence/attempt07/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "0120f1ed526337da40ad660ffa953cfc280c44b803d59d392615aa30c421cfbf"
+    },
+    {
+      "path": "evidence/attempt07/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "12f015db4c2abfc6fc4a51ed2d1887dfbb0333839ac0ccf31155f61af4aaffd2"
+    },
+    {
+      "path": "evidence/attempt08/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "3888ac0550dd064da99cca320a9e7276ee864b517d2b1739d9d0a86b3a0ef9fd"
+    },
+    {
+      "path": "evidence/attempt08/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/attempt08/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "409ef34b6a766da9c814b73a7055dc9a15c0956dec75f669640611d5299b63bb"
+    },
+    {
+      "path": "evidence/attempt08/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/attempt08/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "e4b9de0d8d9808ad5f1b45f09c0b5fc4620e72f07aba45bc837854ab8b3dd88e"
+    },
+    {
+      "path": "evidence/attempt08/cli/trust.json",
+      "bytes": 1994,
+      "sha256": "b7b3b7d4bf945d06c0386a8813bc4d353b295bcae46f58f46fdac612f06d368e"
+    },
+    {
+      "path": "evidence/attempt08/run.json",
+      "bytes": 1497,
+      "sha256": "f3eb8ab591c7e331a3016b202b7f8007100837b14d0be40392b89a9aa671c69a"
+    },
+    {
+      "path": "evidence/attempt08/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "e4b9de0d8d9808ad5f1b45f09c0b5fc4620e72f07aba45bc837854ab8b3dd88e"
+    },
+    {
+      "path": "evidence/attempt08/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/attempt08/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "3888ac0550dd064da99cca320a9e7276ee864b517d2b1739d9d0a86b3a0ef9fd"
+    },
+    {
+      "path": "evidence/attempt08/tests/results.json",
+      "bytes": 5196,
+      "sha256": "2785e5d4463f6390b7ccf2362b656c5d9c014a093a10c3c81a5de03e79690fb1"
+    },
+    {
+      "path": "evidence/attempt08/tests/runner.txt",
+      "bytes": 102,
+      "sha256": "f964e566672207768edf7f98e1797edf78afc63a3ce599edc208c50604bf56a5"
+    },
+    {
+      "path": "evidence/attempt08/tests/synthetic_trust.json",
+      "bytes": 1994,
+      "sha256": "b7b3b7d4bf945d06c0386a8813bc4d353b295bcae46f58f46fdac612f06d368e"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "9360cb593882be1d881aeacdfb1215124800f7e61d3388d61dc2c4a47864f957"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "6d1d6380f94cbcf991b257f76716c175a6a3e28140549b06db6fe0a2e4299c98"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "085f7fda55d3e6a509da90d1157eb7753706fbb548f958c7e8c585ed51fa67bd"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/evidence/mutant_nic01/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "b40fe8be630da1464f971ac721b57f4737eaa32a2493e000ed5bab63f632442b"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/source/lab_gate.py",
+      "bytes": 23748,
+      "sha256": "9a4b0dac7e490d0e2f15e8d19e399df7fc78470f5c5062355ee4c378397447fa"
+    },
+    {
+      "path": "evidence/mutant_nic01/mutant_package/tests/test_gate.py",
+      "bytes": 19253,
+      "sha256": "55e5adeec6ba1c67a1354b5516ee40df07b9ab0003a0f97b3e25334176fa3d7e"
+    },
+    {
+      "path": "evidence/mutant_nic01/run.json",
+      "bytes": 1522,
+      "sha256": "9343dba9534124e30247c324157415fd11a15ed58a04ff1075175f6f90e607f0"
+    },
+    {
+      "path": "evidence/mutant_nic01/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "085f7fda55d3e6a509da90d1157eb7753706fbb548f958c7e8c585ed51fa67bd"
+    },
+    {
+      "path": "evidence/mutant_nic01/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_nic01/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "9360cb593882be1d881aeacdfb1215124800f7e61d3388d61dc2c4a47864f957"
+    },
+    {
+      "path": "evidence/mutant_nic01/tests/results.json",
+      "bytes": 5009,
+      "sha256": "ada8520470c90f0743c6ffb1b0baab110ab1b06a3e01e21125469a9cc735eab6"
+    },
+    {
+      "path": "evidence/mutant_nic01/tests/runner.txt",
+      "bytes": 1032,
+      "sha256": "55305099101d8229d65356379fc60dd31b512add83e99d58019c2d127c9d7113"
+    },
+    {
+      "path": "evidence/mutant_nic01/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "b40fe8be630da1464f971ac721b57f4737eaa32a2493e000ed5bab63f632442b"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "79bdf45e978398a3bae71dbb90e1668fd29cc02706b2d9b8204b8c93ac13ce20"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "655fdd96cbc677769f37e0396b68d46344dcf87148fcf58179fcefa435eb1479"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "0bc458b70400413e6345abc74895ee34d64e0dd3a7a1cb63d98cfec3fa3631f8"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/evidence/mutant_nic02/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "253d3e3bb1d4f145c8f7e825a049fd29dc8579031fe480d8edcaa35b82509611"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/source/lab_gate.py",
+      "bytes": 23699,
+      "sha256": "5126fdaa78833b685142efca0783dfbc0f3250ca7e4a82aac5a49d94c0659318"
+    },
+    {
+      "path": "evidence/mutant_nic02/mutant_package/tests/test_gate.py",
+      "bytes": 19528,
+      "sha256": "083d9100b468b9c8dc3b665a43856746fa9b7fcf3f70419a6c22b4d391609720"
+    },
+    {
+      "path": "evidence/mutant_nic02/run.json",
+      "bytes": 1592,
+      "sha256": "dcc16a2fb3d6f1a02166ca29d7a8717f7cfc36b3c54f6416fd77d5875b79d9d9"
+    },
+    {
+      "path": "evidence/mutant_nic02/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "0bc458b70400413e6345abc74895ee34d64e0dd3a7a1cb63d98cfec3fa3631f8"
+    },
+    {
+      "path": "evidence/mutant_nic02/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_nic02/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "79bdf45e978398a3bae71dbb90e1668fd29cc02706b2d9b8204b8c93ac13ce20"
+    },
+    {
+      "path": "evidence/mutant_nic02/tests/results.json",
+      "bytes": 5140,
+      "sha256": "d864d7d64200ebb3c6b391c4c5a60ed536fd18b23006b6f31faf0c6d044377e0"
+    },
+    {
+      "path": "evidence/mutant_nic02/tests/runner.txt",
+      "bytes": 1827,
+      "sha256": "96714ee23563f1cc726dae93281327e1554abaca2c6959b6cf611f727b7c85f4"
+    },
+    {
+      "path": "evidence/mutant_nic02/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "253d3e3bb1d4f145c8f7e825a049fd29dc8579031fe480d8edcaa35b82509611"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "d185afb49c3190e50e63042513f37967823018a855fdc88868c6fca1b9c2c472"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "d6debca7dcd00f3dc2ebb9cbbebb551a2053b1da6e77d1de2b8774a80be07907"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "a10c77d31cec7759dbeb5aca244d67fc45a5e923c3436e4023756b4d83a3c2e5"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/evidence/mutant_nic03/cli/trust.json",
+      "bytes": 1994,
+      "sha256": "701d65663b50f411307a1f1cb7683561c2980030da2e695c938bda46016fc264"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/source/lab_gate.py",
+      "bytes": 23890,
+      "sha256": "953577c584693e9b06d80b716b3a38a19fd9a55690c5842d15c762f3428d45d7"
+    },
+    {
+      "path": "evidence/mutant_nic03/mutant_package/tests/test_gate.py",
+      "bytes": 20063,
+      "sha256": "971c85ca98270cbd95617d8f38582d971be879dcf8d58fb5b2bac1f82c2f609e"
+    },
+    {
+      "path": "evidence/mutant_nic03/run.json",
+      "bytes": 1593,
+      "sha256": "208b87e41263652aad124d34f3f90b6a8b74b7aaf55d6b84d9c6b54438b45dff"
+    },
+    {
+      "path": "evidence/mutant_nic03/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "a10c77d31cec7759dbeb5aca244d67fc45a5e923c3436e4023756b4d83a3c2e5"
+    },
+    {
+      "path": "evidence/mutant_nic03/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_nic03/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "d185afb49c3190e50e63042513f37967823018a855fdc88868c6fca1b9c2c472"
+    },
+    {
+      "path": "evidence/mutant_nic03/tests/results.json",
+      "bytes": 5250,
+      "sha256": "080c0cd8264e39f2066fecb20782a0d795094e329455e2ccda8df462d89a1f8a"
+    },
+    {
+      "path": "evidence/mutant_nic03/tests/runner.txt",
+      "bytes": 1827,
+      "sha256": "4e26653091e6aced92302414c1e9df89ce0f2ea8250d7a2cbee3737ecfbf2f83"
+    },
+    {
+      "path": "evidence/mutant_nic03/tests/synthetic_trust.json",
+      "bytes": 1994,
+      "sha256": "701d65663b50f411307a1f1cb7683561c2980030da2e695c938bda46016fc264"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "8b761ba78742ae36a4ef42c10320a55b425464660adac2bad30566b0db32710b"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "f0268f1fde44e033edca287128ce04d8ef653bc254676288deac87b9bd268689"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "cf2e53d7dd6c422acac4945e17de076c028ee4489988698d219de7074a32f460"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/evidence/mutant_trust01/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "f87c9305fe18ec399a7bfac6ab0ee12a3300f9df0343bd0fe58a5109285fee57"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/source/lab_gate.py",
+      "bytes": 23704,
+      "sha256": "9f8cc8f96014673fb2ef04e5b24eaddc363367a031bf141a88795dd0300a7398"
+    },
+    {
+      "path": "evidence/mutant_trust01/mutant_package/tests/test_gate.py",
+      "bytes": 19253,
+      "sha256": "55e5adeec6ba1c67a1354b5516ee40df07b9ab0003a0f97b3e25334176fa3d7e"
+    },
+    {
+      "path": "evidence/mutant_trust01/run.json",
+      "bytes": 1532,
+      "sha256": "5df47191360ca49cc42bdcfa680abda420c67c55c1847b4fd79c0acf45bdac74"
+    },
+    {
+      "path": "evidence/mutant_trust01/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "cf2e53d7dd6c422acac4945e17de076c028ee4489988698d219de7074a32f460"
+    },
+    {
+      "path": "evidence/mutant_trust01/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_trust01/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "8b761ba78742ae36a4ef42c10320a55b425464660adac2bad30566b0db32710b"
+    },
+    {
+      "path": "evidence/mutant_trust01/tests/results.json",
+      "bytes": 5009,
+      "sha256": "4ccc80238bc6e385cef517c7479bb2de5c0f5641aacf5850977c7b82cd3333db"
+    },
+    {
+      "path": "evidence/mutant_trust01/tests/runner.txt",
+      "bytes": 795,
+      "sha256": "cba7ed90d4947494950d566816f159d69925ae2f79a0222bf7cdbac2d27cb21b"
+    },
+    {
+      "path": "evidence/mutant_trust01/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "f87c9305fe18ec399a7bfac6ab0ee12a3300f9df0343bd0fe58a5109285fee57"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "0f61602dcced667f67cede7a3cbfc6c6a9d32251964a00a0cbebc89963980180"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "c2693c9553eabd70cb6b3965c430aaffc0657aea344cd1f87f8399a58084b5e3"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "0430d7d70944b23fbc0b25f564c4cc866005e9e1c0478ab96cae8915deed1468"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/evidence/mutant_trust02/cli/trust.json",
+      "bytes": 1897,
+      "sha256": "ab2315ed986362a64d3000f089abd44c45bcdcc57e2772179e5e3901f02a2c0d"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/source/lab_gate.py",
+      "bytes": 23655,
+      "sha256": "3764c7de7f61471553c7e950c578ae04db841d77099129b47ca1c8eb20932971"
+    },
+    {
+      "path": "evidence/mutant_trust02/mutant_package/tests/test_gate.py",
+      "bytes": 19528,
+      "sha256": "083d9100b468b9c8dc3b665a43856746fa9b7fcf3f70419a6c22b4d391609720"
+    },
+    {
+      "path": "evidence/mutant_trust02/run.json",
+      "bytes": 1544,
+      "sha256": "4ff07e6add8452d5190bd25c0b7f01668de3c3aa381c7b89803115913eb49f76"
+    },
+    {
+      "path": "evidence/mutant_trust02/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "0430d7d70944b23fbc0b25f564c4cc866005e9e1c0478ab96cae8915deed1468"
+    },
+    {
+      "path": "evidence/mutant_trust02/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_trust02/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "0f61602dcced667f67cede7a3cbfc6c6a9d32251964a00a0cbebc89963980180"
+    },
+    {
+      "path": "evidence/mutant_trust02/tests/results.json",
+      "bytes": 5113,
+      "sha256": "a973b529c2d5234a567508c28e4b784bd134975edb89d930479f4c22ace1ad94"
+    },
+    {
+      "path": "evidence/mutant_trust02/tests/runner.txt",
+      "bytes": 795,
+      "sha256": "32c7a3cf40e1321d0b7458722a07b9a37ec7a13695ec2387a6c990e3de093139"
+    },
+    {
+      "path": "evidence/mutant_trust02/tests/synthetic_trust.json",
+      "bytes": 1897,
+      "sha256": "ab2315ed986362a64d3000f089abd44c45bcdcc57e2772179e5e3901f02a2c0d"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/bundle.json",
+      "bytes": 13064,
+      "sha256": "5f91afe28d213b49b8e3135d159b6331c60691808023aad6edbacf5f64dfd6cd"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/none.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/positive.json",
+      "bytes": 4935,
+      "sha256": "8d0ac77a48b15cc2335f0aac2ef613e2b9edfa1dbf78dcabb1bccf3674f6529d"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/real.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "ba90e0eefa0a03e565b4a63065b9f560f0d51f5aff6351c07166d8c677f8cb89"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/evidence/mutant_trust03/cli/trust.json",
+      "bytes": 1994,
+      "sha256": "03069c211480c9f6474386c6cc72aeecc41a3da21d386104f392b83927dbb208"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/source/lab_gate.py",
+      "bytes": 23846,
+      "sha256": "edefc4f311f12f525c7d178198c77f5dbcd2fc8a3636a4c89e6107689fb4ff48"
+    },
+    {
+      "path": "evidence/mutant_trust03/mutant_package/tests/test_gate.py",
+      "bytes": 20063,
+      "sha256": "971c85ca98270cbd95617d8f38582d971be879dcf8d58fb5b2bac1f82c2f609e"
+    },
+    {
+      "path": "evidence/mutant_trust03/run.json",
+      "bytes": 1544,
+      "sha256": "34c2d727e9453feac390526a2b89fc49d96f4ef1b5b8a32dca7307ee2d376ff4"
+    },
+    {
+      "path": "evidence/mutant_trust03/Signatures.exe",
+      "bytes": 7168,
+      "sha256": "ba90e0eefa0a03e565b4a63065b9f560f0d51f5aff6351c07166d8c677f8cb89"
+    },
+    {
+      "path": "evidence/mutant_trust03/tests/owned-result.json",
+      "bytes": 17,
+      "sha256": "12b34da73b0c67a0319e6eddbd3582af66e3b558b4d44e4a6860e0cec20d726f"
+    },
+    {
+      "path": "evidence/mutant_trust03/tests/positive_bundle.json",
+      "bytes": 13064,
+      "sha256": "5f91afe28d213b49b8e3135d159b6331c60691808023aad6edbacf5f64dfd6cd"
+    },
+    {
+      "path": "evidence/mutant_trust03/tests/results.json",
+      "bytes": 5223,
+      "sha256": "51c1280448fbbad0a4ef19586482c2b064fdeb811b1b91162c9c668067b129c1"
+    },
+    {
+      "path": "evidence/mutant_trust03/tests/runner.txt",
+      "bytes": 795,
+      "sha256": "5257a83558d0ac892640e4584546e65552c48d8a19a796a4e4afba1e678df009"
+    },
+    {
+      "path": "evidence/mutant_trust03/tests/synthetic_trust.json",
+      "bytes": 1994,
+      "sha256": "03069c211480c9f6474386c6cc72aeecc41a3da21d386104f392b83927dbb208"
+    },
+    {
+      "path": "evidence/ps51_syntax.json",
+      "bytes": 2665,
+      "sha256": "c18a6ac0d34e058ca04e761c6ba13ed265bfe5139e50320f0423e911b17fb681"
+    },
+    {
+      "path": "fixtures/README.md",
+      "bytes": 1502,
+      "sha256": "c6df161c611226405c878913fccf8fec718f6a9b95311151439a47ee224ac7cf"
+    },
+    {
+      "path": "fixtures/unprovisioned.json",
+      "bytes": 22,
+      "sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8"
+    },
+    {
+      "path": "gate_results.json",
+      "bytes": 2127,
+      "sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce"
+    },
+    {
+      "path": "host_collector_review.json",
+      "bytes": 914,
+      "sha256": "ac93a70cfb71d661e097b5a82fff9ced92f9cb65fd51be9e03287cd5d89f6540"
+    },
+    {
+      "path": "host_readonly_inventory.json",
+      "bytes": 2380,
+      "sha256": "c66d2e571a0aebca000ec76528d7f3545568377a8a9f91933c45d2e1c61dfaaa"
+    },
+    {
+      "path": "lab_build_plan.json",
+      "bytes": 10973,
+      "sha256": "db5d7ff5bb013cd232618f02ddb41ee3119896d3eaa88f12dd1dc9c83dab7c1a"
+    },
+    {
+      "path": "lab_build_plan.md",
+      "bytes": 11170,
+      "sha256": "7be836fb19e9ec6ac835918b7b7e2db7b9e04f7453ffec8c690b8e3deb6e7a0a"
+    },
+    {
+      "path": "manual_engineering_review.md",
+      "bytes": 10973,
+      "sha256": "78b319174e3ca61a48aae73cb2af6a4e321cdebe15a623690668cd3375ff5c5b"
+    },
+    {
+      "path": "next_user_go.md",
+      "bytes": 5546,
+      "sha256": "44db08a372f8068873d2ad062a8fd1b132622ab3a7de322191db2cd0b58cb184"
+    },
+    {
+      "path": "package_review.json",
+      "bytes": 971,
+      "sha256": "816914a1757cfb9949ba611fa97724cdae72c3ba34351f2379286f0f11d5f571"
+    },
+    {
+      "path": "protected_inputs.json",
+      "bytes": 90257,
+      "sha256": "d2d0e39bfb4784872bbceb9be764c78880e36898600ea15a5e0360747ac40787"
+    },
+    {
+      "path": "README.md",
+      "bytes": 10642,
+      "sha256": "15dbc44a626eda544856918b4fa18ae06a4e3aff0f08c62f0b541897583dc828"
+    },
+    {
+      "path": "report.md",
+      "bytes": 15380,
+      "sha256": "19138ca55a96ee03745716d04c799408e698d869e3041c57c185e1d626e7423c"
+    },
+    {
+      "path": "source/lab_gate.py",
+      "bytes": 23649,
+      "sha256": "a54fbab8c3fa24566ac02be10fab6f6357727ccef34dbb573b18cc73b173c97a"
+    },
+    {
+      "path": "source/Signatures.cs",
+      "bytes": 2245,
+      "sha256": "191c7d5abc6f40b711c510fc5de4853105234bc060efa28bad9cd76f219e5444"
+    },
+    {
+      "path": "tests/test_gate.py",
+      "bytes": 20063,
+      "sha256": "971c85ca98270cbd95617d8f38582d971be879dcf8d58fb5b2bac1f82c2f609e"
+    },
+    {
+      "path": "tools/assemble.py",
+      "bytes": 8044,
+      "sha256": "dcbee424952f26a2decba9a1784edade0570de90283867642f839529eb7af365"
+    },
+    {
+      "path": "tools/Check-AdapterSyntax.ps1",
+      "bytes": 1997,
+      "sha256": "30c109e91590f5ddc10abc22eed78d9cda5236867c91a5188d828dc2eca68090"
+    },
+    {
+      "path": "tools/handoff.py",
+      "bytes": 13421,
+      "sha256": "f4096cd50175a6484f6f20ba2f8a1cb8361d9ada5dd4cd19b548efa6b18153c3"
+    },
+    {
+      "path": "tools/run_checks.py",
+      "bytes": 4143,
+      "sha256": "78438ef699f63da0fdda5665fbdbd3ef6fba227d3dde81003b219ac2242c9fc4"
+    }
+  ],
+  "self_hash": "excluded",
+  "publication": "LOCAL ONLY"
+}

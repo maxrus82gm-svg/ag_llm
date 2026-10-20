@@ -1,0 +1,38 @@
+{
+  "source_pins": {
+    "source/lab_gate.py": "eb373f93a8b88242398d39c738967c68a3637e627ffed2abd4384d995b047232",
+    "source/Signatures.cs": "191c7d5abc6f40b711c510fc5de4853105234bc060efa28bad9cd76f219e5444",
+    "adapters/Collect-Host.ps1": "ec67934f504eaa7c1572c31738ad7978aee6c73e763a199090de2a43f3f723ee",
+    "tests/test_gate.py": "dc5ff71d47903acb831afef61cda9f426b82ebcb32cb7a75ee0f3721c787a77c",
+    "tools/handoff.py": "eb401cd81e291bfe5edfdb7b0549f7cbe09563e2e8eb1a7f47fc1892ff4d0671",
+    "tools/run_checks.py": "455d2b69b2548b23e6d2ba082b3972b26d846f9ba2e5659da3261eeafa02463b"
+  },
+  "compiler_sha256": "aae1db57f898ca8bda18590c56f86ced6d0ead80c22033b76fdfe9119706f116",
+  "compile_exit": 0,
+  "compile_diagnostic_codes": [],
+  "python_syntax": "PASS",
+  "child_environment_keys": [
+    "COMSPEC",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "WINDIR"
+  ],
+  "steps": [],
+  "elapsed_seconds": 6.637,
+  "test_exit": 0,
+  "stdout_sha256": "45ead49d4b5638c66230cff24832192acb0976b1c84ef98f615952c7a8d5c53b",
+  "test_counts": {
+    "total": 42,
+    "passed": 42,
+    "failed": 0,
+    "errors": 0
+  },
+  "expected_mutant_failure": null,
+  "mutant_killed": false,
+  "sources_unchanged": true,
+  "helper_sha256": "572ae957737f751868309ddde8ca73de980045daf31f0ca492df15940ba17561",
+  "vm_changes": 0,
+  "WFP_calls": 0,
+  "network_probes": 0
+}

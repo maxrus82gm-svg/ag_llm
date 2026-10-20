@@ -1,0 +1,13 @@
+TASK: CODEX-WUA-0-WINDOWS-LAB-GATE-001
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11
+
+Готов работающий offline verifier I01–I12, negative controls, read-only preflight и deterministic 13-step dry-run. Native/VM execution всегда false; отдельного apply executor нет.
+TESTS: final 52/52 PASS, 0 errors. Две мутации обнаружены: NIC — 2 expected failures; test-trust — 1. Initial red 50/51 сохранён, ошибка приоритета signed negative facts исправлена. 2 PS5.1 AST parses, 0 errors; Execution Policy не меняли.
+HOST: Windows10 Pro x64 build19045, CPU virtualization available, HypervisorPresent=false; готовые Hyper-V/owned VM/trusted offline media не подтверждены. Snapshot 2026-10-20T18:44:45Z; VM queries 0, adapter NOT RUN.
+REAL GATE: I01–I12 BLOCKED 12/12. OFFLINE_GATE_LOGIC_TESTED; LAB_PLATFORM_NOT_PROVISIONED; HOST_CONFIG_PROOF_PENDING; GUEST_ISOLATION_PROOF_PENDING; NATIVE_WFP_EXECUTION_BLOCKED.
+CHANGES: только новая TASK-папка и штатная собственная card rotation. Реальные VM/WFP/security/network/V2Ray/policy/Git/GitHub изменения и network tests 0. CanApply=false / Install-Uninstall BLOCKED и HOSTED_TUNNEL_ON_HOLD_BY_USER сохранены.
+CARD: B2 full assignment, B3 factual result, B1 ОЖИДАНИЕ НОВОЙ ЗАДАЧИ; 524629 bytes old history и 6852 bytes rules/prefix byte-exact. 388/388 protected non-card files unchanged; readback и guarded reconstruction проверены.
+ARTIFACTS: reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/{report.md,README.md,manifest.json,checks.json,gate_results.json,host_readonly_inventory.json,lab_build_plan.md,next_user_go.md,manual_engineering_review.md,card_rotation.json,integrity.json}; source/adapters/tests/contracts/fixtures/evidence.
+BLOCKERS: ready exact lab host/media/root/ownership/quota, исчерпывающий device/channel/storage proof, независимые host/guest attempts observers и live watch/stop/rollback. Подпись JSON не заменяет их.
+DOC IMPACT: новая TASK + собственная карточка; shared docs, production и чужие TASK не менялись.
+NEXT SAFE ACTION: передать пакет WEB_11; выбрать отдельный готовый Hyper-V lab host и легитимное offline media. Provisioning/controlled baseline boot/owned cleanup — отдельный адресный USER GO; native WFP — ещё один gate после независимого доказательства изоляции. Приёмка pending; Git/GitHub и сообщения в другие чаты не выполнялись.

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "test_only": true,
+  "principals": {
+    "host": {
+      "principal_id": "00000000-0000-0000-0000-000000000001",
+      "key": {
+        "n": "30PN9BMRUjRIs+k9isA4n4213IhokTPs8b7N1Q05seF4wD0q302RLddNP74qLYEjiXcUOfYfAZIrEVjCJKKJtGKT2+12OaUCLMN8M0MTgelxSOLLZMxaLyNzUMI5uOe95BoM5IekvZonsr0QKcHf3iJd4ePyzBR6tjsRwP3E7Da9Kakb6jp5p36iXvCn4+luPjM3sVOXWN7yZD/0V2uEjaRlL/d6cGpwU15l8Mgf78zd8ZWDLS/AEawKwDOGBqdEG9qyp3e6rO/TYe30t0zXhFr080hzhswonwhLgYu1ODGptbLIahXT418m0eL/sUIhH/xTDIfKWRNI/WyTpSWUkQ==",
+        "e": "AQAB"
+      }
+    },
+    "guest": {
+      "principal_id": "00000000-0000-0000-0000-000000000002",
+      "key": {
+        "n": "rQBEY/+zSiuo4ZX8STjefuo/nmpgFWsQFCP+l2mRUzDxPc9ykFqe5fehd6sAvI8MRoyiZQK7nF+oMAELFntKR8orHKzqffViBvkIeGo53YEvLlDgcwD+cZvvxUJyZrL9wz3B6KEjQJQpEGFaQ9qwgIViYOpvOGJ6ASAl3AGiUenjV+jQSARduyteHuNEm7Y+MQ4/9VyrDLwrykn8HzAuMnZQPyrlfzGVzZpDDfGUP/z003WnTdJTBKyRjkc3OH4Ot9C6pp1n+mN9rv6ZAaClYaHagDGxGYxYf0XUit5FLF80yOPmcp4sHHhmONdRLW4Ry5qGAHGkisDiyv+NxewKNQ==",
+        "e": "AQAB"
+      }
+    },
+    "review": {
+      "principal_id": "00000000-0000-0000-0000-000000000003",
+      "key": {
+        "n": "v4VmogsU81FTN2aT6EG0NPsKRWvood2dgrIaHcdOxQezUCeZKa76lMt0+SUvGUjB3OBI6vFuAwg5oBLrOnxvZmH3pBYifxkXVC4+U+2L1hMWz5JED/8m21zDoq+/0u/e1s1aakrI0zG+VuS2DMZLjDktdia65EvjJINgXW8rsWYTUJlP9FHBE1rAzRo5oM5p89f2lfijyT/OqbgQV74GKthSgteapvlasozEl6OAOs8MyOx21qu1ZFTZnmGCg2qpWORcrjg2TyPEJvFzECeRRPYCJC6Uina/wKMwofU6OdrRynVfLGst2IOfccQnDv5eFQTj39d9pi0U/m5RP7beuQ==",
+        "e": "AQAB"
+      }
+    }
+  },
+  "crypto_helper_sha256": "0430d7d70944b23fbc0b25f564c4cc866005e9e1c0478ab96cae8915deed1468",
+  "observers": {
+    "host": {
+      "version": "1.0",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "guest": {
+      "version": "1.0",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    }
+  }
+}

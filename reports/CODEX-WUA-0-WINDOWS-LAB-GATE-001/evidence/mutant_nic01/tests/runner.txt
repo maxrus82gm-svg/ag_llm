@@ -1,0 +1,19 @@
+======================================================================
+FAIL: test_even_disabled_NIC_fails (__main__.GateTests.test_even_disabled_NIC_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<TASK>\tests\test_gate.py", line 69, in test_even_disabled_NIC_fails
+    def test_even_disabled_NIC_fails(self):self.expect_bad('host','I02','nic_count',1)
+                                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<TASK>\tests\test_gate.py", line 51, in expect_bad
+    result=self.eval(self.mutated(role,i,k,v));self.assertEqual(result['decision'],decision);self.assertEqual(next(x for x in result['requirements'] if x['id']==i)['status'],decision)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PASS' != 'FAIL'
+- PASS
++ FAIL
+
+
+----------------------------------------------------------------------
+Ran 50 tests in 7.193s
+
+FAILED (failures=1)

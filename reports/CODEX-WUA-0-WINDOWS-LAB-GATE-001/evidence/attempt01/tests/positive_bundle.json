@@ -1,0 +1,309 @@
+{
+  "request": {
+    "schema": 1,
+    "owner": "11111111-1111-4111-8111-111111111111",
+    "vm_guid": "22222222-2222-4222-8222-222222222222",
+    "run_id": "33333333-3333-4333-8333-333333333333",
+    "nonce": "9999999999999999999999999999999999999999999999999999999999999999",
+    "backend": "Hyper-V",
+    "backend_version": "10.0.19045",
+    "config_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+    "media_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "chain_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+    "assets_digest": "808b2983c1efc33c4151aa03db18cd83d65c877e6a58d2be697c7b104792393d",
+    "rollback_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+    "valid_from": "2030-01-01T00:00:00Z",
+    "valid_until": "2030-01-01T00:01:30Z",
+    "endpoints": [
+      {
+        "address": "127.0.0.1",
+        "port": 54321,
+        "transport": "tcp"
+      }
+    ],
+    "assets": [
+      {
+        "role": "wfp_source",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "role": "wfp_binary",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "role": "observer_host",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "role": "observer_guest",
+        "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "role": "fixture",
+        "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "role": "windows_media",
+        "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "bytes": 123,
+        "origin_review": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    ],
+    "approval": {
+      "read_only_review": true,
+      "provision": false,
+      "native": false
+    }
+  },
+  "host": {
+    "body": {
+      "role": "host",
+      "request_hash": "ab968eec2e036fc6c367f1c5572cc6f3231b5ce11904b19c57ec9b8a0e0f33e6",
+      "observed_at": "2030-01-01T00:00:29Z",
+      "facts": {
+        "I01": {
+          "vm_guid": "22222222-2222-4222-8222-222222222222",
+          "owner": "11111111-1111-4111-8111-111111111111",
+          "backend": "Hyper-V",
+          "backend_version": "10.0.19045",
+          "config_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "run_id": "33333333-3333-4333-8333-333333333333"
+        },
+        "I02": {
+          "census_complete": true,
+          "nic_count": 0,
+          "legacy_nics": 0,
+          "nat_edges": 0,
+          "bridge_edges": 0,
+          "hostonly_edges": 0,
+          "forwarders": 0,
+          "passthrough": 0
+        },
+        "I03": {
+          "census_complete": true,
+          "shared_folders": 0,
+          "clipboard": false,
+          "enhanced_console": false,
+          "powershell_direct": false,
+          "guest_relay": false,
+          "serial_pipes": 0,
+          "usb_relay": 0,
+          "gpu_relay": 0,
+          "host_disk_mounts": 0,
+          "console_mode": "basic"
+        },
+        "I04": {
+          "census_complete": true,
+          "chain_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+          "media_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "local_only": true,
+          "owned_only": true,
+          "no_reparse": true,
+          "shared_writable": false,
+          "concurrent_mount": false,
+          "input_readonly": true,
+          "output_bridge": false
+        },
+        "I06": {
+          "assets_digest": "808b2983c1efc33c4151aa03db18cd83d65c877e6a58d2be697c7b104792393d",
+          "origins_reviewed": true,
+          "dependencies_offline": true,
+          "startup_audited": true,
+          "auto_install": false
+        },
+        "I07": {
+          "schema_reviewed": true,
+          "fresh_profile": true,
+          "host_credentials_inherited": false,
+          "real_tunnel_id": false,
+          "secrets_present": false,
+          "real_profiles": false,
+          "original_launcher_changed": false
+        },
+        "I08": {
+          "observer_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "observer_version": "1.0",
+          "coverage_validated": true,
+          "socket_attempts": true,
+          "dns_attempts": true,
+          "process_events": true,
+          "children": true,
+          "refused_attempts": true,
+          "started_before_subject": true,
+          "loss_count": 0,
+          "restarts": 0,
+          "zero_packets_only": false,
+          "run_id": "33333333-3333-4333-8333-333333333333",
+          "heartbeat_age_ms": 50,
+          "monotonic_duration_ms": 10000,
+          "clock_correlation_error_ms": 10,
+          "trace_retained": true
+        },
+        "I10": {
+          "assets_digest": "808b2983c1efc33c4151aa03db18cd83d65c877e6a58d2be697c7b104792393d",
+          "all_processes_in_guest": true,
+          "unknown_children": 0,
+          "unapproved_helpers": 0,
+          "cloudflared": false,
+          "inherited_secrets": false
+        },
+        "I11": {
+          "before_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "after_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "watch_complete": true,
+          "config_drift": 0,
+          "heartbeat_ok": true,
+          "independent_power_control": true,
+          "admissions_frozen_on_loss": true
+        },
+        "I12": {
+          "rollback_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+          "ledger_owner": "11111111-1111-4111-8111-111111111111",
+          "clean_checkpoint_reviewed": true,
+          "disk_chain_reviewed": true,
+          "independent_stop_ready": true,
+          "evidence_retention": true,
+          "recovery_reviewed": true,
+          "network_reset_required": false
+        }
+      }
+    },
+    "signature": "hcw2526yAyxPZh/y5OY3lRb+uw9QaOXx12AnOLGBvqUZpOuCjGpaoiFw+l3ZCHIwl3jjbh91CqK190wumhvGjutM1AYgb/DlpfdLfyZs2hP7GC8lW4S08gk7MDYc063Y82rHxqsra7pm7IUlksNVcgD72nmOp4U1FVR8+Rs3qf9eWPbEpNcWf/NaBXAURYExXHalbWGK5uZHjoGaZS1XbRSl0VhcXQRKDx/G35Uo18gS5J6injKsz6KOnGeqfKbophQxeod69I44caiO2zvMQKkqqwhtZh/UyHVgyCZpNPZ3t0XnEBAMfkc+xkdx7x1nLR+31kMcGZVJD04s/trr4Q=="
+  },
+  "guest": {
+    "body": {
+      "role": "guest",
+      "request_hash": "ab968eec2e036fc6c367f1c5572cc6f3231b5ce11904b19c57ec9b8a0e0f33e6",
+      "observed_at": "2030-01-01T00:00:29Z",
+      "facts": {
+        "I01": {
+          "vm_guid": "22222222-2222-4222-8222-222222222222",
+          "owner": "11111111-1111-4111-8111-111111111111",
+          "backend": "Hyper-V",
+          "backend_version": "10.0.19045",
+          "config_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "run_id": "33333333-3333-4333-8333-333333333333"
+        },
+        "I03": {
+          "census_complete": true,
+          "shared_folders": 0,
+          "clipboard": false,
+          "enhanced_console": false,
+          "powershell_direct": false,
+          "guest_relay": false,
+          "serial_pipes": 0,
+          "usb_relay": 0,
+          "gpu_relay": 0,
+          "host_disk_mounts": 0,
+          "console_mode": "basic"
+        },
+        "I05": {
+          "census_complete": true,
+          "nonloopback_adapters": 0,
+          "nonloopback_addresses": 0,
+          "gateways": 0,
+          "resolvers": 0,
+          "proxy_endpoints": 0,
+          "relays": 0
+        },
+        "I06": {
+          "assets_digest": "808b2983c1efc33c4151aa03db18cd83d65c877e6a58d2be697c7b104792393d",
+          "origins_reviewed": true,
+          "dependencies_offline": true,
+          "startup_audited": true,
+          "auto_install": false
+        },
+        "I07": {
+          "schema_reviewed": true,
+          "fresh_profile": true,
+          "host_credentials_inherited": false,
+          "real_tunnel_id": false,
+          "secrets_present": false,
+          "real_profiles": false,
+          "original_launcher_changed": false
+        },
+        "I08": {
+          "observer_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "observer_version": "1.0",
+          "coverage_validated": true,
+          "socket_attempts": true,
+          "dns_attempts": true,
+          "process_events": true,
+          "children": true,
+          "refused_attempts": true,
+          "started_before_subject": true,
+          "loss_count": 0,
+          "restarts": 0,
+          "zero_packets_only": false,
+          "run_id": "33333333-3333-4333-8333-333333333333",
+          "heartbeat_age_ms": 50,
+          "monotonic_duration_ms": 10000,
+          "clock_correlation_error_ms": 10,
+          "trace_retained": true
+        },
+        "I09": {
+          "endpoint_digest": "30fc25afbe82d40c5e5c775879cfd7347c2be8ef06fcb485bd33beef78e509f7",
+          "owned_receivers": true,
+          "positive_receipts": true,
+          "negative_controls_reviewed": true,
+          "cleanup_known": true,
+          "wildcard": false,
+          "dns_used": false,
+          "external_upstream": false
+        },
+        "I10": {
+          "assets_digest": "808b2983c1efc33c4151aa03db18cd83d65c877e6a58d2be697c7b104792393d",
+          "all_processes_in_guest": true,
+          "unknown_children": 0,
+          "unapproved_helpers": 0,
+          "cloudflared": false,
+          "inherited_secrets": false
+        },
+        "I11": {
+          "before_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "after_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "watch_complete": true,
+          "config_drift": 0,
+          "heartbeat_ok": true,
+          "independent_power_control": true,
+          "admissions_frozen_on_loss": true
+        }
+      }
+    },
+    "signature": "R811UdKIJ4TAOeNIc3xBFdMcbNSTKnKTea+wy6EKc77jZdXfeWmjagOkpTJGNLxwsezVeLZ8CGNE0KIfEtVwa9l9XxxXRBygBTzkXXmM+dNwHvTjvWGSsYX0wmivPIma8cvAM/xa7VTZ2SUJM2H6zx4RAvGGrOdwkodWfSpfF/Kt9URbDPFHXsUKRziZaNPIFeqytNJVmG0HNjTDzlOJRHO/nWdTgrG7ITDY5u3GobFxJtpupCO3pYWnZhleB20dJEnvGJP/l9SMG8tByrjAJGaNvt4uAC0SNHIfXtDV3AM2/r4CZrv/rkiKWObYRBapRGb5Z8at8R6old46mhLXWA=="
+  },
+  "review": {
+    "body": {
+      "role": "review",
+      "request_hash": "ab968eec2e036fc6c367f1c5572cc6f3231b5ce11904b19c57ec9b8a0e0f33e6",
+      "observed_at": "2030-01-01T00:00:30Z",
+      "host_hash": "34bd69bf6999f4141e088fe0f4fc8177113778fba7c7cf99f4e176ea672e1c8a",
+      "guest_hash": "e87937958aad59326bed918500e4174b0d290b4c3d2513985587a09b5cbc75fa",
+      "decisions": {
+        "I01": "CONFIRMED",
+        "I02": "CONFIRMED",
+        "I03": "CONFIRMED",
+        "I04": "CONFIRMED",
+        "I05": "CONFIRMED",
+        "I06": "CONFIRMED",
+        "I07": "CONFIRMED",
+        "I08": "CONFIRMED",
+        "I09": "CONFIRMED",
+        "I10": "CONFIRMED",
+        "I11": "CONFIRMED",
+        "I12": "CONFIRMED"
+      }
+    },
+    "signature": "uRdlhHY8AYm0x7hLK4N0wuhnRjGBXwqedE7j8D5Zi9eOG8Xkqdme7oMIJvCw/1eTKtZDyaV5qnRKvZuv9z5RWBllWNyu2uygiZ4Yd+Q9B+QxwzD3aSkJTXJ/LHfctGeUn4iopL7fnGKAC7PRgFw8TiIdTgVyzMaeiaLPqIZxu95cYU+jW4e3mSCnQYai9MVu/iO76PE/wkWSWiiCE0jl52MUlqF1ydJ3ZH598eed6XROM9UhAn3UqSd2vR1uIJ2XeMUu8onJshbMKAQhKKuiDQSm6clFYGhF/BjSxZRly13VOpRseGcmUFDlKEwV/iSAH15OdAt61IQdemJBge0EMg=="
+  }
+}

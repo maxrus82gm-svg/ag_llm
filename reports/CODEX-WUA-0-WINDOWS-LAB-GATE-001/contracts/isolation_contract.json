@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "contract": "I01-I12 executable snapshot validation",
+  "source_contract": "reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/isolation_preflight_contract.md",
+  "requirements": [
+    {
+      "id": "I01",
+      "meaning": "Identity, VM GUID, owner, backend/version and guest boot/baseline",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I02",
+      "meaning": "Complete device census: zero NIC, NAT, bridge, host-only, forwarding",
+      "required_signed_sources": [
+        "host",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I03",
+      "meaning": "Guest-host integration, console, clipboard, relay and devices",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I04",
+      "meaning": "Owned complete disk/media parent chain, local exclusive storage",
+      "required_signed_sources": [
+        "host",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I05",
+      "meaning": "Guest network/PnP/routes/DNS/proxy corroboration",
+      "required_signed_sources": [
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I06",
+      "meaning": "Exact staged assets, origins, dependencies and startup closure",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I07",
+      "meaning": "Disposable credentials/profile and no real tunnel/proxy secrets",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I08",
+      "meaning": "Independent attempts observers, coverage, loss, heartbeat and correlation",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I09",
+      "meaning": "Exact guest loopback receivers with positive/negative controls",
+      "required_signed_sources": [
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I10",
+      "meaning": "Guest-contained approved process/descendant graph",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I11",
+      "meaning": "Continuous config/observer watch and independent power control",
+      "required_signed_sources": [
+        "host",
+        "guest",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    },
+    {
+      "id": "I12",
+      "meaning": "Owned clean checkpoint, rollback, recovery and evidence retention",
+      "required_signed_sources": [
+        "host",
+        "review"
+      ],
+      "current_real_status": "BLOCKED"
+    }
+  ],
+  "limits": {
+    "real_attestation_produced": false,
+    "live_watch_implemented": false,
+    "approval_activates_execution": false,
+    "input_max_bytes": 1048576,
+    "input_max_depth": 16,
+    "request_ttl_seconds_max": 300,
+    "observation_age_seconds_max": 60,
+    "heartbeat_age_ms_max": 1000,
+    "max_approved_endpoints": 8
+  },
+  "decision": "Missing proof -> BLOCKED; authenticated contradiction -> FAIL; all independent signed and approved snapshot conditions -> evidence-only PASS. NOT RUN is an adapter/test execution status. Synthetic PASS never authorizes a lab."
+}

@@ -19,6 +19,19 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+
+---
+
+# БЛОК 2 — АРХИВ ПОЛНЫХ ПОСТАНОВОК
+
+## 2026-10-21 — CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+Полная исходная постановка, byte-exact UTF-8:
+
+```markdown
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
 # 🟨 CODEX-WUA-0-WINDOWS-LAB-GATE-001 — Подготовка проверяемой изолированной Windows-лаборатории для MCP
 
 Уважаемый агент 007 (Codex)!
@@ -364,6 +377,31 @@ Git/GitHub, commit и push не выполнять. Пользователь п�
 **Главный принцип:** подготовить действительно полезный инструмент следующего этапа, не подвергая рабочую Windows риску.
 
 ---
+
+```
+
+# БЛОК 3 — ФАКТИЧЕСКИЕ РЕЗУЛЬТАТЫ
+
+## 2026-10-21 — CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11.** Исполнение TASK завершено в разрешённом offline scope; независимая приёмка pending.
+
+Созданы executable I01–I12 offline evidence gate, раздельные signed host/guest/review synthetic fixtures с внешним approved-request trust pin, strict JSON/disk/assets/owner/freshness checks, bounded host collector, частичный exact-GUID read-only Hyper-V candidate и 13-step data-only dry-run. Всегда native_execution_allowed=false / vm_changes_allowed=false / can_apply=false. Полные реальный collectors/watch/containment не заявлены.
+
+Статусы: OFFLINE_GATE_LOGIC_TESTED; LAB_PLATFORM_NOT_PROVISIONED; HOST_CONFIG_PROOF_PENDING; GUEST_ISOLATION_PROOF_PENDING; NATIVE_WFP_EXECUTION_BLOCKED. Actual gate I01–I12: 12 BLOCKED. Hyper-V VM adapter NOT RUN. HOSTED_TUNNEL_ON_HOLD_BY_USER; ORDINARY CHAT E2E NOT VERIFIED.
+
+Проверки: final attempt08 52/52 PASS, 0 errors. NIC mutant03: 52 total/50 PASS/2 expected FAIL/0 errors, killed. Trust mutant03: 52 total/51 PASS/1 expected FAIL/0 errors, killed. Initial genuine red attempt05 сохранён: 51 total/50 PASS/1 FAIL/0 errors; исправлен приоритет signed negative facts над отсутствующим review. 2 adapter PS5.1 AST parses, 0 errors; file-helper PS5.1 execution POLICY BLOCKED, policy не менялась. Host collector выполнен один раз PS7.6.5.
+
+Среда snapshot 2026-10-20T18:44:45Z: Windows10 Pro x64 build19045, CPU virtualization=true; HypervisorPresent=false, Hyper-V module/ready VM/trusted media не подтверждены. 0 VM queries. Все VM/security/network/V2Ray/WFP/native/rights/policy/Git/GitHub mutations и network tests=0. 389 protected files до ротации неизменны; последующая сверка non-card — integrity.json. Прежние BackendImplemented=false/CanApply=false сохранены.
+
+Evidence: reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/{report.md,README.md,checks.json,gate_results.json,host_readonly_inventory.json,manifest.json}; source/,adapters/,tests/,contracts/,fixtures/, evidence/attempt08/,mutant_nic03/,mutant_trust03/,attempt05/; lab_build_plan.md/json,next_user_go.md,manual_engineering_review.md; card_rotation.json,integrity.json.
+
+DOC IMPACT: только новая TASK + штатная собственная card rotation; общие документы, Claude/LLM12/production и предыдущие TASK не менялись. NEXT SAFE ACTION: WEB_11 independently reviews пакет; пользователь выбирает отдельный уже готовый Hyper-V lab host + легитимное offline media. Provisioning/controlled baseline boot/owned cleanup и native WFP требуют разных будущих адресных USER GO. Ни feature install/reboot, ни proxy/network workarounds не разрешены. Пользователь публикует/передаёт WEB_11.
+
+
+---
+
+## Предыдущая история (сохранена byte-exact)
 
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 

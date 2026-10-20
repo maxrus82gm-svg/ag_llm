@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "decision": "BLOCKED",
+  "scope": "REAL_EVIDENCE_VALIDATION",
+  "requirements": [
+    {
+      "id": "I01",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I02",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I03",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I04",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I05",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I06",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I07",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I08",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I09",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I10",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I11",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    },
+    {
+      "id": "I12",
+      "status": "BLOCKED",
+      "reason": "LAB_NOT_PROVISIONED_NO_APPROVED_IDENTITY",
+      "sources": []
+    }
+  ],
+  "evidence_digest": "1c2d494e862da169f916300f87fe2abf81793e0a7c4def36b065a5611b04a9df",
+  "native_execution_allowed": false,
+  "vm_changes_allowed": false,
+  "real_isolation": "NOT VERIFIED",
+  "states": [
+    "LAB_PLATFORM_NOT_PROVISIONED",
+    "HOST_CONFIG_PROOF_PENDING",
+    "GUEST_ISOLATION_PROOF_PENDING",
+    "NATIVE_WFP_EXECUTION_BLOCKED"
+  ]
+}

@@ -1,0 +1,31 @@
+======================================================================
+FAIL: test_even_disabled_NIC_fails (__main__.GateTests.test_even_disabled_NIC_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<TASK>\tests\test_gate.py", line 74, in test_even_disabled_NIC_fails
+    def test_even_disabled_NIC_fails(self):self.expect_bad('host','I02','nic_count',1)
+                                           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<TASK>\tests\test_gate.py", line 52, in expect_bad
+    result=self.eval(self.mutated(role,i,k,v));self.assertEqual(result['decision'],decision);self.assertEqual(next(x for x in result['requirements'] if x['id']==i)['status'],decision)
+                                               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PASS' != 'FAIL'
+- PASS
++ FAIL
+
+
+======================================================================
+FAIL: test_signed_negative_fact_dominates_missing_review (__main__.GateTests.test_signed_negative_fact_dominates_missing_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<TASK>\tests\test_gate.py", line 111, in test_signed_negative_fact_dominates_missing_review
+    b=self.mutated('host','I02','nic_count',1);del b['review'];r=self.eval(b);self.assertEqual(r['decision'],'FAIL');self.assertEqual(next(x for x in r['requirements'] if x['id']=='I02')['status'],'FAIL')
+                                                                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'BLOCKED' != 'FAIL'
+- BLOCKED
++ FAIL
+
+
+----------------------------------------------------------------------
+Ran 52 tests in 7.606s
+
+FAILED (failures=2)

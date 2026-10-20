@@ -1,0 +1,16 @@
+======================================================================
+FAIL: test_signed_negative_fact_dominates_missing_review (__main__.GateTests.test_signed_negative_fact_dominates_missing_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<TASK>\tests\test_gate.py", line 106, in test_signed_negative_fact_dominates_missing_review
+    b=self.mutated('host','I02','nic_count',1);del b['review'];r=self.eval(b);self.assertEqual(r['decision'],'FAIL');self.assertEqual(next(x for x in r['requirements'] if x['id']=='I02')['status'],'FAIL')
+                                                                              ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'BLOCKED' != 'FAIL'
+- BLOCKED
++ FAIL
+
+
+----------------------------------------------------------------------
+Ran 51 tests in 7.048s
+
+FAILED (failures=1)

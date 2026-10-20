@@ -1,0 +1,26 @@
+{
+  "status": "ROTATED / READBACK VERIFIED",
+  "before_sha256": "f1d7c6a46e8af32719fded3a0383c19eeceb4ba7c9be8565cda9429aa0574b11",
+  "staged_sha256": "a59f76c9bc6f2574d20c18f558e4c062407eba3101d5e72a2a8aebbfa4591b7d",
+  "final_sha256": "955e764ecf51e4102841bde10921c0aad7a8f78d6371e6d664914b394eb905be",
+  "prefix_sha256": "1d8451e505f2cd6af7f8e3f87ba614dcbe7cc896f3a96011c5da2b4b9bca0fde",
+  "prefix_bytes": 6852,
+  "previous_history_sha256": "68dbbe6d986a832be26212eb939e4a860e8f783725ea86b6b2df7d73333041d3",
+  "previous_history_bytes": 524629,
+  "full_assignment_sha256": "26abe1ea439d9d46e180f018a0d049c41de18f3bc7bd318192b532e6f2f16741",
+  "report_sha256_before_rotation": "19138ca55a96ee03745716d04c799408e698d869e3041c57c185e1d626e7423c",
+  "pre_rotation_manifest_sha256": "489e5da5b3acf8ca62063f12627ae77874444735ecd8c9833fe2dbfe08ad595d",
+  "B2_full_assignment_saved": true,
+  "B3_result_saved": true,
+  "staged_readback_before_B1_clear": true,
+  "B1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "previous_history_byte_exact": true,
+  "rules_prefix_unchanged": true,
+  "guard_negative_controls": {
+    "total": 2,
+    "rejected": 2
+  },
+  "replacement": "ReplaceFileW existing target only; no ACL API changes",
+  "events": [],
+  "rollback": "Only with separate authorization and exact final hash guard: original = first prefix_bytes bytes + assignment.md bytes + last previous_history_bytes bytes of current card; reconstructed SHA must equal before_sha256. Never overwrite later edits."
+}

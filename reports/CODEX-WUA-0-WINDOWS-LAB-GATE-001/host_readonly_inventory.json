@@ -1,0 +1,91 @@
+{
+  "native_execution": "BLOCKED",
+  "mutations": 0,
+  "architecture": "AMD64",
+  "services": [],
+  "query_errors": [],
+  "existing_vm_queries": 0,
+  "hyperv_module_present": false,
+  "approved_vm_guid_supplied": false,
+  "cpu": [
+    {
+      "vm_monitor_extensions": true,
+      "address_width": 64,
+      "slat": true,
+      "firmware_virtualization": true
+    }
+  ],
+  "limits": "Bounded paths only; absence outside these paths not established. Feature codes/module presence are not readiness proof. No remote CIM session, network, private VM config or working V2Ray read.",
+  "known_tool_locations": {
+    "qemu": false,
+    "virtualbox": false,
+    "hyperv_manager": false,
+    "framework_csc": true,
+    "vmware": false
+  },
+  "vm_adapter_status": "NOT RUN",
+  "hyperv_module_versions": [],
+  "hypervisor_present": [
+    false
+  ],
+  "runtime": "7.6.5",
+  "optional_feature_codes": [
+    {
+      "raw_state_code": 2,
+      "component": "HypervisorPlatform"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "VirtualMachinePlatform"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Containers-DisposableClientVM"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-All"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-Tools-All"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-Management-PowerShell"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-Hypervisor"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-Services"
+    },
+    {
+      "raw_state_code": 2,
+      "component": "Microsoft-Hyper-V-Management-Clients"
+    }
+  ],
+  "exported_readonly_commands": [],
+  "host_config_proof": "PENDING",
+  "lab_status": "LAB_NOT_PROVISIONED",
+  "trusted_media_verified": false,
+  "source": "bounded_local_readonly",
+  "trusted_media_candidates_in_task_assets": 0,
+  "guest_proof": "PENDING",
+  "collected_utc": "2026-10-20T18:44:45.1792843Z",
+  "schema": 1,
+  "os": [
+    {
+      "build": "19045",
+      "version": "10.0.19045",
+      "sku": 48
+    }
+  ],
+  "lab_existence_scope": "No approved VM identity supplied; unrelated VMs not enumerated"
+}

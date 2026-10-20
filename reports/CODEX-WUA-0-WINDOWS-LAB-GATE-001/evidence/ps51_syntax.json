@@ -1,0 +1,51 @@
+{
+    "method":  "Direct Parser.ParseFile command only; no evaluated source or adapter invocation",
+    "files":  [
+                  {
+                      "named_commands":  [
+                                             "ConvertTo-Json",
+                                             "ForEach-Object",
+                                             "Get-ChildItem",
+                                             "Get-CimInstance",
+                                             "Get-Module",
+                                             "Import-Module",
+                                             "Join-Path",
+                                             "LocalQuery",
+                                             "Split-Path",
+                                             "Where-Object",
+                                             "Write-Output"
+                                         ],
+                      "sha256":  "ec67934f504eaa7c1572c31738ad7978aee6c73e763a199090de2a43f3f723ee",
+                      "source":  "adapters/Collect-Host.ps1",
+                      "parse_errors":  0
+                  },
+                  {
+                      "named_commands":  [
+                                             "ConvertFrom-Json",
+                                             "ConvertTo-Json",
+                                             "Core",
+                                             "DigestText",
+                                             "ForEach-Object",
+                                             "Get-CimInstance",
+                                             "Get-Command",
+                                             "Get-Content",
+                                             "Get-FileHash",
+                                             "Get-Item",
+                                             "Hyper-V\\Get-VM",
+                                             "Import-Module",
+                                             "Join-Path",
+                                             "Save",
+                                             "Split-Path",
+                                             "Where-Object"
+                                         ],
+                      "sha256":  "187451076abb92fbe40410c49da3fb956fc05ef3c9fb5750e2aa417c117db3d6",
+                      "source":  "adapters/Read-HyperVApproved.ps1",
+                      "parse_errors":  0
+                  }
+              ],
+    "policy_changes":  0,
+    "parse_only":  true,
+    "file_script_attempt":  "BLOCKED_BY_EXISTING_EXECUTION_POLICY",
+    "adapters_invoked":  0,
+    "runtime":  "5.1.19041.6456"
+}

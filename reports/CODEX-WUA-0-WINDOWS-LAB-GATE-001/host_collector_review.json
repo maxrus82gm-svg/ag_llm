@@ -1,0 +1,23 @@
+{
+  "source": "adapters/Collect-Host.ps1",
+  "sha256": "ec67934f504eaa7c1572c31738ad7978aee6c73e763a199090de2a43f3f723ee",
+  "locality_review": "Trusted installed local CIM providers, exact classes/properties; no remote sessions/host names; 8s per query",
+  "reads": [
+    "OS version/build/SKU",
+    "hypervisor-present boolean",
+    "CPU virtualization booleans",
+    "selected optional feature raw codes",
+    "vmms/vmcompute state",
+    "trusted system Hyper-V module metadata only",
+    "five exact standard tool paths",
+    "top-level TASK assets media count only"
+  ],
+  "not_executed": [
+    "VM enumeration/config access without approved identity",
+    "feature/VM/service mutations",
+    "ports/DNS/network/proxy probes",
+    "private credentials/configs",
+    "hypervisor/native client startup"
+  ],
+  "scope": "No whole-host traffic/OS isolation attestation; trusted OS/providers/filesystem assumed"
+}

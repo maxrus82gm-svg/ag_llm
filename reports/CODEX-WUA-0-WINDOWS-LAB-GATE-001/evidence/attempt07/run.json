@@ -1,0 +1,39 @@
+{
+  "source_pins": {
+    "source/lab_gate.py": "448f85d60b94cd2adc320f62cd2c6aac3ffdca8a17d12bcedc66a525de8dd280",
+    "source/Signatures.cs": "191c7d5abc6f40b711c510fc5de4853105234bc060efa28bad9cd76f219e5444",
+    "adapters/Collect-Host.ps1": "ec67934f504eaa7c1572c31738ad7978aee6c73e763a199090de2a43f3f723ee",
+    "adapters/Read-HyperVApproved.ps1": "187451076abb92fbe40410c49da3fb956fc05ef3c9fb5750e2aa417c117db3d6",
+    "tests/test_gate.py": "083d9100b468b9c8dc3b665a43856746fa9b7fcf3f70419a6c22b4d391609720",
+    "tools/handoff.py": "eb401cd81e291bfe5edfdb7b0549f7cbe09563e2e8eb1a7f47fc1892ff4d0671",
+    "tools/run_checks.py": "78438ef699f63da0fdda5665fbdbd3ef6fba227d3dde81003b219ac2242c9fc4"
+  },
+  "compiler_sha256": "aae1db57f898ca8bda18590c56f86ced6d0ead80c22033b76fdfe9119706f116",
+  "compile_exit": 0,
+  "compile_diagnostic_codes": [],
+  "python_syntax": "PASS",
+  "child_environment_keys": [
+    "COMSPEC",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "WINDIR"
+  ],
+  "steps": [],
+  "elapsed_seconds": 7.469,
+  "test_exit": 0,
+  "stdout_sha256": "cd52e75e9ba765958fc3d77e5e17211d916c65e2bfdc509b4831933353a5a7ab",
+  "test_counts": {
+    "total": 51,
+    "passed": 51,
+    "failed": 0,
+    "errors": 0
+  },
+  "expected_mutant_failure": null,
+  "mutant_killed": false,
+  "sources_unchanged": true,
+  "helper_sha256": "d4e485feae3a862b42f149ffc22d98a4cadc3b0a8f34ca9d82eed0792f5bc758",
+  "vm_changes": 0,
+  "WFP_calls": 0,
+  "network_probes": 0
+}

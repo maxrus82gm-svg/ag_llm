@@ -1,0 +1,16 @@
+======================================================================
+FAIL: test_real_mode_rejects_synthetic_trust (__main__.GateTests.test_real_mode_rejects_synthetic_trust)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<TASK>\tests\test_gate.py", line 60, in test_real_mode_rejects_synthetic_trust
+    def test_real_mode_rejects_synthetic_trust(self):self.assertEqual(self.eval(synthetic=False)['decision'],'BLOCKED')
+                                                     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PASS' != 'BLOCKED'
+- PASS
++ BLOCKED
+
+
+----------------------------------------------------------------------
+Ran 52 tests in 8.417s
+
+FAILED (failures=1)

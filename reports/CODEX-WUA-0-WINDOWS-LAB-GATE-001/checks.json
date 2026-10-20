@@ -1,0 +1,96 @@
+{
+  "task_id": "CODEX-WUA-0-WINDOWS-LAB-GATE-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "created_utc": "2026-10-20T19:14:43.143041+00:00",
+  "offline_gate_logic": "OFFLINE_GATE_LOGIC_TESTED",
+  "final_suite": {
+    "total": 52,
+    "passed": 52,
+    "failed": 0,
+    "errors": 0
+  },
+  "final_suite_ref": "evidence/attempt08/run.json",
+  "frozen_source_refs": [
+    "source/lab_gate.py",
+    "source/Signatures.cs",
+    "tests/test_gate.py",
+    "adapters/Collect-Host.ps1",
+    "adapters/Read-HyperVApproved.ps1",
+    "tools/run_checks.py"
+  ],
+  "mutations": [
+    {
+      "id": "mutant_nic03",
+      "ref": "evidence/mutant_nic03/run.json",
+      "mutant_killed": true,
+      "expected_failed": 2
+    },
+    {
+      "id": "mutant_trust03",
+      "ref": "evidence/mutant_trust03/run.json",
+      "mutant_killed": true,
+      "expected_failed": 1
+    }
+  ],
+  "retained_genuine_red": {
+    "ref": "evidence/attempt05/run.json",
+    "total": 51,
+    "passed": 50,
+    "failed": 1,
+    "errors": 0,
+    "case": "test_signed_negative_fact_dominates_missing_review",
+    "fix": "Signed contradiction evaluated even when independent review is missing; FAIL dominates BLOCKED"
+  },
+  "host_collector_runs": 1,
+  "host_snapshot_utc": "2026-10-20T18:44:45.1792843Z",
+  "host_snapshot_sha256": "c66d2e571a0aebca000ec76528d7f3545568377a8a9f91933c45d2e1c61dfaaa",
+  "actual_gate_exit": 20,
+  "actual_gate_sha256": "44ab04bfd81817dd3eb88257d645e0d95f372f0b1929d211edfc832b1e10b8ce",
+  "actual_gate_provenance": {
+    "input": "fixtures/unprovisioned.json",
+    "input_sha256": "84f20ede556d3ba17d06571a32c889d190b2dc3442f30b0be2270beb5ba850c8",
+    "inventory": "host_readonly_inventory.json",
+    "inventory_link": "Context only, not a signed I01-I12 attestation",
+    "helper_sha256": "e4b9de0d8d9808ad5f1b45f09c0b5fc4620e72f07aba45bc837854ab8b3dd88e"
+  },
+  "ps51": {
+    "runtime": "5.1.19041.6456",
+    "parsed_files": 2,
+    "errors": 0,
+    "named_command_allowlist": "PASS",
+    "adapter_invocations_in_parser": 0,
+    "initial_file_execution": "BLOCKED BY POLICY; no policy change; direct parser metadata command used"
+  },
+  "source_barriers": {
+    "protected_total": 389,
+    "unchanged_before_rotation": 389,
+    "noncard_expected_after_rotation": 388,
+    "portable_backend_flags_false_count": 1,
+    "wfp_CanApply": false,
+    "old_modules_imported_or_run": 0
+  },
+  "real_operations": {
+    "vm_queries": 0,
+    "vm_mutations": 0,
+    "feature_or_hypervisor_installs": 0,
+    "WFP_native_calls": 0,
+    "network_probes": 0,
+    "V2Ray_changes": 0,
+    "Git_GitHub_calls": 0,
+    "rights_or_policy_changes": 0
+  },
+  "unverified": [
+    "Hyper-V adapter runtime and full channel/storage census",
+    "Trusted Windows media and ready owned VM",
+    "Host/guest attempts observers and real isolation",
+    "Future apply/stop/cleanup enforcement",
+    "Native WFP and client/network/E2E"
+  ],
+  "states": [
+    "OFFLINE_GATE_LOGIC_TESTED",
+    "LAB_PLATFORM_NOT_PROVISIONED",
+    "HOST_CONFIG_PROOF_PENDING",
+    "GUEST_ISOLATION_PROOF_PENDING",
+    "NATIVE_WFP_EXECUTION_BLOCKED"
+  ]
+}
