@@ -1,3 +1,17 @@
+## CURRENT / 2026-10-20 / LLM12 — Claude AUD-01T-R опубликован; независимая проверка ещё продолжается
+
+🟨 **Задача простыми словами:** «Безопасное ручное восстановление повреждённого транспортного журнала после аварии» (`CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001`, `AUD-01T-R`). **Опубликовано, но не принято финально.** [Claude commit #376](https://github.com/maxrus82gm-svg/ag_llm/commit/25feb142052ee57f0b70fbafe1818bc96f713174), published files from `main@9fc0d2fca4b9982d1086b50bba8e3f8ecdc4e698`; 2 new modules, 151/151 manifest paths exist, 9/9 selected SHA-256+size checks passed. Author manifest still says LOCAL ONLY, which is now outdated. Personal Claude B1 remains WAITING; ChatGPT coordinator **did not modify B1**.
+
+**Claude local evidence:** full 909=907 PASS+2 SKIP, 0 FAIL/ERROR, 0 isolation; 874 previous methods unchanged, 35 added. Focused-r3 1 FAIL/1 isolation in preexisting test; baseline mirror 2/10 reproductions of F-T1, so do not erase this RED. Independent source inspection sees manual inspect→archive→apply plan and no automatic repair, preserving unknown delivery of torn event.
+
+**Verifier independent CI:** [Actions #39439901294](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/39439901294), diagnostic [PR #17](https://github.com/maxrus82gm-svg/ag_llm/pull/17), source base `9fc0d2fca4b9982d1086b50bba8e3f8ecdc4e698`, only Markdown marker, **DO NOT MERGE**. Last observed **RUNNING**; final logs, result/evidence not yet closed out.
+
+**New independent finding / NEEDS FIX:** several published test summary strings contain absolute local Windows user paths despite report's redaction claim (`runs/focused-r3/summary.json`, `runs/flake-baseline-05/summary.json`, `runs/green1/summary.json`). Do not propagate paths. Correct publication-safe copies + evidence digest chain separately, preserve unredacted original privately; no silent historical rewrite. Further OPEN: F-T1 guard flake, symlink Windows privilege test not run, power loss PWR-01, TOCTOU, W3 live preflight, AUD-02c/AUD-04, full production rollout. **WA4-R PARTIAL; no full DONE/VERIFIED or production activation.**
+
+**Handoff format invariant:** assistant prepares FULL БЛОК 1 as single copyable long block **in chat** and a separate SHORT launch block for Claude/Codex; only user personally pastes long block into agent card. Coordinator must never self-fill/edit/clear agent БЛОК 1. This is separate from authorized read-only review and common documentation.
+
+---
+
 ## ARCH DECISION / 2026-10-20 / WEB_11 — универсальная ChatGPT MCP-интеграция и независимые сетевые профили
 
 **Решение пользователя / FUTURE, НЕ РЕАЛИЗОВАНО:** Web Alarm Ultra проектируется как переносимая мультимодельная система с каталогом подключений собственных LLM/API, локальных моделей, CLI/агентов и MCP-инструментов. Внешний ChatGPT → Ultra MCP/plugin tools **не равен** Ultra → LLM model provider. «Проводник» в будущем показывает официальные способы авторизации, доступные возможности, выбранный сетевой профиль, необходимые изменения/scopes и запрашивает отдельное согласие; секреты не попадают агенту.
