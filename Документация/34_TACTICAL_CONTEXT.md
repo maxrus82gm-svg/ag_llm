@@ -20,6 +20,8 @@
 
 **STATUS / NEXT:** детали зафиксированы в 11 и 19. Codex Install/Uninstall BLOCKED; WFP/V2Ray/network isolation/ChatGPT E2E NOT VERIFIED; `HOSTED_TUNNEL_ON_HOLD_BY_USER` остаётся. Нет новой TASK или разрешения на установку, рабочий firewall/V2Ray/систему не меняем. Следующий обсуждаемый этап — проверяемый security backend и доказательство в изолированной Windows-лаборатории.
 
+**Повторная архитектурная сверка / 2026-10-20 / WEB_11:** подтверждено разделение двух независимых направлений (Ultra → model provider и ChatGPT → Ultra tools). Уточнены ещё две независимые оси: *мультимодельность ≠ мультимодальность* (документ 11, ASR из 12 пока FUTURE) и *MCP transport / reachability ≠ OS-level egress/V2Ray* (документ 19, §7.2). Нужны три разные группы доказательств: официальный ChatGPT→MCP read-only E2E, достижимость/auth и изолированные сетевые negative tests. Этот аудит — только документационная корректировка; capability, install, tunnel и production gates **не изменены**, Blueprint LLM не утверждался и не редактировался.
+
 ---
 
 ## CURRENT / 2026-10-20 / WEB_10 — portable MCP toolkit published and bounded independently reviewed
