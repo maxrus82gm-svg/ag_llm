@@ -32,8 +32,75 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
+🟨 **ЗАДАЧА ДЛЯ CLAUDE 008: Безопасное ручное восстановление повреждённого транспортного журнала после аварии**
+
+**TASK ID:** `CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001`
+**Finding:** `AUD-01T-R` = Audit finding 01, Transport events, Residual recovery gap (остаточная проблема восстановления).
+**Project:** исходный Web Alarm Workspace / RT-001 / WA4-R (Reliability — надёжность хранения и восстановления).
+**Статус:** USER APPROVED / БЛОК 1 ГОТОВ; начать выполнение после короткого сообщения пользователя в чате Claude. В этой TASK разрешена только локальная разработка и изолированное тестирование в рамках scope. Итог — `RESULT READY / AWAITING INDEPENDENT VERIFICATION`, НЕ `DONE/VERIFIED`.
+**Координатор/verifier:** ChatGPT, чат LLM12. Другая ветка WEB_10/MCP/WUA-0 не входит в работу.
+**Baseline GitHub for coordinator:** `main@8ab1c7d6c03c829ed6bd82290a700c0048fd24ab` (2026-10-20). Это ориентир только для сверки; НЕ разрешение агенту на Git/GitHub. При локальных отличиях нужных файлов — STOP / report / спросить пользователя, без перезаписи.
+
+## 1. Смысл, факт и ожидаемый результат
+
+В `web_alarm/transport_event_store.py` общий append-only `transport/transport_events.jsonl` намеренно fail-closed: если процесс погибает между частями физической записи, последний JSONL-фрагмент может остаться без полного LF/валидного содержимого. Последующие чтение/append блокируются, сохраняя evidence, но штатного безопасного ручного восстановления нет (`AUD-01T-R`). Цель: добавить **отдельную контролируемую OFFLINE operator recovery procedure/tool**, при которой нельзя незаметно стереть или переписать исходную историю; оператор понимает, какой именно хвост исключён из рабочего журнала и где сохранены точные исходные байты.
+
+**Принцип:** никакого фонового, автоматического или молчаливого «исправления». Отсутствие доказательства сохранности = STOP. Успешный exit != доказательство, что частичное событие действительно было доставлено; неопределённость остаётся в отчёте. Fail-closed для обычных читателей и writers сохранить до явного подтверждённого восстановления.
+
+## 2. Обязательные источники и границы
+
+Перед стартом реально прочитать актуальные локальные `08_Старт.md`, `000_Задачи для агента.md`, эту личную карточку `000_Задачи Claude.md`, `18_Регламент сопровождения документации.md`, `34_TACTICAL_CONTEXT.md`, `23_Архитектура Web Alarm Workspace.md`, `24_План реализации Web Alarm Workspace.md`, `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`, `36_Единая архитектура тестирования.md`, `36.1_Обязательный регламент тестирования для LLM.md`, `36.2_Профиль тестирования Web Alarm Workspace.md`; адресно `05_Реестр задач.md`. Применить `DOC-GIT-01@1`, `TEST-COLLAB-01@1`, `DOC-ENGINEERING-ROLES-01@1`, `DOC-LOCAL-REPORT-HANDOFF-01@1`, `DOC-TASK-READABLE-01@1`.
+
+Код/инварианты: `web_alarm/transport_event_store.py`, `web_alarm/store_lock.py`, использование `TransportEventStore` в server/API/transport/recovery и существующие тесты `test_web_alarm_transport_event_store.py`, `test_web_alarm_aud01t02b_repair.py`, `test_web_alarm_crash_consistency.py`, `test_web_alarm_transport_recovery.py`; история предыдущей Claude TASK `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001/report.md`, особенно `AUD-01T-R`; отчёт последнего ремонта `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001/report.md`. Факт независимого CI: Windows Actions #39387538904, 874/OK — **прохождение тестов, не закрытие всех исторических рисков**.
+
+**WRITE-SCOPE:** новый `web_alarm/transport_event_recovery.py` (или узкий самостоятельный модуль того же назначения), минимальные необходимые изменения `web_alarm/transport_event_store.py` только если они доказанно нужны для строгого shared lock/validation, новый `test_web_alarm_transport_event_recovery.py`, минимальное расширение `test_web_alarm_transport_event_store.py` при необходимости, отдельная task-папка `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001/` и собственные БЛОКИ 1–3 личной карточки **только для штатной ротации**. Соседний код читать и disposable isolated probes создавать можно. При необходимости изменить `server.py`, `store_lock.py`, `models.py`, другой production файл, общий runner/CI, shared-документы или схему — сначала представить основание и запросить отдельный scope GO; не менять самовольно. Никаких правок MCP/Ultra и чужих агентских карточек.
+
+**ЗАПРЕЩЕНО:** любой Git/GitHub от имени локального Claude, даже status/diff/show/read, если пользователь отдельно не разрешил; любые production/live-storage операции, реальные рабочие TASK или пользовательские данные, сети/платные вызовы, rollout, изменение WA4-R OBSERVE/WARN/STRICT/gateway, удаление/перезапись реального журнала, autoheal при старте, live API для восстановления, ослабление fail-closed validation. Работа и fault injection только с синтетическими данными в выделенных TEMP-каталогах.
+
+## 3. Инженерный контракт — обязательные свойства
+
+**A. Диагностика без мутации.** Отдельный dry-run/preflight по явно указанному offline storage root обнаруживает пустой/здоровый файл, оборванный последний байтовый сегмент, повреждённую среднюю строку, неправильный UTF-8, CRLF/LF, полную JSON-строку без завершающего LF, неизвестную схему/event type, конфликт event-id и неоднозначный файл. До repair не создаёт и не меняет журнал, не проводит «догадки» о потерянном событии; диагностическая выдача без секретов/пейлоадов. Здоровый/неоднозначный случай => NOOP/REFUSE соответственно; только доказуемый физический suffix после последнего завершённого валидного JSONL-event может быть кандидатом для отдельного ручного действия. Чётко различать recoverable torn **tail** и corrupt **middle** (middle всегда STOP, не применять tail-salvage).
+
+**B. Обязательное двухэтапное подтверждение.** Сначала отдельный inspection-план с точным storage target, относительным путём, исходным byte count + SHA-256, границей валидного префикса (offset, rows, SHA-256), byte count + SHA-256 потерянного из активного журнала suffix и риском недоставленного события. Никакого вывода содержимого пользовательских событий в stdout/report. Затем только отдельная явная локальная operator-команда с подтверждением fingerprint/плана; `--force`/безусловный repair запрещён. Свежая проверка идентичности источника непосредственно перед применением; mismatched/stale/foreign plan => STOP.
+
+**C. Невозможность незаметной потери байтов.** Перед любым изменением записать **полную, побайтно тождественную** версию повреждённого журнала в отдельное неизменяемое evidence/archive место (не в рабочем read path), зафиксировать размер, SHA-256, имя, время, операторское намерение, исходный статус. Архив проверяется повторным чтением. Отдельно сохранить исходные хвостовые байты или иметь явный offset в архиве; до подтверждённой сохранности архива repair невозможен. Никогда не редактировать архив после создания, не перезаписывать существующее, не очищать/ротировать автоматически. Если нет гарантии сохранить оригинал — REFUSE. Task evidence публиковать только на синтетике; никаких живых байт или payload в GitHub.
+
+**D. Сериализация, атомарность и recovery самого recovery.** Согласовать выполнение с уже существующим `InterProcessLock` глобального transport writer, включая другие процессы. Во время решающего read-verify-backup-replace ни один writer не должен вклиниться; при timeout/подозрении на стороннего writer => STOP. Замену делать через безопасный временный файл и атомарную замену в той же filesystem области, с flushing/fdatasync по возможностям платформы; при отсутствии надёжной платформенной гарантии честно помечать ограничение, не заявлять power-loss durability. Не допускать окна, когда readers получают полуотрезанную строку. Сбой/kill до архивирования, во время архива, после архива до replace и во время/после replace => после fresh reopen либо исходный fail-closed журнал, либо доказанно валидный префикс; архив сохранён, действие и его исход документированы; повторное применение безопасно / идемпотентно или отказывает. Защититься от symlink/junction/reparse/path-swap и ошибочной root-цели; если платформенную защиту нельзя доказать — STOP с отчётом, не выполнять unsafe repair.
+
+**E. Validation после явного восстановления.** Строгий byte-framing LF/CRLF и действующий `TransportEventStore.read_events()`, сохранность порядка/идентичности каждого события префикса, сохранённые replay-id и conflict semantics; новый append должен работать штатно, но не возобновлять ранее неопределённое событие автоматически. Не создавать фиктивных успешных transport событий или ложных TASK/operation state. История не переписывается задним числом. Записывать forensic receipt/repair metadata отдельно от transport-events (и честно сообщать, если receipt не мог быть записан).
+
+**F. Минимальность.** Не перестраивать формат `TransportEventRecord` и не расширять runtime API, если это не обязательно. На здоровом журнале behavior должен остаться побайтно прежним. Выбирать простейший проверяемый контракт; если восстановление строго безопасно нельзя сделать в этом scope — `BLOCKED / DESIGN DECISION NEEDED` с конкретным reproduction и безопасной альтернативой, а не half-working repair.
+
+## 4. Тесты — независимо опровергать собственное решение
+
+**Gate A (RED / baseline):** изолированно продемонстрировать, что исходный код блокирует оборванный transport tail и не имеет штатной операции восстановления; не удалять исторические reds. Сохранить raw source/behavior proof и control.
+
+**Gate B (implementation):** добавить реальные `unittest`-тесты в накопительную базу. Обязательные направления:
+1. healthy/empty/missing log: NOOP/REFUSE without mutation;
+2. valid prefix + truncated JSON tail, complete JSON without LF, CRLF/Unicode framing, invalid UTF-8 tail; byte-exact archive/prefix/offset;
+3. corrupt middle/unknown schema/invalid event-id/ambiguous suffix => refused, original untouched;
+4. stale SHA/size between inspection and apply, mismatched plan, unexpected new appended event => reject, preserve original;
+5. concurrent cross-process append race, lock timeout, double confirm/retry/replay conflict, no deadlock/lost pre-existing rows;
+6. injected errors (backup writes, fsync, rename/reopen, receipt failures), process death of **child test process only** at key boundaries and fresh-process reload; distinct injected exception vs actual `os._exit` vs untested power loss;
+7. bad storage root, symlink/junction/reparse/path-swap, permissions/read-only constraints; Windows-specific protections or explicit NOT RUN/blocked;
+8. regression for existing transport readers/writers and related recovery; ensure no TASK/operation/microtask false success.
+
+**Gate C (adversarial):** independently design at least 5 additional plausible failure modes, mutation-quality negative controls (intentionally defective implementation or injected faults should be caught), repeat stress races and fresh-process tests. Weak tests that only check return codes or silence errors are insufficient: compare raw bytes/hashes/event identities/source state with clear oracle.
+
+**Gate D:** suitable focused tests repeated (e.g. 3 runs), full `python wa4a_acceptance.py all` on Windows if environment supports, exact RUN commands, status counts, baseline test ID comparison against independent W1 874/OK, stdout and test results. Any skip, fail, error, RED or incomplete run explicit and explained; do not silently modify test runner, asserts or legacy tests. No CI/GitHub activation by Claude. Independent ChatGPT will organize separate CI after published report.
+
+**Gate E:** baseline pin/source-map, explicit changed file list and scope check; confirm unrelated files unchanged; record reproducible SHA-256/byte lengths for production/tests/evidence and raw receipt; report unexpected EOL changes; redact confidential values. Preserve all first-attempt failure evidence and debugging artifacts as evidence; never replace RED with a later green summary.
+
+## 5. Deliverables and handoff
+
+Put complete user-publishable packet in `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001/` (nonignored path):
+- `report.md`: diagnosis, chosen manual recovery contract, threat model, lock order, crash points, source/result hashes, user-facing operator instructions (dry-run vs explicit apply), compatibility/rollback, test matrix, failures/risks, exact NOT RUN, proposals for any out-of-scope issues;
+- `manifest.json` with relative paths, byte sizes and SHA-256, task status, historical artifacts incl. red-fail source; safe sanitized `evidence.json` and `runs/` containing JSON result summaries and preferably raw per-test results, deterministic repros, fault injection output and source/baseline map; no privacy-sensitive logs and no temp-only evidence;
+- `scope.md` (allowed/protected), diff/patch evidence, `gate-e.json`; forensic sample + receipt **from synthetic data only**; examples showing that exact tail/original preserved; concise `SHARED DOC DELTA` proposal (without direct editing of 05/06/18/23/24/25/34/36*).
+
+When local execution is over: rotate **only your personal** БЛОК 1→2→3 according to card rules, preserving existing B2/B3 into append-only history with exact textual evidence. If history integrity or concurrent edits cannot be proven, STOP, leave B1, report. B3 status only `RESULT READY / AWAITING INDEPENDENT VERIFICATION` (or `BLOCKED`). Output user-facing concise one ```text``` block with TASK ID, human title, root cause, scope files, counts/FAIL/SKIP, report path, OPEN/NOT RUN and next decision. Do NOT commit/push; tell the user which files to publish through GitHub Desktop.
+
+**Безопасность и предел приёмки:** никакое production repair, destructive live data, W3 live-storage inspection, WARN/GATEWAY REQUIRED/STRICT или финальное DONE не разрешены этой TASK. Независимая приёмка отчёта и возможная активация инструмента — отдельные решения ChatGPT/пользователя.
 
 ---
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
