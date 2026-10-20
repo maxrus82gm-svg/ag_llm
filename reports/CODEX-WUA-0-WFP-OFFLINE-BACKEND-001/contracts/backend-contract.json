@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0-offline-source-candidate",
+  "profile": "STRICT_V2RAY_BROKER",
+  "threat_model": "T1 candidate; not a T2 sandbox",
+  "CanApply": false,
+  "current_entrypoints": ["OfflineTests.exe selftest <new-owned-result.json>", "OfflineBackend.Apply: always BLOCKED", "OfflineBackend.Rollback: always BLOCKED"],
+  "request": {
+    "owner": "nonempty deployment UUID; not ownership authority",
+    "host_binding": "64 lowercase hex content reference; future authenticated local binding absent",
+    "inventory_hash": "64 lowercase hex, UTC freshness window <= 5 minutes",
+    "identities": "distinct client/broker/UI local-account SID shapes, client+broker same machine prefix; new-local-origin must be proved later",
+    "client_endpoint": "literal 127.0.0.1, explicit uint16 port > 0, TCP only",
+    "broker_endpoint": "explicit canonical unicast IPv4 + uint16 TCP port, remote authentication not inferred",
+    "provenance": ["SYNTHETIC", "UNVERIFIED_LOCAL_BINDING"],
+    "rejected": ["imported authority claim", "DIRECT fallback profile", "DNS endpoint", "IPv6 endpoint", "multicast/linklocal/loopback remote", "UI SID reuse", "stale/future/nonUTC observation", "wrong approval hash"]
+  },
+  "filter_objects": {
+    "count": 8,
+    "layers": ["ALE_AUTH_CONNECT_V4", "ALE_AUTH_CONNECT_V6"],
+    "action": "FWP_ACTION_BLOCK only",
+    "flags": "PERSISTENT only; no dynamic session, boot or clear-action-right flags",
+    "role_predicates": ["IPv6: SID", "IPv4: SID AND protocol != TCP", "IPv4: SID AND TCP AND remote address != exact endpoint", "IPv4: SID AND TCP AND remote address == endpoint AND remote port != exact port"],
+    "selected_edge": "unmatched by own denies, not an explicit permit or availability proof",
+    "ALE_USER_ID": "FWP_SECURITY_DESCRIPTOR_TYPE with self-relative exact-SID DACL / FWP_ACTRL_MATCH_FILTER",
+    "arbitration": "foreign filters/callouts/hard permits remain UNVERIFIED; no weight heuristic establishes OS precedence"
+  },
+  "native_boundary": {
+    "Core_and_Abi_PInvoke": 0,
+    "NativePreview_PInvoke": 15,
+    "NativePreview_public_types": 0,
+    "NativePreview_executable_entrypoint": false,
+    "NativePreview_runtime_dependency": false,
+    "NativePreview_load": "reflection-only metadata during tests",
+    "native_calls_in_current_commands": 0,
+    "not_claimed": "not a sandbox against reflection or a privileged actor intentionally loading internal source"
+  },
+  "rollback": {
+    "status": "BLOCKED / KEEP DENY",
+    "delete_calls_implemented": false,
+    "future_order": ["freeze admissions", "disable owned startup/accounts", "stop owned process trees and delegated work", "independently prove zero processes/flows/queued work", "verify exact trusted ownership and live readback", "remove exact owned startup/resources", "remove owned deny objects last, within reviewed transaction", "remove exact owned provider/sublayer only after filter ownership/references verified"],
+    "ledger_and_reported_zero_are_authority": false
+  },
+  "enforcement": "NOT RUN / NOT VERIFIED",
+  "activation_requires_new_reviewed_source_release": true
+}

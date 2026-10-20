@@ -1,0 +1,458 @@
+{
+  "task_id": "CODEX-WUA-0-WFP-OFFLINE-BACKEND-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "files": [
+    {
+      "path": "assignment.md",
+      "bytes": 18857,
+      "sha256": "1edea544c37ba428999734035ace65e08f90b3bd03372a966d72580449960cc2"
+    },
+    {
+      "path": "card_initial.json",
+      "bytes": 407,
+      "sha256": "d49db760f90a34e0eb4e05c610a028220f295941517a99ce709ebc15ced138f5"
+    },
+    {
+      "path": "card_rotation.json",
+      "bytes": 1147,
+      "sha256": "4d50ed1140c9d7e9b4b6fcf6f47fb1ff3d698f02eac0ac6c4413545129f7c69e"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 2547,
+      "sha256": "1519a861ca436e9e8fdfdc2a4883a27b40dd4f14e56517efc0642c3837c88790"
+    },
+    {
+      "path": "checks_final.json",
+      "bytes": 2547,
+      "sha256": "43db75ac429d1b4a3e7e66664822b1ddea90d37445d5e0c7a38977c2b822d283"
+    },
+    {
+      "path": "contracts/backend-contract.json",
+      "bytes": 3119,
+      "sha256": "85c618c03d1089edf8e5793dbd9740740df1260113e41a8b45a090ea64cbe959"
+    },
+    {
+      "path": "evidence/attempt01/build.json",
+      "bytes": 3377,
+      "sha256": "27ff63be05bbb2c4f32c1ebac230894caf212675fa798677fc295af2e11fe247"
+    },
+    {
+      "path": "evidence/attempt01/OfflineTests.exe",
+      "bytes": 38400,
+      "sha256": "ce23bd3a264c4164327db474319bcaa2c0cb51db34bc431bc6babcc8173e47ac"
+    },
+    {
+      "path": "evidence/attempt01/results.json",
+      "bytes": 3555,
+      "sha256": "16e319e1fc2ecc465b3b2df62b1c95f20297f60ec3f038808f202a7c7b966728"
+    },
+    {
+      "path": "evidence/attempt01/Wua.Wfp.Abi.dll",
+      "bytes": 7680,
+      "sha256": "eabe122ea13a3b9ae2c88f47e1859c89712fe7201f1254becb88e4f5a6936594"
+    },
+    {
+      "path": "evidence/attempt01/Wua.Wfp.Core.dll",
+      "bytes": 22016,
+      "sha256": "c2a02b25753f15c6274fd50cff29702d94faa43247d850295930e36a26cd53e3"
+    },
+    {
+      "path": "evidence/attempt01/Wua.Wfp.NativePreview.dll",
+      "bytes": 10752,
+      "sha256": "40c34487d87b77815a9935971f245d45d26294d81badfa917fc8cfdb17d8ca97"
+    },
+    {
+      "path": "evidence/attempt02/build.json",
+      "bytes": 3377,
+      "sha256": "2877f113a218758c431c5020334e039986ddbdd477c9c94fec132be8444a2282"
+    },
+    {
+      "path": "evidence/attempt02/OfflineTests.exe",
+      "bytes": 45056,
+      "sha256": "3a7b18287f4cfcfad3057981a6b8082e19cbb7404f5941a9e6556a6b147ae75a"
+    },
+    {
+      "path": "evidence/attempt02/results.json",
+      "bytes": 4396,
+      "sha256": "b19f75bfdc08b4314c627f8befbd00140a5632bf26af784462b63a16e200bfef"
+    },
+    {
+      "path": "evidence/attempt02/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "34242edfec5a6b4209bcf768c0f4600ab94fa0afb89fe7a42cc3411f65329a11"
+    },
+    {
+      "path": "evidence/attempt02/Wua.Wfp.Core.dll",
+      "bytes": 23040,
+      "sha256": "86a007ad0d2f3ccd2589e62e1b2271413457730334b2fe87487b3814f6efb34b"
+    },
+    {
+      "path": "evidence/attempt02/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "e4a85aede54bed773f1b9b91a5f384fc78e5646ac06535ca4770555aa2214392"
+    },
+    {
+      "path": "evidence/attempt03/build.json",
+      "bytes": 3484,
+      "sha256": "bc03db5258ecda42283dff3058e362b8fd7d3cbd8b46f5990e9ae4bae0c8b907"
+    },
+    {
+      "path": "evidence/attempt03/OfflineTests.exe",
+      "bytes": 46592,
+      "sha256": "2fdea96ae0390773e3976d2cbefa6038dbb3ca87cbf631713afd9a794e887601"
+    },
+    {
+      "path": "evidence/attempt03/results.json",
+      "bytes": 4639,
+      "sha256": "abc697f8eb73d38d1bc2fe19f0fd342f6119e5584d4d9d16f279c7c6b9251bd8"
+    },
+    {
+      "path": "evidence/attempt03/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "94299ab2f5e46abb49c119a9cd8755f669defdf41ce104aa703de6f157b65630"
+    },
+    {
+      "path": "evidence/attempt03/Wua.Wfp.Core.dll",
+      "bytes": 23552,
+      "sha256": "ddfeb8114cb870bf0c41abf404071d89b8223e4ce5cd1b3a5da9acbf003ee4b8"
+    },
+    {
+      "path": "evidence/attempt03/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "71fced2e378d100c46cf21c44bff2dd1ebb85e5c12540f5a482c4b1152769262"
+    },
+    {
+      "path": "evidence/attempt04/build.json",
+      "bytes": 3484,
+      "sha256": "17c6ccc327e309b9f02a22f06779c09bd570a01c3e50c41344e5f24e70a52e94"
+    },
+    {
+      "path": "evidence/attempt04/OfflineTests.exe",
+      "bytes": 48128,
+      "sha256": "f1c3da8ecb3bced4a726b067c54c49b7dd663d3457bde4099993d1062a5d9f81"
+    },
+    {
+      "path": "evidence/attempt04/results.json",
+      "bytes": 4886,
+      "sha256": "a81d80934ee44f58308b8e5ef9c121d1cc90a85a87d81e177d38a152d28fa250"
+    },
+    {
+      "path": "evidence/attempt04/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "7f6b1679c2930fa0178c35d629b5ffb7ff6bc484ea958e6af432fb2ec526485e"
+    },
+    {
+      "path": "evidence/attempt04/Wua.Wfp.Core.dll",
+      "bytes": 24576,
+      "sha256": "4bdda030ddee27f8b94e087ddf164ef5a204f03f48d1ad5d40a13b62b71a059d"
+    },
+    {
+      "path": "evidence/attempt04/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "b6a289ecb9cf92fdb99157f3cee79e4c94dcd9971f4030113e2b96e79a641c9c"
+    },
+    {
+      "path": "evidence/attempt05/build.json",
+      "bytes": 3815,
+      "sha256": "4e34c684677886bb5963c6bce37ff12900b318a8fd3dea9a03357b7b13e0c3e5"
+    },
+    {
+      "path": "evidence/attempt05/OfflineTests.exe",
+      "bytes": 49152,
+      "sha256": "cdc5d6c489505b9870c8d5d511dd650ec882e87700b46b0e1143ee625e7e0df4"
+    },
+    {
+      "path": "evidence/attempt05/results.json",
+      "bytes": 4977,
+      "sha256": "bbca371997bc2bffbda9328148bab54b873d73cb784ee980e090f6ab296c07cd"
+    },
+    {
+      "path": "evidence/attempt05/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "a975abf1833d022af0d9041d3c730100bbb59283ebced0d0fda3e9a451302240"
+    },
+    {
+      "path": "evidence/attempt05/Wua.Wfp.Core.dll",
+      "bytes": 24576,
+      "sha256": "53eb8f40762277ce7236bfe90a898ca72b218e4cc1a6126fc567add9c380f1bf"
+    },
+    {
+      "path": "evidence/attempt05/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "28b1b3ae6a6d3b853ff2077bc87d4431c9bfba950642d78d4213af1ee95027e3"
+    },
+    {
+      "path": "evidence/mutant_port01/Abi-mutant.cs",
+      "bytes": 8995,
+      "sha256": "ab9fda17c5e618b31a3707c33429376d88480218013611535fbd8e7c4374ab1f"
+    },
+    {
+      "path": "evidence/mutant_port01/build.json",
+      "bytes": 3764,
+      "sha256": "c0c15f5ed7c178fd384beb348634caaed7237c05ebf9b0c6d03d734c0a3277ff"
+    },
+    {
+      "path": "evidence/mutant_port01/OfflineTests.exe",
+      "bytes": 45056,
+      "sha256": "9a97ba134944b32f336a063d5dab19c6cdec028bf8934aebcc6a4cc08161b0a2"
+    },
+    {
+      "path": "evidence/mutant_port01/results.json",
+      "bytes": 4432,
+      "sha256": "7df325d7d436f887c767f24be6ebe8a78199658eea9ad7ae84da2a6df56c5ab4"
+    },
+    {
+      "path": "evidence/mutant_port01/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "0a4f746fa54a94d246c6626b6c57bb622dbf12052ab184e98123d2d3aeedf75e"
+    },
+    {
+      "path": "evidence/mutant_port01/Wua.Wfp.Core.dll",
+      "bytes": 23040,
+      "sha256": "658ca3f2d61991125954d8a1072b2ce30522d0ad75c3148b3a9fa4b6bc621d0f"
+    },
+    {
+      "path": "evidence/mutant_port01/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "00597b6c7e1cae7d0b1275fb2faffecfa7696a0c9358f496434d45ffdf0d5e89"
+    },
+    {
+      "path": "evidence/mutant_port02/Abi-mutant.cs",
+      "bytes": 8995,
+      "sha256": "ab9fda17c5e618b31a3707c33429376d88480218013611535fbd8e7c4374ab1f"
+    },
+    {
+      "path": "evidence/mutant_port02/build.json",
+      "bytes": 3871,
+      "sha256": "8702df8a8b8fa0fa873bff007364499179d58bf88a13d66e43f31b3e03b8faf0"
+    },
+    {
+      "path": "evidence/mutant_port02/OfflineTests.exe",
+      "bytes": 46592,
+      "sha256": "c90a771c31026ce88a581a77fe324eef0d16df4f4cab08b3736befa173424164"
+    },
+    {
+      "path": "evidence/mutant_port02/results.json",
+      "bytes": 4675,
+      "sha256": "dc7ecb31324284614b80a944bd5044db03b3fabd3e61b64a381b5233b93042a8"
+    },
+    {
+      "path": "evidence/mutant_port02/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "8ef1a5afe1759392be010adbd0f5658ac4be527a7d72fd744580d4e4b5482e47"
+    },
+    {
+      "path": "evidence/mutant_port02/Wua.Wfp.Core.dll",
+      "bytes": 23552,
+      "sha256": "5ea0bc62587b59f4d0887641ed8eed207f39a73e744047a681baa39cc3755980"
+    },
+    {
+      "path": "evidence/mutant_port02/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "bb6ac92306da059a4db441c2d9c1df0ff2b8540176dc9080ca11ca94f3f5c7e8"
+    },
+    {
+      "path": "evidence/mutant_port03/Abi-mutant.cs",
+      "bytes": 8995,
+      "sha256": "ab9fda17c5e618b31a3707c33429376d88480218013611535fbd8e7c4374ab1f"
+    },
+    {
+      "path": "evidence/mutant_port03/build.json",
+      "bytes": 3871,
+      "sha256": "f8a3baeff5f184aa72902ab4a637afef535fd39eb7070083df6cc24e1e8e7972"
+    },
+    {
+      "path": "evidence/mutant_port03/OfflineTests.exe",
+      "bytes": 48128,
+      "sha256": "c80719c0f5a1c842653452e9cc08187850102371d1b6c50d9886e3c69d47048e"
+    },
+    {
+      "path": "evidence/mutant_port03/results.json",
+      "bytes": 4922,
+      "sha256": "71de6c72f767af739138340884647b1cdf7e3092b87ea5771fb119a39783a1d0"
+    },
+    {
+      "path": "evidence/mutant_port03/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "e469b8f773d465454c9bb0817ca47d116687459d248c6e9a77bd84e60a5a2293"
+    },
+    {
+      "path": "evidence/mutant_port03/Wua.Wfp.Core.dll",
+      "bytes": 24576,
+      "sha256": "6796838e4982ed28e8f4eaa2570cdf35186f282fc83bd9aa96a820fa290339fe"
+    },
+    {
+      "path": "evidence/mutant_port03/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "bec2bbf5c0beb097597e72b0b5a89d7af2f7bcbaa5b3af48972ce123101d022f"
+    },
+    {
+      "path": "evidence/mutant_port04/Abi-mutant.cs",
+      "bytes": 8995,
+      "sha256": "ab9fda17c5e618b31a3707c33429376d88480218013611535fbd8e7c4374ab1f"
+    },
+    {
+      "path": "evidence/mutant_port04/build.json",
+      "bytes": 4202,
+      "sha256": "b50fb87da182cae3300ccecedcef4f29ca29d45b59fc114c29ef9e473c08d96e"
+    },
+    {
+      "path": "evidence/mutant_port04/OfflineTests.exe",
+      "bytes": 49152,
+      "sha256": "f84f5350d9dae3daaed2d7ecad30975a76379b770bdabc32dfb3483269f5bb3d"
+    },
+    {
+      "path": "evidence/mutant_port04/results.json",
+      "bytes": 5013,
+      "sha256": "ac5796e27c576911e61c7da0b77a1157742f798f75606988a4284706380141be"
+    },
+    {
+      "path": "evidence/mutant_port04/Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "9dd414ba1e55bc608915b29e663e786576540abce04ad0ce850e71c294b13a72"
+    },
+    {
+      "path": "evidence/mutant_port04/Wua.Wfp.Core.dll",
+      "bytes": 24576,
+      "sha256": "9bf4176df0092f97c1aa086a8b3acba0e0989d7865d5290cf0623920a55c40ea"
+    },
+    {
+      "path": "evidence/mutant_port04/Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "3425e67f1c35342f5297ebf0c83624cd2ef31a8119a665df890b86d5213ff8e4"
+    },
+    {
+      "path": "evidence/previous_toolkit_guard.json",
+      "bytes": 256,
+      "sha256": "c09d75dc27f3d01f726eb64bc3bed9d78cbbfb831e5e7ae16ce7cb9415396a63"
+    },
+    {
+      "path": "evidence/ps51_syntax.json",
+      "bytes": 237,
+      "sha256": "17c62e3d3692eb737a10b90ef5dccd3d15ad247a07007063f0d374fffc50da49"
+    },
+    {
+      "path": "evidence/ps51_syntax_actual.json",
+      "bytes": 264,
+      "sha256": "d91068e5119aba0984811b356b123c1d3f1352f7b373011b4d7b5ee825fc4f70"
+    },
+    {
+      "path": "evidence/sdk_declarations.json",
+      "bytes": 4608,
+      "sha256": "d33071badb9402f849cf7cc620f652718675dc5ef4c01b78537a6cfb1ed5b897"
+    },
+    {
+      "path": "factual_result.txt",
+      "bytes": 1608,
+      "sha256": "be0237f628f7b7cc2004773343b3f60cef711101a40eace7bf6773f542b8988c"
+    },
+    {
+      "path": "handoff_verification.json",
+      "bytes": 335,
+      "sha256": "a09c774b570bac39c99c639190958222731e4d637ae772c25e930ea7ddf24981"
+    },
+    {
+      "path": "integration_plan.md",
+      "bytes": 2945,
+      "sha256": "8312eee6c2a741592e2db5c6ce378712f7b8d053b8989cdbe28d2f73b4b35976"
+    },
+    {
+      "path": "integrity.json",
+      "bytes": 106930,
+      "sha256": "32c3534bde4949517320a7ed66f9d4aea4b7c6eb8485c9656da799f494b9b430"
+    },
+    {
+      "path": "lab_gate.md",
+      "bytes": 5589,
+      "sha256": "e221c130434a65532c43c14ee1b5df0d0931e1125d3f35bb4d8c24fc5f7596f5"
+    },
+    {
+      "path": "manual_engineering_review.md",
+      "bytes": 9964,
+      "sha256": "6ea51bedfd4407c625af4431b73329884c14cb5b47ab423c06331434ae402855"
+    },
+    {
+      "path": "native/NativePreview.cs",
+      "bytes": 7306,
+      "sha256": "0a9552dbbb633071523f736e37d6da92b07b7e8cbec7705e007bdf216cf2356b"
+    },
+    {
+      "path": "privacy_review.json",
+      "bytes": 7943,
+      "sha256": "2087a03e60f1d31facd97f0326536d5a905f850d09088a0b56c44a7eb0c42cf1"
+    },
+    {
+      "path": "protected_inputs.json",
+      "bytes": 72668,
+      "sha256": "59a35fbe77886afe09feec1aa7ca72e4b08599bfe03238dceecc38845409ba58"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4656,
+      "sha256": "bc4f2ce11257a4260dc24cf0abd4eb5a27e3c73541095041be1c1313d7b1306b"
+    },
+    {
+      "path": "report.md",
+      "bytes": 16756,
+      "sha256": "ec3786190b792682582b2642759c3826d477650eec28374bc52fffdc7ad103cf"
+    },
+    {
+      "path": "security_boundary.md",
+      "bytes": 7075,
+      "sha256": "a315882de22081a199a3772af7f857114678cf2c0f33259ad9b07db8d008b78a"
+    },
+    {
+      "path": "source/Abi.cs",
+      "bytes": 8931,
+      "sha256": "0e3065e07dbc0b539aa564a20c8f2f54a3f93c8c8b68eea63cd899ebda58794b"
+    },
+    {
+      "path": "source/Core.cs",
+      "bytes": 19009,
+      "sha256": "c474bbf8dbcd4eb793e6883634d57c6b2254df98f8070945fabfebd4963ae933"
+    },
+    {
+      "path": "source/SdkConstants.cs",
+      "bytes": 882,
+      "sha256": "020d971e1f45fce8442d76f2227d19192a58012779079a1307372b7bfc8a1a62"
+    },
+    {
+      "path": "tests/abi_static.cpp",
+      "bytes": 1597,
+      "sha256": "90b2cadb531bcd20ff83da3efda3ea3df8c66034c960447797fc95770f56707a"
+    },
+    {
+      "path": "tests/OfflineTests.cs",
+      "bytes": 24476,
+      "sha256": "3879485416e9a688d15e27edcfa95595e68b7aa3c10e25565d8ba2e46cf8dc5f"
+    },
+    {
+      "path": "tests/PreviousToolkitGuard.ps1",
+      "bytes": 2110,
+      "sha256": "3ae34e8c167b050e08cb73c82984202dc67df4440c2e96639f1a63a60c9a498e"
+    },
+    {
+      "path": "tools/build_test.py",
+      "bytes": 6178,
+      "sha256": "4778f4442ab676098b834d20e69dc0121505b3bfd0f6fdbef35a7c016f6d984c"
+    },
+    {
+      "path": "tools/handoff.py",
+      "bytes": 14680,
+      "sha256": "ab86274ae938cca9ec130067d97215a35a9e37a46e45a4ffb46d622c113a97f4"
+    },
+    {
+      "path": "tools/sdk_audit.py",
+      "bytes": 2735,
+      "sha256": "a2ef22ecac2f1f77f2567411f0e02b4b887e247f967d2168915d3e8310e1a7eb"
+    },
+    {
+      "path": "tools/source_audit.py",
+      "bytes": 5874,
+      "sha256": "6eb694ed50bc7f14c181b5f7714983ea1fe07cacba6162159e4434f3e62c20a1"
+    }
+  ],
+  "self_hash": "excluded",
+  "publication": "LOCAL ONLY / NOT VERIFIED"
+}

@@ -1,0 +1,75 @@
+{
+  "task_id": "CODEX-WUA-0-WFP-OFFLINE-BACKEND-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "final_managed_suite": {
+    "passed": 62,
+    "failed": 0,
+    "total": 62,
+    "source": "evidence/attempt05/",
+    "source_pins_current": true,
+    "oracle_points_in_one_case": 73728,
+    "policy_mutants_killed": 7
+  },
+  "compiled_readback_mutant": {
+    "tests": 62,
+    "pass": 61,
+    "expected_FAIL": 1,
+    "killed": true,
+    "source": "evidence/mutant_port04/",
+    "meaning": "Port-check omission detected, not unresolved product failure"
+  },
+  "build": {
+    "managed_outputs": 4,
+    "compiler_errors": 0,
+    "warnings": 0,
+    "x64": true,
+    "language": "C#5",
+    "target": ".NET Framework 4.5+ on Windows x64",
+    "SDK_versions_read": 3,
+    "SDK_headers_hashed": 9,
+    "native_prototypes": 15,
+    "Cxx_compile_only_static_asserts": 22
+  },
+  "previous_toolkit_gate": {
+    "apply": "BLOCKED",
+    "checks": 3,
+    "collector_invocations": 0,
+    "execution_policy_override": false,
+    "failed": 0,
+    "installer_invocations": 0,
+    "passed": 3,
+    "rollback": "ROLLBACK BLOCKED",
+    "runtime": "7.6.5",
+    "uninstaller_invocations": 0,
+    "windows_mutations": 0,
+    "wrong_hash": "FAIL"
+  },
+  "boundary": {
+    "native_preview_exports": 0,
+    "native_preview_executable_entrypoints": 0,
+    "current_runtime_references_to_native_preview": 0,
+    "runtime_PInvoke_declarations": 0,
+    "preview_PInvoke_declarations": 15,
+    "CanApply": false,
+    "old_toolkit_changed": false,
+    "native_preview_loading": "reflection-only metadata, no execution load or WFP imports resolved"
+  },
+  "limitations": [
+    "Pointers in Readback are trusted owned/OS memory, not arbitrary user input",
+    "Headers/ABI/managed tests do not prove ALE condition support, arbitration, boot, loopback, DNS or WFP enforcement",
+    "Provenance/ledger/hash is not authenticated local SID/host ownership",
+    "Native stage/readback preview compiled but never called; native rollback deletion is BLOCKED",
+    "No Windows/network operational probes or host-wide no-traffic attestation"
+  ],
+  "NATIVE_WFP_ENFORCEMENT": "NOT RUN / NOT VERIFIED",
+  "REAL_HOST_SECURITY": "NOT VERIFIED",
+  "V2RAY_REMOTE_ROUTE": "NOT VERIFIED",
+  "ORDINARY_CHAT_MCP_E2E": "NOT VERIFIED",
+  "HOSTED_TUNNEL": "NOT STARTED",
+  "native_WFP_calls": 0,
+  "account_acl_rights_firewall_changes": 0,
+  "network_probes": 0,
+  "Git_GitHub_operations": 0,
+  "independent_verifier": "WEB_11 / PENDING",
+  "publication": "LOCAL ONLY / NOT VERIFIED"
+}

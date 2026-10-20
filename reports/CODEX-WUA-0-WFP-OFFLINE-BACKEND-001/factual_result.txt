@@ -1,0 +1,15 @@
+TASK: CODEX-WUA-0-WFP-OFFLINE-BACKEND-001
+RESULT READY / AWAITING INDEPENDENT VERIFICATION (WEB_11).
+Готовы исходники typed policy, managed ABI/readback и отдельный неактивный Fwpm preview.
+Build: 4 managed outputs, 0 errors/warnings; 22 SDK C++ static assertions PASS.
+Offline tests: 62/62 PASS; 73 728 model points; 7 behavior mutants killed.
+Compiled readback mutant: 61 PASS / 1 EXPECTED FAIL, ровно нужный regression.
+Прежний toolkit: 3/3 pure gates PASS, Apply/Rollback остаются BLOCKED.
+Native WFP calls 0; OS/network tests NOT RUN. Host security/V2Ray route/Chat E2E NOT VERIFIED.
+CanApply=false. Native source не запускался; real rollback delete BLOCKED.
+Windows/WFP/V2Ray/сеть/учётные записи не менялись; Git/GitHub не использовались.
+PS5.1: AST 1/1, runtime suite NOT RUN; исходное PS7 shell-selector наблюдение сохранено, не зачтено за PS5.
+DOC IMPACT: reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/ + own-card rotation; 297/297 прочих protected файлов неизменны.
+Карточка: постановка B2, factual result B3, B1 ОЖИДАНИЕ НОВОЙ ЗАДАЧИ, история сохранена.
+Полный отчёт report.md, manifest.json, checks_final.json, source/native/tests/evidence в TASK folder.
+NEXT: независимый source/evidence review WEB_11; затем новый USER GO на доказанно изолированную lab и reviewed adapter. Working-host Apply запрещён.

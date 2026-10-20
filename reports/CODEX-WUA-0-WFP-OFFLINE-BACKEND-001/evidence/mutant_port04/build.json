@@ -1,0 +1,117 @@
+{
+  "mode": "local offline compilation and synthetic tests",
+  "sources": {
+    "source/Abi.cs": "0e3065e07dbc0b539aa564a20c8f2f54a3f93c8c8b68eea63cd899ebda58794b",
+    "source/Core.cs": "c474bbf8dbcd4eb793e6883634d57c6b2254df98f8070945fabfebd4963ae933",
+    "source/SdkConstants.cs": "020d971e1f45fce8442d76f2227d19192a58012779079a1307372b7bfc8a1a62",
+    "native/NativePreview.cs": "0a9552dbbb633071523f736e37d6da92b07b7e8cbec7705e007bdf216cf2356b",
+    "tests/abi_static.cpp": "90b2cadb531bcd20ff83da3efda3ea3df8c66034c960447797fc95770f56707a",
+    "tests/OfflineTests.cs": "3879485416e9a688d15e27edcfa95595e68b7aa3c10e25565d8ba2e46cf8dc5f",
+    "tests/PreviousToolkitGuard.ps1": "3ae34e8c167b050e08cb73c82984202dc67df4440c2e96639f1a63a60c9a498e"
+  },
+  "orchestrator_sha256": "4778f4442ab676098b834d20e69dc0121505b3bfd0f6fdbef35a7c016f6d984c",
+  "child_environment_keys": [
+    "COMSPEC",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PROCESSOR_ARCHITECTURE",
+    "SYSTEMDRIVE",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "VSCMD_SKIP_SENDTELEMETRY",
+    "WINDIR"
+  ],
+  "tools": {
+    "csc_sha256": "aae1db57f898ca8bda18590c56f86ced6d0ead80c22033b76fdfe9119706f116",
+    "cl_sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d",
+    "sdk": "10.0.19041.0",
+    "cl_version_directory": "14.44.35207"
+  },
+  "steps": [
+    {
+      "step": "Wua.Wfp.Core.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "Wua.Wfp.Abi.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "Wua.Wfp.NativePreview.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "OfflineTests.exe",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "SDK-ABI-static-assert",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "f4f908c762e7c48fdc7806acce8c3dc74396577ccc2171d9d1bdb6f8aac53541",
+      "status": "PASS"
+    },
+    {
+      "step": "managed-selftest",
+      "exit_code": 1,
+      "diagnostic_codes": [],
+      "stdout_sha256": "70c624d3639fbecc53383ab6a23381d68cfc68bfdbf1350f3f26ee3ffedee209",
+      "status": "PASS_EXPECTED_MUTANT_KILLED",
+      "expected_exit_code": 1
+    },
+    {
+      "step": "unknown-command-blocked",
+      "exit_code": 20,
+      "diagnostic_codes": [],
+      "stdout_sha256": "184ba805acc8a966c800774cef01a7891e361213cfe2e75b6e6c7394b7c2db38",
+      "status": "PASS",
+      "expected_exit_code": 20
+    }
+  ],
+  "mutant": {
+    "change": "omit native UINT16 port comparison",
+    "source": "evidence/mutant_port04/Abi-mutant.cs",
+    "sha256": "ab9fda17c5e618b31a3707c33429376d88480218013611535fbd8e7c4374ab1f",
+    "expected_failed_test": "readback_rejects_wrong_port_even_same_owner_digest",
+    "killed_by_expected_test": true
+  },
+  "source_pins_unchanged": true,
+  "compiled_outputs": [
+    {
+      "ref": "OfflineTests.exe",
+      "bytes": 49152,
+      "sha256": "f84f5350d9dae3daaed2d7ecad30975a76379b770bdabc32dfb3483269f5bb3d"
+    },
+    {
+      "ref": "Wua.Wfp.Abi.dll",
+      "bytes": 10240,
+      "sha256": "9dd414ba1e55bc608915b29e663e786576540abce04ad0ce850e71c294b13a72"
+    },
+    {
+      "ref": "Wua.Wfp.Core.dll",
+      "bytes": 24576,
+      "sha256": "9bf4176df0092f97c1aa086a8b3acba0e0989d7865d5290cf0623920a55c40ea"
+    },
+    {
+      "ref": "Wua.Wfp.NativePreview.dll",
+      "bytes": 8192,
+      "sha256": "3425e67f1c35342f5297ebf0c83624cd2ef31a8119a665df890b86d5213ff8e4"
+    }
+  ],
+  "native_preview_execution": "NOT LOADED; reflection-only metadata in synthetic tests",
+  "actual_WFP_API_calls": 0,
+  "network_probes": 0
+}

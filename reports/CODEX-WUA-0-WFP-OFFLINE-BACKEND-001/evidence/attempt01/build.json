@@ -1,0 +1,95 @@
+{
+  "mode": "local offline compilation and synthetic tests",
+  "sources": {
+    "source/Abi.cs": "fee8d01b35644eb010f882e01db4f852b2cd2883b70d7f47a1baa03ce628d152",
+    "source/Core.cs": "30626eaaacfc59a4ef857e397827fcb71d2219d92d0cb0df94b67e0c8b1d07f5",
+    "source/SdkConstants.cs": "020d971e1f45fce8442d76f2227d19192a58012779079a1307372b7bfc8a1a62",
+    "native/NativePreview.cs": "88e9e8fc1b21076fed257c5242edd3b8686b705e6211c0a5a872a53077a389f9",
+    "tests/abi_static.cpp": "90b2cadb531bcd20ff83da3efda3ea3df8c66034c960447797fc95770f56707a",
+    "tests/OfflineTests.cs": "d12d30f48aa82048d0a5ee46720cf5e75a2aed536d087b46f10d8d81b61044df"
+  },
+  "tools": {
+    "csc_sha256": "aae1db57f898ca8bda18590c56f86ced6d0ead80c22033b76fdfe9119706f116",
+    "cl_sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d",
+    "sdk": "10.0.19041.0",
+    "cl_version_directory": "14.44.35207"
+  },
+  "steps": [
+    {
+      "step": "Wua.Wfp.Core.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "Wua.Wfp.Abi.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "Wua.Wfp.NativePreview.dll",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "OfflineTests.exe",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS"
+    },
+    {
+      "step": "SDK-ABI-static-assert",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "f4f908c762e7c48fdc7806acce8c3dc74396577ccc2171d9d1bdb6f8aac53541",
+      "status": "PASS"
+    },
+    {
+      "step": "managed-selftest",
+      "exit_code": 0,
+      "diagnostic_codes": [],
+      "stdout_sha256": "c2367dc1637406392ae21c9758f536b9fc11f2384c123ea2e647094b981137a3",
+      "status": "PASS"
+    },
+    {
+      "step": "unknown-command-blocked",
+      "exit_code": 20,
+      "diagnostic_codes": [],
+      "stdout_sha256": "184ba805acc8a966c800774cef01a7891e361213cfe2e75b6e6c7394b7c2db38",
+      "status": "PASS",
+      "expected_exit_code": 20
+    }
+  ],
+  "source_pins_unchanged": true,
+  "compiled_outputs": [
+    {
+      "ref": "OfflineTests.exe",
+      "bytes": 38400,
+      "sha256": "ce23bd3a264c4164327db474319bcaa2c0cb51db34bc431bc6babcc8173e47ac"
+    },
+    {
+      "ref": "Wua.Wfp.Abi.dll",
+      "bytes": 7680,
+      "sha256": "eabe122ea13a3b9ae2c88f47e1859c89712fe7201f1254becb88e4f5a6936594"
+    },
+    {
+      "ref": "Wua.Wfp.Core.dll",
+      "bytes": 22016,
+      "sha256": "c2a02b25753f15c6274fd50cff29702d94faa43247d850295930e36a26cd53e3"
+    },
+    {
+      "ref": "Wua.Wfp.NativePreview.dll",
+      "bytes": 10752,
+      "sha256": "40c34487d87b77815a9935971f245d45d26294d81badfa917fc8cfdb17d8ca97"
+    }
+  ],
+  "native_preview_execution": "NOT LOADED; reflection-only metadata in synthetic tests",
+  "actual_WFP_API_calls": 0,
+  "network_probes": 0
+}

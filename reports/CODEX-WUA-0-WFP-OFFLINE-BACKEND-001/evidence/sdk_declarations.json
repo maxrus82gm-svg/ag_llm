@@ -1,0 +1,85 @@
+{
+  "headers": [
+    {
+      "sdk": "10.0.19041.0",
+      "header": "um/fwpmu.h",
+      "bytes": 123920,
+      "sha256": "f96dd01748036265ee6d7115084c7acdd2b26989dfc666a55b0f49f3250bc007"
+    },
+    {
+      "sdk": "10.0.19041.0",
+      "header": "shared/fwpmtypes.h",
+      "bytes": 45741,
+      "sha256": "70fee183925d0947798b5cdc6aad4c712251de9f8264d3325e3ec77b114b7aa3"
+    },
+    {
+      "sdk": "10.0.19041.0",
+      "header": "shared/fwptypes.h",
+      "bytes": 17962,
+      "sha256": "5a4964e624d92ea3096c5bc1084ec58fc3e32abc979945986a4f2313e8f8a19d"
+    },
+    {
+      "sdk": "10.0.22621.0",
+      "header": "um/fwpmu.h",
+      "bytes": 124905,
+      "sha256": "8c653a75cae301df5e09cd952448eb5feb2f56b141c0a5e6331adfca82f84873"
+    },
+    {
+      "sdk": "10.0.22621.0",
+      "header": "shared/fwpmtypes.h",
+      "bytes": 46278,
+      "sha256": "b5b7c00f4f5e17d48646d243dc6ed1a25f3b0e5c2dcf1d7b23af12acaebe7550"
+    },
+    {
+      "sdk": "10.0.22621.0",
+      "header": "shared/fwptypes.h",
+      "bytes": 17882,
+      "sha256": "0df014afc1ac69f6929f5e8501ec13962d31d826bfb39c9d9d7d66f46466888e"
+    },
+    {
+      "sdk": "10.0.26100.0",
+      "header": "um/fwpmu.h",
+      "bytes": 125989,
+      "sha256": "92d5f2a1ee268ba7f494dc7109a61a09766e622f10e4c4eb91605c56792ec3e1"
+    },
+    {
+      "sdk": "10.0.26100.0",
+      "header": "shared/fwpmtypes.h",
+      "bytes": 48081,
+      "sha256": "20d401e84467b8efad4fe8809ebfd162d5441abd4c7c202a194f81a5b3559238"
+    },
+    {
+      "sdk": "10.0.26100.0",
+      "header": "shared/fwptypes.h",
+      "bytes": 17882,
+      "sha256": "0df014afc1ac69f6929f5e8501ec13962d31d826bfb39c9d9d7d66f46466888e"
+    }
+  ],
+  "guids": {
+    "FWPM_LAYER_ALE_AUTH_CONNECT_V4": "c38d57d1-05a7-4c33-904f-7fbceee60e82",
+    "FWPM_LAYER_ALE_AUTH_CONNECT_V6": "4a72393b-319f-44bc-84c3-ba54dcb3b6b4",
+    "FWPM_CONDITION_ALE_USER_ID": "af043a0a-b34d-4f86-979c-c90371af6e66",
+    "FWPM_CONDITION_IP_PROTOCOL": "3971ef2b-623e-4f9a-8cb1-6e79b806b9a7",
+    "FWPM_CONDITION_IP_REMOTE_ADDRESS": "b235ae9a-1d64-49b8-a44c-5ff3d9095045",
+    "FWPM_CONDITION_IP_REMOTE_PORT": "c35a604d-d22b-4e1a-91b4-68f674ee674b"
+  },
+  "guid_versions_equal": true,
+  "declarations": {
+    "FwpmEngineOpen0": "DWORD\nWINAPI\nFwpmEngineOpen0(\n   _In_opt_ const wchar_t* serverName,\n   _In_ UINT32 authnService,\n   _In_opt_ SEC_WINNT_AUTH_IDENTITY_W* authIdentity,\n   _In_opt_ const FWPM_SESSION0* session,\n   _Out_ HANDLE* engineHandle\n   );",
+    "FwpmEngineClose0": "DWORD\nWINAPI\nFwpmEngineClose0(_Inout_ HANDLE engineHandle);",
+    "FwpmTransactionBegin0": "DWORD\nWINAPI\nFwpmTransactionBegin0(\n   _In_ HANDLE engineHandle,\n   _In_ UINT32 flags\n   );",
+    "FwpmTransactionCommit0": "DWORD\nWINAPI\nFwpmTransactionCommit0(_In_ HANDLE engineHandle);",
+    "FwpmTransactionAbort0": "DWORD\nWINAPI\nFwpmTransactionAbort0(_In_ HANDLE engineHandle);",
+    "FwpmProviderAdd0": "DWORD\nWINAPI\nFwpmProviderAdd0(\n   _In_ HANDLE engineHandle,\n   _In_ const FWPM_PROVIDER0* provider,\n   _In_opt_ PSECURITY_DESCRIPTOR sd\n   );",
+    "FwpmProviderGetByKey0": "DWORD\nWINAPI\nFwpmProviderGetByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key,\n   _Outptr_ FWPM_PROVIDER0** provider\n   );",
+    "FwpmProviderDeleteByKey0": "DWORD\nWINAPI\nFwpmProviderDeleteByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key\n   );",
+    "FwpmSubLayerAdd0": "DWORD\nWINAPI\nFwpmSubLayerAdd0(\n   _In_ HANDLE engineHandle,\n   _In_ const FWPM_SUBLAYER0* subLayer,\n   _In_opt_ PSECURITY_DESCRIPTOR sd\n   );",
+    "FwpmSubLayerGetByKey0": "DWORD\nWINAPI\nFwpmSubLayerGetByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key,\n   _Outptr_ FWPM_SUBLAYER0** subLayer\n   );",
+    "FwpmSubLayerDeleteByKey0": "DWORD\nWINAPI\nFwpmSubLayerDeleteByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key\n   );",
+    "FwpmFilterAdd0": "DWORD\nWINAPI\nFwpmFilterAdd0(\n   _In_ HANDLE engineHandle,\n   _In_ const FWPM_FILTER0* filter,\n   _In_opt_ PSECURITY_DESCRIPTOR sd,\n   _Out_opt_ UINT64* id\n   );",
+    "FwpmFilterGetByKey0": "DWORD\nWINAPI\nFwpmFilterGetByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key,\n   _Outptr_ FWPM_FILTER0** filter\n   );",
+    "FwpmFilterDeleteByKey0": "DWORD\nWINAPI\nFwpmFilterDeleteByKey0(\n   _In_ HANDLE engineHandle,\n   _In_ const GUID* key\n   );",
+    "FwpmFreeMemory0": "void WINAPI FwpmFreeMemory0(_Inout_ void** p);"
+  },
+  "scope": "Declarations only; headers do not establish valid conditions at a layer, arbitration or OS enforcement."
+}

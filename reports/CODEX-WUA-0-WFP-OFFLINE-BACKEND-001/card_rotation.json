@@ -1,0 +1,18 @@
+{
+  "status": "CARD ROTATION SAVED / B1 WAITING",
+  "before_sha256": "16ada0353344de7809a6e11090f38aaff3c38c2fdb3e87b567a54a5b8ff9ede3",
+  "stage_sha256": "cd5440a3e1231a5039355628f5dc15df6b6c167c973ef2d60492c89050aa516b",
+  "final_sha256": "4d63758f60ee7f95efb2f91305e7a59e7406faa706436eff7f07999417f55824",
+  "prefix_bytes": 6852,
+  "prefix_sha256": "1d8451e505f2cd6af7f8e3f87ba614dcbe7cc896f3a96011c5da2b4b9bca0fde",
+  "assignment_sha256": "1edea544c37ba428999734035ace65e08f90b3bd03372a966d72580449960cc2",
+  "old_history_bytes": 502226,
+  "old_history_sha256": "991978fc27e9c7b9fdcc1e41eedfe7afac6468de40412b0f98065a4a57f69637",
+  "B2_B3_readback_before_B1_clear": true,
+  "B1_waiting": true,
+  "old_history_preserved": true,
+  "report_before_rotation_sha256": "02358861b2b44a62a2bde06f7b368e91a99d010b3422babbea5356503584ac6a",
+  "premanifest_sha256": "6c4730172bee8fa9eed0a1c0f7787188f068b7b9916ddb83fed69a4fa2eb6f7a",
+  "retry_events": [],
+  "rollback": "With separate authorization and matching final SHA only: reconstruct unchanged prefix + assignment.md + exact old-history suffix; verify before SHA before replacing. Stop on drift."
+}

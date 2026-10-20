@@ -19,6 +19,18 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+
+---
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+## CODEX-WUA-0-WFP-OFFLINE-BACKEND-001 / 2026-10-20
+
+Полный исходный БЛОК 1 ниже сохранён без изменения байтов. Дополнительных AMENDMENT к постановке нет.
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
 Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WUA-0-WFP-OFFLINE-BACKEND-001` — разработка автономного, безопасно заблокированного до лабораторной проверки Windows WFP security backend для MCP Web Alarm Ultra.
 
 # Задача: защитное ядро MCP — этап OFFLINE
@@ -238,6 +250,60 @@
 Работать самостоятельно, качественно, с приоритетом доказуемой безопасности над формальным завершением.
 
 ---
+
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+## CODEX-WUA-0-WFP-OFFLINE-BACKEND-001 / Codex 007 / 2026-10-20
+
+RESULT READY / AWAITING INDEPENDENT VERIFICATION (WEB_11).
+Prepared and built typed policy/managed ABI/readback/native source candidate.
+Core/Abi/OfflineTests have zero P/Invoke; separate internal NativePreview DLL
+has 15 Fwpm declarations, no exported types/entrypoint/runtime reference.
+Native metadata inspected reflection-only; actual WFP calls 0. CanApply=false.
+
+Final source-pinned managed tests 62/62 PASS, 0 FAIL (attempt05). One finite
+oracle matrix 73,728 points, not Windows tests. Seven behavior mutants killed.
+Compiled port-readback mutant: 61 PASS / 1 EXPECTED FAIL (mutant_port04),
+exact regression trigger; negative red evidence preserved. Four managed
+outputs built, zero compile errors/warnings; 22 independent SDK C++ static
+assertions (/Zs only). Three SDK versions, 9 primary header hashes, 6 GUIDs,
+15 prototypes. Previous toolkit 3 pure gates PASS, Apply/Rollback still BLOCKED;
+its Install/Uninstall/collector not invoked and prior files untouched.
+PS5.1 new guard AST 1/1, 0 errors; runtime suite not run. Initial shell-selector
+parse actually ran on PS7 and was not credited as PS5 evidence. No Bypass/
+Unblock/ExecutionPolicy/elevation. Final compiler env allowlisted, no inherited
+CL/_CL_/CSC or proxy/API credentials. No product test FAIL/compile ERROR;
+44->55->58->61->62 historical suites retained, not cumulative native proof.
+
+NATIVE WFP ENFORCEMENT NOT RUN / NOT VERIFIED. REAL HOST SECURITY / V2RAY
+REMOTE ROUTE / ORDINARY CHAT MCP E2E NOT VERIFIED; HOSTED TUNNEL NOT STARTED.
+Install/live rollback BLOCKED. Native stage/readback compiled but never called;
+native delete remains blocked, trusted lineage/ACL/effective graph/loopback/
+children/DNS/BFE/boot/flow/quiescence gates open. Source visibility is not a
+sandbox against deliberate reflection/admin execution. No real accounts,
+rights/ACL/WFP/firewall/V2Ray/network mutations, native subjects or Git/GitHub.
+
+Artifacts: reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/
+report.md, manifest.json, checks_final.json, source/, native/, contracts/,
+evidence/attempt05/, evidence/mutant_port04/, evidence/previous_toolkit_guard.json,
+evidence/ps51_syntax_actual.json, security_boundary.md, lab_gate.md,
+integration_plan.md, manual_engineering_review.md, privacy_review.json,
+card_rotation.json, integrity.json, factual_result.txt.
+
+DOC IMPACT: own TASK directory + own-card rotation only. Protected baseline:
+298 project files, 297 noncard checked unchanged before rotation. Other
+cards/old toolkit/shared docs/Claude/LLM12/production untouched. Full old
+history and own rules prefix byte-exact; report/evidence/manifest saved before
+B2/B3 readback, only then B1 WAITING. No raw historic card copied to bundle.
+SHARED DOC DELTA for 19/34 is proposal in report only. Source pin from TASK
+not Git-verified; publication/independent acceptance pending. User forwards
+result to WEB_11. NEXT: independent review then separately authorized proven
+isolated Windows lab + reviewed adapter, not live activation on working host.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 — исходные байты сохранены
 
 # БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
 
