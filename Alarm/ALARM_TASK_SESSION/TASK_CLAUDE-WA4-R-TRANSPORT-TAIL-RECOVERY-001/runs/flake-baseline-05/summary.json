@@ -1,0 +1,34 @@
+{
+ "label": "flake-baseline-05",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-baseline-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-flake-baseline-05-m8sv95kf\\out",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event"
+ ],
+ "exit": 1,
+ "wall_seconds": 4.815,
+ "base": "<TEMP>\\claude-tailrec-flake-baseline-05-m8sv95kf",
+ "tests_run": 1,
+ "passed": 0,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.147,
+ "successful": false,
+ "isolation_violations": 1,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "FAIL",
+   "ata\\\\Local\\\\Temp\\\\wa_aud01t_avafqmu4\\\\state\\\\locks\\\\transport']\n\n+ []\n- [[409,\n-   'transport_evidence_error',\n-   'cannot lock transport events: WA4-A isolation: write outside disposable '\n-   'temp: '\n-   '\\\\\\\\?\\\\C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud01t_avafqmu4\\\\state\\\\locks\\\\transport']]\n"
+  ]
+ ]
+}

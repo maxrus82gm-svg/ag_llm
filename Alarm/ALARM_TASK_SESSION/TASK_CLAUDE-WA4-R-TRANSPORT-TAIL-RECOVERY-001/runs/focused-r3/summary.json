@@ -1,0 +1,46 @@
+{
+ "label": "focused-r3",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-focused-r3-ygyrn6s8\\out",
+  "test_web_alarm_transport_event_recovery",
+  "test_gate_a_baseline",
+  "test_web_alarm_transport_event_store",
+  "test_web_alarm_transport_recovery",
+  "test_web_alarm_transport_ingestion",
+  "test_web_alarm_transport_authority",
+  "test_web_alarm_aud01t02b_repair",
+  "test_web_alarm_crash_consistency"
+ ],
+ "exit": 1,
+ "wall_seconds": 123.138,
+ "base": "<TEMP>\\claude-tailrec-focused-r3-ygyrn6s8",
+ "tests_run": 119,
+ "passed": 117,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 122.337,
+ "successful": false,
+ "isolation_violations": 1,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "FAIL",
+   "ata\\\\Local\\\\Temp\\\\wa_aud01t_n8iu5qra\\\\state\\\\locks\\\\transport']\n\n+ []\n- [[409,\n-   'transport_evidence_error',\n-   'cannot lock transport events: WA4-A isolation: write outside disposable '\n-   'temp: '\n-   '\\\\\\\\?\\\\C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud01t_n8iu5qra\\\\state\\\\locks\\\\transport']]\n"
+  ]
+ ]
+}

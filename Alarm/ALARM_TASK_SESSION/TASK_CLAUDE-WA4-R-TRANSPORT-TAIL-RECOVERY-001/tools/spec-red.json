@@ -1,0 +1,5 @@
+[
+ {"label": "gatea-baseline", "targets": ["test_gate_a_baseline", "test_web_alarm_transport_event_store"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes", "runner_root": "<TEMP>\\claude-tailrec-mirror-baseline"},
+ {"label": "red-module-baseline", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-baseline"},
+ {"label": "green1", "targets": ["test_web_alarm_transport_event_recovery", "test_gate_a_baseline"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes"}
+]

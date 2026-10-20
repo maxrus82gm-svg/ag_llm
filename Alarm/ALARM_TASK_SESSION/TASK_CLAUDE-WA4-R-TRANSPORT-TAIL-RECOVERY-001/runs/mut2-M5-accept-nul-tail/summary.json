@@ -1,0 +1,39 @@
+{
+ "label": "mut2-M5-accept-nul-tail",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M5-accept-nul-tail-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut2-M5-accept-nul-tail-7j53hgk_\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 22.837,
+ "base": "<TEMP>\\claude-tailrec-mut2-M5-accept-nul-tail-7j53hgk_",
+ "tests_run": 35,
+ "passed": 33,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 21.902,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous [NUL_IN_TAIL]",
+   "FAIL",
+   "X\\AppData\\Local\\Temp\\claude-tailrec-mirror-M5-accept-nul-tail-2\\test_web_alarm_transport_event_recovery.py\", line 358, in test_tails_not_left_by_one_interrupted_write_are_ambiguous\n    self.assertEqual(plan[\"verdict\"], \"AMBIGUOUS\")\nAssertionError: 'TORN_TAIL' != 'AMBIGUOUS'\n- TORN_TAIL\n+ AMBIGUOUS\n\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

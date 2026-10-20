@@ -1,0 +1,69 @@
+{
+ "label": "mut2-M1-middle-salvage",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M1-middle-salvage-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut2-M1-middle-salvage-53tydv3q\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 22.7,
+ "base": "<TEMP>\\claude-tailrec-mut2-M1-middle-salvage-53tydv3q",
+ "tests_run": 35,
+ "passed": 27,
+ "failures": 1,
+ "errors": 6,
+ "skips": 1,
+ "elapsed_seconds": 21.805,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.DifferentialTests.test_classifier_matches_the_store_reader_on_random_damage",
+   "FAIL",
+   ":\n  File \"<TEMP>\\claude-tailrec-mirror-M1-middle-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 862, in test_classifier_matches_the_store_reader_on_random_damage\n    self.assertGreater(verdicts.get(\"CORRUPT_MIDDLE\", 0), 20)\nAssertionError: 0 not greater than 20\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [INVALID_JSON]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [UNKNOWN_SCHEMA]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [UNKNOWN_EVENT_TYPE]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [INVALID_RECORD]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [INVALID_UTF8]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail [BLANK_LINE]",
+   "FAIL",
+   "-salvage-2\\test_web_alarm_transport_event_recovery.py\", line 334, in test_corrupt_middle_is_refused_even_with_a_torn_tail\n    self.assertEqual((plan[\"verdict\"], plan[\"problem\"], plan[\"line\"]), (\"CORRUPT_MIDDLE\", problem, 2))\n                                       ~~~~^^^^^^^^^^^\nKeyError: 'problem'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

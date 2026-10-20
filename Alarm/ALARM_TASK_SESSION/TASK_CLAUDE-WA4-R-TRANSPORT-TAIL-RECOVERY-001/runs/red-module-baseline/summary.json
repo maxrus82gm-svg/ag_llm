@@ -1,0 +1,34 @@
+{
+ "label": "red-module-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-baseline\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-red-module-baseline-07wf3f01\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 0.71,
+ "base": "<TEMP>\\claude-tailrec-red-module-baseline-07wf3f01",
+ "tests_run": 1,
+ "passed": 0,
+ "failures": 0,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 0.021,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "unittest.loader._FailedTest.test_web_alarm_transport_event_recovery",
+   "ERROR",
+   "nt_recovery.py\", line 24, in <module>\n    from web_alarm import transport_event_recovery as rec\nImportError: cannot import name 'transport_event_recovery' from 'web_alarm' (<TEMP>\\claude-tailrec-mirror-baseline\\web_alarm\\__init__.py). Did you mean: 'transport_event_store'?\n\n"
+  ]
+ ]
+}

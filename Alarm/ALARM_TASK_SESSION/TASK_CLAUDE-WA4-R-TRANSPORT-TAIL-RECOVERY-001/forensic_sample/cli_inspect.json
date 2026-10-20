@@ -1,0 +1,25 @@
+{
+ "identical_duplicate_rows": 0,
+ "plan_fingerprint": "d0f456349431d4ee7cbdbec19e1125ca52cb69bb584722f18a243e60f663310e",
+ "plan_format": 1,
+ "prefix": {
+  "bytes": 930,
+  "event_ids_sha256": "3fad5055954fc93ab759aee1689576668a60edce303b98f8d82a035c30cb9e98",
+  "rows": 3,
+  "sha256": "b1ad8495674067d4da114bd140e4f2c465bab7663a0bf606b2b2b8d1226a33dc"
+ },
+ "relative_path": "transport/transport_events.jsonl",
+ "risk": "the excluded tail is an append that never completed; whether its event was delivered is unknown and it is NOT restored; its exact bytes are kept in the archive",
+ "source": {
+  "bytes": 1068,
+  "sha256": "4484fb44a2ef6630292a43e356ddc3f08635e9563a98c5a35919cab86a16f6c4"
+ },
+ "storage_root": "<TEMP>\\state",
+ "tail": {
+  "bytes": 138,
+  "kind": "TRUNCATED_JSON",
+  "sha256": "12c1f5a743decfb185029112ab56930ee7bf87dd191386a5bc76eb47ef3825d1",
+  "starts_at_offset": 930
+ },
+ "verdict": "TORN_TAIL"
+}

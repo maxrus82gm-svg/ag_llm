@@ -1,0 +1,44 @@
+{
+ "label": "mut-M3-no-lock",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M3-no-lock\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut-M3-no-lock-ovc4pjrg\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 21.812,
+ "base": "<TEMP>\\claude-tailrec-mut-M3-no-lock-ovc4pjrg",
+ "tests_run": 34,
+ "passed": 31,
+ "failures": 2,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 20.91,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change",
+   "FAIL",
+   "k\\test_web_alarm_transport_event_recovery.py\", line 635, in test_lock_held_by_another_process_times_out_without_any_change\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_two_concurrent_confirmations_apply_exactly_once",
+   "FAIL",
+   "t_confirmations_apply_exactly_once\n    self.assertEqual(outcomes, [\"ALREADY_APPLIED\", \"APPLIED\"])\nAssertionError: Lists differ: ['APPLIED', 'REFUSED'] != ['ALREADY_APPLIED', 'APPLIED']\n\nFirst differing element 0:\n'APPLIED'\n'ALREADY_APPLIED'\n\n- ['APPLIED', 'REFUSED']\n+ ['ALREADY_APPLIED', 'APPLIED']\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

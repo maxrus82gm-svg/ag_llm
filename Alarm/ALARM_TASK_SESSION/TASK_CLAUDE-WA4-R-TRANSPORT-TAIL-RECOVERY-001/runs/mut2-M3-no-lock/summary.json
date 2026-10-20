@@ -1,0 +1,49 @@
+{
+ "label": "mut2-M3-no-lock",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M3-no-lock-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut2-M3-no-lock-9576w3be\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 22.535,
+ "base": "<TEMP>\\claude-tailrec-mut2-M3-no-lock-9576w3be",
+ "tests_run": 35,
+ "passed": 31,
+ "failures": 3,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 21.624,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change",
+   "FAIL",
+   "2\\test_web_alarm_transport_event_recovery.py\", line 656, in test_lock_held_by_another_process_times_out_without_any_change\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_two_concurrent_confirmations_apply_exactly_once",
+   "FAIL",
+   "t_confirmations_apply_exactly_once\n    self.assertEqual(outcomes, [\"ALREADY_APPLIED\", \"APPLIED\"])\nAssertionError: Lists differ: ['APPLIED', 'REFUSED'] != ['ALREADY_APPLIED', 'APPLIED']\n\nFirst differing element 0:\n'APPLIED'\n'ALREADY_APPLIED'\n\n- ['APPLIED', 'REFUSED']\n+ ['ALREADY_APPLIED', 'APPLIED']\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_writer_waits_for_the_repair_and_then_appends_after_the_prefix",
+   "FAIL",
+   "rm_transport_event_recovery.py\", line 683, in test_writer_waits_for_the_repair_and_then_appends_after_the_prefix\n    self.assertEqual(done[\"errors\"], 0, \"the writer read the log while the recovery was in progress\")\nAssertionError: 25 != 0 : the writer read the log while the recovery was in progress\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

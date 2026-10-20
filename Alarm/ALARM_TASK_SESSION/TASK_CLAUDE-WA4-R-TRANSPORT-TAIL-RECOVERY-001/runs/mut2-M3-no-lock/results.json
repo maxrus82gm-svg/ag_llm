@@ -1,0 +1,679 @@
+{
+  "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "targets": [
+    "test_web_alarm_transport_event_recovery"
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "platform": "win32",
+  "started_unix": 1792496782.4165921,
+  "elapsed_seconds": 21.624,
+  "tests_run": 35,
+  "failures": 3,
+  "errors": 0,
+  "skips": 1,
+  "passed": 31,
+  "successful": false,
+  "isolation_violations": [],
+  "source_sha256": {
+    "web_alarm/__init__.py": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+    "web_alarm/__main__.py": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+    "web_alarm/cli.py": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+    "web_alarm/closeout.py": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+    "web_alarm/context_pack.py": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+    "web_alarm/event_checkpoint_store.py": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042",
+    "web_alarm/file_state.py": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+    "web_alarm/folder_picker.py": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+    "web_alarm/manifest_store.py": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+    "web_alarm/microtask_gate.py": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+    "web_alarm/models.py": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+    "web_alarm/mutation_executor.py": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+    "web_alarm/observation.py": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+    "web_alarm/operation_contract.py": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+    "web_alarm/operation_store.py": "a36468717b8def5ca024cdaff751168fc86adbb6aad58f9679dbde2f4a626d48",
+    "web_alarm/operator_view.py": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+    "web_alarm/payload_store.py": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+    "web_alarm/projection.py": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5",
+    "web_alarm/reconciliation.py": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+    "web_alarm/reconciliation_decision.py": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+    "web_alarm/reconciliation_service.py": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+    "web_alarm/recovery_coordinator.py": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0",
+    "web_alarm/recovery_report_builder.py": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+    "web_alarm/recovery_report_service.py": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+    "web_alarm/recovery_report_store.py": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+    "web_alarm/remote_entry.py": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+    "web_alarm/resolution_store.py": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+    "web_alarm/resolver_service.py": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+    "web_alarm/rollback_service.py": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+    "web_alarm/rollback_store.py": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+    "web_alarm/server.py": "7e8b2aab5e2a04e87a5b7dc28cd9c33adf3e0c93bc5dd86f65be4faccae70013",
+    "web_alarm/state_machine.py": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182",
+    "web_alarm/storage_policy.py": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+    "web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "web_alarm/target_claim_service.py": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+    "web_alarm/target_claim_store.py": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+    "web_alarm/target_identity.py": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+    "web_alarm/task_store.py": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+    "web_alarm/transport_event_recovery.py": "77b8743f3d7533aa4ebb7ba8f863b2a2f63d4fbd65d3bb1d07ea3386364e4f6f",
+    "web_alarm/transport_event_store.py": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+    "web_alarm/ui.py": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412",
+    "web_alarm/workspace_registry.py": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+    "test_web_alarm_aud010205_repair.py": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+    "test_web_alarm_aud01t02b_repair.py": "a1d7e25383afcf79c106f7d69d50c0d149ed2e73ed65a60214085357fa8e5136",
+    "test_web_alarm_cli.py": "da16d5b886309d369c8607ab85ec7aab2c3a3bcfd89212429a941b431eeeca59",
+    "test_web_alarm_context_pack.py": "0775e6d15091e42f46b32a1349725fd90041aedb38a46e743199029e45766d52",
+    "test_web_alarm_crash_consistency.py": "255b942fb0027c03fb373c5d4f5003e9d0885bb71b142113fb877e4197b44237",
+    "test_web_alarm_event_checkpoint_store.py": "de26ecc5698d8e90d7b7a00cc4675d281df01ce39093d7af9db1910e1675cb1c",
+    "test_web_alarm_folder_picker.py": "ec46dbad11f5e18bce7fd3cb55523e45654224b69b1193499ee1be29b5b7a97e",
+    "test_web_alarm_lost_response.py": "1f48a0b175c89feedd29aa9dbdd356e8d1c47cb2a88502949a5a646bb0448cea",
+    "test_web_alarm_manifest_store.py": "d35fb7538581e681a08022138fcbf3da407d759f5104c935a3a6e89b0c50009b",
+    "test_web_alarm_models.py": "da0b930d37f8b2fcf39bc89e2458d8eeaede163f154f2906eac27551a3964ac1",
+    "test_web_alarm_mutation_executor.py": "a7e5aa5e1b4c9e029cca19f68f6ad2def8109d7656a260355fc3bd8f8bafa6be",
+    "test_web_alarm_new_invariants.py": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+    "test_web_alarm_observation.py": "e895b409d4d63ac2d4a768eaedac0ccbc7fe3c24126704e034d9bc9155e70c9d",
+    "test_web_alarm_operation_contract.py": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+    "test_web_alarm_operation_store.py": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba",
+    "test_web_alarm_operation_store_concurrency.py": "bab96f7d52a1f60085936c93c1cba7887a1b20dda05d8e92e6e8ba3e949a303b",
+    "test_web_alarm_operator_ui.py": "1ca15bb060a360b404cff4d5c45013340eb4ac805d4aeb39623eee29c695fc9a",
+    "test_web_alarm_payload_store.py": "9b232329cbe3fdf8b84091780967834537f447bc17c690b15a829a09f0303a0a",
+    "test_web_alarm_projection.py": "d338067a27db813dc0621ae4bb3264c7bc865c2c01d6f53653491e4c541cf7d9",
+    "test_web_alarm_projection_concurrency.py": "b3c257feb3a4a7da1c630e936f52583580d9188581e5f2301039138e3b10e09b",
+    "test_web_alarm_projection_repair2.py": "add847e7e4331ffc4e962948bd8bc94d9335ea15442827a04831c8715e0d23dc",
+    "test_web_alarm_reconciliation.py": "074b467b1b925aec12e12fe6e14dfa0f1223e48cf7f12675ae67034aa7e96605",
+    "test_web_alarm_reconciliation_decision.py": "4dd20a9a5bb58586dab2e6b47de09281ae62efdb37e50a5397032d4a89043b91",
+    "test_web_alarm_reconciliation_integration.py": "ced03d05078b77ebcbbd6f4b526806ee4a8e753bfcd40030df02ff7d6be8d334",
+    "test_web_alarm_recovery_coordinator.py": "c7408223f4ae462600a9c6384b6cc327068b1f8e54e5061b049c9c74770e8d7a",
+    "test_web_alarm_recovery_coordinator_adversarial.py": "0998303cc315f32926aaa215c659a4a0a48d58035d19ef138717c61339d3fb8e",
+    "test_web_alarm_recovery_coordinator_concurrency.py": "9ed892335426f5813d960d522429a917616e8b1a9591d3d5110e0c2cd180658b",
+    "test_web_alarm_recovery_coordinator_repair1.py": "90be1c61284e78f199131d333368a645820cf5f5a392df8a7a49ded7d5057493",
+    "test_web_alarm_recovery_coordinator_repair2.py": "42be3c91ee5f9af7e97a86bc7653c01f1963390bba78fe7597a5fa7c27c51c66",
+    "test_web_alarm_recovery_coordinator_repair3.py": "76244e276ffeb53737723a361c26b52479c39302b3d93ce68f22e074dc3b3016",
+    "test_web_alarm_recovery_coordinator_repair4.py": "016ce8bfd5c00ff5cfe56444f76fff033c12967603fa67d1ef1206fde3107211",
+    "test_web_alarm_recovery_coordinator_repair4a.py": "2cf70b19aac76f1752a88b012f081204446f18e39cb985fdaf06649651df8015",
+    "test_web_alarm_recovery_coordinator_repair4b.py": "d61b004360aeef1404d19f84450f62f992f6a74734b6d573d91295f5d05e85f3",
+    "test_web_alarm_recovery_coordinator_wa014.py": "f8381c97b87e30335e56a1314d4e6f2cf6f421899f84e2984cab8b886b530758",
+    "test_web_alarm_recovery_report_acceptance.py": "14d562590eb844b4f02d77546dc49cf9a35d9c8c7588061c370d058ae7a54ac5",
+    "test_web_alarm_recovery_report_builder.py": "35a0b5cc3ddc32f8ac0bc28d42d7ba15d9adb552a1d3b6102b0fd937556de73b",
+    "test_web_alarm_recovery_report_integration.py": "a1189a9b2a17cffb21cf3dc1bed617851188793277c1939628254218d656e840",
+    "test_web_alarm_recovery_report_store.py": "9e0ae8ec8b6506df921fbacaac56fe359f7edd8d9bd436aab022d7ba0ec195e4",
+    "test_web_alarm_recovery_scenarios.py": "f9a6ab823f1bf908a58581f49d73d66a5a8a50d205ebccf8a20fb57ec9bb1093",
+    "test_web_alarm_reliability_wa017.py": "edb7d2b0bc65568d3be3fc33f39b3c808f790c4906991e4b63c17c974489fabd",
+    "test_web_alarm_remote_entry.py": "e8b956d296588672f9a893aff0e7cb5e9fa0a0ae918d09f52720b8ab430a4be0",
+    "test_web_alarm_resolver.py": "0b9cd46389b397ff97d2a3d3686d1887baee920459e3d969769ebac6a7b06bbc",
+    "test_web_alarm_resolver_concurrency.py": "2b51c468df66c0a9441040814c1f59b9e17e3b73f4b3b1a00a13e07e9dac8d96",
+    "test_web_alarm_restart_recovery.py": "11807f4a50ec11d22f37d68105d73380fc2a2f3151915a6136554056c1ce9a3c",
+    "test_web_alarm_rollback.py": "17f9145fd8b7e578ce3680c63fff04eb404553c564b1a0c6482d1da7799b6aaa",
+    "test_web_alarm_rollback_concurrency.py": "c12bfee5c4b09ae62c9a934079a9325612f6e331587ad13dacb3f836f263e8c4",
+    "test_web_alarm_server.py": "7aa4fd2a77daacb50e990355d82a1046c338fd3a90df4b179cd26c144d89ea3f",
+    "test_web_alarm_state_machine.py": "483e913b6e3ae4b8059511987e0cd09f64d4a1e494e2bd939740e900fa592bfb",
+    "test_web_alarm_state_machine_cas.py": "e00c5f1bbce9c5900887b767bc52195737a783f3cac15baa8f84459e55ca7e77",
+    "test_web_alarm_target_claims.py": "a6fd3b43880f26a22ee2dbbfb2d076a9e8385c6a8ed006c1d27540537e844616",
+    "test_web_alarm_target_claims_concurrency.py": "48443dc39e85f27c77d92ce8ff39cbea5f1f62fa1403034cb64da57fb3052484",
+    "test_web_alarm_target_identity.py": "f7ad1b7977454412ca2f2fed2736bf7d34edfd66161baa88dad992d4c1ab163c",
+    "test_web_alarm_task_store.py": "df3dd3bfbfa9d97329a8d5b4af915b3a994fde7dd4c8918219f08582098eae3b",
+    "test_web_alarm_transport_authority.py": "3b5218ee6f623f3b9c889032c38f324d2671f7c0f0fcfc638f2ef9c6abd95c53",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "test_web_alarm_transport_event_store.py": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849",
+    "test_web_alarm_transport_ingestion.py": "765fa85afb8846855e3de15bbe1fbd4a1b3d24aec62778ad5f70810635cf07eb",
+    "test_web_alarm_transport_recovery.py": "de660a794815e9d58b0648ab84ecc4e90e398134d9e83d79a71793be078f20b1",
+    "test_web_alarm_ui.py": "fcfa67c3e352422a15197423fcae3a4598625b66d6d14b2e4c6af066420cc1b7",
+    "test_web_alarm_ui_launcher.py": "b67083d89b019e400958f42fe6e48ea41fbb13ced2c196b527f01c6b45519dc6",
+    "test_web_alarm_ui_ux.py": "2eb379d90a8f2f0b121a1e55c350d6273241ba784acd33ab001e920cdc81cf96",
+    "test_web_alarm_wa4r002_diagnostics.py": "1d7a23480b726b4835692b53b3e80b72ead980907e145a3ffdbb85ff74083254",
+    "test_web_alarm_wa4r006_local_gate.py": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+    "test_web_alarm_workspace_registry.py": "16ac6c5b053cd8123b26004cda26dd080140d0332acea15ac5ecb760521984ed",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+  },
+  "tests": [
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_apply_archives_original_and_tail_before_keeping_the_exact_prefix",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_apply_archives_original_and_tail_before_keeping_the_exact_prefix"
+        },
+        {
+          "receipt": {
+            "receipt_format": 1,
+            "attempt_id": "20261020T114622-8d71a7ad",
+            "plan_fingerprint": "b31f8d4f06f9e2e25ae1daadea2042134f214a9681d444745c1a3f893fb6a473",
+            "storage_root": "<TEMP>\\wa_tailrec_etd_k0qz\\state",
+            "relative_path": "transport/transport_events.jsonl",
+            "operator_reason": "synthetic torn tail after a simulated crash",
+            "started_at": "2026-10-20T11:46:22.452006+00:00",
+            "source_before": {
+              "bytes": 1024,
+              "sha256": "a7bc6c5afc322a514612f1a09d9cebcca0f58ea1f0b580cc7a59eda1f21c5b6f"
+            },
+            "prefix": {
+              "bytes": 984,
+              "rows": 3,
+              "sha256": "b8f1f9167eb25bbf057cc4413d869ef855f13c5a8871f7b5aa9e5a4ff28ab974",
+              "event_ids_sha256": "b380c88cb822d4eab05804ba019e778db6f2921abd104bbb9f7f6ea9ae7e3a7f"
+            },
+            "tail": {
+              "bytes": 40,
+              "sha256": "bf580174be7623cf30f03f5061c26d3647ed4e257f0737a4708fa281863e3e70",
+              "starts_at_offset": 984,
+              "kind": "TRUNCATED_JSON"
+            },
+            "risk": "the excluded tail is an append that never completed; whether its event was delivered is unknown and it is NOT restored; its exact bytes are kept in the archive",
+            "durability": "file data fsynced; directory entry not fsynced (unsupported on Windows, PWR-01)",
+            "archive": {
+              "original.bin": {
+                "bytes": 1024,
+                "sha256": "a7bc6c5afc322a514612f1a09d9cebcca0f58ea1f0b580cc7a59eda1f21c5b6f",
+                "path": "transport_recovery/b31f8d4f06f9e2e2/20261020T114622-8d71a7ad/original.bin"
+              },
+              "tail.bin": {
+                "bytes": 40,
+                "sha256": "bf580174be7623cf30f03f5061c26d3647ed4e257f0737a4708fa281863e3e70",
+                "path": "transport_recovery/b31f8d4f06f9e2e2/20261020T114622-8d71a7ad/tail.bin"
+              },
+              "plan.json": {
+                "bytes": 1038,
+                "sha256": "8b0990b3110cc1a84ffcbc93dc73e986a3f9e725da23ec11b38ac04f78f2424e",
+                "path": "transport_recovery/b31f8d4f06f9e2e2/20261020T114622-8d71a7ad/plan.json"
+              }
+            },
+            "result": {
+              "bytes": 984,
+              "sha256": "b8f1f9167eb25bbf057cc4413d869ef855f13c5a8871f7b5aa9e5a4ff28ab974",
+              "rows": 3,
+              "read_events": "OK"
+            },
+            "outcome": "APPLIED",
+            "finished_at": "2026-10-20T11:46:22.470101+00:00",
+            "transport_log_changed": true,
+            "receipt_recorded": true
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_cli_has_two_steps_no_force_and_prints_no_content",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_cli_has_two_steps_no_force_and_prints_no_content"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_damaged_or_forged_archive_is_never_taken_as_proof",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_damaged_or_forged_archive_is_never_taken_as_proof"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_new_appends_work_and_the_lost_event_is_not_resumed",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_new_appends_work_and_the_lost_event_is_not_resumed"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_repeat_is_already_applied_and_after_new_appends_is_stale",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_repeat_is_already_applied_and_after_new_appends_is_stale"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_stale_foreign_and_malformed_plans_are_refused_without_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ApplyTests.test_stale_foreign_and_malformed_plans_are_refused_without_any_write"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.BaselineFailClosedTests.test_store_refuses_reads_and_appends_on_a_torn_tail_and_changes_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.BaselineFailClosedTests.test_store_refuses_reads_and_appends_on_a_torn_tail_and_changes_nothing"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_free_readers_never_see_a_half_cut_log",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_free_readers_never_see_a_half_cut_log"
+        },
+        {
+          "reader_first": {
+            "first": "error:unterminated transport event log"
+          },
+          "apply_outcomes": {
+            "REPLACE_FAILED": 12,
+            "APPLIED": 20
+          },
+          "reader_observations": {
+            "error:unterminated transport event log": 6585,
+            "error:cannot read transport events": 7,
+            "ids:40:t0|t1|t2|t3|t4|t5|t6|t7|t8|t9|t10": 453
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<TEMP>\\claude-tailrec-mirror-M3-no-lock-2\\test_web_alarm_transport_event_recovery.py\", line 656, in test_lock_held_by_another_process_times_out_without_any_change\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_two_concurrent_confirmations_apply_exactly_once",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<TEMP>\\claude-tailrec-mirror-M3-no-lock-2\\test_web_alarm_transport_event_recovery.py\", line 698, in test_two_concurrent_confirmations_apply_exactly_once\n    self.assertEqual(outcomes, [\"ALREADY_APPLIED\", \"APPLIED\"])\nAssertionError: Lists differ: ['APPLIED', 'REFUSED'] != ['ALREADY_APPLIED', 'APPLIED']\n\nFirst differing element 0:\n'APPLIED'\n'ALREADY_APPLIED'\n\n- ['APPLIED', 'REFUSED']\n+ ['ALREADY_APPLIED', 'APPLIED']\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_two_concurrent_confirmations_apply_exactly_once"
+        },
+        {
+          "outcomes": [
+            "APPLIED",
+            "REFUSED"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_writer_waits_for_the_repair_and_then_appends_after_the_prefix",
+      "status": "FAIL",
+      "error": "Traceback (most recent call last):\n  File \"<TEMP>\\claude-tailrec-mirror-M3-no-lock-2\\test_web_alarm_transport_event_recovery.py\", line 683, in test_writer_waits_for_the_repair_and_then_appends_after_the_prefix\n    self.assertEqual(done[\"errors\"], 0, \"the writer read the log while the recovery was in progress\")\nAssertionError: 25 != 0 : the writer read the log while the recovery was in progress\n",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_writer_waits_for_the_repair_and_then_appends_after_the_prefix"
+        },
+        {
+          "blocked_while_repairing": true,
+          "writer": {
+            "ok": true,
+            "errors": 25
+          },
+          "apply": {
+            "outcome": "APPLIED",
+            "attempt": "20261020T114629-a9a95d45",
+            "step": null,
+            "proven": null
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe"
+        },
+        {
+          "locked": {
+            "verdict": "TORN_TAIL",
+            "leftover": 0
+          }
+        },
+        {
+          "archive_original_written": {
+            "verdict": "TORN_TAIL",
+            "leftover": 0
+          }
+        },
+        {
+          "archive_written": {
+            "verdict": "TORN_TAIL",
+            "leftover": 0
+          }
+        },
+        {
+          "archive_verified": {
+            "verdict": "TORN_TAIL",
+            "leftover": 0
+          }
+        },
+        {
+          "temp_written": {
+            "verdict": "TORN_TAIL",
+            "leftover": 1
+          }
+        },
+        {
+          "before_replace": {
+            "verdict": "TORN_TAIL",
+            "leftover": 1
+          }
+        },
+        {
+          "after_replace": {
+            "verdict": "HEALTHY",
+            "leftover": 0
+          }
+        },
+        {
+          "receipt_written": {
+            "verdict": "HEALTHY",
+            "leftover": 0
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.DifferentialTests.test_classifier_matches_the_store_reader_on_random_damage",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.DifferentialTests.test_classifier_matches_the_store_reader_on_random_damage"
+        },
+        {
+          "verdicts": {
+            "TORN_TAIL": 149,
+            "CORRUPT_MIDDLE": 166,
+            "AMBIGUOUS": 71,
+            "HEALTHY": 14
+          },
+          "disagreements": []
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_archive_write_failure_refuses_and_keeps_the_log",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_archive_write_failure_refuses_and_keeps_the_log"
+        },
+        {
+          "outcome": [
+            "REFUSED",
+            "ARCHIVE_FAILED"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_foreign_write_ignoring_the_lock_before_replace_is_detected",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_foreign_write_ignoring_the_lock_before_replace_is_detected"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_fsync_failure_refuses_before_any_change",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_fsync_failure_refuses_before_any_change"
+        },
+        {
+          "outcome": [
+            "REFUSED",
+            "ARCHIVE_FAILED"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_readonly_log_file_fails_replace_for_real",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_readonly_log_file_fails_replace_for_real"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_receipt_failure_is_reported_not_hidden",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_receipt_failure_is_reported_not_hidden"
+        },
+        {
+          "outcome": [
+            "APPLIED",
+            "None"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_replace_failure_reports_failed_and_keeps_the_log",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_replace_failure_reports_failed_and_keeps_the_log"
+        },
+        {
+          "outcome": [
+            "FAILED",
+            "REPLACE_FAILED"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_silently_corrupted_archive_write_is_caught_by_read_back",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_silently_corrupted_archive_write_is_caught_by_read_back"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.FaultTests.test_wrong_bytes_after_replace_restore_the_original",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.FaultTests.test_wrong_bytes_after_replace_restore_the_original"
+        },
+        {
+          "outcome": [
+            "FAILED",
+            "POST_CHECK_FAILED"
+          ]
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_corrupt_middle_is_refused_even_with_a_torn_tail"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_crlf_framed_history_keeps_its_exact_prefix",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_crlf_framed_history_keeps_its_exact_prefix"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_empty_and_healthy_logs_are_noop_and_apply_changes_nothing",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_empty_and_healthy_logs_are_noop_and_apply_changes_nothing"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_event_id_conflict_is_ambiguous_but_an_identical_duplicate_is_tolerated",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_event_id_conflict_is_ambiguous_but_an_identical_duplicate_is_tolerated"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_missing_log_and_missing_root_parts_are_never_created",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_missing_log_and_missing_root_parts_are_never_created"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_torn_first_record_leaves_an_empty_log",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_torn_first_record_leaves_an_empty_log"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.InspectTests.test_truncated_record_plan_is_byte_exact_and_shows_no_content",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.InspectTests.test_truncated_record_plan_is_byte_exact_and_shows_no_content"
+        },
+        {
+          "plan": {
+            "plan_format": 1,
+            "storage_root": "<TEMP>\\wa_tailrec_g_yp9ibo\\state",
+            "relative_path": "transport/transport_events.jsonl",
+            "source": {
+              "bytes": 1039,
+              "sha256": "d2cbafa81b46ea588b7219f1a33b26945d71e1b7f4026426b5e01c257eb3b551"
+            },
+            "prefix": {
+              "bytes": 984,
+              "rows": 3,
+              "sha256": "7b98eecd29c7a395e23197971e5ebf68e5570fd4845e5705456bccc4f147a25e",
+              "event_ids_sha256": "b380c88cb822d4eab05804ba019e778db6f2921abd104bbb9f7f6ea9ae7e3a7f"
+            },
+            "identical_duplicate_rows": 0,
+            "verdict": "TORN_TAIL",
+            "tail": {
+              "bytes": 55,
+              "sha256": "75166e9cc164c3c89251d664fcdd6e165869e404187cadab39ecb1f7ee2ec551",
+              "starts_at_offset": 984,
+              "kind": "TRUNCATED_JSON"
+            },
+            "risk": "the excluded tail is an append that never completed; whether its event was delivered is unknown and it is NOT restored; its exact bytes are kept in the archive",
+            "plan_fingerprint": "77ac1b5ec38cba2488615e941b4f5c9b5928e97c8458f43b04b0c70023467383"
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.TargetTests.test_bad_roots_are_refused",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.TargetTests.test_bad_roots_are_refused"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.TargetTests.test_hard_linked_log_is_ambiguous",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.TargetTests.test_hard_linked_log_is_ambiguous"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.TargetTests.test_junctions_anywhere_in_the_tree_are_refused_before_any_write",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.TargetTests.test_junctions_anywhere_in_the_tree_are_refused_before_any_write"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.TargetTests.test_path_swap_to_an_identical_copy_after_inspect_is_refused",
+      "status": "PASS",
+      "facts": [
+        {
+          "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+          "test": "test_web_alarm_transport_event_recovery.TargetTests.test_path_swap_to_an_identical_copy_after_inspect_is_refused"
+        }
+      ]
+    },
+    {
+      "test": "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+      "status": "SKIP",
+      "reason": "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+    }
+  ]
+}

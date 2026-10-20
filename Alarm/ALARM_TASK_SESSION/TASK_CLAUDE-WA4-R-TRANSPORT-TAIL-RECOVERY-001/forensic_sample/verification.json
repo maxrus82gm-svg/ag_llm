@@ -1,0 +1,27 @@
+{
+ "inspect_exit": 10,
+ "apply_exit": 0,
+ "repeat_exit": 0,
+ "verdict": "TORN_TAIL",
+ "tail_kind": "TRUNCATED_JSON",
+ "original_bytes_sha256": [
+  1068,
+  "4484fb44a2ef6630292a43e356ddc3f08635e9563a98c5a35919cab86a16f6c4"
+ ],
+ "archive_original_equals_original": true,
+ "archive_tail_equals_original_from_offset": true,
+ "tail_equals_lost_bytes": true,
+ "repaired_equals_original_prefix": true,
+ "repaired_event_ids": [
+  "sample-0",
+  "sample-1",
+  "sample-2"
+ ],
+ "repeat_outcome": "ALREADY_APPLIED",
+ "archive_files_readonly": [
+  "original.bin",
+  "plan.json",
+  "receipt.json",
+  "tail.bin"
+ ]
+}

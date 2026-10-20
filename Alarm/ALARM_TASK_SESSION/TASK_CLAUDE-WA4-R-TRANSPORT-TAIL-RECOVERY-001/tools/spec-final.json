@@ -1,0 +1,15 @@
+[
+ {"label": "red-final-baseline", "targets": ["test_gate_a_baseline", "test_web_alarm_transport_event_store", "test_web_alarm_transport_event_recovery"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes", "runner_root": "<TEMP>\\claude-tailrec-mirror-baseline-2"},
+ {"label": "mut2-M1-middle-salvage", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M1-middle-salvage-2"},
+ {"label": "mut2-M2-no-archive-verify", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M2-no-archive-verify-2"},
+ {"label": "mut2-M3-no-lock", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M3-no-lock-2"},
+ {"label": "mut2-M4-no-fingerprint-recheck", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M4-no-fingerprint-recheck-2"},
+ {"label": "mut2-M5-accept-nul-tail", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M5-accept-nul-tail-2"},
+ {"label": "mut2-M6-follow-junctions", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M6-follow-junctions-2"},
+ {"label": "mut2-M7-no-source-recheck", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M7-no-source-recheck-2"},
+ {"label": "mut2-M8-truncate-in-place", "targets": ["test_web_alarm_transport_event_recovery"], "runner_root": "<TEMP>\\claude-tailrec-mirror-M8-truncate-in-place-2"},
+ {"label": "focused-r1", "targets": ["test_web_alarm_transport_event_recovery", "test_gate_a_baseline", "test_web_alarm_transport_event_store", "test_web_alarm_transport_recovery", "test_web_alarm_transport_ingestion", "test_web_alarm_transport_authority", "test_web_alarm_aud01t02b_repair", "test_web_alarm_crash_consistency"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes"},
+ {"label": "focused-r2", "targets": ["test_web_alarm_transport_event_recovery", "test_gate_a_baseline", "test_web_alarm_transport_event_store", "test_web_alarm_transport_recovery", "test_web_alarm_transport_ingestion", "test_web_alarm_transport_authority", "test_web_alarm_aud01t02b_repair", "test_web_alarm_crash_consistency"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes"},
+ {"label": "focused-r3", "targets": ["test_web_alarm_transport_event_recovery", "test_gate_a_baseline", "test_web_alarm_transport_event_store", "test_web_alarm_transport_recovery", "test_web_alarm_transport_ingestion", "test_web_alarm_transport_authority", "test_web_alarm_aud01t02b_repair", "test_web_alarm_crash_consistency"], "extra_path": "M:\\GitHub\\ag_llm\\Alarm\\ALARM_TASK_SESSION\\TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001\\probes"},
+ {"label": "full", "targets": ["all"]}
+]

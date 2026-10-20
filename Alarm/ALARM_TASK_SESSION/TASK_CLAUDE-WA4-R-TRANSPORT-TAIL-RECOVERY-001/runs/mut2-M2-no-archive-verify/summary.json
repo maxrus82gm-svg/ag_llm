@@ -1,0 +1,39 @@
+{
+ "label": "mut2-M2-no-archive-verify",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M2-no-archive-verify-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut2-M2-no-archive-verify-ohvq1uxw\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 21.683,
+ "base": "<TEMP>\\claude-tailrec-mut2-M2-no-archive-verify-ohvq1uxw",
+ "tests_run": 35,
+ "passed": 33,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 20.766,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.FaultTests.test_silently_corrupted_archive_write_is_caught_by_read_back",
+   "FAIL",
+   "y-2\\test_web_alarm_transport_event_recovery.py\", line 595, in test_silently_corrupted_archive_write_is_caught_by_read_back\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

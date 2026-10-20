@@ -1,0 +1,54 @@
+{
+ "archive": {
+  "original.bin": {
+   "bytes": 1068,
+   "path": "transport_recovery/d0f456349431d4ee/20261020T114606-dde745e2/original.bin",
+   "sha256": "4484fb44a2ef6630292a43e356ddc3f08635e9563a98c5a35919cab86a16f6c4"
+  },
+  "plan.json": {
+   "bytes": 1050,
+   "path": "transport_recovery/d0f456349431d4ee/20261020T114606-dde745e2/plan.json",
+   "sha256": "0f77e8d9d923c552a4e00eae61a7f23229ec91d5e69c20a5ac14aed62323c561"
+  },
+  "tail.bin": {
+   "bytes": 138,
+   "path": "transport_recovery/d0f456349431d4ee/20261020T114606-dde745e2/tail.bin",
+   "sha256": "12c1f5a743decfb185029112ab56930ee7bf87dd191386a5bc76eb47ef3825d1"
+  }
+ },
+ "attempt_id": "20261020T114606-dde745e2",
+ "durability": "file data fsynced; directory entry not fsynced (unsupported on Windows, PWR-01)",
+ "finished_at": "2026-10-20T11:46:06.958699+00:00",
+ "operator_reason": "synthetic sample: process died inside an append",
+ "outcome": "APPLIED",
+ "plan_fingerprint": "d0f456349431d4ee7cbdbec19e1125ca52cb69bb584722f18a243e60f663310e",
+ "prefix": {
+  "bytes": 930,
+  "event_ids_sha256": "3fad5055954fc93ab759aee1689576668a60edce303b98f8d82a035c30cb9e98",
+  "rows": 3,
+  "sha256": "b1ad8495674067d4da114bd140e4f2c465bab7663a0bf606b2b2b8d1226a33dc"
+ },
+ "receipt_format": 1,
+ "receipt_recorded": true,
+ "relative_path": "transport/transport_events.jsonl",
+ "result": {
+  "bytes": 930,
+  "read_events": "OK",
+  "rows": 3,
+  "sha256": "b1ad8495674067d4da114bd140e4f2c465bab7663a0bf606b2b2b8d1226a33dc"
+ },
+ "risk": "the excluded tail is an append that never completed; whether its event was delivered is unknown and it is NOT restored; its exact bytes are kept in the archive",
+ "source_before": {
+  "bytes": 1068,
+  "sha256": "4484fb44a2ef6630292a43e356ddc3f08635e9563a98c5a35919cab86a16f6c4"
+ },
+ "started_at": "2026-10-20T11:46:06.931136+00:00",
+ "storage_root": "<TEMP>\\state",
+ "tail": {
+  "bytes": 138,
+  "kind": "TRUNCATED_JSON",
+  "sha256": "12c1f5a743decfb185029112ab56930ee7bf87dd191386a5bc76eb47ef3825d1",
+  "starts_at_offset": 930
+ },
+ "transport_log_changed": true
+}

@@ -1,0 +1,41 @@
+{
+ "label": "red-final-baseline",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-baseline-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-red-final-baseline-lmea9fic\\out",
+  "test_gate_a_baseline",
+  "test_web_alarm_transport_event_store",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 1.719,
+ "base": "<TEMP>\\claude-tailrec-red-final-baseline-lmea9fic",
+ "tests_run": 14,
+ "passed": 12,
+ "failures": 1,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 0.796,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_gate_a_baseline.GateA.test_trigger_operator_recovery_restores_the_valid_prefix_and_keeps_the_original",
+   "FAIL",
+   "st_trigger_operator_recovery_restores_the_valid_prefix_and_keeps_the_original\n    self.assertIsNotNone(spec, \"no operator recovery operation exists for a torn transport tail (AUD-01T-R)\")\nAssertionError: unexpectedly None : no operator recovery operation exists for a torn transport tail (AUD-01T-R)\n"
+  ],
+  [
+   "unittest.loader._FailedTest.test_web_alarm_transport_event_recovery",
+   "ERROR",
+   "_recovery.py\", line 24, in <module>\n    from web_alarm import transport_event_recovery as rec\nImportError: cannot import name 'transport_event_recovery' from 'web_alarm' (<TEMP>\\claude-tailrec-mirror-baseline-2\\web_alarm\\__init__.py). Did you mean: 'transport_event_store'?\n\n"
+  ]
+ ]
+}

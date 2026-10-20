@@ -1,0 +1,35 @@
+{
+ "label": "green2",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-green2-ld4z_kjq\\out",
+  "test_web_alarm_transport_event_recovery",
+  "test_gate_a_baseline"
+ ],
+ "exit": 0,
+ "wall_seconds": 20.585,
+ "base": "<TEMP>\\claude-tailrec-green2-ld4z_kjq",
+ "tests_run": 37,
+ "passed": 36,
+ "failures": 0,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 19.891,
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

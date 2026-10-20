@@ -1,0 +1,145 @@
+[
+ {
+  "label": "red-final-baseline",
+  "base": "<TEMP>\\claude-tailrec-red-final-baseline-lmea9fic",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 1,
+  "skips": 0,
+  "isolation_violations": 0,
+  "wall": 1.8
+ },
+ {
+  "label": "mut2-M1-middle-salvage",
+  "base": "<TEMP>\\claude-tailrec-mut2-M1-middle-salvage-53tydv3q",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 1,
+  "errors": 6,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.8
+ },
+ {
+  "label": "mut2-M2-no-archive-verify",
+  "base": "<TEMP>\\claude-tailrec-mut2-M2-no-archive-verify-ohvq1uxw",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 21.8
+ },
+ {
+  "label": "mut2-M3-no-lock",
+  "base": "<TEMP>\\claude-tailrec-mut2-M3-no-lock-9576w3be",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 3,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.6
+ },
+ {
+  "label": "mut2-M4-no-fingerprint-recheck",
+  "base": "<TEMP>\\claude-tailrec-mut2-M4-no-fingerprint-recheck-tiis6n_k",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 2,
+  "errors": 1,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 21.2
+ },
+ {
+  "label": "mut2-M5-accept-nul-tail",
+  "base": "<TEMP>\\claude-tailrec-mut2-M5-accept-nul-tail-7j53hgk_",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.9
+ },
+ {
+  "label": "mut2-M6-follow-junctions",
+  "base": "<TEMP>\\claude-tailrec-mut2-M6-follow-junctions-n0jvwnb9",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.5
+ },
+ {
+  "label": "mut2-M7-no-source-recheck",
+  "base": "<TEMP>\\claude-tailrec-mut2-M7-no-source-recheck-g9o5vfni",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.4
+ },
+ {
+  "label": "mut2-M8-truncate-in-place",
+  "base": "<TEMP>\\claude-tailrec-mut2-M8-truncate-in-place-9ub08izd",
+  "exit": 1,
+  "tests_run": 35,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.2
+ },
+ {
+  "label": "focused-r1",
+  "base": "<TEMP>\\claude-tailrec-focused-r1-ts8kte7_",
+  "exit": 0,
+  "tests_run": 119,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 122.8
+ },
+ {
+  "label": "focused-r2",
+  "base": "<TEMP>\\claude-tailrec-focused-r2-7tc0wt1l",
+  "exit": 0,
+  "tests_run": 119,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 122.9
+ },
+ {
+  "label": "focused-r3",
+  "base": "<TEMP>\\claude-tailrec-focused-r3-ygyrn6s8",
+  "exit": 1,
+  "tests_run": 119,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 1,
+  "wall": 123.2
+ },
+ {
+  "label": "full",
+  "base": "<TEMP>\\claude-tailrec-full-s681ybdk",
+  "exit": 0,
+  "tests_run": 909,
+  "failures": 0,
+  "errors": 0,
+  "skips": 2,
+  "isolation_violations": 0,
+  "wall": 1018.3
+ }
+]

@@ -1,0 +1,135 @@
+{
+ "label": "green1",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-green1-skc4h8rv\\out",
+  "test_web_alarm_transport_event_recovery",
+  "test_gate_a_baseline"
+ ],
+ "exit": 1,
+ "wall_seconds": 19.979,
+ "base": "<TEMP>\\claude-tailrec-green1-skc4h8rv",
+ "tests_run": 37,
+ "passed": 16,
+ "failures": 1,
+ "errors": 19,
+ "skips": 1,
+ "elapsed_seconds": 19.263,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change",
+   "ERROR",
+   "or p in sorted(root.rglob(\"*\")) if p.is_file()}\n                                                ^^^^^^^^^^^^^^\n  File \"<USER>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\pathlib.py\", line 1020, in read_bytes\n    return f.read()\n           ^^^^^^^^\nPermissionError: [Errno 13] Permission denied\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ConcurrencyTests.test_lock_held_by_another_process_times_out_without_any_change",
+   "ERROR",
+   "_transport_event_recovery.py\", line 126, in _force_remove\n    function(path)\nPermissionError: [WinError 32] Процесс не может получить доступ к файлу, так как этот файл занят другим процессом: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_ozqjixfj\\\\state\\\\locks\\\\transport\\\\transport_events.lock'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_hnuomuc1'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_mfhdm4c2'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_mfhdm4c2'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_mfhdm4c2'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_mfhdm4c2'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_every_tail_kind_is_classified_and_recovered_byte_exactly",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_mfhdm4c2'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_missing_log_and_missing_root_parts_are_never_created",
+   "FAIL",
+   "_missing_log_and_missing_root_parts_are_never_created\n    self.assertEqual(tree(self.root), before[0])\nAssertionError: {'locks/transport/transport_events.lock': [62 chars]855'} != {}\n- {'locks/transport/transport_events.lock': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}\n+ {}\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_w_it_8d_'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_w_it_8d_'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_w_it_8d_'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.InspectTests.test_tails_not_left_by_one_interrupted_write_are_ambiguous",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 125, in _force_remove\n    os.chmod(path, stat.S_IWRITE | stat.S_IREAD)\nFileNotFoundError: [WinError 2] Не удается найти указанный файл: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_tailrec_w_it_8d_'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

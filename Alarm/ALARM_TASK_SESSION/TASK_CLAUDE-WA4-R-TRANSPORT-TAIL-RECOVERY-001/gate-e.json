@@ -1,0 +1,49 @@
+{
+ "task": "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+ "baseline_map": {
+  "source": "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001/source-final.json",
+  "sha256": "7e841edc82ec58bf47319307f5c2cee7a5e97a6ca4d7b1a6c58e4e78952db090",
+  "files": 105,
+  "verdict": "PASS"
+ },
+ "final_map": {
+  "files": 107,
+  "new": [
+   "test_web_alarm_transport_event_recovery.py",
+   "web_alarm/transport_event_recovery.py"
+  ],
+  "drift": [],
+  "missing": []
+ },
+ "repository_files_changed": {
+  "test_web_alarm_transport_event_recovery.py": {
+   "bytes": 44794,
+   "sha256": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+   "eol": "LF",
+   "kind": "new",
+   "added_lines": 866
+  },
+  "web_alarm/transport_event_recovery.py": {
+   "bytes": 25599,
+   "sha256": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+   "eol": "LF",
+   "kind": "new",
+   "added_lines": 546
+  }
+ },
+ "in_scope_unchanged": {
+  "web_alarm/store_lock.py": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+  "web_alarm/transport_event_store.py": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+  "test_web_alarm_transport_event_store.py": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849"
+ },
+ "card": {
+  "path": "Документация/000_Задачи Claude.md",
+  "eol": "CRLF (converted outside this TASK before start)",
+  "precheck": "MATCH",
+  "sha256_at_start": "5ff04275f0b0e77178efd69ab945d65a80eb2ed08ede03d90cc0648a97f2a1c5",
+  "sha256_after_rotation": "4ebf132a9bdb9eb1b3632b9a1ad8cfeac76fd6f6457a9fa69a711f12357d613f",
+  "change": "BLOCK 1-3 rotation only"
+ },
+ "eol_note": "8 pre-existing test files contain CRLF (unchanged, same as the Gate A map); both new files are LF",
+ "rollback": "delete web_alarm/transport_event_recovery.py and test_web_alarm_transport_event_recovery.py; nothing else in the repository changed; no data format changed"
+}

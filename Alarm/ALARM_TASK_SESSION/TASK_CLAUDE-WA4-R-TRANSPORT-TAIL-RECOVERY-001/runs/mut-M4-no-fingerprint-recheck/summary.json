@@ -1,0 +1,49 @@
+{
+ "label": "mut-M4-no-fingerprint-recheck",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-M4-no-fingerprint-recheck\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-mut-M4-no-fingerprint-recheck-0yb3rmkg\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 20.986,
+ "base": "<TEMP>\\claude-tailrec-mut-M4-no-fingerprint-recheck-0yb3rmkg",
+ "tests_run": 34,
+ "passed": 30,
+ "failures": 2,
+ "errors": 1,
+ "skips": 1,
+ "elapsed_seconds": 20.063,
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ApplyTests.test_cli_has_two_steps_no_force_and_prints_no_content",
+   "ERROR",
+   "-tailrec-mirror-M4-no-fingerprint-recheck\\test_web_alarm_transport_event_recovery.py\", line 468, in test_cli_has_two_steps_no_force_and_prints_no_content\n    self.assertEqual((code, json.loads(out)[\"code\"]), (20, \"PLAN_MISMATCH\"))\n                            ~~~~~~~~~~~~~~~^^^^^^^^\nKeyError: 'code'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ApplyTests.test_stale_foreign_and_malformed_plans_are_refused_without_any_write (code='PLAN_MISMATCH', args='synth')",
+   "FAIL",
+   "_web_alarm_transport_event_recovery.py\", line 421, in test_stale_foreign_and_malformed_plans_are_refused_without_any_write\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ApplyTests.test_stale_foreign_and_malformed_plans_are_refused_without_any_write",
+   "FAIL",
+   "_web_alarm_transport_event_recovery.py\", line 424, in test_stale_foreign_and_malformed_plans_are_refused_without_any_write\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

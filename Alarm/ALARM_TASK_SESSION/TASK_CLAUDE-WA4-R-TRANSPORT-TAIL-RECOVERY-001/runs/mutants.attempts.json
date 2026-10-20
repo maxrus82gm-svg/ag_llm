@@ -1,0 +1,90 @@
+[
+ {
+  "label": "mut-M1-middle-salvage",
+  "base": "<TEMP>\\claude-tailrec-mut-M1-middle-salvage-gt47ua0h",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 1,
+  "errors": 6,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.4
+ },
+ {
+  "label": "mut-M2-no-archive-verify",
+  "base": "<TEMP>\\claude-tailrec-mut-M2-no-archive-verify-oav3eu7m",
+  "exit": 0,
+  "tests_run": 34,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 21.5
+ },
+ {
+  "label": "mut-M3-no-lock",
+  "base": "<TEMP>\\claude-tailrec-mut-M3-no-lock-ovc4pjrg",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 21.9
+ },
+ {
+  "label": "mut-M4-no-fingerprint-recheck",
+  "base": "<TEMP>\\claude-tailrec-mut-M4-no-fingerprint-recheck-0yb3rmkg",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 2,
+  "errors": 1,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 21.1
+ },
+ {
+  "label": "mut-M5-accept-nul-tail",
+  "base": "<TEMP>\\claude-tailrec-mut-M5-accept-nul-tail-xknj3v2s",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.1
+ },
+ {
+  "label": "mut-M6-follow-junctions",
+  "base": "<TEMP>\\claude-tailrec-mut-M6-follow-junctions-kyp_v1d0",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.5
+ },
+ {
+  "label": "mut-M7-no-source-recheck",
+  "base": "<TEMP>\\claude-tailrec-mut-M7-no-source-recheck-x7nsduoi",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.1
+ },
+ {
+  "label": "mut-M8-truncate-in-place",
+  "base": "<TEMP>\\claude-tailrec-mut-M8-truncate-in-place-lybvqmqo",
+  "exit": 1,
+  "tests_run": 34,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "wall": 22.2
+ }
+]

@@ -1,0 +1,39 @@
+{
+ "label": "flake-baseline-10",
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-tailrec-mirror-baseline-2\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001",
+  "--output",
+  "<TEMP>\\claude-tailrec-flake-baseline-10-95uw28gk\\out",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event"
+ ],
+ "exit": 1,
+ "wall_seconds": 1.719,
+ "base": "<TEMP>\\claude-tailrec-flake-baseline-10-95uw28gk",
+ "tests_run": 1,
+ "passed": -1,
+ "failures": 1,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 0.999,
+ "successful": false,
+ "isolation_violations": 1,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "FAIL",
+   "\n  File \"<TEMP>\\wa4a_guard_4czpvp7s\\sitecustomize.py\", line 13, in _violation\r\n    raise PermissionError(\"WA4-A isolation: \"+reason)\r\nPermissionError: WA4-A isolation: write outside disposable temp: \\\\?\\<TEMP>\\wa_aud01t_rlepdbsk\\state\\tasks\\active\r\n\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "ERROR",
+   " 629, in _rmtree_unsafe\n    onexc(os.rmdir, fullname, err)\n  File \"<USER>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\shutil.py\", line 627, in _rmtree_unsafe\n    os.rmdir(fullname)\nOSError: [WinError 145] Папка не пуста: 'C:\\\\Users\\\\REX\\\\AppData\\\\Local\\\\Temp\\\\wa_aud01t_rlepdbsk\\\\state\\\\tasks'\n"
+  ]
+ ]
+}
