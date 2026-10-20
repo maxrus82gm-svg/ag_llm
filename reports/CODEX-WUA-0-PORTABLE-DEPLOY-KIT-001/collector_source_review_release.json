@@ -1,0 +1,48 @@
+{
+  "review": "source-level locality and side effects reviewed before real inventory",
+  "files": [
+    {
+      "path": "toolkit/Collect-Host.ps1",
+      "sha256": "2e50e910f24b48a274a63ca41f895fbbde4a7821287f1f3031a916e376bd5df8"
+    },
+    {
+      "path": "toolkit/Discovery.ps1",
+      "sha256": "1ef9b405114eaec3878a93531ce151f281498516fed1c124e1d172810a7c35a9"
+    },
+    {
+      "path": "toolkit/WuaMcp.psm1",
+      "sha256": "3b5182c406ce540ac57967d352c4f3b9316056c5e2d37447f246be6683054b92"
+    }
+  ],
+  "approved_reads": [
+    "local CIM Win32_OperatingSystem Version/BuildNumber/OperatingSystemSKU",
+    "local Win32_Service Name/State for BFE/MpsSvc/Schedule",
+    "local cached MSFT_NetFirewallProfile counts",
+    "local registry firewall-policy key presence, no values",
+    "local SecurityCenter2 productState count only",
+    "current token admin-membership boolean, no SID export",
+    "effective execution policy read only",
+    "local technical-name collision queries, no unrelated user records",
+    "local TCP/UDP port metadata, no bind/connect",
+    "local address-family/route counts, no address export",
+    "bounded local PATH and known-process executable-path candidates, no command lines",
+    "explicit local binary/text hashes/version metadata, no execution",
+    "local MSFT_NetAdapter InterfaceOperationalStatus counts only"
+  ],
+  "forbidden_not_present": [
+    "DNS resolution",
+    "external connect/probe",
+    "CimSession/ComputerName",
+    "package update/download",
+    "credential/browser/key inspection",
+    "policy/account/ACL/service/scheduler mutations",
+    "native subject invocation"
+  ],
+  "limits": [
+    "trusted installed Windows providers and trusted filesystem assumed",
+    "path checks are not a kernel race-proof boundary against hostile local admin",
+    "coverage describes missing evidence, not all guarantees satisfied"
+  ],
+  "revision": "release-frozen",
+  "repeat_reason": "Final 64-bit collector guard and independent static verifier added after previous run; validate frozen release source. No expansion of read categories."
+}

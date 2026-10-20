@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "requirements": "requirements_manifest.json",
+  "expected_fields": 55,
+  "statuses": [
+    "DETECTED",
+    "VERIFIED",
+    "MISSING",
+    "UNSUPPORTED",
+    "CONFLICT",
+    "REQUIRES_USER_INPUT"
+  ],
+  "unavailable_detail": [
+    "REQUIRES_ELEVATION",
+    "BLOCKED",
+    "NOT_IMPLEMENTED",
+    "NOT_SUPPLIED"
+  ],
+  "privacy": "No host/user/SID/address/credential/raw-command output. Public data uses aggregates and symbolic refs.",
+  "compatibility": "PowerShell 5.1 and 7 parser/runtime tests; metadata profiles are not OS security certification.",
+  "apply": "No executable security backend in v1. Apply cannot be enabled by input attestations."
+}

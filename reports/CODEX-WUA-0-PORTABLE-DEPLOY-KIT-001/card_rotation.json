@@ -1,0 +1,28 @@
+{
+  "status": "CARD ROTATION SAVED / B1 WAITING",
+  "before_sha256": "d8caf71b2b5c383caec5887fecfa29ec586d18345feb727705243732cef3d9f8",
+  "stage_sha256": "652caab86855c07249a34ae4b3444c9acd1365450f2a7bf6d9d4764fea26ae32",
+  "final_sha256": "bdb2c19f4638cfb9ef64ce9c53a8685968a782392a960d939df4a733f2513cc9",
+  "prefix_sha256": "1d8451e505f2cd6af7f8e3f87ba614dcbe7cc896f3a96011c5da2b4b9bca0fde",
+  "prefix_bytes": 6852,
+  "assignment_sha256": "12189b8e80ecdda2a89483d48b523a2d1149fd711cac90f020bb474004bd15cb",
+  "assignment_bytes": 35214,
+  "old_history_sha256": "1bedf6994675b5a568b01e348c937222bb5c8852b25b4b98ff78450112489916",
+  "old_history_bytes": 463833,
+  "full_assignment_preserved": true,
+  "old_history_preserved": true,
+  "B2_B3_readback_before_B1_clear": true,
+  "B1_waiting": true,
+  "report_before_rotation_sha256": "c1a6ee7d7a1fb79aefa9456972dc4621d0bb0b14e1d9010b37624fb633d9a394",
+  "premanifest_sha256": "c2ecd1a4b1f0850ce81afcac0b6d9bf105d35fc2d1c533b653b73123489a7e71",
+  "no_raw_card_backup_in_public_bundle": true,
+  "retry_events": [
+    {
+      "phase": "clear_B1_after_readback",
+      "attempt": 1,
+      "error_class": "PermissionError",
+      "winerror": 5
+    }
+  ],
+  "rollback": "Only with explicit authorization and matching final card SHA: use unchanged prefix + assignment.md + old-history suffix, validate reconstructed before SHA; stop on any concurrent change."
+}

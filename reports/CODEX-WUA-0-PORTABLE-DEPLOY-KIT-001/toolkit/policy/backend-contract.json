@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "capability": "NOT_IMPLEMENTED",
+  "model": "T1 candidate, not a T2 sandbox",
+  "scope": "C exact loopback TCP endpoint; B exact authenticated remote TCP endpoint; no global user/UI policy",
+  "sid_source": "new local accounts created on this machine; no imported SID or reuse by name",
+  "intended_layers": ["ALE_AUTH_CONNECT_V4", "ALE_AUTH_CONNECT_V6"],
+  "condition_model": "nonoverlapping deny complement; supported comparators and arbitration require target-Windows proof",
+  "hard_stop": ["SID matching unverified", "loopback/bind identity unverified", "BFE/boot/old-flow semantics unverified", "DNS or service mediation unresolved", "no independent observer", "no authenticated host binding"],
+  "real_backend_build": "Not supplied. A future signed/reviewed user-mode Fwpm/identity helper may use Windows SDK and .NET; static terminating WFP filters need no custom kernel callout merely to exist, but all required semantics remain unproved.",
+  "source_stub": "../backends/UnavailableWfpBackend.cs",
+  "no_auto_compile_or_load": true
+}

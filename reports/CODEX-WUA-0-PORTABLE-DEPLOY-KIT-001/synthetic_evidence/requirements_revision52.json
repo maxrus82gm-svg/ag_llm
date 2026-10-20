@@ -1,0 +1,1684 @@
+{
+  "schema_version": 1,
+  "contract_id": "wua.discovery.v1",
+  "coverage_definition": "100% required entries represented with explicit status; not 100% security verification",
+  "categories": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K"
+  ],
+  "fields": [
+    {
+      "id": "os.version",
+      "category": "A",
+      "purpose": "local CIM version",
+      "source": "local CIM version",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "os",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "os.build",
+      "category": "A",
+      "purpose": "local CIM build",
+      "source": "local CIM build",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "integer",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "os",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "os.edition",
+      "category": "A",
+      "purpose": "local CIM SKU",
+      "source": "local CIM SKU",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "integer",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "os",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "os.architecture",
+      "category": "A",
+      "purpose": "process/OS architecture metadata",
+      "source": "process/OS architecture metadata",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "arch",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "powershell.version",
+      "category": "A",
+      "purpose": "local runtime",
+      "source": "local runtime",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "ps",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "api.wfp_file",
+      "category": "A",
+      "purpose": "system library presence, no load",
+      "source": "system library presence, no load",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "boolean",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "api",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "bfe.state",
+      "category": "B",
+      "purpose": "local ServiceController",
+      "source": "local ServiceController",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "services",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "firewall.state",
+      "category": "B",
+      "purpose": "local ServiceController",
+      "source": "local ServiceController",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "services",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "firewall.profiles",
+      "category": "B",
+      "purpose": "local cached MSFT_NetFirewallProfile",
+      "source": "local cached MSFT_NetFirewallProfile",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "firewall",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "policy.management",
+      "category": "B",
+      "purpose": "local policy-key presence only",
+      "source": "local policy-key presence only",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "policy",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "security.products",
+      "category": "B",
+      "purpose": "local SecurityCenter2 counts",
+      "source": "local SecurityCenter2 counts",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "security",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "security.admin_token",
+      "category": "B",
+      "purpose": "current token administrator membership boolean, no SID export",
+      "source": "current token administrator membership boolean, no SID export",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "boolean",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "permissions",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "security.effective_policy",
+      "category": "B",
+      "purpose": "effective WFP graph requires reviewed backend",
+      "source": "effective WFP graph requires reviewed backend",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "accounts.collision_free",
+      "category": "C",
+      "purpose": "only generated technical candidate names",
+      "source": "only generated technical candidate names",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "boolean",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "accounts",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "accounts.new_sid_binding",
+      "category": "C",
+      "purpose": "resolve NEW local SIDs at provisioning",
+      "source": "resolve NEW local SIDs at provisioning",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "future",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "accounts.logon_rights",
+      "category": "C",
+      "purpose": "future least-privilege logon contract",
+      "source": "future least-privilege logon contract",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "endpoint.local",
+      "category": "D",
+      "purpose": "operator port or deterministic unused candidate",
+      "source": "operator port or deterministic unused candidate",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "ports",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "endpoint.snapshot_free",
+      "category": "D",
+      "purpose": "local TCP/UDP metadata, no bind",
+      "source": "local TCP/UDP metadata, no bind",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "boolean",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "ports",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "endpoint.receiver_guard",
+      "category": "D",
+      "purpose": "bind/recipient enforcement must be proved",
+      "source": "bind/recipient enforcement must be proved",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "network.families",
+      "category": "E",
+      "purpose": "local address family counts",
+      "source": "local address family counts",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "network",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "network.routes",
+      "category": "E",
+      "purpose": "local route counts, no addresses",
+      "source": "local route counts, no addresses",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "network",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "network.proxy_context",
+      "category": "E",
+      "purpose": "presence flags only, no values",
+      "source": "presence flags only, no values",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proxy",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "network.dns_delegation",
+      "category": "E",
+      "purpose": "DNS/service causal egress proof",
+      "source": "DNS/service causal egress proof",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "broker.binary",
+      "category": "F",
+      "purpose": "explicit local file metadata/hash only",
+      "source": "explicit local file metadata/hash only",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "broker",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "broker.version",
+      "category": "F",
+      "purpose": "file version metadata, not execution",
+      "source": "file version metadata, not execution",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "broker",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "broker.schema",
+      "category": "F",
+      "purpose": "version-pinned offline schema review",
+      "source": "version-pinned offline schema review",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "broker.route_graph",
+      "category": "F",
+      "purpose": "loaded config/overrides/DNS closure proof",
+      "source": "loaded config/overrides/DNS closure proof",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "broker.remote_endpoint",
+      "category": "F",
+      "purpose": "operator supplies literal endpoint privately",
+      "source": "operator supplies literal endpoint privately",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "broker.remote_identity",
+      "category": "F",
+      "purpose": "server authentication reference, not secret",
+      "source": "server authentication reference, not secret",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.binary",
+      "category": "G",
+      "purpose": "explicit local file metadata/hash only",
+      "source": "explicit local file metadata/hash only",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "client",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.version",
+      "category": "G",
+      "purpose": "file version metadata, not execution",
+      "source": "file version metadata, not execution",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "client",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.source_archive",
+      "category": "G",
+      "purpose": "exact provided archive size/hash",
+      "source": "exact provided archive size/hash",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "source",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.stdio_exe",
+      "category": "G",
+      "purpose": "explicit interpreter metadata",
+      "source": "explicit interpreter metadata",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "stdio_exe",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.stdio_script",
+      "category": "G",
+      "purpose": "explicit script hash, no execution",
+      "source": "explicit script hash, no execution",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "stdio_script",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.resources",
+      "category": "G",
+      "purpose": "local read-only resource root reference",
+      "source": "local read-only resource root reference",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "resources",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "mcp.launcher_hold",
+      "category": "G",
+      "purpose": "existing hold must remain, no launcher execution",
+      "source": "existing hold must remain, no launcher execution",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "startup.scheduler",
+      "category": "H",
+      "purpose": "local Schedule status",
+      "source": "local Schedule status",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "services",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "startup.execution_policy",
+      "category": "H",
+      "purpose": "effective script policy read-only; never bypass automatically",
+      "source": "effective script policy read-only; never bypass automatically",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "permissions",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "startup.mode",
+      "category": "H",
+      "purpose": "batch/task or reviewed service wrapper",
+      "source": "batch/task or reviewed service wrapper",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "string",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "startup.dependencies",
+      "category": "H",
+      "purpose": "deny before principals/workers",
+      "source": "deny before principals/workers",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "startup.child_identity",
+      "category": "H",
+      "purpose": "primary token/children/delegation proof",
+      "source": "primary token/children/delegation proof",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "files.deployment_root",
+      "category": "I",
+      "purpose": "local root, no reparse/network path",
+      "source": "local root, no reparse/network path",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "root",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "files.acl_contract",
+      "category": "I",
+      "purpose": "role-based exact ACL, no workspace-wide grant",
+      "source": "role-based exact ACL, no workspace-wide grant",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "ownership.baseline",
+      "category": "J",
+      "purpose": "owner GUID and new-resource/no-reuse contract",
+      "source": "owner GUID and new-resource/no-reuse contract",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "operator",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "ledger.backend",
+      "category": "J",
+      "purpose": "trusted owner ledger after provisioning",
+      "source": "trusted owner ledger after provisioning",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "future",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": false
+    },
+    {
+      "id": "rollback.quiescence",
+      "category": "J",
+      "purpose": "independent absence of SID work/flows/delegation",
+      "source": "independent absence of SID work/flows/delegation",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "wfp.sid_match",
+      "category": "K",
+      "purpose": "actual ALE identity semantics",
+      "source": "actual ALE identity semantics",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "wfp.loopback",
+      "category": "K",
+      "purpose": "exact endpoint, aliases and alternate ports",
+      "source": "exact endpoint, aliases and alternate ports",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "wfp.arbitration",
+      "category": "K",
+      "purpose": "installed graph/third-party precedence",
+      "source": "installed graph/third-party precedence",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "wfp.lifecycle",
+      "category": "K",
+      "purpose": "boot/BFE/profile/established flows",
+      "source": "boot/BFE/profile/established flows",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "verification.observer",
+      "category": "K",
+      "purpose": "independent attempts observer with loss counters",
+      "source": "independent attempts observer with loss counters",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    },
+    {
+      "id": "host.binding",
+      "category": "K",
+      "purpose": "trusted local device binding, not public inventory hash",
+      "source": "trusted local device binding, not public inventory hash",
+      "safe_read": "local metadata only; no network/remoting/elevation; proof/future never synthesized",
+      "type": "object",
+      "validation": {
+        "strict_type": true,
+        "max_string_length": 256,
+        "no_unknown_safe_default": true
+      },
+      "required": true,
+      "sensitivity": "public_aggregate_or_role_reference",
+      "statuses": [
+        "DETECTED",
+        "VERIFIED",
+        "MISSING",
+        "UNSUPPORTED",
+        "CONFLICT",
+        "REQUIRES_USER_INPUT"
+      ],
+      "probe": "proof",
+      "stop_rule": "block all dependent mutations unless required evidence is valid and complete",
+      "dependent_actions": [
+        "plan",
+        "install",
+        "verify",
+        "rollback"
+      ],
+      "security_proof": true
+    }
+  ]
+}

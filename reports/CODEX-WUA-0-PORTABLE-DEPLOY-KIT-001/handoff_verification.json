@@ -1,0 +1,28 @@
+{
+  "status": "LOCAL HANDOFF CHECKED / INDEPENDENT ACCEPTANCE PENDING",
+  "final_card_sha256": "bdb2c19f4638cfb9ef64ce9c53a8685968a782392a960d939df4a733f2513cc9",
+  "B1_waiting": true,
+  "original_card_reconstructs_byte_exactly": true,
+  "old_history_bytes": 463833,
+  "prefix_unchanged": true,
+  "full_assignment_in_B2": true,
+  "protected_noncard_unchanged": 208,
+  "runtime_source_pins_still_current": true,
+  "handoff_helper_correction": {
+    "initial_final_integrity_attempts": 2,
+    "error": "FileNotFoundError from locale-dependent JSON decoding of Cyrillic paths",
+    "fix": "Explicit utf-8-sig for authoring helper JSON reads",
+    "final_check": "PASS",
+    "files_were_not_missing_or_recreated": true,
+    "toolkit_runtime_or_test_results_changed": false
+  },
+  "card_retry": [
+    {
+      "phase": "clear_B1_after_readback",
+      "attempt": 1,
+      "error_class": "PermissionError",
+      "winerror": 5
+    }
+  ],
+  "independent_verifier": "WEB_10 / PENDING"
+}

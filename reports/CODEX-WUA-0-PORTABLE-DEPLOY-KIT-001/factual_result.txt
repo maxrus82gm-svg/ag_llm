@@ -1,0 +1,14 @@
+TASK: CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001
+RESULT READY / AWAITING INDEPENDENT VERIFICATION (WEB_10).
+Готово: переносимые Discovery, Contracts, Plan, static Verify, rollback planner.
+Реальные Install/Uninstall: BLOCKED — executable security backend отсутствует.
+Проверки: финальные PS7 62/62 PASS, 0 FAIL; PS5.1 AST 8/8, 0 ошибок, runtime NOT RUN (Restricted).
+Ранний PS5.1 prototype запускался с process-only Bypass; отклонение раскрыто, финальной сертификацией не считается.
+Реальный read-only inventory: 55/55 полей представлены, 14 metadata VERIFIED, 42 блокирующих требования.
+План: 11 действий, повторная сборка идентична; binding/static invariants PASS.
+OS isolation / native fail-closed / V2Ray route / ordinary Chat E2E: NOT VERIFIED; hosted tunnel NOT STARTED.
+Windows, учётные записи, сеть, WFP/firewall, V2Ray и Git/GitHub не изменялись.
+DOC IMPACT: reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/ + ротация собственной карточки; 208/208 остальных protected файлов неизменны.
+Карточка: полная постановка в БЛОКЕ 2, factual result в БЛОКЕ 3, БЛОК 1 — ОЖИДАНИЕ НОВОЙ ЗАДАЧИ; история сохранена.
+Артефакты: report.md, manifest.json, toolkit/README.md, checks.json, evidence и manual_engineering_review.md в TASK-папке.
+NEXT: независимая проверка WEB_10; затем отдельный USER GO на изолированный lab backend/proof. Реальный Apply сейчас запрещён.

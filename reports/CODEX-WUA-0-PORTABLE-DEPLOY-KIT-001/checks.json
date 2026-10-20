@@ -1,0 +1,88 @@
+{
+  "task_id": "CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "toolkit_release": "0.1.0-offline",
+  "source_pins_current": [
+    "Collect-Host.ps1",
+    "Discovery.ps1",
+    "Install-WuaMcp.ps1",
+    "New-DeploymentPlan.ps1",
+    "Test-WuaMcpInstallation.ps1",
+    "Uninstall-WuaMcp.ps1",
+    "WuaMcp.psm1",
+    "tests/Test-Toolkit.ps1"
+  ],
+  "PS7_final": {
+    "passed": 62,
+    "total": 62,
+    "failed": 0,
+    "source": "synthetic_evidence/attempt06_ps7/results.json",
+    "protocol_port_model_points_in_one_case": 2048,
+    "not_os_native_tests": true
+  },
+  "PS51_final": {
+    "parser_files": 8,
+    "parse_errors": 0,
+    "policy": "Restricted",
+    "override": false,
+    "runtime_suite": "NOT RUN",
+    "collector": "NOT RUN",
+    "source": "synthetic_evidence/syntax_ps51_release.json"
+  },
+  "legacy_PS51_deviation": {
+    "early_prototype_passed": 47,
+    "process_only_ExecutionPolicy_Bypass": true,
+    "persistent_policy_store_changed": false,
+    "process_exited": true,
+    "final_release_runtime_certification": false,
+    "disposition": "Disclosed; not repeated; no bypass in toolkit"
+  },
+  "discovery": {
+    "required": 55,
+    "represented": 55,
+    "representation_percent": 100,
+    "metadata_verified": 14,
+    "blocking_requirements": 42,
+    "readiness": "BLOCKED",
+    "bounded_metadata_runs": 3,
+    "source": "host_discovery_release/"
+  },
+  "plan": {
+    "rebuild_equal": true,
+    "static_binding": "PASS",
+    "independent_static_predicates": "PASS",
+    "security_verdict": "NOT VERIFIED"
+  },
+  "operational_calls": {
+    "native_subject_launches": 0,
+    "install_wrapper_invocations": 0,
+    "uninstall_wrapper_invocations": 0,
+    "network_probes": 0,
+    "account_rights_ACL_WFP_firewall_changes": 0,
+    "V2Ray_route_DNS_service_task_changes": 0,
+    "git_github_calls": 0,
+    "scope": "Agent commands/source; no host-wide traffic claim"
+  },
+  "protected_inputs": {
+    "total": 209,
+    "noncard_unchanged_before_rotation": 208,
+    "authorized_card_only": true,
+    "final": "integrity.json",
+    "noncard_unchanged_final": 208
+  },
+  "live_install": "BLOCKED / NO EXECUTABLE SECURITY BACKEND",
+  "live_rollback": "BLOCKED / KEEP DENY",
+  "OS_ENFORCED_EGRESS_ISOLATION": "NOT VERIFIED",
+  "NATIVE_CLIENT_FAIL_CLOSED": "NOT VERIFIED",
+  "V2RAY_REMOTE_ROUTE": "NOT VERIFIED",
+  "HOSTED_TUNNEL": "NOT STARTED",
+  "ORDINARY_CHAT_E2E": "NOT VERIFIED",
+  "independent_acceptance": "PENDING WEB_10",
+  "publication": "LOCAL ONLY / USER PUBLICATION NOT VERIFIED",
+  "card_rotation": {
+    "status": "CARD ROTATION SAVED / B1 WAITING",
+    "old_history_bytes_preserved": 463833,
+    "B1_waiting": true,
+    "rollback_reconstruction_hash_checked": true
+  }
+}

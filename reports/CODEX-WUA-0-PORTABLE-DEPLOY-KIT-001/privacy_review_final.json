@@ -1,0 +1,10 @@
+{
+  "scope": "Bounded UTF-8/schema and identifier/token-shape review plus manual public field walkthrough",
+  "files_reviewed": 87,
+  "findings": [],
+  "allowed_address_classes": "loopback, unspecified and explicit synthetic RFC5737/multicast fixtures",
+  "raw_historic_card_copied": false,
+  "external_connection_config_or_secret_store_read": false,
+  "limitations": "Pattern review is not a universal secret detector. New private inputs/LocalPreview need a new privacy review.",
+  "gitignore": "Root .gitignore read only; TASK source/evidence names not matched by its visible patterns. Global Git excludes not inspected; Git not invoked."
+}

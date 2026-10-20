@@ -1,0 +1,45 @@
+{
+  "review": "source-level locality and side effects reviewed before real inventory",
+  "files": [
+    {
+      "path": "toolkit/Collect-Host.ps1",
+      "sha256": "2e50e910f24b48a274a63ca41f895fbbde4a7821287f1f3031a916e376bd5df8"
+    },
+    {
+      "path": "toolkit/Discovery.ps1",
+      "sha256": "dd7100315bd597c9c2d762c9a9216ee1d6437ac4776df6c8927d93fd78f9455a"
+    },
+    {
+      "path": "toolkit/WuaMcp.psm1",
+      "sha256": "3fd2f2dfe90fb09f0a3afc7cbb4ab8ee5395d08f2b6f189731e7d4695fbc1341"
+    }
+  ],
+  "approved_reads": [
+    "local CIM Win32_OperatingSystem Version/BuildNumber/OperatingSystemSKU",
+    "local Win32_Service Name/State for BFE/MpsSvc/Schedule",
+    "local cached MSFT_NetFirewallProfile counts",
+    "local registry firewall-policy key presence, no values",
+    "local SecurityCenter2 productState count only",
+    "current token admin-membership boolean, no SID export",
+    "effective execution policy read only",
+    "local technical-name collision queries, no unrelated user records",
+    "local TCP/UDP port metadata, no bind/connect",
+    "local address-family/route counts, no address export",
+    "bounded local PATH and known-process executable-path candidates, no command lines",
+    "explicit local binary/text hashes/version metadata, no execution"
+  ],
+  "forbidden_not_present": [
+    "DNS resolution",
+    "external connect/probe",
+    "CimSession/ComputerName",
+    "package update/download",
+    "credential/browser/key inspection",
+    "policy/account/ACL/service/scheduler mutations",
+    "native subject invocation"
+  ],
+  "limits": [
+    "trusted installed Windows providers and trusted filesystem assumed",
+    "path checks are not a kernel race-proof boundary against hostile local admin",
+    "coverage describes missing evidence, not all guarantees satisfied"
+  ]
+}

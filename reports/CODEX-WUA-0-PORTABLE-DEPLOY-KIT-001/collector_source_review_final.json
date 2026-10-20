@@ -1,0 +1,48 @@
+{
+  "review": "source-level locality and side effects reviewed before real inventory",
+  "files": [
+    {
+      "path": "toolkit/Collect-Host.ps1",
+      "sha256": "2e50e910f24b48a274a63ca41f895fbbde4a7821287f1f3031a916e376bd5df8"
+    },
+    {
+      "path": "toolkit/Discovery.ps1",
+      "sha256": "d864b394a9912c278932bb0374b6595639e52aedd283297b564f58d9e94f7b8d"
+    },
+    {
+      "path": "toolkit/WuaMcp.psm1",
+      "sha256": "4f5dc36eaafe0cd2c94ad4a0c9fe3e3457eb4455c99f5bc0bfc19b58dcf0c565"
+    }
+  ],
+  "approved_reads": [
+    "local CIM Win32_OperatingSystem Version/BuildNumber/OperatingSystemSKU",
+    "local Win32_Service Name/State for BFE/MpsSvc/Schedule",
+    "local cached MSFT_NetFirewallProfile counts",
+    "local registry firewall-policy key presence, no values",
+    "local SecurityCenter2 productState count only",
+    "current token admin-membership boolean, no SID export",
+    "effective execution policy read only",
+    "local technical-name collision queries, no unrelated user records",
+    "local TCP/UDP port metadata, no bind/connect",
+    "local address-family/route counts, no address export",
+    "bounded local PATH and known-process executable-path candidates, no command lines",
+    "explicit local binary/text hashes/version metadata, no execution",
+    "local MSFT_NetAdapter InterfaceOperationalStatus counts only"
+  ],
+  "forbidden_not_present": [
+    "DNS resolution",
+    "external connect/probe",
+    "CimSession/ComputerName",
+    "package update/download",
+    "credential/browser/key inspection",
+    "policy/account/ACL/service/scheduler mutations",
+    "native subject invocation"
+  ],
+  "limits": [
+    "trusted installed Windows providers and trusted filesystem assumed",
+    "path checks are not a kernel race-proof boundary against hostile local admin",
+    "coverage describes missing evidence, not all guarantees satisfied"
+  ],
+  "revision": "final55",
+  "repeat_reason": "Final contract adds interface count, explicit working directory and effective ACL blocker; known false metadata now blocks requirement satisfaction; source hash/file metadata uses nonlocking shared reads."
+}

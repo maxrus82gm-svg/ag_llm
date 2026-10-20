@@ -1,0 +1,64 @@
+# Host inventory (PUBLIC REDACTED)
+
+No host/user/SID/address/private-path/credential values are exported.
+Required fields represented: 55/55
+Metadata VERIFIED: 14
+100% representation is not security readiness. Apply: BLOCKED.
+
+| Field | Status | Detail |
+|---|---|---|
+| os.version | VERIFIED | LOCAL_METADATA |
+| os.build | VERIFIED | LOCAL_METADATA |
+| os.edition | VERIFIED | LOCAL_METADATA |
+| os.architecture | VERIFIED | LOCAL_METADATA |
+| powershell.version | VERIFIED | LOCAL_METADATA |
+| api.wfp_file | VERIFIED | LOCAL_METADATA |
+| bfe.state | VERIFIED | LOCAL_METADATA |
+| firewall.state | VERIFIED | LOCAL_METADATA |
+| firewall.profiles | DETECTED | SNAPSHOT_NOT_EFFECTIVE_WFP_PROOF |
+| policy.management | DETECTED | PRESENCE_ONLY_NOT_POLICY_AUTHORITY |
+| security.products | DETECTED | COUNT_NOT_EFFECTIVE_FILTER_PROOF |
+| security.admin_token | VERIFIED | TOKEN_MEMBERSHIP_BOOL_ONLY |
+| security.effective_policy | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| accounts.collision_free | VERIFIED | LOCAL_METADATA |
+| accounts.new_sid_binding | UNSUPPORTED | NEW_SIDS_RESOLVED_ONLY_DURING_FUTURE_APPLY |
+| accounts.logon_rights | REQUIRES_USER_INPUT | NOT_SUPPLIED |
+| endpoint.local | VERIFIED | SNAPSHOT_CANDIDATE_NOT_PORT_RESERVATION |
+| endpoint.snapshot_free | VERIFIED | SNAPSHOT_ONLY_NO_OWNER_GUARD |
+| endpoint.receiver_guard | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| network.interfaces | DETECTED | COUNTS_ONLY_NO_NAMES_OR_IDENTIFIERS |
+| network.families | DETECTED | COUNTS_ONLY_NO_ADDRESSES |
+| network.routes | DETECTED | COUNTS_ONLY_NO_ADDRESSES |
+| network.proxy_context | REQUIRES_USER_INPUT | NO_ENV_OR_PROXY_SECRET_VALUES_READ |
+| network.dns_delegation | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| broker.binary | VERIFIED | STATIC_HASH_ONLY |
+| broker.version | REQUIRES_USER_INPUT | NO_TRUSTED_VERSION_METADATA |
+| broker.schema | REQUIRES_USER_INPUT | OFFLINE_VERSIONED_SCHEMA_REVIEW_REQUIRED |
+| broker.route_graph | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| broker.remote_endpoint | REQUIRES_USER_INPUT | NOT_SUPPLIED |
+| broker.remote_identity | REQUIRES_USER_INPUT | AUTHENTICATED_SERVER_PROOF_REQUIRED |
+| mcp.binary | REQUIRES_USER_INPUT | SAFE_LOCAL_PATH_NOT_FOUND_OR_SUPPLIED |
+| mcp.version | REQUIRES_USER_INPUT | NOT_SUPPLIED |
+| mcp.source_archive | REQUIRES_USER_INPUT | SAFE_LOCAL_PATH_NOT_FOUND_OR_SUPPLIED |
+| mcp.stdio_exe | REQUIRES_USER_INPUT | SAFE_LOCAL_PATH_NOT_FOUND_OR_SUPPLIED |
+| mcp.stdio_script | REQUIRES_USER_INPUT | SAFE_LOCAL_PATH_NOT_FOUND_OR_SUPPLIED |
+| mcp.working_directory | REQUIRES_USER_INPUT | PATH_NOT_SUPPLIED |
+| mcp.resources | REQUIRES_USER_INPUT | PATH_NOT_SUPPLIED |
+| mcp.launcher_hold | REQUIRES_USER_INPUT | PRESERVE_EXISTING_HOLD_NO_LAUNCHER_EXECUTION |
+| startup.scheduler | VERIFIED | LOCAL_METADATA |
+| startup.execution_policy | DETECTED | READ_ONLY_NEVER_AUTO_BYPASS |
+| startup.mode | REQUIRES_USER_INPUT | NOT_SUPPLIED |
+| startup.dependencies | DETECTED | DESIGN_NOT_REGISTERED |
+| startup.child_identity | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| files.deployment_root | REQUIRES_USER_INPUT | PATH_NOT_SUPPLIED |
+| files.acl_contract | DETECTED | DESIGN_NOT_APPLIED |
+| files.acl_effective | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| ownership.baseline | DETECTED | DESIGN_NO_RESOURCES_CREATED |
+| ledger.backend | UNSUPPORTED | PROVISIONING_BACKEND_NOT_IMPLEMENTED |
+| rollback.quiescence | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| wfp.sid_match | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| wfp.loopback | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| wfp.arbitration | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| wfp.lifecycle | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| verification.observer | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |
+| host.binding | UNSUPPORTED | SECURITY_BACKEND_NOT_IMPLEMENTED |

@@ -1,0 +1,66 @@
+{
+    "final_PS51_runtime":  "NOT RUN under Restricted policy",
+    "error_count":  0,
+    "execution_policy":  "Restricted",
+    "files":  [
+                  {
+                      "sha256":  "2e50e910f24b48a274a63ca41f895fbbde4a7821287f1f3031a916e376bd5df8",
+                      "errors":  [
+
+                                 ],
+                      "file":  "Collect-Host.ps1"
+                  },
+                  {
+                      "sha256":  "1ef9b405114eaec3878a93531ce151f281498516fed1c124e1d172810a7c35a9",
+                      "errors":  [
+
+                                 ],
+                      "file":  "Discovery.ps1"
+                  },
+                  {
+                      "sha256":  "8f43540643f5a43fd40b406887cb4a2190efbb074a3563bb3b2bef666b4336a1",
+                      "errors":  [
+
+                                 ],
+                      "file":  "Install-WuaMcp.ps1"
+                  },
+                  {
+                      "sha256":  "3e6aa4478c91ab578c06402550d0ca25549a6607586e5923662a380d1b211809",
+                      "errors":  [
+
+                                 ],
+                      "file":  "New-DeploymentPlan.ps1"
+                  },
+                  {
+                      "sha256":  "c940969804307b408dac53a392ee808fd8f29834a470c89e9dfb1575e484dba9",
+                      "errors":  [
+
+                                 ],
+                      "file":  "Test-WuaMcpInstallation.ps1"
+                  },
+                  {
+                      "sha256":  "2f8ee140ab25666f9d45ebad6e4d2ffb5fea94d68019b487e5e870a9ab866745",
+                      "errors":  [
+
+                                 ],
+                      "file":  "Uninstall-WuaMcp.ps1"
+                  },
+                  {
+                      "sha256":  "3b5182c406ce540ac57967d352c4f3b9316056c5e2d37447f246be6683054b92",
+                      "errors":  [
+
+                                 ],
+                      "file":  "WuaMcp.psm1"
+                  },
+                  {
+                      "sha256":  "2102daf5520d0a55afb0840b50d92f32aa804b7b37a9c0b9fb58ede7ca1ed257",
+                      "errors":  [
+
+                                 ],
+                      "file":  "tests/Test-Toolkit.ps1"
+                  }
+              ],
+    "mode":  "AST parse only, no toolkit script execution",
+    "runtime":  "5.1.19041.6456",
+    "execution_policy_override":  false
+}
