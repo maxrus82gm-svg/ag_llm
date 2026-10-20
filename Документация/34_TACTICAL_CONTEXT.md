@@ -1,3 +1,13 @@
+## ARCH DECISION / 2026-10-20 / WEB_11 — универсальная ChatGPT MCP-интеграция и независимые сетевые профили
+
+**Решение пользователя / FUTURE, НЕ РЕАЛИЗОВАНО:** Web Alarm Ultra проектируется как переносимая мультимодельная система с каталогом подключений собственных LLM/API, локальных моделей, CLI/агентов и MCP-инструментов. Внешний ChatGPT → Ultra MCP/plugin tools **не равен** Ultra → LLM model provider. «Проводник» в будущем показывает официальные способы авторизации, доступные возможности, выбранный сетевой профиль, необходимые изменения/scopes и запрашивает отдельное согласие; секреты не попадают агенту.
+
+**Сеть:** `DIRECT_ALLOWED` (только явный выбор), `APPROVED_PROXY` (поддерживаемый прокси), `STRICT_V2RAY_BROKER` (наша текущая обязательная цель Codex: технические SID/WFP, две учётные записи и выделенный V2Ray-брокер без DIRECT). V2Ray не обязателен для MCP вообще; **для выбранной локальной строгой политики он обязателен, отказ должен быть fail-closed без fallback**. Два Windows SID — кандидат именно строгого режима, не защита всей Windows/ChatGPT Desktop.
+
+**STATUS / NEXT:** детали зафиксированы в 11 и 19. Codex Install/Uninstall BLOCKED; WFP/V2Ray/network isolation/ChatGPT E2E NOT VERIFIED; `HOSTED_TUNNEL_ON_HOLD_BY_USER` остаётся. Нет новой TASK или разрешения на установку, рабочий firewall/V2Ray/систему не меняем. Следующий обсуждаемый этап — проверяемый security backend и доказательство в изолированной Windows-лаборатории.
+
+---
+
 ## CURRENT / 2026-10-20 / WEB_10 — portable MCP toolkit published and bounded independently reviewed
 
 **SOURCE:** [user-published Codex toolkit / commit #374](https://github.com/maxrus82gm-svg/ag_llm/commit/6b3403f034b56b3dbb89f3ffcb44695f8d194101), `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001`, `reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/`. **VERDICT: DOCUMENTARY/SOURCE AND BOUNDED PUBLICATION INTEGRITY PASS; FUNCTIONAL TOOLKIT PARTIAL; SECURITY BACKEND NOT IMPLEMENTED.** GitHub manifest path census **87/87** plus manifest; **10/10** critical artifact SHA-256/byte sizes independently matched (nine LF + one CRLF reconstructed); all remaining published files present but **not separately rehashed**. Published Codex card digest matched receipt, B1 waiting, B2 full assignment, B3 factual result; previous B2/B3 history preserved against pre-task GitHub snapshot. One reported guarded retry after `WinError 5`; cause unknown.
