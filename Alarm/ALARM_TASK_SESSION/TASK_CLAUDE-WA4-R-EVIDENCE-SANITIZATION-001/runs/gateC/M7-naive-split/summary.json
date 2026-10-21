@@ -1,0 +1,45 @@
+{
+ "label": "M7-naive-split",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M7-naive-split-8m2nvali\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M7-naive-split-ijh0ww7l\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.889,
+ "base": "<TEMP>\\claude-evsan-gateC-M7-naive-split-ijh0ww7l",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M7-naive-split-8m2nvali\\code",
+ "tests_run": 36,
+ "passed": 33,
+ "failures": 3,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.999,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=1)",
+   "FAIL",
+   "al\\Temp\\claude-evsan-mirror-M7-naive-split-8m2nvali\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<HOME>естовый\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- <HOME>естовый\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=2)",
+   "FAIL",
+   "al\\Temp\\claude-evsan-mirror-M7-naive-split-8m2nvali\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<HOME>естовый\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- <HOME>естовый\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=3)",
+   "FAIL",
+   "al\\Temp\\claude-evsan-mirror-M7-naive-split-8m2nvali\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<HOME>естовый\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- <HOME>естовый\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ]
+ ]
+}

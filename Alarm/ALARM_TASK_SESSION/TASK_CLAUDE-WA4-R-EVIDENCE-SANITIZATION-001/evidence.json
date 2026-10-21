@@ -1,0 +1,44 @@
+{
+ "task": "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "platform": "Windows 10 Pro 19045, Python 3.12.10 (.venv), guarded runner wa4a_acceptance.py, disposable TEMP",
+ "tool": {"module": "web_alarm/evidence_sanitizer.py", "tool_sha256_lf": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201", "policy_version": 1, "repo_anchor": "ag_llm"},
+ "inventory_tail_recovery": {
+  "files_scanned": 152,
+  "classes": {"BENIGN_ONLY": 2, "CLEAN": 124, "CONFIRMED": 12, "SUSPECT": 14},
+  "findings": {"FRAGMENT": 2, "HOME": 2, "ILLUSTRATIVE": 2, "REPO": 71, "TEMP": 144},
+  "secrets": 0, "computer_name": 0, "email": 0,
+  "details": "inventory/tail-recovery-scan.json"
+ },
+ "siblings": {"packages_scanned": 56, "packages_with_local_name": 15, "files_with_local_name": 105, "packages_with_any_path_finding": 30, "packages_with_unsupported_files": 8, "unsupported_files": 16, "details": "inventory/siblings-scan.json"},
+ "stage_tail_recovery_final": {
+  "location": "logs/test-evidence/web_alarm/CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001/tail-recovery-stage-final (git-ignored, not published)",
+  "files_total": 152, "files_changed": 26, "files_blocked": 0,
+  "replacements": {"FRAGMENT": 2, "HOME": 2, "REPO": 71, "TEMP": 144}, "kept": {"ILLUSTRATIVE": 2},
+  "verify": "CONSISTENT, problems {}",
+  "manifest_sha256_match": {"true": 151, "not_listed_manifest_itself": 1},
+  "mapping_sha256": "50a27ba8d13e8fe463e1ee83a7bc20a02884197a974876b526f5575911ac8e2b",
+  "mapping_published_copy": "mapping/tail-recovery-mapping.json",
+  "determinism": "two independent stagings (two tool revisions) -> identical SHA-256 of all 152 sanitized files"
+ },
+ "independent_oracle": {
+  "sanitized": {"absolute_root_left": 0, "name_left_at_word_boundary": 0, "name_inside_other_word_false_positive_files": 2, "json_pairs_same_signature": "124/124", "results_same_census": "47/47", "sha_ok": "152/152 + 152/152"},
+  "originals": {"absolute_root_left": 24, "name_left_at_word_boundary": 12},
+  "details": "runs/oracle/sanitized.json, runs/oracle/originals.json"
+ },
+ "tests": {
+  "target_final": {"label": "target-4", "tests_run": 38, "PASS": 38, "FAIL": 0, "ERROR": 0, "SKIP": 0, "isolation": 0},
+  "target_red_attempt": {"label": "target-1", "tests_run": 36, "PASS": 35, "FAIL": 1, "cause": "wrong expectation in the new test (3 confirmed files, not 2)"},
+  "gate_A": {"legacy_algorithm_leaks_shapes": "5/5", "baseline_mirror_without_module": "1 ERROR (import)", "real_package_scan_exit": 2},
+  "gate_C_mutants": {"series": "gateC2 (final test bytes)", "killed": "11/11", "failed_methods": {"M1": 8, "M2": 7, "M3": 6, "M4": 3, "M5": 2, "M6": 1, "M7": 1, "M8": 5, "M9": 2, "M10": 1, "M11": 1}},
+  "full": [
+   {"label": "full", "bytes": "intermediate test revision", "tests_run": 947, "PASS": 945, "FAIL": 0, "ERROR": 0, "SKIP": 2, "isolation": 0},
+   {"label": "full2", "bytes": "final", "tests_run": 947, "PASS": 944, "FAIL": 1, "ERROR": 0, "SKIP": 2, "isolation": 0, "red": "F-S1 test_web_alarm_folder_picker ... WinError 10053, unrelated module, preserved"},
+   {"label": "full3", "bytes": "final", "tests_run": 947, "PASS": 945, "FAIL": 0, "ERROR": 0, "SKIP": 2, "isolation": 0}
+  ],
+  "vs_previous_909": {"removed": 0, "added": 38, "added_all_new_module": true, "status_changed_full3": 0, "source_map_files": 109, "source_drift_full2_full3": 0},
+  "flaky_F_S1_repeats": {"module": "test_web_alarm_folder_picker", "current_red": "0/10", "baseline_mirror_without_task_red": "1/10 (other test, same WinError 10053)"},
+  "census": "runs/census.json"
+ },
+ "not_run": ["CI/GitHub (coordinator)", "Linux/macOS", "non-UTF-8/UTF-16 text encodings beyond Latin-1 view", "Git history and Actions artifacts (DOC-GIT-01)", "publication"]
+}

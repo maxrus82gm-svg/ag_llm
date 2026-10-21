@@ -1,0 +1,40 @@
+{
+ "label": "full",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-full-quimn70a\\out",
+  "all"
+ ],
+ "exit": 0,
+ "wall_seconds": 1015.724,
+ "base": "<TEMP>\\claude-evsan-full-quimn70a",
+ "runner_root": "<REPO>",
+ "tests_run": 947,
+ "passed": 945,
+ "failures": 0,
+ "errors": 0,
+ "skips": 2,
+ "elapsed_seconds": 1014.469,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+   "SKIP",
+   "symlink creation is not permitted here"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

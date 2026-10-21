@@ -1,0 +1,35 @@
+{
+ "label": "M11-no-secret-redaction",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M11-no-secret-redaction-fqjfjj21\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC2-M11-no-secret-redaction-2sid5czl\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.687,
+ "base": "<TEMP>\\claude-evsan-gateC2-M11-no-secret-redaction-2sid5czl",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M11-no-secret-redaction-fqjfjj21\\code",
+ "tests_run": 38,
+ "passed": 37,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.793,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.GateTests.test_secret_redacted_and_refused",
+   "FAIL",
+   "\"<TEMP>\\claude-evsan-mirror-M11-no-secret-redaction-fqjfjj21\\code\\test_web_alarm_evidence_sanitizer.py\", line 343, in test_secret_redacted_and_refused\n    self.assertFalse(token in out, \"synthetic token survived\")\nAssertionError: True is not false : synthetic token survived\n"
+  ]
+ ]
+}

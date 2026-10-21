@@ -1,0 +1,40 @@
+{
+ "label": "M9-no-unc-level-check",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M9-no-unc-level-check-jw1no00z\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC2-M9-no-unc-level-check-h6aq_qg7\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.716,
+ "base": "<TEMP>\\claude-evsan-gateC2-M9-no-unc-level-check-h6aq_qg7",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M9-no-unc-level-check-jw1no00z\\code",
+ "tests_run": 38,
+ "passed": 36,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.829,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_benign_and_illustrative_text_untouched (case=12)",
+   "FAIL",
+   "-evsan-mirror-M9-no-unc-level-check-jw1no00z\\code\\test_web_alarm_evidence_sanitizer.py\", line 220, in test_benign_and_illustrative_text_untouched\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], text)\nAssertionError: '<UNC>' != '\\\\\\\\n\\\\\\\\nTraceback follows'\n- <UNC>\n+ \\\\n\\\\nTraceback follows\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=23)",
+   "FAIL",
+   "el-check-jw1no00z\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<UNC>\\\\\\\\zqsynthuser\\\\\\\\x' != '\\\\\\\\h\\\\\\\\\\\\\\\\<HOME>\\\\\\\\x'\n- <UNC>\\\\zqsynthuser\\\\x\n+ \\\\h\\\\\\\\<HOME>\\\\x\n\n"
+  ]
+ ]
+}

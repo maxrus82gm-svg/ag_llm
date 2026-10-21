@@ -1,0 +1,110 @@
+{
+ "label": "M3-no-fragment",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M3-no-fragment-1scrzsj5\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC2-M3-no-fragment-45quiuij\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.619,
+ "base": "<TEMP>\\claude-evsan-gateC2-M3-no-fragment-45quiuij",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M3-no-fragment-1scrzsj5\\code",
+ "tests_run": 38,
+ "passed": 22,
+ "failures": 16,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.737,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output",
+   "FAIL",
+   ": 7,\n \"files_changed\": 4,\n \"files_blocked\": 1,\n \"replacements_total\": {\n  \"REPO\": 3,\n  \"TEMP\": 4\n },\n \"kept_total\": {\n  \"ILLUSTRATIVE\": 1\n },\n \"identity_gate\": \"ENFORCED\",\n \"verdict\": \"REFUSED\",\n \"blocked\": [\n  {\n   \"id\": \"runs/a/summary.json\",\n   \"reasons\": [\n    \"residual-identity\"\n   ]\n  }\n ]\n}\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_new_sanitizer_closes_every_shape_and_keeps_json_valid (shape='truncated-tail')",
+   "FAIL",
+   "web_alarm_evidence_sanitizer.py\", line 152, in test_new_sanitizer_closes_every_shape_and_keeps_json_valid\n    self.assertEqual(leaks(new), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=9)",
+   "FAIL",
+   "1, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=10)",
+   "FAIL",
+   "161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=11)",
+   "FAIL",
+   "e 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=12)",
+   "FAIL",
+   "ine 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=13)",
+   "FAIL",
+   " line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=14)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=15)",
+   "FAIL",
+   "py\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=16)",
+   "FAIL",
+   "r.py\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=17)",
+   "FAIL",
+   "zer.py\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=17)",
+   "FAIL",
+   "py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<TEMP>\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <TEMP>\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=18)",
+   "FAIL",
+   "arm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<HOME>\\\\AppData\\\\Roaming\\\\x' != '<HOME>\\\\AppData\\\\Roaming\\\\x'\n- <HOME>\\AppData\\Roaming\\x\n? ^^^^^^\n+ <HOME>\\AppData\\Roaming\\x\n? ^^^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=19)",
+   "FAIL",
+   "e\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: 'sers\\\\<TEMP>\\\\x' != 'sers\\\\<TEMP>\\\\x'\n- sers\\<TEMP>\\x\n+ sers\\<TEMP>\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file",
+   "FAIL",
+   "nce_sanitizer.py\", line 412, in test_stage_preserves_originals_and_maps_every_file\n    self.assertEqual(mapping[\"verdict\"], \"SAFE PUBLICATION CANDIDATE (needs USER GO)\")\nAssertionError: 'REFUSED' != 'SAFE PUBLICATION CANDIDATE (needs USER GO)'\n- REFUSED\n+ SAFE PUBLICATION CANDIDATE (needs USER GO)\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_verify_detects_tampering_and_drift (problem='sanitized-missing-or-changed')",
+   "FAIL",
+   "a\\Local\\Temp\\claude-evsan-mirror-M3-no-fragment-1scrzsj5\\code\\test_web_alarm_evidence_sanitizer.py\", line 450, in test_verify_detects_tampering_and_drift\n    self.assertIn(problem, report[\"problems\"])\nAssertionError: 'sanitized-missing-or-changed' not found in {'blocked-file-has-sanitized-copy': 1}\n"
+  ]
+ ]
+}

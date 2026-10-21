@@ -1,0 +1,35 @@
+{
+ "label": "baseline",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-baseline-7i_01hc7\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-baseline-mlqi63d2\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 1.332,
+ "base": "<TEMP>\\claude-evsan-gateC-baseline-mlqi63d2",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-baseline-7i_01hc7\\code",
+ "tests_run": 1,
+ "passed": 0,
+ "failures": 0,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 0.449,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "unittest.loader._FailedTest.test_web_alarm_evidence_sanitizer",
+   "ERROR",
+   "line-7i_01hc7\\code\\test_web_alarm_evidence_sanitizer.py\", line 26, in <module>\n    from web_alarm import evidence_sanitizer as es\nImportError: cannot import name 'evidence_sanitizer' from 'web_alarm' (<TEMP>\\claude-evsan-mirror-baseline-7i_01hc7\\code\\web_alarm\\__init__.py)\n\n"
+  ]
+ ]
+}

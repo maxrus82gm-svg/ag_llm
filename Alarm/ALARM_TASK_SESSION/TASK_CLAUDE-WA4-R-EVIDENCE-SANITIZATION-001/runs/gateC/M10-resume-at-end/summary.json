@@ -1,0 +1,35 @@
+{
+ "label": "M10-resume-at-end",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M10-resume-at-end-2b_p9hlo\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M10-resume-at-end-wvlh3954\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.66,
+ "base": "<TEMP>\\claude-evsan-gateC-M10-resume-at-end-wvlh3954",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M10-resume-at-end-2b_p9hlo\\code",
+ "tests_run": 36,
+ "passed": 35,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.771,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (text=\"'\\\\\\\\\\\\\\\\h\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\<HOME>\\\\\\\\\\\\\\\\x'\")",
+   "FAIL",
+   "de\\test_web_alarm_evidence_sanitizer.py\", line 213, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '\\\\\\\\h\\\\\\\\\\\\\\\\<HOME>\\\\\\\\x' != '\\\\\\\\h\\\\\\\\\\\\\\\\<HOME>\\\\\\\\x'\n- \\\\h\\\\\\\\<HOME>\\\\x\n+ \\\\h\\\\\\\\<HOME>\\\\x\n\n"
+  ]
+ ]
+}

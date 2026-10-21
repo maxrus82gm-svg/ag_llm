@@ -1,0 +1,40 @@
+{
+ "label": "M5-no-structure-check",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M5-no-structure-check-d09yc3fb\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M5-no-structure-check-dcu36fch\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.762,
+ "base": "<TEMP>\\claude-evsan-gateC-M5-no-structure-check-dcu36fch",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M5-no-structure-check-d09yc3fb\\code",
+ "tests_run": 36,
+ "passed": 34,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.871,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_key_collision_refused",
+   "FAIL",
+   "ack (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M5-no-structure-check-d09yc3fb\\code\\test_web_alarm_evidence_sanitizer.py\", line 284, in test_key_collision_refused\n    self.assertEqual(r.safety, \"BLOCKED\")\nAssertionError: 'PASS' != 'BLOCKED'\n- PASS\n+ BLOCKED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_protected_identifier_change_refused",
+   "FAIL",
+   "ile \"<TEMP>\\claude-evsan-mirror-M5-no-structure-check-d09yc3fb\\code\\test_web_alarm_evidence_sanitizer.py\", line 291, in test_protected_identifier_change_refused\n    self.assertIn(\"protected-field-changed\", r.reasons)\nAssertionError: 'protected-field-changed' not found in []\n"
+  ]
+ ]
+}

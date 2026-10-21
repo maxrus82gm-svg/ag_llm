@@ -1,0 +1,300 @@
+{
+ "label": "M2-case-sensitive",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC2-M2-case-sensitive-r691atp_\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.735,
+ "base": "<TEMP>\\claude-evsan-gateC2-M2-case-sensitive-r691atp_",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code",
+ "tests_run": 38,
+ "passed": -16,
+ "failures": 54,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.848,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=True, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=True, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=True, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=True, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=False, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=False, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=False, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=0, ascii=False, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=True, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=True, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=True, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=True, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=False, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=False, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=False, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=1, ascii=False, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=True, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=True, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=True, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=True, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=False, depth=0)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=False, depth=1)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=False, depth=2)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=2, ascii=False, depth=3)",
+   "FAIL",
+   "st recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 247, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: '<ABS>\\\\w' != '<TEMP>\\\\w'\n- <ABS>\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_bom_and_crlf_preserved",
+   "FAIL",
+   "-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 302, in test_bom_and_crlf_preserved\n    self.assertEqual(json.loads(r.output[3:]), {\"p\": \"<TEMP>\\\\x\"})\nAssertionError: {'p': '<ABS>\\\\x'} != {'p': '<TEMP>\\\\x'}\n- {'p': '<ABS>\\\\x'}\n?         ^^^\n\n+ {'p': '<TEMP>\\\\x'}\n?         ^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_jsonl",
+   "FAIL",
+   "lines()], [{\"p\": \"<TEMP>\\\\a\"}, {\"n\": 1}])\nAssertionError: Lists differ: [{'p': '<ABS>\\\\a'}, {'n': 1}] != [{'p': '<TEMP>\\\\a'}, {'n': 1}]\n\nFirst differing element 0:\n{'p': '<ABS>\\\\a'}\n{'p': '<TEMP>\\\\a'}\n\n- [{'p': '<ABS>\\\\a'}, {'n': 1}]\n?          ^^^\n\n+ [{'p': '<TEMP>\\\\a'}, {'n': 1}]\n?          ^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_results_document_keeps_structure_counters_and_formatting",
+   "FAIL",
+   "onError: [WinError 5] Access is denied: \\'<ABS>\\\\\\\\\\\\\\\\lock\\'\"},\\n  {\"test\": \"test_a.T.test_three\", \"status\": \"SKIP\", \"error\": \"symlink privilege\"}\\n ],\\n \"isolation_violations\": [\"write outside disposable temp: \\\\\\\\\\\\\\\\?\\\\\\\\<ABS>\\\\\\\\state\"],\\n \"dup\": 1, \"dup\": 2,\\n \"sep\": \"a\\\\u2028b \\\\u0416\"\\n}\\n'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=9)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=10)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=11)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=12)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=13)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=14)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=15)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=16)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_truncated_inside_profile_name (cut=17)",
+   "FAIL",
+   "\", line 161, in test_truncated_inside_profile_name\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], \"<TEMP>\\\\claude-mirror\\\\x\")\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_benign_and_illustrative_text_untouched (case=0)",
+   "FAIL",
+   "vidence_sanitizer.py\", line 220, in test_benign_and_illustrative_text_untouched\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], text)\nAssertionError: '<ABS>\\\\case.py' != 'C:\\\\Program Files\\\\Python312\\\\Lib\\\\unittest\\\\case.py'\n- <ABS>\\case.py\n+ C:\\Program Files\\Python312\\Lib\\unittest\\case.py\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_benign_and_illustrative_text_untouched (case=1)",
+   "FAIL",
+   "an-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 220, in test_benign_and_illustrative_text_untouched\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], text)\nAssertionError: '<ABS>\\\\x.log' != 'C:\\\\Windows\\\\Temp\\\\x.log'\n- <ABS>\\x.log\n+ C:\\Windows\\Temp\\x.log\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_benign_and_illustrative_text_untouched (case=2)",
+   "FAIL",
+   "rror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 220, in test_benign_and_illustrative_text_untouched\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], text)\nAssertionError: '<ABS>\\\\x' != 'C:\\\\Users\\\\Public\\\\Documents\\\\x'\n- <ABS>\\x\n+ C:\\Users\\Public\\Documents\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_benign_and_illustrative_text_untouched (case=4)",
+   "FAIL",
+   "-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 220, in test_benign_and_illustrative_text_untouched\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], text)\nAssertionError: '<ABS>\\\\AppData' != 'C:\\\\Users\\\\...\\\\AppData'\n- <ABS>\\AppData\n+ C:\\Users\\...\\AppData\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=0)",
+   "FAIL",
+   "aude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\state' != '<TEMP>\\\\wa_x\\\\state'\n- <ABS>\\state\n+ <TEMP>\\wa_x\\state\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=2)",
+   "FAIL",
+   "<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\wa' != '<TEMP>\\\\wa'\n- <ABS>\\wa\n+ <TEMP>\\wa\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=3)",
+   "FAIL",
+   "M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '\\\\\\\\?\\\\<ABS>\\\\locks' != '\\\\\\\\?\\\\<TEMP>\\\\wa\\\\locks'\n- \\\\?\\<ABS>\\locks\n+ \\\\?\\<TEMP>\\wa\\locks\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=4)",
+   "FAIL",
+   "<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\wa' != '<TEMP>\\\\wa'\n- <ABS>\\wa\n+ <TEMP>\\wa\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=5)",
+   "FAIL",
+   "<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\wa' != '<TEMP>\\\\wa'\n- <ABS>\\wa\n+ <TEMP>\\wa\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=6)",
+   "FAIL",
+   "-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\a.txt' != '<HOME>\\\\Documents\\\\a.txt'\n- <ABS>\\a.txt\n+ <HOME>\\Documents\\a.txt\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=7)",
+   "FAIL",
+   "ocal\\Temp\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\zqsynthuser' != '<HOME>'\n- <ABS>\\zqsynthuser\n+ <HOME>\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=8)",
+   "FAIL",
+   "ying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\decoder.py' != '<HOME>\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\Lib\\\\json\\\\decoder.py'\n- <ABS>\\decoder.py\n+ <HOME>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\decoder.py\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=16)",
+   "FAIL",
+   "_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: 'file:///<ABS>/x.html' != 'file:///<HOME>/x.html'\n- file:///<ABS>/x.html\n?          ^^^\n+ file:///<HOME>/x.html\n?          ^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=17)",
+   "FAIL",
+   "sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<HOME>\\\\AppData\\\\Local\\\\Temp\\\\claude-mirror\\\\x' != '<TEMP>\\\\claude-mirror\\\\x'\n- <HOME>\\AppData\\Local\\Temp\\claude-mirror\\x\n+ <TEMP>\\claude-mirror\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=19)",
+   "FAIL",
+   "zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: 'sers\\\\<HOME>\\\\AppData\\\\Local\\\\Temp\\\\x' != 'sers\\\\<TEMP>\\\\x'\n- sers\\<HOME>\\AppData\\Local\\Temp\\x\n+ sers\\<TEMP>\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=20)",
+   "FAIL",
+   "s\\<TEMP>\\claude-evsan-mirror-M2-case-sensitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '<ABS>\\\\x' != '<HOME>\\\\x'\n- <ABS>\\x\n+ <HOME>\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=21)",
+   "FAIL",
+   "code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: 'path <ABS>\\\\a and <ABS>\\\\b' != 'path <TEMP>\\\\a and <HOME>\\\\b'\n- path <ABS>\\a and <ABS>\\b\n+ path <TEMP>\\a and <HOME>\\b\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (case=22)",
+   "FAIL",
+   "sitive-e8zfr2f3\\code\\test_web_alarm_evidence_sanitizer.py\", line 215, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: \"'<ABS>\\\\a', '<ABS>\\\\b'\" != \"'<TEMP>\\\\a', '<TEMP>\\\\b'\"\n- '<ABS>\\a', '<ABS>\\b'\n+ '<TEMP>\\a', '<TEMP>\\b'\n\n"
+  ]
+ ]
+}

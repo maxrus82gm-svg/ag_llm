@@ -1,0 +1,40 @@
+{
+ "label": "M6-no-overlap-guard",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M6-no-overlap-guard-o6h5gtc1\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC2-M6-no-overlap-guard-iqqqd050\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 3.11,
+ "base": "<TEMP>\\claude-evsan-gateC2-M6-no-overlap-guard-iqqqd050",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M6-no-overlap-guard-o6h5gtc1\\code",
+ "tests_run": 38,
+ "passed": 36,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 2.214,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_output_location_guards_create_nothing (out='staging')",
+   "FAIL",
+   "AppData\\Local\\Temp\\claude-evsan-mirror-M6-no-overlap-guard-o6h5gtc1\\code\\test_web_alarm_evidence_sanitizer.py\", line 487, in test_output_location_guards_create_nothing\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_output_location_guards_create_nothing",
+   "FAIL",
+   "ck (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M6-no-overlap-guard-o6h5gtc1\\code\\test_web_alarm_evidence_sanitizer.py\", line 489, in test_output_location_guards_create_nothing\n    self.assertFalse((pkg / \"staging\").exists())\nAssertionError: True is not false\n"
+  ]
+ ]
+}

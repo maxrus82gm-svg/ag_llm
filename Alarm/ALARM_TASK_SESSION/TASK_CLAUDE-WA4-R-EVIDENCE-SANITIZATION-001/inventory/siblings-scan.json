@@ -1,0 +1,680 @@
+{
+ "tool": "web_alarm.evidence_sanitizer",
+ "policy": {
+  "version": 1,
+  "repo_anchors": [
+   "ag_llm"
+  ],
+  "protected_keys": [
+   "exit",
+   "label",
+   "outcome",
+   "selector",
+   "status",
+   "task",
+   "test",
+   "test_id"
+  ]
+ },
+ "summary": {
+  "packages_scanned": 56,
+  "packages_with_local_name": 15,
+  "files_with_local_name": 105,
+  "packages_with_any_path_finding": 30
+ },
+ "packages": {
+  "ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6": {
+   "files": 16,
+   "classes": {
+    "CLEAN": 15,
+    "SUSPECT": 1
+   },
+   "findings": {
+    "REPO": 1
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.5
+  },
+  "ALARM_TASK_SESSION/TASK_CHATGPT-WA-008_RC6_REPAIR1": {
+   "files": 24,
+   "classes": {
+    "CLEAN": 19,
+    "CONFIRMED": 2,
+    "CONFIRMED+UNSUPPORTED": 3
+   },
+   "findings": {
+    "HOME": 8
+   },
+   "files_with_local_name": 5,
+   "seconds": 0.8
+  },
+  "ALARM_TASK_SESSION/TASK_CHATGPT-WORKFLOW-20261008": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 3
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CHATGPT_RT001_33_CLOSE": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 3
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RC6-REVERIFY": {
+   "files": 10,
+   "classes": {
+    "CLEAN": 8,
+    "CONFIRMED": 1,
+    "SUSPECT": 1
+   },
+   "findings": {
+    "REPO": 1,
+    "TEMP": 1
+   },
+   "files_with_local_name": 1,
+   "seconds": 0.4
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RC6-VERIFY": {
+   "files": 7,
+   "classes": {
+    "CLEAN": 4,
+    "SUSPECT": 3
+   },
+   "findings": {
+    "REPO": 4
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-FA-M1-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-RUNTIME-DIAG-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-RECON-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-REPAIR-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S1-REPAIR-002": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S2-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S2-REPAIR-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-RT002-S2-REPAIR-002": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-001": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-002_RC0": {
+   "files": 1,
+   "classes": {
+    "BENIGN_ONLY": 1
+   },
+   "findings": {
+    "SYSTEM": 1
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-003_RC1": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-004_RC2": {
+   "files": 14,
+   "classes": {
+    "CLEAN": 14
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.4
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-005_RC3": {
+   "files": 4,
+   "classes": {
+    "CLEAN": 4
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-006_RC4": {
+   "files": 20,
+   "classes": {
+    "CLEAN": 20
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.9
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-007_RC5": {
+   "files": 30,
+   "classes": {
+    "CLEAN": 29,
+    "SUSPECT": 1
+   },
+   "findings": {
+    "REPO": 4
+   },
+   "files_with_local_name": 0,
+   "seconds": 1.2
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-009_RC6_REPAIR2": {
+   "files": 45,
+   "classes": {
+    "CLEAN": 33,
+    "CONFIRMED": 2,
+    "SUSPECT": 10
+   },
+   "findings": {
+    "REPO": 17,
+    "TEMP": 2
+   },
+   "files_with_local_name": 2,
+   "seconds": 1.6
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-010_RC6_REPAIR3": {
+   "files": 27,
+   "classes": {
+    "CLEAN": 22,
+    "CONFIRMED+UNSUPPORTED": 1,
+    "SUSPECT": 3,
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "findings": {
+    "REPO": 32,
+    "TEMP": 2
+   },
+   "files_with_local_name": 1,
+   "seconds": 0.7
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-011_RC6_REPAIR4": {
+   "files": 37,
+   "classes": {
+    "CLEAN": 30,
+    "CONFIRMED": 2,
+    "CONFIRMED+UNSUPPORTED": 1,
+    "SUSPECT": 3,
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "findings": {
+    "ABS": 5,
+    "REPO": 30,
+    "TEMP": 6
+   },
+   "files_with_local_name": 3,
+   "seconds": 1.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-012_RC6_REPAIR4A": {
+   "files": 32,
+   "classes": {
+    "CLEAN": 24,
+    "CONFIRMED": 3,
+    "CONFIRMED+UNSUPPORTED": 1,
+    "SUSPECT": 3,
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "findings": {
+    "ABS": 8,
+    "REPO": 31,
+    "TEMP": 10
+   },
+   "files_with_local_name": 4,
+   "seconds": 0.7
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-013_RC6_REPAIR4B": {
+   "files": 49,
+   "classes": {
+    "CLEAN": 30,
+    "CONFIRMED": 11,
+    "CONFIRMED+UNSUPPORTED": 1,
+    "SUSPECT": 6,
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "findings": {
+    "ABS": 39,
+    "REPO": 35,
+    "TEMP": 47
+   },
+   "files_with_local_name": 12,
+   "seconds": 1.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-014_RC6_ABORT_BEFORE_ACTIVE": {
+   "files": 45,
+   "classes": {
+    "CLEAN": 30,
+    "CONFIRMED": 6,
+    "CONFIRMED+UNSUPPORTED": 2,
+    "SUSPECT": 6,
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "findings": {
+    "ABS": 47,
+    "REPO": 49,
+    "TEMP": 50
+   },
+   "files_with_local_name": 8,
+   "seconds": 1.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-015_RC5_FINAL_VERIFICATION": {
+   "files": 5,
+   "classes": {
+    "CLEAN": 5
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-016_RC5_REPAIR2": {
+   "files": 2,
+   "classes": {
+    "CLEAN": 2
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY": {
+   "files": 2,
+   "classes": {
+    "CLEAN": 2
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA-018_WA4E_EXECUTOR": {
+   "files": 1,
+   "classes": {
+    "CLEAN": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD010205-REPAIR-001": {
+   "files": 19,
+   "classes": {
+    "CLEAN": 11,
+    "CONFIRMED": 3,
+    "SUSPECT": 5
+   },
+   "findings": {
+    "HOME": 2,
+    "REPO": 96,
+    "TEMP": 109
+   },
+   "files_with_local_name": 3,
+   "seconds": 1.8
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-AUD01T02B-REPAIR-001": {
+   "files": 56,
+   "classes": {
+    "CLEAN": 26,
+    "CONFIRMED": 22,
+    "SUSPECT": 8
+   },
+   "findings": {
+    "FRAGMENT": 2,
+    "HOME": 28,
+    "REPO": 205,
+    "TEMP": 337
+   },
+   "files_with_local_name": 22,
+   "seconds": 2.4
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001": {
+   "files": 40,
+   "classes": {
+    "CLEAN": 33,
+    "SUSPECT": 7
+   },
+   "findings": {
+    "REPO": 9
+   },
+   "files_with_local_name": 0,
+   "seconds": 1.7
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001": {
+   "files": 143,
+   "classes": {
+    "CLEAN": 99,
+    "CONFIRMED": 28,
+    "SUSPECT": 16
+   },
+   "findings": {
+    "FRAGMENT": 4,
+    "HOME": 4,
+    "REPO": 138,
+    "TEMP": 204
+   },
+   "files_with_local_name": 28,
+   "seconds": 39.9
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-R006-INDEPENDENT-AUDIT-001": {
+   "files": 13,
+   "classes": {
+    "CLEAN": 2,
+    "CONFIRMED": 2,
+    "SUSPECT": 9
+   },
+   "findings": {
+    "ABS": 1,
+    "REPO": 65,
+    "TEMP": 204
+   },
+   "files_with_local_name": 2,
+   "seconds": 1.9
+  },
+  "ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001": {
+   "files": 152,
+   "classes": {
+    "BENIGN_ONLY": 2,
+    "CLEAN": 124,
+    "CONFIRMED": 12,
+    "SUSPECT": 14
+   },
+   "findings": {
+    "FRAGMENT": 2,
+    "HOME": 2,
+    "ILLUSTRATIVE": 2,
+    "REPO": 71,
+    "TEMP": 144
+   },
+   "files_with_local_name": 12,
+   "seconds": 17.7
+  },
+  "ALARM_TASK_SESSION/TASK_DOC-MULTIAGENT-001": {
+   "files": 4,
+   "classes": {
+    "CLEAN": 4
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_DOC-TCTX-034": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 2,
+    "CONFIRMED": 1
+   },
+   "findings": {
+    "REPO": 1
+   },
+   "files_with_local_name": 1,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_DOC-WA-REMOTE-CONCLUSIONS-001": {
+   "files": 10,
+   "classes": {
+    "CLEAN": 8,
+    "SUSPECT": 2
+   },
+   "findings": {
+    "DRIVE_ROOT": 1,
+    "REPO": 8
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.5
+  },
+  "ALARM_TASK_SESSION/TASK_OBS-WA-001": {
+   "files": 2,
+   "classes": {
+    "CLEAN": 1,
+    "SUSPECT": 1
+   },
+   "findings": {
+    "REPO": 2
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_OBS-WA-002": {
+   "files": 7,
+   "classes": {
+    "CLEAN": 6,
+    "SUSPECT": 1
+   },
+   "findings": {
+    "REPO": 6
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.2
+  },
+  "ALARM_TASK_SESSION/TASK_RT-DOC-31-REP-001": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 1,
+    "SUSPECT": 2
+   },
+   "findings": {
+    "REPO": 9
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_RT-DOC-ROLE-002": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 2,
+    "CONFIRMED": 1
+   },
+   "findings": {
+    "TEMP": 1
+   },
+   "files_with_local_name": 1,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_RT001_UI_PLAN_001": {
+   "files": 4,
+   "classes": {
+    "CLEAN": 4
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_RT002_ITERATIVE_GATE_001": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 2,
+    "UNSUPPORTED": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_RT002_SYNTH_RECON_001": {
+   "files": 3,
+   "classes": {
+    "CLEAN": 2,
+    "UNSUPPORTED": 1
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.0
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.3.2": {
+   "files": 22,
+   "classes": {
+    "CLEAN": 18,
+    "SUSPECT": 4
+   },
+   "findings": {
+    "DRIVE_ROOT": 2,
+    "REPO": 21
+   },
+   "files_with_local_name": 0,
+   "seconds": 1.0
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.3.3": {
+   "files": 19,
+   "classes": {
+    "CLEAN": 16,
+    "SUSPECT": 3
+   },
+   "findings": {
+    "DRIVE_ROOT": 1,
+    "REPO": 16
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.7
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.3.4": {
+   "files": 25,
+   "classes": {
+    "CLEAN": 21,
+    "SUSPECT": 4
+   },
+   "findings": {
+    "DRIVE_ROOT": 1,
+    "REPO": 21
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.9
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.4": {
+   "files": 23,
+   "classes": {
+    "CLEAN": 19,
+    "SUSPECT": 4
+   },
+   "findings": {
+    "DRIVE_ROOT": 1,
+    "REPO": 18
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.9
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.5": {
+   "files": 72,
+   "classes": {
+    "CLEAN": 54,
+    "SUSPECT": 18
+   },
+   "findings": {
+    "DRIVE_ROOT": 6,
+    "REPO": 62
+   },
+   "files_with_local_name": 0,
+   "seconds": 3.6
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.6": {
+   "files": 4,
+   "classes": {
+    "CLEAN": 2,
+    "SUSPECT": 2
+   },
+   "findings": {
+    "ABS": 1,
+    "REPO": 1
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "ALARM_TASK_SESSION/TASK_WA-3.7": {
+   "files": 5,
+   "classes": {
+    "CLEAN": 5
+   },
+   "findings": {},
+   "files_with_local_name": 0,
+   "seconds": 0.1
+  },
+  "reports/CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001": {
+   "files": 10,
+   "classes": {
+    "CLEAN": 8,
+    "SUSPECT": 2
+   },
+   "findings": {
+    "REPO": 2
+   },
+   "files_with_local_name": 0,
+   "seconds": 0.2
+  }
+ }
+}

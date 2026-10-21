@@ -1,0 +1,50 @@
+{
+ "label": "M4-gate-off",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M4-gate-off-_c2odz9k\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M4-gate-off-uxjr4lwj\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.672,
+ "base": "<TEMP>\\claude-evsan-gateC-M4-gate-off-uxjr4lwj",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M4-gate-off-_c2odz9k\\code",
+ "tests_run": 36,
+ "passed": 32,
+ "failures": 4,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.785,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.GateTests.test_escaped_cyrillic_identity_caught_at_any_level (doc='{\"who\": \"\\\\u0422\\\\u043')",
+   "FAIL",
+   "l last):\n  File \"<TEMP>\\claude-evsan-mirror-M4-gate-off-_c2odz9k\\code\\test_web_alarm_evidence_sanitizer.py\", line 334, in test_escaped_cyrillic_identity_caught_at_any_level\n    self.assertIn(\"residual-identity\", r.reasons)\nAssertionError: 'residual-identity' not found in []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.GateTests.test_escaped_cyrillic_identity_caught_at_any_level (doc='{\"inner\": \"{\\\\\"who\\\\\":')",
+   "FAIL",
+   "l last):\n  File \"<TEMP>\\claude-evsan-mirror-M4-gate-off-_c2odz9k\\code\\test_web_alarm_evidence_sanitizer.py\", line 334, in test_escaped_cyrillic_identity_caught_at_any_level\n    self.assertIn(\"residual-identity\", r.reasons)\nAssertionError: 'residual-identity' not found in []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.GateTests.test_identity_outside_a_path_refused",
+   "FAIL",
+   "ack (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M4-gate-off-_c2odz9k\\code\\test_web_alarm_evidence_sanitizer.py\", line 325, in test_identity_outside_a_path_refused\n    self.assertEqual(r.safety, \"BLOCKED\")\nAssertionError: 'PASS' != 'BLOCKED'\n- PASS\n+ BLOCKED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_blocked_file_has_no_sanitized_copy_and_refuses",
+   "FAIL",
+   "_c2odz9k\\code\\test_web_alarm_evidence_sanitizer.py\", line 469, in test_blocked_file_has_no_sanitized_copy_and_refuses\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ]
+ ]
+}

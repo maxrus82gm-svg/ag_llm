@@ -1,0 +1,19 @@
+{
+ "phase": "precheck",
+ "before_sha256": "dda0722e3c7641509350964f396753ecfabb3086e4feee81d694bc55bc35ff75",
+ "before_bytes": 649911,
+ "eol": "LF",
+ "method": "card with BLOCK 1 replaced by the waiting slot, encoded LF and CRLF, must equal the previous rotation result",
+ "expected_sha256": "4ebf132a9bdb9eb1b3632b9a1ad8cfeac76fd6f6457a9fa69a711f12357d613f",
+ "reconstructed_sha256": {
+  "LF": "dd4c8c3ffd88798bdb65ce52707a5a7bb61c878891bc6473d476da1faf5b1f81",
+  "CRLF": "4ebf132a9bdb9eb1b3632b9a1ad8cfeac76fd6f6457a9fa69a711f12357d613f"
+ },
+ "matched_encoding": [
+  "CRLF"
+ ],
+ "eol_changed_since_previous_rotation": true,
+ "block1_has_task": true,
+ "block1_ends": true,
+ "result": "MATCH"
+}

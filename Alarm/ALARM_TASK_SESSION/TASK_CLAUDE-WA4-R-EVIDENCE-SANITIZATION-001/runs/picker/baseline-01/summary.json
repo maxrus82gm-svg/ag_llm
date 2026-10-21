@@ -1,0 +1,29 @@
+{
+ "label": "baseline-01",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-picker-qhtnd57k\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-picker-baseline-01-red8e0gb\\out",
+  "test_web_alarm_folder_picker"
+ ],
+ "exit": 0,
+ "wall_seconds": 10.653,
+ "base": "<TEMP>\\claude-evsan-picker-baseline-01-red8e0gb",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-picker-qhtnd57k\\code",
+ "tests_run": 16,
+ "passed": 16,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 9.536,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

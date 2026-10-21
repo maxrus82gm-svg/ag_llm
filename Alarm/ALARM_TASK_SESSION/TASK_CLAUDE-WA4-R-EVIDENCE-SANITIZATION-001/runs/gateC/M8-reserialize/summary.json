@@ -1,0 +1,55 @@
+{
+ "label": "M8-reserialize",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M8-reserialize-l8foinw8\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M8-reserialize-ztb6gkjj\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.631,
+ "base": "<TEMP>\\claude-evsan-gateC-M8-reserialize-ztb6gkjj",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M8-reserialize-l8foinw8\\code",
+ "tests_run": 36,
+ "passed": 31,
+ "failures": 5,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.738,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output",
+   "FAIL",
+   "s\"], {\"CLEAN\": 2, \"CONFIRMED\": 3, \"SUSPECT\": 2})\nAssertionError: {'CLEAN': 2, 'CONFIRMED': 2, 'CONFIRMED+UNSUPPORTED': 1, 'SUSPECT': 2} != {'CLEAN': 2, 'CONFIRMED': 3, 'SUSPECT': 2}\n- {'CLEAN': 2, 'CONFIRMED': 2, 'CONFIRMED+UNSUPPORTED': 1, 'SUSPECT': 2}\n+ {'CLEAN': 2, 'CONFIRMED': 3, 'SUSPECT': 2}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_bom_and_crlf_preserved",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M8-reserialize-l8foinw8\\code\\test_web_alarm_evidence_sanitizer.py\", line 299, in test_bom_and_crlf_preserved\n    self.assertEqual(r.output.count(b\"\\r\\n\"), 3)\nAssertionError: 0 != 3\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_key_collision_refused",
+   "FAIL",
+   "k (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M8-reserialize-l8foinw8\\code\\test_web_alarm_evidence_sanitizer.py\", line 285, in test_key_collision_refused\n    self.assertIn(\"key-collision\", r.reasons)\nAssertionError: 'key-collision' not found in ['structure']\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_results_document_keeps_structure_counters_and_formatting",
+   "FAIL",
+   "_counters_and_formatting\n    self.assertEqual((r.safety, r.structure, r.reasons), (\"PASS\", \"PASS\", []))\nAssertionError: Tuples differ: ('BLOCKED', 'FAIL', ['structure']) != ('PASS', 'PASS', [])\n\nFirst differing element 0:\n'BLOCKED'\n'PASS'\n\n- ('BLOCKED', 'FAIL', ['structure'])\n+ ('PASS', 'PASS', [])\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file",
+   "FAIL",
+   "nce_sanitizer.py\", line 409, in test_stage_preserves_originals_and_maps_every_file\n    self.assertEqual(mapping[\"verdict\"], \"SAFE PUBLICATION CANDIDATE (needs USER GO)\")\nAssertionError: 'REFUSED' != 'SAFE PUBLICATION CANDIDATE (needs USER GO)'\n- REFUSED\n+ SAFE PUBLICATION CANDIDATE (needs USER GO)\n\n"
+  ]
+ ]
+}

@@ -1,0 +1,175 @@
+{
+ "label": "M1-single-separator",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001",
+  "--output",
+  "<TEMP>\\claude-evsan-gateC-M1-single-separator-fg1gnzcs\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.741,
+ "base": "<TEMP>\\claude-evsan-gateC-M1-single-separator-fg1gnzcs",
+ "runner_root": "<TEMP>\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code",
+ "tests_run": 36,
+ "passed": 7,
+ "failures": 29,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.851,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output",
+   "FAIL",
+   "ocked\": 1,\n \"replacements_total\": {\n  \"FRAGMENT\": 1,\n  \"REPO\": 3,\n  \"TEMP\": 3\n },\n \"kept_total\": {\n  \"DRIVE_ROOT\": 1,\n  \"ILLUSTRATIVE\": 1\n },\n \"identity_gate\": \"ENFORCED\",\n \"verdict\": \"REFUSED\",\n \"blocked\": [\n  {\n   \"id\": \"runs/a/results.json\",\n   \"reasons\": [\n    \"residual-identity\"\n   ]\n  }\n ]\n}\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.DeterminismTests.test_output_does_not_depend_on_local_identity",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 383, in test_output_does_not_depend_on_local_identity\n    self.assertEqual(len(outputs), 1)\nAssertionError: 2 != 1\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=True, depth=1)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=True, depth=2)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=True, depth=3)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=False, depth=1)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=False, depth=2)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'zqsynthuser'\", ascii=False, depth=3)",
+   "FAIL",
+   "or-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=1)",
+   "FAIL",
+   "ocal\\Temp\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: 'C:\\\\<HOME>\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- C:\\<HOME>\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=2)",
+   "FAIL",
+   "ocal\\Temp\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: 'C:\\\\<HOME>\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- C:\\<HOME>\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=True, depth=3)",
+   "FAIL",
+   "ocal\\Temp\\claude-evsan-mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 245, in test_levels_ascii_and_cyrillic\n    self.assertEqual(out, \"<TEMP>\\\\w\")\nAssertionError: 'C:\\\\<HOME>\\\\AppData\\\\Local\\\\Temp\\\\w' != '<TEMP>\\\\w'\n- C:\\<HOME>\\AppData\\Local\\Temp\\w\n+ <TEMP>\\w\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=False, depth=1)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=False, depth=2)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'\\\\u0422\\\\u0435\\\\u0441\\\\u0442\\\\u043e\\\\u0432\\\\u044b\\\\u0439'\", ascii=False, depth=3)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=True, depth=1)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=True, depth=2)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=True, depth=3)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=False, depth=1)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=False, depth=2)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_levels_ascii_and_cyrillic (name=\"'Zq Synth'\", ascii=False, depth=3)",
+   "FAIL",
+   "e-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 242, in test_levels_ascii_and_cyrillic\n    self.assertEqual(leaks(out, name), [])\nAssertionError: Lists differ: ['Zq Synth'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Zq Synth'\n\n- ['Zq Synth']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_repr_layers (depth=0)",
+   "FAIL",
+   "mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 252, in test_repr_layers\n    self.assertEqual(leaks(out, CYR), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_repr_layers (depth=1)",
+   "FAIL",
+   "mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 252, in test_repr_layers\n    self.assertEqual(leaks(out, CYR), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.EscapingLevelTests.test_repr_layers (depth=2)",
+   "FAIL",
+   "mirror-M1-single-separator-9khp1b6q\\code\\test_web_alarm_evidence_sanitizer.py\", line 252, in test_repr_layers\n    self.assertEqual(leaks(out, CYR), [])\nAssertionError: Lists differ: ['Тестовый'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'Тестовый'\n\n- ['Тестовый']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.JsonDocumentTests.test_results_document_keeps_structure_counters_and_formatting",
+   "FAIL",
+   "rmatting\n    self.assertEqual((r.safety, r.structure, r.reasons), (\"PASS\", \"PASS\", []))\nAssertionError: Tuples differ: ('BLOCKED', 'PASS', ['residual-identity']) != ('PASS', 'PASS', [])\n\nFirst differing element 0:\n'BLOCKED'\n'PASS'\n\n- ('BLOCKED', 'PASS', ['residual-identity'])\n+ ('PASS', 'PASS', [])\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_new_sanitizer_closes_every_shape_and_keeps_json_valid (shape='repr-inside-json')",
+   "FAIL",
+   "web_alarm_evidence_sanitizer.py\", line 152, in test_new_sanitizer_closes_every_shape_and_keeps_json_valid\n    self.assertEqual(leaks(new), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_new_sanitizer_closes_every_shape_and_keeps_json_valid (shape='extended-prefix-repr')",
+   "FAIL",
+   "web_alarm_evidence_sanitizer.py\", line 152, in test_new_sanitizer_closes_every_shape_and_keeps_json_valid\n    self.assertEqual(leaks(new), [])\nAssertionError: Lists differ: ['zqsynthuser'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'zqsynthuser'\n\n- ['zqsynthuser']\n+ []\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.LegacyGapTests.test_new_sanitizer_closes_every_shape_and_keeps_json_valid (shape='frames-json-in-json')",
+   "FAIL",
+   "nce_sanitizer.py\", line 153, in test_new_sanitizer_closes_every_shape_and_keeps_json_valid\n    self.assertNotIn(\"Work\", new)\nAssertionError: 'Work' unexpectedly found in '\"{\\\\\"frames\\\\\": [\\\\\"  File \\\\\\\\\\\\\"<REPO>\\\\\\\\\\\\\\\\web_alarm\\\\\\\\\\\\\\\\task_store.py\\\\\\\\\\\\\", line 1, in f\\\\\"]}\"'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.PathFormTests.test_identifying_prefix_replaced_exactly (text=\"'\\\\\\\\\\\\\\\\h\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\<HOME>\\\\\\\\\\\\\\\\x'\")",
+   "FAIL",
+   "de\\test_web_alarm_evidence_sanitizer.py\", line 213, in test_identifying_prefix_replaced_exactly\n    self.assertEqual(es.sanitize_text(text, POLICY)[0], expected)\nAssertionError: '\\\\\\\\h\\\\\\\\\\\\\\\\<HOME>\\\\\\\\x' != '\\\\\\\\h\\\\\\\\\\\\\\\\<HOME>\\\\\\\\x'\n- \\\\h\\\\\\\\<HOME>\\\\x\n+ \\\\h\\\\\\\\<HOME>\\\\x\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file",
+   "FAIL",
+   "nce_sanitizer.py\", line 409, in test_stage_preserves_originals_and_maps_every_file\n    self.assertEqual(mapping[\"verdict\"], \"SAFE PUBLICATION CANDIDATE (needs USER GO)\")\nAssertionError: 'REFUSED' != 'SAFE PUBLICATION CANDIDATE (needs USER GO)'\n- REFUSED\n+ SAFE PUBLICATION CANDIDATE (needs USER GO)\n\n"
+  ]
+ ]
+}
