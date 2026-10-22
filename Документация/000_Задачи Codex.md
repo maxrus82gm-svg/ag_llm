@@ -4,6 +4,8 @@
 
 ## Правила
 
+- **`DOC-VERIFIER-BLOCK4-01@1` (18): БЛОК 4 независимого verifier.** БЛОКИ 1–3 прежние; БЛОК 4 — READ-ONLY для исполнителя, его пишет назначенный независимый проверяющий (пока ChatGPT) после фактического review/test. Память — последнее полное заключение + до двух кратких прежних, постоянный архив всех verdict в 06. Новая TASK не обнуляет БЛОК 4. При отсутствии независимого результата — NOT VERIFIED, не PASS.
+
 **Единая граница Git (`rule-ref:DOC-GIT-01@1` в 18, пользовательское решение 2026-10-10):** локальный Codex не обращается самостоятельно к Git/GitHub ни для чтения `status/diff/log/show`, ни для записи, через CLI/UI/scripts/API/тест. Если нужна история или сверка committed версии, запросить exact path/range у пользователя либо ChatGPT-координатора в момент работы; если интерактивно нельзя — в отчёте с пометкой BLOCKED по зависимой операции. Исторические отчёты о прошлых Git-проверках сохраняются как события прошлого, а не как разрешение на новые.
 
 - Перед TASK: `08_Старт.md` → `000_Задачи для агента.md` → `18_Регламент сопровождения документации.md` → `01` → профиль темы. Кодекс приступает только к утверждённому БЛОКУ 1; права на мутации определяются scope.
@@ -815,6 +817,27 @@ Evidence: reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/{report.md,README.md,checks.j
 
 DOC IMPACT: только новая TASK + штатная собственная card rotation; общие документы, Claude/LLM12/production и предыдущие TASK не менялись. NEXT SAFE ACTION: WEB_11 independently reviews пакет; пользователь выбирает отдельный уже готовый Hyper-V lab host + легитимное offline media. Provisioning/controlled baseline boot/owned cleanup и native WFP требуют разных будущих адресных USER GO. Ни feature install/reboot, ни proxy/network workarounds не разрешены. Пользователь публикует/передаёт WEB_11.
 
+
+---
+
+
+---
+# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
+---
+
+**Автор:** независимый ChatGPT, Codex — READ-ONLY. Архив: `Документация/06_Журнал выполнения и отчёты.md`.
+
+## 1. Последнее заключение: 2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+**Вердикт: PARTIAL / INDEPENDENT BOUNDED OFFLINE ACCEPTED**. WEB_11 подтвердил пакет **215/215** путей и **13/13** выборочных SHA-256. Сохранённые **52/52 PASS** — Codex-run evidence, **не независимый запуск Windows suite**; baseline red 50/51, 2 мутанта. Реальный lab I01–I12: **12/12 BLOCKED**; trusted VM/media/изоляция, WFP/V2Ray/native/Chat E2E **NOT VERIFIED**. `CanApply=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; future provisioning требует отдельного USER GO. Путь: `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/`, WEB_11 в 34, постоянный архив 06.
+
+## 2. Предыдущее заключение: 2026-10-20 / CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001
+
+WEB_10 bounded independent source/evidence: **87** путей по manifest + manifest, **10/10** выборочных SHA-256; real Windows/native install не проверены, installer BLOCKED. История: 06, WEB_10.
+
+## 3. Позапрошлое заключение
+
+Оставлено пустым: без достоверной дополнительной независимой проверки/постоянной записи не заполнять.
 
 ---
 

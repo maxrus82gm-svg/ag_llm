@@ -1,3 +1,9 @@
+## CROSS-CHAT CURRENT / 2026-10-21 — БЛОК 4, утверждённый общий регламент
+
+**`DOC-VERIFIER-BLOCK4-01@1` (18):** независимый verifier/планировщик (сейчас ChatGPT) один пишет БЛОК 4 в карточках Claude/Codex/ChatGPT. Исполнитель ротирует прежние БЛОКИ 1–3, БЛОК 4 READ-ONLY; 1 последняя развёрнутая проверка + до 2 предыдущих кратких, полная бессрочная история verdict — в 06. Новая TASK не стирает выводы verifier. Claude sanitizer `CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001`: Linux 38/38 штатных PASS, 2 fail-open, независимый вердикт PARTIAL; исправление пока не назначено. Codex `CODEX-WUA-0-WINDOWS-LAB-GATE-001`: bounded OFFLINE accepted, реальный Windows VM/WFP/native NOT VERIFIED. Windows Actions основная лаборатория; Linux Actions возможно по необходимости / DEFERRED / NOT IMPLEMENTED. Это обновление governance, не разрешение на код, CI YAML, provision или rollout.
+
+---
+
 ## CROSS-CHAT CURRENT / 2026-10-21 — GitHub-права, роли и лаборатории (решение пользователя)
 
 **Новый обычный чат обязательно читает актуальный GitHub:** `08_Старт → 000_Задачи для агента → 34_TACTICAL_CONTEXT → 18_Регламент сопровождения документации → 01/профиль → 36_Единая архитектура тестирования → 36.1 → 36.2/36.3`. Из 18 обязательно: `DOC-GIT-01@1`, `DOC-ENGINEERING-ROLES-01@1`, `DOC-PARALLEL-01@1`, `DOC-GITHUB-HANDOFF-01@1`. Ограниченный `INDEPENDENT_PLAN` не раскрывается обычным маршрутом (BLIND-START). Датированные старые блоки ниже — история, а не подтверждение текущего HEAD.
