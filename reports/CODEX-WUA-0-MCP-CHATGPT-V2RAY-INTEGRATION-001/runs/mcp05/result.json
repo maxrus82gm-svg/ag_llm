@@ -1,0 +1,379 @@
+{
+  "checks": [
+    {
+      "name": "0:SDK_initialize",
+      "status": "PASS"
+    },
+    {
+      "name": "0:exact_tools",
+      "status": "PASS"
+    },
+    {
+      "name": "0:readonly_annotations",
+      "status": "PASS"
+    },
+    {
+      "name": "0:ping:success",
+      "status": "PASS"
+    },
+    {
+      "name": "0:ping:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "0:ping:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "0:ping:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "0:list_capabilities:success",
+      "status": "PASS"
+    },
+    {
+      "name": "0:list_capabilities:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "0:list_capabilities:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "0:list_capabilities:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "0:get_status:success",
+      "status": "PASS"
+    },
+    {
+      "name": "0:get_status:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "0:get_status:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "0:get_status:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "0:read_synthetic_context:success",
+      "status": "PASS"
+    },
+    {
+      "name": "0:read_synthetic_context:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "0:read_synthetic_context:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "0:read_synthetic_context:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "0:server_owned_context",
+      "status": "PASS"
+    },
+    {
+      "name": "0:repeat_content",
+      "status": "PASS"
+    },
+    {
+      "name": "0:deny_foreign",
+      "status": "PASS"
+    },
+    {
+      "name": "0:deny_traversal",
+      "status": "PASS"
+    },
+    {
+      "name": "0:deny_wrong_type",
+      "status": "PASS"
+    },
+    {
+      "name": "0:deny_extra",
+      "status": "PASS"
+    },
+    {
+      "name": "0:unknown_tool_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "0:strict_request_type",
+      "status": "PASS"
+    },
+    {
+      "name": "0:errors_do_not_leak_private_paths",
+      "status": "PASS"
+    },
+    {
+      "name": "0:clean_sdk_stop",
+      "status": "PASS"
+    },
+    {
+      "name": "0:owned_api_process_exited",
+      "status": "PASS"
+    },
+    {
+      "name": "1:SDK_initialize",
+      "status": "PASS"
+    },
+    {
+      "name": "1:exact_tools",
+      "status": "PASS"
+    },
+    {
+      "name": "1:readonly_annotations",
+      "status": "PASS"
+    },
+    {
+      "name": "1:ping:success",
+      "status": "PASS"
+    },
+    {
+      "name": "1:ping:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "1:ping:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "1:ping:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "1:list_capabilities:success",
+      "status": "PASS"
+    },
+    {
+      "name": "1:list_capabilities:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "1:list_capabilities:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "1:list_capabilities:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "1:get_status:success",
+      "status": "PASS"
+    },
+    {
+      "name": "1:get_status:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "1:get_status:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "1:get_status:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "1:read_synthetic_context:success",
+      "status": "PASS"
+    },
+    {
+      "name": "1:read_synthetic_context:API_provenance",
+      "status": "PASS"
+    },
+    {
+      "name": "1:read_synthetic_context:hash",
+      "status": "PASS"
+    },
+    {
+      "name": "1:read_synthetic_context:actual_storage_unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "1:server_owned_context",
+      "status": "PASS"
+    },
+    {
+      "name": "1:repeat_content",
+      "status": "PASS"
+    },
+    {
+      "name": "1:deny_foreign",
+      "status": "PASS"
+    },
+    {
+      "name": "1:deny_traversal",
+      "status": "PASS"
+    },
+    {
+      "name": "1:deny_wrong_type",
+      "status": "PASS"
+    },
+    {
+      "name": "1:deny_extra",
+      "status": "PASS"
+    },
+    {
+      "name": "1:unknown_tool_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "1:strict_request_type",
+      "status": "PASS"
+    },
+    {
+      "name": "1:errors_do_not_leak_private_paths",
+      "status": "PASS"
+    },
+    {
+      "name": "1:clean_sdk_stop",
+      "status": "PASS"
+    },
+    {
+      "name": "1:owned_api_process_exited",
+      "status": "PASS"
+    },
+    {
+      "name": "restart_fresh_session_and_context",
+      "status": "PASS"
+    }
+  ],
+  "sessions": [
+    {
+      "session_id": "7ca6a23c-bb55-4f21-b541-e6af00d5315d",
+      "nonce_sha256": "bdb9b72c322d674cd36390d57294b8991ca140f6f83b6d56b6f392f6b9eaad2b",
+      "context_sha256": "d0527e58ac4960d57d74bf914ce1c25c86f389eb0ed79174f0767c1549fbdc7b"
+    },
+    {
+      "session_id": "7543e41e-9962-4e73-a3c1-fc7bd4f514ec",
+      "nonce_sha256": "85863b60a9181c5914a63ab0eb1904b7faabd8f21c4412367e75b06fc4599610",
+      "context_sha256": "efa4b185cedf69a2a6ff994f3773be1586bd40674d607afac177015eb82a4ddf"
+    }
+  ],
+  "wire_calls": [
+    {
+      "tool": "ping",
+      "is_error": false,
+      "request_id": "586d7658-1b64-4c46-ae8e-822a3d5324ba"
+    },
+    {
+      "tool": "list_capabilities",
+      "is_error": false,
+      "request_id": "2174cf20-90c9-4939-b610-2aaa6c0ed472"
+    },
+    {
+      "tool": "get_status",
+      "is_error": false,
+      "request_id": "0079501f-5f33-4e76-b67a-34a1544bbc3d"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": false,
+      "request_id": "4da240ce-30b0-4bfd-95ef-8e7ddfa8a73c"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": false,
+      "request_id": "e582943d-23ba-4fc8-90f3-06f2816643c3"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "cae3ce03-f9b0-49aa-9e74-f73c34e09b63"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "8fa9e49d-4b96-4c8b-a3ec-dc3537207a9d"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "7387edad-97dc-491d-9959-320a1c04fe2f"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "e6af68f7-9b5d-455e-a42c-4b86887528f0"
+    },
+    {
+      "tool": "execute",
+      "is_error": true,
+      "request_id": "1ab1acbf-1b30-4c37-9e70-db5ac2f3f0ca"
+    },
+    {
+      "tool": "get_status",
+      "is_error": false,
+      "request_id": "6b2934f5-c3f3-41e4-aa38-a95e31e3c5a1"
+    },
+    {
+      "tool": "ping",
+      "is_error": false,
+      "request_id": "b76f39fc-35b6-4e13-b0ee-945b1e57a2e8"
+    },
+    {
+      "tool": "list_capabilities",
+      "is_error": false,
+      "request_id": "7c0bb0e7-d821-42eb-bdf8-4d7552ed65ce"
+    },
+    {
+      "tool": "get_status",
+      "is_error": false,
+      "request_id": "12593a7a-c50b-494f-b07c-c631cf23a378"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": false,
+      "request_id": "f6fe5b18-1d6c-425d-84bb-ca457fd254d9"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": false,
+      "request_id": "f2afb18e-e8b5-4295-b90d-815669023036"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "f6da01e2-bfd0-4a14-8f54-2d91a665594d"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "a59f1c35-2a18-42fa-9629-bd76c31821f9"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "352ed607-ada4-4fb6-a3e9-688421aa4e3a"
+    },
+    {
+      "tool": "read_synthetic_context",
+      "is_error": true,
+      "request_id": "cd29d04e-37af-40d9-8fb5-3bb59cc6d3ea"
+    },
+    {
+      "tool": "execute",
+      "is_error": true,
+      "request_id": "84b55add-ab4d-4f49-8fa0-cfc217b1fddf"
+    },
+    {
+      "tool": "get_status",
+      "is_error": false,
+      "request_id": "fe96fdc0-95fa-4d65-8d6e-ae5b42c70133"
+    }
+  ],
+  "counts": {
+    "total": 61,
+    "passed": 61,
+    "failed": 0
+  },
+  "scope": "real MCP SDK stdio -> integration -> separate real WebAlarmApi dispatch fixture; synthetic data only",
+  "OS_security_proof": false
+}

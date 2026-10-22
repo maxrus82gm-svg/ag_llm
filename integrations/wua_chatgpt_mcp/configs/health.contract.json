@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "source": "get_status MCP tool -> server-owned /status dispatch",
+  "public_fields": [
+    "status",
+    "service",
+    "api_version",
+    "mode"
+  ],
+  "proof_fields": [
+    "session_id",
+    "nonce",
+    "api_reads",
+    "api_route",
+    "baseline_sha256",
+    "current_sha256"
+  ],
+  "do_not_return": [
+    "storage_root",
+    "raw profiles",
+    "secrets",
+    "full environment",
+    "host usernames"
+  ],
+  "route_state": "UNVERIFIED until real OS/owner/observer evidence; MCP ok cannot imply WFP/V2Ray ok",
+  "startup_decision": "BLOCKED if any identity, broker, pipe, observer, source/config/hash or approval is unknown or lost",
+  "on_failure": "No retry to DIRECT/secondary proxy; stop owned chain only under approved supervisor authority; no auto-resume or weakening",
+  "native_stop_supervisor": "NOT IMPLEMENTED; future separate reviewed component"
+}

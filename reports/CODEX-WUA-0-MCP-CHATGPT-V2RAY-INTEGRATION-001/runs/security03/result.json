@@ -1,0 +1,459 @@
+{
+  "total": 24,
+  "passed": 24,
+  "failed": 0,
+  "errors": 0,
+  "tests": [
+    {
+      "name": "test_closed_broker_listener_bounded",
+      "status": "PASS"
+    },
+    {
+      "name": "test_closed_socks_listener_bounded_no_fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "test_control_plane_paths_and_receipt_correlation",
+      "status": "PASS"
+    },
+    {
+      "name": "test_endpoint_substitution_and_method_rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "test_environment_secondary_proxy_no_proxy_rejected_before_dial",
+      "status": "PASS"
+    },
+    {
+      "name": "test_observer_flags_unexpected_owned_loopback_attempt",
+      "status": "PASS"
+    },
+    {
+      "name": "test_port_takeover_fails_authority_nonce",
+      "status": "PASS"
+    },
+    {
+      "name": "test_redirect_and_oversized_response_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_socks_fault_matrix_no_direct_fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "test_config_flags_fake_proofs_cannot_activate",
+      "status": "PASS"
+    },
+    {
+      "name": "test_extra_TCP_or_regular_user_socks_route_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_reference_broker_rejects_unbounded_or_nonloopback_config",
+      "status": "PASS"
+    },
+    {
+      "name": "test_same_foreign_builtin_or_ui_SID_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_startup_pin_tampering_and_unknown_field_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_strict_parser_and_path_scope",
+      "status": "PASS"
+    },
+    {
+      "name": "test_unknown_child_wrong_owner_and_hash_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_v2ray_host_user_owner_mismatch_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_valid_synthetic_contract_still_blocks_real_activation",
+      "status": "PASS"
+    },
+    {
+      "name": "test_child_exit_no_retry_or_replacement",
+      "status": "PASS"
+    },
+    {
+      "name": "test_independent_api_auth_replay_and_readonly_scope",
+      "status": "PASS"
+    },
+    {
+      "name": "test_oversized_real_MCP_frame_stops_and_reaps_API_child",
+      "status": "PASS"
+    },
+    {
+      "name": "test_production_root_and_untrusted_bootstrap_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_response_nonce_session_hash_and_storage_substitution_denied",
+      "status": "PASS"
+    },
+    {
+      "name": "test_wrong_MAC_fail_closed_and_child_stops",
+      "status": "PASS"
+    }
+  ],
+  "route_observations": [
+    {
+      "case": "test_closed_broker_listener_bounded",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59150,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "control_receipts": [],
+      "broker_event_codes": []
+    },
+    {
+      "case": "test_closed_socks_listener_bounded_no_fallback",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59157,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59156,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "control_receipts": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "TRANSPORT_TIMEOUT"
+      ]
+    },
+    {
+      "case": "test_control_plane_paths_and_receipt_correlation",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        },
+        {
+          "role": "client",
+          "target_port": 59162,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59161,
+          "allowed": true
+        },
+        {
+          "role": "socks",
+          "target_port": 59160,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "control_receipts": [
+        {
+          "phase": "poll",
+          "request_id": "f1307d46-6fc9-4550-85dd-c700c94fc507"
+        },
+        {
+          "phase": "result",
+          "request_id": "f7fc9e79-d2c2-4405-8b40-23fb5110f126"
+        },
+        {
+          "phase": "secret",
+          "request_id": "220f1eb8-5282-4874-997b-29619fc3db97"
+        },
+        {
+          "phase": "health",
+          "request_id": "144ad3af-d49f-4375-8336-61c794e744d9"
+        },
+        {
+          "phase": "mcp",
+          "request_id": "62e35b53-ca5a-46b5-89a9-82d041fe9b23"
+        },
+        {
+          "phase": "oauth",
+          "request_id": "599ad7a7-d628-47b5-b90c-daec0c90a4f7"
+        },
+        {
+          "phase": "harpoon",
+          "request_id": "b2512a99-cb85-4d07-b3b2-1249159c0b52"
+        }
+      ],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF",
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_GRANTED",
+        "TUNNEL_ESTABLISHED",
+        "RELAY_EOF"
+      ]
+    },
+    {
+      "case": "test_endpoint_substitution_and_method_rejected",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59186,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "control_receipts": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "METHOD"
+      ]
+    },
+    {
+      "case": "test_environment_secondary_proxy_no_proxy_rejected_before_dial",
+      "attempts": [],
+      "violations": [],
+      "control_receipts": [],
+      "broker_event_codes": []
+    },
+    {
+      "case": "test_observer_flags_unexpected_owned_loopback_attempt",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59191,
+          "allowed": false
+        }
+      ],
+      "violations": [
+        {
+          "kind": "UNEXPECTED_CONNECT",
+          "role": "client"
+        }
+      ],
+      "control_receipts": [],
+      "broker_event_codes": []
+    },
+    {
+      "case": "test_port_takeover_fails_authority_nonce",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59196,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "control_receipts": [],
+      "broker_event_codes": []
+    },
+    {
+      "case": "socks_refused",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59212,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59211,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_REFUSED"
+      ]
+    },
+    {
+      "case": "socks_timeout",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59217,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59216,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "TRANSPORT_TIMEOUT"
+      ]
+    },
+    {
+      "case": "socks_abrupt",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59222,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59221,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "TRANSPORT_ERROR"
+      ]
+    },
+    {
+      "case": "socks_malformed",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59227,
+          "allowed": true
+        },
+        {
+          "role": "broker",
+          "target_port": 59226,
+          "allowed": true
+        }
+      ],
+      "violations": [],
+      "broker_event_codes": [
+        "CLIENT_ACCEPTED",
+        "SOCKS_CONNECTED",
+        "SOCKS_METHOD"
+      ]
+    }
+  ],
+  "synthetic_only": true,
+  "native_calls": 0,
+  "mutation": null
+}

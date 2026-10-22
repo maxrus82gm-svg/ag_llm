@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "state": "DISABLED / DO NOT EXECUTE",
+  "official_client_candidate": "0.0.16+5f99daabd4aa4a77049e6d81d54a0d8c18335397",
+  "source_binary_attestation": "NOT VERIFIED",
+  "executable": "${INDEPENDENTLY_VERIFIED_TUNNEL_CLIENT_EXE}",
+  "argv": [
+    "run",
+    "--config",
+    "${SEALED_CONFIG_FILE}",
+    "--http-proxy",
+    "http://127.0.0.1:${BROKER_PORT}",
+    "--control-plane.http-proxy",
+    "http://127.0.0.1:${BROKER_PORT}",
+    "--mcp.http-proxy",
+    "http://127.0.0.1:${BROKER_PORT}",
+    "--harpoon.http-proxy",
+    "http://127.0.0.1:${BROKER_PORT}",
+    "--health.listen-addr",
+    "127.0.0.1:0"
+  ],
+  "argv_is_data_only": true,
+  "environment_policy": {
+    "inherit_user_environment": false,
+    "baseline_keys": [
+      "SystemRoot",
+      "WINDIR",
+      "COMSPEC"
+    ],
+    "separate_secret_delivery": "Approved private runtime reference only, not supplied or opened here",
+    "deny_ambient": [
+      "HTTP_PROXY",
+      "HTTPS_PROXY",
+      "ALL_PROXY",
+      "NO_PROXY",
+      "TUNNEL_CLIENT_PROFILE",
+      "TUNNEL_CLIENT_PROFILE_FILE",
+      "TUNNEL_CLIENT_PROFILE_DIR",
+      "TUNNEL_CLIENT_CONFIG",
+      "CONTROL_PLANE_BASE_URL",
+      "CA_BUNDLE",
+      "CLOUDFLARED_TUNNEL_TOKEN",
+      "CLOUDFLARED_MANAGED",
+      "HARPOON_TARGETS",
+      "HARPOON_ADDITIONAL_TRANSPORTS"
+    ],
+    "full_native_env_graph": "PENDING SOURCE AUDIT; list is not exhaustive enforcement proof"
+  },
+  "mcp_transport": "STDIO",
+  "mcp_entrypoint": "Future independently reviewed C-owned synchronous STDIO-to-local-pipe relay with no TCP runtime, leading to server-owned SDK gateway; current fixture-only Python entry must NOT be placed under C-only broker-port policy",
+  "health_listener": "Own ephemeral loopback H, separate bind/UI/accepted-flow proof needed; no automatic C outbound exception",
+  "cloudflared": "NOT CONFIGURED / MUST REMAIN ABSENT; native child proof pending",
+  "Harpoon_OAuth": "No HTTP MCP OAuth discovery intended under stdio; no configured Harpoon targets; full native branch audit pending",
+  "can_start": false,
+  "missing": [
+    "Approved source pack and source-to-binary proof",
+    "Real local SID/token/ACL/startup and effective WFP/IPC containment",
+    "Dedicated V2Ray ownership/config/remote-only evidence",
+    "Reviewed API gateway connector, private runtime auth, workspace entitlement and tunnel resource",
+    "Independent acceptance and exact separate USER GO",
+    "Current Python asyncio selfpipe conflict; selected no-TCP C relay and server-owned MCP peer not yet implemented"
+  ]
+}

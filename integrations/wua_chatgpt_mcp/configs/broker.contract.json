@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "profile": "STRICT_V2RAY_BROKER",
+  "target_layout": "DEDICATED_V2RAY_CONNECT_INBOUND",
+  "state": "DISABLED",
+  "process_owner": "new locally provisioned wua-broker SID, equal V2Ray actual effective token SID",
+  "client_identity": "new distinct local wua-client SID",
+  "inbound": {
+    "interface": "literal127.0.0.1",
+    "port": "assigned owned P, no hardcoded default",
+    "protocol": "verified HTTP CONNECT support of selected dedicated V2Ray build",
+    "owner_bind": "Native bind/listener and peer ownership proof required; port number alone insufficient"
+  },
+  "outbound": {
+    "remote": "approved literal R:Q TCP",
+    "no_DIRECT": true,
+    "secondary_proxy": false,
+    "host_resolver": false,
+    "fallback": false,
+    "secrets": "private approved broker-only upstream credential store; absent here"
+  },
+  "existing_V2Ray": "No profile/listener/process ownership inspection or mutation in this TASK",
+  "reference_adapter": "reference_connect.py is synthetic-only CONNECT -> owned SOCKS5; it is not selected for live topology because local S and external owner require additional policy proof",
+  "upstream_config_format": "NOT GENERATED: exact V2Ray implementation/version/schema must be selected and independently reviewed",
+  "can_apply": false
+}

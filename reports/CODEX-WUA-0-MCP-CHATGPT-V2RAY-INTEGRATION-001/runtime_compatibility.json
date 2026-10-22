@@ -1,0 +1,24 @@
+{
+  "python": "3.12.10",
+  "loop_class": "ProactorEventLoop",
+  "socketpair_function": "_fallback_socketpair",
+  "AF_UNIX_available": false,
+  "socketpair_source_sha256": "9a5d6858a77647f86775b8b61c225999ceadb0d45a16063e7ebd463d84a46bd8",
+  "owned_reserved_broker_port": 56862,
+  "observed_runtime_edges": [
+    {
+      "event": "socket.bind",
+      "host": "127.0.0.1",
+      "port": 0
+    },
+    {
+      "event": "socket.connect",
+      "host": "127.0.0.1",
+      "port": 56863
+    }
+  ],
+  "candidate_single_edge_conflict": true,
+  "status": "BLOCKED / DYNAMIC INTERNAL TCP UNDER CLIENT SID",
+  "interpretation": "Actual own-loopback runtime behavior observed, compared with prior single-edge predicate intent only. No Windows SID/WFP rules applied; not a native filtering verdict. The fixture audit guard installed after loop construction does NOT cover this initialization.",
+  "production_alternative": "Separate reviewed host-owned MCP SDK gateway plus a C-owned synchronous STDIO-to-local-pipe bridge with no TCP runtime, or a demonstrably compatible runtime. Neither activated/implemented here. No new port exception granted."
+}

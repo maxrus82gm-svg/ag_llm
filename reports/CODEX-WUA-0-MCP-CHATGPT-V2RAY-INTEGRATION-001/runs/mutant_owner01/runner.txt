@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_v2ray_host_user_owner_mismatch_denied (__main__.SecurityTests.test_v2ray_host_user_owner_mismatch_denied)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\test_security_routes.py", line 168, in test_v2ray_host_user_owner_mismatch_denied
+    with self.assertRaises(common.Denied):security.validate(p,common.digest(p))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Denied not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

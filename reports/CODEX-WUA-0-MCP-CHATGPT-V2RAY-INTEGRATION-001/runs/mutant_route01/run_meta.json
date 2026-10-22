@@ -1,0 +1,43 @@
+{
+  "label": "mutant_route01",
+  "exit_code": 1,
+  "counts": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "errors": 0
+  },
+  "mutant_killed": true,
+  "expected_mutant_failure": "test_control_plane_paths_and_receipt_correlation",
+  "elapsed_seconds": 0.141,
+  "sources_before": {
+    "integrations/wua_chatgpt_mcp/api_channel.py": "767059689360dad0ba5a8b4b2e3f2dd6180c0123c65b5e3e390a267e31fa5928",
+    "integrations/wua_chatgpt_mcp/api_fixture.py": "77d919c122bcb6bf7dcc7962eb97d65a85da921a574cbb7b33dc9b8eedae849a",
+    "integrations/wua_chatgpt_mcp/common.py": "edde5820d62e700ae9f1e8561f56cb28e8ffe3583433bf295c9c06fa93263c86",
+    "integrations/wua_chatgpt_mcp/reference_connect.py": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+    "integrations/wua_chatgpt_mcp/route_simulation.py": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b",
+    "integrations/wua_chatgpt_mcp/security_contract.py": "2f5df6c8dcf4116faddbee091519a786499f618a4d500efa5cd8260cc0419025",
+    "integrations/wua_chatgpt_mcp/server.py": "1c6b40ff1f397256b9f838fdbfcec060b957e44096b6a1a25e020e5205a9f3f1",
+    "integrations/wua_chatgpt_mcp/tests/mcp_smoke.py": "d042fdde5516362c3cdeeab5306ca3d202dff4e38b045e12d9125cf6111d4816",
+    "integrations/wua_chatgpt_mcp/tests/run_suite.py": "d3de1b8af6faa21eb76e83a7fa4eb84777ec71bcf83a5586e0b142c2e51e30ec",
+    "integrations/wua_chatgpt_mcp/tests/test_security_routes.py": "627fb778b6feedbf339b1f54dc1a347831017303b69773ab25f210bd75a74725"
+  },
+  "sources_unchanged": true,
+  "python_version": "3.12.10",
+  "packages": {
+    "mcp": "2.2.0",
+    "httpx": "0.28.1",
+    "pydantic": "2.13.5"
+  },
+  "environment_keys": [
+    "COMSPEC",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "WINDIR"
+  ],
+  "stdout_summary": "{\"total\": 1, \"passed\": 0, \"failed\": 1, \"errors\": 0, \"mutation\": \"route\"}",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "external_network_targets": 0,
+  "native_tunnel_or_WFP_executions": 0
+}

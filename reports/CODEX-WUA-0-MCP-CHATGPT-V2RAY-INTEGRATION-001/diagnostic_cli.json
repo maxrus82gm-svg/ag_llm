@@ -1,0 +1,39 @@
+{
+  "contract_validation": "VALID",
+  "profile_sha256": "a526a82810851bb9bd6a10f5c24e235c4fd152e89b13d9af4f59a16494852261",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "identities_proven": false,
+  "WFP_proven": false,
+  "V2Ray_route_proven": false,
+  "status": "BLOCKED / REAL USER GO AND INDEPENDENT OS PROOFS REQUIRED",
+  "client_socket_intent": {
+    "family": "IPv4",
+    "protocol": "TCP",
+    "destination": "127.0.0.1",
+    "port": 32123
+  },
+  "broker_socket_intent": {
+    "family": "IPv4",
+    "protocol": "TCP",
+    "destination": "192.0.2.17",
+    "port": 443
+  },
+  "warnings": [
+    "Names and SID strings are not LookupAccountSid/token proof",
+    "WFP exact port does not authenticate listener",
+    "Gateway pipe/ACL/impersonation and real V2Ray ownership need independent evidence",
+    "No direct, secondary proxy, resolver or host-user V2Ray delegation allowed",
+    "Installed Windows Python asyncio uses dynamic TCP selfpipe: incompatible with putting this SDK child under C-only P. A verified no-TCP C stdio-to-pipe relay and server-owned SDK peer are required; not implemented here"
+  ],
+  "untrusted_evidence_accepted": false,
+  "checked_utc": "2026-10-21T18:24:20.567404+00:00",
+  "kind": "OFFLINE_STRUCTURAL_PREFLIGHT",
+  "states": [
+    "TWO_WINDOWS_IDENTITIES_NOT_PROVISIONED",
+    "OS_WFP_EGRESS_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "SECURE_TUNNEL_NOT_ACTIVATED",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ]
+}

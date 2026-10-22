@@ -1,0 +1,14 @@
+TASK: CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11 — LOCAL ONLY
+
+Реализован настоящий MCP SDK2 stdio adapter ↔ отдельный server-owned WebAlarmApi fixture, 4 read tools, authenticated bounded API channel, строгий profile/preflight, versioned disabled tunnel/broker/IPC/health templates и synthetic route/security tests.
+TESTS: final mcp06 63/63 named SDK checks; security03 24/24 unittest methods, 0 FAIL/ERROR; обе targeted mutations обнаружены (по 1 expected FAIL/0 ERROR). Исходные mcp01/02 ошибки сохранены, NUL guard defect исправлен; own SDK/API process-stop подтверждён.
+LOCAL_MCP_INTEGRATION_VERIFIED (synthetic SDK scope only).
+STRICT_ROUTE_SYNTHETIC_TESTED (owned loopback simulation only).
+TWO_WINDOWS_IDENTITIES_NOT_PROVISIONED; OS_WFP_EGRESS_NOT_VERIFIED; V2RAY_LIVE_ROUTE_NOT_VERIFIED; SECURE_TUNNEL_NOT_ACTIVATED; ORDINARY_CHATGPT_E2E_NOT_VERIFIED; HOSTED_TUNNEL_ON_HOLD_BY_USER.
+BLOCKERS: actual Windows Python asyncio opens dynamic TCP selfpipe≠broker P; current Python SDK child нельзя считать совместимым с C-only-P. Selected future no-TCP C relay + server-owned pipe peer пока не реализован. V2Ray external egress должен реально принадлежать B; обычный host-user SOCKS этого не доказывает. Selected future dedicated B V2Ray CONNECT broker→literalR:Q. No extra WFP ports or DIRECT/fallback.
+CHANGES: only integrations/wua_chatgpt_mcp/, own TASK report/evidence and own-card rotation. Real accounts/WFP/Firewall/BFE/ACL/services/rights/VM/HyperV/ExecutionPolicy/V2Ray/network changes=0; native Go/Cloudflared/hosted/model API/API-key/Git/GitHub/other-chat calls=0. Existing activation barriers preserved.
+CARD: B2 full assignment, B3 factual result, B1 ОЖИДАНИЕ НОВОЙ ЗАДАЧИ; 549445 bytes previous history and 6852 bytes rules/prefix byte-exact. 667/667 protected non-card files unchanged; readback and guarded reconstruction verified.
+DOC IMPACT: new code/reports + own-card rotation; shared19/34/37 proposed delta only, not edited. Package/old reports/production/Claude scope preserved.
+ARTIFACTS: integrations/wua_chatgpt_mcp/; reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/{report.md,manifest.json,checks.json,topology.md,connection_gates.md,deployment_plan.md,next_user_go.md,manual_engineering_review.md,runtime_compatibility.json,diagnostic_cli.json,card_rotation.json,integrity.json}; full final and original evidence in runs/.
+NEXT SAFE ACTION: user forwards package to WEB_11; separately authorize source/owned-IPC-fixture engineering for no-TCP C relay + server-owned gateway, then dedicated B engine/source/config review. Real SID/WFP lab, native routing, installation and hosted activation require distinct future gates/USER GO. Independent acceptance pending.

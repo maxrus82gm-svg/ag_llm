@@ -1,0 +1,36 @@
+{
+  "status": "VERSION-PINNED CACHED EVIDENCE / LIVE UPSTREAM NOT FETCHED",
+  "official_references": [
+    "https://developers.openai.com/api/docs/guides/secure-mcp-tunnels",
+    "https://github.com/openai/tunnel-client/blob/master/docs/configuration.md"
+  ],
+  "cached_sources": [
+    {
+      "ref": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/run_help.txt",
+      "sha256": "eb252ba52bc740f9794d2fb3f62056a1314ae9e066b52b963172ca55d4af3323"
+    },
+    {
+      "ref": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/stdio_sample.txt",
+      "sha256": "c4c5ed21b9045146df1c4fedfe0cb59ab13a34fe983e891a6ebcd125e53f195a"
+    },
+    {
+      "ref": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/secure_tunnel_preparation/version.txt",
+      "sha256": "cb830d481dedd61bda2c85781e4db69cd1f65e04f113acb6a8f311843933c33b"
+    },
+    {
+      "ref": "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/source_audit.md",
+      "sha256": "703fea3f3a412d609f460903c70c89d016d4ced1def37a37f558891397f3538b"
+    }
+  ],
+  "verified_cached_flags": [
+    "config",
+    "http-proxy",
+    "control-plane.http-proxy",
+    "mcp.http-proxy",
+    "harpoon.http-proxy",
+    "health.listen-addr"
+  ],
+  "client_executions_in_this_TASK": 0,
+  "network_or_Git_fetches": 0,
+  "limits": "Cached sample/help corroborate version-specific names and STDIO, not complete native config precedence, fallback, source-to-EXE identity or current service entitlement. No API key or tunnel ID supplied."
+}

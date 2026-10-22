@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "protocol": "wua-api-jsonl-v1",
+  "current_executable": "api_fixture.py, synthetic STDIO worker, fresh owned state only",
+  "future_transport": "local Windows named pipe, under existing server-owned authority; not TCP API to production",
+  "future_requirements": [
+    "Local NPFS namespace only, reject remote SMB/UNC access",
+    "Server-created exclusive pipe instance with versioned DACL and no broad Everyone/anonymous access",
+    "Server validates client process/token SID C; client validates server PID/token and signed executable identity",
+    "Bounded frames, challenge/session-bound capability, exact read-only TASK grant, replay and deadline limits",
+    "No arbitrary method/path/storage-root or model credentials; server dispatch only approved status/context",
+    "No network delegation, writes or code execution via IPC; negative tests for other host IPC/services still required"
+  ],
+  "current_Windows_pipe_created": false,
+  "ACL_or_impersonation_proven": false,
+  "TCP_exception_added": false,
+  "production_connector": "BLOCKED / NOT IMPLEMENTED IN THIS FIXTURE PACKAGE",
+  "selected_target_chain": "C: official Go -> STDIO -> no-TCP synchronous C relay -> local authenticated pipe -> server-owned MCP SDK + WebAlarmApi authority U",
+  "mcp_role_in_identity_contract": "C-owned stdio pipe relay, not installed Python asyncio server",
+  "runtime_blocker": "Current Python3.12 ProactorEventLoop opens dynamic TCP selfpipe; do not launch it under C-only broker-port WFP intent",
+  "new_relay_implemented": false
+}

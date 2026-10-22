@@ -1,0 +1,15 @@
+# NEXT USER GO — адресные следующие действия
+
+Сейчас можно передать пакет WEB_11 для независимого source/evidence review. Git/GitHub и прямой отправки в другой чат Codex не выполнял. Hosted tunnel остаётся ON HOLD; не нужно снова перезапускать Desktop, переустанавливать плагин или вручную вводить длинные команды.
+
+**Ближайшая полезная отдельная инженерная TASK:** разрешить разработку и проверку **C-owned синхронного STDIO→local named-pipe relay без TCP runtime** и server-owned MCP gateway на существующей SDK/API границе. Нужны собственные одноразовые pipe/process fixtures с явно ограниченным локальным ACL/peer-token readback; никаких реальных technical accounts, WFP, V2Ray, внешних подключений, чужих pipes или production state. Это адресно закрывает установленный конфликт Python asyncio self-socket с единственным разрешённым P. Неподтверждённый runtime нельзя исправлять выдачей диапазона loopback-портов.
+
+Отдельно для будущего route-source review пользователь выбирает реализацию/версию **нового выделенного V2Ray CONNECT broker**, предоставляет проверенные offline source/config/schema references и описание upstream без credentials. Разрешение нужно только на адресное read-only изучение выбранных файлов/бинарных metadata; запуск или изменение текущего V2Ray, его ownership/listeners и профилей не подразумевается. Совпадение номера порта или SOCKS greeting не доказывает CONNECT, outbound или B-SID ownership.
+
+Далее требуется готовая отдельная Windows lab и одобренные source/observer/media. Native lab gate I01–I12 остаётся BLOCKED. Создание VM/включение компонентов/изменение рабочей Windows здесь не разрешены. После доказанной изоляции WEB_11 может подготовить отдельный USER GO на строго перечисленные **lab-only accounts/SID/WFP/IPC/bind/DNS/child/failure cases**, с owner, source/config hashes, максимальным временем/попытками и stop/rollback authority.
+
+Только после этих доказательств обсуждать ещё один адресный GO на установку двух disabled local identities/owned policies/отдельного B V2Ray и затем hosted activation. Он должен перечислять выбранный host, реальные новые SIDs и protected credential mechanism, signed runtime/child closure, endpoints P/H/R:Q, права/ACL/startup, отсутствие DIRECT/secondary/resolver, effective WFP и независимые failure receipts. **Текущий комплект не имеет apply/start и не разблокируется JSON-флагом даже после чужой записи «verified».**
+
+Для настоящего Secure MCP Tunnel пользователь отдельно подтверждает доступность Platform/ChatGPT workspace Tunnels, роли и разрешения; tunnel resource/runtime key — через утверждённый приватный механизм, не в чат/репозиторий. API key для runtime tunnel не является Model Assignment или model API-вызовом; права/тарифная доступность здесь не проверялись. ChatGPT-пароль не нужен.
+
+Последний gate — четыре настоящих MCP-вызова обычного ChatGPT и независимая сверка server receipt/nonce/hash/отказа other_task. SDK, visible @mention и synthetic routes этот gate не заменяют. Пока: TWO_WINDOWS_IDENTITIES_NOT_PROVISIONED; OS_WFP_EGRESS_NOT_VERIFIED; V2RAY_LIVE_ROUTE_NOT_VERIFIED; SECURE_TUNNEL_NOT_ACTIVATED; ORDINARY_CHATGPT_E2E_NOT_VERIFIED.

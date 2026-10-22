@@ -1,0 +1,1010 @@
+{
+  "task_id": "CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001",
+  "scope_root": "repository root; both authorized new directories",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "files": [
+    {
+      "path": "integrations/wua_chatgpt_mcp/api_channel.py",
+      "bytes": 3742,
+      "sha256": "767059689360dad0ba5a8b4b2e3f2dd6180c0123c65b5e3e390a267e31fa5928"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/api_fixture.py",
+      "bytes": 3800,
+      "sha256": "77d919c122bcb6bf7dcc7962eb97d65a85da921a574cbb7b33dc9b8eedae849a"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/common.py",
+      "bytes": 4663,
+      "sha256": "edde5820d62e700ae9f1e8561f56cb28e8ffe3583433bf295c9c06fa93263c86"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/broker.contract.json",
+      "bytes": 1288,
+      "sha256": "da0530ea237c69057e68e3c7c29455bdcd6d76b5e185a91bc3e395a82204c76d"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/gateway.ipc.contract.json",
+      "bytes": 1574,
+      "sha256": "7b0c4e909d3477d51b5e511f6f6c113e724108b0dab69aa002df8a6d5821033f"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/health.contract.json",
+      "bytes": 883,
+      "sha256": "00a11ba408a80ff0de4db9e460981d4fa50b0c37be683e13a836d99189ecc69d"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/strict.synthetic.example.json",
+      "bytes": 1433,
+      "sha256": "8f2790e25a1dbe03078636eae68f6a028698a8b1c0cb802679131de779a40409"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/strict.template.json",
+      "bytes": 1083,
+      "sha256": "6d7b8dc2c2acef40e9bddd748788e5ffa072b7df37b40f4eeaff306209506874"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/tunnel-client.v0.0.16.disabled.yaml",
+      "bytes": 508,
+      "sha256": "ef6ad11c812b44d15c3d47710b7a3d88cba078ef595506d9c9a9c2d97f9de2a8"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/configs/tunnel.launch.contract.json",
+      "bytes": 2618,
+      "sha256": "7474c1e49b6bd80ce4a94fbcc6a853822f1040ef09e531bf3a967e08b29a0eb5"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/diagnostics.py",
+      "bytes": 1607,
+      "sha256": "0861851ac285eb025822086c13c93f04efa3287ed1823ad9640ef3b965102e45"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/README.md",
+      "bytes": 8073,
+      "sha256": "74ca842af0a664288e2d873d4a6e4c1d4b9ee15bc1c03a31685efe671d3bd2f6"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/reference_connect.py",
+      "bytes": 13314,
+      "sha256": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/route_simulation.py",
+      "bytes": 2718,
+      "sha256": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/security_contract.py",
+      "bytes": 5355,
+      "sha256": "8d568f36868ef4155da9e789d19604e1acaa4f3efc235117baf2e246803b6ade"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/server.py",
+      "bytes": 4539,
+      "sha256": "b642b02599abdece141740b1eb3a9dc35b4ed69f25ba8207d737fb7523e2df67"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/mcp_smoke.py",
+      "bytes": 7995,
+      "sha256": "870f431dfa1172febe4b82750bf633aa55fc2e11648a3c65e48c3b226afa7daa"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/probe_event_loop.py",
+      "bytes": 2325,
+      "sha256": "99b643a4660e08fdbbad60e4929b78364fedb6f43cceb29d20ccf51072661848"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/run_suite.py",
+      "bytes": 2601,
+      "sha256": "d3de1b8af6faa21eb76e83a7fa4eb84777ec71bcf83a5586e0b142c2e51e30ec"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/test_security_routes.py",
+      "bytes": 21177,
+      "sha256": "3fe7b2869aa05b381a539c65459ff25b1aa6c060c45a97f8a98464ce9c2705d8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/assignment.md",
+      "bytes": 24275,
+      "sha256": "9dae7d70cfcd6a75728b30d746f65c30099439f0917975d5dc2a7ddd1cf05572"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/card_initial.json",
+      "bytes": 379,
+      "sha256": "238b7452291b89c387e6e3c37844b2eb991c3c3e857af4db9623cae72d8f131a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/card_result.txt",
+      "bytes": 3288,
+      "sha256": "f04042cf2196cb6537a2f5f033a7fb494af424b0ec518c802fd558949faeeb47"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/card_rotation.json",
+      "bytes": 1514,
+      "sha256": "bf1e944e810c3a5ccdbacd63257b4cc6daba31d05935659b90d5389d2a48ccd4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/checks.json",
+      "bytes": 4688,
+      "sha256": "a97f0b584d11fb8575e1542e2bdd4000a9231357b4fa19182edba126f6ee86f1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/connection_gates.md",
+      "bytes": 5596,
+      "sha256": "d0320e65bb29d301e0489e7034c223f313d9f325159fae6800130c8c9f7933c5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/deployment_plan.md",
+      "bytes": 5870,
+      "sha256": "62148919f5c58f80de63a32820d52b5b6d56ec90bd8857f838d8ae2082872ba3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/diagnostic_cli.json",
+      "bytes": 1508,
+      "sha256": "0197720a48896f8f199c4e3a19420c690e030e085e0b41a04c6bf8f2acebb15c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/diagnostic_cli_run.json",
+      "bytes": 315,
+      "sha256": "2864b8bf685a38b846b8eae31f56793544d2564e16328a8fb7e5c0d15711f4e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/diagnostic_preflight.json",
+      "bytes": 938,
+      "sha256": "c6ece12d76ec9e130e5b1ef5cf20ede7ecd1d8c4d4841f3576b4ec209077f9d0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/factual_result.txt",
+      "bytes": 2975,
+      "sha256": "703c8e19fdb8d235a5a28c20c4c675903e8254d5dd775e149234b6c91afa21c8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/integrity.json",
+      "bytes": 523,
+      "sha256": "44267692cb09a0a32fc06240d31f191b93fa77b18d416b36143e94deec0ff22a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/manifest.pre_rotation.json",
+      "bytes": 51831,
+      "sha256": "2e66ea28c1a03242df4940130b8b6145e7cb9821a4660db406fd45e4a8ed4b81"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/manual_engineering_review.md",
+      "bytes": 11427,
+      "sha256": "dc87ee8699f47299b01e8d0e91e3eb0dc40df89bbfe1a5e1e4051afa686829da"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/next_user_go.md",
+      "bytes": 4626,
+      "sha256": "5730e122c35564a9add48caf7e70475dd6e9544c3c2f912b3eb129067dac5767"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/protected_inputs.json",
+      "bytes": 153936,
+      "sha256": "7bcb762d6ad4270cacf23a3788fcb4bceb98d160f4f0d425ad77dd501a254917"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/report.md",
+      "bytes": 21367,
+      "sha256": "04eb8c138f0342f838d1903453ec464216a45bb2c3719f2e7a35cea3340b8034"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/reused_sources.json",
+      "bytes": 305,
+      "sha256": "844d7f32ba98269c7244db48f91e410d327ec26dbbd3d06d8d9c9a2b8e118b5c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp01/result.json",
+      "bytes": 3669,
+      "sha256": "4b41329f24594927aa61c6235657ff51937f937ff4d4c4c955c9b6b042eb91f7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp01/session0/stderr.txt",
+      "bytes": 25,
+      "sha256": "f755c3fd220a6a3603af7f627071009698fb020a649084beced6d64dbc64b2e7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp02/result.json",
+      "bytes": 3669,
+      "sha256": "4b41329f24594927aa61c6235657ff51937f937ff4d4c4c955c9b6b042eb91f7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp02/session0/stderr.txt",
+      "bytes": 53,
+      "sha256": "76fbca6b466b6c65876ac1584efe2dc9b0dfbba6d3a46a109bca1c2edf4aa762"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/result.json",
+      "bytes": 8648,
+      "sha256": "32150336a7217b92922935d9e8de593ebad6ade00c16228c61f4f5b18f4e31ce"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "6064168498789471a7657d0883bf9c8ac773e0575e5d961bf98b5a840c8a6f6d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "589bc0b257006e539b0fccee6224f26820902a87c03caa7964c8998d7c2d6c16"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session0/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "645ef3f71fa8556f9249c35f3d525d9088cc29536a369fa717c19f8ba1066bdc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session0/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "4e6a9e8fe23a54f41f460a1409ee343d3d757783ad1e1d762be79f56aa6f3b5c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "45ea1a9d66f41f9b67b06de76999759132799c16508d1bf1f50a6d0e6b1fc328"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session1/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "5b345822779bbd56fbb13da123654ac1da6bf8228b50593ae5e555f83d0639ef"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp03/session1/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/result.json",
+      "bytes": 8816,
+      "sha256": "a1b1da93af1a65acdab3c61069aa7caffdfb2669cceb7b5286859d47800fbd0f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "0527eefa41bcd60b873ca06f2c238abb303b20f5322a67c6f9b8fe1ae0c5346e"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "cc0dad6b2b1ec732b9ddfe6fec6503b5779216b777acaa3152f57ced9ff9046d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "1a207b6251b6373fe39f72971284c108aa32115439db9defd8103f2de962309c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "e40f02cfdcb573a42e97211d38a4a9e10f194176931f1f7cc1fcab1f85fa0616"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session0/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "5ad0e4cbd09943383dd357abb3f2a8230123dc7493e397dc73cecf3024c3f3d8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "fbb255fd37e7bc93ce4a2c7eaf475b66190b7cac787704c987a69ffbd070d3a7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "783da284da87fb2b197a208f7a53f1466c67b1241c72b656a325851a9e2ef0a6"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "a060f251aaefa0f844c7368fb6e16c4819b23aaa921e228f7813d29f9beaae5d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp04/session1/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/result.json",
+      "bytes": 8816,
+      "sha256": "a62ae956072db2f35a7f8d79065c7bef77cb03abf783b7192c667983cfd7d2af"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/run_meta.json",
+      "bytes": 2015,
+      "sha256": "626d93b0b739fb49db00fcfd298645e961aa10f33da616cf938dde16386b428d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "ce12eac3fa5ba17aa1e63cfb874eb888c1bd3234e764ee5e11277e0347a2d34f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "df7dd13ae28a857075cbdec53547aaee98c43dce1ed9e0cce73eae6219aacba8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "80f1d0133499733eba08d23518ab4fd74afe36a8c45c8bfcadf97129957d3a75"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "341e79226b344715a28674c1a5067984230358a425488e23ea6407690a80470d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session0/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "e050a17fb206c01fd49cef2b7a582abbf44db6f8d4db8a3c8f025b5755b31d4b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "cd57e9922fb5fef592cd9fae4452483eb9d5aad41aab092e4e0e4590c8aad4b1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "4189620180cf8bee4526d76bee0f73879b3294b14d6d785c5da6334da5f63197"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "19ba9d2b10b5620989b8da000485b0017580470af0b7df180b8b8b01c6dc7697"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp05/session1/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/result.json",
+      "bytes": 32746,
+      "sha256": "56fd9068d3821df657261adf2f1741a80ff83fc8467059e3e8ff8a86deefd115"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/run_meta.json",
+      "bytes": 3355,
+      "sha256": "edd9eb9d9399f65fc078414ac829cbd3258a8cbb26265c3e01e80d29d7ca5886"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "b46cd86bc88e586e29ac705090efdaa4e8faffcc5bf6cedfe12e472778a944bc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "ec56c4208c047e94f5643a90d137f550a4120ea12ae1406b0ab107601e4c1c84"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "791fd992fae184d01e7ca049ea16276fb0cb607b7fb13ea584985d307c6a3ef5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "817b60e03889670d4e1ebb7b22a974258bf30c9ac67f9e1180e98272645b868e"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session0/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "1b3e5618922d5b1b4651cf9447d816864ea4a9dbd0244c42394ee289f5cf9899"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "49955877bff2c30f7091b3211b15f3ea6b1a6801a66ba99a62da7343aa9616e3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "b8c5fb2c5bffaaee72d18ecb57cb24571d7dab7f01bd08c1d211946bdc3bd4d9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 377,
+      "sha256": "8b96f0deeaac0b114095d655c4483adcc943f05cfb4047f576ab914c9125643b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mcp06/session1/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner01/mutated_source.py",
+      "bytes": 5151,
+      "sha256": "89a905aaf7e5300326e7369cbcc8f46622a893b2351b7092a7554e1b5d08747e"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner01/result.json",
+      "bytes": 289,
+      "sha256": "8744e4e43c35b17647c1f57bebbe929e2f12be5f81e0510e52df9e72b6c9d8e0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner01/run_meta.json",
+      "bytes": 2067,
+      "sha256": "8dec3c6c846ebe72a771fc784cfb16ba54d1517d95c9a037fa4355f7b96fa6f5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner01/runner.txt",
+      "bytes": 712,
+      "sha256": "347d1eee976c5ba975b8d5f084c0bfda8576ec1b3a7e3852eeb0c5c243d341c5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner02/mutated_source.py",
+      "bytes": 5371,
+      "sha256": "f851c4808b93f55d6774adcd3e126746c1bcf0a8f6001904ecb5657ba738344f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner02/result.json",
+      "bytes": 289,
+      "sha256": "8744e4e43c35b17647c1f57bebbe929e2f12be5f81e0510e52df9e72b6c9d8e0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner02/run_meta.json",
+      "bytes": 3407,
+      "sha256": "f54e04005c9a31da97ecd739f1fbd5c20cdb58607b0b0e12849a2f558c30eaf9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_owner02/runner.txt",
+      "bytes": 712,
+      "sha256": "392182b571c4e15db204ce446c44850d11d2e09cc4ee474d2028eeb9f38c6d37"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route01/mutated_source.py",
+      "bytes": 2759,
+      "sha256": "93d87723b59668dc47a4d23544fc252e4e0b39305f65aa8144b8544d2e70da21"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route01/result.json",
+      "bytes": 710,
+      "sha256": "977ed32e095aa341e82421ded3971bbd690341f24b248a8d2cbc8cceec02d24c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route01/run_meta.json",
+      "bytes": 2073,
+      "sha256": "08663e5a8d5961380a4fddd0500e6b7ac03dbacf014dc125fbe5e18472442921"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route01/runner.txt",
+      "bytes": 2286,
+      "sha256": "1940678a50380b8c42b48e919d7f5c7d4abd9eac87b6060b72e2beeda15ae4ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route02/mutated_source.py",
+      "bytes": 2759,
+      "sha256": "93d87723b59668dc47a4d23544fc252e4e0b39305f65aa8144b8544d2e70da21"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route02/result.json",
+      "bytes": 710,
+      "sha256": "84ba966450819885977aed95ef58712a0113ebdac44a4238f4df6161309df22a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route02/run_meta.json",
+      "bytes": 3413,
+      "sha256": "d2690767ef0f3f170924168d011a28731e65060e238988b883d07babc52381ca"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/mutant_route02/runner.txt",
+      "bytes": 2286,
+      "sha256": "a1445eaee6cd32e76cfefb8d99d5b53395c935203004e4dfe23f3c05e3b314a7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-2c0110c51671460a91889799255fb896/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "9e34098b8dac2fd8ecb58e5892aa0aec02703e7ea81881222a5cbf9d5e660906"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-2c0110c51671460a91889799255fb896/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "1981bf612acbd1808ac8810c2457fb2f71a33e6f8fdb7e196a0cd6c3e77e381b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-2c0110c51671460a91889799255fb896/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "af6da24fafd25f11210f359ed7fbc45978540f607e9149c8f6fc6b6e2a0007a8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-2c0110c51671460a91889799255fb896/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-2c0110c51671460a91889799255fb896/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "1623364056d52ac53eb4fe9303143ebbde312a0c917e9a96fd995cc0ab400984"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-32134007a2454ded8d7db7d92f2c4c95/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "1f7243cd8ff821d6967afd0d4c8031cd368568a380c90f800ac8a109bfd4986c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-32134007a2454ded8d7db7d92f2c4c95/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "f498c09d9e805d53efa1224a13df90229046d63f234d4b488ee57e3d855fc179"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-32134007a2454ded8d7db7d92f2c4c95/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "035f14eb2b21b27953e3d7f9084410468655683b8a6d6e68abae82ff3e209a5d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-32134007a2454ded8d7db7d92f2c4c95/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-32134007a2454ded8d7db7d92f2c4c95/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "4445fc1b51c2a350279e028477a938f5879630c04a23fcbed0be740d2e9badf7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-9fed0fb4c7e5440c955eec6986dd6579/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "a21d91d6c0d187f9e4c9aad27ebabe08bcd62420ba8fc5f747a2ad8132d449f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-9fed0fb4c7e5440c955eec6986dd6579/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "c7d8c46dbe4d5f24f87fa6b57646093c28d23e3e94885a1c729c2c9d72ed2f80"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-9fed0fb4c7e5440c955eec6986dd6579/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "89baaae1364eec16ef2ad5fa15eb6d0338c868852230b5e1e3c2162d4b1940f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-9fed0fb4c7e5440c955eec6986dd6579/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/api-9fed0fb4c7e5440c955eec6986dd6579/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "fb13fe0875b87721232cd47a4acd77e1fb672ff3ff2a56322420822acd3eb63c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/result.json",
+      "bytes": 10563,
+      "sha256": "edfde613987c981465edde2d090b3bdf715a519bbb6532d8bb1523225a744448"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/run_meta.json",
+      "bytes": 2023,
+      "sha256": "a8b93e601b98d294318e0808e3062f5217b1bdd5deb4e7665a1ac6702ac2a53f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security01/runner.txt",
+      "bytes": 125,
+      "sha256": "13ecbb0b37aaba01198e88e42b13c491da15c7859f394921c070ff5f1af2da90"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-38c8d169df724e3b8dfb9aaad8077d54/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "57c82ff856de1653f13ca9db733e09dda1ff2972764933459ebd864822fae88b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-38c8d169df724e3b8dfb9aaad8077d54/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "df71e8727802ff87befc1907b1d16aeba1d63f5aabe17ff6b921ff6ccc9c429d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-38c8d169df724e3b8dfb9aaad8077d54/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "14267be248a036f43cbe404f0507ca6cf9158d0639e1816792ecb46cbe7b021b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-38c8d169df724e3b8dfb9aaad8077d54/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-38c8d169df724e3b8dfb9aaad8077d54/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "89774c225b9f6e009ee133ae24b0e6331885a85bcfafc270caf4ebdd81273944"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-9f604d7074154a32a64be1823f332574/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "aea7dee7687923055a2b3aa19b6f4624e472c2ca020881e43b4c0e23da8c2860"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-9f604d7074154a32a64be1823f332574/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "ef19bd69945b617901656ad1ce1b7c5fad07a3a0d6e85c9ed18a44dcf0aa9e2c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-9f604d7074154a32a64be1823f332574/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "e9e8ef6ba226dad53cb3e9f00adcbd0c618d245197f1cd695dc248b178087fa4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-9f604d7074154a32a64be1823f332574/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-9f604d7074154a32a64be1823f332574/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "3f6893e618fe77b5bf76a1f974125569149d5ff846b0c13e157ea93203438861"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-df5ae04146c244398d01552faf0a407c/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "f42ecedef341d0bea31900fabf37362173580df8586407b8ae5da154dfefcdf7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-df5ae04146c244398d01552faf0a407c/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "37681683d78f5c5987959e868b24b7521afbb01227895a05ab9d7f434cf6dd3e"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-df5ae04146c244398d01552faf0a407c/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "896ae22221413aee55ded29b171788851ff47166846eb54b61ff79cb3f0b9cc9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-df5ae04146c244398d01552faf0a407c/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-df5ae04146c244398d01552faf0a407c/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "00d29f5a182f6eec132b509dab937f78ee98d311c53bcb1b4e2f61e7d7ce1c1d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-f687b75ff9c64ec489cf9f1d1956e113/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "0db53de72a1fa0c5436e96bd13492d18b725caebc732c6482a498aad14481ec5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-f687b75ff9c64ec489cf9f1d1956e113/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "fc76217568e100f4ddd909de3d6ec1574d86177e198198e0497546ae91af3cf7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-f687b75ff9c64ec489cf9f1d1956e113/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "91c4e24d004a0afcdfec71686e6d6e476179dcdffeb66fbcdff0a30672ac7a7d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-f687b75ff9c64ec489cf9f1d1956e113/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/api-f687b75ff9c64ec489cf9f1d1956e113/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "f6cde0a65d8a81bc5020b8f08f2d074e0456da51d34ee29f78005c25915be7a7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/result.json",
+      "bytes": 10795,
+      "sha256": "6009e5954a68a4275c1c73f2587c0b673417484587188e111c2611f7ea189f13"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/run_meta.json",
+      "bytes": 2143,
+      "sha256": "d0dad5ea8160c7e2a2657795d1d5c2922268cc3270d1f02a779b0e8a0e574183"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security02/runner.txt",
+      "bytes": 127,
+      "sha256": "dc824dd98aa29ae113ab9b6a31fb4d9dda7c1f5b37631672566cdc1b57d825a5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-1b86c046a95b48a29e79f3462e9bc1fa/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "8b39bbd57db9350825fa42505d56d8ed912fb542e7037e3192f0a70a60f0bb3d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-1b86c046a95b48a29e79f3462e9bc1fa/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "3f31457f9fd7113211416d9bf6c27ba8a67411cec927fba36c5233b373d0c8d5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-1b86c046a95b48a29e79f3462e9bc1fa/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "2c6629301ec876e476448c877ed562d27a6b83be42103f8188ebcc2bef2f2fed"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-1b86c046a95b48a29e79f3462e9bc1fa/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-1b86c046a95b48a29e79f3462e9bc1fa/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "4e0aeedda27899727b72e328762b8ca49276622f56766193d647701af6196cb5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-3a791e83a4654fca8f9f0bfe46ab039f/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "2892b3cca88c0d7f19dea93df9c21b9c207c0b11ea2a715255e7fce1f2c26f1c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-3a791e83a4654fca8f9f0bfe46ab039f/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "3f46f319070d9447dbe4303bd8f486c87cc573d3516825e9084300e130bd695a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-3a791e83a4654fca8f9f0bfe46ab039f/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "f726ed368551ea78c3972fdd144239b1259d0fa7e89adc7b18ecf4a2c9453a08"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-3a791e83a4654fca8f9f0bfe46ab039f/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-3a791e83a4654fca8f9f0bfe46ab039f/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "22b37b5630dbcf88878b55eb59b5ba682510f3df254841c6b584024ddc3febd1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-5ee0e207ab1c42ebb9380e0d9af718de/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "954d9e160ce8b3ec2d2c6f4420b5c230aca1073a3b6a2f1fff9adea9f00c7834"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-5ee0e207ab1c42ebb9380e0d9af718de/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "5dd52a48632ba4ce11e9342fb9b9a2685372c159253f6d31fbc57149d79199ea"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-5ee0e207ab1c42ebb9380e0d9af718de/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "50919a19a2f3ff8949c8d694aaf92cb19bbe44fc78efdad6fb4d768b8d714ea8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-5ee0e207ab1c42ebb9380e0d9af718de/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-5ee0e207ab1c42ebb9380e0d9af718de/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "0fe2d7ccac3d76eb15ab42f7a5662dfe47fa432ae21f5d9d7febd745619e71dd"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-c64e3a92f2d446409e201536a6870351/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "5c6da2fc1c727156f3e87636831258df2ba9c0e164d6b4e72edb08cff8744a69"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-c64e3a92f2d446409e201536a6870351/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "d3e74f186bf115e37810a46a07aacb7895704ce13b2e55c4c0b63415693e65ab"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-c64e3a92f2d446409e201536a6870351/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "7a51e83dcca02815bacbe7611f7f2aecc40d3c5e659163bbb2fde2253ad617ac"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-c64e3a92f2d446409e201536a6870351/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-c64e3a92f2d446409e201536a6870351/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 410,
+      "sha256": "50c6cf65e560c7d43ea629ed59fa3918c04e139969b7f56de630ac49774d84ff"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/current_sha256/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "084dd2fd27fec70752cedb7bbfcb03e9f33dfe155a5db1ac7941fb993290499c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/current_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "af24f8efe8baa918b87214add71ad2ecec15d86270c5dcc048cfb63f91348a28"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/current_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "2c2da165cb6bdb3d1dc4fb57528f7ebf7db4f44c0a5de995a3c714e972d5ac5a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/current_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/current_sha256/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 426,
+      "sha256": "48ca339e8f883b296d5704831b4ad08644006f8a25f817f03b3dcf08b7e48ff7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/nonce/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "084dd2fd27fec70752cedb7bbfcb03e9f33dfe155a5db1ac7941fb993290499c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/nonce/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "06bab1104f481230453842baf4ae8f1775aafd730db30145ca22f174717bc4e2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/nonce/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "0ab57d56d8345960ec348d2b9c46c1ea5ea835d58a763088be2fc1f04369fbb5"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/nonce/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/nonce/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 417,
+      "sha256": "9eb65c6a001ff098af0323313c0d0f38c5ffdae248941cb881996483ae9a8e24"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/session_id/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "084dd2fd27fec70752cedb7bbfcb03e9f33dfe155a5db1ac7941fb993290499c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/session_id/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "4320ba9f8abbdcb7e8e78d57f6372d1b0c9701f993793390b537319d92deefe2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/session_id/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "040f37a1d4e9349925d7f08968b7d36ac277d1db4390baa33a0738aa13068748"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/session_id/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/session_id/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 422,
+      "sha256": "9360bb074bb31d4b250ec40dc51c233ae638d7a4fcb58121ec760d037c769f95"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/value_sha256/owned-api-state/owned-api-stop.json",
+      "bytes": 98,
+      "sha256": "084dd2fd27fec70752cedb7bbfcb03e9f33dfe155a5db1ac7941fb993290499c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/value_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/plan.json",
+      "bytes": 302,
+      "sha256": "43d52331a4f978f0271eb2c36563abdb89bbd87b3140bf9625f90608dd018665"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/value_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.json",
+      "bytes": 450,
+      "sha256": "14cdacb86ad721e4cb8ac8fda795ded4c9d53fdbe145a550408f6c2d9c7a0be2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/value_sha256/owned-api-state/state/tasks/active/synthetic_wua_integration_001/task.md",
+      "bytes": 30,
+      "sha256": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/api-e31267462caf4d2e86626609eb94db88/value_sha256/owned-api-state/state/workspaces/synthetic_integration_ws.json",
+      "bytes": 424,
+      "sha256": "6c1496f6c0493f7661f714ba28f8683a89b145b14818a99ce8b2bccf0e1430ac"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/result.json",
+      "bytes": 10917,
+      "sha256": "a6c3c58e309bc4b22b71adcca9eccf19d2fd94ec7e7e2cf4d37cf00efb4e4102"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/run_meta.json",
+      "bytes": 3363,
+      "sha256": "f85a4f4433c00105bac75bfb03f70d3b1feddd1ea046d82a1318f72f445a773a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runs/security03/runner.txt",
+      "bytes": 128,
+      "sha256": "20e9184871725ab7331f4495000793f9578db95a760d9b013c370c80f7efe1a3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/runtime_compatibility.json",
+      "bytes": 1162,
+      "sha256": "70164d83c88f5616dec8be16f83d60b4d397893ccf4bf2479a7f530805c9c63d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/source_evidence.json",
+      "bytes": 1518,
+      "sha256": "f1e7553cc4500a77400a5d4cdcf2ad9d1390cfa4039e49f91d98d75469c00e2a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/tools/artifacts.py",
+      "bytes": 14544,
+      "sha256": "7ed8c9253e9bd1e4430727b74965af3e8db48f8d72b2f84a8fb38f1c46c0c06b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/tools/build_templates.py",
+      "bytes": 9392,
+      "sha256": "da872c3b5d7b21b7bf6f39a018e121d6f32d3795f86c8b78d811bf6efb5e8719"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/topology.md",
+      "bytes": 7395,
+      "sha256": "78f073a55046d2b665bc12c2b8170123270b78f2da1fb054e9d8dea9b4547d38"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/verification.json",
+      "bytes": 552,
+      "sha256": "f19ae6a48dc7f54bf924b57532339611159360da7619ecc366b8eaf540f39a80"
+    }
+  ],
+  "self_hash": "excluded; external digest in handoff",
+  "card": "Current canonical own card not copied; before/stage/final hashes and guarded reconstruction in card_rotation.json",
+  "publication": "LOCAL ONLY; no Git/GitHub used"
+}

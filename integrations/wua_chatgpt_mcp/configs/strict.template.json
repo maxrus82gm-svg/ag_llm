@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "profile": "STRICT_V2RAY_BROKER",
+  "owner": null,
+  "identities": {
+    "client": null,
+    "broker": null,
+    "ui": null
+  },
+  "processes": {
+    "tunnel": null,
+    "mcp": null,
+    "gateway": "SERVER_OWNED_AUTHORITY",
+    "v2ray": null
+  },
+  "route": {
+    "layout": "DEDICATED_V2RAY_CONNECT_INBOUND",
+    "client_proxy_host": "127.0.0.1",
+    "client_proxy_port": null,
+    "egress_ip": null,
+    "egress_port": null,
+    "dns": "NO_HOST_RESOLVER_LITERAL_UPSTREAM",
+    "proxy_scheme": "http",
+    "remote_protocol": "tcp"
+  },
+  "ipc": {
+    "tunnel_to_mcp": "STDIO",
+    "mcp_to_server": "SERVER_OWNED_AUTHENTICATED_LOCAL_PIPE",
+    "arbitrary_network_api": false
+  },
+  "children": [
+    {
+      "role": "mcp",
+      "owner_sid": null,
+      "sha256": null
+    },
+    {
+      "role": "v2ray",
+      "owner_sid": null,
+      "sha256": null
+    }
+  ],
+  "startup_state": "DISABLED",
+  "allow_direct": false,
+  "secondary_proxies": [],
+  "environment_override": false,
+  "approval": {
+    "provision": false,
+    "native": false,
+    "tunnel": false
+  }
+}

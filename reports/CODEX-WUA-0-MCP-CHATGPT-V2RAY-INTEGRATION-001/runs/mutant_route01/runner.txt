@@ -1,0 +1,31 @@
+F
+======================================================================
+FAIL: test_control_plane_paths_and_receipt_correlation (__main__.RouteTests.test_control_plane_paths_and_receipt_correlation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\test_security_routes.py", line 112, in test_control_plane_paths_and_receipt_correlation
+    try:r=self.h.request(authority+'.invalid:443',phase)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\test_security_routes.py", line 99, in request
+    def request(self,authority='control.invalid:443',phase='poll',ambient=None):return route.control_request(self.adapter.port,authority,phase,self.nonce,ambient)
+                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\route_simulation.py", line 30, in control_request
+    sock.settimeout(1);sock.connect(('127.0.0.1',broker_port))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\test_security_routes.py", line 33, in observe
+    if not ok:monitor['violations'].append({'kind':'UNEXPECTED_CONNECT','role':role});raise PermissionError('OWNED_EDGE_ONLY')
+                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: OWNED_EDGE_ONLY
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\test_security_routes.py", line 113, in test_control_plane_paths_and_receipt_correlation
+    except (common.Denied,OSError,TimeoutError):self.fail('Expected approved route did not reach independent receiver')
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Expected approved route did not reach independent receiver
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1)

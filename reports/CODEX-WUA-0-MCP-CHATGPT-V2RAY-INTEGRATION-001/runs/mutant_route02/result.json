@@ -1,0 +1,35 @@
+{
+  "total": 1,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "tests": [
+    {
+      "name": "test_control_plane_paths_and_receipt_correlation",
+      "status": "FAIL"
+    }
+  ],
+  "route_observations": [
+    {
+      "case": "test_control_plane_paths_and_receipt_correlation",
+      "attempts": [
+        {
+          "role": "client",
+          "target_port": 59261,
+          "allowed": false
+        }
+      ],
+      "violations": [
+        {
+          "kind": "UNEXPECTED_CONNECT",
+          "role": "client"
+        }
+      ],
+      "control_receipts": [],
+      "broker_event_codes": []
+    }
+  ],
+  "synthetic_only": true,
+  "native_calls": 0,
+  "mutation": "route"
+}
