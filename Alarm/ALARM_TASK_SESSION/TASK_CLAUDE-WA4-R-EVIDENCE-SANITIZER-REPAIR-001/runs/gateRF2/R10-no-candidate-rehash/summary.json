@@ -1,0 +1,65 @@
+{
+ "label": "R10-no-candidate-rehash",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R10-no-candidate-rehash-ois8fyac\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF2-R10-no-candidate-rehash-oit_nfe8\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.165,
+ "base": "<TEMP>\\claude-esrep-gateRF2-R10-no-candidate-rehash-oit_nfe8",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R10-no-candidate-rehash-ois8fyac\\code",
+ "tests_run": 62,
+ "passed": 55,
+ "failures": 7,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.229,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness",
+   "FAIL",
+   "USED', 'PROVEN_BY_EXTERNAL_MAPPING_SHA256') != ('SAFE CANDIDATE', 'PROVEN_BY_EXTERNAL_MAPPING_SHA256')\n\nFirst differing element 0:\n'REFUSED'\n'SAFE CANDIDATE'\n\n- ('REFUSED', 'PROVEN_BY_EXTERNAL_MAPPING_SHA256')\n?   ^ ^^^ -\n\n+ ('SAFE CANDIDATE', 'PROVEN_BY_EXTERNAL_MAPPING_SHA256')\n?   ^^^ ^^^^^^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_mapping_without_optional_new_fields_still_verifies",
+   "FAIL",
+   "-candidate-rehash-ois8fyac\\code\\test_web_alarm_evidence_sanitizer.py\", line 1031, in test_mapping_without_optional_new_fields_still_verifies\n    self.assertEqual(es.verify(out, pkg, IDENTITY)[\"publication\"], \"SAFE CANDIDATE\")\nAssertionError: 'REFUSED' != 'SAFE CANDIDATE'\n- REFUSED\n+ SAFE CANDIDATE\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=0)",
+   "FAIL",
+   "PROVE[14 chars]AGE')\n\nFirst differing element 0:\n'INCONSISTENT'\n'CONSISTENT'\n\n+ ('CONSISTENT', 'SAFE CANDIDATE', {}, 'PROVEN_AGAINST_PACKAGE')\n- ('INCONSISTENT',\n-  'REFUSED',\n-  {'mapping-field-mismatch': 1,\n-   'mapping-totals-mismatch': 1,\n-   'not-reproducible': 1},\n-  'PROVEN_AGAINST_PACKAGE')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=2)",
+   "FAIL",
+   "PROVE[14 chars]AGE')\n\nFirst differing element 0:\n'INCONSISTENT'\n'CONSISTENT'\n\n+ ('CONSISTENT', 'SAFE CANDIDATE', {}, 'PROVEN_AGAINST_PACKAGE')\n- ('INCONSISTENT',\n-  'REFUSED',\n-  {'mapping-field-mismatch': 1,\n-   'mapping-totals-mismatch': 1,\n-   'not-reproducible': 1},\n-  'PROVEN_AGAINST_PACKAGE')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output",
+   "FAIL",
+   "!= 0 : {\n \"files_checked\": 7,\n \"files_blocked_in_mapping\": 0,\n \"files_blocked_recomputed\": 0,\n \"problems\": {\n  \"mapping-field-mismatch\": 1,\n  \"mapping-totals-mismatch\": 1,\n  \"not-reproducible\": 1\n },\n \"verdict\": \"INCONSISTENT\",\n \"completeness\": \"PROVEN_AGAINST_PACKAGE\",\n \"publication\": \"REFUSED\"\n}\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes",
+   "FAIL",
+   "b'} != {'bytes': 82, 'sha256': 'c52ea34cea573397d347c0c61d[35 chars]ed1'}\n- {'bytes': 90,\n?           ^^\n\n+ {'bytes': 82,\n?           ^^\n\n-  'sha256': '6dd877455a042b16850737bab3c7e2a3d09967985b7aa8b69abc7df5470b447b'}\n+  'sha256': 'c52ea34cea573397d347c0c61d0b11118319fa9b912dae1437508564a5a5fed1'}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file",
+   "FAIL",
+   "h-ois8fyac\\code\\test_web_alarm_evidence_sanitizer.py\", line 427, in test_stage_preserves_originals_and_maps_every_file\n    self.assertEqual(changed, {\"report.md\", \"runs/a/results.json\", \"runs/a/summary.json\", \"tools/run.py\",\nAssertionError: Items in the second set but not the first:\n'manifest.json'\n"
+  ]
+ ]
+}

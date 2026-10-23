@@ -1,0 +1,40 @@
+{
+ "label": "R9-unlisted-accepted",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R9-unlisted-accepted-7ymb6jtq\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF-R9-unlisted-accepted-t2i0yoyn\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.231,
+ "base": "<TEMP>\\claude-esrep-gateRF-R9-unlisted-accepted-t2i0yoyn",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R9-unlisted-accepted-7ymb6jtq\\code",
+ "tests_run": 62,
+ "passed": 60,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.295,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused",
+   "FAIL",
+   "ecent call last):\n  File \"<TEMP>\\claude-esrep-mirror-R9-unlisted-accepted-7ymb6jtq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1008, in test_local_name_in_a_file_name_is_refused\n    self.assertEqual(json.loads(out)[\"classes\"].get(\"CONFIRMED\"), 1)\nAssertionError: 2 != 1\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused",
+   "FAIL",
+   "accepted-7ymb6jtq\\code\\test_web_alarm_evidence_sanitizer.py\", line 738, in test_file_missing_from_manifest_is_refused\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ]
+ ]
+}

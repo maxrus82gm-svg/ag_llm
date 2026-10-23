@@ -17,14 +17,26 @@ Design:
 * the machine's own identity (user, computer, profile folder) is used only by the final publication gate as an
   independent backstop; anything left over, any secret-like value or any unsupported file refuses publication.
 
+Integrity and completeness (CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001, F-ES-01 / F-ES-02):
+* ``--manifest``: every listed file must match its declared SHA-256 and size, and every present file must be
+  listed; a broken, duplicate-key, self-listing or incomplete manifest, unsafe or case-colliding ids, links in the
+  package refuse the run before anything is written. The candidate's manifest.json is re-hashed to describe the
+  sanitized bytes (the original stays in ``originals/``). Without ``--manifest`` a manifest.json is an ordinary file.
+* ``verify`` recomputes everything from the preserved originals - schema, ids, totals, verdict, safety, manifest
+  results, the exact sets of originals and sanitized copies - and never trusts the mapping's own claims. Proving
+  that nothing was removed needs an anchor outside the bundle: ``--package`` (the source as it is now) or
+  ``--mapping-sha256`` (the mapping hash printed by ``stage`` and recorded elsewhere). Without one: NOT_PROVEN,
+  publication REFUSED. A manifest inside the package is a claim, not a cryptographic anchor.
+
 Commands (``python -m web_alarm.evidence_sanitizer``)::
 
-  scan   PACKAGE [--manifest] [--json FILE]   read-only inventory; never prints matched values
-  stage  PACKAGE --out DIR [--manifest]       preserve originals, write sanitized copies and mapping.json
-  verify DIR [--package PACKAGE]              recheck hashes, rescan, reproduce sanitized bytes from originals
+  scan   PACKAGE [--manifest] [--json FILE]               read-only inventory; never prints matched values
+  stage  PACKAGE --out DIR [--manifest]                   preserve originals, write sanitized copies and mapping.json
+  verify DIR [--package PACKAGE] [--mapping-sha256 HEX]   re-prove the bundle; see above
 
 ``--out`` must be outside the package and either outside the repository or under its git-ignored ``logs/``.
-Exit codes: 0 = safe, 2 = findings remain / publication refused, 3 = usage or environment error.
+Exit codes: 0 = safe, 2 = findings remain / integrity not proven / publication refused, 3 = usage or environment
+error. Python >= 3.12 (possessive quantifiers; junction detection).
 """
 from __future__ import annotations
 
@@ -418,6 +430,7 @@ class FileResult:
 
     def refuse(self, reason: str) -> None:
         self.safety = "BLOCKED"
+        self.output = None  # a refused file never gets a publishable copy, whatever refused it and when
         if reason not in self.reasons:
             self.reasons.append(reason)
 
@@ -427,7 +440,16 @@ def _json_values(text: str) -> list[str]:
 
 
 def process_bytes(rel: str, data: bytes, policy: Policy = Policy(), identity: re.Pattern | None = None) -> FileResult:
-    """Sanitize one file's bytes; never raises for bad content (the result is BLOCKED instead)."""
+    """Sanitize one file's bytes; never raises for bad content (the result is BLOCKED instead).
+
+    The file id is published as well (candidate tree, mapping, manifest), so a local name in it refuses the file."""
+    result = _process_content(rel, data, policy, identity)
+    if identity is not None and identity.search(rel):
+        result.refuse("identity-in-file-name")
+    return result
+
+
+def _process_content(rel: str, data: bytes, policy: Policy, identity: re.Pattern | None) -> FileResult:
     result = FileResult(rel, "text", _sha(data), len(data))
     bom = data[:3] == b"\xef\xbb\xbf"
     try:
@@ -457,7 +479,7 @@ def process_bytes(rel: str, data: bytes, policy: Policy = Policy(), identity: re
         records = [line for line in text.split("\n") if line.strip()] if suffix == ".jsonl" else [text]
         try:
             old_records = [_load_pairs(r) for r in records]
-        except ValueError:
+        except (ValueError, RecursionError):
             result.structure = "FAIL"
             result.refuse("invalid-" + result.kind)
             return result
@@ -470,7 +492,7 @@ def process_bytes(rel: str, data: bytes, policy: Policy = Policy(), identity: re
                 issues["structure"] += 1
             for old, new in zip(old_records, new_records):
                 _compare(old, _load_pairs(new), policy, issues)
-        except ValueError:
+        except (ValueError, RecursionError):
             issues["structure"] += 1
         result.structure = "FAIL" if issues else "PASS"
         for issue in sorted(issues):
@@ -490,6 +512,32 @@ def process_bytes(rel: str, data: bytes, policy: Policy = Policy(), identity: re
 
 
 # ----------------------------------------------------------------------------------------------- package level
+#
+# Integrity (F-ES-01) and completeness (F-ES-02), CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001:
+# * a manifest is a claim, not an anchor: in manifest mode every listed file must match its declared SHA-256 and
+#   size, the manifest must be strict JSON (no duplicate keys) with safe, unique ids, every listed file must exist
+#   and every present file must be listed - otherwise the file (or, before anything is written, the run) is refused;
+# * verify trusts nothing the bundle says about itself: schema, ids, totals, verdict, safety, manifest results and
+#   the exact sets of originals and sanitized copies are recomputed; completeness against coordinated deletion
+#   needs a trusted anchor outside the bundle - the source package (--package) or the mapping's SHA-256 recorded
+#   out of band (--mapping-sha256). Without one, completeness is NOT_PROVEN and publication is REFUSED.
+
+class IntegrityRefusal(EvidenceError):
+    """The input cannot be shown to be what it claims (manifest / inventory): nothing is written, CLI exit 2."""
+
+
+VERDICT_SAFE = "SAFE PUBLICATION CANDIDATE (needs USER GO)"
+SELECTIONS = ("manifest", "all-files")
+KINDS = frozenset({"text", "json", "jsonl", "binary"})
+TRANSIENT_REASONS = frozenset({"source-changed-during-staging"})
+ANCHOR_FORBIDDEN = PROFILE_ROOTS | SYSTEM_ROOTS | PUBLIC_PROFILES | ELLIPSES | {
+    "appdata", "local", "locallow", "roaming", "temp", "tmp"}
+BUNDLE_ENTRIES = frozenset({"mapping.json", "originals", "sanitized"})
+UNSUPPORTED_REASONS = frozenset({"invalid-json", "invalid-jsonl", "structure", "key-collision", "value-changed",
+                                 "protected-field-changed", "binary-with-findings"})
+_HEX64 = re.compile(r"[0-9a-fA-F]{64}")
+_ID_FORBIDDEN = re.compile(r'[\\:*?"<>|\x00-\x1f]')
+
 
 def _inside(child: Path, parent: Path) -> bool:
     child_s, parent_s = os.path.normcase(str(child)), os.path.normcase(str(parent))
@@ -499,45 +547,197 @@ def _inside(child: Path, parent: Path) -> bool:
         return False
 
 
-def package_files(package: Path, use_manifest: bool) -> tuple[list[str], dict]:
-    """Relative ids to process (sorted) and the package manifest's own entries (if requested)."""
+def _is_hex(value) -> bool:
+    return isinstance(value, str) and _HEX64.fullmatch(value) is not None
+
+
+def _is_count(value) -> bool:
+    return type(value) is int and value >= 0
+
+
+def _strict_json(data):
+    """json.loads that refuses duplicate object keys (the last value would silently win)."""
+    def pairs(items):
+        keys = [key for key, _ in items]
+        if len(keys) != len(set(keys)):
+            raise ValueError("duplicate key")
+        return dict(items)
+
+    text = data.decode("utf-8-sig") if isinstance(data, bytes) else data
+    return json.loads(text, object_pairs_hook=pairs)
+
+
+def _id_problem(rel) -> str | None:
+    """A file id is a relative POSIX path that names one ordinary file the same way on every platform."""
+    if not isinstance(rel, str) or not rel or rel.startswith("/") or _ID_FORBIDDEN.search(rel):
+        return "unsafe-id"  # backslash, drive or stream colon, wildcard, control character
+    for part in rel.split("/"):
+        if part in ("", ".", "..") or part != part.rstrip(" ."):
+            return "unsafe-id"  # empty / dot segments; Windows silently drops trailing dots and spaces
+    return None
+
+
+def _check_ids(ids) -> None:
+    seen = set()
+    for rel in ids:
+        if _id_problem(rel):
+            raise IntegrityRefusal("unsafe file id in the package or its manifest")
+        if rel.casefold() in seen:
+            raise IntegrityRefusal("two file ids name the same file on a case-insensitive file system")
+        seen.add(rel.casefold())
+
+
+def _is_link(entry) -> bool:
+    is_junction = getattr(entry, "is_junction", None)  # os.DirEntry and Path, Python >= 3.12
+    return entry.is_symlink() or bool(is_junction and is_junction())
+
+
+def _walk(root: Path, skip_cache: bool) -> tuple[list[str], int]:
+    """Relative ids of the ordinary files under root and the number of links / special entries (never followed)."""
+    files, links, stack = [], 0, [(root, "")]
+    while stack:
+        directory, prefix = stack.pop()
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                rel = prefix + entry.name
+                if _is_link(entry):
+                    links += 1
+                elif entry.is_dir(follow_symlinks=False):
+                    if not (skip_cache and entry.name == "__pycache__"):
+                        stack.append((Path(entry.path), rel + "/"))
+                elif entry.is_file(follow_symlinks=False):
+                    files.append(rel)
+                else:
+                    links += 1
+    return sorted(files), links
+
+
+@dataclass
+class Selection:
+    ids: list[str]
+    entries: dict  # manifest "files" object (manifest mode)
+    manifest_bytes: bytes | None  # read once; the same bytes are checked, processed and preserved
+    unlisted: set[str]
+
+
+def package_files(package: Path, use_manifest: bool) -> Selection:
+    """The exact set of files to process; refuses (IntegrityRefusal) anything that cannot be accounted for."""
+    package = Path(package)
     if not package.is_dir():
         raise EvidenceError("package directory not found")
-    entries = {}
-    if use_manifest:
-        manifest_path = package / "manifest.json"
-        if not manifest_path.is_file():
-            raise EvidenceError("manifest.json not found in package")
-        listed = json.loads(manifest_path.read_bytes()).get("files")
-        entries = dict(listed) if isinstance(listed, dict) else {name: {} for name in listed or []}
-        ids = sorted(set(entries) | {"manifest.json"})
-    else:
-        ids = sorted(p.relative_to(package).as_posix() for p in package.rglob("*")
-                     if p.is_file() and "__pycache__" not in p.relative_to(package).parts)
-    for rel in ids:
-        rel_path = PurePosixPath(rel)
-        if rel_path.is_absolute() or ".." in rel_path.parts or not _inside((package / rel).resolve(), package.resolve()):
-            raise EvidenceError("manifest entry escapes the package")
-    return ids, entries
+    present, links = _walk(package, skip_cache=True)
+    if links:
+        raise IntegrityRefusal("the package contains links, junctions or special files")
+    _check_ids(present)
+    if not use_manifest:
+        return Selection(present, {}, None, set())
+    if "manifest.json" not in present:
+        raise IntegrityRefusal("manifest.json not found in the package")
+    manifest_bytes = (package / "manifest.json").read_bytes()
+    try:
+        doc = _strict_json(manifest_bytes)
+    except (ValueError, RecursionError):
+        raise IntegrityRefusal("manifest.json is not valid JSON or repeats a key") from None
+    files = doc.get("files") if isinstance(doc, dict) else None
+    if not isinstance(files, dict):
+        raise IntegrityRefusal("manifest.json has no files object with integrity entries")
+    _check_ids(files)
+    if "manifest.json" in files:
+        raise IntegrityRefusal("manifest.json lists itself; its own hash cannot be checked")
+    if any(rel not in present for rel in files):
+        raise IntegrityRefusal("a file listed in manifest.json is missing from the package")
+    unlisted = set(present) - set(files) - {"manifest.json"}
+    return Selection(sorted(set(files) | {"manifest.json"} | unlisted), files, manifest_bytes, unlisted)
 
 
-UNSUPPORTED_REASONS = frozenset({"invalid-json", "invalid-jsonl", "structure", "key-collision", "value-changed",
-                                 "protected-field-changed", "binary-with-findings"})
+def _manifest_check(entry, data: bytes) -> tuple[str, list[str], bool | None]:
+    """(status, reasons, sha256 match) of one manifest entry against the actual bytes."""
+    if not isinstance(entry, dict):
+        return "INVALID_ENTRY", ["manifest-entry-invalid"], None
+    digest, size = entry.get("sha256"), entry.get("bytes")
+    match = digest.lower() == _sha(data) if _is_hex(digest) else None
+    if match is None or not _is_count(size):
+        return "INVALID_ENTRY", ["manifest-entry-invalid"], match
+    reasons = ([] if match else ["manifest-sha256-mismatch"]) + ([] if size == len(data) else ["manifest-bytes-mismatch"])
+    return ("MISMATCH" if reasons else "MATCH"), reasons, match
+
+
+def _escape_line_separators(text: str) -> str:
+    for ch in LINE_SEPARATORS:
+        text = text.replace(ch, "\\u%04x" % ord(ch))
+    return text
+
+
+def _rehash_manifest(manifest: bytes, outputs: dict) -> tuple[bytes, int] | None:
+    """The candidate's manifest: sha256/bytes of every listed file set to its sanitized copy (None if unusable)."""
+    try:
+        doc = _strict_json(manifest)
+    except (ValueError, RecursionError):
+        return None
+    files = doc.get("files") if isinstance(doc, dict) else None
+    if not isinstance(files, dict):
+        return None
+    changed = 0
+    for rel in sorted(outputs):
+        data, entry = outputs[rel], files.get(rel)
+        if data is None or not isinstance(entry, dict):
+            continue
+        fresh = {"sha256": _sha(data), "bytes": len(data)}
+        if entry.get("sha256") != fresh["sha256"] or entry.get("bytes") != fresh["bytes"]:
+            entry.update(fresh)
+            changed += 1
+    if not changed:
+        return manifest, 0
+    eol = "\r\n" if b"\r\n" in manifest else "\n"
+    text = _escape_line_separators(json.dumps(doc, ensure_ascii=False, indent=1)) + "\n"
+    bom = b"\xef\xbb\xbf" if manifest.startswith(b"\xef\xbb\xbf") else b""
+    return bom + text.replace("\n", eol).encode("utf-8"), changed
+
+
+def _candidate_manifest(manifest_result: FileResult, outputs: dict, policy: Policy, identity) -> tuple[bytes | None, int]:
+    """Re-hash the sanitized manifest for the candidate and pass it through the gate again (same in stage/verify)."""
+    if manifest_result.output is None:
+        return None, 0
+    rehashed = _rehash_manifest(manifest_result.output, outputs)
+    if rehashed is None:
+        manifest_result.refuse("manifest-rehash-failed")
+        return None, 0
+    candidate, count = rehashed
+    if count:
+        again = process_bytes("manifest.json", candidate, policy, identity)
+        if again.safety != "PASS" or again.output != candidate:
+            manifest_result.refuse("manifest-rehash-failed")
+            return None, 0
+    return candidate, count
+
+
+def _policy_problems(policy: Policy) -> list[str]:
+    found = []
+    if not policy.repo_anchors:
+        found.append("no-repo-anchor")
+    for anchor in policy.repo_anchors:
+        low = anchor.lower() if isinstance(anchor, str) else ""
+        if not low or low != low.strip() or _ID_FORBIDDEN.search(low) or "/" in low or low in (".", "..") \
+                or low in ANCHOR_FORBIDDEN:
+            found.append("unsafe-repo-anchor")  # e.g. "users" would turn C:\Users\<name> into <REPO>\<name>
+    if not PROTECTED_KEYS <= set(policy.protected_keys):
+        found.append("protected-keys-weakened")
+    return found
 
 
 def scan(package: Path, use_manifest: bool = False, policy: Policy = Policy(), identity=None) -> dict:
     """Read-only inventory of a package: categories and counts per file id, never values."""
-    ids, _entries = package_files(package, use_manifest)
+    package = Path(package)
+    selection = package_files(package, use_manifest)
     files, classes = [], Counter()
-    for rel in ids:
-        path = package / rel
-        if not path.is_file():
-            files.append({"id": rel, "class": "MISSING"})
-            classes["MISSING"] += 1
-            continue
-        r = process_bytes(rel, path.read_bytes(), policy, identity)
+    for rel in selection.ids:
+        data = selection.manifest_bytes if rel == "manifest.json" and use_manifest else (package / rel).read_bytes()
+        r = process_bytes(rel, data, policy, identity)
+        status = None
+        if use_manifest and rel != "manifest.json":
+            status = "NOT_LISTED" if rel in selection.unlisted else _manifest_check(selection.entries[rel], data)[0]
         replaced = sum(r.counts[k] for k in REPLACED_KINDS)
-        if r.original_identity_hits or r.counts[SECRET]:
+        if r.original_identity_hits or r.counts[SECRET] or "identity-in-file-name" in r.reasons:
             cls = "CONFIRMED"
         elif replaced:
             cls = "SUSPECT"
@@ -547,14 +747,16 @@ def scan(package: Path, use_manifest: bool = False, policy: Policy = Policy(), i
             cls = "CLEAN"
         if UNSUPPORTED_REASONS.intersection(r.reasons):
             cls = "UNSUPPORTED" if cls == "CLEAN" else cls + "+UNSUPPORTED"
+        if status not in (None, "MATCH"):
+            cls = "INTEGRITY" if cls == "CLEAN" else cls + "+INTEGRITY"
         classes[cls] += 1
         files.append({"id": rel, "kind": r.kind, "bytes": r.source_bytes, "sha256": r.source_sha256, "class": cls,
                       "findings": dict(sorted(r.counts.items())), "identity_hits": r.original_identity_hits,
-                      "json_tokens_affected": r.json_tokens_changed,
+                      "json_tokens_affected": r.json_tokens_changed, "manifest_check": status,
                       "after_sanitizing": "PASS" if r.safety == "PASS" else "BLOCKED:" + ",".join(r.reasons)})
     return {"tool": "web_alarm.evidence_sanitizer", "policy": policy.as_dict(), "package": package.name,
-            "files_scanned": len(ids), "classes": dict(sorted(classes.items())),
-            "findings_total": _summary_counts_from(files), "files": files}
+            "selection": "manifest" if use_manifest else "all-files", "files_scanned": len(selection.ids),
+            "classes": dict(sorted(classes.items())), "findings_total": _summary_counts_from(files), "files": files}
 
 
 def _summary_counts_from(files) -> dict:
@@ -565,7 +767,7 @@ def _summary_counts_from(files) -> dict:
 
 
 def _check_out_dir(out: Path, package: Path) -> Path:
-    out_r, pkg_r, repo = out.resolve(), package.resolve(), REPO_ROOT.resolve()
+    out_r, pkg_r, repo = Path(out).resolve(), Path(package).resolve(), REPO_ROOT.resolve()
     if _inside(out_r, pkg_r) or _inside(pkg_r, out_r):
         raise EvidenceError("output directory overlaps the source package")
     if _inside(out_r, repo) and not (_inside(out_r, repo / "logs") and out_r != (repo / "logs")):
@@ -587,7 +789,8 @@ def _write_new(path: Path, data: bytes) -> str:
     return _sha(back)
 
 
-def _mapping_row(r: FileResult, manifest_entry: dict | None, original_sha: str | None, out_sha: str | None) -> dict:
+def _mapping_row(r: FileResult, original_sha: str, out_sha: str | None, check: tuple | None,
+                 rehashed: int | None) -> dict:
     row = {"id": r.id, "kind": r.kind, "source_sha256": r.source_sha256, "source_bytes": r.source_bytes,
            "preserved_original": "originals/" + r.id, "preserved_sha256": original_sha,
            "sanitized_id": ("sanitized/" + r.id) if out_sha else None, "sanitized_sha256": out_sha,
@@ -597,9 +800,10 @@ def _mapping_row(r: FileResult, manifest_entry: dict | None, original_sha: str |
            "kept": {k: v for k, v in sorted(r.counts.items()) if k in KEPT_KINDS},
            "json_tokens": r.json_tokens, "json_tokens_changed": r.json_tokens_changed,
            "structure": r.structure, "safety": r.safety, "reasons": r.reasons}
-    if manifest_entry is not None:
-        expected = manifest_entry.get("sha256")
-        row["manifest_sha256_match"] = None if expected is None else expected == r.source_sha256
+    if check is not None:
+        row["manifest_check"], row["manifest_sha256_match"] = check
+    if rehashed is not None:
+        row["manifest_rehashed_entries"] = rehashed
     return row
 
 
@@ -609,20 +813,48 @@ def _tool_sha() -> str:
 
 
 def stage(package: Path, out: Path, use_manifest: bool = False, policy: Policy = Policy(), identity=None) -> dict:
-    """Preserve originals and write sanitized copies + mapping.json into a new private directory."""
-    ids, entries = package_files(package, use_manifest)
+    """Preserve originals and write sanitized copies + mapping.json into a new private directory.
+
+    Order: account for every file (refuse before writing), read each file once, process, check the manifest,
+    re-hash the candidate manifest, re-read the sources (refuse what changed meanwhile), then write."""
+    if _policy_problems(policy):
+        raise EvidenceError("unsafe sanitizing policy: " + ", ".join(sorted(set(_policy_problems(policy)))))
+    package = Path(package)
+    selection = package_files(package, use_manifest)
     out_r = _check_out_dir(out, package)
+    work = {}
+    for rel in selection.ids:
+        data = selection.manifest_bytes if rel == "manifest.json" and use_manifest else (package / rel).read_bytes()
+        r = process_bytes(rel, data, policy, identity)
+        check = None
+        if use_manifest and rel != "manifest.json":
+            if rel in selection.unlisted:
+                check = ("NOT_LISTED", None)
+                r.refuse("not-listed-in-manifest")
+            else:
+                status, reasons, match = _manifest_check(selection.entries[rel], data)
+                check = (status, match)
+                for reason in reasons:
+                    r.refuse(reason)
+        work[rel] = (data, r, check)
+    rehashed = None
+    if use_manifest:
+        manifest_result = work["manifest.json"][1]
+        outputs = {rel: work[rel][1].output for rel in selection.entries}
+        candidate, rehashed = _candidate_manifest(manifest_result, outputs, policy, identity)
+        if candidate is not None:
+            manifest_result.output = candidate
+    for rel, (data, r, _check) in work.items():
+        current = package / rel
+        if not current.is_file() or _sha(current.read_bytes()) != r.source_sha256:
+            r.refuse("source-changed-during-staging")
     out_r.mkdir(parents=True, exist_ok=True)
     rows = []
-    for rel in ids:
-        source = package / rel
-        data = source.read_bytes()
-        r = process_bytes(rel, data, policy, identity)
+    for rel in selection.ids:
+        data, r, check = work[rel]
         original_sha = _write_new(out_r / "originals" / rel, data)
         out_sha = _write_new(out_r / "sanitized" / rel, r.output) if r.output is not None else None
-        if _sha(source.read_bytes()) != r.source_sha256:
-            r.refuse("source-changed-during-staging")
-        rows.append(_mapping_row(r, entries.get(rel) if use_manifest else None, original_sha, out_sha))
+        rows.append(_mapping_row(r, original_sha, out_sha, check, rehashed if rel == "manifest.json" else None))
     blocked = [row["id"] for row in rows if row["safety"] != "PASS"]
     mapping = {
         "tool": "web_alarm.evidence_sanitizer", "tool_sha256_lf": _tool_sha(), "policy": policy.as_dict(),
@@ -631,7 +863,7 @@ def stage(package: Path, out: Path, use_manifest: bool = False, policy: Policy =
         "files_blocked": len(blocked), "replacements_total": _sum_rows(rows, "replacements"),
         "kept_total": _sum_rows(rows, "kept"),
         "identity_gate": "ENFORCED" if identity is not None else "NOT ENFORCED",
-        "verdict": "SAFE PUBLICATION CANDIDATE (needs USER GO)" if not blocked else "REFUSED", "files": rows,
+        "verdict": VERDICT_SAFE if not blocked else "REFUSED", "files": rows,
     }
     tmp = out_r / "mapping.json.tmp"
     tmp.write_bytes((json.dumps(mapping, ensure_ascii=False, indent=1) + "\n").encode("utf-8"))
@@ -646,54 +878,213 @@ def _sum_rows(rows, key) -> dict:
     return dict(sorted(total.items()))
 
 
-def verify(out: Path, package: Path | None = None, identity=None) -> dict:
-    """Recheck a staged set: hashes, completeness, gate, and reproduction from the preserved originals."""
+def _mapping_policy(raw, problems: Counter) -> Policy:
+    """The mapping's policy, accepted only if it is a complete, current and not weakened policy."""
+    if not isinstance(raw, dict) or raw.get("version") != POLICY_VERSION:
+        problems["policy-invalid"] += 1
+        return Policy()
+    anchors, keys = raw.get("repo_anchors"), raw.get("protected_keys")
+    if not (isinstance(anchors, list) and all(isinstance(a, str) for a in anchors)
+            and isinstance(keys, list) and all(isinstance(k, str) for k in keys)):
+        problems["policy-invalid"] += 1
+        return Policy()
+    policy = Policy(tuple(anchors), frozenset(keys))
+    if _policy_problems(policy):
+        problems["policy-invalid"] += 1
+        return Policy(tuple(a for a in anchors if not _policy_problems(Policy((a,)))) or ("ag_llm",))
+    return policy
+
+
+def _row_problem(row) -> str | None:
+    if not isinstance(row, dict):
+        return "mapping-row-invalid"
+    rel = row.get("id")
+    if _id_problem(rel):
+        return "unsafe-id"
+    valid = (row.get("kind") in KINDS and _is_hex(row.get("source_sha256")) and _is_count(row.get("source_bytes"))
+             and row.get("preserved_original") == "originals/" + rel
+             and row.get("preserved_sha256") == row.get("source_sha256")
+             and row.get("safety") in ("PASS", "BLOCKED") and isinstance(row.get("changed"), bool)
+             and isinstance(row.get("reasons"), list) and all(isinstance(x, str) for x in row["reasons"]))
+    if not valid:
+        return "mapping-row-invalid"
+    if row["safety"] == "PASS":
+        if row.get("sanitized_id") != "sanitized/" + rel or not _is_hex(row.get("sanitized_sha256")) \
+                or not _is_count(row.get("sanitized_bytes")) or row["reasons"]:
+            return "mapping-row-invalid"
+    elif row.get("sanitized_id") is not None or row.get("sanitized_sha256") is not None or not row["reasons"]:
+        return "mapping-row-invalid"
+    return None
+
+
+def _bundle_files(out: Path, name: str, problems: Counter) -> set[str]:
+    root = out / name
+    if _is_link(root):
+        problems["link-in-bundle"] += 1
+        return set()
+    if not root.is_dir():
+        return set()
+    files, links = _walk(root, skip_cache=False)
+    if links:
+        problems["link-in-bundle"] += links
+    return set(files)
+
+
+def _verify_manifest(rows, ids, results, policy, identity, problems) -> bytes | None:
+    """Re-prove manifest integrity from the preserved manifest and originals; return the expected candidate."""
+    manifest = results.get("manifest.json")
+    if manifest is None:
+        problems["manifest-missing"] += 1
+        return None
+    try:
+        doc = _strict_json(manifest[0])
+        files = doc.get("files") if isinstance(doc, dict) else None
+        if not isinstance(files, dict) or "manifest.json" in files or any(_id_problem(k) for k in files):
+            raise ValueError("unusable manifest")
+    except (ValueError, RecursionError):
+        problems["manifest-invalid"] += 1
+        manifest[1].refuse("manifest-invalid")
+        return None
+    listed = set(files)
+    flagged = {r["id"] for r in rows if "not-listed-in-manifest" in r["reasons"]}
+    if flagged & listed or ids != listed | {"manifest.json"} | flagged:
+        problems["mapping-set-differs-from-manifest"] += 1
+    for rel in listed & set(results):
+        status, reasons, match = _manifest_check(files[rel], results[rel][0])
+        results[rel][2] = (status, match)
+        for reason in reasons:
+            results[rel][1].refuse(reason)
+    for rel in (flagged - listed) & set(results):
+        results[rel][2] = ("NOT_LISTED", None)
+        results[rel][1].refuse("not-listed-in-manifest")
+    outputs = {rel: results[rel][1].output for rel in listed & set(results)}
+    return _candidate_manifest(manifest[1], outputs, policy, identity)[0]
+
+
+def _verify_report(problems: Counter, checked: int, claimed_blocked: int, blocked: int, completeness: str) -> dict:
+    clean = not problems
+    return {"files_checked": checked, "files_blocked_in_mapping": claimed_blocked, "files_blocked_recomputed": blocked,
+            "problems": dict(sorted(problems.items())), "verdict": "CONSISTENT" if clean else "INCONSISTENT",
+            "completeness": completeness,
+            "publication": "SAFE CANDIDATE" if clean and not blocked and completeness != "NOT_PROVEN" else "REFUSED"}
+
+
+def verify(out: Path, package: Path | None = None, identity=None, mapping_anchor: str | None = None) -> dict:
+    """Re-prove a staged set from scratch; nothing the bundle says about itself is taken on trust."""
+    out = Path(out)
     mapping_path = out / "mapping.json"
     if not mapping_path.is_file():
         raise EvidenceError("mapping.json not found")
-    mapping = json.loads(mapping_path.read_bytes())
-    policy_dict = mapping.get("policy", {})
-    if policy_dict.get("version") != POLICY_VERSION:
-        raise EvidenceError("mapping policy version is not supported by this tool")
-    policy = Policy(tuple(policy_dict.get("repo_anchors", ())), frozenset(policy_dict.get("protected_keys", ())))
+    if package is not None and not Path(package).is_dir():
+        raise EvidenceError("package directory not found")
+    raw = mapping_path.read_bytes()
     problems = Counter()
-    listed = set()
+    anchored = False
+    if mapping_anchor is not None:
+        anchored = _sha(raw) == str(mapping_anchor).lower()
+        if not anchored:
+            problems["mapping-anchor-mismatch"] += 1
+    completeness = ("PROVEN_AGAINST_PACKAGE" if package is not None
+                    else "PROVEN_BY_EXTERNAL_MAPPING_SHA256" if anchored else "NOT_PROVEN")
+    try:
+        mapping = _strict_json(raw)
+    except (ValueError, RecursionError):
+        mapping = None
+    if not isinstance(mapping, dict) or not isinstance(mapping.get("files"), list):
+        problems["mapping-invalid"] += 1
+        return _verify_report(problems, 0, 0, 0, completeness)
+    policy = _mapping_policy(mapping.get("policy"), problems)
+    selection = mapping.get("selection")
+    if selection not in SELECTIONS:
+        problems["mapping-invalid"] += 1
+    rows, seen = [], set()
     for row in mapping["files"]:
-        rel = row["id"]
-        listed.add(rel)
-        original = out / "originals" / rel
-        if not original.is_file() or _sha(original.read_bytes()) != row["source_sha256"]:
+        issue = _row_problem(row)
+        if issue is None and row["id"].casefold() in seen:
+            issue = "duplicate-ids"
+        if issue:
+            problems[issue] += 1
+            continue
+        seen.add(row["id"].casefold())
+        rows.append(row)
+    by_id = {row["id"]: row for row in rows}
+    ids = set(by_id)
+    claimed_blocked = sum(1 for row in mapping["files"] if not isinstance(row, dict) or row.get("safety") != "PASS")
+
+    unexpected = [p.name for p in out.iterdir() if p.name not in BUNDLE_ENTRIES]
+    if unexpected:
+        problems["unexpected-bundle-entries"] += len(unexpected)
+    originals = _bundle_files(out, "originals", problems)
+    sanitized = _bundle_files(out, "sanitized", problems)
+    if ids - originals:
+        problems["original-missing-or-changed"] += len(ids - originals)
+    if originals - ids:
+        problems["unlisted-originals"] += len(originals - ids)
+    claimed_pass = {rel for rel, row in by_id.items() if row["safety"] == "PASS"}
+    if sanitized - claimed_pass:
+        problems["unlisted-sanitized-files"] += len(sanitized - claimed_pass)
+    if claimed_pass - sanitized:
+        problems["sanitized-missing-or-changed"] += len(claimed_pass - sanitized)
+
+    results = {}
+    for rel in sorted(ids & originals):
+        row, data = by_id[rel], (out / "originals" / rel).read_bytes()
+        if _sha(data) != row["source_sha256"] or len(data) != row["source_bytes"]:
             problems["original-missing-or-changed"] += 1
             continue
-        data = original.read_bytes()
-        if package is not None:
-            current = package / rel
-            if not current.is_file() or _sha(current.read_bytes()) != row["source_sha256"]:
-                problems["package-differs-from-preserved-original"] += 1
-        again = process_bytes(rel, data, policy, identity)
-        expected = row.get("sanitized_sha256")
-        sanitized = out / "sanitized" / rel
-        if expected is None:
-            if sanitized.exists():
-                problems["blocked-file-has-sanitized-copy"] += 1
-            if again.safety == "PASS":
-                problems["blocked-file-now-passes"] += 1
+        results[rel] = [data, process_bytes(rel, data, policy, identity), None]
+    candidate = _verify_manifest(rows, ids, results, policy, identity, problems) if selection == "manifest" else None
+
+    blocked = changed = 0
+    for rel in sorted(ids):
+        row = by_id[rel]
+        if rel not in results:
+            blocked += 1
             continue
-        if not sanitized.is_file() or _sha(sanitized.read_bytes()) != expected:
-            problems["sanitized-missing-or-changed"] += 1
-        if again.output is None or _sha(again.output) != expected:
-            problems["not-reproducible"] += 1
-        if again.safety != "PASS":
-            problems["gate-fails-now"] += 1
-    extra = [p for p in (out / "sanitized").rglob("*") if p.is_file()
-             and p.relative_to(out / "sanitized").as_posix() not in listed] if (out / "sanitized").is_dir() else []
-    if extra:
-        problems["unlisted-sanitized-files"] += len(extra)
-    blocked = sum(1 for row in mapping["files"] if row["safety"] != "PASS")
-    return {"files_checked": len(mapping["files"]), "files_blocked_in_mapping": blocked,
-            "problems": dict(sorted(problems.items())),
-            "verdict": "CONSISTENT" if not problems else "INCONSISTENT",
-            "publication": "SAFE CANDIDATE" if not problems and not blocked else "REFUSED"}
+        data, r, check = results[rel]
+        expected = candidate if rel == "manifest.json" and selection == "manifest" else r.output
+        recomputed = "PASS" if r.safety == "PASS" and expected is not None else "BLOCKED"
+        if recomputed != row["safety"]:
+            if row["safety"] == "PASS":
+                problems["map-claims-pass-but-recomputation-refuses"] += 1
+            elif not TRANSIENT_REASONS.intersection(row["reasons"]):
+                problems["blocked-file-now-passes"] += 1
+        final_pass = recomputed == "PASS" and row["safety"] == "PASS"
+        if final_pass:
+            if _sha(expected) != row["sanitized_sha256"] or len(expected) != row["sanitized_bytes"]:
+                problems["not-reproducible"] += 1
+            if rel in sanitized and _sha((out / "sanitized" / rel).read_bytes()) != row["sanitized_sha256"]:
+                problems["sanitized-missing-or-changed"] += 1
+        else:
+            blocked += 1
+        is_changed = final_pass and _sha(expected) != row["source_sha256"]
+        changed += is_changed
+        claimed_check = (row.get("manifest_check"), row.get("manifest_sha256_match"))
+        if row["changed"] != is_changed or ("manifest_check" in row and claimed_check != (check or (None, None))) \
+                or ("manifest_check" not in row and "manifest_sha256_match" in row
+                    and row["manifest_sha256_match"] != (check or (None, None))[1]):
+            problems["mapping-field-mismatch"] += 1
+    total = len(mapping["files"])
+    expected_verdict = VERDICT_SAFE if blocked == 0 and len(rows) == total else "REFUSED"
+    if (mapping.get("files_total"), mapping.get("files_blocked"), mapping.get("files_changed"),
+            mapping.get("verdict")) != (total, blocked, changed, expected_verdict):
+        problems["mapping-totals-mismatch"] += 1
+
+    if package is not None:
+        package = Path(package)
+        try:
+            source = package_files(package, selection == "manifest")
+        except IntegrityRefusal:
+            problems["package-inventory-differs"] += 1
+        else:
+            if set(source.ids) != ids or len(rows) != total:
+                problems["package-inventory-differs"] += 1
+            for rel in sorted(set(source.ids) & ids):
+                data = source.manifest_bytes if rel == "manifest.json" and source.manifest_bytes is not None \
+                    else (package / rel).read_bytes()
+                if _sha(data) != by_id[rel]["source_sha256"]:
+                    problems["package-differs-from-preserved-original"] += 1
+    return _verify_report(problems, len(rows), claimed_blocked, blocked, completeness)
 
 
 # ---------------------------------------------------------------------------------------------------------- CLI
@@ -721,13 +1112,16 @@ def main(argv=None) -> int:
     p_stage.add_argument("--manifest", action="store_true")
     p_verify = sub.add_parser("verify")
     p_verify.add_argument("out")
-    p_verify.add_argument("--package")
+    p_verify.add_argument("--package", help="source package: proves completeness against its inventory")
+    p_verify.add_argument("--mapping-sha256", help="SHA-256 of mapping.json recorded outside the bundle at stage time")
     args = parser.parse_args(argv)
 
     tokens = list(args.identity_token) + ([] if args.no_local_identity else local_identity_tokens())
     identity = identity_pattern(tokens)
     policy = Policy(tuple(args.repo_anchor)) if args.repo_anchor else Policy()
     try:
+        if _policy_problems(policy):
+            raise EvidenceError("unsafe --repo-anchor")
         if args.command == "scan":
             report = scan(Path(args.package), args.manifest, policy, identity)
             if args.json_out:
@@ -737,17 +1131,25 @@ def main(argv=None) -> int:
                 with open(target, "xb") as handle:
                     handle.write((json.dumps(report, ensure_ascii=False, indent=1) + "\n").encode("utf-8"))
             _print({k: v for k, v in report.items() if k != "files"})
-            leaks = sum(v for k, v in report["classes"].items() if k.startswith(("CONFIRMED", "SUSPECT", "UNSUP")))
-            return EXIT_REFUSED if leaks else EXIT_SAFE
+            refused = sum(v for k, v in report["classes"].items()
+                          if {"CONFIRMED", "SUSPECT", "UNSUPPORTED", "INTEGRITY"} & set(k.split("+")))
+            return EXIT_REFUSED if refused else EXIT_SAFE
         if args.command == "stage":
             mapping = stage(Path(args.package), Path(args.out), args.manifest, policy, identity)
+            written = Path(args.out) / "mapping.json"
             _print({k: v for k, v in mapping.items() if k != "files"} |
-                   {"blocked": [{"id": r["id"], "reasons": r["reasons"]} for r in mapping["files"]
+                   {"mapping_sha256": _sha(written.read_bytes()),
+                    "blocked": [{"id": r["id"], "reasons": r["reasons"]} for r in mapping["files"]
                                 if r["safety"] != "PASS"]})
             return EXIT_SAFE if mapping["files_blocked"] == 0 else EXIT_REFUSED
-        report = verify(Path(args.out), Path(args.package) if args.package else None, identity)
+        if args.mapping_sha256 is not None and not _is_hex(args.mapping_sha256):
+            raise EvidenceError("--mapping-sha256 must be 64 hexadecimal characters")
+        report = verify(Path(args.out), Path(args.package) if args.package else None, identity, args.mapping_sha256)
         _print(report)
         return EXIT_SAFE if report["publication"] == "SAFE CANDIDATE" else EXIT_REFUSED
+    except IntegrityRefusal as exc:
+        _print({"error": safe_message(exc, identity), "publication": "REFUSED"})
+        return EXIT_REFUSED
     except EvidenceError as exc:
         _print({"error": safe_message(exc, identity)})
         return EXIT_USAGE

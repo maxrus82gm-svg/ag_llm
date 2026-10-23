@@ -1,0 +1,390 @@
+{
+ "label": "baseline",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRB-baseline-knc8bc0l\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.835,
+ "base": "<TEMP>\\claude-esrep-gateRB-baseline-knc8bc0l",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code",
+ "tests_run": 62,
+ "passed": -10,
+ "failures": 50,
+ "errors": 22,
+ "skips": 0,
+ "elapsed_seconds": 4.851,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory (damage='added')",
+   "FAIL",
+   "ata\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 967, in test_all_files_selection_compares_the_whole_source_inventory\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory (damage='removed')",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 968, in test_all_files_selection_compares_the_whole_source_inventory\n    self.assertIn(\"package-inventory-differs\", report[\"problems\"])\nAssertionError: 'package-inventory-differs' not found in {'package-differs-from-preserved-original': 1}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing",
+   "ERROR",
+   "^^^^^^^^^^^^^^^^^\n  File \"<HOME>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\decoder.py\", line 354, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\nRecursionError: maximum recursion depth exceeded while decoding a JSON array from a unicode string\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused (with_package=True)",
+   "FAIL",
+   "<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 830, in test_deleted_row_and_sanitized_copy_is_refused\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused (with_package=False)",
+   "FAIL",
+   "<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 830, in test_deleted_row_and_sanitized_copy_is_refused\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused",
+   "FAIL",
+   "call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 832, in test_deleted_row_and_sanitized_copy_is_refused\n    self.assertEqual(run_cli(\"verify\", out, \"--package\", pkg)[0], es.EXIT_REFUSED)\nAssertionError: 0 != 2\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness",
+   "FAIL",
+   "al_mapping_anchor_proves_completeness\n    self.assertEqual(es.verify(out, None, IDENTITY)[\"publication\"], \"REFUSED\")  # nothing trusted to compare\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without (manifest=True)",
+   "FAIL",
+   "\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 846, in test_fully_removed_file_is_caught_against_source_and_unproven_without\n    self.assertEqual(with_source[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without (manifest=False)",
+   "FAIL",
+   "\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 846, in test_fully_removed_file_is_caught_against_source_and_unproven_without\n    self.assertEqual(with_source[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused",
+   "FAIL",
+   "<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 956, in test_junction_inside_bundle_is_refused\n    self.assertIn(\"link-in-bundle\", report[\"problems\"])\nAssertionError: 'link-in-bundle' not found in {'unlisted-sanitized-files': 1}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 940, in test_leftovers_and_partial_bundles\n    self.assertIn(\"unexpected-bundle-entries\", es.verify(out, pkg, IDENTITY)[\"problems\"])\nAssertionError: 'unexpected-bundle-entries' not found in {}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused",
+   "FAIL",
+   "sed\n    self.assertEqual((row[\"safety\"], row[\"sanitized_id\"]), (\"BLOCKED\", None))\nAssertionError: Tuples differ: ('PASS', 'sanitized/runs/notes-zqsynthuser.txt') != ('BLOCKED', None)\n\nFirst differing element 0:\n'PASS'\n'BLOCKED'\n\n- ('PASS', 'sanitized/runs/notes-zqsynthuser.txt')\n+ ('BLOCKED', None)\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=0)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=1)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=2)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=3)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=4)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=5)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=6)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=8)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=9)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=11)",
+   "FAIL",
+   "elf.assertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'REFUSED') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'REFUSED')\n+ ('INCONSISTENT', 'REFUSED')\n?   ++\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=12)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_traversal_id_never_reads_outside_the_bundle",
+   "FAIL",
+   "iwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 935, in test_traversal_id_never_reads_outside_the_bundle\n    self.assertNotIn(\"../../outside.txt\", [c.args[0] for c in spy.call_args_list])\nAssertionError: '../../outside.txt' unexpectedly found in ['../../outside.txt', 'b.txt', 'manifest.json']\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=0)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=1)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=2)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=3)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=4)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=5)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=6)",
+   "FAIL",
+   "\\AppData\\Local\\Temp\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 1023, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    self.assertEqual(code, es.EXIT_USAGE)\nAssertionError: 2 != 3\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=0)",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 978, in test_valid_bundles_pass_in_both_selection_modes\n    report[\"completeness\"]),\n    ~~~~~~^^^^^^^^^^^^^^^^\nKeyError: 'completeness'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=1)",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 978, in test_valid_bundles_pass_in_both_selection_modes\n    report[\"completeness\"]),\n    ~~~~~~^^^^^^^^^^^^^^^^\nKeyError: 'completeness'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=2)",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 978, in test_valid_bundles_pass_in_both_selection_modes\n    report[\"completeness\"]),\n    ~~~~~~^^^^^^^^^^^^^^^^\nKeyError: 'completeness'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes (case=3)",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 978, in test_valid_bundles_pass_in_both_selection_modes\n    report[\"completeness\"]),\n    ~~~~~~^^^^^^^^^^^^^^^^\nKeyError: 'completeness'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 566, in test_unexpected_errors_are_reported_without_paths\n    self.assertEqual(code, es.EXIT_REFUSED)\nAssertionError: 3 != 2\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes",
+   "FAIL",
+   "b'} != {'bytes': 82, 'sha256': 'c52ea34cea573397d347c0c61d[35 chars]ed1'}\n- {'bytes': 90,\n?           ^^\n\n+ {'bytes': 82,\n?           ^^\n\n-  'sha256': '6dd877455a042b16850737bab3c7e2a3d09967985b7aa8b69abc7df5470b447b'}\n+  'sha256': 'c52ea34cea573397d347c0c61d0b11118319fa9b912dae1437508564a5a5fed1'}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused",
+   "FAIL",
+   "baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 738, in test_file_missing_from_manifest_is_refused\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=True)",
+   "FAIL",
+   "idence_sanitizer.py\", line 795, in test_fully_consistent_forgery_still_fails_the_manifest_reproof\n    report = es.verify(out, package, IDENTITY, mapping_anchor)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: verify() takes from 1 to 3 positional arguments but 4 were given\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=False)",
+   "FAIL",
+   "idence_sanitizer.py\", line 795, in test_fully_consistent_forgery_still_fails_the_manifest_reproof\n    report = es.verify(out, package, IDENTITY, mapping_anchor)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: verify() takes from 1 to 3 positional arguments but 4 were given\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused",
+   "FAIL",
+   "seline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 755, in test_manifest_changed_during_staging_refused\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate (with_package=True)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate (with_package=False)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=0)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=1)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=2)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=3)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=4)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=5)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=6)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=7)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=8)",
+   "FAIL",
+   "ne-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=9)",
+   "FAIL",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<TEMP>\\claude-esrep-mirror-baseline-muywiwbh\\code\\web_alarm\\evidence_sanitizer.py\", line 601, in _mapping_row\n    expected = manifest_entry.get(\"sha256\")\n               ^^^^^^^^^^^^^^^^^^\nAttributeError: 'str' object has no attribute 'get'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=0)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=1)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=2)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=3)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=4)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=5)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=6)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=7)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse (case=8)",
+   "FAIL",
+   "mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 730, in test_unsafe_manifest_ids_refuse\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=0)",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=1)",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=2)",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=3)",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=4)",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n                           ^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'web_alarm.evidence_sanitizer' has no attribute 'IntegrityRefusal'\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes",
+   "FAIL",
+   "   \"test_id\"\n  ]\n },\n \"package\": \"pkg_ac92c1\",\n \"selection\": \"manifest\",\n \"files_total\": 3,\n \"files_changed\": 2,\n \"files_blocked\": 0,\n \"replacements_total\": {\n  \"TEMP\": 2\n },\n \"kept_total\": {},\n \"identity_gate\": \"ENFORCED\",\n \"verdict\": \"SAFE PUBLICATION CANDIDATE (needs USER GO)\",\n \"blocked\": []\n}\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify",
+   "FAIL",
+   "baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 652, in test_wrong_sha256_refuses_stage_and_verify\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses",
+   "FAIL",
+   "laude-esrep-mirror-baseline-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 671, in test_wrong_size_refuses\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file",
+   "FAIL",
+   "e-muywiwbh\\code\\test_web_alarm_evidence_sanitizer.py\", line 427, in test_stage_preserves_originals_and_maps_every_file\n    self.assertEqual(changed, {\"report.md\", \"runs/a/results.json\", \"runs/a/summary.json\", \"tools/run.py\",\nAssertionError: Items in the second set but not the first:\n'manifest.json'\n"
+  ]
+ ]
+}

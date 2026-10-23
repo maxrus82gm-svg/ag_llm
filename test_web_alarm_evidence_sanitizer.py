@@ -423,8 +423,9 @@ class StageVerifyTests(TempCase):
             if row["id"] != "manifest.json":
                 self.assertIs(row["manifest_sha256_match"], True)
         changed = {r["id"] for r in mapping["files"] if r["changed"]}
+        # manifest.json changes too: the candidate's manifest is re-hashed to describe the sanitized bytes
         self.assertEqual(changed, {"report.md", "runs/a/results.json", "runs/a/summary.json", "tools/run.py",
-                                   "nested/deep/notes.txt"})
+                                   "nested/deep/notes.txt", "manifest.json"})
         text = (out / "mapping.json").read_text(encoding="utf-8")
         self.assert_no_base_path(text)
         self.assertEqual(leaks(text), [])
@@ -534,7 +535,7 @@ class CliTests(TempCase):
         code, out = self.run_main("verify", self.base / "staging", "--package", pkg)
         self.assertEqual(code, es.EXIT_SAFE, out)
         code, out = self.run_main("scan", self.base / "staging" / "sanitized", "--manifest")
-        self.assertEqual(code, es.EXIT_SAFE, out)  # the original manifest is copied, its hashes differ
+        self.assertEqual(code, es.EXIT_SAFE, out)  # the candidate's manifest describes the sanitized bytes
 
     def test_inventory_file_never_written_into_the_package(self):
         pkg = self.make_package({"a.txt": "alpha"})
@@ -561,9 +562,15 @@ class CliTests(TempCase):
         broken = self.base / ("broken_" + USER)
         broken.mkdir()
         (broken / "mapping.json").write_text(json.dumps({"policy": {"version": es.POLICY_VERSION}}))
-        code, out = self.run_main("verify", broken)  # KeyError inside verify, not a traceback
+        code, out = self.run_main("verify", broken)  # a schema-broken mapping is a refusal, not a crash
+        self.assertEqual(code, es.EXIT_REFUSED)
+        self.assert_no_base_path(out)
+        pkg = self.make_package({"a.txt": "alpha"})
+        boom = RuntimeError("helper failed at " + TEMP_ROOT + "\\x for " + USER)
+        with mock.patch.object(es, "process_bytes", side_effect=boom):
+            code, out = self.run_main("scan", pkg)  # an unexpected exception: no traceback, no path, no name
         self.assertEqual(code, es.EXIT_USAGE)
-        self.assertIn("KeyError", out)
+        self.assertIn("RuntimeError", out)
         self.assert_no_base_path(out)
         self.assertEqual(leaks(out), [])
         pkg = self.make_package({"a.txt": "alpha"})
@@ -597,6 +604,431 @@ class RobustnessTests(unittest.TestCase):
         for text in texts:
             es.sanitize_text(text, POLICY)
         self.assertLess(time.monotonic() - started, 20.0)
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001: F-ES-01 (manifest integrity) and F-ES-02 (bundle completeness).
+# Oracles: hashlib, literal verdict strings / exit codes, and plain file / json edits of the bundle - never the
+# sanitizer's own helpers. The first test of each class is the independent verifier's reproduction (RED before).
+
+SAFE_VERDICT = "SAFE PUBLICATION CANDIDATE (needs USER GO)"
+
+
+def run_cli(*argv) -> tuple[int, str]:
+    buffer = io.StringIO()
+    with redirect_stdout(buffer):
+        code = es.main(["--no-local-identity", "--identity-token", USER, "--repo-anchor", "ag_llm", *map(str, argv)])
+    return code, buffer.getvalue()
+
+
+def load_mapping(out: Path) -> dict:
+    return json.loads((out / "mapping.json").read_text(encoding="utf-8"))
+
+
+def save_mapping(out: Path, mapping: dict) -> None:
+    (out / "mapping.json").write_text(json.dumps(mapping, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+
+
+def row_of(mapping: dict, rel: str) -> dict:
+    return next(r for r in mapping["files"] if r["id"] == rel)
+
+
+class ManifestIntegrityTests(TempCase):
+    """F-ES-01: a manifest that does not describe the actual bytes refuses publication in stage, scan and verify."""
+
+    def two_files(self) -> Path:
+        return self.make_package({"a.txt": TEMP_ROOT + "\\a", "b.json": json.dumps({"p": TEMP_ROOT + "\\b"})})
+
+    def edit_manifest(self, pkg: Path, mutate) -> None:
+        manifest = json.loads((pkg / "manifest.json").read_text(encoding="utf-8"))
+        mutate(manifest["files"])
+        (pkg / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+
+    def test_wrong_sha256_refuses_stage_and_verify(self):
+        pkg = self.two_files()
+        self.edit_manifest(pkg, lambda files: files["a.txt"].update(sha256="0" * 64))
+        out = self.base / "out"
+        mapping = es.stage(pkg, out, True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], "REFUSED")
+        row = row_of(mapping, "a.txt")
+        self.assertEqual((row["safety"], row["sanitized_id"]), ("BLOCKED", None))
+        self.assertFalse((out / "sanitized" / "a.txt").exists())
+        self.assertEqual(es.verify(out, pkg, IDENTITY)["publication"], "REFUSED")
+        self.assertEqual(es.verify(out, None, IDENTITY)["publication"], "REFUSED")
+
+    def test_wrong_sha256_cli_exit_codes(self):
+        pkg = self.two_files()
+        self.edit_manifest(pkg, lambda files: files["b.json"].update(sha256="f" * 64))
+        self.assertEqual(run_cli("scan", pkg, "--manifest")[0], es.EXIT_REFUSED)
+        code, out = run_cli("stage", pkg, "--out", self.base / "out", "--manifest")
+        self.assertEqual(code, es.EXIT_REFUSED, out)
+        self.assertEqual(run_cli("verify", self.base / "out", "--package", pkg)[0], es.EXIT_REFUSED)
+
+    def test_wrong_size_refuses(self):
+        pkg = self.two_files()
+        self.edit_manifest(pkg, lambda files: files["a.txt"].update(bytes=files["a.txt"]["bytes"] + 1))
+        mapping = es.stage(pkg, self.base / "out", True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], "REFUSED")
+        self.assertIn("manifest-bytes-mismatch", row_of(mapping, "a.txt")["reasons"])
+
+    def test_missing_or_mistyped_integrity_fields_refuse(self):
+        def drop(key):
+            return lambda files: files["a.txt"].pop(key)
+
+        def put(key, value):
+            return lambda files: files["a.txt"].update({key: value})
+
+        variants = [drop("sha256"), drop("bytes"), put("sha256", 12), put("sha256", "0" * 63),
+                    put("sha256", "z" * 64), put("bytes", "5"), put("bytes", True), put("bytes", -1),
+                    put("bytes", 1.5), lambda files: files.update({"a.txt": "not an object"})]
+        for case, mutate in enumerate(variants):
+            with self.subTest(case=case):
+                pkg = self.two_files()
+                self.edit_manifest(pkg, mutate)
+                out = self.base / ("out_%d" % case)
+                mapping = es.stage(pkg, out, True, POLICY, IDENTITY)
+                self.assertEqual(mapping["verdict"], "REFUSED")
+                self.assertIn("manifest-entry-invalid", row_of(mapping, "a.txt")["reasons"])
+                self.assertEqual(es.verify(out, pkg, IDENTITY)["publication"], "REFUSED")
+
+    def test_unusable_manifest_refuses_before_writing(self):
+        def as_list(pkg):
+            (pkg / "manifest.json").write_text(json.dumps({"files": ["a.txt", "b.json"]}))
+
+        def broken(pkg):
+            (pkg / "manifest.json").write_text('{"files": {"a.txt": ')
+
+        def duplicate_key(pkg):
+            text = (pkg / "manifest.json").read_text(encoding="utf-8")
+            entry = json.dumps({"bytes": 1, "sha256": "0" * 64})
+            (pkg / "manifest.json").write_text(text.replace('"files": {', '"files": {"a.txt": ' + entry + ",", 1))
+
+        def missing_file(pkg):
+            (pkg / "b.json").unlink()
+
+        def no_manifest(pkg):
+            (pkg / "manifest.json").unlink()
+
+        for case, damage in enumerate((as_list, broken, duplicate_key, missing_file, no_manifest)):
+            with self.subTest(case=case):
+                pkg = self.two_files()
+                damage(pkg)
+                out = self.base / ("refused_%d" % case)
+                with self.assertRaises(es.IntegrityRefusal):
+                    es.stage(pkg, out, True, POLICY, IDENTITY)
+                self.assertFalse(out.exists())
+                self.assertEqual(run_cli("stage", pkg, "--out", out, "--manifest")[0], es.EXIT_REFUSED)
+                self.assertFalse(out.exists())
+
+    def test_unsafe_manifest_ids_refuse(self):
+        for case, rel in enumerate(("../outside.txt", "a.txt:stream", "C:/x.txt", "sub\\a.txt", "./a.txt",
+                                    "sub//a.txt", "", "/abs.txt", "A.TXT")):
+            with self.subTest(case=case):
+                pkg = self.two_files()
+                self.edit_manifest(pkg, lambda files: files.update({rel: {"bytes": 1, "sha256": "0" * 64}}))
+                out = self.base / ("unsafe_%d" % case)
+                with self.assertRaises(es.IntegrityRefusal):
+                    es.stage(pkg, out, True, POLICY, IDENTITY)
+                self.assertFalse(out.exists())
+
+    def test_file_missing_from_manifest_is_refused(self):
+        pkg = self.two_files()
+        (pkg / "extra.txt").write_text("not listed")
+        mapping = es.stage(pkg, self.base / "out", True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], "REFUSED")
+        row = row_of(mapping, "extra.txt")
+        self.assertEqual((row["safety"], row["sanitized_id"]), ("BLOCKED", None))
+        self.assertIn("not-listed-in-manifest", row["reasons"])
+        self.assertEqual(run_cli("scan", pkg, "--manifest")[0], es.EXIT_REFUSED)
+
+    def test_manifest_changed_during_staging_refused(self):
+        pkg = self.two_files()
+        original = es.process_bytes
+
+        def racing(rel, data, *args, **kwargs):
+            if rel == "a.txt":
+                self.edit_manifest(pkg, lambda files: files["b.json"].update(bytes=999))
+            return original(rel, data, *args, **kwargs)
+
+        with mock.patch.object(es, "process_bytes", racing):
+            mapping = es.stage(pkg, self.base / "out", True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], "REFUSED")
+        self.assertIn("source-changed-during-staging", row_of(mapping, "manifest.json")["reasons"])
+
+    def test_mapping_cannot_be_edited_into_a_safe_candidate(self):
+        pkg = self.two_files()
+        self.edit_manifest(pkg, lambda files: files["a.txt"].update(sha256="0" * 64))
+        out = self.base / "out"
+        es.stage(pkg, out, True, POLICY, IDENTITY)
+        forged = b"<TEMP>\\a"
+        (out / "sanitized" / "a.txt").write_bytes(forged)
+        mapping = load_mapping(out)
+        row = row_of(mapping, "a.txt")
+        row.update(safety="PASS", reasons=[], sanitized_id="sanitized/a.txt", sanitized_sha256=sha(forged),
+                   sanitized_bytes=len(forged), changed=True, manifest_sha256_match=True)
+        row.pop("manifest_check", None)
+        mapping.update(files_blocked=0, verdict=SAFE_VERDICT)
+        save_mapping(out, mapping)
+        for package in (pkg, None):
+            with self.subTest(with_package=package is not None):
+                report = es.verify(out, package, IDENTITY)
+                self.assertEqual((report["verdict"], report["publication"]), ("INCONSISTENT", "REFUSED"))
+
+    def test_fully_consistent_forgery_still_fails_the_manifest_reproof(self):
+        # Stage a correct package, then make the package manifest lie about a.txt and forge the bundle so that every
+        # derived field agrees with the lie (preserved manifest, its row, a.txt's manifest fields). Only verify's own
+        # re-check of the manifest against the preserved bytes can tell - the candidate manifest is identical.
+        pkg = self.two_files()
+        out = self.base / "out"
+        self.assertEqual(es.stage(pkg, out, True, POLICY, IDENTITY)["verdict"], SAFE_VERDICT)
+        self.edit_manifest(pkg, lambda files: files["a.txt"].update(sha256="0" * 64))
+        lying = (pkg / "manifest.json").read_bytes()
+        (out / "originals" / "manifest.json").write_bytes(lying)
+        mapping = load_mapping(out)
+        row_of(mapping, "manifest.json").update(source_sha256=sha(lying), source_bytes=len(lying),
+                                                 preserved_sha256=sha(lying))
+        row_of(mapping, "a.txt").update(manifest_check="MISMATCH", manifest_sha256_match=False)
+        save_mapping(out, mapping)
+        anchor = sha((out / "mapping.json").read_bytes())
+        for package, mapping_anchor in ((pkg, None), (None, anchor)):
+            with self.subTest(with_package=package is not None):
+                report = es.verify(out, package, IDENTITY, mapping_anchor)
+                self.assertEqual((report["verdict"], report["publication"]), ("INCONSISTENT", "REFUSED"))
+                self.assertIn("map-claims-pass-but-recomputation-refuses", report["problems"])
+
+    def test_candidate_manifest_describes_sanitized_bytes(self):
+        pkg = self.make_package(standard_package_files())
+        out = self.base / "out"
+        mapping = es.stage(pkg, out, True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], SAFE_VERDICT)
+        self.assertEqual((out / "originals" / "manifest.json").read_bytes(), (pkg / "manifest.json").read_bytes())
+        candidate = json.loads((out / "sanitized" / "manifest.json").read_text(encoding="utf-8"))
+        for rel in standard_package_files():
+            data = (out / "sanitized" / rel).read_bytes()
+            self.assertEqual(candidate["files"][rel], {"bytes": len(data), "sha256": sha(data)})
+        self.assertEqual(run_cli("scan", out / "sanitized", "--manifest")[0], es.EXIT_SAFE)
+
+
+class BundleCompletenessTests(TempCase):
+    """F-ES-02: verify proves source -> manifest/selection -> originals -> mapping -> sanitized as a whole set."""
+
+    def staged(self, files=None, use_manifest=True) -> tuple[Path, Path]:
+        pkg = self.make_package(files or {"a.txt": TEMP_ROOT + "\\a", "b.txt": "beta"}, manifest=use_manifest)
+        out = self.base / ("out_" + uuid.uuid4().hex[:6])
+        self.assertEqual(es.stage(pkg, out, use_manifest, POLICY, IDENTITY)["verdict"], SAFE_VERDICT)
+        return pkg, out
+
+    def test_deleted_row_and_sanitized_copy_is_refused(self):
+        pkg, out = self.staged()
+        mapping = load_mapping(out)
+        mapping["files"] = [r for r in mapping["files"] if r["id"] != "b.txt"]
+        save_mapping(out, mapping)
+        (out / "sanitized" / "b.txt").unlink()
+        for package in (pkg, None):
+            with self.subTest(with_package=package is not None):
+                report = es.verify(out, package, IDENTITY)
+                self.assertEqual(report["publication"], "REFUSED")
+                self.assertNotEqual(report["problems"], {})
+        self.assertEqual(run_cli("verify", out, "--package", pkg)[0], es.EXIT_REFUSED)
+        self.assertEqual(run_cli("verify", out)[0], es.EXIT_REFUSED)
+
+    def test_fully_removed_file_is_caught_against_source_and_unproven_without(self):
+        for use_manifest in (True, False):
+            with self.subTest(manifest=use_manifest):
+                pkg, out = self.staged(use_manifest=use_manifest)
+                mapping = load_mapping(out)
+                mapping["files"] = [r for r in mapping["files"] if r["id"] != "b.txt"]
+                mapping["files_total"] -= 1
+                save_mapping(out, mapping)
+                (out / "sanitized" / "b.txt").unlink()
+                (out / "originals" / "b.txt").unlink()
+                with_source = es.verify(out, pkg, IDENTITY)
+                self.assertEqual(with_source["publication"], "REFUSED")
+                self.assertIn("package-inventory-differs", with_source["problems"])
+                alone = es.verify(out, None, IDENTITY)
+                self.assertEqual((alone["publication"], alone["completeness"]), ("REFUSED", "NOT_PROVEN"))
+
+    def test_external_mapping_anchor_proves_completeness(self):
+        pkg, out = self.staged()
+        anchor = sha((out / "mapping.json").read_bytes())
+        self.assertEqual(es.verify(out, None, IDENTITY)["publication"], "REFUSED")  # nothing trusted to compare
+        report = es.verify(out, None, IDENTITY, anchor)
+        self.assertEqual((report["publication"], report["completeness"]),
+                         ("SAFE CANDIDATE", "PROVEN_BY_EXTERNAL_MAPPING_SHA256"))
+        self.assertEqual(run_cli("verify", out, "--mapping-sha256", anchor)[0], es.EXIT_SAFE)
+        mapping = load_mapping(out)
+        mapping["package"] = "renamed"
+        save_mapping(out, mapping)
+        tampered = es.verify(out, None, IDENTITY, anchor)
+        self.assertEqual(tampered["publication"], "REFUSED")
+        self.assertIn("mapping-anchor-mismatch", tampered["problems"])
+
+    def test_metadata_tampering_is_detected(self):
+        def total(m):
+            m["files_total"] += 1
+
+        def blocked(m):
+            m["files_blocked"] = 1
+
+        def changed_total(m):
+            m["files_changed"] = 0
+
+        def verdict(m):
+            m["verdict"] = "REFUSED"
+
+        def selection(m):
+            m["selection"] = "all-files"
+
+        def bad_selection(m):
+            m["selection"] = "everything"
+
+        def weaker_policy(m):
+            m["policy"]["protected_keys"] = []
+
+        def anchor_users(m):
+            m["policy"]["repo_anchors"] = ["users"]
+
+        def duplicate_row(m):
+            m["files"].append(dict(m["files"][0]))
+
+        def case_duplicate(m):
+            m["files"].append(dict(m["files"][0], id=m["files"][0]["id"].upper()))
+
+        def traversal(m):
+            m["files"][0]["id"] = "../outside.txt"
+
+        def unknown_safety(m):
+            m["files"][0]["safety"] = "MAYBE"
+
+        def flag_flip(m):
+            row_of(m, "b.txt")["changed"] = True
+
+        def sha_type(m):
+            m["files"][0]["source_sha256"] = 7
+
+        def files_not_list(m):
+            m["files"] = {}
+
+        for case, mutate in enumerate((total, blocked, changed_total, verdict, selection, bad_selection,
+                                       weaker_policy, anchor_users, duplicate_row, case_duplicate, traversal,
+                                       unknown_safety, flag_flip, sha_type, files_not_list)):
+            with self.subTest(case=case):
+                pkg, out = self.staged()
+                mapping = load_mapping(out)
+                mutate(mapping)
+                save_mapping(out, mapping)
+                report = es.verify(out, pkg, IDENTITY)
+                self.assertEqual((report["verdict"], report["publication"]), ("INCONSISTENT", "REFUSED"))
+
+    def test_traversal_id_never_reads_outside_the_bundle(self):
+        pkg, out = self.staged()
+        outside = self.base / "outside.txt"
+        outside.write_text("alpha")
+        mapping = load_mapping(out)
+        # originals/../../outside.txt is exactly the file planted next to the bundle, with a matching hash
+        mapping["files"][0].update(id="../../outside.txt", source_sha256=sha(b"alpha"), source_bytes=5)
+        save_mapping(out, mapping)
+        self.assertEqual((out / "originals" / "../../outside.txt").resolve(), outside.resolve())
+        with mock.patch.object(es, "process_bytes", wraps=es.process_bytes) as spy:
+            report = es.verify(out, pkg, IDENTITY)
+        self.assertEqual(report["publication"], "REFUSED")
+        self.assertNotIn("../../outside.txt", [c.args[0] for c in spy.call_args_list])
+
+    def test_leftovers_and_partial_bundles(self):
+        pkg, out = self.staged()
+        (out / "mapping.json.tmp").write_text("{}")
+        self.assertIn("unexpected-bundle-entries", es.verify(out, pkg, IDENTITY)["problems"])
+        (out / "mapping.json.tmp").unlink()
+        (out / "mapping.json").unlink()
+        with self.assertRaises(es.EvidenceError):
+            es.verify(out, pkg, IDENTITY)
+
+    @unittest.skipUnless(sys.platform == "win32", "junctions are a Windows feature")
+    def test_junction_inside_bundle_is_refused(self):
+        import _winapi
+        pkg, out = self.staged()
+        elsewhere = self.base / "elsewhere"
+        elsewhere.mkdir()
+        (elsewhere / "c.txt").write_text("gamma")
+        _winapi.CreateJunction(str(elsewhere), str(out / "sanitized" / "linked"))
+        report = es.verify(out, pkg, IDENTITY)
+        self.assertEqual(report["publication"], "REFUSED")
+        self.assertIn("link-in-bundle", report["problems"])
+
+    def test_all_files_selection_compares_the_whole_source_inventory(self):
+        for damage in ("added", "removed"):
+            with self.subTest(damage=damage):
+                pkg, out = self.staged(use_manifest=False)
+                if damage == "added":
+                    (pkg / "late.txt").write_text("late")
+                else:
+                    (pkg / "b.txt").unlink()
+                report = es.verify(out, pkg, IDENTITY)
+                self.assertEqual(report["publication"], "REFUSED")
+                self.assertIn("package-inventory-differs", report["problems"])
+
+    def test_valid_bundles_pass_in_both_selection_modes(self):
+        for case, (files, use_manifest) in enumerate(((None, True), (None, False),
+                                                      (standard_package_files(), True),
+                                                      (standard_package_files(), False))):
+            with self.subTest(case=case):
+                pkg, out = self.staged(files, use_manifest)
+                report = es.verify(out, pkg, IDENTITY)
+                self.assertEqual((report["verdict"], report["publication"], report["problems"],
+                                  report["completeness"]),
+                                 ("CONSISTENT", "SAFE CANDIDATE", {}, "PROVEN_AGAINST_PACKAGE"))
+                self.assertEqual(run_cli("verify", out, "--package", pkg)[0], es.EXIT_SAFE)
+                self.assertEqual(run_cli("verify", out)[0], es.EXIT_REFUSED)  # completeness not provable alone
+
+    def test_deeply_nested_json_is_refused_without_crashing(self):
+        deep = "[" * 5000 + "]" * 5000  # beyond the JSON decoder's recursion limit
+        r = es.process_bytes("deep.json", deep.encode(), POLICY, IDENTITY)
+        self.assertEqual((r.safety, r.output), ("BLOCKED", None))
+        pkg = self.make_package({"a.txt": "alpha"})
+        (pkg / "manifest.json").write_text('{"files": ' + deep + "}")
+        with self.assertRaises(es.IntegrityRefusal):
+            es.stage(pkg, self.base / "deep_out", True, POLICY, IDENTITY)
+        pkg, out = self.staged()
+        (out / "mapping.json").write_text(deep)
+        report = es.verify(out, pkg, IDENTITY)
+        self.assertEqual(report["publication"], "REFUSED")
+        self.assertIn("mapping-invalid", report["problems"])
+
+    def test_local_name_in_a_file_name_is_refused(self):
+        name = "runs/notes-" + USER + ".txt"
+        pkg = self.make_package({"a.txt": "alpha", name: "clean content"})
+        mapping = es.stage(pkg, self.base / "out", True, POLICY, IDENTITY)
+        self.assertEqual(mapping["verdict"], "REFUSED")
+        row = row_of(mapping, name)
+        self.assertEqual((row["safety"], row["sanitized_id"]), ("BLOCKED", None))
+        self.assertIn("identity-in-file-name", row["reasons"])
+        self.assertFalse((self.base / "out" / "sanitized" / name).exists())
+        # the manifest lists that name in its own content, so it is refused too (by the content gate)
+        self.assertIn("residual-identity", row_of(mapping, "manifest.json")["reasons"])
+        code, out = run_cli("scan", pkg, "--manifest")
+        self.assertEqual(code, es.EXIT_REFUSED)
+        self.assertEqual(json.loads(out)["classes"].get("CONFIRMED"), 2)
+
+    def test_unsafe_repo_anchor_is_refused_in_stage_and_cli(self):
+        pkg = self.make_package({"a.txt": HOME_ROOT + "\\x"})
+        for case, anchor in enumerate(("users", "AppData", "Temp", "", "a/b", "C:", "Program Files")):
+            with self.subTest(case=case):
+                out = self.base / ("anchor_%d" % case)
+                with self.assertRaises(es.EvidenceError):
+                    es.stage(pkg, out, True, es.Policy((anchor,)), IDENTITY)
+                self.assertFalse(out.exists())
+        buffer = io.StringIO()
+        with redirect_stdout(buffer):
+            code = es.main(["--no-local-identity", "--repo-anchor", "users", "scan", str(pkg)])
+        self.assertEqual(code, es.EXIT_USAGE)
+
+    def test_mapping_without_optional_new_fields_still_verifies(self):
+        pkg, out = self.staged()
+        mapping = load_mapping(out)
+        for row in mapping["files"]:
+            row.pop("manifest_check", None)
+        save_mapping(out, mapping)
+        self.assertEqual(es.verify(out, pkg, IDENTITY)["publication"], "SAFE CANDIDATE")
 
 
 if __name__ == "__main__":

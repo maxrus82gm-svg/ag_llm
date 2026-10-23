@@ -1,0 +1,29 @@
+{
+ "label": "R2-verify-trusts-manifest",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-gcira4ca\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateR-R2-verify-trusts-manifest-dnfb3q_8\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 0,
+ "wall_seconds": 5.203,
+ "base": "<TEMP>\\claude-esrep-gateR-R2-verify-trusts-manifest-dnfb3q_8",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-gcira4ca\\code",
+ "tests_run": 60,
+ "passed": 60,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.262,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

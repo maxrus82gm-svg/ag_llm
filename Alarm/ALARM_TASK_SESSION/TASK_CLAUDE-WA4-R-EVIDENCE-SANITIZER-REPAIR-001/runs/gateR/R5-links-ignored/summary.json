@@ -1,0 +1,35 @@
+{
+ "label": "R5-links-ignored",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R5-links-ignored-o54uglv2\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateR-R5-links-ignored-snoeaw5n\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.119,
+ "base": "<TEMP>\\claude-esrep-gateR-R5-links-ignored-snoeaw5n",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R5-links-ignored-o54uglv2\\code",
+ "tests_run": 60,
+ "passed": 59,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.193,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused",
+   "FAIL",
+   "<TEMP>\\claude-esrep-mirror-R5-links-ignored-o54uglv2\\code\\test_web_alarm_evidence_sanitizer.py\", line 933, in test_junction_inside_bundle_is_refused\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ]
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "label": "R11-anchor-unchecked",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF2-R11-anchor-unchecked-ewo4pzty\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.304,
+ "base": "<TEMP>\\claude-esrep-gateRF2-R11-anchor-unchecked-ewo4pzty",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code",
+ "tests_run": 62,
+ "passed": 57,
+ "failures": 5,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.359,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=0)",
+   "FAIL",
+   "al\\Temp\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=1)",
+   "FAIL",
+   "al\\Temp\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=2)",
+   "FAIL",
+   "al\\Temp\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli (case=6)",
+   "FAIL",
+   "al\\Temp\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1017, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    with self.assertRaises(es.EvidenceError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: EvidenceError not raised\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-esrep-mirror-R11-anchor-unchecked-2a6vv6jq\\code\\test_web_alarm_evidence_sanitizer.py\", line 1023, in test_unsafe_repo_anchor_is_refused_in_stage_and_cli\n    self.assertEqual(code, es.EXIT_USAGE)\nAssertionError: 2 != 3\n"
+  ]
+ ]
+}

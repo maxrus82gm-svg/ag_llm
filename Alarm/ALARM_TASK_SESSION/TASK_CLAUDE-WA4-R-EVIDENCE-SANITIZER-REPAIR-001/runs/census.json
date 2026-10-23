@@ -1,0 +1,1170 @@
+{
+ "task": "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+ "runs": {
+  "red-1": {
+   "tests_run": 58,
+   "methods": 58,
+   "method_counts": {
+    "FAIL": 19,
+    "PASS": 39
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+    "test_web_alarm_evidence_sanitizer.py": "d75e2f5589f7da53512d1201e25b60393a7162a99b01adcd7a70d4b3934a8931"
+   },
+   "exit": 1
+  },
+  "green-1": {
+   "tests_run": 58,
+   "methods": 58,
+   "method_counts": {
+    "PASS": 58
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "4480113cacaf482e650ff8105b9884bce5cef8977cc83b94a296a421c54cb10d",
+    "test_web_alarm_evidence_sanitizer.py": "e14b7a83c88bbb31f64c600ad0a02aabd53f6eec0224ef7eef3d47c7b02f6a17"
+   },
+   "exit": 0
+  },
+  "green-2": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 60
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f26e59da94e3e3babd14402b6cb5210c671853ea02f2aa69be8068fd4b0d451e",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 0
+  },
+  "green-3": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 60
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "08afc7ec42ef66d2db25b5aed36d73005ddfabbeb0b1789cfc437be2f8414d00",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 0
+  },
+  "green-4": {
+   "tests_run": 61,
+   "methods": 61,
+   "method_counts": {
+    "PASS": 61
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "08afc7ec42ef66d2db25b5aed36d73005ddfabbeb0b1789cfc437be2f8414d00",
+    "test_web_alarm_evidence_sanitizer.py": "0c5fe16e0b1037cdd69cfaba415f17049b85d2fcc485102c33ebc987286e7486"
+   },
+   "exit": 0
+  },
+  "green-5": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "green-6": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 62
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 0
+  },
+  "full": {
+   "tests_run": 971,
+   "methods": 971,
+   "method_counts": {
+    "PASS": 969,
+    "SKIP": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 0
+  },
+  "gateR/baseline": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "FAIL": 22,
+    "ERROR": 1,
+    "PASS": 37
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_traversal_id_never_reads_outside_the_bundle": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R1-stage-ignores-manifest": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 56,
+    "FAIL": 4
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1c95a1be7ca32157266900f93d3365ab34e6a29757ceabad1484345f3844846e",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R2-verify-trusts-manifest": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 60
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "e7df22574e7b44da5cf764b9502a99fb4251f0de7c87befca425806bd212775e",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 0
+  },
+  "gateR/R3-no-completeness-anchor": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 57,
+    "FAIL": 3
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "5cef952d32c17072752fd75096799889b970acbae58710fd81569373668860d9",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R4-no-inventory-compare": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "FAIL": 2,
+    "PASS": 58
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "e0b2b8fbe1908357b257296d628a7eda6afe2c357ac61d7c8d97caa082bb0ebd",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R5-links-ignored": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "4a78f169810d118e07b4c6de808c9cf3b4277f405d46473b157851067ed431d8",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R6-read-unvalidated-ids": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_verify_detects_tampering_and_drift": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "847eb4549b71045d6eddac64b80032826d6f4be0bd28010d37e0a533bc8f22cc",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R7-totals-trusted": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "6558320b06ecc19116d54b87d1ee5abae91288ea5e039f1798c6c0a09be8ec01",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R8-duplicate-keys-accepted": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "c38038027e5e16245d61b0e12f08a9e0d23f04ca9798b83a86fa8298645b4784",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R9-unlisted-accepted": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "14d8f3ddff82039765a36ea03ab13e3aca6ac87cdfde8e5d56ea215f5a5c7b35",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R10-no-candidate-rehash": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 54,
+    "FAIL": 6
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_mapping_without_optional_new_fields_still_verifies": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "2067fcd4ef74428c4363e795aa486117649526e7849487319433f357bfe08818",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R11-anchor-unchecked": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "4b7e9487b4e3be2d99581111ee1d5a5c5b24cfaced7b1e550c074b6bb1c29452",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR/R12-recursion-not-refused": {
+   "tests_run": 60,
+   "methods": 60,
+   "method_counts": {
+    "PASS": 59,
+    "ERROR": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1d510495a864fa9b8465dfdff88280d6b12c006ca91899c2811eeb8b95fa0224",
+    "test_web_alarm_evidence_sanitizer.py": "cf11a85801cb1fca29462733d04480a77bdf3c53c57e4d5e14fa10e02030a2e0"
+   },
+   "exit": 1
+  },
+  "gateR2probe/R2-verify-trusts-manifest": {
+   "tests_run": 61,
+   "methods": 61,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "e7df22574e7b44da5cf764b9502a99fb4251f0de7c87befca425806bd212775e",
+    "test_web_alarm_evidence_sanitizer.py": "0c5fe16e0b1037cdd69cfaba415f17049b85d2fcc485102c33ebc987286e7486"
+   },
+   "exit": 1
+  },
+  "gateRF/baseline": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "FAIL": 24,
+    "ERROR": 1,
+    "PASS": 37
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_traversal_id_never_reads_outside_the_bundle": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R1-stage-ignores-manifest": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 57,
+    "FAIL": 5
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "929e1cfedd01f81403c90343164cca1d35279ac19d44d3bc6ca00f6168004740",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R2-verify-trusts-manifest": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "8d4f8c31be4014c2d01fbfd50ff35500b843a2bb613ea5b94860309a96c56558",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R3-no-completeness-anchor": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 58,
+    "FAIL": 4
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f7ab320ea325d68e6ff625da8cfcc091ae309f51ae81b923c5cc8452b7de033a",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R4-no-inventory-compare": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "FAIL": 3,
+    "PASS": 59
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "47f8b1b4cdecd33a1609e95550656585160534df03724d0ad59bfc287b4d31aa",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R5-links-ignored": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "91629bf892761246a07a1508cccce939664c57e446dc0101d4e3c3853e630fb1",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R6-read-unvalidated-ids": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_verify_detects_tampering_and_drift": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "aeb7584b4225dfbe4cf90a0fd882b0daae3a4a909523c6035d63477cf310be0d",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R7-totals-trusted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "68f3f20a71d66626a546f4edace150172c3026c718817817abde5569b8350822",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R8-duplicate-keys-accepted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "6ed60222a474dc9b9322087e281ca6b74b40f4ecc63d8dfeba9381416c475a96",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R9-unlisted-accepted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "19fb387f6c755bf729994ff7b76e487488973188062e58463d26c3f0f332de1f",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R10-no-candidate-rehash": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 55,
+    "FAIL": 7
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_mapping_without_optional_new_fields_still_verifies": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "2e83dccfe7741401570c0cd43851e1df3f76c64535d5d2b14a56b08c0d2c078c",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R11-anchor-unchecked": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "b1b759533a862895e43f087ed5f34d0f024115f5d69de5ac73b585aef211bb1b",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R12-recursion-not-refused": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 60,
+    "ERROR": 1,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "4a9486eda9ff5c6647937dffdcdd732b4f8a197628ac14c5fa242db15909192a",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF/R13-file-name-unchecked": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "99317b373aacb2094f8d0c79e3551fb896107e228602adb1647fc3ac1df15fa0",
+    "test_web_alarm_evidence_sanitizer.py": "671348805c56dc61fa7f15cb961aca18184f08ad4c48266884274b464c305c9b"
+   },
+   "exit": 1
+  },
+  "gateRF2/baseline": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "FAIL": 24,
+    "ERROR": 1,
+    "PASS": 37
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_traversal_id_never_reads_outside_the_bundle": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R1-stage-ignores-manifest": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 58,
+    "FAIL": 4
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "929e1cfedd01f81403c90343164cca1d35279ac19d44d3bc6ca00f6168004740",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R2-verify-trusts-manifest": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "8d4f8c31be4014c2d01fbfd50ff35500b843a2bb613ea5b94860309a96c56558",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R3-no-completeness-anchor": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 59,
+    "FAIL": 3
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "f7ab320ea325d68e6ff625da8cfcc091ae309f51ae81b923c5cc8452b7de033a",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R4-no-inventory-compare": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "FAIL": 2,
+    "PASS": 60
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "47f8b1b4cdecd33a1609e95550656585160534df03724d0ad59bfc287b4d31aa",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R5-links-ignored": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "91629bf892761246a07a1508cccce939664c57e446dc0101d4e3c3853e630fb1",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R6-read-unvalidated-ids": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_verify_detects_tampering_and_drift": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "aeb7584b4225dfbe4cf90a0fd882b0daae3a4a909523c6035d63477cf310be0d",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R7-totals-trusted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "68f3f20a71d66626a546f4edace150172c3026c718817817abde5569b8350822",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R8-duplicate-keys-accepted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "6ed60222a474dc9b9322087e281ca6b74b40f4ecc63d8dfeba9381416c475a96",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R9-unlisted-accepted": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "19fb387f6c755bf729994ff7b76e487488973188062e58463d26c3f0f332de1f",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R10-no-candidate-rehash": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 56,
+    "FAIL": 6
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_mapping_without_optional_new_fields_still_verifies": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_scan_stage_verify_exit_codes_and_quiet_output": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "2e83dccfe7741401570c0cd43851e1df3f76c64535d5d2b14a56b08c0d2c078c",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R11-anchor-unchecked": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "b1b759533a862895e43f087ed5f34d0f024115f5d69de5ac73b585aef211bb1b",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R12-recursion-not-refused": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "ERROR": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "4a9486eda9ff5c6647937dffdcdd732b4f8a197628ac14c5fa242db15909192a",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRF2/R13-file-name-unchecked": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "PASS": 61,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "99317b373aacb2094f8d0c79e3551fb896107e228602adb1647fc3ac1df15fa0",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  },
+  "gateRB/baseline": {
+   "tests_run": 62,
+   "methods": 62,
+   "method_counts": {
+    "FAIL": 24,
+    "ERROR": 1,
+    "PASS": 37
+   },
+   "non_pass_methods": {
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deeply_nested_json_is_refused_without_crashing": "ERROR",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_deleted_row_and_sanitized_copy_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_external_mapping_anchor_proves_completeness": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_junction_inside_bundle_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_leftovers_and_partial_bundles": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_traversal_id_never_reads_outside_the_bundle": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_unsafe_repo_anchor_is_refused_in_stage_and_cli": "FAIL",
+    "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_valid_bundles_pass_in_both_selection_modes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.CliTests.test_unexpected_errors_are_reported_without_paths": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_candidate_manifest_describes_sanitized_bytes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_manifest_changed_during_staging_refused": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_mapping_cannot_be_edited_into_a_safe_candidate": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unsafe_manifest_ids_refuse": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify": "FAIL",
+    "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses": "FAIL",
+    "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_stage_preserves_originals_and_maps_every_file": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+    "test_web_alarm_evidence_sanitizer.py": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf"
+   },
+   "exit": 1
+  }
+ }
+}

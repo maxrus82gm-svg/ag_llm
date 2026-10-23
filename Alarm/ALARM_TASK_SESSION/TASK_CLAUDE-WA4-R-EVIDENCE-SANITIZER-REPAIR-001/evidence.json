@@ -1,0 +1,37 @@
+{
+ "task": "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "platform": "Windows 10 Pro 19045, Python 3.12.10 (.venv), guarded runner wa4a_acceptance.py, disposable TEMP",
+ "source": {
+  "baseline_module_sha256": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
+  "baseline_tests_sha256": "215d0fb2c62bb68ae2a097f6524061cdbfa5d7646a4d3417696315bf1045cebf",
+  "final_module_sha256": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+  "final_tests_sha256": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf",
+  "coordinator_baseline_commit": "main@8a6345886aa8ed2f21d143d8c261d01ede2ec675 (not checked: no Git)"
+ },
+ "red": {
+  "red-1": {"bytes": "original module + 58-method test revision", "tests_run": 58, "PASS": 39, "red_methods": 19,
+            "verifier_reproductions": "both FAIL by assertion (SAFE instead of REFUSED)"},
+  "baseline_on_final_tests": {"series": "gateRF2/baseline and gateRB/baseline (module bytes from CLAUDE_BASELINE_MODULE, SHA checked)",
+                              "tests_run": 62, "PASS": 37, "FAIL": 24, "ERROR": 1}
+ },
+ "green": {
+  "guarded_runner": {"label": "green-6", "tests_run": 62, "PASS": 62, "FAIL": 0, "ERROR": 0, "SKIP": 0, "isolation": 0},
+  "unittest_v": "Ran 62 tests, OK (runs/unittest-v.txt)",
+  "compileall": "exit 0 (bytecode cache redirected to TEMP)"
+ },
+ "mutants": {"series": "gateRF2 (final bytes)", "killed": "13/13",
+             "red_methods": {"R1": 4, "R2": 1, "R3": 3, "R4": 2, "R5": 1, "R6": 1, "R7": 1, "R8": 1, "R9": 1, "R10": 6,
+                             "R11": 1, "R12": "1 ERROR", "R13": 1},
+             "history": "first series gateR: R2 survived; fixed by test_fully_consistent_forgery_still_fails_the_manifest_reproof (gateR2probe)"},
+ "full": {"label": "full", "tests_run": 971, "PASS": 969, "FAIL": 0, "ERROR": 0, "SKIP": 2, "isolation": 0,
+          "vs_909": {"removed": 0, "status_changed": 0, "added": 62, "added_all_sanitizer_module": true},
+          "source_map_files": 109, "source_drift": 0},
+ "real_data": {"package": "TASK_CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001 (manifest mode)", "files": 152,
+               "manifest_match": 151, "stage": "SAFE, 27 changed, 0 blocked", "candidate_manifest_rehashed": 26,
+               "verify_with_package": "SAFE / PROVEN_AGAINST_PACKAGE", "verify_no_anchor": "REFUSED / NOT_PROVEN (exit 2)",
+               "verify_mapping_sha256": "SAFE / PROVEN_BY_EXTERNAL_MAPPING_SHA256", "scan_candidate_manifest": "exit 0",
+               "previous_tool_bundle": "REFUSED (stale candidate manifest)", "details": "runs/real-data.json"},
+ "census": "runs/census.json",
+ "not_run": ["GitHub Actions / Windows CI (coordinator)", "Linux/macOS", "Git history (DOC-GIT-01)"]
+}

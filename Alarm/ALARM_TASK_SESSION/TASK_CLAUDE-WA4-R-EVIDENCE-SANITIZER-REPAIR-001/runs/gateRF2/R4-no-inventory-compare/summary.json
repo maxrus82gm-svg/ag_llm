@@ -1,0 +1,50 @@
+{
+ "label": "R4-no-inventory-compare",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R4-no-inventory-compare-sfv4q_1d\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF2-R4-no-inventory-compare-2r3alj_1\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.134,
+ "base": "<TEMP>\\claude-esrep-gateRF2-R4-no-inventory-compare-2r3alj_1",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R4-no-inventory-compare-sfv4q_1d\\code",
+ "tests_run": 62,
+ "passed": 58,
+ "failures": 4,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.213,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory (damage='added')",
+   "FAIL",
+   "claude-esrep-mirror-R4-no-inventory-compare-sfv4q_1d\\code\\test_web_alarm_evidence_sanitizer.py\", line 967, in test_all_files_selection_compares_the_whole_source_inventory\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_all_files_selection_compares_the_whole_source_inventory (damage='removed')",
+   "FAIL",
+   "claude-esrep-mirror-R4-no-inventory-compare-sfv4q_1d\\code\\test_web_alarm_evidence_sanitizer.py\", line 967, in test_all_files_selection_compares_the_whole_source_inventory\n    self.assertEqual(report[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without (manifest=True)",
+   "FAIL",
+   "1d\\code\\test_web_alarm_evidence_sanitizer.py\", line 847, in test_fully_removed_file_is_caught_against_source_and_unproven_without\n    self.assertIn(\"package-inventory-differs\", with_source[\"problems\"])\nAssertionError: 'package-inventory-differs' not found in {'mapping-set-differs-from-manifest': 1}\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_fully_removed_file_is_caught_against_source_and_unproven_without (manifest=False)",
+   "FAIL",
+   "irror-R4-no-inventory-compare-sfv4q_1d\\code\\test_web_alarm_evidence_sanitizer.py\", line 846, in test_fully_removed_file_is_caught_against_source_and_unproven_without\n    self.assertEqual(with_source[\"publication\"], \"REFUSED\")\nAssertionError: 'SAFE CANDIDATE' != 'REFUSED'\n- SAFE CANDIDATE\n+ REFUSED\n\n"
+  ]
+ ]
+}

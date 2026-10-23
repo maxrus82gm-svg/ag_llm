@@ -1,0 +1,35 @@
+{
+ "label": "R8-duplicate-keys-accepted",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R8-duplicate-keys-accepted-63ybta2d\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF2-R8-duplicate-keys-accepted-dtojevr6\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.244,
+ "base": "<TEMP>\\claude-esrep-gateRF2-R8-duplicate-keys-accepted-dtojevr6",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R8-duplicate-keys-accepted-63ybta2d\\code",
+ "tests_run": 62,
+ "passed": 61,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.296,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_unusable_manifest_refuses_before_writing (case=2)",
+   "FAIL",
+   "claude-esrep-mirror-R8-duplicate-keys-accepted-63ybta2d\\code\\test_web_alarm_evidence_sanitizer.py\", line 717, in test_unusable_manifest_refuses_before_writing\n    with self.assertRaises(es.IntegrityRefusal):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: IntegrityRefusal not raised\n"
+  ]
+ ]
+}

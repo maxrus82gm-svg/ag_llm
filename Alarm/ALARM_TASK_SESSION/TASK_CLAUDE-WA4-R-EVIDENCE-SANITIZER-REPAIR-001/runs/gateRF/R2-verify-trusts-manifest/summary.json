@@ -1,0 +1,45 @@
+{
+ "label": "R2-verify-trusts-manifest",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-ol30an9r\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateRF-R2-verify-trusts-manifest-n3nzje2e\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.206,
+ "base": "<TEMP>\\claude-esrep-gateRF-R2-verify-trusts-manifest-n3nzje2e",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-ol30an9r\\code",
+ "tests_run": 62,
+ "passed": 59,
+ "failures": 3,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.266,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_local_name_in_a_file_name_is_refused",
+   "FAIL",
+   " call last):\n  File \"<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-ol30an9r\\code\\test_web_alarm_evidence_sanitizer.py\", line 1008, in test_local_name_in_a_file_name_is_refused\n    self.assertEqual(json.loads(out)[\"classes\"].get(\"CONFIRMED\"), 1)\nAssertionError: 2 != 1\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=True)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=False)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ]
+ ]
+}

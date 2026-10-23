@@ -1,0 +1,661 @@
+{
+ "task": "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+ "title": "Исправление fail-open ошибок механизма безопасной публикации диагностических отчётов",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "task_folder": "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "repository_files_changed": {
+  "web_alarm/evidence_sanitizer.py": {
+   "bytes": 56975,
+   "sha256": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+   "eol": "LF",
+   "kind": "modified",
+   "lines": 1165
+  },
+  "test_web_alarm_evidence_sanitizer.py": {
+   "bytes": 53907,
+   "sha256": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf",
+   "eol": "LF",
+   "kind": "modified",
+   "lines": 1035
+  }
+ },
+ "also_changed_outside_folder": {
+  "Документация/000_Задачи Claude.md": {
+   "bytes": 16526,
+   "sha256": "b119c9bc7de12905a683ac23d0781ce52662af83059cb321e7fc4498538a07ad",
+   "eol": "LF",
+   "note": "BLOCK 1-3 rotation only, BLOCK 4 untouched"
+  },
+  "Документация/001_История выполненных задач Claude.md": "append-only new record (see card-rotation.json)"
+ },
+ "not_published_private": "raw run outputs and real-package staging stayed in disposable TEMP (not published)",
+ "files": {
+  "block3-closeout.md": {
+   "bytes": 3268,
+   "sha256": "8e4e3658af8f6d88dcef252d10bba43de182ea9ad38fbd99367d04cce4dd6bc4",
+   "eol": "LF"
+  },
+  "card-rotation.json": {
+   "bytes": 1916,
+   "sha256": "63ebf09601174702cc660e1a5112ec33902cc11943ff1981b0f7555e16014fd6",
+   "eol": "LF"
+  },
+  "evidence.json": {
+   "bytes": 2803,
+   "sha256": "88f53279b6856c7408d79fab9ec85299718097c297e005417cef82f97141c57c",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 33410,
+   "sha256": "bc13c815ad7337f205876bbd9f7e942157fd7bfd343c6f6be883bd092132504c",
+   "eol": "LF"
+  },
+  "runs/census.json": {
+   "bytes": 54848,
+   "sha256": "e82489dd94b2618c1158fb0c1a6cdd1de5a6e3233d1e62c6a7143ef5884fbb9f",
+   "eol": "LF"
+  },
+  "runs/full/results.json": {
+   "bytes": 4977947,
+   "sha256": "99ad10943c821e0b185cca18518ba1c520e3a8c61436c6596a9a805b79f07440",
+   "eol": "CRLF"
+  },
+  "runs/full/summary.json": {
+   "bytes": 1037,
+   "sha256": "a1d64c445be92902efc981ad7af6dcfe8ed6e84e434785a025029bc5a1472446",
+   "eol": "CRLF"
+  },
+  "runs/full-vs-909.json": {
+   "bytes": 6582,
+   "sha256": "5bde99f79812c799a62ab029f34f972340095e6c1ad296a883d06d5e4d7943be",
+   "eol": "LF"
+  },
+  "runs/gateR/attempts.json": {
+   "bytes": 5841,
+   "sha256": "1e87a753988fb5db815385533d7946ebb67db1023053f69167a2b00aceb89871",
+   "eol": "CRLF"
+  },
+  "runs/gateR/baseline/results.json": {
+   "bytes": 61304,
+   "sha256": "a4d1dc38626d5badf30294a8218fa32bae2d489d5f101d8ee810c013e2d10912",
+   "eol": "CRLF"
+  },
+  "runs/gateR/baseline/summary.json": {
+   "bytes": 32109,
+   "sha256": "e1321ebf31009b9dd4ffb59f4aa62e2b310d50883f6fab6a0b5fa9e293e6bbb7",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R1-stage-ignores-manifest/results.json": {
+   "bytes": 30414,
+   "sha256": "37d2bfb6d4c3ba38326b78f3d8571a5585cf403cc7182f1881be9571db3be48f",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R1-stage-ignores-manifest/summary.json": {
+   "bytes": 6888,
+   "sha256": "565cd7ceeaab509d368d958a992d59655b08512f8ae172a26b74823023772894",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R10-no-candidate-rehash/results.json": {
+   "bytes": 27233,
+   "sha256": "5a724a92b69416978edbe5eddf35ff3494c4dd20e11fb9362b0057043ccf41c3",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R10-no-candidate-rehash/summary.json": {
+   "bytes": 4110,
+   "sha256": "6044c3ffa68120396fac4828ebae854ae09f5449bd5df2ad28e817b80425fd39",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R11-anchor-unchecked/results.json": {
+   "bytes": 25159,
+   "sha256": "191060ef3c6dae22fe9ea3922a6393866dc64db3336e22f408585cc10fe301aa",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R11-anchor-unchecked/summary.json": {
+   "bytes": 3157,
+   "sha256": "d5ad09e70ca49c119bc668b6e03dd7976211aef64a3124b474591caf354d0902",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R12-recursion-not-refused/results.json": {
+   "bytes": 24375,
+   "sha256": "51ea4cb1d371d144c547313332bc12f1038eb24f08e5109e956c66d4a63c00e5",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R12-recursion-not-refused/summary.json": {
+   "bytes": 1349,
+   "sha256": "f2986317c6b07ff52239dcfe8758505b549ab31d5714234056a289577577d414",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R2-verify-trusts-manifest/results.json": {
+   "bytes": 22666,
+   "sha256": "c2519234288ff12303be3ce5e10b47ade89334a05fce2bd283f49068985f9506",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 889,
+   "sha256": "fbed78a443a425f613c748a88a60a6d383401e6057ffad36d56b6bb990bb3b90",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R3-no-completeness-anchor/results.json": {
+   "bytes": 25983,
+   "sha256": "b667c3ddb7b72d5bcebfd9edba6b24b442cc2ebbc32c332eb83080421848c10f",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R3-no-completeness-anchor/summary.json": {
+   "bytes": 3690,
+   "sha256": "442b4a498b4fec7ba39caa04c7f38e43c319a700c10142a479a2c7a1639394c2",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R4-no-inventory-compare/results.json": {
+   "bytes": 24663,
+   "sha256": "0510bc87a822269546ad9a6bff2d0ef9e90c378915f76dc19fe2eeabc5cb7d73",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R4-no-inventory-compare/summary.json": {
+   "bytes": 2841,
+   "sha256": "d9cd37ba54fa45c4019cfaf69dcf732d24ca58b201c1e2615f1525ecf843e924",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R5-links-ignored/results.json": {
+   "bytes": 23025,
+   "sha256": "7510bc20acb35988c5f039bd6bf0d06122722243f8cd28d16ed216afe9bb77dd",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R5-links-ignored/summary.json": {
+   "bytes": 1273,
+   "sha256": "6c0294c297be75ec252e465335a9c14680a65487a81d053eeba131e679bf5bb2",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R6-read-unvalidated-ids/results.json": {
+   "bytes": 23844,
+   "sha256": "4c324b6e4fb20acf5cd2e6b35d574ff7aeeb62980489180f947e7fb0481aeb9b",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R6-read-unvalidated-ids/summary.json": {
+   "bytes": 1333,
+   "sha256": "6ec3af88f51b994979ff1c546a5ef66f1594fa5914034e72938a3d7c4443a31d",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R7-totals-trusted/results.json": {
+   "bytes": 25317,
+   "sha256": "e4c7d23f30825fd0e2306b3cbfa1bec4bb15c4c6f510c4c3be36eecba1d453ea",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R7-totals-trusted/summary.json": {
+   "bytes": 2680,
+   "sha256": "a6d7a1f59c0b9ab8f537befc21f01be53545d2303619962bd56c3ff4c0c2f8b4",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R8-duplicate-keys-accepted/results.json": {
+   "bytes": 23037,
+   "sha256": "3dea62b997a4a6d66a5c05ad23a0a937da672dad0fb243bc82f5f953c98436c0",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R8-duplicate-keys-accepted/summary.json": {
+   "bytes": 1353,
+   "sha256": "aceb1afc2c02e725f263ecbdd0d7b5020e800695a537654a9c8ed9bfa3bdb921",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R9-unlisted-accepted/results.json": {
+   "bytes": 23086,
+   "sha256": "5630ef3572604bc91ca90cb42f5cf72c28df5762165d34c78bf51fba1d6db9a1",
+   "eol": "CRLF"
+  },
+  "runs/gateR/R9-unlisted-accepted/summary.json": {
+   "bytes": 1317,
+   "sha256": "4b1d68f4483f99437ddc3af5c195a2a5ec607ae1a1493c9b50fbf901cbe8ab0c",
+   "eol": "CRLF"
+  },
+  "runs/gateR2probe/attempts.json": {
+   "bytes": 471,
+   "sha256": "1ce517f759cd9908d50476eda790325ad6cb32f1ecfc0e740601957f1bbb9531",
+   "eol": "CRLF"
+  },
+  "runs/gateR2probe/R2-verify-trusts-manifest/results.json": {
+   "bytes": 24222,
+   "sha256": "02bfb13d92a0c3181ae1f3b876c5720c50a30940d4afff7f333e10aaa2534bec",
+   "eol": "CRLF"
+  },
+  "runs/gateR2probe/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 1892,
+   "sha256": "5cd9ee3b85d2ce93e5cbbf5cf7bb3fa2c0c9583372d6268562634c3d6e789ad1",
+   "eol": "CRLF"
+  },
+  "runs/gateRB/attempts.json": {
+   "bytes": 417,
+   "sha256": "8084e037a69c44652731f449cdd2277dad6eba185eb574268af49d6a6f26cecd",
+   "eol": "CRLF"
+  },
+  "runs/gateRB/baseline/results.json": {
+   "bytes": 63291,
+   "sha256": "8f7f77819dc897e3d5cb882eeb86ae134c701b8e5f396f2cbaa6a67424608647",
+   "eol": "CRLF"
+  },
+  "runs/gateRB/baseline/summary.json": {
+   "bytes": 33650,
+   "sha256": "ce31118a764c8161407256fb2b72aec8ad936d6ec4507368403becaebe7eec67",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/attempts.json": {
+   "bytes": 6309,
+   "sha256": "5cff6eb0e34aac8fde3114f15244efd693e0f6b27380c61b42bd1eb623524a87",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/baseline/results.json": {
+   "bytes": 63290,
+   "sha256": "9ff0f62d6d98ea69873c327a2c2f818e27ef78d5ad1b3af7d4b3e5b00f74f418",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/baseline/summary.json": {
+   "bytes": 33650,
+   "sha256": "c4fa5549f06d8ae2cbc5ef60de0aacaa461c0fee2bd23bcca67954672779d210",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R1-stage-ignores-manifest/results.json": {
+   "bytes": 31118,
+   "sha256": "17a852c6cedd32cdb317ed510cb42c1074300238c103d4d301e0365c88f28057",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R1-stage-ignores-manifest/summary.json": {
+   "bytes": 7315,
+   "sha256": "c45a777e672210b60d657f759cc21bda26bd57e98775bf6be7d354735fca610b",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R10-no-candidate-rehash/results.json": {
+   "bytes": 27935,
+   "sha256": "33224bebaf2221f07eab33c2a2bfb16744d37fe05d376017551a59e82e20ebbe",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R10-no-candidate-rehash/summary.json": {
+   "bytes": 4537,
+   "sha256": "899951651d803e845246b02bdc76ae691fd309534014021443e07635b88ae7f9",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R11-anchor-unchecked/results.json": {
+   "bytes": 25863,
+   "sha256": "96c2f23d0611b459c8064ee64773e7160c7c87e13860d8077e9a2259bbd6bf8b",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R11-anchor-unchecked/summary.json": {
+   "bytes": 3585,
+   "sha256": "101f2a8d6d012a3df3e36db746fde1f052e537a7529873993264920ef4a604b1",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R12-recursion-not-refused/results.json": {
+   "bytes": 25079,
+   "sha256": "b2a0829641483b66d4143e06c6aac7de0036c3873b059c137ef4dba136ba2e8f",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R12-recursion-not-refused/summary.json": {
+   "bytes": 1775,
+   "sha256": "7d052ecd7b4f51cfa2f152dd5621855737403b6da54fb83416d0a0c7ea32a5e7",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R13-file-name-unchecked/results.json": {
+   "bytes": 23583,
+   "sha256": "969e60562fe6fcb0f1a69bdf051f052e31da4c3349fb92fca71783ca47fc25da",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R13-file-name-unchecked/summary.json": {
+   "bytes": 1337,
+   "sha256": "cc7ff25ee702e8447f906051d204a282ae1b609087c3ee86d470b6d3c8da3a7e",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R2-verify-trusts-manifest/results.json": {
+   "bytes": 24730,
+   "sha256": "6997ea8eaa4e596b124f0d9225e02d09d05c433cea601719813b29931052919d",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 2308,
+   "sha256": "5078ff26a17ec8162fa9793dd4a2dd7ea76934c6023748b03c74a60c861f0f81",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R3-no-completeness-anchor/results.json": {
+   "bytes": 26687,
+   "sha256": "904a79e8a9b0528903a47c67d6833a480ac324ac44a7ef8a3e847181e320c327",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R3-no-completeness-anchor/summary.json": {
+   "bytes": 4117,
+   "sha256": "bca4e88dcbc1641cdccd2df00768a8dd2ed71abe6d16934c23c82f5d7b84b038",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R4-no-inventory-compare/results.json": {
+   "bytes": 25365,
+   "sha256": "d236074ace2e0218338a56c0a65392aafaffde7661269800650234e45dbbc47a",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R4-no-inventory-compare/summary.json": {
+   "bytes": 3269,
+   "sha256": "02607ef064e103e1182dc4323ff1af3664a03f8b66374b41d6a3ac7eaea036eb",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R5-links-ignored/results.json": {
+   "bytes": 23720,
+   "sha256": "454c8d2a79b26deb04f6cde5c69a7a45f0a83c5a00a56ceb0a84bd993622d731",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R5-links-ignored/summary.json": {
+   "bytes": 1700,
+   "sha256": "9873524013c8ac2c3a4a56fa77b9fd7017213f48b6af53a03b679b0db87348c1",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R6-read-unvalidated-ids/results.json": {
+   "bytes": 24546,
+   "sha256": "d638e6449ef35ec9dcb4f803139fdb60c0b8e5a0851a7a83ff1cb9c47e50af8b",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R6-read-unvalidated-ids/summary.json": {
+   "bytes": 1760,
+   "sha256": "2c2b08d8d14dab8d8aef018262fd953148cf30d78c69192e942407d93032cbed",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R7-totals-trusted/results.json": {
+   "bytes": 26013,
+   "sha256": "17a550a488d465d8c4f5821a2a5d02d2e8fc5dfe6fe5dc580e30d2afada31637",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R7-totals-trusted/summary.json": {
+   "bytes": 3107,
+   "sha256": "6c91396d2613fbb393cf3e280bc882a710db9a3da1200a1cec4141c0b90288ab",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R8-duplicate-keys-accepted/results.json": {
+   "bytes": 23741,
+   "sha256": "fafec67e049ce278d416bc488f628bc1929d631024b7500a22939831a52efe52",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R8-duplicate-keys-accepted/summary.json": {
+   "bytes": 1780,
+   "sha256": "ef919265443c0820d7c7ce0144f5fea38e4ea753b906d62838644b15b82f1c76",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R9-unlisted-accepted/results.json": {
+   "bytes": 23785,
+   "sha256": "d042b991e8f4e23693abea70f3bd5a6ae318dbb67d3ed5aa28b2427a78569648",
+   "eol": "CRLF"
+  },
+  "runs/gateRF/R9-unlisted-accepted/summary.json": {
+   "bytes": 1744,
+   "sha256": "7d9c918a254e2ccf5e1f48fff050d3d7092daac963e741b533364190b0ef7730",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/attempts.json": {
+   "bytes": 6323,
+   "sha256": "b2ba8ec81cb274873ea674d5480c2d0bf0618a64df704350037a399ac23e5dbb",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/baseline/results.json": {
+   "bytes": 63291,
+   "sha256": "2410ce4759bd6c31b9438e091e76a4ae7a607f78c8259fd322e3abdfdcfa6e86",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/baseline/summary.json": {
+   "bytes": 33652,
+   "sha256": "f241a7403a72e7fcbc18a867d959e00cf9770b637fa5ebb84211adbdcd372113",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R1-stage-ignores-manifest/results.json": {
+   "bytes": 30788,
+   "sha256": "7b0e1b8b9deb6574006a7dada91571995cb26dd2d23353b119fc842466991792",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R1-stage-ignores-manifest/summary.json": {
+   "bytes": 6892,
+   "sha256": "57e50aa7561193dfb2c58babdfe41ff1fade2f2d998f27bb239f51767fd74404",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R10-no-candidate-rehash/results.json": {
+   "bytes": 27608,
+   "sha256": "04207ab4373d3a332d41ac230d44dc78159b7895ea8faea9e8289bb817438876",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R10-no-candidate-rehash/summary.json": {
+   "bytes": 4114,
+   "sha256": "9b4870c7efa649497fe58363a6d2f803ea8f604b2fe02c2a8b06a80a6d39dd6a",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R11-anchor-unchecked/results.json": {
+   "bytes": 25538,
+   "sha256": "74991717b8c970ebde741b240b77f1e43bc56616110d0d692e9002d2321b1e07",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R11-anchor-unchecked/summary.json": {
+   "bytes": 3162,
+   "sha256": "a1228cff8c585e2bd76e9899057736647b04bb7aad653472bb4501c145e46f12",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R12-recursion-not-refused/results.json": {
+   "bytes": 24749,
+   "sha256": "12a0698b1aebacfa6a812a4549cfcc70d1e7b5ddca25e97abde05554ccce7e4c",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R12-recursion-not-refused/summary.json": {
+   "bytes": 1353,
+   "sha256": "febf71f512be5804906eeecb362b4c79b2379c78f1289122646d9088d316dc15",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R13-file-name-unchecked/results.json": {
+   "bytes": 23583,
+   "sha256": "21c4673805e28224e397f8194fddc3051783ac95ed8133434206e3e32c9e26bf",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R13-file-name-unchecked/summary.json": {
+   "bytes": 1339,
+   "sha256": "3921dfd61b72a72075123a04881da91e1d484aa07d86b05fea5c5db175904d09",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R2-verify-trusts-manifest/results.json": {
+   "bytes": 24400,
+   "sha256": "d816384daa83677d4a5474c26a36c683b501db5af59a1c7d837a4bbd7b4b8639",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 1885,
+   "sha256": "5e1663b004e29e9afe546d1d9e8b6e5890d46496a6ad506980ee944e4bc781f3",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R3-no-completeness-anchor/results.json": {
+   "bytes": 26357,
+   "sha256": "631768e1cd39fe78c3e010e5223af1c2fb9997b18a5afc532c1cd875bcb2d005",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R3-no-completeness-anchor/summary.json": {
+   "bytes": 3694,
+   "sha256": "122eb64dbcfe1798bee5b7e42f6597ad4252706bd4bee993cd7ef954598965b2",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R4-no-inventory-compare/results.json": {
+   "bytes": 25037,
+   "sha256": "d42fd0b51b2524afe75951b84f2b5a0e53360b13fa093fe22b812e3dbcad2733",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R4-no-inventory-compare/summary.json": {
+   "bytes": 2846,
+   "sha256": "847f9ae94b689f51e4d86fc47d9feab14fadf1ff3920f89d79565b46732b4136",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R5-links-ignored/results.json": {
+   "bytes": 23399,
+   "sha256": "758cd7b888e1f7c951f14af9480b5efae8ddaeb6f7e164d28c8d3768d35a0979",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R5-links-ignored/summary.json": {
+   "bytes": 1277,
+   "sha256": "106f36b9b6c6733fca1121d6000f4f15ed66ff0dad9a16bc91f29f08584b285f",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R6-read-unvalidated-ids/results.json": {
+   "bytes": 24218,
+   "sha256": "413311326b40796f329fb1febddacf6044c23cebb022b478437eefab8dd3b1ad",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R6-read-unvalidated-ids/summary.json": {
+   "bytes": 1337,
+   "sha256": "2d2a15b0acb4fb7b172866a00457a0a6d86d560bcbee196354a46b05a236b082",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R7-totals-trusted/results.json": {
+   "bytes": 25691,
+   "sha256": "ca794049a1fb928e30d92c4de0ad3aae4a7e1da0d21adeba95370638644db166",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R7-totals-trusted/summary.json": {
+   "bytes": 2684,
+   "sha256": "98d27e30b93566a7c972999662636b5d26794fca444a8034d00574bf6771337c",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R8-duplicate-keys-accepted/results.json": {
+   "bytes": 23410,
+   "sha256": "35524eda0f2fefca93b84f606291a69d77cdea9554716249edec0aad681f10fd",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R8-duplicate-keys-accepted/summary.json": {
+   "bytes": 1357,
+   "sha256": "85dcbaf3e9050c6c8fbc9ca1bd3f5e996a90e837e2add99b60db36df78f5148a",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R9-unlisted-accepted/results.json": {
+   "bytes": 23460,
+   "sha256": "78cdedd56cb83d2fd80ae610e22ef2bcfc40757b93e568d21408df732020676c",
+   "eol": "CRLF"
+  },
+  "runs/gateRF2/R9-unlisted-accepted/summary.json": {
+   "bytes": 1320,
+   "sha256": "a35e80f638848c3a091bfe1491e72385332a933be37bf4c04a11b3aa1b493b03",
+   "eol": "CRLF"
+  },
+  "runs/green-1/results.json": {
+   "bytes": 22293,
+   "sha256": "fcbbba9048c0303148f75476d9f3a3fedb6593fd1534ac2d0bc1cf9b92b9e812",
+   "eol": "CRLF"
+  },
+  "runs/green-1/summary.json": {
+   "bytes": 699,
+   "sha256": "8a4044765eff5ed4bcc64635fee6c23447c1af7bf18099fb46b77ee30ebcf271",
+   "eol": "CRLF"
+  },
+  "runs/green-2/results.json": {
+   "bytes": 22666,
+   "sha256": "27420a33d68dbe7bd2166dadafec062f99340b3defeb7cd14bd3d4c97e3cb2ff",
+   "eol": "CRLF"
+  },
+  "runs/green-2/summary.json": {
+   "bytes": 699,
+   "sha256": "6de3aa734ba323b8eed7a0df433482cb666f5b6d13e2f3f18fec3453258ae36e",
+   "eol": "CRLF"
+  },
+  "runs/green-3/results.json": {
+   "bytes": 22667,
+   "sha256": "b1c71658dc1c486a2c81407be59f14b7539ffdb1ef6710c37a7ef234527055e7",
+   "eol": "CRLF"
+  },
+  "runs/green-3/summary.json": {
+   "bytes": 699,
+   "sha256": "0742f6bc5bf164805be8808c9741885247a71d2866a16ef3b8774ecc4c8409e1",
+   "eol": "CRLF"
+  },
+  "runs/green-4/results.json": {
+   "bytes": 22864,
+   "sha256": "07b62cfb79f347204010d730d7a142f3ebc44143ae3bfaddb7ffb2046c36e73e",
+   "eol": "CRLF"
+  },
+  "runs/green-4/summary.json": {
+   "bytes": 699,
+   "sha256": "9a2807f80b4f3b8256aa35c0a88feadfb4b63ff1cd10b4ec9899187cbe7deb08",
+   "eol": "CRLF"
+  },
+  "runs/green-5/results.json": {
+   "bytes": 23309,
+   "sha256": "ade488b38a8d75359f04dc81efd9daafe1f8e94d0b9fd6dcf23cc137b8737a46",
+   "eol": "CRLF"
+  },
+  "runs/green-5/summary.json": {
+   "bytes": 1087,
+   "sha256": "89a1e75e4b56a95c698d5be07cba2396e3ae05d03c98779a743fc41f54245cfa",
+   "eol": "CRLF"
+  },
+  "runs/green-6/results.json": {
+   "bytes": 23041,
+   "sha256": "420df6ea7225a9a0111cde756f86dcab1f110e5a545118270c6757d1e59cc769",
+   "eol": "CRLF"
+  },
+  "runs/green-6/summary.json": {
+   "bytes": 699,
+   "sha256": "8eb4c2cab1e1f7cffbfb5d0f5f44bc8c3a03a43feedd54d1ac0d11a71c489ee2",
+   "eol": "CRLF"
+  },
+  "runs/real-data.json": {
+   "bytes": 1370,
+   "sha256": "5bdef5b7a1971770c2c5dcfe45aeeebaa4e0b0fa45b874dce708bacf96c6d5d5",
+   "eol": "CRLF"
+  },
+  "runs/red-1/results.json": {
+   "bytes": 51868,
+   "sha256": "4f6ea7e3241fcadd9dd0fdf0ae31ca472891b687c5b362ef14d8e0412f928bd1",
+   "eol": "CRLF"
+  },
+  "runs/red-1/summary.json": {
+   "bytes": 26570,
+   "sha256": "62d76968eb379d18f144147af30efa5292ca037e9ecffb73b33d2317b4a2fc15",
+   "eol": "CRLF"
+  },
+  "runs/runs-map.json": {
+   "bytes": 37946,
+   "sha256": "e294ba1d4d19f9c35e213a93a26658da68332c6bd38ab9e9532139b23ae15428",
+   "eol": "LF"
+  },
+  "runs/unittest-v.txt": {
+   "bytes": 9201,
+   "sha256": "e01fb022c74a20ec15055ef263c9fe66e826049651225fa94d375c8c3f957197",
+   "eol": "CRLF"
+  },
+  "scope.md": {
+   "bytes": 3382,
+   "sha256": "6714fc944f97014ce24afc27d6c6fc5479c7383c3886a2206cfe85c89e8c71b1",
+   "eol": "LF"
+  },
+  "tools/build_mirror.py": {
+   "bytes": 6582,
+   "sha256": "99a96cf89a5df0142509ea34f6b45d1e61ecfccfabf5746e5ee7c849a51a06a7",
+   "eol": "LF"
+  },
+  "tools/collect_runs.py": {
+   "bytes": 4385,
+   "sha256": "e6ec57aba59e9c7d972d46ec1b77415a8f7540eac3cb0adb806a9e78cd50081f",
+   "eol": "LF"
+  },
+  "tools/compare_full.py": {
+   "bytes": 1826,
+   "sha256": "50655e151477c34cbfa7360d72a9ba316baa5e7c33160dd6a54440c918df63dc",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 2457,
+   "sha256": "963c9dcd68eab5ae36c5ae0363f869c13b12fa901143086595d47ec439f62a5e",
+   "eol": "LF"
+  },
+  "tools/real_data_check.py": {
+   "bytes": 3144,
+   "sha256": "1f03b34c3da228879e2a49ef170d75ee78e3a18563ee9fd9bc515a0b68e0ae0f",
+   "eol": "LF"
+  },
+  "tools/rotate_card.py": {
+   "bytes": 9787,
+   "sha256": "3a27aed8205d59623256a7fb26a1cfa76da7817bdde827ef4dceea6e6a141108",
+   "eol": "LF"
+  },
+  "tools/run_gate.py": {
+   "bytes": 3019,
+   "sha256": "2f6b514418c0cc2465e8079d7f02b01c21477644e094387ec45717049095bd14",
+   "eol": "LF"
+  },
+  "tools/run_mutants.py": {
+   "bytes": 2082,
+   "sha256": "3c85d43570b5c02333b5f35b67bad75bc1c87e858634b737d876f0c60a8cefad",
+   "eol": "LF"
+  }
+ }
+}

@@ -1,0 +1,34 @@
+{
+ "phase": "B",
+ "card_sha256": "b70947a4b4880fa37467140e6a7a3b48537687403fcf1cac4e93670fb53e3df0",
+ "card_eol": "LF",
+ "block1_is_task": true,
+ "block2_entries": 5,
+ "block3_entries": 5,
+ "rules_sha256": "d612dd2eec818ee36bb44468b6fe1cb44f6c97ae0b843d05d55e0848e4327980",
+ "block4_sha256": "549c79ec6e9d54f7825d04d8ad9d97e8fc7f2a5c7c5a2e7fa2d255b22613239b",
+ "archive_size": 670414,
+ "archive_ends_with_newline": true,
+ "archive_eol": "CRLF",
+ "archive_read": "last 2 bytes only (no older record read or searched)",
+ "result": "OK",
+ "archive_offset": 670414,
+ "archive_appended_bytes": 24352,
+ "archive_record_sha256": "3aa9da37b88bf103e4abc0d5b36f0916da31ec7943fa8dad7f02a5f0ca524aab",
+ "archive_size_after": 694766,
+ "evicted_block2": [
+  "- **2026-10-17 / CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001** — проектирование crash consistency. Статус: RESULT READY / DESIGN PROPOSAL."
+ ],
+ "evicted_block3": [
+  "- **CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001** — Воспроизведены false-safe и recovery deadlock; дизайн R-MT/R-OP, не production fix. Полный источник: поиск TASK ID в `001` и task-report проекта."
+ ],
+ "line3": "- **CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — F-ES-01 (manifest SHA-256/размер) и F-ES-02 (полнота комплекта) закрыты fail-closed; verify доказывает набор против пакета или внешнего хеша карты, иначе REFUSED. Полный источник: запись в `001` и `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/report.md`.",
+ "readback": "MATCH",
+ "card_after_sha256": "b119c9bc7de12905a683ac23d0781ce52662af83059cb321e7fc4498538a07ad",
+ "card_after_bytes": 16526,
+ "block1_now": "WAITING",
+ "block2_entries_after": 5,
+ "block3_entries_after": 5,
+ "rules_unchanged": true,
+ "block4_unchanged": true
+}

@@ -1,0 +1,254 @@
+[
+ {
+  "label": "baseline",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 50,
+  "errors": 22,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-baseline-pkjmlxd9",
+  "build": {
+   "variant": "baseline",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201"
+   }
+  },
+  "wall": 5.7
+ },
+ {
+  "label": "R1-stage-ignores-manifest",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 13,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R1-stage-ignores-manifest-ozugjvln",
+  "build": {
+   "variant": "R1-stage-ignores-manifest",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "929e1cfedd01f81403c90343164cca1d35279ac19d44d3bc6ca00f6168004740"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R2-verify-trusts-manifest",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R2-verify-trusts-manifest-zd_z9y_3",
+  "build": {
+   "variant": "R2-verify-trusts-manifest",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "8d4f8c31be4014c2d01fbfd50ff35500b843a2bb613ea5b94860309a96c56558"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R3-no-completeness-anchor",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 6,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R3-no-completeness-anchor-7ka9fz5c",
+  "build": {
+   "variant": "R3-no-completeness-anchor",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "f7ab320ea325d68e6ff625da8cfcc091ae309f51ae81b923c5cc8452b7de033a"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R4-no-inventory-compare",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 4,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R4-no-inventory-compare-2r3alj_1",
+  "build": {
+   "variant": "R4-no-inventory-compare",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "47f8b1b4cdecd33a1609e95550656585160534df03724d0ad59bfc287b4d31aa"
+   }
+  },
+  "wall": 5.2
+ },
+ {
+  "label": "R5-links-ignored",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R5-links-ignored-5q6werdq",
+  "build": {
+   "variant": "R5-links-ignored",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "91629bf892761246a07a1508cccce939664c57e446dc0101d4e3c3853e630fb1"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R6-read-unvalidated-ids",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 0,
+  "errors": 1,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R6-read-unvalidated-ids-lobgyfnb",
+  "build": {
+   "variant": "R6-read-unvalidated-ids",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "aeb7584b4225dfbe4cf90a0fd882b0daae3a4a909523c6035d63477cf310be0d"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R7-totals-trusted",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 4,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R7-totals-trusted-1d5h4uqa",
+  "build": {
+   "variant": "R7-totals-trusted",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "68f3f20a71d66626a546f4edace150172c3026c718817817abde5569b8350822"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R8-duplicate-keys-accepted",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R8-duplicate-keys-accepted-dtojevr6",
+  "build": {
+   "variant": "R8-duplicate-keys-accepted",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "6ed60222a474dc9b9322087e281ca6b74b40f4ecc63d8dfeba9381416c475a96"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R9-unlisted-accepted",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R9-unlisted-accepted-aulfm95a",
+  "build": {
+   "variant": "R9-unlisted-accepted",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "19fb387f6c755bf729994ff7b76e487488973188062e58463d26c3f0f332de1f"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R10-no-candidate-rehash",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 7,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R10-no-candidate-rehash-oit_nfe8",
+  "build": {
+   "variant": "R10-no-candidate-rehash",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "2e83dccfe7741401570c0cd43851e1df3f76c64535d5d2b14a56b08c0d2c078c"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R11-anchor-unchecked",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 5,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R11-anchor-unchecked-ewo4pzty",
+  "build": {
+   "variant": "R11-anchor-unchecked",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "b1b759533a862895e43f087ed5f34d0f024115f5d69de5ac73b585aef211bb1b"
+   }
+  },
+  "wall": 5.4
+ },
+ {
+  "label": "R12-recursion-not-refused",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 0,
+  "errors": 1,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R12-recursion-not-refused-svh8r9jw",
+  "build": {
+   "variant": "R12-recursion-not-refused",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "4a9486eda9ff5c6647937dffdcdd732b4f8a197628ac14c5fa242db15909192a"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "R13-file-name-unchecked",
+  "exit": 1,
+  "tests_run": 62,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateRF2-R13-file-name-unchecked-kcllndpg",
+  "build": {
+   "variant": "R13-file-name-unchecked",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "99317b373aacb2094f8d0c79e3551fb896107e228602adb1647fc3ac1df15fa0"
+   }
+  },
+  "wall": 5.3
+ }
+]

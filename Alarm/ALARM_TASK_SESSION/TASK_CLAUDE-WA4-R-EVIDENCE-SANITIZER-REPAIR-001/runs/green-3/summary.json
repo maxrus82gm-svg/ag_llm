@@ -1,0 +1,29 @@
+{
+ "label": "green-3",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-green-3-y_gu5_59\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 0,
+ "wall_seconds": 4.582,
+ "base": "<TEMP>\\claude-esrep-green-3-y_gu5_59",
+ "runner_root": "<REPO>",
+ "tests_run": 60,
+ "passed": 60,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 3.871,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}
