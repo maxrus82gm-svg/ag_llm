@@ -1022,6 +1022,77 @@ class BundleCompletenessTests(TempCase):
             code = es.main(["--no-local-identity", "--repo-anchor", "users", "scan", str(pkg)])
         self.assertEqual(code, es.EXIT_USAGE)
 
+    # REVISE F-ES-03: the --package anchor must be independent of the bundle it is supposed to prove complete.
+    def assert_not_independent(self, out, package):
+        report = es.verify(out, package, IDENTITY)
+        self.assertEqual(report["publication"], "REFUSED")
+        self.assertNotEqual(report["completeness"], "PROVEN_AGAINST_PACKAGE")
+        self.assertIn("package-not-independent", report["problems"])
+
+    def test_bundle_internal_folder_is_not_an_independent_package(self):
+        for use_manifest in (True, False):
+            with self.subTest(manifest=use_manifest):
+                _pkg, out = self.staged(use_manifest=use_manifest)
+                self.assert_not_independent(out, out / "originals")  # the verifier's reproduction
+                self.assert_not_independent(out, out / "sanitized" / ".." / "originals")  # non-canonical spelling
+                self.assert_not_independent(out, out)
+                self.assertEqual(run_cli("verify", out, "--package", out / "originals")[0], es.EXIT_REFUSED)
+
+    @unittest.skipUnless(sys.platform == "win32", "case-insensitive paths are a Windows property")
+    def test_case_variant_spelling_is_the_same_folder(self):
+        _pkg, out = self.staged()
+        self.assert_not_independent(out, Path(str(out / "originals").upper()))
+
+    @unittest.skipUnless(sys.platform == "win32", "extended-length paths are a Windows spelling")
+    def test_extended_length_spelling_is_the_same_folder(self):
+        _pkg, out = self.staged()
+        extended = Path("\\\\?\\" + str((out / "originals").resolve()))
+        self.assertTrue(extended.is_dir())
+        self.assert_not_independent(out, extended)
+        # the bundle root itself: no file ids in common, so only the path comparison can tell
+        self.assert_not_independent(out, Path("\\\\?\\" + str(out.resolve())))
+
+    def test_bundle_inside_the_package_is_not_independent(self):
+        pkg, out = self.staged()
+        nested = pkg.parent / "outer"
+        shutil.copytree(out, nested / "bundle")
+        for rel in ("a.txt", "b.txt", "manifest.json"):
+            shutil.copy2(pkg / rel, nested / rel)
+        self.assert_not_independent(nested / "bundle", nested)
+
+    @unittest.skipUnless(sys.platform == "win32", "junctions are a Windows feature")
+    def test_junction_to_the_bundle_is_not_independent(self):
+        import _winapi
+        _pkg, out = self.staged()
+        alias = self.base / "looks_external"
+        _winapi.CreateJunction(str(out / "originals"), str(alias))
+        self.assert_not_independent(out, alias)
+
+    def test_hard_linked_copy_of_the_originals_is_not_independent(self):
+        _pkg, out = self.staged()
+        clone = self.base / "hardlinked"
+        for path in sorted((out / "originals").rglob("*")):
+            if path.is_file():
+                target = clone / path.relative_to(out / "originals")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                os.link(path, target)
+        self.assert_not_independent(out, clone)
+
+    def test_independent_package_and_mapping_anchor_still_prove_completeness(self):
+        pkg, out = self.staged()
+        copy = self.base / "independent_copy"
+        shutil.copytree(pkg, copy)  # a real copy elsewhere is a legitimate source
+        for package in (pkg, copy):
+            with self.subTest(package=package.name[:4]):
+                report = es.verify(out, package, IDENTITY)
+                self.assertEqual((report["publication"], report["completeness"]),
+                                 ("SAFE CANDIDATE", "PROVEN_AGAINST_PACKAGE"))
+        anchor = sha((out / "mapping.json").read_bytes())
+        self.assertEqual(es.verify(out, None, IDENTITY, anchor)["publication"], "SAFE CANDIDATE")
+        refused = es.verify(out, out / "originals", IDENTITY, anchor)  # a valid anchor does not excuse a self-package
+        self.assertEqual(refused["publication"], "REFUSED")
+        self.assertIn("package-not-independent", refused["problems"])
+
     def test_mapping_without_optional_new_fields_still_verifies(self):
         pkg, out = self.staged()
         mapping = load_mapping(out)

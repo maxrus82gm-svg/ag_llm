@@ -60,10 +60,45 @@ MUTANTS = {
     # R13: a local name in a file id is published (only file contents are gated)
     "R13-file-name-unchecked": ("    if identity is not None and identity.search(rel):\n        result.refuse(\"identity-in-file-name\")\n",
                                 ""),
+    # R14 (F-ES-03): a package folder inside / containing / linked to the bundle is accepted as independent
+    "R14-overlap-unchecked": ("    independent = package is None or not _overlap(out, Path(package))",
+                              "    independent = True"),
+    # R15 (F-ES-03): a hard-linked copy of the bundle's originals is accepted as the source
+    "R15-hardlinks-unchecked": ("                if rel in originals and os.path.samefile(package / rel, out / \"originals\" / rel):",
+                                "                if False:"),
+    # R16 (F-ES-03): the Windows extended-length prefix is not removed before comparing folders
+    "R16-extended-prefix-kept": ("    if real.startswith(\"\\\\\\\\?\\\\UNC\\\\\"):\n        real = \"\\\\\\\\\" + real[8:]\n"
+                                 "    elif real.startswith(\"\\\\\\\\?\\\\\"):\n        real = real[4:]\n", ""),
     # R12: a deeply nested manifest crashes instead of being refused
     "R12-recursion-not-refused": ("    except (ValueError, RecursionError):\n        raise IntegrityRefusal(\"manifest.json is not valid",
                                   "    except ValueError:\n        raise IntegrityRefusal(\"manifest.json is not valid"),
 }
+
+
+PRE_ES03_SHA256 = "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9"  # published, CI-checked revision
+PRE_ES03 = [  # reverse of the REVISE F-ES-03 edits; the result must be byte-identical to the published module
+    (" A manifest inside the package is a claim, not a cryptographic anchor. ``--package`` must be\n"
+     "  independent of the bundle (not the bundle, not inside it, not containing it, not reaching it through a link or a\n"
+     "  hard-linked file) - otherwise ``package-not-independent`` and REFUSED (F-ES-03).\n",
+     " A manifest inside the package is a claim, not a cryptographic anchor.\n"),
+    ("    # F-ES-03: a package that is (inside) the bundle, contains it, or reaches it through a link proves nothing\n"
+     "    independent = package is None or not _overlap(out, Path(package))\n"
+     "    if not independent:\n        problems[\"package-not-independent\"] += 1\n"
+     "    completeness = (\"PROVEN_AGAINST_PACKAGE\" if package is not None and independent\n",
+     "    completeness = (\"PROVEN_AGAINST_PACKAGE\" if package is not None\n"),
+    ("    if package is not None and independent:\n        package = Path(package)\n",
+     "    if package is not None:\n        package = Path(package)\n"),
+    ("                if rel in originals and os.path.samefile(package / rel, out / \"originals\" / rel):\n"
+     "                    independent = False  # a hard link to the bundle's own preserved copy, not a source\n", ""),
+    ("        if not independent:\n            problems[\"package-not-independent\"] += 1\n"
+     "            completeness = \"PROVEN_BY_EXTERNAL_MAPPING_SHA256\" if anchored else \"NOT_PROVEN\"\n", ""),
+]
+
+
+def _canonical_block(text: str) -> str:
+    start = text.index("def _canonical(path: Path) -> str:")
+    end = text.index("def _verify_report(")
+    return text[:start] + text[end:]
 
 
 def main():
@@ -81,6 +116,16 @@ def main():
         data = Path(os.environ["CLAUDE_BASELINE_MODULE"]).read_bytes()
         if hashlib.sha256(data).hexdigest() != BASELINE_SHA256:
             raise SystemExit("CLAUDE_BASELINE_MODULE is not the pre-repair module")
+        target.write_bytes(data)
+    elif variant == "pre-es03":
+        text = target.read_text(encoding="utf-8")
+        for old, new in PRE_ES03:
+            if text.count(old) != 1:
+                raise SystemExit(f"pre-es03: pattern found {text.count(old)} times")
+            text = text.replace(old, new)
+        data = _canonical_block(text).encode("utf-8")
+        if hashlib.sha256(data).hexdigest() != PRE_ES03_SHA256:
+            raise SystemExit("pre-es03: reconstruction is not the published module")
         target.write_bytes(data)
     else:
         replacements = MUTANTS[variant]

@@ -26,7 +26,9 @@ Integrity and completeness (CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001, F-ES-01 
   results, the exact sets of originals and sanitized copies - and never trusts the mapping's own claims. Proving
   that nothing was removed needs an anchor outside the bundle: ``--package`` (the source as it is now) or
   ``--mapping-sha256`` (the mapping hash printed by ``stage`` and recorded elsewhere). Without one: NOT_PROVEN,
-  publication REFUSED. A manifest inside the package is a claim, not a cryptographic anchor.
+  publication REFUSED. A manifest inside the package is a claim, not a cryptographic anchor. ``--package`` must be
+  independent of the bundle (not the bundle, not inside it, not containing it, not reaching it through a link or a
+  hard-linked file) - otherwise ``package-not-independent`` and REFUSED (F-ES-03).
 
 Commands (``python -m web_alarm.evidence_sanitizer``)::
 
@@ -961,6 +963,26 @@ def _verify_manifest(rows, ids, results, policy, identity, problems) -> bytes | 
     return _candidate_manifest(manifest[1], outputs, policy, identity)[0]
 
 
+def _canonical(path: Path) -> str:
+    """One comparable spelling of an existing path: absolute, symlinks/junctions/8.3 names resolved, the Windows
+    extended-length prefix removed, case-folded where the platform is case-insensitive."""
+    real = os.path.realpath(path, strict=True)
+    if real.startswith("\\\\?\\UNC\\"):
+        real = "\\\\" + real[8:]
+    elif real.startswith("\\\\?\\"):
+        real = real[4:]
+    return os.path.normcase(real)
+
+
+def _overlap(a: Path, b: Path) -> bool:
+    """True when one existing directory is the other one or lies inside it."""
+    first, second = _canonical(a), _canonical(b)
+    try:
+        return os.path.commonpath([first, second]) in (first, second)
+    except ValueError:  # different drives
+        return False
+
+
 def _verify_report(problems: Counter, checked: int, claimed_blocked: int, blocked: int, completeness: str) -> dict:
     clean = not problems
     return {"files_checked": checked, "files_blocked_in_mapping": claimed_blocked, "files_blocked_recomputed": blocked,
@@ -984,7 +1006,11 @@ def verify(out: Path, package: Path | None = None, identity=None, mapping_anchor
         anchored = _sha(raw) == str(mapping_anchor).lower()
         if not anchored:
             problems["mapping-anchor-mismatch"] += 1
-    completeness = ("PROVEN_AGAINST_PACKAGE" if package is not None
+    # F-ES-03: a package that is (inside) the bundle, contains it, or reaches it through a link proves nothing
+    independent = package is None or not _overlap(out, Path(package))
+    if not independent:
+        problems["package-not-independent"] += 1
+    completeness = ("PROVEN_AGAINST_PACKAGE" if package is not None and independent
                     else "PROVEN_BY_EXTERNAL_MAPPING_SHA256" if anchored else "NOT_PROVEN")
     try:
         mapping = _strict_json(raw)
@@ -1070,7 +1096,7 @@ def verify(out: Path, package: Path | None = None, identity=None, mapping_anchor
             mapping.get("verdict")) != (total, blocked, changed, expected_verdict):
         problems["mapping-totals-mismatch"] += 1
 
-    if package is not None:
+    if package is not None and independent:
         package = Path(package)
         try:
             source = package_files(package, selection == "manifest")
@@ -1080,10 +1106,15 @@ def verify(out: Path, package: Path | None = None, identity=None, mapping_anchor
             if set(source.ids) != ids or len(rows) != total:
                 problems["package-inventory-differs"] += 1
             for rel in sorted(set(source.ids) & ids):
+                if rel in originals and os.path.samefile(package / rel, out / "originals" / rel):
+                    independent = False  # a hard link to the bundle's own preserved copy, not a source
                 data = source.manifest_bytes if rel == "manifest.json" and source.manifest_bytes is not None \
                     else (package / rel).read_bytes()
                 if _sha(data) != by_id[rel]["source_sha256"]:
                     problems["package-differs-from-preserved-original"] += 1
+        if not independent:
+            problems["package-not-independent"] += 1
+            completeness = "PROVEN_BY_EXTERNAL_MAPPING_SHA256" if anchored else "NOT_PROVEN"
     return _verify_report(problems, len(rows), claimed_blocked, blocked, completeness)
 
 
