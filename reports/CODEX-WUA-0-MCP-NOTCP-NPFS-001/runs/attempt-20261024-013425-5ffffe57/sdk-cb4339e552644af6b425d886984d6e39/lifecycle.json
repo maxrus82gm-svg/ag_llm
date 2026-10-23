@@ -1,0 +1,25 @@
+{
+  "gateway_pid": 30316,
+  "gateway_exit": 0,
+  "events": [
+    "GATEWAY_LISTENING",
+    "GATEWAY_AUTHENTICATED:10032",
+    "DACL_TOKEN_VERIFIED:Identification:current-user"
+  ],
+  "errors": [
+    "",
+    "Необработанное исключение: System.ObjectDisposedException: Дескриптор SafeHandle был закрыт",
+    "   в System.Runtime.InteropServices.SafeHandle.DangerousAddRef(Boolean& success)",
+    "   в System.StubHelpers.StubHelpers.SafeHandleAddRef(SafeHandle pHandle, Boolean& success)",
+    "   в Microsoft.Win32.Win32Native.SetEvent(SafeWaitHandle handle)",
+    "   в System.Threading.EventWaitHandle.Set()",
+    "   в System.Threading.ManualResetEventSlim.Set(Boolean duringCancellation)",
+    "   в System.Threading.Tasks.Task.FinishStageTwo()",
+    "   в System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)",
+    "   в System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)",
+    "   в System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)",
+    "   в System.Threading.ThreadPoolWorkQueue.Dispatch()"
+  ],
+  "owned_relays": [],
+  "reader_threads_stopped": true
+}

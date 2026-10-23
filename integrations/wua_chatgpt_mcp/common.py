@@ -41,8 +41,9 @@ def request_id(value):
     return value
 def owned_path(value,existing=True):
     text=str(value);require(not text.startswith(('\\\\','//')) and '://' not in text,'LOCAL_PATH_REQUIRED')
-    p=Path(os.path.abspath(text));base=REPORT/'runs'
-    require(p!=base and p.is_relative_to(base),'FIXTURE_SCOPE')
+    p=Path(os.path.abspath(text));bases=[REPORT/'runs',REPO/'reports'/'CODEX-WUA-0-MCP-NOTCP-NPFS-001'/'runs']
+    # The new NPFS TASK reruns the existing fixture baseline without writing historical reports.
+    require(any(p!=base and p.is_relative_to(base) for base in bases),'FIXTURE_SCOPE')
     if os.name=='nt':
         import ctypes
         fn=ctypes.windll.kernel32.GetDriveTypeW;fn.argtypes=[ctypes.c_wchar_p];fn.restype=ctypes.c_uint

@@ -1,0 +1,112 @@
+{
+  "attempts": [
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011133-fa17ab37/results.json",
+      "collected": 1,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011144-61bfea89/results.json",
+      "collected": 11,
+      "passed": 9,
+      "failed": 0,
+      "errors": 2
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011345-9f9a09a6/results.json",
+      "collected": 1,
+      "passed": 0,
+      "failed": 0,
+      "errors": 1
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011404-93e481ee/results.json",
+      "collected": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011429-b8bad24c/results.json",
+      "collected": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011442-387c16e5/results.json",
+      "collected": 1,
+      "passed": 0,
+      "failed": 1,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011516-4ac8786d/results.json",
+      "collected": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-011719-00744cfd/results.json",
+      "collected": 16,
+      "passed": 14,
+      "failed": 2,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-012051-0e81d845/results.json",
+      "collected": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-012159-583b3695/results.json",
+      "collected": 20,
+      "passed": 20,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-012520-68b132df/results.json",
+      "collected": 22,
+      "passed": 22,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-012822-999cda26/results.json",
+      "collected": 23,
+      "passed": 23,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-013410-59631d78/results.json",
+      "collected": 1,
+      "passed": 1,
+      "failed": 0,
+      "errors": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-013425-5ffffe57/results.json",
+      "collected": 24,
+      "passed": 24,
+      "failed": 0,
+      "errors": 0
+    }
+  ],
+  "prep": "evidence/prep01.json",
+  "initial_fail_preserved": true,
+  "classifications": {
+    "SDK aliases": "HARNESS_DEFECT; SDK2 snake_case attributes",
+    "CreateNamedPipe WinError87": "PRODUCT DEFECT in new candidate; unsupported dwOpenMode flag removed, narrow DACL retained",
+    "fake peer image": "HARNESS_DEFECT: venv launcher hash versus real Python process image; guard correctly refused",
+    "startup job race": "SOURCE REVIEW FINDING; fixed with suspended creation before job assign/resume",
+    "terminal error race": "SOURCE REVIEW FINDING; first terminal event retained"
+  },
+  "early_intermediate_full_source_snapshots": "NOT AVAILABLE; hashes and diagnostics retained; final full snapshot available"
+}

@@ -1,0 +1,169 @@
+[
+  {
+    "schema": 1,
+    "tool": "ping",
+    "request_id": "9ab50175-d69d-4536-88fc-c5791bcb2055",
+    "value": {
+      "status": "ok",
+      "service": "web_alarm_server",
+      "api_version": 1,
+      "mode": "server_owned_state_machine"
+    },
+    "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96",
+    "proof": {
+      "session_id": "8cb1d1f6-5e0d-48b0-a9d3-f9db218065a6",
+      "nonce": "c537f425ceb26ba2048593e79ea0ac9c52bbf9399cae4cfdf46d1447dced10ba",
+      "api_reads": 1,
+      "api_route": "/status",
+      "baseline_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "current_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "mcp_process_id": 20340
+    },
+    "synthetic": true,
+    "audit": [
+      {
+        "request_id": "9ab50175-d69d-4536-88fc-c5791bcb2055",
+        "tool": "ping",
+        "result": "OK"
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "tool": "list_capabilities",
+    "request_id": "e72bebf3-b919-4458-ba4d-aa4e152fe78d",
+    "value": {
+      "interface_version": "0.1.0",
+      "tools": [
+        "ping",
+        "list_capabilities",
+        "read_synthetic_context",
+        "get_status"
+      ],
+      "scope": [
+        "synthetic_wua_integration_001"
+      ],
+      "read_only": true,
+      "model_api": false,
+      "git": false,
+      "arbitrary_files": false,
+      "native_activation": false,
+      "api_protocol": "wua-api-jsonl-v1"
+    },
+    "content_sha256": "3a5d01d47a817ee733d97bd8a139ead50a7ce125ef7117a26c863b412e5cf88b",
+    "proof": {
+      "session_id": "8cb1d1f6-5e0d-48b0-a9d3-f9db218065a6",
+      "nonce": "c537f425ceb26ba2048593e79ea0ac9c52bbf9399cae4cfdf46d1447dced10ba",
+      "api_reads": 2,
+      "api_route": "/status",
+      "baseline_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "current_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "mcp_process_id": 20340
+    },
+    "synthetic": true,
+    "audit": [
+      {
+        "request_id": "9ab50175-d69d-4536-88fc-c5791bcb2055",
+        "tool": "ping",
+        "result": "OK"
+      },
+      {
+        "request_id": "e72bebf3-b919-4458-ba4d-aa4e152fe78d",
+        "tool": "list_capabilities",
+        "result": "OK"
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "tool": "read_synthetic_context",
+    "request_id": "775ddbda-f1f0-48bf-bfe1-4b2a04d6c0c1",
+    "value": {
+      "TASK": {
+        "task_id": "synthetic_wua_integration_001",
+        "title": "Synthetic MCP integration",
+        "status": "PLANNED"
+      },
+      "GOAL": "synthetic nonce: c537f425ceb26ba2048593e79ea0ac9c52bbf9399cae4cfdf46d1447dced10ba",
+      "CURRENT_STATUS": "NO_MICROTASK",
+      "NEXT_SAFE_ACTION": "create a microtask and define the TASK plan",
+      "AUTHORITY_SOURCE": "lifecycle",
+      "CHECKPOINT": {
+        "status": "MISSING",
+        "authoritative": false
+      }
+    },
+    "content_sha256": "a5abc755e2037fbc72c6a843c48d2a51e919259e38268fd9c73d49f0272b6694",
+    "proof": {
+      "session_id": "8cb1d1f6-5e0d-48b0-a9d3-f9db218065a6",
+      "nonce": "c537f425ceb26ba2048593e79ea0ac9c52bbf9399cae4cfdf46d1447dced10ba",
+      "api_reads": 3,
+      "api_route": "/tasks/synthetic_wua_integration_001/context",
+      "baseline_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "current_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "mcp_process_id": 20340
+    },
+    "synthetic": true,
+    "audit": [
+      {
+        "request_id": "9ab50175-d69d-4536-88fc-c5791bcb2055",
+        "tool": "ping",
+        "result": "OK"
+      },
+      {
+        "request_id": "e72bebf3-b919-4458-ba4d-aa4e152fe78d",
+        "tool": "list_capabilities",
+        "result": "OK"
+      },
+      {
+        "request_id": "775ddbda-f1f0-48bf-bfe1-4b2a04d6c0c1",
+        "tool": "read_synthetic_context",
+        "result": "OK"
+      }
+    ]
+  },
+  {
+    "schema": 1,
+    "tool": "get_status",
+    "request_id": "48f77b1b-0758-4ceb-88d3-a20abf7b9da8",
+    "value": {
+      "status": "ok",
+      "service": "web_alarm_server",
+      "api_version": 1,
+      "mode": "server_owned_state_machine"
+    },
+    "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96",
+    "proof": {
+      "session_id": "8cb1d1f6-5e0d-48b0-a9d3-f9db218065a6",
+      "nonce": "c537f425ceb26ba2048593e79ea0ac9c52bbf9399cae4cfdf46d1447dced10ba",
+      "api_reads": 4,
+      "api_route": "/status",
+      "baseline_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "current_sha256": "5f84d086b7a84f67a8f2e163c7ad5e3f846dde7c991c1b736f515f16907c225e",
+      "mcp_process_id": 20340
+    },
+    "synthetic": true,
+    "audit": [
+      {
+        "request_id": "9ab50175-d69d-4536-88fc-c5791bcb2055",
+        "tool": "ping",
+        "result": "OK"
+      },
+      {
+        "request_id": "e72bebf3-b919-4458-ba4d-aa4e152fe78d",
+        "tool": "list_capabilities",
+        "result": "OK"
+      },
+      {
+        "request_id": "775ddbda-f1f0-48bf-bfe1-4b2a04d6c0c1",
+        "tool": "read_synthetic_context",
+        "result": "OK"
+      },
+      {
+        "request_id": "48f77b1b-0758-4ceb-88d3-a20abf7b9da8",
+        "tool": "get_status",
+        "result": "OK"
+      }
+    ]
+  }
+]

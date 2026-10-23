@@ -1,0 +1,52 @@
+[
+  {
+    "component": "Relay",
+    "argv": [
+      "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe",
+      "/nologo",
+      "/noconfig",
+      "/nostdlib+",
+      "/platform:x64",
+      "/langversion:5",
+      "/optimize+",
+      "/debug-",
+      "/warnaserror+",
+      "/target:exe",
+      "/out:M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-MCP-NOTCP-NPFS-001\\build\\WuaRelay.exe",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\mscorlib.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Core.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Web.Extensions.dll",
+      "M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\npfs\\Shared.cs",
+      "M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\npfs\\Relay.cs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "component": "Gateway",
+    "argv": [
+      "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe",
+      "/nologo",
+      "/noconfig",
+      "/nostdlib+",
+      "/platform:x64",
+      "/langversion:5",
+      "/optimize+",
+      "/debug-",
+      "/warnaserror+",
+      "/target:exe",
+      "/out:M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-0-MCP-NOTCP-NPFS-001\\build\\WuaGateway.exe",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\mscorlib.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Core.dll",
+      "/reference:C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Web.Extensions.dll",
+      "M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\npfs\\Shared.cs",
+      "M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\npfs\\Gateway.cs"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

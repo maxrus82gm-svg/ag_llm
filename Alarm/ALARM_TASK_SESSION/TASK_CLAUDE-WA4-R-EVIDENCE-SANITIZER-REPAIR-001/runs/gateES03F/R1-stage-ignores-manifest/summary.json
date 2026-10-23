@@ -1,0 +1,95 @@
+{
+ "label": "R1-stage-ignores-manifest",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R1-stage-ignores-manifest-yl53odt5\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R1-stage-ignores-manifest-29wch_ym\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.614,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R1-stage-ignores-manifest-29wch_ym",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R1-stage-ignores-manifest-yl53odt5\\code",
+ "tests_run": 69,
+ "passed": 56,
+ "failures": 13,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.673,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=0)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=1)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=2)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=3)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=4)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=5)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=6)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=7)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=8)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_missing_or_mistyped_integrity_fields_refuse (case=9)",
+   "FAIL",
+   "st-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 690, in test_missing_or_mistyped_integrity_fields_refuse\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_cli_exit_codes",
+   "FAIL",
+   ": 3,\n \"files_changed\": 3,\n \"files_blocked\": 0,\n \"replacements_total\": {\n  \"TEMP\": 2\n },\n \"kept_total\": {},\n \"identity_gate\": \"ENFORCED\",\n \"verdict\": \"SAFE PUBLICATION CANDIDATE (needs USER GO)\",\n \"mapping_sha256\": \"dabead5991eb4dbd2d87ddf4701a25dc3caf99aad03acd8e79b53080d1854890\",\n \"blocked\": []\n}\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_sha256_refuses_stage_and_verify",
+   "FAIL",
+   "manifest-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 652, in test_wrong_sha256_refuses_stage_and_verify\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_wrong_size_refuses",
+   "FAIL",
+   "r-R1-stage-ignores-manifest-yl53odt5\\code\\test_web_alarm_evidence_sanitizer.py\", line 671, in test_wrong_size_refuses\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ]
+ ]
+}

@@ -1,0 +1,12 @@
+{
+  "observed": [
+    "hello",
+    "request"
+  ],
+  "peer_faults": [],
+  "relay": {
+    "exit": 20,
+    "stdout": "",
+    "stderr": "RELAY_AUTHENTICATED\r\n\nНеобработанное исключение: System.ObjectDisposedException: Дескриптор SafeHandle был закрыт\r\n   в System.Runtime.InteropServices.SafeHandle.DangerousAddRef(Boolean& success)\r\n   в System.StubHelpers.StubHelpers.SafeHandleAddRef(SafeHandle pHandle, Boolean& success)\r\n   в Microsoft.Win32.Win32Native.SetEvent(SafeWaitHandle handle)\r\n   в System.Threading.EventWaitHandle.Set()\r\n   в System.IO.Pipes.PipeStream.AsyncPSCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pOverlapped)\r\n   в System.Threading._IOCompletionCallback.PerformIOCompletionCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pOVERLAP)\nRELAY_STOP:IO_TIMEOUT\r\n"
+  }
+}

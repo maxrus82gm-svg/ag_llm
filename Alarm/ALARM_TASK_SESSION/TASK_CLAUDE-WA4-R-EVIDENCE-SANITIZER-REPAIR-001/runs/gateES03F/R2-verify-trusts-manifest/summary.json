@@ -1,0 +1,40 @@
+{
+ "label": "R2-verify-trusts-manifest",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-ay1o55m8\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R2-verify-trusts-manifest-nodqwj2h\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.699,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R2-verify-trusts-manifest-nodqwj2h",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R2-verify-trusts-manifest-ay1o55m8\\code",
+ "tests_run": 69,
+ "passed": 67,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.716,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=True)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_fully_consistent_forgery_still_fails_the_manifest_reproof (with_package=False)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ]
+ ]
+}

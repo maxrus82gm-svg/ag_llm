@@ -1,0 +1,27 @@
+{
+  "gateway_pid": 45272,
+  "gateway_exit": 20,
+  "events": [
+    "GATEWAY_LISTENING",
+    "GATEWAY_AUTHENTICATED:40600",
+    "DACL_TOKEN_VERIFIED:Identification:current-user"
+  ],
+  "errors": [
+    "GATEWAY_STOP:IO_TIMEOUT",
+    "",
+    "Необработанное исключение: System.ObjectDisposedException: Дескриптор SafeHandle был закрыт",
+    "   в System.Runtime.InteropServices.SafeHandle.DangerousAddRef(Boolean& success)",
+    "   в System.StubHelpers.StubHelpers.SafeHandleAddRef(SafeHandle pHandle, Boolean& success)",
+    "   в Microsoft.Win32.Win32Native.SetEvent(SafeWaitHandle handle)",
+    "   в System.Threading.EventWaitHandle.Set()",
+    "   в System.IO.Pipes.PipeStream.AsyncPSCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pOverlapped)",
+    "   в System.Threading._IOCompletionCallback.PerformIOCompletionCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* pOVERLAP)"
+  ],
+  "owned_relays": [
+    {
+      "pid": 40600,
+      "exit": 20
+    }
+  ],
+  "reader_threads_stopped": true
+}

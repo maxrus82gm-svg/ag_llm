@@ -1,0 +1,30 @@
+# MANUAL ENGINEERING REVIEW
+
+Codex 007, 2026-10-24. Собственная инженерная проверка; не независимый verdict WEB_11. Разбор выполнен поверх автотестов, с повторным чтением изменённых ветвей. Финальные результаты привязаны к source snapshot/pins, а не к Git reference координатора.
+
+## Причина и выбранная граница
+
+Причина F1 относится к C-owned Python ProactorEventLoop, а не к JSON-RPC/MCP. Поэтому не менял asyncio internals, WFP port ranges и сервер Web Alarm. C frontend заменён ограниченным .NET/NPFS relay; существующие SDK tool definitions и WebAlarmApi reused. U-side Python вправе сохранять собственный runtime socket вне C/B. Full-chain Go/WFP безопасность из этого не следует.
+
+Отвергнуты HTTP localhost workaround, remote SMB pipe, непрозрачный helper launch и динамическое расширение egress. F2 не решался новым proxy wrapper: actual B-owned V2Ray socket остаётся обязательным отдельным gate.
+
+## Разобранные аварийные ветви и исправления
+
+1. **Duplex/deadlock.** Два потока работают независимо, shared correlation map защищена lock. Нет очереди произвольного размера. Первое terminal событие выбирается один раз; исключения, вызванные последующим закрытием другого направления, не подменяют нормальный EOF. Partial header/body/line, limit, slow/unresponsive peer и blocked writes ограничены deadline. Потенциально зависший Dispose не отменяет process watchdog; это аварийное завершение, не обещание graceful receipt при crash.
+2. **ACL/creation.** Ошибка нового кода с READ_CONTROL в dwOpenMode сохранена как настоящий FAIL: CreateNamedPipe отказал с WinError87. Исправлен только неподдерживаемый флаг; ACL не расширялась до broad user groups. Возвращён минимальный mask, descriptor реально прочитан обратно. First-instance + exact name + one instance исключают silent attach; ни один отказ не включает reconnect.
+3. **Token versus PID.** Primary process SID и effective pipe-client Identification SID проверяются отдельно. Мутация отключает PID/image checks: независимый fake peer действительно получает MCP request, и policy oracle становится FAIL. Nonce/MAC не называется доказательством SID. Cross-SID tests не выполнялись: нет разрешения создавать accounts.
+4. **Grant integrity.** Direction/session/sequence/length включены в MAC; payload проверяется только после MAC. Grant копируется во внутренний Wire до очистки временного массива: иначе обе стороны ошибочно продолжили бы с известным нулевым ключом. Authority fixture session отдельно сверяется с transport config; намеренный mismatch не создаёт API state. Ключи не передаются SDK child и не сохраняются в evidence.
+5. **Child startup race.** Первоначальный Process.Start → AssignJobObject имел окно, особенно из-за venv redirector. До финальной сдачи заменён на CreateProcess suspended + explicit STARTUPINFOEX handle list → AssignJobObject → ResumeThread. Удерживаемые job/pipe/process handles не наследуются. Реальный SDK PID наблюдался через OS wait после kill только owned gateway; descendant завершился. Это проверка fixture, не hostile process sandbox.
+6. **Portability.** Native peer image lookup использует Unicode API. Отдельный настоящий MCP ping через relay с кириллицей/CJK/emoji в имени executable проверяет этот путь. Сборка x64 и фиксированная layout зависимость gateway объявлены явно; Linux/x86/иная runtime installation не проверены и не обходятся установкой.
+7. **Read authority и raw state.** До auth не запускается worker. Новый root создаётся без exist_ok; server читает только точные GET status/context. SDK ответы сверены с synthetic nonce, canonical digest, server receipt и реальными JSON seed bytes; baseline/final tree равны. Unknown tools/TASK/types/extra fields/replay не расширяют API authority. Production ни в одном тесте не открывался.
+8. **OS/network oracle.** C source не содержит socket/DNS/HTTP/child-launch paths. Независимый PID-based Windows TCP/UDP IPv4/IPv6 sampler наблюдает нормальный relay и intentional native TCP dial; отдельный loopback accept подтверждает dial trigger. Toolhelp sampling не нашёл C children. Это конечная выборка: startup/short-lived edges могут быть пропущены, failed dial может не появиться в таблице. Нет ETW continuous observer или OS-enforced запрета; полный no-network verdict не присвоен.
+
+## Тестовые дефекты / сохранность истории
+
+Первые SDK прогоны имели неверные Python attribute aliases; исправлен тест под существующий SDK2 snake_case. Независимые raw fake-peer тесты сначала pin-или venv launcher вместо реального executable текущего Python PID: image guard правильно отказал; oracle исправлен на QueryFullProcessImageName текущего процесса, guard не ослаблен. Нулевые/ошибочные collection, WinError87 и последующие результаты сохранены раздельно. Финальная source snapshot доступна; самые ранние промежуточные исходники имеют hashes/диагностику, но не полный восстановимый snapshot — это ограничение раннего evidence, не скрытый PASS.
+
+## Открытые риски
+
+Same-user malicious caller/administrator может читать environment/менять свой checkout: этот fixture не устанавливает hostile same-user boundary. Image-file hash не attestation loaded memory. Полная Python/.NET/Go closure, все native startup/egress paths, production grant delivery, cross-SID token-query rights, rejected remote-client OS flag на настоящем удалённом хосте, crash внутри каждого native syscall и exhaustive scheduling не доказаны. Remote-UNC request отвергнут локально до API; реальный SMB connect не предпринимался. Другие IPC/service delegation пути, accounts/WFP/V2Ray/boot и ordinary Chat остаются BLOCKED/NOT VERIFIED. Успешные synthetic loops не снимают эти ограничения.
+
+Финальный проход после полного suite24/24 отдельно проверил unchanged C# source pins, byte/binary snapshots и cancellation oracle: официальный SDK действительно сформировал abandon после наблюдаемого outstanding tools/call; тот же requestId дошёл через C relay до намеренно stalled owned peer. Это проверка transport cancellation, не WebAlarmApi cancellation latency и не ChatGPT E2E. Неизменённые legacy SDK/security зависимости покрыты отдельными 63/63 и24/24 прогонами. Полный process lifetime network observer по-прежнему отсутствует.

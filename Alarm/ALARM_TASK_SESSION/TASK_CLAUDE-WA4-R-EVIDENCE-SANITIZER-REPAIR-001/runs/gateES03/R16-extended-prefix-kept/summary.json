@@ -1,0 +1,29 @@
+{
+ "label": "R16-extended-prefix-kept",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R16-extended-prefix-kept-3xv213vm\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03-R16-extended-prefix-kept-ai0ef8sl\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 0,
+ "wall_seconds": 5.857,
+ "base": "<TEMP>\\claude-esrep-gateES03-R16-extended-prefix-kept-ai0ef8sl",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R16-extended-prefix-kept-3xv213vm\\code",
+ "tests_run": 69,
+ "passed": 69,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.897,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

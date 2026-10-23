@@ -46,7 +46,7 @@ TASK: —
 
 Скользящее окно до 5 выполненных TASK; полный архив — [[001_История выполненных задач Claude]]. После шестой задачи самая старая строка вытесняется только отсюда, после архивного readback. Независимый статус не выдумывать.
 
-- **2026-10-23 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — исправление fail-open F-ES-01 / F-ES-02 механизма публикации evidence. Статус: RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+- **2026-10-23 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — исправление fail-open F-ES-01 / F-ES-02 + REVISE F-ES-03 (2026-10-24) механизма публикации evidence. Статус: RESULT READY / AWAITING INDEPENDENT VERIFICATION.
 - **2026-10-21 / CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001** — анонимизация диагностических evidence. Статус: PARTIAL / REWORK REQUIRED.
 - **2026-10-20 / CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001** — офлайн восстановление оборванного журнала. Статус: RESULT READY / NOT INDEPENDENTLY VERIFIED.
 - **2026-10-19 / CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001** — анализ fail-closed MCP/V2Ray egress. Статус: RESULT READY; NATIVE NOT VERIFIED.
@@ -56,7 +56,7 @@ TASK: —
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — F-ES-01 (manifest SHA-256/размер) и F-ES-02 (полнота комплекта) закрыты fail-closed; verify доказывает набор против пакета или внешнего хеша карты, иначе REFUSED. Полный источник: запись в `001` и `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/report.md`.
+- **CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — F-ES-01/F-ES-02 закрыты fail-closed; REVISE F-ES-03: `--package` = комплект, внутри или вокруг него, через ссылку или жёсткие ссылки → `package-not-independent`, REFUSED. Полный источник: записи в `001` и `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/report.md`.
 - **CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001** — Независимые Linux tests: штатные 38/38 PASS, но 2 подтверждённых fail-open; публикация исторических evidence заблокирована. Полный источник: поиск TASK ID в `001` и task-report проекта.
 - **CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001** — Offline inspect/apply, архив до исправления; live storage и production не затронуты. Полный источник: поиск TASK ID в `001` и task-report проекта.
 - **CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001** — Исследована модель SID, WFP и CONNECT/V2Ray; реальная OS-изоляция не подтверждена. Полный источник: поиск TASK ID в `001` и task-report проекта.

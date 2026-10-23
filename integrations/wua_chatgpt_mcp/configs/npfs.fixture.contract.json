@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "mode": "synthetic_fixture_only",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "profile": "STRICT_V2RAY_BROKER",
+  "c_frontend": "npfs/Relay.cs + npfs/Shared.cs",
+  "u_gateway": "npfs/Gateway.cs + npfs/Shared.cs -> fixed gateway_worker.py -> existing server.make_server -> synthetic WebAlarmApi",
+  "pipe": "local NPFS; exact random fixture name; no remote SMB; one first instance; reject remote clients",
+  "authentication": ["current-user SID primary tokens", "client Identification token via RunAsClient", "peer PID + held process handle + image file SHA256", "fresh per-session in-memory grant with directional HMAC and sequence"],
+  "limits": {"request_bytes": 8192, "response_bytes": 32768, "frame_ms": 2500, "bridge_lifetime_ms": 30000, "wire_frames_per_direction": 128, "request_ids_per_direction": 96, "inflight_per_direction": 16},
+  "activation": "BLOCKED: cross-SID provisioning/auth, production authority and grant delivery, WFP, actual B V2Ray egress, tunnel and ordinary Chat E2E require separate approval and evidence",
+  "install_uninstall": "BLOCKED",
+  "hosted_tunnel": "HOSTED_TUNNEL_ON_HOLD_BY_USER"
+}

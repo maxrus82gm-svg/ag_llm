@@ -1,0 +1,31 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "status": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read": 0,
+  "archive_previous_bytes_written": 0,
+  "method": "exclusive append-only archive handle; bounded readback at new offset; exclusive card write with in-memory rollback",
+  "archive_offset": 588938,
+  "archive_appended_bytes": 27527,
+  "archive_appended_sha256": "ee664d7d515f32662f910cdffe4f55764817337f15cb70c5a186ba26529f737e",
+  "archive_new_metadata": {
+    "size": 616465,
+    "mtime_ns": 1792788100077805200,
+    "inode": 1125899907271690
+  },
+  "archive_new_entry_readback": true,
+  "card_before_sha256": "aace0c47b83d75042a5f4845455ad62901af8ef272c3557fb953a7336a640f8a",
+  "card_after_sha256": "9b238fbdcdc558670dbb7e4a9cafc60df3beeddfab62f2b29b9727b416384be8",
+  "block4_before_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "block4_after_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "block1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "block2_rows": 5,
+  "block3_rows": 5,
+  "evicted_card_summaries": {
+    "block2": [
+      "- **2026-10-19 / CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001** — исследование двух SID/WFP и CONNECT-брокера. Статус: RESULT READY; OS NOT VERIFIED."
+    ],
+    "block3": [
+      "- **CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001** — SID/WFP/loopback схема предложена; только static evidence, native/network tests не выполнялись. Полный источник: поиск TASK ID в `001` и task-report проекта."
+    ]
+  }
+}

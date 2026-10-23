@@ -1,0 +1,35 @@
+{
+ "label": "R9-unlisted-accepted",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R9-unlisted-accepted-tkpaibq_\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R9-unlisted-accepted-0ddnhdqs\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.788,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R9-unlisted-accepted-0ddnhdqs",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R9-unlisted-accepted-tkpaibq_\\code",
+ "tests_run": 69,
+ "passed": 68,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.827,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.ManifestIntegrityTests.test_file_missing_from_manifest_is_refused",
+   "FAIL",
+   "accepted-tkpaibq_\\code\\test_web_alarm_evidence_sanitizer.py\", line 738, in test_file_missing_from_manifest_is_refused\n    self.assertEqual(mapping[\"verdict\"], \"REFUSED\")\nAssertionError: 'SAFE PUBLICATION CANDIDATE (needs USER GO)' != 'REFUSED'\n- SAFE PUBLICATION CANDIDATE (needs USER GO)\n+ REFUSED\n\n"
+  ]
+ ]
+}

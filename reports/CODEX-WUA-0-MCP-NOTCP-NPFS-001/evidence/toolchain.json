@@ -1,0 +1,37 @@
+{
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "mcp": "2.2.0",
+  "csc_sha256": "aae1db57f898ca8bda18590c56f86ced6d0ead80c22033b76fdfe9119706f116",
+  "framework_references": {
+    "mscorlib.dll": "cbba0b14d43901ff3d92cc44efe6a79149bfcaa3006c08ca05e186b2a75b54b5",
+    "System.dll": "af12577769e3b0c94fc8e4715cdfd21cbcf0f665bf63489f81e5a0934c94c7e4",
+    "System.Core.dll": "78c77c7250b6e318e69c1162980640bf7da5e8d3303d3abcc32401a52d667139",
+    "System.Web.Extensions.dll": "4ab5606b6a0cafdd5650630bafeddd96d24939f85c2a88dda2aeec69ccf274c0"
+  },
+  "sources": {
+    "integrations/wua_chatgpt_mcp/npfs/Gateway.cs": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565",
+    "integrations/wua_chatgpt_mcp/npfs/gateway_worker.py": "eb6a7a630682dd7cb59b5aad6402135f47552d33567d4dbca134f7d32bfec843",
+    "integrations/wua_chatgpt_mcp/npfs/Relay.cs": "60ab73430736fd0d67f9ac1e2ad7a2c243f8e60a01f12e432434b6b2e9c02546",
+    "integrations/wua_chatgpt_mcp/npfs/Shared.cs": "12ce7c78444c931d35b6ca089766d887277bbddfe2c7764e70811a9e069f9f22",
+    "integrations/wua_chatgpt_mcp/tests/run_npfs.py": "f3f2936036c32fb9b6e5d2da52f2da74df80273ed97478ea2cdde8b10c34d5cc",
+    "integrations/wua_chatgpt_mcp/tests/npfs_regression.py": "6b911f0859b8afb59daa859da6b5b88fa8cdb12ee4bf5870939ebe475b3c01af",
+    "integrations/wua_chatgpt_mcp/server.py": "b642b02599abdece141740b1eb3a9dc35b4ed69f25ba8207d737fb7523e2df67",
+    "integrations/wua_chatgpt_mcp/common.py": "12b8441ba72661fb2189c03e37e0203082a003e5e6be630b5d25dbe03809a209",
+    "web_alarm/server.py": "7e8b2aab5e2a04e87a5b7dc28cd9c33adf3e0c93bc5dd86f65be4faccae70013"
+  },
+  "binary_pins": {
+    "WuaRelay.exe": {
+      "bytes": 18944,
+      "sha256": "d4be1feee9e684397ed8bf315ed821f3b208bf12fb41fbee18a318f31424fe70",
+      "snapshot": "reports\\CODEX-WUA-0-MCP-NOTCP-NPFS-001\\runs\\attempt-20261024-013425-5ffffe57\\source_snapshot\\WuaRelay.exe"
+    },
+    "WuaGateway.exe": {
+      "bytes": 27648,
+      "sha256": "e771d55a9a362d2c65c7ff31d7688beaf36f3954cedfe2400402cb5cd03ffdea",
+      "snapshot": "reports\\CODEX-WUA-0-MCP-NOTCP-NPFS-001\\runs\\attempt-20261024-013425-5ffffe57\\source_snapshot\\WuaGateway.exe"
+    }
+  },
+  "no_downloads": true,
+  "no_Git": true
+}

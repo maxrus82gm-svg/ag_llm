@@ -1,0 +1,19 @@
+{
+  "gateway_pid": 30336,
+  "gateway_exit": 20,
+  "events": [
+    "GATEWAY_LISTENING",
+    "GATEWAY_AUTHENTICATED:10492",
+    "DACL_TOKEN_VERIFIED:Identification:current-user"
+  ],
+  "errors": [
+    "GATEWAY_STOP:PARTIAL_OR_EOF"
+  ],
+  "owned_relays": [
+    {
+      "pid": 10492,
+      "exit": 20
+    }
+  ],
+  "reader_threads_stopped": true
+}

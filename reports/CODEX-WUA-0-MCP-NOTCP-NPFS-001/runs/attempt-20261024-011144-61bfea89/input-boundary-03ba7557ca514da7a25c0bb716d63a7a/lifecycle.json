@@ -1,0 +1,18 @@
+{
+  "gateway_pid": 10356,
+  "gateway_exit": 20,
+  "events": [
+    "GATEWAY_LISTENING",
+    "GATEWAY_AUTHENTICATED:50316"
+  ],
+  "errors": [
+    "GATEWAY_STOP:PARTIAL_OR_EOF"
+  ],
+  "owned_relays": [
+    {
+      "pid": 50316,
+      "exit": 20
+    }
+  ],
+  "reader_threads_stopped": true
+}

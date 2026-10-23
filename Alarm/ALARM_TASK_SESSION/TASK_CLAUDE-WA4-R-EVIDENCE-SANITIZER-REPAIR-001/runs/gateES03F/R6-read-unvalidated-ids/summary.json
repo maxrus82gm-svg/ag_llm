@@ -1,0 +1,35 @@
+{
+ "label": "R6-read-unvalidated-ids",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R6-read-unvalidated-ids-n_bupdlb\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R6-read-unvalidated-ids-6paf3zip\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.686,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R6-read-unvalidated-ids-6paf3zip",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R6-read-unvalidated-ids-n_bupdlb\\code",
+ "tests_run": 69,
+ "passed": 68,
+ "failures": 0,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 4.749,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.StageVerifyTests.test_verify_detects_tampering_and_drift (problem='original-missing-or-changed')",
+   "FAIL",
+   "n io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '<TEMP>\\\\wa_evsan_xgo7cno5\\\\t_original-missing-or-changed\\\\originals\\\\tools\\\\run.py'\n"
+  ]
+ ]
+}

@@ -7,24 +7,24 @@
  "self_hash": "EXCLUDED (reported in the chat handoff)",
  "repository_files_changed": {
   "web_alarm/evidence_sanitizer.py": {
-   "bytes": 56975,
-   "sha256": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+   "bytes": 58626,
+   "sha256": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284",
    "eol": "LF",
    "kind": "modified",
-   "lines": 1165
+   "lines": 1196
   },
   "test_web_alarm_evidence_sanitizer.py": {
-   "bytes": 53907,
-   "sha256": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf",
+   "bytes": 57897,
+   "sha256": "8bf399431e8b780fc82a18d8bc9d3bea260f071a56167e3515ae3f7f89b52953",
    "eol": "LF",
    "kind": "modified",
-   "lines": 1035
+   "lines": 1106
   }
  },
  "also_changed_outside_folder": {
   "Документация/000_Задачи Claude.md": {
-   "bytes": 16526,
-   "sha256": "b119c9bc7de12905a683ac23d0781ce52662af83059cb321e7fc4498538a07ad",
+   "bytes": 16545,
+   "sha256": "e5a73cde674d9a7c1efeac883b8cea254657773723423ea3718da86f005e21b7",
    "eol": "LF",
    "note": "BLOCK 1-3 rotation only, BLOCK 4 untouched"
   },
@@ -32,6 +32,21 @@
  },
  "not_published_private": "raw run outputs and real-package staging stayed in disposable TEMP (not published)",
  "files": {
+  "amendment-F-ES-03.md": {
+   "bytes": 4020,
+   "sha256": "00296e4bd4baf46aac8a51d68bb2d6840ac97afffb7f72f156bb67c48e31c496",
+   "eol": "LF"
+  },
+  "amendment-rotation.json": {
+   "bytes": 1625,
+   "sha256": "6d013d15b0dc27a7ea5930cb4da7aeed6f91b71c1ef0263eb0cd147529f1790c",
+   "eol": "LF"
+  },
+  "block3-closeout-es03.md": {
+   "bytes": 2516,
+   "sha256": "765343369d458339c7e411dac5590bbd7889935049432deb62e0a0b671ecc498",
+   "eol": "LF"
+  },
   "block3-closeout.md": {
    "bytes": 3268,
    "sha256": "8e4e3658af8f6d88dcef252d10bba43de182ea9ad38fbd99367d04cce4dd6bc4",
@@ -43,19 +58,89 @@
    "eol": "LF"
   },
   "evidence.json": {
-   "bytes": 2803,
-   "sha256": "88f53279b6856c7408d79fab9ec85299718097c297e005417cef82f97141c57c",
+   "bytes": 4311,
+   "sha256": "1782a49e47765343f09da09c70bccaac2423aabe092a38e860ee711cc3ec41f8",
    "eol": "LF"
   },
   "report.md": {
-   "bytes": 33410,
-   "sha256": "bc13c815ad7337f205876bbd9f7e942157fd7bfd343c6f6be883bd092132504c",
+   "bytes": 43375,
+   "sha256": "d4cb410f4b0ed6fcddabaa9e178a3f24bce6e8193bd18f627a71bcbbaa3fce63",
    "eol": "LF"
   },
   "runs/census.json": {
-   "bytes": 54848,
-   "sha256": "e82489dd94b2618c1158fb0c1a6cdd1de5a6e3233d1e62c6a7143ef5884fbb9f",
+   "bytes": 98212,
+   "sha256": "31df11f4baa4c7933621cc6f4bf44511256d3c8a834c19b00867964cce2777a5",
    "eol": "LF"
+  },
+  "runs/es03-full/results.json": {
+   "bytes": 4967081,
+   "sha256": "0ef96654bca1579f5dda7d1323aa321aa70bea4380235620d7e0c6422963bdb9",
+   "eol": "CRLF"
+  },
+  "runs/es03-full/summary.json": {
+   "bytes": 1052,
+   "sha256": "47accd6857235cdbc7340aa37b668cfd53dfc3a40272a4f7d43ea675aa2aa424",
+   "eol": "CRLF"
+  },
+  "runs/es03-full-vs-909.json": {
+   "bytes": 7400,
+   "sha256": "ebca9dd43fa0cc839889679efe75bf67ea21908c8d1a326ee17b2525a4e5ff82",
+   "eol": "LF"
+  },
+  "runs/es03-green/results.json": {
+   "bytes": 24178,
+   "sha256": "5580f78785128981e6324aebb5ccf30f22d77b5f5f4a0b513b5da56ae6780ec2",
+   "eol": "CRLF"
+  },
+  "runs/es03-green/summary.json": {
+   "bytes": 708,
+   "sha256": "9b1b73da8798803a783d616db29d4cb559ee211c62a78fbf614224ce38bfe200",
+   "eol": "CRLF"
+  },
+  "runs/es03-green2/results.json": {
+   "bytes": 24362,
+   "sha256": "3a53384aaccf7fbfe88206270d457e2515bf03309566fab312f86ed208b8daae",
+   "eol": "CRLF"
+  },
+  "runs/es03-green2/summary.json": {
+   "bytes": 709,
+   "sha256": "1948d71fa34511b037164d5699208fb610d70a0c1fc1cb6535812506592b3c2f",
+   "eol": "CRLF"
+  },
+  "runs/es03-green3/results.json": {
+   "bytes": 24363,
+   "sha256": "ec9f688dbd587836078a7013602659a550d2cbe9053a2e3d3b2138c0f6f531c3",
+   "eol": "CRLF"
+  },
+  "runs/es03-green3/summary.json": {
+   "bytes": 711,
+   "sha256": "cc3e4f3838657e5a6ca0a28e25ac35ded9aa6fc615d7de87c1ba1b63c6dc1627",
+   "eol": "CRLF"
+  },
+  "runs/es03-real-data.json": {
+   "bytes": 1370,
+   "sha256": "8eddf0fc3565c701d5d76e1c6e41b79136739bbe9c72e575188ce89bc720191e",
+   "eol": "CRLF"
+  },
+  "runs/es03-real-selfpackage.json": {
+   "bytes": 237,
+   "sha256": "8b630c141aeb73ed7955a4e80ccf064dd94281eeef8636ca9cca6f264516355e",
+   "eol": "CRLF"
+  },
+  "runs/es03-red/results.json": {
+   "bytes": 27720,
+   "sha256": "e8c1c8b28289b11b10c97563ab9c007aa6c66c24a5d66e68c3c1651685d6757f",
+   "eol": "CRLF"
+  },
+  "runs/es03-red/summary.json": {
+   "bytes": 3922,
+   "sha256": "06bc5c04c02d738d57802eb33d064295586885d35d7157693a8503e3d5e52717",
+   "eol": "CRLF"
+  },
+  "runs/es03-unittest-v.txt": {
+   "bytes": 10431,
+   "sha256": "1e50a346c0edf478e640d4c42900e4b617ea5a27c8b9ba1e50ae89aec7745d2a",
+   "eol": "CRLF"
   },
   "runs/full/results.json": {
    "bytes": 4977947,
@@ -71,6 +156,401 @@
    "bytes": 6582,
    "sha256": "5bde99f79812c799a62ab029f34f972340095e6c1ad296a883d06d5e4d7943be",
    "eol": "LF"
+  },
+  "runs/gateES03/attempts.json": {
+   "bytes": 7706,
+   "sha256": "704a45a18ffe4bfb74f30fda17fc438b6987e1041c777ceaea81be265b81990d",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/baseline/results.json": {
+   "bytes": 70600,
+   "sha256": "e898ebb3c45756a2dca496c65d11fea981b249bdf84da669d06a5bcfd504b8b1",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/baseline/summary.json": {
+   "bytes": 38213,
+   "sha256": "2dc6eb86755eade7a7efcb23f2a88f13a03f90426284d845b16604ed2d16bcd4",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R1-stage-ignores-manifest/results.json": {
+   "bytes": 32109,
+   "sha256": "22218d4e5864c862fe44c2784e23c61c0c1929bd91aee6914bbe493fea7e8a30",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R1-stage-ignores-manifest/summary.json": {
+   "bytes": 6894,
+   "sha256": "acc0f1ba9e4b31185135c9a06f4b75a4acda1c43a1d5ffc840acc9485ee82eb0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R10-no-candidate-rehash/results.json": {
+   "bytes": 31038,
+   "sha256": "30aaa01c6683e32ce8eb1d1bd34289bb734670e1882238300d772711e200ba27",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R10-no-candidate-rehash/summary.json": {
+   "bytes": 5584,
+   "sha256": "308c9a873b2eb2380606651ea866dae1b003ac81f09e76fb722973a846e0dcbd",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R11-anchor-unchecked/results.json": {
+   "bytes": 26859,
+   "sha256": "2233b30f0a4d406143e2df2fe9629f4ac8bd3e02439bb7204cad1f5b624b8464",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R11-anchor-unchecked/summary.json": {
+   "bytes": 3164,
+   "sha256": "5fa6f1feff9856823bf6bce6bbe3bb94be14cee7a2ae671f1629d1f9400bae90",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R12-recursion-not-refused/results.json": {
+   "bytes": 26071,
+   "sha256": "4cb64fa44fc3638d70051dc0957cc5bb9d1fcd4570741cccf041f27bd2e6c2d0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R12-recursion-not-refused/summary.json": {
+   "bytes": 1355,
+   "sha256": "38cbdc363e8355eb5c1594da4d657be9868a798b00589e57bf3b10f9d4c33c53",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R13-file-name-unchecked/results.json": {
+   "bytes": 24904,
+   "sha256": "ce333f074b9b50bf938b0594d2875df43fb6f7d470e85b5ac384df00b36965e8",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R13-file-name-unchecked/summary.json": {
+   "bytes": 1341,
+   "sha256": "7da62f6b1aa904b0e8562d7c727595b8e2447f42b6a5b2affbf707f3353e5f4a",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R14-overlap-unchecked/results.json": {
+   "bytes": 26328,
+   "sha256": "88fa43d316ffd0ba9f1c2b9d694935b3a8b1b4be65f23c9b9f967b861056f472",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R14-overlap-unchecked/summary.json": {
+   "bytes": 2250,
+   "sha256": "781a1af59543909d3beeb370cfac5cfb5bf9d33a705ef280189aed64d8885a09",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R15-hardlinks-unchecked/results.json": {
+   "bytes": 24948,
+   "sha256": "e84bc466f6a3c5996b9eff180381f93f393fa007becc1fab4759ce7aab3d6c36",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R15-hardlinks-unchecked/summary.json": {
+   "bytes": 1331,
+   "sha256": "085155ce92648c8fb1dfe583214a291f19d40f9d66d5adc164345af372e39fce",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R16-extended-prefix-kept/results.json": {
+   "bytes": 24363,
+   "sha256": "41f0aa593f6983ce0ea0095e8bdfa1c2f018870ebaec9cc9f593730e0135e257",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R16-extended-prefix-kept/summary.json": {
+   "bytes": 890,
+   "sha256": "fa3132f0fee8176b7d16a49b44f574dd84627ed3e8a9fd8d1f6a965cf7f7e279",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R2-verify-trusts-manifest/results.json": {
+   "bytes": 25722,
+   "sha256": "3a628a9565dc6c875a18b0e10fdcc6ea5d7f4989789657239ef3dde390f536da",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 1887,
+   "sha256": "19e0a9ddca2ff2772432232fa29291f8e585120dcaa9bcb1cd39e7ace7507894",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R3-no-completeness-anchor/results.json": {
+   "bytes": 27679,
+   "sha256": "f8cad5d1bc67e443d72645c7c93c115d70cc96d61d06f97372b0811475139377",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R3-no-completeness-anchor/summary.json": {
+   "bytes": 3696,
+   "sha256": "d1aec5e9dc6f3e30e89d800d05ca0c1d9e8821a597219f6718df3986d26e55e7",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R4-no-inventory-compare/results.json": {
+   "bytes": 26359,
+   "sha256": "da6d730a1c7a4005ba72c20b77c42513b51123946ad59036f61079e5a12d942c",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R4-no-inventory-compare/summary.json": {
+   "bytes": 2848,
+   "sha256": "0550023061100e824c063d300831d0ab74353d4c05fce996cfbee1ccb1fab52d",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R5-links-ignored/results.json": {
+   "bytes": 24721,
+   "sha256": "8df580192d0aeb3badfb607ec15ea000a05140fca92a337afe6a490298e3fb39",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R5-links-ignored/summary.json": {
+   "bytes": 1279,
+   "sha256": "306db35ab92da06eb52d40d4f056fbd7ada3e21c363d9d4e5dc804741c4b59c0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R6-read-unvalidated-ids/results.json": {
+   "bytes": 25539,
+   "sha256": "f570e13525c23aeb83c14de772b81eb6365a2e8185c0c5b520fb0dfbda132a0c",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R6-read-unvalidated-ids/summary.json": {
+   "bytes": 1339,
+   "sha256": "2e71eed3016fd8f0199dd0fb07060b86d4a14ae6059e620de87282baf5c62300",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R7-totals-trusted/results.json": {
+   "bytes": 27013,
+   "sha256": "4859bb7417b539fbf270bff9bd2bff0cb6815f41910216dae18b92e002866af6",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R7-totals-trusted/summary.json": {
+   "bytes": 2686,
+   "sha256": "e7a780bb54e5af65f5cc84eb9d7a4f61e5a13d877d2c8fb77dd2f470366a3076",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R8-duplicate-keys-accepted/results.json": {
+   "bytes": 24733,
+   "sha256": "1a2d117c458edea9db190b0ecff3b51e941359037ba7915f5315be8bdf4561e0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R8-duplicate-keys-accepted/summary.json": {
+   "bytes": 1359,
+   "sha256": "eef3b9f5efbf7a4422012bf6ffd8a5c8617fe0b4fe83be62af43b0f58775fed0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R9-unlisted-accepted/results.json": {
+   "bytes": 24781,
+   "sha256": "5884f9b8d681f5a9982e5244e774834c54258b5e45cd45cbd298d119c4af2667",
+   "eol": "CRLF"
+  },
+  "runs/gateES03/R9-unlisted-accepted/summary.json": {
+   "bytes": 1323,
+   "sha256": "f1d66c1a09ca9dc691ccd47aea4a475c52e3f5ec8231f2fe8ba7b268e7893c00",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/attempts.json": {
+   "bytes": 1376,
+   "sha256": "50209f58c03db8e8ab8ce4a358f205352a8c01f67630566acbb2f7cb2123f043",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R14-overlap-unchecked/results.json": {
+   "bytes": 26949,
+   "sha256": "1df1916917ba9abf88373cf01ed3783b9cf7d31ade3a982e85d87c6375e91f30",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R14-overlap-unchecked/summary.json": {
+   "bytes": 2692,
+   "sha256": "44da279c4fcdae488f4d110109ddf20d61f356c3be6425895e42a574a3d01428",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R15-hardlinks-unchecked/results.json": {
+   "bytes": 24948,
+   "sha256": "98dae9098a54079662f236dc105617145243e64684b16b0f09a97a79e6362ca5",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R15-hardlinks-unchecked/summary.json": {
+   "bytes": 1333,
+   "sha256": "f172aae5a0af712192d7c6270858573ce8dd530b66b46977952f7258301c52f0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R16-extended-prefix-kept/results.json": {
+   "bytes": 24991,
+   "sha256": "5cdf37e8929c37dad5493f2027f5d541ea9e94199ca1db58f282851d753895c5",
+   "eol": "CRLF"
+  },
+  "runs/gateES03b/R16-extended-prefix-kept/summary.json": {
+   "bytes": 1335,
+   "sha256": "a7d587b76c399183c387c22448b9f43131fa1a9d3e0a36e59bf3bf9cf8d686cb",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/attempts.json": {
+   "bytes": 8136,
+   "sha256": "79e9eae6e7f645a6527d9a1d2fd7d7d5d5dc2ff96c2f3b8f81c95fa205a23b29",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/baseline/results.json": {
+   "bytes": 70599,
+   "sha256": "b26a4213b6d2283ab79e9a8cbcc6c9f76e6be825864a48330704c694b2e2813f",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/baseline/summary.json": {
+   "bytes": 38215,
+   "sha256": "0e5fc69ed15ebfae3274db9f89f0579ad44f7e6b6996c3e0d9661cce4bff10d3",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/pre-es03/results.json": {
+   "bytes": 29037,
+   "sha256": "82e444db09212b949b9e8ff09d1d1c1321ddcf9e8e3270a3c32f549df75aeeb0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/pre-es03/summary.json": {
+   "bytes": 4390,
+   "sha256": "30e55b57a5c4e84e257d5fac59f244b0a2a7ca4623c1d0129f77c6adb673e371",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R1-stage-ignores-manifest/results.json": {
+   "bytes": 32110,
+   "sha256": "47723e90c9f2686ed7864b17af30a07890d260a81a8fb31c6e1a917043b657a4",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R1-stage-ignores-manifest/summary.json": {
+   "bytes": 6896,
+   "sha256": "592b4defdc0609bdea288a8a33788898aa5b137ae274a2961ecfc2837d8ceb7e",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R10-no-candidate-rehash/results.json": {
+   "bytes": 31039,
+   "sha256": "34b81f557075b9af262aa010d8adee10a80b45263e404930a971267ff9eb9af0",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R10-no-candidate-rehash/summary.json": {
+   "bytes": 5586,
+   "sha256": "7519379bb6d57046330734488f4090c9fe8c0cc6984d69a6d983ba07ff8f9a76",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R11-anchor-unchecked/results.json": {
+   "bytes": 26860,
+   "sha256": "08fcbff2a67a52bb9bc42266964d0dce7952cdade7577ee31ebaf4cd69b8ef2a",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R11-anchor-unchecked/summary.json": {
+   "bytes": 3166,
+   "sha256": "a779b52b6b39b4ad9a0a6d7a7338548b6e448f56a7df4538b4eab0c21c912402",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R12-recursion-not-refused/results.json": {
+   "bytes": 26071,
+   "sha256": "72590abbfcb08161ade4a7bc12b4412e12a7c436afe5c67f6b7cf109e454a492",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R12-recursion-not-refused/summary.json": {
+   "bytes": 1357,
+   "sha256": "b10b8ade2aaf51a2e993de695bc544bd5e56f3a57174e6c3353437b6505057ea",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R13-file-name-unchecked/results.json": {
+   "bytes": 24904,
+   "sha256": "60a4e7ae3e9b4022f21aee5a4e7026eee26aa8cef1f472c439250920f05c78af",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R13-file-name-unchecked/summary.json": {
+   "bytes": 1342,
+   "sha256": "0f88ccedf36a78e150030cf9cdb7d267b6474b45b537af9edf784bafa1043717",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R14-overlap-unchecked/results.json": {
+   "bytes": 26949,
+   "sha256": "e549c9ea713bd5dc951e12fa589ad83faf16fb22d840b6ce0259211d4edf4bc2",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R14-overlap-unchecked/summary.json": {
+   "bytes": 2691,
+   "sha256": "a0e001c6d71c3dcfb8c2f15e7584fbad570ee560ef7912b24c1b72e481b98e67",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R15-hardlinks-unchecked/results.json": {
+   "bytes": 24948,
+   "sha256": "4461bf93bcda2ff3789e8c8b4e6593bca7703388fb07e86056bd470615693e77",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R15-hardlinks-unchecked/summary.json": {
+   "bytes": 1333,
+   "sha256": "ed8c94ef05dc1d33c6cf5c0beba35fa5a82f4d99386080cfd1819cab54706247",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R16-extended-prefix-kept/results.json": {
+   "bytes": 24991,
+   "sha256": "ef61f812d8653b2fc11dc3188bfd246eba5aff4aca63be545e78d398c3e790b2",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R16-extended-prefix-kept/summary.json": {
+   "bytes": 1335,
+   "sha256": "7d1445d6cbe92ef5693c8f5e937e03e8a793aeb858860e9c86b784e0384ab056",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R2-verify-trusts-manifest/results.json": {
+   "bytes": 25722,
+   "sha256": "5a6e3e2ee552c928c764b25b0c58037691e84a4adcd8d642809e0613090ca1bf",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R2-verify-trusts-manifest/summary.json": {
+   "bytes": 1889,
+   "sha256": "8768f8736a584c7f50cad465e1cc898530450cb02e3e14e7e2e8fe3e55d580be",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R3-no-completeness-anchor/results.json": {
+   "bytes": 27678,
+   "sha256": "800bcf4b97b73d27fd5eaf70bc2f1e7491b76bb340c6a6bd59f789fd4753f7a1",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R3-no-completeness-anchor/summary.json": {
+   "bytes": 3698,
+   "sha256": "26989d2dd45cd488de5b1f161f977a66fa6c0d72b83305805a77bd047af1f31f",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R4-no-inventory-compare/results.json": {
+   "bytes": 26359,
+   "sha256": "420ea7fc8f880a9bbeeedfa64d9a84601cc06607000d1a3c3ae6f15b3556c9fb",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R4-no-inventory-compare/summary.json": {
+   "bytes": 2850,
+   "sha256": "7d9c772290d9622c1d1214c4b6663abb2ccc2e1a857fb5596d2208e982c4924f",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R5-links-ignored/results.json": {
+   "bytes": 24721,
+   "sha256": "ed2a9c88bdb981e34aa1ac812726280d2d09ad5f1b48f6ad4f04f9dfbd202fa9",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R5-links-ignored/summary.json": {
+   "bytes": 1281,
+   "sha256": "71fbbe8a05d7c5bcd8e615042b747901f3b03eadd3cd571689a5b91116add295",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R6-read-unvalidated-ids/results.json": {
+   "bytes": 25540,
+   "sha256": "5a0144c6dca7630e687270ad7f45fb0857ebb97f49859b3152bb49bd458cd1f7",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R6-read-unvalidated-ids/summary.json": {
+   "bytes": 1341,
+   "sha256": "a118b4ff4b61df183dc811aebff8315a6785b617c5dc77300b40dd70517fd8b3",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R7-totals-trusted/results.json": {
+   "bytes": 27013,
+   "sha256": "a0ff4c9c8bf2376dfcd1fbbdf43800ee811b7c71a3bf301a149d2021969f92de",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R7-totals-trusted/summary.json": {
+   "bytes": 2688,
+   "sha256": "a74d0d5489d20fcf41d73869e8dadf69beeec8be0380895b37f8b779348a92ae",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R8-duplicate-keys-accepted/results.json": {
+   "bytes": 24733,
+   "sha256": "71e9e5f31907ea6a5f18b1b7ad41ca9b9ddc2bec62af8b725ca20842522f2ce4",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R8-duplicate-keys-accepted/summary.json": {
+   "bytes": 1361,
+   "sha256": "10909573e4510c0d678be1b0fab0d1266cf9d7b224101f19fd9158ca39286062",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R9-unlisted-accepted/results.json": {
+   "bytes": 24782,
+   "sha256": "93c95ff1acff090dbd2595d5d373fd72085b375fbf61c88838d0a1f15e4cd530",
+   "eol": "CRLF"
+  },
+  "runs/gateES03F/R9-unlisted-accepted/summary.json": {
+   "bytes": 1325,
+   "sha256": "e04ffa0e1e830d17d547df1e2afa9ec96769b07032985f22f0f4754d5af11364",
+   "eol": "CRLF"
   },
   "runs/gateR/attempts.json": {
    "bytes": 5841,
@@ -603,8 +1083,8 @@
    "eol": "CRLF"
   },
   "runs/runs-map.json": {
-   "bytes": 37946,
-   "sha256": "e294ba1d4d19f9c35e213a93a26658da68332c6bd38ab9e9532139b23ae15428",
+   "bytes": 70306,
+   "sha256": "7aa5fc63f27bfaf3b4734a87567549b0b71024bfd110b7164709be8b63fb8922",
    "eol": "LF"
   },
   "runs/unittest-v.txt": {
@@ -618,8 +1098,8 @@
    "eol": "LF"
   },
   "tools/build_mirror.py": {
-   "bytes": 6582,
-   "sha256": "99a96cf89a5df0142509ea34f6b45d1e61ecfccfabf5746e5ee7c849a51a06a7",
+   "bytes": 9863,
+   "sha256": "10627a00e157d56a87ab3af652f95076ba47c3b6b2fc3d548f5503b2f756807f",
    "eol": "LF"
   },
   "tools/collect_runs.py": {
@@ -640,6 +1120,11 @@
   "tools/real_data_check.py": {
    "bytes": 3144,
    "sha256": "1f03b34c3da228879e2a49ef170d75ee78e3a18563ee9fd9bc515a0b68e0ae0f",
+   "eol": "LF"
+  },
+  "tools/rotate_amendment.py": {
+   "bytes": 7716,
+   "sha256": "af075deedda1633451fc380b541f293006c7db70a702dda61aa9056c4f1a886d",
    "eol": "LF"
   },
   "tools/rotate_card.py": {

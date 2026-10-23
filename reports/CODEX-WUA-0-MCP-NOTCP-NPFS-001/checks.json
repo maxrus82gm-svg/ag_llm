@@ -1,0 +1,63 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11",
+  "publication": "LOCAL ONLY / GITHUB NOT USED",
+  "npfs": {
+    "collected": 24,
+    "passed": 24,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "npfs_evidence": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-013425-5ffffe57/results.json",
+  "regression": {
+    "sdk": {
+      "total": 63,
+      "passed": 63,
+      "failed": 0
+    },
+    "security": {
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "errors": 0
+    },
+    "evidence": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/regression-20261024-012158-837df4bd/results.json"
+  },
+  "statuses": [
+    "LOCAL_STDIO_NPFS_MCP_TESTED",
+    "C_RELAY_NO_TCP_SOURCE_REVIEWED",
+    "RUNTIME_NETWORK_OBSERVATION_NOT_VERIFIED",
+    "REAL_CROSS_SID_AUTH_PENDING",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "B_V2RAY_EGRESS_OWNER_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "network_observations": {
+    "normal_samples": 51,
+    "normal_endpoint_rows": 0,
+    "normal_children": [],
+    "mutant_samples": 51,
+    "mutant_endpoint_rows": 49,
+    "complete_process_lifetime_proof": false,
+    "OS_enforced": false
+  },
+  "security_controls": {
+    "tcp_dial": "DETECTED",
+    "wrong_peer": "DETECTED: inner policy oracle FAIL",
+    "shortened_lifetime": "owned process termination observed"
+  },
+  "source_pins": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-013425-5ffffe57/source_pins.json",
+  "binary_pins": "reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/runs/attempt-20261024-013425-5ffffe57/binary_pins.json",
+  "can_apply": false,
+  "install_uninstall": "BLOCKED",
+  "real_cross_sid_tests": "NOT RUN",
+  "WFP_calls": 0,
+  "Go_tunnel_client_runs": 0,
+  "real_V2Ray_requests": 0,
+  "OpenAI_requests": 0,
+  "ordinary_ChatGPT_calls": 0,
+  "independent_acceptance": "NOT VERIFIED",
+  "rotation": "CARD ROTATION VERIFIED"
+}

@@ -1,0 +1,56 @@
+[
+ {
+  "label": "R14-overlap-unchecked",
+  "exit": 1,
+  "tests_run": 69,
+  "failures": 4,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateES03b-R14-overlap-unchecked-uqvn91kn",
+  "build": {
+   "variant": "R14-overlap-unchecked",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "250f6d24c7759a8e9f81e182302e5aee38e9416ccc7b05c4012ddb53b901c81c"
+   }
+  },
+  "wall": 6.1
+ },
+ {
+  "label": "R15-hardlinks-unchecked",
+  "exit": 1,
+  "tests_run": 69,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateES03b-R15-hardlinks-unchecked-opurlply",
+  "build": {
+   "variant": "R15-hardlinks-unchecked",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "d50afae4d0a143c4c297a1a504032379ffe0f3c3e3e92ae18c4479fed298a81a"
+   }
+  },
+  "wall": 5.9
+ },
+ {
+  "label": "R16-extended-prefix-kept",
+  "exit": 1,
+  "tests_run": 69,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-esrep-gateES03b-R16-extended-prefix-kept-qkcc8fv6",
+  "build": {
+   "variant": "R16-extended-prefix-kept",
+   "mirror": "code",
+   "changed": {
+    "evidence_sanitizer.py": "9483e2482630dfde8a24fec533577476c042c655055077094fc2c6d3ed5ae573"
+   }
+  },
+  "wall": 5.9
+ }
+]

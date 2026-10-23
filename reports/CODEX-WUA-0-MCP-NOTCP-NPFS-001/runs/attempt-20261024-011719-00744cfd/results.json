@@ -1,0 +1,78 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "collected": 16,
+  "passed": 14,
+  "failed": 2,
+  "errors": 0,
+  "skipped": 0,
+  "selectors": [
+    {
+      "id": "__main__.NpfsTests.test_01_official_sdk_four_tools_and_readonly",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_02_restart_and_proxy_environment",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_03_pipe_missing",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_04_remote_smb_and_bad_name",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_05_wrong_server_pid_sid_image",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_06_gateway_rejects_wrong_client_image",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_07_wrong_grant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_08_session_mixing",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_09_oversize_partial_duplicate_and_bad_type",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_10_owner_crash_and_unresponsive_stdin",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_11_exclusive_instance",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_12_wrong_peer_oracle_and_mutant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_13_pipe_response_bounds_correlation_replay_and_close",
+      "status": "FAIL",
+      "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 415, in test_13_pipe_response_bounds_correlation_replay_and_close\n    self.assertEqual(seen,['hello','request'])\nAssertionError: Lists differ: [] != ['hello', 'request']\n\nSecond list contains 2 additional elements.\nFirst extra element 0:\n'hello'\n\n- []\n+ ['hello', 'request']\n"
+    },
+    {
+      "id": "__main__.NpfsTests.test_14_os_tables_and_tcp_mutation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_15_sdk_child_job_cleanup_after_gateway_crash",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_16_scoped_gateway_raw_wire_replay",
+      "status": "FAIL",
+      "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 466, in test_16_scoped_gateway_raw_wire_replay\n    self.assertEqual(read_wire(client,f.session,f.key,b'U',0),b'ready')\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 73, in read_wire\n    head = peer.read(53)\n           ^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 239, in read\n    assert K.ReadFile(self.h, b, len(b), ct.byref(got), None) and got.value\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "mcp": "2.2.0"
+}

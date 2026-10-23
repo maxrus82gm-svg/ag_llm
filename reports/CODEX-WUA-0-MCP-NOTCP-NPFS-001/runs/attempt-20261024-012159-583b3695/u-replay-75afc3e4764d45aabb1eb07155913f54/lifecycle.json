@@ -1,0 +1,14 @@
+{
+  "gateway_pid": 40600,
+  "gateway_exit": 20,
+  "events": [
+    "GATEWAY_LISTENING",
+    "GATEWAY_AUTHENTICATED:41168",
+    "DACL_TOKEN_VERIFIED:Identification:current-user"
+  ],
+  "errors": [
+    "GATEWAY_STOP:WIRE_REPLAY"
+  ],
+  "owned_relays": [],
+  "reader_threads_stopped": true
+}

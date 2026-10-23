@@ -1,0 +1,50 @@
+{
+ "label": "R7-totals-trusted",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R7-totals-trusted-detqluag\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R7-totals-trusted-9c_dj9hg\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.768,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R7-totals-trusted-9c_dj9hg",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R7-totals-trusted-detqluag\\code",
+ "tests_run": 69,
+ "passed": 65,
+ "failures": 4,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.809,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=0)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=1)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=2)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ],
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_metadata_tampering_is_detected (case=3)",
+   "FAIL",
+   "sertEqual((report[\"verdict\"], report[\"publication\"]), (\"INCONSISTENT\", \"REFUSED\"))\nAssertionError: Tuples differ: ('CONSISTENT', 'SAFE CANDIDATE') != ('INCONSISTENT', 'REFUSED')\n\nFirst differing element 0:\n'CONSISTENT'\n'INCONSISTENT'\n\n- ('CONSISTENT', 'SAFE CANDIDATE')\n+ ('INCONSISTENT', 'REFUSED')\n"
+  ]
+ ]
+}

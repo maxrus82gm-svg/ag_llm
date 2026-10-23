@@ -1,0 +1,23 @@
+{
+ "phase": "B",
+ "card_sha256": "b119c9bc7de12905a683ac23d0781ce52662af83059cb321e7fc4498538a07ad",
+ "block1_waiting": true,
+ "rules_sha256": "d612dd2eec818ee36bb44468b6fe1cb44f6c97ae0b843d05d55e0848e4327980",
+ "block1_sha256": "11701f8ce1760e6d90fb30612c64d01aa6f1825ade2ad0be33e1fe3e296d7427",
+ "block4_sha256": "549c79ec6e9d54f7825d04d8ad9d97e8fc7f2a5c7c5a2e7fa2d255b22613239b",
+ "line2_before": "- **2026-10-23 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — исправление fail-open F-ES-01 / F-ES-02 механизма публикации evidence. Статус: RESULT READY / AWAITING INDEPENDENT VERIFICATION.",
+ "line3_before": "- **CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — F-ES-01 (manifest SHA-256/размер) и F-ES-02 (полнота комплекта) закрыты fail-closed; verify доказывает набор против пакета или внешнего хеша карты, иначе REFUSED. Полный источник: запись в `001` и `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/report.md`.",
+ "earlier_record_readback": true,
+ "archive_size": 694766,
+ "archive_eol": "CRLF",
+ "archive_read": "own earlier record range + last 2 bytes only",
+ "result": "OK",
+ "archive_offset": 694766,
+ "archive_appended_bytes": 7392,
+ "archive_record_sha256": "a564b7cd590207252eb0b158bd4497ca70a8a5cdede73e33350c51402d7b5e72",
+ "archive_size_after": 702158,
+ "readback": "MATCH",
+ "card_after_sha256": "e5a73cde674d9a7c1efeac883b8cea254657773723423ea3718da86f005e21b7",
+ "card_after_bytes": 16545,
+ "rules_block1_block4_unchanged": true
+}

@@ -1,0 +1,286 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "time": "2026-10-24T01:06:08.022409+05:00",
+  "inputs": {
+    "integrations/wua_chatgpt_mcp/api_channel.py": {
+      "bytes": 3742,
+      "sha256": "767059689360dad0ba5a8b4b2e3f2dd6180c0123c65b5e3e390a267e31fa5928"
+    },
+    "integrations/wua_chatgpt_mcp/api_fixture.py": {
+      "bytes": 3800,
+      "sha256": "77d919c122bcb6bf7dcc7962eb97d65a85da921a574cbb7b33dc9b8eedae849a"
+    },
+    "integrations/wua_chatgpt_mcp/common.py": {
+      "bytes": 4663,
+      "sha256": "edde5820d62e700ae9f1e8561f56cb28e8ffe3583433bf295c9c06fa93263c86"
+    },
+    "integrations/wua_chatgpt_mcp/diagnostics.py": {
+      "bytes": 1607,
+      "sha256": "0861851ac285eb025822086c13c93f04efa3287ed1823ad9640ef3b965102e45"
+    },
+    "integrations/wua_chatgpt_mcp/README.md": {
+      "bytes": 8073,
+      "sha256": "74ca842af0a664288e2d873d4a6e4c1d4b9ee15bc1c03a31685efe671d3bd2f6"
+    },
+    "integrations/wua_chatgpt_mcp/reference_connect.py": {
+      "bytes": 13314,
+      "sha256": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457"
+    },
+    "integrations/wua_chatgpt_mcp/route_simulation.py": {
+      "bytes": 2718,
+      "sha256": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b"
+    },
+    "integrations/wua_chatgpt_mcp/security_contract.py": {
+      "bytes": 5355,
+      "sha256": "8d568f36868ef4155da9e789d19604e1acaa4f3efc235117baf2e246803b6ade"
+    },
+    "integrations/wua_chatgpt_mcp/server.py": {
+      "bytes": 4539,
+      "sha256": "b642b02599abdece141740b1eb3a9dc35b4ed69f25ba8207d737fb7523e2df67"
+    },
+    "integrations/wua_chatgpt_mcp/configs/broker.contract.json": {
+      "bytes": 1288,
+      "sha256": "da0530ea237c69057e68e3c7c29455bdcd6d76b5e185a91bc3e395a82204c76d"
+    },
+    "integrations/wua_chatgpt_mcp/configs/gateway.ipc.contract.json": {
+      "bytes": 1574,
+      "sha256": "7b0c4e909d3477d51b5e511f6f6c113e724108b0dab69aa002df8a6d5821033f"
+    },
+    "integrations/wua_chatgpt_mcp/configs/health.contract.json": {
+      "bytes": 883,
+      "sha256": "00a11ba408a80ff0de4db9e460981d4fa50b0c37be683e13a836d99189ecc69d"
+    },
+    "integrations/wua_chatgpt_mcp/configs/strict.synthetic.example.json": {
+      "bytes": 1433,
+      "sha256": "8f2790e25a1dbe03078636eae68f6a028698a8b1c0cb802679131de779a40409"
+    },
+    "integrations/wua_chatgpt_mcp/configs/strict.template.json": {
+      "bytes": 1083,
+      "sha256": "6d7b8dc2c2acef40e9bddd748788e5ffa072b7df37b40f4eeaff306209506874"
+    },
+    "integrations/wua_chatgpt_mcp/configs/tunnel-client.v0.0.16.disabled.yaml": {
+      "bytes": 508,
+      "sha256": "ef6ad11c812b44d15c3d47710b7a3d88cba078ef595506d9c9a9c2d97f9de2a8"
+    },
+    "integrations/wua_chatgpt_mcp/configs/tunnel.launch.contract.json": {
+      "bytes": 2618,
+      "sha256": "7474c1e49b6bd80ce4a94fbcc6a853822f1040ef09e531bf3a967e08b29a0eb5"
+    },
+    "integrations/wua_chatgpt_mcp/tests/mcp_smoke.py": {
+      "bytes": 7995,
+      "sha256": "870f431dfa1172febe4b82750bf633aa55fc2e11648a3c65e48c3b226afa7daa"
+    },
+    "integrations/wua_chatgpt_mcp/tests/probe_event_loop.py": {
+      "bytes": 2325,
+      "sha256": "99b643a4660e08fdbbad60e4929b78364fedb6f43cceb29d20ccf51072661848"
+    },
+    "integrations/wua_chatgpt_mcp/tests/run_suite.py": {
+      "bytes": 2601,
+      "sha256": "d3de1b8af6faa21eb76e83a7fa4eb84777ec71bcf83a5586e0b142c2e51e30ec"
+    },
+    "integrations/wua_chatgpt_mcp/tests/test_security_routes.py": {
+      "bytes": 21177,
+      "sha256": "3fe7b2869aa05b381a539c65459ff25b1aa6c060c45a97f8a98464ce9c2705d8"
+    },
+    "web_alarm/cli.py": {
+      "bytes": 13167,
+      "sha256": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41"
+    },
+    "web_alarm/closeout.py": {
+      "bytes": 5752,
+      "sha256": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603"
+    },
+    "web_alarm/context_pack.py": {
+      "bytes": 7616,
+      "sha256": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2"
+    },
+    "web_alarm/event_checkpoint_store.py": {
+      "bytes": 19244,
+      "sha256": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042"
+    },
+    "web_alarm/evidence_sanitizer.py": {
+      "bytes": 58626,
+      "sha256": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284"
+    },
+    "web_alarm/file_state.py": {
+      "bytes": 5943,
+      "sha256": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1"
+    },
+    "web_alarm/folder_picker.py": {
+      "bytes": 4927,
+      "sha256": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3"
+    },
+    "web_alarm/manifest_store.py": {
+      "bytes": 36996,
+      "sha256": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3"
+    },
+    "web_alarm/microtask_gate.py": {
+      "bytes": 23319,
+      "sha256": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a"
+    },
+    "web_alarm/models.py": {
+      "bytes": 12040,
+      "sha256": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf"
+    },
+    "web_alarm/mutation_executor.py": {
+      "bytes": 39988,
+      "sha256": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854"
+    },
+    "web_alarm/observation.py": {
+      "bytes": 7166,
+      "sha256": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1"
+    },
+    "web_alarm/operation_contract.py": {
+      "bytes": 27639,
+      "sha256": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6"
+    },
+    "web_alarm/operation_store.py": {
+      "bytes": 44850,
+      "sha256": "a36468717b8def5ca024cdaff751168fc86adbb6aad58f9679dbde2f4a626d48"
+    },
+    "web_alarm/operator_view.py": {
+      "bytes": 7577,
+      "sha256": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e"
+    },
+    "web_alarm/payload_store.py": {
+      "bytes": 5589,
+      "sha256": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1"
+    },
+    "web_alarm/projection.py": {
+      "bytes": 77123,
+      "sha256": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5"
+    },
+    "web_alarm/reconciliation.py": {
+      "bytes": 24654,
+      "sha256": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407"
+    },
+    "web_alarm/reconciliation_decision.py": {
+      "bytes": 11134,
+      "sha256": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb"
+    },
+    "web_alarm/reconciliation_service.py": {
+      "bytes": 3217,
+      "sha256": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0"
+    },
+    "web_alarm/recovery_coordinator.py": {
+      "bytes": 83713,
+      "sha256": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0"
+    },
+    "web_alarm/recovery_report_builder.py": {
+      "bytes": 10467,
+      "sha256": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592"
+    },
+    "web_alarm/recovery_report_service.py": {
+      "bytes": 6394,
+      "sha256": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920"
+    },
+    "web_alarm/recovery_report_store.py": {
+      "bytes": 14761,
+      "sha256": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583"
+    },
+    "web_alarm/remote_entry.py": {
+      "bytes": 4429,
+      "sha256": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5"
+    },
+    "web_alarm/resolution_store.py": {
+      "bytes": 11052,
+      "sha256": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641"
+    },
+    "web_alarm/resolver_service.py": {
+      "bytes": 25279,
+      "sha256": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2"
+    },
+    "web_alarm/rollback_service.py": {
+      "bytes": 54374,
+      "sha256": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69"
+    },
+    "web_alarm/rollback_store.py": {
+      "bytes": 13940,
+      "sha256": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72"
+    },
+    "web_alarm/server.py": {
+      "bytes": 58755,
+      "sha256": "7e8b2aab5e2a04e87a5b7dc28cd9c33adf3e0c93bc5dd86f65be4faccae70013"
+    },
+    "web_alarm/state_machine.py": {
+      "bytes": 39949,
+      "sha256": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182"
+    },
+    "web_alarm/storage_policy.py": {
+      "bytes": 1298,
+      "sha256": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76"
+    },
+    "web_alarm/store_lock.py": {
+      "bytes": 2537,
+      "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7"
+    },
+    "web_alarm/target_claim_service.py": {
+      "bytes": 30670,
+      "sha256": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce"
+    },
+    "web_alarm/target_claim_store.py": {
+      "bytes": 11265,
+      "sha256": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185"
+    },
+    "web_alarm/target_identity.py": {
+      "bytes": 4834,
+      "sha256": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71"
+    },
+    "web_alarm/task_store.py": {
+      "bytes": 26797,
+      "sha256": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac"
+    },
+    "web_alarm/transport_event_recovery.py": {
+      "bytes": 25599,
+      "sha256": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5"
+    },
+    "web_alarm/transport_event_store.py": {
+      "bytes": 11736,
+      "sha256": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95"
+    },
+    "web_alarm/ui.py": {
+      "bytes": 57552,
+      "sha256": "dbaf3bad41dfacec9a53fa03cd729101ba9c09d87d8ffed23eed18c123a2d412"
+    },
+    "web_alarm/workspace_registry.py": {
+      "bytes": 5854,
+      "sha256": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556"
+    },
+    "web_alarm/__init__.py": {
+      "bytes": 5319,
+      "sha256": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410"
+    },
+    "web_alarm/__main__.py": {
+      "bytes": 80,
+      "sha256": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a"
+    },
+    "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/report.md": {
+      "bytes": 21367,
+      "sha256": "04eb8c138f0342f838d1903453ec464216a45bb2c3719f2e7a35cea3340b8034"
+    },
+    "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/topology.md": {
+      "bytes": 7395,
+      "sha256": "78f073a55046d2b665bc12c2b8170123270b78f2da1fb054e9d8dea9b4547d38"
+    },
+    "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/connection_gates.md": {
+      "bytes": 5596,
+      "sha256": "d0320e65bb29d301e0489e7034c223f313d9f325159fae6800130c8c9f7933c5"
+    },
+    "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/manual_engineering_review.md": {
+      "bytes": 11427,
+      "sha256": "dc87ee8699f47299b01e8d0e91e3eb0dc40df89bbfe1a5e1e4051afa686829da"
+    },
+    "reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/manifest.json": {
+      "bytes": 52893,
+      "sha256": "54f29c076ac2f79c2758caddecc78845986f8746df739c13d87890e1b0c6a66f"
+    }
+  },
+  "card_sha256": "aace0c47b83d75042a5f4845455ad62901af8ef272c3557fb953a7336a640f8a",
+  "block4_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "archive_metadata_only": {
+    "size": 588938,
+    "mtime_ns": 1792741253972127700,
+    "inode": 1125899907271690
+  },
+  "archive_old_bytes_read": 0
+}

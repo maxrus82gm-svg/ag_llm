@@ -1,0 +1,35 @@
+{
+ "label": "R16-extended-prefix-kept",
+ "argv": [
+  "<REPO>/.venv/Scripts/python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-esrep-mirror-R16-extended-prefix-kept-hm7qei2a\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-esrep-gateES03F-R16-extended-prefix-kept-av_r95u0\\out",
+  "test_web_alarm_evidence_sanitizer"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.952,
+ "base": "<TEMP>\\claude-esrep-gateES03F-R16-extended-prefix-kept-av_r95u0",
+ "runner_root": "<TEMP>\\claude-esrep-mirror-R16-extended-prefix-kept-hm7qei2a\\code",
+ "tests_run": 69,
+ "passed": 68,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.997,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_evidence_sanitizer.BundleCompletenessTests.test_extended_length_spelling_is_the_same_folder",
+   "FAIL",
+   "<TEMP>\\claude-esrep-mirror-R16-extended-prefix-kept-hm7qei2a\\code\\test_web_alarm_evidence_sanitizer.py\", line 1029, in assert_not_independent\n    self.assertNotEqual(report[\"completeness\"], \"PROVEN_AGAINST_PACKAGE\")\nAssertionError: 'PROVEN_AGAINST_PACKAGE' == 'PROVEN_AGAINST_PACKAGE'\n"
+  ]
+ ]
+}

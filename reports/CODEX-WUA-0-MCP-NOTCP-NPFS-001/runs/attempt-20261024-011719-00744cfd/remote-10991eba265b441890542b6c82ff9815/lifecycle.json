@@ -1,0 +1,29 @@
+{
+  "gateway_pid": 43016,
+  "gateway_exit": 20,
+  "events": [
+    "GATEWAY_LISTENING"
+  ],
+  "errors": [
+    "GATEWAY_STOP:ACCEPT_TIMEOUT"
+  ],
+  "owned_relays": [
+    {
+      "pid": 42232,
+      "exit": 20
+    },
+    {
+      "pid": 33164,
+      "exit": 20
+    },
+    {
+      "pid": 37456,
+      "exit": 20
+    },
+    {
+      "pid": 14948,
+      "exit": 20
+    }
+  ],
+  "reader_threads_stopped": true
+}

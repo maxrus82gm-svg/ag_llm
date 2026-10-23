@@ -1,0 +1,58 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "collected": 11,
+  "passed": 9,
+  "failed": 0,
+  "errors": 2,
+  "skipped": 0,
+  "selectors": [
+    {
+      "id": "__main__.NpfsTests.test_01_official_sdk_four_tools_and_readonly",
+      "status": "ERROR",
+      "traceback": "  + Exception Group Traceback (most recent call last):\n  |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 211, in test_01_official_sdk_four_tools_and_readonly\n  |     wire = asyncio.run(sdk_session(f))\n  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\n  |     return runner.run(main)\n  |            ^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\n  |     return self._loop.run_until_complete(task)\n  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\n  |     return future.result()\n  |            ^^^^^^^^^^^^^^^\n  |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 180, in sdk_session\n  |     async with stdio_client(params) as (read, write):\n  |                ^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py\", line 231, in __aexit__\n  |     await self.gen.athrow(value)\n  |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\stdio.py\", line 200, in stdio_client\n  |     async with anyio.create_task_group() as tg:\n  |                ^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py\", line 847, in __aexit__\n  |     raise BaseExceptionGroup(\n  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n  +-+---------------- 1 ----------------\n    | Exception Group Traceback (most recent call last):\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\stdio.py\", line 204, in stdio_client\n    |     yield read_stream, write_stream\n    |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 181, in sdk_session\n    |     async with ClientSession(read, write) as session:\n    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\session.py\", line 514, in __aexit__\n    |     result = await self._task_group.__aexit__(exc_type, exc_val, exc_tb)\n    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py\", line 847, in __aexit__\n    |     raise BaseExceptionGroup(\n    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n    +-+---------------- 1 ----------------\n      | Traceback (most recent call last):\n      |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 190, in sdk_session\n      |     assert not reply.isError, reply\n      |                ^^^^^^^^^^^^^\n      |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\pydantic\\main.py\", line 1042, in __getattr__\n      |     raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\n      | AttributeError: 'CallToolResult' object has no attribute 'isError'. Did you mean: 'is_error'?\n      +------------------------------------\n"
+    },
+    {
+      "id": "__main__.NpfsTests.test_02_restart_and_proxy_environment",
+      "status": "ERROR",
+      "traceback": "  + Exception Group Traceback (most recent call last):\n  |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 227, in test_02_restart_and_proxy_environment\n  |     wire = asyncio.run(sdk_session(f, True))\n  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 195, in run\n  |     return runner.run(main)\n  |            ^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\runners.py\", line 118, in run\n  |     return self._loop.run_until_complete(task)\n  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\asyncio\\base_events.py\", line 691, in run_until_complete\n  |     return future.result()\n  |            ^^^^^^^^^^^^^^^\n  |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 180, in sdk_session\n  |     async with stdio_client(params) as (read, write):\n  |                ^^^^^^^^^^^^^^^^^^^^\n  |   File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py\", line 231, in __aexit__\n  |     await self.gen.athrow(value)\n  |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\stdio.py\", line 200, in stdio_client\n  |     async with anyio.create_task_group() as tg:\n  |                ^^^^^^^^^^^^^^^^^^^^^^^^^\n  |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py\", line 847, in __aexit__\n  |     raise BaseExceptionGroup(\n  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n  +-+---------------- 1 ----------------\n    | Exception Group Traceback (most recent call last):\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\stdio.py\", line 204, in stdio_client\n    |     yield read_stream, write_stream\n    |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 181, in sdk_session\n    |     async with ClientSession(read, write) as session:\n    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\mcp\\client\\session.py\", line 514, in __aexit__\n    |     result = await self._task_group.__aexit__(exc_type, exc_val, exc_tb)\n    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py\", line 847, in __aexit__\n    |     raise BaseExceptionGroup(\n    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)\n    +-+---------------- 1 ----------------\n      | Traceback (most recent call last):\n      |   File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 190, in sdk_session\n      |     assert not reply.isError, reply\n      |                ^^^^^^^^^^^^^\n      |   File \"M:\\GitHub\\ag_llm\\.venv\\Lib\\site-packages\\pydantic\\main.py\", line 1042, in __getattr__\n      |     raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')\n      | AttributeError: 'CallToolResult' object has no attribute 'isError'. Did you mean: 'is_error'?\n      +------------------------------------\n"
+    },
+    {
+      "id": "__main__.NpfsTests.test_03_pipe_missing",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_04_remote_smb_and_bad_name",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_05_wrong_server_pid_sid_image",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_06_gateway_rejects_wrong_client_image",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_07_wrong_grant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_08_session_mixing",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_09_oversize_partial_duplicate_and_bad_type",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_10_owner_crash_and_unresponsive_stdin",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.NpfsTests.test_11_exclusive_instance",
+      "status": "PASS"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "mcp": "2.2.0"
+}

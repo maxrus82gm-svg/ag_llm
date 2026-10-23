@@ -1,0 +1,17 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "collected": 1,
+  "passed": 0,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "selectors": [
+    {
+      "id": "__main__.NpfsTests.test_01_official_sdk_four_tools_and_readonly",
+      "status": "FAIL",
+      "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 218, in test_01_official_sdk_four_tools_and_readonly\n    with Fixture('sdk') as f:\n         ^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 133, in __enter__\n    return self.ready()\n           ^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 104, in ready\n    raise AssertionError(('gateway-not-listening', self.gateway.poll(), self.errors)) from None\nAssertionError: ('gateway-not-listening', 20, ['GATEWAY_STOP:EXCLUSIVE_PIPE_CREATE'])\n"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "mcp": "2.2.0"
+}

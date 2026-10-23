@@ -1,0 +1,17 @@
+{
+  "task": "CODEX-WUA-0-MCP-NOTCP-NPFS-001",
+  "collected": 1,
+  "passed": 0,
+  "failed": 0,
+  "errors": 1,
+  "skipped": 0,
+  "selectors": [
+    {
+      "id": "__main__.NpfsTests.test_01_official_sdk_four_tools_and_readonly",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 210, in test_01_official_sdk_four_tools_and_readonly\n    with Fixture('sdk') as f:\n         ^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 128, in __enter__\n    return self.ready()\n           ^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\run_npfs.py\", line 101, in ready\n    assert self.lines.get(timeout=4) == 'GATEWAY_LISTENING', self.errors\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\REX\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\queue.py\", line 179, in get\n    raise Empty\n_queue.Empty\n"
+    }
+  ],
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "mcp": "2.2.0"
+}

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "session_id": "18fef642-02d4-4c84-ac06-3b0fa71400df",
+  "nonce": "31c4d0149e6cf602ee29533b7613ed34a239e95020c745952d41987c809d20b7",
+  "api_reads": [
+    {
+      "request_id": "2d192620-4721-4c96-ae39-374e008a44a0",
+      "operation": "status",
+      "route": "/status",
+      "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96"
+    },
+    {
+      "request_id": "bcb6c9cc-e353-4089-9712-1f6727fe4f53",
+      "operation": "status",
+      "route": "/status",
+      "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96"
+    },
+    {
+      "request_id": "b1d51a98-6c1f-4262-b496-849456b803dc",
+      "operation": "context",
+      "route": "/tasks/synthetic_wua_integration_001/context",
+      "content_sha256": "d4fe7f1d43e7abfdf6e343675b77782e21544cc15d529f563c860c45001b7b87"
+    },
+    {
+      "request_id": "e86825ee-a3d0-4db5-a806-3110882b9744",
+      "operation": "status",
+      "route": "/status",
+      "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96"
+    },
+    {
+      "request_id": "1ce303e2-4f79-4210-8327-94cf4c1b9d13",
+      "operation": "status",
+      "route": "/status",
+      "content_sha256": "e04e4d9a45d15ee73052f5f9730d5b7aad10f369bf8d3224e5d4f0656319fa96"
+    }
+  ],
+  "seed_files": {
+    "state/workspaces/synthetic_integration_ws.json": "b080a2dfad84c4a82f3e05ded52f17b10d4d832458e0267210b14944e136e7bd",
+    "state/tasks/active/synthetic_wua_integration_001/plan.json": "73775e24c674ddf37a7c8f8396cb969e1426abdf1a3a8ac9fd596f2ecd84713f",
+    "state/tasks/active/synthetic_wua_integration_001/task.json": "de4f5cc28f0afe0b303c1f7e658bc6cc2134d3523ed1e542991b795206bcdb82",
+    "state/tasks/active/synthetic_wua_integration_001/task.md": "c9388baf7cdbda51cdd567f7051d802c50a2a312d51606e1ec0ef71ddda03987"
+  },
+  "baseline_sha256": "c054d1fe692592b68e51859e16346c29cd29fe658b5fb27a6eb5c3f07fdc33d5",
+  "final_sha256": "c054d1fe692592b68e51859e16346c29cd29fe658b5fb27a6eb5c3f07fdc33d5",
+  "worker_pid": 46820,
+  "closed": true
+}

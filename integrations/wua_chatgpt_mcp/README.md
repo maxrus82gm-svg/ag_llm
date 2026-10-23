@@ -46,3 +46,8 @@ Synthetic route tests use only literal127.0.0.1 listeners created by the test. `
 `diagnostics.py --profile <staged JSON> --pin <canonical SHA256> --output <new TASK JSON>` is structural/offline only, expected exit20 even for a valid synthetic profile. It neither enumerates accounts nor probes live listeners. Status and config contracts are in `configs/`; profile/template placeholders stay DISABLED. Template CLI names are taken from cached official v0.0.16 help/sample, not newly downloaded/current upstream. Full native proxy/env/redirect/DNS/child graph and source↔binary identity remain unverified.
 
 Read `reports/.../report.md`, `topology.md`, `connection_gates.md`, `deployment_plan.md`, `manual_engineering_review.md` and `next_user_go.md` before proposing a real connection. Ordinary ChatGPT E2E, native fail-closed and OS containment are separate gates. Working SDK tests do not prove any of them.
+
+
+## Local NPFS candidate (2026-10-24)
+
+`npfs/Relay.cs` and `Shared.cs` compile to the C-side no-TCP executable; `npfs/Gateway.cs` owns one explicit-DACL local pipe and a suspended/job-contained fixed U SDK child. `npfs/gateway_worker.py` reuses the four existing tools with real WebAlarmApi on a new TASK fixture. The legacy STDIO fixture remains available. Run `tests/run_npfs.py` with the existing project Python for the Windows integration/fault suite; `tests/npfs_regression.py` reruns the previous 63-check SDK and 24-test security selectors into the new TASK only. See `reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/README.md`. This is current-user synthetic evidence, not a production connector, cross-SID/WFP proof, tunnel activation or ordinary Chat E2E. Dedicated B-owned V2Ray egress remains an independent blocker.

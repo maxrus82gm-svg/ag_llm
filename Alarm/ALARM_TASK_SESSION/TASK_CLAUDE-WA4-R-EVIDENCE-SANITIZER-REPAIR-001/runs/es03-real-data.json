@@ -1,0 +1,65 @@
+{
+ "stage": {
+  "exit": 0,
+  "files_total": 152,
+  "files_changed": 27,
+  "files_blocked": 0,
+  "verdict": "SAFE PUBLICATION CANDIDATE (needs USER GO)",
+  "replacements_total": {
+   "FRAGMENT": 2,
+   "HOME": 2,
+   "REPO": 71,
+   "TEMP": 144
+  },
+  "kept_total": {
+   "ILLUSTRATIVE": 2
+  },
+  "tool_sha256_lf": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284"
+ },
+ "manifest_checks": {
+  "MATCH": 151,
+  "None": 1
+ },
+ "candidate_manifest": {
+  "changed": true,
+  "rehashed_entries": 26
+ },
+ "verify_with_package": {
+  "exit": 0,
+  "verdict": "CONSISTENT",
+  "completeness": "PROVEN_AGAINST_PACKAGE",
+  "publication": "SAFE CANDIDATE",
+  "problems": {}
+ },
+ "verify_no_anchor": {
+  "exit": 2,
+  "verdict": "CONSISTENT",
+  "completeness": "NOT_PROVEN",
+  "publication": "REFUSED",
+  "problems": {}
+ },
+ "verify_mapping_sha256": {
+  "exit": 0,
+  "verdict": "CONSISTENT",
+  "completeness": "PROVEN_BY_EXTERNAL_MAPPING_SHA256",
+  "publication": "SAFE CANDIDATE",
+  "problems": {}
+ },
+ "scan_candidate": {
+  "exit": 0,
+  "classes": {
+   "BENIGN_ONLY": 2,
+   "CLEAN": 150
+  }
+ },
+ "verify_previous_bundle": {
+  "exit": 2,
+  "verdict": "INCONSISTENT",
+  "publication": "REFUSED",
+  "problems": {
+   "mapping-field-mismatch": 1,
+   "mapping-totals-mismatch": 1,
+   "not-reproducible": 1
+  }
+ }
+}
