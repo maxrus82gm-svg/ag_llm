@@ -1,0 +1,7412 @@
+# Задачи Codex
+
+**Назначение:** персональная карточка локального Codex CLI для задач проекта `ag_llm`. Авторизована пользователем 2026-10-08. Проектный маршрутизатор — [[000_Задачи для агента]]; общий регламент — `18_Регламент сопровождения документации.md`. Codex и Claude не используют общие TASK ID и не пишут отчёт за другую модель.
+
+## Правила
+
+- **`DOC-VERIFIER-BLOCK4-01@1` (18): БЛОК 4 независимого verifier.** БЛОКИ 1–3 прежние; БЛОК 4 — READ-ONLY для исполнителя, его пишет назначенный независимый проверяющий (пока ChatGPT) после фактического review/test. Память — последнее полное заключение + до двух кратких прежних, постоянный архив всех verdict в 06. Новая TASK не обнуляет БЛОК 4. При отсутствии независимого результата — NOT VERIFIED, не PASS.
+
+**Единая граница Git (`rule-ref:DOC-GIT-01@1` в 18, пользовательское решение 2026-10-10):** локальный Codex не обращается самостоятельно к Git/GitHub ни для чтения `status/diff/log/show`, ни для записи, через CLI/UI/scripts/API/тест. Если нужна история или сверка committed версии, запросить exact path/range у пользователя либо ChatGPT-координатора в момент работы; если интерактивно нельзя — в отчёте с пометкой BLOCKED по зависимой операции. Исторические отчёты о прошлых Git-проверках сохраняются как события прошлого, а не как разрешение на новые.
+
+- **Перед TASK / `DOC-TASK-READ-SCOPE-01@1`:** собственные Правила, активный БЛОК 1 и относящийся БЛОК 4 (READ-ONLY), затем указанные в TASK актуальные разделы `08_Старт`, `34_TACTICAL_CONTEXT`, `01`/профиль темы, `36/36.1/36.2` (Web Alarm) или `36.3` (Ultra). Координатор даёт матрицу `файл → точный раздел/Rule-ID → зачем → обязательно/условно/полностью`. Весь глобальный `000_Задачи для агента` и весь `18` не читать механически; при пробеле/конфликте прав, security или отчётности требуется конкретное нормативное правило `18` вместе с зависимостями. Обязательные правила остаются в силе, Git-права не появляются. Codex приступает только к утверждённому БЛОКУ 1; права на мутации определяются scope.
+- **Локальный режим.** Codex CLI не использует аварийный handoff ChatGPT через Desktop Commander Remote. Не создавать `Alarm/ALARM_TASK_SESSION/TASK_*`, `session.jsonl`, `context.md`, `history.md`, пооперационный `INTENT/DONE/VERIFIED`, массовые резервные копии tracked-файлов и сырые stdout-логи в репозитории. Использовать локальный контекст, прямую работу с исходниками и временные изолированные пробы **без Git/GitHub по умолчанию** — `rule-ref:DOC-GIT-01@1` из документа 18. Исключение — явно утверждённая пользователем задача с особыми требованиями аудита и защиты.
+- **Безопасность.** Не экспериментировать на живом storage; Git не заменяет защиту нерегистрируемых в Git пользовательских данных. Не отключать штатный runtime backup/rollback Web Alarm и не удалять существующую историю автоматически.
+- **Обязательная отчётность внутри проекта (`rule-ref:DOC-LOCAL-REPORT-HANDOFF-01@1`, 18).** По каждой TASK — в том числе PARTIAL, FAIL, BLOCKED и исследовательской — всегда сохранять полный factual `report.md`, manifest и необходимые безопасные evidence по разрешённому относительному пути внутри локального `ag_llm`, обычно `reports/<TASK-ID>/`. Итоговые файлы нельзя оставлять только во внешнем TEMP/кэше или в пути, исключённом `.gitignore`; при исключении сохранить очищенную публикационную копию в допустимой части проекта и отметить недоступный оригинал. Не публиковать секреты и приватные raw-логи. Git-коммиты/публикацию обычно делает пользователь; Codex не использует Git/GitHub и не имеет постоянного права самостоятельно отправлять сообщения в ChatGPT без конкретного USER GO для TASK/AMENDMENT. Допускаются временные изолированные пробы и минимальные технические файлы, но не вместо обязательного итогового отчёта.
+- По завершении: один самостоятельный копируемый блок `text` в Chat (TASK ID, статус, изменения, проверки с точными числами, обнаруженные риски, DOC IMPACT, NEXT). Не смешивать итоговый блок с промежуточным ходом работы.
+- Внутри scope самостоятельно проверить релевантные edge cases; проблемы вне scope сообщить с evidence и предложением, не менять другие подсистемы без разрешения.
+- Не выполнять commit/push и не объявлять `DONE / VERIFIED` без явного разрешения и независимой приёмки.
+- После каждого завершённого исполнения TASK, включая PARTIAL/BLOCKED с готовым полным итоговым отчётом, обязательна безопасная ротация собственной карточки: сохранить полную утверждённую постановку и все AMENDMENT в БЛОКЕ 2, factual result, статусы, проверки и evidence — в БЛОКЕ 3; проверить сохранность обоих блоков и прежней истории, только затем очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`. Для текущей CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001 адресная запись в собственную карточку сверх основного write_scope разрешена прямым USER GO; для следующих TASK явно закреплять это право при выдаче scope. При невозможности безопасной ротации сохранить отчёт и явно указать `CARD ROTATION BLOCKED`; не маскировать незавершённое исполнение под завершённое. Канонические журналы обновляются после независимого PASS, не на основании самопроверки Codex.
+
+---
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
+
+---
+
+# БЛОК 2 — АРХИВ ПОЛНЫХ ПОСТАНОВОК
+
+## 2026-10-21 — CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001
+
+Полная постановка byte-exact UTF-8:
+
+```markdown
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# 🟨 CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001
+
+## Реализация локального MCP-интеграционного контура ChatGPT ↔ Web Alarm Ultra с двумя техническими Windows identities и обязательным V2Ray
+
+Уважаемый агент 007 (Codex)!
+
+Поручаю продолжить практическую разработку интеграции ChatGPT с Web Alarm Ultra.
+
+**Исполнитель:** Codex 007  
+**Координатор и независимый verifier:** ChatGPT WEB_11  
+**ARCH CLASS:** Web Alarm Ultra / External AI Integration / Secure MCP Tunnel / Strict Network Isolation  
+**SOURCE REFERENCE:** `ag_llm/main@f9c18194f4e2b6ec9f17033a1d0afc34768c6dd5`
+
+Это координаторский GitHub reference, а не разрешение использовать Git/GitHub.
+
+### 1. Главная цель
+
+Создать **практический, воспроизводимый локальный MCP-интеграционный комплект**, который впоследствии позволит обычному ChatGPT обращаться к разрешённым инструментам Web Alarm Ultra через OpenAI Secure MCP Tunnel.
+
+Для текущего пользователя обязателен строгий профиль:
+
+`STRICT_V2RAY_BROKER`
+
+Два разных непривилегированных Windows identities:
+
+- `wua-client` — для официального `tunnel-client` и точно утверждённых дочерних процессов;
+    
+- `wua-broker` — для выделенного сетевого брокера и контролируемого маршрута через V2Ray.
+    
+
+**Главный инвариант:** никаких несанкционированных прямых сетевых выходов, скрытого переключения на DIRECT, других прокси или автоматического ослабления защиты при отказе компонентов.
+
+Это требование должно присутствовать в архитектуре, конфигурационных контрактах, тестах и будущей модели установки.
+
+**Критически важно:** эти две технические учётные записи и их настоящие WFP-ограничения пока не созданы и не активированы. Их наличие в документах не доказывает работающую защиту.
+
+В этой TASK необходимо получить работающую локальную реализацию MCP, а не ещё один большой исследовательский отчёт. Проверять её можно на контролируемых синтетических fixtures без открытия внешней сети и без изменения Windows.
+
+### 2. Обязательная исходная база
+
+Прочитать актуальные локальные нормативные документы в установленном маршруте:
+
+`08 → 000 → 34 → 18 → 01 → 19 → 36 → 36.1 → применимый 36.2/36.3`.
+
+Дополнительно:
+
+- `Документация/37_Старт перехода - Web Alarm Ultra.md`, раздел 9;
+    
+- `Документация/11_Мультимодельная архитектура и назначение LLM.md` — граница model assignment, не путать с MCP;
+    
+- `Документация/000_Задачи Codex.md`, БЛОК 1.
+    
+
+Использовать ранее опубликованные разработки:
+
+1. `reports/CODEX-WUA-0-MCP-FEASIBILITY-001/` — уже работающий локальный MCP SDK → stdio adapter → синтетический WebAlarmApi, ранее 34 PASS.
+    
+2. `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/` — подготовка Secure MCP Tunnel, расследование V2Ray и ограниченный CONNECT→SOCKS5 reference adapter.
+    
+3. `reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/` — переносимый Discovery/Plan/Verify toolkit.
+    
+4. `reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/` — источник будущих WFP-ограничений.
+    
+5. `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/` — offline gate I01–I12, принятый только в ограниченном объёме.
+    
+6. Существующие `web_alarm/server.py` и серверные контракты получения status/context.
+    
+
+Официальные технические ориентиры:
+
+- [https://developers.openai.com/api/docs/guides/secure-mcp-tunnels](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels)
+    
+- [https://github.com/openai/tunnel-client/blob/master/docs/configuration.md](https://github.com/openai/tunnel-client/blob/master/docs/configuration.md)
+    
+
+Не повторять завершённые исследования без конкретной технической причины. Версионно-зависимые CLI-флаги и настройки проверять по доступным проверенным источникам; если их нельзя подтвердить без запрещённого доступа в сеть, явно фиксировать BLOCKED.
+
+### 3. Первая инженерная задача — проверить целостность всей сетевой топологии
+
+До написания основного кода разобрать **все локальные и внешние соединения**, необходимые будущему рабочему процессу.
+
+Особенно важно устранить потенциальное противоречие:
+
+Предыдущая WFP-модель разрешала `wua-client` обращаться только к одному локальному `127.0.0.1:P`, который предполагался брокером. Но tunnel-client должен также взаимодействовать с MCP-сервером, а MCP-адаптер — с Ultra.
+
+Нужно определить, какие соединения используют:
+
+- STDIO;
+    
+- локальный TCP;
+    
+- именованный канал Windows IPC;
+    
+- исходящий HTTPS;
+    
+- SOCKS5 / HTTP CONNECT.
+    
+
+**Нельзя считать, что уже существующий единственный разрешённый TCP-порт подходит для всей схемы.**
+
+Предпочтительно исследовать применение `stdio` между tunnel-client и MCP tool-server, если официальный клиент это поддерживает и такой маршрут позволяет избежать дополнительного небезопасного TCP-порта.
+
+Затем отдельно решить, как MCP tool-server безопасно получает данные от Ultra: server-owned API, доверенный локальный IPC или иной минимальный механизм. Не добавлять новое WFP-исключение автоматически.
+
+Также проверить модель брокера и V2Ray:
+
+- Если брокер подключается к локальному SOCKS5 V2Ray, определить, какой процесс действительно осуществляет внешний egress.
+    
+- Если V2Ray работает от обычного пользователя, не объявлять его защищённым WFP-политикой двух технических SID.
+    
+- Не считать SOCKS5 на `127.0.0.1:10808` доказательством HTTP CONNECT или доказательством фактического выхода через V2Ray.
+    
+- Не менять существующие V2Ray profiles, listeners или process ownership.
+    
+- Если строгая двухидентификационная модель не покрывает выбранный вариант V2Ray, выдать точный blocking finding и безопасную альтернативу для будущей реализации.
+    
+
+**Результат этой части:** одна согласованная топология с явными process identities, каждым IPC/socket/port, trust boundary, разрешениями и blocking gates. Не подменять её красивой схемой без фактической совместимости.
+
+### 4. Реальный локальный MCP Integration Adapter
+
+Использовать уже существующий MCP PoC, где это технически целесообразно, и создать переиспользуемый standalone integration package.
+
+Минимальные инструменты:
+
+- `ping` — проверяемый ответ локального сервера;
+    
+- `list_capabilities` — точный allowlist и версия интерфейса;
+    
+- `read_synthetic_context` — чтение разрешённого синтетического TASK context;
+    
+- `get_status` — ограниченное чтение состояния через server-owned интерфейс, только в явно разрешённом тестовом scope.
+    
+
+Реализация должна использовать настоящий MCP transport/protocol, а не имитацию MCP в Python.
+
+Не давать прямой доступ к файлам Ultra, Run Store, Git, системным настройкам, произвольным TASK ID или model credentials.
+
+Обязательны:
+
+- корректная инициализация MCP;
+    
+- `tools/list` и `tools/call`;
+    
+- версия и capability manifest;
+    
+- проверяемая авторизация и scope на стороне интеграции;
+    
+- fail-closed при неизвестной операции;
+    
+- строгая типизация входа;
+    
+- ограничение времени, размера ответов и запросов;
+    
+- отказ от redirects и непредусмотренных сетевых адресов;
+    
+- redacted audit с correlation/request ID;
+    
+- ограниченные ошибки без утечки private context;
+    
+- безопасный stop/restart с отсутствием зависших собственных процессов.
+    
+
+**Практический критерий:** независимый локальный MCP SDK client должен реально обращаться к adapter, а adapter — к собственному изолированному WebAlarmApi fixture, возвращающему проверяемый context.
+
+Просто возвращать заранее зашитый JSON без обращения к server-owned API недопустимо.
+
+### 5. Secure MCP Tunnel integration
+
+Подготовить корректные versioned-конфигурации для официального `tunnel-client`.
+
+Разделить:
+
+1. Local MCP transport (stdio/HTTP).
+    
+2. OpenAI tunnel control-plane connection.
+    
+3. Local HTTP CONNECT broker.
+    
+4. V2Ray outbound.
+    
+5. Host OS egress enforcement.
+    
+
+Для каждого канала определить endpoint, process identity, authority, auth, порт/pipe, допустимый профиль и реакцию на failure.
+
+Текущая официальная конфигурация `tunnel-client` поддерживает явные HTTP/HTTPS proxy settings; нельзя напрямую подставить SOCKS URL в параметр, рассчитанный на HTTP proxy.
+
+Предыдущий CONNECT→SOCKS5 adapter — **reference-only**. Если он используется, проверить совместимость всех необходимых control-plane paths, а не только одного успешного CONNECT.
+
+Не использовать неизвестные CLI-флаги или фиктивные признаки поддержки.
+
+Подготовить:
+
+- шаблон профиля `STRICT_V2RAY_BROKER`;
+    
+- контракт запуска без секретов;
+    
+- точный список необходимых официальных OpenAI prerequisites;
+    
+- условия, при которых tunnel должен оставаться остановленным;
+    
+- отдельный диагностический preflight и health/status contract.
+    
+
+Не создавать tunnel_id, API key или реальную Platform-конфигурацию. Не запрашивать ChatGPT-пароль.
+
+Отдельно документировать, что runtime API key для туннеля и использование платного model API — разные вопросы, но фактическая доступность туннеля зависит от прав Platform/ChatGPT workspace.
+
+### 6. Две технические Windows identities и строгая защита
+
+Создать конфигурационные контракты для:
+
+`wua-client` и `wua-broker`.
+
+Требования:
+
+- разные SID, локальные непривилегированные identities;
+    
+- исключить основной Windows account и обычный ChatGPT Desktop из scope технических SID;
+    
+- не импортировать чужие SID с другого компьютера;
+    
+- отдельные process ownership, credentials, startup rights и ACL;
+    
+- точный allowlist контролируемых локальных каналов;
+    
+- явная идентификация V2Ray process boundary;
+    
+- без DIRECT/fallback;
+    
+- любые unknown/mismatch/unverified — BLOCKED.
+    
+
+Использовать выводы предыдущего WFP-кандидата, **не активируя его**.
+
+Показать, какие свойства обеспечивает обычная конфигурация приложений, а какие требуют обязательной OS-enforced WFP-изоляции. Application-level запрет прямого dial не считать гарантией против произвольного дочернего процесса.
+
+Все source/config templates должны быть переносимыми, без настоящих паролей, токенов, секретных прокси URL и частных host identifiers.
+
+### 7. Тесты
+
+Разработать воспроизводимую offline/integration suite, использующую только собственные временные директории, синтетический WebAlarmApi и явно принадлежащие тесту loopback endpoints.
+
+Обязательные группы:
+
+**MCP:** настоящий SDK initialize, tools/list, tools/call, разрешённое чтение, отказ чужому TASK, перепроверка context hash/nonce, restart и повторное чтение.
+
+**Network route:** HTTP CONNECT→SOCKS5 reference, отдельный control-plane simulation, отказ SOCKS upstream, closed listener, timeout, abrupt close, malformed response, secondary proxy и environment overrides.
+
+**Strict profile:** при потере обязательного брокера/V2Ray отсутствуют попытки DIRECT; при появлении непредусмотренного соединения тестовый observer обязан выдавать FAIL. Вызывать настоящие внешние endpoints запрещено.
+
+**Process/permissions:** разные технические identities на уровне контрактов, неправильный SID/owner, непредусмотренный child, port takeover, подмена endpoint и недоверенный startup configuration.
+
+**Security regression:** WFP toolkit и Install/Uninstall остаются BLOCKED; никаких разрешений через config flag, fake proof или synthetic PASS. Отдельные проверки отсутствия записи в production.
+
+**Quality:** bounded timeouts/resources, отдельные negative/mutant controls и самостоятельный manual engineering/adversarial source review.
+
+Не требовать искусственного количества тестов. Предпочтительны небольшие, но действительно чувствительные к нарушениям независимые oracles.
+
+Тесты могут делать сетевые соединения **только в собственном локальном fixture**, без внешней сети, реального V2Ray или настоящего tunnel-client.
+
+Если отдельный тест требует настоящего исполнения Go tunnel-client, SID/WFP или hosted tunnel — `NOT RUN / BLOCKED`, с конкретным gate, а не фальшивый PASS.
+
+### 8. Permissions и границы работы
+
+**Write scope:**
+
+- Новая самостоятельная директория `integrations/wua_chatgpt_mcp/` — исходники, конфигурационные шаблоны и тесты. Если локально директория уже существует и содержит чужую работу, остановить конфликтующие записи.
+    
+- `reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/` — отчёты, evidence и manifest.
+    
+- `Документация/000_Задачи Codex.md` — только штатная ротация собственной карточки после завершения.
+    
+
+Остальные документы, старые отчёты, `web_alarm/`, Ultra production/runtime, тесты Claude и CI — read-only.
+
+**Запрещено без нового USER GO:**
+
+- создавать реальные Windows-учётные записи;
+    
+- изменять WFP, Firewall, BFE, сервисы, системные ACL, сетевые маршруты или V2Ray;
+    
+- запускать настоящий tunnel-client, Cloudflared, hosted tunnel;
+    
+- создавать внешний MCP endpoint, listener на внешнем интерфейсе либо tunnel resource;
+    
+- менять proxy/environment настоящих пользовательских процессов;
+    
+- включать Hyper-V, запускать экспериментальные VM/native-WFP тесты;
+    
+- выполнять Git/GitHub-операции локальным Codex;
+    
+- обращаться к реальным OpenAI endpoints, создавать или использовать API keys;
+    
+- выполнять платные API-запросы;
+    
+- устанавливать новые зависимости без разрешения;
+    
+- обходить Execution Policy/локальные ограничения.
+    
+
+`HOSTED_TUNNEL_ON_HOLD_BY_USER` остаётся.
+
+**Важно:** задача не должна останавливаться полностью только потому, что настоящий tunnel/WFP заблокирован. Разрешённую локальную MCP-интеграцию и synthetic route tests Codex должен довести до практически работающего результата.
+
+### 9. Что должно быть сдано
+
+Подготовить:
+
+1. Исходный код standalone MCP integration package.
+    
+2. Воспроизводимый local MCP ↔ WebAlarmApi integration test.
+    
+3. Строгую process/socket/IPC topology с указанием обеих identities и V2Ray boundary.
+    
+4. Версионированные шаблоны tunnel-client, broker и strict network profile.
+    
+5. Offline tests, negative controls и evidence.
+    
+6. Документ `connection_gates.md` с фактическими условиями каждого будущего подключения.
+    
+7. `deployment_plan.md` — точный порядок будущей установки и проверки на другом ПК, без применения изменений.
+    
+8. `manual_engineering_review.md`.
+    
+9. `report.md` и `manifest.json` со всеми файлами, размерами и SHA-256.
+    
+10. Короткий `NEXT USER GO`, перечисляющий **необходимые конкретные разрешения**, а не абстрактную просьбу разрешить всё.
+    
+
+Результат должен быть пригоден для следующего практического этапа без переписывания всей MCP-интеграции заново.
+
+### 10. Критерии приёмки
+
+TASK может получить `RESULT READY / AWAITING INDEPENDENT VERIFICATION`, когда:
+
+- Есть настоящий локальный MCP server/adapter и проверенный MCP SDK client.
+    
+- Подтверждена фактическая связь с синтетическим server-owned WebAlarmApi.
+    
+- Есть точная совместимая целевая топология или адресно обозначенные blocking conflicts.
+    
+- Две технические identities встроены в конструкцию и deployment contracts, а не просто упомянуты.
+    
+- Все сетевые профили имеют явную fail-closed политику.
+    
+- Ни один синтетический тест не разблокировал реальное применение WFP/туннеля.
+    
+- Проведены тесты и самостоятельный инженерный review.
+    
+- Сохранены полный report/evidence/manifest и прежние ошибки.
+    
+- Основная Windows, V2Ray и production Web Alarm остались неизменными.
+    
+
+**Статусы разделять обязательно:**
+
+- `LOCAL_MCP_INTEGRATION_VERIFIED` — только при фактически выполненном тесте.
+    
+- `STRICT_ROUTE_SYNTHETIC_TESTED` — только при фактически выполненном тесте.
+    
+- `TWO_WINDOWS_IDENTITIES_NOT_PROVISIONED`.
+    
+- `OS_WFP_EGRESS_NOT_VERIFIED`.
+    
+- `V2RAY_LIVE_ROUTE_NOT_VERIFIED`.
+    
+- `SECURE_TUNNEL_NOT_ACTIVATED`.
+    
+- `ORDINARY_CHATGPT_E2E_NOT_VERIFIED`.
+    
+
+Ни один статус offline-тестов не превращать в `PRODUCTION READY`.
+
+После окончания: сохранить все материалы, выполнить штатную безопасную ротацию БЛОКОВ 1–3 собственной карточки, прежнюю историю оставить побайтно. Git/GitHub не использовать. Пользователь публикует результат, WEB_11 проводит независимый review.
+
+**Ключевое ожидание:** нам нужен не очередной анализ возможностей MCP, а технически работающий локальный интеграционный комплект, который сохраняет возможность будущего строгого подключения через две Windows identities и V2Ray.
+
+---
+
+```
+
+# БЛОК 3 — ФАКТИЧЕСКИЕ РЕЗУЛЬТАТЫ
+
+## 2026-10-21 — CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11. LOCAL ONLY.** Исполнение завершено в разрешённом local/synthetic scope; independent acceptance pending, production BLOCKED.
+
+Реализован standalone `integrations/wua_chatgpt_mcp/`: настоящий MCP SDK2 stdio server/client, 4 read tools ping/list_capabilities/read_synthetic_context/get_status, separate authenticated server-owned WebAlarmApi fixture с new owned state, strict JSON/auth/task/replay/hash/nonce/size/time/cleanup; pinned strict profile, diagnostic CLI, disabled versioned tunnel/broker/IPC/health templates, reference CONNECT→SOCKS and own control-plane simulation.
+
+Статусы: LOCAL_MCP_INTEGRATION_VERIFIED (SDK synthetic only); STRICT_ROUTE_SYNTHETIC_TESTED (own fixtures only); TWO_WINDOWS_IDENTITIES_NOT_PROVISIONED; OS_WFP_EGRESS_NOT_VERIFIED; V2RAY_LIVE_ROUTE_NOT_VERIFIED; SECURE_TUNNEL_NOT_ACTIVATED; ORDINARY_CHATGPT_E2E_NOT_VERIFIED; HOSTED_TUNNEL_ON_HOLD_BY_USER.
+
+Final tests: mcp06 63/63 named checks PASS, 2 sessions + own MCP/API process-stop proof; security03 24/24 unittest methods, 0 FAIL/ERROR. Route/owner mutants02: each 1 targeted expected FAIL/0 ERROR, both detected. Initial mcp01/02 failure retained (NUL stderr sink blocked by own write guard), fixed narrowly; earlier 59/61 and 21/23 results retained. Actual own-loopback runtime probe found Python3.12 Proactor dynamic TCP selfpipe≠reserved P — compatibility BLOCKED, not native WFP verdict.
+
+Blocking topology findings: STDIO does not eliminate Python runtime TCP under C-only-P; selected future C no-TCP stdio/pipe relay + U server-owned SDK peer not implemented. B wrapper→user-owned SOCKS does not cover V2Ray egress; selected future separate native CONNECT V2Ray under B → literal R:Q. Existing V2Ray ownership/profile untouched, real route unknown. No new WFP port exceptions. All approvals/fake proofs still can_apply/can_start=false.
+
+Real account/WFP/Firewall/BFE/service/ACL/rights/VM/HyperV/ExecutionPolicy/V2Ray/network mutations=0; native Go/Cloudflared/hosted/model API/API-key/Git/GitHub/other-chat calls=0. Allowed own STDIO/loopback/file/process tests only, not whole-host/native containment proof. Prior toolkit/WFP activation barriers preserved; production/Claude/LLM12/CI unchanged. 668 protected files before rotation; after-card noncard integrity in receipt.
+
+Evidence: `reports/CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001/{report.md,manifest.json,checks.json,topology.md,connection_gates.md,deployment_plan.md,next_user_go.md,manual_engineering_review.md,runtime_compatibility.json,source_evidence.json,diagnostic_cli.json,card_rotation.json,integrity.json}`; runs/mcp06/security03/mutant_route02/mutant_owner02 and original failures. Manifest covers package + TASK; exact hashes/byte sizes, no raw private card/keys.
+
+DOC IMPACT: only new package/reports + own-card rotation; shared19/34/37 delta proposed for WEB_11, not edited. NEXT SAFE ACTION: independent WEB_11 review; separate engineering USER GO for no-TCP C relay + server-owned authenticated local pipe fixture; choose dedicated B engine offline source/config; native SID/WFP lab and hosted activation remain distinct future gates. User publishes/forwards; no independent PASS asserted.
+
+
+---
+
+## Предыдущая история (byte-exact)
+
+# БЛОК 2 — АРХИВ ПОЛНЫХ ПОСТАНОВОК
+
+## 2026-10-21 — CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+Полная исходная постановка, byte-exact UTF-8:
+
+```markdown
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# 🟨 CODEX-WUA-0-WINDOWS-LAB-GATE-001 — Подготовка проверяемой изолированной Windows-лаборатории для MCP
+
+Уважаемый агент 007 (Codex)!
+
+Назначаю следующую задачу: разработать **практический лабораторный комплект** для будущей независимой проверки WFP security backend Web Alarm Ultra.
+
+**Исполнитель:** Codex 007  
+**Координатор и независимый verifier:** ChatGPT WEB_11  
+**ARCH CLASS:** Web Alarm Ultra / ChatGPT MCP / Windows Security / Isolated Lab  
+**Исходный GitHub reference:** `ag_llm/main@1db3bb6fef333e8567e8e638690049c1198a6fef`
+
+Указанный commit — координаторский ориентир, а не разрешение самостоятельно использовать Git/GitHub.
+
+## 1. Цель
+
+Ранее завершены:
+
+- `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001` — переносимый комплект Discovery/Plan/Verify с заблокированной установкой.
+    
+- `CODEX-WUA-0-WFP-OFFLINE-BACKEND-001` — кандидат защитного ядра WFP. Независимый WEB_11 подтвердил опубликованные исходники, структуру тестов и ограниченную OFFLINE-приёмку. Реальная Windows-фильтрация не проверена.
+    
+- `CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001` — предварительное исследование изолированной виртуальной машины, включая контракт I01–I12. На тот момент готовой лаборатории, образа Windows и платформы виртуализации подтверждено не было.
+    
+
+**Сегодняшняя задача — не писать ещё один общий архитектурный план.**
+
+Нужно превратить существующие требования I01–I12 в воспроизводимый программный инструмент, способный проверить подготовленную лабораторию и обоснованно выдать `PASS`, `BLOCKED`, `FAIL` или `NOT RUN`.
+
+Итог должен помочь в дальнейшем безопасно развернуть отдельную Windows VM без необходимости устанавливать экспериментальные WFP-правила непосредственно на пользовательскую рабочую Windows.
+
+## 2. Нормативные материалы
+
+Прочитать в локальном проекте:
+
+- `Документация/08_Старт.md`;
+    
+- `Документация/000_Задачи для агента.md`;
+    
+- собственную карточку `Документация/000_Задачи Codex.md`, БЛОК 1;
+    
+- `Документация/18_Регламент сопровождения документации.md`;
+    
+- `Документация/34_TACTICAL_CONTEXT.md`;
+    
+- `Документация/01_Архитектура и текущее состояние.md`;
+    
+- `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`;
+    
+- `Документация/36_Единая архитектура тестирования.md`, `36.1` и применимые положения `36.2`/`36.3`.
+    
+
+Особенно изучить:
+
+- `reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/isolation_preflight_contract.md`;
+    
+- `offline_vm_design.md`, `host_vm_inventory.md`, `preflight_decision.json`, `rollback_plan.md`, `native_offline_test_plan.md`;
+    
+- `reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/lab_gate.md`, `security_boundary.md`, `integration_plan.md`, `manifest.json`, исходники `source/`, `native/`.
+    
+
+Не повторять уже завершённые исследования без обнаруженной новой технической причины.
+
+## 3. Разрешения и write scope
+
+**Разрешённые записи:**
+
+- Только новые файлы внутри `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/`;
+    
+- Собственная `Документация/000_Задачи Codex.md` — строго для штатной ротации БЛОКОВ 1–3 после завершения задачи.
+    
+
+**Разрешено:**
+
+1. Проводить ограниченное read-only обследование Windows: доступность Hyper-V/VM runtime, существующих инструментов, необходимых OS API и подтверждённых read-only cmdlet.
+    
+2. Разрабатывать скрипты, исходники, контракты и тесты будущего лабораторного комплекта.
+    
+3. Выполнять synthetic/offline tests и статические проверки без административных мутаций.
+    
+4. Если обнаружена существующая лабораторная VM — читать её конфигурацию только при доказанной принадлежности и без включения, выключения, изменения или подключения к ней.
+    
+5. Создать dry-run механизм, показывающий полный будущий план развёртывания и проверки лаборатории без применения этого плана.
+    
+
+**Отдельное разрешение на создание VM, изменение Windows или запуск WFP не предоставлено.**
+
+## 4. Жёсткие запреты
+
+Без нового адресного USER GO запрещено:
+
+- Включать Hyper-V, Windows Sandbox, Virtual Machine Platform или иные системные компоненты.
+    
+- Устанавливать гипервизор, драйверы, SDK, пакеты, средства наблюдения или обновления.
+    
+- Создавать, запускать, выключать, изменять или удалять виртуальные машины.
+    
+- Создавать виртуальные сетевые коммутаторы, NAT, bridges, shared networks, proxy или port forwarding.
+    
+- Менять Windows Firewall/WFP/BFE, маршруты, DNS, V2Ray, службы, ACL, учётные записи, загрузочную конфигурацию или Execution Policy.
+    
+- Запрашивать или автоматически получать elevation, выполнять reboot/logoff, запускать фоновые долгоживущие службы.
+    
+- Запускать `NativePreview`, любые реальные `Fwpm*` mutation calls, установщик MCP, `tunnel-client`, Cloudflared и реальные сетевые fault tests.
+    
+- Выполнять интернет-запросы, скачивания, Git/GitHub-операции.
+    
+- Изменять production Web Alarm/Ultra, исходники Claude/LLM12, предыдущий toolkit и опубликованные отчёты других TASK.
+    
+
+**Особенно важно:** текущие `CanApply=false`, `Install/Uninstall BLOCKED`, `HOSTED_TUNNEL_ON_HOLD_BY_USER` должны оставаться неизменными.
+
+## 5. Практическая реализация
+
+### A. Свежая read-only проверка среды
+
+Адресно проверить, что действительно доступно сейчас:
+
+- Windows edition/build/architecture;
+    
+- виртуализация CPU и ОС;
+    
+- установленный и доступный гипервизор, его версия и поддерживаемые read-only команды;
+    
+- наличие подготовленной _отдельной_ лабораторной VM, без предположений по одному имени;
+    
+- доступность доверенного Windows image/media, только в разрешённых путях;
+    
+- возможность собрать лабораторный комплект имеющимся toolchain.
+    
+
+Не читать пользовательские секреты, приватные прокси-профили и конфигурацию работающего V2Ray. Не сканировать весь компьютер без границ.
+
+При отсутствии готовой VM зафиксировать `LAB_NOT_PROVISIONED`, а не создавать её.
+
+### B. Исполняемый offline lab gate
+
+Разработать самостоятельный комплект проверки требований **I01–I12** из ранее принятого isolation contract.
+
+Минимум:
+
+- структурированный входной контракт: VM identity, owner, host/guest evidence, assets, observer versions, допустимые endpoints, approval state;
+    
+- проверка полноты evidence и срока его действия;
+    
+- контроль неизменности VM GUID, config digest, disk/media chain и ownership;
+    
+- проверка заявленного отсутствия NIC, NAT/bridge, guest-host relay и других каналов;
+    
+- контроль раздельного host-side и guest-side evidence;
+    
+- контроль полноты наблюдателей, heartbeat, event-loss и конфигурационного drift;
+    
+- deterministic decision с указанием причины для каждого I01–I12;
+    
+- глобальная логика: отсутствие обязательного доказательства → `BLOCKED`, противоречие или отрицательный контроль → `FAIL`, только независимо подтверждённые условия могут дать `PASS`.
+    
+
+**Не создавать ложную имитацию доказанной изоляции.** Синтетическое `PASS` означает корректность алгоритма проверки на тестовом наборе, а не существование безопасной VM.
+
+В реализации обязательны отдельные состояния:
+
+- `OFFLINE_GATE_LOGIC_TESTED`;
+    
+- `LAB_PLATFORM_NOT_PROVISIONED`;
+    
+- `HOST_CONFIG_PROOF_PENDING`;
+    
+- `GUEST_ISOLATION_PROOF_PENDING`;
+    
+- `NATIVE_WFP_EXECUTION_BLOCKED`.
+    
+
+Допускается адаптация имен в контракте, но их смысл должен сохраняться.
+
+### C. Backend-specific read-only adapters
+
+Если доступна документированная платформа Hyper-V, подготовить адресные адаптеры чтения её конфигурации по **точному одобренному VM GUID**.
+
+В частности, анализировать VM network adapters, device attachments, integration services, disks, checkpoints, console/redirect channels и состояние VM.
+
+Не считать один `Get-VMNetworkAdapter` полным доказательством.
+
+Если Hyper-V не установлен, адаптер должен оставаться OFFLINE/NOT RUN, а synthetic fixtures — проверяться независимо.
+
+Никаких операций provisioning, start, stop, delete, export или изменения настройки через такие адаптеры.
+
+### D. Будущий сценарий создания стенда
+
+Подготовить **неисполняющий dry-run сценарий** будущего создания одной disposable Windows VM.
+
+Требования:
+
+- выделенный owner и отдельный новый локальный resource root;
+    
+- VM без NIC objects и без host bridge;
+    
+- запрещённые guest-host integration/data channels явно учтены;
+    
+- отдельный чистый Windows image и локальная цепочка дисков;
+    
+- ни одного пользовательского ключа, настоящего MCP tunnel ID или профиля V2Ray;
+    
+- известная процедура остановки и последующего удаления _только принадлежащих лаборатории_ ресурсов;
+    
+- отдельные preflight, provisioning и native-execution permission gates.
+    
+
+Запись dry-run не является разрешением на последующее выполнение.
+
+Если подготовка реальной VM требует включения Hyper-V, установки драйвера, reboot либо изменения общего состояния Windows — указать эту необходимость пользователю и оставить действие `BLOCKED`.
+
+### E. Доказательство качества проверяющего
+
+Создать полезную автоматизированную offline test suite с независимыми positive/negative controls.
+
+Обязательные негативные сценарии:
+
+- добавление даже отключённого NIC;
+    
+- наличие host-only/NAT/bridge или скрытого forwarding;
+    
+- guest-host shared folder/clipboard/device relay;
+    
+- несовпадение VM identity, конфигурации, owners или образа;
+    
+- stale или подделанный manifest;
+    
+- потеря части host/guest observations;
+    
+- ложный `PASS`, основанный только на `zero packets`;
+    
+- изменение VM config между снимком и решением;
+    
+- подмена guest-side evidence одним self-report;
+    
+- неизвестный observer и неподтверждённый rollback.
+    
+
+Тестировать не только то, что опасные конфигурации блокируются, но и что корректный synthetic набор вообще способен пройти необходимые проверки.
+
+Предусмотреть mutation/negative controls, при которых нарушение инварианта действительно переводит решение в `FAIL/BLOCKED`.
+
+Сохранить точные числа и первоначальные сбои; не выдавать все synthetic assertions за независимые тесты гипервизора.
+
+### F. Будущие реальные испытания WFP
+
+Использовать уже подготовленный WFP backend как исходный reference, **не подключая и не вызывая его сейчас**.
+
+Составить один короткий, практически исполнимый следующий gate:
+
+1. Подготовлена и идентифицирована lab-only Windows VM.
+    
+2. Проверена её внешняя изоляция, включая host/guest observers и отрицательные контроли.
+    
+3. Есть trusted baseline, quota, clean checkpoint, private ledger и recovery.
+    
+4. Сверены WFP source/binary hashes и ограничения privilege/ACL.
+    
+5. WEB_11 проверил конкретный lab evidence.
+    
+6. Пользователь отдельно утвердил **точные native cases и ограниченный срок исполнения**.
+    
+
+Только после всех шести условий будущая отдельная TASK вправе создавать лабораторные Windows identities и пробовать реальные WFP filters.
+
+Дальнейшие native tunnel-client, V2Ray remote route и ordinary ChatGPT MCP E2E остаются отдельными gate и не включаются в эту TASK.
+
+## 6. Тестирование и инженерная проверка
+
+Провести:
+
+- syntax/static checks;
+    
+- unit/synthetic проверки алгоритма I01–I12;
+    
+- negative controls, включая намеренные mutations;
+    
+- проверки readonly/dry-run режимов;
+    
+- ограниченную проверку, что исходный toolkit и WFP backend не получили новый activation path;
+    
+- ручной adversarial review собственного решения.
+    
+
+В отчёте отдельно указать, какие проверки реально выполнены, какие только описаны и какие заблокированы отсутствием лаборатории.
+
+Нельзя получать `PASS` просто потому, что на машине не найден гипервизор или потому, что скрипт не выполнил сетевой запрос.
+
+## 7. Результат и артефакты
+
+Сохранить в `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/`:
+
+1. `report.md` — фактический итог и готовность;
+    
+2. `README.md` — простая инструкция по запуску проверок;
+    
+3. исходники laboratory gate и read-only/dry-run adapters;
+    
+4. offline tests и проверяемые test fixtures;
+    
+5. `gate_results.json` — результаты I01–I12 с provenance;
+    
+6. `host_readonly_inventory.json` — только очищенные допустимые факты;
+    
+7. `lab_build_plan.md` — минимальная процедура будущего создания VM;
+    
+8. `next_user_go.md` — точные операции, риски, prerequisites и permissions, которые понадобятся для следующего этапа;
+    
+9. `manual_engineering_review.md` — независимый от автотестов инженерный self-review;
+    
+10. `manifest.json` — перечень файлов, byte sizes и SHA-256.
+    
+
+Структуру исходников и имена дополнительных файлов выбирать самостоятельно. Не копировать без необходимости старые большие отчёты или бинарники.
+
+**При отсутствии доступного гипервизора:** задача всё равно должна дать реальный код gate, его synthetic tests и точный список блокеров. Не подменять это просто очередным сравнением платформ виртуализации.
+
+## 8. Критерии сдачи
+
+Статус `RESULT READY / AWAITING INDEPENDENT VERIFICATION` допустим, когда:
+
+- создан и испытан самостоятельный offline lab-gate verifier;
+    
+- есть положительные и отрицательные контрольные наборы, проверенные адресными тестами;
+    
+- получен свежий ограниченный статус доступности лабораторной платформы;
+    
+- есть конкретный сценарий следующего шага, без неоговорённых требований к Windows;
+    
+- все реальные OS/VM/WFP/security/proxy/network изменения остаются **0**;
+    
+- все отсутствующие host/guest доказательства честно `BLOCKED / NOT RUN`;
+    
+- сохранён отчёт, manifest и необходимое evidence.
+    
+
+Затем по штатному регламенту выполнить безопасную ротацию собственной карточки: полная постановка — БЛОК 2, factual result — БЛОК 3, предыдущая история сохраняется, БЛОК 1 освобождается только после readback.
+
+Git/GitHub, commit и push не выполнять. Пользователь публикует результат, WEB_11 проводит независимую проверку.
+
+По завершении отправить в чат один компактный копируемый итог: TASK ID, статус, артефакты, числа тестов, какая платформа обнаружена, открытые блокеры, DOC IMPACT и NEXT SAFE ACTION.
+
+**Главный принцип:** подготовить действительно полезный инструмент следующего этапа, не подвергая рабочую Windows риску.
+
+---
+
+```
+
+# БЛОК 3 — ФАКТИЧЕСКИЕ РЕЗУЛЬТАТЫ
+
+## 2026-10-21 — CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11.** Исполнение TASK завершено в разрешённом offline scope; независимая приёмка pending.
+
+Созданы executable I01–I12 offline evidence gate, раздельные signed host/guest/review synthetic fixtures с внешним approved-request trust pin, strict JSON/disk/assets/owner/freshness checks, bounded host collector, частичный exact-GUID read-only Hyper-V candidate и 13-step data-only dry-run. Всегда native_execution_allowed=false / vm_changes_allowed=false / can_apply=false. Полные реальный collectors/watch/containment не заявлены.
+
+Статусы: OFFLINE_GATE_LOGIC_TESTED; LAB_PLATFORM_NOT_PROVISIONED; HOST_CONFIG_PROOF_PENDING; GUEST_ISOLATION_PROOF_PENDING; NATIVE_WFP_EXECUTION_BLOCKED. Actual gate I01–I12: 12 BLOCKED. Hyper-V VM adapter NOT RUN. HOSTED_TUNNEL_ON_HOLD_BY_USER; ORDINARY CHAT E2E NOT VERIFIED.
+
+Проверки: final attempt08 52/52 PASS, 0 errors. NIC mutant03: 52 total/50 PASS/2 expected FAIL/0 errors, killed. Trust mutant03: 52 total/51 PASS/1 expected FAIL/0 errors, killed. Initial genuine red attempt05 сохранён: 51 total/50 PASS/1 FAIL/0 errors; исправлен приоритет signed negative facts над отсутствующим review. 2 adapter PS5.1 AST parses, 0 errors; file-helper PS5.1 execution POLICY BLOCKED, policy не менялась. Host collector выполнен один раз PS7.6.5.
+
+Среда snapshot 2026-10-20T18:44:45Z: Windows10 Pro x64 build19045, CPU virtualization=true; HypervisorPresent=false, Hyper-V module/ready VM/trusted media не подтверждены. 0 VM queries. Все VM/security/network/V2Ray/WFP/native/rights/policy/Git/GitHub mutations и network tests=0. 389 protected files до ротации неизменны; последующая сверка non-card — integrity.json. Прежние BackendImplemented=false/CanApply=false сохранены.
+
+Evidence: reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/{report.md,README.md,checks.json,gate_results.json,host_readonly_inventory.json,manifest.json}; source/,adapters/,tests/,contracts/,fixtures/, evidence/attempt08/,mutant_nic03/,mutant_trust03/,attempt05/; lab_build_plan.md/json,next_user_go.md,manual_engineering_review.md; card_rotation.json,integrity.json.
+
+DOC IMPACT: только новая TASK + штатная собственная card rotation; общие документы, Claude/LLM12/production и предыдущие TASK не менялись. NEXT SAFE ACTION: WEB_11 independently reviews пакет; пользователь выбирает отдельный уже готовый Hyper-V lab host + легитимное offline media. Provisioning/controlled baseline boot/owned cleanup и native WFP требуют разных будущих адресных USER GO. Ни feature install/reboot, ни proxy/network workarounds не разрешены. Пользователь публикует/передаёт WEB_11.
+
+
+---
+
+
+---
+# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
+---
+
+**Автор:** независимый ChatGPT, Codex — READ-ONLY. Архив: `Документация/06_Журнал выполнения и отчёты.md`.
+
+## 1. Последнее заключение: 2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+**Вердикт: PARTIAL / INDEPENDENT BOUNDED OFFLINE ACCEPTED**. WEB_11 подтвердил пакет **215/215** путей и **13/13** выборочных SHA-256. Сохранённые **52/52 PASS** — Codex-run evidence, **не независимый запуск Windows suite**; baseline red 50/51, 2 мутанта. Реальный lab I01–I12: **12/12 BLOCKED**; trusted VM/media/изоляция, WFP/V2Ray/native/Chat E2E **NOT VERIFIED**. `CanApply=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; future provisioning требует отдельного USER GO. Путь: `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/`, WEB_11 в 34, постоянный архив 06.
+
+## 2. Предыдущее заключение: 2026-10-20 / CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001
+
+WEB_10 bounded independent source/evidence: **87** путей по manifest + manifest, **10/10** выборочных SHA-256; real Windows/native install не проверены, installer BLOCKED. История: 06, WEB_10.
+
+## 3. Позапрошлое заключение
+
+Оставлено пустым: без достоверной дополнительной независимой проверки/постоянной записи не заполнять.
+
+---
+
+## Предыдущая история (сохранена byte-exact)
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+## CODEX-WUA-0-WFP-OFFLINE-BACKEND-001 / 2026-10-20
+
+Полный исходный БЛОК 1 ниже сохранён без изменения байтов. Дополнительных AMENDMENT к постановке нет.
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WUA-0-WFP-OFFLINE-BACKEND-001` — разработка автономного, безопасно заблокированного до лабораторной проверки Windows WFP security backend для MCP Web Alarm Ultra.
+
+# Задача: защитное ядро MCP — этап OFFLINE
+
+**ARCH CLASS:** Web Alarm Ultra / External AI Integrations / ChatGPT Desktop MCP / Windows Security.
+
+**Исполнитель:** Codex 007.
+
+**Координатор и независимый verifier:** ChatGPT WEB_11.
+
+**Исходный опубликованный ориентир:** `ag_llm/main@8cc376c2de1bf41a0e504bb12a8624ed5a9cd79a`.
+
+Это идентификатор исходного контекста, а не разрешение использовать Git/GitHub.
+
+**PRIMARY ARCHITECTURE:** `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`, включая новые разделы 7.1 и 7.2.
+
+## 1. Цель
+
+Перейти от предыдущего переносимого комплекта Discovery/Plan/static Verify к реальному, проверяемому исходному коду **Windows WFP security backend**, который впоследствии сможет обеспечить ограничение сетевого доступа двух отдельных непривилегированных Windows identities:
+
+- `wua-client` — технический процесс MCP-клиента и явно охваченные дочерние процессы. Разрешён только точно определённый локальный endpoint выделенного брокера; остальные исходящие маршруты должны блокироваться.
+    
+- `wua-broker` — отдельный брокер с маршрутом к заранее согласованному remote endpoint через выбранный V2Ray/sing-box профиль, без DIRECT и скрытого fallback.
+    
+
+Эта архитектура относится к будущему строгому режиму `STRICT_V2RAY_BROKER`. Режимы `DIRECT_ALLOWED` и `APPROVED_PROXY` существуют отдельно и не должны становиться неявным аварийным обходом строгого профиля.
+
+Не изменять текущую пользовательскую учётную запись, её ChatGPT Desktop или общесистемные настройки безопасности.
+
+**Модель угроз текущего этапа:** T1 — предотвращение непреднамеренного обхода маршрута охваченными процессами. T2 — враждебные дочерние процессы, системные посредники и сложные обходы — отдельная область доказательства, которую запрещено считать решённой автоматически.
+
+## 2. Входные материалы
+
+Ознакомиться с релевантными действующими документами в локальном проекте:
+
+- `08_Старт.md`, `000_Задачи для агента.md`, `34_TACTICAL_CONTEXT.md`, `18_Регламент сопровождения документации.md`;
+    
+- `01_Архитектура и текущее состояние.md`;
+    
+- `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`;
+    
+- `36_Единая архитектура тестирования.md`, `36.1_Обязательный регламент тестирования для LLM.md` и применимый тестовый профиль `36.2`;
+    
+- `reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/`, особенно `toolkit/`, `policy/backend-contract.json`, `backends/UnavailableWfpBackend.cs`, `known_limitations.md`, `next_stage_plan.md`, `report.md`;
+    
+- релевантные отчёты `CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001`, `CODEX-WUA-0-NATIVE-EGRESS-GATE-001`, `CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001`.
+    
+
+Не повторять предыдущие исследования без конкретной технической необходимости. Основные проблемы уже установлены.
+
+## 3. Разрешённая работа
+
+**Write scope:**
+
+- Новые исходники, тесты, инструменты и отчёты внутри `reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/`.
+    
+- Собственная личная карточка `Документация/000_Задачи Codex.md` — исключительно для установленной регламентом ротации БЛОКОВ 1–3 после завершения TASK.
+    
+
+**Read scope:** относящиеся к MCP исходники, документы и предыдущие отчёты локального проекта.
+
+Создать самостоятельный инженерный пакет, который можно будет позднее присоединить к переносимому установщику. Предыдущие опубликованные материалы toolkit не перезаписывать и не менять задним числом.
+
+В рамках задачи разрешены:
+
+1. Разработка типизированного контракта для будущего WFP backend, включая identity/SID, owner, plan digest, endpoint, filter objects, provenance и условия отказа.
+    
+2. Реализация проверяемого кандидата WFP policy builder/native-interop layer с использованием документированных Windows API, доступных локально. Не подменять реальные API исключительно симулятором, но отделить native layer от чистой логики и тестовых doubles.
+    
+3. Проектирование корректной WFP-фильтрации на основе SID/ALE, адресов, портов, protocol/address family и проверяемой arbitration. Не принимать схему «BLOCK ALL плюс отдельный ALLOW localhost» без доказанной корректности precedence.
+    
+4. Подготовка точных процедур установки, readback, проверки собственных объектов и будущего rollback в отдельной **неактивной** реализации.
+    
+5. Создание независимого offline policy oracle и тестов, которые обнаруживают ошибки в генераторе фильтров.
+    
+6. Разработка документации для будущих лабораторных испытаний, с явным указанием необходимых privileges, источников истины, наблюдателей и критериев STOP.
+    
+
+Выбирать инженерное устройство и структуру модулей самостоятельно в пределах scope. Предпочтительны PowerShell 5.1-compatible/.NET/C# и штатные компоненты Windows, если это осуществимо без новых установок. Если необходимая SDK/toolchain отсутствует, не скачивать и не устанавливать её самостоятельно: отметить конкретную зависимость и продолжить возможные независимые части.
+
+## 4. Жёсткие запреты
+
+**Это исходная OFFLINE-разработка, а не разрешение на применение политик к Windows.**
+
+Без отдельного USER GO запрещено:
+
+- Создавать, изменять или удалять реальные учётные записи Windows, SID-зависимые права, ACL, службы и задания автозапуска.
+    
+- Добавлять, удалять или изменять действующие WFP/Firewall filters, изменять BFE, GPO, Defender, системные политики или маршруты.
+    
+- Запускать native MCP/tunnel-client, брокер, Cloudflared, live V2Ray tests или любые тесты прямого сетевого выхода.
+    
+- Открывать сетевые порты, обращаться к DNS, внешним endpoints, локальным proxy listeners либо запускать реальные probe/fault injections на рабочем компьютере.
+    
+- Создавать VM/Sandbox или включать системные компоненты виртуализации.
+    
+- Изменять текущие проекты Claude/LLM12, production Web Alarm/Ultra, общую документацию или ранее запечатанные отчёты.
+    
+- Использовать Git/GitHub даже для чтения без отдельного разрешения.
+    
+- Менять PowerShell Execution Policy, применять Bypass/Unblock, повышать привилегии или устанавливать зависимости.
+    
+- Встраивать исполняемую ветку Apply в прежний installer либо каким-либо образом снимать его безусловный BLOCKED.
+    
+
+**Любой потенциально изменяющий Windows native API path должен оставаться недостижимым из исполняемых entrypoints текущего комплекта.** Исходный прототип должен предоставлять проверяемую изоляцию этой границы: standalone build и offline tests допустимы, но реальные системные вызовы изменения состояния не выполняются. `CanApply=false` и безусловный BLOCKED действующего toolkit сохраняются.
+
+Если корректность отдельного native API, фильтра или исполнения не доказана — статус UNVERIFIED/BLOCKED, а не оптимистичный PASS.
+
+## 5. Обязательные инженерные критерии
+
+Проверить и адресно описать:
+
+- SID/ALE matching для обоих технических контуров без воздействия на основной ChatGPT Desktop.
+    
+- Точные endpoint и порт; запрещение иных localhost listeners и возможности port takeover.
+    
+- IPv4/IPv6, UDP, DNS, системные посредники, child process inheritance и изменения identity.
+    
+- Arbitration WFP, конфликтующие filters, pre-existing flows, BFE stop/restart, boot timing.
+    
+- Отсутствие DIRECT/secondary proxy fallback.
+    
+- Ownership, повторная установка, partial failure, drift и недоверенный ledger.
+    
+- Quiescence и принцип `keep deny until proven safe` перед будущим rollback.
+    
+- Невозможность считать наличие фильтра подтверждением фактической OS-enforced изоляции.
+    
+
+Для неопределённых или неустранимых без лаборатории рисков оставить точные blocking gates и план независимого наблюдения. Не подменять их mock-результатами.
+
+## 6. Тестирование
+
+Разработать и выполнить собственные тесты в разрешённой offline-среде, не создавая реальных WFP objects и не выполняя сетевых соединений.
+
+Ожидаемые группы:
+
+- Корректные и некорректные synthetic SID/endpoint/filter configurations.
+    
+- Непересекающиеся allow/deny правила, конкурирующие фильтры и конфликт приоритетов.
+    
+- Другой loopback port, произвольный localhost proxy, IPv6/UDP, DNS и маршруты вне разрешённого диапазона.
+    
+- Отказ брокера, BFE, некорректный plan hash, stale inventory, несовпадающий owner, replay/partial apply/rollback.
+    
+- Позитивные controls и отрицательные/mutant controls: тест должен доказуемо обнаруживать внесённое нарушение инварианта.
+    
+- Проверка того, что любые публичные entrypoints и старый toolkit продолжают блокировать реальный Apply.
+    
+
+Тесты должны иметь собственный изолированный TEMP/output, ограниченные время и ресурсы. Не затрагивать Web Alarm/LLM12/Ultra regression suites и их fixtures.
+
+После автоматизированных тестов выполнить **MANUAL ENGINEERING / ADVERSARIAL SOURCE REVIEW**: проверить архитектуру, ветви отказа, взаимосвязь источников, race, ownership, ложноположительные тесты и критические упущения. Автоматические PASS не заменяют этот review.
+
+Разделить результаты:
+
+- OFFLINE LOGIC / SOURCE / BUILD VERIFIED (только фактически проверенные части);
+    
+- NATIVE WFP ENFORCEMENT — NOT RUN / NOT VERIFIED;
+    
+- REAL HOST SECURITY — NOT VERIFIED;
+    
+- V2RAY REMOTE ROUTE — NOT VERIFIED;
+    
+- ORDINARY CHAT MCP E2E — NOT VERIFIED.
+    
+
+## 7. Обязательный результат
+
+В `reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/` подготовить не менее следующих логических артефактов:
+
+1. Исходный код автономного WFP backend-кандидата и его контракты.
+    
+2. Offline test suite и воспроизводимую команду запуска.
+    
+3. `security_boundary.md` — что код способен обеспечить потенциально, что пока не доказано и почему.
+    
+4. `lab_gate.md` — конкретный порядок будущего испытания на доказанно изолированной Windows, требуемые независимые positive/negative oracles и условия немедленного STOP.
+    
+5. `integration_plan.md` — минимальный безопасный путь будущего подключения к существующему toolkit без снятия блокировок.
+    
+6. `manual_engineering_review.md` — самостоятельная критическая инженерная проверка.
+    
+7. `report.md` — понятный человеку итог, фактические изменения и численные результаты.
+    
+8. `manifest.json` — перечень отчётных файлов с byte size и SHA-256, без секретов и приватных локальных путей.
+    
+
+Если невозможно безопасно собрать часть native backend, предоставить максимально завершённый проверяемый пакет и адресный перечень блокеров. Не делать фиктивную реализацию ради заявления DONE.
+
+## 8. Критерии приёмки и передача
+
+Задача считается **RESULT READY / AWAITING INDEPENDENT VERIFICATION**, когда:
+
+- Разрешённый исходный код подготовлен и отделён от действующих OS-changing operations.
+    
+- Выполнены все доступные offline syntax/build/target/negative проверки с точными результатами.
+    
+- Исходные FAIL/ERROR/NOT RUN не скрыты и не заменены поздними зелёными прогонами.
+    
+- Реальные Windows accounts/WFP/Firewall/V2Ray и рабочая сеть не изменены в ходе данной TASK.
+    
+- Файлы отчёта и достаточные очищенные evidence сохранены в trackable пути внутри `ag_llm`.
+    
+- Подготовлен самостоятельный adversarial source review и перечень открытых security gates.
+    
+
+Считать native security ACCEPTED, Install READY или MCP CONNECTED по результатам offline-тестов запрещено.
+
+После завершения выполнить регламентную ротацию собственной карточки: сохранить полную задачу и AMENDMENT в БЛОКЕ 2, factual result и evidence в БЛОКЕ 3; сохранить прежнюю историю и только после успешной проверки очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`. При проблеме остановить ротацию и сообщить о ней.
+
+**Публикация:** ничего самостоятельно не commit/push. Пользователь публикует готовый отчёт и исходники; после этого ChatGPT WEB_11 проводит независимую проверку через GitHub.
+
+**В чате Codex по завершении:** один компактный копируемый итоговый текст с TASK ID, статусом, файлами, точными числами тестов, ограничениями, исходными ошибками, DOC IMPACT и NEXT SAFE ACTION.
+
+Работать самостоятельно, качественно, с приоритетом доказуемой безопасности над формальным завершением.
+
+---
+
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+## CODEX-WUA-0-WFP-OFFLINE-BACKEND-001 / Codex 007 / 2026-10-20
+
+RESULT READY / AWAITING INDEPENDENT VERIFICATION (WEB_11).
+Prepared and built typed policy/managed ABI/readback/native source candidate.
+Core/Abi/OfflineTests have zero P/Invoke; separate internal NativePreview DLL
+has 15 Fwpm declarations, no exported types/entrypoint/runtime reference.
+Native metadata inspected reflection-only; actual WFP calls 0. CanApply=false.
+
+Final source-pinned managed tests 62/62 PASS, 0 FAIL (attempt05). One finite
+oracle matrix 73,728 points, not Windows tests. Seven behavior mutants killed.
+Compiled port-readback mutant: 61 PASS / 1 EXPECTED FAIL (mutant_port04),
+exact regression trigger; negative red evidence preserved. Four managed
+outputs built, zero compile errors/warnings; 22 independent SDK C++ static
+assertions (/Zs only). Three SDK versions, 9 primary header hashes, 6 GUIDs,
+15 prototypes. Previous toolkit 3 pure gates PASS, Apply/Rollback still BLOCKED;
+its Install/Uninstall/collector not invoked and prior files untouched.
+PS5.1 new guard AST 1/1, 0 errors; runtime suite not run. Initial shell-selector
+parse actually ran on PS7 and was not credited as PS5 evidence. No Bypass/
+Unblock/ExecutionPolicy/elevation. Final compiler env allowlisted, no inherited
+CL/_CL_/CSC or proxy/API credentials. No product test FAIL/compile ERROR;
+44->55->58->61->62 historical suites retained, not cumulative native proof.
+
+NATIVE WFP ENFORCEMENT NOT RUN / NOT VERIFIED. REAL HOST SECURITY / V2RAY
+REMOTE ROUTE / ORDINARY CHAT MCP E2E NOT VERIFIED; HOSTED TUNNEL NOT STARTED.
+Install/live rollback BLOCKED. Native stage/readback compiled but never called;
+native delete remains blocked, trusted lineage/ACL/effective graph/loopback/
+children/DNS/BFE/boot/flow/quiescence gates open. Source visibility is not a
+sandbox against deliberate reflection/admin execution. No real accounts,
+rights/ACL/WFP/firewall/V2Ray/network mutations, native subjects or Git/GitHub.
+
+Artifacts: reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/
+report.md, manifest.json, checks_final.json, source/, native/, contracts/,
+evidence/attempt05/, evidence/mutant_port04/, evidence/previous_toolkit_guard.json,
+evidence/ps51_syntax_actual.json, security_boundary.md, lab_gate.md,
+integration_plan.md, manual_engineering_review.md, privacy_review.json,
+card_rotation.json, integrity.json, factual_result.txt.
+
+DOC IMPACT: own TASK directory + own-card rotation only. Protected baseline:
+298 project files, 297 noncard checked unchanged before rotation. Other
+cards/old toolkit/shared docs/Claude/LLM12/production untouched. Full old
+history and own rules prefix byte-exact; report/evidence/manifest saved before
+B2/B3 readback, only then B1 WAITING. No raw historic card copied to bundle.
+SHARED DOC DELTA for 19/34 is proposal in report only. Source pin from TASK
+not Git-verified; publication/independent acceptance pending. User forwards
+result to WEB_11. NEXT: independent review then separately authorized proven
+isolated Windows lab + reviewed adapter, not live activation on working host.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 — исходные байты сохранены
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+## CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001 / 2026-10-20
+
+Полная исходная постановка ниже сохранена без изменений; AMENDMENT к этой TASK нет.
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001` — создание универсального, воспроизводимого и проверяемого комплекта безопасного развёртывания MCP на разных компьютерах Windows.
+
+**Название:** WUA MCP — Portable Secure Deployment Kit / Automated Host Discovery, Identity Provisioning, WFP Policy, Verification & Rollback.
+
+**ARCH CLASS:** Web Alarm Ultra / External AI Integrations / ChatGPT Desktop MCP / Windows Security / Portable Deployment.
+
+**Исполнитель:** Codex 007.
+
+**Координатор и независимый verifier:** ChatGPT WEB_10.
+
+**PRIMARY PROFILE:** `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`
+
+**Исходный ориентир:** `main@a9615a135b87e933b672c25d1323a2c892e93290`. Не является разрешением использовать Git/GitHub.
+
+**Режим:** IMPLEMENTATION OF OFFLINE TOOLKIT + BOUNDED READ-ONLY HOST INVENTORY + SYNTHETIC TESTS. NO LIVE DEPLOYMENT.
+
+## 1. Цель
+
+Разработать универсальный переносимый комплект, позволяющий устанавливать защищённую MCP-инфраструктуру на разных Windows-компьютерах без ручного повторения длинной последовательности административных операций.
+
+Пользователь должен иметь возможность:
+
+1. Запустить локальный диагностический скрипт на новом компьютере.
+    
+2. Автоматически собрать все необходимые для установки и проверки сведения о целевой Windows.
+    
+3. Получить полный отчёт о совместимости, безопасности, найденных параметрах, неизвестных параметрах и ограничениях.
+    
+4. Автоматически сформировать машинно-зависимый план установки.
+    
+5. До установки увидеть все запланированные изменения: учётные записи, права, сетевые политики, процессы, каталоги, службы и порты.
+    
+6. После отдельного подтверждения выполнить установку через подготовленный скрипт.
+    
+7. Автоматически проверить фактически созданную конфигурацию.
+    
+8. При необходимости безопасно откатить только изменения, созданные данным комплектом.
+    
+
+**Ключевая идея: один исходный toolkit — множество Windows-компьютеров; на каждом компьютере собственные параметры, SID, разрешения и отчёт.**
+
+Не копировать SID, секреты или готовые системные политики с одной Windows в другую.
+
+## 2. Обязательная архитектурная база
+
+Перед разработкой изучить актуальную локальную документацию:
+
+- `Документация/08_Старт.md`
+    
+- `Документация/000_Задачи для агента.md`
+    
+- `Документация/000_Задачи Codex.md`
+    
+- `Документация/18_Регламент сопровождения документации.md`
+    
+- `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`
+    
+- `Документация/34_TACTICAL_CONTEXT.md`
+    
+- `Документация/01_Архитектура и текущее состояние.md`
+    
+- применимые `36`, `36.1`, `36.2`.
+    
+
+Особенно:
+
+`reports/CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001/report.md`
+
+И предшествующие исследования:
+
+- `reports/CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001/`
+    
+- `reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/`
+    
+- `reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/`
+    
+- `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/`
+    
+
+Не повторять большой архитектурный анализ с нуля. Использовать уже принятые инженерные выводы.
+
+## 3. Целевая схема
+
+Текущий пользователь продолжает работать в обычном ChatGPT Desktop.
+
+Технический контур предполагает:
+
+- `wua-client` — отдельная непривилегированная Windows identity для `tunnel-client` и дочернего MCP STDIO-процесса.
+    
+- `wua-broker` — отдельная identity для выделенного HTTP CONNECT / V2Ray/sing-box broker.
+    
+- Для клиента C — разрешён только конкретный локальный endpoint `127.0.0.1:P`, всё остальное запрещено на уровне проверенной системной политики.
+    
+- Для брокера B — разрешён только согласованный remote endpoint `R:Q`, при наличии дополнительных требований к подлинности удалённого сервера.
+    
+- Никаких разрешённых DIRECT fallback.
+    
+- DNS, IPv6, UDP, системные посредники, дочерние процессы, захват порта и отказы WFP/BFE должны рассматриваться как отдельные пути риска.
+    
+
+Это архитектура-кандидат **T1**, а не доказанная реализация. Для модели T2 стандартные учётные записи сами по себе недостаточны.
+
+**Не создавать действующие политики по схеме** `**Block ALL + Allow localhost**`**.** Пересечение явных запретов и разрешений должно быть исключено либо доказанно разрешено корректным механизмом WFP. Не принимать спецификацию условий WFP за runtime-доказательство.
+
+## 4. Полнота автоматического сбора данных
+
+Требование пользователя: обеспечить **100% покрытие всех обязательных параметров целевой машины**, необходимых для безопасной установки, проверки и отката.
+
+Это не означает сбор всей информации с компьютера.
+
+Подготовить строго типизированный `discovery_contract` / `requirements_manifest`, в котором каждый обязательный параметр имеет:
+
+- идентификатор и назначение;
+    
+- источник получения;
+    
+- безопасный локальный способ чтения;
+    
+- тип значения;
+    
+- правила валидации;
+    
+- признак обязательности;
+    
+- уровень чувствительности;
+    
+- статус `DETECTED / VERIFIED / MISSING / UNSUPPORTED / CONFLICT / REQUIRES_USER_INPUT`;
+    
+- правило остановки;
+    
+- зависимые действия установки.
+    
+
+Обязательно предусмотреть следующие категории.
+
+**A. Система:** Windows edition, build, architecture, PowerShell, необходимые API и системные компоненты.
+
+**B. Защитные механизмы:** наличие WFP/BFE/Windows Firewall, применимые политики, управление политиками через GPO/MDM, наличие конфликтующих средств защиты, доступность необходимых механизмов и permissions.
+
+**C. Учётные записи:** существование целевых технических имён, локальные SID, возможные конфликты, принцип минимальных привилегий, требования к неинтерактивному запуску и типам logon.
+
+**D. Порты и процессы:** предполагаемый локальный endpoint, существующие слушатели, конфликтные службы, принадлежность порта. Статический снимок занятости порта не считать защитой от будущей подмены слушателя.
+
+**E. Сетевой контур:** локальные интерфейсы, IPv4/IPv6, необходимые признаки сетевой конфигурации, локальные proxy endpoints, потенциально конфликтующие правила маршрутизации, без реальных внешних сетевых запросов.
+
+**F. V2Ray/sing-box:** присутствие и версия необходимых бинарных компонентов, хеши, поддерживаемая схема конфигурации, proxy capabilities, наличие DIRECT/fallback/selector/override в доступных безопасных конфигурационных материалах.
+
+**G. MCP:** доступный `tunnel-client`, версия и SHA-256, существующие local launcher/config/help files, требуемые STDIO child, рабочие директории и пути к readonly resources.
+
+**H. Автозапуск:** Task Scheduler или service launcher, условия запуска под выделенной учётной записью, startup dependencies, состояние после перезагрузки, жизненный цикл дочерних процессов.
+
+**I. Файловый доступ:** требуемые каталоги и ACL, доступ к бинарным файлам, конфигурациям, профилям и необходимым read-only ресурсам. Не предоставлять техническим пользователям весь доступ к `ag_llm`, чужим профилям или системным каталогам.
+
+**J. Установка и откат:** начальное состояние, список объектов, которые будут созданы, доступные механизмы атомарного применения, точные зависимости и возможность rollback.
+
+**K. Безопасность:** наличие локальных механизмов, позволяющих проверить effective policies, фактические process identities, ownership, listen/connect path и отсутствие обходных маршрутов в будущем лабораторном тесте.
+
+Подготовить автоматический `coverage report`: обязательные поля должны быть либо подтверждены, либо явно помечены как блокеры. Неизвестное значение **не может считаться безопасным по умолчанию**.
+
+Где сведения нельзя получить автоматически и безопасно — предусмотреть отдельный явный ввод оператора. Не подставлять произвольные значения и не расширять сетевые разрешения автоматически.
+
+## 5. Минимизация собираемой информации
+
+Сбор должен быть адресным.
+
+**Не собирать и не экспортировать:**
+
+- пароли Windows;
+    
+- содержимое Windows Credential Manager;
+    
+- приватные ключи, API tokens, access tokens, cookies;
+    
+- реальные proxy credentials;
+    
+- личные файлы, документы и переписку;
+    
+- содержимое браузерных профилей;
+    
+- данные остальных пользователей, не относящиеся к технической задаче.
+    
+
+Не отправлять собранные сведения в интернет, внешние API или телеметрию.
+
+Не публиковать идентификаторы хоста, пользовательские имена, конфиденциальные адреса, секретные конфигурации и unredacted runtime output в GitHub.
+
+Разделить безопасный публикуемый отчёт и локальные конфиденциальные данные, если последние когда-либо действительно потребуются; для данной задачи предпочтительно обходиться без них.
+
+## 6. Комплект скриптов
+
+Разработать переносимую структуру, например:
+
+`toolkit/Collect-Host.ps1`
+
+`toolkit/New-DeploymentPlan.ps1`
+
+`toolkit/Install-WuaMcp.ps1`
+
+`toolkit/Test-WuaMcpInstallation.ps1`
+
+`toolkit/Uninstall-WuaMcp.ps1`
+
+`toolkit/contracts/`
+
+`toolkit/policy/`
+
+`toolkit/tests/`
+
+Названия могут быть изменены по инженерным причинам, но функции должны быть представлены.
+
+### 6.1. Collect-Host
+
+Read-only локальная инвентаризация.
+
+Должна определять поддерживаемые системные параметры, совместимость и необходимые машинно-зависимые значения.
+
+Не выполнять DNS-запросы, внешние connect probes, установку пакетов, изменение реестра, firewall, служб, сетевых настроек или политик безопасности.
+
+Текущая TASK разрешает **ограниченный фактический read-only сбор технических метаданных с текущего компьютера**, только если агент предварительно проверил локальность и отсутствие побочных действий конкретных команд. Не допускать скрытых network probes, автообновлений, remoting или повышения прав.
+
+Доступные только с привилегиями администратора сведения обозначать `REQUIRES_ELEVATION` / `BLOCKED`; не повышать права автоматически.
+
+### 6.2. New-DeploymentPlan
+
+Из безопасного inventory + versioned configuration contract формировать:
+
+- точный install plan;
+    
+- перечень новых учётных записей и разрешений;
+    
+- план WFP/security policy по SID;
+    
+- назначение портов;
+    
+- план запуска MCP и брокера;
+    
+- план ACL;
+    
+- все prerequisites и риски;
+    
+- машинно-зависимые параметры;
+    
+- validation plan;
+    
+- rollback plan;
+    
+- неизменяемый идентификатор/хеш утверждаемого плана.
+    
+
+План должен быть понятен человеку.
+
+Для каждого действия указать:
+
+`WHAT / WHY / TARGET / BEFORE / AFTER / REQUIRED PRIVILEGES / VERIFICATION / ROLLBACK`.
+
+Иметь предварительную проверку конфликтов со существующими учётными записями, файлами, службами, портами и политиками.
+
+Поддерживать `DryRun` по умолчанию.
+
+### 6.3. Install-WuaMcp
+
+Создать **реальную реализацию или чётко ограниченный инженерный scaffold** будущей установки, не выдавая непроверенные операции за готовые.
+
+При наличии доказанного security backend будущий установщик должен уметь:
+
+- создавать технические учётные записи локально на каждой Windows;
+    
+- получать их реальные SID и привязывать к ним политики;
+    
+- назначать минимальные права и ACL;
+    
+- создавать только необходимые, проверенные policy objects;
+    
+- настраивать отдельный брокер без DIRECT;
+    
+- создавать безопасный неинтерактивный startup;
+    
+- сохранять deployment ledger;
+    
+- проверять успешность каждого шага;
+    
+- останавливаться при нарушении любого обязательного инварианта.
+    
+
+Не переносить пароль/токен из старой машины. Не хранить секреты в скриптах, командных аргументах, открытых конфигурациях или опубликованных отчётах.
+
+**Запрещено фактически исполнять Install в текущей TASK.**
+
+Пока WFP/loopback/SID/remote-pin не доказаны на целевой Windows, `Apply` должен оставаться безопасно заблокированным: понятная причина `BLOCKED`, без обходного флага `force insecure` и без подмены работающей защиты имитацией.
+
+### 6.4. Test-WuaMcpInstallation
+
+Подготовить систему независимой проверки.
+
+Отделить:
+
+- статическую корректность generated policy;
+    
+- корректность создания/привязки SID;
+    
+- проверку effective WFP objects;
+    
+- принадлежность локального listening endpoint;
+    
+- запрет других local и external endpoints;
+    
+- дочерние процессы;
+    
+- DNS и delegated operations;
+    
+- broker outbound;
+    
+- поведение при отказах;
+    
+- подтверждение V2Ray remote route;
+    
+- ordinary Chat MCP E2E.
+    
+
+Каждый вид проверки должен сообщать, что именно он доказал.
+
+Не считать успешный `DryRun`, наличие правил или отсутствие пакетов доказательством fail-closed.
+
+### 6.5. Uninstall-WuaMcp
+
+Предусмотреть безопасный rollback:
+
+- остановить собственный MCP process tree и брокер;
+    
+- подтвердить отсутствие живых процессов/потоков, для которых снятие deny создаст риск;
+    
+- восстановить только изменённые объекты с проверкой ownership;
+    
+- удалять только объекты из deployment ledger, созданные нашим комплектом;
+    
+- не менять другие Windows accounts, службы и правила;
+    
+- при неизвестном состоянии сохранять ограничения и выдавать `ROLLBACK BLOCKED`, а не снимать защиту.
+    
+
+**Rollback не должен открывать DIRECT маршрут даже временно.**
+
+## 7. Прозрачность и контроль пользователем
+
+Одна из главных целей задачи — постоянная проверяемость установки.
+
+Обязательно разработать:
+
+1. Машинно-читаемый inventory.
+    
+2. Человеко-читаемый inventory с редактированием чувствительных полей.
+    
+3. Матрицу покрытия обязательных требований.
+    
+4. `install-plan.json` и текстовый `install-plan.md`.
+    
+5. Deployment ledger для каждого созданного ресурса.
+    
+6. Отчёт post-install drift/verification.
+    
+7. Явное разграничение `PASS / FAIL / BLOCKED / NOT RUN / NOT VERIFIED`.
+    
+8. Сводку того, какие действия требуют административных прав.
+    
+9. Механизм повторного запуска без дублирования пользователей, правил, служб и других ресурсов.
+    
+10. Возможность сравнить два компьютера по требованиям совместимости без переноса их секретов.
+    
+
+Каждое изменение должно быть объяснимо и воспроизводимо.
+
+Нельзя автоматически расширять разрешённые адреса, порты или права ради устранения ошибки.
+
+## 8. Проверка на нескольких Windows
+
+Комплект не должен зависеть от фиксированного имени компьютера, буквы `M:`, локальных путей Codex или конкретного SID.
+
+Предусмотреть как минимум:
+
+- Windows 10 Pro и поддерживаемые варианты Windows 11;
+    
+- отличия редакций/сборок;
+    
+- PowerShell 5.1 и другие версии при необходимости;
+    
+- отсутствие sing-box;
+    
+- отсутствие `tunnel-client`;
+    
+- неизвестную версию бинарного файла;
+    
+- конфликт имён пользователей;
+    
+- занятый порт;
+    
+- GPO/MDM policy conflict;
+    
+- недоступный WFP backend;
+    
+- отсутствие прав администратора;
+    
+- неподдерживаемый способ запуска;
+    
+- изменённую конфигурацию V2Ray;
+    
+- отсутствие официального исходного архива;
+    
+- недостаточную информацию о remote endpoint.
+    
+
+Не объявлять совместимость со всеми Windows без доказательств.
+
+Неподдерживаемые конфигурации должны завершаться диагностикой `UNSUPPORTED / BLOCKED`, не запуском менее защищённой установки.
+
+## 9. Испытания самого toolkit
+
+Разрешены локальные полностью синтетические тесты, использующие mocks/fixtures, с размещением всех новых файлов в собственной TASK-папке.
+
+Не обращаться к реальной внешней сети.
+
+Проверить:
+
+- полноту requirements manifest;
+    
+- корректность формирования плана;
+    
+- пограничные случаи и противоречия;
+    
+- пропущенные обязательные поля;
+    
+- недопустимые привилегии;
+    
+- конфликтующие WFP predicates;
+    
+- IPv4/IPv6/UDP/ports;
+    
+- неправильные SID/port ownership assumptions;
+    
+- отсутствие или конфликт компонентов;
+    
+- запрет Apply при невалидном или недоказанном security backend;
+    
+- идемпотентность логики;
+    
+- привязку плана к версии конфигурации;
+    
+- отклонение подменённого плана;
+    
+- правильный безопасный порядок rollback;
+    
+- отсутствие секретов в публичном отчёте;
+    
+- отрицательные контроли: умышленно сломанная конфигурация должна давать FAIL/BLOCKED.
+    
+
+**TEST-ENG-01@1:** после автоматических тестов обязательный собственный `MANUAL ENGINEERING REVIEW`, включая анализ failure paths, privilege escalation, policy bypass, частичной установки и TOCTOU.
+
+Не использовать mock PASS как доказательство Windows OS enforcement.
+
+## 10. Текущие ограничения
+
+В этой TASK разрешены:
+
+- локальное чтение указанных документов и относящихся к MCP исходных материалов;
+    
+- адресная read-only инвентаризация системных технических метаданных текущей Windows;
+    
+- разработка offline-скриптов и контрактов;
+    
+- синтетические offline-тесты;
+    
+- запись результатов только в собственную отчётную папку;
+    
+- безопасная ротация собственной карточки.
+    
+
+**Без отдельного USER GO запрещены:**
+
+- Git/GitHub, включая чтение;
+    
+- внешние сетевые обращения и скачивания;
+    
+- создание реальных пользователей Windows;
+    
+- назначение реальных новых ACL, logon rights или privileges;
+    
+- установка/изменение/удаление WFP и Windows Firewall rules;
+    
+- запуск настоящего `tunnel-client`, V2Ray-брокера, Cloudflared или hosted tunnel;
+    
+- запуск реальных DNS/HTTP/network probes;
+    
+- создание или активация VM/Sandbox;
+    
+- изменение Windows services, Task Scheduler jobs, DNS, маршрутов, proxy, registry security settings;
+    
+- изменение существующего v2rayN/sing-box;
+    
+- установка драйверов и программ;
+    
+- применение установочного/откатного сценария на реальной системе;
+    
+- использование/экспорт секретов;
+    
+- изменение production-кода Web Alarm/Ultra/LLM12;
+    
+- изменение общих документов или материалов других агентов.
+    
+
+`HOSTED_TUNNEL_ON_HOLD_BY_USER` сохраняется без изменений.
+
+Никаких переходов на прямой Windows internet.
+
+## 11. WRITE_SCOPE
+
+Единственная директория разработки и отчётов:
+
+`reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/`
+
+Внутри можно создавать:
+
+- `report.md`
+    
+- `manifest.json`
+    
+- `requirements_manifest.json`
+    
+- `discovery_contract.json`
+    
+- `toolkit/`
+    
+- `toolkit/tests/`
+    
+- `synthetic_evidence/` либо безопасные отслеживаемые файлы с результатами
+    
+- `manual_engineering_review.md`
+    
+- `known_limitations.md`
+    
+- `next_stage_plan.md`
+    
+
+Все необходимые исходные коды и доказательные артефакты должны быть пригодны для последующего пользовательского commit/push, без секретов.
+
+Дополнительно разрешена запись в:
+
+`Документация/000_Задачи Codex.md`
+
+**Исключительно для ротации собственной завершённой задачи.**
+
+Не изменять профили `18`, `19`, `34`, документацию Claude/LLM12, другие отчёты, root scripts, shared CI и production.
+
+## 12. Требования к готовому результату
+
+В конце Codex должен передать не только описание, но и максимально практически пригодный **переносимый toolkit** с работающими безопасными компонентами.
+
+Минимальные критерии:
+
+**DISCOVERY:** локальный сбор реальных разрешённых метаданных и полный coverage report.
+
+**PLAN:** автоматическое построение человеко-читаемого и машинного плана.
+
+**INSTALL:** подготовленный контролируемый механизм provisioning с жёстким safety gate; всё недоказанное явно BLOCKED.
+
+**VERIFY:** независимые проверки как отдельная часть инструментария.
+
+**ROLLBACK:** адресный ledger-based rollback без широкого снятия защитных правил.
+
+**PORTABILITY:** отсутствие фиксированной зависимости от первоначального компьютера.
+
+**TESTS:** реальные локальные synthetic tests + negative controls с честным разграничением от OS-native испытаний.
+
+**MANUAL REVIEW:** обязательный adversarial source walkthrough.
+
+**HANDOFF:** список остающихся блокеров, без которых выполнять настоящий Apply нельзя.
+
+Отдельно оценить, можно ли пользоваться штатными средствами PowerShell/Windows без дополнительных внешних runtime dependencies. Если для полноценного user-mode WFP provisioning требуется отдельный компонент, представить минимальную реализацию, её ограничения и требования к сборке; не скрывать dependency.
+
+Если технически невозможно завершить полный installer без подтверждения WFP semantics, сдать законченные Discovery/Plan/Contracts/Tests и корректно заблокированный Apply. Не создавать небезопасный «рабочий» installer ради формального PASS.
+
+## 13. Очерёдность будущего использования
+
+После отдельной независимой приёмки:
+
+1. На новом компьютере — read-only discovery.
+    
+2. Полная проверка требований и конфликтов.
+    
+3. Создание плана установки.
+    
+4. Подтверждение пользователем параметров и самого плана.
+    
+5. После доказанных OS safety gates и отдельного USER GO — Apply.
+    
+6. Verification и независимое сравнение с планом.
+    
+7. Только после этого — контролируемые native/network/E2E испытания с отдельными разрешениями.
+    
+
+Сегодня разрабатываем только комплект и выполняем разрешённые offline-проверки.
+
+## 14. Завершение и отчётность
+
+Сохранить `report.md`, `manifest.json`, весь исходный код toolkit, тестовые результаты, перечень реально прочитанных системных параметров и список блокеров.
+
+Составить отдельно:
+
+- что полностью готово и проверено;
+    
+- что реализовано, но ещё не проверено на Windows;
+    
+- что невозможно реализовать до следующего USER GO;
+    
+- какие данные автоматически собираются на любой новой машине;
+    
+- какие данные требуют ввода оператором;
+    
+- чего toolkit намеренно не собирает;
+    
+- как он поведёт себя при недостающих данных;
+    
+- как избежать изменения существующей рабочей инфраструктуры.
+    
+
+Предложить WEB_10 `SHARED DOC DELTA` для 19 и 34, но не редактировать их самостоятельно.
+
+После завершения:
+
+1. Сохранить первоначальную постановку и AMENDMENT в БЛОКЕ 2 собственной карточки.
+    
+2. Сохранить factual result и ссылки на evidence в БЛОКЕ 3.
+    
+3. Проверить сохранность прежней истории.
+    
+4. Только после этого очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+    
+
+Если ротация не может быть выполнена безопасно, сохранить БЛОК 1 и указать `CARD ROTATION BLOCKED`.
+
+Выдать пользователю краткий самодостаточный результат одним копируемым блоком `text`, содержащий TASK ID, статус, что готово, результаты проверок, ограничения, изменённые пути и следующий этап.
+
+Статус сдачи:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+**Конечная цель:** один прозрачный, безопасный, воспроизводимый универсальный комплект, с помощью которого новую Windows можно обследовать и подготовить к защищённому MCP без ручного переписывания конфигураций, прав и сетевых правил, без несанкционированного прямого выхода в интернет.
+
+---
+
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+## CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001 / 2026-10-20 / Codex 007
+
+RESULT READY / AWAITING INDEPENDENT VERIFICATION (WEB_10).
+Discovery / Plan / Contracts / static Verify / rollback planner implemented.
+Install/Uninstall mutation backend is absent: APPLY BLOCKED; keep deny.
+Permitted bounded fallback under assignment sections 6.3/12; no live deployment.
+
+Release PS7 suite 62/62 PASS, 0 FAIL, source-pinned. One case includes 2048
+symbolic protocol/port combinations; no OS-native security test implied.
+Final PS5.1 AST 8/8 files, 0 parse errors, Restricted, override=false;
+final PS5.1 runtime NOT RUN. Early 47-case prototype used process-only
+ExecutionPolicy Bypass once; no persistent policy change, disclosed deviation,
+not final-release certification, not repeated or recommended.
+
+Real bounded metadata release: 55/55 fields represented, 14 metadata VERIFIED,
+42 blocking requirements. Three metadata runs during source/contract refinement.
+11-action plan rebuilt identically; binding and independent symbolic static
+policy checks PASS. Unknown/negative security facts remain blockers.
+
+No account/rights/ACL/WFP/firewall/startup/network/V2Ray changes, native subject
+launches, hosted tunnel, Install/Uninstall invocation or Git/GitHub operations.
+OS-enforced isolation / native fail-closed / V2Ray route / ordinary Chat E2E:
+NOT VERIFIED. C# backend source-only scaffold, not compiled/loaded.
+Windows11 synthetic only; no blanket Windows/PS5 runtime certification.
+
+All artifacts: reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/
+report.md; manifest.json; checks.json; toolkit/README.md; toolkit/tests/;
+host_discovery_release/; verification_release.json;
+synthetic_evidence/attempt06_ps7/results.json;
+synthetic_evidence/syntax_ps51_release.json;
+manual_engineering_review.md; known_limitations.md; next_stage_plan.md;
+privacy_review.json; card_rotation.json; integrity.json.
+
+Protected baseline: 209 project files; 208 noncard hashes checked before
+rotation. Only own card authorized; final readback in integrity.json.
+Rules prefix and full old history preserved byte-for-byte. Full assignment
+saved above before clearing B1. No historical raw card copy in public bundle.
+Report/evidence/manifest saved before rotation; receipt binds their hashes.
+DOC IMPACT: new own TASK directory + own card rotation only. Shared 18/19/34,
+Claude/LLM12, production and working launcher untouched. SHARED DOC DELTA for
+19/34 supplied in report only. Source pin from assignment not Git-verified.
+Publication and independent acceptance NOT VERIFIED; user handles handoff.
+NEXT: independent WEB_10 source/manifest review, then separately authorized
+isolated-lab backend implementation/proof. No live Apply from this evidence.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 — без изменения байтов прежней истории
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001` — комплексная независимая проверка архитектуры безопасного MCP-подключения через изолированную учётную запись Windows.
+
+**Название:** Проверка архитектуры Windows Identity Isolation и гарантированного fail-closed для Web Alarm Ultra MCP без обязательной виртуальной машины.
+
+**ARCH CLASS:** Web Alarm Ultra / External AI Integrations / ChatGPT Desktop MCP / Windows Network Security.
+
+**PRIMARY PROFILE:** `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`
+
+**Исполнитель:** Codex 007.
+
+**Координатор и независимый verifier:** ChatGPT WEB_10.
+
+**Режим:** ANALYSIS ONLY / LOCAL READ-ONLY / NO NETWORK / NO SYSTEM MUTATION.
+
+**Исходный ориентир GitHub:** `main@25f62e33e9e094e1c4613818ce168890863b3431`. Это информационный ориентир координатора, не разрешение агенту обращаться к Git/GitHub.
+
+## 1. Цель задачи
+
+Выполнить за один аналитический проход полноценную инженерную проверку архитектурного предложения Claude 008.
+
+Нам необходимо определить, можно ли организовать безопасное соединение ChatGPT Desktop с Web Alarm Ultra через MCP таким образом, чтобы:
+
+1. Пользователь продолжал работать в своей обычной Windows-сессии и обычном ChatGPT Desktop.
+2. Компоненты MCP запускались автоматически, в фоне, под отдельной ограниченной учётной записью Windows.
+3. Пользователю не требовалось переключать рабочий стол, выполнять интерактивный вход под другой учётной записью или устанавливать вторую Windows.
+4. Прямой внешний сетевой выход защищаемых компонентов был системно запрещён.
+5. Весь разрешённый внешний трафик проходил только через проверенный V2Ray-маршрут.
+6. При любом отказе маршрута соединение завершалось безопасным отказом — fail-closed, без DIRECT fallback.
+7. Существующая рабочая Windows, V2Ray, ChatGPT Desktop, Web Alarm и остальные приложения не подвергались ненужным изменениям.
+
+**Главная цель — получить проверяемую и минимально сложную архитектуру, а не максимальное количество защитных компонентов.**
+
+Не считать предложение Claude заранее правильным. Не считать решение Codex через Hyper-V обязательным.
+
+## 2. Обязательная исходная база
+
+Прочитать актуальные локальные документы по принятому маршруту:
+
+- `Документация/08_Старт.md`
+- `Документация/000_Задачи для агента.md`
+- `Документация/000_Задачи Codex.md`
+- `Документация/18_Регламент сопровождения документации.md`
+- `Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`
+- `Документация/34_TACTICAL_CONTEXT.md`
+- `Документация/01_Архитектура и текущее состояние.md`
+- применимые `36`, `36.1`, `36.2`.
+
+Основной предмет независимой проверки:
+
+`reports/CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001/report.md`
+
+При необходимости прочитать его manifest и supporting evidence.
+
+Сопоставить с собственными ранее проведёнными исследованиями:
+
+- `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/`
+- `reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/`
+- `reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/`
+
+Использовать только необходимые части этих комплектов. Не запускать содержащиеся в них runtime, launcher, native client или сетевые тесты.
+
+Обратить особое внимание на последний независимый review WEB_10 в документах 19 и 34.
+
+## 3. Основная архитектура Claude — предмет проверки
+
+Claude предложил использовать отдельную учётную запись Windows `wua-client`, под которой запускаются:
+
+- `tunnel-client`;
+- MCP STDIO child;
+- необходимые дочерние процессы.
+
+Сетевая политика должна быть привязана к Windows SID этой учётной записи, а не к PID, имени EXE или расположению бинарного файла.
+
+Предполагается:
+
+- ограничить внешние подключения клиента на уровне ОС;
+- оставить необходимый локальный доступ к выделенному HTTP-proxy;
+- использовать отдельный экземпляр sing-box/V2Ray без DIRECT-маршрутов;
+- при необходимости запускать брокер под второй учётной записью `wua-broker`;
+- ограничить доступ MCP-клиента к другим локальным портам;
+- запретить альтернативные маршруты, DNS-утечки и обход через системные службы.
+
+Claude разделил архитектуру на P1/P2.
+
+**P1 не признан достаточным для полного V2Ray-only fail-closed**, поскольку сохраняется возможность доступа к другим loopback-сервисам.
+
+P2 предполагает более строгую сетевую изоляцию и остаётся непроверенным.
+
+Codex должен самостоятельно определить, можно ли сделать предложенную архитектуру проще, надёжнее и проверяемее.
+
+## 4. Критический вопрос: Windows Firewall и WFP
+
+Это главный инженерный пункт.
+
+В независимом review WEB_10 обнаружена проблема:
+
+**Правило Windows Firewall «Block ALL» может перекрывать отдельное разрешающее правило «Allow localhost».**
+
+Поэтому нельзя считать конструкцию «запретить всё, кроме loopback» работоспособной только на основании общей поддержки `-LocalUser`.
+
+Исследовать:
+
+1. Реальную семантику `New-NetFirewallRule -LocalUser` для исходящих соединений.
+2. Возможность непересекающихся адресных правил, учитывающих IPv4 и IPv6.
+3. Возможность выразить ограничение «всё, кроме определённых локальных адресов/портов» штатными средствами Windows.
+4. WFP `FWPM_CONDITION_ALE_USER_ID`, ALE-слои, арбитраж блокирующих и разрешающих фильтров.
+5. Особенности loopback-трафика.
+6. Применение к дочерним процессам и процессам, созданным через другие Windows-механизмы.
+7. Поведение политики при смене firewall profile, остановке BFE, перезагрузке, отказе управляющего процесса.
+8. Влияние сторонних firewall и security products.
+
+Если стандартного Windows Firewall недостаточно, рассмотреть штатный WFP из user mode без установки собственного kernel driver.
+
+**Ожидаемый результат:** конкретная реализуемая схема политики либо аргументированное доказательство, что предложенный путь невозможен или недостаточен.
+
+Не выдавать документированное наличие API за подтверждённое поведение системы.
+
+## 5. Практический запуск без второго рабочего стола
+
+Проанализировать реальную организацию фонового запуска:
+
+- отдельная стандартная учётная запись Windows;
+- Windows Task Scheduler / штатные service mechanisms;
+- запуск без интерактивного входа;
+- наследование ограниченной идентичности дочерними процессами;
+- необходимые файловые ACL и доступ к каталогам Web Alarm;
+- хранение необходимых секретов без выдачи избыточных прав;
+- остановка, перезапуск, обновление клиента и rollback;
+- взаимодействие с текущей пользовательской сессией.
+
+Проверить ограничения Session 0, desktop/window station, пользовательского профиля, OAuth/browser flow, stdio pipes, named pipes и IPC, если это важно для конкретной реализации.
+
+Определить, должен ли защищаемый контур включать сам ChatGPT Desktop или ограничиваться локальным MCP-клиентом и его потомками. Рассмотреть оба варианта и объяснить последствия.
+
+**Критерий:** работа пользователя остаётся в обычном ChatGPT Desktop под его текущей учётной записью. Отдельная учётная запись предназначена для фоновых технических процессов.
+
+## 6. Прокси и полная маршрутизация через V2Ray
+
+Проверить архитектуру:
+
+`tunnel-client → local HTTP proxy / HTTP CONNECT → isolated V2Ray/sing-box broker → approved remote upstream`
+
+Рассмотреть:
+
+- прямую поддержку HTTP proxy у native `tunnel-client`;
+- условия необходимости HTTP CONNECT → SOCKS5 адаптера AM07;
+- риски использования общего v2rayN с DIRECT-правилами;
+- возможность отдельного sing-box instance без DIRECT;
+- необходимость второй учётной записи для брокера;
+- DNS и IPv6;
+- стабильность удалённого IP/порта;
+- поведение при изменении удалённого IP, использовании домена или CDN;
+- локальный proxy-port takeover;
+- маршруты через системные службы и другие loopback-прокси;
+- блокировку всей цепочки при отказе отдельного звена.
+
+Нельзя принимать отсутствие DIRECT в одном конфигурационном файле как полное доказательство маршрута. Необходимо установить, какие настройки действительно загружены, где могут существовать fallback/override и как это должно проверяться.
+
+## 7. Независимый разбор безопасности
+
+Проанализировать минимум следующие случаи:
+
+- основной клиент намеренно или случайно игнорирует proxy;
+- `NO_PROXY` содержит внешний хост;
+- клиент делает прямое IPv4/IPv6 TCP-соединение;
+- UDP или DNS обходят proxy;
+- дочерний процесс использует другой transport;
+- дочерний процесс запускается через системный broker;
+- другой локальный процесс захватывает proxy port;
+- V2Ray падает, перезапускается или переключает конфигурацию;
+- firewall/BFE недоступен, правило отключено либо не применяется;
+- launcher аварийно завершается;
+- происходит PID reuse или замена бинарного файла;
+- приложение использует Windows service, BITS, WinHTTP или другой посредник с отдельной идентичностью;
+- proxy-подключение работает, но удалённый маршрут неверный.
+
+Разделить модели угроз:
+
+**T1:** непреднамеренный обход со стороны обычного клиента и его потомков.
+
+**T2:** намеренно вредоносный код без административных прав, пытающийся выйти за границы контура.
+
+Отдельно указать, чего невозможно гарантировать против администратора, привилегированных служб и компрометации ядра Windows.
+
+## 8. Альтернативные архитектуры
+
+Независимо сравнить:
+
+- SID-scoped Windows account isolation;
+- WFP broker-only boundary;
+- AppContainer;
+- Windows Sandbox;
+- Hyper-V VM;
+- другие действительно обоснованные механизмы Windows.
+
+GitHub Actions рассмотреть исключительно как потенциальную среду вспомогательных синтетических проверок. Не считать GitHub-hosted runner доказательством защищённости пользовательского компьютера.
+
+Не создавать вторую Windows, VM или Sandbox в ходе текущей TASK.
+
+Если вариант без VM технически непригоден — прямо указать причины и минимальный приемлемый fallback.
+
+## 9. Source audit и границы доказательности
+
+Известный официальный `tunnel-client`:
+
+Version: `v0.0.16`
+
+Commit: `5f99daabd4aa4a77049e6d81d54a0d8c18335397`
+
+Runtime source archive:
+
+`tunnel-client-runtime-source-v0.0.16.tar.gz`
+
+Expected SHA-256:
+
+`88953678325ffe650cc562bbd0b147e7e8e984b0527aa8b1647b02d6660ce9e0`
+
+Точная верификация официального архива на локальной машине ранее была заблокирована.
+
+Проверить уже имеющиеся локальные source/help/config/evidence **без сетевых обращений и без исполнения клиента**.
+
+Явно разделить:
+
+- исходный код, реально доступный для проверки;
+- поведение, подтверждённое документацией;
+- известные Windows API;
+- архитектурные предположения;
+- то, что требует native testing;
+- факты, которые без архива или системных испытаний доказать невозможно.
+
+Не расширять область исследования бесконечно. Если точный источник отсутствует, оформить адресный запрос и продолжить независимый анализ того, что доступно.
+
+## 10. Рекомендуемый порядок будущих испытаний
+
+Предложить минимальный план, позволяющий подтвердить выбранную архитектуру с минимальным риском.
+
+Разграничить:
+
+1. Offline source/contract verification.
+2. Проверку семантики ограничений Windows на синтетической модели.
+3. Безопасную системную проверку OS-enforced deny без внешнего сетевого выхода.
+4. Испытания native-клиента в заведомо изолированной среде.
+5. Проверку отказов и восстановления.
+6. Проверку реального маршрута через V2Ray.
+7. Четыре настоящих MCP E2E-вызова из обычного ChatGPT Desktop Chat.
+
+Для каждого будущего этапа определить:
+
+- prerequisites;
+- точный критерий PASS/FAIL;
+- независимый oracle;
+- опасные действия и способ rollback;
+- обязательное отдельное USER GO.
+
+**Эти этапы сейчас НЕ исполнять.**
+
+## 11. Разрешения и запреты
+
+### READ_SCOPE
+
+Все перечисленные в разделах 2 и 9 локальные проектные документы, отчёты, конфигурации, исходники и сохранённые результаты в рамках текущего исследования.
+
+Разрешён адресный локальный поиск и безопасный статический анализ доступных файлов.
+
+### WRITE_SCOPE
+
+Только:
+
+`reports/CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001/`
+
+Для полного `report.md`, `manifest.json`, необходимых безопасных evidence и минимальных вспомогательных материалов.
+
+Дополнительно:
+
+`Документация/000_Задачи Codex.md`
+
+Исключительно для собственной безопасной ротации БЛОКОВ 1–3 по действующему регламенту.
+
+### КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО
+
+Без отдельного USER GO:
+
+- Использовать Git/GitHub в любой форме, даже для чтения.
+- Выполнять сетевые запросы, web lookup, API calls и загрузки.
+- Запускать `tunnel-client`, Cloudflared, V2Ray test instance, proxy-adapter или native network probes.
+- Создавать учётные записи Windows.
+- Запускать клиент от другой учётной записи.
+- Изменять Windows Firewall, WFP, BFE, ACL, DNS, proxy, routes, network adapters или security policy.
+- Создавать VM, Sandbox или cloud runner.
+- Менять MCP launcher, Web Alarm, Ultra, CI, production-код и тестовые модули.
+- Отключать средства защиты, изменять системные службы или настройки безопасности.
+- Выполнять любые внешние проверки direct egress.
+- Использовать настоящие токены, ключи или другие секреты.
+- Активировать hosted tunnel.
+- Изменять материалы Claude/LLM12, их карточки и общие документы.
+
+**HOSTED_TUNNEL_ON_HOLD_BY_USER остаётся действующим без исключений.**
+
+Текущая TASK разрешает только исследование, а не подготовку Windows путём фактических изменений.
+
+## 12. Требования к самостоятельному инженерному анализу
+
+Codex является независимым инженерным исполнителем.
+
+Не ограничиваться подтверждением выводов Claude.
+
+Обязательно провести `MANUAL ENGINEERING REVIEW`:
+
+- найти потенциальные неверные предпосылки;
+- проверить внутреннюю совместимость выбранных правил;
+- попытаться построить реальные сценарии обхода;
+- выявить проблему на стыке Windows identity, firewall policy, proxy и дочерних процессов;
+- предложить собственное решение при обнаружении недостатков исходной архитектуры.
+
+Не создавать избыточных тестов и файлов. Для аналитической TASK важнее корректность выводов и точные границы доказательности.
+
+## 13. Ожидаемый конечный результат
+
+В одном полном отчёте предоставить:
+
+**A. Executive Summary**
+
+Простыми словами: можно ли действительно обойтись без виртуальной машины?
+
+**B. Verdict по архитектуре Claude**
+
+Что подтверждено, что неверно, что недостаточно доказано.
+
+**C. Главное техническое решение**
+
+Конкретная рекомендуемая архитектура Windows identity/firewall/WFP с описанием процессов, учётных записей, разрешений, портов и маршрутов.
+
+**D. Реализация без второго рабочего стола**
+
+Как практически запускать и обслуживать MCP-клиент в фоне под отдельным пользователем.
+
+**E. Прокси и маршрутизация**
+
+Как обеспечить V2Ray-only и отсутствие DIRECT fallback.
+
+**F. Security Findings**
+
+Уязвимости, пути обхода, остаточные риски и условия STOP.
+
+**G. Сравнение альтернатив**
+
+Основная архитектура, разумный резервный вариант, условия необходимости VM.
+
+**H. Следующие этапы**
+
+Минимальный безопасный план внедрения и независимой проверки с отдельными USER GO.
+
+**I. Decision Required**
+
+Только действительно необходимые решения пользователя. Вопросы, на которые Codex способен ответить самостоятельно, не перекладывать на пользователя.
+
+**J. DOC IMPACT / SHARED DOC DELTA**
+
+Точные предложения WEB_10 по актуализации документов 19 и 34. Самостоятельно их не изменять.
+
+## 14. Завершение
+
+Сохранить полный отчёт и manifest в:
+
+`reports/CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001/`
+
+После сохранения отчёта безопасно выполнить ротацию своей карточки:
+
+1. Перенести полную исходную постановку БЛОКА 1 и принятые AMENDMENT в БЛОК 2.
+2. Записать factual result, ограничения, тесты NOT RUN и пути к evidence в БЛОК 3.
+3. Проверить сохранность прежней истории.
+4. Только затем очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+
+Если ротация невозможна — `CARD ROTATION BLOCKED`, без удаления исходной задачи.
+
+После работы выдать пользователю один краткий самодостаточный копируемый блок `text` с TASK ID, вердиктом, доказанными и недоказанными фактами, рисками, изменёнными файлами, DOC IMPACT и NEXT.
+
+Итоговый статус до независимой проверки WEB_10:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+**Критерий успеха всей TASK:** одна завершённая инженерная оценка, которая позволит нам принять решение о конкретной архитектуре и безопасном следующем этапе, не запуская новую серию предварительных исследований без необходимости.
+
+---
+
+
+Принятые AMENDMENT: отсутствуют; команда запуска соответствует полной постановке.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001; Codex 007; 2026-10-19.
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION.**
+Вердикт: принять SID/background-launch как архитектурные принципы; P1 недостаточен,
+P2 не доказан. Кандидат T1 без VM: два SID, непересекающиеся user-mode WFP deny
+predicates, exact loopback endpoint, dedicated HTTP CONNECT broker с remote pin.
+Требуют проверки SID/layer/loopback/arbitration, BFE/boot/existing flows,
+receiver/port takeover, DNS/system delegation; для T2 стандартной учётки мало.
+Обязательность VM для эксплуатации не утверждается; ordinary UI остаётся
+отдельным process/network scope. Health :0 означает ephemeral listener.
+
+Факты: 9/9 Claude manifest file size/hash matches; 9 Windows SDK/CDXML source
+files прочитаны статически, не Windows API tests. 17 rule definitions сверены,
+16 без текстовых изменений и одна уточнённая норма own-card rotation.
+Fresh protected baseline 207 files; 206/206 noncard hashes сверены до ротации,
+конечная сверка — integrity.json. Новых runtime/system/network/native tests 0;
+старые suites не повторялись. Git/GitHub, Windows/V2Ray/ACL/VM mutations 0.
+
+OS-ENFORCED EGRESS ISOLATION NOT VERIFIED
+NATIVE CLIENT FAIL-CLOSED NOT VERIFIED
+V2RAY REMOTE ROUTE NOT VERIFIED
+HOSTED TUNNEL NOT STARTED
+ORDINARY CHAT E2E NOT VERIFIED
+
+Report/manifest/evidence: reports/CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001/
+report.md, manifest.json, windows_static_evidence.json, review_evidence.json,
+inputs_before.json, integrity.json, card_rotation.json. Полная постановка выше
+в B2, прежняя история ниже сохранена дословно; B1 очищается после staged readback.
+DOC IMPACT: task folder + own rotation only. SHARED DOC DELTA для 19/34 включена
+в report section J, общие документы и Claude/LLM12 не изменены.
+NEXT/PROPOSAL: один bounded implementation/proof package в независимой offline
+лаборатории после exact source handoff и отдельного USER GO; native/live/E2E
+имеют отдельные gates. Публикует и передаёт WEB_10 пользователь, не агент.
+
+---
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001
+
+**Название:** WUA MCP — Official Source Pack & Air-Gapped Windows VM Preflight
+
+**Адресат:** агент 007 (Codex)  
+**Координатор и независимый verifier:** ChatGPT «Сервер WEB_10»  
+**ARCH CLASS:** Web Alarm Ultra / External AI Integration / ChatGPT Desktop MCP  
+**Приоритет:** HIGH  
+**Статус:** USER APPROVED / READY FOR LAUNCH  
+**Тип работы:** offline engineering preflight + source verification + VM isolation design
+
+## 1. Цель
+
+Уважаемый агент 007 (Codex), предлагаю перейти к следующему этапу подготовки безопасного подключения ChatGPT Desktop к Web Alarm через официальный OpenAI Secure MCP Tunnel.
+
+Исследование `CODEX-WUA-0-NATIVE-EGRESS-GATE-001` завершило ограниченную проверку архитектуры защиты. Native execution остался BLOCKED. Результат независимо рассмотрен координатором WEB_10 и зафиксирован в документах 19 и 34.
+
+**Теперь необходимо подготовить практический, воспроизводимый план запуска настоящего** `**tunnel-client v0.0.16**` **в полностью изолированной Windows VM.**
+
+Главный принцип:
+
+**До доказанной изоляции ни один исследуемый native-процесс, его дочерний процесс или вспомогательный компонент не должен иметь возможности прямого внешнего подключения через Windows.**
+
+Для первого native offline gate тестовая VM вообще не должна иметь внешней сети, включая выход через V2Ray, хостовую систему, NAT, мосты и другие каналы.
+
+Рабочий V2Ray пользователя продолжает функционировать без изменений.
+
+**В рамках данной TASK запрещается создавать VM или запускать настоящий tunnel-client.** Задача должна подготовить условия для отдельно разрешённого практического этапа.
+
+## 2. Обязательные исходные документы
+
+Прочитать актуальные:
+
+`08 → 000 → 34 → 18 → 01`
+
+А также документы:
+
+- `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`
+    
+- `23_Архитектура Web Alarm Workspace.md`
+    
+- `36`, `36.1`, `36.2`
+    
+- `37_Старт перехода - Web Alarm Ultra.md`
+    
+- Собственную персональную карточку Codex.
+    
+
+Обязательные предыдущие материалы:
+
+- `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_preflight_20261017/`
+    
+- `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/native_client_offline_20261017/`
+    
+- `reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/http_socks_adapter_20261018/`
+    
+- `reports/CODEX-WUA-0-NATIVE-EGRESS-GATE-001/`
+    
+
+Использовать текущую опубликованную базу GitHub, указанную координатором:
+
+`main@795e1fddf6741169f006caf8ba9430e4d22fca0f`
+
+Это справочный source pin, **не разрешение локальному Codex использовать Git/GitHub**.
+
+Не повторять предыдущие 19/19, 5/5, 36/36 и 22/22 reference-тесты без конкретной новой инженерной гипотезы.
+
+## 3. Gate A — официальный исходный код
+
+Точная версия:
+
+- Repository: `openai/tunnel-client`
+    
+- Tag: `v0.0.16`
+    
+- Commit: `5f99daabd4aa4a77049e6d81d54a0d8c18335397`
+    
+- Source archive: `tunnel-client-runtime-source-v0.0.16.tar.gz`
+    
+- Published archive size: `239841` bytes
+    
+- Expected SHA-256: `88953678325ffe650cc562bbd0b147e7e8e984b0527aa8b1647b02d6660ce9e0`
+    
+
+Официальная ссылка для идентификации:
+
+[https://github.com/openai/tunnel-client/releases/download/v0.0.16/tunnel-client-runtime-source-v0.0.16.tar.gz](https://github.com/openai/tunnel-client/releases/download/v0.0.16/tunnel-client-runtime-source-v0.0.16.tar.gz)
+
+**Действия:**
+
+1. Проверить только локально доступные разрешённые каталоги и предыдущие материалы на наличие точного архива.
+    
+2. Если архив найден — вычислить реальный SHA-256, размер и проверить соответствие ожидаемым значениям.
+    
+3. Если хеш совпадает — безопасно изучить содержимое архива, структуру проекта, `go.mod`, `go.sum` и необходимые исходники, не выполняя код из архива.
+    
+4. Подготовить точный список файлов, необходимых для анализа control-plane, MCP, OAuth, Harpoon, DNS, proxy-health, Cloudflared и других сетевых путей.
+    
+5. Проверить provenance установленного EXE в пределах доступных локальных данных, не выдавая совпадение строки версии за воспроизводимую сборку.
+    
+6. Если архив отсутствует — зафиксировать `SOURCE PACK BLOCKED`, точную ссылку, ожидаемые характеристики и процедуру безопасной пользовательской передачи.
+    
+
+**Запрещено:** самостоятельно загружать архив или зависимости из интернета, использовать Git/GitHub, PowerShell Download, curl, wget, pip, npm, Go downloader или другие сетевые каналы.
+
+Отсутствие архива не останавливает разрешённую VM-часть исследования.
+
+## 4. Gate B — инвентаризация Windows
+
+Провести только read-only анализ текущей машины.
+
+Установить:
+
+- Версию Windows и архитектуру.
+    
+- Поддержку аппаратной виртуализации по доступным системным сведениям.
+    
+- Наличие или отсутствие установленных платформ Hyper-V, Windows Hypervisor Platform, VirtualBox, VMware и иных подходящих гипервизоров.
+    
+- Доступность уже существующих VM и их конфигурации, если они находятся в разрешённом read_scope.
+    
+- Наличие подходящего установочного образа Windows и необходимых offline dependencies.
+    
+- Возможность создания полностью сетево-изолированной VM выбранным гипервизором.
+    
+- Возможности получения проверяемых доказательств изоляции до старта native-клиента.
+    
+
+Не считать отсутствие команды в PATH доказательством отсутствия продукта.
+
+**Никаких изменений Windows Features, Hyper-V, BIOS/UEFI, сетевых адаптеров, firewall, драйверов, виртуальных коммутаторов или конфигурации существующих VM.**
+
+Не запускать, не останавливать и не перенастраивать существующие виртуальные машины.
+
+Если какой-либо read-only источник требует повышения прав — оставить соответствующий пункт `BLOCKED`, не обходить ограничение.
+
+## 5. Gate C — выбор изолированной Windows VM
+
+Сравнить применимые технологии и выбрать наиболее подходящую для disposable native offline gate.
+
+Оценивать:
+
+1. Надёжность отключения всех внешних сетевых путей.
+    
+2. Возможность независимо подтвердить конфигурацию гипервизора.
+    
+3. Удобство повторяемых запусков и возврата к исходному состоянию.
+    
+4. Изоляцию дочерних процессов.
+    
+5. Отсутствие влияния на рабочий V2Ray и остальные приложения пользователя.
+    
+6. Управляемость снапшотов и удаления только принадлежащих TASK ресурсов.
+    
+7. Возможность сохранять очищенные результаты без передачи секретов.
+    
+8. Объём необходимых системных изменений и способ точного rollback.
+    
+
+Предлагаемая первая лаборатория:
+
+`Disposable Windows VM → native tunnel-client → собственные loopback HTTP/SOCKS fixtures → синтетические endpoints`
+
+**Не подключать VM к живому V2Ray, OpenAI, Cloudflare или внешнему интернету.**
+
+Особое внимание уделить запрету:
+
+- external NIC, NAT, bridged и host-only сетей с возможностью дальнейшего выхода;
+    
+- default gateway и DNS через хост;
+    
+- port forwarding;
+    
+- shared sockets и сетевых IPC-мостов;
+    
+- host proxy relay;
+    
+- незадекларированных guest integrations;
+    
+- альтернативного IPv4/IPv6 и UDP egress;
+    
+- неконтролируемого запуска дополнительных native-процессов.
+    
+
+Host-only сеть не считать автоматически безопасной. Нужна проверка фактической топологии.
+
+Проверить, что выбранный способ не требует отключения защитных механизмов рабочей Windows.
+
+## 6. Gate D — доказательство изоляции
+
+Разработать конкретный **Isolation Preflight Contract**, который будущий исполнитель сможет проверить до запуска native EXE.
+
+Контракт должен требовать:
+
+- Идентификацию VM, гипервизора и точной версии конфигурации.
+    
+- Подтверждение отсутствия всех внешних сетевых интерфейсов, шлюзов, NAT и мостов.
+    
+- Подтверждение отсутствия передачи трафика через хостовые интеграции.
+    
+- Проверку разрешённых loopback fixtures.
+    
+- Проверку всех запускаемых внутри VM процессов и возможных дочерних процессов.
+    
+- Независимые наблюдения со стороны гипервизора/хоста, а не только заявления гостевой Windows.
+    
+- Отдельную проверку целостности EXE и offline dependencies.
+    
+- Отсутствие реальных credentials и hosted tunnel configuration.
+    
+- Явный STOP при изменении VM identity, конфигурации сети или целостности окружения.
+    
+
+Предложить доказуемые критерии PASS/BLOCKED и перечень evidence.
+
+**В этой задаче контракт проектируется, но настоящая изоляция не объявляется VERIFIED.**
+
+Не использовать реальный внешний IP или DNS в качестве тестовой цели даже для проверки запрета выхода.
+
+## 7. Gate E — будущий native offline test plan
+
+Подготовить точную последовательность будущих испытаний настоящего `tunnel-client`, когда изоляция будет доказана.
+
+Минимальная программа:
+
+1. Проверка точной версии и SHA-256 EXE.
+    
+2. Локальный фиктивный HTTP CONNECT proxy.
+    
+3. Локальный фиктивный SOCKS5 proxy.
+    
+4. Ошибка прокси до установления соединения.
+    
+5. Тайм-аут, отказ и внезапное отключение.
+    
+6. Изменение или потеря proxy policy.
+    
+7. Наличие конфликтующих `HTTP_PROXY`, `HTTPS_PROXY`, `ALL_PROXY`, `NO_PROXY`.
+    
+8. Попытка клиента переключиться на другой маршрут.
+    
+9. Попытка обращения к внешнему адресу, ограниченная исключительно наблюдением внутри полностью изолированной лаборатории без какого-либо фактического внешнего выхода.
+    
+10. Отслеживание DNS, IPv6, UDP и нестандартных transports.
+    
+11. Дочерние процессы и отсутствие возможности выйти за защитную границу.
+    
+12. Проверка cleanup, отсутствия оставшихся соединений и восстановления снапшота.
+    
+
+Для каждого теста определить:
+
+- Preconditions.
+    
+- Изолированную fixture.
+    
+- Действие.
+    
+- Независимый oracle.
+    
+- Expected result.
+    
+- STOP condition.
+    
+- Evidence.
+    
+- Cleanup.
+    
+
+**Настоящий tunnel-client в этой TASK не запускать.** Подготовка test plan не является разрешением на тестовый запуск.
+
+## 8. Gate F — rollback и защита рабочей машины
+
+Подготовить точную процедуру будущего развёртывания и отката.
+
+Обязательные требования:
+
+- Никаких изменений действующего V2Ray/sing-box.
+    
+- Никаких изменений рабочего launcher и `HOSTED_TUNNEL_ON_HOLD_BY_USER`.
+    
+- Никакого массового сброса Windows firewall.
+    
+- Никакого изменения DNS, VPN, TUN или системного прокси.
+    
+- Никакого удаления чужих VM и снапшотов.
+    
+- Любая будущая VM должна иметь отдельный owner, идентификатор, manifest и список принадлежащих ей ресурсов.
+    
+- При неудачной проверке изоляции VM не используется для native tests.
+    
+- Rollback должен затрагивать исключительно ресурсы будущей одобренной задачи.
+    
+
+Предусмотреть действия при отказе гипервизора, незавершённой VM и невозможности удаления ресурсов. Не заменять точный rollback советом «переустановить» или «сбросить настройки».
+
+## 9. Разрешённая область
+
+**read_scope:**
+
+- Утверждённые регламенты и профильные документы.
+    
+- AM05–AM07 и `CODEX-WUA-0-NATIVE-EGRESS-GATE-001`.
+    
+- Разрешённые локальные сведения о Windows и виртуализации.
+    
+- Доступные локальные исходники и проверенный архив клиента, если он существует.
+    
+
+**write_scope:**
+
+Только новая папка:
+
+`reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/`
+
+Допустимы исключительно безопасные локальные файлы и аналитические offline-пробы в её пределах.
+
+**Запрещены:**
+
+- Native network execution `tunnel-client` и Cloudflared.
+    
+- Создание или изменение VM.
+    
+- Любые реальные внешние сетевые запросы.
+    
+- Изменение Windows/V2Ray/firewall/DNS/proxy/launcher.
+    
+- Git/GitHub-операции.
+    
+- Изменение персональной карточки Claude.
+    
+- Запись в `web_alarm/`, общие документы и материалы LLM12.
+    
+- Изменение предыдущих отчётов и evidence.
+    
+- Использование приватных ключей и токенов.
+    
+- Самостоятельный hosted activation.
+    
+
+При пересечении областей остановить конфликтующую операцию и зафиксировать причину.
+
+## 10. Обязательная отчётность
+
+Сохранить внутри собственной папки:
+
+- `report.md` — полный factual report.
+    
+- `manifest.json` — перечень файлов, SHA-256 и размеры.
+    
+- `checks.json` — PASS/FAIL/BLOCKED/NOT RUN.
+    
+- `source_pack_preflight.md` — статус официального архива.
+    
+- `host_vm_inventory.md` — только очищенные read-only сведения.
+    
+- `vm_platform_comparison.md` — сравнение доступных решений.
+    
+- `offline_vm_design.md` — выбранная архитектура изоляции.
+    
+- `isolation_preflight_contract.md` — условия будущего независимого доказательства.
+    
+- `native_offline_test_plan.md` — детальная программа испытаний.
+    
+- `rollback_plan.md` — точный план возврата состояния.
+    
+- `manual_engineering_review.md` — собственный adversarial security review сверх автоматических проверок.
+    
+- Безопасные JSON evidence и новые исходники offline-проверок, если такие потребуются.
+    
+
+Не копировать приватные конфигурации Windows/V2Ray, секреты, сертификаты или пользовательские данные в отчёт.
+
+Если создаются вспомогательные тесты, использовать точные source hashes, отдельные fixtures и сохранение первоначальных FAIL.
+
+## 11. Acceptance и STOP
+
+Требуемые итоговые статусы:
+
+- `OFFICIAL SOURCE PACK VERIFIED / BLOCKED`
+    
+- `LOCAL SOURCE AUDIT VERIFIED / PARTIAL / BLOCKED`
+    
+- `VM PLATFORM INVENTORY VERIFIED / PARTIAL`
+    
+- `OFFLINE VM DESIGN READY / PARTIAL / BLOCKED`
+    
+- `ISOLATION PREFLIGHT CONTRACT READY / PARTIAL`
+    
+- `OS/HYPERVISOR ISOLATION NOT VERIFIED`
+    
+- `NATIVE CLIENT EXECUTION NOT STARTED`
+    
+- `NATIVE CLIENT FAIL-CLOSED NOT VERIFIED`
+    
+- `V2RAY REMOTE ROUTE NOT VERIFIED`
+    
+- `HOSTED TUNNEL NOT STARTED`
+    
+- `ORDINARY CHAT E2E NOT VERIFIED`
+    
+
+**Критерий успешного выполнения:** координатор получает конкретный, воспроизводимый проект offline Windows VM, доказательную программу независимой проверки её изоляции, процедуру подготовки исходников, будущий native test plan и точный запрос на следующий USER GO.
+
+Если платформа или официальные исходники недоступны, представить честный PARTIAL/BLOCKED с минимальным перечнем необходимых условий и действий пользователя.
+
+Не объявлять готовой защиту, которая существует только в проекте.
+
+## 12. Завершение
+
+Выполнить собственный инженерный и adversarial review по действующему регламенту.
+
+Сохранить постановку, отчёт, manifest, evidence и информацию для корректной ротации карточки. Если write_scope не позволяет менять персональную карточку, не нарушать его: подготовить handoff внутри отчётной папки и отметить причину.
+
+Выдать пользователю один самостоятельный итоговый блок:
+
+TASK ID, статус, подтверждённые результаты, проверки с точными числами, заблокированные операции, риски, DOC IMPACT, SHARED DOC DELTA, report path и NEXT.
+
+Codex не использует Git/GitHub. Пользователь публикует результаты самостоятельно. WEB_10 проводит независимую проверку.
+
+**Финальное условие безопасности: никакой прямой внешней сети и никакого native-запуска без доказанной изоляции и отдельного разрешения пользователя.**
+
+
+## Принятые дополнения к постановке
+
+# USER GO — дополнение к CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001
+
+Источник: прямое сообщение пользователя в текущем чате; принято 2026-10-18.
+
+Уважаемый агент 007 (Codex)!
+
+Пользователь утвердил запуск задачи `CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001`. Полная постановка размещена в БЛОКЕ 1 вашей персональной карточки.
+
+**Дополнительное обязательное уточнение USER GO — ротация карточки Codex.**
+
+В предыдущих задачах обнаружено противоречие: регламент требует очищать БЛОК 1 после завершения, но узкий `write_scope` запрещал изменение карточки.
+
+Пользователь разрешает устранить это противоречие.
+
+1. Прочитайте правила ротации в документе `18_Регламент сопровождения документации.md` и персональной карточке `Документация/000_Задачи Codex.md`.
+2. Разрешается минимально уточнить раздел правил **собственной карточки Codex**, явно закрепив обязанность ротации после каждой выполненной задачи, включая PARTIAL/BLOCKED с готовым итоговым отчётом.
+3. После фактического завершения текущей задачи и сохранения отчёта обязательно:
+   - перенести полную постановку БЛОКА 1 со всеми дополнениями в БЛОК 2;
+   - записать factual result, статусы, проверки и пути evidence в БЛОК 3;
+   - убедиться, что оба блока успешно сохранены и предыдущая история не потеряна;
+   - **очистить БЛОК 1 до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.**
+4. Для этих действий разрешается адресная запись в `Документация/000_Задачи Codex.md` сверх основного `write_scope`. Другие файлы не получают дополнительных разрешений.
+5. Если обнаружится противоречие в общем документе 18, подготовьте точное предложение исправления для WEB_10, но самостоятельно общий регламент не изменяйте.
+6. Если безопасная ротация невозможна, остановите только её, сохраните отчёт и явно укажите `CARD ROTATION BLOCKED` с причиной. Молчаливо оставлять завершённую задачу в БЛОКЕ 1 нельзя.
+
+Это правило не разрешает удалять историю, изменять карточки Claude, выполнять Git/GitHub-операции либо менять чужие TASK.
+
+**Теперь приступайте к `CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001`.**
+
+Главные сетевые ограничения неизменны: никакого прямого внешнего соединения, создания VM, native-запуска или изменения рабочего V2Ray. Только разрешённые offline-проверки и проектирование изоляции.
+
+По завершении представить обычный итоговый отчёт для независимой проверки WEB_10.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: `CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001`; Codex 007; 2026-10-18.
+**PARTIAL / RESULT READY / AWAITING INDEPENDENT VERIFICATION.**
+Разрешённая offline-подготовка завершена; внешний native/VM gate BLOCKED.
+
+```text
+OFFICIAL SOURCE PACK BLOCKED
+LOCAL SOURCE AUDIT PARTIAL
+VM PLATFORM INVENTORY PARTIAL
+OFFLINE VM DESIGN PARTIAL
+ISOLATION PREFLIGHT CONTRACT PARTIAL
+OS/HYPERVISOR ISOLATION NOT VERIFIED
+NATIVE CLIENT EXECUTION NOT STARTED
+NATIVE CLIENT FAIL-CLOSED NOT VERIFIED
+V2RAY REMOTE ROUTE NOT VERIFIED
+HOSTED TUNNEL NOT STARTED
+ORDINARY CHAT E2E NOT VERIFIED
+```
+
+Read-only inventory: Windows 10 Pro x64 build 19045; CPU virtualization/SLAT=true;
+HypervisorPresent=false. В bounded sources не найдены ready VM platform,
+Windows media и exact source archive. Fresh ZIP/cached checksums/EXE identity
+совпали; source→binary build proof остаётся OPEN. Сохранены conditional zero-NIC
+Hyper-V VM design, I01–I12 contract, 16 NOT RUN native cases, owned rollback и
+manual adversarial review. Native executions/VM creation/network probes = 0.
+Previous 19/19, 5/5, 36/36, 22/22 suites не повторялись. Fresh protected baseline
+151 файл; кроме авторизованной own card изменения не предусмотрены, конечная
+сверка и точные evidence counts — checks.json/integrity.json/bundle_validation.json.
+
+Report/evidence: `reports/CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001/report.md`,
+`manifest.json`, `host_inventory.json`, `local_file_inventory.json`,
+`provenance.json`, `preflight_decision.json`, `card_rotation.json` в той же папке.
+Прямое USER GO разрешает own-card rule clarification/rotation; исходная карточка
+сохранена в card_before.md; полная B1 + дополнение — выше в B2; прежняя история
+ниже сохранена дословно. B1 очищается только после readback B2/B3.
+DOC IMPACT: own card + task report only; shared delta для WEB_10 подготовлена,
+общие документы не изменены. Git/GitHub и прямая отправка в чаты не выполнялись.
+NEXT/PROPOSAL: передача exact source archive и trusted offline lab platform/media;
+отдельный provisioning scope, independent isolation review, затем отдельный
+USER GO на exact native cases. Самостоятельная независимая приёмка не объявлена.
+
+---
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+````````````````````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WUA-0-MCP-FEASIBILITY-001
+
+**Адресат:** агент 007 (Codex)  
+**Направление:** Web Alarm Ultra / ChatGPT Desktop / MCP  
+**Статус:** новая исследовательская задача, запускается пользователем  
+**Тип:** feasibility + безопасный локальный proof-of-concept
+
+## Цель
+
+Уважаемый агент 007 (Codex), предлагаю начать исследование возможности прямого подключения обычного ChatGPT Desktop на Windows к Web Alarm / будущему Web Alarm Ultra через локальный MCP-мост.
+
+Наша цель — создать техническую основу, благодаря которой ChatGPT сможет обращаться к разрешённым возможностям Web Alarm Ultra без обязательной промежуточной публикации данных на GitHub и без постоянного использования Desktop Commander.
+
+Основная исследуемая схема:
+
+**ChatGPT Desktop → локальный MCP-адаптер → Web Alarm / Web Alarm Ultra**
+
+Отдельно исследовать возможность использования Codex в качестве вспомогательного канала уведомлений между AG LLM и существующим чатом ChatGPT.
+
+## Порядок работы
+
+1. Изучить актуальные документы проекта, прежде всего `08_Старт`, `18`, `19`, `34`, `37`, а также применимые документы архитектуры и тестирования.
+2. Проверить, какие возможности локальных MCP-плагинов действительно доступны установленному ChatGPT Desktop и текущему аккаунту пользователя.
+3. Определить минимальную архитектуру адаптера без переработки старой Ultra/Tkinter.
+4. По возможности выполнить безопасный локальный smoke-тест на синтетических данных: `ping`, `list_capabilities`, `read_synthetic_context`.
+5. Проверить, возможно ли в дальнейшем передавать через этот канал статусы TASK, контекст, отчёты и evidence из Web Alarm.
+6. Отдельно исследовать доставку уведомлений от локального агента в уже существующий чат ChatGPT: идентификация чата, подтверждение доставки, ошибки, повторные попытки и защита от дубликатов.
+7. Провести необходимые проверки в рамках исследовательского scope и подготовить воспроизводимый отчёт с фактическими результатами.
+
+Агенту разрешается самостоятельно выбирать подходы к исследованию, проводить диагностику и предлагать архитектурные решения в рамках указанной цели.
+
+## Ограничения
+
+- Не изменять рабочий Web Alarm, production TASK, активные состояния или реальные Workspace.
+- Не изменять архитектуру старой Ultra и не начинать полноценный перенос в Web UI.
+- Не выполнять платные API-вызовы без отдельного разрешения.
+- Не использовать Git/GitHub-команды без отдельного разрешения пользователя.
+- Не обходить существующие механизмы permissions, STOP, approval и recovery.
+- Не смешивать MCP-инструменты с вызовами моделей через OpenAI API.
+- Если реальные возможности подключения не подтверждены, честно зафиксировать ограничение и предложить дальнейший маршрут.
+- Не объявлять весь Web Alarm Ultra интегрированным на основании ограниченного smoke-теста.
+
+## Результат
+
+Подготовить отчёт, содержащий:
+
+- фактически проверенные способы подключения;
+- результаты локальных тестов;
+- достигнутые и недостигнутые возможности;
+- необходимые компоненты и изменения для следующего этапа;
+- ограничения безопасности и совместимости;
+- перечень файлов, если они создавались;
+- итоговый статус: PASS / PARTIAL / BLOCKED;
+- предложение следующего инженерного этапа.
+
+Сохранить отчёт и evidence в отдельной папке TASK, не подменяя существующие документы и результаты других агентов.
+
+## ОБЯЗАТЕЛЬНОЕ ФИНАЛЬНОЕ ДЕЙСТВИЕ — ОТПРАВКА ОТЧЁТА В CHATGPT
+
+**После завершения работы агент 007 обязан отправить сообщение в существующий чат ChatGPT с названием «Сервер WEB_08», используя ранее проверенный доступный механизм передачи сообщений из AG LLM / Codex.**
+
+В сообщении необходимо:
+
+1. Указать точный TASK ID.
+2. Передать содержательный итоговый отчёт, аналогичный отчёту, который агент предоставляет пользователю в своём чате. Не ограничиваться ссылкой, коротким статусом или сообщением «готово».
+3. Приложить ссылки или точные пути к материалам и evidence, если они имеются.
+4. Отдельной заключительной строкой написать:
+
+**«Задача выполнена. Отчёт передан. Ожидаю независимой проверки ChatGPT в чате „Сервер WEB_08“.»**
+
+Если отправка технически невозможна, сообщить пользователю причину и сохранить полный текст сообщения для ручной передачи. Не заявлять об успешной доставке без подтверждения.
+
+**Важно:** отправка отчёта не означает автоматической приёмки TASK. Окончательный вердикт выносится ChatGPT после независимой проверки результатов.
+
+После сдачи оформить результат в персональной карточке Codex по установленному регламенту БЛОКОВ 1–3.
+
+---
+
+````````````````````````````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WUA-0-MCP-FEASIBILITY-001
+Статус: PARTIAL / RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+2026-10-16, Codex 007. Локальный stdio MCP -> disposable Web Alarm HTTP:
+34 PASS, 0 FAIL/ERROR/SKIP, exit 0; два свежих процесса, fixture bytes unchanged,
+45 source hashes unchanged. Первые 4 неуспешные попытки сохранены отдельно.
+Обычный ChatGPT Desktop E2E и receiver ACK не подтверждены.
+Полный report.md отправлен в «Сервер WEB_08», ID
+6acfcf40-e98c-83ed-b435-cc0eb062b996: TRANSPORT_ACCEPTED + MESSAGE VISIBLE.
+Полный readback всех 12480 символов совпал с отправленным сообщением,
+message/turn ID bed226fe-5d7a-4cbe-94e8-f10beb8f0a79.
+Ответ получателя и независимая приёмка не объявлены. По одной отправке probe
+и отчёта, без resend. Доказательство: reports/CODEX-WUA-0-MCP-FEASIBILITY-001/notification_delivery.json.
+Scope: только папка reports/CODEX-WUA-0-MCP-FEASIBILITY-001/ и эта карточка.
+Production/runtime/config/общая документация не изменялись; LOCAL ONLY / NOT SYNCED.
+Отклонение DOC-GIT-01: до чтения карточки read-only git status/log; после
+обнаружения запрета дальнейших Git/GitHub операций не было. Независимый PASS
+не заявляется. NEXT: independent review и отдельный ручной Desktop E2E gate.
+
+## ARCHIVED PREVIOUS BLOCKS — preserved verbatim, 2026-10-16
+
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+````````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE`.
+
+# TASK: CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE
+
+**ARCH CLASS:** Web Alarm Workspace / WA4-R Reliability / Windows Local Gate  
+**EXECUTOR:** Codex 007  
+**INDEPENDENT VERIFIER:** ChatGPT / WEB_08  
+**STATUS:** ASSIGNED UPON USER LAUNCH  
+**PRIORITY:** HIGH — завершение доказательной проверки F1/F2/F3 перед дальнейшим WA4-R rollout.
+
+## 1. Цель
+
+Выполнить углублённую локальную Windows-проверку актуального Web Alarm Workspace и определить, устранены ли опасные сценарии F1/F2/F3 на уровне реального поведения системы, а не только сохранённых отчётов.
+
+Проверить существующие исправления, их архитектурную корректность, состояние файлов, конкурентные операции, отказоустойчивость, перезапуск и восстановление.
+
+**Это самостоятельная инженерная задача, а не поручение механически повторить тесты R-003/R-004.**
+
+Исполнитель вправе самостоятельно развивать исследование, строить дополнительные гипотезы, улучшать тесты и исправлять выявленные связанные дефекты в утверждённой области записи.
+
+Не повторять старые циклы только ради получения прежних чисел PASS. Использовать существующие доказательства как отправную точку.
+
+## 2. Нормативные документы
+
+Прочитать действующий маршрут:
+
+`08 → 000 → 34 → 18 → 01 → 23 / 24 / 25 → 36 / 36.1 / 36.2`
+
+Обязательно учитывать:
+
+- `DOC-ENGINEERING-ROLES-01@1`
+    
+- `DOC-PARALLEL-01@1`
+    
+- `DOC-GIT-01@1`
+    
+- `DOC-TASK-BLOCK1-01@1`
+    
+- `TEST-COLLAB-01@1`
+    
+- `TEST-ENG-01@1`
+    
+- `TEST-AREA-01@1`
+    
+
+Прочитать отчёты и первичные доказательства:
+
+- `reports/CODEX-WA4-R-003-F2F3-LOCAL-REPAIR/`
+    
+- `reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/`
+    
+- `reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/`
+    
+
+GitHub baseline, независимо зафиксированный координатором: `main@df3250140c987876771fe2f899f80acaf38fd920`.
+
+**Локальный Codex не использует Git/GitHub.** Проверить фактически доступную локальную ревизию через чтение файлов, документированные SHA-256 и исходные manifest. Не считать локальную папку автоматически совпадающей с GitHub HEAD. Различия LF/CRLF учитывать отдельно от реального изменения кода.
+
+При существенном source drift не выдавать прежние PASS за результаты нового дерева. Можно исследовать независимые безопасные сценарии, но нельзя выдавать несопоставимые прогоны за закрытие gate.
+
+## 3. Инженерная самостоятельность
+
+Агент действует как полноценный инженер-разработчик.
+
+Разрешается самостоятельно:
+
+- исследовать всю связанную архитектуру Web Alarm, а не только три заранее названных метода;
+    
+- искать новые race conditions, нарушения инвариантов, ошибочные допущения и ложные результаты тестов;
+    
+- создавать дополнительные тесты и негативные контроли;
+    
+- проводить обоснованные bounded stress/concurrency experiments;
+    
+- находить причины отказов вместо маскировки ошибок;
+    
+- исправлять обнаруженные связанные runtime-дефекты в разрешённой области записи;
+    
+- рефакторить непосредственно затронутый код, если это необходимо для доказуемого исправления и сохранения контрактов;
+    
+- проверять соседние механизмы, влияющие на F1/F2/F3: locks, admission, storage, snapshot, checkpoint, receipt, replay, projection, recovery;
+    
+- предлагать альтернативные решения и улучшения архитектуры.
+    
+
+**Не требуется согласовывать каждую проверку, тест, метод или исправление внутри scope.**
+
+Если выявлен дополнительный дефект, связанный с целью TASK, — исследовать, исправить при необходимости и подтвердить regression test.
+
+Если проблема выходит за разрешённую область или меняет rollout/authority, — оформить `FINDING / PROPOSAL / BLOCKER`, указать последствия и рекомендуемую отдельную TASK. Не расширять право записи самостоятельно.
+
+## 4. Обязательные направления
+
+### F1 — TASK Closeout / Windows I/O
+
+Исследовать:
+
+- native pre-move refusal, включая `WinError 5/32`;
+    
+- post-move failure при записи статуса;
+    
+- `MOVED_STATUS_PENDING`;
+    
+- admission-first и completion-first;
+    
+- concurrent readers/writers;
+    
+- сохранение snapshot, checkpoint, claims, events;
+    
+- fresh-process recovery;
+    
+- повторный closeout и запрет незаконного повторного завершения.
+    
+
+Проверить именно физическое состояние, файловые байты и durable operation state, а не только возвращаемое исключение.
+
+### F2 — Closeout vs MutationExecutor
+
+Проверить:
+
+- прямой `TaskStore.complete_task` и gated `CloseoutService`;
+    
+- порядок захвата и освобождения locks;
+    
+- STARTED → physical apply → DONE;
+    
+- directory move и destination/source lookup gap;
+    
+- canonical target identity и stale CAS;
+    
+- отказ до apply;
+    
+- повторное выполнение известного контракта;
+    
+- сохранность receipt/operation/event history;
+    
+- отсутствие второго physical effect;
+    
+- подлинные duplicate directories и ошибочные phantom duplicates.
+    
+
+### F3 — Crash / Recovery Race
+
+Проверить:
+
+- достижение конкретной crash-phase, а не приблизительный тайминг;
+    
+- конкуренцию reader, admission, mutation и closeout;
+    
+- принудительный обрыв disposable worker;
+    
+- поздние попытки записи;
+    
+- terminal raw-state до восстановления;
+    
+- восстановление другим процессом;
+    
+- отсутствие ложного SUCCESS, resurrection или повторной mutation.
+    
+
+Сохранить в отчёте первоначальный исторический RED. Поздний PASS не означает автоматически, что причина прежнего WinError 5 установлена.
+
+## 5. Дополнительное исследование
+
+Самостоятельно проверить связанные сценарии, которые исполнитель считает существенными, даже если они не перечислены выше.
+
+Особое внимание:
+
+- lock-order inversion и скрытые deadlocks;
+    
+- TOCTOU между проверкой состояния и действием;
+    
+- неполная запись файлов, повреждение JSON/JSONL и усечённые events;
+    
+- исключение после durable DONE, но до ответа;
+    
+- отказ во время recovery;
+    
+- неверная identity TASK/Workspace;
+    
+- повтор после потери ответа;
+    
+- неосвобождённые handles и child processes;
+    
+- подменённые receipts или checkpoint;
+    
+- ложноположительные тестовые oracle;
+    
+- неполная очистка TEMP после аварийного завершения.
+    
+
+При необходимости расширить targeted coverage. Не выполнять бессмысленные многократные прогоны, когда исходная ошибка уже локализована.
+
+## 6. Локальная проверка R-005
+
+Проверить исходный evidence-export дополнительно на компьютере, где доступны оригинальные архивы.
+
+Использовать существующий `validate_export.py` в read-only режиме, включая проверку оригинальных ZIP через `--sources` и допустимый `--self-check`.
+
+Различать:
+
+- оригинальные байты архивов;
+    
+- текстовые RAW-записи;
+    
+- транспортную нормализацию CRLF/LF;
+    
+- локальный source pin;
+    
+- фактически независимо выполненный runtime test.
+    
+
+Известное замечание: 7 из 56 опубликованных файлов R-005 отличаются переводами строк, но точно совпадают по SHA-256 после восстановления CRLF. Исследовать корректный способ проверки и предложить переносимое решение.
+
+**Не переписывать запечатанные R-003/R-004/R-005 evidence и manifest.** При необходимости подготовить исправленный валидатор или дополнение только в собственной папке R-006.
+
+## 7. Тестовый цикл
+
+Работать локально на Windows, предпочтительно в существующей Python `.venv`.
+
+Перед запуском проверить source/environment, Python, доступность runner, guard и состав фактически обнаруженных тестов.
+
+Рекомендуемый порядок:
+
+1. Source-level и архитектурный review.
+    
+2. Existing F1/F2/F3 focused tests.
+    
+3. Собственные новые negative/adversarial tests по найденным рискам.
+    
+4. Windows process/restart/recovery tests на отдельных disposable TEMP fixtures.
+    
+5. Связанная regression suite.
+    
+6. Full Web Alarm regression, если среда допускает.
+    
+7. Bounded concurrency/stress по обоснованной необходимости.
+    
+8. Повторная оценка исходников и доказательств после исправлений.
+    
+
+Использовать существующий `wa4a_acceptance.py` и актуальные selectors согласно `36.2`. Каждый attempt имеет уникальную TEMP output directory.
+
+Для каждого существенного прогона фиксировать collection count, PASS/FAIL/ERROR/SKIP, exit code, isolation, Python/Windows environment, exact source identity и адресное RAW evidence.
+
+Если запуск прервался, не отмечать последующие проверки как выполненные.
+
+## 8. Разрешённые изменения
+
+**Write scope:**
+
+- Python runtime-модули `web_alarm/*.py`, непосредственно связанные с F1/F2/F3 и обнаруженными смежными дефектами;
+    
+- адресные `test_web_alarm_*.py` и соответствующие новые `test_web_alarm_*.py` для регрессии;
+    
+- новая собственная папка `reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/`;
+    
+- персональная карточка `Документация/000_Задачи Codex.md` только для штатной ротации;
+    
+- disposable TEMP fixtures, logs и диагностические файлы.
+    
+
+Новые связанные runtime/test-файлы в указанных областях допустимы, если обоснованы задачей.
+
+**Read / execute only:**
+
+- `wa4a_acceptance.py` и другие общие runners;
+    
+- R-003/R-004/R-005 reports/evidence;
+    
+- общая документация;
+    
+- CI workflows;
+    
+- соседние Ultra/Voice подсистемы.
+    
+
+При необходимости изменить общий runner, shared module или другой файл вне write scope — сначала `FINDING / SCOPE EXTENSION REQUIRED`.
+
+**Запрещены без отдельного USER GO:**
+
+- Git/GitHub operations, включая read-only Git-команды;
+    
+- изменение live Workspace и реальных пользовательских проектов;
+    
+- произвольная очистка данных, чужих TEMP/output или чужих TASK-файлов;
+    
+- изменения Ultra, Voice, системных настроек или сети;
+    
+- сторонние API, платные LLM и live credentials;
+    
+- включение WARN / GATEWAY REQUIRED / STRICT;
+    
+- изменение CI или общих документов;
+    
+- изменение исторических запечатанных результатов;
+    
+- автоматическое объявление общей приёмки WA4-R.
+    
+
+## 9. Обязательная инженерная проверка
+
+До `RESULT READY` выполнить самостоятельный `MANUAL ENGINEERING REVIEW` по `TEST-ENG-01@1`:
+
+- разобрать порядок операций и реальную семантику блокировок;
+    
+- зафиксировать подтверждённые и опровергнутые гипотезы;
+    
+- проверить, что тест действительно достигает нужной фазы;
+    
+- выявить ложный green или слабый oracle;
+    
+- проверить источники потенциально недетерминированного поведения;
+    
+- оценить, не создаёт ли исправление новую race condition;
+    
+- оценить residual risks и неохваченные сценарии.
+    
+
+Одного успешного regression suite недостаточно.
+
+## 10. Сдача
+
+Создать компактный независимый отчёт в собственной папке R-006.
+
+Требуются:
+
+1. Source/environment pins до и после исследования.
+    
+2. Список изменённых файлов и обоснование каждого изменения.
+    
+3. Исходные findings, воспроизводимость и root-cause confidence.
+    
+4. Exact tests и counts, отдельно initial RED и final runs.
+    
+5. RAW-состояния для F1/F2/F3, включая целевые bytes/receipt/checkpoint/events, phases/PID/exit и fresh-process outcomes.
+    
+6. Negative controls и результаты adversarial review.
+    
+7. Отдельный `MANUAL ENGINEERING REVIEW`.
+    
+8. Явные `PASS / FAIL / BLOCKED / NOT RUN` без смешения статусов.
+    
+9. `SHARED DOC DELTA` для WEB_08 без самостоятельной записи общих документов.
+    
+10. Рекомендации по оставшимся Windows/CI/rollout gates.
+    
+
+Экономить объём отчётов: основные доказательства и адресный индекс, без копирования огромных stdout и без повторения уже сохранённых архивов. Значимые ошибки не сокращать до потери информации.
+
+При отсутствии дефектов завершить доказательный review без искусственного изменения кода.
+
+Финальный статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+**Не присваивать самостоятельно DONE / VERIFIED.**
+
+После отчёта — штатная ротация БЛОКОВ 1–3 с сохранением полной исходной TASK и истории.
+
+**Главная цель:** доказать или честно опровергнуть надёжность действующего Web Alarm на реальной Windows-среде, закрыв связанные инженерные вопросы до следующего rollout, без искусственного ограничения профессиональной инициативы исполнителя.
+
+---
+
+````````````````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+PUBLICATION: LOCAL ONLY / NOT SYNCED
+ARCH CLASS: Web Alarm Workspace / WA4-R Reliability / Windows Local Gate; PRIMARY PROFILE 23, TEST PROFILE 36.2.
+
+Исправлены три подтверждённые связанные причины: (1) foreign TASK/plan/microtask identity принималась authoritative readers, вплоть до false COMPLETED и физического EXECUTED; (2) JSONL без финального delimiter допускала склеивающий append и false clean closeout; (3) public operations lock path создавался до проверки TASK ID. Изменены только web_alarm/task_store.py, event_checkpoint_store.py, operation_store.py; добавлен test_web_alarm_wa4r006_local_gate.py (11 методов). MutationExecutor/CloseoutService/shared runner/CI/Ultra/Voice и старые evidence не менялись.
+
+ФИНАЛЬНЫЕ ПРОВЕРКИ Windows/Python .venv 3.12.10:
+- full-release: 802 tests, 801 PASS / 0 FAIL / 0 ERROR / 1 SKIP, isolation 0, exit 0; 791.165 s.
+- адресный subset внутри full: 103/103 PASS, включая 11 новых; это НЕ отдельный завершённый focused run.
+- quality-final: 12 outer PASS, каждый 1 intentional inner FAIL / 0 ERROR / 0 SKIP; isolation 0.
+- bounded-release: 2 PASS / 0 FAIL/ERROR/SKIP, 8 внутренних раундов F2/F3; isolation 0.
+- initial baseline: 92 PASS; initial adversarial: 3 PASS / 6 FAIL / 1 test-helper ERROR; invalid-lock reproducer: 1 FAIL. Все initial RED сохранены.
+- R005 --sources --self-check PASS; LF transport restoration ровно 7 файлов по SHA+size в disposable TEMP; source packages неизменны.
+- RAW review 10 checks PASS; 45 прямых текстовых records равны original ZIP subtrees; 102 финальных source pins сверены. Manifest/CRC/порча данных проверены.
+
+Evidence/report: reports/CODEX-WA4-R-006-WINDOWS-F1F2F3-LOCAL-GATE/report.md, checks/versions/provenance/raw-index/raw-review/transport-check/scope-check/rotation/manifest и новый evidence.zip только с R006. Полный сохранённый TEMP: C:\Users\REX\AppData\Local\Temp\codex-wa4r006-lwgw7sov. Исторический F3 original FAIL — прежний R005 E043, не перезаписан.
+
+ОГРАНИЧЕНИЯ: symlink creation запрещён средой, один тест SKIP; historical handle owner неизвестен, original F1 artifact/F2 80-round ZIP не получены; WinError 32 отдельно не воспроизводился. Read-only Projection cached-path I/O race сохраняется. Power loss/external noncompliant writers не сертифицированы. Незавершённые full-final/focused-final сохранены, не засчитаны PASS. Новый independent Windows CI NOT RUN.
+
+SOURCE: supplied main@df3250140c987876771fe2f899f80acaf38fd920; Git equivalence не проверялась, локальный Git/GitHub не использован. Final byte pins: task_store fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac; event_checkpoint_store 7d094e81b5a40dbced420af9a51c04b6e5b7b4eb4050d96bca0ba01495274aad; operation_store bb7eaf40dd2280fcd5a38d33fe85d2d97ff19733740719d15fa02cf4e6854360.
+
+DOC IMPACT / SHARED DOC DELTA: только own report и safe rotation. WEB_08 после independent PASS адресно обновляет 23/36.2 и 25/05/06/34/общий 000, при необходимости 01/24; 18/36/36.1 contract NO CHANGE. Подробный manual engineering review и NEXT в report.md.
+NEXT: пользователь публикует завершённый пакет/code/tests; WEB_08 независимо проверяет source/RAW/quality и даёт отдельные F1/F2/F3 verdicts. Не запускать следующие TASK, WARN/GATEWAY REQUIRED/STRICT или rollout. DONE/VERIFIED агентом не присвоены.
+AMENDMENT: пользовательский вопрос о недостающем опубликованном report учтён как status clarification; scope/исходный БЛОК 1 не менялись.
+
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-R-006
+
+````````````````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+```````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение задачи `CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE`.
+
+# TASK: CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE
+
+**ARCH CLASS:** Web Alarm Workspace / WA4-R Reliability / Evidence Handoff  
+**EXECUTOR:** Codex 007  
+**INDEPENDENT VERIFIER:** ChatGPT / WEB_07 → WEB_08  
+**STATUS:** ASSIGNED UPON USER LAUNCH  
+**PRIORITY:** Завершение независимой приёмки F1/F2/F3 без изменения production-кода.
+
+## 1. Цель
+
+Подготовить компактный, пригодный для чтения через GitHub **текстовый пакет первичных доказательств** из уже созданных R-003 и R-004 ZIP-архивов.
+
+Не повторять выполненный repair. Не проводить rollout. Не менять архитектуру.
+
+Сейчас GitHub предоставляет координатору текстовые `report.md`, `checks.json`, `versions.json`, но не позволяет независимо прочитать бинарные `evidence.zip`.
+
+Нужно устранить именно этот доказательственный разрыв.
+
+## 2. Источники
+
+Обязательно прочитать действующий маршрут:
+
+`08 → 000 → 34 → 18 → 01 → 23/24/25 → 36/36.1/36.2`.
+
+Исходные задачи и архивы:
+
+- `reports/CODEX-WA4-R-003-F2F3-LOCAL-REPAIR/`
+- `reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/`
+
+В том числе `report.md`, `checks.json`, `versions.json`, `manifest.json`, `evidence.zip`, negative controls, historical evidence.
+
+Обязательно сверить исходные SHA-256 и точные имена архивных members.
+
+Актуальный опубликованный source baseline перед новой документационной записью: GitHub `main@38e7164b1ab3af6131d65cfc9dc8760ee426dd1e` (#336). Последующий коммит ChatGPT №337 изменяет только тактическую документацию. Локальный агент **не использует Git/GitHub**, а сверяет доступные локальные файлы и документированные контрольные суммы.
+
+## 3. Результат — текстовый evidence package
+
+Создать:
+
+`reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/`
+
+Внутри сформировать:
+
+- `report.md` — выводы, ограничения, полный индекс первоисточников.
+- `provenance.json` — source archive SHA-256, member path, member SHA-256, source file pins, размеры, версии.
+- `f1-raw.jsonl` — F1 phase/raw evidence из R-004.
+- `f2f3-raw.jsonl` — адресные F2/F3 records из R-003.
+- `negative-controls.jsonl` — фактические inner RED и outer PASS.
+- `checks.json` — проверка корректности экспорта.
+- `manifest.json` — SHA-256 каждого экспортированного файла.
+
+При необходимости разбить длинные JSONL на отдельные небольшие файлы по сценарию.
+
+Не заменять отсутствующие RAW-данные пересказом из `report.md`. Если первоисточник не содержит нужного поля, записать `NOT PRESENT IN SOURCE`.
+
+## 4. Обязательная матрица F1
+
+Экспортировать для четырёх final F1-сценариев:
+
+1. Native pre-move refusal.
+2. Native post-move status failure + fresh-process recovery.
+3. Completion-first admission/plan/executor race.
+4. Admission-first closeout rejection.
+
+Для каждого сохранить при наличии в первоисточнике:
+
+- исходный test selector и attempt;
+- PRE, intermediate и terminal raw states;
+- фазовые маркеры в исходном порядке;
+- worker PID, exit, stdout/stderr, error chain и WinError;
+- active/completed location и task status;
+- реальные target bytes/hex/SHA-256;
+- operation, receipt, checkpoint, snapshot, claims;
+- исходные events bytes/prefix и completion-event count;
+- fresh-process reread/recovery;
+- доказательство отсутствия второго physical apply.
+
+Контрольные значения должны воспроизводиться **непосредственно из оригинальных данных**, а не создаваться по ожидаемой логике теста.
+
+## 5. Обязательная матрица F2/F3
+
+Из R-003 экспортировать наиболее важные первичные записи:
+
+- phantom duplicate и real move;
+- bounded destination recheck;
+- direct close / operations-lock serialization;
+- RAW read-before-lock native Windows refusal;
+- исправленный locked admission;
+- executor preflight authority / отказ без apply;
+- WA-017 crash race и terminal state;
+- ограничения исторического Windows CI.
+
+Сохранить исходные красные результаты, где они имеются.
+
+Исторический F2 80-round архив и исходный F1 artifact **не считать полученными**, если их фактически нет.
+
+## 6. Проверки качества экспорта
+
+Проверить:
+
+- исходные ZIP SHA совпадают с опубликованными manifest;
+- каждый JSONL record ссылается на реальный исходный member и selector;
+- значения PRE/POST, статусы и timestamps не реконструированы вручную;
+- все экспортированные JSON/JSONL корректно парсятся;
+- контрольные суммы текста и исходных записей фиксируются отдельно;
+- шесть R-004 и шесть R-003 negative controls представлены без подмены intentional RED продуктовым FAIL;
+- исходные ZIP и ранее сохранённые отчёты остаются неизменными;
+- нет секретов, live Workspace данных и избыточных персональных путей.
+
+Желательно выполнить adversarial self-check: намеренно исказить одно экспортированное поле в disposable TEMP и доказать, что проверка provenance/integrity обнаруживает изменение.
+
+При отсутствии данных не запускать автоматически новые тесты для «достраивания» evidence: сначала зафиксировать пробел и обосновать необходимость отдельного rerun.
+
+## 7. Scope
+
+**Разрешённая запись:**
+
+- только новая собственная папка `reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/`;
+- персональная карточка `Документация/000_Задачи Codex.md` по действующему регламенту ротации.
+
+**Read-only:** R-003, R-004, все production/test files, архитектурная и тактическая документация.
+
+Запрещено изменять:
+
+- `web_alarm/`;
+- корневые `test_web_alarm_*.py/js`;
+- общие runners и CI;
+- Ultra;
+- Git/GitHub;
+- существующие R-003/R-004 evidence;
+- общий `34_TACTICAL_CONTEXT.md`.
+
+Не обращаться к пользовательскому live storage. Не запускать платные LLM.
+
+## 8. Сдача
+
+Статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+Отдельно указать:
+
+- какие raw records удалось получить и связать с источниками;
+- какие записи отсутствуют;
+- какие целостностные проверки выполнены;
+- source SHA и размер каждого артефакта;
+- сохраняется ли необходимость дополнительного Windows CI.
+
+В конце — `SHARED DOC DELTA` для WEB_08.
+
+**NEXT:** пользователь публикует пакет штатным способом; ChatGPT независимо проверяет GitHub-тексты и выдаёт отдельные F1/F2/F3 verdicts. Без этого не объявлять STRICT VERIFIED.
+
+Главная задача — **сделать уже существующие доказательства независимо проверяемыми**, не выполнять повторно весь инженерный цикл.
+
+---
+
+```````````````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+PUBLICATION: LOCAL ONLY / NOT SYNCED
+ARCH CLASS: Web Alarm Workspace / WA4-R Reliability / Evidence Handoff; PRIMARY PROFILE 23 / TEST PROFILE 36.2.
+
+Подготовлен текстовый пакет reports/CODEX-WA4-R-005-EVIDENCE-EXPORT-GITHUB-GATE/: report.md, provenance.json, четыре JSONL-индекса, 43 адресных RAW файла, observations/checks/scope/rotation/final-validation/manifest и два offline export/validation скрипта. 4 final F1 + 16 F2/F3 + 12 negative controls + 11 original RED; 1230 RAW/STRUCTURE nodes. Источники неизменны, значения не реконструированы.
+
+ПРОВЕРКИ: ZIP SHA/size совпали с локальными manifest, CRC PASS; 43/43 исходных test records восстановлены и сравнены с ZIP; 12/12 controls сохранены с intentional inner RED/outer PASS, недостающие inner counters R-003 явно отмечены. Три adversarial export controls PASS/0 FAIL/0 SKIP. Сверены F1 receipt/target/snapshot/checkpoint/exact events prefix/fresh process raw; source/text режимы и финальный manifest проверены. Exact команды, числа и hashes: checks.json, final-validation.json, manifest.json. Production/regression R-003/R-004 NOT RUN по scope. Семь final R-004 file pins совпали с локальными.
+
+РИСКИ: original F1 artifact и historical F2 80-round ZIP отсутствуют в разрешённых источниках; historical F3 handle owner/PID/trace/stdout/full raw tree не записаны. Старые event bytes/PID R-003 не достроены из parsed state. R-003 UI/server/diagnostic pins отличаются от текущего дерева; старый full PASS на него не перенесён. Новый независимый Windows CI на final source не подтверждён. Cache cleanup отклонён автоматической проверкой blocked by policy; собственный Python cache оставлен и исключён из manifest.
+
+DOC IMPACT: только новая own report папка и safe rotation этой карточки. 184 защищённых файла, включая старые evidence/reports, runtime/tests/CI/shared docs, сверены без изменений; общие документы READ-ONLY. SHARED DOC DELTA для WEB_08 в report.md, общего DOC closeout/VERIFIED нет. Git/GitHub, live storage, Ultra, production repair и rollout не использовались.
+
+NEXT: пользователь публикует только manifest-listed тексты; WEB_08 независимо проверяет RAW/source/control пакет, принимает раздельные решения F1/F2/F3 и назначает нужный Windows gate. Не начинать следующую задачу, не присваивать DONE / VERIFIED / STRICT VERIFIED.
+AMENDMENT: новых указаний во время R-005 не поступало.
+
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-R-005
+
+```````````````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-004-F1-CLOSEOUT-GATE. Полная исходная утверждённая постановка сохранена дословно; БЛОК 1 не менялся во время работы.
+
+``````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-004-F1-CLOSEOUT-GATE
+
+**ARCH CLASS:** Web Alarm Workspace / WA4-R Reliability  
+**STATUS:** ASSIGNED FOR IMPLEMENTATION AND EVIDENCE  
+**AGENT:** Codex 007  
+**INDEPENDENT VERIFIER:** ChatGPT / WEB_07
+
+Уважаемый агент 007, предлагаю начать выполнение задачи `CODEX-WA4-R-004-F1-CLOSEOUT-GATE`.
+
+## 1. Цель
+
+Закрыть доказательственный и, при наличии подтверждённого дефекта, программный пробел **F1 — Windows TASK closeout**, не изменяя без необходимости действующую архитектуру Web Alarm.
+
+Это следующий этап проверки WA4-R, а **не разрешение на WARN, GATEWAY REQUIRED, STRICT или эксплуатационный rollout**.
+
+## 2. Исходное состояние
+
+- OBSERVE — ранее принят в ограниченном read-only объёме.
+    
+- UX-002 — bounded independent acceptance: ChatGPT повторно выполнил JavaScript 77/77 PASS и Python focused 53/53 PASS, проверил SHA-256 семи файлов; GUI SELECTED/CANCELLED подтверждены пользователем. Full regression 787 PASS / 1 SKIP — reported Codex, не независимый повтор.
+    
+- F2/F3 — `CODEX-WA4-R-003-F2F3-LOCAL-REPAIR` сообщил успешный repair, однако независимая runtime-приёмка всей области ещё не завершена.
+    
+- F1 — OPEN.
+    
+- WA4-R — IN PROGRESS / STRICT NOT VERIFIED.
+    
+
+Исторический Windows CI:
+
+- Run: `38379575748`
+    
+- Artifact: `11802732223`
+    
+- ZIP SHA-256: `020d2770b48f90e0d24df071b10c2ad5fe5caa2972d8d3070445ac875963e120`
+    
+- Внутри `results.json`: 63 tests, 62 PASS / 1 FAIL.
+    
+- Красный F3 case: `FAILED:CloseoutError` вместо ожидаемого `REJECTED`; цепочка `CloseoutError → TaskStoreError → PermissionError`, `WinError 5` в `os.replace(active → completed)`.
+    
+- Снимок терминального состояния: `active=true`, `completed=false`, `PLANNED`; исходные project bytes сохранились.
+    
+
+**Запрещено** трактовать любое `CloseoutError` как допустимый `REJECTED` или считать поздний зелёный прогон опровержением исторического FAIL.
+
+## 3. Обязательная инженерная работа
+
+1. Пройти актуальный маршрут 08 → собственная карточка 000 → 34 → 18 → 01 → 23/24/25 → 36/36.1/36.2.
+    
+2. Зафиксировать исходные source SHA-256 и проверить текущую совместимость с F2/F3 repair. Не перезаписывать первоначальный БЛОК 1.
+    
+3. Построить отдельные детерминированные Windows-сценарии:
+    
+    - **Pre-move refusal:** нативный отказ `os.replace`, TASK остаётся active, исходные bytes/plan/checkpoint/operations/events корректны.
+        
+    - **Post-move status failure:** каталог уже completed, но статус ещё PLANNED; состояние явно определяется как `MOVED_STATUS_PENDING`, а не ложный success.
+        
+    - **Fresh-process recovery:** новый процесс восстанавливает допустимое состояние, без повторного physical apply, потери receipt и возврата TASK в active.
+        
+    - **Concurrent admission / completion:** операции, RAW readers и закрытие подчиняются единому lock order; нет нового write после commit point.
+        
+4. Для каждого сценария предъявить raw PRE, достигнутую фазу, worker exit, terminal files, actual target bytes/hashes, operation/receipt history, checkpoint и результат повторного открытия.
+    
+5. Проверить существующие тесты F1/F2/F3 на пробелы. Не плодить дубли, не ослаблять строгие assertions.
+    
+6. Если подтверждён runtime-дефект, выполнить минимальный scoped repair. Если дефекта не обнаружено — предоставить полноценное evidence без искусственных изменений кода.
+    
+7. Провести независимую инженерную самопроверку по TEST-ENG-01, включая adversarial walkthrough и отрицательные контроли, которые действительно падают при внесении соответствующего нарушения.
+    
+
+## 4. Write-scope
+
+Разрешены исключительно:
+
+- `web_alarm/closeout.py`
+    
+- `web_alarm/task_store.py`
+    
+- `test_web_alarm_wa4r002_diagnostics.py`
+    
+- `test_web_alarm_reliability_wa017.py`
+    
+- Собственная папка `reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/`
+    
+- Собственная карточка агента и её регламентная ротация.
+    
+
+Производственные файлы изменять **только после конкретного воспроизводимого дефекта**. Если необходимы `operation_store.py`, `mutation_executor.py`, дополнительные тесты или изменения общей инфраструктуры, остановиться и запросить отдельный AMENDMENT с обоснованием.
+
+Общие документы 000/05/06/23/24/25/34/36.x — read-only. Ultra, Git/GitHub, workflows/CI, live Workspace и пользовательские проекты не изменять.
+
+## 5. Тесты и evidence
+
+- Только disposable TEMP fixtures.
+    
+- Windows Python 3.12 с наследуемым `PYTHONUTF8=1`.
+    
+- Использовать актуальный `wa4a_acceptance.py` и существующий профиль 36.2.
+    
+- Сначала адресные и отрицательные проверки; затем focused F1/F2/F3 regression.
+    
+- При изменении runtime — полный Web Alarm regression и ограниченный deterministic race/stress, сохраняя каждый исходный FAIL.
+    
+- Проверить collection IDs, exit codes, isolation violations, source hashes, предыдущее покрытие и raw evidence.
+    
+- Не запускать destructively на пользовательском проекте, не использовать реальные сетевые LLM-вызовы.
+    
+
+## 6. Критерий сдачи
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION` только после доказательства:
+
+- pre-move отказ сохраняет корректную активную TASK;
+    
+- post-move interruption сохраняет корректное закрытое, но ожидающее финализации состояние;
+    
+- fresh-process recovery воспроизводим и не создаёт второй mutation;
+    
+- history/receipts/checkpoint/manifest не теряются и не фальсифицируются;
+    
+- F2/F3 invariants не ухудшились;
+    
+- тесты и negative controls имеют точные raw результаты.
+    
+
+Отчёт: `report.md`, `checks.json`, `versions.json`, переносимые логи/evidence, список реально изменённых файлов, отдельные red/green attempts, технические ограничения и **SHARED DOC DELTA**.
+
+**NEXT:** передать результат WEB_07. Не объявлять F1 VERIFIED самостоятельно; не запускать следующую ступень WA4-R без решения независимого проверяющего и пользователя.
+
+---
+
+**Приоритет:** адресная надёжность и доказательства. Не превращать эту задачу в переписывание Web Alarm или начало интеграции Ultra.
+
+---
+
+``````````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-004-F1-CLOSEOUT-GATE · 2026-10-14 · Codex 007.
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION · LOCAL ONLY / NOT SYNCED. Verifier — WEB_07. Не DONE/VERIFIED.
+
+**Вывод:** в проверенных F1 ветвях новый runtime-дефект не подтверждён; production-код не изменён. Закрыт пробел тестового evidence: существующий post-move F1 теперь использует одну реальную выполненную/VERIFIED operation, непустой receipt/checkpoint/manifest/snapshot; добавлены native pre-move и два порядка concurrent admission/closeout. Общий файл test_web_alarm_wa4r002_diagnostics.py: 15 прежних selectors сохранены, 3 новых; старые F2/F3 test bodies AST unchanged. closeout.py/task_store.py/operation_store.py/mutation_executor.py совпали с reported F2/F3 final hashes. WA-017 не менялся. Git/GitHub, Ultra, CI/runners, общие документы и rollout не затрагивались.
+
+**Фактические проверки final source:** focused F1/F2/F3 и stores — 92 PASS / 0 FAIL / 0 ERROR / 0 SKIP, isolation 0; два bounded F1 repeats — 8/8 PASS; quality — 6/6 outer PASS, каждый с ровно одним ожидаемым inner assertion FAIL, без ERROR/SKIP. Native Windows ошибки реально вызваны open-handle/replace, не подменены blanket REJECTED. Fresh processes сохраняют closed/pending state, receipt/checkpoint/manifest/точный event byte prefix и target/snapshot bytes; physical apply остаётся один. False-success mutant COMPLETED при completed+PLANNED отвергнут тестом.
+
+**Collection/static:** 791 distinct root Web Alarm IDs = 788 retained +3 new; syntax двух изменённых Python modules PASS. Full Web Alarm execution NOT RUN: runtime repair отсутствует, условный полный gate исходной TASK не наступил. Collection 791 не выдаётся за 791 PASS; прежний UX full не используется как новый тест.
+
+**Исходные красные evidence:** F1-first 3 PASS /1 FAIL — ошибка нового checkpoint oracle (законная admission обновляет derived checkpoint). FAIL/source/raw сохранены; исправлено post-admission barrier + exact no-closeout-change, не production repair. Collection/export setup error: TEMP-only guard блокировал разрешённый report export внутри guarded процесса, audit1 сохранён; финальный export отделён, final collection isolation0. Нативный historical F3 ZIP run38379575748/artifact11802732223 действительно прочитан адресно, digest020d2770b48f90e0d24df071b10c2ad5fe5caa2972d8d3070445ac875963e120 совпал; исходный 62 PASS/1 FAIL, native pre-move WinError5/active PLANNED и frames сохранены. Старый FAIL не переименован в PASS.
+
+**REPORT / EVIDENCE:** [report](../reports/CODEX-WA4-R-004-F1-CLOSEOUT-GATE/report.md); рядом checks.json, versions.json, historical-F3.json, quality_controls.py, source-changes.diff, evidence.zip, rotation.json, manifest.json. Пакет содержит raw PRE/phase/PID/exit/terminal/records/hashes, source snapshots, original/red/green attempts и original historical ZIP. Локальные TEMP не удаляются; Git-синхронизация не заявлена.
+
+**MANUAL ENGINEERING REVIEW / пределы:** изучены gate/commit point, operations→mutation lock order, RAW admission, atomic status failure, fresh recovery, replay и immutable history. Полная ревизия/альтернативы в report §7. Нативный handle — controlled reproduction, не установленный исторический owner; original F1 raw artifact не получен. Нет доказательства всех внешних writer/antivirus/kernel/power-loss случаев. Low-level locked primitive требует правильного caller lock. F2/F3 independent acceptance и общий STRICT не присвоены.
+
+**DOC IMPACT / SHARED DOC DELTA:** после WEB_07 verdict — 36.2 (4 F1 scenarios, 6 controls, nonempty fixture, exact event prefix, post-admission checkpoint baseline), 23/24/25 bounded evidence без смены authority, маршруты/статусы 000/05/06/34/01 по необходимости. Самостоятельно общие нормы не редактировались.
+
+**NEXT:** пользователь публикует local result штатно; WEB_07 независимо проверяет source/input/phase/raw/controls/collection/source pins. F1 не объявлять VERIFIED до независимой приёмки. Следующие ступени WA4-R, WARN/GATEWAY REQUIRED/STRICT/rollout/Ultra не запускать.
+
+## Архив прежних БЛОКОВ 2–3 (дословно, исторические статусы не переоцениваются)
+
+``````````````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER. Постановка сохранена дословно; разрешение четырёх дополнительных файлов и контракта — отдельный AMENDMENT.
+
+`````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER
+
+**Исполнитель:** Codex 007  
+**ARCH CLASS:** Web Alarm Workspace / Operator UI / UX / Local Folder Selection  
+**Статус:** USER ASSIGNED / AWAITING EXECUTION  
+**Независимая проверка:** ChatGPT  
+**Визуальная приёмка:** пользователь
+
+## 1. Основание
+
+14 октября 2026 года пользователь самостоятельно проверил обновлённый Web Alarm через `Start_WebAlarm_Demo.cmd`.
+
+Подтверждено:
+
+- Локальный сервер запускается.
+    
+- WORKSPACES отображаются.
+    
+- Новый Workspace `123` успешно зарегистрирован.
+    
+- Редактор новой TASK открывается по кнопке `+`.
+    
+- Черновик сохраняется в браузере.
+    
+- После обновления страницы текст черновика восстанавливается.
+    
+- Черновик отображается справа отдельно от серверных TASK.
+    
+- Регистрация TASK без явного действия не выполняется.
+    
+
+**Не проверены пользователем:** полноценная регистрация TASK, планирование, выполнение этапов и recovery.
+
+В процессе проверки выявлены два недостатка интерфейса.
+
+## 2. UX-002-A — уведомления об операциях
+
+### Наблюдаемый дефект
+
+После успешной регистрации Workspace появляется красное уведомление:
+
+«Сервер подтвердил регистрацию. Исполнение не запускалось».
+
+Пользователь воспринимает его как сообщение об ошибке.
+
+Уведомление остаётся в нижней части левой колонки, хотя операция уже завершилась успешно.
+
+### Требуемое поведение
+
+1. Успешная регистрация Workspace отображается как успешная операция, не как ошибка.
+    
+2. Основное уведомление размещается **в верхней части центральной рабочей области**, а не внизу списка Workspaces.
+    
+3. Сообщение должно соответствовать совершённому действию, например: «Workspace „123“ успешно зарегистрирован».
+    
+4. Регистрация Workspace и регистрация TASK должны иметь разные, точные сообщения.
+    
+5. Не нужно сообщать о запуске или незапуске исполнения при обычном добавлении Workspace, если это не относится к выполненному действию.
+    
+6. Ошибки отображаются как ошибки, предупреждения — как предупреждения, успешные действия — как успешные.
+    
+7. Индикатор «Сервер доступен» остаётся независимым от уведомлений об операциях.
+    
+8. Повторное обновление данных не должно оставлять неактуальное уведомление в состоянии ошибки.
+    
+9. Не создавать бесконечно накапливающийся список уведомлений.
+    
+
+Разрешается самостоятельно выбрать компактную архитектуру уведомлений: единая область статуса операции, contextual notices либо другой технически обоснованный способ.
+
+Уведомления не должны перекрывать карточки TASK, черновики, NEXT SAFE ACTION или диагностические сообщения.
+
+### Обязательные тесты
+
+- Успешная регистрация Workspace.
+    
+- Успешная регистрация TASK.
+    
+- Серверная ошибка регистрации.
+    
+- Неизвестный результат операции.
+    
+- Повторное обновление каталога после успеха.
+    
+- Отсутствие ложного сообщения о запуске исполнения.
+    
+- Сохранение существующих гарантий регистрации и защиты от повторного POST.
+    
+
+## 3. UX-002-B — выбор папки через Проводник Windows
+
+### Пользовательское требование
+
+При добавлении Workspace пользователь хочет нажать кнопку **«Обзор…»** или **«Выбрать папку»**, открыть стандартный интерфейс выбора папки Windows, перейти в нужный каталог и подтвердить выбор.
+
+После этого путь должен автоматически появиться в поле Workspace Root.
+
+Ручной ввод абсолютного пути должен остаться альтернативой, но не единственным способом.
+
+### Техническое исследование
+
+Сначала исследуй существующую архитектуру запуска и API.
+
+Определи безопасный вариант настоящего локального выбора папки.
+
+Обрати особое внимание:
+
+- Обычный браузерный `showDirectoryPicker()` не предоставляет гарантированного доверенного абсолютного Windows-пути.
+    
+- Web Alarm запускается локально, но наличие локального HTTP-сервера само по себе не делает браузер доверенным нативным приложением.
+    
+- Необходимо сохранять существующие проверки root и authority.
+    
+- Нельзя открывать произвольным внешним сайтам доступ к локальной файловой системе.
+    
+- Выбор папки не должен сам запускать TASK или записывать что-либо в выбранный Workspace.
+    
+
+### Требуемый результат
+
+При технической возможности реализовать:
+
+1. Кнопку «Обзор…» рядом с полем пути.
+    
+2. Настоящий выбор каталога с помощью допустимого локального механизма.
+    
+3. Подстановку выбранного абсолютного пути.
+    
+4. Сохранение существующего подтверждения регистрации Workspace.
+    
+5. Корректную отмену выбора без регистрации и побочных действий.
+    
+6. Понятное поведение, если нативный выбор недоступен.
+    
+
+**Запрещено имитировать функцию:** нельзя создавать кнопку, которая выглядит как выбор папки, но не позволяет получить доверенный путь.
+
+Если для реализации требуется изменение серверного контракта или создание локального native bridge, сначала подготовь краткое техническое решение с точным списком файлов, API, границ доверия и тестов. Запроси расширение scope до внесения этих изменений.
+
+До получения разрешения выполни независимую часть UX-002-A и другие работы внутри разрешённой области.
+
+## 4. Область работ
+
+**Разрешена запись:**
+
+- `web_alarm/ui.py`
+    
+- `test_web_alarm_operator_ui.js`
+    
+- `test_web_alarm_ui_ux.py`
+    
+- собственная папка `reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/`
+    
+- персональная карточка Codex — согласно действующей ротации БЛОКОВ 1–3.
+    
+
+**Read-only для исследования:**
+
+- `web_alarm/server.py`
+    
+- `wa4o_ui_launcher.py`
+    
+- `Start_WebAlarm_Demo.cmd`
+    
+- маршруты Workspace Registry и соответствующие тесты;
+    
+- действующая архитектурная и тестовая документация Web Alarm.
+    
+
+**Без отдельного расширения scope запрещено:**
+
+- изменять backend/state machine;
+    
+- менять server authority и права на файловые операции;
+    
+- затрагивать F1–F3, WA4-R и STRICT;
+    
+- изменять Ultra или работу Claude;
+    
+- изменять общий CI или тестовые runners;
+    
+- выполнять Git/GitHub-операции;
+    
+- редактировать общие архитектурные документы.
+    
+
+Перед началом соблюдай регламенты `DOC-ENGINEERING-ROLES-01@1`, `DOC-PARALLEL-01@1`, `DOC-GIT-01@1` и профиль тестирования `36.2`.
+
+## 5. Самостоятельность Codex
+
+Ты самостоятельно исследуешь дефекты, выбираешь реализацию, пишешь код, проводишь тестирование и инженерное ревью.
+
+ChatGPT выступает независимым проверяющим, а не соавтором реализации.
+
+Не нужно запрашивать разрешение на каждую внутреннюю правку в установленном scope. Запрашивай его только при необходимости расширить область записи или изменить согласованные архитектурные контракты.
+
+## 6. Проверки и доказательства
+
+Обязательно:
+
+- Адресные тесты новых сценариев.
+    
+- Regression tests прежнего Operator UI.
+    
+- Negative controls для новых защитных механизмов.
+    
+- Проверка отсутствия неожиданных серверных мутаций.
+    
+- Browser evidence для уведомлений и, если реализовано, выбора папки.
+    
+- Результаты PASS/FAIL/ERROR/SKIP/NOT RUN с командами и исходными версиями.
+    
+- Самостоятельный MANUAL ENGINEERING REVIEW.
+    
+
+Использовать только изолированные тестовые Workspaces. Не изменять пользовательский проект `123` или реальный `Чат_pro` в рамках проверки.
+
+Существующие тесты сохраняются и дополняются; нельзя заменять регрессионное покрытие фиктивными PASS.
+
+## 7. Сдача
+
+Представь отчёт:
+
+`reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/report.md`
+
+Отдельно укажи:
+
+- Что исправлено в уведомлениях.
+    
+- Какие сценарии пользователь может проверить самостоятельно.
+    
+- Реализован ли настоящий выбор папки.
+    
+- Если требуется native bridge — точный контракт и запрос расширения scope.
+    
+- Что проверено тестами.
+    
+- Какие функции остались BLOCKED/PROPOSAL.
+    
+- Какие изменения общей документации потребуются после независимой приёмки.
+    
+
+Финальный статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+Не объявлять DONE/VERIFIED самостоятельно. Не выполнять commit или push. Не приступать к следующей стадии без отдельной задачи.
+
+---
+
+`````````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER · 2026-10-14 · Codex 007.
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Не DONE/VERIFIED. Независимая проверка — ChatGPT; визуальная/native — пользователь.
+
+**Изменения:** точные success/error/unknown уведомления в одном центральном слоте; настоящий opt-in Windows Tk folder picker через ограниченный helper с loopback/Host/Origin/token защитой. Выбор только заполняет путь, отдельное подтверждение регистрации сохранено. Late-response/form guards, cancellation/manual fallback, freshness recovery редактора без выдачи TASK authority. Исходные state machine/Registry/executor, Ultra, WA4-R, CI/runners и общие документы не изменялись; Git/GitHub не использовались.
+
+**AMENDMENT:** пользователь явно разрешил «указанные четыре файла и контракт»: server.py только picker adapter, новый folder_picker.py, новый test_web_alarm_folder_picker.py, demo opt-in. Полный исходный БЛОК 1 во время работы не переписывался.
+
+**Проверки:** Windows focused 53 PASS / 0 FAIL / 0 ERROR / 0 SKIP; полный Web Alarm 788 IDs = 787 PASS / 0 FAIL / 0 ERROR / 1 SKIP, isolation 0; Node 77 PASS / 0 FAIL / 0 SKIP. Quality controls 11/11 outer PASS, каждый с ожидаемым targeted inner assertion FAIL (10 UI +1 Origin). SKIP: Windows symlink creation not permitted. compile/Node --check PASS. Прежние FAIL уведомлений/picker/DEVNULL guard/non-ASCII token/stale freshness и setup EEXIST quality runner сохранены, не подменены повторным PASS.
+
+**Browser/raw:** реальный Task POST создал только task.json/task.md/plan.json; 70 прежних fixture файлов byte-identical, 70→73. Offline unknown/restart не создали данных; текст и блокировка повтора сохранены, старая data-unavailable плашка после recovery очищается. Native helper реально вызван, observed timeout/reap с неизменностью пути/bytes. Пользователь сообщил о появлении диалога и нажатии «Отмена», но подтверждённого CANCELLED HTTP response нет; настоящий SELECTED — NOT RUN. Штатный Workspace confirm недоступен IAB/user его не видел; защита не обходилась, browser Workspace happy path не объявлен PASS.
+
+**Ограничения:** человеческая native SELECTED/CANCELLED/visual приёмка остаётся; hard-crash watchdog проверен по исходнику без отдельной crash-пробы; Tk/noninteractive desktop может дать unavailable, ручной путь доступен; singleflight только в одном server process. Известный symlink SKIP не PASS. Внешний drift карточки Claude не откатывался.
+
+**REPORT:** [report](../reports/CODEX-WA4-UX-002-OPERATOR-POLISH-FOLDER-PICKER/report.md); рядом manual-review.md, folder-picker-proposal.md, checks.json, versions.json, browser.json, source-changes.diff, evidence.zip, rotation.json, manifest.json и screenshots. Версии — local SHA-256, не Git revision. Raw logs дополнительно сохранены в disposable TEMP; переносимые доказательства — в evidence.zip.
+
+**DOC IMPACT / SHARED DOC DELTA:** после verdict координатору: 24 — notices/picker UX; 23/25 — opt-in transport/trust/runtime; 36.2 — tests/controls/evidence limits; адресные маршруты/статусы 01/05/06/34/общий000 по необходимости. Общие документы и Rule-ID не изменялись.
+
+**NEXT:** ChatGPT независимо проверяет source/evidence/scope/lossless rotation; пользователь принимает реальный выбор/отмену папки и UI. Следующих стадий, commit/push или DONE/VERIFIED от Codex нет. БЛОК 1 освобождён только после сохранения постановки, factual result и всей прежней истории.
+
+## Архив прежних БЛОКОВ 2–3 (дословно, без переоценки исторических статусов)
+
+`````````````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ПОСТАНОВКА
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+
+Полная исходная постановка сохранена дословно. AMENDMENT пользователя: отдельно разрешено адресное изменение test_web_alarm_operator_ui.js; БЛОК 1 во время работы не переписывался.
+
+````````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+Уважаемый агент 007 (Codex), предлагаю начать выполнение новой самостоятельной инженерной задачи по Web Alarm Workspace.
+
+# TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+
+**Статус:** USER ASSIGNED / AWAITING LOCAL EXECUTION  
+**Исполнитель:** Codex 007  
+**ARCH CLASS:** Web Alarm Workspace / Operator UI / UX  
+**PRIMARY PROFILE:** 23 — Архитектура Web Alarm Workspace  
+**IMPLEMENTATION PLAN:** 24 — План реализации Web Alarm Workspace, § WA-4.6, UX-2026-10-11 A/B/C  
+**TEST PROFILE:** 36 / 36.1 / 36.2  
+**Параллельная работа:** Claude 008 независимо работает над Ultra.
+
+## 1. Цель задачи
+
+Довести существующий Web Alarm Operator UI до практически пригодного, понятного человеку рабочего интерфейса, который можно открыть локально и увидеть основные сценарии использования системы.
+
+Реализовать следующую самостоятельную итерацию интерфейса на основе уже утверждённых пользовательских требований UX A/B/C из документа №24.
+
+Сохранить понравившийся пользователю тёмный стиль действующей оболочки. Не разрабатывать дизайн заново без необходимости.
+
+**Нужен работающий интерфейс, а не только макет, описание или набор статических картинок.**
+
+При этом запрещено имитировать отсутствующие возможности backend или обходить серверные механизмы безопасности.
+
+## 2. Самостоятельность исполнителя
+
+Ты выступаешь самостоятельным инженером и имеешь право в пределах утверждённого scope:
+
+- самостоятельно исследовать текущую реализацию;
+- выявлять UX-ошибки, архитектурные ограничения и связанные дефекты;
+- выбирать структуру интерфейса и способ реализации;
+- перерабатывать HTML/CSS/JavaScript внутри разрешённых файлов;
+- создавать и улучшать соответствующие regression tests;
+- проводить негативные, интеграционные и пользовательские проверки;
+- предлагать альтернативные архитектурные решения.
+
+Не нужно согласовывать с ChatGPT каждую строку, класс или тест.
+
+Если решение требует изменения server API, state machine, общего runtime либо неразрешённого файла, останови именно эту часть, сформулируй конкретное предложение с обоснованием и запроси расширение scope. Остальную разрешённую работу продолжай.
+
+ChatGPT не является автором твоего кода. Он проведёт независимое ревью результата.
+
+## 3. Обязательный вход
+
+Изучи актуальные локальные:
+
+- `08_Старт.md`
+- `000_Задачи для агента.md`
+- `34_TACTICAL_CONTEXT.md`
+- `18_Регламент сопровождения документации.md`
+- `23_Архитектура Web Alarm Workspace.md`
+- `24_План реализации Web Alarm Workspace.md`
+- `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+- `36_Единая архитектура тестирования.md`
+- `36.1_Обязательный регламент тестирования для LLM.md`
+- `36.2_Профиль тестирования Web Alarm Workspace.md`
+
+В документе №24 **UX-2026-10-11-C имеет приоритет над более ранними предположениями о моменте создания пустой TASK**.
+
+Перед записью проверить отсутствие другой активной работы в тех же файлах. Git/GitHub самостоятельно не использовать, включая read-only Git-команды, согласно `DOC-GIT-01@1`.
+
+## 4. Основной интерфейс — три независимые области
+
+### Левая колонка — WORKSPACES
+
+- Отображает список зарегистрированных рабочих пространств.
+- Имеет собственную прокрутку.
+- Выбранный Workspace хорошо выделен.
+- В шапке расположена кнопка добавления Workspace.
+- Не содержит длинного смешанного списка TASK.
+- Не показывает постоянно полный путь под каждым названием; информацию о пути можно раскрывать по запросу.
+
+### Центральная область — выбранная TASK
+
+Центр — главное рабочее пространство пользователя.
+
+Показывает, насколько позволяют реальные серверные данные:
+
+- исходную постановку и описание TASK;
+- текущий этап и всю доступную последовательность этапов;
+- текущую операцию;
+- статусы выполнения;
+- блокирующие причины и recovery;
+- NEXT SAFE ACTION;
+- доступные отчёты, результаты и evidence.
+
+Длинные тексты должны нормально читаться, прокручиваться и раскрываться. Не сводить полноценную карточку к нескольким техническим статусам.
+
+### Правая колонка — TASKS
+
+- Отображает TASK только выбранного Workspace.
+- Показывает все доступные категории задач: текущие, завершённые, ожидающие и требующие восстановления, согласно фактическим серверным состояниям.
+- Каждая запись содержит короткое название и понятный статус.
+- Выбор TASK открывает её карточку в центре.
+- В шапке находится плюс для новой TASK.
+- Список имеет независимую прокрутку.
+
+После проверки функциональной замены убрать устаревшую объединённую панель навигатора. Не удалять её функциональность вслепую.
+
+## 5. Создание новой TASK — принцип UX-C
+
+Это особо важное пользовательское требование.
+
+По нажатию `+` справа:
+
+1. В центре немедленно открывается чистый экран с одним большим свободным полем для исходной постановки.
+2. Не требуются отдельные обязательные поля Name, Goal, RAW TASK, ID или этапов.
+3. Если пользователь ничего не написал и покинул экран, пустая форма исчезает без создания постоянной TASK и без предупреждения.
+4. Если пользователь начал вводить текст, необходимо защитить непустой черновик от случайной потери. Исследуй безопасный способ хранения, восстановления и отображения его фактического состояния.
+5. Пользователь должен понимать разницу между несохранённым текстом, сохранённым черновиком и зарегистрированной серверной TASK.
+6. Нажатие плюса или ввод текста **не должны запускать планировщик, исполнение, операции записи в Workspace или серверную TASK с придуманным статусом**.
+
+Если в текущей архитектуре нет отдельного безопасного draft lifecycle или planner API, реализуй полезный ограниченный UI-сценарий без ложных обещаний, а необходимые backend-дополнения вынеси в архитектурное предложение.
+
+Не вводить фиктивный planner только для того, чтобы форма казалась завершённой.
+
+## 6. Дополнительные UX-требования
+
+Реализуй в пределах существующих серверных контрактов:
+
+- Русские человекочитаемые обозначения состояний, не изменяя машинные enum.
+- Реальный индикатор соединения с локальным сервером в верхней панели.
+- Понятные состояния loading, empty, unavailable, error и recovery.
+- Корректное восстановление отображения при обновлении страницы.
+- Адаптивность интерфейса и отсутствие накладывающихся панелей.
+- Ненавязчивые подсказки для технических идентификаторов и других непонятных элементов.
+- Отсутствие смешения TASK разных Workspaces.
+
+**Не реализовывать без отдельного согласования:** новую серверную PAUSED state machine, автоматическое планирование, физическое удаление существующих TASK, изменение immutable RAW/evidence, перенос ownership, backend-rename, новые права на мутации или новые серверные маршруты.
+
+Добавление Workspace с нативным выбором папки, rename display label, archive/delete/retention и полноценная передача контекста агенту должны быть исследованы. Если они требуют изменения API или нового контракта хранения, представить отдельные предложения, а не имитационные кнопки.
+
+## 7. Разрешённые области
+
+**Основная запись:**
+
+- `web_alarm/ui.py`
+
+**Тесты:**
+
+- `test_web_alarm_ui.py`
+- `test_web_alarm_operator_ui.py`
+- при необходимости один новый адресный `test_web_alarm_ui_ux.py`
+
+**Собственный отчёт:**
+
+- `reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/`
+
+**Персональная карточка:**
+
+- `Документация/000_Задачи Codex.md` — только предусмотренная регламентом ротация БЛОКОВ 1–3 после завершения работы.
+
+**Read-only для изучения:**
+
+- `web_alarm/server.py` и необходимые модели, API и read models;
+- `wa4o_ui_launcher.py`;
+- `Start_WebAlarm_Demo.cmd`;
+- соответствующие исходники, тесты и архитектурные документы Web Alarm.
+
+**Запрещена запись без отдельного разрешения:**
+
+- backend/state machine, включая `web_alarm/server.py`;
+- WA4-R, F1/F2/F3, RC-5, MutationExecutor и другие control-plane механизмы;
+- Ultra, Voice и относящиеся к ним тесты;
+- общие тестовые runners, CI/workflows;
+- общая документация №18/23/24/25/34/36;
+- любые Git/GitHub-операции.
+
+Работать только в согласованной области. При обнаружении зависимости вне неё подготовить предложение на расширение.
+
+## 8. Проверки
+
+Перед результатом:
+
+1. Проверить исходное состояние существующего UI и соответствующих API.
+2. Сопоставить каждое пользовательское требование с текущими возможностями.
+3. Реализовать разрешённую часть.
+4. Добавить meaningful tests в общую накопительную тестовую базу.
+5. Пройти UI, HTTP, JavaScript и необходимую regression-проверку по действующему профилю.
+6. Проверить фактическое поведение в браузере и изолированном demo окружении, если доступен соответствующий способ проверки.
+7. Провести самостоятельный `MANUAL ENGINEERING REVIEW` сверх автотестов.
+
+Особенно проверить:
+
+- два и более Workspace с неперемешивающимися TASK;
+- выбор и переключение карточек;
+- пустой экран новой TASK без нежелательного server persistence;
+- непустой draft и защиту от потери;
+- обновление страницы и изменение доступности сервера;
+- реальное отображение recovery, UNKNOWN, DONE и VERIFIED;
+- отсутствие скрытых мутаций при просмотре, выборе, обновлении и открытии карточек;
+- длинные названия, большие отчёты, узкое окно, прокрутку и ошибки API;
+- отсутствие регрессии прежнего UI и функций навигатора.
+
+Использовать отдельные disposable TEMP fixtures и собственный output root данной TASK. Не обращаться к live Workspace и не запускать опасные реальные мутации. Не пересекаться с выполняющимися тестами Ultra.
+
+Честно различать PASS, FAIL, ERROR, SKIP и NOT RUN. Сохранить исходные ошибки и negative controls.
+
+## 9. Результат для пользователя
+
+Целевой результат — обновлённая рабочая демонстрация Web Alarm с тремя колонками, полноценной карточкой TASK и понятным пользовательским сценарием новой постановки.
+
+Покажи, что реально работает, а какие возможности пока ограничены backend.
+
+Обязательно предоставить:
+
+- перечень изменённых файлов;
+- краткое описание новой компоновки;
+- реализованные UX A/B/C требования;
+- ограничения или необходимые архитектурные расширения;
+- проверки с точными командами и результатами;
+- фактическое browser/demo evidence, если запускалось;
+- самостоятельный инженерный разбор рисков;
+- понятный способ открыть результат пользователю;
+- предложение следующего безопасного шага.
+
+Если какой-либо важный сценарий нельзя корректно реализовать в существующем scope, это не повод создавать ложный функционал. Зафиксируй BLOCKED/PROPOSAL, причину и необходимое решение.
+
+## 10. Завершение
+
+Итоговый статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+До отдельной независимой проверки ChatGPT не объявлять `DONE / VERIFIED`.
+
+Не выполнять commit, push, pull, merge или иных Git-операций.
+
+После фактической сдачи выполнить предусмотренную безопасную ротацию собственной персональной карточки: первоначальный БЛОК 1 → БЛОК 2, фактический результат → БЛОК 3, затем БЛОК 1 → ожидание новой задачи.
+
+На этом остановиться и ожидать независимой проверки.
+
+---
+
+````````````````
+
+---
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+DATE: 2026-10-14
+ARCH CLASS: Web Alarm Workspace / Operator UI / UX; PRIMARY 23; IMPLEMENTATION 24 A/B/C; TEST 36/36.1/36.2.
+
+FACT: рабочие три области Workspace/main/TASK, полноценные RAW/этапы/REPORT/recovery/NEXT, RU labels, GET health/freshness, адаптивность. UX-C: один textarea, пустая форма ephemeral, browser-local autosave/reload + Web Locks, явная регистрация через прежний API без planner/operations. Неопределённый POST сохраняет текст и блокирует повтор; backend receipt/idempotency остаётся BLOCKED/PROPOSAL.
+
+WRITE: web_alarm/ui.py; test_web_alarm_operator_ui.js (явный AMENDMENT); новый test_web_alarm_ui_ux.py; собственная папка reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/; эта ротация. Backend/WA4-R/Ultra/shared docs/runner/CI/launcher не изменены. Git/GitHub не использовались. Внешняя работа Claude сохранена.
+
+CHECKS: baseline Python 34 PASS и JS23 PASS. Финальный focused Python/HTTP 36 PASS; full Web Alarm 771 IDs = 770 PASS / 0 FAIL / 0 ERROR / 1 SKIP (Windows symlink permissions), exit0, isolation0. JS53 PASS / 0 FAIL / 0 SKIP. Negative controls4/4 PASS с ожидаемым внутренним FAIL каждого mutant. Collection769→771, без удалённых Python IDs; JS23→53, два переименования и 30 новых сценариев. Первые красные прогоны сохранены.
+
+BROWSER: desktop1440×1000 и narrow390×844, реальный reload draft, два Workspace, независимый scroll, server stop/reopen/stale export guard. Просмотр сохранил70 файлов; регистрация добавила только3 Task-файла без operations; последующий fresh reopen/final checks сохранил73 файла byte-identical. /ui совпал с финальным INDEX_HTML. Demo http://127.0.0.1:53833/ в disposable TEMP; обычный запуск Start_WebAlarm_Demo.cmd.
+
+MANUAL ENGINEERING REVIEW: authority, async identity, draft locks/read-acquire gap, uncertain registration, corruption/quota, real fixture bytes и побочные эффекты проверены отдельно. Найдены и исправлены четыре invalid API display defects; независимая приёмка этим не заменена.
+
+EVIDENCE: reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/report.md — полный отчёт; checks.json / versions.json / quality.json / browser.json / first-reds.json / source-evidence.zip / rotation.json / manifest.json; три PNG. Raw outputs и fixtures: C:/Users/REX/AppData/Local/Temp/codex-wa4ux001-md3m9ccc. Source pins и ограничения в отчёте. Исторические F1–F3/STRICT/CI не закрываются этим PASS.
+
+DOC IMPACT: YES; CURRENT STATE YES; ARCHITECTURE YES (browser/UI); CONTEXT LIBRARY NO; REGISTRY/ROUTING YES (handoff); NEW CANONICAL DOCUMENT NO. SHARED DOC DELTA для23/24/25/36.2/01/05/06/34/global000 предложена в отчёте, не внесена. LOSS CHECK подтверждён rotation.json; прежние блоки сохранены ниже дословно.
+
+NEXT SAFE ACTION: ChatGPT / WEB_07 независимо проверяет diff/oracles/evidence; пользователь принимает визуальную часть. Shared docs синхронизирует координатор после решения. Codex остановлен, следующую стадию не начинает. DONE / VERIFIED не присвоен.
+
+---
+
+## AMENDMENT / UX-001-A/B REPAIR — 2026-10-14
+
+TASK: CODEX-WA4-UX-001-OPERATOR-REDESIGN
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION — LOCAL ONLY / NOT SYNCED.
+
+Независимый SOURCE REVIEW: CHANGES REQUESTED. Оба finding подтверждены. UX-001-A: пустой editor A после refresh мог показывать B, отправляя workspace_id=A; теперь draft удерживает исходные ID/root, регистрация отдельно проверяет binding, исчезновение/смена root блокирует POST без миграции текста. UX-001-B: прежний progress repair не покрывал timeline; теперь incoherent empty stages не объявляются подтверждённым отсутствием плана. Прежний отчёт сохранён как история, его широкая формулировка уточнена новым отчётом.
+
+WRITE: web_alarm/ui.py, test_web_alarm_operator_ui.js, собственный repair-ux001 report/evidence, это дополнение. Backend/Ultra/WA4-R/shared docs/runners/CI не изменены; Git/GitHub не использовались. БЛОКИ 1/2 и прежние записи БЛОКА 3 не переписаны.
+
+RED BEFORE REPAIR: JS57 = 52 PASS / 5 FAIL; изолированный probe подтвердил POST A при отображаемом B и ложный empty timeline. FINAL: JS57 PASS; focused Python/HTTP36 PASS / 0 FAIL/ERROR/SKIP, isolation0; controls6/6 PASS (прежние4 + новые2), syntax PASS. Full backend discovery и новый визуальный browser audit NOT RUN по адресному client-only scope; прежний full не выдан за новый. Demo перезапущено на current UI, /ui == INDEX_HTML,73 файла fixture unchanged.
+
+REPORT: reports/CODEX-WA4-UX-001-OPERATOR-REDESIGN/repair-ux001/report.md; evidence.json, quality.json, changes.patch, manifest.json. Raw: C:/Users/REX/AppData/Local/Temp/codex-wa4ux001-repair-3ew7rtbi. Source pins в отчёте/evidence. SHARED DOC DELTA для23/24/25/36.2 предложена, общие документы не правились. Ограничения browser-local drafts, unknown POST и backend GET→POST root CAS остаются.
+
+NEXT SAFE ACTION: повторная независимая проверка ChatGPT / WEB_07. DONE / VERIFIED не присвоен; следующие стадии не запущены.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 (дословно, без переоценки исторических статусов)
+
+````````````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-003-F2F3-LOCAL-REPAIR. Исходный БЛОК 1 сохранён дословно, до отчёта не изменялся.
+**AMENDMENT / EVIDENCE:** адресный handoff WEB_07 по F3 и пользовательские JSON/ZIP из run 38379575748 сохранены отдельно в отчёте и original attachments; исходную постановку не заменяют.
+
+```````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-003-F2F3-LOCAL-REPAIR
+
+**Статус:** ASSIGNED / AWAITING LOCAL EXECUTION  
+**Исполнитель:** Codex, локальный агент  
+**ARCH CLASS:** Web Alarm Workspace / Runtime Reliability & Concurrency  
+**PRIMARY PROFILE:** 23 — Web Alarm  
+**TEST PROFILE:** 36.2  
+**Тема:** Независимое инженерное расследование и локальный ремонт гонок F2/F3.
+
+## 1. Цель
+
+Исследовать два подтверждённых красных сценария Windows CI, установить фактические причины, выполнить необходимые адресные исправления, дополнить общую накопительную базу тестов и **самостоятельно провести локальное тестирование на Windows**.
+
+Тесты не являются единственным доказательством корректности.
+
+Исполнитель обязан провести собственную инженерную проверку исходников, алгоритмов, последовательностей событий, блокировок, файловых операций, отказов и восстановления состояния.
+
+**Зелёный результат тестов без анализа кода и фактического состояния данных недостаточен для RESULT READY.**
+
+## 2. Обязательное чтение
+
+Пройти актуальный локальный маршрут:
+
+`08 → 000 → 34 → 18 → 01 → 23/24/25 → 36 → 36.1 → 36.2`
+
+Применять `TEST-COLLAB-01@1`, `TEST-DEV-01@1`, `TEST-COV-01@1`, `TEST-EXEC-01@1`, `TEST-QA-01@1`, `TEST-FLAKY-01@1`, `TEST-EVID-01@1`, `TEST-SCOPE-01@1`.
+
+Соблюдать `DOC-GIT-01@1`: **никаких Git/GitHub-операций локального агента без отдельного разрешения**, включая `git status`, `git diff` и чтение `.git`.
+
+Изучить существующие исходники и тесты непосредственно в локальной рабочей копии. Убедиться, что прежняя TASK не выполняется одновременно в тех же файлах; при конфликте сохранить чужие изменения и сообщить о блокере.
+
+## 3. Исходные доказательства
+
+GitHub Windows Actions, run `38379575748`:
+
+[https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38379575748](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38379575748)
+
+Проверяемая CI-ревизия:
+
+`37123b176097c15c8d21e0040bdf7d7f3e8072a3`
+
+### F2 — direct close versus mutation
+
+Задание `WA4-A direct-close race / 80 rounds / Windows` завершилось FAIL.
+
+Selector:
+
+`test_web_alarm_mutation_executor.RaceTests.test_execution_racing_the_task_closure_never_writes_into_a_closed_task`
+
+Наблюдался `EventCheckpointStoreError` с причиной:
+
+`task exists in active and completed: task_e`
+
+Stack проходит через `OperationStore.begin`, `EventCheckpointStore.append_event`, `TaskStore.task_directory` и `TaskStore._task_path`.
+
+**Гипотеза, не установленная причина:** чтения active/completed могут пересекаться с перемещением директории TASK. Проверить этот вариант и альтернативные причины; не считать гипотезу доказательством.
+
+### F3 — dying completion versus writers
+
+Задание `WA4-R-002 independent diagnostic / Windows` завершилось FAIL: 63 теста, 1 failure.
+
+Selector:
+
+`test_web_alarm_reliability_wa017.CompletionCrashRaceTests.test_writers_racing_a_dying_completion_never_land_in_the_closed_task`
+
+При активной TASK тест ожидал результат completion `REJECTED`, но фактически получил:
+
+`FAILED:CloseoutError`
+
+Нужно установить точную fault phase, причину ошибки и реальный terminal state. Само исключение не доказывает ни повреждение данных, ни безопасность.
+
+Дополнительные факты:
+
+- Все 8 новых `test_web_alarm_wa4r002_diagnostics` прошли.
+    
+- Полный Web Alarm regression: 761/761 PASS.
+    
+- Изолированные гонки проходили в отдельных прогонах.
+    
+- Negative controls независимого задания не исполнялись из-за предшествующего FAIL.
+    
+
+**Первоначальные красные результаты сохраняются как исторические свидетельства. Повторный PASS их не отменяет.**
+
+## 4. Этап A — самостоятельное расследование
+
+До исправлений:
+
+1. Изучить реальные реализации `TaskStore`, `CloseoutService`, `MutationExecutor`, `OperationStore`, `EventCheckpointStore`, checkpoint/projection и соответствующие тестовые harness.
+    
+2. Вручную восстановить последовательности возможных событий: lock acquisition, operation BEGIN/STARTED/APPLY/DONE, append event, directory move, status update, process termination и fresh-process recovery.
+    
+3. Проверить границы блокировок, повторное определение пути TASK, TOCTOU, Windows rename semantics, обработку исключений, сохранность receipts и checkpoint.
+    
+4. Отдельно определить: допустимый отказ, реальный дефект runtime, дефект тестового harness или пока неопределённая ситуация.
+    
+5. Проверить, какие ещё участки кода используют ту же опасную последовательность, даже если существующие тесты её не обнаруживают.
+    
+
+Подготовить короткую evidence-based матрицу:
+
+`Observed failure → possible cause → source path → expected invariant → existing test → gap`.
+
+**Не переходить сразу к косметическому изменению assertions.**
+
+## 5. Этап B — локальное воспроизведение и независимый oracle
+
+Использовать существующий Windows runner и только disposable TEMP fixtures.
+
+Сначала провести узкий baseline текущих тестов, сохранить первый новый FAIL и точную фактическую collection.
+
+Если сбой не воспроизводится естественно, допускается контролируемая диагностическая инъекция, которая достигает той же критической ветви исполнения. Natural reproduction и injected reproduction должны быть явно разделены.
+
+При необходимости создать дополнительные deterministic phase-barrier тесты.
+
+Проверять независимо от возвращаемых production enum:
+
+- фактическое наличие TASK в `active` и `completed` после остановки процессов;
+    
+- исходные и конечные bytes/hash целевых файлов;
+    
+- состояние `task.json`, plan, operations, events, receipts и checkpoint;
+    
+- число реальных физических применений mutation;
+    
+- отсутствие недопустимых writes после завершения TASK;
+    
+- корректность fresh-process recovery и replay;
+    
+- отсутствие дублирования эффектов, потери записей и ложного авторитетного состояния.
+    
+
+Снимки состояния получать после остановки собственных worker-процессов, отдельно отмечая промежуточные наблюдения в момент гонки.
+
+## 6. Этап C — исправление
+
+После установления причины внести минимальные адресные изменения в разрешённые runtime-файлы.
+
+Допускается улучшать существующие тесты и добавлять новые regression/negative selectors **в общую тестовую базу проекта**.
+
+Обязательно:
+
+- сохранять строгий контракт и fail-closed поведение там, где оно требуется;
+    
+- не заменять `REJECTED` на «любое исключение допустимо»;
+    
+- не скрывать failure через skip, XFAIL, дополнительные retries или исключение теста из collection;
+    
+- не менять исторические evidence;
+    
+- не ухудшать безопасность ради устранения race;
+    
+- самостоятельно проверить все новые ветви и побочные эффекты исправления.
+    
+
+Если выяснится, что причина в harness, исправить harness в рамках scope, но не ослаблять продуктовый oracle. Доказать качество новых тестов, включая контроль того, что тест действительно достиг целевой fault phase.
+
+## 7. Этап D — обязательные локальные проверки после исправления
+
+**Локальные тесты выполняет сам Codex, а не передаёт их запуск координатору.**
+
+Порядок:
+
+1. Syntax/static checks изменённых Python-модулей.
+    
+2. Точные F2/F3 selectors с проверкой collection и assertions.
+    
+3. Новые regression tests и подходящие negative controls.
+    
+4. Смежные тесты `test_web_alarm_mutation_executor`, `test_web_alarm_reliability_wa017`, `test_web_alarm_wa4r002_diagnostics` и `test_web_alarm_projection_concurrency`.
+    
+5. Bounded Windows race/stress повторения после локального PASS, с сохранением результатов по каждой попытке.
+    
+6. Полная Web Alarm regression, если среда позволяет.
+    
+
+Пример стандартного запуска из корня проекта:
+
+```
+python -B wa4a_acceptance.py --task CODEX-WA4-R-003-F2F3-LOCAL-REPAIR --output "$env:TEMP\wa-f2f3-focused" test_web_alarm_mutation_executor test_web_alarm_reliability_wa017 test_web_alarm_wa4r002_diagnostics test_web_alarm_projection_concurrency
+```
+
+После целевых проверок:
+
+```
+python -B wa4a_acceptance.py --task CODEX-WA4-R-003-F2F3-LOCAL-REPAIR --output "$env:TEMP\wa-f2f3-full" all
+```
+
+Для каждого повторного запуска — отдельная output-директория.
+
+Обязательно проверить фактические test IDs, counts PASS/FAIL/ERROR/SKIP, exit codes, isolation и результаты негативных контролей.
+
+Если что-либо невозможно выполнить, указать `NOT RUN / BLOCKED`, не объявляя полный PASS.
+
+## 8. Этап E — ручная инженерная ревизия
+
+**Этот этап обязателен даже при полностью зелёной регрессии.**
+
+После всех исправлений исполнитель самостоятельно:
+
+- перечитывает изменённые функции целиком;
+    
+- выполняет логический walkthrough нормальных и аварийных ветвей;
+    
+- проверяет, нет ли новых race windows;
+    
+- анализирует соблюдение lock ordering и atomicity;
+    
+- проверяет крайние состояния и частичные отказы, включая сценарии вне первоначального чек-листа;
+    
+- сверяет фактические данные с архитектурными контрактами, а не только с assertions;
+    
+- определяет остаточные риски и непокрытые случаи.
+    
+
+Результат отдельным разделом отчёта: **MANUAL ENGINEERING REVIEW** с конкретными проверенными ветвями и выводами.
+
+Недостаточно написать просто «код проверен».
+
+## 9. Границы полномочий
+
+Разрешено: адресное исследование, исправление Web Alarm runtime и тестов по F2/F3, необходимые безопасные локальные проверки, дополнение общего набора регрессионных тестов, профильный фактический отчёт.
+
+Запрещено без отдельного решения: Git/GitHub-операции, merge, rollout, WARN/STRICT/GATEWAY REQUIRED, изменение production workspace, destructive live fault injection, вмешательство в Ultra/Voice и самостоятельное редактирование общих документов `000/01/05/06/08/18/34/36/36.1`.
+
+По F1 не объявлять закрытие в составе данной TASK. При обнаружении пересекающейся причины указать её и выполнить только необходимые смежные проверки.
+
+Для общих документов подготовить `SHARED DOC DELTA`, который затем рассмотрит ChatGPT.
+
+## 10. Сдача
+
+Финальный статус:
+
+`RESULT READY / AWAITING INDEPENDENT VERIFICATION`
+
+Представить:
+
+- краткий человеческий итог;
+    
+- фактическую root cause либо обоснованное `INCONCLUSIVE`;
+    
+- список изменённых файлов и конкретных участков;
+    
+- сравнение исходного и исправленного поведения;
+    
+- перечень созданных/усиленных тестов;
+    
+- точные команды и результаты локальных прогонов;
+    
+- raw evidence, исходный FAIL, phase markers, hashes, recovery observations;
+    
+- отдельный `MANUAL ENGINEERING REVIEW`;
+    
+- нерешённые риски и `DOC IMPACT / SHARED DOC DELTA`;
+    
+- `NEXT SAFE ACTION`.
+    
+
+При необходимости для независимой приёмки сохранить один компактный task-report с указателями на evidence. Не создавать массив ненужных служебных отчётов.
+
+**Окончательный DONE / VERIFIED присваивает ChatGPT только после собственной независимой проверки исходников, тестов и доказательств.**
+
+TASK не разрешает автоматический переход к STRICT rollout.
+
+---
+
+```````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-003-F2F3-LOCAL-REPAIR. **STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION.** Исполнитель 007/Codex; Windows/Python 3.12.10, 2026-10-13.
+
+F2: real-move TOCTOU phantom duplicate и cached reader/event paths исправлены; bounded recheck также устраняет вручную найденный false UNKNOWN. Completion, begin и ранние executor reads соблюдают operations → mutation; CAS/ownership/physical boundary не ослаблены. Изменены 3 runtime + 3 существующих test-файла, добавлены 8 regression methods без удаления прежних 761 selectors.
+
+F3: original CI ZIP подтверждает pre-move native WinError 5/active-only PLANNED. Локальный held RAW reader воспроизводит тот же класс отказа до repair и защищён lock после repair. Владельца handle именно исторического CI record установить нельзя; исторический FAIL сохранён, VERIFIED не присваивается. Strict REJECTED/crash exit9 assertions сохранены, crash markers и fresh recovery проверены.
+
+Проверки final revision: focused 71 PASS/0 FAIL/0 ERROR/0 SKIP; quality 6 outer PASS с целевыми inner RED; 5 bounded stress attempts, 10 methods/40 внутренних раундов PASS; FULL 769 tests: 768 PASS/0 FAIL/0 ERROR/1 SKIP, exit 0, guard 0. Source SHA финальных addressed/focused/quality/stress/FULL совпадают. Промежуточные RED/ERROR не скрыты: before duplicate/RAW, manually found move gap, missing hashlib harness import и старый CAS test oracle; причины и поправки в report.
+
+**MANUAL ENGINEERING REVIEW** проведён отдельно: lock ordering/callers, normal/failed move, timeout/exception unwinding, STARTED/APPLY/DONE/release, duplicate/invalid ID, early refusal, raw bytes/events/receipt/checkpoint, fresh restart/replay. F1 OPEN; cached direct Projection snapshot read error остаётся отдельным read-only ограничением с доказанным сохранением данных и fresh STALE. Natural stress F3 дал 20 exit9; writer-first REJECTED доказан отдельно deterministic control. Никаких live mutations, Git/GitHub, Ultra/Voice/UI/CI изменений или следующих стадий.
+
+**REPORT / EVIDENCE:** [report](../reports/CODEX-WA4-R-003-F2F3-LOCAL-REPAIR/report.md); рядом checks.json, versions.json, evidence.zip, historical-CI.zip, historical-F3.json, quality_controls.py, control-inputs.json, rotation.json, manifest.json. TEMP raw attempts дополнительно сохранены; переносимые evidence находятся в reports. Внешний drift общих документов зафиксирован, не откатывался; полный БЛОК 1 оставался неизменен до ротации.
+
+**DOC IMPACT / SHARED DOC DELTA:** для 23/24/25, 36.2 и общего current/history контура предложена адресная дельта в report. Общие документы мной не редактировались; DOC CLOSEOUT INCOMPLETE до координатора. Нумерация commit не придумывалась.
+
+**NEXT SAFE ACTION:** независимая проверка WEB_07 sources/oracle/raw evidence/recovery и при отдельно разрешённом решении CI. Только ChatGPT присваивает acceptance/VERIFIED. F1 и STRICT не закрывать, следующие TASK не запускать.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и история
+
+Дословный архив, не действующая постановка и не новые полномочия.
+
+```````````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-002. Полная первоначальная утверждённая постановка сохранена дословно. Во время исполнения БЛОК 1 не переписывался.
+**AMENDMENT:** EVIDENCE HANDOFF пользователя/WEB_07 по F1/F2 CI jobs и отсутствующему первоначальному F3 red run сохранён отдельно в разделе AMENDMENT отчёта `reports/CODEX-WA4-R-002/report.md`. Scope не расширен, production repair не разрешён.
+
+``````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: CODEX-WA4-R-002
+
+**Название:** Historical Race Evidence & Recovery Proof  
+**Исполнитель:** Codex  
+**ARCH CLASS:** Web Alarm Workspace  
+**Статус:** USER APPROVED — START  
+**Режим:** Evidence-first / bounded diagnostic
+
+## 1. Цель
+
+Провести техническую диагностику трёх исторических race failures F1–F3, установить реальные причины, получить независимые доказательства корректности или некорректности состояния и определить минимальные необходимые исправления.
+
+Это продолжение WA4-R после принятого bounded OBSERVE, **не разрешение на WARN или STRICT**.
+
+## 2. Обязательный вход
+
+Прочитать в установленном порядке:
+
+- `Документация/08_Старт.md`
+    
+- `Документация/000_Задачи для агента.md`
+    
+- `Документация/34_TACTICAL_CONTEXT.md`
+    
+- `Документация/18_Регламент сопровождения документации.md`
+    
+- `Документация/01_Архитектура и текущее состояние.md`
+    
+- `Документация/23`, `24`, `25`
+    
+- `Документация/36`, `36.1`, `36.2`
+    
+- Персональную карточку `000_Задачи Codex.md`.
+    
+
+Базовая контрольная точка GitHub: коммит №302, `11f0a0a47518619119a5d60685abe852da915f10`. Локальную ревизию сверять без самостоятельных Git-команд; при необходимости запрашивать сведения у координатора.
+
+Использовать существующие отчёты `CODEX-WA4-R-001`, `CODEX-WA4-R-001-DIAG-01`, `ASTRA-WEB02-TEST-ARCH-001`, первоначальные FAIL и соответствующие тесты.
+
+## 3. Диагностика
+
+**F1 — RC-5 Closeout**
+
+Проверить natural pre-move и post-move/status-pending окна, `WinError 5`, сохранность активной TASK, состояние после перемещения и восстановление в новом процессе.
+
+**F2 — TaskStore.complete_task vs MutationExecutor**
+
+Установить детерминированный порядок `STARTED → apply → move → DONE`. Проверить operation/events/receipt, реальные байты файлов, checkpoint/manifest и состояние после восстановления. Не считать `FileNotFoundError` ни доказательством незаконной записи, ни доказательством безопасности.
+
+**F3 — WA-017 completion crash-race**
+
+Зафиксировать достижение конкретной crash-phase, terminal outcome, отсутствие недопустимых повторных эффектов и восстановление после fresh-process restart.
+
+Для каждой гонки сохранить исходный FAIL, воспроизведение, raw-state oracle, результат и отдельно оставшуюся неопределённость.
+
+## 4. Обязательный аудит актуальности тестов
+
+Перед изменениями составить карту:
+
+`инвариант → production-контракт → существующий тест → oracle → статус актуальности`.
+
+Для каждого затронутого теста определить:
+
+- **CURRENT** — соответствует действующему контракту.
+    
+- **NEEDS UPDATE** — контракт изменился или проверка устарела.
+    
+- **INSUFFICIENT** — тест актуален, но не покрывает критический сценарий.
+    
+- **OBSOLETE** — требование больше не действует, с доказательством причины.
+    
+
+Если изменяется контракт или поведение, обязательно пересмотреть существующие тесты, дополнить или исправить их в рамках разрешённого scope. Не подгонять ожидания под текущий результат реализации.
+
+Новые тесты должны быть детерминированными, изолированными, иметь проверяемый oracle и включаться в накопительную регрессию. Повторный PASS не отменяет предыдущий FAIL.
+
+Следовать правилам `TEST-DEV-01`, `TEST-COV-01`, `TEST-EXEC-01`, `TEST-QA-01`, `TEST-FLAKY-01`, `TEST-EVID-01`, `TEST-SCOPE-01` из 36.1 и профильным требованиям 36.2.
+
+**При любом будущем изменении production-кода этот аудит актуальности тестов является обязательной частью разработки, а не отдельной необязательной задачей.**
+
+## 5. Разрешённые действия
+
+- Читать исходники, тесты, локальные отчёты и каноническую документацию.
+    
+- Проводить ограниченные диагностические проверки только на одноразовых изолированных fixtures.
+    
+- Добавлять или корректировать необходимые диагностические тесты в рамках F1–F3.
+    
+- Сохранять минимальные raw evidence и отчёт для независимой приёмки.
+    
+
+## 6. Запреты
+
+- Не менять production-код без отдельного согласования repair scope.
+    
+- Не менять реальные TASK/storage и пользовательские данные.
+    
+- Не запускать rollout WARN, GATEWAY REQUIRED, STRICT.
+    
+- Не выполнять Git/GitHub-команды, commit, push, merge или самостоятельные CI-запуски.
+    
+- Не удалять исторические FAIL, не маскировать flaky и не заменять raw evidence выводами тестового runner.
+    
+- Не изменять Ultra и UI backlog.
+    
+- Не присваивать WA4-R статус DONE.
+    
+
+Если для доказательства требуется production repair или выход за scope — остановить соответствующую часть, предоставить минимальное обоснование и запросить разрешение.
+
+## 7. Результат
+
+Предоставить единый отчёт с:
+
+1. Таблицей F1/F2/F3: доказано, не доказано, root cause, severity, состояние после restart.
+    
+2. Картой актуальности существующих тестов и списком необходимых изменений.
+    
+3. Точными тестовыми командами, результатами, числом PASS/FAIL/SKIP, доказательствами изоляции.
+    
+4. Ссылками на исходные и новые evidence.
+    
+5. Минимальным repair proposal, если требуется.
+    
+6. DOC IMPACT и NEXT SAFE ACTION.
+    
+
+**Статус результата:** `READY FOR INDEPENDENT REVIEW`, не `VERIFIED`.
+
+После завершения передать результат WEB_07. Канонические документы и публикацию обновляет координатор после независимой приёмки.
+
+---
+
+**Codex: задача утверждена пользователем. Прочитай постановку и приступай к исполнению в указанных границах. Дополнительного подтверждения для разрешённой диагностики не требуется.**
+
+---
+
+``````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** CODEX-WA4-R-002  
+**STATUS:** READY FOR INDEPENDENT REVIEW  
+**DATE:** 2026-10-13, Asia/Yekaterinburg  
+**ARCH CLASS:** Web Alarm Workspace, PRIMARY PROFILE 23; test profile 36.2.  
+**INDEPENDENT REVIEWER / RECEIVER:** WEB_07.
+
+[Полный отчёт](../reports/CODEX-WA4-R-002/report.md), рядом `checks.json`, `evidence.json`, `versions.json`, `quality_controls.py`. Новый source: `test_web_alarm_wa4r002_diagnostics.py`, 8 auto-discovered methods. Старые tests, production, runner, workflows и общая документация не изменялись.
+
+Перед добавлением tests сохранена карта invariant → production contract → existing test → oracle → CURRENT/INSUFFICIENT; после pilot отдельно отмечены checkpoint controls и необходимость адресного review classification ветки F1. Оснований OBSOLETE и смены runtime-контракта нет. Строгие прежние assertions не ослаблены.
+
+F1: штатный native pre-move test PASS. Контролируемый native post-move/task.json WinError 5 воспроизведён; raw completed-only/PLANNED, исходные records/restore point/RAW/bytes сохранены, новый mutation request REFUSED. Fresh gated completion восстанавливает COMPLETED/MOVED_STATUS_PENDING; повтор REJECTED, один completion event. Это доказательство конкретной ветки, не первопричина исторического CI по одному assertion active=False.
+
+F2: детерминированно воспроизведены TaskStoreError/FileNotFoundError при cached acquire task.md и EventCheckpointStoreError/FileNotFoundError при release event после durable DONE. В первой ветке PRE/INTENT/no receipt/0 apply, fresh replay REFUSED; во второй POST/DONE/exact receipt/released claim/1 apply, fresh replay REPLAYED без второй записи. Отдельный projection snapshot read выдаёт raw FileNotFoundError без потери checkpoint; fresh validation STALE/authoritative=false. Executor restore_plan отказывает typed REFUSED при том же классе окна. Lock probe подтверждает, что direct move не проходит между STARTED и DONE внутри реального physical mutation boundary. Эти диагностические PASS воспроизводят дефекты, а не означают production repair.
+
+F3: реальный move + достигнутый crash marker + exit91, late writers отвергнуты, late records/physical effects отсутствуют; fresh gated completion и повтор доказаны raw states. Writer-first negative phase control даёт REJECTED без crash marker. Первоначальный red F3 run не идентифицирован: INCONCLUSIVE; прежние 80-round PASS не закрывают его.
+
+Проверки: pilot-1 предыдущей revision 7 PASS/0 FAIL/0 ERROR/0 SKIP (10.756 s); финальный focused 63 PASS/0 FAIL/0 ERROR/0 SKIP (97.003 s), включая 8 новых и 55 прежних; negative controls 2 PASS (2.303 s), внутренние испорченные сценарии ожидаемо FAIL. Все exit0, guard violations=0. Exact collection без потерь/дубликатов. Whole-project FULL/stress NOT RUN — bounded diagnostic без production change. 753 старых methods + 8 новых = 761 static inventory, не runtime PASS.
+
+Все fixtures disposable TEMP; внешние HTTP/Git/native shell/live storage не использовались. Source baseline №302 получен из TASK, локальная Git equivalence UNVERIFIED. До ротации все 158 preexisting контрольных файлов неизменны; production hashes совпали также с прежним локальным DIAG manifest. Оригинальные CI ZIP не получены, входные FAIL/job locators и AMENDMENT сохранены. Raw paths/hash и 24 дедуплицированных raw states доступны в evidence; TEMP logs отдельно, source sealing — координатор.
+
+DOC IMPACT: SHARED DOC DELTA / DOC CLOSEOUT INCOMPLETE для 23/24/25, 36.2, общего routing/history после независимой приёмки. Minimal repair proposal есть в отчёте: typed acquire refusal/consistent read, release event handling с сохранением durable outcome, snapshot error boundaries и lock order operations → mutation → target. Production repair не выполнялся и требует отдельного утверждённого scope. WARN/GATEWAY REQUIRED/STRICT, Ultra/UI backlog и следующие задачи не запускались. WA4-R overall DONE/VERIFIED не присваивался.
+
+NEXT: WEB_07 независимо проверяет source/evidence, получает original F1/F2 artifacts и отсутствующий F3 red run, решает необходимый repair scope. БЛОК 1 освобождён только после сохранения постановки, AMENDMENT reference и factual result; прежняя история ниже сохранена побайтово.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и история
+
+Дословный архив, не действующая постановка и не новые полномочия.
+
+``````````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** ASTRA-TEST-ARCH-REVIEW-001. Полная утверждённая постановка сохранена дословно. AMENDMENT: новых уточнений во время аудита не поступало.
+
+`````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: ASTRA-TEST-ARCH-REVIEW-001
+
+**Исполнитель:** Astra  
+**Режим:** независимый архитектурный аудит / READ MOSTLY  
+**ARCH CLASS:** Cross-project / Testing Architecture / Documentation Governance  
+**Статус:** USER APPROVED FOR REVIEW  
+**Цель:** проверить завершённую ChatGPT архитектуру тестирования до перехода к технической реализации.
+
+## Задача
+
+Проведи критический, независимый аудит четырёх новых документов:
+
+- `Документация/36_Единая архитектура тестирования.md`
+    
+- `Документация/36.1_Обязательный регламент тестирования для LLM.md`
+    
+- `Документация/36.2_Профиль тестирования Web Alarm Workspace.md`
+    
+- `Документация/36.3_Профиль тестирования Ultra.md`
+    
+
+Проверяй как независимый технический рецензент. Не считай решения ChatGPT правильными по умолчанию.
+
+Ты участвовала в предыдущем исследовании `ASTRA-WEB02-TEST-ARCH-001`, поэтому собственные прежние тесты и выводы не объявляй независимо подтверждёнными данным аудитом.
+
+## Что проверить
+
+1. **Полнота процесса разработки.** После каждой существенной правки кода должны присутствовать анализ изменения, оценка рисков, review кода, решение о необходимости новых тестов, подходящий прогон и сохранение evidence. Не допускается ситуация «тесты зелёные — значит всё правильно».
+    
+2. **Качество тестирования.** Разделение быстрых, профильных, интеграционных, аварийных и стресс-тестов; накопительная регрессия; самостоятельные дефекты тестов и runner; сохранение первого FAIL; недопустимость косметического превращения ошибки в PASS.
+    
+3. **Архитектурные границы.** Универсальные правила действительно универсальны, а Web Alarm и Ultra имеют собственные инварианты, oracle и окружение. Нет ли противоречий с действующей профильной архитектурой?
+    
+4. **Документация и навигация.** Единственная ветка Obsidian: главная карта → 36 → 36.1/36.2/36.3. Нет ли дублирующих нормативных владельцев, ошибочных Rule-ID, сломанных маршрутов, лишних Wiki-связей или противоречий с существующими регламентами?
+    
+5. **Точность утверждений.** Разделены ли CURRENT, VERIFIED, PROPOSED, FUTURE и OPEN? Не представлены ли ещё не реализованные runner, CI, one-click, safety gates или тестовые гарантии как уже существующие?
+    
+6. **Практическая применимость.** Сможет ли Codex, Claude или ChatGPT действительно применять правила без избыточного чтения, тысяч ручных записей, лишних прогонов и неограниченного расхода токенов?
+    
+
+## Дополнительные источники
+
+Начни с четырёх документов 36–36.3.
+
+Затем адресно проверь нужные разделы `08_Старт.md`, `18_Регламент сопровождения документации.md`, `00_Главная - карта проекта.md`, Ultra `01/09/13`, Web Alarm `23/24/25` и `reports/DOC-TEST-001/report.md`.
+
+Прежний отчёт `reports/ASTRA-WEB02-TEST-ARCH-001/report.md` используй лишь для проверки спорных фактов и происхождения пилотных тестов.
+
+Не перечитывай весь архив, всю историю задач или исходный код проекта без конкретной обнаруженной причины. Обязательные нормы и ограничения доступа соблюдать.
+
+## Бюджет и запреты
+
+**Приоритет — экономия контекста при сохранении качества.**
+
+- Никакой повторной разработки архитектуры с нуля.
+    
+- Никаких массовых прогонов тестов, стресс-тестов или установки зависимостей.
+    
+- Не изменять документы 36–36.3, production-код, тесты, runner, workflow или общие нормативные документы.
+    
+- Не выполнять Git/GitHub-операции, включая `git status`, `diff`, `log`, `fetch`, `commit`, `push`, без отдельного разрешения.
+    
+- Не менять rollout Web Alarm или активные задачи Ultra.
+    
+- Не создавать новые документы архитектуры и не перестраивать Obsidian Graph.
+    
+
+Разрешено читать локальные файлы проекта и сохранить **один краткий итоговый отчёт** в `reports/ASTRA-TEST-ARCH-REVIEW-001/report.md`.
+
+Не тратить ресурсы на стилистические замечания, если они не меняют смысл.
+
+## Формат результата
+
+Максимум **8 существенных findings**, в порядке критичности. Для каждого:
+
+`ID / Severity / Документ + раздел / Проблема / Почему это риск / Минимальное исправление`.
+
+Если существенных недостатков нет — так и сообщить. Не придумывать замечания ради количества.
+
+Отдельно дать:
+
+- **Вердикт:** `ACCEPT`, `ACCEPT WITH MINOR CORRECTIONS` или `REWORK REQUIRED`.
+    
+- **Проверенные области** и границы аудита.
+    
+- **Что подтверждено**, а что осталось непроверенным.
+    
+- **Предлагаемое исправление** только для подтверждённых проблем.
+    
+- **NEXT:** что следует исправить до реализации test runner/one-click, а что допустимо оставить на будущий этап.
+    
+
+**Итоговый ответ в чате — до 5000 символов.** Детали — в одном отчёте, без дублирования всего прочитанного.
+
+По завершении сохранить factual report. Ротацию личной task-card выполнять только по действующему регламенту, после проверки сохранности предыдущей задачи и её истории. При риске потери прежних БЛОКОВ 2–3 не перезаписывать их, а сообщить о блокере.
+
+Ничего самостоятельно не исправлять. Результат передать ChatGPT-координатору и пользователю для решения.
+
+---
+
+`````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** ASTRA-TEST-ARCH-REVIEW-001  
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION  
+**VERDICT:** REWORK REQUIRED — две адресные коррекции; переизобретать архитектуру не требуется.  
+**DATE:** 2026-10-12.
+
+Полный краткий [отчёт](../reports/ASTRA-TEST-ARCH-REVIEW-001/report.md) — единственный report artifact этой задачи. Прочитаны 36–36.3 и DOC-TEST-001; смежные нормы и код сверены адресно.
+
+- R1 / HIGH / 36.3 §4: прямой unittest test_final_audit включает mock_git=False cases, достигающие реальных Git subprocess. Этот пример несовместим с default no-Git без отдельной изоляции/разрешения. Нужна явная маркировка и безопасный guarded route.
+- R2 / MEDIUM / 36.2 raw oracle: «новый receipt => FAIL» неверно для разрешённого ADOPT, который штатно создаёт подтверждённый receipt без повторного write. Нужно отделить historical replay от sanctioned recovery.
+
+Статические проверки: 4 ожидаемых Wiki-ребра, все цели существуют; 0 исходящих Wiki-ссылок у дочерних документов; 7 уникальных TEST Rule-ID contract 1/ACTIVE, согласованных с 08. Цикл review/risk/tests/evidence, запрет скрывать первый FAIL, границы Ultra/Web Alarm и маркировка FUTURE подтверждены на уровне документов. Runtime tests/CI/Git/import test modules — NOT RUN; собственный прежний пилот не объявлен независимо подтверждённым. Remote merge/CI и визуальный кэш Obsidian не проверены.
+
+Исправления документов, production, tests, runner и workflow не выполнялись. Исходные версии четырёх документов закреплены SHA-256 в отчёте. Персональная ротация выполнена только после сохранения постановки и factual result; прежние БЛОКИ 2–3 сохранены дословно ниже.
+
+DOC IMPACT: SHARED DOC DELTA для 36.2/36.3; общие файлы не изменены. NEXT: ChatGPT/пользователь рассматривают два findings; адресные исправления перед реализацией runner/one-click, затем review. F1–F3 и инфраструктурные улучшения остаются отдельными задачами. Следующие стадии не запущены.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и история
+
+Дословный архив; не активная постановка и не новые полномочия.
+
+`````````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** ASTRA-WEB02-TEST-ARCH-001. Полная утверждённая постановка ниже сохранена дословно.
+**AMENDMENT:** пользовательский handoff PR12/F1–F3 и source revision сохранён дословно в `reports/ASTRA-WEB02-TEST-ARCH-001/pr12-handoff.md`; временная пауза отменена последующим «продолжай». Исходный БЛОК 1 во время работы не переписывался.
+
+````````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# TASK: ASTRA-WEB02-TEST-ARCH-001
+
+## Universal Test Architecture / Independent Test Design / Pilot Implementation
+
+**PROJECT:** `maxrus82gm-svg/ag_llm`  
+**ARCH CLASS:** Web Alarm Workspace / Testing & Quality Assurance  
+**EXECUTOR:** Astra — Very High reasoning  
+**MODE:** Independent architecture analysis + limited test implementation  
+**PRIORITY:** Experimental, non-production  
+**STATUS:** APPROVED FOR LIMITED ANALYSIS AND TEST PILOT
+
+### 1. Основная задача
+
+Проведи независимый анализ существующего тестирования Web Alarm Workspace и предложи расширяемую систему проверки его безопасности и надёжности.
+
+Цель — создать тестовую архитектуру, которой смогут пользоваться независимо друг от друга:
+
+- ChatGPT через GitHub Actions;
+- Codex на локальном компьютере;
+- Claude как локальный агент;
+- Astra при последующих проверках;
+- другие будущие агенты и CI-системы.
+
+Никакой отдельной логики тестирования для конкретной LLM быть не должно. Агент только запускает стандартный test runner и анализирует унифицированный результат.
+
+### 2. Контекст проекта
+
+Открой проект по обычному маршруту:
+
+`Документация/08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md`
+
+Затем адресно изучи документы №23, №24 и №25 по Web Alarm.
+
+Обязательно изучи существующий код тестов, `wa4a_acceptance.py` и `.github/workflows/web-alarm-tests.yml`.
+
+Используй текущие отчёты и GitHub CI как реальные evidence, но проверяй их актуальность относительно исходников. Документация может отставать от GitHub.
+
+Обрати особое внимание на Draft PR №12, в котором продолжается независимая диагностика Windows concurrency races.
+
+Не дублируй без необходимости уже существующие проверки.
+
+### 3. Архитектурный анализ
+
+Выдели фундаментальные инварианты безопасности по направлениям:
+
+1. Lifecycle TASK / microtask.
+2. Closeout и атомарность перехода ACTIVE → COMPLETED.
+3. Межпроцессные блокировки и конкурентные операции.
+4. Durable operation identity и предотвращение повторных физических изменений.
+5. Snapshot, manifest, checkpoint, projection.
+6. Reconciliation и восстановление после обрыва связи.
+7. RC-4 rollback и RC-6 recovery.
+8. Crash consistency и отказ файловой системы Windows.
+9. Согласованность состояния после повторного запуска процесса.
+10. Изоляция тестовой среды от реальных пользовательских данных.
+
+Для каждого инварианта выясни:
+
+- какой существующий тест его проверяет;
+- какие условия уже покрыты;
+- каких опасных сценариев не хватает;
+- каким способом их лучше проверять;
+- можно ли автоматически получить воспроизводимое evidence.
+
+### 4. Проект тестовой архитектуры
+
+Предложи расширяемый тестовый контур, состоящий из:
+
+**A. Shared fixtures**
+
+Временные TASK, микрозадачи, workspaces, manifests, операции и файловые состояния.
+
+**B. Scenario runner**
+
+Универсальный запуск последовательностей операций, в том числе конкурентных и аварийных сценариев.
+
+**C. Invariant oracle**
+
+Независимая проверка фактического конечного состояния. Не доверять одному лишь коду возврата проверяемой операции.
+
+**D. Fault injection**
+
+Контролируемые отказы записи, перемещения папок, блокировок, повторного запуска и сетевого ответа. Искусственные отказы всегда отличать от естественно воспроизведённых.
+
+**E. Evidence collector**
+
+Сохранять исходное и конечное состояние, error chain, версию исходников, seed, воспроизводимую команду и результаты проверок.
+
+**F. Test profiles**
+
+- SMOKE — быстрые проверки.
+- FOCUSED — проверки конкретного механизма.
+- FULL REGRESSION — вся накопленная регрессия.
+- STRESS — расширенное многократное тестирование по отдельному запросу.
+
+### 5. Требования GitHub Actions и локальной совместимости
+
+Это обязательное архитектурное требование, не дополнительная опция.
+
+Тесты должны запускаться на GitHub Actions, в первую очередь на Windows Runner с Python 3.12, и локально тем же Python test runner.
+
+По возможности использовать встроенный `unittest` и уже существующий `wa4a_acceptance.py`, без новых тяжёлых зависимостей.
+
+Пример целевого интерфейса:
+
+```powershell
+python -B wa4a_acceptance.py --task ASTRA-WEB02-TEST-ARCH-001 --output "$env:TEMP\astra-test-evidence" test_web_alarm_new_invariants
+```
+
+В CI путь `--output` должен указывать на `${{ runner.temp }}`.
+
+Новые тесты обязаны работать на изолированных временных данных, не обращаться к live storage и не зависеть от конкретного имени агента.
+
+Поддерживать явные `PASS / FAIL / ERROR / SKIP`, машиночитаемые JSON-результаты и доступную человеку диагностику.
+
+Windows-only сценарии должны иметь явно обоснованное условие платформы. Не превращать необъяснённую ошибку в SKIP или PASS.
+
+При необходимости можно предложить отдельную проверку на Linux, но Windows остаётся обязательной основной средой.
+
+### 6. Маленький практический пилот
+
+После анализа выбери **два или три новых теста**, которые закрывают наиболее важные непокрытые риски.
+
+Реализуй их в отдельном тестовом модуле, например:
+
+`test_web_alarm_new_invariants.py`
+
+Если нужна вспомогательная инфраструктура, сделай её минимальной и переиспользуемой.
+
+Желательно показать:
+
+- хотя бы один test case с детерминированным fault injection;
+- хотя бы один test case с crash/restart или replay;
+- хотя бы один конкурентный или state-machine сценарий.
+
+Не добавляй тесты, которые лишь повторяют существующие assertions под другим названием.
+
+Каждый тест должен иметь воспроизводимую команду запуска и доказательство, какой конкретно инвариант он проверяет.
+
+Если среда позволяет выполнить тесты локально — выполни и сохрани evidence. Если выполнить нельзя, представь полный код, зависимости и точную причину отсутствия verification. Не объявляй невыполненный тест успешным.
+
+### 7. Анализ качества тестирования
+
+Предложи методы контроля за качеством самой системы тестирования:
+
+- обнаружение тестов, которые всегда проходят независимо от состояния программы;
+- выявление дублирования;
+- воспроизводимость случайных сценариев по seed;
+- сокращение слишком длинных failing scenarios;
+- разделение ошибок production и ошибок test harness;
+- контроль времени выполнения в CI;
+- сохранение исторических regressions без потери доказательств.
+
+Оцени, какие из этих методов оправданны уже сейчас, а какие лучше внедрять позже.
+
+### 8. Ограничения
+
+- Не менять production-код Web Alarm или Ultra.
+- Не исправлять параллельно текущие проблемы PR №12.
+- Не ослаблять существующие assertions.
+- Не менять текущий CI workflow без отдельного согласования координатора.
+- Не выполнять Git/GitHub-операции, запрещённые действующим регламентом для локальных агентов.
+- Не делать commits, push, merge или rollout самостоятельно.
+- Не использовать реальные пользовательские TASK и workspace-файлы.
+- Не включать WARN, GATEWAY REQUIRED, STRICT.
+- Не распространять архитектурные правила Web Alarm на Ultra автоматически: для Ultra потребуется отдельный профиль инвариантов.
+- Не читать все документы и исходники без разбора; чтение должно быть адресным.
+
+Новые тестовые файлы допустимо готовить только в разрешённой рабочей области, без публикации в `main` и без конфликтов с текущим PR №12. GitHub-интеграцию после ревью выполняет координатор.
+
+### 9. Ограничение затрат модели
+
+Задача экспериментальная и должна оставаться ограниченной.
+
+Этап A — анализ архитектуры, матрица существующего покрытия, выявление пробелов.
+
+Этап B — проект общего тестового контура и выбор 2–3 тестов.
+
+Этап C — реализация выбранных тестов и локальная проверка при наличии среды.
+
+Этап D — компактный handoff на независимую проверку ChatGPT и последующее GitHub CI.
+
+Не приступать к масштабному рефакторингу или десяткам новых тестов. Если возникнет необходимость заметно расширить scope, подготовить proposal и остановиться.
+
+### 10. Результат
+
+Предоставь:
+
+1. `COVERAGE MATRIX` — существующие тесты, инварианты и реальные пробелы.
+2. `TEST ARCHITECTURE PROPOSAL` — универсальный тестовый контур.
+3. `PILOT IMPLEMENTATION` — 2–3 полностью написанных новых теста.
+4. `RUN INSTRUCTIONS` — команды для локальных агентов и GitHub Actions.
+5. `EVIDENCE` — фактически полученные результаты либо честный NOT RUN.
+6. `EXTENSION CONTRACT` — как добавлять тесты в будущем без переделки инфраструктуры.
+7. `RISKS / OPEN QUESTIONS` — что осталось непроверенным.
+8. `NEXT SAFE ACTION` — предложения для независимого review и CI.
+
+В конце отдельно оцени, насколько предложенная архитектура может быть перенесена на Ultra и другие подсистемы без смешивания их правил безопасности.
+
+**Критерий успеха:** не количество тестов, а появление нескольких действительно полезных, воспроизводимых и расширяемых проверок, которыми смогут пользоваться разные агенты.
+
+Не объявлять проект завершённым и не изменять общий статус Web Alarm. После подготовки пилота остановиться для независимого review.
+
+---
+
+````````````
+
+# БЛОК 3 — ФАКТИЧЕСКИЙ РЕЗУЛЬТАТ
+
+**TASK:** ASTRA-WEB02-TEST-ARCH-001  
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION  
+**DATE:** 2026-10-12. Independent audit: ChatGPT; GitHub publication/CI — только уполномоченный координатор.
+
+## Изменения и архитектурный результат
+
+- Сначала зафиксированы архитектура A–F, 13 независимых invariant families и coverage gaps; затем реализованы ровно 3 новых product tests в `test_web_alarm_new_invariants.py`.
+- P1: настоящий staging write/cleanup при injected fsync ENOSPC; сохранность PRE/snapshot и отсутствие повторного apply после restart.
+- P2: empty CREATE, crash после durable DONE, replay, tracked DELETE и replay исторического CREATE без resurrection.
+- P3: два workspace/process, один textual operation ID, управляемый barrier; отдельные bytes/receipts/events и replay без повторного apply.
+- Proposal включает unittest/существующий runner, fixtures, scenario steps, независимый raw oracle, fault injection, evidence envelope, profiles, extension contract, input quality, накопительную regression, seed/schedule, bounded reduction и переносимость без смешивания правил Ultra.
+- Handoff PR12/F1–F3 учтён отдельным AMENDMENT; предложения pre-move/post-move/recovery/concurrent mutation/crash oracles сохранены. Findings НЕ закрыты.
+
+## Фактические проверки
+
+| Attempt | PASS | FAIL | ERROR | SKIP |
+| --- | ---: | ---: | ---: | ---: |
+| Первый pilot (ошибка fixture schema) | 1 | 0 | 2 | 0 |
+| Исправленный pilot | 3 | 0 | 0 | 0 |
+| FOCUSED | 103 | 0 | 0 | 0 |
+| FULL, tested content manifest | 751 | 0 | 0 | 1 |
+
+FULL: 752 уникальных selectors = 749 прежних + 3 новых, пропусков/дубликатов нет; 660.566 s. Единственный SKIP — отсутствие разрешения на создание symlink. Product isolation violations=0. Новый module source SHA-256: `b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b`.
+
+Quality sensitivity: 2 PASS при ожидаемом падении внутренних испорченных сценариев; 6/6 отрицательных raw oracle/parser controls отвергнуты. Отдельные intentional counterexamples: empty collection → successful/exit0; один test с двумя failing subtests → passed=-1/exit1; пойманный synthetic guard event → JSON successful, guard=1/exit1. Последний не выполняет реальную shell-команду. Старый runner не менялся. Все attempts, включая initial ERROR, сохранены.
+
+## Ограничения, source evidence и scope
+
+FOCUSED/FULL source manifests совпали с исходными sources + новым pilot. После записи FULL внешне изменились `test_web_alarm_projection_concurrency.py`, `test_web_alarm_reliability_wa017.py`, `.github/workflows/web-alarm-tests.yml`; baseline/tested/current hashes сохранены. Автор изменений/Git identity не устанавливались, файлы не откатывались. Зелёный FULL НЕ означает проверку изменившегося checkout. Production, runner, прочие прежние tests и общие документы на контрольной сверке неизменны. Этот исполнитель не изменял existing tests/CI/production/Ultra и не использовал Git/GitHub, live storage, merge или rollout.
+
+PR12 source SHA/CI результаты получены от пользователя, независимо не проверены. F1 post-move recovery, F2 terminal safety и первоначальная причина F3 остаются открыты. GitHub Windows CI на итоговом tree — NOT RUN. Generic validator/DSL/stress scheduler — DESIGN ONLY. Process crash не равен power loss; injected failure не выдаётся за natural Windows reproduction. Shared DOC CLOSEOUT INCOMPLETE до независимой приёмки.
+
+## Evidence и передача
+
+[Полный отчёт](../reports/ASTRA-WEB02-TEST-ARCH-001/report.md), [дословный AMENDMENT](../reports/ASTRA-WEB02-TEST-ARCH-001/pr12-handoff.md). Рядом: `checks.json`, `coverage.json`, `pilot-evidence.json`, `versions.json`, `quality_cases.py`; exact commands, runtime, исходные hashes и факты сохранены. Массовые raw logs остаются в system TEMP, пути/хеши — в checks; source sealing при публикации выполняет координатор.
+
+DOC IMPACT: testing proposal/pilot YES; runtime architecture NO; Ultra NO. SHARED DOC DELTA: владельцы 23/24/25 и общего routing — ChatGPT; после review зафиксировать новые возможности и пределы, PR12 findings оставить открытыми, отдельно решить infrastructure TASK для quality gates. Общий DONE/VERIFIED не присваивался.
+
+NEXT SAFE ACTION: независимый аудит архитектуры, novelty, oracles, source drift и evidence ChatGPT; сверка актуального PR12 tree и Windows CI уполномоченным координатором. Следующие стадии не запущены. БЛОК 1 освобождается только после сохранения полной постановки в БЛОКЕ 2 и этого factual result.
+
+---
+
+## Сохранённые прежние БЛОКИ 2–3 и их история
+
+Исторический текст ниже сохранён дословно; он не является активной постановкой и не выдаёт новых полномочий.
+
+````````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-001-DIAG-01. Полная пользовательская постановка сохранена дословно. AMENDMENT: новых уточнений во время этой диагностики не поступало.
+
+```````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# CODEX-WA4-R-001-DIAG-01 — Closeout Race / Independent CI Failure Diagnosis
+
+**PROJECT:** `ag_llm / WEB-02 / Web Alarm Workspace`  
+**EXECUTOR:** Codex CLI  
+**ARCH CLASS:** Web Alarm Workspace / RC-5 Closeout / Concurrency / WA4-R Verification  
+**PRIMARY PROFILE:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`  
+**PARENT TASK:** `CODEX-WA4-R-001`  
+**STATUS:** USER APPROVED / READY FOR EXECUTION
+
+## 1. Цель
+
+Выполнить ограниченную диагностику сбоя конкурентного закрытия TASK, выявленного независимым GitHub Windows CI при проверке `CODEX-WA4-R-001`.
+
+Установить, является ли сбой:
+
+- допустимым fail-closed отказом при конкурентном доступе;
+- нестабильностью тестового harness или Windows filesystem;
+- дефектом реализации RC-5 Closeout;
+- нарушением инварианта закрытия TASK;
+- иной причиной, подтверждённой evidence.
+
+**Не считать успешный повтор теста доказательством отсутствия дефекта.**
+
+Цель — установить фактическую причину, доказать либо опровергнуть безопасность конечного состояния и передать результат ChatGPT для независимой проверки.
+
+## 2. Исходные факты
+
+Исходная версия Web Alarm OBSERVE:
+
+- Коммит №280: `c7de06a60e2bd75d5f266ccf931a5ebb4da625f3`.
+- GitHub PR №11: https://github.com/maxrus82gm-svg/ag_llm/pull/11
+- Independent CI: https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38206439998
+
+В первой попытке GitHub Actions:
+
+- WA4-R focused: PASS, 228 tests.
+- Full regression: 749 tests, 748 PASS, 1 FAIL.
+- JavaScript: PASS.
+
+Сбой:
+
+`test_web_alarm_projection_concurrency.ProjectionRaceTests.test_completion_never_admits_new_open_state`
+
+Ожидалось:
+
+`REJECTED`
+
+Получено:
+
+`FAILED:CloseoutError`
+
+Во второй попытке тот же independent CI прошёл полностью: 749 PASS.
+
+**Корневая причина первого отказа не установлена.**
+
+Существующий тест возвращает тип исключения, но не сохраняет подробную причину, исходное состояние, событийную последовательность и доказательства конечного состояния TASK.
+
+Это и является предметом диагностики.
+
+Данные коммитов и PR предоставлены координатором. Локальный Codex НЕ получает разрешения обращаться к Git/GitHub.
+
+## 3. Обязательный preflight
+
+До выполнения:
+
+1. Прочитать `Документация/08_Старт.md`.
+2. Открыть общий `000_Задачи для агента.md`.
+3. Проверить персональный БЛОК 1 Codex.
+4. Прочитать актуальный `34_TACTICAL_CONTEXT.md`.
+5. Прочитать применимые правила из №18, включая `DOC-GIT-01@1`, `DOC-READ-01@1`, `DOC-VERSION-01@1`, `DOC-CHANGE-01@1`, `DOC-TASK-BLOCK1-01@1`.
+6. Проверить профильные №01, №23, №24, №25.
+7. Зафиксировать действующий локальный scope и текущие исходные файлы без использования Git.
+
+Не перезаписывать более новые документы старыми сведениями из постановки.
+
+## 4. Разрешённая область
+
+**Read scope:**
+
+- `test_web_alarm_projection_concurrency.py`
+- `web_alarm/closeout.py`
+- `web_alarm/task_store.py`
+- `web_alarm/operation_store.py`
+- `web_alarm/projection.py`
+- необходимые связанные lock/store и checkpoint modules;
+- `wa4a_acceptance.py`;
+- ранее сохранённый отчёт `reports/CODEX-WA4-R-001/report.md`.
+
+**Write scope:**
+
+- временные диагностические scripts/fixtures исключительно внутри system TEMP;
+- минимальная диагностическая модификация `test_web_alarm_projection_concurrency.py` при необходимости;
+- отдельный новый диагностический тестовый файл только при доказанной необходимости;
+- `reports/CODEX-WA4-R-001-DIAG-01/` — итоговый отчёт и компактное evidence;
+- персональная карточка Codex — только регламентная ротация после завершения.
+
+Разрешено добавлять instrumented diagnostic output и тестовые проверки, но запрещено ослаблять исходные assertions либо менять ожидаемый результат с `REJECTED` на `FAILED` ради зелёного теста.
+
+**Production-код не менять.** Если обнаружен реальный дефект, подготовить конкретный repair proposal с файлами, причинами и тестами, затем остановиться до отдельного USER GO.
+
+## 5. Диагностическая работа
+
+### D1 — Восстановление failure path
+
+Проследить фактический путь:
+
+`CloseoutService.complete → TASK locks → completion_state → ProjectionService.build → closeout verdict → complete_task_locked`
+
+Также проверить конкурентные пути:
+
+- `OperationStore.begin`;
+- `TaskStore.create_microtask`;
+- completion directory transition;
+- checkpoint/projection reads;
+- exception wrapping в `CloseoutError`.
+
+Установить, где могут возникать `TaskStoreError`, `OperationStoreError`, lock timeout, transient filesystem access error либо несогласованное состояние между записями.
+
+Разделять подтверждённую причину, гипотезу и недоказанное предположение.
+
+### D2 — Диагностическое инструментирование
+
+В тестовом harness обеспечить фиксацию:
+
+- полного типа и сообщения исключения;
+- исходного exception cause/context, если доступно;
+- имени worker и операции;
+- этапа и порядка конкурентных действий;
+- факта получения либо отказа lock;
+- результата Closeout;
+- конечного местонахождения TASK;
+- наличия новых operation/microtask records;
+- состояния projection/checkpoint;
+- обнаруженных ошибок чтения хранилищ.
+
+Использовать bounded diagnostic output, не записывать секреты, пользовательские данные либо массовые stdout-логи в репозиторий.
+
+Логирование должно быть тестовым и не влиять на production authority.
+
+### D3 — Воспроизведение
+
+Запустить существующий проблемный тест на disposable Windows storage.
+
+Выполнить не менее 20 ограниченных повторений теста при доступной среде. Сохранить число реальных конкурентных раундов, успешных и неуспешных попыток.
+
+При подтверждённой необходимости добавить контролируемые test-only задержки либо синхронизацию для воспроизведения подозреваемого порядка событий.
+
+Для искусственного отказа обязательно указать, что это fault injection, а не доказательство естественного воспроизведения исходной ошибки.
+
+Если воспроизведение невозможно, зафиксировать `NOT REPRODUCED`, а не `FIXED`.
+
+Не допускать бесконечного retry. Ограничить время и число попыток; при блокировке завершить с диагностическим результатом.
+
+### D4 — Проверка инвариантов
+
+Для каждой диагностированной ветки подтвердить либо опровергнуть:
+
+1. COMPLETED TASK никогда не получает вновь допущенную operation/microtask.
+2. При отказе Closeout не происходит незаконного частичного закрытия.
+3. Не появляется одновременно противоречивое active/completed состояние.
+4. Не теряются ранее существовавшие TASK plan, operation records и history.
+5. Отказ lock/storage не превращается в разрешение записи.
+6. Проекция не выдаёт недостоверное безопасное NEXT.
+7. Restart/reopen сохраняет проверяемое конечное состояние.
+8. Отказ одного конкурентного worker не приводит к скрытой успешной mutation после закрытия TASK.
+
+Если инвариант невозможно доказать имеющимися данными, отметить `UNVERIFIED`, а не PASS.
+
+### D5 — Причина и классификация
+
+Подготовить одну из классификаций:
+
+- `TEST HARNESS DEFECT`;
+- `EXPECTED FAIL-CLOSED / TEST EXPECTATION DEFECT`;
+- `RUNTIME DEFECT`;
+- `WINDOWS/FILESYSTEM TRANSIENT — CAUSE ESTABLISHED`;
+- `INCONCLUSIVE / NOT REPRODUCED`.
+
+Обязательно приложить evidence, объясняющее выбранную классификацию.
+
+**`EXPECTED FAIL-CLOSED` разрешается только при подтверждённой причине отказа и безопасном конечном состоянии.**
+
+Если причина не установлена, не приписывать её автоматически Windows scheduling.
+
+### D6 — Регрессия
+
+После завершения диагностики:
+
+- выполнить targeted concurrency regression;
+- проверить смежные RC-5 closeout/projection tests;
+- проверить, что диагностические изменения не ослабили проверку;
+- выполнить guarded full Web Alarm regression, если среда позволяет;
+- сохранить точное количество PASS/FAIL/ERROR/SKIP;
+- записать source SHA-256 без использования Git.
+
+Если full regression недоступна или не завершена, указать соответствующий blocker. Не подменять её результат предыдущими CI.
+
+Использовать `wa4a_acceptance.py` в штатной изолированной конфигурации, когда применимо.
+
+## 6. Безусловные запреты
+
+- Никаких Git/GitHub-операций, даже read-only `status/diff/log/show`, согласно `DOC-GIT-01@1`.
+- Не выполнять commit, push, branch, merge или PR operations.
+- Не менять production Closeout, RC-3/4/5/6, mutation executor или server authority.
+- Не включать WARN, GATEWAY REQUIRED, STRICT.
+- Не запускать следующий этап WA4-R.
+- Не изменять Ultra, UI/UX, launcher, общие нормативные документы.
+- Не работать с live storage, пользовательскими TASK, реальными проектными файлами.
+- Не удалять исторические отчёты или изменять прежние evidence.
+- Не создавать массовые backups либо raw logs внутри repository.
+- Не объявлять исходный failure решённым только на основании успешного rerun.
+- Не заявлять `DONE / VERIFIED` самостоятельно.
+
+В случае необходимости выйти за scope — остановиться с `BLOCKED / USER DECISION REQUIRED`.
+
+## 7. Итоговые артефакты
+
+Сохранить:
+
+`reports/CODEX-WA4-R-001-DIAG-01/report.md`
+
+В отчёте обязательно:
+
+- исходные факты;
+- проверенные source paths;
+- временная последовательность гонки;
+- реальная либо неустановленная причина `CloseoutError`;
+- конечное состояние TASK;
+- результат каждого инварианта;
+- таблица повторений;
+- результаты focused/full;
+- список изменённых файлов;
+- source hashes;
+- классификация;
+- remaining risks;
+- минимальный repair proposal при необходимости;
+- `DOC IMPACT`;
+- `NEXT SAFE ACTION`.
+
+Допустимо добавить компактные машинные evidence-файлы с повторениями, причиной исключения и результатами проверок. Не сохранять избыточные логи.
+
+## 8. Критерии завершения
+
+Диагностическая TASK может быть передана на независимую проверку, если:
+
+1. Проверен полный failure path.
+2. Собраны причины исключений с сохранением исходного context/cause.
+3. Подтверждены либо явно отмечены недоказанными конечные инварианты.
+4. Выполнены ограниченные повторения с точными числами.
+5. Не скрыты исходный FAIL и предыдущий успешный rerun.
+6. Не изменена production authority.
+7. Есть доказательная классификация либо честный `INCONCLUSIVE`.
+8. Подготовлены отчёт, evidence и документационная дельта.
+
+Если найден настоящий runtime defect, результат этой TASK — **диагноз + repair proposal**, а не самовольное исправление.
+
+Если причина не установлена, результат — `INCONCLUSIVE / BLOCKED FOR ACCEPTANCE`, с конкретным следующим необходимым диагностическим шагом.
+
+Только ChatGPT после независимого review определяет, достаточно ли данных для приёмки OBSERVE и разрешения Merge PR №11.
+
+## 9. DOC IMPACT / ротация
+
+Провести Documentation Impact Check.
+
+Общие документы №000, №01, №05, №06, №23, №24, №25, №34 самостоятельно не редактировать. Подготовить `SHARED DOC DELTA` для ChatGPT.
+
+Не менять глобальный статус `CODEX-WA4-R-001` на DONE/VERIFIED.
+
+После сохранения полного factual result выполнить безопасную ротацию персональной карточки:
+
+- Полная новая постановка → БЛОК 2.
+- Фактический результат → БЛОК 3.
+- Предыдущие записи сохранить без потерь в истории.
+- БЛОК 1 очистить до `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ` только после проверки обеих сохранённых записей.
+
+## 10. Финальный handoff
+
+В завершение вернуть в Chat один самостоятельный копируемый блок `text`:
+
+TASK: CODEX-WA4-R-001-DIAG-01  
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION либо BLOCKED  
+ROOT CAUSE: ...  
+CLASSIFICATION: ...  
+TASK FINAL STATE: ...  
+SAFETY INVARIANTS: ...  
+REPRODUCTION: ...  
+TESTS: ...  
+FILES CHANGED: ...  
+PRODUCTION CODE: UNCHANGED  
+DOC IMPACT: ...  
+EVIDENCE: ...  
+NEXT SAFE ACTION: Independent ChatGPT verification.
+
+**После передачи результата остановиться.**
+
+PR №11 не объединять. Исходный OBSERVE не принимать самостоятельно. Никакие следующие стадии не запускать.
+
+---
+
+```````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+```text
+TASK: CODEX-WA4-R-001-DIAG-01
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+ROOT CAUSE: historical CI cause UNESTABLISHED. Controlled actual Windows pre-lock reader produced CloseoutError -> TaskStoreError -> PermissionError(errno=13, winerror=5) at directory move; original active TASK remained intact.
+CLASSIFICATION: INCONCLUSIVE / NOT REPRODUCED; BLOCKED FOR ACCEPTANCE of historical CI/OBSERVE pending independent ChatGPT decision.
+TASK FINAL STATE: observed clean races either COMPLETED/read-only with no new state, or REJECTED/active with admitted writers. Controlled move failure: unchanged active/PLANNED; after reader release op_reader/INTENT admitted only in active TASK, subsequent closeout REJECTED. Injected post-move status failure: closed MOVED_STATUS_PENDING, writes denied, explicit gated resume -> COMPLETED.
+SAFETY INVARIANTS: I1-I8 PASS within observed disposable branches and fresh-process reopen. Historical failed CI terminal invariants UNVERIFIED; no recovered incident evidence.
+REPRODUCTION: final 20 W repetitions = 80 rounds, plus module W = 4, full W = 4; 0 natural CloseoutError. Across all instrumented revisions 176 rounds = 101 COMPLETED + 75 REJECTED; original unmodified baseline adds 4 rounds. Controlled native WinError 5 is a possible safe path, not proof of original incident cause.
+TESTS: final focused 95 PASS; final controlled 8 PASS; full 749 total = 748 PASS + 1 symlink-permission SKIP, 0 FAIL/ERROR. Three final processes exit 0; isolation violations 0. All 19 original assertions retained; 31 after diagnostic additions; ROUNDS=4 and strict REJECTED assertion unchanged.
+FILES CHANGED: test_web_alarm_projection_concurrency.py; reports/CODEX-WA4-R-001-DIAG-01/report.md plus checks.json, controlled.json, repetitions.json, versions.json; this personal card rotation. Diagnostic scripts/fixtures/raw logs only system TEMP.
+PRODUCTION CODE: UNCHANGED; all web_alarm/*.py, other tests and wa4a_acceptance.py match pre-task SHA. No Git/GitHub, live data, Ultra/UI/launcher/common-document edits or rollout activation.
+DOC IMPACT: YES; architecture contract unchanged. SHARED DOC DELTA / DOC CLOSEOUT INCOMPLETE: coordinator owns 000/01/05/06/23/24/25/34; preserve first CI FAIL and second PASS, record diagnostic limitations, do not automatically accept WA4-R or assign next stage.
+EVIDENCE: reports/CODEX-WA4-R-001-DIAG-01/report.md and four compact JSON files. Raw evidence/scripts: C:/Users/REX/AppData/Local/Temp/wa4rdiag-06exabdv; final sources and artifact hashes in versions.json.
+NEXT SAFE ACTION: Independent ChatGPT verification. Run unchanged strict instrumented test in original Windows CI, inspect full cause/phases/terminal state before any expectation repair. No production repair implemented; separate USER GO for future changes. PR 11 not merged; no DONE / VERIFIED; stop after handoff.
+```
+
+**Полный отчёт:** `reports/CODEX-WA4-R-001-DIAG-01/report.md`; здесь приведён самостоятельный factual handoff, а в отчёте — source trace, сценарии, инварианты, команды, hashes и ограничения.
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WA4-R-001-DIAG-01
+
+```````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-WA4-R-001. Полная исходная пользовательская постановка ниже сохранена дословно; её STATUS candidate — исторический текст до прямого USER GO в текущем чате. AMENDMENT: новых уточнений во время исполнения не поступало.
+
+``````````text
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+
+# CODEX-WA4-R-001 — Strict Rollout Preflight / OBSERVE
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**ARCH CLASS:** Web Alarm Workspace / Strict Rollout / Mutation Control  
+**PRIMARY PROFILE:** Документация/23_Архитектура Web Alarm Workspace.md  
+**PLAN:** Документация/24_План реализации Web Alarm Workspace.md  
+**HISTORY:** Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md  
+**STATUS:** USER TASK CANDIDATE — execute only after user places this text in personal БЛОК 1 and starts Codex.
+
+## 1. Исходная точка
+
+GitHub baseline при подготовке: `main` и `GPT` совпадают, SHA `8966e152359c53f048f8c7b102e5c21db5e16006`.
+
+WA-1–WA-3, RC-0–RC-6, WA4-E, WA4-A прошли независимую приёмку.
+
+WA4-O / CODEX-WA4-O-001: независимый Windows CI run `38153364378` — 719/719 full Web Alarm, 167/167 focused, 29/29 operator+launcher, 23/23 JS, 5/5 smoke PASS. Пользователь просмотрел демонстрацию и согласился оставить эту версию как промежуточную. Полная визуальная проверка всех сценариев не объявлена PASS.
+
+UX-пожелания пользователя сохранены в документе 24 (UX-2026-10-11, B, C). Их реализация не входит в эту задачу.
+
+WA4-R ещё не реализован и не принят.
+
+## 2. Цель
+
+Подготовить начало финального Strict Rollout по утверждённой последовательности:
+
+OBSERVE → WARN → GATEWAY REQUIRED → STRICT → FINAL AUDIT.
+
+Сейчас разрешён **только preflight и, если безопасно и архитектурно обоснованно, реализация OBSERVE**.
+
+Нельзя включать обязательный gateway или strict enforcement.
+
+## 3. Обязательный preflight
+
+Прочитать проектный маршрут `08 → 000 → 34 → 18 → 01 → 23/24/25` и собственную персональную карточку Codex.
+
+Проверить текущие исходники, server API, CLI, Mutation Executor, RC-3 ownership, RC-5/RC-6 recovery и фактические точки входа изменяющих операций.
+
+Составить матрицу существующих путей:
+
+- Web Alarm HTTP mutation gateway;
+    
+- Web Alarm CLI и legacy-команды;
+    
+- Desktop Commander Remote;
+    
+- прямые файловые операции локальных агентов;
+    
+- внешние процессы/редакторы;
+    
+- создание, изменение, удаление, перенос файлов и другие операции, значимые для текущего workflow.
+    
+
+Для каждого пути определить: кто вызывает, кто контролирует, может ли Web Alarm реально наблюдать действие, где необходим gateway, существуют ли обходы, какой требуется механизм для WARN/STRICT и какие ограничения нельзя закрыть существующим API.
+
+**Не объявлять внешний прямой файловый вызов наблюдаемым, если Web Alarm объективно не получает о нём evidence.**
+
+## 4. OBSERVE
+
+После анализа выбрать минимально безопасный вариант наблюдения.
+
+Если существующих механизмов достаточно:
+
+- использовать реальные server-owned данные;
+    
+- выдавать диагностические сведения без изменения execution authority;
+    
+- отдельно различать gateway mutation и наблюдаемое внешнее событие;
+    
+- не превращать отсутствие telemetry в доказательство отсутствия операции;
+    
+- сохранить совместимость существующих workflow;
+    
+- добавить focused regression tests.
+    
+
+Если для полноценного OBSERVE требуется новая архитектура или перехват недоступных вызовов, **не имитировать работоспособность**. Зафиксировать точный blocker и предложить ограниченное инженерное решение для утверждения пользователем.
+
+OBSERVE не должен отказывать в операциях, которые раньше были разрешены, выполнять recovery, менять статус микрозадачи, создавать фиктивные receipts или самостоятельно запускать mutation.
+
+## 5. Инварианты
+
+- Все реальные mutation authority остаются на сервере.
+    
+- Подтверждённый snapshot и manifest обязательны для gateway mutation.
+    
+- Не ослаблять RC-3 claim/CAS, persisted STARTED, operation contracts и historical receipt integrity.
+    
+- `UNKNOWN_AFTER_DISCONNECT` не трактовать как FAILED.
+    
+- Никаких слепых replay/rollback.
+    
+- `DONE` не приравнивать к `VERIFIED`.
+    
+- Нельзя изменять или очищать live пользовательское хранилище.
+    
+- Тесты работают только на изолированных временных данных.
+    
+- Не выполнять Git/GitHub-операции, включая чтение истории, без отдельного разрешения пользователя согласно DOC-GIT-01.
+    
+- Не изменять Ultra, Planner, Dredd, голосовой контур и новый UX backlog.
+    
+
+## 6. Проверки
+
+Обязательны:
+
+1. Проверка неизменности поведения gateway при OBSERVE.
+    
+2. Отрицательные сценарии: запрещённая mutation, устаревший CAS, закрытая TASK, некорректные evidence.
+    
+3. Отсутствие новых несанкционированных mutations при наблюдении.
+    
+4. Проверка повторного открытия состояния, если OBSERVE сохраняет диагностические данные.
+    
+5. Самостоятельный adversarial review.
+    
+6. Focused regression, затем полный Web Alarm regression при фактическом изменении runtime, с точными PASS/FAIL/SKIP.
+    
+7. Отдельный список внешних mutation paths, которые текущая реализация не контролирует.
+    
+
+Не заявлять SUCCESS только по компиляции или наличию новых тестов.
+
+## 7. Результат
+
+Выдать factual report:
+
+- матрица путей изменения файлов;
+    
+- реализован ли OBSERVE, или только подготовлен design;
+    
+- изменённые файлы и точный scope;
+    
+- результаты проверок;
+    
+- подтверждённые ограничения и незакрытые bypass paths;
+    
+- проектный маршрут WARN → GATEWAY REQUIRED → STRICT;
+    
+- условия включения следующей стадии;
+    
+- DOC IMPACT и NEXT SAFE ACTION.
+    
+
+Не переходить к WARN/GATEWAY REQUIRED/STRICT без отдельного USER GO и независимой приёмки OBSERVE.
+
+Статус результата: `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
+
+Выполнить безопасную ротацию персональных БЛОКОВ 1→2/3 только после сохранения factual result. Общую документацию Web Alarm самовольно не закрывать.
+
+---
+
+``````````
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK:** CODEX-WA4-R-001 — Strict Rollout Preflight / OBSERVE.  
+**STATUS:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.  
+**EXECUTOR:** Codex, 2026-10-11. **ARCH CLASS:** Web Alarm Workspace / Strict Rollout / Mutation Control; primary profile 23, plan 24, history 25. **MODE / RECORD:** preflight + bounded OBSERVE / FACT + future PROPOSAL.
+
+**Результат:** проверены фактические mutation paths и authority boundaries. Реализована on-demand read-only диагностика GET /tasks/{task_id}/observe и CLI observe --task-id. Использует существующую RC-5 projection, validated operations/history и snapshot/current-state evidence только текущего manifest. Нового store, authority, status machine, watcher, gateway admission, recovery или automatic mutation нет. WARN / GATEWAY REQUIRED / STRICT НЕ включены.
+
+**Изменения:** web_alarm/observation.py (новый DTO), web_alarm/server.py (read-only endpoint/capability + актуальный module comment), web_alarm/cli.py (observe), test_web_alarm_observation.py (30 tests), reports/CODEX-WA4-R-001/*, эта персональная ротация. Executor/RC-3/RC-4/RC-5/RC-6/operation contracts/UI/launcher/Ultra не менялись. Git/GitHub и live storage не использовались.
+
+**Доказанные границы:** HTTP mutations и CLI mutate проходят один logical server-owned WA4-E boundary; persisted STARTED до physical write, snapshot/manifest/claims/CAS/receipts не ослаблены. RC-4/RC-6 recovery остаётся отдельным gated path. Legacy CLI snapshot restore напрямую перезаписывает/удаляет files без RC-4 session/preservation/CAS — bypass воспроизведён только в disposable fixture и НЕ закрыт этим OBSERVE. Remote direct file/shell/GUI, локальные агенты, редакторы и прочие external writers не перехватываются. State difference не устанавливает writer/event; вне manifest и transient writes не наблюдаются. DONE receipt может быть создан после внешней записи; correlated executor event — historical unauthenticated evidence, отсутствие event не доказывает отсутствие эффекта. UNKNOWN остаётся UNKNOWN, DONE не становится VERIFIED.
+
+**Проверки:** focused 228/228 PASS, 0 FAIL/ERROR/SKIP, 305.725 s; full 749 total = 748 PASS + 1 SKIP, 0 FAIL/ERROR, 686.342 s; оба exit 0, isolation violations 0. SKIP CanonicalTargetTests.test_symlink_target_fails_closed: symlink creation is not permitted here. Node UI regression 23/23 PASS, 0 FAIL/SKIP; compileall exit 0; whitespace/NUL checks PASS. 30 новых tests включают 6 paired gateway action comparisons, real HTTP, fresh-process reopen, no-new-files/status/authority, replay without repeat, negative admission/CAS/closed/corrupt evidence, unobservable external cases и store race. Final source hashes совпали с full и focused. Два промежуточных fixture run (6 ERROR; затем 2 FAIL) сохранены прозрачно в development.json; исправлены согласно реальному API, без ослабления runtime.
+
+**Полный factual report:** reports/CODEX-WA4-R-001/report.md — матрица путей, source selectors, findings, runtime contract, команды, стадийный design и SHARED DOC DELTA. Evidence: focused.json, full.json, client.json, checks.json, versions.json, development.json; rotation.json/manifest.json фиксируют конечные байты. Сырые logs/fixtures только system TEMP: C:\Users\REX\AppData\Local\Temp\wa4r-Iurd2b.
+
+**Ограничения:** external event feed/attribution unavailable; global external OBSERVE и enforcement не реализованы. Bounded store check не atomic project snapshot. Same-user shell/library access не OS security boundary; legacy restore, CAS/write gap, P/R, non-atomic move, snapshot/storage secret-size-location policy, большие histories остаются открыты. Нет live Remote-disconnect / ACL rollout / новой visual acceptance. Future WARN→GATEWAY REQUIRED→STRICT→FINAL AUDIT — только design в report и отдельные USER GO + independent gates.
+
+**DOC IMPACT:** YES; current/architecture/registry-status YES; context library NO; Rule-ID/contracts unchanged; new normative doc NO. Common/profile owners не редактировались Codex. Во время тестов стороннее обновление 000/01/05/06/24/25/34 внесло WA4-O automated PASS / interim UI, но оставило WA4-R candidate/not launched; фактическое назначение подтверждено исходным личным БЛОКОМ 1 и USER GO данного чата. Не откатывать параллельные записи; ChatGPT обновляет этот status и canonical owners 23/24/25 по factual handoff. DOC CLOSEOUT INCOMPLETE для общего контура до действий координатора. .obsidian/workspace.json также изменился вне действий Codex, не восстановлен агентом.
+
+**NEXT SAFE ACTION:** независимая ChatGPT verification именно bounded OBSERVE и его слепых зон; только затем отдельное решение пользователя по новой TASK. Codex остановлен после отчёта; следующих этапов не запускать.
+
+---
+
+## Сохранённая предыдущая карточка БЛОКОВ 2–3
+
+Ниже предыдущий текст сохранён дословно; статусы и постановки относятся к своим историческим TASK.
+
+``````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# CODEX-WA4-O-001 — Web Alarm Operator UI / UX-Ops
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**STATUS:** USER ASSIGNED / READY FOR EXECUTION  
+**ARCH CLASS:** Web Alarm Workspace / Operator UI / Server-owned State Visualization  
+**PRIMARY:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+## 1. Исходная точка
+
+Подтверждённый baseline: `main` commit №262 `2810cfb`.
+
+- WA-1…WA-3, RC-0…RC-6 — DONE / VERIFIED.
+    
+- WA4-E / CLAUDE-WA-018 — DONE / VERIFIED.
+    
+- WA4-A / CODEX-WA4-A-001 — DONE / VERIFIED.
+    
+- Независимый GitHub Windows CI: 5/5 smoke, 166/166 focused и 689/689 full PASS.
+    
+- WA4-R / Strict Rollout — NOT STARTED.
+    
+
+Текущий Web Alarm имеет работающий минимальный UI WA-2.3 в `web_alarm/ui.py`, API в `web_alarm/server.py` и существующий `GET /tasks/{id}/ui`. Однако операторские сведения преимущественно отображаются техническими JSON-блоками без полноценной навигации по этапам, визуального прогресса и удобного представления recovery.
+
+**Цель этой TASK — реализовать полноценный первый рабочий интерфейс WA4-O на существующей серверной архитектуре, а не очередной макет.**
+
+## 2. Обязательный preflight
+
+Прочитать по регламенту:
+
+`08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md → 23/24/25`.
+
+Затем проверить текущие реализации:
+
+- `web_alarm/ui.py`;
+    
+- `web_alarm/server.py`;
+    
+- `web_alarm/projection.py`;
+    
+- `web_alarm/recovery_coordinator.py`;
+    
+- `web_alarm/operation_store.py`;
+    
+- `web_alarm/task_store.py`;
+    
+- `test_web_alarm_ui.py`;
+    
+- смежные UI, projection, recovery и authority-тесты.
+    
+
+Сверить реальный локальный baseline без самостоятельных Git/GitHub-операций. Если требуется информация о commit/history — запросить у пользователя или ChatGPT-координатора.
+
+## 3. Основная задача
+
+Создать удобную рабочую панель для пользователя, позволяющую:
+
+1. Выбрать Workspace и TASK.
+    
+2. Мгновенно увидеть текущий этап и его статус.
+    
+3. Увидеть последовательность микрозадач, уже подтверждённые и оставшиеся этапы.
+    
+4. Узнать текущую операцию и её состояние.
+    
+5. Увидеть recovery, блокеры, ошибки, причины отказа.
+    
+6. Прочитать `NEXT SAFE ACTION` без поиска в технических журналах.
+    
+7. Раскрыть подробные доказательства только при необходимости.
+    
+8. Обновить отображение и продолжить наблюдение после перезапуска сервера или смены браузера.
+    
+
+### Главный архитектурный принцип
+
+**Server owns state. UI presents state.**
+
+UI не имеет своей независимой state machine исполнения, не создаёт собственные статусы операций и не превращает transport-события в факты успешного выполнения.
+
+## 4. Обязательная структура интерфейса
+
+### A. Workspace / TASK navigator
+
+- Переключение между зарегистрированными Workspace.
+    
+- Список активных и завершённых TASK с различимыми статусами.
+    
+- Название, идентификатор, текущий этап, серверный статус и блокер при наличии.
+    
+- Выделение выбранной TASK.
+    
+- Сохранение уже работающих функций создания Workspace/TASK.
+    
+- Выбор другой TASK без потери понимания, какая сейчас открыта.
+    
+
+### B. Task Overview
+
+- Название и цель TASK.
+    
+- Авторитетный серверный статус.
+    
+- Текущая микрозадача.
+    
+- Индикатор подтверждённого прогресса: например `3 / 8 VERIFIED`, только если существуют доказанные данные.
+    
+- Отдельное отображение `DONE` и `VERIFIED`.
+    
+- Информация о checkpoint/snapshot и достоверности проекции.
+    
+- Различение текущего, исторического и неизвестного состояния.
+    
+
+### C. Stage Timeline / Progress
+
+Реализовать визуальную последовательность микрозадач:
+
+- PLANNED / ожидание;
+    
+- READY;
+    
+- ACTIVE;
+    
+- DONE / ожидает verification;
+    
+- VERIFIED;
+    
+- FAILED / FAILED_VERIFICATION;
+    
+- recovery / UNKNOWN / blocked, когда это подтверждено серверными источниками.
+    
+
+Точные названия и допустимые переходы брать из существующей state machine.
+
+Если UI использует упрощённые человекочитаемые подписи, они не должны подменять реальные persisted statuses.
+
+Этапы должны раскрываться, показывая их goal, prerequisites, operations, blockers и относящиеся к ним evidence.
+
+Не создавать новые runtime-статусы только ради оформления.
+
+### D. Current Operation
+
+Выводить:
+
+- `operation_id`;
+    
+- действие и target;
+    
+- реальный persisted status;
+    
+- наличие receipt и его тип;
+    
+- совпадение ожидаемого post-state, когда это доказано;
+    
+- uncertainty/reconciliation requirement;
+    
+- признак replay, если это подтверждено сервером;
+    
+- связь операции с микрозадачей.
+    
+
+Если текущую операцию нельзя достоверно определить, показывать «не определена», а не назначать последнюю по времени операцию текущей.
+
+### E. Recovery & NEXT SAFE ACTION
+
+Сделать отдельную хорошо заметную область:
+
+- authoritative `NEXT SAFE ACTION`;
+    
+- текущий recovery state;
+    
+- причина блокировки;
+    
+- последствия обрыва;
+    
+- наличие и статус recovery evidence;
+    
+- результаты Resolver, если доступны;
+    
+- необходимость ручного решения.
+    
+
+Не считать потерю HTTP-ответа доказательством FAILED. Не разрешать автоматический retry из UNKNOWN.
+
+### F. Evidence Inspector
+
+По раскрытию показывать:
+
+- manifest и snapshot;
+    
+- checkpoint и validation;
+    
+- recent events;
+    
+- operation history и receipt;
+    
+- recovery reports;
+    
+- RAW TASK;
+    
+- диагностическую информацию.
+    
+
+Основной экран не должен быть завален JSON. Полные технические сведения оставить в раскрываемых деталях.
+
+## 5. Операторские действия
+
+**Разрешены в этом этапе:**
+
+- Выбор Workspace/TASK/этапа.
+    
+- Ручное обновление и безопасное read-only автообновление при необходимости.
+    
+- Раскрытие evidence и причин ошибок.
+    
+- Копирование человекочитаемого контекста или `NEXT SAFE ACTION`.
+    
+- Сохранение существующего server-backed создания Workspace/TASK.
+    
+
+Любые дополнительные state-changing controls допускаются **только через уже существующие проверенные серверные API**, с явным намерением пользователя, отображением фактического серверного ответа и сохранением всех admission/CAS/authority checks.
+
+Не добавлять напрямую в интерфейс опасные one-click действия `RETRY`, `ROLLBACK`, `DELETE`, `ABORT`, физическую mutation или принудительное изменение статуса. Если для удобной кнопки требуется новый permission contract или изменение runtime authority, оформить это как PROPOSAL, а не реализовывать молча.
+
+После отказа API интерфейс должен честно показать причину и обновить состояние. Нельзя оптимистично рисовать успешный переход до его подтверждения сервером.
+
+## 6. UX / визуальный стандарт
+
+Интерфейс должен быть пригоден для регулярной работы, а не выглядеть как отладочная страница.
+
+Требования:
+
+- понятная визуальная иерархия;
+    
+- аккуратная тёмная тема на основе текущего стиля;
+    
+- читабельные названия, статусы и причины;
+    
+- визуально различимые verified / waiting / failure / unknown;
+    
+- цвет не должен быть единственным индикатором состояния;
+    
+- адаптация под разные размеры окна;
+    
+- корректные состояния loading / empty / offline / error / stale;
+    
+- отсутствие случайного переключения на опасное действие;
+    
+- подтверждение перед допускаемыми state-changing действиями;
+    
+- управление с клавиатуры, видимый focus и доступные подписи;
+    
+- безопасная вставка пользовательского текста без HTML-инъекций;
+    
+- никакой зависимости от внешних CDN, платных сервисов и аккаунтов.
+    
+
+**Особый UX-принцип:** расположение элементов не должно провоцировать случайные действия при изменении списков. Выбранная TASK должна оставаться явно выделенной; сортировка не должна непредсказуемо перемещать элементы при обновлении.
+
+Пользовательские тексты существующего русскоязычного Web Alarm UI сохранить русскими; технические значения API не переводить внутри protocol objects.
+
+## 7. Server-owned read model
+
+Если существующего `GET /tasks/{id}/ui` недостаточно, разрешено минимально расширить read-only агрегирование состояния в `web_alarm/server.py` или выделенном модуле представления.
+
+Условия:
+
+- только авторитетные persisted state, Projection/RC facts и допустимые производные;
+    
+- без вызова mutation/recovery/rollback при обычном GET;
+    
+- явный статус отсутствующих, противоречивых и stale evidence;
+    
+- не считать checkpoint VALID без проверки;
+    
+- не подменять неопределённое состояние успешным;
+    
+- не создавать отдельное хранилище UI execution status;
+    
+- без изменения существующих RC-1…RC-6, WA4-E и WA4-A invariants.
+    
+
+Минимально менять API; не строить новый framework или дублирующую серверную архитектуру.
+
+## 8. Acceptance matrix O1–O10
+
+**O1 — TASK navigation:** два Workspace и несколько TASK; корректный выбор, отсутствие перемешивания данных.
+
+**O2 — Stage timeline:** правильный порядок и реальные состояния микрозадач, включая VERIFIED, WAITING, ACTIVE и FAILED.
+
+**O3 — Progress honesty:** отображение подтверждённого прогресса не считает DONE или неизвестную операцию VERIFIED.
+
+**O4 — Current operation:** корректная идентификация операции; отсутствие ложной «текущей» при неоднозначных данных.
+
+**O5 — Recovery / disconnect:** UNKNOWN, PARTIAL, stale и blocked cases видны пользователю без ложного SUCCESS.
+
+**O6 — Next Safe Action:** точное отражение серверного решения и причины отказа, без самостоятельного вычисления mutation authority в UI.
+
+**O7 — Read-only safety:** открытие экрана, refresh и просмотр evidence не изменяют Workspace, TASK, operations или recovery facts.
+
+**O8 — Restart persistence:** новое браузерное подключение/новый HTTP Server process отображают тот же сохранённый authoritative state.
+
+**O9 — UX robustness:** offline/error/loading/empty, безопасный рендеринг пользовательского текста, сохранение выбранной TASK, отсутствие случайного опасного перехода.
+
+**O10 — Compatibility:** старые API/WA-2.3 flows и полная регрессия Web Alarm не нарушены.
+
+Для каждого сценария представить PASS / FAIL / BLOCKED с конкретными проверками. Включить реальные HTTP integration tests, а не ограничиваться поиском строк в HTML.
+
+## 9. Проверки
+
+Выполнить:
+
+1. Focused UI/UX-Ops unit и HTTP integration tests.
+    
+2. Adversarial UI checks: неверный статус, stale data, conflicting evidence, пользовательский HTML/script-текст, lost response, repeated clicks.
+    
+3. Проверки отсутствия физических side effects при чтении.
+    
+4. Restart/fresh-instance persistence.
+    
+5. Полный доступный `test_web_alarm_*.py` regression.
+    
+6. `compileall`/`py_compile` для изменённых Python-модулей.
+    
+7. Проверку синтаксиса и работы клиентского JavaScript доступными локальными средствами.
+    
+8. По возможности реальный локальный браузерный smoke-test с визуальной проверкой desktop/narrow layout. Если GUI недоступен, честно указать это как ограничение — не выдавать source-level inspection за визуальный PASS.
+    
+
+**GitHub Actions:** после пользовательской публикации ChatGPT организует независимый CI на GitHub. Локальный Codex не запускает Git/GitHub самостоятельно.
+
+## 10. Scope / ограничения
+
+Разрешено менять UI, необходимые read-only server projection/DTO и тесты Web Alarm.
+
+Запрещено без нового USER GO:
+
+- изменять Ultra;
+    
+- выполнять WA4-R / Strict Rollout;
+    
+- добавлять новый mutation executor;
+    
+- ослаблять RC-3/CAS/recovery/fail-closed;
+    
+- выполнять опасные действия на реальных пользовательских файлах;
+    
+- внедрять новый orchestration scheduler;
+    
+- добавлять облачный frontend, внешнюю аутентификацию или deployment;
+    
+- пользоваться Git/GitHub даже для чтения, кроме отдельного явного разрешения.
+    
+
+Все тесты проводить на disposable Workspace/storage. Не запускать изменения на действующих пользовательских TASK.
+
+## 11. Document Impact
+
+Канонические владельцы:
+
+- `23` — архитектура и инварианты Web Alarm;
+    
+- `24` — план, acceptance и текущий этап;
+    
+- `25` — профильная история;
+    
+- `05`, `06`, `08`, `34` — общая документация под контролем ChatGPT.
+    
+
+Исполнитель формирует `DOC IMPACT / SHARED DOC DELTA` и сохраняет factual evidence, но не объявляет независимый PASS и не переписывает общие статусы.
+
+Полная TASK остаётся в персональном БЛОКЕ 1 до завершения исполнения.
+
+## 12. Exit criteria / handoff
+
+Результат должен включать:
+
+- реально работающий новый операторский интерфейс;
+    
+- список изменённых исходников;
+    
+- screenshot/visual evidence, если доступен браузер;
+    
+- описание server-owned источников каждого отображаемого состояния;
+    
+- результаты O1–O10;
+    
+- focused и full regression с точными числами;
+    
+- честные известные ограничения;
+    
+- рекомендации дальнейшего UX development вне текущего scope;
+    
+- полный factual report для независимого анализа.
+    
+
+После завершения выполнить регламентную ротацию персональных БЛОКОВ:
+
+**БЛОК 1 → БЛОК 2 (полная постановка); factual result → БЛОК 3; БЛОК 1 → ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.**
+
+Статус сдачи:
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION.**
+
+После независимой приёмки ChatGPT и пользовательского визуального просмотра можно закрыть WA4-O как DONE / VERIFIED.
+
+**WA4-R не запускать автоматически.**
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+TASK: CODEX-WA4-O-001 — Web Alarm Operator UI / UX-Ops
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION
+DATE: 2026-10-11
+ARCH CLASS: Web Alarm Workspace / Operator UI / Server-owned State Visualization; PRIMARY 23, PLAN 24, HISTORY 25.
+
+Реализована рабочая операторская панель на существующем Web Alarm UI: Workspace/TASK navigation, overview, verified progress, timeline и раскрываемые evidence, current operation, recovery, authoritative NEXT SAFE ACTION, offline/stale UX. Сервер остаётся владельцем execution state. Read-only DTO сверяет Projection/records двумя bounded чтениями; противоречия не превращаются в подтверждённый прогресс. Текущая операция — только единственная незавершённая операция текущего этапа; last_operation_id не является current. DONE отдельно от VERIFIED, receipt — исторический proof.
+
+Файлы: web_alarm/ui.py, web_alarm/server.py, новый web_alarm/operator_view.py; новые test_web_alarm_operator_ui.py (28 HTTP/adversarial tests), test_web_alarm_operator_ui.js (20 actual-client tests), wa4o_ui_demo.py; wa4a_acceptance.py получил только опциональный --task label. Runtime mutation/recovery authority не изменена. Ultra, WA4-R, общие docs и чужие карточки не менялись; Git/GitHub не использовались.
+
+ПРОВЕРКИ:
+- O1–O10: PASS в самопроверке исполнителя, не independent VERIFIED.
+- Final focused: 154 PASS / 0 FAIL / 0 ERROR / 0 SKIP, exit 0, guard violations 0.
+- Full Web Alarm: 717 total = 716 PASS / 0 FAIL / 0 ERROR / 1 SKIP, exit 0, guard violations 0.
+- SKIP: CanonicalTargetTests.test_symlink_target_fails_closed — symlink creation is not permitted here.
+- Client JS: 20 PASS / 0 FAIL / 0 SKIP; syntax OK. compileall exit 0, whitespace violations 0.
+- Real browser IAB: desktop 1440×1000, narrow 390×844; Workspace isolation, DONE honesty, closed history, keyboard disclosure, safe RAW text, offline and fresh server/browser connection. 70 fixture files unchanged. Screenshots сохранены. Тестовые servers остановлены, вкладки закрыты, viewport сброшен.
+- Source SHA-256 полного regression совпали с финальными исходниками. Прежний БЛОК 1 оставался frozen до ротации.
+
+FULL FACTUAL REPORT / EVIDENCE: reports/CODEX-WA4-O-001/report.md; focused.json, full.json, client.json, visual.json, checks.json, development.json, versions.json, rotation.json, manifest.json; desktop-recovery.jpg, narrow-recovery.jpg, desktop-offline.jpg.
+
+ОГРАНИЧЕНИЯ: self-review, визуальное принятие пользователем и техническая проверка ChatGPT ещё нужны; один IAB браузер, нет cross-browser certification; symlink SKIP; чтение не атомарная транзакция, receipt не current byte proof; большой history не benchmarked. P/R и non-atomic move сохранены; live пользовательские mutation/real Remote-disconnect не выполнялись. Наблюдалось внешнее изменение .obsidian/workspace.json, агент его не редактировал/не восстанавливал.
+
+DOC IMPACT / SHARED DOC DELTA: адресные предложения для 23/24/25, 01/05/06/global 000/34 и при необходимости 08/22 — в полном отчёте. DOC CLOSEOUT INCOMPLETE для общего контура до независимого verifier/координатора. 18/04/14–16/RT/Ultra — NO CHANGE.
+AMENDMENT: новых дополнений в ходе этой TASK не получено.
+NEXT: независимая техническая проверка ChatGPT и визуальный просмотр пользователем; затем согласованный documentation closeout. DONE / VERIFIED не присваивать. Следующие TASK, включая WA4-R, не начинать.
+
+# АРХИВ ПРЕЖНИХ БЛОКОВ 2–3 — сохранено дословно при CODEX-WA4-O-001
+
+Предыдущие постановки, результаты и архивы сохранены без изменения. Текущая сдача находится выше.
+
+`````````markdown
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+# CODEX-WA4-A-001 — Deterministic Lost-Response Acceptance
+
+**PROJECT:** ag_llm / WEB-02 / Web Alarm Workspace  
+**EXECUTOR:** Codex  
+**STATUS:** USER ASSIGNED / READY FOR EXECUTION  
+**ARCH CLASS:** Web Alarm Workspace / Mutation Gateway / Recovery / Acceptance  
+**PRIMARY PROFILE:** `Документация/23_Архитектура Web Alarm Workspace.md`  
+**IMPLEMENTATION PLAN:** `Документация/24_План реализации Web Alarm Workspace.md`  
+**PROFILE HISTORY:** `Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+## 1. Исходная точка
+
+Web Alarm WA-1…WA-3, RC-0…RC-6 и WA4-E (`CLAUDE-WA-018`) завершены со статусом `DONE / VERIFIED`.
+
+WA4-E реализовал серверный authoritative mutation executor:
+
+- `web_alarm/mutation_executor.py`;
+    
+- `POST /tasks/{id}/mutations`;
+    
+- CLI `mutate`;
+    
+- durable Operation Contract, STARTED-before-write, CAS, physical-byte post-proof, persistent receipt;
+    
+- идемпотентность повторной доставки операции;
+    
+- write/edit/create/delete и двухшаговые move/rename.
+    
+
+Независимый baseline WA4-E: 36/36 focused PASS, 643 full Web Alarm OK, 1 skipped.
+
+GitHub Actions `Web Alarm smoke` уже настроен на Windows/Python 3.12. Его пять smoke-тестов не заменяют полный регресс.
+
+**Обязательный preflight:** прочитать `08_Старт.md → 000_Задачи для агента.md → 34_TACTICAL_CONTEXT.md → 18_Регламент сопровождения документации.md → 01_Архитектура и текущее состояние.md`, затем профильные 23/24/25 и актуальные исходники. Сверить состояние локальной рабочей копии с фактическими файлами и доступным baseline, не предполагая отсутствия чужих изменений.
+
+## 2. Цель
+
+**Доказать детерминированным воспроизводимым испытанием, что успешная физическая мутация Web Alarm не исполняется повторно, если её ответ потерян до доставки вызывающему клиенту.**
+
+Главный проверяемый сценарий:
+
+1. Клиент отправляет mutation с устойчивым `operation_id`.
+    
+2. WA4-E исполняет её и сохраняет точный persistent receipt.
+    
+3. Ответ клиенту намеренно не доставляется.
+    
+4. Клиент считает исход вызова неизвестным.
+    
+5. Web Alarm Server завершается или перезапускается.
+    
+6. Новый клиент / новый Python-процесс повторяет исходный запрос.
+    
+7. Сервер возвращает ранее сохранённый receipt.
+    
+8. Физическое действие **не повторяется**.
+    
+9. Фактические байты, operation history, receipt и recovery evidence подтверждают отсутствие повторной мутации.
+    
+
+**Важно:** потеря ответа не равна неуспешному исполнению. Система не должна угадывать исход по transport status.
+
+## 3. Scope
+
+Разрешено:
+
+- Разработать детерминированную fault-injection/acceptance оснастку для WA4-A.
+    
+- Добавить специализированные тесты и необходимые test helpers.
+    
+- Использовать существующие HTTP, CLI, Operation Store, Executor, Resolver, reconciliation и recovery contracts.
+    
+- Исправить обнаруженный дефект в Web Alarm runtime, если он непосредственно блокирует WA4-A и исправление не расширяет утверждённую архитектуру.
+    
+- Провести focused, adversarial, restart/process-level и полный доступный Web Alarm regression.
+    
+
+**Предпочтение: сначала test/evidence, затем минимальный runtime repair только при воспроизведённом дефекте.**
+
+Не начинать WA4-O, WA4-R, расширение функциональности UI, интеграцию с Ultra или самостоятельное перепроектирование recovery.
+
+## 4. Обязательная acceptance matrix
+
+**A1 — Lost response after durable receipt**
+
+Физическая mutation завершена, receipt persisted, клиент не получил HTTP/CLI-ответ. Повтор с тем же contract и `operation_id` возвращает идентичный receipt без повторного side effect.
+
+**A2 — Fresh-process replay**
+
+После A1 полностью пересоздать используемые process/service/store instances. Доказать прежний receipt, неизменность содержимого target и отсутствие повторного события исполнения.
+
+**A3 — Concurrent duplicate delivery**
+
+Проверить одновременную повторную доставку идентичного запроса. Разрешено ровно одно фактическое исполнение, остальные должны получить допустимый persisted replay/refusal без второго side effect.
+
+**A4 — Different request / same operation_id**
+
+Изменённый контракт с прежним `operation_id` отклоняется. Исходная операция и её receipt не переписываются.
+
+**A5 — Loss before STARTED / after STARTED / after physical write / after receipt**
+
+Детерминированно испытать соответствующие окна прерывания, не подменяя ранее доказанные crash-tests WA4-E.
+
+Каждое окно должно приводить к документированному безопасному исходу: разрешённому retry, reconciliation/adopt либо fail-closed/manual review. Нельзя выдавать неизвестное исполнение за SUCCESS.
+
+**A6 — Ambiguous and partial outcome**
+
+Проверить различение PRE_STATE, exact POST_STATE, partial и ambiguous evidence. Для move/rename учитывать, что это две tracked операции, а не атомарная транзакция.
+
+**A7 — Safety boundaries**
+
+Проверить, что retry/replay не обходит TASK status, manifest/snapshot, ownership/claims, CAS и текущий physical-byte proof. Закрытая TASK может вернуть исторический receipt, но не получает права новой mutation.
+
+**A8 — Persistent evidence integrity**
+
+Проверить неизменность identity и целостность receipt, связанного контракта и operation history при повторной доставке и restart. При повреждённых или противоречивых evidence — fail-closed.
+
+Для каждого сценария зафиксировать фактический ожидаемый и полученный результат.
+
+## 5. Существующие ограничения, которые нельзя скрывать
+
+WA4-E оставил открытыми следующие вопросы:
+
+- **P-2:** RETRY из `UNKNOWN_AFTER_DISCONNECT`/`FAILED` может быть несовместим с текущими lifecycle transitions; существующий `RETRY_LIFECYCLE_UNSUPPORTED` является безопасным отказом, не автоматическим FAIL WA4-A.
+    
+- **P-3:** RC-2 может оценивать recovery относительно всего restore point, а не одной операции.
+    
+- **P-4:** возможны устаревшие advisory resolution после исполненного RETRY.
+    
+- **R-1:** внешний несовместимый writer между CAS и physical replace.
+    
+- **R-2–R-4:** Windows sharing violations, отсутствие автоматического создания каталогов и ограничения payload для move.
+    
+
+**Не исправлять всё перечисленное ради расширения scope.** Если сценарий WA4-A требует нового lifecycle design, оформить точный BLOCKER/PROPOSAL с evidence. Нельзя разрешать повторную запись ценой ослабления fail-closed.
+
+## 6. Правила безопасности
+
+- Только disposable temporary Workspace и отдельный temporary Web Alarm storage.
+    
+- Ни одна fault injection не направляется на рабочие пользовательские документы.
+    
+- Не трогать real live TASK/storage, `.obsidian`, Ultra runtime и посторонние локальные изменения.
+    
+- Запускать только контролируемые тестовые процессы, завершать только процессы, созданные данным тестом.
+    
+- Никаких внешних платных моделей, сетевых сервисов, real Remote disconnect или реальных пользовательских данных.
+    
+- Сохранять RC-1…RC-6 и WA4-E invariants: server-owned authority, lock order, STARTED-before-write, exact CAS, receipts, replay safety, recovery/restart persistence.
+    
+- Codex не выполняет самостоятельно `git commit/push/pull/merge/rebase/reset/clean/checkout/switch` и не меняет Git-конфигурацию без отдельного разрешения.
+    
+
+## 7. Порядок выполнения
+
+1. **Preflight:** чтение обязательных документов и кода, определение фактического baseline, рабочих конфликтов и test entrypoints.
+    
+2. **Test design:** фиксированная acceptance matrix A1–A8 и способ детерминированной потери ответа без реального сетевого обрыва.
+    
+3. **Implementation:** сначала acceptance tests/fault-injection harness; минимальные исправления только при доказанной необходимости.
+    
+4. **Adversarial pass:** самостоятельно проверить relevant edge cases, повторную доставку, process death, race, byte drift и целостность receipts.
+    
+5. **Verification:** focused WA4-A → смежные WA4-E/RC regression → полный доступный Web Alarm unittest → compileall/py_compile → diff/whitespace checks, если разрешены соответствующие локальные read-only проверки.
+    
+6. **Reporting:** сохранить test matrix, результаты, изменённые файлы, findings и ограничения. Не объявлять независимый PASS самостоятельно.
+    
+
+GitHub Actions после публикации изменений может использоваться координатором как дополнительный независимый CI-сигнал. Исторические 5/5 PASS не являются доказательством нового кода.
+
+## 8. Documentation Block
+
+**PRIMARY:** `23_Архитектура Web Alarm Workspace.md`  
+**PLAN:** `24_План реализации Web Alarm Workspace.md`  
+**PROFILE HISTORY:** `25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md`
+
+В пределах личной исполнительской ответственности обновить task-card Codex по установленному регламенту и сохранить factual report.
+
+Общие документы `000_Задачи для агента.md`, `34_TACTICAL_CONTEXT.md`, `05_Реестр задач.md`, `06_Журнал выполнения и отчёты.md`, `01`, `04`, `08`, `18` и профильный append-only журнал `25` координирует ChatGPT после проверки. Исполнитель может указать требуемые дельты, но не должен самостоятельно менять общие статусы на `DONE / VERIFIED`.
+
+В `23/24` не проставлять независимый PASS до проверки координатором. Предлагать только документально подтверждённые изменения.
+
+## 9. Exit criteria
+
+Задача может быть представлена на независимую приёмку, только когда:
+
+- ключевой lost-response-after-write сценарий воспроизводится детерминированно;
+    
+- fresh process возвращает прежний receipt;
+    
+- повторного physical side effect нет;
+    
+- A1–A8 имеют явные PASS / FAIL / BLOCKED / NOT_APPLICABLE с обоснованием;
+    
+- не скрыты UNKNOWN, PARTIAL, lifecycle и race limitations;
+    
+- focused и полный доступный регресс запущены и результаты сохранены;
+    
+- сохранены все существующие safety invariants;
+    
+- подготовлен полноценный factual report.
+    
+
+**Если acceptance не доказан — статус BLOCKED / RESULT READY WITH FINDINGS, а не фиктивный SUCCESS.**
+
+## 10. Передача результата
+
+По завершении:
+
+- Сохранить технический отчёт и test evidence в выделенной папке TASK или существующем допустимом отчётном каталоге.
+    
+- Выполнить безопасную ротацию персональной карточки Codex: полная исходная задача → БЛОК 2; factual report → БЛОК 3; только после сохранения обоих БЛОК 1 → `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+    
+- Сообщить координатору список изменённых файлов, команды и результаты тестирования, воспроизводимые findings, статус сценариев A1–A8 и оставшиеся риски.
+    
+- Итоговый статус: **RESULT READY / AWAITING INDEPENDENT VERIFICATION**.
+    
+
+**После независимого PASS:** WA4-A может получить `DONE / VERIFIED`; только затем отдельно обсуждается и назначается WA4-O / UX-Ops. Автоматический переход запрещён.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK ID:** CODEX-WA4-A-001
+**RESULT STATE:** RESULT READY / AWAITING INDEPENDENT VERIFICATION
+**ARCH CLASS:** Web Alarm Workspace / Mutation Gateway / Recovery / Acceptance
+**Mode / scope:** local offline acceptance; запись только Web Alarm integrity checks, test harness/tests, личная карточка и factual evidence. Git/GitHub не использовались.
+
+Доказана temporal chain: physical mutation → durable receipt → потеря HTTP response (0 delivered bytes, client UNKNOWN) → завершение процесса → новые process/API/store → исходный receipt / REPLAYED без второй записи. A1–A8: PASS в самопроверке; независимый PASS не присваивался.
+
+До repair воспроизведены ложные HTTP 200 / REPLAYED при противоречивых receipt/contract/history. Дополнительно подтверждены неверный Workspace/status/execution evidence, запись pending INTENT без intent history и backdated receipt revision. После repair integrity cases получают HTTP 409; повреждённые источники не переписываются. Обрыв между durable receipt и DONE/execution event остаётся допустимым.
+
+Изменены web_alarm/operation_contract.py и web_alarm/operation_store.py; добавлены wa4a_acceptance.py, test_web_alarm_lost_response.py и reports/CODEX-WA4-A-001/. Mutation executor, HTTP/CLI интерфейсы, Ultra и UI не изменялись.
+
+**Итоговые проверки:** WA4-A 46/46; исходные WA4-E 36/36; RC 84/84; focused 166/166, FAIL=0, ERROR=0, SKIP=0, exit 0. Полный Web Alarm: 689 RUN / 688 PASS / 0 FAIL / 0 ERROR / 1 SKIP, exit 0. Compileall exit 0; whitespace/conflict markers — 0. Isolation violations — 0. Точные команды, каждый test result, исходные/final SHA-256 и ограничения — в полном отчёте и JSON evidence.
+
+**Полный отчёт:** `reports/CODEX-WA4-A-001/report.md`. Evidence: `red.json`, `red2.json`, `red3.json`, `red4.json`, `focused.json`, `full.json`; версии/хронология/scope/rotation — `versions.json`, `runs.json`, `rotation.json`. Первоначальный полный 688/687 PASS/1 SKIP — промежуточная версия; итоговый full повторён после последнего repair.
+
+**Ограничения:** deterministic in-memory HTTP wire; реальный Remote disconnect и потеря CLI stdout отдельно не проверялись. Historical receipt не означает fresh current-byte proof: последующий drift сохраняется, reconciliation требует manual review. P-2/P-3/P-4 и R-1…R-4 сохранены; move/rename не атомарны. Integrity checks не являются криптографической защитой от согласованной подмены. Повреждение исходного intent history требует ручного разбора; нагрузка больших журналов не измерялась.
+
+**DOC IMPACT:** YES; CURRENT STATE/ARCHITECTURE/REGISTRY impact YES; CONTEXT LIBRARY NO. Изменены только личная карточка и factual report/evidence. Общие документы read-only; SHARED DOC DELTA для 23/24/25, 000/34/05/06 и Web Alarm строки 01 передана в отчёте. 04/08/18 и инструкции других агентов — NO CHANGE. DOC CLOSEOUT INCOMPLETE до независимой проверки и записи ChatGPT. Наблюдавшийся внешний drift .obsidian/graph.json и workspace.json не восстанавливался.
+
+**LOSS CHECK:** исходная постановка сохранена дословно в БЛОКЕ 2; прежние БЛОКИ 2/3 и архив включены ниже дословно. Фактическая проверка — rotation.json.
+
+**NEXT / receiver:** ChatGPT — независимая приёмка и общий документационный closeout; публикацию выполняет пользователь/уполномоченный координатор. WA4-O/WA4-R и другие задачи не запускать. Исполнитель остановлен в ожидании проверки.
+
+---
+
+## Архив прежних БЛОКОВ 2–3 — сохранён перед CODEX-WA4-A-001
+
+Прежняя постановка, factual result и вложенные архивы сохранены дословно; это история, не активное поручение.
+
+````````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+Ниже полная первоначальная постановка прежнего БЛОКА 1, сохранённая без изменения bytes; её исходный статус READY относится к моменту назначения. Текущий результат и AMENDMENT — в БЛОКЕ 3.
+
+# CODEX-RT002-S0-REPAIR-001 — Repair Evidence Freshness & Durable Outcomes
+
+**Статус:** USER ASSIGNED / READY FOR MANUAL START после вставки пользователем.
+
+**Исполнитель:** Codex — GPT-6 Sol, Very High.
+
+**Проект:** `ag_llm` / GigaChat Ultra.
+
+**Тип:** Runtime correctness & safety repair.
+
+**Независимый verifier:** ChatGPT.
+
+**Основная цель:** устранить две подтверждённые анализом исходников причины четырёх HIGH-нарушений, найденных в `CODEX-RT002-S0-001`, сохранив остальные гарантии Ultra.
+
+## 1. Исходное состояние
+
+Предыдущая S0 закончилась вердиктом `FINDINGS / NO S0 PASS`.
+
+Codex сообщил результаты 97 offline-тестов: 93 PASS, 4 FAIL, 0 ERROR/SKIP.
+
+Исходные доказательства:
+
+- Коммит пользователя №247: `2fb37a266a0780191471cdcecea587fb449a4168`.
+    
+- Личная карточка `Документация/000_Задачи Codex.md`, БЛОК 3.
+    
+- Новый тестовый модуль `test_rt002_s0_kernel.py`.
+    
+- Независимый анализ ChatGPT и статус блокировки дальнейших задач — коммит №248.
+    
+- Каноническая программа — `20`, §5а; утверждённый план — `33.3 FINAL-B2`.
+    
+
+Четыре нарушения объединяются в две группы:
+
+**Группа A — S0-F01 и S0-F02: неправильная привязка наблюдения к состоянию файла.**
+
+- READ возвращает прежние данные, но последующий fingerprint может отражать уже изменённый файл.
+    
+- VERIFY успешно проверяет прежнее содержимое, однако последующее изменение файла может быть ошибочно связано с положительным результатом проверки.
+    
+- В обоих случаях возможны вызов Dredd и ложный `SUCCESS`.
+    
+
+**Группа B — S0-F03 и S0-F04: отсутствие обязательного сохранённого доказательства.**
+
+- При недоступности `AuditThreadRecorder` обязательный результат может остаться только в памяти.
+    
+- Если запись `tool_finished` не сохранена, логический ID доказательства всё ещё может удовлетворить требование.
+    
+- В обоих случаях возможен `SUCCESS` без восстановимого обязательного evidence.
+    
+
+## 2. Требуемый инженерный результат
+
+Исправить обе причины на уровне правильной архитектурной границы, а не частными условиями ради четырёх тестов.
+
+### A. Достоверность наблюдений READ/VERIFY
+
+Результат операции и его доказательство должны относиться к одному фактическому наблюдению.
+
+Исследуй и при необходимости скорректируй:
+
+- `_agent_read_file`, `_agent_verify_file_content`;
+    
+- `_planner_dependency_fingerprint`;
+    
+- post-dispatch binding в `_run_agent_task_impl`;
+    
+- связанные методы `task_planner.py` и lifecycle/freshness;
+    
+- аналогичные пути `read_file_range`, `find_text`, `list_dir`, если обнаружится та же ошибка.
+    
+
+Требования:
+
+1. Не присваивать старому результату новый fingerprint, полученный после изменения target.
+    
+2. Сохранять точную identity: target, arguments, source, generation, RUN, stage и requirement.
+    
+3. Сопоставлять наблюдение с текущим состоянием без подмены его происхождения.
+    
+4. При подтверждённом расхождении требовать актуальное evidence или переходить в честный `BLOCKED`.
+    
+5. Не считать одинаковый content hash достаточным доказательством одинаковой authority/identity.
+    
+6. Сохранять семантику `equals`, `contains`, `exists`, отрицательные результаты и проверку изменений перед terminal `SUCCESS`.
+    
+
+Простой дополнительный snapshot не считается исправлением, если он снова используется для маркировки устаревшего результата.
+
+### B. Обязательная сохранность доказательств
+
+Исследуй `AuditThreadRecorder`, `_emit`, `tool_finished`, Run Store и финальное построение Audit Packet.
+
+Требования:
+
+1. Разделить необязательные диагностические события и обязательные доказательства, необходимые для утверждения результата.
+    
+2. Обязательный результат инструмента должен иметь действительно сохранённую, доступную и проверяемую запись.
+    
+3. Пустой или выдуманный `source_record_id` не может заменять durable outcome.
+    
+4. Ошибка обязательной записи, отсутствующий outcome, нарушение identity или повреждение evidence должны блокировать соответствующий certified `SUCCESS`.
+    
+5. Неполный критичный Audit Packet не должен запускать Dredd.
+    
+6. Сохранять негативные факты, ошибки, результат частичной операции и восстановимую историю.
+    
+7. Не останавливать полностью работоспособную задачу из-за отказа исключительно декоративной телеметрии, если обязательное evidence независимо сохранено и доказано.
+    
+8. После mutation со сбойным сохранением результата **не выполнять автоматически повторную mutation**, не доказав её безопасность.
+    
+
+Существующий механизм mandatory tool reserve и границы разрешений должны продолжать действовать.
+
+## 3. Инженерная самостоятельность
+
+Работай самостоятельно как опытный разработчик.
+
+Разрешено:
+
+- глубоко исследовать связанные исходники и зависимости;
+    
+- выбирать наиболее надёжное техническое решение;
+    
+- исправлять production-код, необходимый для закрытия указанных двух причин;
+    
+- добавлять и усиливать offline regression tests;
+    
+- устранять обнаруженные внутри этого scope сопутствующие дефекты;
+    
+- проводить adversarial analysis, включая не перечисленные явно edge cases.
+    
+
+Ожидаемые исходники: `server.py`, `task_planner.py`, `run_store.py`, `audit_storage.py` и непосредственно связанные с ними компоненты по фактической необходимости. Список не ограничивает глубину исследования.
+
+**Не делать:** общую переработку архитектуры Ultra, новый Context Compiler, budget ledger, переделку интерфейса, изменение моделей и транспортов, возобновление 151C или работы над 151D/E/F/H/I.
+
+Если обнаружен дефект за пределами repair scope — зафиксировать `FINDING / PROPOSAL` с доказательством, не расширяя самовольно задачу.
+
+## 4. Обязательные тесты
+
+Использовать существующий `test_rt002_s0_kernel.py` и необходимые адресные регрессионные тесты.
+
+Минимальные сценарии:
+
+- F01: изменение файла после READ, до evidence binding.
+    
+- F02: изменение файла после положительного `equals`, до binding.
+    
+- F03: ошибка создания обязательного recorder.
+    
+- F04: ошибка сохранения `tool_finished`.
+    
+- Положительный READ с корректно сохранённым material.
+    
+- Положительный VERIFY без изменения target.
+    
+- Корректное обнаружение устаревших source/generation и неправильного target.
+    
+- Missing/corrupt/partial outcome, ошибка index/append при сохранении.
+    
+- Recovery/restart/cancellation после операции без повторной опасной mutation.
+    
+- Отказ необязательной телеметрии при исправном обязательном storage.
+    
+- Проверки прав и разрешений, negative evidence, Final Audit, restart/replay.
+    
+
+Для нарушенных обязательных требований: **никакого ложного SUCCESS и никакого преждевременного Dredd**. Если возможно законное восстановление через новое evidence, успешное завершение должно оставаться достижимым.
+
+**Цель regression:** перевести четыре исходных FAIL в PASS, сохранить 93 предыдущих PASS и добавить разумные проверки новых пограничных случаев. Не подменять это изменением ожидаемых результатов, отключением тестов, `expectedFailure` или удалением отрицательных fixtures.
+
+Все тесты — offline/mock в изолированных временных Workspace. Без реального провайдера, платных API, сетевых вызовов и пользовательского production storage. Перед запуском расширенного suite проверить, что тесты не выполняют неожиданных Git/network/side-effect операций.
+
+## 5. Визуальная и эксплуатационная сторона
+
+Эта TASK не требует изменения GUI.
+
+Однако Server должен формировать понятные terminal events и причины отказа, чтобы существующий монитор Ultra мог показывать отказ обязательного evidence без ложного статуса `SUCCESS`.
+
+Если существующий монитор не умеет корректно отображать новый статус, зафиксируй адресное UI finding и предлагаемую доработку. Сам `ultra_ui.py` без отдельного разрешения не менять.
+
+Кнопка `ULTRA-UX-STOP-001` — другая будущая задача, её здесь не реализовывать.
+
+## 6. Документация, Git и выполнение
+
+Перед началом: `08 → общий 000 → 34 → 18 → 01`, затем профиль `13`, программа `20 §5а`, журнал `21`, утверждённый `33.3 FINAL-B2`, собственная карточка и исходный отчёт S0.
+
+Учесть правило `DOC-TASK-BLOCK1-01@1` из документа `18`.
+
+**Активную постановку БЛОКА 1 не переписывать в процессе исполнения.** Небольшие уточнения пользователя, поступившие в чат, учитывать как отдельные адресные AMENDMENT и отразить в итоговом отчёте.
+
+Локальному Codex запрещены любые Git/GitHub операции, включая read-only status/diff/log/show и косвенный запуск этих операций тестами. Нужный commit/blob provenance предоставляет пользователь или координатор. Исходные файлы читать напрямую; точные SHA-256 обычных файлов разрешены.
+
+Нельзя удалять или перезаписывать чужие, untracked и пользовательские рабочие данные.
+
+Общую документацию `000/05/06/13/20/21/28/33.3/34` не менять. Для неё подготовить `DOC IMPACT / SHARED DOC DELTA`; синхронизацию делает ChatGPT.
+
+## 7. Критерии сдачи
+
+В БЛОКЕ 3 предоставить:
+
+- точные файлы и функции, которые изменены;
+    
+- объяснение обеих причин дефектов и способа устранения;
+    
+- результаты исходных четырёх regression probes до/после;
+    
+- полный набор запущенных тестов: команда, количество PASS/FAIL/ERROR/SKIP и exit code;
+    
+- положительные и отрицательные результаты проверки обязательного evidence;
+    
+- конкретные доказательства, что Dredd/SUCCESS не допускаются при неполном обязательном evidence;
+    
+- восстановление, ошибки storage и поведение при повторных попытках;
+    
+- исходные SHA-256, границы источников и возможные расхождения с GitHub baseline;
+    
+- риски, оставшиеся ограничения, rollback, `DOC IMPACT` и `NEXT`;
+    
+- отдельный перечень дополнительных AMENDMENT, если пользователь давал их в процессе.
+    
+
+После фактического завершения безопасно перенести полную первоначальную постановку в БЛОК 2, factual result — в БЛОК 3 и освободить БЛОК 1. Не удалять старый отчёт S0 и архив предыдущих задач.
+
+**Итоговый статус:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION`. Не объявлять `DONE / VERIFIED` самостоятельно.
+
+После сдачи ChatGPT независимо рассматривает исправления и повторную S0-проверку. Только после независимой приёмки можно обсуждать следующую зависимую задачу программы.
+
+**Важно:** никакого самостоятельного старта S1, 151G или новых TASK.
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK ID:** CODEX-RT002-S0-REPAIR-001 — Repair Evidence Freshness & Durable Outcomes.
+**СТАТУС:** **RESULT READY / AWAITING INDEPENDENT VERIFICATION**. Самопроверка Codex завершена; независимый PASS ChatGPT ещё не получен. Это не DONE / VERIFIED и не принятие всей S0 или 151C.
+**Дата:** 2026-10-10. **Исполнитель:** локальный Codex; запрошенный пользователем профиль — GPT-6 Sol, Very High. Инструментального подтверждения фактического backend/effort нет; переключение модели и делегирование не выполнялись.
+**Основание старта:** прямое поручение пользователя на новую REPAIR TASK и исходный БЛОК 1. **AMENDMENT:** новых уточнений во время исполнения не поступало; исходная постановка сохранена целиком в БЛОКЕ 2.
+
+## 1. Вывод и границы результата
+
+Обе подтверждённые причины исправлены. Сам результат READ/VERIFY теперь определяет fingerprint наблюдения; последующее чтение только проверяет свежесть. Для любого RUN, возвращающего SUCCESS обязательный выполненный outcome должен читаться по реальному указателю Run Store, совпадать по байтам и identity; RAM-ID или запись одного tool_started не являются доказательством результата.
+
+Финальный guarded offline-прогон: **155 PASS / 0 FAIL / 0 ERROR / 0 SKIP, exit 0, isolation violations 0**. В него входят все 97 исходных тестов S0: прежние 93 положительные проверки сохранены, четыре отрицательные регрессии проходят; дополнительно 23 новых repair-тестов и 35 связанных проверок совместимости/файловых инструментов. Для четырёх исходных инъекций финальные наблюдения: **Dredd = 0, опубликованный SUCCESS = 0**, каждый RUN возвращает BLOCKED.
+
+Изменены только server.py, run_store.py, audit_storage.py, test_rt002_s0_kernel.py; добавлен test_rt002_s0_repair.py. Документационная запись — только эта личная карточка. task_planner.py изучен, но не изменён: существующие matching/freshness/generation/recovery методы используются через исправленную серверную границу. Нет изменений GUI, моделей, транспортов, Context Compiler, budget ledger, Web Alarm и общих регламентов. S1, 151G, ULTRA-UX-STOP-001 и следующие TASK не запускались.
+
+## 2. Причины и production-изменения
+
+### A. Наблюдение и последующее состояние раньше смешивались
+
+До repair dispatcher получал старый material/положительный equals, затем post-dispatch fingerprint заново читал уже изменённый target. Старое утверждение получало новый hash и проходило проверку свежести. Дополнительный snapshot сам по себе эту ошибку не устраняет.
+
+В server.py непосредственно изменены _agent_verify_file_content, _planner_dependency_fingerprint, _run_agent_task_impl и проекция tool facts в _collect_final_audit_evidence; добавлены _tool_observation_fingerprint, _tool_evidence_binding и _validate_durable_tool_outcome. Реализации read_file/read_file_range/find_text/list_dir уже возвращали данные нужного наблюдения и не переписывались.
+
+- Новый _tool_observation_fingerprint связывает read_file/read_file_range/find_text с content_sha256, который получен из того же логического чтения, что и material; content VERIFY — с actual_sha256 той же проверки. Проверяется нормализованный path результата; точные исходные arguments и target identity сохраняются отдельно.
+- list_dir связывается с возвращёнными path/entries/truncated, а не с повторным листингом. Truncated observation не удовлетворяет обязательное evidence. Ветка git_diff использует возвращённое наблюдение; при этой TASK реальные Git-вызовы не выполнялись.
+- _agent_verify_file_content для exists/absent фиксирует regular-file existence и target_exists одним stat-наблюдением. _planner_dependency_fingerprint сопоставляет ту же семантику предиката: изменение только содержимого не делает истинный exists ложным. equals не превращается в contains; положительные/отрицательные значения остаются различимы.
+- Для непрозрачных проверок вроде python_compile dependency snapshot фиксируется перед исполнением, затем сравнивается с текущим состоянием. Проверка компиляции в новых тестах полностью fake, без дочернего процесса.
+- Post-dispatch сохраняет старый observation fingerprint как исторический факт. Подтверждённое расхождение даёт tool_evidence_stale, execution_defect текущего stage и новую evidence_generation; старое evidence больше не закрывает этап. Executor получает явную пометку STALE и требование свежего наблюдения. Повтор READ/VERIFY после изменения может законно завершить RUN.
+- Исходные проверки свежести перед Final Audit, после сбора Packet, после Dredd и перед terminal SUCCESS сохранены. Mutation не проходит через generic stale-check собственного pre-state: её фактический результат проверяется штатными receipts/obligations после durable gate.
+
+### B. Обязательные outcomes раньше сохранялись best effort
+
+Исключения recorder/observe подавлялись, но RAM-факт с логическим source_record_id продолжал участвовать в stage evidence. Указатель мог быть пустым или вести только на начало операции.
+
+В run_store.py:
+
+- append_run_record проверяет число записанных байтов outcome и index, сохраняет прежние flush/fsync для обоих файлов и возвращает SHA-256 точных записанных байтов.
+- load_run_record отвергает неоднозначный ID, неверную пару source/stream, недопустимые offset/length, неполную запись, checksum mismatch и несовпадение record/index identity. Старые индексы без checksum остаются читаемыми.
+- Новый validate_run_record требует реальный acknowledgement, повторно читает outcome с checksum именно из acknowledgement, проверяет event и при необходимости полный payload. Удаление checksum из mutable index не снимает эту проверку. Автоматического исправления повреждённой истории и повторного исполнения инструмента нет.
+
+В audit_storage.py:
+
+- _persist_event отделяет подтверждение append/index от _update_summary; observe — от _project_event. Ошибка обязательной записи продолжает распространяться. Ошибка исключительно summary/UI projection после сохранения не теряет acknowledgement; событие получает audit_summary_error/audit_projection_error.
+- tool_evidence_stale добавлен в FRESHNESS_SERVER_EVENTS и сохраняется в истории. Полные tool_finished/tool_error, включая отрицательные результаты, сохраняются до закрытия этапа.
+
+В server.py:
+
+- _tool_evidence_binding и _validate_durable_tool_outcome проверяют source, task/RUN/plan/version/stage/candidate/generation/requirements/targets/tool/capability/status/sequence, arguments hash, observation hash и полный result hash. Packet содержит source_run_store_record_id, source_run_store_sha256, plan_id и candidate_id для независимого разрешения ссылки.
+- _emit независимо от включения Planner/Final Audit требует сохранённые и читаемые tool_started перед dispatcher, final_audit_passed и terminal SUCCESS. Начало операции повторно проверяется после callback до физического исполнения. Отсутствие recorder блокирует RUN до Executor.
+- _assert_durable_outcomes работает после каждого outcome, до следующей итерации/dispatch, до закрытия mutation receipt/этапа, до сбора Packet, непосредственно перед Final Dredd, перед final_audit_passed и SUCCESS. Подтверждение Final Audit также повторно проверяется перед SUCCESS.
+- Ошибка обязательного storage даёт существующий run_finished(status=BLOCKED, reason=mandatory_...) и LifecycleBlocked. Если возможно, terminal reason сохраняется в lifecycle. Candidate после физической mutation с потерянным outcome помечается executed=True, outcome=UNKNOWN, evidence_status=UNAVAILABLE до остановки; повтор mutation не запускается.
+- on_event получает deepcopy, поэтому внешний callback не переписывает серверный material/identity. Создание каталога и запись дополнительного runtime trace входят в best-effort блок и сами не являются обязательным evidence.
+
+Mandatory storage-gate действует и при отключении Final Audit, и при обоих role-флагах False: эти переключатели не разрешают SUCCESS без durable outcomes. Эта дополнительная ветка того же дефекта обнаружена при заключительной экспертизе и закрыта тремя адресными regression-тестами. Observation provenance формируется и в legacy RUN без lifecycle; requirement matching/generation относятся к включённому Planner. Изменений полномочий инструментов или разрешений на Git здесь нет.
+
+## 3. Четыре исходных regression probes: до / после
+
+| Probe | До repair, повторено на исходных bytes | После repair, финальный прогон |
+|---|---|---|
+| S0-F01: READ → внешнее изменение до binding | OLD MATERIAL, fingerprint нового файла; Dredd 1, SUCCESS 1, FAIL | OLD MATERIAL остаётся со своим fingerprint; tool_evidence_stale, generation повышена; Dredd 0, SUCCESS 0, BLOCKED |
+| S0-F02: успешный equals → WRONG до binding | passed=True старого done\n, fingerprint WRONG; Dredd 1, SUCCESS 1, FAIL | Старый PASS не становится доказательством WRONG; Dredd 0, SUCCESS 0, BLOCKED |
+| S0-F03: constructor recorder raises OSError | RAM evidence с пустым durable pointer; Dredd 1, SUCCESS 1, FAIL | mandatory_evidence_store_unavailable, ни одного tool_started; Dredd 0, SUCCESS 0 |
+| S0-F04: observe(tool_finished) raises OSError | Начало операции сохранено, outcome потерян; Dredd 1, SUCCESS 1, FAIL | mandatory_evidence_unavailable: Missing durable Run Store acknowledgement; один tool_started, Dredd 0, SUCCESS 0 |
+
+В F01/F02 fixture намеренно больше не предоставляет свежих tool responses: после stale observation Executor повторяет финальный текст, а существующий lifecycle bound завершает RUN с run_lifecycle_budget_exhausted. Это не немедленный storage BLOCKED; причинное событие tool_evidence_stale сохраняется раньше. Отдельные новые тесты дают второе свежее чтение/проверку и получают законный SUCCESS. В equals recovery содержимое возвращается к тому же hash, но только новое source_record_id и повышенная generation удовлетворяют требование.
+
+Исходные инъекции четырёх probes не удалены и не ослаблены. При первом прогоне исправленного production четыре диагностические строки старых тестов дали AttributeError: они безусловно читали audit.await_args, хотя безопасный сервер уже не отправлял Packet. Изменены только эти предпосылки/диагностические assertions: материал и fingerprint проверяются по сохранённому tool_finished, дополнительно требуются stale/BLOCKED и ноль Dredd. Прежнее главное требование «никакого ложного SUCCESS» сохранено. Нет expectedFailure, удаления отрицательных fixtures или отключения исходных 97 тестов; совпадение всех 97 test IDs с первым полным manifest проверено.
+
+## 4. Дополнительные сценарии и доказательства
+
+| Граница | Проверки и фактический исход |
+|---|---|
+| READ/VERIFY freshness | read_file_range, find_text и list_dir меняются после возвращённого result; exists → удаление, absent → появление файла. Все требуют свежего observation; при исчерпанном tool reserve — BLOCKED, Dredd 0, SUCCESS 0. |
+| Семантика predicates | exists сохраняет истинность при изменении только content; equals/contains/sha256 и отрицательные результаты сохранены существующими и дополнительными тестами. |
+| Законное восстановление | После stale READ/equals допускается новое наблюдение, повышенная generation, новый source; Final Dredd 1, SUCCESS 1. Старое evidence остаётся историей. |
+| Непрозрачная проверка | Fake compile возвращает OK, но меняет dependency; pre-state не подменяется новым, stage не удовлетворён. Реальный subprocess не запускался. |
+| Повреждение/адресация | 8 вариантов: missing index entry, duplicate ID, отрицательный offset, wrong event, wrong source/stream, partial record, equal-length parseable corruption, удалённый stream. Каждый блокирует до Final Dredd. |
+| Identity | При одинаковом material отдельно отвергаются 19 подмен: logical/durable source, checksum, task/RUN/plan/version/stage/candidate/generation/requirements/target/tool/capability/status/arguments/observation/sequence/result. Существующий matcher дополнительно проверяет executed и source/generation eligibility. |
+| Legacy index | Старый index без checksum читается; это не позволяет сертификацию без acknowledgement. Семантически эквивалентная whitespace-правка record при изменённом locator и удалённом index checksum отвергается по исходному byte checksum. |
+| Реальные storage-фазы | Короткая физическая запись outcome; короткая запись index; отказ открытия index для append; отказ первого и второго fsync. 5 вариантов после физической mutation: ровно 1 mutation, Dredd 0, SUCCESS 0, частичная история не переписывается автоматически. |
+| Mutation и restart | Потеря outcome после записи оставляет файл с done, candidate UNKNOWN/executed, без persistence_satisfied и без повторной записи. Новый явно начатый READ RUN в том же temp Workspace не воспроизводит старую mutation и может завершиться. Автоматического resume нет. Существующая cancellation-проба после физической записи также сохранена. |
+| До dispatcher | Недоступен обязательный tool_started — физическая mutation не начинается. |
+| До Dredd | Повреждение outcome при сборе Packet: Final Dredd 0, SUCCESS 0. |
+| Во время/после Dredd | Повреждение source во время fake Final Audit: он уже вызван один раз, но final_audit_passed/SUCCESS не публикуются. Удаление outcome или attestation после audit-pass callback также блокирует SUCCESS. Это не обещание отменить уже отправленный запрос. |
+| Terminal storage | Отказ append final_audit_passed или run_finished SUCCESS: SUCCESS не публикуется; возвращается BLOCKED. |
+| Role flags | Planner ON / Final Audit OFF и оба OFF не обходят mandatory storage gate. При исправном store legacy RUN с обоими OFF по-прежнему завершается без вызова Dredd. |
+| Negative facts | Ошибочный equals сохранён как tool_error с passed=False и полным binding; не закрывает обязательное требование и не запускает Final Dredd. |
+| Необязательная телеметрия | Сбои summary, UI projection, executor diagnostic и дополнительного runtime log при исправном mandatory store не отменяют законное завершение. Callback не переписывает серверный result/binding. |
+| Регрессии гарантий | Сохранены permission escalation/scope denial, exact requirement matching, mandatory reserve, Final Audit routing/recovery, provider unknown usage/replay accounting, backup/rollback и precise file edits. |
+
+Все Dredd-числа здесь — await_count fake verifier, все Executor ответы/token adapters — mock. Это offline correctness evidence, не измерение качества живой модели или провайдера.
+
+## 5. Прогоны: команды, результаты, изоляция
+
+Рабочий каталог M:/GitHub/ag_llm. Команды ниже воспроизводимы; FULL означает manifest на соответствующей промежуточной версии harness. Финальная версия FULL содержит 155 тестов. Порядок selectors не влияет на порядок выполнения manifest.
+
+FULL:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+FOUR:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_lost_tool_outcome_cannot_return_certified_success test_missing_recorder_cannot_return_certified_success test_read_change_before_fingerprint_cannot_certify_old_content test_verify_change_before_fingerprint_cannot_certify_old_predicate
+```
+
+DEV14:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_corruption_during_final_audit_cannot_emit_pass_or_success test_corruption_during_packet_collection_never_reaches_dredd test_deleted_outcome_after_audit_pass_is_rechecked_before_success test_exists_and_absent_races_require_a_new_observation test_exists_predicate_survives_content_only_change test_fake_compile_cannot_certify_changed_dependencies test_final_attestation_and_terminal_write_failures_cannot_publish_success test_missing_corrupt_partial_or_wrong_record_blocks_before_dredd test_outcome_failure_after_mutation_records_unknown_without_retry test_projection_summary_and_diagnostic_failures_do_not_veto_valid_outcomes test_range_find_and_directory_races_never_relabel_old_observation test_required_intent_append_failure_prevents_physical_mutation test_stale_equals_can_recover_without_reusing_old_pass test_stale_read_recovers_only_with_fresh_generation
+```
+
+DEV3:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_deleted_outcome_after_audit_pass_is_rechecked_before_success test_missing_corrupt_partial_or_wrong_record_blocks_before_dredd test_range_find_and_directory_races_never_relabel_old_observation
+```
+
+DEV6:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_acknowledgement_binds_every_identity_dimension_even_with_equal_content test_final_attestation_deleted_after_callback_cannot_certify_success test_negative_verify_is_durable_and_never_certifies_success test_old_indexes_remain_readable_but_cannot_downgrade_certification test_partial_writes_index_append_and_fsync_failures_never_replay_mutation test_runtime_log_failure_is_optional_and_callbacks_cannot_rewrite_evidence
+```
+
+ROLES3:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_both_roles_disabled_cannot_bypass_durable_outcomes test_both_roles_disabled_still_allow_success_with_durable_outcome test_disabled_audit_does_not_waive_planner_durable_outcomes
+```
+
+| Прогон | Команда | TESTS | PASS / FAIL / ERROR / SKIP | exit | guard | sandbox (в системном Temp) |
+|---|---|---:|---|---:|---:|---|
+| До исправления | FOUR | 4 | 0 / 4 / 0 / 0 | 1 | 0 | codex-rt002-s0-lv5q4mc_ |
+| Production исправлен, старая диагностика probes | FULL (97) | 97 | 93 / 0 / 4 / 0 | 1 | 0 | codex-rt002-s0-3wywtt5f |
+| Исправлена диагностика четырёх probes | FOUR | 4 | 4 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-y5xd65is |
+| Разработка дополнительных fixtures | DEV14 | 14 | 11 методов PASS; 2 FAIL subcases / 3 ERROR subcases; SKIP 0 | 1 | 0 | codex-rt002-s0-8iu_kw36 |
+| Исправлены fixtures: безопасный deepcopy и имя text | DEV3 | 3 | 3 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-gu77ge6u |
+| Новые storage/identity/terminal probes | DEV6 | 6 | 6 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-bhmx035_ |
+| Полный S0 + repair | FULL (117) | 117 | 117 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-f_xd9x82 |
+| Расширение старых зависимых тестов — НЕ ЗАСЧИТАНО | FULL (151) | 151 | 151 / 0 / 0 / 0; guard 2 | 1 | 2 | codex-rt002-s0-0vf3nwl0 |
+| Безопасный расширенный набор до проверки role flags | FULL (152) | 152 | 152 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-u5cfuc7r |
+| Role flags: адресные проверки | ROLES3 | 3 | 3 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-tkr70j9x |
+| Итог после устранения обхода role flags | FULL (155) | 155 | 155 / 0 / 0 / 0 | 0 | 0 | codex-rt002-s0-bzrixjsk |
+
+В DEV14 три метода имели неуспешные subcases; FAIL/ERROR перечислены как записи unittest, их нельзя складывать с PASS методов. Причины development-ошибок — неверное имя аргумента find_text (needle вместо text) и повтор fault callback при deepcopy тестового Events; исправлены сами новые fixtures, инъекции сохранены.
+
+В прогоне 151 runner отклонил две попытки subprocess.Popen **до создания дочерних процессов**. Причина — прежний test_explicit_raw_task_no_mutation_policy_is_fail_closed косвенно вызвал реальные _agent_git_status/_agent_git_diff через _collect_final_audit_evidence. Ни один Git-процесс не стартовал; прогон имеет exit 1 и не считается безопасным PASS. Финальный IsolatedFileEditingToolboxTests подставляет fake unavailable Git observations для всех тестов этого класса; возвращён также ранее не включённый дополнительный test_mutation_bookkeeping_and_final_audit_evidence. Негативный тест запрета мутаций не отключён. Финальные guard counters равны нулю.
+
+Runner устанавливает process-wide audit guards **до runtime imports**: запрещает дочерние процессы, сеть/DNS, чтение Git/production storage и записи за пределами sandbox. Штатный синхронный socketpair для Windows asyncio разрешён адресно. TEMP/TMP/LOCALAPPDATA/APPDATA перенаправлены в изоляцию, -B исключает bytecode writes; provider/token/Git diagnostics в исполняемых тестах fake. pytest-style functions вызываются адресно с временными fixtures, без plugin discovery и без полного неконтролируемого repository suite.
+
+Финальный состав: KernelBoundaryTests 14; IdentityBoundaryTests 2; StageEvidenceContractTests 10; FinalAuditByteBudgetTests 2; PersistenceStateTests 11; RecoveryIntegration 16; PlannerIntegration whitelist 20; VerifierRuntime whitelist 10; RunStore/Provider functions 12 = исходные 97. RepairBoundaryTests 23; AuditStorageTests 9; IsolatedFileEditingToolboxTests 22; audit_v2_compatibility 2; verify_file_content 2 = ещё 58. Исключения исходной S0 (реальные Git-dependent fixtures) не превращены в скрытые SKIP.
+
+Все результаты/manifest/наблюдения сохраняются во временных result.json и unittest.log, не в production storage и не как сырой stdout в репозитории. У временных файлов ограниченный срок доступности; независимая приёмка должна повторить финальную команду на переданных исходниках.
+
+### Evidence paths и контрольные суммы
+
+Общий префикс sandbox: C:/Users/REX/AppData/Local/Temp/. В каждой папке лежат result.json (полный manifest, counters, observations) и unittest.log.
+
+| Sandbox | SHA-256 unittest.log | SHA-256 result.json |
+|---|---|---|
+| codex-rt002-s0-lv5q4mc_ | f3fb262fe7374f83c825f110142d67f1156ef64183c896db6bf8dfcdb020cdb1 | 7ada18cf02ec506e135555c695e3c2d26978ba266f07eca186c80b60763e957c |
+| codex-rt002-s0-3wywtt5f | a5e78791d0fbe78c427b267a564783f7c7df46a20971a31df32ef87454ad0da1 | ab74b013bcdfa46da320af734687da0a13691d93d5e68b729a062f51185a404d |
+| codex-rt002-s0-y5xd65is | 6105077ba800eae72bce4b93fcf9b21c2acb3b292226b6a95ec376fd4be6546e | 6133aaed9a25f15ad30d24683d5aee85185a425022a7a8264442aa772e496eb8 |
+| codex-rt002-s0-8iu_kw36 | 906c44b94631c360888934ebdee27016d64585576dd841a8c936e914754729d6 | d6b6451b9975254c6af48caf2e883dfe5085756ea291487fb3caa1efbb876840 |
+| codex-rt002-s0-gu77ge6u | bd900685ef3b3d60f19da0f33411e588f44fd0662e42ae16aeeba42b4ecabf63 | 5073d75e917a1a6e27bfcb63ca237a0875babd521cd86869d1a9a3af25d358f3 |
+| codex-rt002-s0-bhmx035_ | 261b9801bd6b106e7444152561bcbba6098faf377b64d9ef5929cfca5eec69c4 | f812a53865e681531d0a713a2f0c06dcdfd5d20acae12654d99c40a6d14a4203 |
+| codex-rt002-s0-f_xd9x82 | 3efdd8f3ad965c2b291a81ff4ed5e8b2b9633891efdb21ab46cb1747b2e2efa9 | 5e478f6bf65f0bc35f29d17453380fa838b264437279dd8cfe1735b763e077b7 |
+| codex-rt002-s0-0vf3nwl0 | 1206e4110fb43c6d675af3c74797f501c0cb786edc6a1ed4c04da717d6a68140 | bba3cdc8bd5e65d31eb3d2eb5f8af88718cfece295f2da1308e9632ddbb6d2b5 |
+| codex-rt002-s0-u5cfuc7r | ea746f632a1c4125411a35b3303df174ecd4202c82d9d23813a2faedcf5ff760 | 8f5dd5e4a6b05f2087fb976861859145338b5585861a4c81f8d12e6bfea193c7 |
+| codex-rt002-s0-tkr70j9x | d8d5f82a383704ed25b88af76e4b61ab1f2abea32cb056a267950eda5a952846 | dbce126660ba6dd3811223d05e0e33c02d9ba4f157cdce21bbb0dd8db3330d1f |
+| codex-rt002-s0-bzrixjsk | 9210fff3fff8ab87514db60dd0b6cb1800af93c8080193a9318f706979e23265 | 83db60a4e38e5237d45c604e13279c81888728cd3cd2c111155f0b615bfd8e5d |
+
+## 6. Provenance и неизменность scope
+
+Исследованы локальные обычные файлы по маршруту 08 → общий 000 → 34 → 18 → 01, затем профиль 13, программа 20 §5а, журнал 21, 33.3 FINAL-B2, личная карточка и исходный S0-отчёт. Правила DOC-GIT-01@1 и DOC-TASK-BLOCK1-01@1 соблюдаются; прямой новый старт пользователя имеет приоритет над отстающим общим маршрутизатором. Общая документация не синхронизировалась локальным Codex.
+
+Commit №247 (2fb37a266a0780191471cdcecea587fb449a4168), независимый review №248 и immutable FINAL-B2 commit №242 (e7365ea773c9adc4e813e05a58810e40b4de4bb4) — provenance из переданной постановки/документов, а не результат локального чтения истории. Git dirty state, HEAD и актуальное совпадение с GitHub не установлены: полномочий на такие операции не было. Возможное расхождение remote baseline с локальными bytes нельзя исключить без координатора.
+
+До edits сняты SHA-256 167 обычных root/Документация файлов; это файловый контроль ограниченного множества, не Git status и не заявление об инвентаризации всех ignored/untracked/subdirectories. В этом множестве до ротации карточки изменены только три production-файла и исходный S0 harness; добавлен один repair test module. task_planner.py, ultra_ui.py, verifier_runtime.py, planner_runtime.py, shared docs и исходные сторонние тесты совпадают с начальной фиксацией.
+
+| Файл | Исходный SHA-256 | Финальный SHA-256 |
+|---|---|---|
+| server.py | 404d43d6a39924a3a0d725650f0cf4ba67591bca13e071794ab4d576f378090a | 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3 |
+| run_store.py | 91f82db61a75980ebae8a0ee4e707ac2c09e33628021991d70d639b97b2eef44 | a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6 |
+| audit_storage.py | 15466977e17d2f48e377ccd9b77d7ecc01aaec82c2aabf4501f8cd3c11595905 | 5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c |
+| task_planner.py | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 |
+| test_rt002_s0_kernel.py | 845134a0ee3493e31213107c52bba7437c2364505d3036bda4556b5e3a9c5341 | cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b |
+| test_rt002_s0_repair.py | NEW | f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e |
+| ultra_ui.py | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d |
+| verifier_runtime.py | 7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228 | 7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228 |
+| planner_runtime.py | ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e | ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e |
+| Документация/33.3_Круглый стол - итоговый план.md | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf |
+
+Исходная полная личная карточка: SHA-256 0f8b0b6c89499b8067170a2b4e277c6b4867f8f75e0d6f723317dc094fbf5809. Её bytes оставались неизменны на всех этапах исполнения и тестирования; только финальная атомарная ротация создаёт новую редакцию. Исходная постановка без заголовка БЛОКА 1, перенесённая целиком в БЛОК 2: 16095 bytes, SHA-256 b55a38f46e4717fa166abc1ecc7c4384e4d6352fa04e70d0da44d688c19e63e9. Предыдущие S0 БЛОКИ 2/3 сохранены дословно в архиве ниже, SHA-256 исходного фрагмента cb11c9c44cd36fab17605acd3719e7ca44a2c0648d76fe6627df562284e0f699; весь более ранний хвост с REVIEW-1/151C/DOC-034 сохранён, SHA-256 7c43ac7dbdddb9dfc18fdd5177606444687fa31b84dd1e01a66d56c338f0856d.
+
+## 7. Ограничения, риски и rollback
+
+- Это self-test локального repair, не независимое принятие S0. Ни live provider, ни платные API, ни production storage, ни реальная GUI-сессия не использовались. Две попытки дочернего процесса в незасчитанном расширенном прогоне пресечены runner до запуска; финальный набор полностью offline.
+- Повторное разрешение records/index увеличивает локальный I/O; число remote/provider calls от durability gate не растёт. Профилирование latency, большой истории и бюджетов относится к дальнейшей программе, здесь не выполнялось.
+- Freshness остаётся проверкой на границах фаз, а не блокировкой файловой системы: изменение после последней проверки, ABA без наблюдаемого промежуточного состояния, подмена самой доверенной среды или многопроцессный writer одного RUN не сертифицированы этими тестами. Проверенный ABA с зарегистрированным stale-event требует нового source/generation.
+- Durable означает успешные записи/flush/fsync, acknowledgement и read-back в существующем Run Store. Fault injection не является испытанием отключения питания/сбоев оборудования. Частично записанные или недоступные records/index сохраняются; автоматического self-heal/возобновления mutation нет.
+- При неуспешной записи terminal-события в сыром журнале может остаться неподтверждённый фрагмент/попытка записи. Это не опубликованный certified SUCCESS; сервер возвращает BLOCKED и пытается сохранить его. При полном отказе storage причина всё равно передаётся on_event и в возвращённом тексте. Нельзя принимать произвольную строку сырого tail за прошедший gate verdict.
+- Отказ необязательной summary/UI projection может оставить видимую проекцию отстающей, хотя mandatory record исправен. Источник истины — проверяемый indexed outcome и terminal event, не одна карточка summary.
+- В F01/F02 без нового tool response используется существующий lifecycle bound; новый быстрый stop/экономия циклов при упрямом Executor здесь не реализованы. Recovery с новым evidence проверен.
+
+**UI FINDING / PROPOSAL (не блокирует этот repair):** ultra_ui.py:5551 форматирует run_finished со статусом, но без reason; :5960 явно поддерживает BLOCKED, а возвращаемый chat payload содержит причину. Новый tool_evidence_stale выводится общим trace-форматтером. При отдельной доработке показывать reason для BLOCKED, содержательные stale facts и audit_summary_error/audit_projection_error. GUI и кнопка Stop не изменены.
+
+**Rollback:** только по отдельному решению пользователя/координатора восстановить согласованные исходные bytes server.py/run_store.py/audit_storage.py по таблице; тесты можно оставить как воспроизводимые safety probes. Не откатывать рабочие данные, Run Store и историю, не выполнять автоматические reset/checkout/replay. Возврат старых production bytes возвращает четыре известных HIGH; это риск rollback, а не рекомендуемое действие.
+
+## 8. DOC IMPACT / SHARED DOC DELTA
+
+Это пакет для ChatGPT, а не внесённые локально нормативные изменения.
+
+| Владелец | Предлагаемая синхронизация после независимого рассмотрения |
+|---|---|
+| Общий 000 и 34 | Устранить отставание маршрутизатора; сослаться на эту REPAIR, статус ожидания независимой проверки и отсутствие следующего разрешённого старта. |
+| 05 / 06 | Отразить отдельную REPAIR TASK и factual handoff; не переписывать исходный FINDINGS / NO S0 PASS и четыре HIGH как будто их не было. |
+| 13 | После принятия зафиксировать различие observation/provenance/freshness, проверяемый durable outcome и fail-closed certification boundary. |
+| 20 §5а | Перед зависимыми задачами требуется независимое решение по repair/S0; self-test 155 PASS не открывает S1 автоматически. |
+| 21 | Записать before/after F01–F04, команды, hashes, ограничения и независимый вердикт отдельным событием. |
+| 01 | После принятия обновить фактическое runtime-состояние по трём изменённым production-файлам. |
+| 28 / 33.3 | При необходимости добавить внешний указатель на review evidence в протокол; утверждённый immutable FINAL-B2 не переписывать. |
+| 18 / 08 / инструкции агентов | Нового изменения Git-контракта эта TASK не требует; действующее правило без разрешения на git log также сохраняется. |
+
+## 9. NEXT — независимая приёмка
+
+1. ChatGPT проверяет три production-изменения, целостность binding/locator/hash, границы certified режима и исключение повторной mutation; сверяет переданные file SHA-256 с этой редакцией.
+2. Повторяет FULL: .venv/Scripts/python.exe -B test_rt002_s0_kernel.py. Ожидается 155 PASS, exit 0 и guard 0; никакого uncontrolled discovery, live provider или real Git.
+3. Отдельно проверяет сохранение исходных отрицательных инъекций F01–F04, ноль Final Dredd/SUCCESS при недостающем proof и достижимость законного fresh-evidence recovery. Старые 93 PASS не должны быть потеряны.
+4. Проверяет ротацию: первоначальный БЛОК 1 целиком в БЛОКЕ 2, прежняя S0 и более ранние архивы сохранены; новые AMENDMENT отсутствуют.
+5. Выносит независимый verdict, затем согласует SHARED DOC DELTA. До него: **RESULT READY / AWAITING INDEPENDENT VERIFICATION**, следующие задачи не разрешены. Публикацию/commit/push выполняет пользователь либо отдельно уполномоченный внешний координатор.
+
+---
+
+## AMENDMENT — финальная проверка S0: терминальный on_event / SUCCESS (2026-10-10 → 2026-10-11)
+
+**TASK:** CODEX-RT002-S0-REPAIR-001, продолжение по прямому дополнению пользователя; новая TASK не открыта. **Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. Это self-test исполнителя, не DONE / VERIFIED и не независимый S0 PASS.
+
+Предыдущий отчёт БЛОКА 3 выше сохранён дословно. Его 155 PASS относятся к прежней редакции; актуальный результат этой редакции — **166 PASS** ниже. Уточнение снимает предположение, что проверок перед терминальным callback достаточно для безопасного возврата. Ранее обозначенное общее ограничение «после последней проверки» не оправдывает обнаруженное синхронное окно: управляемый сервером callback входит в завершение RUN и теперь охвачен повторным gate.
+
+### A1. Авторизация, исходные данные и границы
+
+AMENDMENT пользователя: сначала изолированно воспроизвести удаление/повреждение обязательной записи Run Store, изменение исходного файла/обязательной зависимости и исключение/нарушение terminal invariants именно в синхронном on_event при run_finished: SUCCESS. При подтверждении минимально исправить S0; проверить Final Audit ON/OFF, исходные F01–F04, Repair и релевантную полную offline regression; сохранить команды, счётчики, исходные версии и ограничения. БЛОК 1 не заполнять, БЛОК 2 не менять, прежний БЛОК 3 сохранить и дополнить. После отчёта остановиться до независимой приёмки. UI, S1/S2, бюджетная система, Stage Compiler, live/HTTP, Git/GitHub, commit/push не разрешены.
+
+Пользователь сообщил о публикации основной REPAIR в №250. Локальный 000_Задачи для агента.md содержит №250 / 321f7436337f162b7741a13619954a49ed80d117, а 34 — открытый непроверенный callback-window. Это provenance из обычных документов и чата, **не результат чтения Git** и не доказательство совпадения local bytes с remote/HEAD. История не запрашивалась и не читалась.
+
+Прочитанные локальные маршрутизаторы/владельцы: 08 → общий 000 → 34 → 18 → 01; task-card БЛОКИ 2/3, server.py, task_planner.py, run_store.py, audit_storage.py и offline fixtures. Действуют rule-ref:DOC-GIT-01@1 и DOC-TASK-BLOCK1-01@1. Явный AMENDMENT пользователя разрешает это продолжение при WAITING в БЛОКЕ 1; карточка не заполнялась заново. Общие документы и immutable FINAL-B2 не редактировались.
+
+### A2. Дефект подтверждён до изменения production
+
+Исходная версия server.py: SHA-256 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3, 321998 bytes. На ней сначала добавлены только adversarial tests, затем выполнены прогоны BEFORE и BEFORE-CERT из A5.
+
+В исходном _emit mandatory outcomes/certifications и сохранённая terminal SUCCESS проверялись **перед** on_event. Callback получал deepcopy, поэтому не менял серверный payload непосредственно, но мог изменить файлы/Run Store. Затем исключение класса Exception подавлялось, best-effort trace записывался, _emit возвращался без новой проверки. Оба вызывающих пути возвращали content. Следовательно, проверка была корректной на прежний момент и уже не доказывала состояние при фактическом возврате.
+
+Подтверждённые исходные инъекции:
+
+| Группа | Сценарии до исправления | Фактический исход исходного server.py |
+|---|---|---|
+| Durable outcome | missing/duplicate index, неверный locator/event/source, partial stream, corruption, deleted stream × Final Audit ON/OFF = 16 | Вернулся Finished; последнее событие SUCCESS; fault callback вызван один раз. |
+| Сертификация | Удаление/повреждение final_audit_passed при ON; удаление/повреждение самой run_finished при ON/OFF = 6 | Вернулся Finished даже без проверяемой ранее принятой записи. |
+| Свежесть и persistence | READ, equals VERIFY, list_dir, fake compile dependency, persistence target × ON/OFF = 10 | Вернулся Finished после изменения обязательного состояния. |
+| Мутация + исключение | Изменение READ target и RuntimeError из callback × ON/OFF = 2 | Exception подавлен, вернулся Finished на устаревшем evidence. |
+| Контроль | Только RuntimeError и изменение копии event, доказательства целы × ON/OFF = 2 | Законный Finished. Исключение декоративного наблюдателя само по себе не делает результат ложным. |
+
+Итого **34 различных отрицательных сценария воспроизведены** на исходном production; 2 положительных контроля сохранили законный успех. В первом BEFORE fixture повреждения attestation искал отсутствующий в ней ключ status: одна инъекция final_audit_passed:corrupt была неполной, cleanup добавил одну FAIL-запись. Это ошибка нового теста, не подтверждение этого сценария; в unittest.log явно записан один callback_errors element. До production-правки fixture исправлен на порчу существующего заголовка event; BEFORE-CERT повторил все 6 certification cases и получил все 6 ожидаемых нарушений. Остальные 33 отрицательных сценария первого BEFORE были реальными. Assertions и fault injections после воспроизведения не ослаблялись.
+
+### A3. Минимальное общее исправление S0
+
+Изменён только production **server.py**; Run Store schema, audit_storage.py, task_planner.py, UI и planner/provider протоколы не менялись.
+
+1. _terminal_evidence_snapshot перед терминальным _emit повторяет существующие условия обязательного evidence и satisfied/persistence obligations; сохраняет snapshot актуальных зависимостей. Это также закрывает callbacks planner_session_completed/final_audit_skipped между gate вызывающего кода и входом в _emit.
+2. После возврата из on_event и best-effort runtime trace _emit снова проверяет все mandatory outcomes, сохранённые final_audit_passed и **свою собственную** terminal record по исходному acknowledgement и expected payload. Затем повторяет freshness/obligations и сравнивает snapshot. Удаление, порча, потеря identity, устаревание либо сбой обязательной проверки запрещают успешный возврат.
+3. При нарушении используется существующий _block_evidence / LifecycleBlocked: конечный результат BLOCKED; корректирующее run_finished BLOCKED пытается сохраниться и доставляется наблюдателю. Ни Executor, ни Dredd, ни mutation не повторяются; новой retry loop нет.
+4. Для legacy callers без TaskLifecycle snapshot берёт реальные аргументы из **проверенного durable outcome**, а не отсутствующее поле arguments RAM-факта. _validate_durable_tool_outcome теперь возвращает уже проверенную запись; все прежние проверки binding/result/hash сохранены. Файловая свежесть сверяется до/после callback; дополнительных Git diagnostics не введено, git_diff из этого fallback исключён.
+5. Обычный Exception только в декоративном callback по-прежнему best-effort: если обязательные инварианты после него целы, SUCCESS законен. Если callback успел что-либо повредить, исключение не обходит post-check. BaseException, включая asyncio.CancelledError, не подавляется: перед распространением того же экземпляра исключения сервер пытается зафиксировать BLOCKED с reason terminal_callback_interrupted.
+
+Кодовые точки текущей редакции: server.py:3558 (_validate_durable_tool_outcome), :3754 (_terminal_evidence_snapshot), :3784 (_emit), :3822 (interruption), :3836 (post-callback gate). SUCCESS-пути: :6377 (Final Audit OFF), :7128 (ON). Проверки добавлены в общий _emit, поэтому покрывают оба пути, включая legacy callers.
+
+Наблюдаемая граница точна: callback по определению **уже получил SUCCESS**, иначе описанная пользователем инъекция не сработала бы. Для такого синхронного наблюдателя это provisional notification до возврата callback и post-check; при нарушении следует корректирующий BLOCKED и нет успешного return. Исправление не утверждает, что невозможно увидеть промежуточное SUCCESS в событиях/сырой истории. Удалять или переписывать прежнюю запись ради такого утверждения было бы потерей истории.
+
+### A4. Финальные adversarial checks — 11 методов / 61 сценарий
+
+Новые методы находятся в test_rt002_s0_repair.py:90–385. Исходные 23 repair methods не переписаны: удаление только добавленного диапазона в памяти восстанавливает исходные 32366 bytes и SHA-256 f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e. Guarded runner test_rt002_s0_kernel.py не изменён. Все 155 прежних exact test IDs присутствуют в финальном manifest.
+
+| Проверка нового набора | Сценариев | Финальное поведение |
+|---|---:|---|
+| 8 видов damage outcome × ON/OFF | 16 | BLOCKED, последняя terminal notification BLOCKED; один fault callback. |
+| Attestation/terminal record: missing/corrupt | 6 | BLOCKED, проверяется и собственный acknowledgement SUCCESS. |
+| READ drift/deletion, equals, directory, compile, вторичная compile dependency, persistence target × ON/OFF | 14 | BLOCKED; для вторичной зависимости исходный result.md остаётся прежним. |
+| Мутация источника + RuntimeError × ON/OFF | 2 | BLOCKED, исключение не прячет drift. |
+| Только Exception/deepcopy tampering × ON/OFF | 2 | Finished, доказательства и сохранённая terminal SUCCESS проверяемы. |
+| CancelledError и собственный BaseException × ON/OFF | 4 | Исходный экземпляр исключения распространяется; последняя сохранённая/доставленная terminal запись BLOCKED; нормального return нет. |
+| Legacy: source/outcome/terminal damage × ON/OFF | 6 | BLOCKED и без TaskLifecycle. |
+| exists меняет только content; READ меняет только unrelated file × ON/OFF | 4 | Законный Finished: семантическая свежесть не заменена излишним запретом любых файловых изменений. |
+| Повреждение SATISFIED stage state × ON/OFF | 2 | BLOCKED, status не принимается на доверии. |
+| Outcome пропал, запись корректирующего BLOCKED также отказывает × ON/OFF | 2 | Возвращён и доставлен BLOCKED, ровно одна попытка corrective append; отказ store не разрешает SUCCESS. |
+| Drift из planner_session_completed (ON/OFF) и final_audit_skipped (OFF) до _emit SUCCESS | 3 | BLOCKED **до** публикации SUCCESS. |
+| **Итого** | **61** | **51 BLOCKED return + 4 interruption (terminal BLOCKED) + 6 valid Finished**. |
+
+В 48 отрицательных инъекциях, сработавших внутри SUCCESS callback, тест намеренно требует одну уже полученную provisional SUCCESS и последующую BLOCKED, а не невозможное «callback сработал на SUCCESS, но никогда его не видел». Проверяются отсутствие повторного callback SUCCESS/новых Executor/Dredd вызовов, два исходных Executor fake responses, Dredd=1 при ON и 0 при OFF. 3 ранних boundary injections не видят SUCCESS вообще. CancelledError/другой BaseException проверены отдельно от обычного Exception.
+
+**Исходные F01–F04 повторены в FULL:** все четыре PASS; в каждом returned BLOCKED, Dredd=0, SUCCESS events=0. F01/F02 без свежего tool response достигают существующего run_lifecycle_budget_exhausted; законное восстановление свежим READ/VERIFY остаётся в прежних Repair tests и PASS. F03 — mandatory_evidence_store_unavailable; F04 — mandatory_evidence_unavailable / missing durable acknowledgement.
+
+### A5. Команды и полная хронология результатов
+
+CWD: M:/GitHub/ag_llm. Runtime — локальная .venv, pyvenv.cfg: Python 3.12.10. Единственная точка запуска suite — standalone runner, без pytest/unittest discovery и plugins. Селекторы — реальные имена методов manifest; никаких expectedFailure/xfail или скрытых SKIP.
+
+C1 — исходные 5 targeted methods (до/после исправления):
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_outcome_damage_cannot_return_success test_terminal_callback_certification_damage_cannot_return_success test_terminal_callback_dependency_drift_cannot_return_success test_terminal_callback_mutation_then_exception_cannot_return_success test_terminal_callback_exception_only_remains_optional
+```
+
+C2 — повтор исправленного certification fixture на исходном production:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_certification_damage_cannot_return_success
+```
+
+C3 — расширенные edge cases:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_dependency_drift_cannot_return_success test_terminal_callback_interruption_propagates_with_blocked_terminal test_terminal_callback_legacy_file_and_record_damage_cannot_return_success test_terminal_callback_semantic_and_unrelated_changes_allow_success test_terminal_callback_stage_state_damage_cannot_return_success test_terminal_callback_damage_and_blocked_append_failure_still_fail_closed test_terminal_boundary_rechecks_events_after_the_callers_freshness_gate
+```
+
+C4 — повтор legacy после устранения найденного обхода:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_terminal_callback_legacy_file_and_record_damage_cannot_return_success
+```
+
+C5 — релевантный полный regression, включая F01–F04, весь прежний S0 Repair и все новые методы:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+| Прогон | Команда | Methods PASS / FAIL / ERROR / SKIP | FAIL entries unittest | Exit | Guard violations | Seconds | Sandbox suffix |
+|---|---|---|---:|---:|---:|---:|---|
+| BEFORE: production исходный | C1 | 1 / 4 / 0 / 0 | 35 | 1 | 0 | 25.848 | zi73nazj |
+| BEFORE-CERT: production исходный, fixture исправлен | C2 | 0 / 1 / 0 / 0 | 6 | 1 | 0 | 4.617 | o2zqft5a |
+| Первое исправление | C1 | 5 / 0 / 0 / 0 | 0 | 0 | 0 | 25.648 | jv7p4sp9 |
+| Дополнительные edge cases | C3 | 6 / 1 / 0 / 0 | 2 | 1 | 0 | 20.657 | tf1r3xvw |
+| Legacy arguments исправлены | C4 | 1 / 0 / 0 / 0 | 0 | 0 | 0 | 2.427 | ywv_8gzr |
+| **FINAL FULL** | **C5** | **166 / 0 / 0 / 0** | **0** | **0** | **0** | **108.891** | **e3w2yqjs** |
+
+PASS/FAIL в этой таблице считают методы, поэтому в BEFORE 1+4=5. FAIL entries — отдельные subTest/cleanup записи unittest: 35 не является числом запущенных методов. BEFORE-CERT = 6 subTest violations одного метода. В C3 обе FAIL entries относятся к одному legacy method: RAM-факт не содержал arguments, initial fallback пропускал source. Корень исправлен чтением проверенного durable record; C4 и FULL подтверждают устранение. Промежуточные red runs раскрыты и не выдаются за успешную приёмку.
+
+Состав FINAL FULL: прежние 155 test IDs + 11 новых = 166. Прежние 97 S0 (14 Kernel, 2 Identity, 10 Stage Evidence, 2 byte budget, 11 persistence, 16 recovery, 20 Planner whitelist, 10 Verifier whitelist, 12 RunStore/provider functions), прежние 23 Repair и 35 compatibility/storage/file-tool tests сохранены. Новые 11 увеличили RepairBoundaryTests до 34. Результат self-test: **PASS 166 / FAIL 0 / ERROR 0 / SKIP 0, exit 0, guard 0**.
+
+Все artifacts ниже находятся **в TEMP**, не в репозитории. Общая база: C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-<suffix>/; в каждой — unittest.log и result.json (manifest, failures/errors/skips/guards, events, packets, observations). Они могут исчезнуть при очистке TEMP; для воспроизведения достаточно текущих исходников/runner, а не сохранности TEMP.
+
+| Suffix | SHA-256 unittest.log | SHA-256 result.json |
+|---|---|---|
+| zi73nazj | 96e9a761e2ec4c7131a143b18693cf2375315fe26473b6ec90548d336fe59f7a | bf34d8b706ce481283c85678560b7b7433b3c2deee0c5d27cf08961df3eb2220 |
+| o2zqft5a | 976db8ba858f00d4bec7ea35e6b8ecae1bf0ea0971b841c8dba5ac103a19361b | 46f5220db7110dfa9b69746856492c24b6416ae4be5a87fbe751806d288c3c12 |
+| jv7p4sp9 | 8f67e727978f5bcdd34df5e661802754af0de079a2d16c33c462d0d48b1e88d2 | 19ebafb8091d438ca5a5379b934a17a9e9197636f00f0c4613791759f22de3f6 |
+| tf1r3xvw | e5bc5d4166c6e1c14dfabb4aca5757c5410ac0f30ed8ec8e44c1e55a6bc6c526 | 9346a9f7d948702766015debc9d0b2a23e695caa40e2eefd7fff16fb38280d60 |
+| ywv_8gzr | 2cb6483dd6a31adba8e9e1bf2486cfd7779002133cc75387ea9d1c3345b3b512 | 4e157bf893fbaf71ea4095c785c8e5352aa66cdd8535d46fca1443ec2b9fc69d |
+| e3w2yqjs | 4e7aadd433c94210e7c2ac59d4024486a39585275270b926902e106a35f51fa2 | 0538b35585760804891976f62cc4240a5628b4ee45583931f37291e67af673ca |
+
+### A6. Версии, изоляция и loss check
+
+Версии ниже установлены прямым чтением файлов и SHA-256, без Git. FINAL FULL выполнен именно на указанных AFTER bytes; после suite хеши server.py, test module и runner повторно совпали. Исходная карточка перед AMENDMENT: 124347 bytes, SHA-256 170c9791cc45936abf5c14aebe6e316b112e764a2770d6809d475cde371a7cef.
+
+| Файл | BEFORE bytes / SHA-256 | AFTER bytes / SHA-256 |
+|---|---|---|
+| server.py | 321998 / 5899125a4c54e629da0f2417aa5d9f7450e19942e4e4137ab8c0b1f77cc374a3 | 324699 / 44d8cc8affaf9c76272f74ec19e046352e8a19a094c3e48e2dc37ccda6159f54 |
+| test_rt002_s0_repair.py | 32366 / f1da9db3b6407f8389e0452f9a414358ce27e0b60bdf84a8febeccd6acd0090e | 52829 / 860f723f4c864deb0fbf6a7699a0ef9b44a29fc6c08038cffb026b36e32fb868 |
+
+Неизменённые опорные файлы:
+
+| Файл | Bytes | SHA-256 (BEFORE = AFTER) |
+|---|---:|---|
+| run_store.py | 23844 | a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6 |
+| audit_storage.py | 31728 | 5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c |
+| test_rt002_s0_kernel.py | 28657 | cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b |
+| task_planner.py | 55904 | c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346 |
+| ultra_ui.py | 246742 | 7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d |
+| Документация/33.3_Круглый стол - итоговый план.md | 45043 | c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf |
+
+rule_set_ref: документ 18_Регламент сопровождения документации.md, прочитанная локальная редакция SHA-256 0b4ce6e621f372bdd2ea268c28e899cd137bdbcd60c8e6846a8f4c428854b51b; DOC-GIT-01@1, DOC-TASK-BLOCK1-01@1. Документы 08/000/34/01 не превращались в разрешение на Git, live или новые этапы.
+
+Снимок 168 обычных py/md/json/toml файлов корня и Документация перед/после работы до сохранения отчёта обнаружил изменения только server.py и test_rt002_s0_repair.py. Это файловая сверка указанного охвата, **не Git status и не заявление о clean tree**. При closeout добавляется только настоящая вставка в персональный БЛОК 3; сырые логи, массовые backups и новые task/report files в репозитории не создавались.
+
+Сохранность карточки контролируется exact bytes:
+
+| Неизменяемый фрагмент | SHA-256 |
+|---|---|
+| Начало карточки, БЛОКИ 1/2 до заголовка БЛОКА 3 | 5db744ea99fcb2982ebfa6bfe64fcfc70b13603e734fd80be49ed42146c73004 |
+| Прежний полный отчёт БЛОКА 3 до ARCHIVED S0-001 | 9d00f3e6f81970480e75142903343c84a69a2cdd1916f195fe02d45b4565adc7 |
+| ARCHIVED S0-001 и вся последующая история | 1627e88619646cbc41fcf16b3c263a3d02e9dfcb613f588de3b845631d4a0925 |
+
+Перед записью проверяется byte equality всей карточки с исходным снимком и неизменность протестированных production/test bytes. Вставка располагается непосредственно **перед ARCHIVED S0-001**, с сохранением prefix, старого отчёта и tail; atomic sibling-temp replacement, readback equality и отдельная проверка трёх фрагментов. БЛОК 1 остаётся WAITING, БЛОК 2 и архивы не меняются. Старый NEXT §9 выше — исторический handoff до AMENDMENT; его слова «новые AMENDMENT отсутствуют» не относятся к текущему состоянию. Актуальный NEXT — A8 ниже.
+
+Все шесть запусков работали под существующими process-wide guards **до runtime imports**: запрещены subprocess/process launch, HTTP/сеть/DNS, чтение .git/production .ultra и запись за пределами временного sandbox. Windows asyncio socketpair разрешён адресно существующим механизмом. TEMP/TMP/LOCALAPPDATA/APPDATA перенаправлены; -B исключает bytecode writes. Token/provider transports, Planner/Dredd, Git diagnostics, compile/tool subprocess и backup/runtime paths безопасно подменены. Adversarial callbacks повреждали только временные fixture-файлы. **Guard violations во всех запусках = 0**; live-вызовов и реальных Git-команд не было.
+
+### A7. Ограничения и риски
+
+- Post-check доказывает возможность безопасного завершения на проверяемой границе, а не блокирует файловую систему. Внешний процесс после последнего чтения, ABA с восстановлением прежнего наблюдаемого состояния, подмена самой доверенной среды, deferred callbacks/другие потоки остаются за пределами этой гарантии. Snapshot comparison не обещает detection невидимого промежуточного изменения.
+- SUCCESS notification/запись существовала до исполнения fault callback. Уже доставленное уведомление нельзя отозвать; исправление даёт окончательный BLOCKED и запрещает успешный return. Историческая SUCCESS не удаляется. Потребитель не должен считать произвольную раннюю/raw строку отдельным окончательным verdict, игнорируя последующий BLOCKED и обязательный proof. UI/API семантика не перепроектировалась и UI не менялся.
+- Если store после fault недоступен, сервер не может обещать durable corrective BLOCKED; проверено, что обычный отказ этой записи не отменяет BLOCKED return/notification и не вызывает повторов. Если и внешняя доставка не работает, её успешность также нельзя гарантировать. Сохранённая старшая SUCCESS/отставшая summary без повторной проверки mandatory proof не является достаточным свидетельством успешного RUN.
+- При ON Final Audit уже был вызван один раз до terminal fault: невозможность вернуть SUCCESS не отменяет совершённый запрос. Нового Dredd/Executor/physical mutation после terminal fault нет.
+- Legacy snapshot не создаёт несуществующий декларативный stage contract и не сертифицирует legacy freshness до начала этой границы. Он ловит изменения наблюдаемых файлов в terminal callback; git_diff исключён из legacy fallback ради отсутствия новых Git diagnostics. В V6 declared requirements/persistence действуют существующие полноценные gates. Это не реализация S1/S2.
+- OFF/ON paths, CancelledError/BaseException и logical dependency freshness проверены offline; настоящий provider/network, реальные compile/backend subprocess, GUI Stop, multi-process races и Git-dependent fixtures намеренно не запускались. **SKIP=0 относится к explicit 166-test manifest**, а не к любому тесту проекта. Полного unrestricted discovery не было; исключённые unsafe tests не объявлены PASS.
+- TEMP evidence может быть очищено системой. Git HEAD/dirty state/remote identity не проверены; №250 и SHA из маршрутизатора — переданный provenance. Независимая приёмка должна сверять эти новые file hashes и повторить guarded suite; прежний статический review №250 сам по себе не принимает текущую правку.
+
+Rollback — только по отдельному решению пользователя/координатора, восстановлением согласованных исходных server.py bytes. Автоматического reset/checkout/replay не выполнять; рабочие данные/Run Store/историю не откатывать. Такой возврат снова открывает подтверждённое terminal window. Новые regression tests полезно сохранять как воспроизведение дефекта.
+
+### A8. DOC IMPACT и NEXT для независимой приёмки
+
+```text
+DOC IMPACT: YES
+CURRENT STATE IMPACT: YES
+ARCHITECTURE IMPACT: NO (граница S0 укреплена, новый subsystem/protocol не вводился)
+CONTEXT LIBRARY IMPACT: NO
+REGISTRY / ROUTING IMPACT: YES (только дельта для координатора)
+NEW DOCUMENT REQUIRED: NO
+CANONICAL OWNER: 13_Архитектура оперативной верификации и контроля выполнения задач.md
+AFFECTED DOCUMENTS: персональный 000_Задачи Codex.md; после independent review — общий 000, 34, 01/13, 05/06, 20 §5а, 21
+CONTRADICTION CHECK: REQUIRED
+LOSS CHECK: PASS (предыдущий отчёт/БЛОКИ 1–2/архивы сохранены; исходные 155 tests retained)
+```
+
+SHARED DOC DELTA **предложена, не внесена локально**: общий 000/34 должны заменить «callback-window NOT REPRODUCED» на «подтверждён и исправлен; 166 PASS self-reported, независимая приёмка ожидается»; 01/13 — отразить post-callback terminal gate и точный предел provisional notification; 21 — before/after, хеши, 61 scenario и ограничения; 05/06 — отдельное append-only событие AMENDMENT; 20 §5а — сохранить S1/S2/151G закрытыми до независимого решения. Immutable 33.3 и прежние findings не переписывать, новой нумерации коммитов не выдумывать. Новых нормативных изменений Git-контракта нет.
+
+NEXT (ChatGPT):
+
+1. Независимо сверить server.py/test hashes из A6, проверить оба call sites и post-callback gate, собственный terminal acknowledgement, legacy arguments, обычный Exception и распространение BaseException. Отдельно оценить provisional SUCCESS / corrective BLOCKED semantics и отказ corrective append; не подменять их обещанием «SUCCESS вообще не наблюдался».
+2. Повторить C5 **с guards**, ожидая 166 PASS / 0 FAIL/ERROR/SKIP, exit 0, guard 0. Проверить inclusion всех прежних 155 test IDs, исходные F01–F04 (Dredd=0/SUCCESS=0), 11 новых methods / 61 scenario, отсутствие replay/новых фаз.
+3. Проверить loss check карточки: исходный БЛОК 1 WAITING, БЛОК 2 прежний, старый БЛОК 3 и архивы целы; AMENDMENT только дописан. Согласовать SHARED DOC DELTA после независимого verdict.
+4. Commit/push/публикация — пользователь или отдельно уполномоченный внешний координатор. Самостоятельной независимой приёмки, DONE/VERIFIED, открытия S1/S2/151G и нового TASK старта здесь нет.
+
+**RESULT READY / AWAITING INDEPENDENT VERIFICATION. После сохранения отчёта исполнитель остановлен до независимой приёмки.**
+
+---
+
+## ARCHIVED S0-001 — прежние БЛОКИ 2/3 (сохранено при REPAIR, 2026-10-10)
+
+Историческая постановка S0 и отчёт FINDINGS / NO S0 PASS сохранены дословно. Это не активная задача и не новый verdict.
+
+```````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK ID:** CODEX-RT002-S0-001 — RT-002/B2 / S0: Fresh Kernel Integration Baseline and Safety Gate.
+**Статус:** **USER APPROVED / READY FOR MANUAL START** (2026-10-10), одна задача за раз; исполнитель — **Codex, GPT-6 Sol, Very High** (выбрано пользователем, реальный backend/effort проверять отдельно).
+**ARCH CLASS:** Ultra Runtime / Verification / Safe Rebaseline.
+**PRIMARY PROFILE:** \`13_Архитектура оперативной верификации и контроля выполнения задач.md\`.
+**SECONDARY:** \`20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md\` (§5а), \`21_Журнал качественного перехода - решения, метрики и аудит.md\`; при необходимости \`01\`.
+**Утверждённое основание:** итоговый план \`33.3 FINAL-B2\`, immutable commit №242 \`e7365ea773c9adc4e813e05a58810e40b4de4bb4\`, SHA256 \`c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf\`; внешний **USER PLAN APPROVAL** в документе \`28\`, canonical handoff в \`20 §5а\` (commit №244). **Старая 151C PARKED / КТ-3 PENDING**, её НЕ принимать под видом S0.
+**Snapshot от координатора до нового назначения:** \`main@cd48ff1629a8e04a734e36196d32ee52e37c103b\`, \`server.py\` blob \`a2e362e552e77b60378b794fe0bec819ec7a0608\`, \`task_planner.py\` \`07f170d07951ee3bd3def22be545bc579dddf6c2\`, \`run_store.py\` \`b5b0e5d6375d8c51b673c0ad14c1d7298fa29c6d\`, \`verifier_runtime.py\` \`4c6b7b08a50cd6698822c7eaba27718c91d9d11e\`; локальные bytes/dirty state могут отличаться и требуют точной, не-Git проверки.
+
+## Зачем нужна S0
+
+Проверь **доказательно**, пригоден ли реально существующий код Ultra для новой защищённой ветки S2/S3→S6a/151G. До изменения архитектуры нужны permission/scope, exact evidence, freshness и recovery гарантии. Результат — один из **BASELINE SUITABLE FOR NAMED NEW SCOPE / FINDINGS / BLOCKED**, с четкими границами доказанного. S0 **не** означает независимую приёмку всей старой 151C и не выдаёт КТ-3 DONE.
+
+## Рабочий маршрут и самостоятельность
+
+1. После пользовательского **GitHub Desktop Fetch/Pull** пройти обычный старт \`08 → общий 000 → 34 → 18 → 01 → персональный 000\`; прочитать \`13\`, \`20 §5а\`, адресно \`21\`, \`33.3 B2\`, \`28\` (USER PLAN APPROVAL) и действующие правила \`DOC-GIT/READ/VERSION/CHANGE @1\` с dependencies. Историческая шапка sealed B2 была DRAFT на момент seal; текущие полномочия **в 28 + 20**, не объявлять план неутверждённым по старой immutable шапке.
+2. **Тебе разрешена глубокая инженерная самостоятельность:** сам выбери порядок чтения, AST/source review, изолированные mock/fixtures, offline targeted tests и adversarial edge cases. Перечисленные файлы — **не ограничение на чтение**. При обнаружении в scope существенной неучтённой проблемы зафиксируй факт, риск, severity, repro и возможное безопасное решение, не скрывай его ради быстрого PASS.
+3. Основные entry points: \`server.py\` (permissions, accepted args/target, tool dispatch, Final Audit packet, SUCCESS), \`task_planner.py\` (RAW TASK/requirements/contains/equals), \`run_store.py\` (source/generation/attempt identities и restart), \`verifier_runtime.py\`, storage/accounting по необходимости; тесты \`test_final_audit_recovery.py\`, \`test_final_audit.py\`, прочие адресные \`test_*.py\`. Не повторять вслепую дорогие исторические архивы. Ссылаться на реальные source selector/revision, отделяя наблюдение от historical claim.
+4. **Никакого локального Git/GitHub**, включая status/diff/log/read .git/API или их запуск через tests/helpers; это \`DOC-GIT-01@1\`. Git evidence/SHA от координатора, локально читать файлы напрямую и при необходимости вычислять локальные SHA-256 без Git. Если для конкретного вывода необходима история, дать \`GIT_DATA_REQUIRED\` с точным запросом и продолжить независимые безопасные пункты.
+5. **Никакого платного/live провайдера, сетевых вызовов, R-031 stress, пользовательского production storage и других агентов.** Для тестов применять temp workspace, fake socket/HTTP, подменённые adapters; перед большим suite проверить отсутствие скрытых Git/network/write side effects. Если опасность не исключена — skip соответствующий suite и отметить честное ограничение.
+
+## Минимальные инварианты (не потолок исследования)
+
+- **Authority / source identity:** Server scope, task/run/plan/stage/generation/requirement, разрешённый target и аргументы READ/VERIFY; wrong target, denied scope, wrong predicate, false equality/blocking.
+- **Полнота до Dredd:** обязательный source/negative tail, truncated/missing READ, wrong target/old generation не могут удовлетворить requirement; incomplete mandatory packet ⇒ \`0 Dredd sends\`, \`0 SUCCESS\`. Проверка пакета против исторического 151C shape — только новая узкая интеграционная пригодность.
+- **Freshness/transition:** replan, repair, mutation и внешние изменения требуют свежего proof; после Audit Packet и перед SUCCESS прежний PASS перепроверяется, hash/same bytes другой identity недостаточно.
+- **Reserve/recovery:** существующий mandatory physical-tool reserve, restart/replay без повторной мутации, отсутствие ложной успешности при missing evidence/UNKNOWN/storage problem.
+- **Positive + negative:** проверить законно выполнимую простую fixture (чтобы guard не блокировал всё), а также deliberate wrong args/target, stale/negative, truncated, restart/abort, permission-denied, unsupported material и failure diagnostics. Найди дополнительные edge cases самостоятельно.
+
+## Что можно менять в этой одной TASK
+
+**Разрешено:** адресные новые или исправленные **изолированные offline regression tests/fixtures** (например \`test_rt002_s0_kernel.py\` и при необходимости \`test_final_audit_recovery.py\`), и только они, если это повышает доказательность. Локальный Codex вправе глубоко читать релевантный production code и сам решать, какие тесты нужны. **Production runtime/config/transport/UI не менять** в S0 — это отдельные будущие TASK после S0 PASS. При найденном небольшом production дефекте приложить repro и предложить минимальный патч для следующей отдельно разрешаемой работы; не маскировать исходное состояние исправлением до проверки.
+
+**Документы:** локально разрешена только собственная task-card \`000_Задачи Codex.md\` для handoff; общие \`000/05/06/13/20/21/28/33.3/34/01\` не редактировать, их сопровождает ChatGPT после независимой приёмки. **Не удалять и не затирать старые карточки** — DOC-034 и REVIEW-1 сохранены ниже в истории. По завершении безопасно перенести S0 постановку в БЛОК 2 и factual result в БЛОК 3, сохранить архив, затем очистить БЛОК 1 до ожидания. Никаких git commit/push.
+
+## Acceptance / отчёт
+
+В БЛОКЕ 3: \`TASK ID\`, прочитанные source и локальные точные hashes, что совпало с предоставленным baseline, что не доказано; \`PASS/FINDING/BLOCKED\` по каждому инварианту со source path/selector; targeted offline commands + **реальные числа** и network/Git isolation; изменённые test paths, found defects, rollback test changes, DOC IMPACT и строго ограниченный NEXT. Фактическое \`RESULT READY / AWAITING INDEPENDENT VERIFICATION\` **не** \`DONE\`. Не сдавай большой общий обзор вместо воспроизводимых probes.
+
+**Завершение:** независимый ChatGPT verifier по опубликованным изменениям и отчёту отдельно устанавливает \`SUITABLE FOR NAMED SCOPE / FINDINGS / BLOCKED\`. Пока нет этого решения, S1 и другие новые TASK не запускать. **Стартовать только по ручной команде пользователя.**
+
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+## CODEX-RT002-S0-001 — factual baseline / 2026-10-10
+
+**Статус исполнения:** RESULT READY / AWAITING INDEPENDENT VERIFICATION. **Предлагаемый verdict:** FINDINGS; пригодность для новой защищённой ветки S2/S3 → S6a/151G пока НЕ доказана. Это локальная самопроверка, не независимый PASS, не DONE и не закрытие 151C/КТ-3. Найдены четыре HIGH-воспроизведения с двумя общими причинами. Production оставлен в исходном состоянии.
+
+**Исполнитель:** локальный Codex. Пользователь запросил GPT-6 Sol / Very High; фактический backend и reasoning effort доступными средствами независимо не подтверждены. Другие агенты не привлекались.
+
+### 1. Основание, источник и границы
+
+Применён маршрут 08 → общий 000 → 34 → 18 → 01 → собственная карточка. Адресно прочитаны 13 (server authority, evidence/freshness, §18 Final Audit и pending recovery), 20 §5а, текущая RT-002 запись 21, внешний USER PLAN APPROVAL в 28, 33.3 FINAL-B2 (§2 T0/S0, §3 DAG и границы последующих этапов). Получены определения `DOC-GIT-01@1`, `DOC-READ-01@1`, `DOC-VERSION-01@1`, `DOC-CHANGE-01@1` из 18 вместе с requires; использовано ручное адресное чтение, не несуществующий автоматический resolver.
+
+33.3: **45043 исходных UTF-8 bytes**, полный SHA-256 **c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf** — точное совпадение с утверждённым B2, без нормализации переводов строк. Immutable commit №242 / `e7365ea773c9adc4e813e05a58810e40b4de4bb4` и разрешение/handoff №244 приняты как сведения координатора; старый DRAFT внутри immutable B2 не отменяет внешнее утверждение.
+
+Четыре runtime-файла локально совпали по SHA-256 с байтами, изученными в предыдущем REVIEW. Это сравнение обычных файлов, **не** доказательство совпадения Git blob. Координаторский `main@cd48ff1629a8e04a734e36196d32ee52e37c103b` и предоставленные blob IDs сохранены в полной постановке БЛОКА 2; локальные Git state/HEAD/dirty status не исследовались.
+
+**GIT_DATA_REQUIRED, только для committed↔local сверки:** координатору предоставить полные обычные file-byte SHA-256 либо экспортированные bytes `server.py`, `task_planner.py`, `run_store.py`, `verifier_runtime.py` из указанного snapshot с точным revision. Текущие probes от этого не зависели; утверждение «проверена именно committed версия» остаётся недоказанным. Git-object hashes не вычислялись обходным способом.
+
+### 2. Что изменено и как воспроизвести
+
+Создан только `M:/GitHub/ag_llm/test_rt002_s0_kernel.py` (27453 bytes, SHA-256 **845134a0ee3493e31213107c52bba7437c2364505d3036bda4556b5e3a9c5341**). Это отдельный guarded runner, 16 новых тестовых методов и явный manifest 81 существующей проверки; существующие тесты не изменены. Документационное изменение — только эта карточка: полная S0 постановка перенесена в БЛОК 2, прежние REVIEW-1 БЛОКИ 2/3 сохранены ниже, старые архивы оставлены.
+
+Из `M:/GitHub/ag_llm`:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py
+```
+
+**Финальный запуск: 97 tests = 93 PASS + 4 FAIL; 0 ERROR, 0 SKIP, exit 1.** Красные проверки намеренно показывают дефекты baseline; не помечены expectedFailure и не замаскированы общим PASS.
+
+| Группа | Число |
+|---|---:|
+| Новые KernelBoundaryTests / IdentityBoundaryTests | 14 / 2 |
+| StageEvidenceContractTests | 10 |
+| FinalAuditByteBudgetTests / RecoveryIntegrationTests | 2 / 16 |
+| PersistenceStateTests / PlannerIntegrationTests | 11 / 20 |
+| VerifierRuntimeTests, адресный protocol subset | 10 |
+| Run Store v2 / provider accounting, прямой вызов pure fixtures | 9 / 3 |
+| Всего | 97 |
+
+Повтор четырёх дефектов на том же финальном test-файле:
+
+```powershell
+.venv/Scripts/python.exe -B test_rt002_s0_kernel.py test_read_change_before_fingerprint_cannot_certify_old_content test_verify_change_before_fingerprint_cannot_certify_old_predicate test_missing_recorder_cannot_return_certified_success test_lost_tool_outcome_cannot_return_certified_success
+```
+
+**4 tests, 4 FAIL, 0 ERROR/SKIP, exit 1.** Все четыре вновь дошли до одного mock Dredd вызова и одного SUCCESS. Изоляция обоих запусков: **0 guard violations**, реальных provider/Git/network вызовов нет.
+
+Проверка обычного unittest discovery:
+
+```powershell
+.venv/Scripts/python.exe -B -m unittest test_rt002_s0_kernel -v
+```
+
+**0 tests, 1 module SKIP, exit 0** — ожидаемо: без standalone-изоляции модуль не импортирует runtime и не устанавливает глобальные hooks в чужой suite. Это проверка безопасного включения файла, не дополнительный runtime PASS. Промежуточные запуски с доработкой fixtures не включены в 97; ошибки настройки denied scope, ожидаемого LOOP DETECTED и Windows newline устранены до финального результата.
+
+### 3. Изоляция и предел доказательности
+
+Guard устанавливается **до** imports server/legacy fixtures: audit hook блокирует subprocess/os.system/spawn, Python socket connect/bind/DNS, чтение .git, чтение production .ultra и файловые мутации вне уникального temp root. Единственное разрешённое socket housekeeping — синхронный stdlib socketpair для Windows asyncio. LOCALAPPDATA/APPDATA/TEMP/TMP направлены в sandbox; -B запрещает pycache writes.
+
+Executor HTTP, token acquisition, Planner и Dredd заменены fake/AsyncMock adapters; server Git helpers заменены фиктивными обычными словарями. Без этих mocks исходный runtime умеет обращаться к Git: наличие проверки S0 не меняет его архитектуру и не даёт такого права локальному агенту. Из manifest исключены весь FinalAuditGitScopeTests и методы recovery `test_ignored_file_material_remains_available_without_git_diff` / `test_git_diff_state_drift_requires_new_source_evidence`; они не исполнялись. Полный неотобранный legacy suite не запускался. Pytest-style функции вызваны напрямую с temp fixtures и MonkeyPatch, без plugin discovery.
+
+Это process-local Python guard плюс проверка выбранных путей, **не OS sandbox** и не сертификация произвольных сторонних расширений. Stress, GUI, реальные provider/transport и Git semantics не проверены. Mock PASS намеренно используется для проверки механических server gates: выводы не зависят от добросовестности LLM.
+
+### 4. Инварианты: результат с точными selectors
+
+В таблице имена test_* относятся к manifest runner; полный список каждого вызова сохраняется в result.json и воспроизводится из _manifest().
+
+| Инвариант | Verdict | Доказательство / предел |
+|---|---|---|
+| Server permissions, READ/VERIFY scope, traversal, WRITE denial/grant | PASS в проверенных случаях | Новые test_read_and_verify_denied_scopes_and_traversal, test_denied_read_never_satisfies_requirement_or_calls_dredd; PlannerIntegration test_scope_violation_does_not_reach_audit_or_force, test_write_off_uses_existing_permission_escalation, test_explicit_permission_grant_allows_same_contract_to_continue. Denied READ заканчивается LOOP DETECTED после трёх ошибок, не SUCCESS; диагностируется PermissionError. |
+| task/run/plan/stage/generation/requirement/source + exact arguments | PASS в проверенных случаях | test_identity_dimensions_and_same_hash_other_target_are_rejected: 9 подмен identity/status/executed и другой target при одинаковом content hash; StageEvidenceContract old_plan_version, execution_repair_generation, missing_source_record_identity; PlannerIntegration wrong_successful_verify и server_evidence_gate. Аргументы связываются arguments_sha256; модельный текст не становится authoritative fact. |
+| equals ≠ contains; false equality | PASS без гонки; FINDING при гонке | test_exact_equality_is_not_contains_and_false_block_is_explicit; test_required_false_equals_blocks_without_dredd: 0 audit, 0 SUCCESS, VerificationError/LOOP DETECTED. Положительный точный equals и READ проходят; F02 показывает отдельную потерю свежести. |
+| Полнота обязательного material до Dredd | PASS для missing/truncated/budget cases; FINDING по durability | Recovery test_missing_required_material_blocks_before_dredd, required_material_budget_exhaustion, deduplicated_required_large_read, tool_level_truncated_find_text, truncated_model_result; PlannerIntegration incomplete_requirement_coverage. В этих случаях 0 mock audit, 0 SUCCESS. Но F03/F04: отсутствующий durable source не признаётся incomplete. |
+| Negative tail / failed exact outcome / dedup | PASS в проверенных случаях | Recovery failed_exact_check_keeps_details_and_its_outcome_record, failed_exact_metadata_survives_zero_material_budget, empty_search_negative_fact_survives_no_preview_budget, complete_deduplicated_material_keeps_an_explicit_source. count=0 и expected/actual остаются явными; старый truncated generation не блокирует новый fresh proof. |
+| replan/repair/mutation/dependency drift | PASS для проверенных transitions | StageEvidenceContract old_plan_version, execution_repair_generation, target_state_drift, dependency_drift_in_compile_paths; PersistenceState stale_candidate, server_binding_other_plan_version, satisfied_receipt_invalidated_by_external_change и replan_cannot_silently_drop_obligation. |
+| freshness после packet, после Dredd и перед terminal SUCCESS | PASS в проверенных поздних окнах; FINDING в исходном observation binding | PlannerIntegration state_change_during_packet_collection и state_change_during_final_audit; Recovery directory_listing_drift_after_pass; новый test_mutation_after_audit_pass_before_terminal_gate_requires_new_read: изменение в callback final_audit_passed вызывает terminal_evidence_freshness_blocked, fresh READ и второй audit, только затем SUCCESS. F01/F02 подменяют исходный binding раньше этих gates, поэтому поздние сравнения его не исправляют. |
+| Mandatory physical-tool reserve | PASS в проверенных случаях | PlannerIntegration test_tool_reserve_preserves_mandatory_write_read_verify_calls: лимит 3, ровно WRITE/READ/VERIFY; лишние calls остановлены до выполнения. test_tool_reserve_blocks_impossible_plan_before_executor_api: лимит 2, 0 executor API, 0 audit. Это существующий reserve, не будущий S3 resource ledger. |
+| abort/restart/replay, UNKNOWN | PASS узко; полного crash recovery proof нет | Новый test_abort_after_write_records_no_success_and_does_not_auto_replay: физический WRITE=1, cancellation до receipt, 0 audit/SUCCESS; новый controller не загружает и не переигрывает старый latch. Existing successful_persistence_advances_before_executor_can_repeat_write не допускает повторного WRITE. Unknown usage остаётся incomplete; duplicate terminal не удваивает usage. Это не доказательство exactly-once при power loss и не реализованный resume interrupted RUN. |
+| Storage failures | FINDING | Плановый atomic_state failure прекращает RUN до executor/audit; last-state preservation, retry/fallback generation проверены. Однако F03/F04 допускают SUCCESS без обязательного durable outcome. |
+| Unsupported material / diagnostics / protocol | PASS в проверенных случаях | test_missing_oversized_unsupported_and_invalid_predicate_fail_closed: missing file, binary suffix, file limit, bad kind/hash/exists args. Dispatcher failure оставляет tool_started → tool_error. Verifier malformed/unknown/mismatched verdict/check_type и unsupported provider/model не превращаются в PASS и не fallback. Реальный транспорт не тестировался. |
+
+### 5. Findings: воспроизведение, причина и безопасное предложение
+
+#### S0-F01 — HIGH: READ material и observed_state относятся к разным состояниям файла
+
+**Repro:** `KernelBoundaryTests.test_read_change_before_fingerprint_cannot_certify_old_content`. Только temp target: READ возвращает `OLD MATERIAL`; wrapper сразу после реального READ заменяет файл на `NEW MATERIAL`, до возврата управления server evidence binding. Не подменяются result, contract, hashes, lifecycle или решение Server. Это детерминированное воспроизведение внешнего изменения в реальном промежутке между чтением и повторным snapshot.
+
+**Факт:** packet содержит `OLD MATERIAL`, а `observed_state_sha256` совпадает с fingerprint уже `NEW MATERIAL`. completeness.complete=true / critical_for_success=false; mock Dredd=1, terminal SUCCESS=1. Следующие freshness checks сравнивают текущий файл с ошибочно новым binding и не видят старость READ.
+
+**Источник:** server.py `_agent_read_file`, `_planner_dependency_fingerprint`, `_run_agent_task_impl` — формирование observed_state_sha256 и consistency_tool_facts после dispatcher; task_planner.py `evidence_dependency_state_fingerprint` / `_matched_evidence_requirement_ids_for_stage`. Значимость: сервер заявляет свежий обязательный READ, который фактически не видел текущего содержимого.
+
+**Минимальный будущий patch, НЕ применён:** строить observation fingerprint из того же наблюдения/байтов, что породили tool result (для READ — content_sha256 и canonical target/exists). Отдельный текущий snapshot использовать только для сравнения, не для присвоения старому result нового observed_state. При несовпадении reopen generation / запрос fresh proof или явный BLOCKED; проверить read_file_range/find_text/list_dir тем же принципом. Простой дополнительный post-read snapshot сам по себе проблему не решает, если им снова маркируется старый material.
+
+#### S0-F02 — HIGH: старый положительный equals сертифицирует уже неверный target
+
+**Repro:** `KernelBoundaryTests.test_verify_change_before_fingerprint_cannot_certify_old_predicate`. Файл физически записан как `done\n` с newline="", real verify(kind=equals,value="done\n") возвращает true; до binding wrapper меняет target на `WRONG`. Положительный control `test_positive_exact_verify_control_for_fingerprint_race` с теми же исходными bytes/args без изменения проходит.
+
+**Факт:** packet verification.passed=true и actual_sha256=`SHA256("done\n")`, но observed_state относится к `WRONG`; mock Dredd=1, SUCCESS=1. Это не смешение contains/equals и не Windows newline artifact. Причина общая с F01, но проверяется более сильный детерминированный predicate.
+
+**Источник:** server.py `_agent_verify_file_content`, post-dispatch observed_state binding; task_planner.py matcher и freshness. **Будущий patch:** bind VERIFY к actual observation, включая exists/actual_sha256 и args fingerprint; при current state mismatch обязательный свежий VERIFY. Для exists/absent отдельно зафиксировать наблюдаемую existence; для directory/multi-path dependencies не притворяться, что file-only fingerprint универсален. F01/F02 — одна обязательная область исправления и два независимых repro, а не два разных архитектурных механизма.
+
+#### S0-F03 — HIGH: недоступный Run Store не блокирует защищённый SUCCESS
+
+**Repro:** `KernelBoundaryTests.test_missing_recorder_cannot_return_certified_success`: constructor `AuditThreadRecorder` выдаёт OSError, имитируя недоступное хранилище. READ и lifecycle работают в temp; result существует только в оперативном контуре.
+
+**Факт:** audit_storage_error наблюдаем, `source_run_store_record_id=null`, но сгенерированный RAM `source_record_id=evidence_...` достаточен для complete=true / critical_for_success=false; mock Dredd=1, SUCCESS=1.
+
+**Источник:** server.py `_run_agent_task_impl`, init AuditThreadRecorder (комментарий “Audit observability is not allowed to veto the Executor RUN”), `_emit`; `_final_audit_requirement_coverage` / packet completeness. Это действующий best-effort design, а не утверждение о случайной новой регрессии. Он не обеспечивает требуемую S0 гарантию сохранённого обязательного proof/recovery.
+
+**Будущий patch:** разделить необязательную observability и обязательное evidence storage. Для protected requirement нужен успешно сохранённый и адресуемый outcome с RUN/plan/stage/generation/args/target identity; иначе critical_for_success до Dredd и запрет certified SUCCESS. Не превращать любой сбой cosmetic trace/UI logging в общий veto. UI/config в S0 не трогались.
+
+#### S0-F04 — HIGH: потеря durable tool_finished оставляет ложную полноту packet
+
+**Repro:** `KernelBoundaryTests.test_lost_tool_outcome_cannot_return_certified_success`: recorder создаётся, tool_started и другие события записываются; только `observe(tool_finished)` выдаёт OSError.
+
+**Факт:** outcome pointer становится null; fault виден в событии, но completeness снова complete=true / critical_for_success=false; mock Dredd=1, SUCCESS=1. Сохранённый tool_started и RAM material не заменяют запись результата инструмента. Отдельная обычная положительная READ fixture проверяет, что непотерянный source действительно разрешается через load_run_record.
+
+**Источник:** server.py `_emit`, обработка tool_result_record после tool_finished и присваивание source_run_store_record_id; task_planner.py matcher требует только непустой logical source_record_id; packet requirement coverage не проверяет durable outcome availability.
+
+**Будущий patch:** сохранять обязательный outcome до удовлетворения requirement; проверять существование/целостность и точную identity адресуемой записи, а не только непустую строку-ID. Отклонять отсутствующий/недоступный/повреждённый outcome. Явно обрабатывать partial append/index failure и cancellation между mutation и receipt без автоматического retry mutation. F03/F04 — две точки отказа одной обязательной области storage.
+
+**Рекомендация для независимой приёмки:** признать FINDINGS и не выдавать SUITABLE FOR NAMED NEW SCOPE до адресного исправления двух причин и повторной S0-проверки. Наличие 93 зелёных проверок не компенсирует четыре нарушения обязательных guarantees. Выпуск исправлений требует новой отдельно разрешённой TASK; её создание/старт здесь не выполнялись.
+
+### 6. Доступные evidence / reproducibility
+
+Финальный sandbox: `C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-y3mo_q14/`.
+- `result.json`: manifest всех 97 cases, фактические counts, isolation violations, events и packets четырёх repro; SHA-256 **72b278ab3cd4a42b735d180c33794179880d40482cb3dd1f52828b0aa0e0b848**.
+- `unittest.log`: SHA-256 **9d28dcc90474fc683ff666263e76c1126f1aa78a79a0ce3c6eecb331d237d209**.
+- Время runner 27.949 s. Случайные RUN/record IDs и время при повторе закономерно меняются; критерии counts/identity/гейтов остаются теми же.
+
+Повтор: `C:/Users/REX/AppData/Local/Temp/codex-rt002-s0-ltmtrjzz/`.
+- `result.json`: SHA-256 **95de5c259e67afccf2ce73c93575b17f39023e2938d6759a344853fb72d8cafd**.
+- `unittest.log`: SHA-256 **0ff71ec5a138b610cca0882d4fbaebcf166f8d9bcba2e4811831c6b417e43153**.
+- Время runner 2.612 s.
+
+Доступность обоих JSON/log и соответствие log hashes проверены. Это временные локальные evidence, **не immutable archive и не SUBMITTED seal**. Внутренние temp workspaces отдельных fixtures очищаются; воспроизводимый test source и достаточные факты сохранены в разрешённых рабочих файлах. До внешней публикации/печати статус остаётся RESULT READY; номер коммита не придуман. Hash этой карточки публикуется отдельно от её собственных bytes.
+
+### 7. Локальные source revisions (полные file-byte SHA-256)
+
+Пути ниже относятся к `M:/GitHub/ag_llm/`; это точные байты локальных файлов, не Git blobs. Исходный snapshot карточки до ротации: **8ceb169dcafa555dcb67e278d939ae545e032ddbc6bdd70b5c7cae1113b5f4d7**. Финальная проверка охватывает 166 исходных файлов корня и документации: изменена только собственная карточка, остальные **165 byte-identical**; дополнительно создан один разрешённый test-файл. Production/config/transport/UI и существующие tests не изменены.
+
+| Runtime / fixture source | SHA-256 |
+|---|---|
+| `audit_storage.py` | `15466977e17d2f48e377ccd9b77d7ecc01aaec82c2aabf4501f8cd3c11595905` |
+| `planner_runtime.py` | `ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e` |
+| `provider_accounting.py` | `dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902` |
+| `run_store.py` | `91f82db61a75980ebae8a0ee4e707ac2c09e33628021991d70d639b97b2eef44` |
+| `server.py` | `404d43d6a39924a3a0d725650f0cf4ba67591bca13e071794ab4d576f378090a` |
+| `task_planner.py` | `c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346` |
+| `test_final_audit_recovery.py` | `8dc022756d5a3b4abb46c86d68f4ea0c9771b4ccba264253843b47b7ade32442` |
+| `test_final_audit.py` | `1e7f883ab9579d9775e6f1603dea46dba37f6f95a8eccf5c1ef39846dd383c57` |
+| `test_provider_accounting.py` | `5c16cc5ab0d55a9ca88720e4c1b42031f4c3cb5657501045403d235fddb00738` |
+| `test_run_store_v2.py` | `28334ef3a59d8ed375eaca7e91e97048cd07f1fdd53526672391546e8fe4b4a2` |
+| `test_stage_evidence_contract.py` | `3467538143c6b7bbab031211a9a6f8d18882899f3a60d877dcd4f91f6eaf12c9` |
+| `test_task_planner.py` | `49ba81617fb85da8656e67db3613a7b641479ad3f177238ad736df6ae019cfa9` |
+| `test_verifier_runtime.py` | `905b6b4cf5553b4f0cfd29edcf3157daa9faa4c78d96416323772880a520cd1a` |
+| `verifier_runtime.py` | `7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228` |
+
+| Нормативный source (Документация/) | SHA-256 |
+|---|---|
+| `000_Задачи для агента.md` | `159584416c3edc8d285143bf4e1349d51a8535753922608f1963a9782de30a12` |
+| `01_Архитектура и текущее состояние.md` | `0d292f590dfce4f9a72abebb7067c2bbd8eaa1ead3d662ac227d586c4b6bc5da` |
+| `08_Старт.md` | `143cd3fb5b7d22d8288726753bfaf248f4d8a5dcd7f2a4e96dd02ba629ce16b0` |
+| `13_Архитектура оперативной верификации и контроля выполнения задач.md` | `994cd41a3ca460753b665c901667548f46462ebf2b2e7167341e7d9bae88f742` |
+| `18_Регламент сопровождения документации.md` | `88fab7b4a23f1dda95ee1fc2c83417fc261333ffdcac1dfb6d8d21d3444c94aa` |
+| `20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md` | `22c7786c41ce7000c640ac82f523270cc98f1e4287277fa1b02b4f15ffee048a` |
+| `21_Журнал качественного перехода - решения, метрики и аудит.md` | `0c1b020bbe0661420b618e1afcd945479028dc58b5e87de57fd009c352b50793` |
+| `28_Круглый стол - протокол и текущий вопрос.md` | `1cbb8d05596085955a22575e0c46cb3a3ee05f5bc4ef74515ea593feec8fe9d1` |
+| `33.3_Круглый стол - итоговый план.md` | `c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf` |
+| `34_TACTICAL_CONTEXT.md` | `a487b36fb181d0328ce772b7f681f5f963c9af881ea327638bef858a5c295e11` |
+
+### 8. Closeout / DOC IMPACT / NEXT
+
+**Rollback test changes:** удалить только созданный `test_rt002_s0_kernel.py`, если пользователь отклонит этот набор; runtime откатывать нечего. Возврат карточки возможен из сохранённой постановки БЛОКА 2 и архива REVIEW-1, без уничтожения factual result/истории; никаких reset/checkout. Временные sandbox logs можно удалить после независимой приёмки/сохранения нужных evidence, только по точным путям. Очистка сейчас не выполнялась.
+
+**Documentation Change Impact:** нормативные Rule-ID/contract не изменены. Обязательные БЛОКИ 1/2/3 сохранены; S0 assignment скопирован полностью, REVIEW-1 БЛОКИ 2/3 сохранены отдельным архивом, прежние 151C/DOC-034 архивы — byte-exact. Текст до БЛОКА 1 сохранён byte-exact. Новых wiki/Markdown graph edges не добавлено, прежние ссылки не переименованы; механическая проверка структуры/сохранения выполнена. Это не визуальный Obsidian Graph PASS и не принятие старой DOC-034.
+
+**SHARED DOC DELTA — передать ChatGPT после независимого рассмотрения:**
+- 20 §5а / 21: зафиксировать локальный S0 result FINDINGS, 97=93+4 и четыре repro/two root causes; независимый verdict и возможные исправления записывать отдельно. Не выдавать старт S0 за его приёмку.
+- общий 000 / 34: отразить ожидание независимой проверки/решения, не объявлять S1 или зависимые этапы разблокированными.
+- 13: при подтверждении findings уточнить предел текущего observation binding / durable source guarantees; исправленный runtime описывать только после отдельной реализации и проверки.
+- 28 / 33.3: утверждение B2 и immutable bytes не менять; результаты S0 не являются новой редакцией плана или принятием 151C. S13a ACCEPTED before S6b остаётся условием канонического маршрута.
+
+Общие документы вне write-scope не правились. **DOC CLOSEOUT INCOMPLETE для общего контура:** ждёт решения и записей уполномоченного координатора; персональный factual handoff подготовлен.
+
+**Строго ограниченный NEXT:** пользователь публикует локальные изменения; ChatGPT независимо проверяет source hashes, isolation/manifest, воспроизводит четыре failures и устанавливает S0 verdict. При подтверждении — согласовать отдельную TASK исправления двух причин и повтор S0. **Никакой S1+ здесь не начат; 151C PARKED / КТ-3 PENDING сохранены.**
+
+
+---
+
+
+```````
+
+---
+
+## ARCHIVED REVIEW-1 — прежние БЛОКИ 2/3 (сохранено при S0, 2026-10-10)
+
+Ниже прежний closeout сохранён дословно; fenced snapshot не является новым назначением.
+
+````text
+# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА
+
+**TASK:** CODEX-RT-002-PLAN-REVIEW-001 (историческая, сдана и внешне запечатана). Полная утверждённая постановка и closeout неизменно восстанавливаются из GitHub `main@cd48ff1629a8e04a734e36196d32ee52e37c103b` в старом БЛОКЕ 1; оригинальный документ результата — `33.1` immutable commit №238. Характер: REVIEW / NOT BLIND первоначального 33 по V1…V13 с 15 findings, DAG и A1…A8, без кода. **Планирование завершено, не исполнять повторно.**
+
+---
+
+# БЛОК 3 — FACTUAL RESULT / HANDOFF
+
+**TASK:** CODEX-RT-002-PLAN-REVIEW-001
+**Статус:** SUBMITTED / EXTERNALLY SEALED (документальный REVIEW, не runtime DONE). **Result:** `33.1` Codex REVIEW-1, commit №238 `c6b910bde7280ace7250d032ba495554b6c41356`, 15 findings: 9 HIGH / 5 MEDIUM / 1 LOW; seal `28/SEAL-CODEX-REVIEW-1`. Итог B2 создан/утверждён человеком, но Codex-probes не являются независимым runtime PASS.
+**Открыто:** CODEX-ULTRA-151C-RECOVERY-001 PARKED/KT-3 PENDING; CODEX-DOC-034-GRAPH-001 результат archived below, всё ещё требует отдельной независимой/визуальной проверки.
+**NEXT:** только новая USER ASSIGNED `CODEX-RT002-S0-001` в БЛОКЕ 1.
+
+---
+
+
+````
+
+## Архив приоритета 151C — решение пользователя 2026-10-10
+
+`CODEX-ULTRA-151C-RECOVERY-001` снята из активного БЛОКА 1 **без признания DONE**. Первоначальная полная постановка и factual recovery-report сохранились неизменёнными в GitHub `main@27ddda0162959f23fabf92ea80a9a58006af93fc`, файл `Документация/000_Задачи Codex.md`, старый БЛОК 1. Результат 151C — `RESULT READY / AWAITING INDEPENDENT VERIFICATION` / КТ-3 `PENDING`; пользователь отложил эту отдельную приёмку и поручил сначала пересмотреть весь план RT-002. Это не означает принятия 151C и не отменяет требований доказательности для будущих TASK.
+
+БЛОКИ 2–3 по `CODEX-DOC-034-GRAPH-001` — **исторический незакрытый RESULT READY**, сохранены без изменений. Следующая ротация только после безопасной координации, не перетирать историю автоматически.
+
+## ARCHIVED DOC-034 — прежний БЛОК 2
+
+**ИСТОРИЧЕСКАЯ КОПИЯ — НЕ CURRENT БЛОК**, original GitHub cd48ff1629a8e04a734e36196d32ee52e37c103b. История не является выполненной независимой приёмкой.
+
+~~~~text
+**TASK:** CODEX-DOC-034-GRAPH-001
+**Статус:** APPROVED FOR EXECUTION (утверждённая постановка).
+**ARCH CLASS:** Documentation / Obsidian Graph; архитектура и runtime не меняются.
+**PRIMARY PROFILE:** 18_Регламент сопровождения документации.md.
+**CHECK 01:** выполнен; архитектурного влияния нет.
+**REGISTRY IMPACT:** NO — сохранить существующую связь 05 → 34.
+**CONTEXT LIBRARY IMPACT:** NO — библиотека 14–16 и модельный prompt не затрагиваются.
+**DOC IMPACT:** 00, 08, 34 и персональная карточка Codex; правила сопровождения 18 сохраняются.
+**Baseline:** HEAD 3b5ab323446c16cacadf9ce2c796af8b8d75c85a; исходные пользовательские изменения .obsidian/graph.json и .obsidian/workspace.json сохраняются.
+
+TASK: CODEX-DOC-034-GRAPH-001 — Исправление связей Tactical Context в Obsidian
+Исполнитель: Codex
+Проект: ag_llm
+Тип: Documentation / Obsidian Graph
+Статус: APPROVED FOR EXECUTION
+Основание: прямое поручение пользователя в текущем чате.
+1. Цель
+Исправить связи документа 34_TACTICAL_CONTEXT.md в графе Obsidian.
+Требуемая схема:
+00_Главная - карта проекта
+          │
+          ▼
+05_Реестр задач
+          │
+          ▼
+34_TACTICAL_CONTEXT
+
+Документ 34_TACTICAL_CONTEXT.md должен иметь ровно одну связь — с 05_Реестр задач.md.
+Никаких других связей у документа 34 быть не должно.
+2. Что необходимо сделать
+1. Открыть репозиторий ag_llm и ознакомиться с Документация/08_Старт.md, глобальным 000_Задачи для агента.md, 34_TACTICAL_CONTEXT.md и правилами документации.
+2. Найти все входящие и исходящие связи документа 34_TACTICAL_CONTEXT.md во всём Obsidian Vault.
+3. Удалить лишние Wiki Links и Markdown-ссылки, создающие рёбра графа между документом 34 и другими документами.
+4. Сохранить связь 05_Реестр задач.md → 34_TACTICAL_CONTEXT.md.
+5. Убедиться, что 00_Главная - карта проекта.md связан с 05_Реестр задач.md.
+6. Удалить прямую связь 00_Главная - карта проекта.md → 34_TACTICAL_CONTEXT.md, если она существует.
+7. Проверить YAML frontmatter документа 34. Если теги continuity, tactical-context или другие метаданные создают дополнительные узлы и связи в графе, убрать соответствующие теги.
+8. Убедиться, что другие документы не создают обратных ссылок на 34.
+Важно: обычные текстовые упоминания документа 34 удалять не требуется. Если ссылка нужна для инструкции или маршрута чтения, заменить её на обычное текстовое название файла без создания ребра Obsidian Graph.
+3. Обязательные ограничения
+- Не удалять сам документ 34_TACTICAL_CONTEXT.md.
+- Не удалять его оперативный контекст, сведения о задачах, статусах и правилах обновления.
+- Не нарушать регламент постоянного сопровождения Tactical Context.
+- Не изменять связи между другими документами, кроме необходимого восстановления цепочки 00 → 05 → 34.
+- Не менять программный код, runtime и тесты проекта.
+- Не сбрасывать настройки Obsidian Graph для маскировки лишних связей. Исправить именно источники этих связей.
+- Не выполнять commit/push — это сделает пользователь.
+4. Критерии приёмки
+После выполнения в Obsidian Graph:
+Должно быть:
+00_Главная - карта проекта ↔ 05_Реестр задач ↔ 34_TACTICAL_CONTEXT
+Не должно быть:
+Прямых связей документа 34 с 000_Задачи для агента, 01_Архитектура, 06_Журнал, 08_Старт, 18_Регламент, 23, 24, 25 или любыми другими документами.
+Также не должно оставаться связей документа 34 с узлами тегов.
+Итог: у узла 34_TACTICAL_CONTEXT должна быть ровно одна связь — с 05_Реестр задач.
+5. Порядок выполнения и отчёт
+Codex, прочитай эту задачу непосредственно из текущего чата и приступай к исполнению. Дополнительного подтверждения в рамках указанного scope не требуется.
+Соблюдай установленный документационный workflow проекта, включая персональную карточку 000_Задачи Codex.md.
+После изменений:
+1. Проверь ссылки и обратные ссылки по всему Vault.
+2. Проверь отсутствие нежелательных связей через YAML-теги.
+3. Убедись, что содержание Tactical Context не потеряно.
+4. Проверь git diff --check.
+5. Подготовь отчёт: какие файлы изменены, какие связи удалены, какие сохранены.
+6. Если доступна проверка непосредственно в Obsidian Graph, выполни её. Иначе явно укажи, что проверена структура Markdown, но не визуальное отображение.
+Результат передать на независимую проверку ChatGPT.
+Код проекта не затрагивать. Не выполнять никаких дополнительных улучшений вне этой задачи.
+Codex: задача утверждена пользователем. Прочитай постановку выше, выполни её самостоятельно и предоставь результат для проверки.
+
+---
+~~~~
+
+
+## ARCHIVED DOC-034 — прежний БЛОК 3
+
+**ИСТОРИЧЕСКАЯ КОПИЯ — НЕ CURRENT БЛОК**, original GitHub cd48ff1629a8e04a734e36196d32ee52e37c103b. История не является выполненной независимой приёмкой.
+
+~~~~text
+**TASK:** CODEX-DOC-034-GRAPH-001
+**Статус:** RESULT READY / AWAITING INDEPENDENT VERIFICATION.
+**Дата:** 2026-10-09.
+**Baseline:** main, HEAD 3b5ab323446c16cacadf9ce2c796af8b8d75c85a; commit/push не выполнялись.
+
+**Результат:** по структуре Markdown цепочка 00 ↔ 05 ↔ 34 сохранена, у узла 34 ровно один уникальный сосед — 05_Реестр задач.md. Сохранены исходная ссылка 05 → 34 и обе существовавшие ссылки 34 → 05; три вхождения ссылок образуют одно ребро, а не три разных соседа.
+
+**Изменены только четыре Markdown-файла:**
+
+- Документация/00_Главная - карта проекта.md — ссылка на 34 заменена текстовым именем файла; существующие ссылки на 05 сохранены.
+- Документация/08_Старт.md — ссылка на 34 заменена текстовым именем файла; обязательный маршрут чтения и closeout сохранены.
+- Документация/34_TACTICAL_CONTEXT.md — 11 исходящих ссылок на другие документы заменены текстовыми именами файлов, удалены YAML-теги project/continuity и project/tactical-context; aliases сохранены. Выполнен обязательный delta-handoff: текущая документальная TASK, сверка Git, NEXT и последний handoff; оперативные задачи, статусы, открытые вопросы и правила сопровождения сохранены.
+- Документация/000_Задачи Codex.md — полная утверждённая постановка сохранена в БЛОКЕ 2, factual result в БЛОКЕ 3; БЛОК 1 возвращён в ожидание после проверки сохранённых блоков.
+
+**Удалены:** 13 вхождений Wiki Links, образовавших 9 лишних рёбер между 34 и документами 00, 000, 01, 06, 08, 18, 23, 24, 25. Новых рёбер нет. Markdown-ссылок на 34, требующих удаления, не обнаружено. Теги 34 удалены из источника, настройки графа не менялись.
+
+**Проверки:** весь Vault, включая скрытые/ignored каталоги, кроме служебной .git: 301 Markdown-файл, 0 Canvas, 0 символических ссылок; обработаны Wiki Links, Markdown/HTML-ссылки, reference links, пути/расширения/URL encoding и aliases. После изменений остался только источник входящей ссылки 05; исходящие ссылки 34 ведут только в 05. YAML/inline tags у 34 отсутствуют. Полный набор остальных рёбер совпадает с исходным. Loss check: после исключения разрешённых замен ссылок/тегов и трёх closeout-дельт с одной актуальной Git-сверкой весь остальной текст 34 совпадает с исходным. Все семь разделов, карта чтения и регламент DELTA сохранены. Реестр 05 и регламент 18 побайтово не менялись. SHA-256 остальных 1 207 tracked-файлов совпали со снимком на входе. git diff --check — PASS.
+
+**Границы и риски:** структура Markdown проверена, визуальное отображение Obsidian Graph не проверено: доступного управления Obsidian/CLI в текущем окружении нет. Независимый PASS ещё не получен. На входе уже были изменены .obsidian/graph.json и .obsidian/workspace.json; их текущие байты сохранены. Код, runtime, тесты, Alarm, глобальная карточка и канонические журналы не изменялись; новые файлы не создавались. Git HEAD/index не менялись.
+
+**DOC IMPACT:** 00, 08, 34, персональная карточка Codex. REGISTRY IMPACT: NO — существующая связь 05 сохранена без изменения реестра. CONTEXT LIBRARY IMPACT: NO — библиотека 14–16 и runtime prompt не затронуты.
+
+**NEXT:** независимая проверка ChatGPT по этой постановке и diff, затем визуально подтвердить в Obsidian Graph единственного соседа 34 — реестр 05; commit/push выполняет пользователь. Статус не повышать до DONE / VERIFIED до принятого независимого PASS.
+~~~~
+
+````````
+
+`````````
+``````````
+```````````
+
+````````````
+
+`````````````
+
+``````````````
+```````````````
+````````````````
+
+`````````````````
+
+``````````````````
+
+```````````````````
+
+````````````````````
