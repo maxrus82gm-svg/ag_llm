@@ -11,7 +11,7 @@
 | Первопричина | Все workflow задают `TMPDIR = TEMP = TMP = runner.temp`. `tempfile` (Python 3.12.10, `_candidate_tempdir_list`) берёт **первым `TMPDIR`**, затем `TEMP`, `TMP`. Тест переопределял для своего дочернего процесса только `TMP`/`TEMP`; в CI ребёнок унаследовал `TMPDIR`, и его guard (`_audit_temp = _canon(tempfile.gettempdir())`) защищал **TEMP раннера**, а не свой `inner`. Все «внешние» фикстуры теста лежат в `base/outside` — внутри TEMP раннера, поэтому 8 операций законно получили `allowed`; заблокированными остались ровно 4, которые отвергаются при любом корне (явный `\\?\` вне/внутри, устойчивый `$Deleted`, `.git`) → **4 записи журнала вместо 12** = девятое падение. Локально `TMPDIR` не задан → PASS |
 | Куда шла запись | Доказано зондом (`tools/probe_child_root.py`, `runs/probe-child-root-ci-env.json`): в CI-окружении у ребёнка `gettempdir` и корень guard = TEMP родителя, запись в `<BASE>/outside/probe.txt` → `allowed`, **файл физически создан** внутри TEMP раннера; с `TMPDIR = inner` → `blocked`, файла нет. Ни одна запись не вышла за TEMP раннера (корень guard там и был) |
 | Исправление | Только `test_web_alarm_runner_guard.py`: (1) ребёнку задаются все три `TMPDIR`/`TEMP`/`TMP`; (2) ребёнок сообщает фактический корень своего guard и `tempfile`, родитель **проверяет, что это его `inner`** — иначе тест не отличает защиту своего TEMP от чужого; (3) новый метод воспроизводит CI-окружение у родителя независимо от хоста. `wa4a_acceptance.py` (guard) **не менялся** |
-| Тесты | RED на исходных байтах в CI-окружении — **ровно как CI**: те же 8 подслучаев + `4 != 12`, `FAILED (failures=9)` (runner и прямой запуск). GREEN: 7/7 прямой запуск и guarded runner, в локальном и CI-окружении. Мутанты **9/9 убиты в обоих окружениях** (C1–C3 этой задачи, A1–A6 прежние). Focused в форме CI: **46 = 45 PASS / 1 SKIP, isolation 0** (CI: 45, 9 FAIL, 1 SKIP). Полный набор — §6 |
+| Тесты | RED на исходных байтах в CI-окружении — **ровно как CI**: те же 8 подслучаев + `4 != 12`, `FAILED (failures=9)` (runner и прямой запуск). GREEN: 7/7 прямой запуск и guarded runner, в локальном и CI-окружении. Мутанты **9/9 убиты в обоих окружениях** (C1–C3 этой задачи, A1–A6 прежние). Focused в форме CI: **46 = 45 PASS / 1 SKIP, isolation 0** (CI: 45, 9 FAIL, 1 SKIP). Полный набор в CI-окружении: **989 = 987 PASS / 0 FAIL / 0 ERROR / 2 SKIP, isolation 0** |
 | Изменённые файлы | `test_web_alarm_runner_guard.py` (+ эта папка; ротация карточки и запись `001`) |
 
 ## 2. Исходные факты CI (из постановки и 34; сырые логи CI локально недоступны)
@@ -74,7 +74,7 @@ child():  assert normcase(guard) == normcase(inner) и то же для gettempd
 | `green-runner-local` / `green-runner-ci` | локальное / CI | 7/7 PASS, isolation 0 / 7/7 PASS, isolation 0 |
 | `direct/green-direct-local` / `green-direct-ci` | локальное / CI | `Ran 7`, OK / `Ran 7`, OK |
 | `focused-ci` — `test_web_alarm_runner_guard test_web_alarm_transport_event_recovery` (команда CI) | CI | **46 = 45 PASS / 0 FAIL / 1 SKIP (symlink), isolation 0** — Archive Retry не затронут |
-| **`full-ci` — `all`** | CI | FULL_PENDING |
+| **`full-ci` — `all`** | CI | **989 = 987 PASS / 0 FAIL / 0 ERROR / 2 SKIP (symlink, нет привилегии), isolation 0, exit 0** |
 
 ## 7. MANUAL ENGINEERING REVIEW
 
@@ -106,3 +106,7 @@ child():  assert normcase(guard) == normcase(inner) и то же для gettempd
 ## 11. Комплект
 
 `source-baseline.json`, `source-final.json`; `runs/` — только через `web_alarm.evidence_sanitizer`, LF (`runs/runs-map.json`, `runs/census.json`; `runs/direct/*` — прямые запуски; `runs/probe-child-root-*.json` — зонд корня); `tools/` — `probe_child_root.py`, `direct_run.py`, `build_mirror.py` (C1–C3, A1–A6, `original-test`), `run_mutants.py`, `run_gate.py`, `census.py`, `snapshot.py`, `collect_runs.py`, `make_manifest.py`, `rotate_task.py`; `manifest.json`; ротация — `rotation.json`.
+
+## 12. Ротация карточки
+
+`tools/rotate_task.py`, квитанция `rotation.json`: precheck OK (БЛОК 1 = эта TASK, окна 5/5, предыдущая своя запись `001` прочитана по квитанции FT1-ARCHIVE-RETRY и заканчивает файл); **A** — запись `001` (постановка дословно, факт `closeout-001.md`, вытесненные строки `CLAUDE-WUA-0-EGRESS-ARCH-REVIEW-001`) 26 279 B со смещения 745 783, readback MATCH, прежние байты неизменны; **B** — новые строки сверху БЛОКОВ 2–3, окна 5/5, БЛОК 1 → `Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ` / `TASK: —`; Правила и **БЛОК 4 побайтно неизменны** (`2cd5bada…49af8`).

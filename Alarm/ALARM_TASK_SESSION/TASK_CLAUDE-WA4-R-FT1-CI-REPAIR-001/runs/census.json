@@ -579,6 +579,29 @@
     "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
    },
    "exit": 1
+  },
+  "full-ci": {
+   "tests_run": 989,
+   "methods": 989,
+   "method_counts": {
+    "PASS": 987,
+    "SKIP": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
   }
  }
 }
