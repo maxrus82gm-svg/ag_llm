@@ -53,6 +53,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -B -c "import json,sys,pathlib; d=json.loads(pathlib.Path(r'${{ runner.temp }}/gpt-es-target/results.json').read_text(encoding='utf-8')); ok=(d['tests_run']==69 and d['passed']==69 and d['failures']==0 and d['errors']==0 and d['skips']==0 and not d['isolation_violations'] and d['successful']); print('EXACT TARGET 69/69:',ok); sys.exit(0 if ok else 1)"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Replay all package negative self-tests (11 mutation cases)
+        shell: pwsh
+        run: |
+          python -B 'Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/tools/check_package.py' --self-test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Negative test duplicate runs-map ID (fail closed required)
         shell: pwsh
         run: |
