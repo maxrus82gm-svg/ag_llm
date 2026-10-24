@@ -262,6 +262,44 @@
    },
    "exit": 0
   },
+  "fin-target": {
+   "tests_run": 69,
+   "methods": 69,
+   "method_counts": {
+    "PASS": 69
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284",
+    "test_web_alarm_evidence_sanitizer.py": "8bf399431e8b780fc82a18d8bc9d3bea260f071a56167e3515ae3f7f89b52953"
+   },
+   "exit": 0
+  },
+  "fin-full": {
+   "tests_run": 978,
+   "methods": 978,
+   "method_counts": {
+    "PASS": 976,
+    "SKIP": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "new_module_sha256": {
+    "web_alarm/evidence_sanitizer.py": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284",
+    "test_web_alarm_evidence_sanitizer.py": "8bf399431e8b780fc82a18d8bc9d3bea260f071a56167e3515ae3f7f89b52953"
+   },
+   "exit": 0
+  },
   "gateR/baseline": {
    "tests_run": 60,
    "methods": 60,

@@ -1,0 +1,197 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "collected": 26,
+  "passed": 25,
+  "failed": 1,
+  "errors": 0,
+  "skipped": 0,
+  "tests": [
+    {
+      "id": "__main__.ContractTests.test_approval_claims_never_activate",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_claimed_version_and_hash_not_verification",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_cli_always_exit20_and_output_scope",
+      "status": "FAIL",
+      "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\broker_suite.py\", line 225, in test_cli_always_exit20_and_output_scope\n    done=subprocess.run(args,capture_output=True,text=True,timeout=10);self.assertEqual(done.returncode,20);v=json.loads((root/'preflight.json').read_text());self.assertFalse(v['can_apply'] or v['can_start_tunnel'])\n                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 1 != 20\n"
+    },
+    {
+      "id": "__main__.ContractTests.test_config_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_extra_companion_and_user_socks_layout",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_literal_ip_port_and_protocol",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_native_config_and_engine_switch_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_owner_egress_must_be_same_engine",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_takeover_scope_protocol_companion",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_owner_sid_and_wrapper_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_source_and_schema_syntax",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_unbound_template_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_valid_contract_is_always_disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_valid_synthetic_observation_never_native_health",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_ambient_proxy_no_fallback_and_dns_udp_ipv6_guard",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_broker_listener_failure_no_receiver_receipt",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_direct_mutation_oracle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_fixture_pin_and_hostname_rejected_before_bind",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_owner_mutation_oracle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_partial_connect_and_timeout",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_receiver_fault_matrix_bounded_no_fallback",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_restart_has_fresh_instance_and_receipt_session",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_same_process_connect_and_egress_receipt",
+      "status": "PASS"
+    }
+  ],
+  "observations": [
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\ambient-ad1c1d63",
+      "receipts": 0,
+      "violations": [
+        "DNS",
+        "UDP_OR_IPV6",
+        "UDP_OR_IPV6"
+      ]
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\failed-listener-2dfa1602",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\direct-mutant-9ff8edc9",
+      "receipts": 1,
+      "violations": [
+        "DIRECT_OR_SECOND_PROXY"
+      ]
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\bad-start-430b02d6",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\bad-start-ab1a1757",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\partial-connect-ca153be4",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\fault-reset-41cb6af7",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\fault-timeout-4399e0d7",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\fault-partial-bda87c9f",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\fault-redirect-7e4df499",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\fault-takeover-e24815f3",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\restart-11e0d9bf",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\restart-d070ceae",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130051-c7a15ba3\\route-5508de59",
+      "receipts": 1,
+      "violations": []
+    }
+  ],
+  "source_pin": "6f54e904801bd42c50d49b5c560a9ad83398acf42a9b39b0e34fd86d02f3ea32",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "engine_runs": 0,
+  "Windows_B_identity_proof": false
+}

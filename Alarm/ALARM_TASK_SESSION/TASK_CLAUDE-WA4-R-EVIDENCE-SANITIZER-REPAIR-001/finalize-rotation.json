@@ -1,0 +1,26 @@
+{
+ "phase": "B",
+ "card_sha256": "9fd81ea87e99bd4a4dd04d4077cd49ad5775570c1f0036d6e14fad1dc152775e",
+ "block1_is_finalize_task": true,
+ "rules_sha256": "d612dd2eec818ee36bb44468b6fe1cb44f6c97ae0b843d05d55e0848e4327980",
+ "block1_sha256": "406882545660c3c30de15ab7de4e23aa70607e8dba54b2290ec24bef43bc9567",
+ "block4_sha256": "549c79ec6e9d54f7825d04d8ad9d97e8fc7f2a5c7c5a2e7fa2d255b22613239b",
+ "line2_before": "- **2026-10-23 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — исправление fail-open F-ES-01 / F-ES-02 + REVISE F-ES-03 (2026-10-24) механизма публикации evidence. Статус: RESULT READY / AWAITING INDEPENDENT VERIFICATION.",
+ "line3_before": "- **CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001** — F-ES-01/F-ES-02 закрыты fail-closed; REVISE F-ES-03: `--package` = комплект, внутри или вокруг него, через ссылку или жёсткие ссылки → `package-not-independent`, REFUSED. Полный источник: записи в `001` и `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/report.md`.",
+ "earlier_records_readback": [
+  true,
+  true
+ ],
+ "archive_size": 702158,
+ "archive_eol": "CRLF",
+ "archive_read": "own earlier record ranges + last 2 bytes only",
+ "result": "OK",
+ "archive_offset": 702158,
+ "archive_appended_bytes": 12156,
+ "archive_record_sha256": "84bbfa6d9184ea1f1ccec3397bebe64f435017096b769ba7b2c3c3d5de24acfa",
+ "archive_size_after": 714314,
+ "readback": "MATCH",
+ "card_after_sha256": "1ad88c6a8b37e793121661517f098fbfc42aa154dbef2f80d02b151c7182fbd7",
+ "card_after_bytes": 25740,
+ "rules_block1_block4_unchanged": true
+}

@@ -1,0 +1,72 @@
+{
+  "kind": "HISTORICAL_PROJECT_EVIDENCE_ONLY",
+  "not_current_process_discovery": true,
+  "source_pins": {
+    "reports/CODEX-WUA-0-DESKTOP-MCP-E2E-001/v2ray_preflight_20261017/preflight.sanitized.json": "328c4ddb45a04c4caaeabc1ca181d6e521e30f7d1ae69eece8d3fd01661a8bb7",
+    "reports/CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001/host_discovery_release/inventory.json": "420d01f3be43611866f5b53bd77a752f85fbe5aa3bf15f3c2f68dbb80a13fad5"
+  },
+  "historical_processes": [
+    {
+      "name": "v2rayN.exe",
+      "pid": 14456,
+      "parent_pid": 9644,
+      "listeners": [],
+      "executable_sha256": "02c40d6f0b70b9495c084003dec55a8b6fd7152bc7af3fdbe4055132bac086bb"
+    },
+    {
+      "name": "sing-box.exe",
+      "pid": 6984,
+      "parent_pid": 14456,
+      "listeners": [
+        {
+          "address": "127.0.0.1",
+          "port": 10813
+        },
+        {
+          "address": "127.0.0.1",
+          "port": 10808
+        }
+      ],
+      "executable_sha256": "ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3"
+    }
+  ],
+  "selected_inventory": [
+    {
+      "detail": "STATIC_HASH_ONLY",
+      "evidence_scope": "metadata_or_static_only",
+      "id": "broker.binary",
+      "status": "VERIFIED",
+      "value": {
+        "bytes": 44773888,
+        "format": "PE_AMD64",
+        "sha256": "ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3",
+        "version_metadata": "unavailable"
+      }
+    },
+    {
+      "detail": "NO_TRUSTED_VERSION_METADATA",
+      "evidence_scope": "metadata_or_static_only",
+      "id": "broker.version",
+      "status": "REQUIRES_USER_INPUT",
+      "value": null
+    },
+    {
+      "detail": "OFFLINE_VERSIONED_SCHEMA_REVIEW_REQUIRED",
+      "evidence_scope": "metadata_or_static_only",
+      "id": "broker.schema",
+      "status": "REQUIRES_USER_INPUT",
+      "value": null
+    },
+    {
+      "detail": "SECURITY_BACKEND_NOT_IMPLEMENTED",
+      "evidence_scope": "metadata_or_static_only",
+      "id": "broker.route_graph",
+      "status": "UNSUPPORTED",
+      "value": null
+    }
+  ],
+  "current_V2Ray_binary_path": null,
+  "verified_V2Ray_version": null,
+  "native_engine_invocations_this_task": 0,
+  "working_profiles_read_this_task": 0
+}

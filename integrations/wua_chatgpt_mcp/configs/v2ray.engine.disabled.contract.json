@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "mode": "OFFLINE_DISABLED_CANDIDATE",
+  "integration": {},
+  "generation": 1,
+  "engine": {
+    "family": "V2Ray",
+    "implementation": null,
+    "version": null,
+    "source_sha256": null,
+    "binary_sha256": null,
+    "config_schema_sha256": null
+  },
+  "ownership": {
+    "listener": "ENGINE_PROCESS",
+    "egress": "SAME_ENGINE_PROCESS",
+    "delegation": "NONE"
+  },
+  "routing": {
+    "default": "DENY",
+    "outbound_count": 1,
+    "rule_order": [
+      "EXACT_CONNECT_TO_PINNED_UPSTREAM",
+      "DENY_REMAINDER"
+    ],
+    "direct": false,
+    "fallback": false,
+    "secondary_proxy": false,
+    "load_balancer": false,
+    "host_dns": false,
+    "udp": false,
+    "ipv6": false,
+    "health_dials": false,
+    "telemetry": false,
+    "companions": []
+  },
+  "remote_identity": {
+    "transport_requirement": "AUTHENTICATED_ENCRYPTED_PROXY",
+    "proxy_protocol": null,
+    "peer_pin_sha256": null,
+    "credential_ref": null
+  },
+  "native_config": null,
+  "lifecycle": {
+    "startup": "DISABLED",
+    "requires": [
+      "REVIEWED_ENGINE_SOURCE_AND_CONFIG",
+      "REAL_B_TOKEN_AND_SOCKET_OWNER",
+      "LAB_PROVEN_WFP",
+      "INDEPENDENT_ACCEPTANCE_AND_USER_GO"
+    ],
+    "on_observer_or_policy_loss": "STOP_OWNED_CHAIN_NO_AUTO_RESUME",
+    "restart": "FRESH_INSTANCE_GENERATION_AND_ATTESTATION",
+    "preexisting_flows": "LAB_PROOF_REQUIRED",
+    "credential_delivery": "PROTECTED_B_ONLY_STORE_PENDING"
+  }
+}

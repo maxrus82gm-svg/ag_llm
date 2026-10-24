@@ -1,12 +1,15 @@
 {
  "task": "CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001",
- "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION (after REVISE F-ES-03)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION (after REVISE F-ES-03 and local finalization 2026-10-24)",
  "platform": "Windows 10 Pro 19045, Python 3.12.10 (.venv), guarded runner wa4a_acceptance.py, disposable TEMP",
  "source": {
   "baseline_module_sha256": "1b4fb52e1e2736ac3c7ccd97c534a3acc1aba3ea5b2fe2481ea42f23e8cc4201",
   "baseline_tests_sha256": "215d0fb2c62bb68ae2a097f6524061cdbfa5d7646a4d3417696315bf1045cebf",
-  "final_module_sha256": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
-  "final_tests_sha256": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf",
+  "pre_revise_module_sha256": "f1a98cc4b5c5f01f77fe9636d4517cb7d5d6b3804c06eef301400fdbb1c22cb9",
+  "pre_revise_tests_sha256": "86a154491a1c7607026c8d94bb12ffbb333b6bbe9cb538e8e7584fec847f06bf",
+  "final_module_sha256": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284",
+  "final_tests_sha256": "8bf399431e8b780fc82a18d8bc9d3bea260f071a56167e3515ae3f7f89b52953",
+  "note": "until 2026-10-24 the final_* fields still named the pre-REVISE bytes (stale); corrected in the finalization, values kept above",
   "coordinator_baseline_commit": "main@8a6345886aa8ed2f21d143d8c261d01ede2ec675 (not checked: no Git)"
  },
  "red": {
@@ -152,5 +155,55 @@
    "verify_no_anchor": "REFUSED",
    "verify_mapping_sha256": "SAFE"
   }
+ },
+ "finalize": {
+  "date": "2026-10-24",
+  "statement": "BLOCK 1 'Завершение локального пакета проверки Evidence Sanitizer после F-ES-03' (no own TASK ID; BLOCK 1 left unchanged)",
+  "sanitizer_code_changed": false,
+  "defects": {
+   "crlf_run_copies": "201 of 222 package files (runs/) had CRLF; publication converts CRLF to LF, so their manifest SHA-256 could not match the published blobs; fixed in tools/collect_runs.py (published = LF(sanitize(raw))) and tools/make_manifest.py (refuses CR)",
+   "stale_evidence_final_sha": "source.final_* named the pre-REVISE bytes; corrected, old values kept as pre_revise_*",
+   "card_hash_label": "manifest card hash now labelled sha256_at_last_rotation (living document)"
+  },
+  "check_package": {
+   "before": "runs/fin-check-red.json (cr-in-file 201, evidence-final-sha-mismatch 1; plus 3 manifest entries of the tools edited in progress)",
+   "after": "check-package.json",
+   "self_test": "check-package-selftest.json"
+  },
+  "runs": {
+   "fin-target": {
+    "tests_run": 69,
+    "method_counts": {
+     "PASS": 69
+    },
+    "isolation": 0
+   },
+   "fin-full": {
+    "tests_run": 978,
+    "method_counts": {
+     "PASS": 976,
+     "SKIP": 2
+    },
+    "isolation": 0
+   },
+   "es03-green3": {
+    "tests_run": 69,
+    "method_counts": {
+     "PASS": 69
+    },
+    "isolation": 0
+   },
+   "es03-full": {
+    "tests_run": 978,
+    "method_counts": {
+     "PASS": 976,
+     "SKIP": 2
+    },
+    "isolation": 0
+   }
+  },
+  "unittest_v": "runs/fin-unittest-v.txt (Ran 69, OK)",
+  "compileall": "exit 0",
+  "full_vs_909": "runs/fin-full-vs-909.json (removed 0, status_changed 0, added 69)"
  }
 }

@@ -1,0 +1,31 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "status": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read": 0,
+  "archive_previous_bytes_written": 0,
+  "method": "exclusive append-only archive handle; bounded readback at new offset; exclusive card write with in-memory rollback",
+  "archive_offset": 616465,
+  "archive_appended_bytes": 26551,
+  "archive_appended_sha256": "a22cdd9e95f524ff4cdd24f413cc7e1a1c89235d27d0b73c50e9fbeb92218ae0",
+  "archive_new_metadata": {
+    "size": 643016,
+    "mtime_ns": 1792830015449272100,
+    "inode": 1125899907271690
+  },
+  "archive_new_entry_readback": true,
+  "card_before_sha256": "ff950fce13cd08343166efdfe508cc5ab6e6e7d481f90d5fa3a6458024998948",
+  "card_after_sha256": "aed7b4b1a9aa06dccf0dd0ab2b51662307800ef987bc5baedd070b6c2017a4b3",
+  "block4_before_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "block4_after_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "block1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "block2_rows": 5,
+  "block3_rows": 5,
+  "evicted_card_summaries": {
+    "block2": [
+      "- **2026-10-20 / CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001** — portable Discovery/Plan/Verify toolkit. Статус: RESULT READY; INSTALLER BLOCKED."
+    ],
+    "block3": [
+      "- **CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001** — 62/62 PS7 synthetic suite у исполнителя, без реальной установки и изоляции. Полный источник: поиск TASK ID в `001` и task-report проекта."
+    ]
+  }
+}

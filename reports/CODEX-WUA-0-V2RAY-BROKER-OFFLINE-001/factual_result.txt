@@ -1,0 +1,10 @@
+TASK: CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001
+RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11; LOCAL ONLY.
+Реализованы versioned disabled broker contract/schema/preflight, same-process CONNECT loopback fixture, source/config/owner observation guards. NPFS/прежний security backend не менялись.
+Проверки: broker 33/33; MCP regression 63/63; security 24/24. DIRECT и owner mutants обнаружены. Initial FAIL сохранены; 79/79 защищённых прежних файлов неизменны.
+COMPATIBILITY: ENGINE_VERSION_SOURCE_BLOCKED / ENGINE_CONFIG_COMPATIBILITY_BLOCKED. Настоящий V2Ray не запускался; B identity не создана; B egress/WFP/live route/ordinary Chat NOT VERIFIED; hosted tunnel HOLD. can_apply=false; can_start_tunnel=false.
+Риски: engine defaults/source/schema не проверены, Python guard не OS containment, synthetic SID/PID attestation не Windows token proof.
+DOC IMPACT: общие документы не изменены; delta 01/19/34/37 и согласование B2/B3 правила 18 переданы предложением в report.md. Своя карточка/архив ротированы, БЛОК 4 сохранён побайтно.
+NEXT: пользователь публикует report/manifest/evidence и передаёт WEB_11 на независимую проверку. Затем разрешённый локальный snapshot конкретного V2Ray release. Native/network/WFP activation только после доказанной изоляции и отдельного USER GO.
+REPORT: reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/report.md
+MANIFEST: reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/manifest.json

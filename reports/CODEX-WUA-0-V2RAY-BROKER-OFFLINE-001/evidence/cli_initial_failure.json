@@ -1,0 +1,7 @@
+{
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\broker.py\", line 14, in <module>\n    from common import (PACKAGE, REPO, Denied, canonical, digest, exact, parse,\nModuleNotFoundError: No module named 'common'\n",
+  "source_sha256": "3e3676ce3f588e58572bdbf3272ff032330f08d8bae507e90850a5a243ec5001",
+  "classification": "PRODUCT_DEFECT: standalone -I entrypoint did not add trusted package directory"
+}

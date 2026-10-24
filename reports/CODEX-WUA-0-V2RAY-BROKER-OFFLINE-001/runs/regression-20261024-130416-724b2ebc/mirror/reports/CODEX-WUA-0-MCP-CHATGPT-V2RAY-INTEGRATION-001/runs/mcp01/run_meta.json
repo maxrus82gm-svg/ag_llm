@@ -1,0 +1,43 @@
+{
+  "label": "mcp01",
+  "exit_code": 0,
+  "counts": {
+    "total": 63,
+    "passed": 63,
+    "failed": 0
+  },
+  "mutant_killed": false,
+  "expected_mutant_failure": null,
+  "elapsed_seconds": 4.359,
+  "sources_before": {
+    "integrations/wua_chatgpt_mcp/api_channel.py": "767059689360dad0ba5a8b4b2e3f2dd6180c0123c65b5e3e390a267e31fa5928",
+    "integrations/wua_chatgpt_mcp/api_fixture.py": "77d919c122bcb6bf7dcc7962eb97d65a85da921a574cbb7b33dc9b8eedae849a",
+    "integrations/wua_chatgpt_mcp/common.py": "12b8441ba72661fb2189c03e37e0203082a003e5e6be630b5d25dbe03809a209",
+    "integrations/wua_chatgpt_mcp/diagnostics.py": "0861851ac285eb025822086c13c93f04efa3287ed1823ad9640ef3b965102e45",
+    "integrations/wua_chatgpt_mcp/reference_connect.py": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+    "integrations/wua_chatgpt_mcp/route_simulation.py": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b",
+    "integrations/wua_chatgpt_mcp/security_contract.py": "8d568f36868ef4155da9e789d19604e1acaa4f3efc235117baf2e246803b6ade",
+    "integrations/wua_chatgpt_mcp/server.py": "b642b02599abdece141740b1eb3a9dc35b4ed69f25ba8207d737fb7523e2df67",
+    "integrations/wua_chatgpt_mcp/tests/mcp_smoke.py": "870f431dfa1172febe4b82750bf633aa55fc2e11648a3c65e48c3b226afa7daa",
+    "integrations/wua_chatgpt_mcp/tests/run_suite.py": "d3de1b8af6faa21eb76e83a7fa4eb84777ec71bcf83a5586e0b142c2e51e30ec",
+    "integrations/wua_chatgpt_mcp/tests/test_security_routes.py": "3fe7b2869aa05b381a539c65459ff25b1aa6c060c45a97f8a98464ce9c2705d8"
+  },
+  "sources_unchanged": true,
+  "python_version": "3.12.10",
+  "packages": {
+    "mcp": "2.2.0",
+    "httpx": "0.28.1",
+    "pydantic": "2.13.5"
+  },
+  "environment_keys": [
+    "COMSPEC",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "WINDIR"
+  ],
+  "stdout_summary": "{\"exit\": 0, \"counts\": {\"total\": 63, \"passed\": 63, \"failed\": 0}, \"error_class\": null}",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "external_network_targets": 0,
+  "native_tunnel_or_WFP_executions": 0
+}

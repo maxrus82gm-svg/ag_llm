@@ -1,0 +1,240 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "collected": 32,
+  "passed": 32,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "tests": [
+    {
+      "id": "__main__.ContractTests.test_approval_claims_never_activate",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_claimed_version_and_hash_not_verification",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_cli_always_exit20_and_output_scope",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_config_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_extra_companion_and_user_socks_layout",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_literal_ip_port_and_protocol",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_native_config_and_engine_switch_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_owner_egress_must_be_same_engine",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_observation_takeover_scope_protocol_companion",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_owner_sid_and_wrapper_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_remote_schema_reference_is_refused_without_dial",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_source_and_schema_syntax",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_startup_policy_cannot_be_enabled_by_data",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_unbound_template_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_valid_contract_is_always_disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_valid_synthetic_observation_never_native_health",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ContractTests.test_whole_config_substitution_still_uses_controller_pin",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_ambient_proxy_no_fallback_and_dns_udp_ipv6_guard",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_broker_listener_failure_no_receiver_receipt",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_direct_mutation_oracle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_fixture_pin_and_hostname_rejected_before_bind",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_owner_mutation_oracle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_partial_connect_and_timeout",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_port_takeover_is_observed_and_response_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_receiver_fault_matrix_bounded_no_fallback",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_restart_has_fresh_instance_and_receipt_session",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_same_fixture_instance_cannot_restart",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_same_process_connect_and_egress_receipt",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.RouteTests.test_upstream_connection_refused",
+      "status": "PASS"
+    }
+  ],
+  "observations": [
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\schema-ref-37cf8af7",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\ambient-147c93ec",
+      "receipts": 0,
+      "violations": [
+        "DNS",
+        "UDP_OR_IPV6",
+        "UDP_OR_IPV6"
+      ]
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\failed-listener-f40157f1",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\direct-mutant-f2dab141",
+      "receipts": 1,
+      "violations": [
+        "DIRECT_OR_SECOND_PROXY"
+      ]
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\bad-start-529d7403",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\bad-start-81861d44",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\partial-connect-01233e8c",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\port-takeover-1b434a94",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\fault-reset-86ff1aee",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\fault-timeout-c9b7086c",
+      "receipts": 0,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\fault-partial-ca8f9636",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\fault-redirect-0d65ca3d",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\fault-takeover-771f8ce7",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\restart-24317fb5",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\restart-8898b920",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\duplicate-instance-c0a9790d",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\route-72b2ff91",
+      "receipts": 1,
+      "violations": []
+    },
+    {
+      "root": "runs\\suite-20261024-130625-84a9a910\\upstream-refused-764cd62d",
+      "receipts": 0,
+      "violations": []
+    }
+  ],
+  "source_pin": "e4d2b054931dc407158ee6d415c83381bc4d55ac671b2c92e571a455f2fcf3db",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "engine_runs": 0,
+  "Windows_B_identity_proof": false
+}

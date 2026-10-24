@@ -1,0 +1,22 @@
+{
+  "profile_status": "BROKER_PROFILE_STRUCTURALLY_VALID",
+  "contract_sha256": "fb18af39f3260b47c5f180d6e128f19b95f79df13376190a38e54a18fe9d771c",
+  "source_sha256": "c294095656f342e95fdea04856a882d3fe28366f0b82a7248fd3372bd6615340",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "engine_native_config": null,
+  "gates": [
+    "ENGINE_VERSION_SOURCE_BLOCKED",
+    "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+    "B_IDENTITY_NOT_PROVISIONED",
+    "B_EGRESS_OWNER_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "native_health": "UNKNOWN",
+  "install_uninstall": "BLOCKED",
+  "evidence_kind": "OFFLINE_STRUCTURE_ONLY",
+  "untrusted_evidence_accepted": false
+}

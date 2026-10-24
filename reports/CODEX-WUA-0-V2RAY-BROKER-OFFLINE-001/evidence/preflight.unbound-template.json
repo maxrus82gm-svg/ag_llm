@@ -1,0 +1,20 @@
+{
+  "profile_status": "BROKER_PROFILE_REJECTED",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "gates": [
+    "ENGINE_VERSION_SOURCE_BLOCKED",
+    "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+    "B_IDENTITY_NOT_PROVISIONED",
+    "B_EGRESS_OWNER_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "native_health": "UNKNOWN",
+  "engine_native_config": null,
+  "install_uninstall": "BLOCKED",
+  "reason": "SCHEMA",
+  "untrusted_evidence_accepted": false
+}

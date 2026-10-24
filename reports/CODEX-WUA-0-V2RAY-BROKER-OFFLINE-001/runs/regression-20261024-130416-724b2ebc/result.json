@@ -1,0 +1,30 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "staged_files": 54,
+  "runs": [
+    {
+      "selector": "mcp01",
+      "exit": 0,
+      "stdout": "{\"label\": \"mcp01\", \"exit_code\": 0, \"counts\": {\"total\": 63, \"passed\": 63, \"failed\": 0}, \"mutant_killed\": false, \"sources_unchanged\": true}\n",
+      "stderr": ""
+    },
+    {
+      "selector": "security01",
+      "exit": 0,
+      "stdout": "{\"label\": \"security01\", \"exit_code\": 0, \"counts\": {\"total\": 24, \"passed\": 24, \"failed\": 0, \"errors\": 0}, \"mutant_killed\": false, \"sources_unchanged\": true}\n",
+      "stderr": ""
+    }
+  ],
+  "original_sources_unchanged": true,
+  "mcp01": {
+    "total": 63,
+    "passed": 63,
+    "failed": 0
+  },
+  "security01": {
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "errors": 0
+  }
+}

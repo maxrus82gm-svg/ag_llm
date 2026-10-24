@@ -1,0 +1,9 @@
+{
+  "oracle": "FAIL (required detection)",
+  "inner_collected": 1,
+  "inner_failures": 1,
+  "inner_errors": 0,
+  "trigger": "egress attestation names different process and UI SID",
+  "scope": "synthetic assertion, not actual Windows SID proof",
+  "runner": "F\n======================================================================\nFAIL: runTest (__main__.RouteTests.test_owner_mutation_oracle.<locals>.Oracle.runTest)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\broker_suite.py\", line 326, in runTest\n    with self.assertRaises(common.Denied):m.check_synthetic_observation(p,o,e,set())\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Denied not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.008s\n\nFAILED (failures=1)\n"
+}

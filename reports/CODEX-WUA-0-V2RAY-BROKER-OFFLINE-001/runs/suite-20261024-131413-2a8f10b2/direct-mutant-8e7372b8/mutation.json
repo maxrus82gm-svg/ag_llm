@@ -1,0 +1,7 @@
+{
+  "oracle": "FAIL (required detection)",
+  "source": "def call(h):\n    return direct(h)\n",
+  "normal_sha256": "ff45be510d578debd438fc4e5912672c0cf1e90bd45336ec35da89fbdca0bac0",
+  "mutant_sha256": "4919f9abf9e191f286f5d613f608ddb62d377cda961956f5808ebee5f3698f30",
+  "trigger": "real direct GET reached independent receiver while broker refused"
+}

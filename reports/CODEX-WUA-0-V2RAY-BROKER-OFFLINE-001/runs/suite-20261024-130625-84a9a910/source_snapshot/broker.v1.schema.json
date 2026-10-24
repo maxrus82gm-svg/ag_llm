@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WUA Dedicated V2Ray Broker Offline Contract v1; NOT engine-native configuration",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema", "mode", "integration", "generation", "engine", "ownership", "routing", "remote_identity", "native_config", "lifecycle"],
+  "properties": {
+    "schema": {"const": 1, "type": "integer"},
+    "mode": {"const": "OFFLINE_DISABLED_CANDIDATE"},
+    "integration": {"type": "object", "description": "Validated exclusively by existing security_contract.validate"},
+    "generation": {"type": "integer", "minimum": 1, "maximum": 2147483647},
+    "engine": {
+      "type": "object", "additionalProperties": false,
+      "required": ["family", "implementation", "version", "source_sha256", "binary_sha256", "config_schema_sha256"],
+      "properties": {
+        "family": {"const": "V2Ray"},
+        "implementation": {"type": ["null", "string"], "minLength": 1, "maxLength": 80},
+        "version": {"type": ["null", "string"], "minLength": 1, "maxLength": 80},
+        "source_sha256": {"$ref": "#/$defs/pin"},
+        "binary_sha256": {"$ref": "#/$defs/pin"},
+        "config_schema_sha256": {"$ref": "#/$defs/pin"}
+      }
+    },
+    "ownership": {"const": {"listener": "ENGINE_PROCESS", "egress": "SAME_ENGINE_PROCESS", "delegation": "NONE"}},
+    "routing": {"const": {
+      "default": "DENY", "outbound_count": 1,
+      "rule_order": ["EXACT_CONNECT_TO_PINNED_UPSTREAM", "DENY_REMAINDER"],
+      "direct": false, "fallback": false, "secondary_proxy": false,
+      "load_balancer": false, "host_dns": false, "udp": false, "ipv6": false,
+      "health_dials": false, "telemetry": false, "companions": []
+    }},
+    "remote_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["transport_requirement", "proxy_protocol", "peer_pin_sha256", "credential_ref"],
+      "properties": {
+        "transport_requirement": {"const": "AUTHENTICATED_ENCRYPTED_PROXY"},
+        "proxy_protocol": {"const": null},
+        "peer_pin_sha256": {"$ref": "#/$defs/pin"},
+        "credential_ref": {"enum": [null, "FUTURE_BROKER_ONLY_SECRET_STORE"]}
+      }
+    },
+    "native_config": {"const": null, "description": "No verified engine schema available; native config generation is BLOCKED"},
+    "lifecycle": {"const": {
+      "startup": "DISABLED",
+      "requires": ["REVIEWED_ENGINE_SOURCE_AND_CONFIG", "REAL_B_TOKEN_AND_SOCKET_OWNER", "LAB_PROVEN_WFP", "INDEPENDENT_ACCEPTANCE_AND_USER_GO"],
+      "on_observer_or_policy_loss": "STOP_OWNED_CHAIN_NO_AUTO_RESUME",
+      "restart": "FRESH_INSTANCE_GENERATION_AND_ATTESTATION",
+      "preexisting_flows": "LAB_PROOF_REQUIRED",
+      "credential_delivery": "PROTECTED_B_ONLY_STORE_PENDING"
+    }}
+  },
+  "$defs": {"pin": {"anyOf": [{"type": "null"}, {"type": "string", "minLength": 64, "maxLength": 64, "pattern": "^[0-9a-f]{64}$"}]}}
+}

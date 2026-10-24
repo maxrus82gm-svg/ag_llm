@@ -2,7 +2,8 @@
 
 For every attempt (label=<TEMP attempt base>): the raw out/results.json and summary.json are copied unchanged into
 a private disposable TEMP folder (logs/ is outside this TASK's write scope); sanitized copies go to
-runs/<label>/ in the TASK folder only if the publication gate passes (a refused file is not written at all).
+runs/<label>/ in the TASK folder only if the publication gate passes (a refused file is not written at all), with
+LF line ends (published = LF(sanitize(raw)); raw SHA-256 and EOL stay in runs-map.json).
 Extra files: <name>=<TEMP file> (e.g. a mutant batch attempts list). Writes runs/runs-map.json (raw -> published
 SHA-256, replacements, gate) and runs/census.json (per-method status counts taken from the raw results).
 Usage: collect_runs.py <label>=<attempt base> ... [file:<name>=<path> ...]
@@ -32,15 +33,31 @@ def publish(rel: str, raw: bytes, rows: list) -> None:
     private.parent.mkdir(parents=True, exist_ok=True)
     private.write_bytes(raw)
     r = es.process_bytes(rel, raw, POLICY, IDENTITY)
-    row = {"id": rel, "raw_sha256": sha(raw), "raw_bytes": len(raw), "safety": r.safety, "reasons": r.reasons,
-           "replacements": {k: v for k, v in sorted(r.counts.items()) if k in es.REPLACED_KINDS},
+    row = {"id": rel, "raw_sha256": sha(raw), "raw_bytes": len(raw), "raw_eol": eol_of(raw), "safety": r.safety,
+           "reasons": r.reasons, "replacements": {k: v for k, v in sorted(r.counts.items()) if k in es.REPLACED_KINDS},
            "published_sha256": None}
     if r.output is not None:
-        target = TASK_DIR / "runs" / rel
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(r.output)
-        row["published_sha256"] = sha(target.read_bytes())
+        # Published copies are LF: the Windows runner writes CRLF, the sanitizer keeps bytes as they are, and the
+        # publication path converts CRLF to LF - a CRLF copy would then never match its manifest SHA-256 on GitHub.
+        # Only line ends change (JSON whitespace; no raw CR can sit inside a JSON string); the LF copy must pass the
+        # gate again unchanged.
+        published = r.output.replace(b"\r\n", b"\n")
+        again = es.process_bytes(rel, published, POLICY, IDENTITY)
+        if again.safety != "PASS" or again.output != published or b"\r" in published:
+            row.update(safety="BLOCKED", reasons=r.reasons + ["lf-normalized-copy-not-stable"])
+        else:
+            target = TASK_DIR / "runs" / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(published)
+            row["published_sha256"] = sha(target.read_bytes())
+            row["published_eol"] = "LF"
     rows.append(row)
+
+
+def eol_of(data: bytes) -> str:
+    crlf = data.count(b"\r\n")
+    lf = data.count(b"\n") - crlf
+    return "NONE" if not (crlf or lf) else "CRLF" if crlf and not lf else "LF" if lf and not crlf else "MIXED"
 
 
 def census(results: dict) -> dict:

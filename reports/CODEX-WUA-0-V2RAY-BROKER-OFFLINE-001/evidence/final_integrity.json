@@ -1,0 +1,25 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "required_artifacts_present": true,
+  "protected_files": 79,
+  "protected_unchanged": 79,
+  "changed": [],
+  "final_source_pins_current": true,
+  "block4_byte_identical": true,
+  "block4_sha256": "bc2e8067af2d9a0af34644cf0855b224b66281b0f63fe59f7d932b613331ad1a",
+  "card_rotation": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read_by_sealer": 0,
+  "new_package_files": [
+    "broker.py",
+    "broker_fixture.py",
+    "configs/broker.v1.schema.json",
+    "configs/broker.v1.synthetic.example.json",
+    "configs/v2ray.engine.disabled.contract.json",
+    "tests/broker_suite.py",
+    "tests/broker_regression.py"
+  ],
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "independent_acceptance": "NOT VERIFIED",
+  "publication": "LOCAL ONLY / USER HANDOFF"
+}

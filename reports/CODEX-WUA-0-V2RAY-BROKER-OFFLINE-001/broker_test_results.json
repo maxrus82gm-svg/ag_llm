@@ -1,0 +1,391 @@
+{
+  "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11",
+  "final_suite_path": "runs/suite-20261024-131413-2a8f10b2",
+  "final_suite": {
+    "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+    "collected": 33,
+    "passed": 33,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "id": "__main__.ContractTests.test_approval_claims_never_activate",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_claimed_version_and_hash_not_verification",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_cli_always_exit20_and_output_scope",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_config_and_source_drift",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_existing_activation_gates_remain_blocked",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_extra_companion_and_user_socks_layout",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_literal_ip_port_and_protocol",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_native_config_and_engine_switch_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_observation_owner_egress_must_be_same_engine",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_observation_takeover_scope_protocol_companion",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_owner_sid_and_wrapper_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_remote_schema_reference_is_refused_without_dial",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_source_and_schema_syntax",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_startup_policy_cannot_be_enabled_by_data",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_unbound_template_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_valid_contract_is_always_disabled",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_valid_synthetic_observation_never_native_health",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.ContractTests.test_whole_config_substitution_still_uses_controller_pin",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_ambient_proxy_no_fallback_and_dns_udp_ipv6_guard",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_broker_listener_failure_no_receiver_receipt",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_direct_mutation_oracle",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_fixture_pin_and_hostname_rejected_before_bind",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_owner_mutation_oracle",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_partial_connect_and_timeout",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_port_takeover_is_observed_and_response_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_receiver_fault_matrix_bounded_no_fallback",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_restart_has_fresh_instance_and_receipt_session",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_same_fixture_instance_cannot_restart",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_same_process_connect_and_egress_receipt",
+        "status": "PASS"
+      },
+      {
+        "id": "__main__.RouteTests.test_upstream_connection_refused",
+        "status": "PASS"
+      }
+    ],
+    "observations": [
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\schema-ref-287c26f8",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\ambient-c1627c97",
+        "receipts": 0,
+        "violations": [
+          "DNS",
+          "UDP_OR_IPV6",
+          "UDP_OR_IPV6"
+        ]
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\failed-listener-31068dfb",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\direct-mutant-8e7372b8",
+        "receipts": 1,
+        "violations": [
+          "DIRECT_OR_SECOND_PROXY"
+        ]
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\bad-start-61cfe104",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\bad-start-acb9e49c",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\partial-connect-430092fc",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\port-takeover-964fc7e4",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\fault-reset-1759e55c",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\fault-timeout-460ac3eb",
+        "receipts": 0,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\fault-partial-9a714cc4",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\fault-redirect-b2e18171",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\fault-takeover-665f9014",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\restart-982b12d9",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\restart-6ae4b56d",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\duplicate-instance-e246d374",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\route-0ff982f4",
+        "receipts": 1,
+        "violations": []
+      },
+      {
+        "root": "runs\\suite-20261024-131413-2a8f10b2\\upstream-refused-1799aa00",
+        "receipts": 0,
+        "violations": []
+      }
+    ],
+    "source_pin": "e4d2b054931dc407158ee6d415c83381bc4d55ac671b2c92e571a455f2fcf3db",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "engine_runs": 0,
+    "Windows_B_identity_proof": false
+  },
+  "attempts": [
+    {
+      "path": "runs/suite-20261024-130051-c7a15ba3",
+      "collected": 26,
+      "passed": 25,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "__main__.ContractTests.test_cli_always_exit20_and_output_scope",
+          "status": "FAIL",
+          "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\broker_suite.py\", line 225, in test_cli_always_exit20_and_output_scope\n    done=subprocess.run(args,capture_output=True,text=True,timeout=10);self.assertEqual(done.returncode,20);v=json.loads((root/'preflight.json').read_text());self.assertFalse(v['can_apply'] or v['can_start_tunnel'])\n                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 1 != 20\n"
+        }
+      ]
+    },
+    {
+      "path": "runs/suite-20261024-130117-4d2211c1",
+      "collected": 26,
+      "passed": 25,
+      "failed": 0,
+      "errors": 1,
+      "skipped": 0,
+      "failures": [
+        {
+          "id": "__main__.RouteTests.test_owner_mutation_oracle",
+          "status": "ERROR",
+          "traceback": "Traceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\broker_suite.py\", line 290, in test_owner_mutation_oracle\n    changed=source.replace(old,\"require(True, 'EGRESS_OWNER')\");m=types.ModuleType('owner_mutant');exec(compile(changed,str(PKG/'broker.py'),'exec'),m.__dict__)\n                                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\broker.py\", line 14, in <module>\n    sys.path.insert(0, str(Path(__file__).resolve().parent))\n                                ^^^^^^^^\nNameError: name '__file__' is not defined. Did you mean: '__name__'?\n"
+        }
+      ]
+    },
+    {
+      "path": "runs/suite-20261024-130314-61981b77",
+      "collected": 29,
+      "passed": 29,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "path": "runs/suite-20261024-130625-84a9a910",
+      "collected": 32,
+      "passed": 32,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    },
+    {
+      "path": "runs/suite-20261024-131413-2a8f10b2",
+      "collected": 33,
+      "passed": 33,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failures": []
+    }
+  ],
+  "initial_failure_classification": [
+    {
+      "attempt": "runs/suite-20261024-130051-c7a15ba3",
+      "class": "CODE DEFECT",
+      "detail": "Isolated CLI could not import common; repaired explicit trusted own-package import root."
+    },
+    {
+      "attempt": "runs/suite-20261024-130117-4d2211c1",
+      "class": "TEST HARNESS DEFECT",
+      "detail": "Copied owner mutant had no __file__; supplied its real source path without weakening the owner oracle."
+    }
+  ],
+  "mutations": [
+    {
+      "path": "runs/suite-20261024-131413-2a8f10b2/direct-mutant-8e7372b8/mutation.json",
+      "oracle": "FAIL (required detection)",
+      "source": "def call(h):\n    return direct(h)\n",
+      "normal_sha256": "ff45be510d578debd438fc4e5912672c0cf1e90bd45336ec35da89fbdca0bac0",
+      "mutant_sha256": "4919f9abf9e191f286f5d613f608ddb62d377cda961956f5808ebee5f3698f30",
+      "trigger": "real direct GET reached independent receiver while broker refused"
+    },
+    {
+      "path": "runs/suite-20261024-131413-2a8f10b2/owner-mutant-e6cc1b5f/mutation.json",
+      "oracle": "FAIL (required detection)",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "trigger": "egress attestation names different process and UI SID",
+      "scope": "synthetic assertion, not actual Windows SID proof",
+      "runner": "F\n======================================================================\nFAIL: runTest (__main__.RouteTests.test_owner_mutation_oracle.<locals>.Oracle.runTest)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"M:\\GitHub\\ag_llm\\integrations\\wua_chatgpt_mcp\\tests\\broker_suite.py\", line 360, in runTest\n    with self.assertRaises(common.Denied):m.check_synthetic_observation(p,o,e,set())\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Denied not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.007s\n\nFAILED (failures=1)\n"
+    }
+  ],
+  "regression_path": "runs/regression-20261024-130416-724b2ebc",
+  "regression": {
+    "task": "CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001",
+    "staged_files": 54,
+    "runs": [
+      {
+        "selector": "mcp01",
+        "exit": 0,
+        "stdout": "{\"label\": \"mcp01\", \"exit_code\": 0, \"counts\": {\"total\": 63, \"passed\": 63, \"failed\": 0}, \"mutant_killed\": false, \"sources_unchanged\": true}\n",
+        "stderr": ""
+      },
+      {
+        "selector": "security01",
+        "exit": 0,
+        "stdout": "{\"label\": \"security01\", \"exit_code\": 0, \"counts\": {\"total\": 24, \"passed\": 24, \"failed\": 0, \"errors\": 0}, \"mutant_killed\": false, \"sources_unchanged\": true}\n",
+        "stderr": ""
+      }
+    ],
+    "original_sources_unchanged": true,
+    "mcp01": {
+      "total": 63,
+      "passed": 63,
+      "failed": 0
+    },
+    "security01": {
+      "total": 24,
+      "passed": 24,
+      "failed": 0,
+      "errors": 0
+    }
+  },
+  "profile_status": "BROKER_PROFILE_STRUCTURALLY_VALID (bound synthetic example only)",
+  "gates": [
+    "ENGINE_VERSION_SOURCE_BLOCKED",
+    "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+    "B_IDENTITY_NOT_PROVISIONED",
+    "B_EGRESS_OWNER_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "real_engine_runs": 0,
+  "native_WFP_calls": 0,
+  "new_accounts": 0,
+  "OpenAI_Platform_or_hosted_tunnel_calls": 0,
+  "Git_GitHub_operations": 0,
+  "external_targets_in_fixture": 0,
+  "independent_acceptance": "NOT VERIFIED"
+}
