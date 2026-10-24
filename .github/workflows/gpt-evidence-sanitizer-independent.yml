@@ -1,0 +1,106 @@
+# Dedicated independent diagnostic. User alone merges GPT into main.
+name: ChatGPT Evidence Sanitizer independent
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - '.github/workflows/gpt-evidence-sanitizer-independent.yml'
+      - '.github/scripts/gpt_evidence_sanitizer_probe.py'
+      - 'web_alarm/evidence_sanitizer.py'
+      - 'test_web_alarm_evidence_sanitizer.py'
+      - 'Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/gpt-evidence-sanitizer-independent.yml'
+      - '.github/scripts/gpt_evidence_sanitizer_probe.py'
+      - 'web_alarm/evidence_sanitizer.py'
+      - 'test_web_alarm_evidence_sanitizer.py'
+      - 'Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-focused:
+    name: Windows / package / target 69 / duplicate-ID probe
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Configure LF checkout and long paths
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.longpaths true
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check package and source syntax
+        shell: pwsh
+        run: |
+          python -B -m compileall -q web_alarm/evidence_sanitizer.py test_web_alarm_evidence_sanitizer.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B 'Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/tools/check_package.py'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run exact guarded sanitizer tests
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task CHATGPT-ES-CI-20261024 --output '${{ runner.temp }}/gpt-es-target' test_web_alarm_evidence_sanitizer
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B -c "import json,sys,pathlib; d=json.loads(pathlib.Path(r'${{ runner.temp }}/gpt-es-target/results.json').read_text(encoding='utf-8')); ok=(d['tests_run']==69 and d['passed']==69 and d['failures']==0 and d['errors']==0 and d['skips']==0 and not d['isolation_violations'] and d['successful']); print('EXACT TARGET 69/69:',ok); sys.exit(0 if ok else 1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Negative test duplicate runs-map ID (fail closed required)
+        shell: pwsh
+        run: |
+          python -B .github/scripts/gpt_evidence_sanitizer_probe.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpt-es-target-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gpt-es-target/results.json
+            ${{ runner.temp }}/gpt-es-target/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+  independent-full:
+    name: Windows / full guarded Web Alarm suite
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Configure LF checkout and long paths
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.longpaths true
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run full guarded regression
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task CHATGPT-ES-CI-20261024 --output '${{ runner.temp }}/gpt-es-full' all
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B -c "import json,sys,pathlib; d=json.loads(pathlib.Path(r'${{ runner.temp }}/gpt-es-full/results.json').read_text(encoding='utf-8')); ok=(d['tests_run']>=978 and d['failures']==0 and d['errors']==0 and not d['isolation_violations'] and d['successful']); print('FULL',d['tests_run'],d['passed'],d['skips'],'validated:',ok); sys.exit(0 if ok else 1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload full evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpt-es-full-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gpt-es-full/results.json
+            ${{ runner.temp }}/gpt-es-full/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 14
