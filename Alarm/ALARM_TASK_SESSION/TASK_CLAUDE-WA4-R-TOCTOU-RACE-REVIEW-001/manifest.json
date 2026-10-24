@@ -1,0 +1,41 @@
+{
+ "task": "CLAUDE-WA4-R-TOCTOU-RACE-REVIEW-001",
+ "status": "BLOCKED (TOCTOU analysis direction); NO PRODUCTION CHANGE",
+ "publication": "LOCAL ONLY / NOT SYNCED",
+ "self_hash": "EXCLUDED (reported in the chat handoff)",
+ "repository_files_changed": {},
+ "card_and_001": "not changed (coordinator owns closeout)",
+ "tests": "NOT RUN",
+ "files": {
+  "refs.json": {
+   "bytes": 11546,
+   "sha256": "37651c1ef53fdb624659e8caea3674fd73ed6e23379c9dcc0591445d559fbc66",
+   "eol": "LF"
+  },
+  "report.md": {
+   "bytes": 4086,
+   "sha256": "a9513dc443fca0645ce025b8688ff4944b13db9a9e29516eaed4a59061ddb9e7",
+   "eol": "LF"
+  },
+  "source-reviewed.json": {
+   "bytes": 11733,
+   "sha256": "04777bb688afeddf8b8ddd8efc673e9502f65ca1013d0bb226f5bd76de0aedff",
+   "eol": "LF"
+  },
+  "tools/make_manifest.py": {
+   "bytes": 1739,
+   "sha256": "3849daa772558328834ac05cbc6286978a599aa7a1b9891d864975346637cf13",
+   "eol": "LF"
+  },
+  "tools/snapshot.py": {
+   "bytes": 2131,
+   "sha256": "8e0b64f47f65c35992c2f67c8db3f87ebe4193cef3629511ff15f130bbe781d7",
+   "eol": "LF"
+  },
+  "tools/source_refs.py": {
+   "bytes": 8741,
+   "sha256": "96754dd1c07be2708a492e5a272b9634db9fcb29530b463654558017b737d8f0",
+   "eol": "LF"
+  }
+ }
+}
