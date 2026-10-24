@@ -53,20 +53,22 @@
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Автор:** независимый ChatGPT, Codex — READ-ONLY. Архив: `Документация/06_Журнал выполнения и отчёты.md`.
+**Автор/verifier:** WEB_11 (ChatGPT). Codex READ-ONLY. Полные постоянные verdict — `Документация/06_Журнал выполнения и отчёты.md`.
 
-## 1. Последнее заключение: 2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001
+## 1. Последнее заключение — 2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001
 
-**Вердикт: PARTIAL / INDEPENDENT BOUNDED OFFLINE ACCEPTED**. WEB_11 подтвердил пакет **215/215** путей и **13/13** выборочных SHA-256. Сохранённые **52/52 PASS** — Codex-run evidence, **не независимый запуск Windows suite**; baseline red 50/51, 2 мутанта. Реальный lab I01–I12: **12/12 BLOCKED**; trusted VM/media/изоляция, WFP/V2Ray/native/Chat E2E **NOT VERIFIED**. `CanApply=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; future provisioning требует отдельного USER GO. Путь: `reports/CODEX-WUA-0-WINDOWS-LAB-GATE-001/`, WEB_11 в 34, постоянный архив 06.
+**PARTIAL / INDEPENDENT BOUNDED OFFLINE ACCEPTED**, source `main@1324f544c7d3fef6c0a80bf71f7460f372f6950d`. Сам WEB_11 проверил GitHub-файлы и исходники, наличие **617/617** записей manifest и независимо пересчитал **12/12** выборочных SHA-256. Изучены `broker.py`, `broker_fixture.py`, schema/preflight, тесты и evidence настоящих негативных мутаций: DIRECT достиг собственного receiver в обход отказавшего broker и обнаружен; owner guard mutant вызвал ожидаемый inner FAIL, но это synthetic, не реальный Windows SID. У Codex сохранены **33/33 broker**, **63/63 MCP**, **24/24 security** PASS — **повторный независимый Windows-run NOT RUN**. Утверждение об **79/79** неизменённых прежних файлах основано на отчёте Codex, НЕ на полной независимой сверке.
 
-## 2. Предыдущее заключение: 2026-10-20 / CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001
+**Критические ограничения:** исторический v2rayN запускал `sing-box.exe`, а не доказанный V2Ray Core. `ENGINE_VERSION_SOURCE_BLOCKED`, `ENGINE_CONFIG_COMPATIBILITY_BLOCKED`; настоящий engine, B identity, effective outbound owner, OS WFP, strict live route, hosted tunnel, ordinary ChatGPT E2E NOT VERIFIED. `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. NEXT: адресно и без запуска исследовать реальный локальный engine binary/version/source/schema; переход sing-box ↔ V2Ray требует решения пользователя, native/WFP/lab отдельного USER GO. Документы/доказательства: `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/` и 06.
 
-WEB_10 bounded independent source/evidence: **87** путей по manifest + manifest, **10/10** выборочных SHA-256; real Windows/native install не проверены, installer BLOCKED. История: 06, WEB_10.
+## 2. Предыдущее заключение — 2026-10-24 / CODEX-WUA-0-MCP-NOTCP-NPFS-001
 
-## 3. Позапрошлое заключение
+**PARTIAL / BOUNDED SOURCE-EVIDENCE ACCEPTED**, `main@1147d283674f60ad94dd0be4b26f49e751523669`. Сам WEB_11 подтвердил **1404/1404** manifest paths и **10/10** выбранных SHA-256, рассмотрел C# relay, Named Pipe gateway, MCP fixture, test code/evidence. Codex-run **24/24 NPFS**, **63/63 MCP**, **24/24 security**; TCP/peer mutants обнаружены по evidence, независимый Windows run NOT RUN. C-side no-Python-asyncio relay готов лишь как локальный synthetic candidate; continuous network, real cross-SID, WFP, B egress, hosted/Chat E2E NOT VERIFIED. Архив 06.
 
-Оставлено пустым: без достоверной дополнительной независимой проверки/постоянной записи не заполнять.
+## 3. Позапрошлое заключение — 2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001
+
+**PARTIAL / BOUNDED OFFLINE ACCEPTED**: WEB_11 verified 215/215 paths, 13/13 selected hashes; Codex-reported 52/52 tests, independent Windows run NOT RUN; I01–I12 **12/12 BLOCKED**, production/native no GO. Source main@fd908cd0fff0abe5ab91b270f89cd1f5933f4192; полный архив 06.
 
 ---
 
-**Уточнение:** последнее независимое заключение выше относится к Windows lab gate; более новая MCP-интеграция независимого PASS не получила.
+**Итого:** реальный security enforcement и ChatGPT E2E по-прежнему BLOCKED / NOT VERIFIED. Эта запись не меняет БЛОКИ 1–3 и не запускает следующую TASK.

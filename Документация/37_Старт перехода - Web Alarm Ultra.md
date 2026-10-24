@@ -111,6 +111,8 @@ Provider Adapter → GigaChat API → Response + status/usage
 
 **Будущий минимальный план проверки (не TASK / NO IMPLEMENTATION GO):** подтвердить создание/доступность локального MCP-плагина в обычном ChatGPT Desktop Chat; безопасно вызвать `ping` и `read_context` с проверкой источника; отдельно повторить доставку Codex-сообщения с `request_id/TASK ID`, затем проверить чтение локального статуса после обращения и независимый readback ответа. Предусмотреть проверку отправителя/полномочий, идемпотентность, ограниченные попытки/таймауты, аудит, ручные/автоматические gates и STOP. **Web Alarm остаётся единственным owner TASK, approvals и mutations**; само сообщение не разрешает write/execute/Git. Никаких изменений production, сети, тарифов или пользовательских прав без нового явного GO. Документ №34 содержит тактический статус и доказательства начального smoke.
 
+**Текущая доказательная сноска WEB_11 / 2026-10-24:** реальные локальные MCP STDIO↔NPFS↔synthetic U и disabled single-process broker model опубликованы Codex, независимо ограниченно проверены по GitHub source/evidence, но не Windows-native/ChatGPT E2E. Исторический v2rayN работал с sing-box, V2Ray Core/CONNECT не подтверждены. Cross-SID, WFP, live B egress, hosted tunnel BLOCKED; `HOSTED_TUNNEL_ON_HOLD_BY_USER`. См. 19 §7.4 и независимый архив 06.
+
 ## Навигация
 
 - [[00_Главная - карта проекта]] — главный индекс.
