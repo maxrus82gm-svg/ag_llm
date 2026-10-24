@@ -41,8 +41,65 @@
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 ---
 
-Статус: ОЖИДАНИЕ НОВОЙ ЗАДАЧИ
-TASK: —
+Статус: НАЗНАЧЕНА / ОЖИДАЕТ ЗАПУСКА ПОЛЬЗОВАТЕЛЕМ
+TASK: CLAUDE-WA4-R-TOCTOU-RACE-REVIEW-001
+ARCH CLASS: Web Alarm / WA4-R Reliability / Adversarial Race Research
+PRIMARY: 36.2; SECONDARY: 23, 24, 25
+BASE: main@357a71442cc57a67e5df45d7901401d495409df0 (сверить локальные байты/ревизию с доступным источником через пользователя; Claude без Git)
+OWNER: Claude 008 — инженерное исследование. INDEPENDENT VERIFIER: ChatGPT. USER GO: scoped offline adversarial research and safe disposable TEMP probes ONLY.
+
+## 1. Цель
+
+Проверить реальные TOCTOU-гонки между проверкой пути, выбором canonical target, snapshot / precondition / ownership / CAS, фактической записью, post-proof и финализацией Web Alarm. Установить, может ли конкурентный процесс/поток заменить объект (файл, каталог, junction/symlink/reparse) после проверки так, что запись уйдёт не туда, будет затёрт чужой объект, получит ложный VERIFIED или испортит durable recovery/receipt. Не смешивать с уже принятым F-T1 test-harness/TMPDIR fix: этот дефект закрыт bounded Windows CI, а malicious/risk-driven TOCTOU ещё не доказан. Отдельно различать подтверждённую уязвимость, теоретический риск, Windows-specific limitation и ложную тревогу теста.
+
+**Тип TASK: DIAGNOSTIC / DESIGN + bounded OFFLINE PoC.** Не исправлять production/runtime сейчас и не включать rollout. Цель — независимая проверяемая матрица угроз и доказательное решение, нужно ли выдавать следующую узкую repair TASK. Не ждать заранее заданного исхода (FAIL или PASS).
+
+## 2. Входные сведения и чтение по scope
+
+- Свою карточку: Правила + БЛОК 1; БЛОК 4 read-only. Профиль `36.2` и тестовые нормативы `36/36.1` (TEST-DEV/COV/EXEC/QA/FLAKY/EVID/SCOPE), `23` и актуальные WA4-R секции `24/25`; `34` — текущий раздел и актуальный WA4-R. `18` — адресно `DOC-GIT-01@1`, `DOC-TASK-CLOSEOUT-OWNER-01@1`, `DOC-TEST-LIFECYCLE-01@1`, `DOC-TASK-READ-SCOPE-01@1`, `DOC-LOCAL-REPORT-HANDOFF-01@1`.
+- Критический код — `web_alarm/mutation_executor.py`, `web_alarm/operation_store.py`, `web_alarm/manifest_store.py`, `web_alarm/snapshot_store.py` (если существует; реальную структуру установить), `web_alarm/workspace_registry.py`, `web_alarm/reconciliation.py`, `web_alarm/transport_event_recovery.py`, `web_alarm/server.py`, `web_alarm/cli.py`, `wa4a_acceptance.py` и соответствующие тесты. Это перечень для *чтения*, не разрешение менять все файлы. Не выдумывать отсутствующие модули/точки entry.
+- Из прошлых gate: WA4-E/RC-3 lock/CAS; WA4-R OBSERVE bounded; F1–F4, AUD-02c/04, PWR-01, W3 — отдельные OPEN, не выдавать их за закрытые. Известные non-atomic move/rename и junction/Windows reparse нюансы включить как потенциальные сценарии.
+- Точный pinned SHA и конфликт локальных редакций установить до тестов (без Git-вызова от Claude: запросить через пользователя, при несоответствии STOP с evidence).
+
+## 3. Scope и permissions
+
+**READ:** релевантный исходный код и тесты Web Alarm в локальном `ag_llm`, документация по указанным селекторам, текущие guard/runner ограничения.
+
+**WRITE (только согласованные новые файлы):**
+- `test_web_alarm_toctou_race_review.py` — необязательный новый standalone test module только для безопасных *изолированных* adversarial probes; если используется, не менять discoverability/CI и не добавлять production changes.
+- `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-TOCTOU-RACE-REVIEW-001/` — `report.md`, `manifest.json`, `runs/`, `tools/` для воспроизводимых, sanitised proof artefacts, минимальных test helpers. Временные рабочие материалы — только в одноразовом TEMP, без чувствительных путей в публикации.
+- Не создавать новый тестовый файл, если probes можно честно провести существующими тестами и сохранить script/evidence в TASK package.
+
+**ЗАПРЕЩЕНО:** менять `web_alarm/*.py`, `wa4a_acceptance.py`, существующие `test_*.py`, CI/workflows, `000/001/05/06/18/23/24/25/34/36*`, настоящий registered Workspace, active TASK/store, архивы чужих задач, системные права/параметры, firewall/V2Ray/MCP, сеть, Git/GitHub (включая read-only) без нового адресного USER GO. Ни production recovery apply, ни реальные destructive writes. Не менять guard ради прохода тестов. Никаких изменений прав symlink/junction на хосте, если это требует admin: пометить NOT RUN и не обходить систему.
+
+## 4. Обязательная матрица исследования
+
+1. **Инвентаризация границ:** реальная цепочка `request → admission → path resolve → snapshot/precondition → target claim & lock → CAS → mutation → post-proof/receipt → VERIFIED/closeout`, отдельно для create/edit/write/delete и двухступенчатых move/rename. Отметить, где filesystem handle/identity защищён, а где проверяется только строковый путь.
+2. **Файловый race:** внешняя замена/удаление/восстановление файла между hash/precheck и atomic replace/write; изменение содержимого при сохранении имени; поведение при sharing violation; детерминированный pause/barrier injection, без опоры на многотысячные случайные повторы.
+3. **Каталоги и reparse:** rename ancestor, replace directory, symlink/junction swap на Windows, `..\`/case/extended paths; доказать физическое место возможного side effect (file hashes/identity), а не только status `blocked`. Если создать ссылку нельзя — SKIP/UNPROVEN.
+4. **Ownership/concurrency:** два независимых процесса и два TASK/operation на том же canonical physical target; claim under lock, stale revision, retry/replay after interrupted write; не игнорировать root guard и no-Git/no-network.
+5. **Receipt / recovery:** инъекция сбоя между successful physical mutation и persist receipt/verification; допускается только controlled exception/child process termination в TEMP без системного crash, подтверждение reopen отдельным process; никакого ложного VERIFIED/COMPLETED, blind replay или потери оригинальных доказательств.
+6. **Негативный контроль:** искусственно ослабленный oracle или строго тестовая imitation path-swap должен порождать обнаруживаемый FAIL; без proof test может быть INCONCLUSIVE, а не PASS. Отдельно учесть F-T1 CI env `TMPDIR/TEMP/TMP` и не повторить старую ошибку выбора корня.
+
+## 5. Тестовая стратегия
+
+Сначала статический source-to-sink review и минимальные детерминированные PoC с изолированным внешним parent TEMP/inner root. Все дочерние процессы получают согласованный temp-root, где требуется. Каждый сценарий должен иметь pre/post SHA/bytes, процессную идентичность, точку race injection, статус и явно `SIDE EFFECT: NONE/IN-ROOT/OUT-OF-ROOT/UNKNOWN`. Сохранять RED и GREEN лишь при реальном воспроизведении; не называть expected test refusal ошибкой Web Alarm. При возможности — несколько независимых повторений *только* для выявленной нестабильности и bounded full regression; не запускать 989 тестов без причинной необходимости для diagnostic-only research. Нельзя расширять guard или маскировать FAIL.
+
+**Нужные доказательства:** threat matrix (severity/likelihood/reproducibility), precise vulnerable/source line references, target identity/pre/post bytes, Windows/platform limits, parser/runner fail-closed, tests total PASS/FAIL/ERROR/SKIP/NOT RUN, raw local path sanitized, manifest SHA-256/size/EOL. Если обнаружена достоверная опасная ошибка, ограничить probe, зафиксировать минимальный RED и предложить отдельно узкую repair TASK — **не лечить runtime по своей инициативе**.
+
+## 6. Ожидаемая сдача
+
+`Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-TOCTOU-RACE-REVIEW-001/report.md` должен включать: архитектурную схему write boundary; audit каждого сценария; reproducible PoC или точные причины NOT RUN; фактические файловые эффекты; negative controls; список findings с `CONFIRMED / RISK / DISPROVED / INCONCLUSIVE`, severity и проверенные инварианты; минимальную рекомендацию по repair/priorities; `DOC IMPACT`; explicit `NO PRODUCTION CHANGE / NO ROLLOUT`. Сохранить sanitized files и manifest. Не вносить найденные факты в общую документацию/личный 001 самостоятельно.
+
+**Самопроверка Claude:** собственный adversarial pass перед итогом; для предупреждений средней/высокой критичности доказательства должны быть перепроверены новым процессом или чётко отмечены как только гипотеза. Не объявлять WA4-R DONE, W3/PWR-01/ WARN/GATEWAY REQUIRED/STRICT принятыми.
+
+**STATUS:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION` — лишь после завершения выбранных обязательных сценариев и readback пакета; `PARTIAL / BLOCKED` с точным NEXT при ограничениях. Если тест ещё работает — красный `ТЕСТЫ НЕ ЗАВЕРШЕНЫ` с реальным состоянием, без преждевременного финального блока.
+
+**Ответ пользователю:** один краткий копируемый блок `text`: TASK ID, итог, матрица, изменения, tests/evidence, risks, рекомендации, report/manifest locator, NEXT. Дальше пользователь публикует на GitHub, ChatGPT проверяет код/evidence и независимый CI и *только потом* заполняет `001`, БЛОКИ 2–4, журнал 06 и актуальный 34, а БЛОК 1 освобождает при успешном closeout. Ни один документный блок не ротировать исполнителем.
+
+## 7. STOP / следующий gate
+
+Без отдельного USER GO не переходить к физическому ремонту, изменению production code, live preflight, security/power-loss gates, rollout. При confirmed HIGH — сохранить исключающий доступ за пределы TEMP тест и немедленно сообщить координатору/пользователю. Итог исследовательской TASK — предложение о следующем минимальном ремонте или evidence-based отказ от него, а не автоматическое решение включить строгий режим.
 
 ---
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
