@@ -1,0 +1,26 @@
+{
+  "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
+  "amendment": 1,
+  "status": "DOWNLOADED_NOT_YET_REVIEWED",
+  "release_url": "https://github.com/SagerNet/sing-box/releases/tag/v1.13.4",
+  "requested_url": "https://github.com/SagerNet/sing-box/archive/refs/tags/v1.13.4.zip",
+  "expected_revision": "d09182614c7778c1e0f51d990635c5d4249c437e",
+  "started_at": "2026-10-24T21:25:49.752694+05:00",
+  "direct_fallback": false,
+  "network_tests": 0,
+  "redirects": [
+    {
+      "status": 302,
+      "url": "https://codeload.github.com/SagerNet/sing-box/zip/refs/tags/v1.13.4"
+    }
+  ],
+  "artifacts_requested": 1,
+  "route": "EXPLICIT_EXISTING_LOOPBACK_HTTP_CONNECT_PROXY; NO_PROXY ignored; no direct fallback",
+  "proxy_port": 10808,
+  "final_url": "https://codeload.github.com/SagerNet/sing-box/zip/refs/tags/v1.13.4",
+  "archive_path": "M:\\WUA_SOURCE_REVIEW\\sing-box\\v1.13.4\\sing-box-v1.13.4-source.zip",
+  "bytes": 1438060,
+  "sha256": "ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c",
+  "received_at": "2026-10-24T21:25:51.265099+05:00",
+  "content_type": "application/zip"
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "read-only source navigation, not a test/engine failure",
+  "attempted_nonexistent_paths": [
+    "adapter/connection.go",
+    "adapter/connection/",
+    "adapter/conntrack/manager.go",
+    "dns/transport/local/local_win.go",
+    "dns/transport/manager.go",
+    "option/http.go"
+  ],
+  "resolution": "Used rg --files and rg -l inside the approved source archive; actual reviewed paths include route/conn.go, dns/transport_manager.go, dns/transport/local/resolv_windows.go. No extra download."
+}

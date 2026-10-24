@@ -1,13 +1,9 @@
-# Единственный недостающий вход
+# NEXT USER DECISION — no additional download performed
 
-Передайте **один официальный архив исходников sing-box v1.13.4**, соответствующий commit **d09182614c7778c1e0f51d990635c5d4249c437e**.
+One-time source ZIP permission is consumed. Main archive received and reviewed; do not repeat the old archive request. The next missing source input is **github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde**, in particular protocol/http, common/auth, common/json and network/control helpers. Pinned go.sum ZIP checksum: `h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=`; go.mod checksum: `h1:ARkL0gM13/Iv5VCZmci/NuoOlePoIsW0m7BWfln/Hak=`.
 
-Безопасное предложенное место, parent directory подготовлен:
+Provide an already available matching local source-only dependency bundle with origin/hash, or separately authorize a bounded dependency-source acquisition. **No dependency installation/build is needed or permitted by the existing one-archive GO.** Do not supply working configs/subscriptions/passwords. This is the minimum next source closure for full CONNECT/auth/JSON review; it is not an ask to download every compiled optional feature.
 
-`M:\GitHub\ag_llm\reports\CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001\source\sing-box-v1.13.4.tar.gz`
+After that review: user decides whether sing-box is the engine candidate, then separately scopes exact disabled native config mapping. Preserve current V2Ray family until that decision. Upstream encrypted/authenticated protocol and endpoint/credential delivery must be explicitly selected, not inferred from a user profile.
 
-Если архив уже находится в другом разрешённом локальном месте, достаточно сообщить **его полный путь**. Дополнительно нужны SHA256 архива и origin/кто передал его с привязкой к этой revision. До распаковки эти данные сверяются с фактическими bytes; одного имени файла недостаточно.
-
-В архиве ожидаются matching go.mod/go.sum и source tree; versioned docs/schema — если они действительно входят в официальный source. Рабочий proxy config, подписки, tokens, API keys и пароли не нужны. Бинарник core для этой source-only стадии передавать/запускать не требуется.
-
-Самостоятельного скачивания или Git-запроса от Codex не будет: **§4 утверждённого БЛОКА1 требует остановить зависимый review при отсутствии локального bundle**. После передачи входа можно возобновить source-only задачу через новое назначение/дополнение. Выбор sing-box вместо V2Ray, изменение family, Windows/WFP/native network и hosted tunnel этим действием не разрешаются.
+Native execution, provisioning C/B identities, WFP, routes, services or hosted tunnel each remain separate USER GO after independently proven lab isolation. Actual same-B PID listener+remote socket, no resolver/UDP/IPv6/helper/fallback, stop on drift/observer loss and existing flow teardown are not proved by source tests. can_apply=false, can_start_tunnel=false, HOSTED_TUNNEL_ON_HOLD_BY_USER, ordinary Chat E2E NOT VERIFIED.

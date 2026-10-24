@@ -1,0 +1,438 @@
+{
+  "revision": "d09182614c7778c1e0f51d990635c5d4249c437e",
+  "scope": "bounded quotes from GPL upstream source archive; not complete dependency closure",
+  "fragments": [
+    {
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "start_line": 58,
+      "end_line": 64,
+      "excerpt": "\t\tContext:           ctx,\n\t\tLogger:            logger,\n\t\tNetwork:           []string{N.NetworkTCP},\n\t\tListen:            options.ListenOptions,\n\t\tConnectionHandler: inbound,\n\t\tSetSystemProxy:    options.SetSystemProxy,\n\t\tSystemProxySOCKS:  false,",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "start_line": 41,
+      "end_line": 47,
+      "excerpt": "\t\trouter:        uot.NewRouter(router, logger),\n\t\tlogger:        logger,\n\t\tauthenticator: auth.NewAuthenticator(options.Users),\n\t}\n\tif options.TLS != nil {\n\t\ttlsConfig, err := tls.NewServerWithOptions(tls.ServerOptions{\n\t\t\tContext:        ctx,",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "start_line": 97,
+      "end_line": 103,
+      "excerpt": "\t\tconn = tlsConn\n\t}\n\terr := http.HandleConnectionEx(ctx, conn, std_bufio.NewReader(conn), h.authenticator, adapter.NewUpstreamHandlerEx(metadata, h.newUserConnection, h.streamUserPacketConnection), metadata.Source, onClose)\n\tif err != nil {\n\t\tN.CloseOnHandshakeFailure(conn, onClose, err)\n\t\th.logger.ErrorContext(ctx, E.Cause(err, \"process connection from \", metadata.Source))\n\t}",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "start_line": 39,
+      "end_line": 45,
+      "excerpt": "\tinbound := &Inbound{\n\t\tAdapter:       inbound.NewAdapter(C.TypeHTTP, tag),\n\t\trouter:        uot.NewRouter(router, logger),\n\t\tlogger:        logger,\n\t\tauthenticator: auth.NewAuthenticator(options.Users),\n\t}\n\tif options.TLS != nil {",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "path": "common/listener/listener_tcp.go",
+      "function": "Listener.ListenTCP",
+      "start_line": 21,
+      "end_line": 27,
+      "excerpt": ")\n\nfunc (l *Listener) ListenTCP() (net.Listener, error) {\n\t//nolint:staticcheck\n\tif l.listenOptions.ProxyProtocol || l.listenOptions.ProxyProtocolAcceptNoHeader {\n\t\treturn nil, E.New(\"Proxy Protocol is deprecated and removed in sing-box 1.6.0\")\n\t}",
+      "file_sha256": "2cd4c4d057e256cfd1c23f730f6ce376fd9ccfeb2a0e998d46b19bb1a1e47e01"
+    },
+    {
+      "path": "common/listener/listener_tcp.go",
+      "function": "Listener.ListenTCP",
+      "start_line": 69,
+      "end_line": 75,
+      "excerpt": "\t\t\treturn tfoConfig.Listen(l.ctx, M.NetworkFromNetAddr(N.NetworkTCP, bindAddr.Addr), bindAddr.String())\n\t\t} else {\n\t\t\treturn listenConfig.Listen(l.ctx, M.NetworkFromNetAddr(N.NetworkTCP, bindAddr.Addr), bindAddr.String())\n\t\t}\n\t})\n\tif err != nil {\n\t\treturn nil, err",
+      "file_sha256": "2cd4c4d057e256cfd1c23f730f6ce376fd9ccfeb2a0e998d46b19bb1a1e47e01"
+    },
+    {
+      "path": "common/listener/listener.go",
+      "function": "Listener.Start",
+      "start_line": 98,
+      "end_line": 104,
+      "excerpt": "\t\t}\n\t}\n\tif l.setSystemProxy {\n\t\tlistenPort := M.SocksaddrFromNet(l.tcpListener.Addr()).Port\n\t\tvar listenAddrString string\n\t\tlistenAddr := l.listenOptions.Listen.Build(netip.IPv4Unspecified())\n\t\tif listenAddr.IsUnspecified() {",
+      "file_sha256": "af8dc8fe9602590a10439b9b1e9461e953685261f4f3a950f6e357319906f54b"
+    },
+    {
+      "path": "common/listener/listener.go",
+      "function": "Listener.Start",
+      "start_line": 111,
+      "end_line": 117,
+      "excerpt": "\t\t\treturn E.Cause(err, \"initialize system proxy\")\n\t\t}\n\t\terr = systemProxy.Enable()\n\t\tif err != nil {\n\t\t\treturn E.Cause(err, \"set system proxy\")\n\t\t}\n\t\tl.systemProxy = systemProxy",
+      "file_sha256": "af8dc8fe9602590a10439b9b1e9461e953685261f4f3a950f6e357319906f54b"
+    },
+    {
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "start_line": 101,
+      "end_line": 107,
+      "excerpt": "\t\tcase *R.RuleActionRoute:\n\t\t\tvar loaded bool\n\t\t\tselectedOutbound, loaded = r.outbound.Outbound(action.Outbound)\n\t\t\tif !loaded {\n\t\t\t\tbuf.ReleaseMulti(buffers)\n\t\t\t\treturn E.New(\"outbound not found: \", action.Outbound)\n\t\t\t}",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6"
+    },
+    {
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "start_line": 138,
+      "end_line": 144,
+      "excerpt": "\t\t}\n\t}\n\tif selectedRule == nil {\n\t\tdefaultOutbound := r.outbound.Default()\n\t\tif !common.Contains(defaultOutbound.Network(), N.NetworkTCP) {\n\t\t\tbuf.ReleaseMulti(buffers)\n\t\t\treturn E.New(\"TCP is not supported by default outbound: \", defaultOutbound.Tag())",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6"
+    },
+    {
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "start_line": 139,
+      "end_line": 145,
+      "excerpt": "\t}\n\tif selectedRule == nil {\n\t\tdefaultOutbound := r.outbound.Default()\n\t\tif !common.Contains(defaultOutbound.Network(), N.NetworkTCP) {\n\t\t\tbuf.ReleaseMulti(buffers)\n\t\t\treturn E.New(\"TCP is not supported by default outbound: \", defaultOutbound.Tag())\n\t\t}",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6"
+    },
+    {
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "start_line": 129,
+      "end_line": 135,
+      "excerpt": "\t\t\t\treturn E.New(\"reject method `reply` is not supported for TCP connections\")\n\t\t\t}\n\t\t\treturn action.Error(ctx)\n\t\tcase *R.RuleActionHijackDNS:\n\t\t\tfor _, buffer := range buffers {\n\t\t\t\tconn = bufio.NewCachedConn(conn, buffer)\n\t\t\t}",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6"
+    },
+    {
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "start_line": 317,
+      "end_line": 323,
+      "excerpt": "\t\t}\n\t}\n\toutboundManager.Initialize(func() (adapter.Outbound, error) {\n\t\treturn direct.NewOutbound(\n\t\t\tctx,\n\t\t\trouter,\n\t\t\tlogFactory.NewLogger(\"outbound/direct\"),",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "start_line": 318,
+      "end_line": 324,
+      "excerpt": "\t}\n\toutboundManager.Initialize(func() (adapter.Outbound, error) {\n\t\treturn direct.NewOutbound(\n\t\t\tctx,\n\t\t\trouter,\n\t\t\tlogFactory.NewLogger(\"outbound/direct\"),\n\t\t\t\"direct\",",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "start_line": 323,
+      "end_line": 329,
+      "excerpt": "\t\t\tlogFactory.NewLogger(\"outbound/direct\"),\n\t\t\t\"direct\",\n\t\t\toption.DirectOutboundOptions{},\n\t\t)\n\t})\n\tdnsTransportManager.Initialize(func() (adapter.DNSTransport, error) {\n\t\treturn local.NewTransport(",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "start_line": 326,
+      "end_line": 332,
+      "excerpt": "\t\t)\n\t})\n\tdnsTransportManager.Initialize(func() (adapter.DNSTransport, error) {\n\t\treturn local.NewTransport(\n\t\t\tctx,\n\t\t\tlogFactory.NewLogger(\"dns/local\"),\n\t\t\t\"local\",",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "start_line": 331,
+      "end_line": 337,
+      "excerpt": "\t\t\tlogFactory.NewLogger(\"dns/local\"),\n\t\t\t\"local\",\n\t\t\toption.LocalDNSServerOptions{},\n\t\t)\n\t})\n\tif platformInterface != nil {\n\t\terr = platformInterface.Initialize(networkManager)",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "start_line": 67,
+      "end_line": 73,
+      "excerpt": "\t\t\tm.defaultOutbound = defaultEndpoint\n\t\t}\n\t\tif m.defaultOutbound == nil {\n\t\t\tdirectOutbound, err := m.defaultOutboundFallback()\n\t\t\tif err != nil {\n\t\t\t\tm.access.Unlock()\n\t\t\t\treturn E.Cause(err, \"create direct outbound for fallback\")",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672"
+    },
+    {
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "start_line": 68,
+      "end_line": 74,
+      "excerpt": "\t\t}\n\t\tif m.defaultOutbound == nil {\n\t\t\tdirectOutbound, err := m.defaultOutboundFallback()\n\t\t\tif err != nil {\n\t\t\t\tm.access.Unlock()\n\t\t\t\treturn E.Cause(err, \"create direct outbound for fallback\")\n\t\t\t}",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672"
+    },
+    {
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "start_line": 308,
+      "end_line": 314,
+      "excerpt": "\t\tm.dependByTag[dependency] = append(m.dependByTag[dependency], tag)\n\t}\n\tif tag == m.defaultTag || (m.defaultTag == \"\" && m.defaultOutbound == nil) {\n\t\tm.defaultOutbound = outbound\n\t\tif m.started {\n\t\t\tm.logger.Info(\"updated default outbound to \", outbound.Tag())\n\t\t}",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672"
+    },
+    {
+      "path": "route/conn.go",
+      "function": "ConnectionManager.NewConnection",
+      "start_line": 100,
+      "end_line": 106,
+      "excerpt": "\t\tremoteConn, err = dialer.DialSerialNetwork(ctx, this, N.NetworkTCP, metadata.Destination, metadata.DestinationAddresses, metadata.NetworkStrategy, metadata.NetworkType, metadata.FallbackNetworkType, metadata.FallbackDelay)\n\t} else {\n\t\tremoteConn, err = this.DialContext(ctx, N.NetworkTCP, metadata.Destination)\n\t}\n\tif err != nil {\n\t\tvar remoteString string\n\t\tif len(metadata.DestinationAddresses) > 0 {",
+      "file_sha256": "ec013d2a393695ff190066aaea9ff04c19207a88bc744cfc79b6d6ace6b97503"
+    },
+    {
+      "path": "route/conn.go",
+      "function": "ConnectionManager.NewConnection",
+      "start_line": 114,
+      "end_line": 120,
+      "excerpt": "\t\t}\n\t\terr = E.Cause(err, \"open connection to \", remoteString, dialerString)\n\t\tN.CloseOnHandshakeFailure(conn, onClose, err)\n\t\tm.logger.ErrorContext(ctx, err)\n\t\treturn\n\t}\n\terr = N.ReportConnHandshakeSuccess(conn, remoteConn)",
+      "file_sha256": "ec013d2a393695ff190066aaea9ff04c19207a88bc744cfc79b6d6ace6b97503"
+    },
+    {
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "start_line": 48,
+      "end_line": 54,
+      "excerpt": "\t\tlogger:     logger,\n\t\tdialer:     outboundDialer,\n\t\tserverAddr: options.ServerOptions.Build(),\n\t\tkey:        trojan.Key(options.Password),\n\t}\n\tif options.TLS != nil {\n\t\toutbound.tlsConfig, err = tls.NewClientWithOptions(tls.ClientOptions{",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18"
+    },
+    {
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "start_line": 132,
+      "end_line": 138,
+      "excerpt": "\t\tconn, err = h.transport.DialContext(ctx)\n\t} else if h.tlsDialer != nil {\n\t\tconn, err = h.tlsDialer.DialTLSContext(ctx, h.serverAddr)\n\t} else {\n\t\tconn, err = h.dialer.DialContext(ctx, N.NetworkTCP, h.serverAddr)\n\t}\n\tif err != nil {",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18"
+    },
+    {
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "start_line": 134,
+      "end_line": 140,
+      "excerpt": "\t\tconn, err = h.tlsDialer.DialTLSContext(ctx, h.serverAddr)\n\t} else {\n\t\tconn, err = h.dialer.DialContext(ctx, N.NetworkTCP, h.serverAddr)\n\t}\n\tif err != nil {\n\t\tcommon.Close(conn)\n\t\treturn nil, err",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18"
+    },
+    {
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "start_line": 142,
+      "end_line": 148,
+      "excerpt": "\tswitch N.NetworkName(network) {\n\tcase N.NetworkTCP:\n\t\treturn trojan.NewClientConn(conn, h.key, destination), nil\n\tcase N.NetworkUDP:\n\t\treturn bufio.NewBindPacketConn(trojan.NewClientPacketConn(conn, h.key), destination), nil\n\tdefault:\n\t\treturn nil, E.Extend(N.ErrUnknownNetwork, network)",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18"
+    },
+    {
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "start_line": 43,
+      "end_line": 49,
+      "excerpt": "\t\terr    error\n\t)\n\tif dialOptions.Detour != \"\" {\n\t\toutboundManager := service.FromContext[adapter.OutboundManager](options.Context)\n\t\tif outboundManager == nil {\n\t\t\treturn nil, E.New(\"missing outbound manager\")\n\t\t}",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7"
+    },
+    {
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "start_line": 55,
+      "end_line": 61,
+      "excerpt": "\t\t}\n\t}\n\tif options.RemoteIsDomain && (dialOptions.Detour == \"\" || options.ResolverOnDetour || dialOptions.DomainResolver != nil && dialOptions.DomainResolver.Server != \"\") {\n\t\tnetworkManager := service.FromContext[adapter.NetworkManager](options.Context)\n\t\tdnsTransport := service.FromContext[adapter.DNSTransportManager](options.Context)\n\t\tvar defaultOptions adapter.NetworkOptions\n\t\tif networkManager != nil {",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7"
+    },
+    {
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "start_line": 124,
+      "end_line": 130,
+      "excerpt": "\t\t\t}\n\t\t}\n\t\tdialer = NewResolveDialer(\n\t\t\toptions.Context,\n\t\t\tdialer,\n\t\t\tdialOptions.Detour == \"\" && !dialOptions.TCPFastOpen,\n\t\t\tserver,",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7"
+    },
+    {
+      "path": "dns/transport/local/resolv_windows.go",
+      "function": "dnsReadConfig/adapterAddresses",
+      "start_line": 97,
+      "end_line": 103,
+      "excerpt": "\t\tb = make([]byte, l)\n\t\tconst flags = windows.GAA_FLAG_INCLUDE_PREFIX | windows.GAA_FLAG_INCLUDE_GATEWAYS\n\t\terr := windows.GetAdaptersAddresses(syscall.AF_UNSPEC, flags, 0, (*windows.IpAdapterAddresses)(unsafe.Pointer(&b[0])), &l)\n\t\tif err == nil {\n\t\t\tif l == 0 {\n\t\t\t\treturn nil, nil\n\t\t\t}",
+      "file_sha256": "e916c4fe78bf5dd5abb8d062a1d7afb436975bb57dfa9f92b545e04f7b3d5070"
+    },
+    {
+      "path": "dns/transport/local/resolv_windows.go",
+      "function": "dnsReadConfig/adapterAddresses",
+      "start_line": 25,
+      "end_line": 31,
+      "excerpt": "\tdefer func() {\n\t\tif len(conf.servers) == 0 {\n\t\t\tconf.servers = defaultNS\n\t\t}\n\t}()\n\taddresses, err := adapterAddresses()\n\tif err != nil {",
+      "file_sha256": "e916c4fe78bf5dd5abb8d062a1d7afb436975bb57dfa9f92b545e04f7b3d5070"
+    },
+    {
+      "path": "common/uot/router.go",
+      "function": "Router.RouteConnectionEx",
+      "start_line": 27,
+      "end_line": 33,
+      "excerpt": "func (r *Router) RouteConnection(ctx context.Context, conn net.Conn, metadata adapter.InboundContext) error {\n\tswitch metadata.Destination.Fqdn {\n\tcase uot.MagicAddress:\n\t\trequest, err := uot.ReadRequest(conn)\n\t\tif err != nil {\n\t\t\treturn E.Cause(err, \"read UoT request\")\n\t\t}",
+      "file_sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d"
+    },
+    {
+      "path": "common/uot/router.go",
+      "function": "Router.RouteConnectionEx",
+      "start_line": 70,
+      "end_line": 76,
+      "excerpt": "\t\tmetadata.Domain = metadata.Destination.Fqdn\n\t\tmetadata.Destination = request.Destination\n\t\tr.router.RoutePacketConnectionEx(ctx, uot.NewConn(conn, *request), metadata, onClose)\n\t\treturn\n\tcase uot.LegacyMagicAddress:\n\t\tr.logger.InfoContext(ctx, \"inbound legacy UoT connection\")\n\t\tmetadata.Domain = metadata.Destination.Fqdn",
+      "file_sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d"
+    },
+    {
+      "path": "protocol/group/urltest.go",
+      "function": "URLTestGroup.PostStart",
+      "start_line": 268,
+      "end_line": 274,
+      "excerpt": "\t\treturn\n\t}\n\tg.ticker = time.NewTicker(g.interval)\n\tgo g.loopCheck()\n\tg.pauseCallback = pause.RegisterTicker(g.pause, g.ticker, g.interval, nil)\n}\n",
+      "file_sha256": "66f1c24301e6ac36e92bf30847681e7780eda785e07fa09805cff4a163d57bdb"
+    },
+    {
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "start_line": 106,
+      "end_line": 112,
+      "excerpt": "\t}\n\tif s.lastUpdated.IsZero() {\n\t\terr := s.fetch(ctx, startContext)\n\t\tif err != nil {\n\t\t\treturn E.Cause(err, \"initial rule-set: \", s.options.Tag)\n\t\t}\n\t}",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1"
+    },
+    {
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "start_line": 111,
+      "end_line": 117,
+      "excerpt": "\t\t}\n\t}\n\ts.updateTicker = time.NewTicker(s.updateInterval)\n\treturn nil\n}\n\nfunc (s *RemoteRuleSet) PostStart() error {",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1"
+    },
+    {
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "start_line": 116,
+      "end_line": 122,
+      "excerpt": "\nfunc (s *RemoteRuleSet) PostStart() error {\n\tgo s.loopUpdate()\n\treturn nil\n}\n\nfunc (s *RemoteRuleSet) Metadata() adapter.RuleSetMetadata {",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1"
+    },
+    {
+      "path": "box.go",
+      "function": "New conditional services",
+      "start_line": 202,
+      "end_line": 208,
+      "excerpt": "\tntpOptions := common.PtrValueOrDefault(options.NTP)\n\tvar timeService *tls.TimeServiceWrapper\n\tif ntpOptions.Enabled {\n\t\ttimeService = new(tls.TimeServiceWrapper)\n\t\tservice.MustRegister[ntp.TimeService](ctx, timeService)\n\t}\n\tfor i, transportOptions := range dnsOptions.Servers {",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "box.go",
+      "function": "New conditional services",
+      "start_line": 372,
+      "end_line": 378,
+      "excerpt": "\t\t\treturn nil, E.Cause(err, \"create NTP service\")\n\t\t}\n\t\tntpService := ntp.NewService(ntp.Options{\n\t\t\tContext:       ctx,\n\t\t\tDialer:        ntpDialer,\n\t\t\tLogger:        logFactory.NewLogger(\"ntp\"),\n\t\t\tServer:        ntpOptions.ServerOptions.Build(),",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+    },
+    {
+      "path": "protocol/tor/outbound.go",
+      "function": "Outbound.start",
+      "start_line": 107,
+      "end_line": 113,
+      "excerpt": "\nfunc (t *Outbound) start() error {\n\ttorInstance, err := tor.Start(t.ctx, t.startConf)\n\tif err != nil {\n\t\treturn E.New(strings.ToLower(err.Error()))\n\t}\n\tt.instance = torInstance",
+      "file_sha256": "99d472aa7c546728807e8f615406b8fdb7d6b9676afb275f30b2378b1dc235be"
+    },
+    {
+      "path": "protocol/tor/outbound.go",
+      "function": "Outbound.start",
+      "start_line": 164,
+      "end_line": 170,
+      "excerpt": "\tt.logger.Trace(\"obtained tor socks5 address \", info[0].Val)\n\t// TODO: set password for tor socks5 server if supported\n\tt.socksClient = socks.NewClient(N.SystemDialer, M.ParseSocksaddr(info[0].Val), socks.Version5, \"\", \"\")\n\treturn nil\n}\n\nfunc (t *Outbound) recvLoop() {",
+      "file_sha256": "99d472aa7c546728807e8f615406b8fdb7d6b9676afb275f30b2378b1dc235be"
+    },
+    {
+      "path": "common/tls/ech.go",
+      "function": "ECHClientConfig.fetchAndHandshake",
+      "start_line": 148,
+      "end_line": 154,
+      "excerpt": "\t\t\t},\n\t\t}\n\t\tresponse, err := s.dnsRouter.Exchange(ctx, message, adapter.DNSQueryOptions{})\n\t\tif err != nil {\n\t\t\treturn nil, E.Cause(err, \"fetch ECH config list\")\n\t\t}\n\t\tif response.Rcode != mDNS.RcodeSuccess {",
+      "file_sha256": "0b5faff382d5cc2af0b940d5ada8e2780a1830f8db124ad9aa92504af340761f"
+    },
+    {
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "start_line": 220,
+      "end_line": 226,
+      "excerpt": "\n\tif !verifier.verified {\n\t\tgo realityClientFallback(e.ctx, uConn, e.uClient.ServerName(), e.uClient.id)\n\t\treturn nil, E.New(\"reality verification failed\")\n\t}\n\n\treturn &realityClientConnWrapper{uConn}, nil",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289"
+    },
+    {
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "start_line": 232,
+      "end_line": 238,
+      "excerpt": "\t\tTransport: &http2.Transport{\n\t\t\tDialTLSContext: func(ctx context.Context, network, addr string, config *tls.Config) (net.Conn, error) {\n\t\t\t\treturn uConn, nil\n\t\t\t},\n\t\t\tTLSClientConfig: &tls.Config{\n\t\t\t\tTime:    ntp.TimeFuncFromContext(ctx),\n\t\t\t\tRootCAs: adapter.RootPoolFromContext(ctx),",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289"
+    },
+    {
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "start_line": 243,
+      "end_line": 249,
+      "excerpt": "\trequest.Header.Set(\"User-Agent\", fingerprint.Client)\n\trequest.AddCookie(&http.Cookie{Name: \"padding\", Value: strings.Repeat(\"0\", mRand.Intn(32)+30)})\n\tresponse, err := client.Do(request)\n\tif err != nil {\n\t\treturn\n\t}\n\t_, _ = io.Copy(io.Discard, response.Body)",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289"
+    },
+    {
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "start_line": 65,
+      "end_line": 71,
+      "excerpt": "\t\t}\n\t}\n\tif len(configPaths) == 0 && len(configDirectories) == 0 {\n\t\tconfigPaths = append(configPaths, \"config.json\")\n\t}\n\tglobalCtx = include.Context(service.ContextWith(globalCtx, deprecated.NewStderrManager(log.StdLogger())))\n}",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9"
+    },
+    {
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "start_line": 66,
+      "end_line": 71,
+      "excerpt": "\t}\n\tif len(configPaths) == 0 && len(configDirectories) == 0 {\n\t\tconfigPaths = append(configPaths, \"config.json\")\n\t}\n\tglobalCtx = include.Context(service.ContextWith(globalCtx, deprecated.NewStderrManager(log.StdLogger())))\n}",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9"
+    },
+    {
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "start_line": 60,
+      "end_line": 66,
+      "excerpt": "\t\t\tfilemanager.MkdirAll(globalCtx, workingDir, 0o777)\n\t\t}\n\t\terr = os.Chdir(workingDir)\n\t\tif err != nil {\n\t\t\tlog.Fatal(err)\n\t\t}\n\t}",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9"
+    },
+    {
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "start_line": 50,
+      "end_line": 56,
+      "excerpt": "\t\terr           error\n\t)\n\tif path == \"stdin\" {\n\t\tconfigContent, err = io.ReadAll(os.Stdin)\n\t} else {\n\t\tconfigContent, err = os.ReadFile(path)\n\t}",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "start_line": 78,
+      "end_line": 84,
+      "excerpt": "\t\toptionsList = append(optionsList, optionsEntry)\n\t}\n\tfor _, directory := range configDirectories {\n\t\tentries, err := os.ReadDir(directory)\n\t\tif err != nil {\n\t\t\treturn nil, E.Cause(err, \"read config directory at \", directory)\n\t\t}",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "start_line": 94,
+      "end_line": 100,
+      "excerpt": "\t\t}\n\t}\n\tsort.Slice(optionsList, func(i, j int) bool {\n\t\treturn optionsList[i].path < optionsList[j].path\n\t})\n\treturn optionsList, nil\n}",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "start_line": 110,
+      "end_line": 116,
+      "excerpt": "\tvar mergedMessage json.RawMessage\n\tfor _, options := range optionsList {\n\t\tmergedMessage, err = badjson.MergeJSON(globalCtx, options.options.RawMessage, mergedMessage, false)\n\t\tif err != nil {\n\t\t\treturn option.Options{}, E.Cause(err, \"merge config at \", options.path)\n\t\t}\n\t}",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "path": "option/options.go",
+      "function": "Options.UnmarshalJSONContext",
+      "start_line": 29,
+      "end_line": 35,
+      "excerpt": "func (o *Options) UnmarshalJSONContext(ctx context.Context, content []byte) error {\n\tdecoder := json.NewDecoderContext(ctx, bytes.NewReader(content))\n\tdecoder.DisallowUnknownFields()\n\terr := decoder.Decode((*_Options)(o))\n\tif err != nil {\n\t\treturn err\n\t}",
+      "file_sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2"
+    },
+    {
+      "path": "option/options.go",
+      "function": "Options.UnmarshalJSONContext",
+      "start_line": 35,
+      "end_line": 41,
+      "excerpt": "\t}\n\to.RawMessage = content\n\treturn checkOptions(o)\n}\n\ntype LogOptions struct {\n\tDisabled     bool   `json:\"disabled,omitempty\"`",
+      "file_sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2"
+    }
+  ]
+}

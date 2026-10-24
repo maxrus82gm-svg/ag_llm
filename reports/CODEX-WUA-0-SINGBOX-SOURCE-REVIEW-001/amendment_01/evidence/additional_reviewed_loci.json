@@ -1,0 +1,128 @@
+[
+  {
+    "path": "protocol/http/inbound.go",
+    "line": 60,
+    "locator": "Network:           []string{N.NetworkTCP}",
+    "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+  },
+  {
+    "path": "common/listener/listener_tcp.go",
+    "line": 23,
+    "locator": "func (l *Listener) ListenTCP()",
+    "file_sha256": "2cd4c4d057e256cfd1c23f730f6ce376fd9ccfeb2a0e998d46b19bb1a1e47e01"
+  },
+  {
+    "path": "common/listener/listener.go",
+    "line": 100,
+    "locator": "if l.setSystemProxy {",
+    "file_sha256": "af8dc8fe9602590a10439b9b1e9461e953685261f4f3a950f6e357319906f54b"
+  },
+  {
+    "path": "route/route.go",
+    "line": 103,
+    "locator": "selectedOutbound, loaded = r.outbound.Outbound(action.Outbound)",
+    "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6"
+  },
+  {
+    "path": "box.go",
+    "line": 319,
+    "locator": "outboundManager.Initialize(func()",
+    "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+  },
+  {
+    "path": "adapter/outbound/manager.go",
+    "line": 69,
+    "locator": "if m.defaultOutbound == nil {",
+    "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672"
+  },
+  {
+    "path": "route/conn.go",
+    "line": 102,
+    "locator": "remoteConn, err = this.DialContext(ctx, N.NetworkTCP, metadata.Destination)",
+    "file_sha256": "ec013d2a393695ff190066aaea9ff04c19207a88bc744cfc79b6d6ace6b97503"
+  },
+  {
+    "path": "protocol/trojan/outbound.go",
+    "line": 50,
+    "locator": "serverAddr: options.ServerOptions.Build()",
+    "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18"
+  },
+  {
+    "path": "common/dialer/dialer.go",
+    "line": 45,
+    "locator": "if dialOptions.Detour != \"\" {",
+    "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7"
+  },
+  {
+    "path": "dns/transport/local/resolv_windows.go",
+    "line": 99,
+    "locator": "windows.GetAdaptersAddresses(",
+    "file_sha256": "e916c4fe78bf5dd5abb8d062a1d7afb436975bb57dfa9f92b545e04f7b3d5070"
+  },
+  {
+    "path": "common/uot/router.go",
+    "line": 29,
+    "locator": "case uot.MagicAddress:",
+    "file_sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d"
+  },
+  {
+    "path": "protocol/group/urltest.go",
+    "line": 270,
+    "locator": "g.ticker = time.NewTicker(g.interval)",
+    "file_sha256": "66f1c24301e6ac36e92bf30847681e7780eda785e07fa09805cff4a163d57bdb"
+  },
+  {
+    "path": "route/rule/rule_set_remote.go",
+    "line": 108,
+    "locator": "s.fetch(ctx, startContext)",
+    "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1"
+  },
+  {
+    "path": "box.go",
+    "line": 204,
+    "locator": "if ntpOptions.Enabled {",
+    "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c"
+  },
+  {
+    "path": "protocol/tor/outbound.go",
+    "line": 109,
+    "locator": "tor.Start(t.ctx, t.startConf)",
+    "file_sha256": "99d472aa7c546728807e8f615406b8fdb7d6b9676afb275f30b2378b1dc235be"
+  },
+  {
+    "path": "common/tls/ech.go",
+    "line": 150,
+    "locator": "s.dnsRouter.Exchange(ctx, message, adapter.DNSQueryOptions{})",
+    "file_sha256": "0b5faff382d5cc2af0b940d5ada8e2780a1830f8db124ad9aa92504af340761f"
+  },
+  {
+    "path": "common/tls/reality_client.go",
+    "line": 222,
+    "locator": "go realityClientFallback(",
+    "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289"
+  },
+  {
+    "path": "cmd/sing-box/cmd.go",
+    "line": 67,
+    "locator": "if len(configPaths) == 0 && len(configDirectories) == 0 {",
+    "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9"
+  },
+  {
+    "path": "cmd/sing-box/cmd_run.go",
+    "line": 52,
+    "locator": "if path == \"stdin\" {",
+    "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+  },
+  {
+    "path": "option/options.go",
+    "line": 31,
+    "locator": "decoder.DisallowUnknownFields()",
+    "file_sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2"
+  },
+  {
+    "path": "common/dialer/default.go",
+    "line": 239,
+    "locator": "func (d *DefaultDialer) DialContext",
+    "file_sha256": "53230c416f8b3f8b6e2c26bb1cf2d88c6f4de20d2792b57a8832437ee556d5f3"
+  }
+]

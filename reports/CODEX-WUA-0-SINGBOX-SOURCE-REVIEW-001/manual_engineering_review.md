@@ -1,13 +1,14 @@
-# Manual engineering review
+# Manual engineering/adversarial review — amendment01
 
-Codex007, 2026-10-24; review доступных постановки/evidence/preparatory runner, **не review sing-box source и не независимая приёмка**.
+Codex007 /2026-10-24, separate source reasoning, not independent WEB_11 acceptance. Reviewed actual pinned archive code and relevant docs; 54 line/function/file-hash locators plus selected additional loci in evidence. No core or Go build/test executed.
 
-- Разделены official tag mapping со слов WEB_11, локальные source bytes и EXE provenance. Совпадение revision не повышает последние два уровня.
-- Проверен exact-path scope. Нет bundle path в B1/сообщении, proposed archive отсутствует. Не делается вывод о всём диске; никаких профилей/кэшей/памяти не исследуется.
-- Ветви HTTP/default/fallback/DNS/helpers/config loader не реконструируются по названиям Go dependencies. Source locators остаются null, source tests/mutations NOT RUN.
-- Existing pure regression использует прежний validator, свежий output и source pins; engine/CLI/loopback selectors исключены. 19 PASS означает сохранение guard behavior, не способность sing-box удовлетворять strict policy.
-- Runtime/config/engine family не менялись. Новый bundle admission framework без архива не создавался. Это экономнее и точнее, чем synthetic source audit без подлинного source.
-- Для будущего архива отдельно нужны безопасная bounded распаковка/проверка traversal/reparse links, независимый package pin и review real source branches. Нынешний отчёт не обещает, что архив с правильным именем автоматически доверенный.
-- WFP, токены/наследование/loaded image, actual socket owner и no-DIRECT остаются native lab gates даже после будущего source review. Git/download/Windows mutations не разрешены отсутствием входа.
+- Download: explicit existing loopback HTTP CONNECT, validated TLS GitHub→codeload, no retry/DIRECT/credential export; only one archive. This does not prove proxy remote route or OS containment. ZIP comment matches revision, but comment/tag/hash alone is not cryptographic archive/EXE authenticity.
+- Source safety: bounded CRC/paths/collisions/links/member checks before extraction, no archive execution. Full1013 file pins retained. Source bytes unchanged; mutations are memory/copies under report, not changes to upstream tree.
+- Corrected assumptions: empty config is **not deny** (DIRECT+localDNS defaults); TCP listener is **not logical UDP exclusion** (UoT); direct factory must not be confused with a reviewed outbound's error return. Interface fallback is not automatically DIRECT proxy fallback.
+- HTTP/auth/JSON code closure: external sing dependency missing. No substitute pseudocode or package-name inference. Tag and module checksum strings do not supply dependency bytes. More dependency fetches are outside USER GO.
+- Hidden paths traced: health groups, remote rules, NTP, Tor, ECH and REALITY cover. REALITY function reuses existing connection, so do not incorrectly claim a new direct dial there. Optional build tools are not automatically run-service telemetry.
+- Config: exact c/cwd possible, but directories/stdin/merge/default/reload and external parser exist. A pointer/line checker is not a full Go static analyzer, native schema validator or protected install boundary.
+- Source test quality: positive actual source + distinct bad pins/files/revision/checksum/field/branch mutations; other-outbound mutant is unexecuted Go lexical change, DIRECT mutant is existing strict review intent because original Go default is already DIRECT. No native effect is claimed. Both source attempts30/30, navigation misses retained, no unexpected red tests.
+- Ownership: ordinary listener/dial path is in process; no claim of effective B token, no implicit privilege/SID transition, no proof against inherited handles or dependency/native companions. Full OS WFP/no-direct/boot/observerloss/preexisting-flow guarantees remain BLOCKED.
 
-Вывод: разрешённый fallback **BLOCKED / SOURCE_BUNDLE_REQUIRED** обоснован. Истинные возможности движка пока не установлены; правильный следующий шаг — получить ровно запрошенный source input и возобновить source-only review.
+Conclusion: bounded useful source evidence obtained; original no-bundle blocker resolved, **dependency closure and strict config/native acceptance remain partial**. Recommend next source-only dependency input before engine decision or implementation.

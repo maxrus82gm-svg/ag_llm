@@ -1,0 +1,32 @@
+{
+  "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
+  "amendment": 1,
+  "status": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read": 0,
+  "archive_previous_bytes_written": 0,
+  "method": "exclusive append-only amendment archive handle; bounded readback at new offset; replace existing compact same-TASK row without duplicates; exclusive card write with in-memory rollback",
+  "archive_offset": 684538,
+  "archive_appended_bytes": 22053,
+  "archive_appended_sha256": "ea5fd3538f80090bdb44b9351755494aa4d03797961850679b186e0a43eae768",
+  "archive_new_metadata": {
+    "size": 706591,
+    "mtime_ns": 1792860028210258100,
+    "inode": 1125899907271690
+  },
+  "archive_new_entry_readback": true,
+  "card_before_sha256": "2bfd1fb281b44780a45bfeb727f98f7800f883c33cf124e7e4ad8ceb53d778bc",
+  "card_after_sha256": "a18e3b7938e66549c8a0753762f7a6deafe70e35090439b2959998942b109858",
+  "block4_before_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block4_after_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "block2_rows": 5,
+  "block3_rows": 5,
+  "updated_same_task_summaries": {
+    "block2": [
+      "- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only review не начат: локальный source archive/path не предоставлен. Статус: BLOCKED / SOURCE_BUNDLE_REQUIRED; blocker report ready; independent NOT VERIFIED."
+    ],
+    "block3": [
+      "- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — BLOCKED / SOURCE_BUNDLE_REQUIRED: официальный v1.13.4→d091826… подтверждён WEB_11 по B1, но local source bytes не предоставлены. 19/19 pure validator regression; source tests/mutations0 NOT RUN. Engine/Windows/network unchanged; tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`; полная TASK/factual result — новая append-only запись 001 (locator в evidence/card_rotation.json)."
+    ]
+  }
+}

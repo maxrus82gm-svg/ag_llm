@@ -32,7 +32,7 @@
 
 Скользящее окно до 5 выполненных TASK; полный архив — [[001_История выполненных задач Codex]]. Независимый статус не выдумывать.
 
-- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only review не начат: локальный source archive/path не предоставлен. Статус: BLOCKED / SOURCE_BUNDLE_REQUIRED; blocker report ready; independent NOT VERIFIED.
+- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — USER GO amendment01: один официальный source ZIP получен, bounded source review выполнен. Статус: PARTIAL; dependency closure BLOCKED; independent NOT VERIFIED.
 - **2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — exact local sing-box static snapshot, embedded v1.13.4 claim; no core launch. Статус: RESULT READY; provenance/schema/CONNECT не подтверждены; independent NOT VERIFIED.
 - **2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — disabled V2Ray broker contract/preflight и same-process loopback model. Статус: RESULT READY; engine compatibility BLOCKED; independent NOT VERIFIED.
 - **2026-10-24 / CODEX-WUA-0-MCP-NOTCP-NPFS-001** — реальный STDIO↔NPFS relay/gateway; current-user auth. Статус: RESULT READY; independent NOT VERIFIED.
@@ -42,7 +42,7 @@
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — BLOCKED / SOURCE_BUNDLE_REQUIRED: официальный v1.13.4→d091826… подтверждён WEB_11 по B1, но local source bytes не предоставлены. 19/19 pure validator regression; source tests/mutations0 NOT RUN. Engine/Windows/network unchanged; tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`; полная TASK/factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
+- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — amendment01 PARTIAL:30/30 (11 source+19 pure), ZIP SHA ecf6cbed… с revision d091826…; native DIRECT/DNS defaults и UoT/hidden paths найдены. HTTP/auth/JSON dependency sing source отсутствует; full strict/WFP/B owner/Chat NOT VERIFIED, tunnel HOLD. Отчёт: `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`; новый append-only amendment locator в amendment_01/evidence/card_rotation.json.
 - **CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — 44/44 (25 metadata + 19 pure broker), hash/capability mutants обнаружены; exact sing-box hash совпал с 17.10, embedded v1.13.4/Go1.25.8/d091826… только claims. Engine selection PENDING USER; provenance/schema/CONNECT/B egress/WFP/Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md`; полная TASK/factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
 - **CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — 33/33 broker; регрессия 63/63 MCP и 24/24 security; DIRECT/owner mutants обнаружены. Engine version/source/config BLOCKED; B identity не создана; B egress/V2Ray/WFP/ordinary Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/report.md`; полная TASK и factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
 - **CODEX-WUA-0-MCP-NOTCP-NPFS-001** — 24/24 NPFS, регрессия 63/63 MCP и 24/24 security; TCP/peer mutants обнаружены. Cross-SID/WFP/B V2Ray/ordinary Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/report.md`; полная TASK и factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).

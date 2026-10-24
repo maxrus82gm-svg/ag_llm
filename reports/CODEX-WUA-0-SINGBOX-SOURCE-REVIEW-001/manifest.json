@@ -1,14 +1,235 @@
 {
   "schema": 1,
   "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
-  "status": "BLOCKED / SOURCE_BUNDLE_REQUIRED",
+  "amendment": 1,
+  "status": "PARTIAL / AWAITING INDEPENDENT VERIFICATION WEB_11",
   "root": "M:/GitHub/ag_llm",
   "self_excluded": true,
   "files": [
     {
+      "path": "integrations/wua_chatgpt_mcp/singbox_source_review.py",
+      "bytes": 6682,
+      "sha256": "e96ec56bbc635c1cbfe0e094fc9f54c4082f09b52d056e1b56c8a6090ee5c326"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py",
+      "bytes": 8652,
+      "sha256": "e0c2af138d3b1f7d048ed307527fdbf61678fb7a23f457f5a3c81c13960c9caa"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_checkpoint/factual_result.txt",
+      "bytes": 1608,
+      "sha256": "1c1317afb1ac7f7c3b852386e44f4fbd13c80ba7a40ce5b91258205ec2cdddfd"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_checkpoint/manual_engineering_review.md",
+      "bytes": 2440,
+      "sha256": "ca7c2e23495a31c4c51d896fb67bbc473a7349f278a157224e67dabaed469d27"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_checkpoint/next_user_decision.md",
+      "bytes": 1959,
+      "sha256": "bce703fe3531fdf3402217d31844a20e3a42ee9a9b4c9b19bd9ec3261ef7463f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_checkpoint/source_bundle_provenance.md",
+      "bytes": 2041,
+      "sha256": "8fc041f5aa4ab671e11988aa34d30872797d8c709c2f2b144f19fc8c3e7f3815"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_checkpoint/test_results.json",
+      "bytes": 3673,
+      "sha256": "d0b5f91840469ff77c2483bdd4ac9a31a28cbeb4ccd9e5fca79c8f7ccc32f2d9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_manifest_before_amendment.json",
+      "bytes": 7019,
+      "sha256": "44e920c4b53d6ab30a5bb07ac8e4044e99790357a83a4cfaf603e2c6a676059c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/blocked_report_before_amendment.md",
+      "bytes": 7513,
+      "sha256": "467ccdcd3a5c3cd424b7ed5c5920f3ae9f3c80b80455a920aca6c5cbffae69fb"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/download_source.py",
+      "bytes": 4645,
+      "sha256": "bc3f3634cb6f8fc4b66022bb07482a3321ce2070e99a3f97c8774212940a50a6"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/additional_reviewed_loci.json",
+      "bytes": 4430,
+      "sha256": "facb433c38ce41de775093a0847ada6c0564f92efef6accb469a206379a54ecf"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/card_rotation.json",
+      "bytes": 2095,
+      "sha256": "b6dc74e85b4c9ffa42c40171e47586b80d399d412aeaf432cb49c9ff1048e384"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/dependency_gap.json",
+      "bytes": 622,
+      "sha256": "024539ad371f1d730423a367f0c874240d8cb451ad379759c556f008043d0dee"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/download_receipt.json",
+      "bytes": 1129,
+      "sha256": "7d68e720cda337cd7ac5e4bf7cd13aa1124972225b68df778e6afe18c915bcae"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/final_integrity.json",
+      "bytes": 595,
+      "sha256": "816e8dcbf5a83a9298e3d588cfa3f1b949b6e2371dbe592f9afc0b6017c9736b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/initial_state.json",
+      "bytes": 18916,
+      "sha256": "4b31a2c0a8014d559e20ccbf3acfdcd528f73bc03024a5e647eba36e9cd047d1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/privacy_check.json",
+      "bytes": 333,
+      "sha256": "e76e286c81bf9df88114c32b865da39ed2a92a442bb8ae0c351a7359d7f1a9ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/review_navigation_errors.json",
+      "bytes": 516,
+      "sha256": "f12ba99df4190b54539cf7e0937928ed28a1e88ac9461cd07e6fbc8bb424f1cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_excerpts.json",
+      "bytes": 27675,
+      "sha256": "71e533eb0ac5d7995ba705abe81f5df9ebe7f665bcfa0f4e8eed3ae718e65196"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_locations.json",
+      "bytes": 16706,
+      "sha256": "be1c8ce09a4b8ef2fe837ee79af4a08fe7572a4b0e6cf30ecc8e8b5c8254fabf"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_tree_manifest.json",
+      "bytes": 187537,
+      "sha256": "22c57ac7891db0aa8a6bdc70a2eca1d7a7a79c2a37005321d4e186f1f16aa616"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/upstream_LICENSE.txt",
+      "bytes": 791,
+      "sha256": "650d5e3b99a446fb38e820fa87a49562e0c79eab868fff58618ac487a58e554c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/rotate_card.py",
+      "bytes": 12085,
+      "sha256": "d84256a5415da919cd65214c7645cea51ad1726c3c3e8c149118b5d5ddc0e30e"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/legacy/legacy-gates-32727303/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "00fbe3f69c2e4cc14791608aaf22e56a589fe998a396a8c41218592b7e47484d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/result.json",
+      "bytes": 4153,
+      "sha256": "6ea13ef7468a67ab75596ca6eb36a2da91bdacb3ed9694d8c9bbac08e52cf1d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/runner.txt",
+      "bytes": 3816,
+      "sha256": "a41e9a816c660e9c66669131d68131315733acf366a946c6b1acee5bffdb22cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213226-1c33bdce/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "b1ea91957aaf7e37fe9272832340ffe93d1643c073714f5cee1c37d5c89666a1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/legacy/legacy-gates-5150a056/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "ac5c3b39289834a2970df7427ed9255ccd2f4be98c22902a1a831207b8dd4208"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/result.json",
+      "bytes": 4153,
+      "sha256": "6ea13ef7468a67ab75596ca6eb36a2da91bdacb3ed9694d8c9bbac08e52cf1d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/runner.txt",
+      "bytes": 3816,
+      "sha256": "c4bbd9a011a6055406e0cf7438901a66b5d94e656774422d6b885b43f2a63408"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/runs/source-20261024-213332-1493e644/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "3956372d922f06e3c7f88e5f5005899613f8135fb41fd5a958ede5c55fd562f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/seal.py",
+      "bytes": 4812,
+      "sha256": "a0abb4f283a8fa5341f838c58f075df21464033a9cfbe2c72f7234162d1eb6ff"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/USER_GO.md",
+      "bytes": 2320,
+      "sha256": "9d185b4c43bba22a62222b718aca1a02bb30ee6da462b0362861e81573eee5b7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/write_reports.py",
+      "bytes": 27627,
+      "sha256": "9ff6df28908bc95aabbe7aff1a8961e16a1697f6f23fe1a3272b6e9e4f98d049"
+    },
+    {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/assignment.md",
       "bytes": 17744,
       "sha256": "b1b8247cfbc50ad6ad000f9971019c696244b2655941ed948ec84617e8bc29d7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/compatibility_matrix.md",
+      "bytes": 1648,
+      "sha256": "a18236bd0a789c3af4b37267956e330514344133a044d46c82de18fbd600f4ce"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/config_loader_review.md",
+      "bytes": 1686,
+      "sha256": "379635437b609271bec865071976add03643b63cc5ec8c5d9a86d954335cc4f5"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/evidence/bundle_request.json",
@@ -82,28 +303,43 @@
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/factual_result.txt",
-      "bytes": 1608,
-      "sha256": "1c1317afb1ac7f7c3b852386e44f4fbd13c80ba7a40ce5b91258205ec2cdddfd"
+      "bytes": 2067,
+      "sha256": "5f6f728f2fabbf08749d5ae30604b758746330bba36ccf851063683c1335728b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/http_connect_review.md",
+      "bytes": 1523,
+      "sha256": "702c7964f950f76fe7e5a024585c17feef9ce3c1403553c199c2c1357df5781f"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/manual_engineering_review.md",
-      "bytes": 2440,
-      "sha256": "ca7c2e23495a31c4c51d896fb67bbc473a7349f278a157224e67dabaed469d27"
+      "bytes": 2723,
+      "sha256": "e1ab1415d94b799e86adb0e4ebee88669430ed951f396842587c54d2318ac065"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/network_egress_review.md",
+      "bytes": 2848,
+      "sha256": "c0716cc3b7498f718a93fe74a7a2393340060dddd9bd1f0b9676298c06e70a81"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/next_user_decision.md",
-      "bytes": 1959,
-      "sha256": "bce703fe3531fdf3402217d31844a20e3a42ee9a9b4c9b19bd9ec3261ef7463f"
+      "bytes": 1713,
+      "sha256": "6ae7a1bae003f36be844a45a07707d460ab8ba0b4dcfe097d099e242b5491297"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md",
-      "bytes": 7513,
-      "sha256": "467ccdcd3a5c3cd424b7ed5c5920f3ae9f3c80b80455a920aca6c5cbffae69fb"
+      "bytes": 10430,
+      "sha256": "fecf0a4b55f3883df626f61c44dba3ab72a547e93a10fa0a830fa8ab6ab5af84"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/rotate_card.py",
       "bytes": 11068,
       "sha256": "3d31bbe82df888da5c919849fd4bd58b5fb0d0ab81329a377da550f0c2f30b19"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/route_and_fallback_review.md",
+      "bytes": 1901,
+      "sha256": "b830c45f2493ad5f019a7e74b743d3824353261340f026b4a0c881ce36f99112"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/run_regression.py",
@@ -137,24 +373,34 @@
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/source_bundle_provenance.md",
-      "bytes": 2041,
-      "sha256": "8fc041f5aa4ab671e11988aa34d30872797d8c709c2f2b144f19fc8c3e7f3815"
+      "bytes": 1947,
+      "sha256": "ecf039448950bf35fbf3e610c39d7fb7f725c2ac10df677bed0bbe15b8c177a3"
     },
     {
       "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/test_results.json",
-      "bytes": 3673,
-      "sha256": "d0b5f91840469ff77c2483bdd4ac9a31a28cbeb4ccd9e5fca79c8f7ccc32f2d9"
+      "bytes": 6153,
+      "sha256": "ce824aedde781db85b1996b52ff921370a1f77195ed2a839b563e04d048a7791"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/tests.md",
+      "bytes": 2413,
+      "sha256": "faaeaaee1da507f72b7c2934b1bbd42e58d045e63caf05971513b405693696d8"
     }
   ],
+  "external_source_archive": {
+    "path": "M:\\WUA_SOURCE_REVIEW\\sing-box\\v1.13.4\\sing-box-v1.13.4-source.zip",
+    "bytes": 1438060,
+    "sha256": "ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c",
+    "publication": "EXTERNAL / NOT AUTOMATICALLY INCLUDED IN REPOSITORY",
+    "source_tree_ledger": "amendment_01/evidence/source_tree_manifest.json"
+  },
   "active_card": {
     "path": "Документация/000_Задачи Codex.md",
-    "bytes": 15900,
-    "sha256": "2bfd1fb281b44780a45bfeb727f98f7800f883c33cf124e7e4ad8ceb53d778bc"
+    "bytes": 15834,
+    "sha256": "a18e3b7938e66549c8a0753762f7a6deafe70e35090439b2959998942b109858"
   },
-  "protected_inputs_reference": "evidence/initial_state.json",
-  "archive": "Never read or hashed by sealer. Only new append bytes checked by rotate_card.py.",
   "can_apply": false,
   "can_start_tunnel": false,
-  "independent_review": "NOT VERIFIED",
-  "publication": "LOCAL ONLY / USER HANDOFF"
+  "publication": "PROJECT REPORT LOCAL ONLY / USER HANDOFF",
+  "independent_acceptance": "NOT VERIFIED"
 }

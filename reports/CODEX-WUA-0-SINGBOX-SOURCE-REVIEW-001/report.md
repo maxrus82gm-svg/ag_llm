@@ -1,57 +1,46 @@
-# CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001
+# CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001 — USER GO amendment 01
 
-**2026-10-24 / Codex 007 — BLOCKED / SOURCE_BUNDLE_REQUIRED.**
+**2026-10-24 / Codex007 — PARTIAL / BOUNDED SOURCE REVIEW; RESULT READY / AWAITING WEB_11.**
 
-Локальный source archive и его путь пользователем не предоставлены. В точном предложенном месте `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/source/sing-box-v1.13.4.tar.gz` файла нет. Поиск по диску, программным каталогам и кэшам не проводился; это не утверждение, что архив нигде на компьютере не существует. Зависимый source review остановлен согласно §4 и fallback §10 исходной TASK. Подготовлен запрос на **один** официальный архив, а не замена отсутствующих исходников псевдоаудитом.
+Предыдущий SOURCE_BUNDLE_REQUIRED снят дополнительным разрешением пользователя на один официальный source ZIP. Initial BLOCKED report/manifest и checks сохранены в `amendment_01/`; прежняя архивная запись не переписана. B1 уже был освобождён; продолжение санкционировано прямым USER GO, сохранённым в `amendment_01/USER_GO.md`.
 
-## Подтверждения и открытые gates
+## Полученный материал
 
-Пользователь/WEB_11 передал подтверждение official tag **v1.13.4** → **d09182614c7778c1e0f51d990635c5d4249c437e**. Оно совпадает с embedded VCS claim предыдущего snapshot. Локальный Codex не обращался к Git/GitHub и не повторял upstream verification. Tag mapping не удостоверяет несуществующие локальные source bytes и не доказывает provenance установленного EXE. Исторический file SHA256: `ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3`; это **не hash исходного архива**.
+С [официального релиза v1.13.4](https://github.com/SagerNet/sing-box/releases/tag/v1.13.4) получен один source ZIP по GitHub archive URL с единственным redirect на codeload. Файл: `M:\WUA_SOURCE_REVIEW\sing-box\v1.13.4\sing-box-v1.13.4-source.zip`. Получен `2026-10-24T21:25:51.265099+05:00`, **1,438,060 bytes**, SHA256 **`ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c`**. ZIP comment **`d09182614c7778c1e0f51d990635c5d4249c437e`** совпал с заданной полной revision. Распаковано **1013 файлов / 3,870,530 bytes** вне репозитория; CRC, archive paths, duplicate/case collisions, symlinks/reparse destination и запрещённые executable members проверены до записи. Исполняемые файлы отдельно не скачивались, зависимости не устанавливались.
 
-Предыдущая ограниченная приёмка 70 paths/10 selected hashes и Codex44/44 принята как предоставленное координатором подтверждение в текущем B1. Локальный B4 пока содержит прошлый broker verdict; он не заменялся и не «исправлялся» исполнителем. Локального §7.5 документа19 нет; Git для его получения не использовался.
+Это bounded chain of custody: официальный HTTPS endpoint, TLS verification, requested exact version, archive revision comment, CRC и фактический package hash. **Tag mapping не единственное основание**, но ZIP comment тоже не цифровая подпись. Detached signature архива, независимый официальный package digest и source→установленный EXE reproducibility не проверены. Go minimum в go.mod —1.24.7; ранее embedded build toolchain1.25.8 не противоречит minimum, но не доказывает воспроизводимость.
 
-```text
-OFFICIAL_SOURCE_REVISION_VERIFIED — подтверждение WEB_11 из постановки; Codex NOT REPEATED
-LOCAL_SOURCE_BUNDLE_BLOCKED / SOURCE_BUNDLE_REQUIRED
-HTTP_CONNECT_SOURCE_UNVERIFIED
-STRICT_ROUTE_SOURCE_UNVERIFIED
-HIDDEN_EGRESS_PATHS_BLOCKED
-ENGINE_SELECTION_PENDING_USER
-B_EGRESS_OWNER_NOT_VERIFIED
-WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED
-HOSTED_TUNNEL_ON_HOLD_BY_USER
-ORDINARY_CHATGPT_E2E_NOT_VERIFIED
-can_apply=false; can_start_tunnel=false
-```
+Downloader использовал только существующий literal127.0.0.1 HTTP CONNECT proxy10808, с явным HTTPS tunnel и без NO_PROXY/DIRECT fallback. Это не доказательство actual remote V2Ray route или B-owned egress. Ни proxy settings, ни рабочий sing-box не менялись. Receipt/время/URL/redirect/hash — `amendment_01/evidence/download_receipt.json`.
 
-## Source review: NOT RUN
+## Основные source findings
 
-|Обязательная тема|Фактический результат|
-|---|---|
-|A. HTTP CONNECT, parsing/auth/errors/listener|NOT RUN — нет исходников; file/function locator отсутствует|
-|B. Route/default/unmatched/retry/fallback/selector|NOT RUN — никаких заявлений о безопасных default paths|
-|C. Encrypted/authenticated upstream R:Q и dial owner|NOT RUN — protocol не выбран по догадке|
-|D. Host DNS, engine DNS, UDP/QUIC/IPv4/IPv6|NOT RUN — compiled tags не заменяют source audit|
-|E. Health/updates/telemetry/rulesets/resources/helpers|NOT RUN — отсутствие hidden dials не заявлено|
-|F. Config paths/import/merge/env/CLI/default/pinning|NOT RUN — native config не создавался|
-|G. Same-process sockets/helper/SID prerequisites|NOT RUN — настоящий B-owned egress не подтверждён|
+1. **Пустой outbound не fail-closed:** default factory создаёт DIRECT (`box.go:319` / `New default fallback factories`); при отсутствии explicit final выбирается первый outbound (`adapter/outbound/manager.go:69` / `Manager.Start/Create`). Unmatched connection использует default (`route/route.go:103` / `Router.routeConnection`). Нельзя принимать empty/minimal config за strict profile.
+2. **Есть явные route/reject primitives** и возврат ошибки при missing selected outbound. В просмотренном обычном connection path ошибка dial закрывает соединение (`route/conn.go:102` / `ConnectionManager.NewConnection`); это не глобальная гарантия отсутствия fallback у всех protocol/group/transport/dependencies.
+3. **HTTP inbound — TCP listener с delegated handler:** `protocol/http/inbound.go:60` / `Inbound.NewConnectionEx`. Реальный HTTP parsing/CONNECT/auth расположен во внешнем `github.com/sagernet/sing`, отсутствующем в единственном разрешённом архиве. Полный HTTP_CONNECT_SOURCE_SUPPORTED **не объявляется**.
+4. **TCP listener не исключает logical UDP:** HTTP использует `uot.NewRouter`, а UoT callback переводит поток в packet routing (`common/uot/router.go:29` / `Router.RouteConnectionEx`). Для strict intent нужен TCP-only route admission плюс reject остатка, не только запрет UDP socket в Windows.
+5. **Есть дополнительные сетевые пути:** local DNS default, resolver selection, health/urltest, remote ruleset fetch/update, NTP, ECH DNS, Tor helper и REALITY cover HTTP на существующем conn. Это conditional features, а не утверждение, что они включены в рабочем config. Подробности — `network_egress_review.md`.
+6. **Config loader умеет больше одного файла:** default config.json, stdin, -c array, -C directory, sort/merge и SIGHUP reload. Параметры и protected config roots нужно закрепить отдельно; source/config hash не проверяется движком как наша installation authority.
 
-Source-specific route mutations/default-DIRECT/alternate-outbound controls **не выполнялись**. Совместимость sing-box со строгим брокером и migration proposal нельзя обосновать без прочтения конкретных source branches; operational engine не выбран. Действующий `engine.family=V2Ray` сохранён.
+Принцип «один B-owned process принимает CONNECT и делает actual socket к R:Q» не опровергнут просмотренным обычным in-process path. Пример Trojan outbound отделяет proxy server address от logical destination, но protocol **не выбран**, TLS опционален, dependencies не замкнуты. Same PID/token/OS security по source не доказываются. Текущий `engine.family=V2Ray` **не менялся**.
 
-## Независимые preparatory checks
+## Реализация и проверки
 
-Выполнена только существующая **pure validator regression: 19/19 PASS, 0 FAIL/ERROR/SKIP**, `runs/pure-20261024-183930-efb63dbf/result.json`. Источники старых тестов/validators не менялись; output перенаправлен runtime-параметром в новую TASK. Избраны те же 19 pure broker contracts, исключены CLI/subprocess/loopback cases. Source-specific tests **0 / NOT RUN**, source mutations **0 / NOT RUN**, engine/native/network runs **0**. Прежние44/44 не выдаются за текущий повторный прогон.
+Добавлены только `integrations/wua_chatgpt_mcp/singbox_source_review.py` и `tests/singbox_source_review_suite.py`: release-pinned source tripwires и negative controls с reuse common/broker. Это не Go parser/interpreter, не второй broker и не native schema validator.
 
-Новый `run_regression.py` находится только в отчёте; production/integration code не добавлялся и не переписывался. Python runner запрещает socket/child creation; это ограничение нашего preparatory code, не OS sandbox proof. Evidence: `test_results.json`, source pins и `runner.txt` выбранного run. Initial unexpected FAIL не было.
+**30/30 PASS: 11 новых source checks +19 прежних pure broker regression; FAIL/ERROR/SKIP0.** Final run `runs/source-20261024-213332-1493e644` внутри amendment01. Проверяются revision/archive/hash/source-file drift, missing required files, critical go.mod/go.sum version/checksum, top-level option field addition, config-default/merge drift, hidden-path anchors, family/secondary proxy refusal и сохранение blocked gates.
 
-## Сдача и следующий вход
+Два адресных mutation controls: (a) explicit selected outbound заменён на literal unapproved в **копии Go source** — lexical source-contract отказ; (b) default DENY→DIRECT в **существующем synthetic broker intent** — старый validator отвергает. В нативном Go empty default **уже DIRECT**; эти tests не выдают его за безопасный и Go не исполняют. Source hashes плюс review защищают known snapshot, а lexical anchors сами по себе не универсальный анализ semantics/веток.
 
-Запрос архива/chain of custody — `source_bundle_provenance.md`, `next_user_decision.md`, `evidence/bundle_request.json`. Пока вход не получен, никаких network capabilities не объявлено SUPPORTED. Проектирование новой абстракции/брокера или фиктивной native schema не выполнялось.
+Initial source runs оба30/30 PASS сохранены; второй после удаления unused imports, без ослабления oracle. Ошибки навигации к несуществующим именам файлов перечислены в `review_navigation_errors.json` и исправлены адресным rg. Никакого initial red test не скрыто. Старый blocked-phase19/19 не суммируется с финальным30.
 
-Контроль сохранности: **107 предыдущих файлов** — initial hashes и итоговая сверка `evidence/initial_state.json`, `evidence/final_integrity.json`. Core и working profiles не открывались в этой TASK; Windows/accounts/WFP/network/hosted tunnel не менялись. Git/GitHub/download/install:0.
+## Статусы и NEXT
 
-DOC IMPACT: общие документы18/19/34/37 не менялись. Для WEB_11 достаточно зафиксировать «tag mapping подтверждён координатором, local source bytes не получены, source review BLOCKED». Отсутствие архива — зависимый input blocker, а не отрицательное заключение о возможностях sing-box.
+`OFFICIAL_SOURCE_REVISION_VERIFIED` — bounded GitHub ZIP origin/comment/hash, не detached signature. `HTTP_CONNECT_SOURCE_UNVERIFIED`; strict route primitives условно подтверждены, **STRICT_ROUTE_SOURCE_UNVERIFIED для полного профиля**. `HIDDEN_EGRESS_PATHS` bounded-reviewed, dependency/global absence BLOCKED. Engine selection PENDING_USER; B owner/WFP/ordinary Chat NOT VERIFIED; hosted tunnel HOLD; **can_apply=false; can_start_tunnel=false; native_config=null**.
 
-Разрешённая fallback-сдача BLOCKED завершается штатной ротацией только после report/manifest: полный исходный B1 и factual result append-only в001, чтение только добавленных bytes, B2/B3 по пять кратких TASK, B4 byte-identical. Receipt — `evidence/card_rotation.json`. Независимая приёмка этой TASK не объявлялась; публикацию/передачу WEB_11 выполняет пользователь.
+Нужный следующий материал — source-only dependency bundle **github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde** (HTTP/auth/JSON/control helpers). Скачивание dependencies **не входит** в одноразовое разрешение и не выполнялось. Затем возможен bounded review строгого native mapping proposal, без немедленного engine switch. Windows/WFP/native/hosted — отдельный будущий USER GO.
 
-Фактическая ротация: **CARD ROTATION VERIFIED**, добавлено и сверено **19,420** новых байт; старых байт архива прочитано/переписано **0**. B1 освобождён, B2/B3 по пять строк, B4 сохранён побайтно. Это закрытие разрешённого fallback-отчёта, не завершённый source review. После передачи архива требуется возобновление source-only работы по новому назначению/дополнению.
+DOC IMPACT: общие18/19/34/37 не изменялись; предложить WEB_11 добавить факты о default DIRECT/DNS, UoT и dependency gap, сохранив gates. Все107 ранее защищённых файлов сверяются в final integrity; original source tree сверяется по1013 hashes. Полный ZIP/source остаётся вне repo, **не входит в пользовательский commit автоматически**; в проекте есть receipt, tree hashes, 54 locators и bounded excerpts. Независимый verifier должен получить этот exact ZIP либо отдельно разрешённый source channel.
+
+Повторный append-only amendment handoff/ротация сохраняет B4 byte-identical, не читает старые001 bytes и не дублирует TASK в compact five. Receipt — `amendment_01/evidence/card_rotation.json`. Независимую приёмку и отправку WEB_11 исполнитель не объявляет; пользователь публикует/передаёт комплект.
+
+Фактическая amendment-ротация **CARD ROTATION VERIFIED**: добавлено/сверено **22,053** новых байт, old archive bytes read/written0; B2/B3 по пять уникальных TASK, текущая строка обновлена без дубля. B4 byte-identical, SHA256 `608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089`; B1 остаётся `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`. Предыдущая BLOCKED-запись в001 не изменена.
