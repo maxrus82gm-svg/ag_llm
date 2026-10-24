@@ -1,3 +1,11 @@
+## WEB_15 / CURRENT 2026-10-24 — независимый FT1-CI-REPAIR PASS; WA4-R PARTIAL
+
+**Новый проверенный результат `CLAUDE-WA4-R-FT1-CI-REPAIR-001`:** опубликован `main@6d79fca5b36830b444e43d992a8f4e0d3d124367`; корневая причина прежних 9 FAIL — child inherited `TMPDIR` вместо `inner`, test harness теперь выставляет `TMPDIR/TEMP/TMP` и сверяет реальный root. [Focused+evidence](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40118229965) **79/79 file +4/4 hash +46 tests (45 PASS/1 SKIP), isolation=0**. [Full](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40117844402) **job SUCCESS: 989 tests (988 PASS/1 SKIP due unsupported 8.3), zero FAIL/ERROR/isolation**. Aggregate прежнего run = failure по хеш-оракулу, исправленному №417; отдельный rerun SUCCESS. **BOUNDED GATE PASS, общий WA4-R PARTIAL**, опасные native/live/PWR/TOCTOU gates и P1/P2/P3 без GO. Claude БЛОК 1 свободен; verifier B4 и 06 дополнены в GPT. Старые блоки «незавершённая приёмка» ниже — исторический срез до этого результата, НЕ текущий статус.
+
+**Workflow/UX:** правило `DOC-TEST-LIFECYCLE-01@1` (18 и личные карточки) и proposal раннего Ultra Workspace Test Control Center (37) находятся в GPT; no implementation permission. NEXT — user merge GPT после review и отдельное решение о следующем scoped этапе.
+
+---
+
 ## WEB_11 / CURRENT 2026-10-24 — sing-box source review и dependency closure
 
 `CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment01` опубликован в `main@e0c89b3536cb030edc4fa905a8e00f1047788c4c`. WEB_11 **PARTIAL / BOUNDED SOURCE REVIEW ACCEPTED**: 76/76 published manifest paths, 7/7 independently recalculated selected hashes, Codex-run 30/30 (11 source+19 pure), independent Windows/Go NOT RUN. External source ZIP SHA256 `ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c`, 1013 files — **Codex-only local receipt**, not independently retrieved. WEB_11 also inspected seven exact files in official upstream `SagerNet/sing-box@d09182614c7778c1e0f51d990635c5d4249c437e`: defaults can route DIRECT, delegated HTTP/auth lies in `sagernet/sing`, UoT creates logical packet path; multi-config/merge. Codex documented conditional DNS/health/rulesets/other egress. These are source-level findings, not proof of running proxy configuration.

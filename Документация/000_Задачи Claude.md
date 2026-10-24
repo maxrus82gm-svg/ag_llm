@@ -68,27 +68,23 @@ TASK: —
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Автор:** ChatGPT (независимый verifier), Claude — READ-ONLY. Постоянный архив: `Документация/06_Журнал выполнения и отчёты.md`. БЛОКИ 1–3 этой записью не изменяются.
+**Автор:** ChatGPT, Claude — READ-ONLY. Постоянный архив всех вердиктов — 06. БЛОКИ 1–3 не изменялись.
 
-## 1. Последнее заключение: 2026-10-24 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001 + CHAT-ONLY AMENDMENT
+## 1. Последнее заключение: 2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001
 
-**Вердикт: PASS / BOUNDED OFFLINE VERIFIED** для опубликованного пакета Evidence Sanitizer и узкого исправления `check_package.py`. Не является разрешением production/live rollout, не доказывает приватное TEMP provenance `--private` независимо и не заменяет отдельное эксплуатационное подтверждение.
+**Независимое заключение: PASS / BOUNDED WINDOWS TEST GATE. WA4-R остаётся PARTIAL.** Публикация Claude в `main@6d79fca5b36830b444e43d992a8f4e0d3d124367`; единственный изменённый test source `test_web_alarm_runner_guard.py` SHA-256 `836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0`. Guard `wa4a_acceptance.py`, recovery module/tests не менялись.
 
-- **Точная версия:** пользовательский `main` commit №399 [`20ebf607cdb891c13e04c71239247fcbaab090ae`](https://github.com/maxrus82gm-svg/ag_llm/commit/20ebf607cdb891c13e04c71239247fcbaab090ae), опубликованный пакет `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/`. Исправлен `tools/check_package.py` (SHA-256 `aaee9ed9…1230e3e3`), manifest 237 entries, расширен self-test до 11 негативных сценариев. Основной модуль `web_alarm/evidence_sanitizer.py` и 69 его тестов в коммите №399 не менялись.
-- **Независимый Windows CI на исходном пакете:** [run 40084806720](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40084806720) воспроизвёл реальный дефект: при идентичной дублированной записи `runs-map`, после корректного обновления manifest, старый `check_package.py` возвращал `CONSISTENT`, exit 0. Это исторический RED, а не текущий дефект после исправления.
-- **Независимый Windows CI после исправления, exact HEAD №399:** [run 40093415722](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40093415722), `SUCCESS`: опубликованный пакет `CONSISTENT`; guarded sanitizer tests **69/69 PASS**, FAIL/ERROR/SKIP=0, isolation violations=0; прежняя adversarial duplicate-ID подмена теперь `runs-map-duplicate-id:1`, `INCONSISTENT`, exit 1.
-- **Дополнительный независимый replay всех 11 self-test:** [run 40093575514](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40093575514) на `GPT` commit №400 `8f6b8f96b0179118ba084e3b1ad5208f9547f78f` — `SUCCESS`; чистая копия PASS, **11/11 DETECTED**, включая идентичные/разные дубликаты ID, unsafe relative ID, duplicate JSON key и повреждения manifest/evidence; отдельный duplicate-ID probe PASS, 69/69 PASS, package CONSISTENT. Commit №400 меняет только собственный диагностический CI; проверяемый Claude-код остаётся №399.
-- **Независимая полная регрессия Web Alarm:** [PR run 40084859948](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40084859948) на версии перед amend: отдельный Windows full job — **978/978 PASS, 0 SKIP, guard/isolation clean**, около 682 секунд. Итоговый PR run помечен `failure` из-за старого негативного checker-пробника, хотя full job `success`. В №399 менялся только проверяющий скрипт и отчётные файлы, не модуль/тесты Web Alarm. Полная регрессия заново на №399 НЕ ЗАПУСКАЛАСЬ; не подменять её предыдущий HEAD новым.
-- **Публикация:** PR №20 ранее принят пользователем в `main`; затем пользователь опубликовал amend №399. ChatGPT безопасно fast-forward ветку `GPT` до этого `main` и запустил независимый CI без изменения `main`. Прямой merge/production ChatGPT не выполнял.
+- [Focused + evidence](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40118229965), independent Windows `GPT@f76a4d8879e13d98e646c6300eb4425c7a52a9d2`: **manifest 79/79, source hashes 4/4, 46 tests = 45 PASS/1 SKIP, zero FAIL/ERROR/isolation**, entire job success.
+- [Full](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40117844402), independent Windows `GPT@4cbe2a89356f6f8101123e63feecdd5fa2d5e490`: **full job SUCCESS, 989 = 988 PASS/1 SKIP (8.3 short paths unsupported), 0 FAIL/ERROR/isolation**, artifact `12570496922`. Aggregate run `failure` исключительно из-за первого ошибочного LF-hash oracle в параллельном evidence job: `wa4a_acceptance.py` исторически authored CRLF, Git blob LF. Diagnostic CI исправлен коммитом №417, focused/evidence rerun SUCCESS. Исходники Web Alarm одинаковы между коммитами №415 и №417.
+- **Причина девяти исторических CI FAIL:** дочерний тест выставлял только `TEMP/TMP=inner` и наследовал родительский `TMPDIR`; `tempfile.gettempdir()` выбирал root внешнего runner TEMP, а не `inner`. Теперь все три переменные задаются явно и проверяется фактический root guard внутри ребёнка; один новый тест CI-like env. Исторический RED и 9 mutant tests сохранены как **evidence Claude**, не независимый mutation replay.
+- **Ограничения:** Claude local full `989 = 987 PASS / 2 SKIP` — иное окружение; независимый Windows full `989 = 988 PASS / 1 SKIP`. Не выполнены adversarial TOCTOU, hardware PWR-01, Linux, production storage, rollout и спорные P1/P2/P3. Никакого общего WA4-R DONE/production GO.
 
-**Границы evidence / NOT RUN:** `--private` с исходными сырыми TEMP логами на Windows Actions не выполнялся; локальный результат Claude `--private CONSISTENT, 210/210` рассматривается только как отчёт исполнителя. Не проверялись настоящие production storage, hosted tunnel, WFP, live процессы или rollout. Нет оснований расширять bounded PASS на них.
+**NEXT:** выбранные пользователем отдельные WA4-R gates; предварительная концепция Workspace Test Control Center для Ultra в 37, без implementation GO. Полное заключение в 06.
 
-**NEXT:** первоначальный дефект дублирующихся runs-map ID устранён и независимо закрыт. Пользователь может принять документационный closeout из ветки `GPT` после review; новых локальных исправлений Claude для этого дефекта не требуется. Дальнейшие live/native проверки — отдельная TASK/USER GO.
+## 2. Предыдущее заключение: 2026-10-24 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001 + AMENDMENT
 
-## 2. Предыдущее заключение: 2026-10-21 / CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001
+**Исторический PASS / BOUNDED OFFLINE VERIFIED:** `main@20ebf607cdb891c13e04c71239247fcbaab090ae`, Windows Actions 40093415722 (69/69, isolation=0), 40093575514 (11/11 negatives). No private TEMP/production claims. Полная исходная запись сохранена в 06.
 
-**Исторический вердикт: PARTIAL / REWORK REQUIRED.** Независимые Linux 38/38 штатных PASS, однако найдены 2 fail-open при неверном SHA-256 manifest и отсутствии mapping entry. Windows Actions тогда не запускались. Позднейший ремонт и новая bounded Windows-проверка отражены выше; старый результат не переписан как успешный задним числом. Дополнительная историческая запись — в 06.
+## 3. Более раннее заключение: 2026-10-21 / CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001
 
-## 3. Более ранние заключения
-
-Нет записи, подтверждённой отдельным независимым отчётом.
+**Исторический PARTIAL / REWORK REQUIRED:** независимый Linux 38/38 PASS, обнаружены два fail-open негативных сценария. Последующий repair отдельно проверен; прежний RED не становится PASS задним числом.
