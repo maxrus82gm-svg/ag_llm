@@ -211,3 +211,23 @@
 **Изменённые локальные файлы этого завершения:** в папке отчёта — `tools/collect_runs.py`, `tools/make_manifest.py`, новый `tools/check_package.py`, новый `tools/rotate_finalize.py`, `evidence.json`, `report.md` (этот раздел), пересобранные `runs/` (те же выходы прогонов, теперь LF, + новые прогоны fin-*), новые `check-package.json`, `check-package-selftest.json`, `block3-closeout-fin.md`, `finalize-rotation.json`, `manifest.json`; вне папки — строка этой TASK в БЛОКАХ 2–3 карточки (БЛОК 1 и БЛОК 4 не тронуты) и новая запись в конце `001`. `web_alarm/evidence_sanitizer.py` и `test_web_alarm_evidence_sanitizer.py` **не менялись**.
 
 **Ограничения.** Перевод CRLF→LF при публикации установлен по косвенным признакам (конфигурация Git не читалась): при любой настройке LF-копии совпадут с блобами, CRLF — нет. Сырые выходы прогонов (CRLF) не публикуются и хранятся только в TEMP; воспроизведение копий из них доступно лишь на этой машине (`raw_sha256` в `runs-map.json` позволяет сверить, если сырые будут переданы). Независимые Windows Actions / GitHub — за координатором. Прочие ограничения инструмента — §8 и §12.
+
+## 14. CHAT-ONLY AMENDMENT — дубликаты в `runs-map.json` (`tools/check_package.py`)
+
+Текст дословно — `amendment-check-package-duplicates.md`. Независимый Windows Actions run verifier-а (#40084806720): исходный пакет PASS, 69/69 PASS, дополнительный негативный тест FAIL. БЛОК 1, БЛОК 4, карточка и `001` в рамках этого дополнения не менялись; код санитайзера и его 69 тестов не менялись; полная регрессия не запускалась (затронут только проверяющий скрипт пакета).
+
+**Причина.** `check()` превращал строки `runs-map.json` в словарь по `id` без проверки уникальности: полностью идентичный дубликат (с пересчитанным SHA-256/размером `runs-map.json` в manifest) схлопывался, и скрипт возвращал `CONSISTENT`, exit 0. Тот же класс найден ещё в двух местах этого скрипта: JSON-файлы пакета загружались обычным `json.loads`, который молча оставляет последний из повторяющихся ключей (дубль ключа в `manifest.json` тоже давал `CONSISTENT`), а `id` строк не проверялись на безопасность (`../../…` читался за пределами пакета и ловился лишь побочно).
+
+**RED** (скрипт до правки, SHA-256 `c7dfb5839cbde0b6…`; `check-package-duplicates-red.txt`; копии пакета в TEMP, manifest каждого затронутого файла пересчитан): дубликат строки `runs-map` → `CONSISTENT`; дубль ключа в `manifest.json` → `CONSISTENT`; небезопасный `id` → только побочное `runs-map-published-mismatch`.
+
+**Исправление (только `tools/check_package.py`):** строгая загрузка `manifest.json`, `runs-map.json`, `census.json`, `evidence.json` — повтор ключа даёт `<файл>-duplicate-key`; уникальность `id` в `runs-map.json` (`runs-map-duplicate-id` — число лишних вхождений, в том числе для полностью идентичных записей); безопасный относительный `id` (`runs-map-unsafe-id`, такой файл не читается). Самотест усилен: после каждой подмены manifest затронутых файлов честно пересчитывается, и сценарий засчитывается, только если найдено **ровно** ожидаемое нарушение (иначе `WRONG:` со списком).
+
+**Проверки (локально, Windows 10 19045, Python 3.12.10):**
+| Команда | Результат |
+|---|---|
+| `python -I -B tools/check_package.py` | **CONSISTENT**, exit 0 |
+| `python -I -B tools/check_package.py --private <TEMP raw>` | **CONSISTENT**, exit 0 (все 210 копий воспроизведены из сырых выходов) (`check-package.json`) |
+| `python -I -B tools/check_package.py --private <TEMP raw> --self-test` | чистая копия **PASS**; **11/11** негативных сценариев **DETECTED** ровно своей проверкой: удалённая строка, дубликат `id` (идентичный), дубликат `id` (другое содержимое), небезопасный `id`, дубль ключа manifest, изменённая копия, CRLF-файл, устаревший хеш `evidence.json`, неверное число в `evidence.json`, незарегистрированный файл, отсутствующий файл (`check-package-selftest.json`) |
+| Повтор RED-воспроизведения на исправленном скрипте | `runs-map-duplicate-id` 1 / `manifest-duplicate-key` 1 / `runs-map-unsafe-id` 1 — каждый случай INCONSISTENT |
+
+**Изменённые файлы этого дополнения:** `tools/check_package.py`; новые `amendment-check-package-duplicates.md`, `check-package-duplicates-red.txt`; обновлены `check-package.json`, `check-package-selftest.json`, `report.md` (этот раздел), `manifest.json`. Статус до повторной проверки verifier-а — **REWORK REQUIRED / NOT VERIFIED** (по формулировке AMENDMENT); со стороны исполнителя — RESULT READY.

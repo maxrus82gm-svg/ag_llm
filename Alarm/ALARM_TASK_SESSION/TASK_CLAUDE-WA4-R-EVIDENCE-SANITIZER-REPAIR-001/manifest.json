@@ -33,6 +33,11 @@
  },
  "not_published_private": "raw run outputs and real-package staging stayed in disposable TEMP (not published)",
  "files": {
+  "amendment-check-package-duplicates.md": {
+   "bytes": 3494,
+   "sha256": "df90875816b2fa6d5e168279a08e971e08917f958d5802f744c699ec717287c0",
+   "eol": "LF"
+  },
   "amendment-F-ES-03.md": {
    "bytes": 4020,
    "sha256": "00296e4bd4baf46aac8a51d68bb2d6840ac97afffb7f72f156bb67c48e31c496",
@@ -63,9 +68,14 @@
    "sha256": "63ebf09601174702cc660e1a5112ec33902cc11943ff1981b0f7555e16014fd6",
    "eol": "LF"
   },
+  "check-package-duplicates-red.txt": {
+   "bytes": 194,
+   "sha256": "3eefb6f26d5c699769147e434750d7a4ef51844b457d0c301a674f1973c8429f",
+   "eol": "LF"
+  },
   "check-package-selftest.json": {
-   "bytes": 251,
-   "sha256": "6837a0f28e866527460a88fc1d70bbe72873f3737229fbaa7dbf60e9c2e7bb34",
+   "bytes": 465,
+   "sha256": "d1275608cf8fd26a240024f0d26a6afc184c0f7537d6c8fd447baa5cfedbc1e4",
    "eol": "LF"
   },
   "check-package.json": {
@@ -84,8 +94,8 @@
    "eol": "LF"
   },
   "report.md": {
-   "bytes": 53637,
-   "sha256": "121d27a68a57f131cad44a38b257b3c9d8dadc57f9635eb0f69e702e72e2f7dd",
+   "bytes": 58399,
+   "sha256": "cecedc214232408183baeb41dc416622d27829affa0745588c136c74423b9c46",
    "eol": "LF"
   },
   "runs/census.json": {
@@ -1159,8 +1169,8 @@
    "eol": "LF"
   },
   "tools/check_package.py": {
-   "bytes": 8722,
-   "sha256": "c7dfb5839cbde0b6b214f53359acc58f3b22efbe06343676abc9296277b92009",
+   "bytes": 12480,
+   "sha256": "aaee9ed94b02a8b7d782341ebfc655d53b7adaa03fc0d953f73f4abe1230e3e3",
    "eol": "LF"
   },
   "tools/collect_runs.py": {

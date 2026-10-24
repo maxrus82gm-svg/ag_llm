@@ -1,10 +1,16 @@
 {
  "clean": "PASS",
  "drop-runs-map-row": "DETECTED",
+ "duplicate-runs-map-id-identical": "DETECTED",
+ "duplicate-runs-map-id-different": "DETECTED",
+ "unsafe-runs-map-id": "DETECTED",
+ "duplicate-manifest-key": "DETECTED",
  "tampered-published-file": "DETECTED",
  "crlf-file": "DETECTED",
  "stale-evidence-sha": "DETECTED",
+ "census-claim": "DETECTED",
  "unlisted-file": "DETECTED",
  "listed-file-missing": "DETECTED",
- "census-claim": "DETECTED"
+ "negative_scenarios": 11,
+ "detected": 11
 }
