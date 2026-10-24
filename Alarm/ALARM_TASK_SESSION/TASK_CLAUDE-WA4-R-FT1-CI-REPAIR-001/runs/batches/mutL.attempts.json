@@ -1,0 +1,198 @@
+[
+ {
+  "label": "final",
+  "exit": 0,
+  "tests_run": 7,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-final-sm82e7rw",
+  "build": {
+   "variant": "final",
+   "mirror": "code",
+   "changed": {}
+  },
+  "wall": 6.1
+ },
+ {
+  "label": "original-test",
+  "exit": 0,
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-original-test-3sg9ziti",
+  "build": {
+   "variant": "original-test",
+   "mirror": "code",
+   "changed": {
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97"
+   }
+  },
+  "wall": 6.2
+ },
+ {
+  "label": "C1-tmpdir-not-overridden",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 1,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-C1-tmpdir-not-overridden-1ocjx__y",
+  "build": {
+   "variant": "C1-tmpdir-not-overridden",
+   "mirror": "code",
+   "changed": {
+    "test_web_alarm_runner_guard.py": "a0251ce9026572bc75ac1e38e29f0ee78e6a07bf4f52164cd6b422f517545355"
+   }
+  },
+  "wall": 6.2
+ },
+ {
+  "label": "C2-tmpdir-and-root-oracle-removed",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-C2-tmpdir-and-root-oracle-removed-hf9eckzr",
+  "build": {
+   "variant": "C2-tmpdir-and-root-oracle-removed",
+   "mirror": "code",
+   "changed": {
+    "test_web_alarm_runner_guard.py": "276b3aec41c0579364c2571e2018dd65b2c37fb60ca6e9e90d1822aaf8d63858"
+   }
+  },
+  "wall": 5.8
+ },
+ {
+  "label": "C3-guard-root-widened",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 7,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-C3-guard-root-widened-ebf_yzhg",
+  "build": {
+   "variant": "C3-guard-root-widened",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "c93b08c5cd04a7c63c09cde3edf1359c46c2fcff36dafc857c14f4b0f7a73996"
+   }
+  },
+  "wall": 5.6
+ },
+ {
+  "label": "A1-no-prefix-strip",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 4,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A1-no-prefix-strip-s5rl4nzg",
+  "build": {
+   "variant": "A1-no-prefix-strip",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "76250c6c783807d39b448396994e2b16b200af97d4062bd6353b314cdcaca1c8"
+   }
+  },
+  "wall": 6.7
+ },
+ {
+  "label": "A2-explicit-prefix-stripped-too",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A2-explicit-prefix-stripped-too-0hq4flr0",
+  "build": {
+   "variant": "A2-explicit-prefix-stripped-too",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "95bde065fadbe07e3824c199fd5e16d3fc359552638a5cfc368090190cd287e3"
+   }
+  },
+  "wall": 5.8
+ },
+ {
+  "label": "A3-no-deleted-retry",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 3,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A3-no-deleted-retry-q2a_qe7d",
+  "build": {
+   "variant": "A3-no-deleted-retry",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "4c723473ef879066d06c24c308b9da216de1ec37b9c4bd11b3bd6e807349afcc"
+   }
+  },
+  "wall": 3.2
+ },
+ {
+  "label": "A4-deleted-trusted-by-spelling",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A4-deleted-trusted-by-spelling-y9_g3jzl",
+  "build": {
+   "variant": "A4-deleted-trusted-by-spelling",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "e3b6e3421b021347e6db0268f2a704864876c02db10d8f28856c06f3925e1e2e"
+   }
+  },
+  "wall": 3.3
+ },
+ {
+  "label": "A5-write-check-disabled",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 14,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A5-write-check-disabled-57ikjljb",
+  "build": {
+   "variant": "A5-write-check-disabled",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "cb012f1d26eca849ac26f705c1fd2ca1e35c17c3426dab75f5f51eaa58d97f9d"
+   }
+  },
+  "wall": 4.6
+ },
+ {
+  "label": "A6-git-check-removed",
+  "exit": 1,
+  "tests_run": 7,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1ci-mutL-A6-git-check-removed-r_g0oig0",
+  "build": {
+   "variant": "A6-git-check-removed",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
+   }
+  },
+  "wall": 6.4
+ }
+]

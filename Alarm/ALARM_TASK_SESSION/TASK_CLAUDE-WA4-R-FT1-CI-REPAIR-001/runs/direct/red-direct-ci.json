@@ -1,0 +1,34 @@
+{
+ "label": "red-direct-ci",
+ "mode": "ci",
+ "module": "test_web_alarm_runner_guard",
+ "exit": 1,
+ "lines": [
+  "test_equivalent_spellings_inside_temp_are_allowed (test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed) ... ok",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [sibling] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [dotdot] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [dotdot_slashes_case] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [junction] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [replace_out] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [mkdir_out] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [race_injection_outside] ... FAIL",
+  "  test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) [deleted_once_outside] ... FAIL",
+  "test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) ... FAIL",
+  "test_folder_created_by_another_process_between_lookups_is_not_a_violation (test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation) ... ok",
+  "test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp (test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp) ... ok",
+  "test_real_mkdir_rmdir_race_never_produces_a_false_violation (test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation) ... ok",
+  "test_short_8dot3_spelling_of_temp_is_allowed (test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed) ... ok",
+  "Ran 6 tests in 5.031s",
+  "FAILED (failures=9)"
+ ],
+ "failing_subtests": [
+  "deleted_once_outside",
+  "dotdot",
+  "dotdot_slashes_case",
+  "junction",
+  "mkdir_out",
+  "race_injection_outside",
+  "replace_out",
+  "sibling"
+ ]
+}

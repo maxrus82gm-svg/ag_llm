@@ -1,0 +1,85 @@
+{
+ "label": "C2-tmpdir-and-root-oracle-removed",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutC-C2-tmpdir-and-root-oracle-removed-d8hmjb0h\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 6.112,
+ "base": "<TEMP>\\claude-ft1ci-mutC-C2-tmpdir-and-root-oracle-removed-d8hmjb0h",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code",
+ "tests_run": 7,
+ "passed": -4,
+ "failures": 11,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 5.554,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir [sibling]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir",
+   "FAIL",
+   "sers\\<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 194, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 0 != 1 : the guard log does not match the refused operations\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [sibling]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [dotdot]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [dotdot_slashes_case]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [junction]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [replace_out]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [mkdir_out]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [race_injection_outside]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [deleted_once_outside]",
+   "FAIL",
+   "most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 193, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   "ers\\<TEMP>\\claude-ft1ci-mirror-C2-tmpdir-and-root-oracle-removed-m1m1d5mb\\code\\test_web_alarm_runner_guard.py\", line 194, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 4 != 12 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

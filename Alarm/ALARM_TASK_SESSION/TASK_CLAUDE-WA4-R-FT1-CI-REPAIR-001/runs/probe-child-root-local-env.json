@@ -1,0 +1,30 @@
+{
+ "parent_env": {
+  "TEMP": "set",
+  "TMP": "set",
+  "TMPDIR": "unset"
+ },
+ "parent_gettempdir": "<PARENT-TEMP>",
+ "variants": {
+  "fixed": {
+   "child_TMPDIR": "inner",
+   "child_exit": 0,
+   "child_gettempdir": "<BASE>/inner",
+   "file_exists_after": false,
+   "guard_root": "<BASE>/inner",
+   "guard_violation_lines": 1,
+   "outcome": "blocked",
+   "write_to": "<BASE>/outside/probe.txt"
+  },
+  "old": {
+   "child_TMPDIR": "unset",
+   "child_exit": 0,
+   "child_gettempdir": "<BASE>/inner",
+   "file_exists_after": false,
+   "guard_root": "<BASE>/inner",
+   "guard_violation_lines": 1,
+   "outcome": "blocked",
+   "write_to": "<BASE>/outside/probe.txt"
+  }
+ }
+}

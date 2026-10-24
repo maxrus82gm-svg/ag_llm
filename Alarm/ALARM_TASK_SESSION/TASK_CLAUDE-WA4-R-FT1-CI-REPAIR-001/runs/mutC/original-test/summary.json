@@ -1,0 +1,75 @@
+{
+ "label": "original-test",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutC-original-test-asrblm5k\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 6.122,
+ "base": "<TEMP>\\claude-ft1ci-mutC-original-test-asrblm5k",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code",
+ "tests_run": 6,
+ "passed": -3,
+ "failures": 9,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 5.523,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [sibling]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [dotdot]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [dotdot_slashes_case]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [junction]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [replace_out]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [mkdir_out]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [race_injection_outside]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [deleted_once_outside]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   " ops})\n  File \"<TEMP>\\claude-ft1ci-mirror-original-test-_76cjwoz\\code\\test_web_alarm_runner_guard.py\", line 182, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 4 != 12 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

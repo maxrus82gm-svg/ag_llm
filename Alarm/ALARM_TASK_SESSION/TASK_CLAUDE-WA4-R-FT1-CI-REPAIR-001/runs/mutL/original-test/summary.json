@@ -1,0 +1,29 @@
+{
+ "label": "original-test",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-original-test-dc8lz311\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutL-original-test-3sg9ziti\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 0,
+ "wall_seconds": 6.149,
+ "base": "<TEMP>\\claude-ft1ci-mutL-original-test-3sg9ziti",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-original-test-dc8lz311\\code",
+ "tests_run": 6,
+ "passed": 6,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 5.568,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

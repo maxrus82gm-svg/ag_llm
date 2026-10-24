@@ -1,0 +1,65 @@
+{
+ "label": "C3-guard-root-widened",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-C3-guard-root-widened-5156iq7w\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutC-C3-guard-root-widened-03edp8gx\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.905,
+ "base": "<TEMP>\\claude-ft1ci-mutC-C3-guard-root-widened-03edp8gx",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-C3-guard-root-widened-5156iq7w\\code",
+ "tests_run": 7,
+ "passed": 0,
+ "failures": 7,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 5.334,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir",
+   "FAIL",
+   "rd_il07omlg' != '<TEMP>\\\\wa_guard_il07omlg\\\\inner'\n- <TEMP>\\wa_guard_il07omlg\n+ <TEMP>\\wa_guard_il07omlg\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed",
+   "FAIL",
+   "rd_j6vu2hug' != '<TEMP>\\\\wa_guard_j6vu2hug\\\\inner'\n- <TEMP>\\wa_guard_j6vu2hug\n+ <TEMP>\\wa_guard_j6vu2hug\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   "rd_bxe59i6y' != '<TEMP>\\\\wa_guard_bxe59i6y\\\\inner'\n- <TEMP>\\wa_guard_bxe59i6y\n+ <TEMP>\\wa_guard_bxe59i6y\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation",
+   "FAIL",
+   "rd_jbr0u8hd' != '<TEMP>\\\\wa_guard_jbr0u8hd\\\\inner'\n- <TEMP>\\wa_guard_jbr0u8hd\n+ <TEMP>\\wa_guard_jbr0u8hd\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp",
+   "FAIL",
+   "rd_aql9muax' != '<TEMP>\\\\wa_guard_aql9muax\\\\inner'\n- <TEMP>\\wa_guard_aql9muax\n+ <TEMP>\\wa_guard_aql9muax\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation",
+   "FAIL",
+   "rd_ke4zo1ew' != '<TEMP>\\\\wa_guard_ke4zo1ew\\\\inner'\n- <TEMP>\\wa_guard_ke4zo1ew\n+ <TEMP>\\wa_guard_ke4zo1ew\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed",
+   "FAIL",
+   "rd_kzz5_cb0' != '<TEMP>\\\\wa_guard_kzz5_cb0\\\\inner'\n- <TEMP>\\wa_guard_kzz5_cb0\n+ <TEMP>\\wa_guard_kzz5_cb0\\inner\n?                                                  ++++++\n : the child's guard does not protect its own temp\n"
+  ]
+ ]
+}

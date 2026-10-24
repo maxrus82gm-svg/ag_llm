@@ -1,8 +1,8 @@
 """F-T1: the WA4-A runner isolation guard (``wa4a_acceptance.GUARD``) on Windows path spellings and real races.
 
-Every case runs the real GUARD source as the sitecustomize of a fresh child Python whose TMP/TEMP is a private
-``inner`` folder, so "outside" is a sibling folder that is still inside the real disposable TEMP: even a broken guard
-cannot write anywhere else. Oracles are independent of the guard's decision code: the child's per-operation outcome
+Every case runs the real GUARD source as the sitecustomize of a fresh child Python whose TMPDIR/TEMP/TMP is a private
+``inner`` folder (checked: the child reports the root its guard really uses), so "outside" is a sibling folder that is
+still inside the real disposable TEMP: even a broken guard cannot write anywhere else. Oracles are independent of the guard's decision code: the child's per-operation outcome
 (``WA4-A isolation`` PermissionError or not), the number of lines in the guard's own violation log, and the files that
 really exist afterwards.
 
@@ -107,7 +107,8 @@ def race(op):
     return counts
 
 
-out = {}
+import sitecustomize, tempfile  # the guard this child really runs under, and the root it really allows
+out = {"_root": {"guard": str(sitecustomize._audit_temp), "gettempdir": tempfile.gettempdir()}}
 for op in cfg["ops"]:
     out[op["name"]] = race(op) if op["op"] == "race" else run(op)
 sys.stdout.write("RESULT " + json.dumps(out) + "\n")  # stdout: the child may write nowhere outside its own temp
@@ -136,13 +137,20 @@ class RunnerGuardTests(unittest.TestCase):
                 os.rmdir(path)
         shutil.rmtree(base, ignore_errors=True)
 
-    def child(self, ops: list[dict]) -> tuple[dict, int]:
+    def child(self, ops: list[dict], parent_env: dict[str, str] | None = None) -> tuple[dict, int]:
+        """Run ops in a guarded child whose allowed root must be exactly ``inner``.
+
+        tempfile (and so the guard) takes the first of TMPDIR, TEMP, TMP: all three are set, and the child reports
+        the root its guard really uses. CI sets TMPDIR (FT1-CI-REPAIR: an inherited TMPDIR made the child guard
+        protect the runner's TEMP instead of ``inner``, so every "outside" fixture counted as inside).
+        """
         self.calls += 1
         cfg = self.base / f"cfg_{self.calls}.json"
         cfg.write_text(json.dumps({"ops": ops}), encoding="utf-8")
         env = {k: v for k, v in os.environ.items() if not k.upper().startswith("PYTHON")}
-        env.update(PYTHONPATH=str(self.guard_dir), PYTHONDONTWRITEBYTECODE="1", TMP=str(self.inner),
-                   TEMP=str(self.inner), WA4A_GUARD_LOG=str(self.log))
+        env.update(parent_env or {})
+        env.update(PYTHONPATH=str(self.guard_dir), PYTHONDONTWRITEBYTECODE="1", TMPDIR=str(self.inner),
+                   TMP=str(self.inner), TEMP=str(self.inner), WA4A_GUARD_LOG=str(self.log))
         proc = subprocess.run([sys.executable, "-B", "-X", "utf8", "-c", CHILD, str(cfg)], env=env,
                               capture_output=True, timeout=120)
         if proc.returncode != 0:
@@ -151,7 +159,13 @@ class RunnerGuardTests(unittest.TestCase):
         violations = len([line for line in self.log.read_text(encoding="utf-8").splitlines() if line.strip()]) \
             if self.log.exists() else 0
         [line] = [x for x in proc.stdout.decode("utf-8").splitlines() if x.startswith("RESULT ")]
-        return json.loads(line[len("RESULT "):]), violations
+        results = json.loads(line[len("RESULT "):])
+        root = results.pop("_root")
+        inner = os.path.normcase(str(self.inner))
+        self.facts.append({"child_root_is_inner": {k: os.path.normcase(v) == inner for k, v in root.items()}})
+        self.assertEqual(os.path.normcase(root["guard"]), inner, "the child's guard does not protect its own temp")
+        self.assertEqual(os.path.normcase(root["gettempdir"]), inner, "the child's tempfile root is not its own temp")
+        return results, violations
 
     def shapes(self) -> dict[str, int]:
         """Masked form of every guard violation reason: the fixture folder and NTFS ids never leave the test."""
@@ -172,8 +186,8 @@ class RunnerGuardTests(unittest.TestCase):
             found[shape] = found.get(shape, 0) + 1
         return found
 
-    def check(self, ops: list[dict], expected: dict[str, str]):
-        results, violations = self.child(ops)
+    def check(self, ops: list[dict], expected: dict[str, str], parent_env: dict[str, str] | None = None):
+        results, violations = self.child(ops, parent_env)
         self.facts.append({"outcomes": {name: r["outcome"] for name, r in results.items()},
                            "guard_violation_lines": violations})
         for name, outcome in expected.items():
@@ -236,6 +250,17 @@ class RunnerGuardTests(unittest.TestCase):
                          "a refused operation left a file outside temp")
         self.assertEqual(sorted(p.name for p in self.inner.rglob("f*.txt")), [])
         self.assertTrue((self.inner / "src.txt").exists())
+
+    def test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir(self):
+        # the CI shape (TMPDIR = TEMP = TMP = runner temp) reproduced here, whatever this host's environment is
+        outer = str(self.base)
+        results = self.check([{"name": "sibling", "op": "write", "path": str(self.outside) + "\\f1.txt"},
+                              {"name": "inside", "op": "write", "path": str(self.inner) + "\\f2.txt"}],
+                             {"sibling": "blocked", "inside": "allowed"},
+                             parent_env={"TMPDIR": outer, "TEMP": outer, "TMP": outer})
+        self.assertEqual(sorted(p.name for p in self.outside.iterdir()), [], "a refused write left a file outside")
+        self.assertTrue((self.inner / "f2.txt").exists())
+        self.assertEqual(set(results), {"sibling", "inside"})
 
     def test_folder_created_by_another_process_between_lookups_is_not_a_violation(self):
         inner = str(self.inner)

@@ -1,0 +1,40 @@
+{
+ "label": "A4-deleted-trusted-by-spelling",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-A4-deleted-trusted-by-spelling-p1lo8v0j\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutC-A4-deleted-trusted-by-spelling-td_yqpo4\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 3.005,
+ "base": "<TEMP>\\claude-ft1ci-mutC-A4-deleted-trusted-by-spelling-td_yqpo4",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-A4-deleted-trusted-by-spelling-p1lo8v0j\\code",
+ "tests_run": 7,
+ "passed": 5,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 2.452,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [always_deleted_inside_stays_strict]",
+   "FAIL",
+   "k (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-A4-deleted-trusted-by-spelling-p1lo8v0j\\code\\test_web_alarm_runner_guard.py\", line 195, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   "<TEMP>\\claude-ft1ci-mirror-A4-deleted-trusted-by-spelling-p1lo8v0j\\code\\test_web_alarm_runner_guard.py\", line 196, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 11 != 12 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

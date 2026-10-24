@@ -1,0 +1,40 @@
+{
+ "label": "A6-git-check-removed",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-A6-git-check-removed-o8yw2vcs\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutC-A6-git-check-removed-jh8eqaw_\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.724,
+ "base": "<TEMP>\\claude-ft1ci-mutC-A6-git-check-removed-jh8eqaw_",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-A6-git-check-removed-o8yw2vcs\\code",
+ "tests_run": 7,
+ "passed": 5,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 5.175,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [git_metadata_read]",
+   "FAIL",
+   "\n  File \"<TEMP>\\claude-ft1ci-mirror-A6-git-check-removed-o8yw2vcs\\code\\test_web_alarm_runner_guard.py\", line 195, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'oserror:FileNotFoundError' != 'blocked'\n- oserror:FileNotFoundError\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   " File \"<TEMP>\\claude-ft1ci-mirror-A6-git-check-removed-o8yw2vcs\\code\\test_web_alarm_runner_guard.py\", line 196, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 11 != 12 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

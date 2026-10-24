@@ -1,0 +1,584 @@
+{
+ "task": "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+ "runs": {
+  "red-ci-env-runner": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "green-runner-local": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 7
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "green-runner-ci": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 7
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "focused-ci": {
+   "tests_run": 46,
+   "methods": 46,
+   "method_counts": {
+    "PASS": 45,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutL/final": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 7
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutL/original-test": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 6
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutL/C1-tmpdir-not-overridden": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 1,
+    "PASS": 6
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "a0251ce9026572bc75ac1e38e29f0ee78e6a07bf4f52164cd6b422f517545355",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutL/C2-tmpdir-and-root-oracle-removed": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 1,
+    "PASS": 6
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "276b3aec41c0579364c2571e2018dd65b2c37fb60ca6e9e90d1822aaf8d63858",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutL/C3-guard-root-widened": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 7
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "c93b08c5cd04a7c63c09cde3edf1359c46c2fcff36dafc857c14f4b0f7a73996"
+   },
+   "exit": 1
+  },
+  "mutL/A1-no-prefix-strip": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "76250c6c783807d39b448396994e2b16b200af97d4062bd6353b314cdcaca1c8"
+   },
+   "exit": 1
+  },
+  "mutL/A2-explicit-prefix-stripped-too": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "95bde065fadbe07e3824c199fd5e16d3fc359552638a5cfc368090190cd287e3"
+   },
+   "exit": 1
+  },
+  "mutL/A3-no-deleted-retry": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "4c723473ef879066d06c24c308b9da216de1ec37b9c4bd11b3bd6e807349afcc"
+   },
+   "exit": 1
+  },
+  "mutL/A4-deleted-trusted-by-spelling": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "e3b6e3421b021347e6db0268f2a704864876c02db10d8f28856c06f3925e1e2e"
+   },
+   "exit": 1
+  },
+  "mutL/A5-write-check-disabled": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 2,
+    "PASS": 5
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "cb012f1d26eca849ac26f705c1fd2ca1e35c17c3426dab75f5f51eaa58d97f9d"
+   },
+   "exit": 1
+  },
+  "mutL/A6-git-check-removed": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
+   },
+   "exit": 1
+  },
+  "mutC/final": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 7
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutC/original-test": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutC/C1-tmpdir-not-overridden": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 7
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "a0251ce9026572bc75ac1e38e29f0ee78e6a07bf4f52164cd6b422f517545355",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutC/C2-tmpdir-and-root-oracle-removed": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 2,
+    "PASS": 5
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "276b3aec41c0579364c2571e2018dd65b2c37fb60ca6e9e90d1822aaf8d63858",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutC/C3-guard-root-widened": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 7
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "c93b08c5cd04a7c63c09cde3edf1359c46c2fcff36dafc857c14f4b0f7a73996"
+   },
+   "exit": 1
+  },
+  "mutC/A1-no-prefix-strip": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "76250c6c783807d39b448396994e2b16b200af97d4062bd6353b314cdcaca1c8"
+   },
+   "exit": 1
+  },
+  "mutC/A2-explicit-prefix-stripped-too": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "95bde065fadbe07e3824c199fd5e16d3fc359552638a5cfc368090190cd287e3"
+   },
+   "exit": 1
+  },
+  "mutC/A3-no-deleted-retry": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "4c723473ef879066d06c24c308b9da216de1ec37b9c4bd11b3bd6e807349afcc"
+   },
+   "exit": 1
+  },
+  "mutC/A4-deleted-trusted-by-spelling": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "e3b6e3421b021347e6db0268f2a704864876c02db10d8f28856c06f3925e1e2e"
+   },
+   "exit": 1
+  },
+  "mutC/A5-write-check-disabled": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "FAIL": 2,
+    "PASS": 5
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "cb012f1d26eca849ac26f705c1fd2ca1e35c17c3426dab75f5f51eaa58d97f9d"
+   },
+   "exit": 1
+  },
+  "mutC/A6-git-check-removed": {
+   "tests_run": 7,
+   "methods": 7,
+   "method_counts": {
+    "PASS": 6,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
+   },
+   "exit": 1
+  }
+ }
+}

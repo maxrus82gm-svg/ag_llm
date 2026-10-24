@@ -1,0 +1,50 @@
+{
+ "label": "A1-no-prefix-strip",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1ci-mirror-A1-no-prefix-strip-ye309fsy\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+  "--output",
+  "<TEMP>\\claude-ft1ci-mutL-A1-no-prefix-strip-s5rl4nzg\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 6.654,
+ "base": "<TEMP>\\claude-ft1ci-mutL-A1-no-prefix-strip-s5rl4nzg",
+ "runner_root": "<TEMP>\\claude-ft1ci-mirror-A1-no-prefix-strip-ye309fsy\\code",
+ "tests_run": 7,
+ "passed": 3,
+ "failures": 4,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.086,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation [write_below_new_folder]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-A1-no-prefix-strip-ye309fsy\\code\\test_web_alarm_runner_guard.py\", line 195, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation [mkdir_below_new_folder]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1ci-mirror-A1-no-prefix-strip-ye309fsy\\code\\test_web_alarm_runner_guard.py\", line 195, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation",
+   "FAIL",
+   "})\n  File \"<TEMP>\\claude-ft1ci-mirror-A1-no-prefix-strip-ye309fsy\\code\\test_web_alarm_runner_guard.py\", line 196, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 2 != 0 : the guard log does not match the refused operations\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation",
+   "FAIL",
+   "mdir_race_never_produces_a_false_violation\n    self.assertEqual((counts[\"blocked\"], violations), (0, 0), \"false isolation violation inside temp\")\nAssertionError: Tuples differ: (1257, 1257) != (0, 0)\n\nFirst differing element 0:\n1257\n0\n\n- (1257, 1257)\n+ (0, 0) : false isolation violation inside temp\n"
+  ]
+ ]
+}

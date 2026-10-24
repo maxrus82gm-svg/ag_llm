@@ -1,0 +1,762 @@
+{
+ "task": "CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+ "files": [
+  {
+   "id": "red-ci-env-runner/results.json",
+   "raw_sha256": "d1181fa8e841e5a93b46a46a95e1db088517d7b0515a992e70392cbd93905d89",
+   "raw_bytes": 20671,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 10
+   },
+   "published_sha256": "889b0c246318afae5ce7781d53ef1383c69dbbb0ecbc774217dc6adbef657149",
+   "published_eol": "LF"
+  },
+  {
+   "id": "red-ci-env-runner/summary.json",
+   "raw_sha256": "09ab732ec7cebfdec8f78532530af4afad8feca72742764ac87c773d57b6a126",
+   "raw_bytes": 4503,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 12,
+    "TEMP": 2
+   },
+   "published_sha256": "0b80f8bd2e6d1b26b92211c1f5bfd6e27b6444fa06d88bc346d1931001075c79",
+   "published_eol": "LF"
+  },
+  {
+   "id": "green-runner-local/results.json",
+   "raw_sha256": "23992bd93aad6cc9c000a046706263726d43d3f7a878ecf00580a8bfe97ed9ee",
+   "raw_bytes": 18129,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "8b0eaf2675183e3dab3e940f4936185c51d9e1523c7398ecb75ca2ccca55eab7",
+   "published_eol": "LF"
+  },
+  {
+   "id": "green-runner-local/summary.json",
+   "raw_sha256": "ee848b8dca9db18988e91cc0adba93fea8a4de6a1fcd7d9ad6f1ed2d85ed7c38",
+   "raw_bytes": 811,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 3,
+    "TEMP": 2
+   },
+   "published_sha256": "1382389664122c9ff1bdd94d3e77c928f0c8aaa63cac86fa3d3d6e3f355303b1",
+   "published_eol": "LF"
+  },
+  {
+   "id": "green-runner-ci/results.json",
+   "raw_sha256": "dcaa97a74cdf6d55d76580507572cc6437a3cb491059494a6023b1c4dbaa7ec9",
+   "raw_bytes": 18130,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "e3872949915527c431a160a71061ef9ec0e616931ed08259f4a7b7d268b0ee00",
+   "published_eol": "LF"
+  },
+  {
+   "id": "green-runner-ci/summary.json",
+   "raw_sha256": "517db6272556df800f7bc7f67591b3643c03b0a8a8eaa080ab9faa1dfe221cc1",
+   "raw_bytes": 801,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 3,
+    "TEMP": 2
+   },
+   "published_sha256": "52109bb6dff7679fc527bf962cfcb66119b9576f6804debcb78f2bf7597cb161",
+   "published_eol": "LF"
+  },
+  {
+   "id": "focused-ci/results.json",
+   "raw_sha256": "294e9e2b9fa860d8405b890fd4691a39aa2fb99adbf2968616983b9e05fb27aa",
+   "raw_bytes": 41163,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 2
+   },
+   "published_sha256": "4bc4612508b043915b66f1cfdba98eca929a02df8b05c393ae916b765d188ca2",
+   "published_eol": "LF"
+  },
+  {
+   "id": "focused-ci/summary.json",
+   "raw_sha256": "eef62c83eba001215d285de26229c1f29d4bfc771f42e38cd1acc6f11325bc0f",
+   "raw_bytes": 1046,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 3,
+    "TEMP": 2
+   },
+   "published_sha256": "c47035e8fc03695e2fb215147586a4408f721ed1eceae887781e29ab9a1c09b8",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/final/results.json",
+   "raw_sha256": "0a62d879493dc1d646733ba48e6d392e70630257fc4dcb0eca798fa8260e8f5f",
+   "raw_bytes": 18129,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "29f2e3673689db21d7c369341ce67664fa2852421e7721ba0f0fd38971ddbbcf",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/final/summary.json",
+   "raw_sha256": "fec09b1afb6ed2950d5836f0cae518973cf1477958ae6744c9b45169593831b6",
+   "raw_bytes": 902,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 4
+   },
+   "published_sha256": "c645d18d3473dc8dd5c32d4af22b50c40445696c8f7d5c40a06ed585988ce678",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/original-test/results.json",
+   "raw_sha256": "86380d61ca6223a3d1dc1eea49e31de4462c1490510e10ca8c18dc5299750db1",
+   "raw_bytes": 16619,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "a85a3c18d6054428cb09a8da733b69218898212748b339b2cbac5840bd09e90e",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/original-test/summary.json",
+   "raw_sha256": "aa436fc6f50908801ddee7c9855ef190761fb1c6fa26d60b00ad6b516f6e2b79",
+   "raw_bytes": 942,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 4
+   },
+   "published_sha256": "418d4eff52fc86981a1131412a580a7367c2cf2936de9ce8d6b5a59d05dad3c4",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C1-tmpdir-not-overridden/results.json",
+   "raw_sha256": "49bddc0ad8e15244f757cb6a43e7d23d7b73c13922117796980259469498896e",
+   "raw_bytes": 19425,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 7
+   },
+   "published_sha256": "5b7cdaae8185bfa097f5c40e2dc7eab587f9e4dfdbdab4daec1f0a5a55752565",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C1-tmpdir-not-overridden/summary.json",
+   "raw_sha256": "83cc6ccefed9f46d4b8940142ce4dc62f2e438830d9869cdc30088eed2a05482",
+   "raw_bytes": 1486,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 7
+   },
+   "published_sha256": "b484460fa7eb6693cf074c5b690372f04d0244cce7b5aba43c13be64a5af9f24",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C2-tmpdir-and-root-oracle-removed/results.json",
+   "raw_sha256": "120302c2f6d8a438b25115193d92807128d222d2cd05d2ea462136ff32d82719",
+   "raw_bytes": 19507,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "d1cad870758bf46ba7cad8937a8e38a01a0e63dd7d353cef655def10ba5ccf5c",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C2-tmpdir-and-root-oracle-removed/summary.json",
+   "raw_sha256": "4aec7fdbde16588710e1ec0ab52b5ff0639747257a3d963e6ed18f9a8a798c50",
+   "raw_bytes": 1995,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "FRAGMENT": 1,
+    "REPO": 1,
+    "TEMP": 5
+   },
+   "published_sha256": "ecd47e88ae273b2d0e3e85234de177ccc33afb55c89e3394942fa26dce6540fa",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C3-guard-root-widened/results.json",
+   "raw_sha256": "48ecbdf4425fb4d4306c2bba0a179f57f7a3f43dc92e8dd6cde5fe16f705399a",
+   "raw_bytes": 25380,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 48
+   },
+   "published_sha256": "38a7f0615c8ee0135982b85ff656089d3cdf7c094d7cdc9a59b378c69c781524",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/C3-guard-root-widened/summary.json",
+   "raw_sha256": "c41ff2fe68d958293de7e66981ddd1b6cd68af7023271d1f3fc6222b06e582fe",
+   "raw_bytes": 4319,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 25
+   },
+   "published_sha256": "c59d2615cbb091a028063c37c41fc8449c39816a716341713c03679f14792fd7",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A1-no-prefix-strip/results.json",
+   "raw_sha256": "14f9160fc11aa655aa131f648094a0da88fa168320a793f68f0b32137fd2bb5a",
+   "raw_bytes": 20544,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 5
+   },
+   "published_sha256": "3aaa96f0ac986a3b77cf12d89e3e6032dd5b7f75b6b002282eadc85334394a76",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A1-no-prefix-strip/summary.json",
+   "raw_sha256": "ac2ac2154e4babe00fa0d8863dc69480c75ca1f63e00f9c40292d77559452cdb",
+   "raw_bytes": 2890,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 7
+   },
+   "published_sha256": "67a9c6fe6d8697f4d7aafdca637bde9638dfaef19c13ea2720d2f46eda6a4c44",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A2-explicit-prefix-stripped-too/results.json",
+   "raw_sha256": "b5b155dac5f331050c745370242f73a349de019b76fe44690a75b4ee6231453c",
+   "raw_bytes": 19349,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "b63c615547d226a31ba8a48fc126acc8505b76ff81d530d897c8001745432f21",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A2-explicit-prefix-stripped-too/summary.json",
+   "raw_sha256": "5e2db29f4c470cdb287e15f8dab4b46b7fad4c0b0b1a2998d4c31c18f73c9f6b",
+   "raw_bytes": 1990,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "FRAGMENT": 1,
+    "REPO": 1,
+    "TEMP": 5
+   },
+   "published_sha256": "06ae2997e92dfb0c32ecff25d84b2bc58ca1d9f886d542ef536f4229fbc8a340",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A3-no-deleted-retry/results.json",
+   "raw_sha256": "1713da286652c176a05aa4d435142417fe62344edb62e5d58996b79aa09842cc",
+   "raw_bytes": 19958,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "ABS": 1,
+    "TEMP": 4
+   },
+   "published_sha256": "716ae900ed83cf5ec813be0ba247b9ab9b4fb67045b29af3ec1484595598592a",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A3-no-deleted-retry/summary.json",
+   "raw_sha256": "8d65c7d43d70ba382d6ea43b835ea0b619e96ee8ad84e4b2b1b9cf59b140aeaf",
+   "raw_bytes": 2396,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "6f49b339c2ddd6502049f735c479aec28e7cc6ea2a2687b552efa6c7476499c9",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A4-deleted-trusted-by-spelling/results.json",
+   "raw_sha256": "7baa4eb2108e5e2a38f7cf667f713831b37879281c1790c14ac45bfd669f73d8",
+   "raw_bytes": 19353,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "5bce30d328497c8b7ab26258b9365d7c36495cf83b8b94cc4bac64cb29f29f28",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A4-deleted-trusted-by-spelling/summary.json",
+   "raw_sha256": "1456d8f2bddbf5dc30a157f2c995e4164b7876ea900cd90c8b4ebe7ad5084e62",
+   "raw_bytes": 1991,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "6d6c0fbb7bf4897f47ee4b8e1f38e53dc8142fb2ca9111dd47fc7d7f03d4b085",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A5-write-check-disabled/results.json",
+   "raw_sha256": "565f993b7044a3b936b201d4dde74af5508d1bd206162daeb8ce8775cdc8e528",
+   "raw_bytes": 25910,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 16
+   },
+   "published_sha256": "7f6760ecf35f23fac0f9bf60cb7face5e5a4776fd80442607e0cf0c8d5ec61c8",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A5-write-check-disabled/summary.json",
+   "raw_sha256": "5c87343835a6a3f2865aed41a7475854ea36930ae3a02427ab9e161c78fa6e47",
+   "raw_bytes": 7737,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 18
+   },
+   "published_sha256": "35619fc94f2a0eb48c683e180ffe41c3e7857c50cd885adb93a1a865de3f6d3b",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A6-git-check-removed/results.json",
+   "raw_sha256": "7e9eb10690bc5414493b370b0a53da86037cf3da5198fffdb45d2c1e6565010d",
+   "raw_bytes": 19360,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "73e1d3fd4eebe048d80b82dc5a3668e1db45fee755446ebbf0e0866b879c588b",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutL/A6-git-check-removed/summary.json",
+   "raw_sha256": "99c6c26935d3bb5511048906386c93393caca6315995599e91663433981df7d4",
+   "raw_bytes": 1926,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "9cd60d373420017e051342ca144d87c208174565d6208a1b8a424649dbed7db9",
+   "published_eol": "LF"
+  },
+  {
+   "id": "batches/mutL.attempts.json",
+   "raw_sha256": "ae0c746f5cfc1fae409c57f8500765f105440a3058e28ff09c23b4205ab2c4c2",
+   "raw_bytes": 5164,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 11
+   },
+   "published_sha256": "c39ec2dee4f853e2a40069361640fa076a5d13122eb15a52a6b6dad68d86d86f",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/final/results.json",
+   "raw_sha256": "a2a087e4a92bb76846f0d40dcdf28de1dad65d90b9ecf23b606b6bee3507fe84",
+   "raw_bytes": 18130,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "a79b5636bba6ca51be8824a1f1daa6ca46a2000d7313b6ab0fb41912f05a32fd",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/final/summary.json",
+   "raw_sha256": "1441141c8b2615ce0e6a6d476fe0cf5ac1f76bfb928e15d637f81e8a6867b44c",
+   "raw_bytes": 902,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 4
+   },
+   "published_sha256": "4d9e987de4253e1e2b996d494143a30b84bd3a2ac770c8afca774bacb20150c6",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/original-test/results.json",
+   "raw_sha256": "33a57acb61149f9ef1efb79e7a0c2232331c98f0a28073ea8dc9189271d1fbf8",
+   "raw_bytes": 21351,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 10
+   },
+   "published_sha256": "f83eec308c61d4cf99230f3343fc28d50497a79d1c4922622ef7bc8450f48eb5",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/original-test/summary.json",
+   "raw_sha256": "386ad2a8532c5fe5587d6447002c58a581df62d9a01da582d8d8b1f371b1d5b6",
+   "raw_bytes": 5182,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 13
+   },
+   "published_sha256": "b1f1b98ab300a685f185713eca05ec433315420644a162ae58125d89744fd00a",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C1-tmpdir-not-overridden/results.json",
+   "raw_sha256": "eb38f619c05fe6f8c1793c05276e4451c909adba120078e6f598297fc6298fbf",
+   "raw_bytes": 24853,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 48
+   },
+   "published_sha256": "017cadea5d6762651e227e6c7d52cb0f7e85c9c5929105f76b77224c46e23f25",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C1-tmpdir-not-overridden/summary.json",
+   "raw_sha256": "8d02fece31dbb7ab8dce17ac23d0222485f23e60a6a468be9fefde43e58eab30",
+   "raw_bytes": 4393,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 31
+   },
+   "published_sha256": "857585214b50b98d3acf71a1694f19f3f0de6500ff77d3b49b779fc6b4b8ba03",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C2-tmpdir-and-root-oracle-removed/results.json",
+   "raw_sha256": "6dbb02797c9e5049d24c3781a3fd68c084487bf47bf4d94c08ab87131f60e353",
+   "raw_bytes": 24449,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 13
+   },
+   "published_sha256": "2d7d37fb8788013f4934381ac0640d969d21e018bb058254803854670356831f",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C2-tmpdir-and-root-oracle-removed/summary.json",
+   "raw_sha256": "cdfaf7b442c03bd47ec27a61e6b748e9a88d1f01a3c5e24fa31649d8eb40ead1",
+   "raw_bytes": 6302,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "FRAGMENT": 2,
+    "REPO": 1,
+    "TEMP": 13
+   },
+   "published_sha256": "f842359264493730e319bfb078800fa05c39538fa7ec983d608fc0d65947b6b6",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C3-guard-root-widened/results.json",
+   "raw_sha256": "35f4ba4574306279bc86360ce7a2b0fcf59387479b424490dc04365541d22395",
+   "raw_bytes": 25380,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 48
+   },
+   "published_sha256": "d3ebddde8720e8b1019b487c30a8f74a16b2f93df46ac2434c00d979e35c4799",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/C3-guard-root-widened/summary.json",
+   "raw_sha256": "4e0e0af6f74aaacad9e4e13e07a2fafa7eaa446bb8894e8e5e289fab7e24577d",
+   "raw_bytes": 4319,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 25
+   },
+   "published_sha256": "608eca7f9d54db915985e32f5ae4ef3f8eecf7b246e2cbadb41e8dd19e5fa384",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A1-no-prefix-strip/results.json",
+   "raw_sha256": "b643253b3719e155baabb233a84532bd2439a66d550f86a4e0cd574ca23156b4",
+   "raw_bytes": 20544,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 5
+   },
+   "published_sha256": "32d95b6f505426fca8f42e5d3903788e33dca884a5d35ea2dc5c439af4c14e43",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A1-no-prefix-strip/summary.json",
+   "raw_sha256": "187308d31075f23f24e881860af7f8b8945f91139151060173ec7012c3e10ad4",
+   "raw_bytes": 2890,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 7
+   },
+   "published_sha256": "2c55fa3ba2933eaeb819a838b8371faa987a75b057df338cdb7b7ffcd0f911b1",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A2-explicit-prefix-stripped-too/results.json",
+   "raw_sha256": "1248642e1e8802fdd3f70187f382dc619d4aaabe57ee47e1c76156b82a4e11ef",
+   "raw_bytes": 19349,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "5b1dcb48c64983fb29ff34d706707847a43486c3fcea2179243ea56c6259e915",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A2-explicit-prefix-stripped-too/summary.json",
+   "raw_sha256": "b5a92973b02d8a1468588d427ef2ca3f66472192705ea1922d8906c75641dd97",
+   "raw_bytes": 1990,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "FRAGMENT": 1,
+    "REPO": 1,
+    "TEMP": 5
+   },
+   "published_sha256": "6f5b91ca23f51f34bd8d4a6d163714b2f25c41b0ca84841db7d5d20567a54f66",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A3-no-deleted-retry/results.json",
+   "raw_sha256": "501624900d55b017a9b88f2cfd2118bc4a73c12a66268db963ebf69f6d0d77ad",
+   "raw_bytes": 19973,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "ABS": 1,
+    "TEMP": 4
+   },
+   "published_sha256": "387ea93a94d80e81151264233e918ff7486e1e59a0f991ac40daa34391fe9e21",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A3-no-deleted-retry/summary.json",
+   "raw_sha256": "7bed3ec9c9e247cec1207da9a8a15684d070ab5aab04d72fc7d02dac4064c9eb",
+   "raw_bytes": 2398,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "3c2211ce84a596d2dae9b57043e403fea602a19af78d272d8285923af542efc1",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A4-deleted-trusted-by-spelling/results.json",
+   "raw_sha256": "0c4b2ed99b6c4fcf124dee5bc6b84ec656248a8489f9d71b7364fcc2f128ff9c",
+   "raw_bytes": 19352,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "655a5de71e9782ed7227b47cda9191f3702f589043dda1919753efc766a4cc56",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A4-deleted-trusted-by-spelling/summary.json",
+   "raw_sha256": "9533aeb606470f4ec5c890eb00ae8238d35800f3b528517d318d2520c851e035",
+   "raw_bytes": 1991,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "e89ab038ae22f88e9322e8a05aa64aa578beb6f61ce24da56a17f4b95b19eba7",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A5-write-check-disabled/results.json",
+   "raw_sha256": "484555f4a5e9e768cb0cd29c0a39ce127e28f08584edc12abd8e9511e09704f5",
+   "raw_bytes": 25912,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 16
+   },
+   "published_sha256": "78e63e0dffc3944d971aadaa08062afcad3061dbbc76e668d9a02947a18dde64",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A5-write-check-disabled/summary.json",
+   "raw_sha256": "ef645dda4440ef393de2f26f38bc3d2b2538256b8bc37c95d6828adaf269c65d",
+   "raw_bytes": 7738,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 18
+   },
+   "published_sha256": "4df93ee85aa62a38ac410f84074de554534058211870ce3062d75d04f08fa2ff",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A6-git-check-removed/results.json",
+   "raw_sha256": "c726d1c1226b5b1a9e013371b1b86713f0ca7d9e8f9caf049944186954d42da3",
+   "raw_bytes": 19360,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 3
+   },
+   "published_sha256": "4daee417204b30fbeb8f71169ce1b965b6a459076e0df5b42ac1e4835c41ab01",
+   "published_eol": "LF"
+  },
+  {
+   "id": "mutC/A6-git-check-removed/summary.json",
+   "raw_sha256": "0c990912644669d8dc9cbed1e083707388be6a4d37d1cb2f1b3f9729d4dd1e96",
+   "raw_bytes": 1926,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "REPO": 1,
+    "TEMP": 6
+   },
+   "published_sha256": "08444aecb74948aa721996c6ef75d856ce3eca52fa9ab1a626b7ade7952509cd",
+   "published_eol": "LF"
+  },
+  {
+   "id": "batches/mutC.attempts.json",
+   "raw_sha256": "c21e301fa0fd7e3f5a12e65e63aeca5c2a96ad373c2382a7e19ebf907e32c8e1",
+   "raw_bytes": 5165,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {
+    "TEMP": 11
+   },
+   "published_sha256": "41b76e4f6c93588f82cacc4e08fb8a049d217b9165d89c4110416213a7b5aa13",
+   "published_eol": "LF"
+  },
+  {
+   "id": "direct/red-direct-ci.json",
+   "raw_sha256": "b2f02a9e158068fcae07a2bd648736ea335fcd62f958bb4a24701627f2d17563",
+   "raw_bytes": 3114,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "078285aa2eafd82a0dca9bd6fabfa5ee28ede0fc9a4488a52c8acba7dcfd0ba2",
+   "published_eol": "LF"
+  },
+  {
+   "id": "direct/green-direct-local.json",
+   "raw_sha256": "3fe7f99e888b5f727b19e0f2c6e2a1fc1b5cc82b361ea4cc0fae5d877a52c268",
+   "raw_bytes": 1485,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "d878b6df71667cfb1bce9873f5b59c9459a5dd3bec376aadf0943915255e4a1c",
+   "published_eol": "LF"
+  },
+  {
+   "id": "direct/green-direct-ci.json",
+   "raw_sha256": "af84b274416d00117e0aee1cac9f2ef80e3ddea35511ac6b2b25c3eb3fb9aa28",
+   "raw_bytes": 1479,
+   "raw_eol": "CRLF",
+   "safety": "PASS",
+   "reasons": [],
+   "replacements": {},
+   "published_sha256": "963dda2d00fdbc85667075fae70dc2c17ce7c4de1b3f152a8777b40cfd7e7cfc",
+   "published_eol": "LF"
+  }
+ ]
+}

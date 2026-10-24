@@ -1,0 +1,18 @@
+{
+ "label": "green-direct-ci",
+ "mode": "ci",
+ "module": "test_web_alarm_runner_guard",
+ "exit": 0,
+ "lines": [
+  "test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir (test_web_alarm_runner_guard.RunnerGuardTests.test_child_guard_protects_its_own_temp_even_when_the_parent_sets_tmpdir) ... ok",
+  "test_equivalent_spellings_inside_temp_are_allowed (test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed) ... ok",
+  "test_every_escape_from_temp_is_still_refused_and_writes_nothing (test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing) ... ok",
+  "test_folder_created_by_another_process_between_lookups_is_not_a_violation (test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation) ... ok",
+  "test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp (test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp) ... ok",
+  "test_real_mkdir_rmdir_race_never_produces_a_false_violation (test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation) ... ok",
+  "test_short_8dot3_spelling_of_temp_is_allowed (test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed) ... ok",
+  "Ran 7 tests in 4.401s",
+  "OK"
+ ],
+ "failing_subtests": []
+}
