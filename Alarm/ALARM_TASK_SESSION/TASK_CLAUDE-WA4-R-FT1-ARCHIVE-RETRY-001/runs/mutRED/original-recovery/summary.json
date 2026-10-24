@@ -1,0 +1,170 @@
+{
+ "label": "original-recovery",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-original-recovery-kh3e_hrl\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutRED-rec-original-recovery-4vfzm_5n\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 24.289,
+ "base": "<TEMP>\\claude-ft1-mutRED-rec-original-recovery-4vfzm_5n",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-original-recovery-kh3e_hrl\\code",
+ "tests_run": 39,
+ "passed": 11,
+ "failures": 27,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 23.36,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does",
+   "FAIL",
+   "261024T143019-5dbf30ef'], False)\n\nFirst differing element 1:\n['20261024T143019-5dbf30ef', '20261024T143019-73cac171']\n['20261024T143019-5dbf30ef']\n\n+ ('ALREADY_APPLIED', ['20261024T143019-5dbf30ef'], False)\n- ('ALREADY_APPLIED',\n-  ['20261024T143019-5dbf30ef', '20261024T143019-73cac171'],\n-  False)\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process",
+   "FAIL",
+   "d_by_a_fresh_process\n    self.assertEqual((result[\"outcome\"], result.get(\"code\")), (\"REFUSED\", \"HEALTHY\"))\nAssertionError: Tuples differ: ('ALREADY_APPLIED', None) != ('REFUSED', 'HEALTHY')\n\nFirst differing element 0:\n'ALREADY_APPLIED'\n'REFUSED'\n\n- ('ALREADY_APPLIED', None)\n+ ('REFUSED', 'HEALTHY')\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [empty_as_left_by_a_death_inside_the_write]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [garbage]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [not_an_object]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_attempt]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_plan]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_source]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_prefix]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [archive_hash_mismatch]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [archive_entry_missing]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [applied_with_other_result]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [unknown_outcome]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [failed_post_check]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [directory]",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [missing] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [empty] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [truncated] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [extended] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [one_byte_changed] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [directory] (receipt=True)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [missing] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [empty] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [truncated] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [extended] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [one_byte_changed] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [directory] (receipt=False)",
+   "FAIL",
+   "aude-ft1-mirror-original-recovery-kh3e_hrl\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

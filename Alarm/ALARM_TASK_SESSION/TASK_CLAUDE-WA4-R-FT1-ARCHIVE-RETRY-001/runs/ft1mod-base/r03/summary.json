@@ -1,0 +1,40 @@
+{
+ "label": "r03",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-base-mirror\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-ft1mod-base-r03-qqogozfa\\out",
+  "test_web_alarm_aud01t02b_repair"
+ ],
+ "exit": 1,
+ "wall_seconds": 35.023,
+ "base": "<TEMP>\\claude-ft1-ft1mod-base-r03-qqogozfa",
+ "runner_root": "<TEMP>\\claude-ft1-base-mirror",
+ "tests_run": 27,
+ "passed": 25,
+ "failures": 1,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 34.477,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 1,
+ "non_pass": [
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "FAIL",
+   "\n  File \"<TEMP>\\wa4a_guard_io4zab0d\\sitecustomize.py\", line 13, in _violation\r\n    raise PermissionError(\"WA4-A isolation: \"+reason)\r\nPermissionError: WA4-A isolation: write outside disposable temp: \\\\?\\<TEMP>\\wa_aud01t_iee27t80\\state\\tasks\\active\r\n\n"
+  ],
+  [
+   "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event",
+   "ERROR",
+   "ms\\Python\\Python312\\Lib\\tempfile.py\", line 909, in onexc\n    _os.unlink(path)\nPermissionError: [WinError 32] Процесс не может получить доступ к файлу, так как этот файл занят другим процессом: '<TEMP>\\\\wa_aud01t_iee27t80\\\\state\\\\locks\\\\transport\\\\transport_events.lock'\n"
+  ]
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "label": "A-red2",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-A-red2-egwn75bz\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 3.347,
+ "base": "<TEMP>\\claude-ft1-A-red2-egwn75bz",
+ "runner_root": "<REPO>",
+ "tests_run": 6,
+ "passed": 1,
+ "failures": 5,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 2.791,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation [write_below_new_folder]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_runner_guard.py\", line 159, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation [mkdir_below_new_folder]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_runner_guard.py\", line 159, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation",
+   "FAIL",
+   "te_below_new_folder\": \"allowed\", \"mkdir_below_new_folder\": \"allowed\"})\n  File \"<REPO>\\test_web_alarm_runner_guard.py\", line 160, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 2 != 0 : the guard log does not match the refused operations\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_is_not_a_violation_inside_temp [write_below_deleted]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<REPO>\\test_web_alarm_runner_guard.py\", line 159, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_is_not_a_violation_inside_temp",
+   "FAIL",
+   "on_inside_temp\n    self.check(ops, {\"write_below_deleted\": \"allowed\"})\n  File \"<REPO>\\test_web_alarm_runner_guard.py\", line 160, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 1 != 0 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

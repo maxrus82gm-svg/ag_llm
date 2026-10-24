@@ -1,0 +1,180 @@
+[
+ {
+  "label": "final",
+  "exit": 0,
+  "tests_run": 39,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-final-dvwvfwg9",
+  "build": {
+   "variant": "final",
+   "mirror": "code",
+   "changed": {}
+  },
+  "wall": 26.9
+ },
+ {
+  "label": "B1-tail-unchecked",
+  "exit": 0,
+  "tests_run": 39,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B1-tail-unchecked-kam27ywl",
+  "build": {
+   "variant": "B1-tail-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "285ea49c8685e4b0cea2f9d694dc42027eb4888a0679782a251c84f7e4343bd7"
+   }
+  },
+  "wall": 25.7
+ },
+ {
+  "label": "B2-receipt-ignored",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 12,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B2-receipt-ignored-uiws2dv7",
+  "build": {
+   "variant": "B2-receipt-ignored",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "aa00aed3fef0ba6af2d84444b4857f1b86e2ab05a067c8ed3e780c94bd467b33"
+   }
+  },
+  "wall": 25.7
+ },
+ {
+  "label": "B3-any-outcome",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B3-any-outcome-isagj4jv",
+  "build": {
+   "variant": "B3-any-outcome",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "73908a664013c6ed0f2d40411bfd8897d5ce97d56bd4f5d6666ec7b994978acb"
+   }
+  },
+  "wall": 25.6
+ },
+ {
+  "label": "B4-receipt-required",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 1,
+  "errors": 2,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B4-receipt-required-kk4mo_qn",
+  "build": {
+   "variant": "B4-receipt-required",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "7d26b301bec75e1fd3f319661c4d6ae0f8332c5c9f3f70b277113c756f1b2dae"
+   }
+  },
+  "wall": 25.8
+ },
+ {
+  "label": "B5-archive-unchecked",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B5-archive-unchecked-sqit3xeg",
+  "build": {
+   "variant": "B5-archive-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "8e41ccfd953a9c1bc463c3c03163dd28fd67ee634cd8ac1cb369e422d8e89efe"
+   }
+  },
+  "wall": 26.4
+ },
+ {
+  "label": "B6-replace-failure-rejected",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B6-replace-failure-rejected-7ak4obyn",
+  "build": {
+   "variant": "B6-replace-failure-rejected",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "9291124a87abe2faf47d1e6fe6ee8400ba700b25d7ef638ee1304eb1603c284f"
+   }
+  },
+  "wall": 25.7
+ },
+ {
+  "label": "B7-result-unchecked",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 1,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B7-result-unchecked-g5lxr911",
+  "build": {
+   "variant": "B7-result-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "04b869f1a239709a9aabf0b02151b7fc6e74092826e9467cdd68afc47e18e7ee"
+   }
+  },
+  "wall": 26.4
+ },
+ {
+  "label": "B8-identity-unchecked",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B8-identity-unchecked-a2olzcv6",
+  "build": {
+   "variant": "B8-identity-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "35550d8975d43281ad5ae92c09ed979f824118c477eccb4af6997281510b0ada"
+   }
+  },
+  "wall": 25.9
+ },
+ {
+  "label": "B9-source-prefix-unchecked",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 2,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB-B9-source-prefix-unchecked-j0scat5y",
+  "build": {
+   "variant": "B9-source-prefix-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "39594b9da0b28bef3eb5a610f24bf7083d50296860124f15aae81cc12625aa4f"
+   }
+  },
+  "wall": 26.3
+ }
+]

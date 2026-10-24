@@ -1,0 +1,35 @@
+{
+ "label": "r05",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-race-retry5-r05-5dt1qmwf\\out",
+  "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation"
+ ],
+ "exit": 1,
+ "wall_seconds": 1.93,
+ "base": "<TEMP>\\claude-ft1-race-retry5-r05-5dt1qmwf",
+ "runner_root": "<REPO>",
+ "tests_run": 1,
+ "passed": 0,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.4,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation",
+   "FAIL",
+   "st_real_mkdir_rmdir_race_never_produces_a_false_violation\n    self.assertEqual((counts[\"blocked\"], violations), (0, 0), \"false isolation violation inside temp\")\nAssertionError: Tuples differ: (3, 3) != (0, 0)\n\nFirst differing element 0:\n3\n0\n\n- (3, 3)\n+ (0, 0) : false isolation violation inside temp\n"
+  ]
+ ]
+}

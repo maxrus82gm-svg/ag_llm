@@ -1,0 +1,29 @@
+{
+ "label": "r10",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-flake-final-r10-izeizxcw\\out",
+  "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event"
+ ],
+ "exit": 0,
+ "wall_seconds": 4.083,
+ "base": "<TEMP>\\claude-ft1-flake-final-r10-izeizxcw",
+ "runner_root": "<REPO>",
+ "tests_run": 1,
+ "passed": 1,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 3.551,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

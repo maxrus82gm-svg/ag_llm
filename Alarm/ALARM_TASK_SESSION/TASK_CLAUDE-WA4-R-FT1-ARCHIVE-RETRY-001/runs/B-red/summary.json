@@ -1,0 +1,130 @@
+{
+ "label": "B-red",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-B-red-qk52s9fc\\out",
+  "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.473,
+ "base": "<TEMP>\\claude-ft1-B-red-qk52s9fc",
+ "runner_root": "<REPO>",
+ "tests_run": 4,
+ "passed": -16,
+ "failures": 20,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 1.745,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does",
+   "FAIL",
+   "261024T131834-3be5a2ea'], False)\n\nFirst differing element 1:\n['20261024T131833-bc802ced', '20261024T131834-3be5a2ea']\n['20261024T131834-3be5a2ea']\n\n+ ('ALREADY_APPLIED', ['20261024T131834-3be5a2ea'], False)\n- ('ALREADY_APPLIED',\n-  ['20261024T131833-bc802ced', '20261024T131834-3be5a2ea'],\n-  False)\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process",
+   "FAIL",
+   "d_by_a_fresh_process\n    self.assertEqual((result[\"outcome\"], result.get(\"code\")), (\"REFUSED\", \"HEALTHY\"))\nAssertionError: Tuples differ: ('ALREADY_APPLIED', None) != ('REFUSED', 'HEALTHY')\n\nFirst differing element 0:\n'ALREADY_APPLIED'\n'REFUSED'\n\n- ('ALREADY_APPLIED', None)\n+ ('REFUSED', 'HEALTHY')\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [garbage]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [not_an_object]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_attempt]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_plan]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_source]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [other_prefix]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [archive_hash_mismatch]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [archive_entry_missing]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [applied_with_other_result]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [unknown_outcome]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [failed_post_check]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [directory]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [missing]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [empty]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [truncated]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [extended]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [one_byte_changed]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail [directory]",
+   "FAIL",
+   "not_proof(fingerprint)\n  File \"<REPO>\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ]
+ ]
+}

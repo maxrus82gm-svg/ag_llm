@@ -1,0 +1,108 @@
+{
+  "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
+  "status": "BLOCKED / SOURCE_BUNDLE_REQUIRED",
+  "existing_pure_validator_regression": {
+    "collected": 19,
+    "passed": 19,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "id": "existing_broker_contracts.ContractTests.test_approval_claims_never_activate",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_claimed_version_and_hash_not_verification",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_config_and_source_drift",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_existing_activation_gates_remain_blocked",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_extra_companion_and_user_socks_layout",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_literal_ip_port_and_protocol",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_native_config_and_engine_switch_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_observation_owner_egress_must_be_same_engine",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_observation_takeover_scope_protocol_companion",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_owner_sid_and_wrapper_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_source_and_schema_syntax",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_startup_policy_cannot_be_enabled_by_data",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_unbound_template_rejected",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_valid_contract_is_always_disabled",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_valid_synthetic_observation_never_native_health",
+        "status": "PASS"
+      },
+      {
+        "id": "existing_broker_contracts.ContractTests.test_whole_config_substitution_still_uses_controller_pin",
+        "status": "PASS"
+      }
+    ],
+    "source_pins_current": true
+  },
+  "source_specific_tests": {
+    "collected": 0,
+    "status": "NOT RUN / SOURCE_BUNDLE_REQUIRED"
+  },
+  "source_route_mutations": {
+    "executed": 0,
+    "status": "NOT RUN / SOURCE_BUNDLE_REQUIRED"
+  },
+  "native_engine_runs": 0,
+  "native_network_tests": 0,
+  "Git_GitHub_operations": 0,
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "excluded_nonpure_selectors": [
+    "test_cli_always_exit20_and_output_scope",
+    "test_remote_schema_reference_is_refused_without_dial"
+  ],
+  "run": "runs/pure-20261024-183930-efb63dbf"
+}

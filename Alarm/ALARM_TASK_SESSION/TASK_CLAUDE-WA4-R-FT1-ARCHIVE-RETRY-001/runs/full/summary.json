@@ -1,0 +1,50 @@
+{
+ "label": "full",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-full-7exquxtr\\out",
+  "all"
+ ],
+ "exit": 1,
+ "wall_seconds": 1050.178,
+ "base": "<TEMP>\\claude-ft1-full-7exquxtr",
+ "runner_root": "<REPO>",
+ "tests_run": 988,
+ "passed": 984,
+ "failures": 0,
+ "errors": 2,
+ "skips": 2,
+ "elapsed_seconds": 1049.008,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_folder_picker.PickerHttpTests.test_wrong_origin_host_token_and_fetch_metadata_never_reach_helper (changes={'Sec-Fetch-Site': 'same-origin'}, omit=(), duplicate=['Sec-Fetch-Site'])",
+   "FAIL",
+   "^^^^^^^^^^^^^^^^^^\n  File \"<HOME>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\socket.py\", line 720, in readinto\n    return self._sock.recv_into(b)\n           ^^^^^^^^^^^^^^^^^^^^^^^\nConnectionAbortedError: [WinError 10053] Программа на вашем хост-компьютере разорвала установленное подключение\n"
+  ],
+  [
+   "test_web_alarm_folder_picker.PickerHttpTests.test_wrong_origin_host_token_and_fetch_metadata_never_reach_helper (changes={}, omit=(), duplicate=['X-WebAlarm-Folder-Token'])",
+   "FAIL",
+   "^^^^^^^^^^^^^^^^^^\n  File \"<HOME>\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\socket.py\", line 720, in readinto\n    return self._sock.recv_into(b)\n           ^^^^^^^^^^^^^^^^^^^^^^^\nConnectionAbortedError: [WinError 10053] Программа на вашем хост-компьютере разорвала установленное подключение\n"
+  ],
+  [
+   "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed",
+   "SKIP",
+   "symlink creation is not permitted here"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

@@ -1,0 +1,35 @@
+{
+ "label": "B1-tail-unchecked",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-B1-tail-unchecked-fyoibjbn\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutB-B1-tail-unchecked-kam27ywl\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 0,
+ "wall_seconds": 25.621,
+ "base": "<TEMP>\\claude-ft1-mutB-B1-tail-unchecked-kam27ywl",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-B1-tail-unchecked-fyoibjbn\\code",
+ "tests_run": 39,
+ "passed": 38,
+ "failures": 0,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 24.658,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

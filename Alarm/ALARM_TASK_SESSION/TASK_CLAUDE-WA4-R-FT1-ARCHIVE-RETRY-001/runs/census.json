@@ -1,0 +1,2613 @@
+{
+ "task": "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+ "runs": {
+  "B-red": {
+   "tests_run": 4,
+   "methods": 4,
+   "method_counts": {
+    "FAIL": 4
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "B-green1": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 38,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "A-red": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "FAIL": 6
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_equivalent_spellings_inside_temp_are_allowed": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_short_8dot3_spelling_of_temp_is_allowed": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "c45ee943f16fccf168814c35271dce479844d708f4c3613d4feddfa7ecd3e027",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "A-red2": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 4,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_is_not_a_violation_inside_temp": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "3f301e589e282704af78a61c3051bb150ce4e8d6ca550b2fe80171789353ebfe",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "A-red3": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 3,
+    "FAIL": 3
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "fe028528a714ea623124b9a36cbfa701bd9b96726e57a6a83c8e60dad5a43d80",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "A-green1": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 6
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "fe028528a714ea623124b9a36cbfa701bd9b96726e57a6a83c8e60dad5a43d80",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "cb0fb00bfc573bc77c63fd0946891a853b1d08cc3b435e94ba78cb0db687bc8d"
+   },
+   "exit": 0
+  },
+  "AB-green2": {
+   "tests_run": 45,
+   "methods": 45,
+   "method_counts": {
+    "PASS": 43,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "942e40fa5326ead539c63825f341d3e1273cdcb0be84fd4398c8aa0c76d5d5c4",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 1
+  },
+  "mutB/final": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 38,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "mutB/B1-tail-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 38,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "285ea49c8685e4b0cea2f9d694dc42027eb4888a0679782a251c84f7e4343bd7",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "mutB/B2-receipt-ignored": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "aa00aed3fef0ba6af2d84444b4857f1b86e2ab05a067c8ed3e780c94bd467b33",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B3-any-outcome": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "73908a664013c6ed0f2d40411bfd8897d5ce97d56bd4f5d6666ec7b994978acb",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B4-receipt-required": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 35,
+    "ERROR": 2,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process": "ERROR",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "ERROR",
+    "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7d26b301bec75e1fd3f319661c4d6ae0f8332c5c9f3f70b277113c756f1b2dae",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B5-archive-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "8e41ccfd953a9c1bc463c3c03163dd28fd67ee634cd8ac1cb369e422d8e89efe",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B6-replace-failure-rejected": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "9291124a87abe2faf47d1e6fe6ee8400ba700b25d7ef638ee1304eb1603c284f",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B7-result-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "04b869f1a239709a9aabf0b02151b7fc6e74092826e9467cdd68afc47e18e7ee",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B8-identity-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "35550d8975d43281ad5ae92c09ed979f824118c477eccb4af6997281510b0ada",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB/B9-source-prefix-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "39594b9da0b28bef3eb5a610f24bf7083d50296860124f15aae81cc12625aa4f",
+    "test_web_alarm_transport_event_recovery.py": "6347e217edf51ba6bc6c0be18da25c340c7c72d22678f8cbcf06cdb753b3e6d7",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutB2/final": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 38,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "mutB2/B1-tail-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "285ea49c8685e4b0cea2f9d694dc42027eb4888a0679782a251c84f7e4343bd7",
+    "test_web_alarm_transport_event_recovery.py": "50575b07a63551a6bdd9387530aac6ce14cfe5e169cb573d11c69f6bdc899726",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "race-retry5/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 1
+  },
+  "race-retry5/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 1
+  },
+  "race-retry5/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 0
+  },
+  "race-retry5/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 1
+  },
+  "race-retry5/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "a35d0d4a0dfc2a85df4deba1d1d4354abe85288f6c286e556311bcac6266b2b4"
+   },
+   "exit": 1
+  },
+  "race-retry50/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "race-retry50/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "race-retry50/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "race-retry50/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "race-retry50/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b3a580cb49bcf5fefe6873ce3cda3dadd6a8b07fe32e439f95b98602c8a7ee0e",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutA/final": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 6
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutA/A1-no-prefix-strip": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 4,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "76250c6c783807d39b448396994e2b16b200af97d4062bd6353b314cdcaca1c8"
+   },
+   "exit": 1
+  },
+  "mutA/A2-explicit-prefix-stripped-too": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "95bde065fadbe07e3824c199fd5e16d3fc359552638a5cfc368090190cd287e3"
+   },
+   "exit": 1
+  },
+  "mutA/A3-no-deleted-retry": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 4,
+    "FAIL": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "4c723473ef879066d06c24c308b9da216de1ec37b9c4bd11b3bd6e807349afcc"
+   },
+   "exit": 1
+  },
+  "mutA/A4-deleted-trusted-by-spelling": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "e3b6e3421b021347e6db0268f2a704864876c02db10d8f28856c06f3925e1e2e"
+   },
+   "exit": 1
+  },
+  "mutA/A5-write-check-disabled": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "cb012f1d26eca849ac26f705c1fd2ca1e35c17c3426dab75f5f51eaa58d97f9d"
+   },
+   "exit": 1
+  },
+  "mutA/A6-git-check-removed": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 5,
+    "FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
+   },
+   "exit": 1
+  },
+  "mutBF/final": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 38,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutBF/B1-tail-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "fa91becd2107111183a8d6a69a1d9c4f312e8c9ebd963607296e4108d7093001",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B2-receipt-ignored": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "ce35429c0439004ce7ca6fb20a650acd408004d81e3a5cde2aa6c78185553a81",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B3-any-outcome": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "bb9b961cc745279118dfaf5148f388702757800b214ce9c3766644330542b87f",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B4-receipt-required": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 34,
+    "ERROR": 3,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process": "ERROR",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "ERROR",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail": "ERROR",
+    "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "e2805767078345a405035a50b9427e00d29943558c90587d1654a5f6a2f270fc",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B5-archive-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b164f89f1985eeffa2787520164bc7c503fc795a84bd1e395058c8f151634e26",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B6-replace-failure-rejected": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "6464bba6d79fb9da1283fdb23c6829fa92ccfe8e2c78bfbe26701ec4aac68fa5",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B7-result-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "1675738a86cc71573bc6e250eb790ea90a43b97fd884930bdc48a5a0edd15a83",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B8-identity-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "b87dade0d0656bd7badaa2790c2e08acf31c0441a49471bb157acb4fc0d22ab8",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "mutBF/B9-source-prefix-unchecked": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 37,
+    "FAIL": 1,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "37a57ae0098119e9243d045f967f583fc3c949da17b02a43fda4f5844ec664eb",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "flake-base/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r06": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r07": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r08": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r09": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r10": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r11": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r12": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r13": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r14": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r15": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r16": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r17": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r18": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r19": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-base/r20": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "flake-final/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r06": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r07": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r08": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r09": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r10": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r11": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r12": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r13": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r14": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r15": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r16": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r17": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r18": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r19": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "flake-final/r20": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "full": {
+   "tests_run": 988,
+   "methods": 988,
+   "method_counts": {
+    "PASS": 985,
+    "FAIL": 1,
+    "SKIP": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_folder_picker.PickerHttpTests.test_wrong_origin_host_token_and_fetch_metadata_never_reach_helper": "FAIL",
+    "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  },
+  "fs1-base/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r06": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r07": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r08": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r09": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-base/r10": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "fs1-final/r01": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r02": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r03": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r04": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r05": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r06": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r07": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r08": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r09": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "fs1-final/r10": {
+   "tests_run": 1,
+   "methods": 1,
+   "method_counts": {
+    "PASS": 1
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r01": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r02": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r03": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 26,
+    "ERROR+FAIL": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_aud01t02b_repair.TransportDurabilityTests.test_concurrent_processes_lose_no_transport_event": "ERROR+FAIL"
+   },
+   "isolation_violations": 1,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "ft1mod-base/r04": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r05": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r06": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r07": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r08": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r09": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-base/r10": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 109,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_transport_event_recovery.py": "c79130ba0cfc3fd2197061202a24ca6a1839d00cc8fdb13fd76e5b0bd6059d3b",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r01": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r02": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r03": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r04": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r05": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r06": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r07": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r08": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r09": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "ft1mod-final/r10": {
+   "tests_run": 27,
+   "methods": 27,
+   "method_counts": {
+    "PASS": 27
+   },
+   "non_pass_methods": {},
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "full2": {
+   "tests_run": 988,
+   "methods": 988,
+   "method_counts": {
+    "PASS": 986,
+    "SKIP": 2
+   },
+   "non_pass_methods": {
+    "test_web_alarm_target_identity.CanonicalTargetTests.test_symlink_target_fails_closed": "SKIP",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 0
+  },
+  "mutRED/original-guard": {
+   "tests_run": 6,
+   "methods": 6,
+   "method_counts": {
+    "PASS": 3,
+    "FAIL": 3
+   },
+   "non_pass_methods": {
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_created_by_another_process_between_lookups_is_not_a_violation": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp": "FAIL",
+    "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation": "FAIL"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"
+   },
+   "exit": 1
+  },
+  "mutRED/original-recovery": {
+   "tests_run": 39,
+   "methods": 39,
+   "method_counts": {
+    "PASS": 34,
+    "FAIL": 4,
+    "SKIP": 1
+   },
+   "non_pass_methods": {
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt": "FAIL",
+    "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_requires_the_archived_tail": "FAIL",
+    "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused": "SKIP"
+   },
+   "isolation_violations": 0,
+   "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+   "platform": "win32",
+   "source_files": 110,
+   "changed_files_sha256": {
+    "web_alarm/transport_event_recovery.py": "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5",
+    "test_web_alarm_runner_guard.py": "66039cef0af39db4347f4ebf68b706803fe5ce194e8e1a85fd6f0897f44b8c97",
+    "test_web_alarm_transport_event_recovery.py": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+    "wa4a_acceptance.py": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd"
+   },
+   "exit": 1
+  }
+ }
+}

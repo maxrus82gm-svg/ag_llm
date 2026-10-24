@@ -1,0 +1,41 @@
+{
+ "label": "AB-green2",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-AB-green2-yug7ee_k\\out",
+  "test_web_alarm_runner_guard",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 27.178,
+ "base": "<TEMP>\\claude-ft1-AB-green2-yug7ee_k",
+ "runner_root": "<REPO>",
+ "tests_run": 45,
+ "passed": 43,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 26.442,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation",
+   "FAIL",
+   "st_real_mkdir_rmdir_race_never_produces_a_false_violation\n    self.assertEqual((counts[\"blocked\"], violations), (0, 0), \"false isolation violation inside temp\")\nAssertionError: Tuples differ: (1, 1) != (0, 0)\n\nFirst differing element 0:\n1\n0\n\n- (1, 1)\n+ (0, 0) : false isolation violation inside temp\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

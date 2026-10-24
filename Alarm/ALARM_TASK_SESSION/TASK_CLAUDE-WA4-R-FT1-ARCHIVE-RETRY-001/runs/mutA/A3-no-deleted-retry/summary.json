@@ -1,0 +1,45 @@
+{
+ "label": "A3-no-deleted-retry",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-A3-no-deleted-retry-uerxulxd\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutA-A3-no-deleted-retry-likto8vu\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 2.84,
+ "base": "<TEMP>\\claude-ft1-mutA-A3-no-deleted-retry-likto8vu",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-A3-no-deleted-retry-uerxulxd\\code",
+ "tests_run": 6,
+ "passed": 3,
+ "failures": 3,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 2.297,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp [write_below_deleted_once]",
+   "FAIL",
+   "Traceback (most recent call last):\n  File \"<TEMP>\\claude-ft1-mirror-A3-no-deleted-retry-uerxulxd\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'blocked' != 'allowed'\n- blocked\n+ allowed\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_folder_resolving_into_deleted_once_is_not_a_violation_inside_temp",
+   "FAIL",
+   "\"})\n  File \"<TEMP>\\claude-ft1-mirror-A3-no-deleted-retry-uerxulxd\\code\\test_web_alarm_runner_guard.py\", line 182, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 1 != 0 : the guard log does not match the refused operations\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_real_mkdir_rmdir_race_never_produces_a_false_violation",
+   "FAIL",
+   "dir_rmdir_race_never_produces_a_false_violation\n    self.assertEqual((counts[\"blocked\"], violations), (0, 0), \"false isolation violation inside temp\")\nAssertionError: Tuples differ: (763, 763) != (0, 0)\n\nFirst differing element 0:\n763\n0\n\n- (763, 763)\n+ (0, 0) : false isolation violation inside temp\n"
+  ]
+ ]
+}

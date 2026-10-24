@@ -1,0 +1,95 @@
+{
+  "doc18_definitions": [
+    "DOC-GIT-01",
+    "DOC-PARALLEL-01",
+    "DOC-TASK-READ-SCOPE-01",
+    "DOC-VERIFIER-BLOCK4-01",
+    "DOC-HISTORY-ACCESS-01",
+    "DOC-TASK-BLOCK1-01",
+    "DOC-LOCAL-REPORT-HANDOFF-01",
+    "DOC-READ-01",
+    "DOC-ENGINEERING-ROLES-01",
+    "DOC-CHANGE-01",
+    "DOC-AGENT-REPORT-TRIGGER-01"
+  ],
+  "changed_doc18_definitions_since_previous_read": [],
+  "sources": [
+    {
+      "path": "Документация/08_Старт.md",
+      "sha256": "d074229c6061f74b04d309543ed52546c9ed774f8b9bc1a85050fa2d0a74f4ff",
+      "selected_headings": [
+        "## ОБЯЗАТЕЛЬНЫЙ ВХОД — GitHub, роли и испытания (решение пользователя 2026-10-21)",
+        "## 15. Git"
+      ]
+    },
+    {
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "sha256": "97c9b39f448bbca83f4dbfd60e26040fd070b5045762965093942deb211e9799",
+      "selected_headings": [
+        "## WEB_11 / CURRENT 2026-10-24 — проверены offline MCP NPFS и broker",
+        "## ARCH DECISION / 2026-10-20 / WEB_11 — универсальная ChatGPT MCP-интеграция и независимые сетевые профили"
+      ]
+    },
+    {
+      "path": "Документация/01_Архитектура и текущее состояние.md",
+      "sha256": "91530faa602da984e5eaadcef24ee04dd38d4fee272cf6eb3166bc5ce5b39919",
+      "selected_headings": [
+        "## Статус документа"
+      ]
+    },
+    {
+      "path": "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md",
+      "sha256": "4429edd48f85a0789d3b80734bbffd00587466077ff56e13c75e7f9c582f9d2a",
+      "selected_headings": [
+        "## 3. CHATGPT ↔ ULTRA VIA PLUGIN / MCP",
+        "## 4. SECURITY BOUNDARY",
+        "## 5. LOCALHOST / REACHABILITY",
+        "### 7.1. FUTURE — сетевые режимы ChatGPT MCP и мастер подключения (решение пользователя 2026-10-20)",
+        "### 7.2. FUTURE — независимые границы MCP transport, reachability и egress (архитектурная сверка 2026-10-20)",
+        "### 7.3. CURRENT — ограниченная независимая приёмка offline WFP и Windows Lab Gate (2026-10-21)",
+        "### 7.4. CURRENT — проверенные offline MCP NPFS и выделенный broker (2026-10-24)"
+      ]
+    },
+    {
+      "path": "Документация/37_Старт перехода - Web Alarm Ultra.md",
+      "sha256": "0808ae509a6beb2e510250b685a78b7500beacf7bf64321bb7450bf3bcb251e5",
+      "selected_headings": [
+        "## 9. ChatGPT Desktop ↔ Web Alarm Ultra: локальный MCP и вызов по событию (2026-10-16)"
+      ]
+    },
+    {
+      "path": "Документация/36_Единая архитектура тестирования.md",
+      "sha256": "3238379402ba953059b20b1f09e529f422f2d70553aef8c63f4a2c9149c6c0e9",
+      "selected_headings": [
+        "## CURRENT / 2026-10-21 — GitHub Actions как основная тестовая лаборатория",
+        "## Общий цикл: исполнитель → независимый verifier → накопленная база (2026-10-13)"
+      ]
+    },
+    {
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "sha256": "8e581be24b927dba339409f42148a70a92fdbdd761764a0333a2197d9be7e6b3",
+      "selected_headings": [
+        "## TEST-COLLAB-01 — Общая накопительная база и двухэтапная независимая проверка",
+        "## TEST-AREA-01 — Изоляция тестов по подсистемам",
+        "## TEST-ENG-01 — Самостоятельная инженерная проверка сверх автотестов",
+        "## TEST-DEV-01 — Тесты начинаются вместе с разработкой",
+        "## TEST-COV-01 — Изменение поведения требует оценки покрытия",
+        "## TEST-EXEC-01 — Накопительная проверка с различимыми слоями",
+        "## TEST-QA-01 — Тесты тоже проходят проверку качества",
+        "## TEST-EVID-01 — Честный итог и source provenance",
+        "## TEST-EVID-ARCHIVE-01 — Адресные диагностические доказательства и раздельный архив",
+        "## TEST-SCOPE-01 — Не расширять полномочия тестированием"
+      ]
+    },
+    {
+      "path": "Документация/36.3_Профиль тестирования Ultra.md",
+      "sha256": "2ef3551c4141292bdc4d57c789758cbe9e211d65035d44f67e94fa9a4e81b072",
+      "selected_headings": [
+        "## Файловая область Ultra (параллельная работа)",
+        "## 1. Какие свойства обязаны сохраняться",
+        "## 2. CURRENT и известные локальные gates",
+        "## 3. Обязательный сценарий агентской кодовой TASK"
+      ]
+    }
+  ]
+}

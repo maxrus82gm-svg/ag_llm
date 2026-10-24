@@ -1,0 +1,45 @@
+{
+ "label": "B3-any-outcome",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-B3-any-outcome-tt03h80x\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutBF-B3-any-outcome-wwkx1yyl\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 25.326,
+ "base": "<TEMP>\\claude-ft1-mutBF-B3-any-outcome-wwkx1yyl",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-B3-any-outcome-tt03h80x\\code",
+ "tests_run": 39,
+ "passed": 36,
+ "failures": 2,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 24.394,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [unknown_outcome]",
+   "FAIL",
+   "\\claude-ft1-mirror-B3-any-outcome-tt03h80x\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt [failed_post_check]",
+   "FAIL",
+   "\\claude-ft1-mirror-B3-any-outcome-tt03h80x\\code\\test_web_alarm_transport_event_recovery.py\", line 531, in assert_not_proof\n    with self.assertRaises(rec.TransportRecoveryRefused) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: TransportRecoveryRefused not raised\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

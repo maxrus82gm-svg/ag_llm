@@ -1,0 +1,40 @@
+{
+ "label": "B6-replace-failure-rejected",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-B6-replace-failure-rejected-mrd3cmq0\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutBF-B6-replace-failure-rejected-2tfw3fyw\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 24.853,
+ "base": "<TEMP>\\claude-ft1-mutBF-B6-replace-failure-rejected-2tfw3fyw",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-B6-replace-failure-rejected-mrd3cmq0\\code",
+ "tests_run": 39,
+ "passed": 37,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "elapsed_seconds": 23.933,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does",
+   "FAIL",
+   "261024T133648-eb65f06f'], False)\n\nFirst differing element 1:\n['20261024T133648-dc0c8866']\n['20261024T133648-dc0c8866', '20261024T133648-eb65f06f']\n\n- ('ALREADY_APPLIED', ['20261024T133648-dc0c8866'], False)\n+ ('ALREADY_APPLIED',\n+  ['20261024T133648-dc0c8866', '20261024T133648-eb65f06f'],\n+  False)\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

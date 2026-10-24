@@ -38,6 +38,25 @@ MUTANTS = {
                                     ("receipt[\"plan_fingerprint\"] == plan[\"plan_fingerprint\"]", "True")]),
     "B9-source-prefix-unchecked": (REC, [("receipt[\"source_before\"] == plan[\"source\"]", "True"),
                                          ("receipt[\"prefix\"] == plan[\"prefix\"]", "True")]),
+    # Phase A (F-T1 guard) - the fix removed, over-widened, or the old protection itself disabled
+    "A1-no-prefix-strip": (GUARD, [(r'''    if os.name == "nt" and s.startswith("\\\\?\\") and not os.path.normpath(raw).startswith("\\\\?\\"):
+        p = Path("\\\\" + s[8:] if s.startswith("\\\\?\\UNC\\") else s[4:])
+''', "")]),
+    "A2-explicit-prefix-stripped-too": (GUARD, [(r''' and not os.path.normpath(raw).startswith("\\\\?\\"):''', ":")]),
+    "A3-no-deleted-retry": (GUARD, [("    for _ in range(50):", "    for _ in range(0):")]),
+    "A4-deleted-trusted-by-spelling": (GUARD, [(
+        '        if [s.lower() for s in p.parts[1:3]] != ["$extend", "$deleted"]: break',
+        '        if [s.lower() for s in p.parts[1:3]] == ["$extend", "$deleted"]: '
+        'p = Path(os.path.abspath(os.fsdecode(value)))\n        break')]),
+    "A5-write-check-disabled": (GUARD, [("    if write and not p.is_relative_to(_audit_temp): _violation(",
+                                         "    if False: _violation(")]),
+    "A6-git-check-removed": (GUARD, [('    if ".git" in {s.lower() for s in p.parts}: _violation("filesystem", '
+                                      '"Git metadata access")', "    pass")]),
+}
+
+ORIGINAL = {  # pre-task bytes, as recorded in source-baseline.json
+    "original-guard": (GUARD, "198d0b8f7822fa29f9f59a00f15b9087313e244a95bf6b1d2d4757fb1be4cffc"),
+    "original-recovery": (REC, "dcdd258342fcd1832efe9970fb5703cc7a7b001429c9e61c45ea8e4d18747ad5"),
 }
 
 
@@ -52,7 +71,14 @@ def main():
     for path in (REPO / "web_alarm").glob("*.py"):
         shutil.copy2(path, dest / "web_alarm" / path.name)
     changed = {}
-    if variant != "final":
+    if variant in ORIGINAL:  # final tree, one file back to its pre-task bytes (RED of the final tests)
+        rel, expected = ORIGINAL[variant]
+        data = (temp / "claude-ft1-base-mirror" / rel).read_bytes()
+        if hashlib.sha256(data).hexdigest() != expected:
+            raise SystemExit(f"{variant}: base mirror file is not the recorded pre-task revision")
+        (dest / rel).write_bytes(data)
+        changed[rel] = expected
+    elif variant != "final":
         rel, replacements = MUTANTS[variant]
         target = dest / rel
         text = target.read_text(encoding="utf-8")

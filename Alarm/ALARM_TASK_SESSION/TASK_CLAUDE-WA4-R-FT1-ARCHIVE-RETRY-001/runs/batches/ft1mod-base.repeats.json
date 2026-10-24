@@ -1,0 +1,104 @@
+[
+ {
+  "repeat": 1,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r01-9qlfmo8b"
+ },
+ {
+  "repeat": 2,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r02-5lwa_in2"
+ },
+ {
+  "repeat": 3,
+  "exit": 1,
+  "tests_run": 27,
+  "failures": 1,
+  "errors": 1,
+  "isolation_violations": 1,
+  "isolation_shapes": [
+   "write outside disposable temp: <PREFIX><TEMP>\\<FIXTURE>\\state\\tasks\\active"
+  ],
+  "attempt": "claude-ft1-ft1mod-base-r03-qqogozfa"
+ },
+ {
+  "repeat": 4,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r04-ptm7oqci"
+ },
+ {
+  "repeat": 5,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r05-792p5lr0"
+ },
+ {
+  "repeat": 6,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r06-7qib1j__"
+ },
+ {
+  "repeat": 7,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r07-eabrjwwa"
+ },
+ {
+  "repeat": 8,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r08-a3b0922q"
+ },
+ {
+  "repeat": 9,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r09-pun43pzs"
+ },
+ {
+  "repeat": 10,
+  "exit": 0,
+  "tests_run": 27,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "isolation_shapes": [],
+  "attempt": "claude-ft1-ft1mod-base-r10-aw1rq1ir"
+ }
+]

@@ -1,0 +1,31 @@
+{
+  "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
+  "status": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read": 0,
+  "archive_previous_bytes_written": 0,
+  "method": "exclusive append-only archive handle; bounded readback at new offset; exclusive card write with in-memory rollback",
+  "archive_offset": 665118,
+  "archive_appended_bytes": 19420,
+  "archive_appended_sha256": "c5500d6b98fc077f013a86c3d13dce3015aa8aebb1ce0905dad6e0fb812d89da",
+  "archive_new_metadata": {
+    "size": 684538,
+    "mtime_ns": 1792849392813396000,
+    "inode": 1125899907271690
+  },
+  "archive_new_entry_readback": true,
+  "card_before_sha256": "c13ceac41c50ee3c68e36c3a1ffed95fe3c5a73b30c16212e4e295c3297717f7",
+  "card_after_sha256": "2bfd1fb281b44780a45bfeb727f98f7800f883c33cf124e7e4ad8ceb53d778bc",
+  "block4_before_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block4_after_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "block2_rows": 5,
+  "block3_rows": 5,
+  "evicted_card_summaries": {
+    "block2": [
+      "- **2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001** — offline lab gate I01–I12. Статус: PARTIAL; BOUNDED OFFLINE ACCEPTED."
+    ],
+    "block3": [
+      "- **CODEX-WUA-0-WINDOWS-LAB-GATE-001** — 52/52 offline suite у исполнителя; независимая ограниченная проверка пакета; 12/12 реальных lab gates BLOCKED. Полный источник: поиск TASK ID в `001` и task-report проекта."
+    ]
+  }
+}

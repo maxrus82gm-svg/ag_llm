@@ -1,0 +1,50 @@
+{
+ "label": "B4-receipt-required",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-B4-receipt-required-9wyf2_br\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutB-B4-receipt-required-kk4mo_qn\\out",
+  "test_web_alarm_transport_event_recovery"
+ ],
+ "exit": 1,
+ "wall_seconds": 25.714,
+ "base": "<TEMP>\\claude-ft1-mutB-B4-receipt-required-kk4mo_qn",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-B4-receipt-required-9wyf2_br\\code",
+ "tests_run": 39,
+ "passed": 35,
+ "failures": 1,
+ "errors": 2,
+ "skips": 1,
+ "elapsed_seconds": 24.744,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process",
+   "ERROR",
+   "ansport_event_recovery.py\", line 636, in test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process\n    self.assertEqual((restored[\"outcome\"], restored[\"proven\"]), (\"ALREADY_APPLIED\", [attempt.name]))\n                                           ~~~~~~~~^^^^^^^^^^\nKeyError: 'proven'\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.ArchiveRetryProofTests.test_retry_proof_rejects_a_damaged_or_foreign_receipt",
+   "ERROR",
+   "uired-9wyf2_br\\code\\web_alarm\\transport_event_recovery.py\", line 409, in _decide\n    raise TransportRecoveryRefused(plan[\"verdict\"], plan.get(\"reason\", \"the log has no recoverable torn tail\"),\nweb_alarm.transport_event_recovery.TransportRecoveryRefused: HEALTHY: the log has no recoverable torn tail\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.CrashTests.test_death_at_every_phase_leaves_original_or_exact_prefix_and_retry_is_safe [after_replace]",
+   "FAIL",
+   "y_phase_leaves_original_or_exact_prefix_and_retry_is_safe\n    self.assertEqual(second[\"outcome\"], \"ALREADY_APPLIED\" if replaced else \"APPLIED\", (phase, second))\nAssertionError: 'REFUSED' != 'ALREADY_APPLIED'\n- REFUSED\n+ ALREADY_APPLIED\n : ('after_replace', {'outcome': 'REFUSED', 'code': 'HEALTHY'})\n"
+  ],
+  [
+   "test_web_alarm_transport_event_recovery.TargetTests.test_symlinked_log_is_refused",
+   "SKIP",
+   "symlink creation not permitted on this host (OSError winerror=1314): NOT RUN, see report"
+  ]
+ ]
+}

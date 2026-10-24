@@ -1,0 +1,36 @@
+[
+ {
+  "label": "final",
+  "exit": 0,
+  "tests_run": 39,
+  "failures": 0,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB2-final-gx0qlxtm",
+  "build": {
+   "variant": "final",
+   "mirror": "code",
+   "changed": {}
+  },
+  "wall": 26.5
+ },
+ {
+  "label": "B1-tail-unchecked",
+  "exit": 1,
+  "tests_run": 39,
+  "failures": 4,
+  "errors": 0,
+  "skips": 1,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutB2-B1-tail-unchecked-2o35lpem",
+  "build": {
+   "variant": "B1-tail-unchecked",
+   "mirror": "code",
+   "changed": {
+    "web_alarm/transport_event_recovery.py": "285ea49c8685e4b0cea2f9d694dc42027eb4888a0679782a251c84f7e4343bd7"
+   }
+  },
+  "wall": 25.9
+ }
+]

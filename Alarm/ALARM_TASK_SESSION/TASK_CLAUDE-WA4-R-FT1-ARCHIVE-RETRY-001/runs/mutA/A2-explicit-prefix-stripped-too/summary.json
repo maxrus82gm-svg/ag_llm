@@ -1,0 +1,40 @@
+{
+ "label": "A2-explicit-prefix-stripped-too",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-ft1-mirror-A2-explicit-prefix-stripped-too-jbq1n_65\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001",
+  "--output",
+  "<TEMP>\\claude-ft1-mutA-A2-explicit-prefix-stripped-too-1q1kj2jj\\out",
+  "test_web_alarm_runner_guard"
+ ],
+ "exit": 1,
+ "wall_seconds": 5.16,
+ "base": "<TEMP>\\claude-ft1-mutA-A2-explicit-prefix-stripped-too-1q1kj2jj",
+ "runner_root": "<TEMP>\\claude-ft1-mirror-A2-explicit-prefix-stripped-too-jbq1n_65\\code",
+ "tests_run": 6,
+ "passed": 4,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 4.611,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing [extended_inside_stays_strict]",
+   "FAIL",
+   "ck (most recent call last):\n  File \"<TEMP>\\claude-ft1-mirror-A2-explicit-prefix-stripped-too-jbq1n_65\\code\\test_web_alarm_runner_guard.py\", line 181, in check\n    self.assertEqual(results[name][\"outcome\"], outcome)\nAssertionError: 'allowed' != 'blocked'\n- allowed\n+ blocked\n\n"
+  ],
+  [
+   "test_web_alarm_runner_guard.RunnerGuardTests.test_every_escape_from_temp_is_still_refused_and_writes_nothing",
+   "FAIL",
+   "\\<TEMP>\\claude-ft1-mirror-A2-explicit-prefix-stripped-too-jbq1n_65\\code\\test_web_alarm_runner_guard.py\", line 182, in check\n    self.assertEqual(violations, list(expected.values()).count(\"blocked\"),\nAssertionError: 11 != 12 : the guard log does not match the refused operations\n"
+  ]
+ ]
+}

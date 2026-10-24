@@ -1,0 +1,126 @@
+[
+ {
+  "label": "final",
+  "exit": 0,
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-final-x93zn_8a",
+  "build": {
+   "variant": "final",
+   "mirror": "code",
+   "changed": {}
+  },
+  "wall": 6.1
+ },
+ {
+  "label": "A1-no-prefix-strip",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 4,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A1-no-prefix-strip-xwrpmi0y",
+  "build": {
+   "variant": "A1-no-prefix-strip",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "76250c6c783807d39b448396994e2b16b200af97d4062bd6353b314cdcaca1c8"
+   }
+  },
+  "wall": 6.1
+ },
+ {
+  "label": "A2-explicit-prefix-stripped-too",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A2-explicit-prefix-stripped-too-1q1kj2jj",
+  "build": {
+   "variant": "A2-explicit-prefix-stripped-too",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "95bde065fadbe07e3824c199fd5e16d3fc359552638a5cfc368090190cd287e3"
+   }
+  },
+  "wall": 5.3
+ },
+ {
+  "label": "A3-no-deleted-retry",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 3,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A3-no-deleted-retry-likto8vu",
+  "build": {
+   "variant": "A3-no-deleted-retry",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "4c723473ef879066d06c24c308b9da216de1ec37b9c4bd11b3bd6e807349afcc"
+   }
+  },
+  "wall": 2.9
+ },
+ {
+  "label": "A4-deleted-trusted-by-spelling",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A4-deleted-trusted-by-spelling-xch0e2u0",
+  "build": {
+   "variant": "A4-deleted-trusted-by-spelling",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "e3b6e3421b021347e6db0268f2a704864876c02db10d8f28856c06f3925e1e2e"
+   }
+  },
+  "wall": 2.9
+ },
+ {
+  "label": "A5-write-check-disabled",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 12,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A5-write-check-disabled-eygany16",
+  "build": {
+   "variant": "A5-write-check-disabled",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "cb012f1d26eca849ac26f705c1fd2ca1e35c17c3426dab75f5f51eaa58d97f9d"
+   }
+  },
+  "wall": 4.5
+ },
+ {
+  "label": "A6-git-check-removed",
+  "exit": 1,
+  "tests_run": 6,
+  "failures": 2,
+  "errors": 0,
+  "skips": 0,
+  "isolation_violations": 0,
+  "base": "<TEMP>\\claude-ft1-mutA-A6-git-check-removed-ocpnt7ev",
+  "build": {
+   "variant": "A6-git-check-removed",
+   "mirror": "code",
+   "changed": {
+    "wa4a_acceptance.py": "77dc57857fd540578e04ee6b742140c60525b2856b276b873564c2305e9f9e95"
+   }
+  },
+  "wall": 5.9
+ }
+]

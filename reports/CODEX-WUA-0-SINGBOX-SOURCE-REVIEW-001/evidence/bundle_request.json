@@ -1,0 +1,23 @@
+{
+  "task": "CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001",
+  "status": "BLOCKED / SOURCE_BUNDLE_REQUIRED",
+  "tag": "v1.13.4",
+  "revision": "d09182614c7778c1e0f51d990635c5d4249c437e",
+  "official_revision_confirmation": "WEB_11 statement supplied by user and assignment; not repeated by local Codex",
+  "local_source_path_provided": false,
+  "requested_archive_path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/source/sing-box-v1.13.4.tar.gz",
+  "exact_requested_archive_exists": false,
+  "archive_sha256": null,
+  "source_files_read": 0,
+  "source_file_function_locators": null,
+  "required_handoff": [
+    "one official source archive for the exact revision",
+    "archive SHA-256 and origin/transfer receipt",
+    "matching go.mod, go.sum and source tree; versioned docs/schema only if actually included"
+  ],
+  "filesystem_scan": false,
+  "downloads": 0,
+  "source_network_review": "NOT RUN",
+  "can_apply": false,
+  "can_start_tunnel": false
+}
