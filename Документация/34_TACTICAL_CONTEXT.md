@@ -1,3 +1,19 @@
+## WEB_11 → NEXT MCP CHAT / 2026-10-25 — краткий handoff
+
+**Контур:** ChatGPT ↔ Web Alarm Ultra via MCP, отдельно от WEB_15/Claude WA4-R. Source на handoff: `main@357a71442cc57a67e5df45d7901401d495409df0`, `GPT@a2b066b1c28f9e2b74747a9823b0697894aaf8f4`; следующий чат обязан перепроверить HEAD и действующие задачи, не считать старые SHA новыми.
+
+**Уже готово / не повторять:** локальный MCP SDK ↔ STDIO ↔ C# Named Pipe ↔ U gateway ↔ synthetic WebAlarmApi; offline broker preflight; идентифицирован v2rayN → sing-box.exe (embedded v1.13.4). Последняя Codex TASK `CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment01`, source `main@e0c89b3536cb030edc4fa905a8e00f1047788c4c`: независимый WEB_11 verdict **PARTIAL / BOUNDED SOURCE REVIEW ACCEPTED**, 76/76 manifest paths, 7/7 selected SHA-256; Codex-run 30/30, independent Windows/Go **NOT RUN**. Этот verdict **уже записан** в БЛОК 4 Codex, постоянный журнал №06, архитектуру №19 и предыдущую запись в №34. **Не создавать повторную приёмку** без новых evidence.
+
+**Что выявлено:** в source sing-box v1.13.4 default route может дать DIRECT; возможны локальный DNS, UoT packet routing, remote rules/health и другие условные подключения; есть multiple config/merge/reload. Полное поведение HTTP CONNECT/auth/JSON требует source зависимости `github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde` (go.sum ZIP `h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=`). Main source ZIP sing-box SHA `ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c` (1013 files) хранится вне repo **по receipt Codex**, не независимо скачан WEB_11. Одноразовый download GO уже израсходован.
+
+**NEXT:** (1) сверить GitHub `08 → 000_Задачи для агента → 34 → 18`, персональную Codex карточку и БЛОК 4; (2) попросить отдельный USER GO на один точный source-only архив `sagernet/sing` вне repo (без install/build/runtime); (3) дать Codex задачу проверить HTTP CONNECT/auth/JSON и строгий default-deny; (4) только по результатам пользователь выбирает sing-box vs V2Ray Core, после этого disabled config; (5) отдельно разрешённые Windows SID/WFP/no-DIRECT/real B egress, затем Secure MCP Tunnel и обычный ChatGPT E2E.
+
+**Неподтверждено:** real binary provenance, C/B accounts и effective network ownership, WFP containment, hosted tunnel, ChatGPT tool calls. `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. Работающий прокси не трогать.
+
+**Актуальное правило:** `DOC-TASK-CLOSEOUT-OWNER-01@1` (18, коммит №419): карточки Codex/Claude (БЛОКИ 1–4) и их архивы 001 теперь закрывает только ChatGPT после публикации и независимой верификации; исполнитель не ротирует сам. ChatGPT пишет в `GPT`, merge в `main` делает пользователь; новая TASK — только по решению пользователя. В этой операции создан **только handoff №34**, не новая TASK и не дополнительный verifier verdict.
+
+---
+
 ## CURRENT GOVERNANCE / 2026-10-24 — координация персональных TASK и архивов
 
 **USER GO / `DOC-TASK-CLOSEOUT-OWNER-01@1` (18, GPT; awaiting user merge):** после каждого технического результата Claude/Codex/Ultra Desktop исполнитель сдаёт `report.md`, manifest и безопасные evidence, **не трогая** свою карточку и `001`. Пользователь публикует пакет; ChatGPT самостоятельно сверяет SHA, source, tests/CI, scope, потом централизованно поддерживает БЛОКИ 1–4, персональные 001, общий 000, бессрочный 06 и действительно обновляет current/open/NEXT в 34. БЛОК 1 закрывается только **после** согласованной архивной записи с readback и независимого PASS соответствующего объёма либо user-approved terminal PARTIAL/BLOCKED. REVISE оставляет БЛОК 1 активным. ChatGPT публикует только в ветку GPT, пользователь принимает GitHub Desktop / merge; не запускать следующую TASK на старой локальной копии. Исторические публикации и записи `001` не переписывать. Это документационная политика, **не** реализация server-side/Ultra автоматического scheduler или editor.
