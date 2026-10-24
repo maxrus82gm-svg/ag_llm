@@ -3,7 +3,8 @@
 No fetch/build/engine execution. Lexical assertions protect reviewed loci; hashes
 bind the rest. Neither lexical checks nor a release ZIP prove native security.
 """
-import hashlib,re,zipfile
+import base64,hashlib,re,stat,unicodedata,zipfile
+from pathlib import PurePosixPath
 from common import require
 REVISION='d09182614c7778c1e0f51d990635c5d4249c437e'
 ZIP_SHA='ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c'
@@ -43,6 +44,55 @@ def check_pins(files,pins):
     for name,pin in pins.items():
         require(name in files,'SOURCE_FILE_MISSING:'+name)
         require(hashlib.sha256(files[name]).hexdigest()==pin,'SOURCE_FILE_DRIFT:'+name)
+
+def module_zip_identity(path,expected_h1=SING_SUM):
+    """Bounded Go module Hash1 + conservative Windows-safe archive admission.
+
+    Hash1: sort full ZIP member names, hash each uncompressed body, concatenate
+    '<lowercase hex sha256>  <full name>\\n', hash that UTF-8 summary, base64 it.
+    ZIP headers/compression/order are intentionally absent from h1. Raw ZIP SHA
+    is reported separately. This admits only a source subset, not all valid ZIPs.
+    No extraction, Go tool invocation or trust in ZIP comments/tags.
+    """
+    module='github.com/sagernet/sing';prefix=module+'@'+SING_VERSION+'/'
+    raw=path.read_bytes();require(len(raw)<=32*1024*1024,'MODULE_ZIP_SIZE')
+    members=[];names=set();total=0;summary=hashlib.sha256()
+    with zipfile.ZipFile(path) as archive:
+        entries=archive.infolist();require(0<len(entries)<=5000,'MODULE_ZIP_COUNT')
+        for entry in entries:
+            name=entry.filename
+            require(name.startswith(prefix),'MODULE_ZIP_PREFIX')
+            relative=name[len(prefix):];parts=relative.split('/')
+            require(relative and all(p not in ('','.', '..') for p in parts),'MODULE_ZIP_PATH')
+            require(not any(ord(c)<32 or c in '\\:<>"|?*' for c in relative),'MODULE_ZIP_PATH')
+            require(not entry.is_dir() and not entry.flag_bits&1,'MODULE_ZIP_ENTRY_TYPE')
+            require(stat.S_IFMT(entry.external_attr>>16) in (0,stat.S_IFREG),'MODULE_ZIP_ENTRY_TYPE')
+            require(not entry.external_attr&0x400,'MODULE_ZIP_REPARSE')
+            for part in parts:
+                require(part==part.rstrip(' .') and part.casefold()!='.git','MODULE_ZIP_WINDOWS_PATH')
+                stem=part.split('.')[0].upper()
+                require(stem not in {'CON','PRN','AUX','NUL',*(f'COM{i}' for i in range(1,10)),*(f'LPT{i}' for i in range(1,10))},'MODULE_ZIP_WINDOWS_PATH')
+            folded=unicodedata.normalize('NFC',relative).casefold()
+            require(folded not in names,'MODULE_ZIP_COLLISION');names.add(folded)
+            require(PurePosixPath(relative).suffix.lower() not in ('.exe','.dll','.so','.dylib','.pyd'),'MODULE_ZIP_EXECUTABLE')
+            require(entry.compress_type in (zipfile.ZIP_STORED,zipfile.ZIP_DEFLATED),'MODULE_ZIP_COMPRESSION')
+            total+=entry.file_size
+            require(entry.file_size<=8*1024*1024 and total<=64*1024*1024,'MODULE_ZIP_EXPANSION')
+        for name in names:
+            require(not any(str(p) in names for p in PurePosixPath(name).parents if str(p)!='.'),'MODULE_ZIP_FILE_DIRECTORY_COLLISION')
+        for entry in sorted(entries,key=lambda e:e.filename):
+            body=archive.read(entry)  # Reads to EOF and verifies ZIP CRC.
+            digest=hashlib.sha256(body).hexdigest()
+            summary.update((digest+'  '+entry.filename+'\n').encode('utf-8'))
+            members.append({'path':entry.filename[len(prefix):],'bytes':len(body),'sha256':digest})
+        require(archive.read(prefix+'go.mod').startswith(('module '+module+'\n').encode()),'MODULE_DECLARATION')
+    actual='h1:'+base64.b64encode(summary.digest()).decode('ascii')
+    require(actual==expected_h1,'MODULE_ZIP_H1_MISMATCH')
+    return {'module':module,'version':SING_VERSION,'h1':actual,'h1_matches':True,
+            'raw_zip_sha256':hashlib.sha256(raw).hexdigest(),'archive_bytes':len(raw),
+            'file_count':len(members),'uncompressed_bytes':total,'files':members,
+            'crc_paths_case_links_checked':True,'signature_verified':False,
+            'native_security_verified':False,'can_apply':False,'can_start_tunnel':False}
 
 def inspect(files):
     require('go.mod' in files and 'go.sum' in files,'MODULE_FILES_REQUIRED')

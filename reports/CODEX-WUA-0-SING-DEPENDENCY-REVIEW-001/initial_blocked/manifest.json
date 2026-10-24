@@ -1,0 +1,86 @@
+{
+  "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
+  "status": "BLOCKED / DOWNLOAD_GO_REQUIRED",
+  "created_at": "2026-10-24T20:16:54.700920+00:00",
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "independent_verification": "PENDING",
+  "task_snapshot": "evidence/task_snapshot.md",
+  "amendments_for_this_task": [],
+  "scope": "New TASK folder only; all referenced pre-existing inputs read-only",
+  "path_base": "manifest directory",
+  "excludes": [
+    "manifest.json (self hash)"
+  ],
+  "files": [
+    {
+      "path": "checks.json",
+      "bytes": 1523,
+      "sha256": "37bc34d85ee9c45bec22cc913c22ccd18304630c005487a8f4f519ea25da21bd"
+    },
+    {
+      "path": "DOC_IMPACT.md",
+      "bytes": 2089,
+      "sha256": "9bb1f5438ff0544ccb242ac0d47090a19e7b6a18cd3442bd36fadbf70b523348"
+    },
+    {
+      "path": "evidence/authorization.json",
+      "bytes": 902,
+      "sha256": "072fcd7b7993463ba50c1c9b4c1b84ce16e987761ec8ae5ef886575bd5375b0a"
+    },
+    {
+      "path": "evidence/protected_inputs_before.json",
+      "bytes": 5243,
+      "sha256": "fdb41c6d92b21e4d3ae63af1444b498008bf9155f73111282f9ba9f455e71565"
+    },
+    {
+      "path": "evidence/read_set.json",
+      "bytes": 6233,
+      "sha256": "65d81ae75ae8afbdc1ac7e2b9a2bd301757dd08909ea3dabb9d7864e6714ac95"
+    },
+    {
+      "path": "evidence/source_boundary.json",
+      "bytes": 4749,
+      "sha256": "77f45299d9be0c4f6dbd72d34471ce368e0a37dc13a0720e1a185acf7ff70e53"
+    },
+    {
+      "path": "evidence/task_snapshot.md",
+      "bytes": 18134,
+      "sha256": "1a4ff13a6fa580b1531df05afe39d46a64663bcfab61518c852c598a03a9ecac"
+    },
+    {
+      "path": "evidence/user_launch.txt",
+      "bytes": 871,
+      "sha256": "ac29f43517327e9e65943f4c4db446acdded3ef2b7a3ad31521f06c7ba9a2065"
+    },
+    {
+      "path": "NEXT_USER_GO.txt",
+      "bytes": 1570,
+      "sha256": "703647e9285c910d23e044a2c6b7e0d9fd71cebb4fcdc324d55e61666547c3b0"
+    },
+    {
+      "path": "prepare_handoff.py",
+      "bytes": 18843,
+      "sha256": "31d44624760730cb934b622440767dcd51c51bb22d66efb9ba365e21e00e4850"
+    },
+    {
+      "path": "report.md",
+      "bytes": 13769,
+      "sha256": "20de4262fe7630314a28fb2fd94b8dca7305e7ec760d8fb58e063805b80c6019"
+    },
+    {
+      "path": "source_callgraph.md",
+      "bytes": 3309,
+      "sha256": "937d74b70bbe4cddd2ccbcb5357fe8f85acfe5945ded87094c1faa224fd3b805"
+    },
+    {
+      "path": "source_provenance.json",
+      "bytes": 1393,
+      "sha256": "187493ea39e2383c9e75714c7d3e4db4a887641f69d1afb3c5ffe1039e838ea2"
+    },
+    {
+      "path": "strict_route_gap_matrix.md",
+      "bytes": 3246,
+      "sha256": "5166c1947cfe784ae87df8f6d3a0ea2280b9d26fc816de75bd9bc8bb96468cdc"
+    }
+  ]
+}

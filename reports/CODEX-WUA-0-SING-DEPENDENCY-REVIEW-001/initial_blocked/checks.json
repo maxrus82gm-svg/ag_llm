@@ -1,0 +1,44 @@
+{
+  "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
+  "status": "BLOCKED / DOWNLOAD_GO_REQUIRED",
+  "kind": "Documentation/evidence checks, not source semantic or native tests",
+  "command": ".\\.venv\\Scripts\\python.exe -B reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/prepare_handoff.py",
+  "check_completed_at": "2026-10-24T20:16:54.699919+00:00",
+  "source_tests": {
+    "collected": 0,
+    "pass": 0,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "status": "NOT RUN / BLOCKED",
+    "exit_code": null
+  },
+  "native_go_engine_network_tests": "NOT RUN / FORBIDDEN",
+  "planned_source_controls_not_run": [
+    "source pin drift",
+    "module ZIP h1 mismatch",
+    "auth guard omission",
+    "parser/route mutation",
+    "DIRECT admission",
+    "unknown default"
+  ],
+  "go_mod_and_zip_go_sum_pin": "MATCH",
+  "source_hashes_matched": 6,
+  "source_hashes_compared": 6,
+  "locators_found": 10,
+  "protected_inputs_unchanged": true,
+  "protected_input_count": 24,
+  "all_outputs_confined_to_task": true,
+  "personal_001_read_or_write": false,
+  "agent_action_inventory": {
+    "network_requests": 0,
+    "downloads": 0,
+    "git_operations": 0,
+    "system_configuration_writes": 0,
+    "integration_source_writes": 0,
+    "test_file_writes": 0
+  },
+  "publication_ignore_check": "Root .gitignore manually reviewed; reports/.gitignore absent. No Git/global-excludes claim.",
+  "manifest_readback": "Required after script exit; separate read-only command in final tool evidence.",
+  "independent_review": "PENDING"
+}
