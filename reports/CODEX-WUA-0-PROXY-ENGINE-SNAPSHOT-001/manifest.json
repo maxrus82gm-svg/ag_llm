@@ -1,0 +1,369 @@
+{
+  "schema": 1,
+  "task": "CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001",
+  "self_excluded": true,
+  "root": "M:/GitHub/ag_llm",
+  "files": [
+    {
+      "path": "integrations/wua_chatgpt_mcp/engine_snapshot.py",
+      "bytes": 13217,
+      "sha256": "7aadeff5f2527e0587faa6161b9bec9c414fa8c3d69918ca8c43d6683bcd5581"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/engine_snapshot_suite.py",
+      "bytes": 16147,
+      "sha256": "c7642f225d1b057dd33386f2729ce14762f08e0169c470ab660ce0b5a7f3928d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/assignment.md",
+      "bytes": 20393,
+      "sha256": "0962f604f339fed2f5e692d50599101738d5f403105ea90309576ea2ff45b5d3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/checks.json",
+      "bytes": 10318,
+      "sha256": "8ab3fc6a2037941bfe99581e3d28ff264f4da308c6b2a79f5c6e84070e4800b3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/collect_snapshot.py",
+      "bytes": 1801,
+      "sha256": "22a71295b3f37d5f7ffa43093f88ee7c4e3d676fc6ccfe0633ac3a039c90f4f0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/compatibility_gates.json",
+      "bytes": 1986,
+      "sha256": "5f2a4b67364b121060187497f1a175d0aaac5f6a42b78ce3d6c769d83a6f9f27"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/engine_capabilities.md",
+      "bytes": 2367,
+      "sha256": "8e3e6481db2bfb2b649b28a036dd5891bb5d1f1b51586ee598a39ebaec14d20d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/engine_inventory.md",
+      "bytes": 2682,
+      "sha256": "a9b17fe7de62486e9dedc336eab4ddd2daef05ee52de693273cbc16e7fcbb0b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/binary_snapshot.json",
+      "bytes": 2277,
+      "sha256": "9a0f393e1fe795d6e933d8168cb9e27d8a0784d5bf85dbacd190f6a566d5f01a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/card_rotation.json",
+      "bytes": 1566,
+      "sha256": "a12427ffc4e9b2879d9a1dbef33045e8fd680f15ade57e00352dc5a44a2f575b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/final_integrity.json",
+      "bytes": 464,
+      "sha256": "e2444bf0a68fa7186c97d876c84ed784b0de539cfc1bbd5c6bfe5df92ea2a649"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/initial_state.json",
+      "bytes": 16573,
+      "sha256": "bbbee50a39868c8a1ef13744b1814d8b59bd4da17db9cb463b19644d7bde045d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/inventory_receipt.json",
+      "bytes": 1022,
+      "sha256": "bb8cdd7eda9524ad85aa605b5941628aa3d57b36ba3a16bb57af6cba9b500172"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/privacy_check.json",
+      "bytes": 303,
+      "sha256": "0a52227c64668271c38b9f67edf9963c284d67e5c282a43150484789bf7d181a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/process_link.json",
+      "bytes": 530,
+      "sha256": "ce487af85c35fbfb555de31241472945da2ad96356265a3ce69eacff8719dc35"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_01_Архитектура и текущее состояние.md",
+      "bytes": 1952,
+      "sha256": "6645800cfbd39e6f0ec25463bc3d8e625f523117e5bacc49af5dc1fa02dc9cf8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_08_Старт.md",
+      "bytes": 39375,
+      "sha256": "0f96b16189280f1621a1e446bbd057b28461af54b1764a00684cc7b31078e5a9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_34_TACTICAL_CONTEXT.md",
+      "bytes": 6552,
+      "sha256": "b54cb18e609633612012ee4d65c3fee597fcad23af20c89809ffa0bfa1a7d8bb"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_36.1_Обязательный регламент тестирования для LLM.md",
+      "bytes": 24199,
+      "sha256": "91f8969bbbbc4b4b2ff10df6dfd35de173e8ac2a5f836eef4878e78b194cc8b9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_36.3_Профиль тестирования Ultra.md",
+      "bytes": 10582,
+      "sha256": "5450988a144bf8693bc1a6527e7ff272d26d415a2450e3d23298f71b293e7171"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/read_36_Единая архитектура тестирования.md",
+      "bytes": 9333,
+      "sha256": "d7a4b83db5de6a229c0eaf8cc84436d1d7a0f9400efd3cb436c59bdbc9fe33e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/reading_receipt.json",
+      "bytes": 4421,
+      "sha256": "5068898b3eac11d526193ade0ca76ddc1e0891e323aba4ca198826089da90717"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/rules_read.md",
+      "bytes": 62762,
+      "sha256": "745e6dd1b51093b9e7317cede33e4348ede6b3b8fa8254a4865d56a57a1f2e2b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/evidence/runtime_dependencies.json",
+      "bytes": 286,
+      "sha256": "17af1345dd74cc5e94d42c045cc53a8cb832bf97fb11b47fbaff869a1076a411"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/factual_result.txt",
+      "bytes": 2210,
+      "sha256": "63c627f952e520771b69434b0563a1a7591839f76bf57ebd214c2ec92c10fa2b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/manual_engineering_review.md",
+      "bytes": 5272,
+      "sha256": "632500cb38a4bf4498dded97014f2d48325ebed44b20d0b5b7edf45dbc83f4c6"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/next_user_decision.md",
+      "bytes": 2993,
+      "sha256": "b4952f3b22cc4b4285bbc80b11dd18fbb41feea1ddc947f559e3dcca254d97a2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/prepare_report.py",
+      "bytes": 3945,
+      "sha256": "11c7db4a5332c835bf29e0428e3985c3b946d4f034387c22325ccf4936c74f93"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md",
+      "bytes": 12094,
+      "sha256": "55c84cabae4edfec5df51b7fccf6cf55dc3ca3dbbe28cbaa83acd5229b4b49f6"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/rotate_card.py",
+      "bytes": 10850,
+      "sha256": "bc737c1c80333199be6ee31ba74c423ffb5fe01a8fc5fbcb330a5fe7cd4b282c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/legacy/legacy-gates-967b301f/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/mutant-INVENTORY_PIN_MISMATCH/engine_snapshot_mutant.py",
+      "bytes": 13341,
+      "sha256": "9eca6a304baa5531ceb0abe57a33bbaa4f5b179093ee9b1b0cbfbd50a993aacd"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/mutant-INVENTORY_PIN_MISMATCH/result.json",
+      "bytes": 1247,
+      "sha256": "ec3420b02e579b2b2541fd82233dd29b4e55be1af591cb30051ba4f9b117a838"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/mutant-UNTRUSTED_CAPABILITY_CLAIM/engine_snapshot_mutant.py",
+      "bytes": 13320,
+      "sha256": "8067c988d8db85a0a9bf9c0ed3731d89e861883058c4ba15f3ca3c0ec9379a64"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/mutant-UNTRUSTED_CAPABILITY_CLAIM/result.json",
+      "bytes": 1259,
+      "sha256": "49eb7ade070feac57f40b8f14c76e189c51d3fae3ce08a269b142cbfa86a7a55"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/result.json",
+      "bytes": 6054,
+      "sha256": "31aecfc16c0ef548a6cca38bce5d8d83991e7fb79606fa28a9e27ec0edbdb4e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/runner.txt",
+      "bytes": 5581,
+      "sha256": "719a9d75c9ce8852628261630d68aac7e064f5e218d8e0e5eb7957e69e5a6fb1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_pins.json",
+      "bytes": 1257,
+      "sha256": "6ceb03a894b56080c7128f89bcdca552ef9208cde2300577ca5c1f584fefc3ae"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/broker.py",
+      "bytes": 8315,
+      "sha256": "d91dce893b1be00b28a804c9d584703ebe54be2211cf2b18bca6ed1a12803be8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/broker.v1.schema.json",
+      "bytes": 2931,
+      "sha256": "122fa2df74deae8b0002fe538fe32c4da9c7a5abb075a9973a0c65ca6ef0b9d3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/broker.v1.synthetic.example.json",
+      "bytes": 3084,
+      "sha256": "28d139e5650d9e923a5c62056d6f67d3a0b2c5ce9b24fa132c268496118e438a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/broker_fixture.py",
+      "bytes": 5044,
+      "sha256": "47254cdc489c84f44ae97f61e7de10c80dd4cc25343774f132ffc7dfd729e55f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/broker_suite.py",
+      "bytes": 29436,
+      "sha256": "98481fa96c793da4311cd7db503550f0e0d14a186b6c601e88b8e9b219ae16eb"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/common.py",
+      "bytes": 4841,
+      "sha256": "12b8441ba72661fb2189c03e37e0203082a003e5e6be630b5d25dbe03809a209"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/engine_snapshot.py",
+      "bytes": 13217,
+      "sha256": "7aadeff5f2527e0587faa6161b9bec9c414fa8c3d69918ca8c43d6683bcd5581"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/engine_snapshot_suite.py",
+      "bytes": 16031,
+      "sha256": "9603d8c1e0e0b653e2effbf8b1c5638c56fd60ffa9a2f5222d7adae323cf3565"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/route_simulation.py",
+      "bytes": 2718,
+      "sha256": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-174910-d3b101ce/source_snapshot/security_contract.py",
+      "bytes": 5355,
+      "sha256": "8d568f36868ef4155da9e789d19604e1acaa4f3efc235117baf2e246803b6ade"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/legacy/legacy-gates-45f0f0f5/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/mutant-INVENTORY_PIN_MISMATCH/engine_snapshot_mutant.py",
+      "bytes": 13341,
+      "sha256": "9eca6a304baa5531ceb0abe57a33bbaa4f5b179093ee9b1b0cbfbd50a993aacd"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/mutant-INVENTORY_PIN_MISMATCH/result.json",
+      "bytes": 1247,
+      "sha256": "93bb15b9d52b49dd48529fa21b6136e81e2984fdbbbc6f1cacc7e5bcaf12ff81"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/mutant-UNTRUSTED_CAPABILITY_CLAIM/engine_snapshot_mutant.py",
+      "bytes": 13320,
+      "sha256": "8067c988d8db85a0a9bf9c0ed3731d89e861883058c4ba15f3ca3c0ec9379a64"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/mutant-UNTRUSTED_CAPABILITY_CLAIM/result.json",
+      "bytes": 1259,
+      "sha256": "8483ba8bc60223101f583e14d10ab702e00c5cc455f6eb22d10d96e31f53c768"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/result.json",
+      "bytes": 6054,
+      "sha256": "31aecfc16c0ef548a6cca38bce5d8d83991e7fb79606fa28a9e27ec0edbdb4e9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/runner.txt",
+      "bytes": 5581,
+      "sha256": "469e59bf61908c17d19bfe571389b524eb1c2e72f5ebd8173b5cf2845c13eeb9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_pins.json",
+      "bytes": 1257,
+      "sha256": "4f58f2309503687c97b4ba237df878f81088097ca0cb09f75a5723409aa468fa"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/broker.py",
+      "bytes": 8315,
+      "sha256": "d91dce893b1be00b28a804c9d584703ebe54be2211cf2b18bca6ed1a12803be8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/broker.v1.schema.json",
+      "bytes": 2931,
+      "sha256": "122fa2df74deae8b0002fe538fe32c4da9c7a5abb075a9973a0c65ca6ef0b9d3"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/broker.v1.synthetic.example.json",
+      "bytes": 3084,
+      "sha256": "28d139e5650d9e923a5c62056d6f67d3a0b2c5ce9b24fa132c268496118e438a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/broker_fixture.py",
+      "bytes": 5044,
+      "sha256": "47254cdc489c84f44ae97f61e7de10c80dd4cc25343774f132ffc7dfd729e55f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/broker_suite.py",
+      "bytes": 29436,
+      "sha256": "98481fa96c793da4311cd7db503550f0e0d14a186b6c601e88b8e9b219ae16eb"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/common.py",
+      "bytes": 4841,
+      "sha256": "12b8441ba72661fb2189c03e37e0203082a003e5e6be630b5d25dbe03809a209"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/engine_snapshot.py",
+      "bytes": 13217,
+      "sha256": "7aadeff5f2527e0587faa6161b9bec9c414fa8c3d69918ca8c43d6683bcd5581"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/engine_snapshot_suite.py",
+      "bytes": 16147,
+      "sha256": "c7642f225d1b057dd33386f2729ce14762f08e0169c470ab660ce0b5a7f3928d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/route_simulation.py",
+      "bytes": 2718,
+      "sha256": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/runs/suite-20261024-175139-adb7977b/source_snapshot/security_contract.py",
+      "bytes": 5355,
+      "sha256": "8d568f36868ef4155da9e789d19604e1acaa4f3efc235117baf2e246803b6ade"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/seal.py",
+      "bytes": 4888,
+      "sha256": "4e0c2aa8a4cd46dcd5fd5eccb4921c0e49a0835521965aa5115663379749b2da"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/singbox_vs_v2ray.md",
+      "bytes": 4004,
+      "sha256": "2ff3644fd14ecd3882c64cabcd3039dc0a2b59f2f9c1c498269af080492fa6f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/source_provenance.md",
+      "bytes": 3293,
+      "sha256": "f549d11ead9faf0b9f52111994dd63207c210afdea598d702596b51a087917e2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/tests.md",
+      "bytes": 4104,
+      "sha256": "d8f11e89c98f663a66e24decd2f10dc8ba59932b135f316d944448994ac4a06e"
+    }
+  ],
+  "active_card": {
+    "path": "Документация/000_Задачи Codex.md",
+    "bytes": 15533,
+    "sha256": "470e12cf6fcdb6024ab3c4fb5151be5d4b076c345293e94f2b3b27c9ad85a1d2"
+  },
+  "protected_inputs_reference": "evidence/initial_state.json",
+  "archive": "Never hashed/read by sealer; new append range only verified by rotate_card.py.",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "publication": "LOCAL ONLY / USER HANDOFF",
+  "independent_acceptance": "NOT VERIFIED"
+}

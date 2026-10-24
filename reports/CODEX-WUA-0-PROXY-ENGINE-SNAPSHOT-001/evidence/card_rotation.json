@@ -1,0 +1,31 @@
+{
+  "task": "CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001",
+  "status": "CARD ROTATION VERIFIED",
+  "archive_old_bytes_read": 0,
+  "archive_previous_bytes_written": 0,
+  "method": "exclusive append-only archive handle; bounded readback at new offset; exclusive card write with in-memory rollback",
+  "archive_offset": 643016,
+  "archive_appended_bytes": 22102,
+  "archive_appended_sha256": "7d4b138efce163fe9b66ebc11a8d1cac01dc6009e26a782ae75805e6e2e3815e",
+  "archive_new_metadata": {
+    "size": 665118,
+    "mtime_ns": 1792846935726003200,
+    "inode": 1125899907271690
+  },
+  "archive_new_entry_readback": true,
+  "card_before_sha256": "abcb7bcf6d27eb8fcd091934cb632bef9e9a5cc7f75e9a72f7ea25c3bf95ea91",
+  "card_after_sha256": "470e12cf6fcdb6024ab3c4fb5151be5d4b076c345293e94f2b3b27c9ad85a1d2",
+  "block4_before_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block4_after_sha256": "608c49b5be482fc6c7ccb7db2c5898bf8c6f9143fbf1d2c02a1c14f4e9fbb089",
+  "block1": "ОЖИДАНИЕ НОВОЙ ЗАДАЧИ",
+  "block2_rows": 5,
+  "block3_rows": 5,
+  "evicted_card_summaries": {
+    "block2": [
+      "- **2026-10-20 / CODEX-WUA-0-WFP-OFFLINE-BACKEND-001** — кандидат WFP security backend. Статус: RESULT READY; NATIVE NOT VERIFIED."
+    ],
+    "block3": [
+      "- **CODEX-WUA-0-WFP-OFFLINE-BACKEND-001** — 62/62 managed tests у исполнителя, native WFP calls 0; Apply BLOCKED. Полный источник: поиск TASK ID в `001` и task-report проекта."
+    ]
+  }
+}

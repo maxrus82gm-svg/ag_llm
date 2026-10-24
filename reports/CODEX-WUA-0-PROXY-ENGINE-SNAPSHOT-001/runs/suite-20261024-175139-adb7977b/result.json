@@ -1,0 +1,196 @@
+{
+  "task": "CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001",
+  "collected": 44,
+  "passed": 44,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "new_metadata_tests": 25,
+  "legacy_pure_contract_regression": 19,
+  "legacy_network_or_subprocess_tests_not_run": [
+    "test_cli_always_exit20_and_output_scope",
+    "test_remote_schema_reference_is_refused_without_dial"
+  ],
+  "tests": [
+    {
+      "id": "__main__.EngineTests.test_binary_or_release_metadata_swap_uses_controller_pin",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_bound_metadata_still_never_activates",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_broker_schema_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_capability_guard_mutation_is_detected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_capability_true_or_supported_cannot_unlock",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_certificate_metadata_is_not_trust",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_current_inventory_is_independently_pinned",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_engine_selection_and_old_contract_conflict",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_fake_all_approved_json_is_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_family_label_cannot_override_module",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_go_inline_only_and_ambiguous_marker",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_go_module_sentinel_and_duplicate_module",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_go_varint_limits",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_inventory_hash_guard_mutation_is_detected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_known_literal_pe_go_fixture_and_corruption",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_no_buildinfo_never_invents_version",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_owner_sid_signature_and_run_claim_not_authority",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_signature_publisher_claim_not_trust",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_snapshot_nested_shape_limits",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_source_schema_and_release_booleans_cannot_verify",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_truncated_pe_headers",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_unknown_version_and_devel_are_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_wrong_architecture_and_section_bounds",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_wrong_binary_hash_bound_in_old_contract",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.EngineTests.test_wrong_inbound_outbound_direct_default_and_proxy",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_approval_claims_never_activate",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_claimed_version_and_hash_not_verification",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_config_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_existing_activation_gates_remain_blocked",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_extra_companion_and_user_socks_layout",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_literal_ip_port_and_protocol",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_native_config_and_engine_switch_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_observation_owner_egress_must_be_same_engine",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_observation_takeover_scope_protocol_companion",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_owner_sid_and_wrapper_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_source_and_schema_syntax",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_startup_policy_cannot_be_enabled_by_data",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_unbound_template_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_valid_contract_is_always_disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_valid_synthetic_observation_never_native_health",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_broker_suite.ContractTests.test_whole_config_substitution_still_uses_controller_pin",
+      "status": "PASS"
+    }
+  ],
+  "source_pins_current": true,
+  "engine_runs": 0,
+  "native_network_tests": 0,
+  "network_or_child_creation_permitted": false
+}

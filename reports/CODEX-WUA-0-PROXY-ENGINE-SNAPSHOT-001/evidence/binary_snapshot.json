@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "kind": "STATIC_BINARY_SNAPSHOT",
+  "basename": "sing-box.exe",
+  "path_label": "ENGINE_BINARY_01",
+  "path_sha256": "58d37f4869b27f413253c17b5d6074698ab0516d0bfbc18f56a2943c236d4f91",
+  "bytes": 44773888,
+  "sha256": "ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3",
+  "pe": {
+    "machine": "AMD64",
+    "optional_header": "PE32+",
+    "sections": 8,
+    "timestamp_claim": 0
+  },
+  "authenticode": {
+    "embedded_certificate_table_present": false,
+    "certificate_bytes": 0,
+    "publisher_trust": "UNVERIFIED",
+    "verification": "NOT_PERFORMED_OFFLINE"
+  },
+  "go_build": {
+    "format": "INLINE_GO_BUILDINFO",
+    "toolchain_claim": "go1.25.8",
+    "main_path_claim": "github.com/sagernet/sing-box/cmd/sing-box",
+    "module_path_claim": "github.com/sagernet/sing-box",
+    "module_version_claim": "v1.13.4",
+    "module_sum_claim": null,
+    "build_settings_claims": {
+      "-buildmode": "exe",
+      "-compiler": "gc",
+      "-tags": "with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_acme,with_clash_api,with_tailscale,with_ccm,with_ocm,with_naive_outbound,with_purego,badlinkname,tfogo_checklinkname0",
+      "CGO_ENABLED": "0",
+      "GOARCH": "amd64",
+      "GOOS": "windows",
+      "GOAMD64": "v1",
+      "vcs": "git",
+      "vcs.revision": "d09182614c7778c1e0f51d990635c5d4249c437e",
+      "vcs.time": "2026-03-26T05:28:33Z",
+      "vcs.modified": "false"
+    },
+    "dependency_count": 100
+  },
+  "engine_family_claim": "sing-box",
+  "windows_version": {
+    "FileVersion": null,
+    "ProductVersion": null,
+    "CompanyName": null,
+    "OriginalFilename": null,
+    "ProductName": null
+  },
+  "verified_release": null,
+  "source_archive_sha256": null,
+  "native_schema_sha256": null,
+  "capabilities": {
+    "http_connect": "UNKNOWN",
+    "one_inbound_outbound": "UNKNOWN",
+    "literal_upstream": "UNKNOWN",
+    "unmatched_deny": "UNKNOWN",
+    "no_direct_fallback": "UNKNOWN",
+    "no_dns_udp_ipv6": "UNKNOWN",
+    "no_telemetry_health_companions": "UNKNOWN",
+    "isolated_config_root": "UNKNOWN",
+    "same_process_egress": "UNKNOWN",
+    "nonadmin_identity": "UNKNOWN"
+  },
+  "owner_proof": "NOT_VERIFIED",
+  "engine_execution": false
+}

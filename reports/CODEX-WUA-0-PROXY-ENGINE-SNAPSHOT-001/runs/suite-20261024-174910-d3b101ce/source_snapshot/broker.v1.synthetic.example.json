@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "mode": "OFFLINE_DISABLED_CANDIDATE",
+  "integration": {
+    "schema": 1,
+    "profile": "STRICT_V2RAY_BROKER",
+    "owner": "77777777-7777-4777-8777-777777777777",
+    "identities": {
+      "client": "S-1-5-21-101-202-303-1001",
+      "broker": "S-1-5-21-101-202-303-1002",
+      "ui": "S-1-5-21-101-202-303-1003"
+    },
+    "processes": {
+      "tunnel": "S-1-5-21-101-202-303-1001",
+      "mcp": "S-1-5-21-101-202-303-1001",
+      "gateway": "SERVER_OWNED_AUTHORITY",
+      "v2ray": "S-1-5-21-101-202-303-1002"
+    },
+    "route": {
+      "layout": "DEDICATED_V2RAY_CONNECT_INBOUND",
+      "client_proxy_host": "127.0.0.1",
+      "client_proxy_port": 32123,
+      "egress_ip": "192.0.2.17",
+      "egress_port": 443,
+      "dns": "NO_HOST_RESOLVER_LITERAL_UPSTREAM",
+      "proxy_scheme": "http",
+      "remote_protocol": "tcp"
+    },
+    "ipc": {
+      "tunnel_to_mcp": "STDIO",
+      "mcp_to_server": "SERVER_OWNED_AUTHENTICATED_LOCAL_PIPE",
+      "arbitrary_network_api": false
+    },
+    "children": [
+      {
+        "role": "mcp",
+        "owner_sid": "S-1-5-21-101-202-303-1001",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      {
+        "role": "v2ray",
+        "owner_sid": "S-1-5-21-101-202-303-1002",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+      }
+    ],
+    "startup_state": "DISABLED",
+    "allow_direct": false,
+    "secondary_proxies": [],
+    "environment_override": false,
+    "approval": {
+      "provision": false,
+      "native": false,
+      "tunnel": false
+    }
+  },
+  "generation": 1,
+  "engine": {
+    "family": "V2Ray",
+    "implementation": null,
+    "version": null,
+    "source_sha256": null,
+    "binary_sha256": null,
+    "config_schema_sha256": null
+  },
+  "ownership": {
+    "listener": "ENGINE_PROCESS",
+    "egress": "SAME_ENGINE_PROCESS",
+    "delegation": "NONE"
+  },
+  "routing": {
+    "default": "DENY",
+    "outbound_count": 1,
+    "rule_order": [
+      "EXACT_CONNECT_TO_PINNED_UPSTREAM",
+      "DENY_REMAINDER"
+    ],
+    "direct": false,
+    "fallback": false,
+    "secondary_proxy": false,
+    "load_balancer": false,
+    "host_dns": false,
+    "udp": false,
+    "ipv6": false,
+    "health_dials": false,
+    "telemetry": false,
+    "companions": []
+  },
+  "remote_identity": {
+    "transport_requirement": "AUTHENTICATED_ENCRYPTED_PROXY",
+    "proxy_protocol": null,
+    "peer_pin_sha256": null,
+    "credential_ref": null
+  },
+  "native_config": null,
+  "lifecycle": {
+    "startup": "DISABLED",
+    "requires": [
+      "REVIEWED_ENGINE_SOURCE_AND_CONFIG",
+      "REAL_B_TOKEN_AND_SOCKET_OWNER",
+      "LAB_PROVEN_WFP",
+      "INDEPENDENT_ACCEPTANCE_AND_USER_GO"
+    ],
+    "on_observer_or_policy_loss": "STOP_OWNED_CHAIN_NO_AUTO_RESUME",
+    "restart": "FRESH_INSTANCE_GENERATION_AND_ATTESTATION",
+    "preexisting_flows": "LAB_PROOF_REQUIRED",
+    "credential_delivery": "PROTECTED_B_ONLY_STORE_PENDING"
+  }
+}

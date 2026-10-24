@@ -1,0 +1,174 @@
+## TEST-COLLAB-01 — Общая накопительная база и двухэтапная независимая проверка
+
+```rule-meta
+contract: 2
+status: ACTIVE
+requires: [TEST-DEV-01, TEST-COV-01, TEST-EXEC-01, TEST-QA-01, TEST-EVID-01, TEST-SCOPE-01, TEST-ENG-01]
+```
+
+1. **Исполнитель владеет локальным циклом своей TASK.** Codex/Claude/Ultra/другой назначенный агент читает актуальные tests/profile, выявляет `change → risk → existing selector → gap`, по разрешённому scope дополняет/улучшает **общую базу** тестов, запускает локально подходящие target/integration/regression/negative gates, исправляет найденное, повторяет проверки и передаёт `RESULT READY / AWAITING INDEPENDENT VERIFICATION` с командами, revision, collection, counts, diff и raw evidence. Если локальный запуск невозможен, честно `NOT RUN / BLOCKED`; CI не выдавать за local run.
+2. **Независимый ChatGPT-verifier** начинает review в утверждённом scope без нового GO: проверяет source/diff, тесты, oracle, negative controls и raw evidence. Сам может создавать/запускать безопасные временные синтетические тесты в изолированном scratch и доступные безопасные GitHub CI с точным SHA/run/OS/evidence. Tracked исходники/тесты/runner/workflow меняет **только по прямому USER GO** на конкретную инженерную работу (`DOC-ENGINEERING-ROLES-01@2` в 18); иначе поручает Claude/Codex. Не выдаёт свою авторскую проверку за независимую приёмку собственного fix. Запрещено расширять scope через скрипты/CI.
+3. **Единый тестовый фонд:** подтверждённые новые и улучшенные тесты сохраняются в существующем проектном наборе и каталоге/профиле, без отдельных несовместимых коллекций по имени агента. Не добавлять бессмысленные дубли; устаревший selector менять только после проверки актуального контракта и сохранения первоначального FAIL. Каждый новый сложный тест проверять на реальный trigger/oracle и negative control пропорционально риску.
+4. **Local-first, CI-confirmed when risk requires.** Быстрый цикл исполнителя — локально; независимый verifier выбирает повторные target/integration/quality checks и при необходимости чистый Windows/platform CI, full regression, bounded race/stress по риску и среде. Для F1–F3 и других исторических flaky failures сохранять первый FAIL, source/environment/seed/raw state; поздний PASS не стирает его. Считать `NOT RUN` любые пропущенные после падения шаги.
+5. **Acceptance** только после отдельного вердикта verifier с source pin, exact test IDs/collection, PASS/FAIL/ERROR/SKIP, isolation, negative controls, evidence, gaps и NEXT SAFE ACTION. Production merge/rollout, destructive fault injection и расширение scope не разрешаются этим правилом.
+
+
+
+## TEST-AREA-01 — Изоляция тестов по подсистемам
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: [TEST-SCOPE-01]
+```
+
+Каждая TASK обозначает `ARCH CLASS`, проектный профиль, разрешённые **файлы тестов и runner**, временный output root и точные команды. Web Alarm и Ultra не редактируют тесты друг друга по умолчанию. Переиспользуемая универсальная проверка копируется/адаптируется в проектную область: запуск с проектными fixtures/oracle, отдельным TEMP и evidence; чужие живые Workspace/процессы не затрагивать. Прогон тестов не расширяет write-scope.
+
+**Текущее переходное состояние:** `test_web_alarm_*` и `wa4a_acceptance.py` физически находятся в корне; это не разрешение Web Alarm менять остальные корневые файлы. В будущем тесты каждой подсистемы должны исполняться из собственного каталога, но перенос/смена discovery/CI требует отдельной проверенной TASK; до неё запускать действующие команды профилей 36.2/36.3. Параллельный запуск допустим только при независимых fixture roots, output, ресурсах и закреплённом source revision; пересечение — остановить конфликтующий запуск/запись, остальные работы можно продолжать.
+
+
+
+## TEST-ENG-01 — Самостоятельная инженерная проверка сверх автотестов
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Для значимой coding/bugfix/concurrency/reliability TASK исполнитель обязан работать **как самостоятельный инженер**, а не только выполнять перечисленные проверки. Перед исправлением изучить релевантные исходники, инварианты, контракты и соседние зависимости; сформировать и проверить причинные гипотезы. После исправления провести отдельный **manual engineering / adversarial source review**: перечитать изменённые ветви, логически проследить нормальные и аварийные переходы, попытаться опровергнуть собственное решение, рассмотреть race, частичные I/O failures, recovery/replay, ownership, backward compatibility и соседние edge cases по риску. Для систем хранения проверять фактические bytes/state/event/receipt, а не только returned enum.
+
+Зелёные автотесты (включая локальные и CI) остаются важными доказательствами, **но не заменяют инженерного анализа**. Исполнитель вправе развивать единую общую базу тестов по `TEST-COLLAB-01@2`; добавленные тесты тоже проходят source-level оценку trigger, oracle, isolation и ложноположительных результатов. Если после review выявлен пробел, внутри scope добавить проверку или зафиксировать `TEST GAP / BLOCKED`, но не заявлять `VERIFIED`.
+
+Перед `RESULT READY` агент обязан представить отдельный раздел `MANUAL ENGINEERING REVIEW`: **просмотренные ключевые ветви/порядок операций, рассмотренные альтернативы, установленные и отвергнутые гипотезы, проверенные edge cases и открытые риски**. Одной фразы «код проверен» недостаточно. Анализ может быть шире TASK; изменение runtime, тестирование на live данных и Git-операции ограничены прежним scope/permissions. Для noncode задач нужна соразмерная смысловая проверка, не фиктивный full suite.
+
+
+
+## TEST-DEV-01 — Тесты начинаются вместе с разработкой
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Перед значимой правкой исполнитель обязан:
+1. Прочитать **текущие** изменяемые участки исходника и контракт/инварианты затронутой подсистемы. Проверить scope/permissions и не полагаться на память о старом code revision.
+2. Назвать `change → risk → existing tests → gap → required verification`. Если риск не покрыт — добавить новый тест **в той же TASK**, если это возможно по scope. Если нельзя безопасно написать тест, явно сохранить `TEST GAP / BLOCKED` с причиной, а не имитировать PASS.
+3. Запустить разумный доступный baseline, если он нужен для различения старого и нового дефекта. Обычный порядок: сначала воспроизвести известный баг failing test, потом исправление; для нового поведения можно начать с тестового контракта. Порядок test-first/review-first выбирается по ситуации, но **не пропускать** review.
+4. После кода проверить именно изменённые ветви, diff и граничные состояния; выполнить target tests, затронутую regression и дополнительные class/platform gates по матрице рисков.
+5. Сохранить новые полезные тесты для будущих запусков, не заменяя всю накопленную регрессию разовым log/LLM review.
+
+
+
+## TEST-COV-01 — Изменение поведения требует оценки покрытия
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Каждая новая функция, bugfix, изменение lifecycle/format, permission/guard, concurrent writer, recovery, миграция или error handling требует явного вопроса: **какой тест заметит ошибку именно здесь?**
+
+Не всякая строка обязана создавать новый тест. Если старый selector уже доказывает изменяемый invariant, достаточно указать его и, при необходимости, усилить assertion. Для security/durable/concurrency и прошлых regressions обязательно проверять отрицательную ветку, частичный отказ, replay/restart и необратимые действия; если они неприменимы — объяснить коротко.
+
+Не формировать expected только из того же production method. Сначала определить независимый oracle (explicit reference model, expected bytes, raw file/record, exact status, event prefix, permission refusal) и что должно дать **красный тест**.
+
+
+
+## TEST-EXEC-01 — Накопительная проверка с различимыми слоями
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+**Минимум после code change:** syntax/static gate по языку + target tests + тесты на взаимодействия в затронутом слое. Для опасных изменений нужен профильный fail-closed/rollback/restart gate; для большой интеграции — full regression при доступном бюджете. Стресс отдельно, с ограниченными repeats/time/fixture size.
+
+Собирать suites **по риску, модулю, стоимости и окружению**, не по искусственному размеру блока. Требовать exact nonzero collection и согласованные counts PASS/FAIL/ERROR/SKIP; verify fixtures, version, exit code и отсутствие isolation violations. Если CI прервал следующие шаги, они `NOT RUN`, а не `PASS`.
+
+Запуск через реальный стандартный runner предпочтительнее серии дорогостоящих tool-call с повторным чтением кода. Нельзя использовать тесты, которые сами выполняют запрещённые Git/сеть/live операции, чтобы обойти права агента.
+
+
+
+## TEST-QA-01 — Тесты тоже проходят проверку качества
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Новый сложный тест обязан иметь доказанный **trigger**: reaches fault/crash/barrier/branch, проверяет ожидаемое последствие и отказывает при намеренном нарушении oracle (negative control или иное достаточное свидетельство). Не нужны искусственные mutation checks для каждой примитивной assertion — усилия пропорциональны риску.
+
+У теста должны быть ограниченные timeout и ресурсы, собственный TEMP fixture, clean worker reap, отсутствие зависимости от порядка/живых данных. Separate `UNIT / INTEGRATION / FAULT / CONCURRENCY / PLATFORM / STRESS` позволяет запускать только необходимое и быстро локализовать поломку.
+
+Нельзя silently XFAIL/skip критический баг, ослаблять ожидаемое с `REJECTED` до `любое исключение`, скрывать первоначальный FAIL повторными попытками либо переписывать history.
+
+
+
+## TEST-EVID-01 — Честный итог и source provenance
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Вывод тестирования имеет смысл только для определённого исходника и набора проверок. Минимальный handoff:
+
+```text
+TASK / ARCH CLASS / PRIMARY PROFILE:
+SOURCE: commit or local manifest hashes (проверенный revision)
+CHANGE + REVIEWED CODE: файлы и опасные ветви
+TEST IMPACT: existing selectors, added/updated tests, uncovered risks
+COMMANDS + PLATFORM: exact invocation + Python/OS/runner
+RESULT: collected; PASS / FAIL / ERROR / SKIP / NOT RUN / INCONCLUSIVE
+QUALITY: fault markers, negative controls if applicable, isolation
+EVIDENCE: path/CI run + retention; original fail and later attempts separate
+DOC IMPACT: profile and test catalog updates, or NO CHANGE with reason
+NEXT SAFE ACTION: who is authorized to review/repair/publish
+```
+
+Runner exit=0 без nonzero collection не PASS. Любой source drift после проверки требует нового затронутого gate; старый PASS сохраняется с его revision. Различать actor-declared `RESULT READY` и независимое `DONE/VERIFIED`.
+
+
+
+## TEST-EVID-ARCHIVE-01 — Адресные диагностические доказательства и раздельный архив
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: [TEST-EVID-01, TEST-SCOPE-01]
+```
+
+**Решение пользователя 2026-10-13 / общий протокол Web Alarm + Ultra.** При ошибке агенту/координатору передаётся **короткая проверяемая диагностическая выписка**, а не весь массив тестов по умолчанию. Исполнитель самостоятельно расследует исходники, последствия и альтернативные причины; выдержка указывает точку сбоя, **не ограничивая** исследование. После локального FAIL исполнитель в пределах своей TASK и filesystem scope сам готовит evidence, без ожидания ручного копирования пользователем. При GitHub CI координатор получает source artifact и готовит аналогичную выписку. Первичный FAIL и исходный источник никогда не перезаписываются повторным PASS.
+
+**Два слоя хранения, разделённые по архитектуре (целевая схема; автоматизация НЕ РЕАЛИЗОВАНА):**
+
+- **Локальный объёмный архив:** `logs/test-evidence/web_alarm/<TASK-ID>/<attempt>/` и `logs/test-evidence/ultra/<TASK-ID>/<attempt>/` — исходные `results.json`, ZIP, журналы и необходимые raw-state снимки; `logs/` уже исключён в `.gitignore`, поэтому GitHub **не получит** эти данные автоматически. Предлагаемая будущая ротация: четыре обычных поколения **независимо для каждой подсистемы и набора прогонов**, с новыми каталогами для каждого attempt; до внедрения проверенного механизма ничего автоматически не удалять. Первичные красные прогоны, открытые инциденты и evidence незавершённой приёмки помечаются pinned и исключаются из ротации.
+- **Компактный GitHub-доступный handoff:** `reports/test-evidence/web_alarm/<TASK-ID>/` либо `reports/test-evidence/ultra/<TASK-ID>/`, содержащий по необходимости `diagnostic.json` и короткий `manifest.json`/отчёт. Эти файлы находятся **вне `logs/`** и после явной проверки содержимого могут быть включены пользователем или уполномоченным ChatGPT в обычный GitHub-коммит. В них не включать секреты, приватные live-данные, избыточные дампы или огромные ZIP. Гарантии исходного полного evidence: сохранённый оригинал либо ссылка/ID/дата истечения CI-artifact плюс закреплённая минимальная независимая выписка; временная ссылка на CI сама по себе не означает долговременное сохранение.
+
+**Минимальная адресная выписка:** `TASK-ID`, `profile`, `source commit/hash`, `CI run/artifact ID` либо local attempt, точный selector/round/phase, `expected vs observed`, полный релевантный error chain/frames, terminal raw-state/oracle, состояние других участвовавших workers (если нужно), исходный FAIL, команды/платформа, контрольные суммы и пути к оригиналам, известные пробелы. Указывать provenance каждого факта; не превращать рабочую гипотезу в подтверждённую root cause. Проверять существование и читаемость передаваемых путей. Если выдержки недостаточно для независимого oracle — передавать **ровно нужную** дополнительную часть оригинала, вплоть до полного артефакта.
+
+**Синхронизация и полномочия:** локальные Codex/Claude могут записывать разрешённые evidence-файлы, но по `DOC-GIT-01@1` **не** выполняют `git status/diff/add/commit/push` и GitHub-операции без отдельного GO. Пользователь штатно синхронизирует проверенные материалы через GitHub Desktop; ChatGPT читает **фактически опубликованные** файлы и независимо проверяет их. Пока commit/push не подтверждены, ставить `LOCAL ONLY / NOT SYNCED`, а не утверждать доступность ChatGPT; отсутствие файла в GitHub не доказывает отсутствие локального результата. Remote/Desktop Commander не требуется по умолчанию. Различать подготовку evidence, публикацию, самостоятельное расследование и финальную независимую приёмку.
+
+**Статус реализации:** правило передачи и классификации обязательно с момента публикации; единый сборщик, загрузчик CI artifact, index, перенос из TEMP и ротация четырёх поколений — **FUTURE / NOT IMPLEMENTED**, требуют самостоятельной ограниченной TASK, проверки `.gitignore`, retention, permissions и безопасного удаления. Это правило не расширяет scope текущих TASK и не меняет замороженные БЛОКИ 1; необходимые уточнения для активного агента — через короткий `TASK-ID AMENDMENT`.
+
+
+
+## TEST-SCOPE-01 — Не расширять полномочия тестированием
+
+```rule-meta
+contract: 1
+status: ACTIVE
+requires: []
+```
+
+Тестовый контракт не даёт исполнителю новых write/access прав. Применяются актуальные `DOC-GIT-01@1`, user TASK scope, Ultra Server/Verification Gate или Web Alarm safety gate. Критичные прогоны — только на специально созданных disposable fixtures без live workspace mutation, реальных ключей, внешних API и случайного system-root. Если среда не позволяет, явно `BLOCKED / NOT RUN`.
+
+Agent может готовить архитектуру и репродуктор без запуска tool, когда scope не допускает execution. User/coordinator назначает независимого reviewer. Нельзя совершать merge, расширенный rollout или production fault injection без отдельного решения.
+<!-- RULES:END -->
+

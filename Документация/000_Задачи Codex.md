@@ -32,21 +32,21 @@
 
 Скользящее окно до 5 выполненных TASK; полный архив — [[001_История выполненных задач Codex]]. Независимый статус не выдумывать.
 
+- **2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — exact local sing-box static snapshot, embedded v1.13.4 claim; no core launch. Статус: RESULT READY; provenance/schema/CONNECT не подтверждены; independent NOT VERIFIED.
 - **2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — disabled V2Ray broker contract/preflight и same-process loopback model. Статус: RESULT READY; engine compatibility BLOCKED; independent NOT VERIFIED.
 - **2026-10-24 / CODEX-WUA-0-MCP-NOTCP-NPFS-001** — реальный STDIO↔NPFS relay/gateway; current-user auth. Статус: RESULT READY; independent NOT VERIFIED.
 - **2026-10-21 / CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001** — local MCP SDK/stdio интеграция; secure tunnel/V2Ray остаются gated. Статус: RESULT READY; independent NOT VERIFIED.
 - **2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001** — offline lab gate I01–I12. Статус: PARTIAL; BOUNDED OFFLINE ACCEPTED.
-- **2026-10-20 / CODEX-WUA-0-WFP-OFFLINE-BACKEND-001** — кандидат WFP security backend. Статус: RESULT READY; NATIVE NOT VERIFIED.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
+- **CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — 44/44 (25 metadata + 19 pure broker), hash/capability mutants обнаружены; exact sing-box hash совпал с 17.10, embedded v1.13.4/Go1.25.8/d091826… только claims. Engine selection PENDING USER; provenance/schema/CONNECT/B egress/WFP/Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md`; полная TASK/factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
 - **CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — 33/33 broker; регрессия 63/63 MCP и 24/24 security; DIRECT/owner mutants обнаружены. Engine version/source/config BLOCKED; B identity не создана; B egress/V2Ray/WFP/ordinary Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/report.md`; полная TASK и factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
 - **CODEX-WUA-0-MCP-NOTCP-NPFS-001** — 24/24 NPFS, регрессия 63/63 MCP и 24/24 security; TCP/peer mutants обнаружены. Cross-SID/WFP/B V2Ray/ordinary Chat NOT VERIFIED, tunnel HOLD. Полный отчёт: `reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/report.md`; полная TASK и factual result — новая append-only запись 001 (locator в evidence/card_rotation.json).
 - **CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001** — 63/63 локальных MCP и 24/24 security-тестов по evidence исполнителя; настоящие WFP, V2Ray, две identities, ChatGPT E2E не подтверждены. Полный источник: поиск TASK ID в `001` и task-report проекта.
 - **CODEX-WUA-0-WINDOWS-LAB-GATE-001** — 52/52 offline suite у исполнителя; независимая ограниченная проверка пакета; 12/12 реальных lab gates BLOCKED. Полный источник: поиск TASK ID в `001` и task-report проекта.
-- **CODEX-WUA-0-WFP-OFFLINE-BACKEND-001** — 62/62 managed tests у исполнителя, native WFP calls 0; Apply BLOCKED. Полный источник: поиск TASK ID в `001` и task-report проекта.
 
 ---
 

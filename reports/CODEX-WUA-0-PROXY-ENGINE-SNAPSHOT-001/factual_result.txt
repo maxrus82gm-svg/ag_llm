@@ -1,0 +1,12 @@
+TASK: CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001
+RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_11; LOCAL ONLY.
+Текущий child v2rayN: sing-box.exe, 44,773,888 bytes PE32+ AMD64.
+SHA256: ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3 — совпадает с 17 октября.
+Embedded claims: sing-box v1.13.4, go1.25.8, VCS d09182614c7778c1e0f51d990635c5d4249c437e. Это не подтверждённое соответствие официальному source/release. PE version resources/embedded certificate отсутствуют; catalog trust не проверен.
+Реализован bounded metadata reader/gates с reuse существующего broker preflight. Тесты44/44: 25 новых +19 pure broker regression; две metadata guard mutations обнаружены; предыдущие95/95 файлов неизменны.
+ENGINE_BINARY_IDENTIFIED; ENGINE_RELEASE_PROVENANCE_BLOCKED; ENGINE_NATIVE_CONFIG_SCHEMA_BLOCKED; STRICT_CONNECT_COMPATIBILITY_UNVERIFIED; ENGINE_SELECTION_PENDING_USER.
+Core не запускался, profiles не читались, engine не выбран/не заменён. B identity/egress/WFP/ordinary Chat NOT VERIFIED; hosted tunnel HOLD; can_apply=false; can_start_tunnel=false. Git/GitHub0.
+DOC IMPACT: общие документы не менялись; предложить фиксацию новых static claims без повышения gates. Своя карточка/архив ротированы, БЛОК4 сохранён побайтно.
+NEXT USER DECISION: рекомендуется source-only review существующего sing-box v1.13.4; нужен один подлинный локальный source/provenance/docs/schema bundle для заявленного revision. Если требуется именно V2Ray Core, пользователь отдельно выбирает exact release и предоставляет его bundle. Native/Windows/network activation требует другой USER GO и доказанной OS isolation.
+REPORT: reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md
+MANIFEST: reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/manifest.json
