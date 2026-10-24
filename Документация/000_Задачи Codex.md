@@ -53,22 +53,22 @@
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Автор/verifier:** WEB_11 (ChatGPT). Codex READ-ONLY. Полные постоянные verdict — `Документация/06_Журнал выполнения и отчёты.md`.
+**Verifier:** WEB_11 / ChatGPT. Codex — READ-ONLY. Полная история приёмки в `Документация/06_Журнал выполнения и отчёты.md`.
 
-## 1. Последнее заключение — 2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001
+## 1. Последнее заключение — 2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001 / amendment01
 
-**PARTIAL / INDEPENDENT BOUNDED OFFLINE ACCEPTED**, source `main@1324f544c7d3fef6c0a80bf71f7460f372f6950d`. Сам WEB_11 проверил GitHub-файлы и исходники, наличие **617/617** записей manifest и независимо пересчитал **12/12** выборочных SHA-256. Изучены `broker.py`, `broker_fixture.py`, schema/preflight, тесты и evidence настоящих негативных мутаций: DIRECT достиг собственного receiver в обход отказавшего broker и обнаружен; owner guard mutant вызвал ожидаемый inner FAIL, но это synthetic, не реальный Windows SID. У Codex сохранены **33/33 broker**, **63/63 MCP**, **24/24 security** PASS — **повторный независимый Windows-run NOT RUN**. Утверждение об **79/79** неизменённых прежних файлах основано на отчёте Codex, НЕ на полной независимой сверке.
+**PARTIAL / INDEPENDENT BOUNDED SOURCE REVIEW ACCEPTED**, source `main@e0c89b3536cb030edc4fa905a8e00f1047788c4c`. WEB_11 независимо проверил **76/76** перечисленных manifest paths, **7/7** выбранных SHA-256; рассмотрел новый checker, 11 тестов, source locators, download/source-tree/rotation receipts и отчёт. Codex-run **30/30 PASS** (11 source + 19 pure regression), независимый Windows/Go run NOT RUN; external ZIP **1,013** source files and its SHA-256 `ecf6cbedda4c35073656c902722b74daaf9fb89bb6f52de9ed0bdfd3a7729c1c` — локальный receipt Codex, **не независимый пересчёт ZIP**. Сам WEB_11 адресно прочитал официальный `SagerNet/sing-box@d09182614c7778c1e0f51d990635c5d4249c437e` `go.mod`, `box.go`, `adapter/outbound/manager.go`, `protocol/http/inbound.go`, `route/route.go`, `common/uot/router.go`, `cmd/sing-box/cmd_run.go` через GitHub connector. Подтверждены exact dependency `github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde`, потенциальный default DIRECT при отсутствии явного outbound, HTTP delegated parser/auth, UoT logical packet routing и merge/reload path. Это **bounded code findings**, не доказательство реального working profile. Негативные проверки source tripwire — по evidence Codex, Go/engine/native tests NOT RUN.
 
-**Критические ограничения:** исторический v2rayN запускал `sing-box.exe`, а не доказанный V2Ray Core. `ENGINE_VERSION_SOURCE_BLOCKED`, `ENGINE_CONFIG_COMPATIBILITY_BLOCKED`; настоящий engine, B identity, effective outbound owner, OS WFP, strict live route, hosted tunnel, ordinary ChatGPT E2E NOT VERIFIED. `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. NEXT: адресно и без запуска исследовать реальный локальный engine binary/version/source/schema; переход sing-box ↔ V2Ray требует решения пользователя, native/WFP/lab отдельного USER GO. Документы/доказательства: `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/` и 06.
+**OPEN:** внешний source dependency `sagernet/sing` пока не исследован; HTTP CONNECT/auth/JSON closure BLOCKED; native strict route, owner SID, WFP, installed EXE authenticity, hosted tunnel и ordinary ChatGPT E2E NOT VERIFIED. `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. NEXT: получить ровно version-pinned **source-only** `sagernet/sing` dependency под отдельным разрешением пользователя; затем минимальная source compatibility review и решение о выборе engine. Полное заключение в 06.
 
-## 2. Предыдущее заключение — 2026-10-24 / CODEX-WUA-0-MCP-NOTCP-NPFS-001
+## 2. Предыдущее заключение — 2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001
 
-**PARTIAL / BOUNDED SOURCE-EVIDENCE ACCEPTED**, `main@1147d283674f60ad94dd0be4b26f49e751523669`. Сам WEB_11 подтвердил **1404/1404** manifest paths и **10/10** выбранных SHA-256, рассмотрел C# relay, Named Pipe gateway, MCP fixture, test code/evidence. Codex-run **24/24 NPFS**, **63/63 MCP**, **24/24 security**; TCP/peer mutants обнаружены по evidence, независимый Windows run NOT RUN. C-side no-Python-asyncio relay готов лишь как локальный synthetic candidate; continuous network, real cross-SID, WFP, B egress, hosted/Chat E2E NOT VERIFIED. Архив 06.
+**PARTIAL / BOUNDED STATIC-SNAPSHOT ACCEPTED**, `main@bc0a1be97e7a44a0869310e6961e77ff6c841073`. Independently **70/70** manifest paths и **10/10** SHA-256; Codex-run **44/44** (25 new, 19 pure regression), two metadata mutants detected. Actual `sing-box.exe` SHA-256 from local inventory `ca74563c93440a2e9cb73eae6a04c109d3f5efce36a385f8261a654e362d2ea3` matches historical snapshot; embedded v1.13.4 / Go1.25.8 / VCS d091826… agrees with official GitHub tag commit but does **not** attest installed binary. Windows independent tests NOT RUN. Full verdict in 06.
 
-## 3. Позапрошлое заключение — 2026-10-21 / CODEX-WUA-0-WINDOWS-LAB-GATE-001
+## 3. Позапрошлое заключение — 2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001
 
-**PARTIAL / BOUNDED OFFLINE ACCEPTED**: WEB_11 verified 215/215 paths, 13/13 selected hashes; Codex-reported 52/52 tests, independent Windows run NOT RUN; I01–I12 **12/12 BLOCKED**, production/native no GO. Source main@fd908cd0fff0abe5ab91b270f89cd1f5933f4192; полный архив 06.
+**PARTIAL / BOUNDED OFFLINE ACCEPTED**, `main@1324f544c7d3fef6c0a80bf71f7460f372f6950d`. Independently **617/617** paths и **12/12** selected hashes; Codex broker **33/33**, MCP **63/63**, security **24/24**, independently Windows NOT RUN. Synthetic strict broker, no native V2Ray/WFP. Full verdict in 06.
 
 ---
 
-**Итого:** реальный security enforcement и ChatGPT E2E по-прежнему BLOCKED / NOT VERIFIED. Эта запись не меняет БЛОКИ 1–3 и не запускает следующую TASK.
+**Status:** not PRODUCTION VERIFIED. Old NPFS and Lab Gate verdicts remain archived in 06. B1–B3 untouched, hosted tunnel HOLD.
