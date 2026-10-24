@@ -1,0 +1,156 @@
+{
+  "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
+  "captured_at": "2026-10-24T20:16:54.686948+00:00",
+  "rule_set_ref": [
+    "DOC-GIT-01@1",
+    "DOC-PARALLEL-01@1",
+    "DOC-LOCAL-REPORT-HANDOFF-01@1",
+    "DOC-TASK-CLOSEOUT-OWNER-01@1",
+    "DOC-TEST-LIFECYCLE-01@1",
+    "DOC-VERIFIER-BLOCK4-01@2",
+    "DOC-TASK-READ-SCOPE-01@1",
+    "DOC-HISTORY-ACCESS-01@1",
+    "DOC-TASK-BLOCK1-01@1",
+    "TEST-COLLAB-01@2",
+    "TEST-ENG-01@1",
+    "TEST-COV-01@1",
+    "TEST-EXEC-01@1",
+    "TEST-QA-01@1",
+    "TEST-EVID-01@1",
+    "TEST-SCOPE-01@1"
+  ],
+  "files": [
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "bytes": 35919,
+      "sha256": "2c993aaca0491045ec0527baff56bc777269cef11a14a37ec4bf88028262bcc2"
+    },
+    {
+      "path": "Документация/08_Старт.md",
+      "bytes": 114329,
+      "sha256": "46c2c141ffb82bd9364a218fe8bacdc164eaf527e4fd7d0a5d5cf01017fffce1"
+    },
+    {
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "bytes": 229406,
+      "sha256": "27fcde30d403ccd57c1049f2e4176a5b9cf0b794813d3ee590044309d45b196f"
+    },
+    {
+      "path": "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md",
+      "bytes": 100116,
+      "sha256": "a5177725d61298061b2c4302639fa54fc3204e0e10f3e3b5ae5adbe9e8b8393c"
+    },
+    {
+      "path": "Документация/01_Архитектура и текущее состояние.md",
+      "bytes": 64554,
+      "sha256": "91530faa602da984e5eaadcef24ee04dd38d4fee272cf6eb3166bc5ce5b39919"
+    },
+    {
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "bytes": 178246,
+      "sha256": "37a750fea0866247cf70e71e08b37ff34926c8a8a0288ab464ebc325dc75f94a"
+    },
+    {
+      "path": "Документация/36_Единая архитектура тестирования.md",
+      "bytes": 31094,
+      "sha256": "3238379402ba953059b20b1f09e529f422f2d70553aef8c63f4a2c9149c6c0e9"
+    },
+    {
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "bytes": 31210,
+      "sha256": "8e581be24b927dba339409f42148a70a92fdbdd761764a0333a2197d9be7e6b3"
+    },
+    {
+      "path": "Документация/36.2_Профиль тестирования Web Alarm Workspace.md",
+      "bytes": 42987,
+      "sha256": "a69f7bf3f2a5967b73e1eef997723243dc07b26c971ca1d23b4c58a1aa8cfad0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md",
+      "bytes": 10430,
+      "sha256": "fecf0a4b55f3883df626f61c44dba3ab72a547e93a10fa0a830fa8ab6ab5af84"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/USER_GO.md",
+      "bytes": 2320,
+      "sha256": "9d185b4c43bba22a62222b718aca1a02bb30ee6da462b0362861e81573eee5b7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/download_receipt.json",
+      "bytes": 1129,
+      "sha256": "7d68e720cda337cd7ac5e4bf7cd13aa1124972225b68df778e6afe18c915bcae"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_tree_manifest.json",
+      "bytes": 187537,
+      "sha256": "22c57ac7891db0aa8a6bdc70a2eca1d7a7a79c2a37005321d4e186f1f16aa616"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/dependency_gap.json",
+      "bytes": 622,
+      "sha256": "024539ad371f1d730423a367f0c874240d8cb451ad379759c556f008043d0dee"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_locations.json",
+      "bytes": 16706,
+      "sha256": "be1c8ce09a4b8ef2fe837ee79af4a08fe7572a4b0e6cf30ecc8e8b5c8254fabf"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/singbox_source_review.py",
+      "bytes": 6682,
+      "sha256": "e96ec56bbc635c1cbfe0e094fc9f54c4082f09b52d056e1b56c8a6090ee5c326"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py",
+      "bytes": 8652,
+      "sha256": "e0c2af138d3b1f7d048ed307527fdbf61678fb7a23f457f5a3c81c13960c9caa"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 1496,
+      "sha256": "b6431afa9e91b5748582a20cdec23cb95d06ac63a4ce44d7556faf7092d6d9bb"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/go.mod",
+      "bytes": 9427,
+      "sha256": "84a623f20793ae3fde651c54d8cbbc0cfd46f683cc3c8961209b53bdaabc503a"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/go.sum",
+      "bytes": 40017,
+      "sha256": "6af60ff44d8f69f9fc6c9d01444e38d17ca54e856011cd7f325428cbba704d79"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/protocol/http/inbound.go",
+      "bytes": 4371,
+      "sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/option/options.go",
+      "bytes": 2581,
+      "sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/cmd/sing-box/cmd_run.go",
+      "bytes": 4783,
+      "sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "path": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/common/uot/router.go",
+      "bytes": 3181,
+      "sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d"
+    }
+  ],
+  "reading_scope": {
+    "card": "Rules + B1 + B4; no 001 archive",
+    "08": "Current start/roles/tests",
+    "34": "WEB_11 NEXT MCP CHAT and sing-box source review",
+    "19": "7.1/7.2/7.4/7.6",
+    "01": "External AI integration and project limits",
+    "18": "Addressed definitions and applicable dependencies; no whole-document historical review",
+    "36": "Test areas/evidence/safety",
+    "36.1": "Applicable TEST rules",
+    "36.2": "Invariant matrix/isolated test scope",
+    "previous_task": "Report, exact old GO, receipt, dependency gap, source locators/tree manifest"
+  }
+}

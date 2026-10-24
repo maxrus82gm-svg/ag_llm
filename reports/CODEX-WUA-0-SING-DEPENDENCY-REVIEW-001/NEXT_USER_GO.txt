@@ -1,0 +1,12 @@
+ПРОЕКТ РАЗРЕШЕНИЯ — НЕ ПОЛУЧЕННЫЙ USER GO
+
+Для CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 разрешаю одно source-only получение архива:
+https://proxy.golang.org/github.com/sagernet/sing/@v/v0.8.3-0.20260315153529-ed51f65fbfde.zip
+
+Module: github.com/sagernet/sing
+Version: v0.8.3-0.20260315153529-ed51f65fbfde
+Expected module ZIP h1: h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=
+
+Только через существующий разрешённый HTTP CONNECT proxy path после его read-only подтверждения. Предыдущий endpoint 127.0.0.1:10808 не считать автоматически актуальным. Без DIRECT/fallback, другого источника, неутверждённых redirect/intermediaries и автоматического повтора через иной маршрут. При недоказанном маршруте, происхождении или checksum остановиться.
+
+ZIP и безопасную распаковку сохранить в новом изолированном каталоге M:/WUA_SOURCE_REVIEW/sing/v0.8.3-0.20260315153529-ed51f65fbfde/ вне repo, не перезаписывая предыдущие материалы. Продолжить только source-only review и разрешённые offline проверки. Go/build/install/native/network tests, настройка Windows/proxy/WFP, движка, учёток, tunnel и Git/GitHub по-прежнему запрещены.
