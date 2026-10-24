@@ -1,0 +1,125 @@
+name: GPT FT1 CI Repair independent Windows
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-ft1-ci-repair-independent.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  evidence-and-focused:
+    name: Published evidence and focused guard / Windows
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Sparse checkout, exact pinned revision
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /*.json
+            /*.js
+            /web_alarm/
+            /Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-FT1-CI-REPAIR-001/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify committed manifest, blobs, source hashes
+        shell: pwsh
+        run: |
+          @'
+          import hashlib, json, pathlib, subprocess
+          root = "Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-FT1-CI-REPAIR-001"
+          j = json.loads(pathlib.Path(root, "manifest.json").read_bytes())
+          assert j["task"] == "CLAUDE-WA4-R-FT1-CI-REPAIR-001", j["task"]
+          items = j["files"]
+          assert len(items) == 79, f"wrong file count: {len(items)}"
+          committed = subprocess.run(["git","ls-tree","-r","--name-only","HEAD","--",root], check=True, capture_output=True, text=True, encoding="utf-8").stdout.splitlines()
+          actual = {p[len(root)+1:] for p in committed if p.startswith(root + "/") and p != root + "/manifest.json"}
+          assert set(items) == actual, f"manifest mismatch missing={sorted(set(items)-actual)[:5]} extra={sorted(actual-set(items))[:5]}"
+          def committed_blob(p):
+              return subprocess.run(["git","show","HEAD:"+p], check=True, capture_output=True).stdout
+          for rel,meta in items.items():
+              parts = pathlib.PurePosixPath(rel)
+              assert rel and not parts.is_absolute() and ".." not in parts.parts
+              data = committed_blob(root + "/" + rel)
+              assert len(data) == meta["bytes"], rel + ": byte count"
+              assert hashlib.sha256(data).hexdigest() == meta["sha256"], rel + ": SHA256"
+              assert b"\r" not in data, rel + ": CR present"
+          sources = {**j["repository_files_changed"], **j["repository_files_unchanged_checked"]}
+          assert set(sources) == {"test_web_alarm_runner_guard.py", "wa4a_acceptance.py", "web_alarm/transport_event_recovery.py", "test_web_alarm_transport_event_recovery.py"}
+          for p,meta in sources.items():
+              data = committed_blob(p)
+              expected = meta.get("sha256_lf_normalized", meta["sha256"])
+              got = hashlib.sha256(data.replace(b"\r\n",b"\n")).hexdigest()
+              assert got == expected, p + ": published source mismatch"
+          print(f"MANIFEST PASS {len(items)}/79, SOURCE HASHES PASS {len(sources)}/4")
+          '@ | python -B -
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Focused live guard and archive test
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task GPT-FT1-CI-REPAIR-INDEPENDENT --output "$env:RUNNER_TEMP/ft1ci-focused" test_web_alarm_runner_guard test_web_alarm_transport_event_recovery
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $r = Get-Content -Raw "$env:RUNNER_TEMP/ft1ci-focused/results.json" | ConvertFrom-Json
+          if ($r.tests_run -ne 46 -or $r.failures -ne 0 -or $r.errors -ne 0 -or $r.isolation_violations.Count -ne 0 -or $r.skips -gt 1) { throw "FOCUSED FAILED count/errors/isolation: $($r | ConvertTo-Json -Compress)" }
+          Write-Host "FOCUSED PASS total=$($r.tests_run) skips=$($r.skips) isolation=0"
+      - name: Retain focused diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft1ci-focused-evidence
+          path: |
+            ${{ runner.temp }}/ft1ci-focused/results.json
+            ${{ runner.temp }}/ft1ci-focused/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  full:
+    name: Independent complete 989 suite / Windows
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Sparse checkout, same pinned revision
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /*.json
+            /*.js
+            /web_alarm/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Full independent regression
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task GPT-FT1-CI-REPAIR-FULL --output "$env:RUNNER_TEMP/ft1ci-full" all
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $r = Get-Content -Raw "$env:RUNNER_TEMP/ft1ci-full/results.json" | ConvertFrom-Json
+          if ($r.tests_run -ne 989 -or $r.failures -ne 0 -or $r.errors -ne 0 -or $r.isolation_violations.Count -ne 0 -or $r.skips -gt 2) { throw "FULL FAILED count/errors/isolation: $($r | ConvertTo-Json -Compress)" }
+          Write-Host "FULL PASS total=$($r.tests_run) skips=$($r.skips) isolation=0"
+      - name: Retain full diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft1ci-full-evidence
+          path: |
+            ${{ runner.temp }}/ft1ci-full/results.json
+            ${{ runner.temp }}/ft1ci-full/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
