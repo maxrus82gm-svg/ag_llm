@@ -1,0 +1,128 @@
+name: GPT FT1 Archive Retry independent Windows
+
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-ft1-archive-retry-independent.yml
+      - wa4a_acceptance.py
+      - web_alarm/transport_event_recovery.py
+      - test_web_alarm_transport_event_recovery.py
+      - test_web_alarm_runner_guard.py
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/gpt-ft1-archive-retry-independent.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused:
+    name: Archive, guard and published evidence / Windows
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Sparse checkout (avoid unrelated tracked long paths)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /*.json
+            /*.js
+            /web_alarm/
+            /Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify published manifest, hashes and package census
+        shell: pwsh
+        run: |
+          @'
+          import hashlib, json, pathlib, sys
+          root = pathlib.Path("Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001")
+          j = json.loads((root / "manifest.json").read_bytes())
+          items = j["files"]
+          assert len(items) == 295, f"manifest has {len(items)} files"
+          actual = {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file() and p.name != "manifest.json"}
+          assert actual == set(items), f"missing {sorted(set(items)-actual)[:3]}, extra {sorted(actual-set(items))[:3]}"
+          for rel, meta in items.items():
+              parts = pathlib.PurePosixPath(rel).parts
+              assert rel and not pathlib.PurePosixPath(rel).is_absolute() and ".." not in parts
+              data = (root / rel).read_bytes()
+              assert len(data) == meta["bytes"], rel + ": bytes"
+              assert hashlib.sha256(data).hexdigest() == meta["sha256"], rel + ": SHA-256"
+              assert b"\r" not in data, rel + ": not LF-only"
+          for name, meta in j["repository_files_changed"].items():
+              data = pathlib.Path(name).read_bytes()
+              norm_sha = hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
+              assert norm_sha == meta["sha256_lf_normalized"], name + ": published source hash mismatch"
+          print(f"PASS manifest {len(items)}/{len(items)}, 4/4 published source hashes")
+          '@ | python -B -
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Guarded archive and guard regression
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task GPT-FT1-ARCHIVE-RETRY-INDEPENDENT --output "${{ runner.temp }}/ft1-focused" test_web_alarm_runner_guard test_web_alarm_transport_event_recovery
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $r = Get-Content -Raw "${{ runner.temp }}/ft1-focused/results.json" | ConvertFrom-Json
+          if ($r.tests_run -ne 45 -or $r.failures -ne 0 -or $r.errors -ne 0 -or $r.isolation_violations.Count -ne 0) { throw "Focused count or isolation unexpected" }
+          Write-Host "FOCUSED PASS $($r.tests_run) total, $($r.skips) skipped, isolation zero"
+      - name: Upload focused evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft1-focused-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/ft1-focused/results.json
+            ${{ runner.temp }}/ft1-focused/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+  full:
+    name: Guarded full 988 regression / Windows
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Sparse checkout (same pinned source; avoid long paths)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*.py
+            /*.json
+            /*.js
+            /web_alarm/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run guarded complete Web Alarm suite
+        shell: pwsh
+        env:
+          TMPDIR: ${{ runner.temp }}
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
+        run: |
+          python -B wa4a_acceptance.py --task GPT-FT1-ARCHIVE-RETRY-FULL --output "${{ runner.temp }}/ft1-full" all
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $r = Get-Content -Raw "${{ runner.temp }}/ft1-full/results.json" | ConvertFrom-Json
+          if ($r.tests_run -ne 988 -or $r.failures -ne 0 -or $r.errors -ne 0 -or $r.isolation_violations.Count -ne 0) { throw "Full count or isolation unexpected" }
+          Write-Host "FULL PASS $($r.tests_run) total, $($r.skips) skipped, isolation zero"
+      - name: Upload full regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ft1-full-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/ft1-full/results.json
+            ${{ runner.temp }}/ft1-full/isolation.jsonl
+          if-no-files-found: warn
+          retention-days: 7
