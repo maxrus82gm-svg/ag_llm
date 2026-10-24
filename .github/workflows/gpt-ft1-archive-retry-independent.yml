@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: |
           @'
-          import hashlib, json, pathlib, sys
+          import hashlib, json, pathlib, subprocess, sys
           root = pathlib.Path("Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001")
           j = json.loads((root / "manifest.json").read_bytes())
           items = j["files"]
@@ -52,12 +52,12 @@ jobs:
           for rel, meta in items.items():
               parts = pathlib.PurePosixPath(rel).parts
               assert rel and not pathlib.PurePosixPath(rel).is_absolute() and ".." not in parts
-              data = (root / rel).read_bytes()
+              data = subprocess.run(["git", "show", "HEAD:" + root.as_posix() + "/" + rel], check=True, capture_output=True).stdout
               assert len(data) == meta["bytes"], rel + ": bytes"
               assert hashlib.sha256(data).hexdigest() == meta["sha256"], rel + ": SHA-256"
               assert b"\r" not in data, rel + ": not LF-only"
           for name, meta in j["repository_files_changed"].items():
-              data = pathlib.Path(name).read_bytes()
+              data = subprocess.run(["git", "show", "HEAD:" + name], check=True, capture_output=True).stdout
               norm_sha = hashlib.sha256(data.replace(b"\r\n", b"\n")).hexdigest()
               assert norm_sha == meta["sha256_lf_normalized"], name + ": published source hash mismatch"
           print(f"PASS manifest {len(items)}/{len(items)}, 4/4 published source hashes")
@@ -87,6 +87,9 @@ jobs:
           retention-days: 7
 
   full:
+    # The first independent full suite runs on commit 411. Later full suites run via PR/manual,
+    # while source/CI pushes run the fast focused gate.
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     name: Guarded full 988 regression / Windows
     runs-on: windows-latest
     timeout-minutes: 40
