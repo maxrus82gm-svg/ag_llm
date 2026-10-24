@@ -17,7 +17,9 @@ an explicit storage root.
    (exclusive create, fsync, read-back check, read-only), writes the prefix to a
    temporary file checked by the store's own reader, re-checks the source and
    atomically replaces the log. A receipt is written next to the archive, never
-   into the transport log.
+   into the transport log. A repeated ``apply`` on the repaired log is
+   ALREADY_APPLIED only if an attempt's archive (original, tail, plan) and its
+   receipt - when there is one - agree with the current bytes; otherwise refused.
 
 The excluded tail is never restored or re-appended: whether that event was
 delivered stays unknown. A corrupt middle line, an event-id conflict, NUL bytes
@@ -303,6 +305,32 @@ def _archive_base(root: Path, fingerprint: str) -> Path:
     return base / fingerprint[:16]
 
 
+def _receipt_agrees(attempt: Path, plan: dict[str, Any], files: dict[str, bytes], current: bytes) -> bool:
+    """No receipt (a death right after the replace leaves none), or one written for exactly this attempt.
+
+    A receipt that is present must name this attempt and plan, record the archived bytes, and be either APPLIED
+    with ``current`` as its result or a replace failure that left the log unchanged. Anything else - unreadable,
+    foreign, or a failed post-check - contradicts the archive and proves nothing.
+    """
+    path = attempt / "receipt.json"
+    if not os.path.lexists(path):
+        return True
+    receipt = json.loads(path.read_bytes())
+    archive = receipt["archive"]
+    if not (receipt["receipt_format"] == PLAN_FORMAT and receipt["attempt_id"] == attempt.name
+            and receipt["plan_fingerprint"] == plan["plan_fingerprint"] and receipt["storage_root"] == plan["storage_root"]
+            and receipt["relative_path"] == plan["relative_path"] and receipt["source_before"] == plan["source"]
+            and receipt["prefix"] == plan["prefix"] and receipt["tail"] == plan["tail"]
+            and set(archive) == set(files)
+            and all(archive[name]["sha256"] == _sha(data) and archive[name]["bytes"] == len(data)
+                    for name, data in files.items())):
+        return False
+    if receipt["outcome"] == APPLIED:
+        return receipt["result"]["sha256"] == _sha(current) and receipt["result"]["bytes"] == len(current)
+    return (receipt["outcome"] == FAILED and receipt["step"] == "REPLACE_FAILED"
+            and receipt["transport_log_changed"] is False)
+
+
 def _proven_attempts(root: Path, fingerprint: str, current: bytes) -> list[str]:
     """Attempts whose verified archive proves that ``current`` is exactly the plan's prefix."""
     plan_dir = root / ARCHIVE_RELATIVE_PATH / fingerprint[:16]
@@ -311,14 +339,18 @@ def _proven_attempts(root: Path, fingerprint: str, current: bytes) -> list[str]:
         return proven
     for attempt in sorted(p for p in plan_dir.iterdir() if p.is_dir() and not _is_reparse(p)):
         try:
-            plan = json.loads((attempt / "plan.json").read_bytes())
-            original = (attempt / "original.bin").read_bytes()
+            files = {name: (attempt / name).read_bytes() for name in ("original.bin", "tail.bin", "plan.json")}
+            plan = json.loads(files["plan.json"])
+            original, tail, cut = files["original.bin"], files["tail.bin"], plan["prefix"]["bytes"]
             matches = (plan.get("plan_fingerprint") == fingerprint == _fingerprint(plan)
                        and _sha(original) == plan["source"]["sha256"]
-                       and original[:plan["prefix"]["bytes"]] == current
-                       and _sha(current) == plan["prefix"]["sha256"])
+                       and original[:cut] == current
+                       and _sha(current) == plan["prefix"]["sha256"]
+                       and tail == original[cut:]
+                       and _sha(tail) == plan["tail"]["sha256"] and len(tail) == plan["tail"]["bytes"]
+                       and _receipt_agrees(attempt, plan, files, current))
         except (OSError, ValueError, KeyError, TypeError, AttributeError):
-            continue  # an unreadable, partial or foreign attempt proves nothing
+            continue  # an unreadable, partial, damaged or foreign attempt proves nothing
         if matches:
             proven.append(attempt.name)
     return proven

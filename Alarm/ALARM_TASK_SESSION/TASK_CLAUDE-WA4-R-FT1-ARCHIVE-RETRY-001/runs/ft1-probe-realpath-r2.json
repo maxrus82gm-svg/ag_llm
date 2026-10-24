@@ -1,0 +1,70 @@
+{
+ "platform": "win32",
+ "python": "3.12.10",
+ "race_unpatched": {
+  "iterations": 20000,
+  "kept_extended_prefix": 12463,
+  "not_relative_shapes": {
+   "<NO-BASE-FORM:50 chars>": 699,
+   "<NO-BASE-FORM:58 chars>": 775,
+   "<PREFIX><BASE>\\race\\d\\f.txt": 11688
+  },
+  "not_relative_to_temp_root": 13162
+ },
+ "sequenced": {
+  "control_existing_file": {
+   "is_relative_to_temp_root": true,
+   "kept_extended_prefix": false,
+   "resolved": "<BASE>\\a\\sub3\\f.txt",
+   "winerrors_seen": [
+    "ok",
+    "ok"
+   ]
+  },
+  "control_parent_missing_nothing_changes": {
+   "is_relative_to_temp_root": true,
+   "kept_extended_prefix": false,
+   "resolved": "<BASE>\\a\\sub\\f.txt",
+   "winerrors_seen": [
+    3,
+    3,
+    2,
+    "ok",
+    3
+   ]
+  },
+  "file_created_between_calls": {
+   "is_relative_to_temp_root": true,
+   "kept_extended_prefix": false,
+   "resolved": "<BASE>\\a\\sub3\\f.txt",
+   "winerrors_seen": [
+    2,
+    "ok",
+    "ok"
+   ]
+  },
+  "nested_parent_created_between_calls": {
+   "is_relative_to_temp_root": true,
+   "kept_extended_prefix": false,
+   "resolved": "<BASE>\\a\\x\\y\\f.txt",
+   "winerrors_seen": [
+    3,
+    3,
+    2,
+    "ok",
+    3
+   ]
+  },
+  "parent_created_between_calls": {
+   "is_relative_to_temp_root": false,
+   "kept_extended_prefix": true,
+   "resolved": "<PREFIX><BASE>\\a\\sub2\\f.txt",
+   "winerrors_seen": [
+    3,
+    2,
+    "ok",
+    2
+   ]
+  }
+ }
+}

@@ -249,10 +249,20 @@ def worker(base, mode, name, body, barrier=None):
 # suite uses loopback HTTP; external networking and all non-Python subprocesses
 # are refused. Writes are confined to the system temp directory, never live data.
 GUARD = r'''
-import ipaddress, json, os, sys, tempfile
+import ipaddress, json, os, sys, tempfile, time
 from pathlib import Path
-_audit_temp = Path(tempfile.gettempdir()).resolve()
-_audit_log = Path(os.environ["WA4A_GUARD_LOG"]).resolve()
+def _canon(value):
+    # F-T1: Path.resolve() adds \\?\ while it resolves a path that does not exist yet and strips it only if a second
+    # lookup fails with the same error; a folder created meanwhile by another process leaves the prefix on a TEMP
+    # path. Strip only a prefix the caller did not write itself: an explicit \\?\ path stays as strict as before.
+    raw = os.fsdecode(value)
+    p = Path(raw).resolve()
+    s = str(p)
+    if os.name == "nt" and s.startswith("\\\\?\\") and not os.path.normpath(raw).startswith("\\\\?\\"):
+        p = Path("\\\\" + s[8:] if s.startswith("\\\\?\\UNC\\") else s[4:])
+    return p
+_audit_temp = _canon(tempfile.gettempdir())
+_audit_log = _canon(os.environ["WA4A_GUARD_LOG"])
 if not _audit_log.is_relative_to(_audit_temp):
     raise RuntimeError("WA4-A audit log must be inside disposable temp")
 # Open once before the audit hook. A denied write must never re-enter
@@ -263,7 +273,14 @@ def _violation(event, reason):
     raise PermissionError("WA4-A isolation: "+reason)
 def _path(value, write=False):
     if value is None or isinstance(value, int): return
-    p = Path(os.fsdecode(value)).resolve()
+    p = _canon(value)
+    # F-T1: a folder removed by another process while it is resolved resolves into <drive>:\$Extend\$Deleted. That
+    # state passes; resolve again (bounded, about 50 ms at most) instead of trusting it. A path that keeps resolving
+    # there stays refused, so this can only delay a refusal, never let a write out.
+    for _ in range(50):
+        if [s.lower() for s in p.parts[1:3]] != ["$extend", "$deleted"]: break
+        time.sleep(0.001)
+        p = _canon(value)
     if ".git" in {s.lower() for s in p.parts}: _violation("filesystem", "Git metadata access")
     if write and not p.is_relative_to(_audit_temp): _violation("filesystem", "write outside disposable temp: "+str(p))
 def _local(host):

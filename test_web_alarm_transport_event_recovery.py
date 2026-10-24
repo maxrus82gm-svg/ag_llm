@@ -498,6 +498,152 @@ class ApplyTests(Fixture):
         self.assertEqual((code, json.loads(out)["verdict"]), (20, "BAD_TARGET"))
 
 
+class ArchiveRetryProofTests(Fixture):
+    """FT1-ARCHIVE-RETRY: ALREADY_APPLIED needs a complete, consistent archive, not just plan.json + original.bin.
+
+    Every damaged case must refuse (log HEALTHY, code HEALTHY) without writing anything; the intact control after the
+    loop must still be ALREADY_APPLIED, so the damage alone decides. A missing receipt stays accepted: a death right
+    after the replace leaves none (CrashTests).
+    """
+
+    def applied(self):
+        prefix, tail, original = self.torn_record()
+        fingerprint = self.plan_fp()
+        first = rec.apply(self.root, fingerprint, REASON)
+        self.assertEqual(first["outcome"], "APPLIED")
+        [attempt] = self.attempts()
+        return prefix, tail, original, fingerprint, first, attempt
+
+    @staticmethod
+    def writable(path: Path):
+        os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
+
+    @staticmethod
+    def remove(path: Path):
+        if path.is_dir():
+            os.rmdir(path)
+        elif path.exists():
+            os.chmod(path, stat.S_IWRITE | stat.S_IREAD)
+            path.unlink()
+
+    def assert_not_proof(self, fingerprint: str):
+        census, log = tree(self.root), self.log.read_bytes()
+        with self.assertRaises(rec.TransportRecoveryRefused) as caught:
+            rec.apply(self.root, fingerprint, REASON)
+        self.assertEqual(caught.exception.code, "HEALTHY")
+        self.assertEqual(tree(self.root), census, "a refused retry wrote something")
+        self.assertEqual(self.log.read_bytes(), log)
+
+    def assert_proof(self, fingerprint: str, attempts: list[str]):
+        census = tree(self.root)
+        again = rec.apply(self.root, fingerprint, REASON)
+        self.assertEqual((again["outcome"], again["proven_by_attempts"], again["transport_log_changed"]),
+                         ("ALREADY_APPLIED", attempts, False))
+        self.assertEqual(tree(self.root), census, "a repeated confirmation wrote something")
+
+    def test_retry_proof_requires_the_archived_tail(self):
+        _, tail, _, fingerprint, first, attempt = self.applied()
+        path, receipt = attempt / "tail.bin", attempt / "receipt.json"
+        receipt_bytes = receipt.read_bytes()
+        other = bytes([tail[0] ^ 1]) + tail[1:]
+        cases = {"missing": None, "empty": b"", "truncated": tail[:-1], "extended": tail + b"x",
+                 "one_byte_changed": other, "directory": "dir"}
+        # without a receipt (a death right after the replace) only tail.bin itself can contradict the archive
+        for with_receipt in (True, False):
+            if not with_receipt:
+                self.remove(receipt)
+            for name, content in cases.items():
+                with self.subTest(name, receipt=with_receipt):
+                    self.remove(path)
+                    if content == "dir":
+                        path.mkdir()
+                    elif content is not None:
+                        path.write_bytes(content)
+                    self.assert_not_proof(fingerprint)
+                    self.remove(path)
+                    path.write_bytes(tail)
+            self.assert_proof(fingerprint, [first["attempt_id"]])
+        receipt.write_bytes(receipt_bytes)
+        self.assert_proof(fingerprint, [first["attempt_id"]])
+
+    def test_retry_proof_rejects_a_damaged_or_foreign_receipt(self):
+        prefix, _, _, fingerprint, first, attempt = self.applied()
+        path = attempt / "receipt.json"
+        good_bytes = path.read_bytes()
+        good = json.loads(good_bytes)
+        other_sha = "0" * 64
+        cases = {
+            "empty_as_left_by_a_death_inside_the_write": b"",
+            "garbage": b"{not json",
+            "not_an_object": b"[]\n",
+            "other_attempt": json.dumps(dict(good, attempt_id="20261024T000000-deadbeef")).encode(),
+            "other_plan": json.dumps(dict(good, plan_fingerprint=other_sha)).encode(),
+            "other_source": json.dumps(dict(good, source_before=dict(good["source_before"], sha256=other_sha))).encode(),
+            "other_prefix": json.dumps(dict(good, prefix=dict(good["prefix"], bytes=1))).encode(),
+            "archive_hash_mismatch": json.dumps(dict(good, archive=dict(good["archive"], **{
+                "tail.bin": dict(good["archive"]["tail.bin"], sha256=other_sha)}))).encode(),
+            "archive_entry_missing": json.dumps(dict(good, archive={k: v for k, v in good["archive"].items()
+                                                                    if k != "tail.bin"})).encode(),
+            "applied_with_other_result": json.dumps(dict(good, result=dict(good["result"], sha256=other_sha))).encode(),
+            "unknown_outcome": json.dumps(dict(good, outcome="REFUSED")).encode(),
+            "failed_post_check": json.dumps(dict(good, outcome="FAILED", step="POST_CHECK_FAILED",
+                                                 transport_log_changed=True)).encode(),
+            "directory": "dir",
+        }
+        self.assertEqual((good["outcome"], good["result"]["sha256"]), ("APPLIED", sha(prefix)))
+        for name, content in cases.items():
+            with self.subTest(name):
+                self.remove(path)
+                if content == "dir":
+                    path.mkdir()
+                else:
+                    path.write_bytes(content)
+                self.assert_not_proof(fingerprint)
+                self.remove(path)
+                path.write_bytes(good_bytes)
+        self.assert_proof(fingerprint, [first["attempt_id"]])
+        self.remove(path)  # no receipt at all: the state a death right after the replace leaves
+        self.assert_proof(fingerprint, [first["attempt_id"]])
+
+    def test_a_replace_failure_archive_still_proves_and_a_damaged_one_never_does(self):
+        prefix, _, original = self.torn_record()
+        fingerprint = self.plan_fp()
+        with mock.patch.object(rec, "_replace", side_effect=PermissionError("injected replace failure")):
+            failed = rec.apply(self.root, fingerprint, REASON)
+        self.assertEqual((failed["outcome"], failed["step"], failed["transport_log_changed"]),
+                         ("FAILED", "REPLACE_FAILED", False))
+        self.assert_fail_closed(original)
+        applied = rec.apply(self.root, fingerprint, REASON)
+        self.assertEqual(applied["outcome"], "APPLIED")
+        self.assertEqual(self.log.read_bytes(), prefix)
+        self.assert_proof(fingerprint, sorted([failed["attempt_id"], applied["attempt_id"]]))
+        damaged = self.root / "transport_recovery" / fingerprint[:16] / failed["attempt_id"] / "tail.bin"
+        self.remove(damaged)
+        damaged.write_bytes(b"{")
+        self.assert_proof(fingerprint, [applied["attempt_id"]])
+
+    def test_damaged_archive_after_death_after_replace_is_refused_by_a_fresh_process(self):
+        prefix, _, _ = self.torn_record()
+        fingerprint = self.plan_fp()
+        code, err = self.child({"kind": "apply", "fingerprint": fingerprint, "reason": REASON,
+                                "die_at": "after_replace", "out": "never"})
+        self.assertEqual(code, 77, err)
+        self.assertEqual(self.log.read_bytes(), prefix)
+        [attempt] = self.attempts()
+        self.assertFalse((attempt / "receipt.json").exists(), "the death must leave no receipt")
+        self.remove(attempt / "tail.bin")
+        census = tree(self.root)
+        self.child({"kind": "apply", "fingerprint": fingerprint, "reason": REASON, "out": "r_missing"})
+        result = self.wait_marker("r_missing")
+        self.facts.append({"fresh_process_retry_without_tail": result})
+        self.assertEqual((result["outcome"], result.get("code")), ("REFUSED", "HEALTHY"))
+        self.assertEqual(tree(self.root), census)
+        (attempt / "tail.bin").write_bytes((attempt / "original.bin").read_bytes()[len(prefix):])
+        self.child({"kind": "apply", "fingerprint": fingerprint, "reason": REASON, "out": "r_restored"})
+        restored = self.wait_marker("r_restored")
+        self.assertEqual((restored["outcome"], restored["proven"]), ("ALREADY_APPLIED", [attempt.name]))
+
+
 class FaultTests(Fixture):
     """Direction 6: injected exceptions (in process) — distinct from real process death below."""
 
