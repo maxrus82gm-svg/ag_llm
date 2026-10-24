@@ -1,0 +1,460 @@
+{
+ "repository_root": "<REPO>",
+ "files": {
+  "web_alarm/mutation_executor.py": {
+   "sha256": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+   "bytes": 39988
+  },
+  "web_alarm/target_identity.py": {
+   "sha256": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+   "bytes": 4834
+  },
+  "web_alarm/file_state.py": {
+   "sha256": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+   "bytes": 5943
+  },
+  "web_alarm/target_claim_service.py": {
+   "sha256": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+   "bytes": 30670
+  },
+  "web_alarm/operation_store.py": {
+   "sha256": "a36468717b8def5ca024cdaff751168fc86adbb6aad58f9679dbde2f4a626d48",
+   "bytes": 44850
+  },
+  "web_alarm/manifest_store.py": {
+   "sha256": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+   "bytes": 36996
+  },
+  "web_alarm/rollback_service.py": {
+   "sha256": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+   "bytes": 54374
+  },
+  "web_alarm/target_claim_store.py": {
+   "sha256": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+   "bytes": 11265
+  },
+  "web_alarm/store_lock.py": {
+   "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+   "bytes": 2537
+  },
+  "web_alarm/cli.py": {
+   "sha256": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+   "bytes": 13167
+  },
+  "web_alarm/transport_event_recovery.py": {
+   "sha256": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+   "bytes": 27771
+  }
+ },
+ "refs": [
+  {
+   "id": "E1",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 110,
+   "text": "def _create_exclusive(path: Path, data: bytes) -> None:"
+  },
+  {
+   "id": "E2",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 117,
+   "text": "temp = path.parent / f\".{path.name}.{new_id('wa4e')}.tmp\""
+  },
+  {
+   "id": "E3",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 124,
+   "text": "os.link(temp, path)"
+  },
+  {
+   "id": "E4",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 130,
+   "text": "os.rename(temp, path)  # Windows: FileExistsError if the name was taken meanwhile"
+  },
+  {
+   "id": "E5",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 427,
+   "text": "claim = self.claims.acquire(task_id, op, operation_revision=record.revision, agent=agent,"
+  },
+  {
+   "id": "E6",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 453,
+   "text": "with self.claims.mutation_boundary(task_id, op, operation_revision=record.revision,"
+  },
+  {
+   "id": "E7",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 491,
+   "text": "canonical, _ = self.claims._target(current)"
+  },
+  {
+   "id": "E8",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 495,
+   "text": "current = self.operations._transition_locked("
+  },
+  {
+   "id": "E9",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 509,
+   "text": "kind = MutationKind.CREATE  # a write of an absent file never replaces one that appeared meanwhile"
+  },
+  {
+   "id": "E10",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 511,
+   "text": "self._apply(kind, path, data)"
+  },
+  {
+   "id": "E11",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 515,
+   "text": "done = self.operations._transition_locked("
+  },
+  {
+   "id": "E12",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 539,
+   "text": "_atomic_write_bytes(path, data)"
+  },
+  {
+   "id": "E13",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 541,
+   "text": "_create_exclusive(path, data)"
+  },
+  {
+   "id": "E14",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 543,
+   "text": "path.unlink()"
+  },
+  {
+   "id": "E15",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 549,
+   "text": "observed = observe_path(path)"
+  },
+  {
+   "id": "E16",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 613,
+   "text": "payload = src.path.read_bytes()"
+  },
+  {
+   "id": "E17",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 623,
+   "text": "if not same_authority(observe_bytes(payload), source_pre):"
+  },
+  {
+   "id": "E18",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 637,
+   "text": "owned = self.claims.acquire(task_id, delete_id, operation_revision=removal.revision,"
+  },
+  {
+   "id": "E19",
+   "file": "web_alarm/mutation_executor.py",
+   "line": 317,
+   "text": "if record.status in (OperationStatus.STARTED, OperationStatus.UNKNOWN_AFTER_DISCONNECT):"
+  },
+  {
+   "id": "T1",
+   "file": "web_alarm/target_identity.py",
+   "line": 81,
+   "text": "root = Path(workspace_root).resolve(strict=True)"
+  },
+  {
+   "id": "T2",
+   "file": "web_alarm/target_identity.py",
+   "line": 98,
+   "text": "if is_link_or_reparse_point(candidate):"
+  },
+  {
+   "id": "T3",
+   "file": "web_alarm/target_identity.py",
+   "line": 101,
+   "text": "resolved = candidate.resolve(strict=False)"
+  },
+  {
+   "id": "T4",
+   "file": "web_alarm/target_identity.py",
+   "line": 102,
+   "text": "relative = resolved.relative_to(root)"
+  },
+  {
+   "id": "T5",
+   "file": "web_alarm/target_identity.py",
+   "line": 116,
+   "text": "path=resolved,"
+  },
+  {
+   "id": "F1",
+   "file": "web_alarm/file_state.py",
+   "line": 130,
+   "text": "info = os.lstat(target)"
+  },
+  {
+   "id": "F2",
+   "file": "web_alarm/file_state.py",
+   "line": 135,
+   "text": "if is_link_or_reparse_point(target):"
+  },
+  {
+   "id": "F3",
+   "file": "web_alarm/file_state.py",
+   "line": 141,
+   "text": "with target.open(\"rb\") as handle:"
+  },
+  {
+   "id": "C1",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 173,
+   "text": "canonical = canonical_target(root, record.target)"
+  },
+  {
+   "id": "C2",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 178,
+   "text": "return canonical, physical_target_key(canonical.path)"
+  },
+  {
+   "id": "C3",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 432,
+   "text": "observed = observe_path(canonical.path).authority()"
+  },
+  {
+   "id": "C4",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 456,
+   "text": "with self.operations.task_lock(task_id):"
+  },
+  {
+   "id": "C5",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 463,
+   "text": "canonical, physical_key = self._target(record)"
+  },
+  {
+   "id": "C6",
+   "file": "web_alarm/target_claim_service.py",
+   "line": 464,
+   "text": "with self._mutation_lock(task_id), self._target_lock(physical_key):"
+  },
+  {
+   "id": "O1",
+   "file": "web_alarm/operation_store.py",
+   "line": 504,
+   "text": "canonical = canonical_target(workspace_root, target)"
+  },
+  {
+   "id": "O2",
+   "file": "web_alarm/operation_store.py",
+   "line": 651,
+   "text": "observed_pre = observe_path(request.target.path)"
+  },
+  {
+   "id": "O3",
+   "file": "web_alarm/operation_store.py",
+   "line": 728,
+   "text": "canonical = canonical_target("
+  },
+  {
+   "id": "O4",
+   "file": "web_alarm/operation_store.py",
+   "line": 732,
+   "text": "if canonical.key != contract[\"target_key\"]:"
+  },
+  {
+   "id": "O5",
+   "file": "web_alarm/operation_store.py",
+   "line": 734,
+   "text": "observed = observe_path(canonical.path)"
+  },
+  {
+   "id": "M1",
+   "file": "web_alarm/manifest_store.py",
+   "line": 81,
+   "text": "path.parent.mkdir(parents=True, exist_ok=True)"
+  },
+  {
+   "id": "M2",
+   "file": "web_alarm/manifest_store.py",
+   "line": 82,
+   "text": "temp = path.parent / f\".{path.name}.{new_id('tmp')}.tmp\""
+  },
+  {
+   "id": "M3",
+   "file": "web_alarm/manifest_store.py",
+   "line": 88,
+   "text": "os.replace(temp, path)"
+  },
+  {
+   "id": "M4",
+   "file": "web_alarm/manifest_store.py",
+   "line": 138,
+   "text": "if candidate.is_symlink():"
+  },
+  {
+   "id": "M5",
+   "file": "web_alarm/manifest_store.py",
+   "line": 140,
+   "text": "resolved = candidate.expanduser().resolve(strict=False)"
+  },
+  {
+   "id": "M6",
+   "file": "web_alarm/manifest_store.py",
+   "line": 751,
+   "text": "def restore_microtask(self, task_id: str, microtask_id: str) -> ManifestRecord:"
+  },
+  {
+   "id": "M7",
+   "file": "web_alarm/manifest_store.py",
+   "line": 799,
+   "text": "_atomic_write_bytes(target, data)"
+  },
+  {
+   "id": "M8",
+   "file": "web_alarm/manifest_store.py",
+   "line": 800,
+   "text": "restored = target.read_bytes()"
+  },
+  {
+   "id": "M9",
+   "file": "web_alarm/manifest_store.py",
+   "line": 806,
+   "text": "target.unlink()"
+  },
+  {
+   "id": "R1",
+   "file": "web_alarm/rollback_service.py",
+   "line": 200,
+   "text": "_atomic_write_bytes(path, data)"
+  },
+  {
+   "id": "R2",
+   "file": "web_alarm/rollback_service.py",
+   "line": 204,
+   "text": "path.unlink()"
+  },
+  {
+   "id": "R3",
+   "file": "web_alarm/rollback_service.py",
+   "line": 270,
+   "text": "if canonical.key != target[\"target_key\"] or target_hash(physical_target_key(canonical.path)) != target[\"target_hash\"]:"
+  },
+  {
+   "id": "R4",
+   "file": "web_alarm/rollback_service.py",
+   "line": 766,
+   "text": "observed = observe_path(self._canonical(root, target).path)"
+  },
+  {
+   "id": "R5",
+   "file": "web_alarm/rollback_service.py",
+   "line": 815,
+   "text": "canonical = self._canonical(root, target)"
+  },
+  {
+   "id": "R6",
+   "file": "web_alarm/rollback_service.py",
+   "line": 816,
+   "text": "observed = observe_path(canonical.path)"
+  },
+  {
+   "id": "R7",
+   "file": "web_alarm/rollback_service.py",
+   "line": 831,
+   "text": "if not same_authority(observed, target[\"preserved\"]):"
+  },
+  {
+   "id": "R8",
+   "file": "web_alarm/rollback_service.py",
+   "line": 837,
+   "text": "self._persist(record)"
+  },
+  {
+   "id": "R9",
+   "file": "web_alarm/rollback_service.py",
+   "line": 840,
+   "text": "_write_restored_bytes(canonical.path, snapshots[target[\"manifest_entry_id\"]])"
+  },
+  {
+   "id": "R10",
+   "file": "web_alarm/rollback_service.py",
+   "line": 842,
+   "text": "_delete_created(canonical.path)"
+  },
+  {
+   "id": "R11",
+   "file": "web_alarm/rollback_service.py",
+   "line": 843,
+   "text": "post = observe_path(canonical.path)"
+  },
+  {
+   "id": "R12",
+   "file": "web_alarm/rollback_service.py",
+   "line": 854,
+   "text": "target[\"status\"] = T_RESTORED"
+  },
+  {
+   "id": "R13",
+   "file": "web_alarm/rollback_service.py",
+   "line": 888,
+   "text": "observed = observe_path(self._canonical(root, target).path)"
+  },
+  {
+   "id": "R14",
+   "file": "web_alarm/rollback_service.py",
+   "line": 921,
+   "text": "_, checked = self._prove_current(record, root)"
+  },
+  {
+   "id": "K1",
+   "file": "web_alarm/target_claim_store.py",
+   "line": 91,
+   "text": "key = os.path.normcase(str(path))"
+  },
+  {
+   "id": "L1",
+   "file": "web_alarm/store_lock.py",
+   "line": 3,
+   "text": "This protects storage integrity (read-check-write of one store), not physical"
+  },
+  {
+   "id": "L2",
+   "file": "web_alarm/store_lock.py",
+   "line": 45,
+   "text": "msvcrt.locking(self._handle.fileno(), msvcrt.LK_NBLCK, 1)"
+  },
+  {
+   "id": "CL1",
+   "file": "web_alarm/cli.py",
+   "line": 211,
+   "text": "_json(record_to_dict(manifests.restore_microtask(args.task_id, args.microtask_id)))"
+  },
+  {
+   "id": "X1",
+   "file": "web_alarm/transport_event_recovery.py",
+   "line": 148,
+   "text": "if before.st_nlink != 1:"
+  },
+  {
+   "id": "X2",
+   "file": "web_alarm/transport_event_recovery.py",
+   "line": 154,
+   "text": "if not (_identity(before) == _identity(opened) == _identity(after)) or after.st_size != len(data):"
+  },
+  {
+   "id": "X3",
+   "file": "web_alarm/transport_event_recovery.py",
+   "line": 481,
+   "text": "if current is None or current[1] != identity or current[0] != data:"
+  }
+ ],
+ "problems": []
+}
