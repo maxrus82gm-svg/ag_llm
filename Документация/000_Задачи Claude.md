@@ -241,12 +241,27 @@
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Автор:** ChatGPT (независимый verifier), Claude — READ-ONLY. Постоянный архив: `Документация/06_Журнал выполнения и отчёты.md`.
+**Автор:** ChatGPT (независимый verifier), Claude — READ-ONLY. Постоянный архив: `Документация/06_Журнал выполнения и отчёты.md`. БЛОКИ 1–3 этой записью не изменяются.
 
-## 1. Последнее заключение: 2026-10-21 / CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001
+## 1. Последнее заключение: 2026-10-24 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001 + CHAT-ONLY AMENDMENT
 
-**Вердикт: PARTIAL / REWORK REQUIRED**, не DONE/VERIFIED. Независимый Linux-прогон Python 3.13.5 на двух переданных исходниках (сверены с GitHub в ходе проверки): **38/38 штатных PASS**, 0 FAIL/ERROR/SKIP. Дополнительные синтетические проверки: **2 fail-open** — при неверной manifest SHA-256 и при пропущенном `mapping.json` entry с отсутствующей sanitized copy `verify` возвращает `SAFE CANDIDATE`. Контрольный конфликт JSON-ключей корректно блокируется. Windows GitHub Actions для этой версии санитизатора **NOT RUN**; историческая публикационная безопасность не подтверждена. Отдельно требуется пользовательское GO на Claude repair обоих случаев, regression tests и новый Windows Actions независимый review. Ранее выданный ChatGPT Linux-отчёт `wa4_linux_independent_review_20261021.md` — разговорный артефакт, постоянный GitHub-путь к нему не подтверждён. Архив вердикта — 06.
+**Вердикт: PASS / BOUNDED OFFLINE VERIFIED** для опубликованного пакета Evidence Sanitizer и узкого исправления `check_package.py`. Не является разрешением production/live rollout, не доказывает приватное TEMP provenance `--private` независимо и не заменяет отдельное эксплуатационное подтверждение.
 
-## 2–3. Предыдущие заключения
+- **Точная версия:** пользовательский `main` commit №399 [`20ebf607cdb891c13e04c71239247fcbaab090ae`](https://github.com/maxrus82gm-svg/ag_llm/commit/20ebf607cdb891c13e04c71239247fcbaab090ae), опубликованный пакет `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001/`. Исправлен `tools/check_package.py` (SHA-256 `aaee9ed9…1230e3e3`), manifest 237 entries, расширен self-test до 11 негативных сценариев. Основной модуль `web_alarm/evidence_sanitizer.py` и 69 его тестов в коммите №399 не менялись.
+- **Независимый Windows CI на исходном пакете:** [run 40084806720](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40084806720) воспроизвёл реальный дефект: при идентичной дублированной записи `runs-map`, после корректного обновления manifest, старый `check_package.py` возвращал `CONSISTENT`, exit 0. Это исторический RED, а не текущий дефект после исправления.
+- **Независимый Windows CI после исправления, exact HEAD №399:** [run 40093415722](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40093415722), `SUCCESS`: опубликованный пакет `CONSISTENT`; guarded sanitizer tests **69/69 PASS**, FAIL/ERROR/SKIP=0, isolation violations=0; прежняя adversarial duplicate-ID подмена теперь `runs-map-duplicate-id:1`, `INCONSISTENT`, exit 1.
+- **Дополнительный независимый replay всех 11 self-test:** [run 40093575514](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40093575514) на `GPT` commit №400 `8f6b8f96b0179118ba084e3b1ad5208f9547f78f` — `SUCCESS`; чистая копия PASS, **11/11 DETECTED**, включая идентичные/разные дубликаты ID, unsafe relative ID, duplicate JSON key и повреждения manifest/evidence; отдельный duplicate-ID probe PASS, 69/69 PASS, package CONSISTENT. Commit №400 меняет только собственный диагностический CI; проверяемый Claude-код остаётся №399.
+- **Независимая полная регрессия Web Alarm:** [PR run 40084859948](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/40084859948) на версии перед amend: отдельный Windows full job — **978/978 PASS, 0 SKIP, guard/isolation clean**, около 682 секунд. Итоговый PR run помечен `failure` из-за старого негативного checker-пробника, хотя full job `success`. В №399 менялся только проверяющий скрипт и отчётные файлы, не модуль/тесты Web Alarm. Полная регрессия заново на №399 НЕ ЗАПУСКАЛАСЬ; не подменять её предыдущий HEAD новым.
+- **Публикация:** PR №20 ранее принят пользователем в `main`; затем пользователь опубликовал amend №399. ChatGPT безопасно fast-forward ветку `GPT` до этого `main` и запустил независимый CI без изменения `main`. Прямой merge/production ChatGPT не выполнял.
 
-Не заявлены без фактически подтверждённого отдельного независимого отчёта с TASK ID и ссылкой на архив.
+**Границы evidence / NOT RUN:** `--private` с исходными сырыми TEMP логами на Windows Actions не выполнялся; локальный результат Claude `--private CONSISTENT, 210/210` рассматривается только как отчёт исполнителя. Не проверялись настоящие production storage, hosted tunnel, WFP, live процессы или rollout. Нет оснований расширять bounded PASS на них.
+
+**NEXT:** первоначальный дефект дублирующихся runs-map ID устранён и независимо закрыт. Пользователь может принять документационный closeout из ветки `GPT` после review; новых локальных исправлений Claude для этого дефекта не требуется. Дальнейшие live/native проверки — отдельная TASK/USER GO.
+
+## 2. Предыдущее заключение: 2026-10-21 / CLAUDE-WA4-R-EVIDENCE-SANITIZATION-001
+
+**Исторический вердикт: PARTIAL / REWORK REQUIRED.** Независимые Linux 38/38 штатных PASS, однако найдены 2 fail-open при неверном SHA-256 manifest и отсутствии mapping entry. Windows Actions тогда не запускались. Позднейший ремонт и новая bounded Windows-проверка отражены выше; старый результат не переписан как успешный задним числом. Дополнительная историческая запись — в 06.
+
+## 3. Более ранние заключения
+
+Нет записи, подтверждённой отдельным независимым отчётом.
