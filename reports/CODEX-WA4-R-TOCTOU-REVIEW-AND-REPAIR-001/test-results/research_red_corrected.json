@@ -1,0 +1,27 @@
+{
+  "run_id": "research_red_corrected",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "research_tests"
+  ],
+  "cwd": "<LAB>/baseline",
+  "exit_code": 1,
+  "duration_seconds": 7.95,
+  "environment": {
+    "TEMP": "<LAB>/tmp",
+    "TMP": "<LAB>/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "<LAB>/baseline"
+  },
+  "summary": [
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 16 tests in 7.555s",
+    "",
+    "FAILED (failures=4)"
+  ]
+}

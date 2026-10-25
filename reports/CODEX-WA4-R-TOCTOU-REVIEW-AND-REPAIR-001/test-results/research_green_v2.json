@@ -1,0 +1,27 @@
+{
+  "run_id": "research_green_v2",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "research_tests"
+  ],
+  "cwd": "<LAB>/candidate",
+  "exit_code": 0,
+  "duration_seconds": 8.063,
+  "environment": {
+    "TEMP": "<LAB>/tmp",
+    "TMP": "<LAB>/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "<LAB>/candidate"
+  },
+  "summary": [
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 16 tests in 7.639s",
+    "",
+    "OK"
+  ]
+}

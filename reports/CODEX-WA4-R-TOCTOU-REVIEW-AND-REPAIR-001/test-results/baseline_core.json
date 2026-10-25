@@ -1,0 +1,40 @@
+{
+  "run_id": "baseline_core",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "test_web_alarm_target_identity",
+    "test_web_alarm_target_claims",
+    "test_web_alarm_target_claims_concurrency",
+    "test_web_alarm_operation_contract",
+    "test_web_alarm_operation_store",
+    "test_web_alarm_operation_store_concurrency",
+    "test_web_alarm_mutation_executor",
+    "test_web_alarm_manifest_store",
+    "test_web_alarm_rollback",
+    "test_web_alarm_rollback_concurrency",
+    "test_web_alarm_crash_consistency",
+    "test_web_alarm_aud010205_repair",
+    "test_web_alarm_aud01t02b_repair",
+    "test_web_alarm_state_machine_cas"
+  ],
+  "cwd": "<LAB>/baseline",
+  "exit_code": 0,
+  "duration_seconds": 164.81,
+  "environment": {
+    "TEMP": "<LAB>/tmp",
+    "TMP": "<LAB>/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "<LAB>/baseline"
+  },
+  "summary": [
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 241 tests in 163.957s",
+    "",
+    "OK (skipped=1)"
+  ]
+}

@@ -1,0 +1,56 @@
+--- a/web_alarm/file_state.py
++++ b/web_alarm/file_state.py
+@@ -123,6 +123,15 @@
+     return bool(attributes & _FILE_ATTRIBUTE_REPARSE_POINT)
+ 
+ 
++def _observation_signature(info: os.stat_result) -> tuple:
++    """Bind an observation to one regular file and detect visible concurrent writes."""
++    return (
++        info.st_dev, info.st_ino, info.st_mode, info.st_size,
++        info.st_mtime_ns, info.st_ctime_ns,
++        getattr(info, "st_file_attributes", 0) & _FILE_ATTRIBUTE_REPARSE_POINT,
++    )
++
++
+ def observe_path(path: str | os.PathLike[str]) -> FileState:
+     """Read the current physical state of one file target without following links."""
+     target = Path(path)
+@@ -139,11 +148,21 @@
+     digest = _Digest()
+     try:
+         with target.open("rb") as handle:
++            opened = os.fstat(handle.fileno())
++            if _observation_signature(info) != _observation_signature(opened):
++                raise FileStateError(f"target changed before observation: {target}")
+             while True:
+                 chunk = handle.read(_CHUNK_SIZE)
+                 if not chunk:
+                     break
+                 digest.update(chunk)
++            finished = os.fstat(handle.fileno())
++            if (_observation_signature(opened) != _observation_signature(finished)
++                    or digest.size != finished.st_size):
++                raise FileStateError(f"target changed during observation: {target}")
++            current = os.lstat(target)
++            if _observation_signature(current) != _observation_signature(finished):
++                raise FileStateError(f"target identity changed during observation: {target}")
+     except OSError as exc:
+         raise FileStateError(f"cannot read target: {target}") from exc
+     return digest.finish()
+--- a/web_alarm/manifest_store.py
++++ b/web_alarm/manifest_store.py
+@@ -785,6 +785,13 @@
+                             f"snapshot_path mismatch: {entry.source_path}"
+                         )
+                     data = binary_path.read_bytes()
++                    # Verify the exact retained buffer consumed by the restore, not
++                    # only an earlier read of this mutable snapshot path.
++                    if (len(data) != snapshot.size_before
++                            or _sha256(data) != snapshot.sha256_before):
++                        raise ManifestStoreError(
++                            f"snapshot integrity failure before restore: {entry.source_path}"
++                        )
+                     actions.append((target, snapshot, data))
+                 else:
+                     if target.exists() and target.is_dir():

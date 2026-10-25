@@ -1,0 +1,21 @@
+test_create_collision_after_cas_never_overwrites (research_tests.MutationResearch.test_create_collision_after_cas_never_overwrites) ... ok
+test_drift_before_final_cas_is_refused (research_tests.MutationResearch.test_drift_before_final_cas_is_refused) ... ok
+test_existing_delete_removes_uncooperative_update_after_cas (research_tests.MutationResearch.test_existing_delete_removes_uncooperative_update_after_cas) ... ok
+test_existing_write_loses_uncooperative_update_after_cas (research_tests.MutationResearch.test_existing_write_loses_uncooperative_update_after_cas) ... ok
+test_junction_swap_redirects_create_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_create_before_post_proof) ... ok
+test_junction_swap_redirects_delete_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_delete_before_post_proof) ... ok
+test_junction_swap_redirects_write_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_write_before_post_proof) ... ok
+test_post_action_drift_has_no_done_receipt_or_blind_replay (research_tests.MutationResearch.test_post_action_drift_has_no_done_receipt_or_blind_replay) ... ok
+test_snapshot_change_after_final_basis_uses_retained_verified_bytes (research_tests.RollbackResearch.test_snapshot_change_after_final_basis_uses_retained_verified_bytes) ... ok
+test_snapshot_change_after_plan_is_blocked_by_freshness (research_tests.RollbackResearch.test_snapshot_change_after_plan_is_blocked_by_freshness) ... ok
+test_uncooperative_write_after_rollback_cas_is_lost (research_tests.RollbackResearch.test_uncooperative_write_after_rollback_cas_is_lost) ... ok
+test_in_place_write_during_stream_must_not_return_mixed_digest (research_tests.ObservationRepairOracles.test_in_place_write_during_stream_must_not_return_mixed_digest) ... ok
+test_replacement_between_lstat_and_open_must_be_detected (research_tests.ObservationRepairOracles.test_replacement_between_lstat_and_open_must_be_detected) ... ok
+test_stable_observation_and_absence_still_work (research_tests.ObservationRepairOracles.test_stable_observation_and_absence_still_work) ... ok
+test_consumed_snapshot_must_be_revalidated_before_restore (research_tests.SnapshotRepairOracles.test_consumed_snapshot_must_be_revalidated_before_restore) ... ok
+test_consumed_snapshot_size_drift_is_refused_before_restore (research_tests.SnapshotRepairOracles.test_consumed_snapshot_size_drift_is_refused_before_restore) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 7.639s
+
+OK

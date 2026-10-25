@@ -1,0 +1,103 @@
+test_create_collision_after_cas_never_overwrites (research_tests.MutationResearch.test_create_collision_after_cas_never_overwrites) ... ok
+test_drift_before_final_cas_is_refused (research_tests.MutationResearch.test_drift_before_final_cas_is_refused) ... FAIL
+test_existing_delete_removes_uncooperative_update_after_cas (research_tests.MutationResearch.test_existing_delete_removes_uncooperative_update_after_cas) ... ok
+test_existing_write_loses_uncooperative_update_after_cas (research_tests.MutationResearch.test_existing_write_loses_uncooperative_update_after_cas) ... FAIL
+test_junction_swap_redirects_create_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_create_before_post_proof) ... ok
+test_junction_swap_redirects_delete_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_delete_before_post_proof) ... ok
+test_junction_swap_redirects_write_before_post_proof (research_tests.MutationResearch.test_junction_swap_redirects_write_before_post_proof) ... ok
+test_post_action_drift_has_no_done_receipt_or_blind_replay (research_tests.MutationResearch.test_post_action_drift_has_no_done_receipt_or_blind_replay) ... FAIL
+test_snapshot_change_after_final_basis_uses_retained_verified_bytes (research_tests.RollbackResearch.test_snapshot_change_after_final_basis_uses_retained_verified_bytes) ... FAIL
+test_snapshot_change_after_plan_is_blocked_by_freshness (research_tests.RollbackResearch.test_snapshot_change_after_plan_is_blocked_by_freshness) ... FAIL
+test_uncooperative_write_after_rollback_cas_is_lost (research_tests.RollbackResearch.test_uncooperative_write_after_rollback_cas_is_lost) ... ERROR
+test_in_place_write_during_stream_must_not_return_mixed_digest (research_tests.ObservationRepairOracles.test_in_place_write_during_stream_must_not_return_mixed_digest) ... ok
+test_replacement_between_lstat_and_open_must_be_detected (research_tests.ObservationRepairOracles.test_replacement_between_lstat_and_open_must_be_detected) ... ok
+test_stable_observation_and_absence_still_work (research_tests.ObservationRepairOracles.test_stable_observation_and_absence_still_work) ... ok
+test_consumed_snapshot_must_be_revalidated_before_restore (research_tests.SnapshotRepairOracles.test_consumed_snapshot_must_be_revalidated_before_restore) ... ok
+test_consumed_snapshot_size_drift_is_refused_before_restore (research_tests.SnapshotRepairOracles.test_consumed_snapshot_size_drift_is_refused_before_restore) ... ok
+
+======================================================================
+ERROR: test_uncooperative_write_after_rollback_cas_is_lost (research_tests.RollbackResearch.test_uncooperative_write_after_rollback_cas_is_lost)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\web_alarm\operation_store.py", line 651, in begin
+    observed_pre = observe_path(request.target.path)
+  File "<LAB>\candidate\web_alarm\file_state.py", line 153, in observe_path
+    raise FileStateError(f"target changed before observation: {target}")
+web_alarm.file_state.FileStateError: target changed before observation: <LAB>\tmp\tmph_lioldm\project\target.txt
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 159, in test_uncooperative_write_after_rollback_cas_is_lost
+    resolution = self.scenario()
+  File "<LAB>\candidate\test_web_alarm_rollback.py", line 156, in scenario
+    self.ops.begin(TASK, "m1", "write", "target.txt", operation_id="op_1", payload=AFTER)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<LAB>\candidate\web_alarm\operation_store.py", line 653, in begin
+    raise OperationContractRejected(str(exc)) from exc
+web_alarm.operation_store.OperationContractRejected: target changed before observation: <LAB>\tmp\tmph_lioldm\project\target.txt
+
+======================================================================
+FAIL: test_drift_before_final_cas_is_refused (research_tests.MutationResearch.test_drift_before_final_cas_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 46, in test_drift_before_final_cas_is_refused
+    self.assertEqual(result['result_code'], 'PRECONDITION_FAILED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'TARGET_UNOBSERVABLE' != 'PRECONDITION_FAILED'
+- TARGET_UNOBSERVABLE
++ PRECONDITION_FAILED
+
+
+======================================================================
+FAIL: test_existing_write_loses_uncooperative_update_after_cas (research_tests.MutationResearch.test_existing_write_loses_uncooperative_update_after_cas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 75, in test_existing_write_loses_uncooperative_update_after_cas
+    self.assertEqual(result['result'], 'EXECUTED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'RECONCILIATION_REQUIRED' != 'EXECUTED'
+- RECONCILIATION_REQUIRED
++ EXECUTED
+
+
+======================================================================
+FAIL: test_post_action_drift_has_no_done_receipt_or_blind_replay (research_tests.MutationResearch.test_post_action_drift_has_no_done_receipt_or_blind_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 103, in test_post_action_drift_has_no_done_receipt_or_blind_replay
+    self.assertEqual(result['result_code'], 'POST_PROOF_FAILED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'RECEIPT_NOT_PERSISTED' != 'POST_PROOF_FAILED'
+- RECEIPT_NOT_PERSISTED
++ POST_PROOF_FAILED
+
+
+======================================================================
+FAIL: test_snapshot_change_after_final_basis_uses_retained_verified_bytes (research_tests.RollbackResearch.test_snapshot_change_after_final_basis_uses_retained_verified_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 210, in test_snapshot_change_after_final_basis_uses_retained_verified_bytes
+    self.assertEqual(result['result'], 'VERIFIED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'REPLAYED' != 'VERIFIED'
+- REPLAYED
++ VERIFIED
+
+
+======================================================================
+FAIL: test_snapshot_change_after_plan_is_blocked_by_freshness (research_tests.RollbackResearch.test_snapshot_change_after_plan_is_blocked_by_freshness)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\candidate\research_tests.py", line 192, in test_snapshot_change_after_plan_is_blocked_by_freshness
+    self.assertEqual(result['result'], 'BLOCKED')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'REPLAYED' != 'BLOCKED'
+- REPLAYED
++ BLOCKED
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 6.925s
+
+FAILED (failures=5, errors=1)
