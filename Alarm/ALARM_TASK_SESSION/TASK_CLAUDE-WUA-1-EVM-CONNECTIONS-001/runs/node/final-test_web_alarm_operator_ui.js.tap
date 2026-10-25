@@ -1,0 +1,472 @@
+TAP version 13
+# Subtest: O1 workspace filter and task selection never mix details
+ok 1 - O1 workspace filter and task selection never mix details
+  ---
+  duration_ms: 25.3922
+  type: 'test'
+  ...
+# Subtest: O2 timeline shows persisted DONE separately from VERIFIED
+ok 2 - O2 timeline shows persisted DONE separately from VERIFIED
+  ---
+  duration_ms: 2.5815
+  type: 'test'
+  ...
+# Subtest: O3 inconsistent read has no progress value or usable copy action
+ok 3 - O3 inconsistent read has no progress value or usable copy action
+  ---
+  duration_ms: 1.9119
+  type: 'test'
+  ...
+# Subtest: O4 absent current operation stays undetermined
+ok 4 - O4 absent current operation stays undetermined
+  ---
+  duration_ms: 2.7698
+  type: 'test'
+  ...
+# Subtest: O5 offline retains last snapshot visibly stale and disables copying NEXT
+ok 5 - O5 offline retains last snapshot visibly stale and disables copying NEXT
+  ---
+  duration_ms: 2.0273
+  type: 'test'
+  ...
+# Subtest: O5 ageing snapshot becomes stale without inventing runtime status
+ok 6 - O5 ageing snapshot becomes stale without inventing runtime status
+  ---
+  duration_ms: 1.6178
+  type: 'test'
+  ...
+# Subtest: O6 server NEXT copied exactly; no client authority decisions
+ok 7 - O6 server NEXT copied exactly; no client authority decisions
+  ---
+  duration_ms: 2.2702
+  type: 'test'
+  ...
+# Subtest: O7 navigation refresh disclosure emit only GET
+ok 8 - O7 navigation refresh disclosure emit only GET
+  ---
+  duration_ms: 3.0856
+  type: 'test'
+  ...
+# Subtest: O8 restored browser selection still fetches server-owned state
+ok 9 - O8 restored browser selection still fetches server-owned state
+  ---
+  duration_ms: 1.7852
+  type: 'test'
+  ...
+# Subtest: O9 old task response cannot repaint new selected task
+ok 10 - O9 old task response cannot repaint new selected task
+  ---
+  duration_ms: 2.1142
+  type: 'test'
+  ...
+# Subtest: O9 loading clears old task details immediately
+ok 11 - O9 loading clears old task details immediately
+  ---
+  duration_ms: 1.8377
+  type: 'test'
+  ...
+# Subtest: O9 response identity mismatch is an error, never another workspace data
+ok 12 - O9 response identity mismatch is an error, never another workspace data
+  ---
+  duration_ms: 1.9858
+  type: 'test'
+  ...
+# Subtest: O9 HTML and script input remains text in rendered nodes
+ok 13 - O9 HTML and script input remains text in rendered nodes
+  ---
+  duration_ms: 1.4462
+  type: 'test'
+  ...
+# Subtest: O9 repeated refresh is single-flight and stable ordering survives update
+ok 14 - O9 repeated refresh is single-flight and stable ordering survives update
+  ---
+  duration_ms: 1.5042
+  type: 'test'
+  ...
+# Subtest: O9 server refusal shows exact reason and refreshes facts
+ok 15 - O9 server refusal shows exact reason and refreshes facts
+  ---
+  duration_ms: 3.1499
+  type: 'test'
+  ...
+# Subtest: O9 lost POST response never automatically reissues creation
+ok 16 - O9 lost POST response never automatically reissues creation
+  ---
+  duration_ms: 3.2316
+  type: 'test'
+  ...
+# Subtest: O9 repeated explicit registration submits once without a second form
+ok 17 - O9 repeated explicit registration submits once without a second form
+  ---
+  duration_ms: 2.937
+  type: 'test'
+  ...
+# Subtest: O9 cancelled confirmation causes no POST
+ok 18 - O9 cancelled confirmation causes no POST
+  ---
+  duration_ms: 1.9378
+  type: 'test'
+  ...
+# Subtest: O9 empty navigator and unavailable clipboard are honest
+ok 19 - O9 empty navigator and unavailable clipboard are honest
+  ---
+  duration_ms: 1.9806
+  type: 'test'
+  ...
+# Subtest: O9 narrow selection closes side panels and focuses the central card
+ok 20 - O9 narrow selection closes side panels and focuses the central card
+  ---
+  duration_ms: 2.3156
+  type: 'test'
+  ...
+# Subtest: O6 context export is forbidden when server read is incoherent
+ok 21 - O6 context export is forbidden when server read is incoherent
+  ---
+  duration_ms: 1.8666
+  type: 'test'
+  ...
+# Subtest: O5 context export is forbidden after offline response and restored on fresh read
+ok 22 - O5 context export is forbidden after offline response and restored on fresh read
+  ---
+  duration_ms: 3.0009
+  type: 'test'
+  ...
+# Subtest: O9 context export is forbidden after 45-second freshness timeout
+ok 23 - O9 context export is forbidden after 45-second freshness timeout
+  ---
+  duration_ms: 2.0899
+  type: 'test'
+  ...
+# Subtest: UX-C empty plus is ephemeral: no draft record, task or POST on leave
+ok 24 - UX-C empty plus is ephemeral: no draft record, task or POST on leave
+  ---
+  duration_ms: 1.6437
+  type: 'test'
+  ...
+# Subtest: UX-C autosave stores exact original text as browser draft, not server status
+ok 25 - UX-C autosave stores exact original text as browser draft, not server status
+  ---
+  duration_ms: 2.3432
+  type: 'test'
+  ...
+# Subtest: UX-C returning to draft and reload restore text without server creation
+ok 26 - UX-C returning to draft and reload restore text without server creation
+  ---
+  duration_ms: 4.5152
+  type: 'test'
+  ...
+# Subtest: UX-C drafts and task rows remain isolated across workspace switches
+ok 27 - UX-C drafts and task rows remain isolated across workspace switches
+  ---
+  duration_ms: 1.7184
+  type: 'test'
+  ...
+# Subtest: UX-C quota failure warns and prevents POST and accidental unsaved navigation
+ok 28 - UX-C quota failure warns and prevents POST and accidental unsaved navigation
+  ---
+  duration_ms: 1.9577
+  type: 'test'
+  ...
+# Subtest: UX-C saved or empty forms do not request beforeunload confirmation
+ok 29 - UX-C saved or empty forms do not request beforeunload confirmation
+  ---
+  duration_ms: 1.6743
+  type: 'test'
+  ...
+# Subtest: UX-C malformed draft bytes are retained and never overwritten
+ok 30 - UX-C malformed draft bytes are retained and never overwritten
+  ---
+  duration_ms: 1.5299
+  type: 'test'
+  ...
+# Subtest: UX-C storage read denial and missing Web Locks never authorize registration
+ok 31 - UX-C storage read denial and missing Web Locks never authorize registration
+  ---
+  duration_ms: 1.4694
+  type: 'test'
+  ...
+# Subtest: UX-C second tab cannot overwrite a locked draft; reopening reads latest text
+ok 32 - UX-C second tab cannot overwrite a locked draft; reopening reads latest text
+  ---
+  duration_ms: 2.7968
+  type: 'test'
+  ...
+# Subtest: UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap
+ok 33 - UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap
+  ---
+  duration_ms: 2.8832
+  type: 'test'
+  ...
+# Subtest: UX-C late lock callback cannot reopen a composer in another workspace
+ok 34 - UX-C late lock callback cannot reopen a composer in another workspace
+  ---
+  duration_ms: 2.4572
+  type: 'test'
+  ...
+# Subtest: UX-C registration uses one field, server ID and no planner or execution routes
+ok 35 - UX-C registration uses one field, server ID and no planner or execution routes
+  ---
+  duration_ms: 3.023
+  type: 'test'
+  ...
+# Subtest: UX-C lost POST survives reload as unknown; never resubmit or delete automatically
+ok 36 - UX-C lost POST survives reload as unknown; never resubmit or delete automatically
+  ---
+  duration_ms: 2.8727
+  type: 'test'
+  ...
+# Subtest: UX-C server 500 or malformed acknowledgement stays unknown without second POST
+ok 37 - UX-C server 500 or malformed acknowledgement stays unknown without second POST
+  ---
+  duration_ms: 3.3137
+  type: 'test'
+  ...
+# Subtest: UX-C in-flight registration cannot repaint or clear another workspace draft
+ok 38 - UX-C in-flight registration cannot repaint or clear another workspace draft
+  ---
+  duration_ms: 1.8775
+  type: 'test'
+  ...
+# Subtest: UX-C deleting browser draft never deletes a registered TASK or emits HTTP DELETE
+ok 39 - UX-C deleting browser draft never deletes a registered TASK or emits HTTP DELETE
+  ---
+  duration_ms: 1.3095
+  type: 'test'
+  ...
+# Subtest: UX-C missing workspace blocks registration while preserving local text
+ok 40 - UX-C missing workspace blocks registration while preserving local text
+  ---
+  duration_ms: 1.3317
+  type: 'test'
+  ...
+# Subtest: UX connection uses real health, ages explicitly and survives failure without changing enums
+ok 41 - UX connection uses real health, ages explicitly and survives failure without changing enums
+  ---
+  duration_ms: 1.6119
+  type: 'test'
+  ...
+# Subtest: UX catalog failure does not mislabel reachable server or authorize POST
+ok 42 - UX catalog failure does not mislabel reachable server or authorize POST
+  ---
+  duration_ms: 2.4235
+  type: 'test'
+  ...
+# Subtest: UX task source and human stage reports are complete inert text
+ok 43 - UX task source and human stage reports are complete inert text
+  ---
+  duration_ms: 3.3999
+  type: 'test'
+  ...
+# Subtest: UX task response arriving after plus never paints over the blank composer
+ok 44 - UX task response arriving after plus never paints over the blank composer
+  ---
+  duration_ms: 1.7373
+  type: 'test'
+  ...
+# Subtest: UX UNKNOWN recovery is human readable without changing the machine state
+ok 45 - UX UNKNOWN recovery is human readable without changing the machine state
+  ---
+  duration_ms: 1.4633
+  type: 'test'
+  ...
+# Subtest: UX workspace registration cannot discard an unsaved active draft
+ok 46 - UX workspace registration cannot discard an unsaved active draft
+  ---
+  duration_ms: 1.4723
+  type: 'test'
+  ...
+# Subtest: UX failed local cleanup after confirmed creation never enables duplicate registration
+ok 47 - UX failed local cleanup after confirmed creation never enables duplicate registration
+  ---
+  duration_ms: 2.0082
+  type: 'test'
+  ...
+# Subtest: UX new card resets old scroll while refresh preserves the current reading position
+ok 48 - UX new card resets old scroll while refresh preserves the current reading position
+  ---
+  duration_ms: 1.5512
+  type: 'test'
+  ...
+# Subtest: UX unplanned task has no invented completion progress and explains absent restore point
+ok 49 - UX unplanned task has no invented completion progress and explains absent restore point
+  ---
+  duration_ms: 2.8452
+  type: 'test'
+  ...
+# Subtest: UX incoherent empty plan never asserts that the plan is known empty
+ok 50 - UX incoherent empty plan never asserts that the plan is known empty
+  ---
+  duration_ms: 2.5784
+  type: 'test'
+  ...
+# Subtest: UX null health response clears the previously online signal
+ok 51 - UX null health response clears the previously online signal
+  ---
+  duration_ms: 1.0921
+  type: 'test'
+  ...
+# Subtest: UX malformed progress or coherence cannot become a fresh authoritative view
+ok 52 - UX malformed progress or coherence cannot become a fresh authoritative view
+  ---
+  duration_ms: 2.9502
+  type: 'test'
+  ...
+# Subtest: UX failed rendering hides the partial snapshot and never retains it for export
+ok 53 - UX failed rendering hides the partial snapshot and never retains it for export
+  ---
+  duration_ms: 1.6724
+  type: 'test'
+  ...
+# Subtest: UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection
+ok 54 - UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection
+  ---
+  duration_ms: 2.496
+  type: 'test'
+  ...
+# Subtest: UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns
+ok 55 - UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns
+  ---
+  duration_ms: 2.0994
+  type: 'test'
+  ...
+# Subtest: UX-001-A changed root blocks old draft and preserves its text under the original key
+ok 56 - UX-001-A changed root blocks old draft and preserves its text under the original key
+  ---
+  duration_ms: 1.5737
+  type: 'test'
+  ...
+# Subtest: UX-001-A submit guard independently rejects stale selected-workspace binding
+ok 57 - UX-001-A submit guard independently rejects stale selected-workspace binding
+  ---
+  duration_ms: 1.7711
+  type: 'test'
+  ...
+# Subtest: UX-002-A workspace success is central green status with precise action and no execution claim
+ok 58 - UX-002-A workspace success is central green status with precise action and no execution claim
+  ---
+  duration_ms: 1.6746
+  type: 'test'
+  ...
+# Subtest: UX-002-A task success is a distinct exact registration result
+ok 59 - UX-002-A task success is a distinct exact registration result
+  ---
+  duration_ms: 1.8645
+  type: 'test'
+  ...
+# Subtest: UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error
+ok 60 - UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error
+  ---
+  duration_ms: 1.6887
+  type: 'test'
+  ...
+# Subtest: UX-002-A lost workspace response is a warning retained across GET without retry
+ok 61 - UX-002-A lost workspace response is a warning retained across GET without retry
+  ---
+  duration_ms: 1.4545
+  type: 'test'
+  ...
+# Subtest: UX-002-A task unknown stays protected while central warning describes the operation
+ok 62 - UX-002-A task unknown stays protected while central warning describes the operation
+  ---
+  duration_ms: 1.8067
+  type: 'test'
+  ...
+# Subtest: UX-002-A internal server error does not claim definitive failure or success
+ok 63 - UX-002-A internal server error does not claim definitive failure or success
+  ---
+  duration_ms: 1.4153
+  type: 'test'
+  ...
+# Subtest: UX-002-A a pending result is replaced once by success and repeated refresh does not make it red
+ok 64 - UX-002-A a pending result is replaced once by success and repeated refresh does not make it red
+  ---
+  duration_ms: 1.6005
+  type: 'test'
+  ...
+# Subtest: UX-002-A confirmed success survives a failed followup catalog read as a separate fact
+ok 65 - UX-002-A confirmed success survives a failed followup catalog read as a separate fact
+  ---
+  duration_ms: 1.3642
+  type: 'test'
+  ...
+# Subtest: UX-002-A malformed workspace acknowledgement cannot become success
+ok 66 - UX-002-A malformed workspace acknowledgement cannot become success
+  ---
+  duration_ms: 1.5695
+  type: 'test'
+  ...
+# Subtest: UX-002-A names in operation messages remain inert text
+ok 67 - UX-002-A names in operation messages remain inert text
+  ---
+  duration_ms: 1.7825
+  type: 'test'
+  ...
+# Subtest: UX-002-B unavailable picker is explicit and manual path remains usable
+ok 68 - UX-002-B unavailable picker is explicit and manual path remains usable
+  ---
+  duration_ms: 1.7439
+  type: 'test'
+  ...
+# Subtest: UX-002-B selected path uses protected JSON request and does not register before confirmation
+ok 69 - UX-002-B selected path uses protected JSON request and does not register before confirmation
+  ---
+  duration_ms: 2.0915
+  type: 'test'
+  ...
+# Subtest: UX-002-B cancellation leaves manual root and catalog untouched
+ok 70 - UX-002-B cancellation leaves manual root and catalog untouched
+  ---
+  duration_ms: 3.4166
+  type: 'test'
+  ...
+# Subtest: UX-002-B picker failure preserves input and offers manual alternative
+ok 71 - UX-002-B picker failure preserves input and offers manual alternative
+  ---
+  duration_ms: 1.4963
+  type: 'test'
+  ...
+# Subtest: UX-002-B late selection cannot replace manually edited path
+ok 72 - UX-002-B late selection cannot replace manually edited path
+  ---
+  duration_ms: 1.3226
+  type: 'test'
+  ...
+# Subtest: UX-002-B closed and reopened workspace form ignores old picker response
+ok 73 - UX-002-B closed and reopened workspace form ignores old picker response
+  ---
+  duration_ms: 1.5947
+  type: 'test'
+  ...
+# Subtest: UX-002-B duplicate pick and registration during dialog do not issue additional POST
+ok 74 - UX-002-B duplicate pick and registration during dialog do not issue additional POST
+  ---
+  duration_ms: 1.2533
+  type: 'test'
+  ...
+# Subtest: UX-002-B malformed capability or relative result never grants picker authority
+ok 75 - UX-002-B malformed capability or relative result never grants picker authority
+  ---
+  duration_ms: 1.2599
+  type: 'test'
+  ...
+# Subtest: UX-002-B restarted server renews capability after refusal without automatic dialog retry
+ok 76 - UX-002-B restarted server renews capability after refusal without automatic dialog retry
+  ---
+  duration_ms: 1.4366
+  type: 'test'
+  ...
+# Subtest: UX-002-A late workspace acknowledgement cannot close a newer form
+ok 77 - UX-002-A late workspace acknowledgement cannot close a newer form
+  ---
+  duration_ms: 1.4429
+  type: 'test'
+  ...
+1..77
+# tests 77
+# suites 0
+# pass 77
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 251.3287

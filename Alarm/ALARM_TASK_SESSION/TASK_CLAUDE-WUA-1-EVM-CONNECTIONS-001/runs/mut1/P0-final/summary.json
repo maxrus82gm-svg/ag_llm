@@ -1,0 +1,29 @@
+{
+ "label": "P0-final",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P0-final-wf0k2ijm\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P0-final-9aix0_iy\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 0,
+ "wall_seconds": 7.891,
+ "base": "<TEMP>\\claude-wua1-mut1-P0-final-9aix0_iy",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P0-final-wf0k2ijm\\code",
+ "tests_run": 14,
+ "passed": 14,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.775,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

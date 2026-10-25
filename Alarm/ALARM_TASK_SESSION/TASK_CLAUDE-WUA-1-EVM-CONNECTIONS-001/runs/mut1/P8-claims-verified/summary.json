@@ -1,0 +1,35 @@
+{
+ "label": "P8-claims-verified",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P8-claims-verified-gu8v3m1n\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P8-claims-verified-ougean9d\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.837,
+ "base": "<TEMP>\\claude-wua1-mut1-P8-claims-verified-ougean9d",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P8-claims-verified-gu8v3m1n\\code",
+ "tests_run": 14,
+ "passed": 13,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.764,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.CatalogTests.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model",
+   "FAIL",
+   "ected\"]), (\"REGISTERED\", \"UNVERIFIED\", False))\nAssertionError: Tuples differ: ('REGISTERED', 'VERIFIED', False) != ('REGISTERED', 'UNVERIFIED', False)\n\nFirst differing element 1:\n'VERIFIED'\n'UNVERIFIED'\n\n- ('REGISTERED', 'VERIFIED', False)\n+ ('REGISTERED', 'UNVERIFIED', False)\n?                 ++\n\n"
+  ]
+ ]
+}

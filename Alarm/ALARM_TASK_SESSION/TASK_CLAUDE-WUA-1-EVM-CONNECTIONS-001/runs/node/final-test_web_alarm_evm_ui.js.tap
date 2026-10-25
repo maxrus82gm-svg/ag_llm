@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: E1 the operator panel stays the default view and nothing is asked about connections at load
+ok 1 - E1 the operator panel stays the default view and nothing is asked about connections at load
+  ---
+  duration_ms: 7.4685
+  type: 'test'
+  ...
+# Subtest: E2 opening EVM renders exactly the server catalog in the API column, other columns empty
+ok 2 - E2 opening EVM renders exactly the server catalog in the API column, other columns empty
+  ---
+  duration_ms: 3.4325
+  type: 'test'
+  ...
+# Subtest: E3 choosing a model posts only role + connection_id once and shows the saved choice
+ok 3 - E3 choosing a model posts only role + connection_id once and shows the saved choice
+  ---
+  duration_ms: 3.2461
+  type: 'test'
+  ...
+# Subtest: E4 a refused choice is reported and the list is reloaded from the server, not changed locally
+ok 4 - E4 a refused choice is reported and the list is reloaded from the server, not changed locally
+  ---
+  duration_ms: 2.1034
+  type: 'test'
+  ...
+# Subtest: E5 malformed or failed catalog answers show an error and no invented models
+ok 5 - E5 malformed or failed catalog answers show an error and no invented models
+  ---
+  duration_ms: 4.4322
+  type: 'test'
+  ...
+# Subtest: E6 saved-choice states are told honestly
+ok 6 - E6 saved-choice states are told honestly
+  ---
+  duration_ms: 5.8176
+  type: 'test'
+  ...
+# Subtest: E7 disabled models cannot be chosen and server text is never markup
+ok 7 - E7 disabled models cannot be chosen and server text is never markup
+  ---
+  duration_ms: 2.1368
+  type: 'test'
+  ...
+# Subtest: E8 the way back restores the operator panel; refresh reloads the catalog
+ok 8 - E8 the way back restores the operator panel; refresh reloads the catalog
+  ---
+  duration_ms: 1.7245
+  type: 'test'
+  ...
+# Subtest: E9 the shipped page carries no model list of its own
+ok 9 - E9 the shipped page carries no model list of its own
+  ---
+  duration_ms: 0.4102
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 91.5178

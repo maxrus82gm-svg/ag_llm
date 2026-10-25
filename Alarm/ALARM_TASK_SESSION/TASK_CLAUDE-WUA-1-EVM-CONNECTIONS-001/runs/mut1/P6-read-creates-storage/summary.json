@@ -1,0 +1,35 @@
+{
+ "label": "P6-read-creates-storage",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P6-read-creates-storage-r50v7pjm\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P6-read-creates-storage-236qz6io\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.959,
+ "base": "<TEMP>\\claude-wua1-mut1-P6-read-creates-storage-236qz6io",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P6-read-creates-storage-r50v7pjm\\code",
+ "tests_run": 14,
+ "passed": 13,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.878,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.CatalogTests.test_viewing_writes_nothing_and_opens_no_network_or_transport",
+   "FAIL",
+   "  File \"<TEMP>\\claude-wua1-mirror-P6-read-creates-storage-r50v7pjm\\code\\test_web_alarm_ultra_connections.py\", line 103, in test_viewing_writes_nothing_and_opens_no_network_or_transport\n    self.assertFalse((self.storage / \"ultra\").exists())\nAssertionError: True is not false\n"
+  ]
+ ]
+}

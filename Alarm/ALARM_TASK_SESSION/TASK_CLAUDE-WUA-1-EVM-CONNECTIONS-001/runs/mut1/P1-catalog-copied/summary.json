@@ -1,0 +1,40 @@
+{
+ "label": "P1-catalog-copied",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P1-catalog-copied-iwnx8ehf\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P1-catalog-copied-ydvknfqc\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.856,
+ "base": "<TEMP>\\claude-wua1-mut1-P1-catalog-copied-ydvknfqc",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P1-catalog-copied-iwnx8ehf\\code",
+ "tests_run": 14,
+ "passed": 12,
+ "failures": 1,
+ "errors": 1,
+ "skips": 0,
+ "elapsed_seconds": 6.781,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.CatalogTests.test_registry_changes_are_seen_without_any_copy_in_web_alarm",
+   "FAIL",
+   "web_alarm_ultra_connections.py\", line 90, in test_registry_changes_are_seen_without_any_copy_in_web_alarm\n    self.assertIn(\"test_model_x\", ids)\nAssertionError: 'test_model_x' not found in ['gigachat_2', 'gigachat_2_max', 'gigachat_2_pro', 'gigachat_3_lightning', 'gigachat_3_pro', 'gigachat_ultra']\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing",
+   "ERROR",
+   "tions.py\", line 157, in test_unknown_malformed_and_disabled_connections_are_refused_without_writing\n    row = next(c for c in self.get(\"/ultra/connections\")[1][\"columns\"][\"api\"][\"connections\"]\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nStopIteration\n"
+  ]
+ ]
+}

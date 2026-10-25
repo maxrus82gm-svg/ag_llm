@@ -1,0 +1,65 @@
+{
+ "label": "P7-damage-not-kept",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P7-damage-not-kept-wa3oa3ks\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P7-damage-not-kept-v4b4nrmp\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.805,
+ "base": "<TEMP>\\claude-wua1-mut1-P7-damage-not-kept-v4b4nrmp",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P7-damage-not-kept-wa3oa3ks\\code",
+ "tests_run": 14,
+ "passed": 7,
+ "failures": 7,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.73,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [garbage]",
+   "FAIL",
+   "icit_choice\n    self.assertEqual([p.read_bytes() for p in kept], [raw], \"the damaged original was not kept\")\nAssertionError: Lists differ: [] != [b'{not json']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'{not json'\n\n- []\n+ [b'{not json'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [not_utf8]",
+   "FAIL",
+   "ce\n    self.assertEqual([p.read_bytes() for p in kept], [raw], \"the damaged original was not kept\")\nAssertionError: Lists differ: [] != [b'\\xff\\xfe\\x00']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'\\xff\\xfe\\x00'\n\n- []\n+ [b'\\xff\\xfe\\x00'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [wrong_schema]",
+   "FAIL",
+   " original was not kept\")\nAssertionError: Lists differ: [] != [b'{\"schema\":\"x\",\"version\":1,\"roles\":{}}']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'{\"schema\":\"x\",\"version\":1,\"roles\":{}}'\n\n- []\n+ [b'{\"schema\":\"x\",\"version\":1,\"roles\":{}}'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [wrong_version]",
+   "FAIL",
+   "ections\", \"version\": 99, \"roles\": {}}']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 99, \"roles\": {}}'\n\n- []\n+ [b'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 99, \"roles\": {}}'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [roles_not_object]",
+   "FAIL",
+   "onnections\", \"version\": 1, \"roles\": []}']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 1, \"roles\": []}'\n\n- []\n+ [b'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 1, \"roles\": []}'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [entry_without_id]",
+   "FAIL",
+   "36 chars]}}}']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 1, \"roles\": {\"chat\": {}}}'\n\n- []\n+ [b'{\"schema\": \"web_alarm.ultra_connections\", \"version\": 1, \"roles\": {\"chat\": {}'\n+  b'}}'] : the damaged original was not kept\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [empty]",
+   "FAIL",
+   "nd_replaced_only_by_an_explicit_choice\n    self.assertEqual([p.read_bytes() for p in kept], [raw], \"the damaged original was not kept\")\nAssertionError: Lists differ: [] != [b'']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\nb''\n\n- []\n+ [b''] : the damaged original was not kept\n"
+  ]
+ ]
+}

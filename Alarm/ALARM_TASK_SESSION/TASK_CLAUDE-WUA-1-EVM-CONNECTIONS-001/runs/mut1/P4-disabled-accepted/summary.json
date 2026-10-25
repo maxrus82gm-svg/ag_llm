@@ -1,0 +1,40 @@
+{
+ "label": "P4-disabled-accepted",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P4-disabled-accepted-nqac6w9n\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P4-disabled-accepted-7kw3oorp\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.991,
+ "base": "<TEMP>\\claude-wua1-mut1-P4-disabled-accepted-7kw3oorp",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P4-disabled-accepted-nqac6w9n\\code",
+ "tests_run": 14,
+ "passed": 12,
+ "failures": 2,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.882,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used",
+   "FAIL",
+   "t_used\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"INVALID_REFERENCE\", None))\nAssertionError: Tuples differ: ('SAVED', 'GigaChat-Temp') != ('INVALID_REFERENCE', None)\n\nFirst differing element 0:\n'SAVED'\n'INVALID_REFERENCE'\n\n- ('SAVED', 'GigaChat-Temp')\n+ ('INVALID_REFERENCE', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing",
+   "FAIL",
+   "^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<TEMP>\\claude-wua1-mirror-P4-disabled-accepted-nqac6w9n\\code\\test_web_alarm_ultra_connections.py\", line 57, in refused\n    with self.assertRaises(ApiError) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ApiError not raised\n"
+  ]
+ ]
+}

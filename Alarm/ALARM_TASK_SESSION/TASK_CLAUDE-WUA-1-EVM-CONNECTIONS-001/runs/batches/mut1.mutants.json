@@ -1,0 +1,228 @@
+[
+ {
+  "mutant": "P0-final",
+  "kind": "python",
+  "exit": 0,
+  "tests_run": 14,
+  "failures": 0,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P0-final-9aix0_iy",
+  "killed": null,
+  "control_pass": true
+ },
+ {
+  "mutant": "P1-catalog-copied",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 1,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P1-catalog-copied-ydvknfqc",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P2-wrong-provider-id",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 9,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P2-wrong-provider-id-z24i5_zg",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P3-corrupt-as-empty",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 7,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P3-corrupt-as-empty-m228891m",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P4-disabled-accepted",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 2,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P4-disabled-accepted-7kw3oorp",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P5-not-persisted",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 18,
+  "errors": 2,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P5-not-persisted-exth6ub6",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P6-read-creates-storage",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P6-read-creates-storage-236qz6io",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P7-damage-not-kept",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 7,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P7-damage-not-kept-v4b4nrmp",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P8-claims-verified",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P8-claims-verified-ougean9d",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "P9-role-ignored",
+  "kind": "python",
+  "exit": 1,
+  "tests_run": 14,
+  "failures": 1,
+  "errors": 0,
+  "isolation_violations": 0,
+  "attempt": "claude-wua1-mut1-P9-role-ignored-eqikdmun",
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U0-final",
+  "kind": "node",
+  "exit": 0,
+  "tests": 9,
+  "pass": 9,
+  "fail": 0,
+  "failed_tests": [],
+  "killed": null,
+  "control_pass": true
+ },
+ {
+  "mutant": "U1-fetch-at-load",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 6,
+  "fail": 3,
+  "failed_tests": [
+   "E1 the operator panel stays the default view and nothing is asked about connections at load",
+   "E4 a refused choice is reported and the list is reloaded from the server, not changed locally",
+   "E8 the way back restores the operator panel; refresh reloads the catalog"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U2-no-busy-guard",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 8,
+  "fail": 1,
+  "failed_tests": [
+   "E3 choosing a model posts only role + connection_id once and shows the saved choice"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U3-no-reload-after-refusal",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 8,
+  "fail": 1,
+  "failed_tests": [
+   "E4 a refused choice is reported and the list is reloaded from the server, not changed locally"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U4-markup-rendering",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 6,
+  "fail": 3,
+  "failed_tests": [
+   "E2 opening EVM renders exactly the server catalog in the API column, other columns empty",
+   "E7 disabled models cannot be chosen and server text is never markup",
+   "E9 the shipped page carries no model list of its own"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U5-no-shape-check",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 8,
+  "fail": 1,
+  "failed_tests": [
+   "E5 malformed or failed catalog answers show an error and no invented models"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U6-no-way-back",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 8,
+  "fail": 1,
+  "failed_tests": [
+   "E8 the way back restores the operator panel; refresh reloads the catalog"
+  ],
+  "killed": true,
+  "control_pass": null
+ },
+ {
+  "mutant": "U7-disabled-selectable",
+  "kind": "node",
+  "exit": 1,
+  "tests": 9,
+  "pass": 8,
+  "fail": 1,
+  "failed_tests": [
+   "E7 disabled models cannot be chosen and server text is never markup"
+  ],
+  "killed": true,
+  "control_pass": null
+ }
+]

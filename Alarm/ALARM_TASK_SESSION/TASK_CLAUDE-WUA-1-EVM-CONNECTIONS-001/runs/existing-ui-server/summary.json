@@ -1,0 +1,33 @@
+{
+ "label": "existing-ui-server",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<REPO>\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-existing-ui-server-lgm1pwdp\\out",
+  "test_web_alarm_ui",
+  "test_web_alarm_ui_ux",
+  "test_web_alarm_operator_ui",
+  "test_web_alarm_server",
+  "test_web_alarm_ui_launcher"
+ ],
+ "exit": 0,
+ "wall_seconds": 59.283,
+ "base": "<TEMP>\\claude-wua1-existing-ui-server-lgm1pwdp",
+ "runner_root": "<REPO>",
+ "tests_run": 49,
+ "passed": 49,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 56.761,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": true,
+ "isolation_violations": 0,
+ "non_pass": []
+}

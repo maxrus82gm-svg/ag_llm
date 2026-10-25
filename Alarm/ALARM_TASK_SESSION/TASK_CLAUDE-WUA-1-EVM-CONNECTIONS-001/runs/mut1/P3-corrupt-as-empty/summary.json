@@ -1,0 +1,65 @@
+{
+ "label": "P3-corrupt-as-empty",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P3-corrupt-as-empty-qwlh5vzj\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P3-corrupt-as-empty-m228891m\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.792,
+ "base": "<TEMP>\\claude-wua1-mut1-P3-corrupt-as-empty-m228891m",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P3-corrupt-as-empty-qwlh5vzj\\code",
+ "tests_run": 14,
+ "passed": 7,
+ "failures": 7,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.713,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [garbage]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [not_utf8]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [wrong_schema]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [wrong_version]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [roles_not_object]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [entry_without_id]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice [empty]",
+   "FAIL",
+   "t_aside_and_replaced_only_by_an_explicit_choice\n    self.assertEqual((s[\"state\"], s[\"provider_model_id\"]), (\"CORRUPT\", None))\nAssertionError: Tuples differ: ('NOT_SELECTED', None) != ('CORRUPT', None)\n\nFirst differing element 0:\n'NOT_SELECTED'\n'CORRUPT'\n\n- ('NOT_SELECTED', None)\n+ ('CORRUPT', None)\n"
+  ]
+ ]
+}

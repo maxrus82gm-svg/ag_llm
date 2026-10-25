@@ -1,0 +1,75 @@
+{
+ "label": "P2-wrong-provider-id",
+ "argv": [
+  "<REPO>\\.venv\\Scripts\\python.exe",
+  "-X",
+  "utf8",
+  "-B",
+  "<TEMP>\\claude-wua1-mirror-P2-wrong-provider-id-i25q_161\\code\\wa4a_acceptance.py",
+  "--task",
+  "CLAUDE-WUA-1-EVM-CONNECTIONS-001",
+  "--output",
+  "<TEMP>\\claude-wua1-mut1-P2-wrong-provider-id-z24i5_zg\\out",
+  "test_web_alarm_ultra_connections"
+ ],
+ "exit": 1,
+ "wall_seconds": 7.881,
+ "base": "<TEMP>\\claude-wua1-mut1-P2-wrong-provider-id-z24i5_zg",
+ "runner_root": "<TEMP>\\claude-wua1-mirror-P2-wrong-provider-id-i25q_161\\code",
+ "tests_run": 14,
+ "passed": 5,
+ "failures": 9,
+ "errors": 0,
+ "skips": 0,
+ "elapsed_seconds": 6.791,
+ "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+ "successful": false,
+ "isolation_violations": 0,
+ "non_pass": [
+  [
+   "test_web_alarm_ultra_connections.HttpTests.test_real_http_round_trip_never_carries_a_secret_or_a_log_line",
+   "FAIL",
+   "SAVED\", \"GigaChat-3-Ultra\"))\nAssertionError: Tuples differ: ('SAVED', 'gigachat_ultra') != ('SAVED', 'GigaChat-3-Ultra')\n\nFirst differing element 1:\n'gigachat_ultra'\n'GigaChat-3-Ultra'\n\n- ('SAVED', 'gigachat_ultra')\n?            ^   ^   ^^\n\n+ ('SAVED', 'GigaChat-3-Ultra')\n?            ^   ^   ^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_2')",
+   "FAIL",
+   "ement 3:\n'gigachat_2'\n'GigaChat-2'\n\n- ('SAVED', 'api:gigachat:gigachat_2', 'gigachat_2', 'gigachat_2')\n?                                                     ^   ^   ^\n\n+ ('SAVED', 'api:gigachat:gigachat_2', 'gigachat_2', 'GigaChat-2')\n?                                                     ^   ^   ^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_2_max')",
+   "FAIL",
+   ", 'api:gigachat:gigachat_2_max', 'gigachat_2_max', 'gigachat_2_max')\n?                                                             ^   ^   ^ ^^\n\n+ ('SAVED', 'api:gigachat:gigachat_2_max', 'gigachat_2_max', 'GigaChat-2-Max')\n?                                                             ^   ^   ^ ^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_2_pro')",
+   "FAIL",
+   ", 'api:gigachat:gigachat_2_pro', 'gigachat_2_pro', 'gigachat_2_pro')\n?                                                             ^   ^   ^ ^^\n\n+ ('SAVED', 'api:gigachat:gigachat_2_pro', 'gigachat_2_pro', 'GigaChat-2-Pro')\n?                                                             ^   ^   ^ ^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_3_lightning')",
+   "FAIL",
+   "tning', 'gigachat_3_lightning', 'GigaChat-3-Lightning')\n\nFirst differing element 3:\n'gigachat_3_lightning'\n'GigaChat-3-Lightning'\n\n  ('SAVED',\n   'api:gigachat:gigachat_3_lightning',\n   'gigachat_3_lightning',\n-  'gigachat_3_lightning')\n?   ^   ^   ^ ^^\n\n+  'GigaChat-3-Lightning')\n?   ^   ^   ^ ^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_3_pro')",
+   "FAIL",
+   ", 'api:gigachat:gigachat_3_pro', 'gigachat_3_pro', 'gigachat_3_pro')\n?                                                             ^   ^   ^ ^^\n\n+ ('SAVED', 'api:gigachat:gigachat_3_pro', 'gigachat_3_pro', 'GigaChat-3-Pro')\n?                                                             ^   ^   ^ ^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id (model='gigachat_ultra')",
+   "FAIL",
+   ", 'api:gigachat:gigachat_ultra', 'gigachat_ultra', 'gigachat_ultra')\n?                                                             ^   ^   ^^\n\n+ ('SAVED', 'api:gigachat:gigachat_ultra', 'gigachat_ultra', 'GigaChat-3-Ultra')\n?                                                             ^   ^   ^^^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference (model='gigachat_2_pro')",
+   "FAIL",
+   ") != ('SAVED', 'gigachat_2_pro', 'GigaChat-2-Pro')\n\nFirst differing element 2:\n'gigachat_2_pro'\n'GigaChat-2-Pro'\n\n- ('SAVED', 'gigachat_2_pro', 'gigachat_2_pro')\n?                              ^   ^   ^ ^^\n\n+ ('SAVED', 'gigachat_2_pro', 'GigaChat-2-Pro')\n?                              ^   ^   ^ ^^\n\n"
+  ],
+  [
+   "test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference (model='gigachat_ultra')",
+   "FAIL",
+   " ('SAVED', 'gigachat_ultra', 'GigaChat-3-Ultra')\n\nFirst differing element 2:\n'gigachat_ultra'\n'GigaChat-3-Ultra'\n\n- ('SAVED', 'gigachat_ultra', 'gigachat_ultra')\n?                              ^   ^   ^^\n\n+ ('SAVED', 'gigachat_ultra', 'GigaChat-3-Ultra')\n?                              ^   ^   ^^^^\n\n"
+  ]
+ ]
+}

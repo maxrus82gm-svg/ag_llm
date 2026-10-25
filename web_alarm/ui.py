@@ -115,8 +115,22 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .connection[data-state=online]{color:var(--green)}.connection[data-state=offline]{color:var(--amber)}
 .path-row{display:flex;gap:8px;align-items:center}.path-row input{min-width:0;flex:1}.path-row button{flex-shrink:0;white-space:nowrap}
 .mobile-toggle{display:none}.report-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+/* WUA-1 EVM tab: connections of the shared Ultra core (API | MCP / agents | local LLM). */
+.top-nav{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
+.top-nav button[aria-pressed=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 0 -2px var(--blue)}
+.evm{max-width:2000px;margin:auto;height:calc(100dvh - 73px);overflow:auto;padding:26px 28px 44px}
+.evm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.evm-head h2{font-size:24px;margin:8px 0}
+.evm-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px;align-items:start}
+.evm-col{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.evm-col h3{font-size:16px}
+.evm-list{display:grid;gap:10px}
+.evm-model{border:1px solid #344454;background:#182431;border-radius:10px;padding:13px;display:grid;gap:8px;min-width:0}
+.evm-model[data-selected=true]{border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.evm-model .row{gap:6px}
+.evm-add{border:1px dashed #526579;border-radius:10px;padding:12px;color:var(--muted);text-align:center;font-size:13px}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
-@media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}}
+@media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -129,6 +143,10 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="live">Постановки · этапы · восстановление</div>
 </div>
 </div>
+<nav class="top-nav" aria-label="Разделы Web Alarm">
+<button type="button" id="viewOperator" aria-pressed="true" aria-controls="layout">Операторская панель</button>
+<button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
+</nav>
 <div class="top-actions">
 <span class="connection" id="serverStatus" role="status" data-state="checking">Проверяем соединение…</span>
 <button class="mobile-toggle" id="showWorkspaces" aria-controls="workspacesPanel">Проекты</button>
@@ -320,6 +338,21 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="side-scroll"><div id="draftEntry"></div><h3 class="side-title spaced">Текущие и ожидающие</h3><div id="activeTasks" class="task-list"></div><h3 class="side-title">Завершённые <span id="completedCount"></span></h3><div id="completedTasks" class="task-list"></div></div>
 </aside>
 </div>
+<section id="evmView" class="evm" aria-labelledby="evmHeading" hidden>
+<div class="evm-head">
+<div><span class="eyebrow">EVM · общее ядро Ultra</span><h2 id="evmHeading" tabindex="-1">Подключения Ultra</h2>
+<p class="muted">Модели берутся из общего реестра Ultra (model_registry). Наличие в реестре не означает проверенного API-подключения: на этом этапе API не проверяется и запросы не отправляются.</p></div>
+<div class="row"><span id="evmState" class="live" role="status">Реестр ещё не загружен</span><button type="button" id="evmRefresh">↻ Обновить список</button></div>
+</div>
+<div id="evmError" class="notice error" role="alert" hidden></div>
+<div id="evmNotice" class="notice success" role="status" hidden></div>
+<div class="card spaced"><p class="side-title">Модель для будущего Ultra Web Chat</p><p id="evmSelection" class="spaced">—</p><p class="muted spaced">Выбор хранится в Web Alarm и не меняет назначения моделей в прежней Ultra (Tkinter).</p></div>
+<div class="evm-columns">
+<section class="evm-col" aria-labelledby="evmApiTitle"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmMcpTitle"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><p class="muted">Подключения агентов появятся позже. Сейчас здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmLocalTitle"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><p class="muted">Локальные модели появятся позже. Сейчас здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+</div>
+</section>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -796,6 +829,80 @@ $('copyContext').onclick=()=>{
   copy(['TASK: '+v.task_state.task.task_id,'Workspace: '+v.workspace.workspace_id,'Снимок: '+v.operator.read_at,'Свежий: '+view.fresh,'Статус: '+v.task_state.task.status,'Исходная постановка: '+v.task_state.task.raw_task,'Цель: '+v.task_state.task.goal,'План: '+JSON.stringify(v.task_state.plan),'Отчёты этапов: '+JSON.stringify(v.reports),'Этап: '+v.current_microtask_id,'Recovery: '+v.recovery_state,'NEXT SAFE ACTION: '+v.next_safe_action].join('\n'))
 }
 ;
+// WUA-1 EVM: connections of the shared Ultra core. Nothing is requested until the tab is opened;
+// every model comes from the server read model of model_registry, never from a list in this page.
+const evm={epoch:0,busy:false,data:null,view:'operator'};
+const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
+function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
+function showView(name){
+  const isEvm=name==='evm';evm.view=isEvm?'evm':'operator';
+  $('layout').hidden=isEvm;$('evmView').hidden=!isEvm;
+  $('viewEvm').setAttribute('aria-pressed',String(isEvm));$('viewOperator').setAttribute('aria-pressed',String(!isEvm));
+  $('showWorkspaces').hidden=isEvm;$('showTasks').hidden=isEvm;
+  if(isEvm){$('evmHeading').focus();return loadEvm()}
+  $('main').focus()
+}
+function validEvm(data){
+  const api=data?.columns?.api;
+  if(!api||!Array.isArray(api.connections)||!data.columns.mcp_agents||!data.columns.local_llm||!data.selection?.chat)return false;
+  return api.connections.every(c=>c&&['connection_id','model_id','display_name','provider_model_id','status','verification'].every(k=>typeof c[k]==='string')&&typeof c.selectable==='boolean'&&typeof c.selected==='boolean')
+}
+function evmSelectionText(s){
+  if(s.state==='SAVED')return 'Выбрана: '+s.display_name+' · '+s.model_id+' → '+s.provider_model_id+(s.selected_at?' · сохранено '+s.selected_at:'');
+  if(s.state==='CORRUPT')return 'Сохранённый выбор повреждён и не используется. Выберите модель заново.';
+  if(s.state==='INVALID_REFERENCE')return 'Сохранённая модель недоступна в реестре ('+(s.connection_id||'—')+'). Выберите модель заново.';
+  if(s.state==='REGISTRY_UNAVAILABLE')return 'Сохранённый выбор ('+(s.connection_id||'—')+') сейчас не проверить: общий реестр моделей недоступен.';
+  return 'Модель для Ultra Web Chat ещё не выбрана.'
+}
+function renderEvm(data){
+  evm.data=data;const api=data.columns.api,s=data.selection.chat;
+  $('evmApiState').replaceChildren(evmTag(api.state));
+  $('evmMcpState').replaceChildren(evmTag(data.columns.mcp_agents.state));
+  $('evmLocalState').replaceChildren(evmTag(data.columns.local_llm.state));
+  text('evmSelection',evmSelectionText(s));
+  if(api.state!=='AVAILABLE')notice('evmError','Общий реестр моделей недоступен: '+(api.reason||api.state));
+  const cards=api.connections.map(c=>{
+    const card=element('div',null,'evm-model');card.setAttribute('data-selected',String(c.selected));card.setAttribute('data-connection',c.connection_id);
+    const tags=element('div',null,'row');tags.append(evmTag(c.status),element('span','API не проверено','tag warn'));
+    if(c.selected)tags.append(element('span','Выбрана для чата','tag active'));
+    const button=element('button',c.selected?'Выбрана':'Выбрать');button.type='button';
+    button.disabled=evm.busy||c.selected||!c.selectable;button.setAttribute('aria-label','Выбрать '+c.display_name+' для Ultra Web Chat');
+    button.onclick=()=>selectConnection(c.connection_id);
+    card.append(element('strong',c.display_name),element('span',c.model_id+' → '+c.provider_model_id,'id'),tags,button);
+    return card
+  });
+  $('evmApiList').replaceChildren(...cards);
+  text('evmState',cards.length?'Моделей в реестре: '+cards.length:'Реестр пуст')
+}
+async function loadEvm(){
+  const epoch=++evm.epoch;$('evmRefresh').disabled=true;notice('evmError','');text('evmState','Загружаем реестр…');
+  try{
+    const data=await api('/ultra/connections');
+    if(epoch!==evm.epoch)return;
+    if(!validEvm(data))throw new Error('Некорректный ответ сервера о подключениях');
+    renderEvm(data)
+  }catch(e){
+    if(epoch!==evm.epoch)return;
+    notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
+  }finally{if(epoch===evm.epoch)$('evmRefresh').disabled=false}
+}
+async function selectConnection(id){
+  if(evm.busy)return;evm.busy=true;notice('evmNotice','');notice('evmError','');
+  if(evm.data)renderEvm(evm.data);
+  let saved=null,error=null;
+  try{
+    const r=await api('/ultra/connections/selection',{method:'POST',body:{role:'chat',connection_id:id}});
+    if(r?.selection?.state!=='SAVED'||r.selection.connection_id!==id)throw new Error('Сервер не подтвердил сохранение выбора');
+    saved=r.selection
+  }catch(e){error=e}
+  evm.busy=false;
+  await loadEvm();
+  if(error)notice('evmError','Выбор не сохранён: '+error.message);
+  else notice('evmNotice','Выбор сохранён: '+saved.display_name+' ('+saved.provider_model_id+')')
+}
+$('viewEvm').onclick=()=>showView('evm');
+$('viewOperator').onclick=()=>showView('operator');
+$('evmRefresh').onclick=()=>loadEvm();
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
   if(typeof saved.workspace==='string')view.workspace=saved.workspace;

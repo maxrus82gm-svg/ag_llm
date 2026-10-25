@@ -60,6 +60,14 @@ from .state_machine import (
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
 from .ui import INDEX_HTML
+from .ultra_connections import (
+    ConnectionRequestError,
+    DisabledConnectionError,
+    RegistryUnavailableError,
+    UltraConnections,
+    UltraConnectionsError,
+    UnknownConnectionError,
+)
 from .operator_view import navigation, operator_details
 from .observation import observe
 from .workspace_registry import (
@@ -185,6 +193,7 @@ class WebAlarmApi:
         self.projection = ProjectionService(storage_root)
         self.closeout = CloseoutService(storage_root)
         self.executor = MutationExecutor(storage_root)
+        self.ultra_connections = UltraConnections(self.tasks.storage_root)
 
     @property
     def storage_root(self) -> Path:
@@ -341,8 +350,24 @@ class WebAlarmApi:
                         "closeout",
                         "mutations",
                         "observe_diagnostics",
+                        "ultra_connections",
                     ],
                 }
+
+            # WUA-1 EVM tab: read model over the shared Ultra model registry + the saved web choice.
+            if parts == ["ultra", "connections"]:
+                if method != "GET":
+                    raise ApiError(405, "method_not_allowed", "the connections catalog is read-only")
+                return 200, self.ultra_connections.catalog()
+            if parts == ["ultra", "connections", "selection"]:
+                if method == "GET":
+                    return 200, {"selection": self.ultra_connections.selection(
+                        _optional_query_text(query, "role") or "chat")}
+                if method == "POST":
+                    data = _require_object(body)
+                    return 200, {"selection": self.ultra_connections.select(
+                        data.get("role", "chat"), data.get("connection_id"))}
+                raise ApiError(405, "method_not_allowed", "selection supports GET and POST")
 
             if parts == ["transport", "events"]:
                 if method == "GET":
@@ -1038,6 +1063,16 @@ class WebAlarmApi:
             raise ApiError(409, "recovery_coordinator_error", str(exc)) from exc
         except (RecoveryReportStoreError, RecoveryReportBuilderError) as exc:
             raise ApiError(409, "recovery_report_error", str(exc)) from exc
+        except ConnectionRequestError as exc:
+            raise ApiError(400, "invalid_connection_request", str(exc)) from exc
+        except UnknownConnectionError as exc:
+            raise ApiError(404, "unknown_connection", str(exc)) from exc
+        except DisabledConnectionError as exc:
+            raise ApiError(409, "connection_disabled", str(exc)) from exc
+        except RegistryUnavailableError as exc:
+            raise ApiError(503, "model_registry_unavailable", str(exc)) from exc
+        except UltraConnectionsError as exc:
+            raise ApiError(409, "connections_state_error", str(exc)) from exc
         except ValueError as exc:
             raise ApiError(400, "invalid_value", str(exc)) from exc
 class _JsonHandler(BaseHTTPRequestHandler):
