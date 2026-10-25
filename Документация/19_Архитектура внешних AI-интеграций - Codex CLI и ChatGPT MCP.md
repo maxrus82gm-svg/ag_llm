@@ -1,6 +1,6 @@
 ### USER DIRECTION / 2026-10-25 — ChatGPT Desktop MCP: FROZEN, archive №39
 
-**PRIORITY STATUS OVERRIDE:** направление **обычный ChatGPT Desktop ↔ MCP ↔ Web Alarm/Ultra**, включая локальный plugin/STDIO, Secure MCP Tunnel, `STRICT_V2RAY_BROKER`, Windows C/B/NPFS/WFP и связанные native/source исследования, **заморожено решением пользователя**; новый USER GO нужен для любых дальнейших действий. Полная доказательная история, source/report locators, границы тестов и условия возврата: [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]].
+**PRIORITY STATUS OVERRIDE:** направление **обычный ChatGPT Desktop ↔ MCP ↔ Web Alarm/Ultra**, включая локальный plugin/STDIO, Secure MCP Tunnel, `STRICT_V2RAY_BROKER`, Windows C/B/NPFS/WFP и связанные native/source исследования, **заморожено решением пользователя**; новый USER GO нужен для любых дальнейших действий. Полная доказательная история, source/report locators, границы тестов и условия возврата: `39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25`.
 
 **ACTIVE USER PRIORITY:** сама Web Alarm Ultra, Connection Registry, внешние нейросети через официальные API и пользовательский веб-чат; исходные правила Web Alarm/WA4-R не отменяются. Архитектура API и Codex CLI/App Server не приравнивается к замороженному Desktop ChatGPT MCP. Старые разделы ниже — **история**, не текущий план запуска. Последний Codex `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` опубликован, но `AWAITING INDEPENDENT VERIFICATION WEB_12`; его активный БЛОК 1 не очищать и не закрывать автоматически.
 
