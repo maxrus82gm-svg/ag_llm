@@ -1,3 +1,13 @@
+## USER PRIORITY / 2026-10-25 — FREEZE CHATGPT DESKTOP MCP / RESUME WEB ALARM ULTRA API
+
+**CURRENT DECISION / SUPERSEDES MCP NEXT PROPOSALS:** пользователь приостановил разработку пути **ChatGPT Desktop Chat → MCP → Web Alarm Ultra** вместе с Secure MCP Tunnel, V2Ray/WFP/cross-SID и related tests. Не назначать Codex/другим агентам новые TASK этого направления, не открывать tunnel и не делать host/security changes без нового USER GO. **Source of truth — [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]]**, владелец архитектуры — [[19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP]]. Все предыдущие WEB_09–12 MCP записи ниже исторические; их технические PASS относятся лишь к ограниченным offline/source областям, не E2E.
+
+**Open handoff:** `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` уже опубликована в `main@e6aa16cc0a8fd18bf7e8cb71ead648008b83f098`, самостоятельный Codex report `PASS / BOUNDED READINESS` и `AWAITING INDEPENDENT VERIFICATION WEB_12`; **нет независимого verdict, нет terminal closeout, персональный БЛОК 1 остаётся назначенным**. Держать `HOLD` до нового решения пользователя, не делать фиктивной ротации. Любой незавершённый живой Codex-run пользователь останавливает отдельно.
+
+**ACTIVE NEXT DIRECTION:** подготовить следующую отдельную задачу на реализацию **Web Alarm Ultra: provider/API connection registry, GigaChat/provider adapters, создание/ведение обычных чатов и сохранение истории**, согласовав с №37 (долгосрочная рамка) и действующим Web Alarm architecture/WA4-R. Это новый USER PRIORITY, но не автоматическое кодовое или платное API GO. Исторический запрет №38 от 2026-10-17 начинать Ultra Tab сейчас **не является текущим приоритетом**. Заморозка внешнего ChatGPT Desktop MCP не запрещает стандартные API/мультимодельную Ultra.
+
+---
+
 ## WEB_12 / CURRENT — 2026-10-25 / Codex strict admission independent offline PASS
 
 **User-authorized documentation closeout** of `CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001` after `main@6456d669a8a804ddd75a0dbca242782c18d914da`; coordinator's working base for docs `main@124b43ed47ec5b2b40217324345ddbdd88066a19`.

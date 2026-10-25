@@ -1,3 +1,13 @@
+### USER DIRECTION / 2026-10-25 — ChatGPT Desktop MCP: FROZEN, archive №39
+
+**PRIORITY STATUS OVERRIDE:** направление **обычный ChatGPT Desktop ↔ MCP ↔ Web Alarm/Ultra**, включая локальный plugin/STDIO, Secure MCP Tunnel, `STRICT_V2RAY_BROKER`, Windows C/B/NPFS/WFP и связанные native/source исследования, **заморожено решением пользователя**; новый USER GO нужен для любых дальнейших действий. Полная доказательная история, source/report locators, границы тестов и условия возврата: [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]].
+
+**ACTIVE USER PRIORITY:** сама Web Alarm Ultra, Connection Registry, внешние нейросети через официальные API и пользовательский веб-чат; исходные правила Web Alarm/WA4-R не отменяются. Архитектура API и Codex CLI/App Server не приравнивается к замороженному Desktop ChatGPT MCP. Старые разделы ниже — **история**, не текущий план запуска. Последний Codex `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` опубликован, но `AWAITING INDEPENDENT VERIFICATION WEB_12`; его активный БЛОК 1 не очищать и не закрывать автоматически.
+
+`can_apply=false`, `can_start_tunnel=false`, `install_uninstall=BLOCKED`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; ordinary ChatGPT Desktop E2E и eligibility личного Plus **NOT VERIFIED**.
+
+---
+
 ### WEB_10 / 2026-10-20 — portable MCP discovery/deployment toolkit v0.1.0-offline, independent bounded review
 
 **TASK:** `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001`; [user-published Codex toolkit / commit #374](https://github.com/maxrus82gm-svg/ag_llm/commit/6b3403f034b56b3dbb89f3ffcb44695f8d194101). **VERDICT:** **OFFLINE TOOLKIT SOURCE / ARTIFACT PUBLICATION BOUNDED REVIEW PASS WITH EXPLICIT OPEN IMPLEMENTATION AND SECURITY GATES**; `RESULT READY` for the **permitted Discovery/Plan/static Verify/rollback planner deliverables**, **not** `SECURE INSTALLER READY` or Windows/V2Ray native security acceptance.
