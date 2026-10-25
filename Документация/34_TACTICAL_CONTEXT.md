@@ -1,3 +1,19 @@
+## WEB_12 / CURRENT — 2026-10-25 / accepted bounded source review, user-approved terminal closeout
+
+Source `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`; task `CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001`, amendment01; independent **TERMINAL PARTIAL / INDEPENDENT BOUNDED SOURCE & EVIDENCE ACCEPTED**.
+
+Codex 007: exact source-only `github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde`; one GET via explicitly approved HTTP CONNECT according to agent audit, 0 redirects/fallback, 322 module files, ZIP raw SHA-256 `dfb3b8c7cbc603602c6cf453161d319209e5610477e1118354dd449bd9409659`, Go module h1 `h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=`. Baseline 30/30, first RED 49/50 (Windows ZIP name normalization; preserved), intermediate 50/50, final **51/51 PASS** (11 source +19 pure +21 dependency), per Codex logs; not independently rerun on Windows.
+
+WEB_12: `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`; **87/87** published manifest paths bytes+SHA independently matched (LF/CRLF-aware); **6/6** independently fetched official `SagerNet/sing@ed51f65fbfde` source files and **33/33** locators match; Go module h1 recomputed from **published SHA values of 322 members**, not independently from original ZIP. Stored FAIL/final result and tests inspected. Physical egress/installed executable/ZIP itself, native Go/Windows/WFP, C/B SIDs/sockets, no-DIRECT proof and ordinary ChatGPT MCP E2E **NOT VERIFIED**.
+
+Source risks: `users=[]` disables proxy authentication; 407/error logs can expose username/password or `Proxy-Authorization`; CONNECT sends `200` before dial/route; HTTP Upgrade/plain alternatives and X-Forwarded-For source override; URL-safe-vs-standard Basic Base64 ambiguity and ignored port-parse error; permissive JSON duplicates/null/case/merge/reload; prior default DIRECT, local DNS/UoT/optional other egress; Go stdlib/x/sys source/native behavior incomplete. No proven native bypass asserted. `engine.family=V2Ray` unchanged, `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; no install/engine switch/proxy/system activation.
+
+**Closeout:** full frozen task `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/task_snapshot.md` SHA256 `1a4ff13a6fa580b1531df05afe39d46a64663bcfab61518c852c598a03a9ecac`, separate consumed GO `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/USER_GO.md`, reports/manifest under `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/`, historical BLOCKED in `initial_blocked/`; previous WEB_11 accepted baseline remains. Coordinated single documentation commit `GPT`, personal 001/B2-B4, №06/05/19/general 000. B1 cleared to WAITING as **last logical documentation operation**. Before Codex starts next task, user must merge `GPT → main`, locally synchronize and copy a new B1 from ChatGPT's three-part chat output.
+
+**NEXT:** new user-assigned *offline strict admission/secret-safe failure/default-deny* proof task, then controlled lab-native/WFP tests by separate GO. No new automatic downloads or engine switch. Strict scope remains `STRICT_V2RAY_BROKER`; held tunnel.
+
+---
+
 ## WEB_11 → NEXT MCP CHAT / 2026-10-25 — краткий handoff
 
 **Контур:** ChatGPT ↔ Web Alarm Ultra via MCP, отдельно от WEB_15/Claude WA4-R. Source на handoff: `main@357a71442cc57a67e5df45d7901401d495409df0`, `GPT@a2b066b1c28f9e2b74747a9823b0697894aaf8f4`; следующий чат обязан перепроверить HEAD и действующие задачи, не считать старые SHA новыми.

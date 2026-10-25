@@ -9491,3 +9491,22 @@ Git-команды, изменение рабочих прокси, запуск
 
 **Report:** `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`; **manifest:** `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/manifest.json`; **checks:** `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/test_results.json`; exact final source/regression locator included; next_user_decision.md requests matching source-only sing dependency bundle, no further download authorized. Prior BLOCKED evidence preserved under amendment_01.
 **Independent acceptance:** NOT VERIFIED; БЛОК 4 unchanged; next review WEB_11.
+
+
+---
+
+## 2026-10-25 — CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / WEB_12 TERMINAL
+
+**USER CLOSEOUT GO:** user explicitly approved terminal PARTIAL documentation closure after independent WEB_12 verdict, retaining every unresolved security gate. **Independent verdict:** **TERMINAL PARTIAL / INDEPENDENT BOUNDED SOURCE & EVIDENCE ACCEPTED**. This is source/evidence acceptance only, not FULL PASS, native security, or production approval.
+
+**Full frozen B1 (permanent, complete):** `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/task_snapshot.md` — SHA-256 `1a4ff13a6fa580b1531df05afe39d46a64663bcfab61518c852c598a03a9ecac`, 18134 raw bytes, Git blob `d2c377ef62e6ef9f4135813126b3e621fcb8d507`; verified byte-content normalization against pre-closeout B1 on `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`. **Amendment01 / separate user download GO:** `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/USER_GO.md` (one exact ZIP); historical initial BLOCKED bundle: `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/`. Source reports: `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/report.md`, canonical `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`; manifest `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/manifest.json`, checks `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/checks.json`, callgraph `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/source_callgraph.md`, gap matrix `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/strict_route_gap_matrix.md`.
+
+**Factual result and independent verification (distinct):**
+
+Codex 007: exact source-only `github.com/sagernet/sing@v0.8.3-0.20260315153529-ed51f65fbfde`; one GET via explicitly approved HTTP CONNECT according to agent audit, 0 redirects/fallback, 322 module files, ZIP raw SHA-256 `dfb3b8c7cbc603602c6cf453161d319209e5610477e1118354dd449bd9409659`, Go module h1 `h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=`. Baseline 30/30, first RED 49/50 (Windows ZIP name normalization; preserved), intermediate 50/50, final **51/51 PASS** (11 source +19 pure +21 dependency), per Codex logs; not independently rerun on Windows.
+
+WEB_12: `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`; **87/87** published manifest paths bytes+SHA independently matched (LF/CRLF-aware); **6/6** independently fetched official `SagerNet/sing@ed51f65fbfde` source files and **33/33** locators match; Go module h1 recomputed from **published SHA values of 322 members**, not independently from original ZIP. Stored FAIL/final result and tests inspected. Physical egress/installed executable/ZIP itself, native Go/Windows/WFP, C/B SIDs/sockets, no-DIRECT proof and ordinary ChatGPT MCP E2E **NOT VERIFIED**.
+
+Source risks: `users=[]` disables proxy authentication; 407/error logs can expose username/password or `Proxy-Authorization`; CONNECT sends `200` before dial/route; HTTP Upgrade/plain alternatives and X-Forwarded-For source override; URL-safe-vs-standard Basic Base64 ambiguity and ignored port-parse error; permissive JSON duplicates/null/case/merge/reload; prior default DIRECT, local DNS/UoT/optional other egress; Go stdlib/x/sys source/native behavior incomplete. No proven native bypass asserted. `engine.family=V2Ray` unchanged, `can_apply=false`, `can_start_tunnel=false`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`; no install/engine switch/proxy/system activation.
+
+**Disposition/NEXT:** terminal PARTIAL releases old B1 only after full archive/readback and consistency checks. Next proposed task: strict offline admission policy and fail-closed tests reusing existing broker/security contracts; not authorized for executor before user assignment and `GPT → main` sync. Previous WEB_11 independent review is preserved separately in №06 and original card/history; do not rewrite it as a WEB_12 PASS.
