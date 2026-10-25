@@ -1,0 +1,1045 @@
+{
+  "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
+  "source_roots": {
+    "sing": "M:/WUA_SOURCE_REVIEW/sing/v0.8.3-0.20260315153529-ed51f65fbfde/source",
+    "sing-box": "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4"
+  },
+  "locators": [
+    {
+      "id": "http_read",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 33,
+      "anchor": "request, err := ReadRequest(reader)",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_factory",
+      "path": "common/auth/auth.go",
+      "function": "NewAuthenticator",
+      "line": 15,
+      "anchor": "if len(users) == 0 {",
+      "file_sha256": "ead6797431505335e84ac8125cff50909e8f978ec648f52d440b9c672a4a5df7",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_factory",
+      "path": "common/auth/auth.go",
+      "function": "NewAuthenticator",
+      "line": 16,
+      "anchor": "return nil",
+      "file_sha256": "ead6797431505335e84ac8125cff50909e8f978ec648f52d440b9c672a4a5df7",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_factory",
+      "path": "common/auth/auth.go",
+      "function": "NewAuthenticator",
+      "line": 29,
+      "anchor": "return ok && common.Contains(passwordList, password)",
+      "file_sha256": "ead6797431505335e84ac8125cff50909e8f978ec648f52d440b9c672a4a5df7",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_guard",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 37,
+      "anchor": "if authenticator != nil {",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_guard",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 50,
+      "anchor": "authOk = authenticator.Verify(username, password)",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_guard",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 56,
+      "anchor": "if !authOk {",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_guard",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 59,
+      "anchor": "request, http.StatusProxyAuthRequired,",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_codec",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 44,
+      "anchor": "strings.HasPrefix(authorization, \"Basic \")",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_codec",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 45,
+      "anchor": "base64.URLEncoding.DecodeString(authorization[6:])",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_error_disclosure",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 66,
+      "anchor": "\", password=\", password",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "auth_error_disclosure",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 68,
+      "anchor": "Proxy-Authorization=\", authorization",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "connect_target",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 79,
+      "anchor": "if request.Method == \"CONNECT\" {",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "connect_target",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 80,
+      "anchor": "M.ParseSocksaddrHostPortStr(request.URL.Hostname(), request.URL.Port()).Unwrap()",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "connect_target",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 81,
+      "anchor": "if destination.Port == 0 {",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "connect_dispatch",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 89,
+      "anchor": "200 Connection established",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "connect_dispatch",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx",
+      "line": 104,
+      "anchor": "handler.NewConnectionEx(ctx, requestConn, source, destination, onClose)",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "http_alternates",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx/handleHTTPConnection",
+      "line": 106,
+      "anchor": "strings.ToLower(request.Header.Get(\"Connection\")) == \"upgrade\"",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "http_alternates",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx/handleHTTPConnection",
+      "line": 136,
+      "anchor": "err = handleHTTPConnection(ctx, handler, conn, request, source)",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "http_alternates",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx/handleHTTPConnection",
+      "line": 180,
+      "anchor": "return http.ErrUseLastResponse",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "http_alternates",
+      "path": "protocol/http/handshake.go",
+      "function": "HandleConnectionEx/handleHTTPConnection",
+      "line": 172,
+      "anchor": "go handler.NewConnectionEx(ctx, output, source, M.ParseSocksaddr(address).Unwrap()",
+      "file_sha256": "de859f01ce2ac1e071f5a93e8d0fb04f83e3998fb9fd748c36249c25dde83808",
+      "snapshot": "sing"
+    },
+    {
+      "id": "source_override",
+      "path": "protocol/http/addr.go",
+      "function": "SourceAddress",
+      "line": 12,
+      "anchor": "request.Header.Get(\"X-Forwarded-For\")",
+      "file_sha256": "36d65df03294efd9eaf86b1b1b8bf96b3a10a21a12e8039abcfc8727d2b3ff82",
+      "snapshot": "sing"
+    },
+    {
+      "id": "source_override",
+      "path": "protocol/http/addr.go",
+      "function": "SourceAddress",
+      "line": 17,
+      "anchor": "address.Addr = originAddr",
+      "file_sha256": "36d65df03294efd9eaf86b1b1b8bf96b3a10a21a12e8039abcfc8727d2b3ff82",
+      "snapshot": "sing"
+    },
+    {
+      "id": "port_cast",
+      "path": "common/metadata/addr.go",
+      "function": "ParseSocksaddrHostPortStr",
+      "line": 227,
+      "anchor": "port, _ := strconv.Atoi(portStr)",
+      "file_sha256": "d5ef1a20d4926d839b96532256b4c6635c0ca9855f715084609b5173d90740b6",
+      "snapshot": "sing"
+    },
+    {
+      "id": "port_cast",
+      "path": "common/metadata/addr.go",
+      "function": "ParseSocksaddrHostPortStr",
+      "line": 232,
+      "anchor": "Port: uint16(port)",
+      "file_sha256": "d5ef1a20d4926d839b96532256b4c6635c0ca9855f715084609b5173d90740b6",
+      "snapshot": "sing"
+    },
+    {
+      "id": "stdlib_link",
+      "path": "protocol/http/link.go",
+      "function": "ReadRequest",
+      "line": 10,
+      "anchor": "//go:linkname ReadRequest net/http.readRequest",
+      "file_sha256": "ae5bc274e6c1608140ae3fd6ea9e1f762e81b8c8f06c3a5fc645cba035dc3ed6",
+      "snapshot": "sing"
+    },
+    {
+      "id": "client_system_default",
+      "path": "protocol/http/client.go",
+      "function": "NewClient/DialContext",
+      "line": 49,
+      "anchor": "if options.Dialer == nil {",
+      "file_sha256": "b066f93c8ace98a84630ff82e6db8a8888defc40478008abeb6782804daadbbe",
+      "snapshot": "sing"
+    },
+    {
+      "id": "client_system_default",
+      "path": "protocol/http/client.go",
+      "function": "NewClient/DialContext",
+      "line": 50,
+      "anchor": "client.dialer = N.SystemDialer",
+      "file_sha256": "b066f93c8ace98a84630ff82e6db8a8888defc40478008abeb6782804daadbbe",
+      "snapshot": "sing"
+    },
+    {
+      "id": "client_system_default",
+      "path": "protocol/http/client.go",
+      "function": "NewClient/DialContext",
+      "line": 106,
+      "anchor": "base64.StdEncoding.EncodeToString([]byte(auth))",
+      "file_sha256": "b066f93c8ace98a84630ff82e6db8a8888defc40478008abeb6782804daadbbe",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_build",
+      "path": "common/json/context.go",
+      "function": "build-selected aliases",
+      "line": 1,
+      "anchor": "//go:build go1.20 && !without_contextjson",
+      "file_sha256": "321e4e8f592dfaf284e3681441ba18680bcb13463653d39564c7a7d87a3e1827",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_build",
+      "path": "common/json/context.go",
+      "function": "build-selected aliases",
+      "line": 6,
+      "anchor": "github.com/sagernet/sing/common/json/internal/contextjson",
+      "file_sha256": "321e4e8f592dfaf284e3681441ba18680bcb13463653d39564c7a7d87a3e1827",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_std_build",
+      "path": "common/json/std.go",
+      "function": "alternative aliases",
+      "line": 1,
+      "anchor": "//go:build !go1.20 || without_contextjson",
+      "file_sha256": "6d391b0d10e8e8b095c689fd96f9549c1b85021dc2c1299a5a7aff6030f47dc7",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_std_build",
+      "path": "common/json/std.go",
+      "function": "alternative aliases",
+      "line": 5,
+      "anchor": "import \"encoding/json\"",
+      "file_sha256": "6d391b0d10e8e8b095c689fd96f9549c1b85021dc2c1299a5a7aff6030f47dc7",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_extended",
+      "path": "common/json/unmarshal.go",
+      "function": "UnmarshalExtendedContext",
+      "line": 18,
+      "anchor": "NewCommentFilter(bytes.NewReader(content))",
+      "file_sha256": "d7227c3bf4b0519a6c36db9b9bbd2137052e82ebf2d1cdf3955c9ea6ab835313",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_extended",
+      "path": "common/json/unmarshal.go",
+      "function": "UnmarshalExtendedContext",
+      "line": 20,
+      "anchor": "err := decoder.Decode(&value)",
+      "file_sha256": "d7227c3bf4b0519a6c36db9b9bbd2137052e82ebf2d1cdf3955c9ea6ab835313",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_unknown",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.object",
+      "line": 744,
+      "anchor": "f = fields.byFoldedName[string(foldName(key))]",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_unknown",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.object",
+      "line": 776,
+      "anchor": "} else if d.disallowUnknownFields {",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_unknown",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.object",
+      "line": 777,
+      "anchor": "json: unknown field %q",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_null",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.literalStore",
+      "line": 953,
+      "anchor": "case reflect.Interface, reflect.Pointer, reflect.Map, reflect.Slice:",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_null",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.literalStore",
+      "line": 955,
+      "anchor": "// otherwise, ignore null for primitives/string",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_single_decode",
+      "path": "common/json/internal/contextjson/stream.go",
+      "function": "Decoder.Decode",
+      "line": 47,
+      "anchor": "func (dec *Decoder) DisallowUnknownFields()",
+      "file_sha256": "9826647c8b4312ec4b1a059076d9dee503b1c536a4d2fea929e7b652bbb8a945",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_single_decode",
+      "path": "common/json/internal/contextjson/stream.go",
+      "function": "Decoder.Decode",
+      "line": 78,
+      "anchor": "err = dec.d.unmarshal(v)",
+      "file_sha256": "9826647c8b4312ec4b1a059076d9dee503b1c536a4d2fea929e7b652bbb8a945",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_single_decode",
+      "path": "common/json/internal/contextjson/stream.go",
+      "function": "Decoder.Decode",
+      "line": 81,
+      "anchor": "dec.tokenValueEnd()",
+      "file_sha256": "9826647c8b4312ec4b1a059076d9dee503b1c536a4d2fea929e7b652bbb8a945",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_nested",
+      "path": "common/json/badjson/merge_objects.go",
+      "function": "UnmarshallExcludedContext",
+      "line": 42,
+      "anchor": "content.Remove(key)",
+      "file_sha256": "fb8b852812e90832d169ac440fec5d9397785ddf6067d739a5e1ca8035650a73",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_nested",
+      "path": "common/json/badjson/merge_objects.go",
+      "function": "UnmarshallExcludedContext",
+      "line": 54,
+      "anchor": "return json.UnmarshalContextDisallowUnknownFields(ctx, inputContent, object)",
+      "file_sha256": "fb8b852812e90832d169ac440fec5d9397785ddf6067d739a5e1ca8035650a73",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_duplicates",
+      "path": "common/json/badjson/object.go",
+      "function": "JSONObject.decodeJSON",
+      "line": 104,
+      "anchor": "m.Put(entryKey, entryValue)",
+      "file_sha256": "f861405b5c643651344037b2632bb046f2c567dcecf10c12b10c48a91f0cc698",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_overwrite",
+      "path": "common/x/linkedhashmap/map.go",
+      "function": "Map.Put",
+      "line": 46,
+      "anchor": "func (m *Map[K, V]) Put(key K, value V) V {",
+      "file_sha256": "3926ffb47aa764b885ccd2d7ab15131a3e0679ce9a35baa94d3db3135cd9d127",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_overwrite",
+      "path": "common/x/linkedhashmap/map.go",
+      "function": "Map.Put",
+      "line": 51,
+      "anchor": "entry.Value.Value = value",
+      "file_sha256": "3926ffb47aa764b885ccd2d7ab15131a3e0679ce9a35baa94d3db3135cd9d127",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_merge",
+      "path": "common/json/badjson/merge.go",
+      "function": "MergeJSON/mergeJSON",
+      "line": 82,
+      "anchor": "if rawSource == nil && rawDestination == nil {",
+      "file_sha256": "99edcfaff9a290c9a86715267ad2571342ce4298ec786c84e0ae0dfa56811d85",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_merge",
+      "path": "common/json/badjson/merge.go",
+      "function": "MergeJSON/mergeJSON",
+      "line": 115,
+      "anchor": "destination = append(destination, source...)",
+      "file_sha256": "99edcfaff9a290c9a86715267ad2571342ce4298ec786c84e0ae0dfa56811d85",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_merge",
+      "path": "common/json/badjson/merge.go",
+      "function": "MergeJSON/mergeJSON",
+      "line": 128,
+      "anchor": "entry.Value, err = mergeJSON(entry.Value, oldValue, disableAppend)",
+      "file_sha256": "99edcfaff9a290c9a86715267ad2571342ce4298ec786c84e0ae0dfa56811d85",
+      "snapshot": "sing"
+    },
+    {
+      "id": "json_merge",
+      "path": "common/json/badjson/merge.go",
+      "function": "MergeJSON/mergeJSON",
+      "line": 48,
+      "anchor": "return destination, nil",
+      "file_sha256": "99edcfaff9a290c9a86715267ad2571342ce4298ec786c84e0ae0dfa56811d85",
+      "snapshot": "sing"
+    },
+    {
+      "id": "http_dispatch",
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "line": 60,
+      "anchor": "Network:           []string{N.NetworkTCP}",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "http_dispatch",
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "line": 43,
+      "anchor": "auth.NewAuthenticator(options.Users)",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "http_dispatch",
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "line": 99,
+      "anchor": "http.HandleConnectionEx(",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "http_dispatch",
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "line": 41,
+      "anchor": "uot.NewRouter(router, logger)",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "listener",
+      "path": "common/listener/listener_tcp.go",
+      "function": "Listener.ListenTCP",
+      "line": 23,
+      "anchor": "func (l *Listener) ListenTCP()",
+      "file_sha256": "2cd4c4d057e256cfd1c23f730f6ce376fd9ccfeb2a0e998d46b19bb1a1e47e01",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "listener",
+      "path": "common/listener/listener_tcp.go",
+      "function": "Listener.ListenTCP",
+      "line": 71,
+      "anchor": "return listenConfig.Listen(l.ctx,",
+      "file_sha256": "2cd4c4d057e256cfd1c23f730f6ce376fd9ccfeb2a0e998d46b19bb1a1e47e01",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "system_proxy",
+      "path": "common/listener/listener.go",
+      "function": "Listener.Start",
+      "line": 100,
+      "anchor": "if l.setSystemProxy {",
+      "file_sha256": "af8dc8fe9602590a10439b9b1e9461e953685261f4f3a950f6e357319906f54b",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "system_proxy",
+      "path": "common/listener/listener.go",
+      "function": "Listener.Start",
+      "line": 113,
+      "anchor": "err = systemProxy.Enable()",
+      "file_sha256": "af8dc8fe9602590a10439b9b1e9461e953685261f4f3a950f6e357319906f54b",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "selected_outbound",
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "line": 103,
+      "anchor": "selectedOutbound, loaded = r.outbound.Outbound(action.Outbound)",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "selected_outbound",
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "line": 140,
+      "anchor": "if selectedRule == nil {",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "selected_outbound",
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "line": 141,
+      "anchor": "defaultOutbound := r.outbound.Default()",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "selected_outbound",
+      "path": "route/route.go",
+      "function": "Router.routeConnection",
+      "line": 131,
+      "anchor": "return action.Error(ctx)",
+      "file_sha256": "65f996a3ff312f4c0e74f134e211c5de87a13279d3a4dbbf116e885c4b95d9a6",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "direct_default",
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "line": 319,
+      "anchor": "outboundManager.Initialize(func()",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "direct_default",
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "line": 320,
+      "anchor": "return direct.NewOutbound(",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "direct_default",
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "line": 325,
+      "anchor": "option.DirectOutboundOptions{}",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "direct_default",
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "line": 328,
+      "anchor": "dnsTransportManager.Initialize(func()",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "direct_default",
+      "path": "box.go",
+      "function": "New default fallback factories",
+      "line": 333,
+      "anchor": "option.LocalDNSServerOptions{}",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "manager_default",
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "line": 69,
+      "anchor": "if m.defaultOutbound == nil {",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "manager_default",
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "line": 70,
+      "anchor": "m.defaultOutboundFallback()",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "manager_default",
+      "path": "adapter/outbound/manager.go",
+      "function": "Manager.Start/Create",
+      "line": 310,
+      "anchor": "m.defaultTag == \"\" && m.defaultOutbound == nil",
+      "file_sha256": "6b0adf0f2517a73af42761429d37bfb52c833fe59352298fc418f2284ac5a672",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "connection_failure",
+      "path": "route/conn.go",
+      "function": "ConnectionManager.NewConnection",
+      "line": 102,
+      "anchor": "remoteConn, err = this.DialContext(ctx, N.NetworkTCP, metadata.Destination)",
+      "file_sha256": "ec013d2a393695ff190066aaea9ff04c19207a88bc744cfc79b6d6ace6b97503",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "connection_failure",
+      "path": "route/conn.go",
+      "function": "ConnectionManager.NewConnection",
+      "line": 116,
+      "anchor": "N.CloseOnHandshakeFailure(conn, onClose, err)",
+      "file_sha256": "ec013d2a393695ff190066aaea9ff04c19207a88bc744cfc79b6d6ace6b97503",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "one_server_example",
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "line": 50,
+      "anchor": "serverAddr: options.ServerOptions.Build()",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "one_server_example",
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "line": 134,
+      "anchor": "h.tlsDialer.DialTLSContext(ctx, h.serverAddr)",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "one_server_example",
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "line": 136,
+      "anchor": "h.dialer.DialContext(ctx, N.NetworkTCP, h.serverAddr)",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "one_server_example",
+      "path": "protocol/trojan/outbound.go",
+      "function": "trojanDialer.DialContext (illustration, not selected protocol)",
+      "line": 144,
+      "anchor": "return trojan.NewClientConn(conn, h.key, destination)",
+      "file_sha256": "53f54a41cf99caa44d6f624e44e4656d6fce0629cfaf204fa09b07160aa7fe18",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "resolve",
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "line": 45,
+      "anchor": "if dialOptions.Detour != \"\" {",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "resolve",
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "line": 57,
+      "anchor": "if options.RemoteIsDomain &&",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "resolve",
+      "path": "common/dialer/dialer.go",
+      "function": "NewWithOptions",
+      "line": 126,
+      "anchor": "NewResolveDialer(",
+      "file_sha256": "63c005b8587da35ddff9fbde56d3800089f9b09b7e21a6c4188585e4c11313a7",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "local_dns",
+      "path": "dns/transport/local/resolv_windows.go",
+      "function": "dnsReadConfig/adapterAddresses",
+      "line": 99,
+      "anchor": "windows.GetAdaptersAddresses(",
+      "file_sha256": "e916c4fe78bf5dd5abb8d062a1d7afb436975bb57dfa9f92b545e04f7b3d5070",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "local_dns",
+      "path": "dns/transport/local/resolv_windows.go",
+      "function": "dnsReadConfig/adapterAddresses",
+      "line": 27,
+      "anchor": "conf.servers = defaultNS",
+      "file_sha256": "e916c4fe78bf5dd5abb8d062a1d7afb436975bb57dfa9f92b545e04f7b3d5070",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "uot",
+      "path": "common/uot/router.go",
+      "function": "Router.RouteConnectionEx",
+      "line": 29,
+      "anchor": "case uot.MagicAddress:",
+      "file_sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "uot",
+      "path": "common/uot/router.go",
+      "function": "Router.RouteConnectionEx",
+      "line": 72,
+      "anchor": "r.router.RoutePacketConnectionEx(",
+      "file_sha256": "7daaa523609b6e6aeb7477274bf5360b14299cd83462b900315780160254639d",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "health",
+      "path": "protocol/group/urltest.go",
+      "function": "URLTestGroup.PostStart",
+      "line": 270,
+      "anchor": "g.ticker = time.NewTicker(g.interval)",
+      "file_sha256": "66f1c24301e6ac36e92bf30847681e7780eda785e07fa09805cff4a163d57bdb",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "remote_rules",
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "line": 108,
+      "anchor": "s.fetch(ctx, startContext)",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "remote_rules",
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "line": 113,
+      "anchor": "s.updateTicker = time.NewTicker(s.updateInterval)",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "remote_rules",
+      "path": "route/rule/rule_set_remote.go",
+      "function": "RemoteRuleSet.StartContext/PostStart",
+      "line": 118,
+      "anchor": "go s.loopUpdate()",
+      "file_sha256": "3bd39362de869860839b7ed7f6a5589533b4481909bfdddddc456625a5875fd1",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "ntp",
+      "path": "box.go",
+      "function": "New conditional services",
+      "line": 204,
+      "anchor": "if ntpOptions.Enabled {",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "ntp",
+      "path": "box.go",
+      "function": "New conditional services",
+      "line": 374,
+      "anchor": "ntp.NewService(ntp.Options{",
+      "file_sha256": "c6d3d4d2f3ae5386ab377ab623b416a52996dfc5eb2eacb30f92aa7adb2efe5c",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "tor_helper",
+      "path": "protocol/tor/outbound.go",
+      "function": "Outbound.start",
+      "line": 109,
+      "anchor": "tor.Start(t.ctx, t.startConf)",
+      "file_sha256": "99d472aa7c546728807e8f615406b8fdb7d6b9676afb275f30b2378b1dc235be",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "tor_helper",
+      "path": "protocol/tor/outbound.go",
+      "function": "Outbound.start",
+      "line": 166,
+      "anchor": "socks.NewClient(N.SystemDialer,",
+      "file_sha256": "99d472aa7c546728807e8f615406b8fdb7d6b9676afb275f30b2378b1dc235be",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "ech_dns",
+      "path": "common/tls/ech.go",
+      "function": "ECHClientConfig.fetchAndHandshake",
+      "line": 150,
+      "anchor": "s.dnsRouter.Exchange(ctx, message, adapter.DNSQueryOptions{})",
+      "file_sha256": "0b5faff382d5cc2af0b940d5ada8e2780a1830f8db124ad9aa92504af340761f",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "reality_cover",
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "line": 222,
+      "anchor": "go realityClientFallback(",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "reality_cover",
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "line": 234,
+      "anchor": "return uConn, nil",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "reality_cover",
+      "path": "common/tls/reality_client.go",
+      "function": "realityClientFallback",
+      "line": 245,
+      "anchor": "client.Do(request)",
+      "file_sha256": "caffb9330f1f122977906f190b2639afc049c6c557a605d64cff2971c611c289",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_default",
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "line": 67,
+      "anchor": "if len(configPaths) == 0 && len(configDirectories) == 0 {",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_default",
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "line": 68,
+      "anchor": "configPaths = append(configPaths, \"config.json\")",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_default",
+      "path": "cmd/sing-box/cmd.go",
+      "function": "preRun",
+      "line": 62,
+      "anchor": "os.Chdir(workingDir)",
+      "file_sha256": "2130f8d63cbf93517c90660e761d6e30acfe77dc50854358a857d04de2e04ac9",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_merge",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "line": 52,
+      "anchor": "if path == \"stdin\" {",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_merge",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "line": 80,
+      "anchor": "for _, directory := range configDirectories {",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_merge",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "line": 96,
+      "anchor": "sort.Slice(optionsList,",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "config_merge",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfig/readConfigAndMerge",
+      "line": 112,
+      "anchor": "badjson.MergeJSON(",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "schema",
+      "path": "option/options.go",
+      "function": "Options.UnmarshalJSONContext",
+      "line": 31,
+      "anchor": "decoder.DisallowUnknownFields()",
+      "file_sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "schema",
+      "path": "option/options.go",
+      "function": "Options.UnmarshalJSONContext",
+      "line": 37,
+      "anchor": "return checkOptions(o)",
+      "file_sha256": "b08783a707aa7b3c069248b45d29842ac699ae8c035274f53f53fb0bf8052ab2",
+      "snapshot": "sing-box"
+    },
+    {
+      "id": "error_new",
+      "snapshot": "sing",
+      "path": "common/exceptions/error.go",
+      "function": "New",
+      "line": 26,
+      "anchor": "return errors.New(F.ToString(message...))",
+      "file_sha256": "51226f5495d38627666099f8a6ef428eddc2d6c4e46fb0a44eae867ecd58cdb4"
+    },
+    {
+      "id": "json_type_error",
+      "snapshot": "sing",
+      "path": "common/json/internal/contextjson/decode.go",
+      "function": "decodeState.literalStore",
+      "line": 970,
+      "anchor": "d.saveError(&UnmarshalTypeError{Value: \"bool\"",
+      "file_sha256": "b634123cf8943b57eeb45a332413ea6dec6e3cd303e3ac221f08314487db0b00"
+    },
+    {
+      "id": "comment_filter",
+      "snapshot": "sing",
+      "path": "common/json/comment.go",
+      "function": "NewCommentFilter",
+      "line": 32,
+      "anchor": "func NewCommentFilter(reader io.Reader) io.Reader {",
+      "file_sha256": "e129eae6d94c31c544038ff8153ba03dafdfe5e57545ef02c5c247fc226e98d7"
+    },
+    {
+      "id": "platform_dependency",
+      "snapshot": "sing",
+      "path": "common/buf/buffer_windows.go",
+      "function": "Buffer.Iovec",
+      "line": 3,
+      "anchor": "import \"golang.org/x/sys/windows\"",
+      "file_sha256": "a3e3a111eb880c2984031f2138616aaff3f6a01f4cebda37d3c05bd9933e194a"
+    },
+    {
+      "id": "parent_error_log",
+      "snapshot": "sing-box",
+      "path": "protocol/http/inbound.go",
+      "function": "Inbound.NewConnectionEx",
+      "line": 102,
+      "anchor": "h.logger.ErrorContext(ctx, E.Cause(err, \"process connection from \", metadata.Source))",
+      "file_sha256": "a4e050782e18f965a81a27cb59b8ec073548c5170033631fc89e2c1198400fbe"
+    },
+    {
+      "id": "parent_nested",
+      "snapshot": "sing-box",
+      "path": "option/inbound.go",
+      "function": "Inbound.UnmarshalJSONContext",
+      "line": 43,
+      "anchor": "err = badjson.UnmarshallExcludedContext(ctx, content, (*_Inbound)(h), options)",
+      "file_sha256": "73e74abdf76a1c54eb91af767fd970dae33e832f3b712d7d74cbe2fb2f59d8f1"
+    },
+    {
+      "id": "parent_merge",
+      "snapshot": "sing-box",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "readConfigAndMerge",
+      "line": 112,
+      "anchor": "mergedMessage, err = badjson.MergeJSON(",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "id": "parent_reload",
+      "snapshot": "sing-box",
+      "path": "cmd/sing-box/cmd_run.go",
+      "function": "run",
+      "line": 181,
+      "anchor": "if osSignal == syscall.SIGHUP {",
+      "file_sha256": "61b5c3f7df80c898e7c23d0680d71df957bb089620760ef12e0c72f6efa80bfb"
+    },
+    {
+      "id": "parent_callback",
+      "snapshot": "sing-box",
+      "path": "adapter/upstream.go",
+      "function": "myUpstreamHandlerWrapperEx.NewConnectionEx",
+      "line": 44,
+      "anchor": "w.connectionHandler(ctx, conn, myMetadata, onClose)",
+      "file_sha256": "c5a9a99f5d438a90f7d697c9a6a73986692595a3df545f2ec6271515c267a857"
+    }
+  ],
+  "limit": "Exact source anchors, not a Go AST/semantic/native proof"
+}

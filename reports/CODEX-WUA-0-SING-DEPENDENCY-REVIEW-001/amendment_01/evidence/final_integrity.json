@@ -1,0 +1,55 @@
+{
+  "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
+  "checked_at": "2026-10-24T20:50:43.634390+00:00",
+  "initial_package_files_preserved": 15,
+  "initial_manifest_sha256": "bd4d417d93c71faa5bf5fdbafd429129033b798eb69675589922307d989d9cc8",
+  "read_only_selected_inputs_unchanged": 26,
+  "read_only_input_paths": [
+    "Документация/000_Задачи Codex.md",
+    "Документация/08_Старт.md",
+    "Документация/34_TACTICAL_CONTEXT.md",
+    "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md",
+    "Документация/01_Архитектура и текущее состояние.md",
+    "Документация/18_Регламент сопровождения документации.md",
+    "Документация/36_Единая архитектура тестирования.md",
+    "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+    "Документация/36.2_Профиль тестирования Web Alarm Workspace.md",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/USER_GO.md",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/download_receipt.json",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_tree_manifest.json",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/dependency_gap.json",
+    "reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/amendment_01/evidence/source_locations.json",
+    ".gitignore",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/go.mod",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/go.sum",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/protocol/http/inbound.go",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/option/options.go",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/cmd/sing-box/cmd_run.go",
+    "M:/WUA_SOURCE_REVIEW/sing-box/v1.13.4/source/sing-box-1.13.4/common/uot/router.go",
+    "integrations/wua_chatgpt_mcp/broker.py",
+    "integrations/wua_chatgpt_mcp/security_contract.py",
+    "integrations/wua_chatgpt_mcp/common.py",
+    "integrations/wua_chatgpt_mcp/tests/broker_suite.py"
+  ],
+  "authorized_modified_source_tests": [
+    {
+      "path": "integrations/wua_chatgpt_mcp/singbox_source_review.py",
+      "before_sha256": "e96ec56bbc635c1cbfe0e094fc9f54c4082f09b52d056e1b56c8a6090ee5c326",
+      "after_sha256": "500d9dcc13ef661bd0dc660c481caf8c956ccba95936b6fce0edd71f333d1169"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py",
+      "before_sha256": "e0c2af138d3b1f7d048ed307527fdbf61678fb7a23f457f5a3c81c13960c9caa",
+      "after_sha256": "e678ea9ca57e875b76986d3a249016c2f79545f5c71b705b6ff642979d4da834"
+    }
+  ],
+  "parent_source_files_unchanged": 1013,
+  "parent_zip_sha_matches": true,
+  "sing_source_files_unchanged": 322,
+  "sing_h1_recomputed_with_final_validator": "h1:RNQzlpnsXIuu1HGts/fIzJ1PR7RhrzaNlU52MDyiX1c=",
+  "final_test_source_pins_match": true,
+  "card_all_blocks_unchanged": true,
+  "personal_001_read_or_write": false,
+  "limit": "Selected inputs + complete two supplied source trees; not whole workspace/OS/global isolation attestation"
+}

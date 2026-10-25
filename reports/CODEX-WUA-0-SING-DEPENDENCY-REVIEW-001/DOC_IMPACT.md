@@ -1,10 +1,10 @@
-# DOC IMPACT / SHARED DOC DELTA — предложение координатору
+# DOC IMPACT / SHARED DOC DELTA — WEB_12
 
-TASK: CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001. Никакие общие документы не изменены.
+No shared documentation/card/001 edits by Codex. Task remains assigned in B1.
 
-- **№19 §7.6:** прежнюю source-приёмку и findings сохранить. Дописать только factual blocker новой TASK: отдельный GO на exact sing module download не получен; загрузок 0, HTTP CONNECT/auth/JSON closure BLOCKED. Не объявлять engine compatibility или выбор движка.
-- **№34 WEB_11 current/NEXT:** отразить `DOWNLOAD_GO_REQUIRED`, ссылку на этот report/manifest и один следующий пользовательский gate. Не дублировать прежнюю независимую приёмку; security/hosted/ordinary-chat gates сохранить.
-- **№06:** после пользовательской передачи пакета — фактическое событие BLOCKED, новые source/native тесты 0/NOT RUN; отдельно прежние 30/30 как historical baseline, без суммирования. Независимый verdict добавляет только verifier.
-- **Карточка/001:** исполнитель ничего не меняет. БЛОК 1 не очищать автоматически; дальнейшее продолжение или terminal BLOCKED/closeout — по действующему порядку координатора и решению пользователя.
+- №19 §7.6: exact sing ZIP/h1 and bounded HTTP/auth/JSON findings. Empty-users auth bypass-by-design, secret-in-error, codec mismatch, 200-before-route, HTTP/Upgrade alternatives, JSON duplicate/null/merge ambiguity; native guarantees remain unverified. Preserve prior WEB_11 acceptance.
+- №34 current/NEXT: separate GO received/consumed, one download, final51, WEB_12 pending, stdlib/x/sys and logging/strict-admission/OS gates open. Do not automatically switch engine or authorize fetch/native.
+- №06: factual amendment; baseline30, first RED49/50, intermediate50/50, final51/51 separately; Go/native/network tests NOT RUN. Initial BLOCKED package preserved. Independent verdict only after verifier's review.
+- Card/001 closeout: coordinator workflow after publication/review or user terminal PARTIAL decision; executor makes no rotation.
 
-Публикация: LOCAL ONLY / NOT SYNCED. Вручную просмотрены root `.gitignore` и отсутствие `reports/.gitignore`; matching exclusions для новой папки не обнаружены. Это не результат `git check-ignore` и не проверка system/global git excludes. Перед публикацией пользователь проверяет точный состав файлов; Git исполнителем не используется.
+LOCAL ONLY / NOT SYNCED. Root .gitignore has no matching new-task exclusion; reports/.gitignore absent. Git/global excludes not queried. User checks exact publication set. Third-party ZIP/tree remain outside repo; receipt/hashes/locators and data-only text mutants are included. Existing suite path reused, no duplicate root-level suite/framework.

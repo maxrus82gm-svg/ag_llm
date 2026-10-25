@@ -152,5 +152,19 @@
     "36.1": "Applicable TEST rules",
     "36.2": "Invariant matrix/isolated test scope",
     "previous_task": "Report, exact old GO, receipt, dependency gap, source locators/tree manifest"
-  }
+  },
+  "phase": "Initial addressed rules preserved; amendment reviewed exact sing source and user GO",
+  "current_changed_source_pins": [
+    {
+      "path": "integrations/wua_chatgpt_mcp/singbox_source_review.py",
+      "before_sha256": "e96ec56bbc635c1cbfe0e094fc9f54c4082f09b52d056e1b56c8a6090ee5c326",
+      "after_sha256": "500d9dcc13ef661bd0dc660c481caf8c956ccba95936b6fce0edd71f333d1169"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py",
+      "before_sha256": "e0c2af138d3b1f7d048ed307527fdbf61678fb7a23f457f5a3c81c13960c9caa",
+      "after_sha256": "e678ea9ca57e875b76986d3a249016c2f79545f5c71b705b6ff642979d4da834"
+    }
+  ],
+  "amendment_source_locator_ref": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/source_locators.json"
 }

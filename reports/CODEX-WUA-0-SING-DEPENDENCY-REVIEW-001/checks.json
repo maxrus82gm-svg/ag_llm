@@ -1,44 +1,68 @@
 {
   "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
-  "status": "BLOCKED / DOWNLOAD_GO_REQUIRED",
-  "kind": "Documentation/evidence checks, not source semantic or native tests",
-  "command": ".\\.venv\\Scripts\\python.exe -B reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/prepare_handoff.py",
-  "check_completed_at": "2026-10-24T20:16:54.699919+00:00",
-  "source_tests": {
-    "collected": 0,
-    "pass": 0,
+  "amendment": 1,
+  "status": "PARTIAL / AWAITING INDEPENDENT VERIFICATION WEB_12",
+  "command": ".\\.venv\\Scripts\\python.exe -B integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py --dependency",
+  "attempts": [
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978",
+      "collected": 30,
+      "pass": 30,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit_code": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7",
+      "collected": 50,
+      "pass": 49,
+      "fail": 1,
+      "error": 0,
+      "skip": 0,
+      "exit_code": 1
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb",
+      "collected": 50,
+      "pass": 50,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit_code": 0
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92",
+      "collected": 51,
+      "pass": 51,
+      "fail": 0,
+      "error": 0,
+      "skip": 0,
+      "exit_code": 0
+    }
+  ],
+  "final": {
+    "collected": 51,
+    "pass": 51,
     "fail": 0,
     "error": 0,
     "skip": 0,
-    "status": "NOT RUN / BLOCKED",
-    "exit_code": null
+    "exit_code": 0
   },
-  "native_go_engine_network_tests": "NOT RUN / FORBIDDEN",
-  "planned_source_controls_not_run": [
-    "source pin drift",
-    "module ZIP h1 mismatch",
-    "auth guard omission",
-    "parser/route mutation",
-    "DIRECT admission",
-    "unknown default"
-  ],
-  "go_mod_and_zip_go_sum_pin": "MATCH",
-  "source_hashes_matched": 6,
-  "source_hashes_compared": 6,
-  "locators_found": 10,
-  "protected_inputs_unchanged": true,
-  "protected_input_count": 24,
-  "all_outputs_confined_to_task": true,
-  "personal_001_read_or_write": false,
-  "agent_action_inventory": {
-    "network_requests": 0,
-    "downloads": 0,
-    "git_operations": 0,
-    "system_configuration_writes": 0,
-    "integration_source_writes": 0,
-    "test_file_writes": 0
+  "components": {
+    "existing_source": 11,
+    "existing_pure_contract": 19,
+    "new_archive_dependency": 21
   },
-  "publication_ignore_check": "Root .gitignore manually reviewed; reports/.gitignore absent. No Git/global-excludes claim.",
-  "manifest_readback": "Required after script exit; separate read-only command in final tool evidence.",
-  "independent_review": "PENDING"
+  "network_downloads": 1,
+  "network_tests": 0,
+  "go_native_build_install_runs": 0,
+  "runtime_activation": false,
+  "offline_socket_subprocess_guard": true,
+  "independent_verification": "PENDING WEB_12",
+  "test_gap_ref": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/test_quality_review.json",
+  "integrity_ref": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/final_integrity.json",
+  "packaging_note": "One apply_patch replace attempt was rejected for duplicate file operations; no mutation; new amendment report then copied to canonical root.",
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "git_used": false
 }

@@ -1,0 +1,15 @@
+{
+  "first_red_preserved": "source-20261025-013946-682a46e7",
+  "classification": "TEST FIXTURE / ZIP NAME REPRESENTATION",
+  "observed": "ZipInfo writer normalized backslash on Windows; expected PATH code not reached, h1 rejected altered archive",
+  "correction": "Inject raw local+central names, assert orig_filename trigger; reject normalization/NUL",
+  "oracle_weakened": false,
+  "later_engineering_hardening": "One capped byte snapshot for raw SHA/ZIP; oversize control added",
+  "semantic_tests_not_run": [
+    "Go HTTP parser/EOF/malformed authority",
+    "Go Basic codec/auth interoperability",
+    "Go JSON duplicate/null/trailing/merge execution",
+    "Native Windows/WFP/B-owned sockets/remote route"
+  ],
+  "go_text_mutation_is": "Lexical copied-source control only; not native Go execution"
+}

@@ -3,7 +3,7 @@
 No fetch/build/engine execution. Lexical assertions protect reviewed loci; hashes
 bind the rest. Neither lexical checks nor a release ZIP prove native security.
 """
-import base64,hashlib,re,stat,unicodedata,zipfile
+import base64,hashlib,io,re,stat,unicodedata,zipfile
 from pathlib import PurePosixPath
 from common import require
 REVISION='d09182614c7778c1e0f51d990635c5d4249c437e'
@@ -55,12 +55,17 @@ def module_zip_identity(path,expected_h1=SING_SUM):
     No extraction, Go tool invocation or trust in ZIP comments/tags.
     """
     module='github.com/sagernet/sing';prefix=module+'@'+SING_VERSION+'/'
-    raw=path.read_bytes();require(len(raw)<=32*1024*1024,'MODULE_ZIP_SIZE')
+    with path.open('rb') as stream:raw=stream.read(32*1024*1024+1)
+    require(len(raw)<=32*1024*1024,'MODULE_ZIP_SIZE')
     members=[];names=set();total=0;summary=hashlib.sha256()
-    with zipfile.ZipFile(path) as archive:
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
         entries=archive.infolist();require(0<len(entries)<=5000,'MODULE_ZIP_COUNT')
         for entry in entries:
             name=entry.filename
+            # ZipInfo normalizes Windows separators and truncates NUL names.
+            # Refuse such transformations before using names for h1/extraction.
+            require(entry.orig_filename==name,'MODULE_ZIP_PATH')
+            require(name.isascii(),'MODULE_ZIP_ASCII_SUBSET')
             require(name.startswith(prefix),'MODULE_ZIP_PREFIX')
             relative=name[len(prefix):];parts=relative.split('/')
             require(relative and all(p not in ('','.', '..') for p in parts),'MODULE_ZIP_PATH')
@@ -93,6 +98,63 @@ def module_zip_identity(path,expected_h1=SING_SUM):
             'file_count':len(members),'uncompressed_bytes':total,'files':members,
             'crc_paths_case_links_checked':True,'signature_verified':False,
             'native_security_verified':False,'can_apply':False,'can_start_tunnel':False}
+
+# Additional bounded locators for the exact acquired sing module. These are
+# deliberately source tripwires, not a replacement HTTP/JSON parser or engine.
+SING_LOCI={
+ 'http_read':('protocol/http/handshake.go','HandleConnectionEx',['request, err := ReadRequest(reader)']),
+ 'auth_factory':('common/auth/auth.go','NewAuthenticator',['if len(users) == 0 {','return nil','return ok && common.Contains(passwordList, password)']),
+ 'auth_guard':('protocol/http/handshake.go','HandleConnectionEx',['if authenticator != nil {','authOk = authenticator.Verify(username, password)','if !authOk {','request, http.StatusProxyAuthRequired,']),
+ 'auth_codec':('protocol/http/handshake.go','HandleConnectionEx',['strings.HasPrefix(authorization, "Basic ")','base64.URLEncoding.DecodeString(authorization[6:])']),
+ 'auth_error_disclosure':('protocol/http/handshake.go','HandleConnectionEx',['", password=", password','Proxy-Authorization=", authorization']),
+ 'connect_target':('protocol/http/handshake.go','HandleConnectionEx',['if request.Method == "CONNECT" {','M.ParseSocksaddrHostPortStr(request.URL.Hostname(), request.URL.Port()).Unwrap()','if destination.Port == 0 {']),
+ 'connect_dispatch':('protocol/http/handshake.go','HandleConnectionEx',['200 Connection established','handler.NewConnectionEx(ctx, requestConn, source, destination, onClose)']),
+ 'http_alternates':('protocol/http/handshake.go','HandleConnectionEx/handleHTTPConnection',['strings.ToLower(request.Header.Get("Connection")) == "upgrade"','err = handleHTTPConnection(ctx, handler, conn, request, source)','return http.ErrUseLastResponse','go handler.NewConnectionEx(ctx, output, source, M.ParseSocksaddr(address).Unwrap()']),
+ 'source_override':('protocol/http/addr.go','SourceAddress',['request.Header.Get("X-Forwarded-For")','address.Addr = originAddr']),
+ 'port_cast':('common/metadata/addr.go','ParseSocksaddrHostPortStr',['port, _ := strconv.Atoi(portStr)','Port: uint16(port)']),
+ 'stdlib_link':('protocol/http/link.go','ReadRequest',['//go:linkname ReadRequest net/http.readRequest']),
+ 'client_system_default':('protocol/http/client.go','NewClient/DialContext',['if options.Dialer == nil {','client.dialer = N.SystemDialer','base64.StdEncoding.EncodeToString([]byte(auth))']),
+ 'json_build':('common/json/context.go','build-selected aliases',['//go:build go1.20 && !without_contextjson','github.com/sagernet/sing/common/json/internal/contextjson']),
+ 'json_std_build':('common/json/std.go','alternative aliases',['//go:build !go1.20 || without_contextjson','import "encoding/json"']),
+ 'json_extended':('common/json/unmarshal.go','UnmarshalExtendedContext',['NewCommentFilter(bytes.NewReader(content))','err := decoder.Decode(&value)']),
+ 'json_unknown':('common/json/internal/contextjson/decode.go','decodeState.object',['f = fields.byFoldedName[string(foldName(key))]','} else if d.disallowUnknownFields {','json: unknown field %q']),
+ 'json_null':('common/json/internal/contextjson/decode.go','decodeState.literalStore',['case reflect.Interface, reflect.Pointer, reflect.Map, reflect.Slice:','// otherwise, ignore null for primitives/string']),
+ 'json_single_decode':('common/json/internal/contextjson/stream.go','Decoder.Decode',['func (dec *Decoder) DisallowUnknownFields()','err = dec.d.unmarshal(v)','dec.tokenValueEnd()']),
+ 'json_nested':('common/json/badjson/merge_objects.go','UnmarshallExcludedContext',['content.Remove(key)','return json.UnmarshalContextDisallowUnknownFields(ctx, inputContent, object)']),
+ 'json_duplicates':('common/json/badjson/object.go','JSONObject.decodeJSON',['m.Put(entryKey, entryValue)']),
+ 'json_overwrite':('common/x/linkedhashmap/map.go','Map.Put',['func (m *Map[K, V]) Put(key K, value V) V {','entry.Value.Value = value']),
+ 'json_merge':('common/json/badjson/merge.go','MergeJSON/mergeJSON',['if rawSource == nil && rawDestination == nil {','destination = append(destination, source...)','entry.Value, err = mergeJSON(entry.Value, oldValue, disableAppend)','return destination, nil'])
+}
+
+def inspect_sing_dependency(files,pins):
+    """Protect reviewed source and ordering; does not execute Go semantics."""
+    check_pins(files,pins)
+    require('go.mod' in files and files['go.mod'].startswith(b'module github.com/sagernet/sing\n'),'SING_MODULE_IDENTITY')
+    locators=[]
+    for key,(path,function,anchors) in SING_LOCI.items():
+        require(path in files,'SING_FILE_MISSING:'+path)
+        text=files[path].decode('utf-8')
+        for anchor in anchors:
+            require(anchor in text,'SING_BRANCH_DRIFT:'+key)
+            locators.append({'id':key,'path':path,'function':function,'line':text[:text.index(anchor)].count('\n')+1,
+                             'anchor':anchor,'file_sha256':hashlib.sha256(files[path]).hexdigest()})
+    text=files['protocol/http/handshake.go'].decode('utf-8')
+    ordered=['if authenticator != nil {','authOk = authenticator.Verify(username, password)','if !authOk {',
+             'if request.Method == "CONNECT" {','200 Connection established',
+             'handler.NewConnectionEx(ctx, requestConn, source, destination, onClose)']
+    positions=[text.index(v) for v in ordered]
+    require(positions==sorted(positions),'SING_AUTH_DISPATCH_ORDER_DRIFT')
+    return {'status':'PARTIAL / BOUNDED DEPENDENCY SOURCE REVIEW','locators':locators,
+            'findings':['EMPTY_USERS_DISABLE_AUTH','AUTH_CHECK_PRECEDES_DISPATCH_WHEN_ENABLED',
+                        'AUTH_ERRORS_CAN_DISCLOSE_CREDENTIALS','URLSAFE_VS_STANDARD_BASIC_CODEC_MISMATCH',
+                        'CONNECT_200_PRECEDES_ROUTE_CALLBACK','HTTP_AND_UPGRADE_ALTERNATIVES_EXIST',
+                        'X_FORWARDED_FOR_CAN_OVERRIDE_SOURCE','PORT_CAST_NOT_STRICT_AUTHORITY_VALIDATION',
+                        'SING_CLIENT_NIL_DIALER_DEFAULTS_SYSTEM','JSON_DUPLICATES_NOT_REJECTED_BY_SEEN_KEY_GUARD',
+                        'JSON_UNKNOWN_STRUCT_FIELDS_GUARDED','NULL_AND_MERGE_NOT_STRICT_POLICY_VALIDATION'],
+            'stdlib_http_parser_review':'BLOCKED / EXACT_GO_STDLIB_SOURCE_NOT_PROVIDED',
+            'native_go_tests':'NOT RUN','complete_dependency_closure':False,
+            'strict_route_verified':False,'native_security_verified':False,
+            'can_apply':False,'can_start_tunnel':False,'engine_selection':'PENDING_USER'}
 
 def inspect(files):
     require('go.mod' in files and 'go.sum' in files,'MODULE_FILES_REQUIRED')

@@ -1,86 +1,456 @@
 {
   "task": "CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001",
-  "status": "BLOCKED / DOWNLOAD_GO_REQUIRED",
-  "created_at": "2026-10-24T20:16:54.700920+00:00",
-  "publication": "LOCAL ONLY / NOT SYNCED",
-  "independent_verification": "PENDING",
-  "task_snapshot": "evidence/task_snapshot.md",
-  "amendments_for_this_task": [],
-  "scope": "New TASK folder only; all referenced pre-existing inputs read-only",
-  "path_base": "manifest directory",
-  "excludes": [
-    "manifest.json (self hash)"
+  "amendments": [
+    "USER GO source-only download; reviewer WEB_12"
   ],
+  "status": "PARTIAL / BOUNDED DEPENDENCY SOURCE REVIEW",
+  "publication": "LOCAL ONLY / NOT SYNCED",
+  "independent_verification": "PENDING WEB_12",
+  "created_at": "2026-10-24T20:50:43.845635+00:00",
+  "path_base": "repository root M:/GitHub/ag_llm",
+  "excludes": [
+    "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/manifest.json (self hash)"
+  ],
+  "task_snapshot": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/task_snapshot.md",
+  "user_go": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/USER_GO.md",
   "files": [
     {
-      "path": "checks.json",
-      "bytes": 1523,
-      "sha256": "37bc34d85ee9c45bec22cc913c22ccd18304630c005487a8f4f519ea25da21bd"
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/download_source.py",
+      "bytes": 5472,
+      "sha256": "12fc42902668f98abc2ed84d67d11e40bd912306d238b704fc638b5fdb78f5d2"
     },
     {
-      "path": "DOC_IMPACT.md",
-      "bytes": 2089,
-      "sha256": "9bb1f5438ff0544ccb242ac0d47090a19e7b6a18cd3442bd36fadbf70b523348"
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/baseline_run.json",
+      "bytes": 176,
+      "sha256": "3610d9516686e9668e38ca4a18ac1fdd5f99d4d18e4d9d2dd7505d4102d8d9c0"
     },
     {
-      "path": "evidence/authorization.json",
-      "bytes": 902,
-      "sha256": "072fcd7b7993463ba50c1c9b4c1b84ce16e987761ec8ae5ef886575bd5375b0a"
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/download_attempt.json",
+      "bytes": 545,
+      "sha256": "3c9a2f3fa13f7efed754df4d057d6c092d142c55362ce71decf1866c7f92abd6"
     },
     {
-      "path": "evidence/protected_inputs_before.json",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/download_receipt.json",
+      "bytes": 1051,
+      "sha256": "d6b3799baa7ae46e0fc6fe72b3a174db3e79f9801d02fa3317925275bb5a4097"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/final_integrity.json",
+      "bytes": 3487,
+      "sha256": "0fd256b81dd0cb8abeb682ad646106f2844534502c1e9e10c31cb5fda87b5fce"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/module_integrity.json",
+      "bytes": 54496,
+      "sha256": "3009d28fe2b86a708ecac8da19d3d7765f0ff49b5bb0442f60b66744fea07165"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/proxy_preflight.json",
+      "bytes": 777,
+      "sha256": "0d1361d5bb33ac64f828f4d3313693f191a4499e274c03da6715f4d2981d7cf2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/source_locators.json",
+      "bytes": 38266,
+      "sha256": "e0075b387feda2125d0c2f00e6e96157f9f93db41f44bcba94cb7af51e18242a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/evidence/test_quality_review.json",
+      "bytes": 822,
+      "sha256": "1ae77f08f4fe663ba9ac06263597c83490fe072b85a16bdf6c457f763ee1cc91"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/extract_source.py",
+      "bytes": 2920,
+      "sha256": "db8cb6e246ecd2d03b9de132dde3f264241265da066b3845f4743bd0388b0b74"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/finalize_handoff.py",
+      "bytes": 20229,
+      "sha256": "0ea873246a0d26253df0d39664e38aab86d7fa5b056f60e4dfa4f8ab86d5a4de"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/report.md",
+      "bytes": 20836,
+      "sha256": "8549b67e00ad451cf9725cfc91de75f095e519b261a7f1f4dbd3ad9c09a4edda"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/legacy/legacy-gates-10451421/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "ac5c3b39289834a2970df7427ed9255ccd2f4be98c22902a1a831207b8dd4208"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/result.json",
+      "bytes": 4296,
+      "sha256": "a3ddb57b13d70de41572e2c6ac929caf85347b39ea2876c1a5ceeb5b513792dc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/runner.txt",
+      "bytes": 3959,
+      "sha256": "27c7eee4752b75f38ea30b468f6e47c1ec5201458bf8d9ab5861e0eea09175da"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013427-60d77978/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "ee3fc57b6e70bed4ee802d4b146f275e0c55299f8615ab9cc9291ae8ac51af79"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/auth_order_mutation.json",
+      "bytes": 140,
+      "sha256": "240edd0022ffdecd1554d356c5a1b8031a764e4c0e7c6bf943ccf83773931f85"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/dependency_review.json",
+      "bytes": 16766,
+      "sha256": "12c9ab657644609eb0436a9122074b4e3c3dc8eddf9bd394794df04c250668f9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/dependency_source_pins.json",
+      "bytes": 1614,
+      "sha256": "3708f4513656fd53117e0eff98712d7e1f5b6ab0d0010fddb0d3efac715c16b0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/legacy/legacy-gates-63dd2388/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "36334cfa77fb3800f601fe96641bd952c07cebe11e54b3fea0d8349df80cdd41"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/result.json",
+      "bytes": 7439,
+      "sha256": "71eacaf62a5c1cfe2b405e3f62f541d7c00c7b8ef837b9ccd4d1dc5458a9f9e0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/runner.txt",
+      "bytes": 7291,
+      "sha256": "8a0fd395740ea746a22abfa2d3593be755fc0b898f97c730631f4a8e6e92315b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-013946-682a46e7/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "dc79c7755a51404a57fafd17266265efd08e11756f7dda418f36319d37f9b7d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/auth_order_mutation.json",
+      "bytes": 140,
+      "sha256": "240edd0022ffdecd1554d356c5a1b8031a764e4c0e7c6bf943ccf83773931f85"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/dependency_review.json",
+      "bytes": 16766,
+      "sha256": "12c9ab657644609eb0436a9122074b4e3c3dc8eddf9bd394794df04c250668f9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/dependency_source_pins.json",
+      "bytes": 1614,
+      "sha256": "f59d44c35001c7e46b6c90d2a36160fdb153f96a450516b1358c2119d5692a55"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/legacy/legacy-gates-d1362ea5/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "2c3ac56c4a34e346b03a6f80c645295d5ab0082ff7bbfe3dee540ac07f33b19d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/result.json",
+      "bytes": 6700,
+      "sha256": "ec1e9554d7cbf4ae190a2fd4b1224a14ff6f591482cc2049c75e1da22ae0500f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/runner.txt",
+      "bytes": 6302,
+      "sha256": "ed3ae2e25fe26fba816d8c3a91a4441dea12f2dc45d3724ef30a2d7075f246df"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014025-e29db5fb/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "6c3c4405d6c2655dbf4c8ea37035cc76c766f7f4759040d184aaf1ba1d31065f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/auth_order_mutation.json",
+      "bytes": 140,
+      "sha256": "240edd0022ffdecd1554d356c5a1b8031a764e4c0e7c6bf943ccf83773931f85"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/default_direct_mutation.json",
+      "bytes": 843,
+      "sha256": "b9cca142f7d3a6cbeb868296cb3d165702a3b6beff2a480268fd08141802506c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/dependency_review.json",
+      "bytes": 16766,
+      "sha256": "12c9ab657644609eb0436a9122074b4e3c3dc8eddf9bd394794df04c250668f9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/dependency_source_pins.json",
+      "bytes": 1614,
+      "sha256": "ff23a0ed79f25e2effedc325b0730bbf83744c654f0cada2a6e9fbf0041b262d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/legacy/legacy-gates-21d7122a/checks.json",
+      "bytes": 757,
+      "sha256": "67b9c791f82ee8017ce1a904e4ca5dacb8b155e4e4ff495b5d6cddfbd92eae72"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/local_source_pins.json",
+      "bytes": 748,
+      "sha256": "dba3cbea3a71e6785ced58fdf38613f9f99d7eb422fd620f47b030fc8cd42513"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/other_outbound_mutant.go",
+      "bytes": 27541,
+      "sha256": "cbe09d59b1b88bbfebb5fbc9c599a0fe53bf6ba45cccd9fc90d9f30645f15819"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/other_outbound_mutation.json",
+      "bytes": 271,
+      "sha256": "a2cedf274113ce51f0bae9cd2ba609cd0c042a0ee7e7a6fb35044e8f84cf2826"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/result.json",
+      "bytes": 6824,
+      "sha256": "5f4cb55cc487557f4cc55396bfbd7faca9c29a91127ae8d3b627262bf20336e4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/runner.txt",
+      "bytes": 6425,
+      "sha256": "7804dcf09af4dba95ec5e75ef8459b56926eafdb1a8d6070f0bb002cce851ee9"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/runs/source-20261025-014112-a2f64d92/upstream_source_pins.json",
+      "bytes": 2023,
+      "sha256": "9c3e0f773e2d35800dca8c48c259154ce2b7554fc266bf7e5e19a4ad53810971"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/source_before/singbox_source_review.py",
+      "bytes": 6682,
+      "sha256": "e96ec56bbc635c1cbfe0e094fc9f54c4082f09b52d056e1b56c8a6090ee5c326"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/source_before/tests/singbox_source_review_suite.py",
+      "bytes": 8652,
+      "sha256": "e0c2af138d3b1f7d048ed307527fdbf61678fb7a23f457f5a3c81c13960c9caa"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/USER_GO.md",
+      "bytes": 1944,
+      "sha256": "553987a30f3df97662f99d50ceb0b4017ff8c23583316ee8142e3d6c10dc68d4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/checks.json",
+      "bytes": 2219,
+      "sha256": "cf7723976031332e3cea375cddd607451be056f8b001fad51267289e0bec1472"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/DOC_IMPACT.md",
+      "bytes": 1330,
+      "sha256": "ae820a27a8a2cd0860acfe2548cc43a5f70a9d85c61e92173cdb7544a51ad0c7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/authorization.json",
+      "bytes": 648,
+      "sha256": "06d80fd875a5004aedf629496e0b34a081a8cdb335116f5373cf8669e79e8008"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/protected_inputs_before.json",
       "bytes": 5243,
       "sha256": "fdb41c6d92b21e4d3ae63af1444b498008bf9155f73111282f9ba9f455e71565"
     },
     {
-      "path": "evidence/read_set.json",
-      "bytes": 6233,
-      "sha256": "65d81ae75ae8afbdc1ac7e2b9a2bd301757dd08909ea3dabb9d7864e6714ac95"
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/read_set.json",
+      "bytes": 7207,
+      "sha256": "54cd0df342d2cc02415bb52fa0c5adc18302fe2b02154e3c07908adc3bbe80f5"
     },
     {
-      "path": "evidence/source_boundary.json",
-      "bytes": 4749,
-      "sha256": "77f45299d9be0c4f6dbd72d34471ce368e0a37dc13a0720e1a185acf7ff70e53"
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/source_boundary.json",
+      "bytes": 633,
+      "sha256": "2495930d79d2ceb7a46301337dd9772c80d38366546f36500832b2c9f47b0875"
     },
     {
-      "path": "evidence/task_snapshot.md",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/task_snapshot.md",
       "bytes": 18134,
       "sha256": "1a4ff13a6fa580b1531df05afe39d46a64663bcfab61518c852c598a03a9ecac"
     },
     {
-      "path": "evidence/user_launch.txt",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/evidence/user_launch.txt",
       "bytes": 871,
       "sha256": "ac29f43517327e9e65943f4c4db446acdded3ef2b7a3ad31521f06c7ba9a2065"
     },
     {
-      "path": "NEXT_USER_GO.txt",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/checks.json",
+      "bytes": 1523,
+      "sha256": "37bc34d85ee9c45bec22cc913c22ccd18304630c005487a8f4f519ea25da21bd"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/DOC_IMPACT.md",
+      "bytes": 2089,
+      "sha256": "9bb1f5438ff0544ccb242ac0d47090a19e7b6a18cd3442bd36fadbf70b523348"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/authorization.json",
+      "bytes": 902,
+      "sha256": "072fcd7b7993463ba50c1c9b4c1b84ce16e987761ec8ae5ef886575bd5375b0a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/protected_inputs_before.json",
+      "bytes": 5243,
+      "sha256": "fdb41c6d92b21e4d3ae63af1444b498008bf9155f73111282f9ba9f455e71565"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/read_set.json",
+      "bytes": 6233,
+      "sha256": "65d81ae75ae8afbdc1ac7e2b9a2bd301757dd08909ea3dabb9d7864e6714ac95"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/source_boundary.json",
+      "bytes": 4749,
+      "sha256": "77f45299d9be0c4f6dbd72d34471ce368e0a37dc13a0720e1a185acf7ff70e53"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/task_snapshot.md",
+      "bytes": 18134,
+      "sha256": "1a4ff13a6fa580b1531df05afe39d46a64663bcfab61518c852c598a03a9ecac"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/evidence/user_launch.txt",
+      "bytes": 871,
+      "sha256": "ac29f43517327e9e65943f4c4db446acdded3ef2b7a3ad31521f06c7ba9a2065"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/manifest.json",
+      "bytes": 2697,
+      "sha256": "bd4d417d93c71faa5bf5fdbafd429129033b798eb69675589922307d989d9cc8"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/NEXT_USER_GO.txt",
       "bytes": 1570,
       "sha256": "703647e9285c910d23e044a2c6b7e0d9fd71cebb4fcdc324d55e61666547c3b0"
     },
     {
-      "path": "prepare_handoff.py",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/prepare_handoff.py",
       "bytes": 18843,
       "sha256": "31d44624760730cb934b622440767dcd51c51bb22d66efb9ba365e21e00e4850"
     },
     {
-      "path": "report.md",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/report.md",
       "bytes": 13769,
       "sha256": "20de4262fe7630314a28fb2fd94b8dca7305e7ec760d8fb58e063805b80c6019"
     },
     {
-      "path": "source_callgraph.md",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/source_callgraph.md",
       "bytes": 3309,
       "sha256": "937d74b70bbe4cddd2ccbcb5357fe8f85acfe5945ded87094c1faa224fd3b805"
     },
     {
-      "path": "source_provenance.json",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/source_provenance.json",
       "bytes": 1393,
       "sha256": "187493ea39e2383c9e75714c7d3e4db4a887641f69d1afb3c5ffe1039e838ea2"
     },
     {
-      "path": "strict_route_gap_matrix.md",
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/initial_blocked/strict_route_gap_matrix.md",
       "bytes": 3246,
       "sha256": "5166c1947cfe784ae87df8f6d3a0ea2280b9d26fc816de75bd9bc8bb96468cdc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/NEXT_USER_GO.txt",
+      "bytes": 300,
+      "sha256": "7d62953d32ffac5c054fd1dd3f634d8cac39cce907f0b7950672600a483a3505"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/prepare_handoff.py",
+      "bytes": 18843,
+      "sha256": "31d44624760730cb934b622440767dcd51c51bb22d66efb9ba365e21e00e4850"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md",
+      "bytes": 21189,
+      "sha256": "88ba0e5d79ac87e820deca2ef91ba3f542e995d509c16e2bbe6345df1ea70337"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/source_callgraph.md",
+      "bytes": 15787,
+      "sha256": "fbe38020b4f71456886b22374643886e3f1eb3549d2ba510902845a8774c88fe"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/source_provenance.json",
+      "bytes": 1709,
+      "sha256": "ab5d4ec8d2b4bcf086fd17046b309fb4a8d6edf10101d9e159485a716c5379e1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/strict_route_gap_matrix.md",
+      "bytes": 3596,
+      "sha256": "faee4825db2e2355634250c3ff20d83408e10fa0205cfa7279b1134431dbe86b"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/singbox_source_review.py",
+      "bytes": 16914,
+      "sha256": "500d9dcc13ef661bd0dc660c481caf8c956ccba95936b6fce0edd71f333d1169"
+    },
+    {
+      "path": "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py",
+      "bytes": 19725,
+      "sha256": "e678ea9ca57e875b76986d3a249016c2f79545f5c71b705b6ff642979d4da834"
     }
-  ]
+  ],
+  "external_archives_trees": "Not in publication package; see source_provenance.json/module_integrity.json",
+  "can_apply": false,
+  "can_start_tunnel": false
 }

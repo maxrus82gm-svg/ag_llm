@@ -1,23 +1,25 @@
-# Strict route gap matrix
+# Strict route gap matrix — USER GO amendment 01
 
-TASK: CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / BLOCKED / DOWNLOAD_GO_REQUIRED.
-Статусы относятся к доказательствам, а не к применённой системной политике.
-
-| Gate | Сохранённое основание | Чего не хватает / требование | Статус |
+| Gate | Реальное source/evidence | Условие / открытый риск | Статус |
 | --- | --- | --- | --- |
-| Exact dependency | go.mod/go.sum pin, шесть parent file hashes | Отдельный download GO, origin/ZIP h1 | BLOCKED |
-| HTTP CONNECT | Parent передаёт поток в sing handler | Authority/port/IPv6/malformed/methods/EOF и порядок dial | BLOCKED |
-| Authentication | Parent создаёт и передаёт authenticator | Реальное reject-before-upstream, empty/wrong credentials, alternate handlers | BLOCKED |
-| JSON/options | Parent вызывает DisallowUnknownFields и MergeJSON | Вложенные decoder/default/null/types/duplicate keys/merge/reload | BLOCKED |
-| Default deny | Ранее принято: native default может быть DIRECT | Explicit final + deny unmatched/incomplete config; unknown defaults отвергать | CONDITIONAL / FULL POLICY UNVERIFIED |
-| No fallback | Ранее просмотрен ограниченный normal dial failure path | Все protocol/group/detour/resolver/failover branches | UNVERIFIED |
-| TCP-only logical traffic | Ранее принят UoT packet path | Отсечь packet/UDP/UoT отдельно от запрета UDP sockets | CONDITIONAL / ENFORCEMENT UNVERIFIED |
-| DNS/IPv6 | Ранее выявлены local DNS/resolver paths | Исключить неутверждённые пути и все дополнительные socket families | UNVERIFIED |
-| Background egress | Ранее выявлены conditional health/rules/NTP/etc | Exact disabled subset и полный closure; источник не равен active config | UNVERIFIED |
-| One B-owned socket | Архитектурный целевой контракт | Фактический token/process/socket owner, SID и WFP containment | BLOCKED / NOT VERIFIED |
-| Proxy route получения | Предыдущий localhost:10808 receipt | Текущая разрешённость и актуальность; сейчас не проверять сеть без GO | BLOCKED |
-| Real fail-closed | Ни source, ни pure model не доказывают OS | Изолированная lab + отдельный GO + negative controls | NOT VERIFIED |
-| Engine selection | engine.family=V2Ray сохранён | Отдельное решение пользователя после closure | PENDING USER |
-| Hosted / ordinary Chat | Старые gates сохранены | Отдельные разрешения и реальные tool calls/receipt | HOLD / NOT VERIFIED |
+| Exact sing module | Version, raw ZIP SHA, Go h1, 322 hashes | Не binary reproducibility/полный upstream revision | SOURCE CONFIRMED (content pin) |
+| Enabled auth before callbacks | Verify/407 до CONNECT/Upgrade/HTTP | Empty users даёт nil и no auth | SOURCE CONFIRMED / strict config CONDITIONAL |
+| Secret-safe auth failure | Error включает password/header; parent logger | Нужна remediation/доказанная redaction до эксплуатации | BLOCKED for strict acceptance |
+| Basic interoperability | URL-safe decode/error ignored vs client standard encode | Нет Go native oracle malformed/+slash inputs | SOURCE CONFIRMED / behavior TEST GAP |
+| CONNECT success | 200 до route callback | Не считать его downstream/route/owner proof | SOURCE CONFIRMED |
+| CONNECT-only admission | Есть plain HTTP/Upgrade | Отдельный строгий method/destination allowlist | NOT IMPLEMENTED / CONDITIONAL |
+| Authority and port | Atoi ignored, uint16 cast/defaults | Exact Go parser grammar/range validation не закрыты | BLOCKED for full parser claim |
+| Source identity | XFF source override | Не использовать forwarded IP как SID/authority | SOURCE CONFIRMED / OS UNVERIFIED |
+| Default deny | Прежний accepted DIRECT default | Empty/missing/unmatched config должен отдельно отвергаться | SOURCE CONFIRMED unsafe capability / strict UNVERIFIED |
+| No secondary/direct fallback | Normal injected callback есть; отдельный client nil→SystemDialer | Все callers/groups/resolvers исключить/доказать | UNVERIFIED |
+| TCP-only logical operations | UoT packet routing существует | Отсечь UDP/UoT и magic destination, не только UDP socket | CONDITIONAL / enforcement UNVERIFIED |
+| DNS/IPv6/background | Прежние optional DNS/health/rules/NTP paths | Exact permitted subset и полный closure | UNVERIFIED |
+| JSON strictness | Unknown struct error есть; duplicates/null/default/merge permissive | Canonical single protected config, reject ambiguity before engine | CONDITIONAL / admission NOT IMPLEMENTED |
+| Merge/reload protection | Multi-file sort/merge и recreate capability | Защитить inputs/CLI; Windows runtime не тестирован | UNVERIFIED |
+| Stdlib/platform | Go linkname, x/sys Windows imports | Exact additional source input + отдельный GO при необходимости | BLOCKED |
+| Existing proxy path for one fetch | Metadata + one audited loopback connect + TLS200 | Не remote V2Ray/B owner proof | BOUNDED OBSERVATION |
+| C/B owner/WFP/fail-closed | Source не устанавливает OS guarantees | Lab isolation + отдельный USER GO + negative controls | NOT VERIFIED / BLOCKED |
+| Engine selection | engine.family=V2Ray не менялся | Пользователь после независимого bounded review | PENDING USER |
+| Hosted/ordinary Chat | can_apply=false, can_start_tunnel=false | Separate permissions and actual calls/receipt | HOLD / NOT VERIFIED |
 
-Никаких изменений policy или ослабления gate. При последующем обнаружении дополнительных dependencies — адресный blocker без auto-fetch. Негативные сценарии текущей TASK NOT RUN, прежний 30/30 не переносится как их результат.
+51/51 Python source/intent controls не являются Go execution или native enforcement. Никакая policy не применялась. Показанные capabilities не доказывают их включение в рабочем profile.
