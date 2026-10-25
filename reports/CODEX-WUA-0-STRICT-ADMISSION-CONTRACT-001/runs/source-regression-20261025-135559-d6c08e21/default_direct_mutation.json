@@ -1,0 +1,45 @@
+{
+  "oracle": "REJECT",
+  "scope": "existing broker review intent; not native Go runtime",
+  "default": "DIRECT",
+  "native_default_finding": "EMPTY_OUTBOUND_CREATES_DIRECT",
+  "result": {
+    "profile_status": "BROKER_PROFILE_REJECTED",
+    "can_apply": false,
+    "can_start_tunnel": false,
+    "gates": [
+      "ENGINE_VERSION_SOURCE_BLOCKED",
+      "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+      "B_IDENTITY_NOT_PROVISIONED",
+      "B_EGRESS_OWNER_NOT_VERIFIED",
+      "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+      "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+      "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+      "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+    ],
+    "native_health": "UNKNOWN",
+    "engine_native_config": null,
+    "install_uninstall": "BLOCKED",
+    "reason": "BROKER_SCHEMA",
+    "strict_admission_status": "STRICT_ADMISSION_BLOCKED",
+    "strict_policy_status": "NOT_EVALUATED",
+    "strict_blockers": [
+      "UPSTREAM_SECRET_BOUNDARY_UNVERIFIED",
+      "CREDENTIAL_STORE_UNVERIFIED",
+      "CONFIG_SOURCE_PROTECTION_UNVERIFIED",
+      "CONNECT_METADATA_ORACLE_UNVERIFIED",
+      "ENGINE_VERSION_SOURCE_BLOCKED",
+      "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+      "B_IDENTITY_NOT_PROVISIONED",
+      "B_EGRESS_OWNER_NOT_VERIFIED",
+      "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+      "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+      "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+      "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+    ],
+    "policy_route_allowed": false,
+    "connect_handler_event": "NOT_OBSERVED",
+    "real_egress_verified": false,
+    "untrusted_evidence_accepted": false
+  }
+}

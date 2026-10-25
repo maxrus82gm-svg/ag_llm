@@ -1,0 +1,64 @@
+{
+  "rule_set_ref": [
+    "DOC-GIT-01@1",
+    "DOC-LOCAL-REPORT-HANDOFF-01@1",
+    "DOC-TASK-CLOSEOUT-OWNER-01@1",
+    "DOC-TASK-READ-SCOPE-01@1",
+    "DOC-TASK-HANDOFF-USER-01@1",
+    "TEST-COLLAB-01@2",
+    "TEST-ENG-01@1",
+    "TEST-COV-01@1",
+    "TEST-EXEC-01@1",
+    "TEST-QA-01@1",
+    "TEST-EVID-01@1",
+    "TEST-SCOPE-01@1"
+  ],
+  "normative_inputs": [
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "bytes": 30473,
+      "sha256": "eb428900fceec125e2fe9cc9989664e5ba5aff98b021fe9137a5ca469edf51f8"
+    },
+    {
+      "path": "Документация/08_Старт.md",
+      "bytes": 114329,
+      "sha256": "46c2c141ffb82bd9364a218fe8bacdc164eaf527e4fd7d0a5d5cf01017fffce1"
+    },
+    {
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "bytes": 178246,
+      "sha256": "37a750fea0866247cf70e71e08b37ff34926c8a8a0288ab464ebc325dc75f94a"
+    },
+    {
+      "path": "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md",
+      "bytes": 103170,
+      "sha256": "b15e2f1d291b3456ee08a55db1b272fd44f3284e1dc5e5511d850e539b69c55d"
+    },
+    {
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "bytes": 232505,
+      "sha256": "3a8504eed19b9126511af6890859e2bb9552c52ad03d3f4da1e7ac61eb5463b2"
+    },
+    {
+      "path": "Документация/36.1_Обязательный регламент тестирования для LLM.md",
+      "bytes": 31210,
+      "sha256": "8e581be24b927dba339409f42148a70a92fdbdd761764a0333a2197d9be7e6b3"
+    },
+    {
+      "path": "Документация/36.2_Профиль тестирования Web Alarm Workspace.md",
+      "bytes": 42987,
+      "sha256": "a69f7bf3f2a5967b73e1eef997723243dc07b26c971ca1d23b4c58a1aa8cfad0"
+    }
+  ],
+  "read_sections": {
+    "card": "Rules/B1/B4",
+    "08": "Priority handoff and rights",
+    "34": "WEB_12 CURRENT",
+    "19": "STRICT_V2RAY_BROKER,7.6/7.7",
+    "18": "Addressed Git/report/closeout/read-scope rules and dependencies",
+    "36.1": "Applicable mandatory TEST rules",
+    "36.2": "Offline isolation/evidence invariants"
+  },
+  "technical_sources": "Broker/security/schema/example/ContractTests and prior accepted sing report/graph/gap matrix; source validator read-only",
+  "sync_evidence": "evidence/sync_gate.json; user confirmation, not Git verification"
+}

@@ -1,0 +1,41 @@
+{
+  "profile_status": "BROKER_PROFILE_STRUCTURALLY_VALID",
+  "contract_sha256": "fb18af39f3260b47c5f180d6e128f19b95f79df13376190a38e54a18fe9d771c",
+  "source_sha256": "0bd5ade8e10df15585135a0a9e54c0cf7e86b15efb53da71c32ed903cca839d0",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "engine_native_config": null,
+  "gates": [
+    "ENGINE_VERSION_SOURCE_BLOCKED",
+    "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+    "B_IDENTITY_NOT_PROVISIONED",
+    "B_EGRESS_OWNER_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "native_health": "UNKNOWN",
+  "install_uninstall": "BLOCKED",
+  "evidence_kind": "OFFLINE_STRUCTURE_ONLY",
+  "strict_admission_status": "STRICT_ADMISSION_BLOCKED",
+  "strict_policy_status": "NOT_EVALUATED",
+  "strict_blockers": [
+    "UPSTREAM_SECRET_BOUNDARY_UNVERIFIED",
+    "CREDENTIAL_STORE_UNVERIFIED",
+    "CONFIG_SOURCE_PROTECTION_UNVERIFIED",
+    "CONNECT_METADATA_ORACLE_UNVERIFIED",
+    "ENGINE_VERSION_SOURCE_BLOCKED",
+    "ENGINE_CONFIG_COMPATIBILITY_BLOCKED",
+    "B_IDENTITY_NOT_PROVISIONED",
+    "B_EGRESS_OWNER_NOT_VERIFIED",
+    "V2RAY_LIVE_ROUTE_NOT_VERIFIED",
+    "WFP_NATIVE_ENFORCEMENT_NOT_VERIFIED",
+    "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+    "ORDINARY_CHATGPT_E2E_NOT_VERIFIED"
+  ],
+  "policy_route_allowed": false,
+  "connect_handler_event": "NOT_OBSERVED",
+  "real_egress_verified": false,
+  "untrusted_evidence_accepted": false
+}

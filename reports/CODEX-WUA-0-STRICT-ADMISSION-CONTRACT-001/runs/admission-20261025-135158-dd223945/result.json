@@ -1,0 +1,182 @@
+{
+  "task": "CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001",
+  "collected": 40,
+  "passed": 40,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "tests": [
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_approval_claims_never_activate",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_claimed_version_and_hash_not_verification",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_config_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_existing_activation_gates_remain_blocked",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_extra_companion_and_user_socks_layout",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_literal_ip_port_and_protocol",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_native_config_and_engine_switch_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_observation_owner_egress_must_be_same_engine",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_observation_takeover_scope_protocol_companion",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_owner_sid_and_wrapper_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_source_and_schema_syntax",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_startup_policy_cannot_be_enabled_by_data",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_unbound_template_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_valid_contract_is_always_disabled",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_valid_synthetic_observation_never_native_health",
+      "status": "PASS"
+    },
+    {
+      "id": "legacy_admission_contracts.ContractTests.test_whole_config_substitution_still_uses_controller_pin",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_auth_required_not_disabled_or_self_asserted",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_complete_policy_cannot_promote_native_security",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_connect_acceptance_does_not_prove_route_or_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_credential_reference_missing_wrong_or_inline_secret",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_data_cannot_enable_flags_or_authorize_evidence",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_direct_fallback_second_proxy_and_unknown_default",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_dns_udp_ipv6_health_telemetry_and_unknown_egress",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_duplicate_keys_unknown_fields_null_and_noncanonical_json",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_exact_destination_and_port",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_legacy_fixture_structural_valid_but_strict_blocked",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_local_schema_cannot_trigger_remote_fetch",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_merge_reload_environment_override_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_metadata_is_not_a_go_parser_or_owner_attestation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_missing_and_empty_users",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_no_secrets_or_header_material_in_own_errors",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_plain_http_upgrade_and_unknown_method",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_protected_single_source_required",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_replacement_after_preflight_and_source_drift",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_undeclared_connect_targets_and_uot_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_unknown_engine_owner_and_runtime_claims_remain_blocked",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AdmissionTests.test_upstream_reference_is_not_optional",
+      "status": "PASS"
+    }
+  ],
+  "legacy_pure": 19,
+  "admission_tests": 21,
+  "source_pins_unchanged": true,
+  "offline_guard_violations": [],
+  "network_or_subprocess_tests_not_collected": [
+    "test_cli_always_exit20_and_output_scope",
+    "test_remote_schema_reference_is_refused_without_dial"
+  ],
+  "native_security": "NOT VERIFIED",
+  "can_apply": false,
+  "can_start_tunnel": false
+}

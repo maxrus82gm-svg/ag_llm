@@ -1,0 +1,57 @@
+test_approval_claims_never_activate (legacy_admission_contracts.ContractTests.test_approval_claims_never_activate) ... ok
+test_claimed_version_and_hash_not_verification (legacy_admission_contracts.ContractTests.test_claimed_version_and_hash_not_verification) ... ok
+test_config_and_source_drift (legacy_admission_contracts.ContractTests.test_config_and_source_drift) ... ok
+test_direct_fallback_second_proxy_and_rule_precedence (legacy_admission_contracts.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence) ... ok
+test_existing_activation_gates_remain_blocked (legacy_admission_contracts.ContractTests.test_existing_activation_gates_remain_blocked) ... ok
+test_extra_companion_and_user_socks_layout (legacy_admission_contracts.ContractTests.test_extra_companion_and_user_socks_layout) ... ok
+test_literal_ip_port_and_protocol (legacy_admission_contracts.ContractTests.test_literal_ip_port_and_protocol) ... ok
+test_native_config_and_engine_switch_rejected (legacy_admission_contracts.ContractTests.test_native_config_and_engine_switch_rejected) ... ok
+test_observation_owner_egress_must_be_same_engine (legacy_admission_contracts.ContractTests.test_observation_owner_egress_must_be_same_engine) ... ok
+test_observation_stale_replay_generation_source_and_observer_loss (legacy_admission_contracts.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss) ... ok
+test_observation_takeover_scope_protocol_companion (legacy_admission_contracts.ContractTests.test_observation_takeover_scope_protocol_companion) ... ok
+test_owner_sid_and_wrapper_rejected (legacy_admission_contracts.ContractTests.test_owner_sid_and_wrapper_rejected) ... ok
+test_source_and_schema_syntax (legacy_admission_contracts.ContractTests.test_source_and_schema_syntax) ... ok
+test_startup_policy_cannot_be_enabled_by_data (legacy_admission_contracts.ContractTests.test_startup_policy_cannot_be_enabled_by_data) ... ok
+test_unbound_template_rejected (legacy_admission_contracts.ContractTests.test_unbound_template_rejected) ... ok
+test_unknown_fields_duplicate_json_and_malformed_legacy_child (legacy_admission_contracts.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child) ... ok
+test_valid_contract_is_always_disabled (legacy_admission_contracts.ContractTests.test_valid_contract_is_always_disabled) ... ok
+test_valid_synthetic_observation_never_native_health (legacy_admission_contracts.ContractTests.test_valid_synthetic_observation_never_native_health) ... ok
+test_whole_config_substitution_still_uses_controller_pin (legacy_admission_contracts.ContractTests.test_whole_config_substitution_still_uses_controller_pin) ... ok
+test_auth_required_not_disabled_or_self_asserted (__main__.AdmissionTests.test_auth_required_not_disabled_or_self_asserted) ... ok
+test_auth_users_types_and_duplicate_references (__main__.AdmissionTests.test_auth_users_types_and_duplicate_references) ... ok
+test_complete_policy_cannot_promote_native_security (__main__.AdmissionTests.test_complete_policy_cannot_promote_native_security) ... ok
+test_connect_acceptance_does_not_prove_route_or_owner (__main__.AdmissionTests.test_connect_acceptance_does_not_prove_route_or_owner) ... ok
+test_credential_reference_missing_wrong_or_inline_secret (__main__.AdmissionTests.test_credential_reference_missing_wrong_or_inline_secret) ... ok
+test_data_cannot_enable_flags_or_authorize_evidence (__main__.AdmissionTests.test_data_cannot_enable_flags_or_authorize_evidence) ... ok
+test_direct_fallback_second_proxy_and_unknown_default (__main__.AdmissionTests.test_direct_fallback_second_proxy_and_unknown_default) ... ok
+test_dns_udp_ipv6_health_telemetry_and_unknown_egress (__main__.AdmissionTests.test_dns_udp_ipv6_health_telemetry_and_unknown_egress) ... ok
+test_duplicate_keys_unknown_fields_null_and_noncanonical_json (__main__.AdmissionTests.test_duplicate_keys_unknown_fields_null_and_noncanonical_json) ... ok
+test_every_public_preflight_keeps_install_gate_blocked (__main__.AdmissionTests.test_every_public_preflight_keeps_install_gate_blocked) ... ok
+test_exact_destination_and_port (__main__.AdmissionTests.test_exact_destination_and_port) ... ok
+test_invalid_raw_types_and_parse_errors_are_fixed_codes (__main__.AdmissionTests.test_invalid_raw_types_and_parse_errors_are_fixed_codes) ... ok
+test_legacy_fixture_structural_valid_but_strict_blocked (__main__.AdmissionTests.test_legacy_fixture_structural_valid_but_strict_blocked) ... ok
+test_local_schema_cannot_trigger_remote_fetch (__main__.AdmissionTests.test_local_schema_cannot_trigger_remote_fetch) ... ok
+test_logical_connect_target_is_distinct_from_physical_egress (__main__.AdmissionTests.test_logical_connect_target_is_distinct_from_physical_egress) ... ok
+test_merge_reload_environment_override_denied (__main__.AdmissionTests.test_merge_reload_environment_override_denied) ... ok
+test_metadata_is_not_a_go_parser_or_owner_attestation (__main__.AdmissionTests.test_metadata_is_not_a_go_parser_or_owner_attestation) ... ok
+test_missing_and_empty_users (__main__.AdmissionTests.test_missing_and_empty_users) ... ok
+test_missing_metadata_and_handler_rejection_remain_explicit (__main__.AdmissionTests.test_missing_metadata_and_handler_rejection_remain_explicit) ... ok
+test_no_secrets_or_header_material_in_own_errors (__main__.AdmissionTests.test_no_secrets_or_header_material_in_own_errors) ... ok
+test_plain_http_upgrade_and_unknown_method (__main__.AdmissionTests.test_plain_http_upgrade_and_unknown_method) ... ok
+test_protected_single_source_required (__main__.AdmissionTests.test_protected_single_source_required) ... ok
+test_replacement_after_preflight_and_source_drift (__main__.AdmissionTests.test_replacement_after_preflight_and_source_drift) ... ok
+test_undeclared_connect_targets_and_uot_denied (__main__.AdmissionTests.test_undeclared_connect_targets_and_uot_denied) ... ok
+test_unknown_engine_owner_and_runtime_claims_remain_blocked (__main__.AdmissionTests.test_unknown_engine_owner_and_runtime_claims_remain_blocked) ... ok
+test_upstream_reference_is_not_optional (__main__.AdmissionTests.test_upstream_reference_is_not_optional) ... ok
+test_mutant_auth_required_detected (__main__.MutationTests.test_mutant_auth_required_detected) ... ok
+test_mutant_canonical_guard_detected (__main__.MutationTests.test_mutant_canonical_guard_detected) ... ok
+test_mutant_controller_pin_detected (__main__.MutationTests.test_mutant_controller_pin_detected) ... ok
+test_mutant_merge_detected (__main__.MutationTests.test_mutant_merge_detected) ... ok
+test_mutant_method_detected (__main__.MutationTests.test_mutant_method_detected) ... ok
+test_mutant_schema_route_guard_detected (__main__.MutationTests.test_mutant_schema_route_guard_detected) ... ok
+test_mutant_secret_error_echo_detected (__main__.MutationTests.test_mutant_secret_error_echo_detected) ... ok
+
+----------------------------------------------------------------------
+Ran 52 tests in 1.157s
+
+OK

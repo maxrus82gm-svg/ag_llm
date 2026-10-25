@@ -4,6 +4,7 @@
   "type": "object", "additionalProperties": false,
   "required": ["schema", "mode", "integration", "generation", "engine", "ownership", "routing", "remote_identity", "native_config", "lifecycle"],
   "properties": {
+    "admission": {"type": "object", "description": "Optional strict offline policy validated by security_contract.validate_admission. Missing policy preserves structural validity but never admits runtime."},
     "schema": {"const": 1, "type": "integer"},
     "mode": {"const": "OFFLINE_DISABLED_CANDIDATE"},
     "integration": {"type": "object", "description": "Validated exclusively by existing security_contract.validate"},
@@ -35,7 +36,7 @@
         "transport_requirement": {"const": "AUTHENTICATED_ENCRYPTED_PROXY"},
         "proxy_protocol": {"const": null},
         "peer_pin_sha256": {"$ref": "#/$defs/pin"},
-        "credential_ref": {"enum": [null, "FUTURE_BROKER_ONLY_SECRET_STORE"]}
+        "credential_ref": {"anyOf": [{"enum": [null, "FUTURE_BROKER_ONLY_SECRET_STORE"]}, {"type": "string", "pattern": "^wua-secret-ref:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"}]}
       }
     },
     "native_config": {"const": null, "description": "No verified engine schema available; native config generation is BLOCKED"},

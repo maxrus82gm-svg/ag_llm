@@ -1,0 +1,12 @@
+{
+  "label": "method",
+  "inner_collected": 1,
+  "inner_failures": 1,
+  "inner_errors": 0,
+  "oracle": "Expected FAIL after weakening a mandatory Python admission check",
+  "executed_python": true,
+  "network_native_go": false,
+  "source_sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80",
+  "mutant_sha256": "bd592cfc239152188a5201072b575f6132743fd5ead3aa5825e555c6263853d0",
+  "runner": "F\n======================================================================\nFAIL: runTest (__main__.MutationTests.killed.<locals>.Oracle.runTest)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<REPO>\\integrations\\wua_chatgpt_mcp\\tests\\admission_suite.py\", line 178, in runTest\n    def runTest(self):probe(self,clone if module is broker else broker)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO>\\integrations\\wua_chatgpt_mcp\\tests\\admission_suite.py\", line 190, in probe\n    t.assertEqual(r['reason'],code)\nAssertionError: 'RUNTIME_SECURITY_UNVERIFIED' != 'CONNECT_METHOD_DENIED'\n- RUNTIME_SECURITY_UNVERIFIED\n+ CONNECT_METHOD_DENIED\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.008s\n\nFAILED (failures=1)\n"
+}

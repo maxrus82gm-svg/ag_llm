@@ -1,0 +1,35 @@
+{
+  "phase": "BEFORE_SOURCE_AND_TEST_EDITS",
+  "collected": 19,
+  "passed": 19,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_ids": [
+    "test_approval_claims_never_activate",
+    "test_claimed_version_and_hash_not_verification",
+    "test_config_and_source_drift",
+    "test_direct_fallback_second_proxy_and_rule_precedence",
+    "test_existing_activation_gates_remain_blocked",
+    "test_extra_companion_and_user_socks_layout",
+    "test_literal_ip_port_and_protocol",
+    "test_native_config_and_engine_switch_rejected",
+    "test_observation_owner_egress_must_be_same_engine",
+    "test_observation_stale_replay_generation_source_and_observer_loss",
+    "test_observation_takeover_scope_protocol_companion",
+    "test_owner_sid_and_wrapper_rejected",
+    "test_source_and_schema_syntax",
+    "test_startup_policy_cannot_be_enabled_by_data",
+    "test_unbound_template_rejected",
+    "test_unknown_fields_duplicate_json_and_malformed_legacy_child",
+    "test_valid_contract_is_always_disabled",
+    "test_valid_synthetic_observation_never_native_health",
+    "test_whole_config_substitution_still_uses_controller_pin"
+  ],
+  "excluded_network_or_subprocess_tests": [
+    "test_cli_always_exit20_and_output_scope",
+    "test_remote_schema_reference_is_refused_without_dial"
+  ],
+  "exit_code": 0,
+  "network_subprocess_guard": true
+}

@@ -1,0 +1,320 @@
+test_approval_claims_never_activate (legacy_admission_contracts.ContractTests.test_approval_claims_never_activate) ... ok
+test_claimed_version_and_hash_not_verification (legacy_admission_contracts.ContractTests.test_claimed_version_and_hash_not_verification) ... ok
+test_config_and_source_drift (legacy_admission_contracts.ContractTests.test_config_and_source_drift) ... ok
+test_direct_fallback_second_proxy_and_rule_precedence (legacy_admission_contracts.ContractTests.test_direct_fallback_second_proxy_and_rule_precedence) ... ok
+test_existing_activation_gates_remain_blocked (legacy_admission_contracts.ContractTests.test_existing_activation_gates_remain_blocked) ... ok
+test_extra_companion_and_user_socks_layout (legacy_admission_contracts.ContractTests.test_extra_companion_and_user_socks_layout) ... ok
+test_literal_ip_port_and_protocol (legacy_admission_contracts.ContractTests.test_literal_ip_port_and_protocol) ... ok
+test_native_config_and_engine_switch_rejected (legacy_admission_contracts.ContractTests.test_native_config_and_engine_switch_rejected) ... ok
+test_observation_owner_egress_must_be_same_engine (legacy_admission_contracts.ContractTests.test_observation_owner_egress_must_be_same_engine) ... ok
+test_observation_stale_replay_generation_source_and_observer_loss (legacy_admission_contracts.ContractTests.test_observation_stale_replay_generation_source_and_observer_loss) ... ok
+test_observation_takeover_scope_protocol_companion (legacy_admission_contracts.ContractTests.test_observation_takeover_scope_protocol_companion) ... ok
+test_owner_sid_and_wrapper_rejected (legacy_admission_contracts.ContractTests.test_owner_sid_and_wrapper_rejected) ... ok
+test_source_and_schema_syntax (legacy_admission_contracts.ContractTests.test_source_and_schema_syntax) ... ok
+test_startup_policy_cannot_be_enabled_by_data (legacy_admission_contracts.ContractTests.test_startup_policy_cannot_be_enabled_by_data) ... ok
+test_unbound_template_rejected (legacy_admission_contracts.ContractTests.test_unbound_template_rejected) ... ok
+test_unknown_fields_duplicate_json_and_malformed_legacy_child (legacy_admission_contracts.ContractTests.test_unknown_fields_duplicate_json_and_malformed_legacy_child) ... ok
+test_valid_contract_is_always_disabled (legacy_admission_contracts.ContractTests.test_valid_contract_is_always_disabled) ... ok
+test_valid_synthetic_observation_never_native_health (legacy_admission_contracts.ContractTests.test_valid_synthetic_observation_never_native_health) ... ok
+test_whole_config_substitution_still_uses_controller_pin (legacy_admission_contracts.ContractTests.test_whole_config_substitution_still_uses_controller_pin) ... ok
+test_auth_required_not_disabled_or_self_asserted (__main__.AdmissionTests.test_auth_required_not_disabled_or_self_asserted) ... FAIL
+test_complete_policy_cannot_promote_native_security (__main__.AdmissionTests.test_complete_policy_cannot_promote_native_security) ... FAIL
+test_connect_acceptance_does_not_prove_route_or_owner (__main__.AdmissionTests.test_connect_acceptance_does_not_prove_route_or_owner) ... FAIL
+test_credential_reference_missing_wrong_or_inline_secret (__main__.AdmissionTests.test_credential_reference_missing_wrong_or_inline_secret) ... FAIL
+test_data_cannot_enable_flags_or_authorize_evidence (__main__.AdmissionTests.test_data_cannot_enable_flags_or_authorize_evidence) ... FAIL
+test_direct_fallback_second_proxy_and_unknown_default (__main__.AdmissionTests.test_direct_fallback_second_proxy_and_unknown_default) ... FAIL
+test_dns_udp_ipv6_health_telemetry_and_unknown_egress (__main__.AdmissionTests.test_dns_udp_ipv6_health_telemetry_and_unknown_egress) ... FAIL
+test_duplicate_keys_unknown_fields_null_and_noncanonical_json (__main__.AdmissionTests.test_duplicate_keys_unknown_fields_null_and_noncanonical_json) ... FAIL
+test_exact_destination_and_port (__main__.AdmissionTests.test_exact_destination_and_port) ... FAIL
+test_legacy_fixture_structural_valid_but_strict_blocked (__main__.AdmissionTests.test_legacy_fixture_structural_valid_but_strict_blocked) ... FAIL
+test_local_schema_cannot_trigger_remote_fetch (__main__.AdmissionTests.test_local_schema_cannot_trigger_remote_fetch) ... FAIL
+test_merge_reload_environment_override_denied (__main__.AdmissionTests.test_merge_reload_environment_override_denied) ... FAIL
+test_metadata_is_not_a_go_parser_or_owner_attestation (__main__.AdmissionTests.test_metadata_is_not_a_go_parser_or_owner_attestation) ... FAIL
+test_missing_and_empty_users (__main__.AdmissionTests.test_missing_and_empty_users) ... FAIL
+test_no_secrets_or_header_material_in_own_errors (__main__.AdmissionTests.test_no_secrets_or_header_material_in_own_errors) ... FAIL
+test_plain_http_upgrade_and_unknown_method (__main__.AdmissionTests.test_plain_http_upgrade_and_unknown_method) ... FAIL
+test_protected_single_source_required (__main__.AdmissionTests.test_protected_single_source_required) ... FAIL
+test_replacement_after_preflight_and_source_drift (__main__.AdmissionTests.test_replacement_after_preflight_and_source_drift) ... FAIL
+test_undeclared_connect_targets_and_uot_denied (__main__.AdmissionTests.test_undeclared_connect_targets_and_uot_denied) ... FAIL
+test_unknown_engine_owner_and_runtime_claims_remain_blocked (__main__.AdmissionTests.test_unknown_engine_owner_and_runtime_claims_remain_blocked) ... FAIL
+test_upstream_reference_is_not_optional (__main__.AdmissionTests.test_upstream_reference_is_not_optional) ... FAIL
+
+======================================================================
+FAIL: test_auth_required_not_disabled_or_self_asserted (__main__.AdmissionTests.test_auth_required_not_disabled_or_self_asserted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 65, in test_auth_required_not_disabled_or_self_asserted
+    p=candidate();p['admission']['authentication']['required']=False;self.rejected(p,'AUTH_REQUIRED')
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_complete_policy_cannot_promote_native_security (__main__.AdmissionTests.test_complete_policy_cannot_promote_native_security)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 53, in test_complete_policy_cannot_promote_native_security
+    r=self.call();self.assertEqual(r['strict_policy_status'],'VALID');self.assertTrue(r['policy_route_allowed'])
+      ^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_connect_acceptance_does_not_prove_route_or_owner (__main__.AdmissionTests.test_connect_acceptance_does_not_prove_route_or_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 89, in test_connect_acceptance_does_not_prove_route_or_owner
+    self.rejected(p,'CONNECT_DESTINATION_DENIED',event=event)
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_credential_reference_missing_wrong_or_inline_secret (__main__.AdmissionTests.test_credential_reference_missing_wrong_or_inline_secret)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 70, in test_credential_reference_missing_wrong_or_inline_secret
+    self.rejected(p,'CREDENTIAL_REFERENCE_INVALID')
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_data_cannot_enable_flags_or_authorize_evidence (__main__.AdmissionTests.test_data_cannot_enable_flags_or_authorize_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 133, in test_data_cannot_enable_flags_or_authorize_evidence
+    p=candidate();p[key]=True;self.rejected(p,'BROKER_SCHEMA')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_direct_fallback_second_proxy_and_unknown_default (__main__.AdmissionTests.test_direct_fallback_second_proxy_and_unknown_default)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 107, in test_direct_fallback_second_proxy_and_unknown_default
+    p=candidate();p['routing'][key]=True;self.rejected(p,code)
+                                         ^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_dns_udp_ipv6_health_telemetry_and_unknown_egress (__main__.AdmissionTests.test_dns_udp_ipv6_health_telemetry_and_unknown_egress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 111, in test_dns_udp_ipv6_health_telemetry_and_unknown_egress
+    p=candidate();p['routing'][key]=True;self.rejected(p,'STRICT_EXTRA_EGRESS_DENIED')
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_duplicate_keys_unknown_fields_null_and_noncanonical_json (__main__.AdmissionTests.test_duplicate_keys_unknown_fields_null_and_noncanonical_json)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 115, in test_duplicate_keys_unknown_fields_null_and_noncanonical_json
+    self.rejected(p,'DUPLICATE_KEY',raw=raw.replace(b'"schema":1',b'"schema":1,"schema":1',1))
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_exact_destination_and_port (__main__.AdmissionTests.test_exact_destination_and_port)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 100, in test_exact_destination_and_port
+    event=metadata();event[key]=value;self.rejected(candidate(),code,event=event)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_legacy_fixture_structural_valid_but_strict_blocked (__main__.AdmissionTests.test_legacy_fixture_structural_valid_but_strict_blocked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 50, in test_legacy_fixture_structural_valid_but_strict_blocked
+    self.assertEqual(r.get('strict_admission_status'),'STRICT_ADMISSION_BLOCKED')
+AssertionError: None != 'STRICT_ADMISSION_BLOCKED'
+
+======================================================================
+FAIL: test_local_schema_cannot_trigger_remote_fetch (__main__.AdmissionTests.test_local_schema_cannot_trigger_remote_fetch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 141, in test_local_schema_cannot_trigger_remote_fetch
+    broker.SCHEMA=path;self.rejected(candidate(),'SCHEMA_EXTERNAL_REF')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_merge_reload_environment_override_denied (__main__.AdmissionTests.test_merge_reload_environment_override_denied)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 126, in test_merge_reload_environment_override_denied
+    p=candidate();p['admission']['configuration'][key]=True;self.rejected(p,code)
+                                                            ^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_metadata_is_not_a_go_parser_or_owner_attestation (__main__.AdmissionTests.test_metadata_is_not_a_go_parser_or_owner_attestation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 96, in test_metadata_is_not_a_go_parser_or_owner_attestation
+    event=metadata();event['downstream_verified']=True;self.rejected(candidate(),'CONNECT_METADATA_FIELDS',event=event)
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_missing_and_empty_users (__main__.AdmissionTests.test_missing_and_empty_users)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 63, in test_missing_and_empty_users
+    self.rejected(p,'AUTH_USERS_REQUIRED')
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_no_secrets_or_header_material_in_own_errors (__main__.AdmissionTests.test_no_secrets_or_header_material_in_own_errors)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 80, in test_no_secrets_or_header_material_in_own_errors
+    r=self.rejected(p,'AUTH_FIELDS');self.assertNotIn(sentinel,json.dumps(r));self.assertNotIn(field,json.dumps(r))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_plain_http_upgrade_and_unknown_method (__main__.AdmissionTests.test_plain_http_upgrade_and_unknown_method)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 93, in test_plain_http_upgrade_and_unknown_method
+    event=metadata();event['method']=method;self.rejected(candidate(),'CONNECT_METHOD_DENIED',event=event)
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_protected_single_source_required (__main__.AdmissionTests.test_protected_single_source_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 122, in test_protected_single_source_required
+    p=candidate();p['admission']['configuration']['source_count']=value;self.rejected(p,'CONFIG_SINGLE_SOURCE_REQUIRED')
+                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_replacement_after_preflight_and_source_drift (__main__.AdmissionTests.test_replacement_after_preflight_and_source_drift)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 128, in test_replacement_after_preflight_and_source_drift
+    p=candidate();pin=common.digest(p);self.call(p,pin=pin)
+                                       ^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_undeclared_connect_targets_and_uot_denied (__main__.AdmissionTests.test_undeclared_connect_targets_and_uot_denied)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 103, in test_undeclared_connect_targets_and_uot_denied
+    p=candidate();p['admission']['connect'][key]=True;self.rejected(p,'CONNECT_POLICY_DENIED')
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_unknown_engine_owner_and_runtime_claims_remain_blocked (__main__.AdmissionTests.test_unknown_engine_owner_and_runtime_claims_remain_blocked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 137, in test_unknown_engine_owner_and_runtime_claims_remain_blocked
+    r=self.call(p);self.assertIn('ENGINE_VERSION_SOURCE_BLOCKED',r['gates']);self.assertIn('B_EGRESS_OWNER_NOT_VERIFIED',r['strict_blockers'])
+      ^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+======================================================================
+FAIL: test_upstream_reference_is_not_optional (__main__.AdmissionTests.test_upstream_reference_is_not_optional)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 75, in test_upstream_reference_is_not_optional
+    p=candidate();p['remote_identity']['credential_ref']=value;self.rejected(p,'UPSTREAM_CREDENTIAL_REFERENCE_REQUIRED')
+                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 46, in rejected
+    r=self.call(p,**kw);self.assertEqual(r['reason'],code);self.assertFalse(r['policy_route_allowed']);return r
+      ^^^^^^^^^^^^^^^^^
+  File "<REPO>\integrations\wua_chatgpt_mcp\tests\admission_suite.py", line 35, in call
+    self.assertTrue(callable(getattr(broker,'strict_preflight',None)),'STRICT_ADMISSION_API_MISSING')
+AssertionError: False is not true : STRICT_ADMISSION_API_MISSING
+
+----------------------------------------------------------------------
+Ran 40 tests in 0.507s
+
+FAILED (failures=21)

@@ -1,0 +1,74 @@
+{
+  "first_red": "runs/admission-20261025-134958-2caf5be1/result.json",
+  "first_red_meaning": "Old code lacked explicit strict API/status; not live network exploitation",
+  "first_red_preserved": true,
+  "expected_codes_not_weakened": true,
+  "mutants": [
+    {
+      "label": "auth",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80",
+      "mutant_sha256": "844df80a16a25ad30636c084b6cb9dd104c1522e873140c5dfbe506be6a7b0a0"
+    },
+    {
+      "label": "canonical",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7",
+      "mutant_sha256": "14e7b629a37064d22fe5824294bab967ee3c8b1a7c1fe503e4609c622a32e877"
+    },
+    {
+      "label": "direct",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7",
+      "mutant_sha256": "92ec6cb5d6adb83d385a82aaa4efbf11f8c517625725ca94a8281f76ec673bd6"
+    },
+    {
+      "label": "error-echo",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7",
+      "mutant_sha256": "73c139ce931cc35fd2f5fc5a338f4af2479a702302079fc70f520d5af1c5451d"
+    },
+    {
+      "label": "merge",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80",
+      "mutant_sha256": "72b7866244823dc05d17022d5bf26f1045861592d25be509c16ddfe29885aca7"
+    },
+    {
+      "label": "method",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80",
+      "mutant_sha256": "bd592cfc239152188a5201072b575f6132743fd5ead3aa5825e555c6263853d0"
+    },
+    {
+      "label": "pin",
+      "inner_collected": 1,
+      "inner_failures": 1,
+      "inner_errors": 0,
+      "source_sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7",
+      "mutant_sha256": "6903c63a2767aad0b012fed66b296b6500eeb9e423557a41909c7d43343b1c74"
+    }
+  ],
+  "mutation_execution": "In-memory Python copies, no disk source substitution, subprocess or Go/native",
+  "counts_overlap": "19 pure ContractTests occur in focus and source regression; do not add as unique tests",
+  "secret_handling": "Only deliberately synthetic markers/opaque UUID refs in tests; no real credentials/store/profile/logs accessed",
+  "native_gaps": [
+    "Go HTTP/JSON/auth boundary",
+    "credential-store/config ACL",
+    "real C/B SID/WFP/socket owner",
+    "runtime route and policy loss",
+    "hosted/ordinary Chat E2E"
+  ]
+}
