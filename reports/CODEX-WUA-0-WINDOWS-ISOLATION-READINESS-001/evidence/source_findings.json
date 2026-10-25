@@ -1,0 +1,155 @@
+{
+  "findings": [
+    {
+      "id": "admission_boundary",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/broker.py",
+      "lines": [
+        43
+      ],
+      "needle": "strict_admission_status='STRICT_ADMISSION_BLOCKED'",
+      "sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7"
+    },
+    {
+      "id": "upstream_secret_gate",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/broker.py",
+      "lines": [
+        26
+      ],
+      "needle": "UPSTREAM_SECRET_BOUNDARY_UNVERIFIED",
+      "sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7"
+    },
+    {
+      "id": "identity_shape_only",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/security_contract.py",
+      "lines": [
+        73
+      ],
+      "needle": "LOCAL_SID_REQUIRED",
+      "sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80"
+    },
+    {
+      "id": "loopback_http_route",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/security_contract.py",
+      "lines": [
+        84
+      ],
+      "needle": "r['client_proxy_host']=='127.0.0.1'",
+      "sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80"
+    },
+    {
+      "id": "declared_child_roles",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/security_contract.py",
+      "lines": [
+        91
+      ],
+      "needle": "CHILD_ALLOWLIST",
+      "sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80"
+    },
+    {
+      "id": "pipe_same_user_only",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Gateway.cs",
+      "lines": [
+        63
+      ],
+      "needle": "CURRENT_USER_FIXTURE_ONLY",
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565"
+    },
+    {
+      "id": "pipe_dacl_readback",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Gateway.cs",
+      "lines": [
+        70
+      ],
+      "needle": "DACL_READBACK",
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565"
+    },
+    {
+      "id": "pipe_identification",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Gateway.cs",
+      "lines": [
+        74
+      ],
+      "needle": "CLIENT_EFFECTIVE_TOKEN",
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565"
+    },
+    {
+      "id": "parent_token_process_creation",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Gateway.cs",
+      "lines": [
+        38
+      ],
+      "needle": "SDK_CREATE_SUSPENDED",
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565"
+    },
+    {
+      "id": "job_before_run",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Gateway.cs",
+      "lines": [
+        39
+      ],
+      "needle": "SDK_JOB_BEFORE_RUN",
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565"
+    },
+    {
+      "id": "held_peer_sid_image",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Shared.cs",
+      "lines": [
+        85
+      ],
+      "needle": "PEER_PROCESS",
+      "sha256": "12ce7c78444c931d35b6ca089766d887277bbddfe2c7764e70811a9e069f9f22"
+    },
+    {
+      "id": "relay_server_pid",
+      "classification": "CODE_CONFIRMED",
+      "path": "integrations/wua_chatgpt_mcp/npfs/Relay.cs",
+      "lines": [
+        16
+      ],
+      "needle": "SERVER_PID_MISMATCH",
+      "sha256": "60ab73430736fd0d67f9ac1e2ad7a2c243f8e60a01f12e432434b6b2e9c02546"
+    },
+    {
+      "id": "wfp_disabled_apply",
+      "classification": "CODE_CONFIRMED",
+      "path": "reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/contracts/backend-contract.json",
+      "lines": [
+        7
+      ],
+      "needle": "OfflineBackend.Apply: always BLOCKED",
+      "sha256": "85c618c03d1089edf8e5793dbd9740740df1260113e41a8b45a090ea64cbe959"
+    },
+    {
+      "id": "wfp_complement",
+      "classification": "CODE_CONFIRMED",
+      "path": "reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/contracts/backend-contract.json",
+      "lines": [
+        24
+      ],
+      "needle": "unmatched by own denies",
+      "sha256": "85c618c03d1089edf8e5793dbd9740740df1260113e41a8b45a090ea64cbe959"
+    },
+    {
+      "id": "wfp_foreign_arbitration",
+      "classification": "CODE_CONFIRMED",
+      "path": "reports/CODEX-WUA-0-WFP-OFFLINE-BACKEND-001/contracts/backend-contract.json",
+      "lines": [
+        26
+      ],
+      "needle": "foreign filters/callouts/hard permits remain UNVERIFIED",
+      "sha256": "85c618c03d1089edf8e5793dbd9740740df1260113e41a8b45a090ea64cbe959"
+    }
+  ],
+  "limitations": "Source/fixture declarations, not native runtime proofs."
+}

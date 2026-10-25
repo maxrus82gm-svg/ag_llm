@@ -1,0 +1,17 @@
+{
+  "first_run": "red_tests.json",
+  "actual_count": 26,
+  "pass": 25,
+  "fail": 0,
+  "error": 1,
+  "exit_code": 1,
+  "selector": "OracleTests.test_malformed_kind_returns_fixed_rejection",
+  "trigger": "kind=[] or {} in SYNTHETIC_OFFLINE_ONLY object",
+  "observed_exception": "TypeError",
+  "cause": "Membership lookup in a set before type validation accepts unhashable input and raises.",
+  "old_fragment": "if kind not in {'DENY','ALLOW','QUIESCENCE'}:",
+  "new_fragment": "if type(kind) is not str or kind not in {'DENY','ALLOW','QUIESCENCE'}:",
+  "source_capture_limitation": "Pre-fix complete source file not separately snapshotted. Fragments describe the actual patch; no pre-fix full-source hash claimed.",
+  "green": "green_tests.json",
+  "native_impact": "None; synthetic evidence-consistency helper only."
+}

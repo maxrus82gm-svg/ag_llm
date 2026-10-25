@@ -1,0 +1,326 @@
+{
+  "schema": 1,
+  "task": "CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001",
+  "permissions": [
+    "READ_ONLY",
+    "LAB_SETUP",
+    "RULE_APPLY",
+    "NATIVE_EGRESS_TEST",
+    "TUNNEL_START"
+  ],
+  "native_tests_run": 0,
+  "engine_family": "V2Ray",
+  "can_apply": false,
+  "can_start_tunnel": false,
+  "install_uninstall": "BLOCKED",
+  "strict_admission_status": "STRICT_ADMISSION_BLOCKED",
+  "hosted_tunnel": "HOSTED_TUNNEL_ON_HOLD_BY_USER",
+  "families": [
+    {
+      "id": "N01",
+      "title": "C direct IPv4 TCP",
+      "kind": "DENY",
+      "observation_source": "Trusted observer удерживает C process/token/image handle; independent WFP decision + scoped owned receiver с run nonce.",
+      "expected": "Попытка действительно инициирована C; коррелируемый deny выбранной boundary; ноль nonce receipts.",
+      "negative_control": "В заведомо изолированной lab разрешённый контроль observer/receiver и намеренно отсутствующий lab deny должны выявить неверный oracle; bypass разрешён только при доказанном outer containment.",
+      "false_pass_risk": "Timeout, неверный target, не запущенный процесс или недоступный receiver выглядят как block.",
+      "preparation_rollback": "Заранее согласованные disposable endpoints; после пробы quiesce C, keep-deny, без реального DIRECT из рабочей Windows.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N02",
+      "title": "B exact physical upstream",
+      "kind": "ALLOW",
+      "observation_source": "Independent socket→held process→primary B token/image observer и remote controlled upstream receipt; logical CONNECT receipt отдельно.",
+      "expected": "Один approved R:Q TCP socket реально принадлежит B engine; nonce/payload у owned upstream, без UI delegation.",
+      "negative_control": "B-wrapper с U-owned engine и CONNECT200 без downstream receipt должны провалить owner/route oracle.",
+      "false_pass_risk": "CONNECT200, PID reuse, sampled socket table или TLS session cache ошибочно принимаются за B egress.",
+      "preparation_rollback": "Только lab-approved engine/source и dummy auth после secret safety review; никакого real tunnel; остановить owned tree, закрыть flows.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N03",
+      "title": "B wrong address/port/alternate proxy",
+      "kind": "DENY",
+      "observation_source": "B initiation/token evidence + effective tuple policy observer + controlled forbidden receivers.",
+      "expected": "Каждый wrong-IP/wrong-port/secondary proxy tuple отклонён; нет receipts или альтернативного socket owner.",
+      "negative_control": "Внутри outer-contained lab intentional wrong-tuple filter mutant должен быть обнаружен downstream observer.",
+      "false_pass_risk": "Receiver down, неверный IP family или движок сам отказал до системного фильтра.",
+      "preparation_rollback": "Тестовый бинарник/набор tuple утверждены отдельно; scoped receipts; quiesce до cleanup.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N04",
+      "title": "Upstream loss/retries/redirect/env",
+      "kind": "DENY",
+      "observation_source": "Owned upstream fault controller, monotonic attempt log, independent all C/B scoped flow observer и effective policy.",
+      "expected": "После отказа/timeout/reset/redirect/NO_PROXY/env попытки остаются только approved edge; нет DIRECT/DNS/secondary route.",
+      "negative_control": "Изолированный fallback mutant с controlled alternate receiver должен дать FAIL даже при исходном CONNECT error.",
+      "false_pass_risk": "Короткое окно скрывает delayed retry, DNS/health dial или reconnect после восстановления.",
+      "preparation_rollback": "Fault injection только lab endpoint; bounded retries+grace window из source review; keep-deny при восстановлении.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N05",
+      "title": "IPv6 / mapped / transition",
+      "kind": "DENY",
+      "observation_source": "Initiator token + address-family/tuple observer, V4/V6 classification evidence и owned dual-stack receivers.",
+      "expected": "C/B ::1, IPv6 external, IPv4-mapped и доступные transition paths не создают неутверждённый egress.",
+      "negative_control": "Изолированный V6 deny omission mutant выявляется; positive observer control на отдельной lab role.",
+      "false_pass_risk": "IPv6 disabled или отсутствует route: NOT TESTABLE, а не подтверждённый WFP deny.",
+      "preparation_rollback": "Не включать IPv6 на рабочей Windows; поддержка family предварительно согласуется для lab; затем quiesce.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N06",
+      "title": "DNS and delegated resolver",
+      "kind": "DENY",
+      "observation_source": "Scoped C/B attempts + independent resolver/service delegation observer + owned DNS/DoH/DoT receivers.",
+      "expected": "Нет unapproved resolution ни от C/B, ни от делегированного U/SYSTEM service.",
+      "negative_control": "Cache-busting nonce и deliberately delegated resolver mutant должны выявить обход SID-only coverage.",
+      "false_pass_risk": "Cache hit/hosts file скрывает сетевой DNS, а наблюдение только C/B пропускает DNS Client service.",
+      "preparation_rollback": "Синтетические имена и owned DNS только под отдельным network GO; не менять host DNS/V2Ray; dispose lab.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N07",
+      "title": "UDP/raw/secondary protocols",
+      "kind": "DENY",
+      "observation_source": "Actual protocol capability/attempt observer + filter classification + owned protocol receivers.",
+      "expected": "Никакого необъявленного UDP/ICMP/raw/secondary path; неподдерживаемые probes отдельно NOT TESTABLE.",
+      "negative_control": "UDP omission mutant в outer-contained lab должен зарегистрироваться receiver, а не остаться зелёным.",
+      "false_pass_risk": "Privilege error при raw socket creation принимается за сетевой фильтр; UDP silence за deny.",
+      "preparation_rollback": "Не повышать права для текущей TASK; будущий GO задаёт разрешённые протоколы; quiesce/keep-deny.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N08",
+      "title": "Unauthorized NPFS peer / pipe squatting",
+      "kind": "DENY",
+      "observation_source": "Gateway access/peer decision fixed code, kernel pipe peer PID→held token/image handle, independent worker invocation counter.",
+      "expected": "Wrong SID, same-SID wrong image, remote pipe и precreated fake server отвергнуты; SDK не запущен для запроса.",
+      "negative_control": "ACL-only или SID-only peer mutant в lab обязан пропустить controlled adversary и вызвать FAIL.",
+      "false_pass_risk": "Gateway не работает/нет pipe; отказ не из-за auth; PID/image race или broad access mask.",
+      "preparation_rollback": "Disposable exact pipe names и dummy grant; без реальных secrets; закрыть pipe/job/handles и проверить отсутствие child.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N09",
+      "title": "Config/source tamper and TOCTOU",
+      "kind": "DENY",
+      "observation_source": "Trusted controller preimage/pins + file ACL/reparse/replacement observer + actual launcher admission and process count.",
+      "expected": "Модификация после preflight/смена parent/reparse/merge/env/reload => no Resume; никаких network attempts.",
+      "negative_control": "Pin-check omission или writable-parent mutant должен дать controlled launch и FAIL oracle.",
+      "false_pass_risk": "Повторное чтение того же caller pin, вместо trusted controller; disk hash не равен mapped executable.",
+      "preparation_rollback": "Только lab copy, никакого рабочего config; restore owned preimage compare-and-swap, keep admissions frozen.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N10",
+      "title": "Auth/407/error/log secret boundary",
+      "kind": "DENY",
+      "observation_source": "Dummy unique canaries; independent enumeration permitted diagnostic sinks/crash/argv/env channels; auth handler receipt.",
+      "expected": "Missing/empty/wrong auth отклонён; canary secret/header absent in every agreed sink, including upstream error chain.",
+      "negative_control": "Canary-leaking logger mutant обязан детектироваться; пустые/несобранные sinks => INCOMPLETE.",
+      "false_pass_risk": "Redaction маскирует исходную утечку, incomplete sinks, real credential ошибочно попал в evidence.",
+      "preparation_rollback": "Только dummy credentials после source fix/review; реальный upstream secret blocker не снят; sanitized counts, raw canary fixture приватен в lab.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N11",
+      "title": "Recovery / deny removal / UI preservation",
+      "kind": "QUIESCENCE",
+      "observation_source": "Independent lifecycle+queued-work/flow/handle observer, exact owned filter/ACL readback before/after; agreed U baseline.",
+      "expected": "Deny не удаляется до zero-work, startup frozen; recovery не меняет U proxy и не resurrect C/B.",
+      "negative_control": "Forged ledger zero, surviving child/flow и чужой object key должны дать KEEP DENY, не cleanup.",
+      "false_pass_risk": "PID list/ledger заменяет real quiescence; global reset чинит lab ценой ослабления host.",
+      "preparation_rollback": "Out-of-band recovery и scoped preimages до setup; only exact owned rollback, unknown => keep-deny/escalate.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N12",
+      "title": "Children / alternate token / delegated helper",
+      "kind": "DENY",
+      "observation_source": "Held process ancestry/primary tokens, job handles, independent flow owner and delegated work observation.",
+      "expected": "Same-SID children restricted; undeclared image suspended/rejected; token/delegation/handle escape не даёт U egress.",
+      "negative_control": "Image-only filter или broker wrapper delegating U engine должен дать FAIL.",
+      "false_pass_risk": "Job kill-on-close ошибочно принят за сетевой sandbox; snapshots пропускают короткоживущий helper.",
+      "preparation_rollback": "Только disposable binaries и controlled U helper; no SeDebug grant; stop entire owned tree and delegated queues.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N13",
+      "title": "Loopback exact port / B listener owner",
+      "kind": "DENY",
+      "observation_source": "Local listen/accept owner token+image, bind exclusivity, client auth and independent flow policy observer.",
+      "expected": "Wrong port, ::1, fake/rebound U listener и non-B listener не приняты; C exception не расширяется.",
+      "negative_control": "Correct tuple but wrong listener owner должен провалить gate даже при CONNECT200.",
+      "false_pass_risk": "Tuple-only ALE check ошибочно приписывает порт B, process reuse и bind race.",
+      "preparation_rollback": "Только если выбран loopback transport; no рабочие ports; stop client before server cleanup, keep-deny.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N14",
+      "title": "Crash / reboot / BFE/provider loss",
+      "kind": "DENY",
+      "observation_source": "Out-of-band boot/lifecycle observer + effective persistent-policy readback before admission + controlled receiver.",
+      "expected": "C/B не Resume в gap и после policy loss; reboot не превращает отсутствие controller в разрешение.",
+      "negative_control": "Startup-before-policy mutant должен дать FAIL; nonpersistent omission в disposable lab обнаруживается.",
+      "false_pass_risk": "PERSISTENT flag принимается за boot-time enforcement; probe начинается после опасного окна.",
+      "preparation_rollback": "Отдельный GO на reboot/service fault в lab, никогда рабочую BFE; independent outer containment and recovery до fault.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N15",
+      "title": "Existing flow / inherited socket handle",
+      "kind": "DENY",
+      "observation_source": "Trusted handle inheritance inventory, admission ordering, scoped flow lifecycle observer и owned receiver.",
+      "expected": "Нет pre-policy established flow или duplicated foreign socket у C/B; rollback waits for all references.",
+      "negative_control": "Intentionally inherited already-connected lab socket должен выявить gap connect-time-only policy.",
+      "false_pass_risk": "Новые connect blocked, но existing socket продолжает data; table sampling теряет ownership handoff.",
+      "preparation_rollback": "Existing-flow preparation только под separate native GO в containment; close all duplicates, zero-work proof.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N16",
+      "title": "Cross-SID NPFS authorized positive path",
+      "kind": "ALLOW",
+      "observation_source": "Kernel peer token/SID/image both directions + exact DACL readback + fixed read-only synthetic MCP nonce/receipt.",
+      "expected": "Correct C↔U peer работает с minimal query rights и Identification-only; no SeDebug/admin/C token leakage.",
+      "negative_control": "Wrong client/server SID и higher impersonation variant отвергнуты; no grant/token inheritance.",
+      "false_pass_risk": "Same-user fixture выдаётся за cross-user pass; helper получает U rights; отсутствие receiver контроля.",
+      "preparation_rollback": "Отдельный launcher/ACL scope и dummy grants; MCP receipt read-only synthetic; stop job/pipe before cleanup. Generic egress oracle здесь НЕ применяется.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N17",
+      "title": "Logical CONNECT target vs physical upstream",
+      "kind": "DENY",
+      "observation_source": "Native handler parsed authority/method/auth observer + physical B R:Q owner and owned logical destination receipt.",
+      "expected": "CONNECT other D/port, Upgrade/plain/UoT denied, даже если physical R:Q allowed.",
+      "negative_control": "Allow-all CONNECT parser mutant обязан FAIL; metadata JSON и HTTP200 сами по себе недостаточны.",
+      "false_pass_risk": "Только transport socket проверен; логическая DNS/UDP операция зашифрована внутри allowed TCP.",
+      "preparation_rollback": "Lab dummy protocol endpoints после source compatibility review; no OpenAI/tunnel; quiesce owned processes.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    },
+    {
+      "id": "N18",
+      "title": "Rollback object ownership / concurrency",
+      "kind": "QUIESCENCE",
+      "observation_source": "Trusted preimage + exact provider/filter/ACL/account ownership readback, independent drift and quiescence observer.",
+      "expected": "Concurrent replacement, foreign reference/key, preexisting account => STOP/KEEP DENY; не remove-by-name.",
+      "negative_control": "Forged UUID/ledger или account-name-only deleter должен дать FAIL на controlled foreign lab object.",
+      "false_pass_risk": "Successful delete по неверному объекту маскирует damage; snapshot restore затирает чужой change.",
+      "preparation_rollback": "Только disposable lab owned and controlled decoy objects; no global import/reset; preserve evidence and escalate.",
+      "execution": "NOT RUN",
+      "classification": "BLOCKED",
+      "requires": [
+        "LAB_SETUP",
+        "RULE_APPLY",
+        "NATIVE_EGRESS_TEST"
+      ]
+    }
+  ]
+}

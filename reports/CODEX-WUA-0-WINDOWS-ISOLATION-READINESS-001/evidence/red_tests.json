@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "kind": "SYNTHETIC_OFFLINE_ONLY",
+  "count": 26,
+  "pass": 25,
+  "fail": 0,
+  "error": 1,
+  "skip": 0,
+  "exit_code": 1,
+  "blocked_operation_attempts": [],
+  "native_network_tests_run": 0,
+  "rows": [
+    {
+      "id": "__main__.OracleTests.test_complete_b_owned_route",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_complete_denial",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_complete_quiescence",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_connect200_without_owner_or_payload_is_insufficient",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_firewall_enabled_not_effective_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_input_cannot_promote_native_status",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_invalid_counts_not_coerced",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_keep_deny_and_freeze_are_required",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_malformed_kind_returns_fixed_rejection",
+      "status": "ERROR",
+      "exception_type": "TypeError"
+    },
+    {
+      "id": "__main__.OracleTests.test_missing_attempt_and_controls",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_only_synthetic_boundary_supported",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_quiescence_blocks_survivors_unknown_and_bool_counts",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_receiver_receipt_contradicts_denial",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_run_binding_format",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_stale_mixed_and_partial_windows_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_timeout_only_never_proves_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_unreviewed_competing_filter_and_missing_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.OracleTests.test_wrapper_or_ui_owner_is_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PlanTests.test_exact_family_collection_and_evidence_dimensions",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PlanTests.test_host_observations_are_actual_bounded_schema",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PlanTests.test_permission_gates_are_separate_and_activation_closed",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PlanTests.test_protected_inputs_unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.PlanTests.test_reuses_existing_admission_without_unlocking",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.MutationTests.test_mutant_ledger_zero_overrides_live_work_is_caught",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.MutationTests.test_mutant_provenance_check_removed_is_caught",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.MutationTests.test_mutant_wrapper_owner_allowed_is_caught",
+      "status": "PASS"
+    }
+  ]
+}

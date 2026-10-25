@@ -1,0 +1,49 @@
+{
+  "matrix": "B1 §3; local content hashes in protected_inputs_before.json, no Git revision attestation",
+  "addressed_sections": {
+    "000_Задачи Codex.md": [
+      "Правила",
+      "БЛОК 1",
+      "БЛОК 4 latest verdict"
+    ],
+    "08_Старт.md": [
+      "priority USER GO / authority"
+    ],
+    "18_Регламент сопровождения документации.md": [
+      "DOC-TASK-CLOSEOUT-OWNER-01@1",
+      "DOC-TEST-LIFECYCLE-01@1",
+      "DOC-TASK-READ-SCOPE-01@1",
+      "DOC-GIT-01@1",
+      "DOC-LOCAL-REPORT-HANDOFF-01@1"
+    ],
+    "19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md": [
+      "§7.7",
+      "§7.8"
+    ],
+    "34_TACTICAL_CONTEXT.md": [
+      "latest WEB_12 CURRENT"
+    ],
+    "36.1_Обязательный регламент тестирования для LLM.md": [
+      "TEST-ENG-01",
+      "TEST-DEV-01",
+      "TEST-COV-01",
+      "TEST-EXEC-01"
+    ],
+    "36.2_Профиль тестирования Web Alarm Workspace.md": [
+      "test isolation/receipts and preservation of existing commands; no production suite run"
+    ]
+  },
+  "other_addressed_sources": [
+    "previous strict report/admission matrix",
+    "broker/security/NPFS source",
+    "existing WFP backend contract/Core.cs because directly relevant to current WFP design"
+  ],
+  "not_read": [
+    "personal 001 archive",
+    "other users/credentials",
+    "full Firewall/WFP rules",
+    "Git/.git/history",
+    "working proxy config/network connections"
+  ],
+  "no_shared_documents_written": true
+}

@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "task": "CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001",
+  "scope": "READ_ONLY_HOST_INSPECTION_AND_OFFLINE_ENGINEERING",
+  "sync_gate": "USER_DECLARED, no Git query",
+  "commands": [
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/capture_inputs.py'",
+      "exit_code": 0,
+      "purpose": "Task snapshot/user sync statement +24 addressed input hashes"
+    },
+    {
+      "command": "& './reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/collect_readonly.ps1' | Set-Content -Encoding UTF8 '<TASK>/evidence/host_observations.json'",
+      "exit_code": 0,
+      "query_groups": 14,
+      "observed": 14,
+      "blocked": 0
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/observe_apis.py' | Set-Content -Encoding UTF8 '<TASK>/evidence/api_observations.json'",
+      "exit_code": 0,
+      "exports_present": 14,
+      "exports_checked": 14,
+      "current_token_elevated": false,
+      "wfp_npfs_invocations": 0
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/plan_data.py'",
+      "exit_code": 0,
+      "future_native_families": 18,
+      "executed": 0
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/test_offline.py' red",
+      "exit_code": 1,
+      "count": 26,
+      "pass": 25,
+      "fail": 0,
+      "error": 1,
+      "skip": 0
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/test_offline.py' review_red",
+      "exit_code": 1,
+      "count": 28,
+      "pass": 26,
+      "fail": 2,
+      "error": 0,
+      "skip": 0,
+      "evidence": "evidence/review_red_tests.json"
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/test_offline.py' green (intermediate)",
+      "exit_code": 1,
+      "count": 28,
+      "pass": 27,
+      "fail": 1,
+      "error": 0,
+      "skip": 0,
+      "evidence": "evidence/review_intermediate_tests.json"
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/test_offline.py' green",
+      "exit_code": 0,
+      "count": 28,
+      "pass": 28,
+      "fail": 0,
+      "error": 0,
+      "skip": 0
+    },
+    {
+      "command": "System.Management.Automation.Language.Parser.ParseFile(<TASK>/collect_readonly.ps1); no script execution",
+      "exit_code": 0,
+      "files": 1,
+      "syntax_errors": 0
+    },
+    {
+      "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/finalize.py' (ast.parse gate included)",
+      "exit_code": 0,
+      "python_syntax_files": 6,
+      "syntax_errors": 0
+    }
+  ],
+  "counts_note": "28 unique final methods =25 ordinary +3 mutation controls. First RED had26, engineering review added2. Repeated runs overlap; do not add counts as distinct tests. Three inner expected assertion FAILs belong to mutation controls, not product failures.",
+  "mutants": {
+    "executed": 3,
+    "caught": 3,
+    "included_in_28": true,
+    "inner_expected_failures": 3,
+    "inner_errors": 0
+  },
+  "source_findings": 15,
+  "protected_inputs_unchanged": 24,
+  "python_guard": {
+    "blocked_operation_attempts": [],
+    "claim": "Python process guard only, not OS-level containment"
+  },
+  "native_tests": {
+    "families_planned": 18,
+    "families_run": 0,
+    "probes_run": 0,
+    "status": "NOT RUN / NOT VERIFIED",
+    "not_collected_in_offline_suite": true
+  },
+  "prohibited_operations": {
+    "git_github": 0,
+    "network_probes": 0,
+    "listeners": 0,
+    "account_acl_firewall_wfp_mutations_requested": 0,
+    "elevation_requests": 0,
+    "engine_runs": 0,
+    "tunnel_starts": 0,
+    "card_archive_edits": 0
+  },
+  "limitations": [
+    "No exact Git revision independently verified",
+    "API/command availability not permissions or enforcement",
+    "No broad rules, user/connection enumeration or secret reads",
+    "Protected hashes cover24 addressed files only",
+    "No native receipt authentication or special-case observers implemented",
+    "Publication heuristic scan is not complete secret detection"
+  ],
+  "packet_verification": {
+    "status": "PASS",
+    "manifest_files": 33,
+    "protected_inputs_unchanged": 24,
+    "json_files_parsed": 18,
+    "python_files_parsed": 6,
+    "native_network_tests_run": 0,
+    "exit_code": 0,
+    "command": "& '.venv/Scripts/python.exe' -I -B 'reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/finalize.py' --verify",
+    "coverage": "all TASK files except manifest itself;24 addressed protected inputs; JSON/syntax/required files/links/narrow publication scan"
+  }
+}

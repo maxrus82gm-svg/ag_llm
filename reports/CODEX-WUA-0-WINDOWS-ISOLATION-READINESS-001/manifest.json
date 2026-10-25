@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "task": "CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001",
+  "root": "repository-relative",
+  "self_excluded": "manifest.json (no recursive self-hash)",
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/capture_inputs.py",
+      "bytes": 2423,
+      "sha256": "29a0cbe1ca96d8f73ceee307db231bc0dfccb00a6cdf5e9b703ba966fb851375"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/checks.json",
+      "bytes": 4959,
+      "sha256": "fe1d158afb39c70782a604841f3b6226e07da1cb269e4afec20aa43e6073eb88"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/collect_readonly.ps1",
+      "bytes": 3086,
+      "sha256": "508b768facc98ffc7eacdafb9a371d1c9f90fa9cdbbfd05ac9b88e3e46c858e7"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/DOC_IMPACT.md",
+      "bytes": 2216,
+      "sha256": "57c024f4c24455672bd257b819f7e647d9f9121e98700c0722aac98221258128"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/api_observations.json",
+      "bytes": 944,
+      "sha256": "9e06f89afaf69d8cd64a87d29c03b2b97c356766be74570a7595f75d0e7d50d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/engineering_review_repairs.json",
+      "bytes": 967,
+      "sha256": "88d0c7099082f4641cdf4a7d39a386ef1d89d924bc8bf1904d891d51d3f587c2"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/green_tests.json",
+      "bytes": 3512,
+      "sha256": "3122ea3befcc8bc087b0215977720b2f8298f0440119cd11618086ca45982098"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/host_observations.json",
+      "bytes": 3579,
+      "sha256": "e93f97b098b9f8c75081f06f65840b42c5e33af6a5a902f08073a8f135beff01"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/oracle_repair.json",
+      "bytes": 835,
+      "sha256": "f50805eaedfcab795b77b9956f8d8777088fbc0717d0d6e2b327de1b6d7b40b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/powershell_syntax.json",
+      "bytes": 93,
+      "sha256": "0dc4daea2e5c29ec4140503b36fc9d32edca24afd8bb558da05ebb742717f13f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/protected_inputs_after.json",
+      "bytes": 4905,
+      "sha256": "207212512cfbdc2fb518f7a6ee78aa7671d2d2feae04232021094b76f9f47110"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/protected_inputs_before.json",
+      "bytes": 4929,
+      "sha256": "d4cd3da132e349f3295a71b707ec7d0d5740620324cef4456ffbb6ea0d9531be"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/python_syntax.json",
+      "bytes": 114,
+      "sha256": "0aa79f5e944b8680bccae89d63c0a836820d05a72cdb838febe018695d6810fb"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/read_scope.json",
+      "bytes": 1642,
+      "sha256": "d70470f8ba2176601fb2137d88aa38398eb21f926ed5eea8b3da68269fd871db"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/red_tests.json",
+      "bytes": 3327,
+      "sha256": "ab88db362ca21648c7e68b748cefad3af212a8a8c69f0d07abf5e564c3299354"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/review_intermediate_tests.json",
+      "bytes": 3555,
+      "sha256": "ddf4a847b103d68d502e0ec8886a80a2c84c03815d31c3a5e3f49b60096a9f82"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/review_red_tests.json",
+      "bytes": 3598,
+      "sha256": "b3ea3b12ac67702e4f2854b46d2eea88f9df23e35f13de739ddb8c2711940e07"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/source_findings.json",
+      "bytes": 5122,
+      "sha256": "9cfdd40a2d92de7f11b68346f98e244d8adc62984ccea93e33e6e9f032aff4b4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/sync_gate.json",
+      "bytes": 330,
+      "sha256": "80ae8e9098317d6b7e938b0e4fa41489b8b6eb395a991831abce6a24c7a1ecf1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/evidence/task_snapshot.md",
+      "bytes": 17796,
+      "sha256": "28ed998efb111c97d0bbc062c91ed4aa22cc9a8cff49edaaf20a4dad7d79bd0b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/finalize.py",
+      "bytes": 26142,
+      "sha256": "adfe97ef52c507dd2117b42a78b656e8e739280282b43f62de3db540acd564d1"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/manual_engineering_review.md",
+      "bytes": 7513,
+      "sha256": "b995c0b4ca2ab14c9f728bfc0a5d1bc2e8a195a5e9f73f117f7d44d99ee85dfc"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/native_plan.json",
+      "bytes": 19882,
+      "sha256": "0e5239ddbf916e42b5c79100a859219f7aa472705c791017ac56de6b26a5340f"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/native_test_plan.md",
+      "bytes": 17890,
+      "sha256": "04997e770b376e1d622fc38dfdc21679c70b79e8471d7e06420cc05a3bebf23a"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/observe_apis.py",
+      "bytes": 2713,
+      "sha256": "6ba2ced1ce7dc25578a95972f3f52129e16ccf08941df031579ac9fab8988364"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/offline_oracles.py",
+      "bytes": 3701,
+      "sha256": "439f666eeb42b4f6255904efed3d03d8d652225fda14e0a8b8e2972e5bdcf232"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/plan_data.py",
+      "bytes": 16193,
+      "sha256": "0fefa8d5f053b60d2827e5de6e8635a5fd244080d9e129d179bbb2aa4b1a1eaf"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/readiness_matrix.md",
+      "bytes": 5504,
+      "sha256": "dbf114ae08fda0593edacd8359c41d0efb5b47fd287556b930594eb3aef1190c"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/report.md",
+      "bytes": 12471,
+      "sha256": "70829bbacef912706508c281c66ba69a214a6e4bd2b0f7897e6c4cb2be26f010"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/rollback_plan.md",
+      "bytes": 7843,
+      "sha256": "ea47317e5019def8ac32707f13b86ef1343322ac8fd8ca581c0a175ef7f902f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/test_offline.py",
+      "bytes": 13096,
+      "sha256": "d930c026af5a18650891baa9e2055adcc43aa780ecc754c5efcf3cdf665cdb2b"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/wfp_policy_plan.md",
+      "bytes": 9004,
+      "sha256": "a2c2bd99e9406bf067ab64790c593db99a7c5c2a6616b1db410d22261761d822"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001/windows_identity_design.md",
+      "bytes": 9971,
+      "sha256": "a4c36ffee0add84b8aa6c689ce3c3cc7da3acf482ab4c3edd30b35fd0aed8459"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "task": "CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001",
+  "collected_utc": "2026-10-25T10:23:37.5450108Z",
+  "scope": "LOCAL_TARGETED_READ_ONLY",
+  "observations": [
+    {
+      "id": "shell",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "version": "7.6.5",
+        "edition": "Core",
+        "process_64bit": true,
+        "os_64bit": true
+      }
+    },
+    {
+      "id": "os",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "caption": "Майкрософт Windows 10 Pro",
+        "version": "10.0.19045",
+        "build": "19045",
+        "architecture": "64-разрядная"
+      }
+    },
+    {
+      "id": "current_token",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "administrator_role": false,
+        "system": false,
+        "authenticated": true
+      }
+    },
+    {
+      "id": "command_Get-LocalUser",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "command_Get-Acl",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "command_Get-NetFirewallProfile",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "command_Get-NetFirewallRule",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "command_Get-NetFirewallSecurityFilter",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "command_Get-Service",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "available": true
+      }
+    },
+    {
+      "id": "account_wua-client",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "exists": false
+      }
+    },
+    {
+      "id": "account_wua-broker",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "exists": false
+      }
+    },
+    {
+      "id": "service_BFE",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "state": "Running"
+      }
+    },
+    {
+      "id": "service_MpsSvc",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": {
+        "state": "Running"
+      }
+    },
+    {
+      "id": "firewall_profiles",
+      "classification": "OBSERVED_READ_ONLY",
+      "status": "OBSERVED",
+      "value": [
+        {
+          "name": "Domain",
+          "enabled": "True",
+          "default_inbound": "NotConfigured",
+          "default_outbound": "NotConfigured"
+        },
+        {
+          "name": "Private",
+          "enabled": "True",
+          "default_inbound": "NotConfigured",
+          "default_outbound": "NotConfigured"
+        },
+        {
+          "name": "Public",
+          "enabled": "True",
+          "default_inbound": "NotConfigured",
+          "default_outbound": "NotConfigured"
+        }
+      ]
+    }
+  ],
+  "native_network_tests_run": 0,
+  "system_mutations_requested": 0
+}
