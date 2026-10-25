@@ -7,6 +7,9 @@ aliases:
 
 # 37. Старт перехода к Web Alarm Ultra
 
+> **USER-DIRECTED UPDATE / 2026-10-25:** теперь **АКТИВНЫЙ ПРИОРИТЕТ** — реализовывать Web Alarm Ultra: API нейросетей, сначала GigaChat, единые сохранённые профили Provider/Model, Ultra Web Chat с Workspace/Chat/Turn history и UI, затем перенос проверенных старых Ultra-возможностей. **НЕ** автоматический GO на код, платное API или rollout. Исторический документ №38 ранее откладывал Ultra Tab (17.10), однако нынешнее решение пользователя (25.10) имеет приоритет. Раздел 9 ниже — историческая архитектура и **замороженная** ChatGPT Desktop → MCP/Tunnel/V2Ray ветка; архив [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]], владелец [[19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP]]. Не возобновлять до отдельного USER UNFREEZE.
+
+
 **Статус:** `USER-DIRECTED START CONCEPT / INITIAL ROADMAP / IMPLEMENTATION NOT ASSIGNED`.
 **Дата:** 2026-10-15. **Архитектурный класс:** Web Alarm Ultra / новый веб-контур чата и подключений моделей.
 **Источник:** последовательное обсуждение пользователя о новой вкладке Ultra, GigaChat, Codex, workspace и Blueprint LLM. **Документ подготовлен ChatGPT как начальная рамка**, а не как утверждённая спецификация реализации.

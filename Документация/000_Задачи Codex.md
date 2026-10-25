@@ -25,6 +25,8 @@
 
 ---
 
+> **USER FREEZE / 2026-10-25 — PAUSED, NOT CLOSED.** Область ChatGPT Desktop → MCP → Web Alarm Ultra / V2Ray / WFP остановлена пользователем. Подробный неизменяемый архив: [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]]; отдельный архитектурный владелец №19. `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` имеет опубликованную авторскую сдачу `RESULT READY / AWAITING INDEPENDENT VERIFICATION WEB_12`, **но не independent PASS**. Полный исходный текст БЛОКА 1 ниже сохранён без изменений. Новые MCP TASK, тесты/host изменений не разрешены; БЛОК 1 не очищать/не ротировать до отдельной приёмки или пользовательского terminal closeout. `can_apply=false`, `can_start_tunnel=false`, tunnel HOLD.
+
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
 # 🟨 Подготовка защищённой Windows-изоляции MCP — проверка готовности и план нативных испытаний
