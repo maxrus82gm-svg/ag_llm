@@ -1,0 +1,318 @@
+{
+  "task": "CODEX-WA4-R-TOCTOU-REVIEW-AND-REPAIR-001",
+  "status": "PARTIAL",
+  "independent_verification": "NOT VERIFIED",
+  "all_reported_tests_finished": true,
+  "runs": [
+    {
+      "run_id": "baseline_core",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_target_identity",
+        "test_web_alarm_target_claims",
+        "test_web_alarm_target_claims_concurrency",
+        "test_web_alarm_operation_contract",
+        "test_web_alarm_operation_store",
+        "test_web_alarm_operation_store_concurrency",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_manifest_store",
+        "test_web_alarm_rollback",
+        "test_web_alarm_rollback_concurrency",
+        "test_web_alarm_crash_consistency",
+        "test_web_alarm_aud010205_repair",
+        "test_web_alarm_aud01t02b_repair",
+        "test_web_alarm_state_machine_cas"
+      ],
+      "cwd": "<LAB>/baseline",
+      "exit_code": 0,
+      "duration_seconds": 164.81,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/baseline"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 241 tests in 163.957s",
+        "",
+        "OK (skipped=1)"
+      ],
+      "counts": {
+        "tests": 241,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "passed": 240
+      }
+    },
+    {
+      "run_id": "candidate_core",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_target_identity",
+        "test_web_alarm_target_claims",
+        "test_web_alarm_target_claims_concurrency",
+        "test_web_alarm_operation_contract",
+        "test_web_alarm_operation_store",
+        "test_web_alarm_operation_store_concurrency",
+        "test_web_alarm_mutation_executor",
+        "test_web_alarm_manifest_store",
+        "test_web_alarm_rollback",
+        "test_web_alarm_rollback_concurrency",
+        "test_web_alarm_crash_consistency",
+        "test_web_alarm_aud010205_repair",
+        "test_web_alarm_aud01t02b_repair",
+        "test_web_alarm_state_machine_cas"
+      ],
+      "cwd": "<LAB>/candidate",
+      "exit_code": 0,
+      "duration_seconds": 157.783,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/candidate"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 241 tests in 157.249s",
+        "",
+        "OK (skipped=1)"
+      ],
+      "counts": {
+        "tests": 241,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "passed": 240
+      }
+    },
+    {
+      "run_id": "replay_red",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests.SnapshotRepairOracles.test_repeated_corrupt_restore_performs_no_write"
+      ],
+      "cwd": "<LAB>/baseline",
+      "exit_code": 1,
+      "duration_seconds": 0.575,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/baseline"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 1 test in 0.189s",
+        "",
+        "FAILED (failures=1)"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 0
+      }
+    },
+    {
+      "run_id": "research_final",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests"
+      ],
+      "cwd": "<LAB>/candidate",
+      "exit_code": 0,
+      "duration_seconds": 7.624,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/candidate"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 17 tests in 7.219s",
+        "",
+        "OK"
+      ],
+      "counts": {
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 17
+      }
+    },
+    {
+      "run_id": "research_green",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests"
+      ],
+      "cwd": "<LAB>/candidate",
+      "exit_code": 1,
+      "duration_seconds": 7.658,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/candidate"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 16 tests in 6.925s",
+        "",
+        "FAILED (failures=5, errors=1)"
+      ],
+      "counts": {
+        "tests": 16,
+        "failures": 5,
+        "errors": 1,
+        "skipped": 0,
+        "passed": 10
+      }
+    },
+    {
+      "run_id": "research_green_v2",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests"
+      ],
+      "cwd": "<LAB>/candidate",
+      "exit_code": 0,
+      "duration_seconds": 8.063,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/candidate"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 16 tests in 7.639s",
+        "",
+        "OK"
+      ],
+      "counts": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 16
+      }
+    },
+    {
+      "run_id": "research_red",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests"
+      ],
+      "cwd": "<LAB>/baseline",
+      "exit_code": 1,
+      "duration_seconds": 7.505,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/baseline"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 14 tests in 7.062s",
+        "",
+        "FAILED (failures=4)"
+      ],
+      "counts": {
+        "tests": 14,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 10
+      }
+    },
+    {
+      "run_id": "research_red_corrected",
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "research_tests"
+      ],
+      "cwd": "<LAB>/baseline",
+      "exit_code": 1,
+      "duration_seconds": 7.95,
+      "environment": {
+        "TEMP": "<LAB>/tmp",
+        "TMP": "<LAB>/tmp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "PYTHONPATH": "<LAB>/baseline"
+      },
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 16 tests in 7.555s",
+        "",
+        "FAILED (failures=4)"
+      ],
+      "counts": {
+        "tests": 16,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 12
+      }
+    }
+  ],
+  "final_runs": [
+    "candidate_core",
+    "research_final"
+  ],
+  "final_counts": {
+    "tests": 258,
+    "passed": 257,
+    "skipped": 1,
+    "failures": 0,
+    "errors": 0
+  },
+  "note": "Some passing research tests confirm unresolved behavior; they are not safety PASS for F01/F02."
+}

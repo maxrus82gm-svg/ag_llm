@@ -1,0 +1,27 @@
+{
+  "run_id": "replay_red",
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "-v",
+    "research_tests.SnapshotRepairOracles.test_repeated_corrupt_restore_performs_no_write"
+  ],
+  "cwd": "<LAB>/baseline",
+  "exit_code": 1,
+  "duration_seconds": 0.575,
+  "environment": {
+    "TEMP": "<LAB>/tmp",
+    "TMP": "<LAB>/tmp",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "<LAB>/baseline"
+  },
+  "summary": [
+    "",
+    "----------------------------------------------------------------------",
+    "Ran 1 test in 0.189s",
+    "",
+    "FAILED (failures=1)"
+  ]
+}

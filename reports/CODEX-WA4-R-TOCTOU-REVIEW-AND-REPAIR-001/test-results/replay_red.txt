@@ -1,0 +1,15 @@
+test_repeated_corrupt_restore_performs_no_write (research_tests.SnapshotRepairOracles.test_repeated_corrupt_restore_performs_no_write) ... FAIL
+
+======================================================================
+FAIL: test_repeated_corrupt_restore_performs_no_write (research_tests.SnapshotRepairOracles.test_repeated_corrupt_restore_performs_no_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<LAB>\baseline\research_tests.py", line 271, in test_repeated_corrupt_restore_performs_no_write
+    self.assertEqual(write.call_count, 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.189s
+
+FAILED (failures=1)
