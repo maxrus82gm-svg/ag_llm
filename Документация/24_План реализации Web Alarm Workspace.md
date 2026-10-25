@@ -959,3 +959,8 @@ WEB ALARM WORKSPACE READY FOR REGULAR USE
 **CURRENT 2026-10-11 — WA4-A independently accepted:** CODEX-WA4-A-001 (code/evidence №259 `b009f803`) A1–A8 deterministic lost-response acceptance; 46 new tests. [GitHub Windows CI run 38135287346](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38135287346): focused **166/166**, full **689/689**, smoke **5/5** PASS, 0 skips/errors, guarded violations 0. CI expansion №260 and self-recursion repair №261 are infrastructure, not new WA4-E authority. **NEXT WA4-O only on USER GO**; WA4-R NOT STARTED. P/R and non-atomic move constraints persist; no new real Remote disconnect. `DONE` operation receipt ≠ `VERIFIED` operation.
 
 **CURRENT HANDOFF / 2026-10-11:** WA4-O PR №7 merged, technical CI 719/719 PASS; demo examined by user as interim version, full visual signoff pending. UX future A/B/C preserved in WA-4.6. WA4-R candidate `CODEX-WA4-R-001` preflight/OBSERVE prepared in prior chat only, user has not confirmed placement in personal Codex БЛОК 1 or execution; no strict rollout enabled. Next CHAT: 08→000→34→18→01→23/24/25, verify GitHub HEAD/personal Codex card, ask user whether to assign or revise candidate. This statement supersedes historical "WA4-O NEXT" lines above, without rewriting their dated history.
+
+
+### Дополнительная аналитика
+
+[[Дополнительная аналитика Астры]]
