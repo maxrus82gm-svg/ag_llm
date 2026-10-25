@@ -27,282 +27,54 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
+**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ / WAITING FOR USER ASSIGNMENT.**
 
-# 🟨 Строгая политика допуска MCP-брокера — offline реализация и негативные тесты
-
-**TASK ID:** `CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001`
-
-**ARCH CLASS:** Web Alarm Ultra / External AI Integration / STRICT_V2RAY_BROKER / Security Admission
-
-Уважаемый агент 007 (Codex)!
-
-Приглашаем вас выполнить следующую инженерную задачу проекта `ag_llm / Web Alarm Ultra / ChatGPT MCP`.
-
-## 1. Главная цель
-
-Реализовать и проверить строгую **offline admission-policy** для будущего защищённого MCP-брокера.
-
-Политика должна запрещать переход к использованию сетевого движка, если конфигурация не соответствует требованиям безопасности либо её соответствие нельзя проверить.
-
-Это практическая задача по существующим Python-контрактам и тестам, а не новое общее исследование sing-box.
-
-**Основной принцип: неизвестное или недоказанное состояние = BLOCKED, никогда не DIRECT и не автоматическое разрешение.**
-
-## 2. Исходная база
-
-Перед началом убедиться, что пользователь перенёс документационный closeout из ветки `GPT` в `main` и синхронизировал локальную рабочую копию.
-
-Координаторский source reference для документации: `GPT@37ef710cf0ba34f4988cba46a28595d6ce7801a5`.
-
-Git/GitHub исполнителю запрещены без отдельного USER GO. Сверку опубликованной ревизии при необходимости запросить у пользователя или координатора.
-
-**Адресная матрица чтения:**
-
-|Файл|Раздел|Назначение|
-|---|---|---|
-|`Документация/000_Задачи Codex.md`|Правила, БЛОК 1, БЛОК 4|Обязательно|
-|`Документация/08_Старт.md`|`DOC-TASK-HANDOFF-USER-01@1`, приоритетные права|Обязательно|
-|`Документация/34_TACTICAL_CONTEXT.md`|`WEB_12 / CURRENT`|Обязательно|
-|`Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md`|`STRICT_V2RAY_BROKER`, §7.6–7.7|Обязательно|
-|`Документация/36.1_Обязательный регламент тестирования для LLM.md`|TEST-COLLAB, TEST-ENG, TEST-COV, TEST-EXEC, TEST-QA, TEST-EVID, TEST-SCOPE|Обязательно|
-|`Документация/36.2_Профиль тестирования Web Alarm Workspace.md`|Применимые offline/Windows test requirements|Адресно|
-|`Документация/18_Регламент сопровождения документации.md`|DOC-GIT, DOC-LOCAL-REPORT-HANDOFF, DOC-TASK-CLOSEOUT-OWNER, DOC-TASK-READ-SCOPE|Адресно|
-
-Технические исходные материалы:
-
-- `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/` — принятый WEB_12 bounded source review, особенно `source_callgraph.md`, `strict_route_gap_matrix.md`, `amendment_01/report.md`.
-    
-- `integrations/wua_chatgpt_mcp/broker.py`
-    
-- `integrations/wua_chatgpt_mcp/security_contract.py`
-    
-- `integrations/wua_chatgpt_mcp/configs/broker.v1.schema.json`
-    
-- `integrations/wua_chatgpt_mcp/configs/broker.v1.synthetic.example.json`
-    
-- `integrations/wua_chatgpt_mcp/tests/broker_suite.py`
-    
-- `integrations/wua_chatgpt_mcp/singbox_source_review.py` — read-only source reference.
-    
-
-Не читать автоматически весь архив `001` или большие документы без адресной необходимости.
-
-## 3. Обязательные проверки строгого допуска
-
-### A. Authentication / credentials
-
-Для будущего strict profile:
-
-1. Отсутствующие или пустые `users` должны приводить к отказу в допуске.
-    
-2. Конфигурация без доказанного обязательного механизма authentication не может считаться готовой.
-    
-3. Проверить, что собственные diagnostic/error outputs не раскрывают пароли, `Proxy-Authorization` и credential material.
-    
-4. Опубликованные сведения об upstream-утечке ошибок должны оставаться отдельным **SECURITY BLOCKER**, пока безопасность соответствующей runtime-границы не доказана.
-    
-
-Не изменять исходники стороннего `sing` и не заявлять, что локальная фильтрация Python устранила все ошибки upstream.
-
-### B. Маршрут и отказ от DIRECT
-
-Строгий admission должен отвергать:
-
-- DIRECT и любую неутверждённую fallback-схему;
-    
-- второй прокси, load balancing или неизвестный outbound;
-    
-- неутверждённые DNS, UDP, IPv6, UoT и фоновые соединения;
-    
-- неоднозначный endpoint, host/port или конфигурацию;
-    
-- неподтверждённый сетевой движок и ownership;
-    
-- незадекларированные изменения политики после preflight.
-    
-
-Синтетический договор с корректной структурой **не равен** разрешению на сетевой запуск.
-
-### C. HTTP CONNECT
-
-Разделить три события:
-
-1. HTTP CONNECT принят обработчиком.
-    
-2. Маршрут разрешён строгой политикой.
-    
-3. Реальный исходящий socket принадлежит разрешённому брокеру и идёт к разрешённому upstream.
-    
-
-Эти события нельзя считать одним доказательством.
-
-Для целевой CONNECT-only политики неопознанные методы, Upgrade, произвольный HTTP и назначения вне разрешённого контракта должны приводить к отказу либо к явно сохранённому BLOCKED до появления проверяемого oracle.
-
-Не писать собственный HTTP-парсер вместо Go standard library.
-
-### D. JSON / configuration admission
-
-Определить и проверить строгие правила:
-
-- один канонический защищённый источник конфигурации;
-    
-- запрет duplicate keys и неутверждённых unknown fields;
-    
-- отказ от неполного, неоднозначного или конфликтующего ввода;
-    
-- запрет неутверждённых merge/reload/environment overrides;
-    
-- явный DENY вместо небезопасных значений по умолчанию.
-    
-
-Использовать существующий parser/validator pipeline. Не создавать параллельную систему конфигурации.
-
-## 4. Реализация
-
-Предпочтительное решение — небольшое расширение существующих `broker.py` / `security_contract.py` и существующих тестов.
-
-Если разделение **структурно корректен** и **допущен к будущей эксплуатации** требует двух статусов, реализовать их явно.
-
-Не разрушать историческую валидность синтетического fixture: он может оставаться `BROKER_PROFILE_STRUCTURALLY_VALID`, одновременно имея `STRICT_ADMISSION_BLOCKED`.
-
-Любой результат по-прежнему обязан содержать:
-
-`can_apply=false`
-
-`can_start_tunnel=false`
-
-`install_uninstall=BLOCKED`
-
-Реальный запуск запрещён независимо от успешности offline-проверок.
-
-## 5. Разрешённый write scope
-
-Минимально необходимые изменения:
-
-- `integrations/wua_chatgpt_mcp/broker.py`
-    
-- `integrations/wua_chatgpt_mcp/security_contract.py`
-    
-- `integrations/wua_chatgpt_mcp/configs/broker.v1.schema.json`, только если действительно требуется совместимое уточнение
-    
-- `integrations/wua_chatgpt_mcp/tests/broker_suite.py`
-    
-- адресная новая тестовая часть внутри существующего `integrations/wua_chatgpt_mcp/tests/`, только если переиспользование старого suite неудобно и обосновано
-    
-- `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/**` для отчёта, manifest и безопасных evidence.
-    
-
-Никаких других изменений без отдельного пользовательского разрешения.
-
-**Запрещено:** Git/GitHub, live Windows, WFP, firewall, Windows accounts, proxy/v2rayN, DNS, работающий sing-box/V2Ray, движок, Go install/build, tunnel, реальное сетевое испытание, production Web Alarm и изменение карточек/001/общей документации.
-
-Новых сетевых скачиваний не выполнять.
-
-## 6. Тестирование
-
-Нужны реальные offline проверки Python, а не только source anchors.
-
-Сначала сохранить исходные тесты и результаты, затем показать негативные RED/REJECT сценарии и итоговые PASS. Минимальная матрица:
-
-1. Нет users / пустой users.
-    
-2. Неверный или отсутствующий credential reference.
-    
-3. Секрет в ошибке или диагностике.
-    
-4. CONNECT без подтверждения downstream.
-    
-5. Plain HTTP / Upgrade при CONNECT-only.
-    
-6. Неверный destination, порт и незадекларированный IPv6.
-    
-7. DIRECT, fallback, secondary proxy.
-    
-8. DNS/UDP/UoT/background egress.
-    
-9. Duplicate JSON keys, unknown field, null/default ambiguity.
-    
-10. Merge/reload/environment override.
-    
-11. Повторная подмена конфигурации после проверки.
-    
-12. Попытка изменить `can_apply` или `can_start_tunnel` входными данными.
-    
-
-Для каждой проверки указывать правильный отказ и его конкретный код. Нельзя считать любое произвольное исключение успешным негативным тестом.
-
-Добавить адресные mutant/negative controls, при которых ослабление обязательной проверки обнаруживается тестами. Сохранить первый FAIL и все исправления оракулов.
-
-Не подменять недостающие native security доказательства Python-симуляцией.
-
-## 7. Критерии результата
-
-**PASS в пределах offline admission**, если:
-
-- реализована одна переиспользуемая строгая admission-policy;
-    
-- небезопасные и недоказанные входы отвергаются;
-    
-- тесты фиксируют фактические отказы, а не только наличие исходного кода;
-    
-- опубликованы source/test hashes, результаты, негативные сценарии и независимые ограничения;
-    
-- старые применимые проверки не сломаны;
-    
-- все activation gates остались закрыты.
-    
-
-**PARTIAL**, если часть admission требований можно определить, но доказать их нельзя без Go/native/OS среды.
-
-**BLOCKED**, если дальнейшее движение потребует недоступного исходника, запрещённого сетевого действия или нового USER GO.
-
-Техническая сдача:
-
-- `report.md` — полный factual результат и MANUAL ENGINEERING REVIEW;
-    
-- `manifest.json` — exact paths, bytes, SHA-256;
-    
-- `admission_matrix.md` — критерии допуска, отказа и остаточные blockers;
-    
-- `checks.json` и sanitized `runs/` — команды, counts, exit codes, исходный FAIL и финальные результаты;
-    
-- `DOC_IMPACT.md` — предложения для №19/34/06, без самостоятельного редактирования.
-    
-
-**После выполнения:** пользователь публикует отчёт и код на GitHub. WEB_12 независимо проверяет результат. Исполнитель не очищает БЛОК 1, не ротирует БЛОКИ 2–4/001 и не объявляет самостоятельно `VERIFIED`.
-
-**Главная цель:** получить практический, тестируемый механизм, который не позволит по ошибке принять небезопасную сетевую конфигурацию за разрешённую, сохранив все настоящие OS/WFP/MCP-gates для следующих задач.
+`CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001` закрыта после независимой WEB_12 приёмки **PASS / INDEPENDENT BOUNDED OFFLINE SOURCE & EVIDENCE ACCEPTED** строго в offline scope. Frozen полный текст постановки сохранён: `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/evidence/task_snapshot.md` (manifest SHA256 `9e9c8b73f2496093924e6c50ca0eefea9148002a888c65ae6e2b5865e4ae843a`, Git blob `fb13fa784b168c371db87f6f2d750fa0dbc85b13`); фактический отчёт и все незакрытые native/security blockers — в личном `001`, БЛОК 4 и общем №06. Следующий TASK ChatGPT публикует **только в чате**, пользователь копирует в БЛОК 1 после `GPT → main` и локальной синхронизации. Это не GO для native/WFP/ChatGPT E2E.
 
 ---
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Скользящее окно последних пяти TASK. Полный архив — [[001_История выполненных задач Codex]].
+Полный архив — [[001_История выполненных задач Codex]].
 
-- **2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — exact sing module dependency source; Codex 51/51 offline, WEB_12 87/87 manifest and 6/6 official source; **TERMINAL PARTIAL / independent bounded review accepted**, native/Chat NOT VERIFIED.
-- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — upstream sing-box v1.13.4 source/default DIRECT/DNS/UoT; WEB_11 bounded source acceptance, no native.
-- **2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — local embedded sing-box static snapshot; WEB_11 bounded acceptance, binary provenance/native pending.
-- **2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — synthetic disabled broker/negative preflight; WEB_11 bounded offline acceptance, engine/native BLOCKED.
-- **2026-10-24 / CODEX-WUA-0-MCP-NOTCP-NPFS-001** — STDIO/NPFS synthetic relay/gateway; independent bounded source result, cross-SID/WFP/real Chat NOT VERIFIED.
+- **2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — admission policy inside existing broker/security pipeline; Codex 52/52 offline, 51/51 regression (19 overlap), 7/7 mutants, WEB_12 independent 53/53 manifest; **PASS / BOUNDED OFFLINE ACCEPTED**, native/WFP/Chat NOT VERIFIED.
+- **2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — source-only exact sing dependency; Codex 51/51, WEB_12 87/87, six upstream files and 33 locators. **TERMINAL PARTIAL**, native blocked.
+- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only sing-box v1.13.4, defaults DIRECT/DNS/UoT; WEB_11 bounded source accepted, native not run.
+- **2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — embedded sing-box local snapshot, WEB_11 bounded, installed executable not attested.
+- **2026-10-24 / CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — disabled broker preflight, WEB_11 bounded offline, engine/WFP blocked.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — 1 GO/ZIP (310819 bytes raw SHA `dfb3b8c7…`), h1 reconstructed from published 322 SHA, Codex 30/30→49/50 FAIL preserved→50/50→51/51, WEB_12 independent 87/87 manifest, 6/6 upstream files and 33/33 locators. **TERMINAL PARTIAL**. Empty users auth disabled, credential logging, CONNECT 200-before-route, JSON/defaults/conditional egress; real C/B WFP/Chat NOT VERIFIED. `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`.
-- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — Codex 30/30; WEB_11 bounded; default DIRECT, DNS, UoT, conditional egress. `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`.
-- **CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — Codex 44/44, WEB_11 bounded static, no installed EXE attestation. `reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md`.
-- **CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — Codex 33/33 broker, 63/63 MCP, 24/24 security pure checks; native/WFP BLOCKED. `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/report.md`.
-- **CODEX-WUA-0-MCP-NOTCP-NPFS-001** — Codex 24/24 NPFS, 63/63 MCP, 24/24 security; cross-SID/WFP/Chat NOT VERIFIED. `reports/CODEX-WUA-0-MCP-NOTCP-NPFS-001/report.md`.
+- **CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — new `strict_preflight`, separated structural vs strict policy statuses; controller-owned canonical/source pins, opaque auth refs, CONNECT-only exact destination and deny DIRECT/fallback/secondary/DNS/UDP/UoT/IPv6/merge/reload. Codex 52/52 offline, 51/51 overlapping compatible tests, 7 mutants caught, preserved RED 19/21, WEB_12 53/53 manifest SHA. **OFFLINE PASS only**, upstream credentials in 407/error logs still SECURITY BLOCKER. Real C/B SID/NPFS, WFP, secret-store and ChatGPT E2E NOT VERIFIED. `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/report.md`.
+- **CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — WEB_12 terminal bounded source-only PARTIAL, 87/87 files and 6/6 upstream SHA/33 locators; no native/real egress. `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`.
+- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — WEB_11 bounded 30/30 Codex, sing-box defaults DIRECT/DNS/UoT/other conditional route risks. `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`.
+- **CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — WEB_11 bounded snapshot, Codex 44/44, actual engine attestation/native not run. `reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md`.
+- **CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001** — WEB_11 bounded 33/33 broker, 63/63 MCP, 24/24 security Codex evidence, no native WFP. `reports/CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001/report.md`.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Verifier:** WEB_12 / ChatGPT, Codex READ-ONLY. All historical verdicts in №06.
+**Verifier:** WEB_12 / ChatGPT. Codex — READ-ONLY. Исторические вердикты в №06.
 
-## 1. Последний вердикт — 2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / amendment01
+## 1. Последний вердикт — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001
+
+**PASS / INDEPENDENT BOUNDED OFFLINE SOURCE & EVIDENCE ACCEPTED**, `main@6456d669a8a804ddd75a0dbca242782c18d914da`.
+
+**Независимый вердикт WEB_12:** **PASS / INDEPENDENT BOUNDED OFFLINE SOURCE & EVIDENCE ACCEPTED** — только `strict admission` Python, source и опубликованная evidence на `main@6456d669a8a804ddd75a0dbca242782c18d914da`; актуальная база при документационном closeout `main@124b43ed47ec5b2b40217324345ddbdd88066a19`. **Не** является native/Windows/WFP, физическим no-DIRECT, credential-safe upstream или ChatGPT MCP E2E pass.
+
+**Проверено самостоятельно WEB_12:** manifest **53/53** опубликованных файлов по размерам и SHA-256 (с учётом CRLF/LF); frozen task B1 совпадает с `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/evidence/task_snapshot.md`, blob `fb13fa784b168c371db87f6f2d750fa0dbc85b13` (manifest SHA256 `9e9c8b73f2496093924e6c50ca0eefea9148002a888c65ae6e2b5865e4ae843a`, 14632 байт), 4/4 исходных файлов `source_before/` по blob SHA совпали с предшествующим изменению HEAD; просмотрены `broker.py`, `security_contract.py`, schema, новая `admission_suite.py` и decision flow, source pin, red/green evidence, mutant outputs. **Codex-run** 52/52 PASS, 51/51 совместимая source/pure regression PASS, **7/7** executed Python mutants caught, initial **19 PASS / 21 FAIL / 0 ERROR** saved. Counts **перекрываются на 19 legacy pure tests**, не складывать их как уникальные. WEB_12 **не запускал** этот suite на независимой Windows или нативном движке; integrity 53/53 не означает native proof.
+
+**Реализовано:** `strict_preflight(raw_bytes, controller_config_pin, controller_source_pin, request_metadata)` повторно использует existing common/parser, schema, `security.validate` и `validate_admission`; structural valid ≠ strict admitted; `strict_policy_status=VALID` может сочетаться с `STRICT_ADMISSION_BLOCKED`. Opaque `wua-secret-ref:` (без чтения credential store), mandatory/nonempty/unique auth declaration, отдельный upstream reference, protected canonical single source, exact controller-owned SHA pin, CONNECT-only request metadata/host/port, deny unknown auth/outbound/DIRECT/fallback/DNS/UDP/UoT/IPv6/secondary/merge/reload/environment override; negative tests/explicit rejection codes. **Не превращать декларативную проверку в утверждение, что реальный native движок/OS соблюдают запрет.**
+
+**Остаточные блокировки:** опасность upstream `sing` при ошибках 407 (credentials/`Proxy-Authorization` in error/log) сохраняется **SECURITY BLOCKER**, не устранена Python offline-контрактом; secret store access control, native listener/auth, exact installed binary/engine compatibility, real Windows identities C/B, SID/NPFS cross-user, WFP IPv4+IPv6/DNS/IPC, B-only egress and fail-closed/physical no DIRECT, native route and ordinary ChatGPT MCP E2E **NOT VERIFIED**. `engine.family=V2Ray` unchanged, `STRICT_ADMISSION_BLOCKED`, `can_apply=false`, `can_start_tunnel=false`, `install_uninstall=BLOCKED`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. No live tunnel, proxy, Windows, WFP or engine change was authorized. Publication commit also included unrelated user-side `.obsidian/workspace.json` metadata: does not affect source acceptance; keep extraneous files out of future scoped technical publications.
+
+**Terminal disposition authorized by user:** offline TASK accepted/archived, old B1 cleared to WAITING. No automatic engine/native/WFP/network/tunnel GO; next task goes in chat only. Full archives in 001, `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/`, journal №06.
+
+## 2. Последний вердикт — 2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / amendment01
 
 **TERMINAL PARTIAL / INDEPENDENT BOUNDED SOURCE & EVIDENCE ACCEPTED**, `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`; user explicitly approved terminal PARTIAL closeout, not full security approval.
 
@@ -314,11 +86,11 @@ Source risks: `users=[]` disables proxy authentication; 407/error logs can expos
 
 Full report `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/amendment_01/report.md`, manifest `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/manifest.json`; pinned complete task in personal 001. No permission to enable/alter engine, Windows, proxy, WFP, local identities, hosted tunnel, ordinary ChatGPT connection or network route.
 
-## 2. Предыдущий — WEB_11 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001
+## 3. Предыдущий — WEB_11 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001
 
 **PARTIAL / INDEPENDENT BOUNDED SOURCE REVIEW ACCEPTED**, `main@e0c89b3536cb030edc4fa905a8e00f1047788c4c`, 76/76 paths, 7/7 selected hashes, Codex 30/30 offline, native NOT RUN. Missing sing module source was historical state later narrowed by WEB_12.
 
-## 3. Позапрошлый — WEB_11 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001
+## 4. Позапрошлый — WEB_11 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001
 
 **PARTIAL / BOUNDED STATIC-SNAPSHOT ACCEPTED**, `main@bc0a1be97e7a44a0869310e6961e77ff6c841073`, 70/70 paths, 10/10 hashes, Codex 44/44, native NOT RUN.
 
