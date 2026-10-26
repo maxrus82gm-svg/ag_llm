@@ -1,0 +1,148 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+ "purpose": "baseline of the existing chat-storage and EVM tests before any stage-1 change",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "3.12.10",
+ "targets": [
+  "test_message_context",
+  "test_chat_create_atomicity",
+  "test_failed_run_terminal_message",
+  "test_web_alarm_ultra_connections"
+ ],
+ "runner_exit": 0,
+ "tests_run": 32,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_accept_restart_restore_and_variant_survival",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_cross_message_variant_empty_and_recompression_rejected",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_legacy_message_is_full_without_lazy_read_write",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_manual_edit_creates_revision_without_overwrite",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_missing_active_variant_is_corruption",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_raw_is_byte_immutable_through_create_edit_restore",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_server_request_uses_working_context_without_network",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_task_block_identity_is_unique_metadata_and_legacy_still_loads",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_visible_chat_body_follows_production_working_representation",
+   "status": "PASS"
+  },
+  {
+   "test": "test_message_context.MessageContextStorageTests.test_working_chat_preserves_roles_and_order",
+   "status": "PASS"
+  },
+  {
+   "test": "test_chat_create_atomicity.ChatCreateAtomicityTests.test_create_chat_publishes_complete_directory_atomically",
+   "status": "PASS"
+  },
+  {
+   "test": "test_chat_create_atomicity.ChatCreateAtomicityTests.test_legacy_directory_without_metadata_is_not_a_visible_chat",
+   "status": "PASS"
+  },
+  {
+   "test": "test_chat_create_atomicity.ChatCreateAtomicityTests.test_metadata_failure_does_not_leave_visible_or_staging_orphan",
+   "status": "PASS"
+  },
+  {
+   "test": "test_chat_create_atomicity.ChatCreateAtomicityTests.test_publish_failure_does_not_leave_visible_or_staging_orphan",
+   "status": "PASS"
+  },
+  {
+   "test": "test_failed_run_terminal_message.FailedRunTerminalMessageTests.test_exception_after_run_started_persists_terminal_assistant_with_provenance",
+   "status": "PASS"
+  },
+  {
+   "test": "test_failed_run_terminal_message.FailedRunTerminalMessageTests.test_exception_before_run_started_still_persists_terminal_assistant",
+   "status": "PASS"
+  },
+  {
+   "test": "test_failed_run_terminal_message.FailedRunTerminalMessageTests.test_terminal_storage_failure_remains_visible_in_error_payload",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_an_unavailable_shared_registry_is_reported_and_invents_nothing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_registry_changes_are_seen_without_any_copy_in_web_alarm",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_status_lists_the_capability_and_wrong_methods_are_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_viewing_writes_nothing_and_opens_no_network_or_transport",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.HttpTests.test_real_http_round_trip_never_carries_a_secret_or_a_log_line",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.HttpTests.test_selection_requires_json_and_the_page_offers_the_evm_entry_and_a_way_back",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_concurrent_choices_leave_one_valid_file",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_roles_of_a_newer_version_are_kept_when_chat_is_saved",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_the_tkinter_ultra_state_and_the_transport_are_never_touched",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing",
+   "status": "PASS"
+  }
+ ]
+}

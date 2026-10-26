@@ -1,0 +1,1037 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+ "module": "tools/probe_s0_storage.py",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "attempts": [
+  {
+   "attempt": 1,
+   "runner_exit": 0,
+   "tests_run": 12,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "python": "3.12.10",
+   "tests": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "status": "PASS"
+    }
+   ],
+   "facts": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "observed": [
+      {
+       "exclusive_between_threads": true,
+       "exclusive_between_processes": true,
+       "released_on_process_death": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "observed": [
+      {
+       "foreign_workspace_chat_listed": true
+      },
+      {
+       "one_damaged_chat_breaks_listing": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "observed": [
+      {
+       "display_messages": 2,
+       "distinct_ids": 1
+      },
+      {
+       "working_messages": 2,
+       "same_text_twice": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "observed": [
+      {
+       "display_accepts_foreign_workspace": true,
+       "by_id_refuses": true,
+       "working_refuses": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "observed": [
+      {
+       "read_bytes_of_one_raw": 8388870,
+       "append_limit": 2097152
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "observed": [
+      {
+       "bare_folder": {
+        "probe_existing_workspace": {
+         "outcome": "returned",
+         "created": []
+        },
+        "list_existing_chats": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "load_existing_project_context": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "list_chats": {
+         "outcome": "returned",
+         "created": [
+          ".ultra",
+          ".ultra/chats",
+          ".ultra/project_context.md",
+          ".ultra/project_context_history"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "observed": [
+      {
+       "foreign_chat_listed": true,
+       "foreign_messages_read": 1
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "observed": [
+      {
+       "replace_refused_while_plain_reader_open": true,
+       "metadata_unchanged": true,
+       "temp_leftovers": 0
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "observed": [
+      {
+       "replace_with_share_delete_reader_open": "PermissionError",
+       "metadata_unchanged_meanwhile": true,
+       "retry_after_reader_closed": "Renamed by Tk"
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "observed": [
+      {
+       "messages_after_retry": 2
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "observed": [
+      {
+       "legacy_failure_in_working_history": true,
+       "classified_by_task_block_runs": [
+        "FAILED"
+       ]
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "observed": [
+      {
+       "expected_runs": 80,
+       "persisted_runs": 40,
+       "duplicate_display_ids": 0,
+       "child_errors": [
+        "KeyError: 'tb_b0000000000000000000000000000000'"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "runner_exit": 0,
+   "tests_run": 12,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "python": "3.12.10",
+   "tests": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "status": "PASS"
+    }
+   ],
+   "facts": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "observed": [
+      {
+       "exclusive_between_threads": true,
+       "exclusive_between_processes": true,
+       "released_on_process_death": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "observed": [
+      {
+       "foreign_workspace_chat_listed": true
+      },
+      {
+       "one_damaged_chat_breaks_listing": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "observed": [
+      {
+       "display_messages": 2,
+       "distinct_ids": 1
+      },
+      {
+       "working_messages": 2,
+       "same_text_twice": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "observed": [
+      {
+       "display_accepts_foreign_workspace": true,
+       "by_id_refuses": true,
+       "working_refuses": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "observed": [
+      {
+       "read_bytes_of_one_raw": 8388870,
+       "append_limit": 2097152
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "observed": [
+      {
+       "bare_folder": {
+        "probe_existing_workspace": {
+         "outcome": "returned",
+         "created": []
+        },
+        "list_existing_chats": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "load_existing_project_context": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "list_chats": {
+         "outcome": "returned",
+         "created": [
+          ".ultra",
+          ".ultra/chats",
+          ".ultra/project_context.md",
+          ".ultra/project_context_history"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "observed": [
+      {
+       "foreign_chat_listed": true,
+       "foreign_messages_read": 1
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "observed": [
+      {
+       "replace_refused_while_plain_reader_open": true,
+       "metadata_unchanged": true,
+       "temp_leftovers": 0
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "observed": [
+      {
+       "replace_with_share_delete_reader_open": "PermissionError",
+       "metadata_unchanged_meanwhile": true,
+       "retry_after_reader_closed": "Renamed by Tk"
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "observed": [
+      {
+       "messages_after_retry": 2
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "observed": [
+      {
+       "legacy_failure_in_working_history": true,
+       "classified_by_task_block_runs": [
+        "FAILED"
+       ]
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "observed": [
+      {
+       "expected_runs": 80,
+       "persisted_runs": 40,
+       "duplicate_display_ids": 0,
+       "child_errors": [
+        "KeyError: 'tb_b0000000000000000000000000000000'"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "attempt": 3,
+   "runner_exit": 0,
+   "tests_run": 12,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "python": "3.12.10",
+   "tests": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "status": "PASS"
+    }
+   ],
+   "facts": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "observed": [
+      {
+       "exclusive_between_threads": true,
+       "exclusive_between_processes": true,
+       "released_on_process_death": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "observed": [
+      {
+       "foreign_workspace_chat_listed": true
+      },
+      {
+       "one_damaged_chat_breaks_listing": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "observed": [
+      {
+       "display_messages": 2,
+       "distinct_ids": 1
+      },
+      {
+       "working_messages": 2,
+       "same_text_twice": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "observed": [
+      {
+       "display_accepts_foreign_workspace": true,
+       "by_id_refuses": true,
+       "working_refuses": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "observed": [
+      {
+       "read_bytes_of_one_raw": 8388870,
+       "append_limit": 2097152
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "observed": [
+      {
+       "bare_folder": {
+        "probe_existing_workspace": {
+         "outcome": "returned",
+         "created": []
+        },
+        "list_existing_chats": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "load_existing_project_context": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "list_chats": {
+         "outcome": "returned",
+         "created": [
+          ".ultra",
+          ".ultra/chats",
+          ".ultra/project_context.md",
+          ".ultra/project_context_history"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "observed": [
+      {
+       "foreign_chat_listed": true,
+       "foreign_messages_read": 1
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "observed": [
+      {
+       "replace_refused_while_plain_reader_open": true,
+       "metadata_unchanged": true,
+       "temp_leftovers": 0
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "observed": [
+      {
+       "replace_with_share_delete_reader_open": "PermissionError",
+       "metadata_unchanged_meanwhile": true,
+       "retry_after_reader_closed": "Renamed by Tk"
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "observed": [
+      {
+       "messages_after_retry": 2
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "observed": [
+      {
+       "legacy_failure_in_working_history": true,
+       "classified_by_task_block_runs": [
+        "FAILED"
+       ]
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "observed": [
+      {
+       "expected_runs": 80,
+       "persisted_runs": 40,
+       "duplicate_display_ids": 0,
+       "child_errors": [
+        "KeyError: 'tb_b0000000000000000000000000000000'"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "attempt": 4,
+   "runner_exit": 0,
+   "tests_run": 12,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "python": "3.12.10",
+   "tests": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "status": "PASS"
+    }
+   ],
+   "facts": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "observed": [
+      {
+       "exclusive_between_threads": true,
+       "exclusive_between_processes": true,
+       "released_on_process_death": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "observed": [
+      {
+       "foreign_workspace_chat_listed": true
+      },
+      {
+       "one_damaged_chat_breaks_listing": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "observed": [
+      {
+       "display_messages": 2,
+       "distinct_ids": 1
+      },
+      {
+       "working_messages": 2,
+       "same_text_twice": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "observed": [
+      {
+       "display_accepts_foreign_workspace": true,
+       "by_id_refuses": true,
+       "working_refuses": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "observed": [
+      {
+       "read_bytes_of_one_raw": 8388870,
+       "append_limit": 2097152
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "observed": [
+      {
+       "bare_folder": {
+        "probe_existing_workspace": {
+         "outcome": "returned",
+         "created": []
+        },
+        "list_existing_chats": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "load_existing_project_context": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "list_chats": {
+         "outcome": "returned",
+         "created": [
+          ".ultra",
+          ".ultra/chats",
+          ".ultra/project_context.md",
+          ".ultra/project_context_history"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "observed": [
+      {
+       "foreign_chat_listed": true,
+       "foreign_messages_read": 1
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "observed": [
+      {
+       "replace_refused_while_plain_reader_open": true,
+       "metadata_unchanged": true,
+       "temp_leftovers": 0
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "observed": [
+      {
+       "replace_with_share_delete_reader_open": "PermissionError",
+       "metadata_unchanged_meanwhile": true,
+       "retry_after_reader_closed": "Renamed by Tk"
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "observed": [
+      {
+       "messages_after_retry": 2
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "observed": [
+      {
+       "legacy_failure_in_working_history": true,
+       "classified_by_task_block_runs": [
+        "FAILED"
+       ]
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "observed": [
+      {
+       "expected_runs": 80,
+       "persisted_runs": 40,
+       "duplicate_display_ids": 0,
+       "child_errors": [
+        "KeyError: 'tb_a0000000000000000000000000000000'"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "attempt": 5,
+   "runner_exit": 0,
+   "tests_run": 12,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "python": "3.12.10",
+   "tests": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "status": "PASS"
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "status": "PASS"
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "status": "PASS"
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "status": "PASS"
+    }
+   ],
+   "facts": [
+    {
+     "test": "LockTests.test_p10_store_lock_is_exclusive_between_threads_and_processes_and_freed_by_process_death",
+     "observed": [
+      {
+       "exclusive_between_threads": true,
+       "exclusive_between_processes": true,
+       "released_on_process_death": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p1_one_damaged_chat_hides_every_chat_and_workspace_id_of_a_chat_is_not_checked",
+     "observed": [
+      {
+       "foreign_workspace_chat_listed": true
+      },
+      {
+       "one_damaged_chat_breaks_listing": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p2_file_name_and_message_id_are_not_compared_and_duplicates_are_returned",
+     "observed": [
+      {
+       "display_messages": 2,
+       "distinct_ids": 1
+      },
+      {
+       "working_messages": 2,
+       "same_text_twice": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p3_display_path_accepts_a_foreign_workspace_message_that_the_by_id_path_refuses",
+     "observed": [
+      {
+       "display_accepts_foreign_workspace": true,
+       "by_id_refuses": true,
+       "working_refuses": true
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p4_reading_has_no_size_bound",
+     "observed": [
+      {
+       "read_bytes_of_one_raw": 8388870,
+       "append_limit": 2097152
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p5_which_functions_create_storage_when_they_only_look",
+     "observed": [
+      {
+       "bare_folder": {
+        "probe_existing_workspace": {
+         "outcome": "returned",
+         "created": []
+        },
+        "list_existing_chats": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "load_existing_project_context": {
+         "outcome": "FileNotFoundError",
+         "created": []
+        },
+        "list_chats": {
+         "outcome": "returned",
+         "created": [
+          ".ultra",
+          ".ultra/chats",
+          ".ultra/project_context.md",
+          ".ultra/project_context_history"
+         ]
+        }
+       }
+      }
+     ]
+    },
+    {
+     "test": "ReadPathTests.test_p6_reader_follows_a_junction_inside_the_chats_folder",
+     "observed": [
+      {
+       "foreign_chat_listed": true,
+       "foreign_messages_read": 1
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p11_plain_open_reader_makes_a_tk_metadata_replace_fail_and_leaves_no_temp",
+     "observed": [
+      {
+       "replace_refused_while_plain_reader_open": true,
+       "metadata_unchanged": true,
+       "temp_leftovers": 0
+      }
+     ]
+    },
+    {
+     "test": "SharingTests.test_p12_even_a_share_delete_reader_blocks_the_replace_on_this_host_but_a_retry_after_close_succeeds",
+     "observed": [
+      {
+       "replace_with_share_delete_reader_open": "PermissionError",
+       "metadata_unchanged_meanwhile": true,
+       "retry_after_reader_closed": "Renamed by Tk"
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p7_repeating_append_after_a_lost_answer_creates_a_second_message",
+     "observed": [
+      {
+       "messages_after_retry": 2
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p8_tk_style_failure_is_stored_as_an_assistant_answer_and_is_classifiable_by_its_run",
+     "observed": [
+      {
+       "legacy_failure_in_working_history": true,
+       "classified_by_task_block_runs": [
+        "FAILED"
+       ]
+      }
+     ]
+    },
+    {
+     "test": "WritePathTests.test_p9_concurrent_new_runs_lose_entries_of_the_shared_workspace_index",
+     "observed": [
+      {
+       "expected_runs": 80,
+       "persisted_runs": 40,
+       "duplicate_display_ids": 0,
+       "child_errors": [
+        "KeyError: 'tb_b0000000000000000000000000000000'"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

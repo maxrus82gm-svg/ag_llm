@@ -1,0 +1,121 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+ "program": "No.37 stage 0",
+ "executor": "Claude 008",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "base_revision_block1": "main@d33056e6e8ff64bc2a17f85865185fd253590e53",
+ "base_check": {
+  "method": "Astra rev2 section 2.2 manifest vs local bytes (no Git)",
+  "rows": 30,
+  "matched": 30,
+  "mismatched": [],
+  "missing_named_files": [
+   "chat_context.py"
+  ]
+ },
+ "checks": {
+  "probes": {
+   "attempts": 5,
+   "tests_per_attempt": [
+    12
+   ],
+   "non_pass": 0,
+   "isolation_violations": 0,
+   "runner_exit_codes": [
+    0
+   ]
+  },
+  "regression_baseline": {
+   "tests_run": 32,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "runner_exit": 0
+  },
+  "evidence_sanitizer_scan_before_manifest": {
+   "exit": 0,
+   "files_scanned": 11,
+   "classes": {
+    "CLEAN": 11
+   }
+  }
+ },
+ "not_run": [
+  "full Web Alarm 'all' regression (no production or test change)",
+  "browser visual check",
+  "symlink scenarios (no privilege)",
+  "POSIX behaviour",
+  "Git / GitHub / real API (forbidden)"
+ ],
+ "write_scope": "reports/CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001/ only",
+ "git_used": false,
+ "files": [
+  {
+   "path": "architecture-contract.md",
+   "bytes": 42391,
+   "sha256": "d9a333029945ed4c49183aa65dbfed039baba0717d11d94dcef3f8ca4de47be3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/baseline.json",
+   "bytes": 12213,
+   "sha256": "443a92a17d65b5955ea87b4118513244e54bee9556e2f6183dfba8772b93ebeb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/probe_runs.json",
+   "bytes": 28310,
+   "sha256": "3020d387069ba5f91eb9c84c6eba3100ec74b0a59344a6ce7dd4285680f90519",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/regression_baseline.json",
+   "bytes": 5491,
+   "sha256": "2611858a4e25180ebd0f85c7aa91be2920be9cbd9dfa045356543908f2996ae1",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 49580,
+   "sha256": "c19ebf1aac66404f7d970393b58518ba68c6af3c8ab9eaa71e7d9fc51ccf6491",
+   "eol": "LF"
+  },
+  {
+   "path": "stage1-handoff.md",
+   "bytes": 19548,
+   "sha256": "402f4e2ac5f0122edcb4c5a6c77553512cb5ef2c2a056488050848d2f9d761f3",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/baseline.py",
+   "bytes": 3341,
+   "sha256": "50ae4786f5b8d0ce524171a563d840b0e3b686b4457a910d1898cb1b535a3ed0",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 3988,
+   "sha256": "221b5fcabd4ecfacc192705f891eeb3eb30633568883c1f2294bed8712b8b596",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/probe_s0_storage.py",
+   "bytes": 15595,
+   "sha256": "5b6875e2543e92a39109235f6cba3913a2c7af3cd792871bf1d8beb93d1fdf1a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1262,
+   "sha256": "32e1f4b498551aac1e22b1da32bb3eef5cfac5dbb7ff43ca2e150a0d9b00b373",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_probes.py",
+   "bytes": 2747,
+   "sha256": "2ececa42055ca2759bdeeda674d9ff38d23675f006ba731fff7cb0b0b971c2b8",
+   "eol": "LF"
+  }
+ ]
+}
