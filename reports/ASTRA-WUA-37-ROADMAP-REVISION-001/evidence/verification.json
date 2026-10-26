@@ -1,0 +1,206 @@
+{
+  "task": "ASTRA-WUA-37-ROADMAP-REVISION-001",
+  "kind": "LOCAL DOCUMENT MECHANICAL CHECKS; NOT INDEPENDENT OR RUNTIME TESTS",
+  "pass": 21,
+  "fail": 0,
+  "checks": [
+    {
+      "name": "01_original_recoverable_bytes",
+      "pass": true,
+      "detail": {
+        "bytes": 43112,
+        "sha256": "c86061e1ae1eb00be3e17e75bc3e1f33ce7d43517f0e789d281ae6a2cfbebade"
+      }
+    },
+    {
+      "name": "02_target_equals_candidate_snapshot",
+      "pass": true,
+      "detail": {
+        "bytes": 71042,
+        "sha256": "dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45"
+      }
+    },
+    {
+      "name": "03_utf8_lf_and_no_replacement_char",
+      "pass": true,
+      "detail": "UTF-8 without BOM; LF"
+    },
+    {
+      "name": "04_frontmatter_preserved",
+      "pass": true,
+      "detail": "graph_cluster and both aliases"
+    },
+    {
+      "name": "05_exact_eight_stages",
+      "pass": true,
+      "detail": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "name": "06_unique_history_ids",
+      "pass": true,
+      "detail": [
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "H06",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12",
+        "H13",
+        "H14",
+        "H15",
+        "H16",
+        "H17",
+        "H18",
+        "H19",
+        "H20",
+        "H21",
+        "H22",
+        "H23"
+      ]
+    },
+    {
+      "name": "07_decision_status_vocabulary",
+      "pass": true,
+      "detail": "Five required status labels present"
+    },
+    {
+      "name": "08_outgoing_wiki_multiset",
+      "pass": true,
+      "detail": {
+        "before": [
+          "00_Главная - карта проекта",
+          "23_Архитектура Web Alarm Workspace",
+          "24_План реализации Web Alarm Workspace",
+          "Blueprint LLM"
+        ],
+        "after": [
+          "00_Главная - карта проекта",
+          "23_Архитектура Web Alarm Workspace",
+          "24_План реализации Web Alarm Workspace",
+          "Blueprint LLM"
+        ]
+      }
+    },
+    {
+      "name": "09_wiki_targets_exist",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "10_navigation_preserved",
+      "pass": true,
+      "detail": "Full navigation text compared after EOL normalization"
+    },
+    {
+      "name": "11_only_allowed_baseline_target_changed",
+      "pass": true,
+      "detail": {
+        "changed": [
+          "Документация/37_Старт перехода - Web Alarm Ultra.md"
+        ],
+        "missing": [],
+        "unchanged": 261
+      }
+    },
+    {
+      "name": "12_no_new_or_removed_monitored_files",
+      "pass": true,
+      "detail": {
+        "extra": [],
+        "removed": []
+      }
+    },
+    {
+      "name": "13_task_card_unchanged",
+      "pass": true,
+      "detail": "0330ef4d2fd3312d1eb0e8703a55059a04e60f4c2c2ca92671b45337149d6471"
+    },
+    {
+      "name": "14_accepted_analysis_pin_unchanged",
+      "pass": true,
+      "detail": "7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5"
+    },
+    {
+      "name": "15_no_incoming_section_selectors_to_migrate",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "16_eleven_recommendation_groups",
+      "pass": true,
+      "detail": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11"
+      ]
+    },
+    {
+      "name": "17_recommendations_have_reason_and_approval",
+      "pass": true,
+      "detail": {
+        "reasons": 11,
+        "approval_fields": 11
+      }
+    },
+    {
+      "name": "18_no_new_wiki_edges_from_reports",
+      "pass": true,
+      "detail": {}
+    },
+    {
+      "name": "19_local_evidence_locators_exist",
+      "pass": true,
+      "detail": [
+        "evidence/37_before.txt",
+        "evidence/37_candidate.txt",
+        "evidence/baseline.json",
+        "recommendations.md"
+      ]
+    },
+    {
+      "name": "20_candidate_and_gate_statements_present",
+      "pass": true,
+      "detail": "Presence check only; does not prove architectural correctness"
+    },
+    {
+      "name": "21_historical_numbering_map_present",
+      "pass": true,
+      "detail": "Historical meaning preserved in explicit mapping"
+    }
+  ],
+  "scope": {
+    "baseline_files": 262,
+    "outside_target_unchanged": 261,
+    "excluded": [
+      ".git",
+      "live storage",
+      ".venv",
+      ".obsidian",
+      "other reports",
+      "unmonitored binary files"
+    ]
+  }
+}

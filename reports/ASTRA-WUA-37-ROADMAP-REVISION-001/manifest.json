@@ -1,0 +1,72 @@
+{
+  "task": "ASTRA-WUA-37-ROADMAP-REVISION-001",
+  "revision": 1,
+  "author": "Astra / Codex",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "created_at": "2026-10-26T12:30:39.034753+05:00",
+  "base": {
+    "kind": "user-supplied local target; matches prior analysis local pin",
+    "path": "Документация/37_Старт перехода - Web Alarm Ultra.md",
+    "sha256": "c86061e1ae1eb00be3e17e75bc3e1f33ce7d43517f0e789d281ae6a2cfbebade",
+    "bytes": 43112,
+    "snapshot": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/37_before.txt"
+  },
+  "publication": "Not performed; current Git HEAD not accessed or verified",
+  "approval": "Candidate only; no implementation or live authorization",
+  "checks": {
+    "mechanical_document_checks_pass": 21,
+    "mechanical_document_checks_fail": 0,
+    "baseline_files": 262,
+    "other_baseline_files_unchanged": 261,
+    "outgoing_wiki_links_preserved": 4,
+    "runtime_tests": "NOT RUN - documentation-only scope"
+  },
+  "artifacts": [
+    {
+      "path": "Документация/37_Старт перехода - Web Alarm Ultra.md",
+      "bytes": 71042,
+      "sha256": "dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/37_before.txt",
+      "bytes": 43112,
+      "sha256": "c86061e1ae1eb00be3e17e75bc3e1f33ce7d43517f0e789d281ae6a2cfbebade"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/37_candidate.txt",
+      "bytes": 71042,
+      "sha256": "dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/baseline.json",
+      "bytes": 44996,
+      "sha256": "e2c426f8a10ab493528656c37218ad88d810046e6487d94d57dee83b34ada50b"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/task_card_at_start.txt",
+      "bytes": 31980,
+      "sha256": "0330ef4d2fd3312d1eb0e8703a55059a04e60f4c2c2ca92671b45337149d6471"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/verification.json",
+      "bytes": 4887,
+      "sha256": "5d64fb19bfdf8b21ecc705fe0f415f017d3404e92b8476c738b1e9b2f286d0c7"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/evidence/verify_documents.py",
+      "bytes": 7673,
+      "sha256": "b2ee87cd84cfce9d40f2de44c93828f3f5d9443134142d66e94214871acf545e"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/recommendations.md",
+      "bytes": 33823,
+      "sha256": "cd8a715d23989bccb5c8bf0902c4eb8079d689b1e19e49047508c3edbf539f53"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/report.md",
+      "bytes": 17756,
+      "sha256": "61c87b1691a5f94d34138c67e3a4b6a801c251fe9aa1f083ce28fa1e397a66b2"
+    }
+  ],
+  "self_hash_policy": "manifest.json intentionally excluded; SHA-256 delivered outside its bytes"
+}
