@@ -1,3 +1,7 @@
+### 2026-10-26 / переносимость Web Alarm Ultra — USER архитектурное требование, не назначенный WA4-R этап
+
+По №37 §2.4 и оперативному №40 направление Web Alarm Core должно при дальнейших **отдельно утверждаемых** задачах не создавать необратимых машинных привязок в Workspace Registry, TASK state/recovery и контроле физических путей. Для смены хоста потребуется проверяемое переподключение по устойчивой идентичности, валидные права и отсутствие смешивания чужих roots; секреты, SID/WFP/права и внешние агенты на другой машине не копируются как переносимый конфиг. Чистый Windows deployment/relocation NOT VERIFIED. Текущие WA4-R gates и Stage1 write-ownership `server.py`/`ui.py` неизменны; новых задач этим текстом не назначаем.
+
 ### 2026-10-20 / 🟨 AUD-01T-R independent Windows verification completed; production gates still blocked
 
 **Current validated milestone:** manually controlled OFFLINE torn-transport-tail recovery source/tests published. Previous canceled 30-minute CI #39439901294 is not a PASS. [Independent Windows CI #39461766337](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/39461766337), head `ddd3e200e620105d2d92b0e22717b8327b3fea8f`, completed SUCCESS 5/5 Windows jobs; independently unpacked evidence confirms full **909/909 PASS, 0 FAIL/ERROR/SKIP/isolation** and 35/35 new methods. Windows checkout CRLF source hashes match independently normalized published LF sources. Diagnostic PR #17 is review-only (workflow timeout 30→60 plus Markdown marker); **NEVER MERGE**.
