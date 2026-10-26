@@ -3,6 +3,21 @@
  "program": "No.37 stage 0",
  "executor": "Claude 008",
  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "revision": 2,
+ "amendments": [
+  {
+   "id": "AMENDMENT-1",
+   "source": "ChatGPT coordinator after independent review of revision 1, relayed by the user in chat",
+   "finding": "history read token was taken from /ui/capabilities, which hands out a token only when the folder picker is available (off by default in create_server)",
+   "resolution": "own capability ultra_chat_read: GET /ui/ultra-chat/capability, own token in X-WebAlarm-Ultra-Chat-Token, loopback only, independent of the folder picker; same Host/Origin/Sec-Fetch-Site rules; one scope (GET /ultra/chat/* of the issuing process)",
+   "updated": [
+    "architecture-contract.md 7.1, 7.1.1, 9",
+    "stage1-handoff.md 3, 4, 5, 6, 8",
+    "report.md 1, 4.1, 8, 9, 10, 12, 13, 15",
+    "manifest.json"
+   ]
+  }
+ ],
  "base_revision_block1": "main@d33056e6e8ff64bc2a17f85865185fd253590e53",
  "base_check": {
   "method": "Astra rev2 section 2.2 manifest vs local bytes (no Git)",
@@ -33,11 +48,35 @@
    "isolation_violations": 0,
    "runner_exit": 0
   },
+  "amendment1_access_prototype": {
+   "attempts": 5,
+   "tests_per_attempt": [
+    11
+   ],
+   "non_pass": 0,
+   "isolation_violations": 0,
+   "runner_exit_codes": [
+    0
+   ]
+  },
+  "amendment1_mutants": {
+   "control": "PASS",
+   "killed": 10,
+   "mutants": 10
+  },
+  "amendment1_picker_server_baseline": {
+   "tests_run": 28,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "runner_exit": 0
+  },
   "evidence_sanitizer_scan_before_manifest": {
    "exit": 0,
-   "files_scanned": 11,
+   "files_scanned": 18,
    "classes": {
-    "CLEAN": 11
+    "CLEAN": 18
    }
   }
  },
@@ -53,14 +92,32 @@
  "files": [
   {
    "path": "architecture-contract.md",
-   "bytes": 42391,
-   "sha256": "d9a333029945ed4c49183aa65dbfed039baba0717d11d94dcef3f8ca4de47be3",
+   "bytes": 52589,
+   "sha256": "ebe890335ae75bc3431657a1fc3dcab0e54f503ddb2ae0309559de7b8b6dcaa1",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/access_gate_mutants.json",
+   "bytes": 3579,
+   "sha256": "d12d6ef971ac8d04faf6c77dc9e1497694b743984b9d346e46b2f07d58b5e392",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/access_gate_runs.json",
+   "bytes": 7847,
+   "sha256": "cfae64759aa0ccfb71affffc48ee93040c64a7b3e53396804b9c55a6b07217c1",
    "eol": "LF"
   },
   {
    "path": "evidence/baseline.json",
    "bytes": 12213,
    "sha256": "443a92a17d65b5955ea87b4118513244e54bee9556e2f6183dfba8772b93ebeb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/picker_server_baseline.json",
+   "bytes": 4409,
+   "sha256": "afc5637da42e6b8ac96d0b396fac5519d5708fe00f95ebcdf168181cd08dda80",
    "eol": "LF"
   },
   {
@@ -77,14 +134,14 @@
   },
   {
    "path": "report.md",
-   "bytes": 49580,
-   "sha256": "c19ebf1aac66404f7d970393b58518ba68c6af3c8ab9eaa71e7d9fc51ccf6491",
+   "bytes": 63163,
+   "sha256": "9cbef6f85d6a24f003a47e7658de73f8609d579fea93b572f6fc4798f9fadb3f",
    "eol": "LF"
   },
   {
    "path": "stage1-handoff.md",
-   "bytes": 19548,
-   "sha256": "402f4e2ac5f0122edcb4c5a6c77553512cb5ef2c2a056488050848d2f9d761f3",
+   "bytes": 27223,
+   "sha256": "6af3de9e0587249ea4436aabf91faa172c0667b5311f271fdcab1751a0167485",
    "eol": "LF"
   },
   {
@@ -95,8 +152,8 @@
   },
   {
    "path": "tools/make_manifest.py",
-   "bytes": 3988,
-   "sha256": "221b5fcabd4ecfacc192705f891eeb3eb30633568883c1f2294bed8712b8b596",
+   "bytes": 6003,
+   "sha256": "86d536f88c1b178abe75570d5280c15cb0a671a34c0516592db126f87c5a7c2b",
    "eol": "LF"
   },
   {
@@ -106,9 +163,27 @@
    "eol": "LF"
   },
   {
+   "path": "tools/proto_ultra_chat_access.py",
+   "bytes": 17520,
+   "sha256": "15745a04ca10046cf728b9f5fa0eb645946748b40fed4da80e193186b7807454",
+   "eol": "LF"
+  },
+  {
    "path": "tools/record_gate.py",
    "bytes": 1262,
    "sha256": "32e1f4b498551aac1e22b1da32bb3eef5cfac5dbb7ff43ca2e150a0d9b00b373",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_gate_attempts.py",
+   "bytes": 2005,
+   "sha256": "700d8666d4efe22347356065e6d23081088618568f0981af1bb0cfa1405006b6",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_gate_mutants.py",
+   "bytes": 4407,
+   "sha256": "aa16f671c0c1babec078939e59eeb17c7124c1f89cd49fbea505695752df758d",
    "eol": "LF"
   },
   {

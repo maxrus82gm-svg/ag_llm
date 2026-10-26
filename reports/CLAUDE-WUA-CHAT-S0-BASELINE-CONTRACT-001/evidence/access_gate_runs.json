@@ -1,0 +1,282 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+ "module": "tools/proto_ultra_chat_access.py",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "attempts": [
+  {
+   "attempt": 1,
+   "runner_exit": 0,
+   "tests_run": 11,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "tests": [
+    {
+     "test": "CurrentBehaviour.test_a1_existing_capabilities_hide_the_token_while_the_folder_picker_is_off_by_default",
+     "status": "PASS"
+    },
+    {
+     "test": "CurrentBehaviour.test_a2_existing_capabilities_hand_out_the_folder_token_only_when_the_picker_is_available",
+     "status": "PASS"
+    },
+    {
+     "test": "Disclosure.test_e1_token_appears_only_in_the_capability_answer",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b1_read_capability_exists_with_the_folder_picker_off_and_on",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b2_tokens_never_cross_scopes",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b3_switching_chat_reading_off_leaves_the_folder_picker_alone",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b4_non_loopback_bind_gives_no_capability_and_no_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d1_foreign_or_opaque_origin_is_refused_on_capability_and_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d2_normal_same_origin_reads_pass",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d3_other_methods_and_preflight_are_refused_without_cors",
+     "status": "PASS"
+    },
+    {
+     "test": "TokenChecks.test_c1_invalid_tokens_are_refused",
+     "status": "PASS"
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "runner_exit": 0,
+   "tests_run": 11,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "tests": [
+    {
+     "test": "CurrentBehaviour.test_a1_existing_capabilities_hide_the_token_while_the_folder_picker_is_off_by_default",
+     "status": "PASS"
+    },
+    {
+     "test": "CurrentBehaviour.test_a2_existing_capabilities_hand_out_the_folder_token_only_when_the_picker_is_available",
+     "status": "PASS"
+    },
+    {
+     "test": "Disclosure.test_e1_token_appears_only_in_the_capability_answer",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b1_read_capability_exists_with_the_folder_picker_off_and_on",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b2_tokens_never_cross_scopes",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b3_switching_chat_reading_off_leaves_the_folder_picker_alone",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b4_non_loopback_bind_gives_no_capability_and_no_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d1_foreign_or_opaque_origin_is_refused_on_capability_and_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d2_normal_same_origin_reads_pass",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d3_other_methods_and_preflight_are_refused_without_cors",
+     "status": "PASS"
+    },
+    {
+     "test": "TokenChecks.test_c1_invalid_tokens_are_refused",
+     "status": "PASS"
+    }
+   ]
+  },
+  {
+   "attempt": 3,
+   "runner_exit": 0,
+   "tests_run": 11,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "tests": [
+    {
+     "test": "CurrentBehaviour.test_a1_existing_capabilities_hide_the_token_while_the_folder_picker_is_off_by_default",
+     "status": "PASS"
+    },
+    {
+     "test": "CurrentBehaviour.test_a2_existing_capabilities_hand_out_the_folder_token_only_when_the_picker_is_available",
+     "status": "PASS"
+    },
+    {
+     "test": "Disclosure.test_e1_token_appears_only_in_the_capability_answer",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b1_read_capability_exists_with_the_folder_picker_off_and_on",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b2_tokens_never_cross_scopes",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b3_switching_chat_reading_off_leaves_the_folder_picker_alone",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b4_non_loopback_bind_gives_no_capability_and_no_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d1_foreign_or_opaque_origin_is_refused_on_capability_and_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d2_normal_same_origin_reads_pass",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d3_other_methods_and_preflight_are_refused_without_cors",
+     "status": "PASS"
+    },
+    {
+     "test": "TokenChecks.test_c1_invalid_tokens_are_refused",
+     "status": "PASS"
+    }
+   ]
+  },
+  {
+   "attempt": 4,
+   "runner_exit": 0,
+   "tests_run": 11,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "tests": [
+    {
+     "test": "CurrentBehaviour.test_a1_existing_capabilities_hide_the_token_while_the_folder_picker_is_off_by_default",
+     "status": "PASS"
+    },
+    {
+     "test": "CurrentBehaviour.test_a2_existing_capabilities_hand_out_the_folder_token_only_when_the_picker_is_available",
+     "status": "PASS"
+    },
+    {
+     "test": "Disclosure.test_e1_token_appears_only_in_the_capability_answer",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b1_read_capability_exists_with_the_folder_picker_off_and_on",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b2_tokens_never_cross_scopes",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b3_switching_chat_reading_off_leaves_the_folder_picker_alone",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b4_non_loopback_bind_gives_no_capability_and_no_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d1_foreign_or_opaque_origin_is_refused_on_capability_and_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d2_normal_same_origin_reads_pass",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d3_other_methods_and_preflight_are_refused_without_cors",
+     "status": "PASS"
+    },
+    {
+     "test": "TokenChecks.test_c1_invalid_tokens_are_refused",
+     "status": "PASS"
+    }
+   ]
+  },
+  {
+   "attempt": 5,
+   "runner_exit": 0,
+   "tests_run": 11,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0,
+   "tests": [
+    {
+     "test": "CurrentBehaviour.test_a1_existing_capabilities_hide_the_token_while_the_folder_picker_is_off_by_default",
+     "status": "PASS"
+    },
+    {
+     "test": "CurrentBehaviour.test_a2_existing_capabilities_hand_out_the_folder_token_only_when_the_picker_is_available",
+     "status": "PASS"
+    },
+    {
+     "test": "Disclosure.test_e1_token_appears_only_in_the_capability_answer",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b1_read_capability_exists_with_the_folder_picker_off_and_on",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b2_tokens_never_cross_scopes",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b3_switching_chat_reading_off_leaves_the_folder_picker_alone",
+     "status": "PASS"
+    },
+    {
+     "test": "Independence.test_b4_non_loopback_bind_gives_no_capability_and_no_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d1_foreign_or_opaque_origin_is_refused_on_capability_and_history",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d2_normal_same_origin_reads_pass",
+     "status": "PASS"
+    },
+    {
+     "test": "OriginChecks.test_d3_other_methods_and_preflight_are_refused_without_cors",
+     "status": "PASS"
+    },
+    {
+     "test": "TokenChecks.test_c1_invalid_tokens_are_refused",
+     "status": "PASS"
+    }
+   ]
+  }
+ ]
+}
