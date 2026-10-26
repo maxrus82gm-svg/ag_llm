@@ -29,141 +29,9 @@
 
 # БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
 
-# 🟨 Задача: Переработка программы перехода Ultra в Web Alarm Ultra
+**ОЖИДАНИЕ НОВОЙ ЗАДАЧИ.** Задача `ASTRA-WUA-37-ROADMAP-REVISION-001` закрыта по независимой документационной приёмке WEB_14. Полная постановка сохранена в `[[001_История выполненных задач Codex]]`, проверена до очистки БЛОКА 1.
 
-**TASK ID:** `ASTRA-WUA-37-ROADMAP-REVISION-001`  
-**Исполнитель:** Астра (Codex)  
-**Тип работы:** архитектурная документация  
-**Статус:** новая задача, назначается пользователем  
-**Основной документ:** `Документация/37_Старт перехода - Web Alarm Ultra.md`
-
-## 1. Цель
-
-Уважаемая Астра!
-
-Мы приняли положительный результат независимой проверки Вашей редакции 2 документа «Дополнительная аналитика Астры.md».
-
-Теперь просим Вас самостоятельно переработать документ №37, используя выводы выполненного исследования и предложенную Вами программу поэтапного переноса старой Python/Tkinter Ultra в Web Alarm Ultra.
-
-Нам нужен не просто технический перечень задач, а **единый понятный инженерный план разработки**, по которому пользователь, координатор ChatGPT и будущие исполнители смогут ясно понимать:
-
-- Что мы собираемся сделать.
-- Зачем нужен каждый этап.
-- Что уже существует и может использоваться повторно.
-- Что должно заработать после выполнения этапа.
-- Какие проверки обязательны перед следующим этапом.
-- Какие прежние решения сохраняются, уточняются, заменяются или переносятся.
-
-**Вам предоставляется свобода самостоятельно выбрать оптимальную структуру и глубину описания.** Не нужно механически копировать предложенную таблицу, если Вы видите более удобный способ документирования.
-
-## 2. Основная программа перехода
-
-Используйте разработанную Вами последовательность из восьми этапов:
-
-| Этап | Название | Основной результат |
-|---|---|---|
-| 0 | Закрепление исходной базы | Приняты необходимые исходные компоненты, согласованы границы параллельной работы |
-| 1 | Главный экран Ultra Chat | Безопасный просмотр существующих Workspace и диалогов |
-| 2 | Общее хранение диалогов | Tkinter и Web Alarm используют одни данные без повреждения истории |
-| 3 | Отправка сообщений и восстановление | Надёжный Turn, идентификаторы, повторные запросы, ошибки |
-| 4 | Общий механизм обращения к GigaChat | Одна реализация запроса с выбором модели, историей и ограничениями |
-| 5 | Полноценный тестовый чат | Сквозная переписка с имитацией провайдера, сохранением и восстановлением |
-| 6 | Общая защита расходов | Ordinary Chat включён в согласованные механизмы B2 |
-| 7 | Первый настоящий GigaChat MVP | Рабочий чат с реальным ответом после отдельного разрешения и приёмки |
-
-Этап 4 может подготавливаться параллельно с этапами 2–3 при отсутствии пересечения изменяемых файлов. Подготовку B2 необходимо предусмотреть заранее.
-
-**Этап 5 — работающий offline Chat. Этап 7 — настоящий Chat MVP.** Не смешивайте эти результаты.
-
-После этапа 7 предусмотрите дальнейшие направления: контексты и наблюдение, проверяющий, агентские операции, Codex и другие подключения, Blueprint и последующий вывод Tkinter из эксплуатации.
-
-При этом прежние утверждённые архитектурные решения остаются основой: одно общее Python-ядро Ultra, сохранение старой Tkinter-оболочки на переходный период, переиспользование существующих моделей, OAuth, истории и контекстов. Web Alarm сохраняет единственные полномочия на управление своими TASK и файловыми операциями.
-
-## 3. Главное требование — инженерный русский язык
-
-Просим Вас оформить план на **понятном, естественном инженерном русском языке**.
-
-Английские названия оставляйте там, где это действительно необходимо: реальные функции, классы, API, программные компоненты, пути файлов, общепринятые термины и точные TASK ID.
-
-Однако основной текст должен объяснять смысл человеческим языком, а не превращаться в последовательность англоязычных технических обозначений.
-
-Для каждого этапа желательно дать понятное описание: что делаем, для чего, что получаем, как проверяем результат, какие есть зависимости и что пока остаётся за пределами этапа.
-
-Закрепите этот стиль как правило самого документа №37. Отдельно рекомендуйте координатору, где такое правило лучше закрепить в общих правилах документации для будущих технических планов.
-
-## 4. История решений — обязательное требование
-
-Нельзя терять историю уже согласованной программы.
-
-В новой редакции №37 предусмотрите отдельный раздел, в котором будет ясно отражено:
-
-- Какое решение действовало раньше.
-- Какое решение предлагается вместо него.
-- Почему потребовалось изменение.
-- Что полностью сохраняется.
-- Что лишь уточняется.
-- Что заменяется или переносится.
-- Какие вопросы ещё требуют утверждения пользователя.
-
-Используйте понятные обозначения, например: **СОХРАНЕНО, УТОЧНЕНО, ЗАМЕНЕНО, ПЕРЕНЕСЕНО, ТРЕБУЕТ СОГЛАСОВАНИЯ**.
-
-Особенно внимательно проверьте прежние WUA-2, WUA-3 и WUA-4: нельзя допустить, чтобы новые этапы программы конфликтовали с историческими идентификаторами Blueprint, Codex и ранее утверждённых задач.
-
-В основном содержании №37 должна быть **одна ясно обозначенная актуальная программа-кандидат**, а не два параллельных маршрута разработки. Прежняя программа сохраняется в истории решений и ссылках. Пока пользователь не утвердил новую редакцию, нельзя выдавать предложенные изменения за окончательно действующие решения.
-
-## 5. Дополнительные технические уточнения
-
-Просим учесть следующие замечания координатора:
-
-1. Первый этап с просмотром истории должен оставаться небольшим полезным результатом, а не отвлекать нас надолго от создания работающего чата.
-2. Хранение, Turn и механизм отправки необходимо согласовать архитектурно заранее, хотя реализовывать их допустимо отдельными задачами.
-3. Восстановление после сбоя должно предотвращать локальные дубли, но не обещать недоказанную гарантию единственного выполнения внешнего сетевого запроса.
-4. Защиту бюджета B2 нужно готовить параллельно; при этом она не должна блокировать полностью изолированную offline-разработку.
-5. Нельзя менять принятые зависимости безопасности, в том числе утверждённый порядок допуска Stage Compiler.
-6. Незавершённую независимую Windows/визуальную приёмку EVM и параллельную работу LLM15/WA4-R необходимо отражать как реальные зависимости, не выдавая их за завершённые.
-
-Если Вы обнаружите дополнительные архитектурные неточности, самостоятельно внесите обоснованные уточнения в пределах согласованной стратегии.
-
-## 6. Рекомендации по другим документам
-
-**Разрешается переработать только документ №37.**
-
-Не изменяйте самостоятельно №24, №20, №21, №03, решения Круглого стола, общие правила №18, карточки исполнителей, реестры, журнал №06, тактический контекст №34 или код приложения.
-
-Вместо этого подготовьте отдельный перечень рекомендаций по синхронизации документации.
-
-Для каждого затронутого документа укажите точный раздел, существующее положение, предлагаемое изменение, его причину и необходимость отдельного утверждения.
-
-Особое внимание уделите №24 (Web Alarm Workspace), №20 §5а и №21 (B2), моделям Chat/Turn/RUN/TASK и нумерации этапов.
-
-**Исторические решения Круглого стола не переписывать.** Если новая программа требует их уточнения, предложите отдельное дополнение с перечнем изменяемых решений. Такие изменения рассматривает координатор вместе с пользователем.
-
-## 7. Ограничения и сдача
-
-Работа исключительно документационная.
-
-**Разрешённая запись:** только документ №37 и отдельный технический отчёт/рекомендации в `reports/ASTRA-WUA-37-ROADMAP-REVISION-001/` согласно действующему регламенту.
-
-До записи проверьте актуальную локальную версию №37 и её соответствие переданной пользователем базе. Не используйте Git/GitHub самостоятельно: для локальных агентов продолжает действовать `DOC-GIT-01@1`. При неопределённости версии или пересечении прав остановитесь и запросите уточнение.
-
-Не изменяйте исходный код, тесты, CI, конфигурацию, сеть, рабочие данные Ultra, хранилища Workspace или другие документы. Не запускайте платные API.
-
-Проверьте сохранность исторических решений, согласованность этапов, отсутствие конфликтов идентификаторов и целостность существующих ссылок Obsidian. Приложение запускать для этой документационной задачи не требуется.
-
-**На выходе ожидаются:**
-
-1. Полностью переработанный документ №37 с понятной программой и историей решений.
-2. Отдельный перечень рекомендаций для остальных документов, без их изменения.
-3. Краткое объяснение, что изменено относительно прежнего №37, что осталось неизменным и что требует решения пользователя.
-4. Технический отчёт с проверками и указанием ограничений.
-
-Сохраните отчёт и необходимый манифест в разрешённой папке проекта. Не редактируйте персональную карточку Codex, БЛОКИ 1–4, персональный архив или общую документацию вне №37.
-
-**Итоговый статус:** `RESULT READY / AWAITING INDEPENDENT VERIFICATION`.
-
-После пользовательской публикации результата координатор ChatGPT проведёт независимую проверку. Только затем пользователь примет решение об утверждении обновлённой программы.
-
-Новых implementation TASK и разрешений на реализацию эта работа не создаёт.
+**Важно:** №37 остаётся ПРОГРАММОЙ-КАНДИДАТОМ до USER PLAN APPROVAL; V-13/B2 и новые implementation TASK не разрешены. Новую задачу сюда вручную вставляет только пользователь. MCP №39 FROZEN.
 
 ---
 
@@ -171,43 +39,43 @@
 
 Полный архив — [[001_История выполненных задач Codex]].
 
+- **2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001** — документ №37, 0–7, H01–H23, R01–R11; independent bounded DOCUMENT PASS, 9/9 artifact hashes; программа ожидает USER PLAN APPROVAL.
 - **2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — rev2 Astra after Sol 6.1 rev1; 30/30 published source pins SHA/size independently checked at №436, R2-01…R2-08 source/reasoning review. **WEB_14 PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, Windows/live NOT RUN; roadmap awaits user approval.
 - **2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — admission policy inside existing broker/security pipeline; Codex 52/52 offline, 51/51 regression (19 overlap), 7/7 mutants, WEB_12 independent 53/53 manifest; **PASS / BOUNDED OFFLINE ACCEPTED**, native/WFP/Chat NOT VERIFIED.
 - **2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — source-only exact sing dependency; Codex 51/51, WEB_12 87/87, six upstream files and 33 locators. **TERMINAL PARTIAL**, native blocked.
 - **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only sing-box v1.13.4, defaults DIRECT/DNS/UoT; WEB_11 bounded source accepted, native not run.
-- **2026-10-24 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — embedded sing-box local snapshot, WEB_11 bounded, installed executable not attested.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
+- **ASTRA-WUA-37-ROADMAP-REVISION-001** — `main@d15d026bf17c1184a004f8891186c0ea02f8887e`, №37 SHA256 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45`, manifest `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`, independent 9/9; авторские 21/21 не перезапускались, no runtime/CI/live; B2 V-13 unresolved.
 - **ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — architecture rev2 `Документация/Дополнительная аналитика Астры.md`, `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30`, 137301 bytes, SHA256 `7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5`; independently source 30/30 pinned №436 and eight R2 corrections accepted; no runtime/CI/API. WUA-2A **NOT ASSIGNED**; frozen B1 archived verbatim in Codex 001.
 - **CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — new `strict_preflight`, separated structural vs strict policy statuses; controller-owned canonical/source pins, opaque auth refs, CONNECT-only exact destination and deny DIRECT/fallback/secondary/DNS/UDP/UoT/IPv6/merge/reload. Codex 52/52 offline, 51/51 overlapping compatible tests, 7 mutants caught, preserved RED 19/21, WEB_12 53/53 manifest SHA. **OFFLINE PASS only**, upstream credentials in 407/error logs still SECURITY BLOCKER. Real C/B SID/NPFS, WFP, secret-store and ChatGPT E2E NOT VERIFIED. `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/report.md`.
 - **CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — WEB_12 terminal bounded source-only PARTIAL, 87/87 files and 6/6 upstream SHA/33 locators; no native/real egress. `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`.
 - **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — WEB_11 bounded 30/30 Codex, sing-box defaults DIRECT/DNS/UoT/other conditional route risks. `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`.
-- **CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001** — WEB_11 bounded snapshot, Codex 44/44, actual engine attestation/native not run. `reports/CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001/report.md`.
 
 ---
 
-# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
+# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
-**Verifier:** WEB_14 / ChatGPT. Codex — READ-ONLY. Полная история №06 и Codex 001.
+**Verifier:** WEB_14 / ChatGPT; Codex READ-ONLY. Полный архив №001 и журнал №06.
 
-## 1. Последний вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001 (rev2)
+## 1. Последний вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001
 
-**PASS / INDEPENDENT BOUNDED ARCHITECTURAL SOURCE REVIEW.** `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30` (№438) and all **30/30** source manifest SHA-256/size checked independently on `main@7924d7653e896e3fe110e7d67162730a9b7e857d` (№436), with CRLF reconstruction for server.py, ultra_ui.py, task_planner.py, web_alarm/ui.py. Report 137301 bytes / SHA256 `7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5` previously independently sealed by WEB_13. Reviewed R2-01…R2-08 by concrete source: identity/bounded reads, chat usage and nullable technical tb, fixed message IDs/recovery, legacy terminal failure assistant RAW, missing ordinary Chat B2 route, bounded owner/locks, shared request transport, physical attempt vs Turn cancellation/UNKNOWN usage. No blocking analytical contradictions. Added future negative-test recommendation: RAW filename/message_id equality and duplicate message IDs.
+**PASS / INDEPENDENT DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** Астра / Codex, результат `main@d15d026bf17c1184a004f8891186c0ea02f8887e`: №37 переработан в программу из восьми этапов 0–7, 23 изменения истории H01–H23 и 11 групп рекомендаций R01–R11. **WEB_14 independent PASS / DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** SHA256 №37 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45` (71042 байта), manifest CRLF `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`. Независимо сверены 9/9 артефактов по SHA256/размерам (четыре CRLF восстановлены), исходный №37 с прежней ревизией, кандидат с опубликованным текстом; без блокирующих противоречий в общем Python-ядре, RAW/Turn/RUN/TASK, бюджете, полномочиях Web Alarm и WA4-R. Авторские 21/21 документных проверок независимо не запускались. Windows/UI/runtime/live/paid/CI NOT RUN. №37 остаётся **ПРОГРАММА-КАНДИДАТ / USER PLAN APPROVAL PENDING**, отложенный B2 V-13 Ordinary Chat требует отдельного решения пользователя, исторический RT-002 и MCP freeze №39 не изменены.
 
-**Independently checked:** source/content/reasoned architecture. **NOT RUN:** Windows CI and visuals, real reparse/concurrency/TOCTOU/restart, real provider/OAuth/live/paid API. EVM independent Windows/visual, WA4-R, B2 S1/S2 Chat route and S3a/S3b, security/history read gate, Turn implementation and actual roadmap approval **OPEN**. Analysis accepted, proposal NOT APPROVED, implementation NOT STARTED. No next task assigned.
+**Не является:** USER PLAN APPROVAL, S3a/S3b implementation PASS, EVM Windows/visual PASS, разрешением paid GigaChat, изменением V-13 или запуском первого этапа. Новую TASK пользователь не назначал.
 
-## 2. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001
+## 2. Предыдущий — WEB_14 / 2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001
 
-**PASS / BOUNDED OFFLINE SOURCE & EVIDENCE**, `main@6456d669a8a804ddd75a0dbca242782c18d914da`, 53/53 manifest, agent-reported 52/52 tests + 51/51 regression (19 overlap), 7/7 mutants; Windows/WFP/no-DIRECT/ChatGPT MCP E2E NOT VERIFIED, upstream error/credential leak SECURITY BLOCKER. Detailed history №06.
+**PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, source pins 30/30 at №436 and eight R2 corrections. Нет Windows/production/live.
 
-## 3. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001
+## 3. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001
 
-**TERMINAL PARTIAL / BOUNDED SOURCE**, `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`, 87/87 manifest, 6/6 upstream selected files, 33/33 locators; no native/network/WFP, Desktop MCP/tunnel FROZEN. Detailed history №06.
+**PASS / BOUNDED OFFLINE SOURCE & EVIDENCE**, native Windows/WFP/ChatGPT Desktop E2E not verified.
 
 ---
 
-**Статус карточки:** задача Astra закрыта в пределах source-only аналитики, БЛОК 1 ожидает назначения пользователем. Frozen Desktop MCP/old independent open checks не закрывались, implementation GO не выдавался.
+**Статус:** БЛОК 1 ожидает нового поручения; план №37 требует решения пользователя.
