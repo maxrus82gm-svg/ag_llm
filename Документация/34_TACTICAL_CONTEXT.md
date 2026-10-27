@@ -1,3 +1,11 @@
+## HANDOFF / WEB15 — 2026-10-27 / финальное утверждение №37 и опубликованный Stage1
+
+**USER PLAN APPROVED:** пользователь явно утвердил кандидат 2 №37 от 2026-10-26 с обязательным §2.4/H24 о переносимости. Перенос на чистую Windows-машину NOT VERIFIED, новое implementation USER GO не выдавалось; Ordinary Chat B2 V-13, paid API, вывод Tkinter и MCP №39 остаются с отдельными условиями.
+
+**CURRENT Stage1:** `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` опубликован в `main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6` вместе с тестами, отчётом, manifest/evidence и активным БЛОКОМ 1 Claude. RESULT READY / AWAITING INDEPENDENT VERIFICATION; локальный self-report 1024 PASS / 2 SKIP, не независимый PASS. Windows/visual Stage1 и EVM gates OPEN. WEB15 отвечает за интерфейс Ultra Chat и координацию приёмки; LLM15 — Web Alarm Core/WA4-R. Перед следующей mutation сверить пересечения через №40.
+
+---
+
 ## HANDOFF / WEB_14 — 2026-10-26 / USER portability requirement, №37 revised for final approval
 
 **Архитектурное решение пользователя:** создавать Web Alarm Ultra как переносимую систему с самого начала, чтобы новая Windows-машина могла получить приложение и сохранённые проекты/чаты, а Claude/Codex/API/локальные модели затем безопасно подключались заново. В №37 добавлен §2.4 и H24; этапы 0–7 получили portability gates. №40 распределяет направления А (Ultra Chat) и Б (Web Alarm Core), обновлены №08/03/19/23/24 и запись №06. **PORTABILITY TARGET / NOT VERIFIED:** фактического переноса чистой установки ещё нет; `workspace_registry.py` использует машину и локальные абсолютные пути. Секреты и OS-сетевые правила не экспортируются. MCP №39 FROZEN.
