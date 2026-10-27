@@ -1,0 +1,69 @@
+{
+  "checks": [
+    {
+      "name": "Original documentation bytes unchanged",
+      "pass": true,
+      "detail": {
+        "checked": 76,
+        "changed": []
+      }
+    },
+    {
+      "name": "Graph configuration unchanged",
+      "pass": true,
+      "detail": ".obsidian/graph.json"
+    },
+    {
+      "name": "Existing source/config/test files unchanged",
+      "pass": true,
+      "detail": {
+        "checked": 240,
+        "changed": []
+      }
+    },
+    {
+      "name": "Required identity and proposal status",
+      "pass": true,
+      "detail": [
+        "# 41. Оптимизация контекста документов — 27.10.2026",
+        "ASTRA-DOC-CONTEXT-OPTIMIZATION-001",
+        "Astra / Codex 007",
+        "PROPOSAL / AWAITING INDEPENDENT REVIEW"
+      ]
+    },
+    {
+      "name": "New Markdown has no graph-link/tag/frontmatter syntax",
+      "pass": true,
+      "detail": {
+        "checked": 3,
+        "violations": []
+      }
+    },
+    {
+      "name": "Migration ledger covers complete source text structurally",
+      "pass": true,
+      "detail": {
+        "fragments": 96,
+        "chars": 289495,
+        "semantic_acceptance": "NOT PERFORMED"
+      }
+    },
+    {
+      "name": "No old references to document 41 in bounded syntax inventory",
+      "pass": true,
+      "detail": {
+        "documents": 70,
+        "matches": [],
+        "whole_vault_resolver": "NOT RUN"
+      }
+    },
+    {
+      "name": "Mandatory local report exists and retains pending review",
+      "pass": true,
+      "detail": "report.md"
+    }
+  ],
+  "passed": 8,
+  "failed": 0,
+  "note": "Author checks only. All-file drift check is separate and must not be hidden by this bounded result."
+}

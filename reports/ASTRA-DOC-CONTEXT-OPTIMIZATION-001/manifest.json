@@ -1,0 +1,87 @@
+{
+  "task_id": "ASTRA-DOC-CONTEXT-OPTIMIZATION-001",
+  "date": "2026-10-27",
+  "status": "PROPOSAL / AWAITING INDEPENDENT REVIEW",
+  "artifacts": [
+    {
+      "path": "Документация/41_Оптимизация контекста документов.md",
+      "bytes": 79975,
+      "sha256": "15542bec5f74b85b7eafd170fabf7b5c8d872a119c850394864138f018c13c57"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/baseline.json",
+      "bytes": 55817,
+      "sha256": "4e845a0b70fbb29c5896409aae181a3187cd3ee2dd613cf40f994403fefdc0f3"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/document_metrics.json",
+      "bytes": 18601,
+      "sha256": "a30dffed3d721da5ddb1e22bafc1335de18515b4a17c39d7b9419d235530f2df"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/graph_syntax_baseline.json",
+      "bytes": 49949,
+      "sha256": "312327ebc94408322f257fadfd8ea9a526f3d4186a26e1cd04eb847260559079"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/migration_inventory.json",
+      "bytes": 72379,
+      "sha256": "a873499851d130773a21143b313bdb5e71b969fe96a20263ecf18e847732a945"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/package_checks.json",
+      "bytes": 1781,
+      "sha256": "8dc2a32c2e07ea35a835f26c26a7d09cbc3152456816cf96ec476acbae072c08"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/registry_navigation_audit.json",
+      "bytes": 61125,
+      "sha256": "90f3929b6c46806d2987928ee9ceb8d7a1719f47a2165cc44cb125f9756aab58"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/section_index.json",
+      "bytes": 248908,
+      "sha256": "86c5c4c4da9ed3be10d3267db314f364275bd70bb2743ed8ba240dc77f725617"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/verification.json",
+      "bytes": 520,
+      "sha256": "fc6e9c0f92da18a918a0f420e17d620e16a14f0a17b14facd9c7c1018e72215c"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/evidence/verification_first.json",
+      "bytes": 520,
+      "sha256": "fc6e9c0f92da18a918a0f420e17d620e16a14f0a17b14facd9c7c1018e72215c"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_receipt.json",
+      "bytes": 1482,
+      "sha256": "9435ac0706f1fedb548871af9ac4eaf44bcc5ecfee65c46e36bec660c38bdd28"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/read_scope.md",
+      "bytes": 8176,
+      "sha256": "7388b502a21b195f36a8351d4e8093b0bac295f7a95cd66d1deec0b3a36f806b"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/report.md",
+      "bytes": 17208,
+      "sha256": "0cbc3d93d9276460e0f4974eca6e99cd95263b133304da9a75c672ffad0530f5"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/tools/audit_context.py",
+      "bytes": 7334,
+      "sha256": "14006e7e0015ca285599967e59fbcdb675c1951815845671d0f39562160fdec7"
+    },
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/tools/verify_package.py",
+      "bytes": 3990,
+      "sha256": "5c5c406b12d49ddd1aa9ffa180cdf70d9897712f561fa2a18669017da8bf9a34"
+    }
+  ],
+  "self_hash": "excluded to avoid recursion",
+  "independent_review": "PENDING",
+  "publication": "LOCAL ONLY / NOT PERFORMED",
+  "scope_note": "Only new document 41 and task report directory written. Existing .obsidian/workspace.json drift detected; no write by executor; origin unestablished. See verification evidence.",
+  "delivery_receipt": "handoff_receipt.json: SEND_TOOL_ACCEPTED; recipient read and independent verdict not confirmed"
+}
