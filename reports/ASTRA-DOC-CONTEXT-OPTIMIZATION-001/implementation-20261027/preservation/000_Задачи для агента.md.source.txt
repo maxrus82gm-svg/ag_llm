@@ -1,0 +1,251 @@
+**WEB15 / USER 2026-10-27 / `DOC-WUA-LAUNCH-01@1` — единый запускатель:** `Start_WebAlarm.bat` должен оставаться единственной пользовательской точкой входа. STANDARD = зелёный и штатная проверенная цель; временный TEST = красный, с TASK ID и названием изменённого target. Переключивший агент восстанавливает STANDARD после теста; перед следующей TASK — обязательная перепроверка/возврат. Если не возвращён — RESTORE_BLOCKED, не выдавать за STANDARD. См. №18 и №40. BAT пока implementation NOT VERIFIED, не запуск Stage2.
+
+## WEB15 / CURRENT 2026-10-27 — №37 USER PLAN APPROVED, Stage1 RESULT READY / NOT VERIFIED
+
+Пользователь утвердил №37 (кандидат 2 от 2026-10-26), включая §2.4/H24 о переносимости. PORTABILITY TARGET / NOT VERIFIED; никакого автоматического GO на этапы 2–7, B2 V-13, live API и замороженный MCP №39. Claude 008 Stage1 `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` опубликован в `main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6`; личный БЛОК 1 пока активен, независимая приёмка source/Windows/visual/EVM OPEN. Координация WEB15/LLM15 и пересечения server/ui — по №40. До независимого verdict не очищать БЛОК 1 и не запускать следующий Stage2.
+
+---
+
+**ОПЕРАТИВНАЯ КООРДИНАЦИЯ ДВУХ НАПРАВЛЕНИЙ:** [[40_Оперативная координация направлений]] — краткая текущая сводка Ultra Chat / Web Alarm Core, возможные пересечения и адресные ссылки. Перед новой задачей читать только эту сводку; полные чужие TASK — при необходимости.
+
+## WEB_14 / 2026-10-26 — 🟨 Claude Stage0 Ultra Chat: документально принят
+
+Claude 008, `CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001`, `main@734cbfc9d5c5800cf610241c19693ddad9f77cd6` (user commit 442, AMENDMENT-1 rev2), проверен WEB_14: **PASS / BOUNDED INDEPENDENT ARCHITECTURE + EVIDENCE INTEGRITY REVIEW**. GitHub manifest 17/17 file SHA256/bytes independently matched. Source+prototype+test-oracle read and inspected: `web_alarm/server.py`, `folder_picker.py`, `context_storage.py`, `run_store.py`, isolated `proto_ultra_chat_access.py`, `probe_s0_storage.py`. Claude reports 60/60 characterization probes (12×5), 55/55 amended protected HTTP prototype (11×5), mutants 10/10 killed, regression 32/32 + 28/28 and zero isolation; **это результаты исполнителя из evidence, ChatGPT НЕ исполнял тесты повторно**. Снимок кода не изменялся; HTTP prototype — только в `reports/CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001/`.
+
+**Сохранённые условия:** №37 всё ещё помечен как программа-кандидат (USER PLAN APPROVAL pending; разрешён только запуск подготовительного этапа 0). Stage1 **NOT ASSIGNED**. EVM Windows/visual independent gate OPEN; разрешить пересекающуюся запись `web_alarm/server.py`/`ui.py` только после разделения с WA4-R/LLM15; B2 V-13 ordinary Chat DEFERRED, stage5 mock отдельно от paid stage7; MCP №39 FROZEN. Независимая read capability защищает от посторонних сайтов, **не обеспечивает OS-user isolation**: другая локальная программа может обратиться к loopback и получить токен. На этапе 1 нужны точные Host/Origin checks, ограниченное I/O, проверка идентичности и race/reparse path swap; `lstat` перед `open` сам по себе не доказывает TOCTOU-безопасность. Реальные данные, EVM Windows visual, настоящий UI/GigaChat/API, full regression NOT RUN по этой TASK.
+
+**NEXT:** пользователь отдельно утверждает этап 1 / правила временного владения общими файлами и решает открытый EVM gate; Claude B1 после readback full original B1 в персональном 001 очищен только в ветке GPT, новая TASK сюда не записывается. Связанные №20/24/37/B2 policy/RT не переписывать автоматически.
+
+---
+
+## WEB_14 / 2026-10-26 — программа №37 проверена, утверждение пользователем ожидается
+
+**🟨 Задача: Переработка программы перехода Ultra в Web Alarm Ultra (ASTRA-WUA-37-ROADMAP-REVISION-001) — PASS / INDEPENDENT DOCUMENTARY & BOUNDED ARCHITECTURE REVIEW.** `main@d15d026bf17c1184a004f8891186c0ea02f8887e`, документ №37 SHA256 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45` (71042 UTF-8 bytes); manifest SHA256 `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34` после CRLF reconstruction. ChatGPT/WEB_14 независимо проверил **9/9** файлов/размеров/хешей, предыдущий №37 против сохранённого snapshot, текущий №37 против candidate, 8 этапов 0–7, 23 H01–H23 и 11 рекомендаций R01–R11, разделение одного Python-ядра / Web Alarm TASK / RAW/Turn/RUN, бюджетные guards S3a/S3b и S13a+S6a→S6b, WA4-R/MCP границы. В редакции блокирующих архитектурных противоречий не найдено. Авторские документные 21/21 test checks не пересчитаны запуском скрипта; UI/Windows/CI/runtime/live/paid не выполнялись. **№37 — проверенная ПРОГРАММА-КАНДИДАТ, НЕ USER PLAN APPROVAL**. Отложенная часть V-13 (Ordinary Chat policy) требует отдельного решения, исторический sealed B2 не менять.
+
+**NEXT:** пользователь решает, принимать ли программу этапов 0–7; отдельно утверждает V-13/Ordinary Chat budget addendum. До решения не изменять нормативные №20/24/32/33.3 и не выдавать implementation TASK. EVM Windows/visual OPEN, LLM15 WA4-R отдельно, MCP №39 FROZEN. Codex БЛОК 1 архивирован и очищен только в GPT после независимой приёмки и readback; только пользователь merge/sync.
+
+---
+
+## WEB_14 / CURRENT 2026-10-26 — Astra rev2 принята в ограниченном source scope
+
+**🟨 Задача: независимая приёмка аналитики переноса Ultra** `ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001`, rev2 — **PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**. Source `main@7924d7653e896e3fe110e7d67162730a9b7e857d` (#436), 30/30 manifest SHA-256+size; report `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30` (#438); R2-01…R2-08 reviewed. Полный B1 архивирован в Codex 001; БЛОК 1 переходит к `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ` только в GPT до пользовательской публикации/локального sync. Полный review — персональный Codex B4, №06, #34.
+
+**НЕ НАЗНАЧЕНО:** `WUA-2A-CHAT-READONLY-001` и остальные этапы — `PROPOSAL / AWAITING USER APPROVAL`. Separate EVM independent Windows/visual, B2 ordinary Chat route and S3, WA4-R/TOCTOU and file ownership открыты. Frozen Desktop MCP/№39 не трогать. Новую TASK ChatGPT готовит только в чат после решения пользователя, не в БЛОК 1. Только пользователь делает GPT → main и локальную синхронизацию.
+
+---
+
+## USER DIRECTION / 2026-10-25 — архив №39 и заморозка ChatGPT Desktop MCP
+
+**CURRENT ROUTE:** `39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25` — authoritative frozen handoff по **ChatGPT Desktop ↔ MCP ↔ Web Alarm Ultra**, local plugin/SDK, hosted Secure MCP Tunnel, V2Ray broker, C/B/WFP/native E2E. Архитектура: `19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP`. Исторические MCP NEXT/TASK ниже не запускать. `can_apply=false`, `can_start_tunnel=false`; no hosted tunnel and no ordinary Desktop MCP E2E proven.
+
+**IMPORTANT:** текущий Codex `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` опубликован, но **awaiting independent WEB_12 verification**, БЛОК 1 не ротировать без closeout по регламенту. Новый основной user priority — **Web Alarm Ultra, внешние LLM API, Connection Registry, создание чата и его история**, не смешивать с WA4-R и не выдавать новую задачу без пользователя. Читаем №37 для рамки Ultra, №38 как историческую (решение 2026-10-17 superseded).
+
+---
+
+## WEB_12 / CURRENT 2026-10-25 — strict MCP broker admission offline PASS
+
+User approved closeout for Codex `CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001` after independent WEB_12 **PASS / INDEPENDENT BOUNDED OFFLINE SOURCE & EVIDENCE ACCEPTED** from `main@6456d669a8a804ddd75a0dbca242782c18d914da`: **53/53** manifest, Codex 52/52 admission + 51/51 overlapping regression, 7/7 mutants; first 19 PASS/21 FAIL preserved. B1 to WAITING after coordinator's archive and documentation only; next task prepared *only in chat* for user to copy. No native Windows/WFP, no network route/engine/ChatGPT E2E proven. Upstream credential errors **SECURITY BLOCKER**; `can_apply=false`, `can_start_tunnel=false`, tunnel HOLD, engine family unchanged. Next: read-only lab readiness and native isolation design before separate host-changing GO. Canonical records in 001/B4/05/06/19/34.
+
+---
+
+## WEB_12 / CURRENT 2026-10-25 — secure MCP source audit closeout
+
+Codex `CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001` **TERMINAL PARTIAL / INDEPENDENT BOUNDED SOURCE & EVIDENCE ACCEPTED** after user terminal PARTIAL GO: published `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`, 87/87 independent manifest SHA, 6/6 official upstream source SHA and 33/33 locators, h1 reconstructed from agent-published 322 hashes; Codex 51/51 offline, independent native/OS/Chat E2E NOT RUN/NOT VERIFIED. Source blockers: optional empty auth, potential credentials in errors, CONNECT 200-before-route, permissive JSON/default DIRECT/conditional egress. Next proposed task: strict offline admission and negative controls. Codex B1 awaits user assignment; ChatGPT does **not** write new TASK into B1. No Windows/proxy/WFP/tunnel/engine apply, `can_apply=false`, `can_start_tunnel=false`. Canonical history in Codex 001 and journal 06, technical details 19/34.
+
+---
+
+**ОБЯЗАТЕЛЬНОЕ ПРАВИЛО / USER GO 2026-10-25 / DOC-TASK-HANDOFF-USER-01@1 / ПРИОРИТЕТ НАД СТАРЫМИ ФОРМУЛИРОВКАМИ О ВЛАДЕНИИ БЛОКОМ 1.** У ChatGPT-координатора ДВЕ разные роли: подготовка новой задачи в чате и документационное закрытие после независимой приёмки. **НОВУЮ ЗАДАЧУ ChatGPT НЕ ЗАПИСЫВАЕТ в БЛОК 1 карточек Claude/Codex/Ultra Desktop ни локально, ни через GitHub.** При постановке ChatGPT отправляет пользователю ТРИ самостоятельных, готовых к копированию блока: **(1)** полный текст постановки для БЛОКА 1 персональной карточки исполнителя; **(2)** краткое стартовое сообщение исполнителю; **(3)** понятное объяснение пользователю ожидаемого результата и границ работы. **Только пользователь** переносит полный БЛОК 1 в карточку, проверяет его, передаёт короткий запуск исполнителю и публикует необходимые изменения. После работы пользователь публикует код, отчёт и evidence на GitHub и передаёт ChatGPT ссылки/отчёт. **Только тогда** ChatGPT независимо проверяет точный опубликованный результат; при PASS формирует изменения истории/реестров, БЛОКОВ 2–4, №06 и №34, а **последним** очищает БЛОК 1 в ветке `GPT`, не записывая туда следующую TASK. При FAIL/REVISE/PARTIAL без разрешённого отдельного closeout БЛОК 1 не очищать. Merge `GPT → main` выполняет только пользователь. **Перед новым чатом перечитать это правило в 08, 18 и карточке ChatGPT**; если архивный текст говорит «ChatGPT заполняет новую задачу в GitHub», приоритет у этого правила. Уже вручную/ранее опубликованную текущую TASK не перезаписывать и не удалять ради внедрения правила.
+
+## CURRENT / 2026-10-18 / LLM12 — WA4-R crash-consistency R-MT/R-OP published, independently bounded-reviewed
+
+**LATEST RT-001:** Claude 008 `CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001` production repair is **PUBLISHED** in [published Claude repair / commit 366](https://github.com/maxrus82gm-svg/ag_llm/commit/2789587880bc79d10d8524773b2d87f7082d43c3) with task report at `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001/report.md`. The USER-approved rule: no recorded proof means no accepted VERIFIED/closeout; preserve result, allow separately supported safe re-check, uncertainty means fail-closed/operator; **never automatically repeat physical apply**. Implementation preserves a potentially persisted VERIFIED state but blocks its operational acceptance until recorded verification; `POST /microtasks/{id}/reaffirm` is a new re-check assertion, not a server-created independent correctness proof. R-MT = write-ahead microtask transition INTENT before status CAS, then commit/abandon/reconcile; R-OP = narrow durable INTENT rev1 pending history is safely reconstructible under lock without executing in that same call. No MicrotaskRecord/OperationRecord schema change.
+
+**VERIFIER FACTS:** 9/9 changed source/test files + 6 key task artefacts independently SHA-256/byte matched (**15/15**); GitHub tree confirms **142/142** manifest-listed task files plus manifest with no unlisted/missing extras. Source paths, recovery/closeout proof guards, changed/new test oracles, sanitized test-summary provenance reviewed. Claude locally reports **full2 874 = 873 PASS / 0 FAIL / 0 ERROR / 1 known SKIP**; baseline red-final 32 = 9 PASS / 21 FAIL / 2 ERROR, full1 historical 1 FAIL remains, 25 new tests, 7/7 quality mutants caught after strengthening, 13/13 original design probes; source map 105/105. These are published **agent runs, NOT independent Windows reexecution**. The 4.88 MB raw `runs/full2/results.json` is present but unavailable in full through current GitHub file-fetch connector; 874 per-test raw records not independently audited. Exact published HEAD source commit #366 has **0 GitHub Actions runs**; W1 NOT RUN, W3 NOT RUN.
+
+**CURRENT GATE:** **BOUNDED SOURCE/PUBLICATION-INTEGRITY REVIEW PASS WITH RESIDUAL RISKS**; full task `RESULT READY / AWAITING INDEPENDENT VERIFICATION` (not `DONE/VERIFIED`), WA4-R **PARTIAL**, OBSERVE bounded only, WARN/GATEWAY REQUIRED/STRICT/Final Audit unauthorized. Open: AUD-01T-R/AUD-02c/AUD-04, PWR-01, F-1 executor wording after commit, F-2 missing TASK_COMPLETED after completion crash, F-3 rejection event after completed, F-4 rollback protection loss. Reaffirm requires independently supplied meaningful evidence; server only validates permitted recovery state and nonempty evidence. Next: W1 clean new Windows CI on the exact six-source/test revision, independent result audit, separately user-approved W3 nonmutating live-store preflight, then remaining reliability gate decisions. ChatGPT alone updates shared docs, Claude Block 1 WAITING. `001_История выполненных задач Claude.md` remains unchanged until official independent DONE/VERIFIED per its rule. WEB_10 MCP, Ultra and Codex remain separate. No production, CI, agent card or rollout modified by this documentation entry.
+
+---
+
+## CURRENT / 2026-10-17 / LLM12 — WA4-R crash consistency DESIGN RESEARCH, no implementation GO
+
+**Current Web Alarm NEXT (supersedes older dated AUD-01T/02b candidate lines below):** [Claude research published](https://github.com/maxrus82gm-svg/ag_llm/commit/6256ac0cb072d4b40e04c506a8549dbfbf136f26); Claude 008 `CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001` has completed research/temporary probes and rotated personal Block 1 to WAITING. Independent GitHub source/evidence review corroborated AUD-02b-R **HIGH: VERIFIED status can be committed while its evidence event is lost, then closeout completes TASK without that evidence**, and AUD-03 **MEDIUM: orphan INTENT without OPERATION_INTENT blocks operation history for the entire TASK, currently fail-closed**. Six research attempts including final 13-method crash probes ×3 with 8 controls/triggers/safety PASS and 5 deliberately failing not-yet-implemented invariants per run, plus 4/4 schema probes (Claude-executed; verifier did not rerun Windows). All **39/39** manifest-listed published artifacts independently SHA-256+size matched (card-rotation.json has manifest-declared CRLF). **DESIGN RESEARCH BOUNDED ACCEPTED; R-OP/R-MT ARCHITECTURE PROPOSED ONLY / NOT APPROVED; WA4-R PARTIAL**. User must decide recovery contract/legacy policy/writer coverage before a separate code TASK; W1 and W3 NOT RUN, WARN/GATEWAY REQUIRED/STRICT/Final Audit not authorized. LLM12 is main Web Alarm; WEB_10 owns MCP/V2Ray separately. ChatGPT must not put any new TASK in Claude's personal Block 1.
+
+---
+
+**WEB_09 shared CURRENT 2026-10-16 / NOT A NEW TASK:** #352 contains Claude repair AUD-01/02/05 accepted by ChatGPT only as bounded source/evidence; final reported 821 PASS/1 SKIP, independent full/clean CI NOT RUN. Claude B1 empty after self-rotation; next repair AUD-01T/AUD-02b NOT ASSIGNED, AUD-03/04 OPEN, WA4-R PARTIAL, OBSERVE bounded, WARN/STRICT not authorized. Codex separate WUA MCP 0.2.1 gate A–D local PASS, ordinary Desktop E2E NOT VERIFIED. ChatGPT updates shared docs, not agents' personal B1; USER manually places full task and starts by small message. See [[34_TACTICAL_CONTEXT]], `37_Старт перехода - Web Alarm Ultra`, `Blueprint LLM`. Older WEB_07 current below historical.
+
+**PERMANENT ROUTE 2026-10-17:** см. `rule-ref:DOC-LOCAL-REPORT-HANDOFF-01@1` (18). Пользователь → утверждённая TASK в персональном БЛОКЕ 1 → локальный исполнитель Claude/Codex/Astra сохраняет **каждый полный отчёт + нужные sanitized evidence в `ag_llm` вне `.gitignore`**, делает summary/SHARED DOC DELTA → пользователь обычно commit/push → ChatGPT читает GitHub по точному SHA, независимо проверяет результат и обновляет общие 34/000/18/профильные документы. По умолчанию агенты не используют Git/GitHub и не имеют постоянного права отправлять сообщения ChatGPT; task-scoped исключение только по отдельному USER GO. Старый Codex self-publish маршрут SUPERSEDED, независимо от исторического bounded chat smoke.
+
+
+# Задачи для агента
+
+**USER GO 2026-10-24 / ДОКУМЕНТАЦИОННЫЙ OWNER:** ChatGPT-координатор ведёт персональные карточки Claude/Codex/Ultra Desktop (БЛОКИ 1–4), их append-only `001`, общий маршрутизатор, журнал `06` и текущий `34`. Исполнитель пишет только утверждённые source/tests и technical report/manifest/evidence; пользователь публикует в main, ChatGPT независимо проверяет, затем в GPT одним согласованным closeout-commit архивирует и освобождает БЛОК 1; пользователь принимает GPT→main. Источник: `DOC-TASK-CLOSEOUT-OWNER-01@1` (18). Прежние сведения о самостоятельной ротации локальных агентов — исторические. Новые TASK по-прежнему вручную утверждает пользователь.
+
+
+## ULTRA DESKTOP / отдельный контур координации и независимой проверки (2026-10-24)
+
+**Роль:** ChatGPT — постановщик задач, координатор сохранения доказательств и независимый verifier; **Ultra Desktop** — отдельный локальный кодинговый исполнитель с собственными полномочиями, не равный GigaChat Ultra Runtime. Операционная карточка: [[000_Задачи Ultra Desktop]]; её собственная история доступна по ссылке **из карточки**, не напрямую из глобального маршрутизатора.
+
+**Как я ставлю задачи Ultra Desktop:**
+- Сначала проверить текущую персональную карточку, незавершённую TASK и соседние write-scopes; не переписывать чужие активные БЛОКИ 1. Подготовить по `DOC-TASK-BLOCK1-01@1` большой цельный БЛОК 1 и отдельную короткую команду запуска; пользователь сам назначает и запускает. Указать цель, минимальное достаточное решение, точные пути, запреты, критерии `PASS/FAIL/BLOCKED` и адресную матрицу чтения по `DOC-TASK-READ-SCOPE-01@1`.
+- Для тестовой лаборатории новая разрешаемая область — `M:\GitHub\ag_llm\GigaCode_Lab\`; **не весь** `ag_llm`. Старый `M:\Test_AI\GigaCode_Lab\` — только историческая ссылка. Изменения основной кодовой базы требуют отдельного USER GO и явного write-scope. Локальный Ultra Desktop не выполняет Git/GitHub без отдельного user GO; GitHub-публикацию обычно делает пользователь.
+- По результатам прежнего `GIGACODE-EXECUTOR-TEST-002` давать компактный инженерный контекст о рисках **сохранения файлов, тестовых данных и неподтверждённого выполнения**: `TASK → WRITE → READBACK → TEST → SELF-AUDIT → REPORT → REVIEW`. Запрашивать доказанное сохранение и тестовый запуск, а не красивую имитацию. Не повторять громоздкие тесты без цели; выбирать проверки по риску.
+- До получения подтверждённого `SAVED/TESTED` не повышать автономность и не считать `RESULT READY` финальной приёмкой. При `BLOCKED` требовать точную диагностику инструмента, пути, команды, stdout/stderr и фактического состояния файлов, но не позволять обходить границы. Не объявлять среду/диск неисправными без доказательств.
+
+**Как я принимаю работу:** после пользовательского commit/push читать GitHub по **точному SHA**, сверять source/manifest/отчёт, код, тестовые оракулы, негативные случаи, путь сохранения и фактически доступные журналы. При необходимости независимо запускать безопасные scratch-tests/разрешённые CI. Отделять `IMPLEMENTED` от `SAVED` и `TESTED`; `VERIFIED` выносит только независимый проверяющий, записывает его в БЛОК 4 и постоянный `06` с ограничениями доказательств. Если данных недостаточно — `PARTIAL / BLOCKED / NOT VERIFIED` с конкретным NEXT, без автоматического повторного физического действия.
+
+**Режим документации:** персональный `001_История выполнения задач Ultra Desktop.md` — append-only архив Ultra Desktop; БЛОКИ 2–3 — пять последних кратких задач/итогов; БЛОК 4 — независимая оценка (1 полная, до 2 кратких). Общие `000/34/05/06` обновляются только по подтверждённому результату и в допустимом scope. Сами старые тесты от 24.10.2026 не становятся новыми задачами/`DONE`.
+
+**Статус:** новая организационная ветка; **NOT ASSIGNED / NOT VERIFIED**. Этот документ не запускает Ultra Desktop, не меняет runtime/CI и не назначает эксперимент автоматически.
+
+
+**ЕДИНЫЙ КАРКАС / `DOC-VERIFIER-BLOCK4-01@1` (18):** во всех персональных TASK-карточках Claude, Codex, ChatGPT и новых агентов БЛОК 1 — текущая TASK, БЛОК 2 — полная постановка выполненной, БЛОК 3 — factual результат исполнителя, **БЛОК 4 — независимый verifier/планировщик**, не редактируется исполнителем. БЛОК 4 хранит 1 актуальное полное и до 2 прежних сжатых заключений, постоянная append-only история всех вердиктов — 06; 34 — текущий краткий handoff. БЛОК 1 не сбрасывает БЛОК 4. Прежние задания, ротация 1–3, BLIND-START и права не меняются.
+
+**AGENT COMMUNICATION / 2026-10-13:** `DOC-AGENT-ADDRESS-01@1` (18): Codex = агент **007**, Claude = агент **008**. В новой TASK оба блока начинаются уважительным приглашением выполнить задачу; coding/repair требует собственной инженерной/adversarial проверки помимо локальных тестов (`TEST-ENG-01@1`, 36.1). Не переписывать уже действующий персональный БЛОК 1.
+
+**COORDINATOR READ MATRIX / `DOC-TASK-READ-SCOPE-01@1` (18), 2026-10-22:** при составлении БЛОКА 1 для Claude/Codex и любого исполнителя ChatGPT обязан сам сверить общий текущий контекст/правила и указать агенту **конкретный раздел/Rule-ID каждого необходимого документа, причину и уровень чтения**. Общий 000 — главный маршрутизатор **координатора**, персональная карточка — операционный вход **исполнителя**; совпадают действующие контракты, но не обязаны совпадать исторические записи. По умолчанию не заставлять локального исполнителя читать весь общий 000 и весь 18; релевантные 08/34/архитектуру/36/36.1/профиль и ключевые безопасность, Git, тесты, отчётность не выкидывать. При пробеле или конфликте — адресный первоисточник 18 со всеми requires. Не менять уже активные постановки.
+
+### ПРАВИЛО: архитектурная экономия и постоянная локальная оптимизация (2026-10-24)
+
+**Обязательное правило ChatGPT-координатора для каждой новой инженерной TASK и её независимой приёмки; применимо к любому кодовому исполнителю (Claude, Codex и др.).** Перед постановкой задачи адресно проверить затрагиваемые модули: какие функции, классы, механизмы и алгоритмы уже решают близкую проблему; можно ли безопасно расширить или переиспользовать их вместо новой параллельной реализации. Включать в TASK краткий критерий повторного использования и недопущения дублирования без повторения всего этого раздела.
+
+- **Минимальная достаточная сложность:** изменять ровно необходимое; не копировать существующую логику, не плодить обёртки, независимые реализации и абстракции без пользы. Предпочитать простой, проверяемый и производительный алгоритм, но не сокращать функциональность, защиту, диагностируемость и тесты ради количества строк.
+- **Разумная модульность:** по мере роста разделять перегруженные функции и файлы по устойчивым зонам ответственности, если это действительно улучшает сопровождение; не дробить механически по числу строк или на микрофайлы. Размер файла — сигнал для анализа, а не автоматический запрет.
+- **Непрерывная оценка оптимизации:** при чтении или изменении кода замечать дублирование, лишние вычисления, чрезмерные зависимости и сложные участки. В рамках текущего write-scope допустимо только адресное необходимое улучшение, покрытое проверками; большой рефакторинг, перенос между подсистемами и изменение контрактов — отдельное предложение и USER GO, не побочный эффект TASK.
+- **Приёмка и экономия контекста:** ChatGPT сверяет, использованы ли подходящие существующие механизмы, нет ли неоправданного прироста или скрытого дублирования; при заметном росте требует короткое объяснение и риски. Читать прежде всего релевантный код, не загружать тысячи строк без необходимости; экономия токенов не должна уменьшать полноту анализа, безопасность или качество регрессии.
+
+Правило действует **для новых постановок**; не переписывать активные БЛОКИ 1, не расширять чужой scope, не отменять независимую проверку, профильные тестовые контракты, ограничения Git/GitHub или `INDEPENDENT_PLAN`/BLIND-START. Накопившуюся архитектурную задолженность выносить в отдельный периодический аудит и рекомендации, без самовольного массового переписывания.
+
+**ТРЁХЧАСТНАЯ ВЫДАЧА TASK / 2026-10-24 / `DOC-TASK-HUMAN-OUTCOME-01@1`:** после двух копируемых агентских сообщений координатор добавляет **отдельный человеческий третий раздел для пользователя** — «Что получим после выполнения», 3–6 предложений, пример «до → после», ожидаемая польза и границы. Это третий раздел ответа, **не персональный БЛОК 3** (тот остаётся factual result). Одинаково применяется к Claude, Codex и новым агентам при сохранении особенностей Ultra Desktop; freeze, user handoff и безопасная ротация не меняются. Canonical rule — 18; холодный старт проверять по актуальному GitHub 08 → 000 → 34 → 18, не по памяти.
+
+**COORDINATOR TASK HANDOFF / 2026-10-13:** `rule-ref:DOC-TASK-BLOCK1-01@1` в 18: при новой TASK обязательны два копируемых блока — полный БЛОК 1 и короткая команда запуска; после запуска исходный БЛОК 1 не пересоздавать до отчёта, только короткие TASK-ID AMENDMENT. Исключение — прямое распоряжение пользователя. Разные агенты могут иметь параллельные независимые БЛОКИ 1. Для `CODEX-WA4-R-002` полный БЛОК 1 уже выдан и остаётся неизменным; краткий запуск передан отдельно.
+
+## CURRENT HANDOFF — WEB_07 / 2026-10-13
+
+**CURRENT VERIFIED UPDATE / 2026-10-13 / WEB_07 / CODEX-WA4-R-001:** bounded read-only **OBSERVE ACCEPTED WITH OPEN RISKS** after independent source/HTTP/CLI/test review and GitHub Windows job-log verification. Pinned source `7caee3af61679f963eb90a323e57a1015f9a565e`; Actions [38229502661](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38229502661), rerun job `115156352428`: WA4-A 167/167, WA4-O 29/29, OBSERVE 228/228, closeout diagnostic 20/20 (80 rounds), JS 23/23, full Web Alarm 750/750 PASS (zero FAIL/ERROR/SKIP). Astra [38258103453](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38258103453), job `115156365504`: P1–P3 3/3 and focused 103/103 PASS. Workflow artifacts and job logs confirmed; original artifact ZIP payloads not independently unpacked in this closeout. **Only bounded on-demand observation is accepted**, not filesystem watching, writer attribution, mutation gateway, enforcement, lifecycle transition or global STRICT acceptance. `DONE` receipts are historical evidence only, not proof of current bytes. F1 RC-5 Windows closeout, F2 direct-close vs MutationExecutor, F3 WA-017 crash race remain OPEN; historical CI failures are not erased by green reruns. `CODEX-WA4-R-001-DIAG-01` establishes a controlled native WinError 5 safe pre-move refusal, **not** the root cause or terminal invariants of the original red CI. WA4-R overall **IN PROGRESS / STRICT NOT VERIFIED**. **NEXT SAFE ACTION:** separately authorize F1–F3 deterministic raw-state/fresh-process evidence or next bounded rollout decision; **no automatic WARN / GATEWAY REQUIRED / STRICT / Final Audit**. Prior `NOT STARTED / NOT ASSIGNED` lines below are preserved as historical snapshots and superseded by this current update.
+
+**DOC CLOSEOUT:** `WEB07-WA4-R-OBSERVE-CLOSEOUT-001` independently accepted and documented; no runtime/test/CI changes. Next engineering TASK requires separate USER GO.
+
+---
+
+
+**Назначение:** оперативный handoff-документ проекта. Это краеугольная точка непрерывности между Chat / Agent / Remote-сессиями: здесь должно быть видно, что уже доказано, что нельзя повторять вслепую и что агент делает следующим.
+
+**Канонический полный вход для нового обычного чата ChatGPT-координатора:** 08 → 000 → 34 → 18 → 01 → профиль. Для локального исполнителя вместо повторного чтения всего общего 000/18 координатор составляет адресную матрицу согласно `DOC-TASK-READ-SCOPE-01@1`, без потери необходимых правил и профильного контекста. **Исключение заранее назначенного INDEPENDENT_PLAN:** этот 000 и 34 могут раскрывать чужой план; до SUBMITTED разрешён только ограниченный BLIND-START из 08, coordinator-provided общий input manifest 28, утверждённые решения/разрешённые evidence и адресно извлечённые правила. Сам 000 до reveal не читать целиком.
+
+**Обязательное правило:** если в блоке «Текущая задача» есть запись, сначала сверить её с фактическим состоянием проекта, recovery-журналом и live evidence. Не повторять незавершённое действие только потому, что Chat потерял контекст.
+
+**Правило инженерной самостоятельности:** границы TASK ограничивают самовольные изменения, а не мышление. Для значимой технической работы обязательный чек-лист является минимумом: перед `RESULT READY` исполнитель должен самостоятельно выполнить adversarial pass, проверить релевантные неперечисленные edge cases и не скрывать находки. Внутри scope найденное можно исправлять с regression test; вне scope — только evidence + `FINDING / PROPOSAL / BLOCKER`, без самовольной смены этапа. Полное правило — в `18_Регламент сопровождения документации.md`.
+
+---
+**CURRENT PARALLEL ULTRA / 2026-10-11 / VERIFIED S0:** ChatGPT independently ran unchanged RT-002 S0 guarded suite via authorized Desktop Commander DESKTOP-SC96D3U (M:\GitHub\ag_llm, Python 3.12.10): **166/166 PASS, 0 FAIL, 0 ERROR, 0 SKIP, 0 isolation violations; exit 0, 110.073 s**. Manifest contains original F01–F04 and all 11 terminal-callback methods. Command `.venv/Scripts/python.exe -B test_rt002_s0_kernel.py`. Original and post-run file hashes equal: server.py SHA-256 `44d8cc8affaf9c76272f74ec19e046352e8a19a094c3e48e2dc37ccda6159f54`, test_rt002_s0_repair.py `860f723f4c864deb0fbf6a7699a0ef9b44a29fc6c08038cffb026b36e32fb868`, runner `cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b`. Local temporary logfile `C:\Users\REX\AppData\Local\Temp\codex-rt002-s0-baq6h0ex\unittest.log` SHA-256 `c64fc45950b9c387b7cc1486459f5b30a4d13b3f5c49a131733eb79267ed5817` (hash independently reread), `result.json` manifest/observations. This is ChatGPT runtime evidence, not merely Codex-reported 166. **S0 bounded OFFLINE kernel gate: INDEPENDENT ACCEPTED / VERIFIED.** Historic user-operated live R-036/T-036 BLOCKED permission rejection and R-037/T-037 WRITE/READ/EQUALS SUCCESS + Dredd PASS remain separate; no real live destructive callback injection. A synchronous `on_event` can see provisional SUCCESS before corrective BLOCKED; very-late external races and unavailable durable corrective BLOCKED after storage failure remain known limits. No source changes, Git commands, paid models or network calls during guarded suite. **S1 NOT ASSIGNED — separate USER GO/TASK required.** Old 151C/KT3 PARKED/PENDING; S6b/151G gated by S13a. ARCH Ultra 01/13/20/21, not WA 23–25 or Voice 12. Next implementation candidate S1 awaits USER GO. Codex personal БЛОК 1 WAITING после WA4-A; её независимая Web Alarm приёмка пройдена, Ultra отдельно. Prior #250/155 notes below are historical.
+
+# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА
+---
+
+**Статус:** WEB-02: WA-1…WA-3, RC-0…RC-6, WA4-E и WA4-A independently DONE / VERIFIED. WA4-O implementation and automated verification PASS; user accepted its current demo as INTERIM UI only, full human visual suite not claimed. WA4-R NOT STARTED. Ultra S0 independently 166/166 OFFLINE VERIFIED; S1 NOT ASSIGNED.
+**Исполнитель / route:** CODEX-WA4-O-001 implemented; ChatGPT independently reviewed/repaired through PR №7 (merged) and Windows CI 719/719; limited human demo review completed. New WA4-R candidate was drafted by ChatGPT in prior chat; **NOT ASSIGNED** — no confirmation of insertion in personal Codex БЛОК 1 or Codex launch. Next user-controlled action is assignment/approval, not autonomous agent start.
+**Последняя технически подтверждённая WEB-02 TASK:** CODEX-WA4-O-001 / WA4-O — automated INDEPENDENT PASS; **formal full visual acceptance PENDING / interim UI approved only**. Earlier fully accepted CODEX-WA4-A-001 — DONE / VERIFIED.
+**Accepted evidence:** WA4-O PR №7 source/repair/launcher through №266 `4cf2f53`; [Actions 38153364378](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38153364378): smoke 5/5, WA4-A focused 167/167, operator+launcher 29/29, JS 23/23, full Web Alarm 719/719, no fail/error/skip/isolation violations. PR №8 and PR №9 docs-only UX A/B/C merged into `main` at `8966e152`; these are preferences/requirements, NOT implementation.
+**Результат:** shipped WA4-O shows server-owned progress/timeline, recovery, current operation, evidence and NEXT without new mutation authority. User opened disposable demo via BAT, positively evaluated visual style; requested major 3-column UX redesign postponed until after original final stage.
+**NEXT SAFE ACTION:** WA4-R is final stage of initial RT-001 plan, starts with bounded **OBSERVE preflight**. Prior chat has 2 copyable blocks for `CODEX-WA4-R-001` (full TASK + short launch); **candidate/prepared only, NOT assigned / NOT running**. Inventory real mutation paths, test evidence-only observation, no WARN/GATEWAY REQUIRED/STRICT or live control yet. User personally places accepted TASK in personal Codex БЛОК 1 and launches, per DOC-TASK-BLOCK1-01@1. Full scope reconstructible from 24's WA4-R handoff; do not fabricate current task execution. Remaining P/R, non-atomic move and unconfirmed real Remote disconnect persist. UX A/B/C after WA4-R, not now.
+**HISTORICAL 2026-10-10 — Parallel RT-002/B2 route (S0 repair report #250):** approved FINAL-B2, programme 20 §5а. Baseline S0 report #247 confirmed 4 HIGH / 2 causes; Codex addressed them in `CODEX-RT002-S0-REPAIR-001`, user commit #250 (`321f7436337f162b7741a13619954a49ed80d117`). Codex reports **155 PASS, 0 FAIL/ERROR/SKIP, guard 0**. GitHub source-level independent review finds plausible correctness fix and scope discipline; **NO independent on-machine run yet** (both Remote devices offline). Review follow-up: `server.py` terminal `run_finished SUCCESS` validates before `on_event` and returns after callback — require isolated tampering/drift probe, currently **NOT REPRODUCED**. **S0 acceptance PENDING**, next dependent S1/S2/151G BLOCKED. Personal Codex БЛОК 1 WAITING; user controls new assignment, no new TASK issued. 151C/КТ-3 PARKED/PENDING; `ULTRA-UX-STOP-001` remains backlog.
+**Parallel Ultra route (2026-10-10, updated):** 151C/КТ-3 остаётся PARKED / RESULT READY / AWAITING INDEPENDENT VERIFICATION, НЕ DONE, исторический исходный БЛОК Codex доступен в GitHub main@27ddda0162959f23fabf92ea80a9a58006af93fc. Старый Codex REVIEW-1 33.1 уже SEALED; B2 approved/handoff в 20 §5а — **актуальная исполнительная ветка**, активная только S0. Отложенные 151D/E/F/H/I не разблокированы. **Новый пользовательский UX-кандидат `ULTRA-UX-STOP-001`** — Stop текущей генерации/запроса с сохранением evidence и interruption semantics: PROPOSED / NOT ASSIGNED, возможен после отдельного решения пользователя и S0 independent result, **не** заменяет S0 и не меняет sealed B2. Общие docs 34/000/05 координирует ChatGPT; ни одно изменение Ultra runtime этим контекстным обновлением не разрешено.
+
+---
+# БЛОК 2 — ПОСЛЕДНЯЯ ПОДТВЕРЖДЁННАЯ ЗАДАЧА
+---
+
+**Дата:** 2026-10-11.
+**Задача:** CODEX-WA4-A-001 / WA4-A — DONE / VERIFIED independently; commit №259 `b009f803`; GitHub PR №5 `38135287346`: focused 166/166, full 689/689, smoke 5/5, 0 skip. CI repair №261. Report `reports/CODEX-WA4-A-001/report.md`. P/R remain; WA4-O only user GO.
+
+**Предыдущая принятая WA-история:**
+
+**Дата:** 2026-10-09.
+**Задача:** CLAUDE-WA-017 — F-5 crash-safe TASK completion + F-6 Windows checkpoint rebuild race.
+**Статус:** DONE / VERIFIED — независимый ChatGPT review и runtime tests по GitHub commit c7681c3841676438d1246ec3de5ac7049c52a4f9.
+
+**Verified:** 17 targeted PASS, 607 full OK (1 skipped), compileall / git diff --check PASS. Закрытая TASK read-only независимо от status/location, mutation_boundary даёт TASK_CLOSED; interrupted completion безопасно завершается. Rebuild failure не выдаёт checkpoint VALID. Архитектурные ограничения WA4-E не расширены.
+
+**History and evidence:** предыдущие RC-6/WA-014 и RC-5/WA-016 остаются в 25/06 и соответствующих отчётах Alarm; RC-0…RC-6 DONE / VERIFIED. Отчёт WA-017: Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA-017_F5_F6_RELIABILITY/wa017_report.md.
+**NEXT SAFE ACTION:** user approval of bounded WA4-E TASK; не начинать самостоятельно. F-1/F-3 и non-blocking findings сохраняются.
+
+---
+# БЛОК 3 — ОТЛОЖЕННАЯ ЗАДАЧА
+---
+
+**Статус:** ОТЛОЖЕНА — TASK 151C / Compact Final Audit Packet + Task-scoped Git Evidence / КТ-3.
+
+**Причина:** задача сознательно снята с активного слота, чтобы освободить текущую TASK для другой ветки работы. Это не `DONE`, не `FAILED` и не отмена задачи.
+
+### Замороженный контекст на момент откладывания
+
+Этот блок хранится вместе с TASK 151C и **не зависит от будущего содержимого БЛОКА 2**.
+
+**Последняя подтверждённая основная точка до 151C:** TASK 151B = DONE / КТ-2 = DONE — Evidence Freshness / Revision Binding.  
+**Что было доказано:** stale PASS после replan/repair/target или dependency drift больше не применяется; Final Audit привязан к конкретному evidence snapshot; focused/expanded/full regression, py_compile, UltraApp smoke и `git diff --check` прошли; fresh live B1/B2/B3 = SUCCESS / Final Audit PASS.  
+**Диагностика после 151B, не меняющая runtime:** TASK 151G-DIAG-R031 = DONE / DIAGNOSTIC — подтверждён Executor context explosion; runtime code не изменялся; R-027 и R-031 оставлены как stress/negative inputs будущей 151G.  
+**Канонический следующий implementation stage на момент паузы:** TASK 151C / Compact Final Audit Packet + Task-scoped Git Evidence / КТ-3.
+
+При возврате к 151C этот frozen context используется как историческая точка входа, а затем обязательно сверяется с фактическим состоянием репозитория и более новыми изменениями, появившимися после паузы.
+
+**ARCH CLASS:** Quality Transition / Final Audit / Evidence Packaging / Runtime Efficiency.  
+**PRIMARY PROFILE:** `13_Архитектура оперативной верификации и контроля выполнения задач.md`.  
+**SECONDARY PROFILES:** `01_Архитектура и текущее состояние.md`, `03_Чаты, проекты и контекст.md`, переходные `20` и `21`.
+
+**Цель:** сделать Final Audit / Dredd packet полным по смыслу, но task-scoped и компактным. Workspace-wide Git diff не должен быть default payload; Server обязан механически доказать completeness до вызова Dredd, а Dredd проверяет semantic completeness относительно RAW TASK.
+
+**Обязательный материал пакета:** RAW TASK; accepted contract / active requirements; requirement → evidence coverage; фактический material, нужный для semantic verification; mutation facts/receipts; exact verification + freshness identity; unexpected/external/unattributed task-relevant changes; unresolved/contradicting facts; candidate final response; completeness metadata.
+
+**Fail-closed:** если mandatory material отсутствует или механическая coverage неполна, Dredd не вызывается «на догадку». Нельзя ослаблять authoritative Server, permission/scope gates, Planner contract, physical verification, TASK 151B evidence freshness, независимый Final Audit и Run Store reproducibility.
+
+**Task-scoped Git evidence:** Git evidence по умолчанию ограничивается файлами/targets текущей TASK и текущего RUN. При этом нельзя скрывать unexpected target changes, external/unattributed mutation, stale state или conflict candidate final ↔ authoritative facts.
+
+**Порядок:** сначала audit фактической реализации Final Audit/Git evidence → design → runtime changes → targeted tests → expanded Final Audit/lifecycle regression → full unittest → py_compile → UltraApp smoke → git diff --check.
+
+**Live policy:** большие live RUN пока не выполнять. R-027/R-031 остаются stress/negative inputs будущей 151G; после offline/code/test verification отдельно решить, безопасен ли небольшой bounded live test.
+
+**Критерий КТ-3:** Dredd получает task-scoped mechanically-complete packet по всем active requirements и negative facts; workspace-wide diff не default; incomplete packet блокируется до Dredd; freshness/authority invariants сохранены.
+
+**Ожидаемый переход после независимой проверки:** `TASK 151C = DONE / КТ-3 = DONE / NEXT = TASK 151D — Server Direct Exact Evidence`.
+
+### Как вернуться к отложенной задаче
+
+1. Не переносить её обратно в «Текущую задачу» автоматически только по записи в этом файле.
+2. Сначала перечитать профильные документы и сверить фактическое состояние репозитория, recovery-журнал и live evidence.
+3. Установить, что из TASK 151C уже реально выполнено, что осталось незавершённым и не появились ли противоречащие изменения.
+4. После reconciliation перенести актуализированную формулировку TASK 151C в блок **«1. Текущая задача»**.
+5. Только после этого продолжать кодовые изменения или verification; незавершённые действия вслепую не повторять.
+6. Пока TASK находится здесь, она считается **PAUSED / DEFERRED** и не блокирует запуск другой текущей TASK.
+
+---
+# БЛОК 4 — МИНИ-РЕЕСТР ПОСЛЕДНИХ 10 ЗНАЧИМЫХ TASK
+---
+
+Этот блок — только ориентир 20–30% детализации. Полная история остаётся в `06`, статус — в `05`, профильная Web Alarm история — в `25`.
+
+| TASK | Статус | Короткий результат |
+| --- | --- | --- |
+| CODEX-WA4-O-001 / WA4-O | AUTOMATED INDEPENDENT PASS / INTERIM USER UI | Operator UI PR №7 (№263–266), Actions 719/719, JS 23/23; exhaustive human visual review pending, redesign A/B/C deferred; WA4-R preflight draft not assigned |
+| CODEX-WA4-A-001 / WA4-A | DONE / VERIFIED | Deterministic HTTP lost-response/restart/receipt replay A1–A8; GitHub focused 166/166 and full 689/689, zero skip; №259/261 |
+| CLAUDE-WA-017 / F-5/F-6 | DONE / VERIFIED | 17/17 focused, 607 OK (skip 1) full; crash-safe TASK closeout and fail-closed Windows checkpoint race; accepted c7681c38 |
+| CLAUDE-WA-016 / RC-5 | DONE / VERIFIED | Independent 60/60 focused, 593 OK (skip 1) full; closeout settlement gate and read-only history; accepted d53ec14 |
+| RC-4 / CLAUDE-WA-006 | DONE / VERIFIED | Tracked safe rollback; current-state preservation; all-target RC-3 ownership incl. NOOP; final full-target proof; crash/replay/partial safe; independent 43/43 RC-4, 88/88 focused, 329/329 full + NOOP race probe PASS; NEXT RC-5 |
+| RC-3 / CLAUDE-WA-005 | DONE / VERIFIED | Canonical-target ownership/conflict gate + mutation-boundary CAS; 20/20 focused, 286/286 full, extra race 5/5 |
+| RC-2 / CLAUDE-WA-004 | DONE / VERIFIED | Persistent Resolver actions bound to evidence fingerprint/revision; stale fail-closed; full 266/266 + focused/concurrency 25/25 + race 5/5 |
+| RC-1 / CLAUDE-WA-003 | DONE / VERIFIED | Durable Operation Contract, payload refs, restart/backward compatibility, interprocess store serialization; full 241/241 |
+| RC-0 | DONE / VERIFIED | Physical-byte authority baseline + normalization policy; 197/197 baseline independently reproduced |
+| WA-3.7 | DONE / VERIFIED / FRESH REOPEN PASS | Real controlled Remote offline/recovered incident, exact PRE_STATE, no replay, deterministic RETRY_SAFE evidence/report |
+| WA-3.6 | DONE / VERIFIED / FRESH REOPEN PASS | Persistent Recovery Report none/partial/full/ambiguous; combined 33/33, full WA 197/197 |
+
+## 5. Правило круговорота задач
+
+1. Этот файл — **глобальный project-level router**, а не персональная карточка конкретного исполнителя. БЛОК 1 показывает текущий проектный NEXT, назначенного исполнителя и route на его персональную task-card.
+2. Полная исполняемая постановка живёт в БЛОКЕ 1 персональной карточки исполнителя. После фактического выполнения исполнитель сам делает безопасную ротацию персональной карточки: **сначала** полная постановка → БЛОК 2, **затем** factual closeout → БЛОК 3 (`RESULT READY / AWAITING INDEPENDENT VERIFICATION`), **только потом** персональный БЛОК 1 → `ОЖИДАНИЕ НОВОЙ ЗАДАЧИ`.
+3. Если сохранность БЛОКОВ 2–3 не доказана из-за сбоя/обрыва, персональный БЛОК 1 не очищать и не повторять ротацию вслепую; сначала reconciliation фактического файла. Незавершённую/приостановленную TASK не выдавать за выполненную.
+4. Глобальный БЛОК 1 исполнитель автоматически **не очищает**. После независимой проверки verifier/координатор переносит подтверждённую точку в глобальный БЛОК 2 и выставляет новый project-level NEXT либо `ОЖИДАЕТСЯ ЗАДАЧА`.
+5. Если TASK сознательно приостановлена на project-level, хранить её в глобальном БЛОКЕ 3 как **PAUSED / DEFERRED**; при возврате сначала reconciliation.
+6. **Новая схема `DOC-TASK-BLOCK1-01@1`:** ChatGPT даёт в чате **два копируемых блока** — полную TASK для персонального БЛОКА 1 и короткую стартовую команду для чата исполнителя; **пользователь сам вставляет/контролирует БЛОК 1 и вручную запускает**. Активную большую постановку не переписывать до фактической сдачи; маленькие дополнения отправлять как адресные AMENDMENT в чат агента, записывать отдельным следом. Прежнюю безопасную ротацию БЛОК 1→2+3 выполняет исполнитель только после фактической работы. Координатор не редактирует личный БЛОК 1 без отдельного поручения. Новая TASK — после проверки предыдущей или явного решения пользователя.
+7. Мини-реестр держать максимум на 10 последних значимых TASK, старые вытеснять в каноническую историю.
+8. Долговременные факты синхронизировать в `05`, `06` и профильный журнал — оперативные `000` их не заменяют.
+9. Каноническое подробное правило персональной ротации находится в `18_Регламент сопровождения документации.md`; при расхождении формулировок следовать `18`.

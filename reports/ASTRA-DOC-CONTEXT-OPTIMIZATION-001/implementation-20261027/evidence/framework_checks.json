@@ -1,0 +1,182 @@
+{
+  "passed": 21,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Exact restorable snapshots",
+      "pass": true,
+      "detail": {
+        "files": 13
+      }
+    },
+    {
+      "name": "All original graph syntax and heading occurrences retained",
+      "pass": true,
+      "detail": {
+        "files": 13,
+        "live_graph_export": "NOT RUN"
+      }
+    },
+    {
+      "name": "Original 05_ bytes unchanged suffix",
+      "pass": true,
+      "detail": {
+        "original_bytes": 79075
+      }
+    },
+    {
+      "name": "Original 06_ bytes unchanged suffix",
+      "pass": true,
+      "detail": {
+        "original_bytes": 261460
+      }
+    },
+    {
+      "name": "All personal B1-B4 bytes unchanged",
+      "pass": true,
+      "detail": {
+        "cards": 4
+      }
+    },
+    {
+      "name": "Full document budgets",
+      "pass": true,
+      "detail": {
+        "08_": 13780,
+        "34_": 20946,
+        "000_Задачи для": 9707,
+        "08_target_8000_12000_met": false,
+        "08_upper_limit": 16000
+      }
+    },
+    {
+      "name": "Coordinator has explicit operating sections",
+      "pass": true,
+      "detail": [
+        "OPS-START",
+        "OPS-OWNERS",
+        "OPS-REVIEW",
+        "OPS-CLOSE",
+        "OPS-LOCATOR",
+        "OPS-RISK",
+        "OPS-BUDGET",
+        "OPS-EXIT"
+      ]
+    },
+    {
+      "name": "Risk form includes evidence, owners and closure conditions",
+      "pass": true,
+      "detail": [
+        "risk_id",
+        "FACT_DEFECT",
+        "RISK_HYPOTHESIS",
+        "VERIFICATION_GAP",
+        "impact",
+        "likelihood",
+        "confidence",
+        "affected_gate",
+        "owner",
+        "verifier",
+        "action",
+        "closure_evidence",
+        "status",
+        "updated_at",
+        "next_review_trigger",
+        "residual_decision"
+      ]
+    },
+    {
+      "name": "Forms include review, archive and closeout",
+      "pass": true,
+      "detail": "Explicit forms; no executor self-rotation"
+    },
+    {
+      "name": "Every new direct DOC dependency has exact definition",
+      "pass": true,
+      "detail": {
+        "requires": [
+          "DOC-TASK-CLOSEOUT-OWNER-01@1",
+          "DOC-TASK-HANDOFF-USER-01@1",
+          "DOC-TASK-READ-SCOPE-01@1",
+          "DOC-HISTORY-ACCESS-01@1",
+          "DOC-VERIFIER-BLOCK4-01@2",
+          "DOC-LOCAL-REPORT-HANDOFF-01@1",
+          "DOC-READ-01@1",
+          "DOC-VERSION-01@1",
+          "DOC-CHANGE-01@1",
+          "DOC-GIT-01@1",
+          "DOC-PARALLEL-01@1"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "name": "New canonical rule has one definition",
+      "pass": true,
+      "detail": {
+        "count": 1
+      }
+    },
+    {
+      "name": "Blind entry is before ordinary route",
+      "pass": true,
+      "detail": "No automatic ordinary-route exposure"
+    },
+    {
+      "name": "Registry record locators reproduce exact existing rows",
+      "pass": true,
+      "detail": {
+        "records": 170
+      }
+    },
+    {
+      "name": "Unusual final registry record indexed",
+      "pass": true,
+      "detail": "Original final record after links section"
+    },
+    {
+      "name": "Negative control: redirecting existing edge detected",
+      "pass": true,
+      "detail": "Same number of Wiki tokens, different directed target"
+    },
+    {
+      "name": "Negative control: duplicate edge occurrence detected",
+      "pass": true,
+      "detail": "Multiset rather than count/set only"
+    },
+    {
+      "name": "Negative control: losing existing heading detected",
+      "pass": true,
+      "detail": "## CURRENT / WEB15 / 2026-10-27 — единый BAT и возврат после любого TEST"
+    },
+    {
+      "name": "Negative control: archive byte loss detected",
+      "pass": true,
+      "detail": "One-byte loss at end"
+    },
+    {
+      "name": "No unrelated stable file drift",
+      "pass": true,
+      "detail": {
+        "changed": [
+          ".obsidian/workspace.json"
+        ],
+        "missing": [],
+        "workspace_state_exception_is_not_agent_write_proof": true
+      }
+    },
+    {
+      "name": "Obsidian graph configuration unchanged",
+      "pass": true,
+      "detail": "graph.json"
+    },
+    {
+      "name": "Personal archives unchanged",
+      "pass": true,
+      "detail": {
+        "archives": 3
+      }
+    }
+  ],
+  "classification": "Author documentary checks, not independent acceptance; no product runtime/CI run"
+}

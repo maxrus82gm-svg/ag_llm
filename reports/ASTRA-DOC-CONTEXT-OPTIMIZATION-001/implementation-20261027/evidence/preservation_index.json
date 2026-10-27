@@ -1,0 +1,4304 @@
+[
+  {
+    "source": "Документация/000_Задачи для агента.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи для агента.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 2,
+        "heading": "Преамбула",
+        "chars": 524,
+        "sha256_utf8": "5e15ee6e039b5e5a81a79f7cacaf46e043e0ce50ddb319c62deabe340b54f4fe"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 3,
+        "last_line": 10,
+        "heading": "## WEB15 / CURRENT 2026-10-27 — №37 USER PLAN APPROVED, Stage1 RESULT READY / NOT VERIFIED",
+        "chars": 914,
+        "sha256_utf8": "92f167ed3d320e1aa503ca341925ea94ce1c77cdb7da94a77b71e41267c73d8b"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 11,
+        "last_line": 20,
+        "heading": "## WEB_14 / 2026-10-26 — 🟨 Claude Stage0 Ultra Chat: документально принят",
+        "chars": 2092,
+        "sha256_utf8": "f41ccafb042c14cbcb5a5891b0d08b7def53b3dfc440b3a213c94377896a2974"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 21,
+        "last_line": 28,
+        "heading": "## WEB_14 / 2026-10-26 — программа №37 проверена, утверждение пользователем ожидается",
+        "chars": 1596,
+        "sha256_utf8": "a6e95417f712faa0cb91a1bac06039bd50d021ed23499920ec668e2a127e2b03"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 29,
+        "last_line": 36,
+        "heading": "## WEB_14 / CURRENT 2026-10-26 — Astra rev2 принята в ограниченном source scope",
+        "chars": 1012,
+        "sha256_utf8": "89ffcf3be2e8342d2a97d6ac972c8808a97a9c84f1e79a89b983c4a31f67f420"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 37,
+        "last_line": 44,
+        "heading": "## USER DIRECTION / 2026-10-25 — архив №39 и заморозка ChatGPT Desktop MCP",
+        "chars": 1019,
+        "sha256_utf8": "9896bf301d67c4ee78d4d6d04f9d7dddf56fd7926876fd34019510e5389ccd36"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 45,
+        "last_line": 50,
+        "heading": "## WEB_12 / CURRENT 2026-10-25 — strict MCP broker admission offline PASS",
+        "chars": 879,
+        "sha256_utf8": "66630e998b949f67c7bb79b15640d97e78f681bb18cf85db094906012490ceee"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 51,
+        "last_line": 58,
+        "heading": "## WEB_12 / CURRENT 2026-10-25 — secure MCP source audit closeout",
+        "chars": 2512,
+        "sha256_utf8": "77c9d24ed2b0cf4a0621f2644fbdc8f6d471ec3f862be763f0d1de57656970cc"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 59,
+        "last_line": 68,
+        "heading": "## CURRENT / 2026-10-18 / LLM12 — WA4-R crash-consistency R-MT/R-OP published, independently bounded-reviewed",
+        "chars": 3277,
+        "sha256_utf8": "b090ff9c45e7cd42de624fcfcf06c79425619946db8c461e25617955fd0c95ba"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 69,
+        "last_line": 79,
+        "heading": "## CURRENT / 2026-10-17 / LLM12 — WA4-R crash consistency DESIGN RESEARCH, no implementation GO",
+        "chars": 2964,
+        "sha256_utf8": "1d4aede9446c10337037c2668c0f9775dbb5cef50f4e5dcd445c8377232c21ff"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 80,
+        "last_line": 84,
+        "heading": "# Задачи для агента",
+        "chars": 680,
+        "sha256_utf8": "cfdb1a5fb77e6e7642c7de1790c9660101d26c70dd6f89dbd826f0e260f10c24"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 85,
+        "last_line": 107,
+        "heading": "## ULTRA DESKTOP / отдельный контур координации и независимой проверки (2026-10-24)",
+        "chars": 4918,
+        "sha256_utf8": "6dbafcb05aec802bf8afb91b355915c42799ff8f0c58209b6e8d1869ffc7812f"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 108,
+        "last_line": 122,
+        "heading": "### ПРАВИЛО: архитектурная экономия и постоянная локальная оптимизация (2026-10-24)",
+        "chars": 3487,
+        "sha256_utf8": "a52d459fb34f1c3b7ac9b15d64e7cd8a286c1c6c1908d7387e071e9919d1c7ae"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 123,
+        "last_line": 142,
+        "heading": "## CURRENT HANDOFF — WEB_07 / 2026-10-13",
+        "chars": 5523,
+        "sha256_utf8": "e7d5ea5b1a44ac023bd59047854d75f329127c3a48436223b93464c9aaa6bb2f"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 143,
+        "last_line": 155,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 4103,
+        "sha256_utf8": "627e54283bd39fa3a96a58fd93cf0a3e5e5f72013ce588c96bedd51ae99cbc14"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 156,
+        "last_line": 173,
+        "heading": "# БЛОК 2 — ПОСЛЕДНЯЯ ПОДТВЕРЖДЁННАЯ ЗАДАЧА",
+        "chars": 1333,
+        "sha256_utf8": "2e14fa4569acc00e62849636e5417a9add3932c8bba9c162781e0ad9efc861ee"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 174,
+        "last_line": 180,
+        "heading": "# БЛОК 3 — ОТЛОЖЕННАЯ ЗАДАЧА",
+        "chars": 299,
+        "sha256_utf8": "b5b38b5ee0a890809a2a3f760bf27c494f2cac4c312d83cef4beff6fe3c4a963"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 181,
+        "last_line": 211,
+        "heading": "### Замороженный контекст на момент откладывания",
+        "chars": 3521,
+        "sha256_utf8": "51b71f570d1dd613b98a341acddcb8f2f4566216043ff25480393e73f657e503"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 212,
+        "last_line": 221,
+        "heading": "### Как вернуться к отложенной задаче",
+        "chars": 723,
+        "sha256_utf8": "f019fecc60e7c40be710984fc3a6294e9c01e133f0f1a6ad55790c090c83b058"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 222,
+        "last_line": 240,
+        "heading": "# БЛОК 4 — МИНИ-РЕЕСТР ПОСЛЕДНИХ 10 ЗНАЧИМЫХ TASK",
+        "chars": 2220,
+        "sha256_utf8": "536d12a27972d87b60b36798e9c6b2cfcd8629a50277448e7e20b242cb706225"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 241,
+        "last_line": 251,
+        "heading": "## 5. Правило круговорота задач",
+        "chars": 2257,
+        "sha256_utf8": "e0e0bcfb3e8e80afb339607c0586dd677c31110ef46701ee787970b9b0ca3a5b"
+      }
+    ]
+  },
+  {
+    "source": "Документация/000_Задачи ChatGPT.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи ChatGPT.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 2,
+        "heading": "Преамбула",
+        "chars": 1563,
+        "sha256_utf8": "d073144d83be56f2ee19cc3312d8058b748fa9ff54c3e982a18eac27666d0a41"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 3,
+        "last_line": 9,
+        "heading": "# Задачи ChatGPT",
+        "chars": 948,
+        "sha256_utf8": "a02db66a100e6b96e40b309508b6c2ee660c78adf58ec0bf096ca2182759a141"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 10,
+        "last_line": 34,
+        "heading": "## Правила",
+        "chars": 4513,
+        "sha256_utf8": "ca763e520d9e60e57aeffc8cea2e76b4fec13300b577b37b9a4f08d3f2ad8c65"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 35,
+        "last_line": 45,
+        "heading": "### Порядок ChatGPT: GitHub-first review и Remote Alarm",
+        "chars": 1704,
+        "sha256_utf8": "24a630d096d247f719646e404e165448134440a2d09472a5a94c6e68c94e485d"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 46,
+        "last_line": 54,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 973,
+        "sha256_utf8": "a56ab724115e5ad0237bc6ebb2d4d25f4312bf9050e03eb8805afe5604c96fa3"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 55,
+        "last_line": 67,
+        "heading": "## Scope / обязательный порядок",
+        "chars": 2344,
+        "sha256_utf8": "ba016f45318d8ffd41ee0c6ef14f405ff5e787b6138ab0bcbd1f98291308b105"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 68,
+        "last_line": 77,
+        "heading": "## Factual result / handoff — 2026-10-10 (не независимая проверка)",
+        "chars": 2819,
+        "sha256_utf8": "0f196632237c9a31fbd79fd97b8f4619a7a8c1746279dc61caa377feab433908"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 78,
+        "last_line": 82,
+        "heading": "## Входная историческая пометка (сохранена из прежнего БЛОКА 1)",
+        "chars": 439,
+        "sha256_utf8": "68cb8fed9ad3b56dbef1f0bb32245c690139971e3b9593c1d24e43e35adb90ca"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 83,
+        "last_line": 90,
+        "heading": "# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА",
+        "chars": 363,
+        "sha256_utf8": "4d92abe9100d06f5693fef2c9f2a879455a0a324736ecb6b8fa278957c6ce632"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 91,
+        "last_line": 99,
+        "heading": "# CHATGPT-WA-008 / RC-6 — REPAIR #1",
+        "chars": 419,
+        "sha256_utf8": "83083ae5bdedda4ce8c566bed4da592aac3dc6ff46fdd560a5897d0086ff0dcb"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 100,
+        "last_line": 103,
+        "heading": "## Scope",
+        "chars": 210,
+        "sha256_utf8": "700f83b577af2f18d622e5517c1911ac177da0b809052a2f11a22ab81e249f6d"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 104,
+        "last_line": 109,
+        "heading": "### B1 — settlement steals recovery focus forever",
+        "chars": 501,
+        "sha256_utf8": "95907f5d17eaa5da6ce48f795fd3d68a85288ba7fca748203fa0b14c38b050f7"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 110,
+        "last_line": 115,
+        "heading": "### B2 — false READY after foreign claim appears",
+        "chars": 481,
+        "sha256_utf8": "5881526e49dd547c536af2dd128895fa73241d190d2425a4e007810ab0ddea3d"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 116,
+        "last_line": 121,
+        "heading": "### B3 — operation microtask != project current microtask",
+        "chars": 533,
+        "sha256_utf8": "9fa4bb48f55989ba603b2e57b1df68b6f38ad4d42a513f4c682f2b30eca2cb33"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 122,
+        "last_line": 128,
+        "heading": "### B4 — own RC-4 effects incorrectly become stale",
+        "chars": 660,
+        "sha256_utf8": "b19d64bc99e9c9765c8a27fd3d81465a1b1c82ee35da14c98bed80fbfac07f55"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 129,
+        "last_line": 133,
+        "heading": "### B5 — false READY with invalid restore point",
+        "chars": 358,
+        "sha256_utf8": "65dce9368a8e2b5d27a81465cc6c7464cb6bfcfba58ce26ab7bfed578e8e5039"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 134,
+        "last_line": 139,
+        "heading": "## F1 policy — ABORT / RECOVERY_REQUIRED",
+        "chars": 350,
+        "sha256_utf8": "b1a4477bcd0f2cdf67e48775cf164c3649faf9779cf38319b7bae0827b553c95"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 140,
+        "last_line": 145,
+        "heading": "## F2 policy — partial/failed rollback close",
+        "chars": 571,
+        "sha256_utf8": "516ece28e7cd468984aac1dc551c51c157cf8f9accbba814c526bbcb0e049263"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 146,
+        "last_line": 158,
+        "heading": "## Truthful READY contract",
+        "chars": 475,
+        "sha256_utf8": "28d1dcb691d6baaf0175561f332ef570c75833d9dca83cd2413b95fec688b957"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 159,
+        "last_line": 166,
+        "heading": "## Settlement ordering",
+        "chars": 392,
+        "sha256_utf8": "caa091755c18f83899535f50b07bbdaad04ccd3b368b388b5c84a9ccca9a00c9"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 167,
+        "last_line": 183,
+        "heading": "## Mandatory regression matrix",
+        "chars": 1083,
+        "sha256_utf8": "a064d24977052a2f1388938a792a9cecbbca05a2bb2796c6cac6500e7acc77f6"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 184,
+        "last_line": 199,
+        "heading": "## Verification",
+        "chars": 501,
+        "sha256_utf8": "6c61137e6f7776bc323f1ee41257c07e6d7d7c2271fef33996d5bfada618ff5b"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 200,
+        "last_line": 203,
+        "heading": "## Out of scope / STOP",
+        "chars": 330,
+        "sha256_utf8": "e8cca871ddae4d446f2318562046c8176e283172805932fd7dc4781486d22d7c"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 204,
+        "last_line": 209,
+        "heading": "## Report / rotation",
+        "chars": 312,
+        "sha256_utf8": "7cce1770c14e7705acabc61a04a7e4b11eaa91fcfb0f1054d9bd5aa0b8155217"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 210,
+        "last_line": 212,
+        "heading": "### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD",
+        "chars": 152,
+        "sha256_utf8": "921256d705e0c5b1ff365924318fdc5d0614e3d1c73c5f3d3c63594215560fbc"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 213,
+        "last_line": 334,
+        "heading": "## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА",
+        "chars": 9204,
+        "sha256_utf8": "6cda91617f788e4b4585d19e22b2540fd7dc018d858fffba7555c630dbef8170"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 335,
+        "last_line": 343,
+        "heading": "# БЛОК 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ",
+        "chars": 262,
+        "sha256_utf8": "ca9d8af5e9fcfd1fb2c8e93e59ac705c42466daf660aef33044fac507c990be6"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 344,
+        "last_line": 353,
+        "heading": "### Исправлено",
+        "chars": 889,
+        "sha256_utf8": "c8c13bcd0eaa1cc34216377fe7d1f1c9ab3ac160bada7ada4595d8fe05326fde"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 354,
+        "last_line": 365,
+        "heading": "### Дополнительный adversarial finding исполнителя",
+        "chars": 424,
+        "sha256_utf8": "cf5cfc57797d18770ff11c39f2074c815bd62670b8f994023c521b6e5c1c2a16"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 366,
+        "last_line": 376,
+        "heading": "### Проверки",
+        "chars": 510,
+        "sha256_utf8": "08ef780e963b6358fd6609b075f82773fae3c9c98c1c0abc5e35a9e0b8fa9075"
+      },
+      {
+        "record_id": "S031",
+        "first_line": 377,
+        "last_line": 383,
+        "heading": "### Evidence",
+        "chars": 345,
+        "sha256_utf8": "3ad0586d8ddee1e4b14274c204746896debefd062704fd570b8afd80ff2585c6"
+      },
+      {
+        "record_id": "S032",
+        "first_line": 384,
+        "last_line": 398,
+        "heading": "### Scope",
+        "chars": 438,
+        "sha256_utf8": "473f643a4fdf8f254247b100b677300e0c78636338e612c46b51807d46cde9f4"
+      },
+      {
+        "record_id": "S033",
+        "first_line": 399,
+        "last_line": 401,
+        "heading": "### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD",
+        "chars": 207,
+        "sha256_utf8": "550cf4603a04072015198b64e65b52716dac25400c3fe75512fdab12518acb4f"
+      },
+      {
+        "record_id": "S034",
+        "first_line": 402,
+        "last_line": 411,
+        "heading": "## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ",
+        "chars": 548,
+        "sha256_utf8": "54a79d0b393bb9e665c9a2b3299ba8b7b2bcbba17c05f28eea681e773d1cd88b"
+      },
+      {
+        "record_id": "S035",
+        "first_line": 412,
+        "last_line": 426,
+        "heading": "### Фактический результат",
+        "chars": 1292,
+        "sha256_utf8": "200107e9ed61d1d0e4405415426d9e384715d9ca71280b8f88836ca044fbef6d"
+      },
+      {
+        "record_id": "S036",
+        "first_line": 427,
+        "last_line": 437,
+        "heading": "### Concurrency / restart",
+        "chars": 597,
+        "sha256_utf8": "b31731ee7de89b253fc62c6fdf6156fdac306fa339d38e7e3b3c3f6b1345b65b"
+      },
+      {
+        "record_id": "S037",
+        "first_line": 438,
+        "last_line": 456,
+        "heading": "### Adversarial",
+        "chars": 436,
+        "sha256_utf8": "cd7a5a55f05b65ae810cbf7fae78c68a2d40b16fff076ea243ba0c66f02ce57e"
+      },
+      {
+        "record_id": "S038",
+        "first_line": 457,
+        "last_line": 465,
+        "heading": "### Проверки",
+        "chars": 443,
+        "sha256_utf8": "ddc2017f70901f845b96f7de308480fb50eea0fdedfac77e26a00d5540a63672"
+      },
+      {
+        "record_id": "S039",
+        "first_line": 466,
+        "last_line": 472,
+        "heading": "### Evidence",
+        "chars": 307,
+        "sha256_utf8": "d7f1613f7ace8c1b827d033b2155aa051b405f83d1725b81dc38f43efc6dddac"
+      },
+      {
+        "record_id": "S040",
+        "first_line": 473,
+        "last_line": 491,
+        "heading": "### Findings / deferred",
+        "chars": 698,
+        "sha256_utf8": "abb6661907575854538b0619b62a6761cbc8f09696ad43e6f34f0473c993b219"
+      },
+      {
+        "record_id": "S041",
+        "first_line": 492,
+        "last_line": 495,
+        "heading": "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER",
+        "chars": 459,
+        "sha256_utf8": "bc0ce8fb700ce24fcbf3d8ff652f1a7bd36d7db50089d2a46477a683e8b44064"
+      }
+    ]
+  },
+  {
+    "source": "Документация/000_Задачи Claude.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Claude.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 7,
+        "heading": "# Задачи Claude",
+        "chars": 363,
+        "sha256_utf8": "3d3041e0396960ea562b10972b129fd60ca057c7ea344a96a4348baaf6f0a2e4"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 8,
+        "last_line": 43,
+        "heading": "## Правила",
+        "chars": 8747,
+        "sha256_utf8": "283771a4e6c852b0f863450e4784a48e0e64a33ef04a6c1613edb996767c9943"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 44,
+        "last_line": 46,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 34,
+        "sha256_utf8": "6a25248d7c09aec1d77e549a987b46b606ba0a05ae69e0feea9e4549f9a1c687"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 47,
+        "last_line": 48,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 29,
+        "sha256_utf8": "56b8b4134c11bb42eddb2ee89d363e24cc59e8d1491df2d762ab6b3b1a3f01d8"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 49,
+        "last_line": 329,
+        "heading": "# Задача: Первый рабочий экран Ultra Chat и безопасное чтение истории",
+        "chars": 12424,
+        "sha256_utf8": "78172f9ef7522fbeaa5262af9867f3be3252f8a580802e619e558956029a8b42"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 330,
+        "last_line": 341,
+        "heading": "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "chars": 1413,
+        "sha256_utf8": "c936c107eea1c68d5e21019bb342583d3dc8e16d7f33b47f3a3284a776285fb4"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 342,
+        "last_line": 351,
+        "heading": "# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ",
+        "chars": 2792,
+        "sha256_utf8": "0c94177a1d944c5e795e89faa982cf50f21e4593fc26cb8125e016c94c8ceca7"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 352,
+        "last_line": 356,
+        "heading": "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER",
+        "chars": 155,
+        "sha256_utf8": "9470bc71068a9b605439ec4cf5267bb54a21d5f274185c7ef06c9567bd417d16"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 357,
+        "last_line": 364,
+        "heading": "## 1. Последний — WEB15 / 2026-10-27 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+        "chars": 1974,
+        "sha256_utf8": "02d625b936a7d7c66344eea8b38eab5ed7641318e2df5ab72ee403395dc8e278"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 365,
+        "last_line": 368,
+        "heading": "## 2. Предыдущий — WEB14 / 2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+        "chars": 266,
+        "sha256_utf8": "641191a98d99164e063aa3af281eddc332bcebc5f07b5d4e56324d328b712357"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 369,
+        "last_line": 375,
+        "heading": "## 3. Предыдущий — WEB14 / 2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001",
+        "chars": 353,
+        "sha256_utf8": "f1af074982d1d24967eb88abd0005dbd10f764db38bef1764c316b7695d2a94f"
+      }
+    ]
+  },
+  {
+    "source": "Документация/000_Задачи Codex.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Codex.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 4,
+        "heading": "# Задачи Codex",
+        "chars": 338,
+        "sha256_utf8": "04e7634064eadacc8b914139d060384c69ef623586b07705a8f28180386eb960"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 5,
+        "last_line": 32,
+        "heading": "## Правила",
+        "chars": 7287,
+        "sha256_utf8": "e159863a84ff2fb6cf51f64345ef99141ffffeaa47e58203e7c60a4cac0ed595"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 33,
+        "last_line": 34,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 27,
+        "sha256_utf8": "f97a01c1880f2a44fef0af41bfab91d70da212a2f073c3cf17cd3fc1d14b4ce3"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 35,
+        "last_line": 42,
+        "heading": "# Задача: Оптимизация контекста документов",
+        "chars": 308,
+        "sha256_utf8": "eb3318831538017913eb8e41afc5626f13e7bb35031e5571f342b9d408b95241"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 43,
+        "last_line": 52,
+        "heading": "## 1. Цель",
+        "chars": 704,
+        "sha256_utf8": "7f7c9cbc6d4edd3aa419a2f90ccd38dcae0a819c9d2dde3667a13960e7343150"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 53,
+        "last_line": 79,
+        "heading": "## 2. Документы, которые необходимо учитывать",
+        "chars": 1167,
+        "sha256_utf8": "21a4d0e48cc823db3fb4e114b2c628aa42409607622b2802818b267f549abc20"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 80,
+        "last_line": 110,
+        "heading": "## 3. Тактический контекст №34",
+        "chars": 1209,
+        "sha256_utf8": "230ede6f07762cdf2d47055542e33dd3f7a97e2fb0d914d3823938fa1971ef12"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 111,
+        "last_line": 135,
+        "heading": "## 4. Стартовый документ №08",
+        "chars": 756,
+        "sha256_utf8": "7db621d2feda75856def53f204732b3b15a666dd2ec286bdb08751ccba846417"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 136,
+        "last_line": 162,
+        "heading": "## 5. Реестр задач №05",
+        "chars": 765,
+        "sha256_utf8": "d798dd50457b5e82bc61bd02db33ef7652db6f995c08af29db176b7fc69cdcfe"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 163,
+        "last_line": 174,
+        "heading": "## 6. Исторические документы",
+        "chars": 522,
+        "sha256_utf8": "e472f3a1533fa3ffd388e981abee10d622dee225b775d72156deb406a35698e2"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 175,
+        "last_line": 190,
+        "heading": "## 7. Критическое ограничение: Obsidian Graph",
+        "chars": 660,
+        "sha256_utf8": "af87c94cfac42833f9b0356ab8a001789e18fd67851e7daead38b79b35661110"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 191,
+        "last_line": 215,
+        "heading": "## 8. Новый жизненный цикл завершения TASK",
+        "chars": 1137,
+        "sha256_utf8": "772bd0f68f4ec33de766457d8af6371507d46a7b21dddb0b96a4e24cef3357c4"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 216,
+        "last_line": 236,
+        "heading": "## 9. Независимый архитектурный анализ",
+        "chars": 757,
+        "sha256_utf8": "617ec812db497258be97eee7b896a288ab613910ef45128d0554b16eb54d8897"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 237,
+        "last_line": 286,
+        "heading": "## 10. Отчёт — документ №41",
+        "chars": 1312,
+        "sha256_utf8": "b1528cf6d72f399dc10136fd76889fa3caeec648cd52fa46a489c00205d11009"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 287,
+        "last_line": 298,
+        "heading": "## 11. Границы разрешения",
+        "chars": 603,
+        "sha256_utf8": "e5e0367d4f1e9ca1b94eaae792134fbca7e1f717e11d1e1923821ba49a6212c1"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 299,
+        "last_line": 327,
+        "heading": "## 12. Критерии готовности",
+        "chars": 817,
+        "sha256_utf8": "7bf6ddcdd04e530f8e69f3131f381b1f741e0408b978e87314a238d02460e3c5"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 328,
+        "last_line": 339,
+        "heading": "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "chars": 1243,
+        "sha256_utf8": "05d7fb067689b77d0c59fd072f2c5755c8ebb1dea8849b71e8f9a92bff23cd6d"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 340,
+        "last_line": 349,
+        "heading": "# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ",
+        "chars": 1830,
+        "sha256_utf8": "1868d4f0a4c10250785bf5b3e37cbdb7a48271ce46782537facde26a20c7acd7"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 350,
+        "last_line": 354,
+        "heading": "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА",
+        "chars": 118,
+        "sha256_utf8": "07aa6884350e9c87c0c356f9ce9dc049568e34fbdce4ec579e25a124d79fd34b"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 355,
+        "last_line": 360,
+        "heading": "## 1. Последний вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001",
+        "chars": 1334,
+        "sha256_utf8": "263593942ed40eb0b59d6cca2cf4118a52fc65a93156a063af23b340fb9bd9e7"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 361,
+        "last_line": 364,
+        "heading": "## 2. Предыдущий — WEB_14 / 2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001",
+        "chars": 210,
+        "sha256_utf8": "0b54818f5ad9de2a9a6ba2962b4d60e2656407433b5526cc1848d142e8b0a9ff"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 365,
+        "last_line": 371,
+        "heading": "## 3. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001",
+        "chars": 273,
+        "sha256_utf8": "eeced66857b3bc3dd4edf48664957fe68b3d8bcc33ee1791a848ad7e838878df"
+      }
+    ]
+  },
+  {
+    "source": "Документация/000_Задачи Ultra Desktop.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Ultra Desktop.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 8,
+        "heading": "# Задачи Ultra Desktop",
+        "chars": 1160,
+        "sha256_utf8": "a92032611cb80c9dd3f02fb1cd8a80e574687c8b76a763967b758877031e497d"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 9,
+        "last_line": 18,
+        "heading": "## Правила — общие для исполнителей",
+        "chars": 3011,
+        "sha256_utf8": "03bf4888f3d8db29a1cf39ce25b61bda132c835daf90c0e25e5ffdd133b65432"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 19,
+        "last_line": 32,
+        "heading": "## Специальный рабочий протокол Ultra Desktop",
+        "chars": 2111,
+        "sha256_utf8": "41d4c24cf57728259f937dd5456920d96a88b204912d2b6f50837ee500883b6a"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 33,
+        "last_line": 36,
+        "heading": "## Известные ошибки — памятка из испытания 24.10.2026",
+        "chars": 829,
+        "sha256_utf8": "e418af184a746ea518d0fe9e72c7273a091385e90529b55591fadaee9135ad4d"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 37,
+        "last_line": 42,
+        "heading": "## Рабочая область и публикация",
+        "chars": 763,
+        "sha256_utf8": "947bd2ca1bef2e299a6311d30b7e7676243da58e3b66d61b86524dee7acf6063"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 43,
+        "last_line": 44,
+        "heading": "## Ротация персональной карточки",
+        "chars": 36,
+        "sha256_utf8": "00bcdc7a3f9ba4fe7f33c1f26fe7465d34626779459ff148ae4f25a13a537b4b"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 45,
+        "last_line": 48,
+        "heading": "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "chars": 136,
+        "sha256_utf8": "d7db105769702e20d5a8c5d38b34ad9ed90673c3dea31c87926b42566dbbd19b"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 49,
+        "last_line": 52,
+        "heading": "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "chars": 173,
+        "sha256_utf8": "47d019cf8953b65ce7bb8e9d9ed9efb2a9dd3157026994429373f1c1bf9e9186"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 53,
+        "last_line": 56,
+        "heading": "# БЛОК 3 — ПЯТЬ ПОСЛЕДНИХ ФАКТИЧЕСКИХ ИТОГОВ",
+        "chars": 188,
+        "sha256_utf8": "9910311c067456a26cc621882c434c060cfb9ccf42d6563f858ebae43e474d1b"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 57,
+        "last_line": 59,
+        "heading": "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER",
+        "chars": 216,
+        "sha256_utf8": "244dfbadc7ef337f804a05afc8d829721342ad11bc0d2441a1b76bcc8f16f27d"
+      }
+    ]
+  },
+  {
+    "source": "Документация/05_Реестр задач.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/05_Реестр задач.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 11,
+        "heading": "## WEB15 / 2026-10-27 — Stage1 Ultra Chat: независимая ограниченная приёмка",
+        "chars": 751,
+        "sha256_utf8": "491bb8278e915b1f6bdc65c11ea1dd181661f3a79d85379f8b75a068e1b705a5"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 12,
+        "last_line": 21,
+        "heading": "## WEB_14 / 2026-10-26 — результат подготовительного этапа Ultra Chat",
+        "chars": 1444,
+        "sha256_utf8": "04a5079cb8081ce0cf4b4adc128cb579ad0eb3bd8200d3dc5c8658bb0416809d"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 22,
+        "last_line": 32,
+        "heading": "## WEB_14 / 2026-10-26 — независимая приёмка кандидатной программы №37",
+        "chars": 779,
+        "sha256_utf8": "8d8c6d3e753a377629d403ff5b59ebc7bf512f91b4d44255fa7c00d5d37f4acb"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 33,
+        "last_line": 43,
+        "heading": "## WEB_14 / 2026-10-26 — независимая архитектурная приёмка Ultra",
+        "chars": 1120,
+        "sha256_utf8": "8f5dab498eb0368912343d07723686328815fe8bd0af3161fcb9c650e3e3e200"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 44,
+        "last_line": 55,
+        "heading": "## USER FREEZE 2026-10-25 — ordinary ChatGPT Desktop MCP / archive №39",
+        "chars": 1313,
+        "sha256_utf8": "37612346cf78d1cce2dad9644ecbffa37c587b33a7ca2e7ea367cbe3e34847bf"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 56,
+        "last_line": 66,
+        "heading": "## WEB_12 / 2026-10-25 — strict admission policy / completed offline task",
+        "chars": 1205,
+        "sha256_utf8": "58385219d8c9536b3a57388caf629585d10d8ab75e9d4d8ac2927c3bd982aac5"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 67,
+        "last_line": 77,
+        "heading": "## WEB_12 / 2026-10-25 — secure ChatGPT MCP / Codex sing dependency",
+        "chars": 1057,
+        "sha256_utf8": "94a20c0363ea9cd8bcfc02b1c24b1bd0c3dfe3961988b804df19a5f8c4625d9a"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 78,
+        "last_line": 91,
+        "heading": "## 🟨 LLM13 / 2026-10-20 — независимый Windows-прогон восстановления журнала завершён, остаточные риски открыты",
+        "chars": 1974,
+        "sha256_utf8": "ae06f8a77d7524ee9258a49129610b7aed1ad21987c3aecf3ed83564ed266610"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 92,
+        "last_line": 105,
+        "heading": "## 🟨 LLM12 / 2026-10-20 — ручное восстановление повреждённого журнала событий",
+        "chars": 1823,
+        "sha256_utf8": "c50dde09b569937de9eebf2a2391c8f0bbdc58c8a4cb9024a2a03c1544ab25e2"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 106,
+        "last_line": 117,
+        "heading": "## WEB_10 / 2026-10-20 — portable MCP setup toolkit, offline stage",
+        "chars": 1473,
+        "sha256_utf8": "e257e8ca8304bdbf03d881735f993fbbafd2578b08e2092014f3796f19ac8e4e"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 118,
+        "last_line": 130,
+        "heading": "## 🟨 LLM12 / 2026-10-20 — независимая проверка Claude на Windows (W1)",
+        "chars": 1429,
+        "sha256_utf8": "1729100fe3740be2d45220a4263b60ebe494b49d725824abb4e43b44f5d42c5a"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 131,
+        "last_line": 142,
+        "heading": "## WEB_10 / 2026-10-19 — MCP identity/SID egress architecture research (not runtime verified)",
+        "chars": 1315,
+        "sha256_utf8": "14f74a71945a9c2e5415d56383d3fc1fe2cb903d9f1641354033fc31e26b2d3a"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 143,
+        "last_line": 156,
+        "heading": "## LLM12 / 2026-10-18 — WA4-R crash-consistency repair latest gate",
+        "chars": 1967,
+        "sha256_utf8": "c6f806d87b0e02dd541b8c86d9900a64bed40cbe25a5919a04523fbbca577b5f"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 157,
+        "last_line": 170,
+        "heading": "## LLM12 / 2026-10-17 — WA4-R AUD-02b-R/AUD-03 crash design review (latest for RT-001)",
+        "chars": 1461,
+        "sha256_utf8": "5308a37b8c944f84891e3b7399080e89e4bdd5caee63fc7d61016586be4d552e"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 171,
+        "last_line": 184,
+        "heading": "## LLM12 / 2026-10-17 — Web Alarm WA4-R latest published review (supersedes dated 2026-10-16 top rows)",
+        "chars": 1720,
+        "sha256_utf8": "4d7283d2036ba4c035537abfcfd37dc6a12375271619070f2bc196879657e8e7"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 185,
+        "last_line": 202,
+        "heading": "## WEB_09 / 2026-10-16 — current Web Alarm and MCP independent streams",
+        "chars": 2244,
+        "sha256_utf8": "bd3bfb15c9c466ea264f45475f2314cf94103fb741beea1d2cf9aef185a491c4"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 203,
+        "last_line": 204,
+        "heading": "# Реестр задач GigaChat Ultra Local Agent",
+        "chars": 43,
+        "sha256_utf8": "a3fb854e28dea4e22db5e0f484dd33bef51f224d36cf68e9a83058fdf73a94eb"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 205,
+        "last_line": 221,
+        "heading": "## CURRENT WEB-02 TASK STATUS — 2026-10-13",
+        "chars": 2902,
+        "sha256_utf8": "e4672f2ae5c547b8b1ee777b12618498b14a044b44ad2d9c169fc7517ecc5089"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 222,
+        "last_line": 226,
+        "heading": "## Формат таблицы",
+        "chars": 119,
+        "sha256_utf8": "70cc242e7ea68030ce76c7bdcfd479b03e7b52a35542a83ae8ab271d1cd4132c"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 227,
+        "last_line": 232,
+        "heading": "## Общая архитектура тестирования — проектная документация",
+        "chars": 986,
+        "sha256_utf8": "4475f4318ba25a20c974eee3a0f4f87144e3e9c8d52159c569307ca8fd69f4e3"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 233,
+        "last_line": 275,
+        "heading": "## Ветка WA: Web Alarm Workspace",
+        "chars": 11134,
+        "sha256_utf8": "2c37a48dc90d504046ec239f8c4a940e20ed5eee9aa38fbfadba3e868d10b5c7"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 276,
+        "last_line": 284,
+        "heading": "## Завершенные задачи (инфраструктура)",
+        "chars": 1297,
+        "sha256_utf8": "241d47e76dfdb42a606d17f6e4cd50312c2941e986697bba5ba0be947721e8c1"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 285,
+        "last_line": 331,
+        "heading": "### Архитектурная серия TASK 132–143 и стабилизация 144–151",
+        "chars": 13270,
+        "sha256_utf8": "f05c3ec61e1cc67ba122ecf78ad4aedc9b06909d1bfcb296dcf89bab4700dfac"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 332,
+        "last_line": 345,
+        "heading": "## Ветка DOC: архитектура и регламент Круглого стола",
+        "chars": 7858,
+        "sha256_utf8": "bc7c2f0e42868ccabed060d15863ee26b1dd29773cb3e0af9d7ca8879eb21412"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 346,
+        "last_line": 347,
+        "heading": "## Задачи в работе и запланированные",
+        "chars": 38,
+        "sha256_utf8": "b18e1579f6de0f66d83a674487a21a43c20f4e0eb6bd72537c0ad69f2c8d7d6e"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 348,
+        "last_line": 357,
+        "heading": "### Этап 06: Система чатов и управление контекстом",
+        "chars": 1116,
+        "sha256_utf8": "abe9aed23ebc7d66f4aff6879e09ec558ff7f864c0513ad1127dabddb161ff76"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 358,
+        "last_line": 371,
+        "heading": "### Ветка MM: Мультимодельная архитектура",
+        "chars": 1209,
+        "sha256_utf8": "65a6156531759b00425d4c44c239297e48418af340bcf2757b4ee9515ed2441f"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 372,
+        "last_line": 377,
+        "heading": "### Этап 07: Переносимость",
+        "chars": 284,
+        "sha256_utf8": "a8a94cce1fcca30ca97b46a38db3c6444de0965fdd81430830bf2d413fd0c712"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 378,
+        "last_line": 383,
+        "heading": "### Этап 08: Web UI",
+        "chars": 209,
+        "sha256_utf8": "c4d479946d26b1be57a8dbb18321322211652ea56b8f8369c29e260caeb0dd9c"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 384,
+        "last_line": 392,
+        "heading": "### FUTURE без присвоенного TASK ID",
+        "chars": 624,
+        "sha256_utf8": "502cae7024b08d95580897852b9016e203c1a4c2af54dabdce594dce45d14c60"
+      },
+      {
+        "record_id": "S031",
+        "first_line": 393,
+        "last_line": 394,
+        "heading": "## Критерии приёмки для ближайших задач",
+        "chars": 41,
+        "sha256_utf8": "d78cf9e875cd00f520f1a89fac0be0741deca9b0404b5ce5f554d016d94ed0a9"
+      },
+      {
+        "record_id": "S032",
+        "first_line": 395,
+        "last_line": 401,
+        "heading": "### TASK 06.1 — Модель данных чатов",
+        "chars": 262,
+        "sha256_utf8": "41d4bdf52a4c1c6f52b8c9edead612db4242affcfbfd38a1f95c2f9842083175"
+      },
+      {
+        "record_id": "S033",
+        "first_line": 402,
+        "last_line": 409,
+        "heading": "### TASK 06.2 — Навигация по чатам",
+        "chars": 215,
+        "sha256_utf8": "318ed63a68ed2684723b5d917166b9901af4a83fd7e0d54fb0d8d46514a9e25f"
+      },
+      {
+        "record_id": "S034",
+        "first_line": 410,
+        "last_line": 415,
+        "heading": "### TASK 06.3 — Multi-turn context",
+        "chars": 495,
+        "sha256_utf8": "90e0dc240f87cccb4d72407283c4ba29de7954e7cf00559d9fcaa67e1a4a1dd1"
+      },
+      {
+        "record_id": "S035",
+        "first_line": 416,
+        "last_line": 421,
+        "heading": "### TASK 06.4 — Разделение контекстов",
+        "chars": 413,
+        "sha256_utf8": "cad5106bc3a4c1c8e981ede48e5f399d35d9b35d4fe47cf7381135eb13fdcac3"
+      },
+      {
+        "record_id": "S036",
+        "first_line": 422,
+        "last_line": 430,
+        "heading": "### TASK 06.5 — Сжатие контекста",
+        "chars": 613,
+        "sha256_utf8": "d10cdcfeba0889d383d2e6c856060caa10180078fb8e260f5cdeeeab2b52c1d5"
+      },
+      {
+        "record_id": "S037",
+        "first_line": 431,
+        "last_line": 436,
+        "heading": "### Ветка V: Execution Verifier",
+        "chars": 669,
+        "sha256_utf8": "345b91e545702e81cfab640f0202868111395e66c2085bece0e417479318d05d"
+      },
+      {
+        "record_id": "S038",
+        "first_line": 437,
+        "last_line": 442,
+        "heading": "## Ссылки",
+        "chars": 391,
+        "sha256_utf8": "9630f11a5227e16ca0e9066cdcc659e55a6a6e66d112a93eff5a4b2862bfeeba"
+      }
+    ]
+  },
+  {
+    "source": "Документация/06_Журнал выполнения и отчёты.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/06_Журнал выполнения и отчёты.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 4,
+        "heading": "## 2026-10-27 — WEB15 / `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` / независимая bounded source/evidence приёмка",
+        "chars": 1075,
+        "sha256_utf8": "5c838bfd33dfef46a62bb625460a1871bd93e6a1e42cdf35dc272b77743267ae"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 5,
+        "last_line": 8,
+        "heading": "## 2026-10-27 — USER PLAN APPROVED / №37 Web Alarm Ultra, кандидат 2",
+        "chars": 756,
+        "sha256_utf8": "4fafe4db9caf3d3104d693c4b75d36fd7671f3d26322ebb9e6e5cb013945e235"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 9,
+        "last_line": 12,
+        "heading": "## 2026-10-26 — USER architecture direction / Web Alarm Ultra: переносимость с этапа 0, №37 подготовлен к финальному утверждению",
+        "chars": 903,
+        "sha256_utf8": "42ae28d726216a6cf70c88ebcde06d939c62f9eb2f0ba40b26a31d28d38ba928"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 13,
+        "last_line": 24,
+        "heading": "## 2026-10-26 — WEB_14 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001 / независимый обзор этапа 0 Ultra Chat, rev2",
+        "chars": 3347,
+        "sha256_utf8": "d6bde3a22de1bed313cd52e182c282c5115c08198567c17edca7a8a88edd1b93"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 25,
+        "last_line": 32,
+        "heading": "## 2026-10-26 — WEB_14 / ASTRA-WUA-37-ROADMAP-REVISION-001 / независимый обзор документа №37",
+        "chars": 1817,
+        "sha256_utf8": "9450714ed36d9a428c4c50d866f7f8ee62c4681fd7dd32d255bc692d52089f74"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 33,
+        "last_line": 44,
+        "heading": "## 2026-10-26 — WEB_14 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001 / independent architecture review PASS",
+        "chars": 2623,
+        "sha256_utf8": "93c182392b540f84b29ca804cf5b90eba8bc539f1aae67564e210665fd1592c5"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 45,
+        "last_line": 54,
+        "heading": "## 2026-10-25 — USER HOLD / archive №39 / ChatGPT Desktop MCP freeze",
+        "chars": 1805,
+        "sha256_utf8": "4a052c169b70400c059cb1290f415c0bbd294718484b0bad0ff897872446f6d0"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 55,
+        "last_line": 68,
+        "heading": "## 2026-10-25 — WEB_12 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001 / independent bounded offline PASS",
+        "chars": 4383,
+        "sha256_utf8": "812b01df8c263e8d9a635ab5aa4c6370e74e8d71171b48f2709755eb2a909fd7"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 69,
+        "last_line": 82,
+        "heading": "## 2026-10-25 — WEB_12 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / user-approved terminal PARTIAL",
+        "chars": 3024,
+        "sha256_utf8": "6f91daafb88aca3b2e4348e2929a390a1404cbee7f3f1960c158f6d947cf27f7"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 83,
+        "last_line": 97,
+        "heading": "## 2026-10-24 — CLAUDE-WA4-R-FT1-CI-REPAIR-001 / независимая Windows приёмка",
+        "chars": 2584,
+        "sha256_utf8": "923028b8325bca4295c57766f82ff62e4359a5252c2f85eb99d245749437bf59"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 98,
+        "last_line": 103,
+        "heading": "## 2026-10-24 — WEB_11 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001 amendment01 / PARTIAL",
+        "chars": 2089,
+        "sha256_utf8": "769786248f5b8371a7a141fb3b803c05351dca91b32de84ac29b7066a8d8c1d2"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 104,
+        "last_line": 109,
+        "heading": "## 2026-10-24 — WEB_11 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001 / PARTIAL",
+        "chars": 1158,
+        "sha256_utf8": "159fff72b294964c211bab0853cecb1f6808748080becfe123cbd1dcd4cc5128"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 110,
+        "last_line": 115,
+        "heading": "## 2026-10-24 — WEB_11: CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001 / PARTIAL",
+        "chars": 1341,
+        "sha256_utf8": "8bb45bd752eb40ed08534cb10b90cc9db9f0faecae01cfc01246895f8820e7eb"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 116,
+        "last_line": 121,
+        "heading": "## 2026-10-24 — WEB_11: CODEX-WUA-0-MCP-NOTCP-NPFS-001 / PARTIAL",
+        "chars": 652,
+        "sha256_utf8": "f35b74d6077d85116d8e2ea66986255a5a4d679841ccba3d461991b1a63a017b"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 122,
+        "last_line": 127,
+        "heading": "## 2026-10-21 — независимый Linux-review Claude Evidence Sanitization / PARTIAL",
+        "chars": 929,
+        "sha256_utf8": "008d405266e2dc5918143b99c27725b68c16c7bb5cfd54ec072d1479fdae52ce"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 128,
+        "last_line": 133,
+        "heading": "## 2026-10-21 — независимый bounded offline-review Codex Windows MCP Lab / PARTIAL",
+        "chars": 657,
+        "sha256_utf8": "4ed560aa27b102d72f6cb16e72e830b5e466e28eaee4054ee791030cc94ebbe5"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 134,
+        "last_line": 145,
+        "heading": "## 2026-10-20 — 🟨 независимая Windows-верификация восстановления оборванного журнала / LLM13 (AUD-01T-R; RT-001)",
+        "chars": 3021,
+        "sha256_utf8": "8f550dc66a2b0610d65a07a28e99e2ce671126cc7728c1fdc0cb6c7c76ea2b9e"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 146,
+        "last_line": 159,
+        "heading": "## 2026-10-20 — WEB_10 independently reviewed Codex 007 portable WUA MCP deployment kit",
+        "chars": 3481,
+        "sha256_utf8": "bbae3f2546cf3fceebade36b6163e837315636fd5adf8eb04dfe8c03e66b9696"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 160,
+        "last_line": 171,
+        "heading": "## 2026-10-19 — WEB_10 independent bounded review of Codex no-VM SID/WFP MCP architecture",
+        "chars": 2781,
+        "sha256_utf8": "a52043c238431ab10186409409330f8b178c71bd7147ff43309212812b3a7dd9"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 172,
+        "last_line": 185,
+        "heading": "## 2026-10-18 — LLM12 independent bounded review / `CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001` [Web Alarm RT-001]",
+        "chars": 3811,
+        "sha256_utf8": "602c14903fb36ac70dd173e1956a9825d70a45e17c5f94759d1a735741426840"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 186,
+        "last_line": 195,
+        "heading": "## 2026-10-17 — LLM12 independent bounded crash-consistency research audit [ChatGPT; Web Alarm RT-001]",
+        "chars": 2235,
+        "sha256_utf8": "ee61c4e87d9d789c5e9759f620f0973bf5462101fbe52dcf2fac08e3f93a5498"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 196,
+        "last_line": 205,
+        "heading": "## 2026-10-17 — LLM12 bounded independent WA4-R AUD-01T/02b source/evidence audit [ChatGPT; ARCH Web Alarm]",
+        "chars": 2113,
+        "sha256_utf8": "b1f93a5e759002660edeef9a97e1a8a11aebee0f17b8630446dba77a6b112510"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 206,
+        "last_line": 211,
+        "heading": "## 2026-10-17 — documentation repair of agent-facing reporting instructions (#356)",
+        "chars": 719,
+        "sha256_utf8": "e46ed5abd046ab27fe144688fc2f0b40f60485d09c1d4590f254397b250ebc5f"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 212,
+        "last_line": 219,
+        "heading": "## 2026-10-17 — coordinator documentation correction: project-local reports and explicit agent Git permissions",
+        "chars": 1612,
+        "sha256_utf8": "8cbcd525b5db18b5fe32776f605297a1f672c55e623b2fd2a63b2969bbca6cc6"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 220,
+        "last_line": 229,
+        "heading": "## 2026-10-16 — WEB_09 / WA4-R AUD-01/02/05 bounded review, documentation-only [ChatGPT; ARCH Web Alarm]",
+        "chars": 1762,
+        "sha256_utf8": "2dbe4810926002a1419cdcfb4c34331b8154923d8c429ec68bc75cfca68a58a4"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 230,
+        "last_line": 231,
+        "heading": "# Журнал выполнения и отчёты GigaChat Ultra Local Agent",
+        "chars": 59,
+        "sha256_utf8": "83214378e2ba76ef5c7120a65e484e37a92e1a77ccb30bf6f49af439e42635f8"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 232,
+        "last_line": 235,
+        "heading": "## 2026-10-14 — RT-002/B2 S2-001 + REPAIR-001/002 — independent source-review closeout [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "chars": 1486,
+        "sha256_utf8": "8326e21103fa8683713f88834c6404384a0d318fd3982bffe86112d44edd34fe"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 236,
+        "last_line": 239,
+        "heading": "## 2026-10-14 — RT-002/B2 S1 + REPAIR-001/002 independent source review [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "chars": 1201,
+        "sha256_utf8": "05461bf02864d5296d6f4c1ae9367cfda096329e8ef5a1e4f9bed8157ae53bbd"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 240,
+        "last_line": 248,
+        "heading": "## 2026-10-13 — №302 / WEB07-WA4-R-OBSERVE-CLOSEOUT-001 [COORDINATOR: ChatGPT]",
+        "chars": 2064,
+        "sha256_utf8": "41c7d8ccb4d0cedbab580ff0254833ebe636ce67e9c8db49dd31a5ff9a3265cd"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 249,
+        "last_line": 254,
+        "heading": "## 2026-10-12 — №301 / User-approved one-task-one-commit policy [COORDINATOR: ChatGPT]",
+        "chars": 922,
+        "sha256_utf8": "3cc1ed3e097ed63ada9e0682491f22e34fa8ad80034e2a6677d62bd26b40a4c2"
+      },
+      {
+        "record_id": "S031",
+        "first_line": 255,
+        "last_line": 262,
+        "heading": "## 2026-10-12 — ASTRA-TEST-ARCH-REVIEW-001 / targeted doc corrections [AUDITOR: Astra; COORDINATOR: ChatGPT]",
+        "chars": 1490,
+        "sha256_utf8": "368de03d8b08261f55d39a44166db1e70b5030f6ec7edd21de8b77ac938e9f91"
+      },
+      {
+        "record_id": "S032",
+        "first_line": 263,
+        "last_line": 268,
+        "heading": "## 2026-10-12 — DOC-TEST-001 / after user-authorized merge [AGENT: ChatGPT] [ARCH: Documentation + pilot CI]",
+        "chars": 991,
+        "sha256_utf8": "54464e2d70440e6af134fb4b39767d45619a2d7853cac6d254e4dadc15189221"
+      },
+      {
+        "record_id": "S033",
+        "first_line": 269,
+        "last_line": 278,
+        "heading": "## 2026-10-12 — DOC-TEST-001 / Cross-project cumulative testing architecture [AGENT/COORDINATOR: ChatGPT] [ARCH: Documentation / Testing QA, Ultra + Web Alarm]",
+        "chars": 2058,
+        "sha256_utf8": "ad7e9d0b3fb9a4cc953c7fbede56bd21f0e07826eff6b71f816966ff44fb4abc"
+      },
+      {
+        "record_id": "S034",
+        "first_line": 279,
+        "last_line": 287,
+        "heading": "## 2026-10-11 — №256 GitHub Actions Web Alarm smoke + №257 documentation closeout [AGENT: ChatGPT] [ARCH: CI infrastructure / Web Alarm; NOT Ultra]",
+        "chars": 1525,
+        "sha256_utf8": "87dbef3ddde7787cb1260fcb01eeff6bf91fdaeada26d401a4816f4caeb9f847"
+      },
+      {
+        "record_id": "S035",
+        "first_line": 288,
+        "last_line": 295,
+        "heading": "## 2026-10-11 — CLAUDE-WA-018 / WA4-E documented independent acceptance (verification run 2026-10-09) [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Web Alarm]",
+        "chars": 2013,
+        "sha256_utf8": "010891f54c0aa542ce88d63eb619dc7c4a17ce4035fe094301a02bdaba899acf"
+      },
+      {
+        "record_id": "S036",
+        "first_line": 296,
+        "last_line": 302,
+        "heading": "## 2026-10-11 — RT-002 Ultra S0 independently VERIFIED [AGENT: Codex] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "chars": 1852,
+        "sha256_utf8": "0dc676e67e1024ed17b7654382e3a734567e4b8793c1afe1843eadbe1c4da9b9"
+      },
+      {
+        "record_id": "S037",
+        "first_line": 303,
+        "last_line": 306,
+        "heading": "## 2026-10-11 — ULTRA ARCHITECTURE ONLY / RT-002 S0 Amendment #252 + collaborative live T-036/T-037 — CONSERVATION",
+        "chars": 1143,
+        "sha256_utf8": "ceda48dad73d97a84a54272dc783b0847bb7119b212fbde2ec339ae12aad904a"
+      },
+      {
+        "record_id": "S038",
+        "first_line": 307,
+        "last_line": 311,
+        "heading": "## 2026-10-10 — S0 REPAIR / CODEX-RT002-S0-REPAIR-001 — REPORTED 155 PASS; INDEPENDENT RUNTIME PENDING `[AGENT: Codex]` `[VERIFIER: ChatGPT GitHub source review only]`",
+        "chars": 1122,
+        "sha256_utf8": "87f1c4fd1262c6fc897dbd8c4812d86a1bb09159fa24f7f906b87aa0c7d139cf"
+      },
+      {
+        "record_id": "S039",
+        "first_line": 312,
+        "last_line": 316,
+        "heading": "## 2026-10-10 — S0 baseline / CODEX-RT002-S0-001 — FINDINGS / NO PASS `[AGENT: Codex]` `[VERIFIER: ChatGPT GitHub/source review]`",
+        "chars": 971,
+        "sha256_utf8": "5119226b6f536dc784f75e406189b1a36a917cce7a4b779e4ddbc83839501f2a"
+      },
+      {
+        "record_id": "S040",
+        "first_line": 317,
+        "last_line": 320,
+        "heading": "## 2026-10-08 — RC-6 CLOSEOUT / CLAUDE-WA-014 — DONE / VERIFIED `[AGENT: Claude]` `[VERIFIER: ChatGPT GitHub]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 1105,
+        "sha256_utf8": "2c02fee5600aeef24b9a97b45b085f6e3bcd06ea49a5faa69c2fc347b405b673"
+      },
+      {
+        "record_id": "S041",
+        "first_line": 321,
+        "last_line": 324,
+        "heading": "## 2026-10-08 — CODEX-ALARM-CLEANUP-001 — служебная очистка `[AGENT: Codex]`",
+        "chars": 823,
+        "sha256_utf8": "20968152d835ed2e586c0dd9e4230c5d84c0962f81c5917ccc78376d2d6da797"
+      },
+      {
+        "record_id": "S042",
+        "first_line": 325,
+        "last_line": 343,
+        "heading": "## 2026-10-04 — CLAUDE-WA-005: RC-3 CANONICAL-TARGET CONFLICT GATE + MUTATION-BOUNDARY CAS — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 2467,
+        "sha256_utf8": "02c4f7a0e9ee94e4383566514946fca2a7a791b114f580f9cc3269c3a1f93c24"
+      },
+      {
+        "record_id": "S043",
+        "first_line": 344,
+        "last_line": 360,
+        "heading": "## 2026-10-04 — CLAUDE-WA-004: RC-2 PERSISTENT RESOLVER + EVIDENCE REVISION BINDING — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 2019,
+        "sha256_utf8": "3b1e65ab86b244759bbe212286cb539ce050cbcf16db9036afb98d49d5fc1bc8"
+      },
+      {
+        "record_id": "S044",
+        "first_line": 361,
+        "last_line": 379,
+        "heading": "## 2026-10-04 — CLAUDE-WA-003: RC-1 DURABLE OPERATION CONTRACT + BACKWARD COMPATIBILITY — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 1968,
+        "sha256_utf8": "7f74bd41f8ada82621ab2368a351893652dff9f06192c59a87eef31bda9f99c4"
+      },
+      {
+        "record_id": "S045",
+        "first_line": 380,
+        "last_line": 396,
+        "heading": "## 2026-10-04 — CLAUDE-WA-002: RC-0 BASELINE И NORMALIZATION POLICY — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 1404,
+        "sha256_utf8": "8b8d96f5d8fba6ccd5a36d38a2a06b87150a093776fdd560320b0d73df8cec88"
+      },
+      {
+        "record_id": "S046",
+        "first_line": 397,
+        "last_line": 401,
+        "heading": "## 2026-10-04 — P00: CANONICAL PLAN HANDOFF RT-001 / EP-RT001-001 — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 602,
+        "sha256_utf8": "8f0a2eca51abf2971e2ec999544f946226b84376dbb59fb936f7372bb6ba382f"
+      },
+      {
+        "record_id": "S047",
+        "first_line": 402,
+        "last_line": 423,
+        "heading": "## 2026-10-03 — CLAUDE-WA-001: INDEPENDENT PREFLIGHT RT-001 / EP-RT001-001 — DONE / VERIFIED 2026-10-04 `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "chars": 1328,
+        "sha256_utf8": "2275fb4dc7a8564958482d76939e3fbe94ec06f688eca5a42c50330a4faeaaac"
+      },
+      {
+        "record_id": "S048",
+        "first_line": 424,
+        "last_line": 430,
+        "heading": "## 2026-10-03 — CLAUDE-TEST-001: READ-ONLY REPOSITORY ANALYSIS — DONE `[AGENT: Claude Opus 5.5]`",
+        "chars": 665,
+        "sha256_utf8": "21ef987ce7d94c2d01c3705ab77980ef7e8b53ef4bbfa97597110061188dc12d"
+      },
+      {
+        "record_id": "S049",
+        "first_line": 431,
+        "last_line": 441,
+        "heading": "## 2026-10-02 — WA-3.6: SHORT MACHINE-USABLE RECOVERY REPORT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1407,
+        "sha256_utf8": "7d9ee32a0bce74c087b23b6843e2e9051c21c3424e47d96ad481d70eba22c14c"
+      },
+      {
+        "record_id": "S050",
+        "first_line": 442,
+        "last_line": 453,
+        "heading": "## 2026-10-02 — WA-3.5.D: AUTHORITY-NEGATIVE TESTS / FINAL WATCHDOG VERIFICATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 673,
+        "sha256_utf8": "928874f088d5575bc518c4c454a073713521cceeb20349360e5bcab4e09d6e4b"
+      },
+      {
+        "record_id": "S051",
+        "first_line": 454,
+        "last_line": 464,
+        "heading": "## 2026-10-02 — WA-3.5.C: RECOVERY / RESTART TRANSPORT PERSISTENCE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1167,
+        "sha256_utf8": "49ded263260151509d8d7c7144031086fd271de76baaa5859b24bc3bb06cb651"
+      },
+      {
+        "record_id": "S052",
+        "first_line": 465,
+        "last_line": 475,
+        "heading": "## 2026-10-02 — WA-3.5.B: WATCHDOG / SERVER TRANSPORT EVIDENCE INGESTION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1054,
+        "sha256_utf8": "9fe6fc8f6d3ab4a80eddb6cebec2189b5b1ce50f185cb402f1c0da2817d4c85b"
+      },
+      {
+        "record_id": "S053",
+        "first_line": 476,
+        "last_line": 486,
+        "heading": "## 2026-10-02 — WA-3.5.A: TRANSPORT EVENT MODEL / APPEND-ONLY STORE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1126,
+        "sha256_utf8": "6a40a6db3399469d81f89161a30dcd47353a07dd4499df45a9fd6b321ed1ea03"
+      },
+      {
+        "record_id": "S054",
+        "first_line": 487,
+        "last_line": 499,
+        "heading": "## 2026-10-02 — DOC-WA-REMOTE-CONCLUSIONS-001: CONSOLIDATED REMOTE FAILURE CONCLUSIONS — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1705,
+        "sha256_utf8": "82cfc5911e92c082701aabb4d20b0c443468e2d091f0eefd42cbde06c65de59b"
+      },
+      {
+        "record_id": "S055",
+        "first_line": 500,
+        "last_line": 510,
+        "heading": "## 2026-10-02 — WA-3.4: RECOVERY AFTER RESTART CHAT / SERVER — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1199,
+        "sha256_utf8": "a62b38dbdf97114215da128f0fd8c89ab232e1d4378c97c55b3a8872587246a9"
+      },
+      {
+        "record_id": "S056",
+        "first_line": 511,
+        "last_line": 519,
+        "heading": "## 2026-10-02 — WA-3.3.4: RECOVERY SCENARIOS / FINAL VERIFICATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1073,
+        "sha256_utf8": "d307a626add2e43653de90a9d1e499a92da138bd3abaa97adc4f7dbd0046d93d"
+      },
+      {
+        "record_id": "S057",
+        "first_line": 520,
+        "last_line": 530,
+        "heading": "## 2026-10-02 — WA-3.3.3: SERVER / REMOTE RECONCILIATION INTEGRATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1581,
+        "sha256_utf8": "c4aa743eb7af5993384857d0c67bbf8fa5aa1ddbf3a78b9fa5398476c6704961"
+      },
+      {
+        "record_id": "S058",
+        "first_line": 531,
+        "last_line": 543,
+        "heading": "## 2026-10-02 — WA-3.3.2: DETERMINISTIC RECONCILIATION DECISION ENGINE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1482,
+        "sha256_utf8": "d40cc02e61b0a5ee28b8c961e83a760288ce20c6596a432016a9567869d374a8"
+      },
+      {
+        "record_id": "S059",
+        "first_line": 544,
+        "last_line": 556,
+        "heading": "## 2026-10-02 — WA-3.3.1: RECONCILIATION EVIDENCE / READ-ONLY INSPECTOR — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1729,
+        "sha256_utf8": "da65b3ee62d1d65211e39c7f023e41650b8214fa710b83c32621280337319af6"
+      },
+      {
+        "record_id": "S060",
+        "first_line": 557,
+        "last_line": 569,
+        "heading": "## 2026-10-02 — DOC-WA-REMOTE-OBS-001: REMOTE TRANSPORT / RECOVERY EVIDENCE JOURNAL — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1958,
+        "sha256_utf8": "9569475c9e752fc45e6cf8d7db83ae75be4e17f0baba0a004a0eb18d27c3c8a6"
+      },
+      {
+        "record_id": "S061",
+        "first_line": 570,
+        "last_line": 582,
+        "heading": "## 2026-10-02 — WA-3.2: WEB ALARM OPERATION ID / REPLAY IDENTITY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1425,
+        "sha256_utf8": "e8b62653cf37d71b8cbf0cb562ee21606ac2e5bdc88dcc4962559c808b7554db"
+      },
+      {
+        "record_id": "S062",
+        "first_line": 583,
+        "last_line": 595,
+        "heading": "## 2026-10-02 — WA-3.1: WEB ALARM CANONICAL REMOTE ENTRY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1369,
+        "sha256_utf8": "5ea72d7f9729cffc78a93112ff5aecd3e0a1db302bb7ecc98e9104548f2f41df"
+      },
+      {
+        "record_id": "S063",
+        "first_line": 596,
+        "last_line": 606,
+        "heading": "## 2026-10-02 — WA-2.4: WEB ALARM ENTRY CONTEXT PACK — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1096,
+        "sha256_utf8": "c6a024c6d86082db17a915e3ce22792804f0ba27d18ea3ade9f5f24122d7026e"
+      },
+      {
+        "record_id": "S064",
+        "first_line": 607,
+        "last_line": 617,
+        "heading": "## 2026-10-02 — WA-2.3: WEB ALARM MINIMAL UI — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 942,
+        "sha256_utf8": "8b20e20c13c2dfbed0424900a1bf40a37008840d265b2ada1f07ff9517d5b363"
+      },
+      {
+        "record_id": "S065",
+        "first_line": 618,
+        "last_line": 628,
+        "heading": "## 2026-10-02 — WA-2.2: WEB ALARM SERVER-OWNED STATE MACHINE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1066,
+        "sha256_utf8": "7577bb2bcd0d06bb1dd72a9f444e8eebe95135fc3a27bef155f13db73a5bcaec"
+      },
+      {
+        "record_id": "S066",
+        "first_line": 629,
+        "last_line": 639,
+        "heading": "## 2026-10-02 — WA-2.1: WEB ALARM SERVER API — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1082,
+        "sha256_utf8": "b53e34d64b4b5e6ac3bf4edd9c7f5b40aa8ac778e78c79c3e15e400f56f96d93"
+      },
+      {
+        "record_id": "S067",
+        "first_line": 640,
+        "last_line": 648,
+        "heading": "## 2026-10-02 — WA-1.6: WEB ALARM BASIC CLI — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 831,
+        "sha256_utf8": "8037a1d7342028b57a23d6bbab9b42f00862c23e1b7b1e1fc9f16e34a3a70005"
+      },
+      {
+        "record_id": "S068",
+        "first_line": 649,
+        "last_line": 659,
+        "heading": "## 2026-10-02 — WA-1.5: WEB ALARM EVENT LOG + CHECKPOINT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1003,
+        "sha256_utf8": "3d0f62c28cb2671dcdc67e19c91de27e2abd739c3ec37ceeb0c2ce9508ce027c"
+      },
+      {
+        "record_id": "S069",
+        "first_line": 660,
+        "last_line": 670,
+        "heading": "## 2026-10-02 — WA-1.4: WEB ALARM MANIFEST + SNAPSHOT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1567,
+        "sha256_utf8": "68e209e2a0f85a4dfa804619e791274a4b0ea837de262e7a93bb0ca51cceeb03"
+      },
+      {
+        "record_id": "S070",
+        "first_line": 671,
+        "last_line": 681,
+        "heading": "## 2026-10-01 — WA-1.3: WEB ALARM TASK + MICROTASK PLAN STORAGE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1370,
+        "sha256_utf8": "bd5e5fc7dc8541322e76d1f156c8fd200bb1f129f1c961834e48d7a671d6fe3c"
+      },
+      {
+        "record_id": "S071",
+        "first_line": 682,
+        "last_line": 692,
+        "heading": "## 2026-10-01 — WA-1.2: WEB ALARM WORKSPACE REGISTRY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1299,
+        "sha256_utf8": "c5e404d8dfaee39f998f4973f6fb7b93b1894e72c09a0bc12c3739564a6ef3f6"
+      },
+      {
+        "record_id": "S072",
+        "first_line": 693,
+        "last_line": 701,
+        "heading": "## 2026-10-01 — WA-1.1: WEB ALARM WORKSPACE DATA SCHEMAS — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "chars": 1147,
+        "sha256_utf8": "9a666794adfa51f5197a0981cb6f9f8f564b269fdce867107b2f8d817db9eeee"
+      },
+      {
+        "record_id": "S073",
+        "first_line": 702,
+        "last_line": 716,
+        "heading": "## 2026-10-01 — TASK 151G-DIAG-R031: EXECUTOR CONTEXT / TOKEN EXPLOSION AUDIT — DONE, RUNTIME UNCHANGED `[ARCH: Quality Transition / Executor Context]`",
+        "chars": 3024,
+        "sha256_utf8": "baa234ef5b23de411fa89aad0e86251489658bc0a5e52c7ece76bb45f294c675"
+      },
+      {
+        "record_id": "S074",
+        "first_line": 717,
+        "last_line": 729,
+        "heading": "## 2026-10-01 — TASK 151B: EVIDENCE FRESHNESS / REVISION BINDING — DONE / КТ-2 DONE `[ARCH: Quality Transition / Verification Freshness]`",
+        "chars": 1900,
+        "sha256_utf8": "2e01c16383440bfbb2963e2f121ed7e0b2cdcdba144fe6388f0a465eadb975a2"
+      },
+      {
+        "record_id": "S075",
+        "first_line": 730,
+        "last_line": 740,
+        "heading": "## 2026-10-01 — TASK 151A: ACCOUNTING + STATISTICAL BENCHMARK CLOSURE — DONE / КТ-1 DONE `[ARCH: Quality Transition / Runtime + Context + Verification]`",
+        "chars": 1547,
+        "sha256_utf8": "bab2bc5ce67f76128c9a5f2e431b22ea2572a9446c4d6e386561574a7590e765"
+      },
+      {
+        "record_id": "S076",
+        "first_line": 741,
+        "last_line": 755,
+        "heading": "## 2026-10-01 — TASK 151A: ACCOUNTING + LIVE BENCHMARKS — IN PROGRESS `[ARCH: Quality Transition / Runtime + Context + Verification]`",
+        "chars": 2137,
+        "sha256_utf8": "6eb3a63d913a03c12ba6240b162ea98b36d98282012c79803832b91a0678c4c8"
+      },
+      {
+        "record_id": "S077",
+        "first_line": 756,
+        "last_line": 766,
+        "heading": "## 2026-10-01 — DESKTOP COMMANDER WATCHDOG V1 — MONITORING ADDED",
+        "chars": 945,
+        "sha256_utf8": "fb12dc025615652322f40893e395d819facb96eba6d8c6a9481c2f31f5d873a6"
+      },
+      {
+        "record_id": "S078",
+        "first_line": 767,
+        "last_line": 785,
+        "heading": "## 2026-09-30 — TASK 151: INTEGRATED STABILIZATION / STABLE BASELINE S1 — DONE",
+        "chars": 2073,
+        "sha256_utf8": "0c7d4f55eb024e407c1c9260bbcd9e0e099e6bf08bdc8e4ef9f6785bb57a1e0e"
+      },
+      {
+        "record_id": "S079",
+        "first_line": 786,
+        "last_line": 823,
+        "heading": "## 2026-09-30 — TASK 150 / 150A: UI BINDING AUDIT + MISSING AUDIT STORAGE UX — DONE",
+        "chars": 1620,
+        "sha256_utf8": "39413537cb05bcdcd316a2642b3cfcb803ff28b9b69701fd868cb557331b9c04"
+      },
+      {
+        "record_id": "S080",
+        "first_line": 824,
+        "last_line": 856,
+        "heading": "## 2026-09-30 — ПРИНЯТА ПРОГРАММА КАЧЕСТВЕННОГО ПЕРЕХОДА 20/21 — DOCUMENTATION / ARCHITECTURAL DECISION",
+        "chars": 1890,
+        "sha256_utf8": "3c1de6cd5135a383c4bdb93079702014ec1c5599f804b05bc7f5a6a3b7daab67"
+      },
+      {
+        "record_id": "S081",
+        "first_line": 857,
+        "last_line": 860,
+        "heading": "## 2026-09-30 — TASK 149: LIFECYCLE / TOOL BUDGET / EVIDENCE CONTRACT — LIVE PARTIAL VERIFIED + REPAIR PASS",
+        "chars": 356,
+        "sha256_utf8": "3f9f517dcd8ca585d5e09e7ff15e9f8b2210fb0d59a884b345afe5acfa2b2782"
+      },
+      {
+        "record_id": "S082",
+        "first_line": 861,
+        "last_line": 873,
+        "heading": "### T-017 / R-017 — WRITE OFF",
+        "chars": 416,
+        "sha256_utf8": "cb8a63521d8f66c613f7849511ebeb447de545681da05960e912cf6083c5334e"
+      },
+      {
+        "record_id": "S083",
+        "first_line": 874,
+        "last_line": 914,
+        "heading": "### T-018 / R-018 — WRITE ON",
+        "chars": 1119,
+        "sha256_utf8": "fd76cce1339ccfd92ed28894571cf7ba6f74990c329f8d2204a572ba43e3e43a"
+      },
+      {
+        "record_id": "S084",
+        "first_line": 915,
+        "last_line": 935,
+        "heading": "### Finding 149C — exact requirement не ограничивал pre-evidence exploration",
+        "chars": 639,
+        "sha256_utf8": "a4d6897369d2694a2643a2c18c8743ce9d8f79e7836686d0b908429730d848b7"
+      },
+      {
+        "record_id": "S085",
+        "first_line": 936,
+        "last_line": 953,
+        "heading": "#### TASK 149C — Exact Evidence Gate",
+        "chars": 805,
+        "sha256_utf8": "f87daf8b1ac37154c2c450f9d23f9c57fcd8b1ee2f785dde436b6d20a89f3cb9"
+      },
+      {
+        "record_id": "S086",
+        "first_line": 954,
+        "last_line": 963,
+        "heading": "### Finding 149D — garbage final candidate прошёл nonempty gate",
+        "chars": 406,
+        "sha256_utf8": "bc6c478d775277c39a6e27a89a4ce03176a18193777077583b13d29576072d8b"
+      },
+      {
+        "record_id": "S087",
+        "first_line": 964,
+        "last_line": 975,
+        "heading": "#### TASK 149D — Final Response Sanity Gate",
+        "chars": 628,
+        "sha256_utf8": "0c26aed036e95f6b5877ddd81e7c633f3a6e3affe86f114a4a3a2b1382861dc9"
+      },
+      {
+        "record_id": "S088",
+        "first_line": 976,
+        "last_line": 986,
+        "heading": "### Automated state after 149C/149D",
+        "chars": 341,
+        "sha256_utf8": "0195a4014dc4703f8b7c6053d4c00fc7ccac57140831c5e06c187efd193a1d6d"
+      },
+      {
+        "record_id": "S089",
+        "first_line": 987,
+        "last_line": 999,
+        "heading": "### T-019 / R-019 — persistence runaway из-за double-escaped Planner exact text",
+        "chars": 1127,
+        "sha256_utf8": "7f12847753531bf55141c5788317aa3ce37c237d4a4e10e2873190dd25414eb5"
+      },
+      {
+        "record_id": "S090",
+        "first_line": 1000,
+        "last_line": 1028,
+        "heading": "#### TASK 149E — Planner Exact Text Escape Guard",
+        "chars": 1333,
+        "sha256_utf8": "4a2f360c036b28a8ad17cacc841dace1fb8c6ee9f773919ebaf7a20b5b62fcfc"
+      },
+      {
+        "record_id": "S091",
+        "first_line": 1029,
+        "last_line": 1055,
+        "heading": "### T-020 / R-020 — lifecycle SUCCESS, 149C/149E LIVE VERIFIED",
+        "chars": 1263,
+        "sha256_utf8": "9e22e8d15acb91d0ea801ccb9bdeedd07c4ec28602d36fd0f121d74bebc6cac1"
+      },
+      {
+        "record_id": "S092",
+        "first_line": 1056,
+        "last_line": 1069,
+        "heading": "### Finding 149F — serialized tool-call markup как final response",
+        "chars": 489,
+        "sha256_utf8": "1a16be42610edf38e26a408b947272da0bfae1599503204ad2ca537f50b06f4a"
+      },
+      {
+        "record_id": "S093",
+        "first_line": 1070,
+        "last_line": 1082,
+        "heading": "#### TASK 149F — Final Response Tool-Markup Gate",
+        "chars": 665,
+        "sha256_utf8": "4ed963b100ee9d75af0b718aa24dff613df8c3cb8126492546995ac2bdd1d766"
+      },
+      {
+        "record_id": "S094",
+        "first_line": 1083,
+        "last_line": 1113,
+        "heading": "### T-021 / R-021 — TASK 149 FINAL LIVE CLOSE",
+        "chars": 1370,
+        "sha256_utf8": "e41aff5d9d6f7547737835e966e6e3ffb61cde4fc27f0bae73706d6f51f77dac"
+      },
+      {
+        "record_id": "S095",
+        "first_line": 1114,
+        "last_line": 1120,
+        "heading": "### Current status",
+        "chars": 174,
+        "sha256_utf8": "8a2f37d263e6f882548c2b7f6e52cd9acee1c340cdb0785f23ac97719a13793c"
+      },
+      {
+        "record_id": "S096",
+        "first_line": 1121,
+        "last_line": 1124,
+        "heading": "## 2026-09-30 — TASK 148: CONTEXT COMPILATION / ROLE BOUNDARY AUDIT — DONE",
+        "chars": 308,
+        "sha256_utf8": "bc099a3996d7839f14b00188586323dd815f3559c370d97b94c8f1c16689aec5"
+      },
+      {
+        "record_id": "S097",
+        "first_line": 1125,
+        "last_line": 1143,
+        "heading": "### R-015 live evidence — Chat vs Executor",
+        "chars": 1153,
+        "sha256_utf8": "732db1033374e17f2bd8bab283f9c15fae3bc4dca66f0a991f39db7fbff162c1"
+      },
+      {
+        "record_id": "S098",
+        "first_line": 1144,
+        "last_line": 1151,
+        "heading": "### Planner boundary",
+        "chars": 610,
+        "sha256_utf8": "38ab3e7840dee946deb4dfbdfa7aad5464348f0cedbef909f54a6a01b0ede786"
+      },
+      {
+        "record_id": "S099",
+        "first_line": 1152,
+        "last_line": 1159,
+        "heading": "### Final Verifier boundary",
+        "chars": 670,
+        "sha256_utf8": "510495172982d97758ed8cff21d2ffe5ddba290097422c082ee1a6243b4b043f"
+      },
+      {
+        "record_id": "S100",
+        "first_line": 1160,
+        "last_line": 1163,
+        "heading": "### Stage-local context growth",
+        "chars": 279,
+        "sha256_utf8": "1a92bdd1cefa413a4afa3db63aea226f341ada340d0d78ddd177b31de25c1788"
+      },
+      {
+        "record_id": "S101",
+        "first_line": 1164,
+        "last_line": 1203,
+        "heading": "### Existing Compressor vs future historical memory",
+        "chars": 1497,
+        "sha256_utf8": "a761479f573a91b8a043b3715856e7007d0d1a031fa84395962682b3bf8c787a"
+      },
+      {
+        "record_id": "S102",
+        "first_line": 1204,
+        "last_line": 1207,
+        "heading": "### Automated evidence",
+        "chars": 169,
+        "sha256_utf8": "17017a8ef1b94fc161ac7ae0adf3dea4a6cdf52d30e247a867fedad3e494dfe2"
+      },
+      {
+        "record_id": "S103",
+        "first_line": 1208,
+        "last_line": 1212,
+        "heading": "### Итог",
+        "chars": 300,
+        "sha256_utf8": "8d94382c7c639b52d162890901ca7f4288a76f655021f5631ef3acccb380e9b3"
+      },
+      {
+        "record_id": "S104",
+        "first_line": 1213,
+        "last_line": 1216,
+        "heading": "## 2026-09-30 — TASK 147B: FAILED RUN TERMINAL ASSISTANT PERSISTENCE — DONE",
+        "chars": 216,
+        "sha256_utf8": "45d8e1940c6d0bbf0630698f954b667ca2fec9e381b42005b15845cf3fd94b0a"
+      },
+      {
+        "record_id": "S105",
+        "first_line": 1217,
+        "last_line": 1228,
+        "heading": "### Реализация",
+        "chars": 767,
+        "sha256_utf8": "322f918d2a72ee3ecdda2d879cd8499800d173a3480475184ef5a922015bfa82"
+      },
+      {
+        "record_id": "S106",
+        "first_line": 1229,
+        "last_line": 1247,
+        "heading": "### Regression tests",
+        "chars": 843,
+        "sha256_utf8": "31a07943f16b7aa4d26d9dfd07901f241a3a781b372ffe1d354755de82e265b6"
+      },
+      {
+        "record_id": "S107",
+        "first_line": 1248,
+        "last_line": 1254,
+        "heading": "### Статус",
+        "chars": 186,
+        "sha256_utf8": "733ad0ef63a2ac07fcf989fa90894f60f5ee77dceecd55392c6df7dfe075d650"
+      },
+      {
+        "record_id": "S108",
+        "first_line": 1255,
+        "last_line": 1258,
+        "heading": "## 2026-09-30 — TASK 147A: CHAT CREATE ATOMICITY / ORPHAN CLEANUP — DONE",
+        "chars": 196,
+        "sha256_utf8": "b72107e303fdfc7f44036823b64cdb132b3667e4b25815be84d794ccfc35f2b0"
+      },
+      {
+        "record_id": "S109",
+        "first_line": 1259,
+        "last_line": 1270,
+        "heading": "### Реализация",
+        "chars": 670,
+        "sha256_utf8": "8f129527274974babf22a161c1ffdcd1c2a73b22478499c22848eb593c0576e0"
+      },
+      {
+        "record_id": "S110",
+        "first_line": 1271,
+        "last_line": 1288,
+        "heading": "### Regression tests",
+        "chars": 616,
+        "sha256_utf8": "4bdd4959307970a325c6d00620524e0558634257d1ec5dcbf87faffe21f45382"
+      },
+      {
+        "record_id": "S111",
+        "first_line": 1289,
+        "last_line": 1292,
+        "heading": "### Live storage cleanup",
+        "chars": 291,
+        "sha256_utf8": "76f3e46df513db80dfce6fe74d330062f794f9677fd549b82f0cb995a34614b5"
+      },
+      {
+        "record_id": "S112",
+        "first_line": 1293,
+        "last_line": 1299,
+        "heading": "### Статус",
+        "chars": 185,
+        "sha256_utf8": "96996fe2980f55dcb84897aade686bb6f0e2ce2478f46107175415e24ffbf9d4"
+      },
+      {
+        "record_id": "S113",
+        "first_line": 1300,
+        "last_line": 1303,
+        "heading": "## 2026-09-30 — TASK 147: CHAT STORAGE / IDENTITY / WORKING REPRESENTATION AUDIT — DONE",
+        "chars": 155,
+        "sha256_utf8": "0d87ea234793fed24bb51b05396511ff54252b68df03763c5e2c226daab25005"
+      },
+      {
+        "record_id": "S114",
+        "first_line": 1304,
+        "last_line": 1315,
+        "heading": "### Проверено",
+        "chars": 1157,
+        "sha256_utf8": "3a04926b90f53392da8b009953da4600520cddb01ea9bac5aad910f97606ef7a"
+      },
+      {
+        "record_id": "S115",
+        "first_line": 1316,
+        "last_line": 1319,
+        "heading": "### Finding A — orphan Chat create durability",
+        "chars": 352,
+        "sha256_utf8": "4649e524b2819e8ec85ff31127e01f9969ea882a85acb32afa74403937750271"
+      },
+      {
+        "record_id": "S116",
+        "first_line": 1320,
+        "last_line": 1323,
+        "heading": "### Finding B — FAILED RUN terminal Chat persistence",
+        "chars": 499,
+        "sha256_utf8": "67d0308df80cd55b6747536fa6f79e516266528b140936d1acce5373d71102a0"
+      },
+      {
+        "record_id": "S117",
+        "first_line": 1324,
+        "last_line": 1328,
+        "heading": "### Итог",
+        "chars": 210,
+        "sha256_utf8": "cbceaebcbe3b3d1e9b66497a5098c669bc95fb878ccc8f6683584a18c9590121"
+      },
+      {
+        "record_id": "S118",
+        "first_line": 1329,
+        "last_line": 1332,
+        "heading": "## 2026-09-30 — TASK 146: RUN STORE EXTERNAL-LOCK RECOVERY — DONE + LIVE VERIFIED",
+        "chars": 340,
+        "sha256_utf8": "d4c47f3c2eec63158ae96c17ea30bcc48f48fb77904d584f8d71d0de30ec19ce"
+      },
+      {
+        "record_id": "S119",
+        "first_line": 1333,
+        "last_line": 1345,
+        "heading": "### Реализация",
+        "chars": 1369,
+        "sha256_utf8": "61d4f931d0a97e95e09763d4e7b2c536920f71399e1886aa230b16bb6b40c7f1"
+      },
+      {
+        "record_id": "S120",
+        "first_line": 1346,
+        "last_line": 1364,
+        "heading": "### Проверки",
+        "chars": 647,
+        "sha256_utf8": "21f8baec244064f8fd5dfd5be972d75a4ab0d6138e0a4740c29055c4186c6df3"
+      },
+      {
+        "record_id": "S121",
+        "first_line": 1365,
+        "last_line": 1385,
+        "heading": "### Windows integration proof",
+        "chars": 709,
+        "sha256_utf8": "c98bd77949b6a16a1a5d99b8a8a99ae15d3d33dfb208aed37ca97ac40662978a"
+      },
+      {
+        "record_id": "S122",
+        "first_line": 1386,
+        "last_line": 1405,
+        "heading": "### Cleanup диагностических артефактов",
+        "chars": 738,
+        "sha256_utf8": "0d4c51fea3784384b3abea25a7d93702e52636f8f2cdb5f23026beac269bb0cd"
+      },
+      {
+        "record_id": "S123",
+        "first_line": 1406,
+        "last_line": 1439,
+        "heading": "### Live verification — T-015 / R-015",
+        "chars": 992,
+        "sha256_utf8": "72f2e90867c1a6ce6af6cc0077f7603412d2077ff34e39445e216a71cb2dfab9"
+      },
+      {
+        "record_id": "S124",
+        "first_line": 1440,
+        "last_line": 1455,
+        "heading": "### Отдельный lifecycle finding из T-015",
+        "chars": 1245,
+        "sha256_utf8": "23f6b3c774f3a0d896a1c8cb0c041d963583dbe02b80488bfb8eb69f80f1cf06"
+      },
+      {
+        "record_id": "S125",
+        "first_line": 1456,
+        "last_line": 1459,
+        "heading": "## 2026-09-30 — TASK 145: RUN STORE / AUDIT PERMISSIONERROR ROOT-CAUSE AUDIT — DONE",
+        "chars": 310,
+        "sha256_utf8": "1674389bee390f9fe09b7f8c350ba26a2a224f17235cf24eae97fa3d3611b25e"
+      },
+      {
+        "record_id": "S126",
+        "first_line": 1460,
+        "last_line": 1497,
+        "heading": "### Доказанный root cause",
+        "chars": 1537,
+        "sha256_utf8": "5e63a45b687b479e4cb7087cd7795364508901749a9f41351a7a83ef36d4e8a2"
+      },
+      {
+        "record_id": "S127",
+        "first_line": 1498,
+        "last_line": 1508,
+        "heading": "### Что это означает для TASK 143",
+        "chars": 286,
+        "sha256_utf8": "c0483239f14bf219c040374cfea8cc97cb689bfed127382cd7e555ca0fa40b67"
+      },
+      {
+        "record_id": "S128",
+        "first_line": 1509,
+        "last_line": 1537,
+        "heading": "### Cleanup review тестовых артефактов",
+        "chars": 1061,
+        "sha256_utf8": "687b3ac5efb438e1bc741e6e7c03e18c93abb8ead659dd2bea600a30dd9340b5"
+      },
+      {
+        "record_id": "S129",
+        "first_line": 1538,
+        "last_line": 1548,
+        "heading": "### Следующий шаг",
+        "chars": 491,
+        "sha256_utf8": "b662e1c283fb7f2d0a8dd2f4991732d43aa009bf86c16180fcbfeade29403d32"
+      },
+      {
+        "record_id": "S130",
+        "first_line": 1549,
+        "last_line": 1552,
+        "heading": "## 2026-09-30 — TASK 144: STABILIZATION MASTER AUDIT / RECOVERY PLAN — DOCUMENTATION ONLY",
+        "chars": 383,
+        "sha256_utf8": "f93df8fc8f41c8a631c267bcfc455ffc99323a73ddac7fdf3b39d2ceea91b333"
+      },
+      {
+        "record_id": "S131",
+        "first_line": 1553,
+        "last_line": 1592,
+        "heading": "### Фактическая карта CURRENT перед аудитом",
+        "chars": 1555,
+        "sha256_utf8": "a9f2bd3c7b28e7485c208c21c61a4c6062f61c9bdabfbf0e4c373bd68f1c6900"
+      },
+      {
+        "record_id": "S132",
+        "first_line": 1593,
+        "last_line": 1601,
+        "heading": "### Что live уже доказал",
+        "chars": 1319,
+        "sha256_utf8": "b4e7c3a3c0f554829a64bce52e6fbd0023b71a02e2d2eedba5f4973b0137ee1e"
+      },
+      {
+        "record_id": "S133",
+        "first_line": 1602,
+        "last_line": 1620,
+        "heading": "### Решение",
+        "chars": 913,
+        "sha256_utf8": "0f8d63972a00f9ca66676ce258820cbabcc4d1441660c095d5ad37257f51dea5"
+      },
+      {
+        "record_id": "S134",
+        "first_line": 1621,
+        "last_line": 1645,
+        "heading": "## 2026-09-30 — TASK 143: RUN STORE PERMISSIONERROR HARDENING — DONE ПО CODE/TESTS; LIVE FAIL CONFIRMED",
+        "chars": 1808,
+        "sha256_utf8": "2b47fb4273619158d9817161604b2ac7c6656a7dfac7fde95a6b34b61857c834"
+      },
+      {
+        "record_id": "S135",
+        "first_line": 1646,
+        "last_line": 1674,
+        "heading": "## 2026-09-30 — TASK 142: EXISTING TARGET / ALREADY_SATISFIED — DONE ПО CODE/TESTS",
+        "chars": 1852,
+        "sha256_utf8": "e4100fea127e1b368bec4cba1e8bb1a62eed40946ee500a52a8111b64680e25d"
+      },
+      {
+        "record_id": "S136",
+        "first_line": 1675,
+        "last_line": 1695,
+        "heading": "## 2026-09-30 — TASK 141: REPLAN OBLIGATION-CHANGE VALIDATION — DONE ПО CODE/TESTS",
+        "chars": 1572,
+        "sha256_utf8": "3dfc19935d5d2ea340a1c3108f9c89e8f2e23647b5e211913c2ca7907247829b"
+      },
+      {
+        "record_id": "S137",
+        "first_line": 1696,
+        "last_line": 1724,
+        "heading": "## 2026-09-30 — TASK 140: NON-PERSISTENCE STAGE EVIDENCE — DONE ПО CODE/TESTS",
+        "chars": 1723,
+        "sha256_utf8": "f95d508d09b47f29bc15aded55f6a5c2d4b339fc7f0c08f0d0c51576f50dc2cb"
+      },
+      {
+        "record_id": "S138",
+        "first_line": 1725,
+        "last_line": 1726,
+        "heading": "## 2026-09-29 — TASK 138–139: PERSISTENCE AUTO-ADVANCE И EXECUTOR CONTEXT POLICY V1",
+        "chars": 87,
+        "sha256_utf8": "613b5ebb2b00d45ebb92faefa3b670839c17adfeae81c40764e61742fdc7ce47"
+      },
+      {
+        "record_id": "S139",
+        "first_line": 1727,
+        "last_line": 1730,
+        "heading": "### Причина",
+        "chars": 408,
+        "sha256_utf8": "913776a2d08e5251dd5bc68820386094b9e8471badc3d2af84703d4fe9487519"
+      },
+      {
+        "record_id": "S140",
+        "first_line": 1731,
+        "last_line": 1737,
+        "heading": "### TASK 138 — исправление перехода stage",
+        "chars": 578,
+        "sha256_utf8": "6b85e8758b801ecfc4b26db6fe7b53280e6d93eb9a2ba79c50e47f1c5b9d0696"
+      },
+      {
+        "record_id": "S141",
+        "first_line": 1738,
+        "last_line": 1761,
+        "heading": "### LIVE T-011 / R-011",
+        "chars": 1062,
+        "sha256_utf8": "3bff9c602a1c944fd31b4f0dff23332b3a895813f88df7e9f6181c008bb9241c"
+      },
+      {
+        "record_id": "S142",
+        "first_line": 1762,
+        "last_line": 1776,
+        "heading": "### TASK 139 — Executor Context Policy V1",
+        "chars": 1242,
+        "sha256_utf8": "e8a64ac7e8f4d8b0f57c43da842fd33dec3f1dd88f238417495876ef09dded4c"
+      },
+      {
+        "record_id": "S143",
+        "first_line": 1777,
+        "last_line": 1795,
+        "heading": "### Documentation Impact",
+        "chars": 714,
+        "sha256_utf8": "13fc637c9047f8400c2d634946de0574c021efa2be2d7069a2ed10994e6f67c0"
+      },
+      {
+        "record_id": "S144",
+        "first_line": 1796,
+        "last_line": 1799,
+        "heading": "## 2026-09-29 — TASK 132–137: RUN STORE V2, PLANNER HARDENING И DOCUMENTATION SYNC",
+        "chars": 294,
+        "sha256_utf8": "dc600bebf5577834cc6aa33ed01bfe885d5eb66bf44a50d93821f8fe03dc65ca"
+      },
+      {
+        "record_id": "S145",
+        "first_line": 1800,
+        "last_line": 1813,
+        "heading": "### Реализовано в серии 132–136",
+        "chars": 1198,
+        "sha256_utf8": "d35a0899e25a882a6e615ec610eeb97b6a6b86bef51387173c0b6181662c5985"
+      },
+      {
+        "record_id": "S146",
+        "first_line": 1814,
+        "last_line": 1831,
+        "heading": "### LIVE T-002 / R-002",
+        "chars": 432,
+        "sha256_utf8": "f602a41b5fbb3d35c6cfd9c352c6ac8e0bbf0a64991eef996a07bfb43a1396ca"
+      },
+      {
+        "record_id": "S147",
+        "first_line": 1832,
+        "last_line": 1847,
+        "heading": "### LIVE T-003 / R-003",
+        "chars": 893,
+        "sha256_utf8": "4e987c3efad10197d314691557829f6dc05029e81b83bf6e433eb3a2a18e6126"
+      },
+      {
+        "record_id": "S148",
+        "first_line": 1848,
+        "last_line": 1852,
+        "heading": "## 2026-09-24 — GLOBAL DOCUMENTATION RECONCILIATION",
+        "chars": 602,
+        "sha256_utf8": "73fe81e784081eff3da620095a761b2f28fe9129f4c91283f7652309125443a9"
+      },
+      {
+        "record_id": "S149",
+        "first_line": 1853,
+        "last_line": 1854,
+        "heading": "## 2026-09-20 — TASK DOC-MULTI-SYNC-03",
+        "chars": 42,
+        "sha256_utf8": "4304153e16c0ea1586b241005a95523bc4f08191179f4a0f6aedbcf22f4d631f"
+      },
+      {
+        "record_id": "S150",
+        "first_line": 1855,
+        "last_line": 1858,
+        "heading": "### Цель",
+        "chars": 135,
+        "sha256_utf8": "8bdb8ad31135c1543251b0a29229540571b621e44a899fa7f5cddfa74b41fe14"
+      },
+      {
+        "record_id": "S151",
+        "first_line": 1859,
+        "last_line": 1869,
+        "heading": "### Фактически выполнено",
+        "chars": 871,
+        "sha256_utf8": "32fe0c4b945e4e8e01e9887567f861cb7e223228bda214eed7dc71f9cefb4156"
+      },
+      {
+        "record_id": "S152",
+        "first_line": 1870,
+        "last_line": 1873,
+        "heading": "### Статус реализации",
+        "chars": 189,
+        "sha256_utf8": "5eb3c44bb82e98f5f849ba0d0eb9c6804cdf544f5c4f94a30349eb36c1a3a60f"
+      },
+      {
+        "record_id": "S153",
+        "first_line": 1874,
+        "last_line": 1881,
+        "heading": "### Проверено в этом RUN",
+        "chars": 327,
+        "sha256_utf8": "5fb2f8aa7841609adf5fbf0614da37ff742462eb878c0293dfe12b60b01d0776"
+      },
+      {
+        "record_id": "S154",
+        "first_line": 1882,
+        "last_line": 1883,
+        "heading": "## 2026-09-20 — TASK DOC-MULTI-SYNC-01",
+        "chars": 42,
+        "sha256_utf8": "55bdbceb3cb908e1109ce2fc11c5ad0df3fbf389166af12dba0086e8980eb9c9"
+      },
+      {
+        "record_id": "S155",
+        "first_line": 1884,
+        "last_line": 1887,
+        "heading": "### Цель",
+        "chars": 150,
+        "sha256_utf8": "30ad563be3c8dd2483d5103bf971ed60961fdd206cda13cfa7638c832146a3ac"
+      },
+      {
+        "record_id": "S156",
+        "first_line": 1888,
+        "last_line": 1896,
+        "heading": "### Фактически выполнено",
+        "chars": 636,
+        "sha256_utf8": "37d7381dce680932f746aeacd3348ed9dc4e3d74a34d391dc4ceacbe0b41cf5e"
+      },
+      {
+        "record_id": "S157",
+        "first_line": 1897,
+        "last_line": 1904,
+        "heading": "### Проверено в этом RUN",
+        "chars": 304,
+        "sha256_utf8": "79dd0895366a34187589c990d244fa67787433e2888cd867b66d2b6b5afc7190"
+      },
+      {
+        "record_id": "S158",
+        "first_line": 1905,
+        "last_line": 1906,
+        "heading": "## 2026-09-19 — Нормализация канонического журнала",
+        "chars": 54,
+        "sha256_utf8": "bdc8f48c47e88a1aeb06e06cf3e5b7398331e4c35896575b114cfe4c74acf642"
+      },
+      {
+        "record_id": "S159",
+        "first_line": 1907,
+        "last_line": 1920,
+        "heading": "### Причина",
+        "chars": 343,
+        "sha256_utf8": "5d0695ebccfa808cbec0c11020742e6d580488ab859236bba8ea63e6b9a6d417"
+      },
+      {
+        "record_id": "S160",
+        "first_line": 1921,
+        "last_line": 1932,
+        "heading": "### Решение",
+        "chars": 254,
+        "sha256_utf8": "275004993bb5bba346b3d5342072e405a890917b2de8726b60fbea7c07f1bc0d"
+      },
+      {
+        "record_id": "S161",
+        "first_line": 1933,
+        "last_line": 1938,
+        "heading": "### Архитектурный вывод",
+        "chars": 124,
+        "sha256_utf8": "ee6b2bce58ba8298c7f19e5f49fac36c43d458e48bfced05057ea7f322687a02"
+      },
+      {
+        "record_id": "S162",
+        "first_line": 1939,
+        "last_line": 1944,
+        "heading": "## 2026-09-19 — ОБНАРУЖЕННЫЙ GAP: NO-TOOL STOP",
+        "chars": 86,
+        "sha256_utf8": "c699a02a634b0477c692bd9584ce50981e9a80001d11e3a88aee6618ca484439"
+      },
+      {
+        "record_id": "S163",
+        "first_line": 1945,
+        "last_line": 1958,
+        "heading": "### Наблюдаемый факт",
+        "chars": 241,
+        "sha256_utf8": "1ec00ee236811684e4ed11ac5d0b9aea9e23a7b6993a26f1074759649a61473f"
+      },
+      {
+        "record_id": "S164",
+        "first_line": 1959,
+        "last_line": 1969,
+        "heading": "### Архитектурное значение",
+        "chars": 388,
+        "sha256_utf8": "c31234e6944aa3d68ce9222368ad12a2d0d3c789083baa01c612d1c9e8793814"
+      },
+      {
+        "record_id": "S165",
+        "first_line": 1970,
+        "last_line": 1983,
+        "heading": "### Статус",
+        "chars": 326,
+        "sha256_utf8": "93dc09e273688873bae088bb4e4824487e761de1e5b47758231f381b32238d44"
+      },
+      {
+        "record_id": "S166",
+        "first_line": 1984,
+        "last_line": 1996,
+        "heading": "## 2026-09-19 — GUARD P1: SERVER-SIDE SUPERVISOR",
+        "chars": 279,
+        "sha256_utf8": "845aa247f529d8bbbdd461126a66d4e214e7e4fa722a0175ba0baaf97cd4fd4d"
+      },
+      {
+        "record_id": "S167",
+        "first_line": 1997,
+        "last_line": 2004,
+        "heading": "### Назначение",
+        "chars": 321,
+        "sha256_utf8": "de5cfb080ca17725f020fc2857375e5f694b3386416fc63200e8fe242a5c089a"
+      },
+      {
+        "record_id": "S168",
+        "first_line": 2005,
+        "last_line": 2029,
+        "heading": "### Физический тест 1 — REPEATED READ",
+        "chars": 404,
+        "sha256_utf8": "4c6aff545fbc0a4296dcc7df34768e923aeca7e60f56d1731f8c1a4aa173c6fb"
+      },
+      {
+        "record_id": "S169",
+        "first_line": 2030,
+        "last_line": 2056,
+        "heading": "### Физический тест 2 — POSSIBLE DUPLICATE CREATE",
+        "chars": 682,
+        "sha256_utf8": "065225781a7165fc078e795b76d3b0d78bed04124b8bfad0b5b911c0afec70d9"
+      },
+      {
+        "record_id": "S170",
+        "first_line": 2057,
+        "last_line": 2064,
+        "heading": "### Известное ограничение GUARD P1",
+        "chars": 368,
+        "sha256_utf8": "3a908f3012d5bdd1af86dd53a165c0a6127cae02dbee690b132c03c957e34fc3"
+      },
+      {
+        "record_id": "S171",
+        "first_line": 2065,
+        "last_line": 2085,
+        "heading": "### Текущий статус GUARD P1",
+        "chars": 490,
+        "sha256_utf8": "5ed69e5bb58cab7d01ede794cf3882e66464b00d97ff7043f646f9ca9a99e3c8"
+      },
+      {
+        "record_id": "S172",
+        "first_line": 2086,
+        "last_line": 2091,
+        "heading": "## 2026-09-19 — TASK DOC-SYNC-02A: Roadmap + Task Registry",
+        "chars": 107,
+        "sha256_utf8": "a76a6849abdfe741d35ba16472a398e188d4ae62e0159217720fe0acfb96177c"
+      },
+      {
+        "record_id": "S173",
+        "first_line": 2092,
+        "last_line": 2098,
+        "heading": "### Цель",
+        "chars": 124,
+        "sha256_utf8": "3fb9e8b38d9b715aa827e0ed742327c905963c7cde64e3d8bc36e409697586e6"
+      },
+      {
+        "record_id": "S174",
+        "first_line": 2099,
+        "last_line": 2114,
+        "heading": "### Фактический trace",
+        "chars": 161,
+        "sha256_utf8": "09a6207a86b1ef200c7c248d512171616adaa1ad8e7f90859c29a4978b358772"
+      },
+      {
+        "record_id": "S175",
+        "first_line": 2115,
+        "last_line": 2124,
+        "heading": "### Основные исправления",
+        "chars": 587,
+        "sha256_utf8": "bb7f81612436991fa26a3bf85fd315da045b9f7705fe187aecd7d4952bf518c9"
+      },
+      {
+        "record_id": "S176",
+        "first_line": 2125,
+        "last_line": 2130,
+        "heading": "### Результат",
+        "chars": 99,
+        "sha256_utf8": "dfb2e913563058bda37508965e425fc2a6756a9156f691f0d1e40daf47ca225b"
+      },
+      {
+        "record_id": "S177",
+        "first_line": 2131,
+        "last_line": 2132,
+        "heading": "## 2026-09-19 — TASK DOC-SYNC-01: первый большой проход синхронизации документации",
+        "chars": 86,
+        "sha256_utf8": "44e12da033cd9914427a45e0cde0918578f07dbbbc5da2868a0fe1e9547f5dc8"
+      },
+      {
+        "record_id": "S178",
+        "first_line": 2133,
+        "last_line": 2136,
+        "heading": "### Цель",
+        "chars": 154,
+        "sha256_utf8": "1ae1d3e003c3aeb37f044c79d3aeb0495347e5f1391b40aefee9b3e97b103315"
+      },
+      {
+        "record_id": "S179",
+        "first_line": 2137,
+        "last_line": 2144,
+        "heading": "### Затронутые документы",
+        "chars": 210,
+        "sha256_utf8": "886ef006c16686d95e064f30de77ee01e8c1ac944cf00fa392395f391a331c37"
+      },
+      {
+        "record_id": "S180",
+        "first_line": 2145,
+        "last_line": 2154,
+        "heading": "### Что было сделано",
+        "chars": 177,
+        "sha256_utf8": "ff91a2ce91bf56679aa4cc47f9bdf457bb36885b5b5e3291e082a407cefd5f86"
+      },
+      {
+        "record_id": "S181",
+        "first_line": 2155,
+        "last_line": 2168,
+        "heading": "### Важное историческое замечание",
+        "chars": 317,
+        "sha256_utf8": "bdb809044cefc73d9d127e9094999c48637bc31f3ed0c998b9be5b8d1adbe64a"
+      },
+      {
+        "record_id": "S182",
+        "first_line": 2169,
+        "last_line": 2178,
+        "heading": "### Последующий review",
+        "chars": 265,
+        "sha256_utf8": "502d187816b2adac5684de9873f8c795e7eab323821d97de281e5b44bb775cb1"
+      },
+      {
+        "record_id": "S183",
+        "first_line": 2179,
+        "last_line": 2180,
+        "heading": "## 2026-09-18 — TASK DOC-04: Обязательный регламент Ultra и автоматическая загрузка правил",
+        "chars": 94,
+        "sha256_utf8": "7e6270bf2bcccf5d97695e89cdff3d63a74658337153852bdc5733a4c8387fbb"
+      },
+      {
+        "record_id": "S184",
+        "first_line": 2181,
+        "last_line": 2184,
+        "heading": "### Цель",
+        "chars": 265,
+        "sha256_utf8": "6e7e4e1e379bcf4b5b579ec32391d86705a22c99f3034701b0f6790f9b5e8174"
+      },
+      {
+        "record_id": "S185",
+        "first_line": 2185,
+        "last_line": 2193,
+        "heading": "### Изменённые файлы",
+        "chars": 365,
+        "sha256_utf8": "cb8310f0f1f4eb11058ac984b5a7940f7d6f97f39c5d0f3e34ee073a144a28fc"
+      },
+      {
+        "record_id": "S186",
+        "first_line": 2194,
+        "last_line": 2207,
+        "heading": "### Что реализовано",
+        "chars": 853,
+        "sha256_utf8": "e367ca332b2049f6897b75a4601311f4e38471dbbdefbf1fdcf6c619ac7a1ec7"
+      },
+      {
+        "record_id": "S187",
+        "first_line": 2208,
+        "last_line": 2217,
+        "heading": "### Проверка",
+        "chars": 585,
+        "sha256_utf8": "a383e5e4329cdc3662072241c36056e9bce6f8daf13fae634c7071ba0a4ae3ec"
+      },
+      {
+        "record_id": "S188",
+        "first_line": 2218,
+        "last_line": 2221,
+        "heading": "### Результат",
+        "chars": 233,
+        "sha256_utf8": "d1bc3f24f57568591f9ef9ef0b7b6bf6ac6026bf0e295654b89997fee736b040"
+      },
+      {
+        "record_id": "S189",
+        "first_line": 2222,
+        "last_line": 2228,
+        "heading": "### Известные проблемы",
+        "chars": 210,
+        "sha256_utf8": "36a6d71ba2b44419a87a4ebdf98447d9facede8e8bdfbdb53d78387944c3e3cd"
+      },
+      {
+        "record_id": "S190",
+        "first_line": 2229,
+        "last_line": 2232,
+        "heading": "### Следующий шаг",
+        "chars": 95,
+        "sha256_utf8": "c017ed618907bf5fc118f0a24d161d4b3621e5530064f3b3b7428e1d0520b49e"
+      },
+      {
+        "record_id": "S191",
+        "first_line": 2233,
+        "last_line": 2238,
+        "heading": "### Требуется restart",
+        "chars": 105,
+        "sha256_utf8": "ee33e8c0a20ee92fc542aea8c0e3049aef86fc9ad02903d2832a99ed051632d0"
+      },
+      {
+        "record_id": "S192",
+        "first_line": 2239,
+        "last_line": 2240,
+        "heading": "## 2026-09-18 — TASK DOC-02: Упрощение системы нумерации и реестра задач",
+        "chars": 76,
+        "sha256_utf8": "2850588f367905e8d86fc96bfc63f8bb294674305935fd515c27791635b60251"
+      },
+      {
+        "record_id": "S193",
+        "first_line": 2241,
+        "last_line": 2244,
+        "heading": "### Цель",
+        "chars": 289,
+        "sha256_utf8": "9e8261b94d5726870e8ad34555cd644b4d7bcece2bf24b780a5d56249818b47d"
+      },
+      {
+        "record_id": "S194",
+        "first_line": 2245,
+        "last_line": 2249,
+        "heading": "### Изменённые файлы",
+        "chars": 192,
+        "sha256_utf8": "b4bf10b3d5b55cc63cff9ab5b3535db7a1fd48e8994a3d3800f43484fe88c588"
+      },
+      {
+        "record_id": "S195",
+        "first_line": 2250,
+        "last_line": 2258,
+        "heading": "### Что реализовано",
+        "chars": 442,
+        "sha256_utf8": "4401967daebe3d9a1ef7762369323a53ad50918446622e50f5645296d04795ca"
+      },
+      {
+        "record_id": "S196",
+        "first_line": 2259,
+        "last_line": 2265,
+        "heading": "### Проверка",
+        "chars": 275,
+        "sha256_utf8": "161f134ceb117190f86b6d9290ffbe3fc17baf9039c71338338d4ab9851113a0"
+      },
+      {
+        "record_id": "S197",
+        "first_line": 2266,
+        "last_line": 2269,
+        "heading": "### Результат",
+        "chars": 234,
+        "sha256_utf8": "089e29b9a1661ba1bfb4749656cc08aa823fa05bc55268f86871737004d0a041"
+      },
+      {
+        "record_id": "S198",
+        "first_line": 2270,
+        "last_line": 2276,
+        "heading": "### Известные проблемы",
+        "chars": 206,
+        "sha256_utf8": "9772750d84b65060dc22d26fa1304a44b241bef81e7625cff602ed1d4f45eb41"
+      },
+      {
+        "record_id": "S199",
+        "first_line": 2277,
+        "last_line": 2282,
+        "heading": "### Следующий шаг",
+        "chars": 102,
+        "sha256_utf8": "ed7257353fcdddadaac16ac90a50fe77dc2c44219e9d135d73fae2b3b8f59fae"
+      },
+      {
+        "record_id": "S200",
+        "first_line": 2283,
+        "last_line": 2284,
+        "heading": "## 2026-09-18 — TASK DOC-01: Создание системы документации проекта",
+        "chars": 70,
+        "sha256_utf8": "74b0666101d7d4e3d5fdc8c9f9645d46b6913bdda5bec49c1c67bca9b298a74c"
+      },
+      {
+        "record_id": "S201",
+        "first_line": 2285,
+        "last_line": 2288,
+        "heading": "### Цель",
+        "chars": 162,
+        "sha256_utf8": "859a764b5f9f0fc6a747f83d591128f19dcc4e02d94c4041db8a6d6ee984db54"
+      },
+      {
+        "record_id": "S202",
+        "first_line": 2289,
+        "last_line": 2299,
+        "heading": "### Изменённые файлы",
+        "chars": 431,
+        "sha256_utf8": "0ad04e7bc059362526b4bbe02daa19860ea798453f3d39f3ea136cd27f905d19"
+      },
+      {
+        "record_id": "S203",
+        "first_line": 2300,
+        "last_line": 2311,
+        "heading": "### Что реализовано",
+        "chars": 523,
+        "sha256_utf8": "6b12489fa60cc3e42c81b2af2532e12a70f554590f496a46276eeba5c66c4cb1"
+      },
+      {
+        "record_id": "S204",
+        "first_line": 2312,
+        "last_line": 2320,
+        "heading": "### Проверка",
+        "chars": 357,
+        "sha256_utf8": "b26a3807bd43ee7a6449d624ac8f55db9a200f663161bd4e9615e7838d45f14d"
+      },
+      {
+        "record_id": "S205",
+        "first_line": 2321,
+        "last_line": 2324,
+        "heading": "### Результат",
+        "chars": 215,
+        "sha256_utf8": "346a2940b61ff95b2ae9accb2ba95cad328b31ad3bf144398fb70845a1ccf72d"
+      },
+      {
+        "record_id": "S206",
+        "first_line": 2325,
+        "last_line": 2331,
+        "heading": "### Известные проблемы",
+        "chars": 205,
+        "sha256_utf8": "6f6b6cf4381dd47d4a305a2617c3a51dd233cf9eb51dc0ac218ef759eaa488db"
+      },
+      {
+        "record_id": "S207",
+        "first_line": 2332,
+        "last_line": 2337,
+        "heading": "### Следующий шаг",
+        "chars": 101,
+        "sha256_utf8": "4d96aedfb48940223660ecea382e4cf429460b31b9b105d133ddde8ee83c5c87"
+      },
+      {
+        "record_id": "S208",
+        "first_line": 2338,
+        "last_line": 2354,
+        "heading": "## Исторический итог (инфраструктура)",
+        "chars": 846,
+        "sha256_utf8": "433ba25a6a1429d8ff52d37c996e04583df2fa55b5a0099914d8c17c7d144481"
+      },
+      {
+        "record_id": "S209",
+        "first_line": 2355,
+        "last_line": 2366,
+        "heading": "## 2026-10-03 — WA-3.7 CONTROLLED REAL REMOTE TRANSPORT-DISCONNECT — M002 VERIFIED / M003 CLOSEOUT",
+        "chars": 1746,
+        "sha256_utf8": "79d43bf9bb058d153bb0f5d93e55238981d555f16f5cca6d4902b51c56e0a24c"
+      },
+      {
+        "record_id": "S210",
+        "first_line": 2367,
+        "last_line": 2370,
+        "heading": "### WA-3 final reconciliation after WA-3.7 fresh reopen",
+        "chars": 583,
+        "sha256_utf8": "e36b1020b580dd227e9eac19f36bbc999d75be0bfacf236416cda8606bdfeb3e"
+      },
+      {
+        "record_id": "S211",
+        "first_line": 2371,
+        "last_line": 2382,
+        "heading": "## 2026-10-04 — Web Alarm RC-4 / CLAUDE-WA-006 — DONE / VERIFIED",
+        "chars": 1466,
+        "sha256_utf8": "442cdfd39eec2d5743b8ee18348788ef11574b5a7e19cb426ea75b1d3a3477de"
+      },
+      {
+        "record_id": "S212",
+        "first_line": 2383,
+        "last_line": 2386,
+        "heading": "## 2026-10-09 — RC-5 / CLAUDE-WA-016 — DONE / VERIFIED [AGENT: Claude] [VERIFIER: ChatGPT independent runtime]",
+        "chars": 584,
+        "sha256_utf8": "3a8af52286ff17dfff9f0b6e95cbf7b229372900cf7c8894a6477717f7ad45a5"
+      },
+      {
+        "record_id": "S213",
+        "first_line": 2387,
+        "last_line": 2390,
+        "heading": "## 2026-10-09 — CLAUDE-WA-017 / F-5/F-6 — DONE / VERIFIED [AGENT: Claude] [VERIFIER: ChatGPT independent runtime]",
+        "chars": 792,
+        "sha256_utf8": "800a062728be2cc470e45b2a86e2887bd56492d986cef4c89b703ab7017847ca"
+      },
+      {
+        "record_id": "S214",
+        "first_line": 2391,
+        "last_line": 2394,
+        "heading": "### 2026-10-10 / RT-002 B2 — approved planning → canonical execution programme",
+        "chars": 949,
+        "sha256_utf8": "e87367ada4df663f90e9a81c0e0169e9df129fd7a8005516f09ba5ce59328d42"
+      },
+      {
+        "record_id": "S215",
+        "first_line": 2395,
+        "last_line": 2404,
+        "heading": "## 2026-10-11 — CODEX-WA4-A-001 / WA4-A — DONE / VERIFIED [AGENT: Codex] [VERIFIER: ChatGPT, GitHub-hosted Windows]",
+        "chars": 1940,
+        "sha256_utf8": "3160b98538b8fe84cfda21881e9fb3f143d04fa107a684c54e3cbfc329027e1b"
+      },
+      {
+        "record_id": "S216",
+        "first_line": 2405,
+        "last_line": 2410,
+        "heading": "## 2026-10-11 — WA4-O Operator UI technical acceptance and planned WA4-R preflight [ARCH: Web Alarm Workspace]",
+        "chars": 1330,
+        "sha256_utf8": "60d97b40af50275686ecdbd7de988a1639d2c77f4b34c6ab55350298a47f74e4"
+      },
+      {
+        "record_id": "S217",
+        "first_line": 2411,
+        "last_line": 2420,
+        "heading": "## 2026-10-24 — CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001 / CHAT-ONLY AMENDMENT — PASS, BOUNDED OFFLINE VERIFIED",
+        "chars": 2608,
+        "sha256_utf8": "f4a3c1087488b016a9a36e729fd0ace6a8cbf7c0405228e2b82e33ef893978a1"
+      },
+      {
+        "record_id": "S218",
+        "first_line": 2421,
+        "last_line": 2423,
+        "heading": "## 2026-10-27 — USER GO / `DOC-WUA-LAUNCH-01@1` — единый запускатель и обязательный возврат TEST→STANDARD",
+        "chars": 1164,
+        "sha256_utf8": "520d0f7a9bbb519662f30e5786a61c7ad881a6a99ca60110cfdb54c9e5cdf2e1"
+      }
+    ]
+  },
+  {
+    "source": "Документация/07_Шаблоны задач, отчётов и решений.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/07_Шаблоны задач, отчётов и решений.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 6,
+        "heading": "# Шаблоны задач, отчётов и архитектурных решений",
+        "chars": 129,
+        "sha256_utf8": "ecc4e21476f61346d0e1de0c2383f58e94ed828f1d0425a9155cfce822d0a1c2"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 7,
+        "last_line": 52,
+        "heading": "## ШАБЛОН TASK",
+        "chars": 2426,
+        "sha256_utf8": "7f8bc03ba2a5455c3f705ea212d774e7ee45de118dc3a9339d446e8ebf3fb503"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 53,
+        "last_line": 71,
+        "heading": "### DOCUMENTATION BLOCK для значимой технической TASK",
+        "chars": 798,
+        "sha256_utf8": "ae6bbe9e38b5fc52d19eb21fd4a2347342dffb1019203c3cedc6bc8f2c12ae9e"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 72,
+        "last_line": 106,
+        "heading": "## ШАБЛОН REPORT",
+        "chars": 1869,
+        "sha256_utf8": "aa3ef7f6b79a781bfc6ce085928e294063a9ac1aa39172e1699cd060cae7caec"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 107,
+        "last_line": 138,
+        "heading": "## ШАБЛОН АРХИТЕКТУРНОГО РЕШЕНИЯ",
+        "chars": 550,
+        "sha256_utf8": "0af444c24f0e6791d10be3b310efe783530d6f711c653eee786e60e4bff1c7bf"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 139,
+        "last_line": 140,
+        "heading": "## ПРИМЕР ИСПОЛЬЗОВАНИЯ",
+        "chars": 25,
+        "sha256_utf8": "eabc95166970cffc1abde9df555ad1519b258324d72efe68a8c3e849cf18ef88"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 141,
+        "last_line": 173,
+        "heading": "### Пример TASK",
+        "chars": 733,
+        "sha256_utf8": "0148e9953018c6b2bc673b5d8fb75f4b21048fe1d20d0c7a0dc33771870b6875"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 174,
+        "last_line": 198,
+        "heading": "### Пример REPORT",
+        "chars": 380,
+        "sha256_utf8": "a70c4e8d2b3b87e1af99db286d4f2ae3ebcaf181488316d579a6a0a761e51740"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 199,
+        "last_line": 205,
+        "heading": "## РЕКОМЕНДАЦИИ",
+        "chars": 324,
+        "sha256_utf8": "e5c406f95cbbe8fd0aa902d32f749c58305fcd2641a5336fc288428f94b52bff"
+      }
+    ]
+  },
+  {
+    "source": "Документация/08_Старт.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/08_Старт.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 15,
+        "heading": "Преамбула",
+        "chars": 5585,
+        "sha256_utf8": "5fbdb590480a2a2c77b8a1f284a74874ea372ffcfc154cdafd7bc7a1872e2627"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 16,
+        "last_line": 17,
+        "heading": "# Старт",
+        "chars": 11,
+        "sha256_utf8": "56a4808a9b6f240ae00501c1befc0f5ee15bb7b7525a069649016931b7146bef"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 18,
+        "last_line": 76,
+        "heading": "## ОБЯЗАТЕЛЬНЫЙ ВХОД — GitHub, роли и испытания (решение пользователя 2026-10-21)",
+        "chars": 22361,
+        "sha256_utf8": "52dc7611c53a3ffeb9dbd319d1ec31a4500604490679346ce1da8c245a37ef73"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 77,
+        "last_line": 87,
+        "heading": "### Особый вход: независимый планировщик Круглого стола (INDEPENDENT_PLAN)",
+        "chars": 2014,
+        "sha256_utf8": "cc022acc7505f5bb694cc3cc7ad7d3db6cf75ba3aea5c43c2c041d751691959f"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 88,
+        "last_line": 111,
+        "heading": "## COLD START / FAST ROUTE",
+        "chars": 7020,
+        "sha256_utf8": "1bb722157f1ad841680be325d5acc833b9db866896ab51fa6720f566b5b2f49a"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 112,
+        "last_line": 123,
+        "heading": "### Удалённая работа ChatGPT / аварийная TASK-сессия",
+        "chars": 2072,
+        "sha256_utf8": "a26a52954adee141c19760c4b59b9772b8bc364dc20293785f3e7dfe61fcb201"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 124,
+        "last_line": 134,
+        "heading": "### Нормативный маршрутизатор Rule-ID (кратко)",
+        "chars": 1821,
+        "sha256_utf8": "c0fc2fda150409adffc0a3476f47aa15d118ded1874fee0f71f1ca263173f24e"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 135,
+        "last_line": 165,
+        "heading": "## 1. Карта проекта",
+        "chars": 320,
+        "sha256_utf8": "073b89f7a9b41ea61264fa2faa2ca6986b5dd6bbae02c17312d13cf272023a39"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 166,
+        "last_line": 231,
+        "heading": "## 2. Назначение проекта",
+        "chars": 1504,
+        "sha256_utf8": "c8a79f9572eb3d251a491a756a253c6f8f0d834f03ef5512d3c29ade1468712d"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 232,
+        "last_line": 233,
+        "heading": "## 3. Что читать перед задачей",
+        "chars": 34,
+        "sha256_utf8": "055a5a86e41b053828f0bbc07cfebfe3e9b929999172af9411d5e6359afa6533"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 234,
+        "last_line": 283,
+        "heading": "### Канонический реестр ответственности документов",
+        "chars": 13380,
+        "sha256_utf8": "373213302dc474cbd1ed999363dfce683a4418805fdec9711312a32818a80b9b"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 284,
+        "last_line": 304,
+        "heading": "### Маршрут новой TASK",
+        "chars": 1981,
+        "sha256_utf8": "cd2102ad4792a8d018fc1cc99f8956680b38d2b69b710beaaa0506ba29660765"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 305,
+        "last_line": 354,
+        "heading": "### Обязательный Documentation Workflow",
+        "chars": 5230,
+        "sha256_utf8": "c7d584e1d096693c81a16970f95893bcfdeede949013513373a331f8551149d0"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 355,
+        "last_line": 365,
+        "heading": "## 4. Текущее состояние runtime — короткий ориентир",
+        "chars": 2046,
+        "sha256_utf8": "a9bd33e6b8eb7044b735fbd3cf3c7988fdc7cca5b206402019c309d0eff163fd"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 366,
+        "last_line": 430,
+        "heading": "## 5. SAFE Mode — текущее проверенное состояние",
+        "chars": 1036,
+        "sha256_utf8": "86a2b2f3d1103a673eadc8f3541265d01dbfa5fa2ab052440df16057ad73ece2"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 431,
+        "last_line": 480,
+        "heading": "## 6. Автобэкап",
+        "chars": 950,
+        "sha256_utf8": "b5663b179ff9c7fc52d65c3b54ad2be8ee367439e6f85928a018b42e4dfa3692"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 481,
+        "last_line": 500,
+        "heading": "## 7. Tool limit",
+        "chars": 468,
+        "sha256_utf8": "46318878e6e78180b0236fcdba7b80485958d31061df2c3a152c27add168427b"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 501,
+        "last_line": 529,
+        "heading": "## 8. Важный принцип работы с Ultra",
+        "chars": 567,
+        "sha256_utf8": "758782b467ceda3583b6f036a441d3c40b564d425bf36ff54a3ddc28fb9817ec"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 530,
+        "last_line": 566,
+        "heading": "## 9. Логи важнее отчёта Ultra",
+        "chars": 528,
+        "sha256_utf8": "32684f428dc18e001af11e665e37235baf9655583aaa0b6561a72337c02ef474"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 567,
+        "last_line": 592,
+        "heading": "## 10. Известный важный инцидент",
+        "chars": 576,
+        "sha256_utf8": "91510d38539333d5215b6160f6f7f6ebb8d07207bbabdc592cac1815d9eb016a"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 593,
+        "last_line": 598,
+        "heading": "## 11. Глобальный контекст Ultra",
+        "chars": 198,
+        "sha256_utf8": "04154f110fa89ad9a2738a28d73f41bcad0fceb47695ddb00b6c82d1ec015feb"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 599,
+        "last_line": 620,
+        "heading": "## 12. Текущее состояние Obsidian",
+        "chars": 272,
+        "sha256_utf8": "5b56f0a3a9a175f46dfa15d7c907293810c7eed5a68ff984a3a237579cde2c95"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 621,
+        "last_line": 625,
+        "heading": "## 13. Куда идти за планом",
+        "chars": 486,
+        "sha256_utf8": "34755b1cf8d22fc443dd97f94233a288f85ff8ff21e303fde77e8cfc0cbd2295"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 626,
+        "last_line": 632,
+        "heading": "## 14. Управляемое сжатие контекста — маршрут",
+        "chars": 801,
+        "sha256_utf8": "b40589812d3019a0a94210058280acc9c777034ef81f96734659f5b8925e1ded"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 633,
+        "last_line": 657,
+        "heading": "## 15. Git",
+        "chars": 2818,
+        "sha256_utf8": "3decc849e9d4e17d530e5cc6e0dab4a85a376a9a8fda5053179797ece90ca72c"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 658,
+        "last_line": 680,
+        "heading": "## 16. Python и окружение",
+        "chars": 316,
+        "sha256_utf8": "8c3e57cd8553d23e495ec1594544582401ab5d0138accf85cd04ee203891c4bd"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 681,
+        "last_line": 703,
+        "heading": "## 17. Командная строка",
+        "chars": 354,
+        "sha256_utf8": "c336e498836fc3447716d160687f8765e40ed162d8df6e027d2918563363e021"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 704,
+        "last_line": 724,
+        "heading": "## 18. Стиль работы в этом проекте",
+        "chars": 445,
+        "sha256_utf8": "b2daf180028c568ad62551cdfbd50fb3712d24d07191e5f0048780483558187f"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 725,
+        "last_line": 745,
+        "heading": "## 19. Что делать при команде «Старт»",
+        "chars": 1275,
+        "sha256_utf8": "6a92582b71b0b67ec836d30d8df9475518c34fe7abea559f99aa10407d6cea63"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 746,
+        "last_line": 756,
+        "heading": "## 20. Главный принцип",
+        "chars": 278,
+        "sha256_utf8": "fe4533c197b45236cbcb7d187d7518c45efabbf9bd67756f6e6b5ed8c22781a1"
+      }
+    ]
+  },
+  {
+    "source": "Документация/18_Регламент сопровождения документации.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/18_Регламент сопровождения документации.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 5,
+        "heading": "# Регламент сопровождения документации",
+        "chars": 1607,
+        "sha256_utf8": "06a2f0999c7cc05778000889bd7f289d46ecc105067c22059afea311b95cf4d1"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 6,
+        "last_line": 18,
+        "heading": "### DOC-TEST-START-01@1 — обязательное чтение тестовой архитектуры при каждом новом входе (2026-10-13)",
+        "chars": 4090,
+        "sha256_utf8": "60e27897ff932ff409c810b125b78951255456fc5f8cd9a55f1279fcdd4cdb71"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 19,
+        "last_line": 50,
+        "heading": "## Нормативный индекс — правила и состояния",
+        "chars": 2979,
+        "sha256_utf8": "c3ae86e6972e70f60aab06768e00db92c8fbfb73991597fff58698337f844377"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 51,
+        "last_line": 69,
+        "heading": "## DOC-WUA-LAUNCH-01 — Единая точка запуска Web Alarm Ultra и обязательный возврат из TEST",
+        "chars": 4226,
+        "sha256_utf8": "b59e0de22d6e229b9071e7531dcb7c797bc94fc5bb01f097ff238aacf107a421"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 70,
+        "last_line": 89,
+        "heading": "## DOC-TASK-CLOSEOUT-OWNER-01 — Единый владелец карточек, персональных архивов и закрытия TASK",
+        "chars": 6095,
+        "sha256_utf8": "b9ac26c1a9fe040fac21b36b7c8899da2671f527fa61d13490b8582717053961"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 90,
+        "last_line": 105,
+        "heading": "## DOC-TEST-LIFECYCLE-01 — Длительные тесты, видимый статус и финальная сдача",
+        "chars": 3619,
+        "sha256_utf8": "d6dcfe3020d06264cd6af1d1a79bc9b115835d53b90ef3da8d719d7756ad377a"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 106,
+        "last_line": 125,
+        "heading": "## DOC-VERIFIER-BLOCK4-01 — Независимая проверка и БЛОК 4 персональных TASK",
+        "chars": 4220,
+        "sha256_utf8": "30495a858de73de1c5435b9ae2a08c9ebe07c674779833b260d7b0b5ead5c174"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 126,
+        "last_line": 143,
+        "heading": "## DOC-TASK-READ-SCOPE-01 — Адресная матрица чтения при передаче TASK исполнителю",
+        "chars": 3742,
+        "sha256_utf8": "a8d24e2fdd2bdd3cc53f0a83c7406dab3cec034c4d5fecab8dd170dac11c3a85"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 144,
+        "last_line": 161,
+        "heading": "## DOC-HISTORY-ACCESS-01 — Чтение персональных исторических архивов только под руководством координатора",
+        "chars": 2611,
+        "sha256_utf8": "6f91bb1eb21dcf49c7ffbf4954d8ad3a8b86adad51895cf037c0069f4c6daad5"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 162,
+        "last_line": 177,
+        "heading": "## DOC-TASK-READABLE-01 — Понятные пользователю названия задач и жёлтая метка",
+        "chars": 2413,
+        "sha256_utf8": "2505fed32e12bd93b34c59551532eea800841bb2174231277f6e4db638156acb"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 178,
+        "last_line": 191,
+        "heading": "## DOC-PLAN-LANGUAGE-01 — Инженерный русский язык в планах и история решений",
+        "chars": 1680,
+        "sha256_utf8": "8b1efacdd9ffaa7d9d05bfb473e6ba7e6bec239f7e6bfbac2b4ef7f2739c458b"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 192,
+        "last_line": 204,
+        "heading": "## DOC-PARALLEL-01 — Границы параллельных задач и контроль публикации",
+        "chars": 2486,
+        "sha256_utf8": "3986874bca87e126513455b61c24f7ef74c7f8b01eb4ef23a68ba87d7c7a0ded"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 205,
+        "last_line": 223,
+        "heading": "## DOC-GPT-BRANCH-01 — Личная ветка ChatGPT GPT и независимый GitHub CI",
+        "chars": 3471,
+        "sha256_utf8": "a749fa2af2f3f26a4cb790d3dd0cb3a7603b2c252c80a7f6fc24d2f95f91f298"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 224,
+        "last_line": 239,
+        "heading": "## DOC-GIT-01 — Доступ локальных агентов к Git и GitHub",
+        "chars": 2102,
+        "sha256_utf8": "e40dca1a33a4d7e61c4667f7711dac2cee7467356ba108263adee761e1f4451f"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 240,
+        "last_line": 251,
+        "heading": "## DOC-CODEX-SELF-PUBLISH-01 — Историческая политика отдельной публикации Codex; SUPERSEDED",
+        "chars": 1454,
+        "sha256_utf8": "83f930ba048e240a9d11a5f0430246d30f111f95e2c428150c00b6e95036d77b"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 252,
+        "last_line": 269,
+        "heading": "## DOC-LOCAL-REPORT-HANDOFF-01 — Отчёты исполнителей внутри ag_llm; GitHub под контролем пользователя и координатора",
+        "chars": 4782,
+        "sha256_utf8": "3609f928472e7f9fb4fd543e4ddb1b6569b350f5759b438ba6092b331bdbbc8f"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 270,
+        "last_line": 286,
+        "heading": "## DOC-READ-01 — Адресное получение нормативных правил",
+        "chars": 2178,
+        "sha256_utf8": "6fa461513cf0089ce7ba98f1f06ee58512dc6cec6ef8f1acf499b153c6a7f4a2"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 287,
+        "last_line": 300,
+        "heading": "## DOC-VERSION-01 — Версии, сохранение и восстановление",
+        "chars": 1507,
+        "sha256_utf8": "d6495c6075aed02ea0c249283501a7ad065c3803cd8b4ee59aee77f7cdd90327"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 301,
+        "last_line": 331,
+        "heading": "## DOC-CHANGE-01 — Проверка влияния документационной правки и порядок записи",
+        "chars": 3836,
+        "sha256_utf8": "c15cca3df894c00225139f07f4267ce5f710bfd6065f636a4ac55c377fddcb65"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 332,
+        "last_line": 347,
+        "heading": "## DOC-ULTRA-NOTE-01 — Короткие метки для будущей реализации в Ultra",
+        "chars": 1499,
+        "sha256_utf8": "ede254dd11d887956409cbd13fdb52723730c9e01b9f153c650c7edb02e32718"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 348,
+        "last_line": 370,
+        "heading": "## DOC-GITHUB-HANDOFF-01 — Обязательное заметное уведомление о принятии изменений",
+        "chars": 3220,
+        "sha256_utf8": "80ffcb850bcb091f4dc5e30deac58d05df40c25d625976021fb77f6c5f71c20d"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 371,
+        "last_line": 390,
+        "heading": "## DOC-COMMIT-01 — Один нумерованный коммит на логическую задачу",
+        "chars": 3090,
+        "sha256_utf8": "e6c104b3b30c89e227ec1640532cabe3cbb3b175b1bb00e29f648f0fa90b83ad"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 391,
+        "last_line": 394,
+        "heading": "## Remote Chat-first preflight",
+        "chars": 786,
+        "sha256_utf8": "fd1fb5bd93b7b0e588a0caed0243a314099d17538ac2fb33a37d6ee3e1804b07"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 395,
+        "last_line": 400,
+        "heading": "## Живой Tactical Context 34 — обязательный delta-handoff",
+        "chars": 1639,
+        "sha256_utf8": "f527fc9ce0c0c5bc76432d7340849ae06d1e26f1fcf6ba76d70b09f8e859a8b2"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 401,
+        "last_line": 406,
+        "heading": "### Перспективная сверка Blueprint LLM — только ChatGPT (уточнение пользователя 2026-10-18)",
+        "chars": 1783,
+        "sha256_utf8": "90ab547555feab971e791572e79269dfb2d90e3902a9d8ee444019ed34597316"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 407,
+        "last_line": 434,
+        "heading": "## Координаторский цикл TASK → проверка → документация (постоянное правило 2026-10-10)",
+        "chars": 4621,
+        "sha256_utf8": "bbdba7deb4808113f48f2a5f067b19c10701a9debe1ac4fe8e15bc92545fb925"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 435,
+        "last_line": 457,
+        "heading": "## DOC-AGENT-REPORT-TRIGGER-01 — Автозапуск независимой проверки по адресной сдаче агента в чат ChatGPT",
+        "chars": 5258,
+        "sha256_utf8": "464148db2e3e3692927c734b91ebf5358ae22d69dc8e23440a4e5c3943994367"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 458,
+        "last_line": 470,
+        "heading": "## Локальные исполнители Claude / Codex — без Remote-continuity overhead (решение пользователя 2026-10-08)",
+        "chars": 2953,
+        "sha256_utf8": "76f8ce3974cd624fc12ed4f273672381ad50c2925b5029ac436e2894230ce945"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 471,
+        "last_line": 482,
+        "heading": "## Совместная работа Claude / Codex и единый редактор общих документов (решение пользователя 2026-10-09)",
+        "chars": 4415,
+        "sha256_utf8": "59bec3178422e85f1bae8a4e3ed175e50eb3c468bdbbbbb085f6bf152deb7ee4"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 483,
+        "last_line": 498,
+        "heading": "## DOC-AGENT-ADDRESS-01 — Уважительное обращение и постоянные идентификаторы исполнителей",
+        "chars": 2263,
+        "sha256_utf8": "820c98ff23ad6d17d4083140f945d4f44f2918da138b2eade4f0ad655cbfd0ce"
+      },
+      {
+        "record_id": "S031",
+        "first_line": 499,
+        "last_line": 516,
+        "heading": "## DOC-ENGINEERING-ROLES-01 — Инженеры, независимые тесты ChatGPT и правки по поручению",
+        "chars": 2464,
+        "sha256_utf8": "74b79b4ea73a6af5424460fd750c0d5de15ee3a48f737277f18210878e65c467"
+      },
+      {
+        "record_id": "S032",
+        "first_line": 517,
+        "last_line": 534,
+        "heading": "## DOC-TASK-HUMAN-OUTCOME-01 — Обязательный третий блок для пользователя",
+        "chars": 2573,
+        "sha256_utf8": "41759879be58628b9e98bf253fbee0b1da03ea1104a075fabee9104ae64a88a3"
+      },
+      {
+        "record_id": "S033",
+        "first_line": 535,
+        "last_line": 552,
+        "heading": "## DOC-TASK-BLOCK1-01 — Ручное назначение и неизменность активной постановки",
+        "chars": 5396,
+        "sha256_utf8": "55adf2a0697a9865ae7ff3583afd9f3f4a3fb0f11c26964fcfc5de68bf2b6a7d"
+      },
+      {
+        "record_id": "S034",
+        "first_line": 553,
+        "last_line": 568,
+        "heading": "## Per-model task routing",
+        "chars": 2539,
+        "sha256_utf8": "f12c540cb9d677232e1312cdc99f608a447fdb8662f440e153e27979382de073"
+      },
+      {
+        "record_id": "S035",
+        "first_line": 569,
+        "last_line": 582,
+        "heading": "## Самостоятельность сильного агента и adversarial review",
+        "chars": 1887,
+        "sha256_utf8": "796104de1bdfda9fc0b94f5ca10d0cbc157025456cadba0b71548a113d4d4e2f"
+      },
+      {
+        "record_id": "S036",
+        "first_line": 583,
+        "last_line": 600,
+        "heading": "## Cold start и профиль активной ветки",
+        "chars": 2012,
+        "sha256_utf8": "551a156acba7b0377059650fcc5df36bcec10a1ccbabf3531d4d5ad834bfc345"
+      },
+      {
+        "record_id": "S037",
+        "first_line": 601,
+        "last_line": 604,
+        "heading": "## Context reading policy",
+        "chars": 671,
+        "sha256_utf8": "bbf328b1817b3dd620cde5a46bf7bda7b7af95c1a2c798c893d6ba38d4f7485d"
+      },
+      {
+        "record_id": "S038",
+        "first_line": 605,
+        "last_line": 625,
+        "heading": "## Documentation Block и Impact Check",
+        "chars": 990,
+        "sha256_utf8": "c25c58e6a38ebbf000b56e3d0a635151dc6eda8833a31cf141d8e4807b218de2"
+      },
+      {
+        "record_id": "S039",
+        "first_line": 626,
+        "last_line": 643,
+        "heading": "## Трёхуровневая фиксация работы",
+        "chars": 3847,
+        "sha256_utf8": "612512c1d04f5bd030e86b03a3210b6ead84ae1bbf406dc046ee6bbca66500d8"
+      },
+      {
+        "record_id": "S040",
+        "first_line": 644,
+        "last_line": 651,
+        "heading": "## Противоречия, дубли и новые документы",
+        "chars": 976,
+        "sha256_utf8": "ac311804d48abac7467322516eda48eea71f8cd36e3c25367a4fe80d6ae6a20c"
+      },
+      {
+        "record_id": "S041",
+        "first_line": 652,
+        "last_line": 657,
+        "heading": "## Правило Obsidian: номера Repair не являются тегами",
+        "chars": 913,
+        "sha256_utf8": "4f0d190fd6528ce81fb416d0454a7ebc41308f0f33477e06954f12ff66228049"
+      },
+      {
+        "record_id": "S042",
+        "first_line": 658,
+        "last_line": 661,
+        "heading": "## Documentation health review",
+        "chars": 424,
+        "sha256_utf8": "36b47d25493fd6326dde1d28bf853988ae3f523be324b2fa8631c0e37165b14c"
+      },
+      {
+        "record_id": "S043",
+        "first_line": 662,
+        "last_line": 664,
+        "heading": "## Obsidian — контроль случайных связей и тегов",
+        "chars": 619,
+        "sha256_utf8": "712e3ef943d296794d73a16002c972b97565c5e2f8515cccc1af90be7cfe1fa5"
+      }
+    ]
+  },
+  {
+    "source": "Документация/34_TACTICAL_CONTEXT.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/34_TACTICAL_CONTEXT.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 6,
+        "heading": "## CURRENT / WEB15 / 2026-10-27 — единый BAT и возврат после любого TEST",
+        "chars": 1001,
+        "sha256_utf8": "30ccd5007a5638d38f36c1a480ccc40e5984dc0169c6efd50607f8279176461c"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 7,
+        "last_line": 12,
+        "heading": "## HANDOFF / WEB15 — 2026-10-27 / Stage1 source/evidence bounded review",
+        "chars": 642,
+        "sha256_utf8": "07c12c10dc26a41fd79b977323ab2ea104c3699589b48aa0e9e4e949eda391ea"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 13,
+        "last_line": 20,
+        "heading": "## HANDOFF / WEB15 — 2026-10-27 / финальное утверждение №37 и опубликованный Stage1",
+        "chars": 887,
+        "sha256_utf8": "32be120bf59cb02838e09a25a686a9f8006cd3ee1a969f4a0707479fdd703257"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 21,
+        "last_line": 28,
+        "heading": "## HANDOFF / WEB_14 — 2026-10-26 / USER portability requirement, №37 revised for final approval",
+        "chars": 1397,
+        "sha256_utf8": "32e1759f75f1df87c416e663cd30e7fde76e561dd52a89d1d92e54fb3dd4084d"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 29,
+        "last_line": 42,
+        "heading": "## HANDOFF / WEB_14 — 2026-10-26 / Ultra Chat Stage0 accepted as bounded architecture, Stage1 approval next",
+        "chars": 3996,
+        "sha256_utf8": "0d2f762bb0bff5f66e02fff9787d500267a9116b6a142fac9e5d8ce87c95b7ce"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 43,
+        "last_line": 52,
+        "heading": "## HANDOFF / WEB_14 — 2026-10-26 / Astra №37 DOCUMENT PASS, roadmap still awaits user",
+        "chars": 2066,
+        "sha256_utf8": "6db79eab964702e82cc201d1c3fe6a02fca9304fc889f159967c7aefef878685"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 53,
+        "last_line": 64,
+        "heading": "## HANDOFF / WEB_14 — 2026-10-26 / Astra rev2 bounded PASS, user decision next",
+        "chars": 2344,
+        "sha256_utf8": "3c1999ae3a45712e97e1c638140fb0e3bfb6657a65396bcaee7a3446a3e332a9"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 65,
+        "last_line": 78,
+        "heading": "## HANDOFF / WEB_14 — 2026-10-26 / WEB_13 → Astra rev2 review, Ultra Chat migration",
+        "chars": 3792,
+        "sha256_utf8": "b227809fcb18f4680c37ccd3f77327ce10efd4d33197fb1bc72b8e9f56b0342b"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 79,
+        "last_line": 96,
+        "heading": "## HANDOFF / WEB_13 — 2026-10-25 / WEB_12 → Web Alarm Ultra API & Chat",
+        "chars": 5577,
+        "sha256_utf8": "f032daa0dc10c3113fb47c48117dca5a53e161051067895df7b0ee1225338d21"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 97,
+        "last_line": 106,
+        "heading": "## USER PRIORITY / 2026-10-25 — FREEZE CHATGPT DESKTOP MCP / RESUME WEB ALARM ULTRA API",
+        "chars": 1809,
+        "sha256_utf8": "c084e68727191187d04bbd10bd34d7e30ec7c0175c40f92315ae63642d84bef7"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 107,
+        "last_line": 124,
+        "heading": "## WEB_12 / CURRENT — 2026-10-25 / Codex strict admission independent offline PASS",
+        "chars": 4281,
+        "sha256_utf8": "f979e588b409271e2f2ef3782217ec31176fd1e2e974f6d38eea863a8f65c04a"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 125,
+        "last_line": 140,
+        "heading": "## WEB_12 / CURRENT — 2026-10-25 / accepted bounded source review, user-approved terminal closeout",
+        "chars": 3077,
+        "sha256_utf8": "fec02c965ec58214d11536597b93ea1186a75276c5d510e975543d038c81c5d3"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 141,
+        "last_line": 156,
+        "heading": "## WEB_11 → NEXT MCP CHAT / 2026-10-25 — краткий handoff",
+        "chars": 2838,
+        "sha256_utf8": "5b62ba45d138a1a1455f3e4cae4fa1b0f24ddd6ec2b5aa680a8ad39a1a0bdb5d"
+      },
+      {
+        "record_id": "S014",
+        "first_line": 157,
+        "last_line": 162,
+        "heading": "## CURRENT GOVERNANCE / 2026-10-24 — координация персональных TASK и архивов",
+        "chars": 1057,
+        "sha256_utf8": "c5450749f2d50c2004bd3b749e2c8e456a5ec41482c7d2af5ad90a8cb9ae7a17"
+      },
+      {
+        "record_id": "S015",
+        "first_line": 163,
+        "last_line": 170,
+        "heading": "## WEB_15 / CURRENT 2026-10-24 — независимый FT1-CI-REPAIR PASS; WA4-R PARTIAL",
+        "chars": 1298,
+        "sha256_utf8": "8701900ac32022f217ccee8201e26dc4f9363558ebf49a31e6c7a7bd7d7754b0"
+      },
+      {
+        "record_id": "S016",
+        "first_line": 171,
+        "last_line": 178,
+        "heading": "## WEB_11 / CURRENT 2026-10-24 — sing-box source review и dependency closure",
+        "chars": 1666,
+        "sha256_utf8": "7e4fe104043cf1eb2764a5f5f4b05d054d48972b90c82aec86f877f428175580"
+      },
+      {
+        "record_id": "S017",
+        "first_line": 179,
+        "last_line": 197,
+        "heading": "## CURRENT HANDOFF / 2026-10-24 — Claude FT1/Archive Retry, НЕЗАВЕРШЁННАЯ независимая приёмка (следующий ChatGPT)",
+        "chars": 5468,
+        "sha256_utf8": "938dbd85102c3555ce130a361c55e5e48cb6617b19fea3107de62cabda967353"
+      },
+      {
+        "record_id": "S018",
+        "first_line": 198,
+        "last_line": 210,
+        "heading": "## CURRENT COORDINATION / 2026-10-24 — выдача TASK, общий контекст и Claude 409",
+        "chars": 3290,
+        "sha256_utf8": "ffae4ec89219d950163051103918f2276ee9e4c41fe8d90fe0666b6717f7cda7"
+      },
+      {
+        "record_id": "S019",
+        "first_line": 211,
+        "last_line": 222,
+        "heading": "## WEB_11 / CURRENT 2026-10-24 — проверены offline MCP NPFS и broker",
+        "chars": 2540,
+        "sha256_utf8": "cbd975367fc83b0797bfcd439c2725344ce15118eee3463bf14e7dfd3999208c"
+      },
+      {
+        "record_id": "S020",
+        "first_line": 223,
+        "last_line": 228,
+        "heading": "## CROSS-CHAT CURRENT / 2026-10-21 — БЛОК 4, утверждённый общий регламент",
+        "chars": 879,
+        "sha256_utf8": "2e61296c5f277bf01b74c329517d5ad6df6132d096ba6fbd3e2dcb4437cb9746"
+      },
+      {
+        "record_id": "S021",
+        "first_line": 229,
+        "last_line": 240,
+        "heading": "## CROSS-CHAT CURRENT / 2026-10-21 — GitHub-права, роли и лаборатории (решение пользователя)",
+        "chars": 2421,
+        "sha256_utf8": "4b724a51da8aec4f6cf2db968d6ab65e727bff65bc81b3cee0d51990a2d89ea7"
+      },
+      {
+        "record_id": "S022",
+        "first_line": 241,
+        "last_line": 246,
+        "heading": "## WEB_11 / CURRENT 2026-10-21 — MCP Windows Lab Gate, независимая ограниченная OFFLINE-приёмка",
+        "chars": 1196,
+        "sha256_utf8": "f63aa397e36b1dc49378ab0b925f1250c20089aed67936da8e09caa8e88d2fa3"
+      },
+      {
+        "record_id": "S023",
+        "first_line": 247,
+        "last_line": 258,
+        "heading": "## CURRENT / 2026-10-20 / LLM13 — AUD-01T-R independent Windows execution PASS; publication/operational gates OPEN (supersedes LLM12 RUNNING snapshot)",
+        "chars": 4629,
+        "sha256_utf8": "a74b43e5036705645900eacd6deb4943cac3b35efe368994503681e755c0137a"
+      },
+      {
+        "record_id": "S024",
+        "first_line": 259,
+        "last_line": 288,
+        "heading": "## CURRENT / 2026-10-20 / LLM12 — HANDOFF TO NEXT CHAT: complete AUD-01T-R independent verification (source, CI, evidence, safety)",
+        "chars": 11054,
+        "sha256_utf8": "0206ffbb04fe00efa21f764930fe5e85d96371e10f5fb34502b0818f2e3a52ee"
+      },
+      {
+        "record_id": "S025",
+        "first_line": 289,
+        "last_line": 302,
+        "heading": "## CURRENT / 2026-10-20 / LLM12 — Claude AUD-01T-R опубликован; независимая проверка ещё продолжается",
+        "chars": 2469,
+        "sha256_utf8": "b36f02a5c55a00f380da55bced0f4f89ae0a082fc8b502e77cc99cb1c9cfbc10"
+      },
+      {
+        "record_id": "S026",
+        "first_line": 303,
+        "last_line": 314,
+        "heading": "## ARCH DECISION / 2026-10-20 / WEB_11 — универсальная ChatGPT MCP-интеграция и независимые сетевые профили",
+        "chars": 2116,
+        "sha256_utf8": "6d81c071c1e1ba27bcd93c084d27dcf763b4c13d6a5196566aef1a74cbb92043"
+      },
+      {
+        "record_id": "S027",
+        "first_line": 315,
+        "last_line": 326,
+        "heading": "## CURRENT / 2026-10-20 / WEB_10 — portable MCP toolkit published and bounded independently reviewed",
+        "chars": 2497,
+        "sha256_utf8": "79741e3b989e7f9095bb983e7d2315d94aa3fa48f1c8b3d559e4f4b6cb640778"
+      },
+      {
+        "record_id": "S028",
+        "first_line": 327,
+        "last_line": 338,
+        "heading": "## CURRENT / 2026-10-20 / LLM12 — Web Alarm: W1 Windows CI выполнена, окончательная приёмка ограничена",
+        "chars": 2462,
+        "sha256_utf8": "c2d165d20c6918d4ba063c5ab0eaa5490672568f3b20e7387d0462bb8a283c6d"
+      },
+      {
+        "record_id": "S029",
+        "first_line": 339,
+        "last_line": 350,
+        "heading": "## CURRENT / 2026-10-19 / WEB_10 — Codex SID/WFP no-VM architecture independently reviewed",
+        "chars": 2823,
+        "sha256_utf8": "b817fb562d25c0794e0a146375fff7aa0d90394e1c18f1a27bbc245bd429e9fe"
+      },
+      {
+        "record_id": "S030",
+        "first_line": 351,
+        "last_line": 362,
+        "heading": "## CURRENT / 2026-10-18 / WEB_10 — Claude no-VM identity-scoped egress analysis, bounded verifier review",
+        "chars": 2830,
+        "sha256_utf8": "6ebeec0d93a2b8b892bd5d8b4dbb3cba68a2f9fb57d4b90ea3d584cdd934bb49"
+      },
+      {
+        "record_id": "S031",
+        "first_line": 363,
+        "last_line": 374,
+        "heading": "## CURRENT / 2026-10-18 / LLM12 — Web Alarm WA4-R R-MT/R-OP published repair independent bounded review",
+        "chars": 3988,
+        "sha256_utf8": "fb14e88aba5a696aa8b611b4de1501d86338eb21ec2131f7b3a52c24aaa2b958"
+      },
+      {
+        "record_id": "S032",
+        "first_line": 375,
+        "last_line": 384,
+        "heading": "## CURRENT / 2026-10-18 / WEB_10 — CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001 independent bounded review",
+        "chars": 2912,
+        "sha256_utf8": "fbcf5d178979c1be8caf2f8c69df6db1ff6e83155d60d814d1c59893a1bc4380"
+      },
+      {
+        "record_id": "S033",
+        "first_line": 385,
+        "last_line": 398,
+        "heading": "## CURRENT / 2026-10-18 / WEB_10 — CODEX-WUA-0-NATIVE-EGRESS-GATE-001 independent bounded review",
+        "chars": 4449,
+        "sha256_utf8": "bc005f1ff7fa066127bbf9f572a293001479775ddde115871c11fd6846ffa11d"
+      },
+      {
+        "record_id": "S034",
+        "first_line": 399,
+        "last_line": 410,
+        "heading": "## CURRENT / 2026-10-18 / WEB_10 — AMENDMENT 07 bounded independent source/evidence review",
+        "chars": 3778,
+        "sha256_utf8": "fe054d350ac5212eba5116ad3fd3ee8d9acddbad4f531fb0e77fada939d81042"
+      },
+      {
+        "record_id": "S035",
+        "first_line": 411,
+        "last_line": 422,
+        "heading": "## CURRENT / 2026-10-17 / LLM12 independent crash-consistency design review — AUD-02b-R and AUD-03",
+        "chars": 3730,
+        "sha256_utf8": "1efec9824254056aabb07cf7bf5edba69138e099dfffcdedf4815d6150d6585e"
+      },
+      {
+        "record_id": "S036",
+        "first_line": 423,
+        "last_line": 434,
+        "heading": "## CURRENT / 2026-10-17 / LLM12 — WA4-R AUD-01T/02b independent bounded review (GitHub-first)",
+        "chars": 3523,
+        "sha256_utf8": "38353eb2445d90bc2a60a5689edd19bc521e0cda7c7c9c4f6b2a2bf6b8aa5498"
+      },
+      {
+        "record_id": "S037",
+        "first_line": 435,
+        "last_line": 444,
+        "heading": "## CURRENT / 2026-10-17 / WEB_10 — official tunnel-client v0.0.16 exact-tag source-only preflight (COORDINATOR RESEARCH)",
+        "chars": 2990,
+        "sha256_utf8": "5cd89d1ed2a2d67645a8047317d577793ebbca1218f2dd4d24a98b94f710a828"
+      },
+      {
+        "record_id": "S038",
+        "first_line": 445,
+        "last_line": 458,
+        "heading": "## CURRENT / 2026-10-17 / WEB_10 — WUA MCP AMENDMENT 06, bounded independent review",
+        "chars": 3575,
+        "sha256_utf8": "ba0b22d6cbaf23fbb423ef6b6e9649bd1885c172b49a53e3ac7dd7eb596cf479"
+      },
+      {
+        "record_id": "S039",
+        "first_line": 459,
+        "last_line": 470,
+        "heading": "## CURRENT / 2026-10-17 / WEB_10 — WUA MCP AMENDMENT 05, bounded independent GitHub review",
+        "chars": 3132,
+        "sha256_utf8": "6b0ac6514dd7c5300a67abcc41a2c11b94d7db658c97c266ceea9e2b3b33239f"
+      },
+      {
+        "record_id": "S040",
+        "first_line": 471,
+        "last_line": 494,
+        "heading": "## CURRENT / 2026-10-17 / HANDOFF WEB_09 → «Сервер WEB_10» — MCP, V2Ray, Secure Tunnel",
+        "chars": 5840,
+        "sha256_utf8": "5e3f81df094105be1ab5d2964e1f4f1ab2561f4535d5fbde8fa2ffb778eb3a6d"
+      },
+      {
+        "record_id": "S041",
+        "first_line": 495,
+        "last_line": 505,
+        "heading": "## CURRENT / 2026-10-17 / USER WORKSTREAM CORRECTION — LLM12=WEB ALARM; WEB_09=MCP",
+        "chars": 1793,
+        "sha256_utf8": "c0c5184122c7874b99f3d32417bdcb88f95493b822bd4b9879da98369f8a5969"
+      },
+      {
+        "record_id": "S042",
+        "first_line": 506,
+        "last_line": 513,
+        "heading": "## LLM12 / 2026-10-17 / CONTEXT TRANSFER — WEB ALARM ULTRA MVP (READ ONLY, NO GO)",
+        "chars": 1232,
+        "sha256_utf8": "6450e8543dba2a61864a1539fe9155545d99a1792a5c0d1360896891810a668b"
+      },
+      {
+        "record_id": "S043",
+        "first_line": 514,
+        "last_line": 525,
+        "heading": "## WEB_09 / 2026-10-17 / USER WORKFLOW OVERRIDE — LOCAL REPORTS, USER PUSH, GITHUB-FIRST COORDINATION",
+        "chars": 2861,
+        "sha256_utf8": "f3d95a3d91fcb2062b2eb5e7ab2ee2521898cb25139531b3dd9eef6030153961"
+      },
+      {
+        "record_id": "S044",
+        "first_line": 526,
+        "last_line": 541,
+        "heading": "## WEB_09 / 2026-10-16 / CURRENT — Claude bounded repair review + two independent streams",
+        "chars": 3179,
+        "sha256_utf8": "0cf45aa77abcf4081870d5fecc586848b4e5ca54346f8eefa91895163126189d"
+      },
+      {
+        "record_id": "S045",
+        "first_line": 542,
+        "last_line": 557,
+        "heading": "## WEB_09 / 2026-10-16 / CONTEXT TRANSFER — WA4-R + MCP (coordination only)",
+        "chars": 5012,
+        "sha256_utf8": "2db57d713e4ba9cd11ff161016b53e279e3eab9869fb816218fa4b842475ed5e"
+      },
+      {
+        "record_id": "S046",
+        "first_line": 558,
+        "last_line": 570,
+        "heading": "## WEB ALARM ULTRA / 2026-10-15 / USER PRIORITY DECISION — WEB_08 FIRST, THEN TRANSITION",
+        "chars": 2912,
+        "sha256_utf8": "88612f455a94013b3e1053059cb990e401ec7dee8eac937dba0132b6ec8d2be2"
+      },
+      {
+        "record_id": "S047",
+        "first_line": 571,
+        "last_line": 580,
+        "heading": "## WEB_08 / 2026-10-16 / USER DIRECTION — MCP FIRST FEASIBILITY + CODEX CHAT RELAY",
+        "chars": 2088,
+        "sha256_utf8": "1ae884f7986179a20adc6324a13c864b20c61e0f13f7c2a8711fb666ac1fc118"
+      },
+      {
+        "record_id": "S048",
+        "first_line": 581,
+        "last_line": 599,
+        "heading": "## WEB_08 / 2026-10-15 / ChatGPT Desktop ↔ MCP ↔ Ultra — FUTURE FEASIBILITY CONCEPT",
+        "chars": 4391,
+        "sha256_utf8": "07abbc3c1b322f3ccccc6ab9360b230db993010b38613b3737f89cbae9c19957"
+      },
+      {
+        "record_id": "S049",
+        "first_line": 600,
+        "last_line": 609,
+        "heading": "### WEB_08 / 2026-10-16 / AG LLM → WEB_08 — INITIAL MESSAGE RELAY SMOKE",
+        "chars": 2136,
+        "sha256_utf8": "27a3be840c28d34491246e2017c8de563eccbc0af38831ac9225076030c34b60"
+      },
+      {
+        "record_id": "S050",
+        "first_line": 610,
+        "last_line": 618,
+        "heading": "### WEB_08 / 2026-10-15 / GitHub-only evidence handoff decision — PREPARED, NOT ASSIGNED",
+        "chars": 2343,
+        "sha256_utf8": "6f236b92af9182c2d4e2ec2d5059fd65dc00144b5a491c27fa2b6855741fffcf"
+      },
+      {
+        "record_id": "S051",
+        "first_line": 619,
+        "last_line": 620,
+        "heading": "## WEB_08 HANDOFF / 2026-10-14 / WEB_07 — READ THIS FIRST (supersedes older CURRENT labels only where specified)",
+        "chars": 114,
+        "sha256_utf8": "fb2415c39e85aadd82810d718825b388d5416f06552e2bd685b1f4551630a4a0"
+      },
+      {
+        "record_id": "S052",
+        "first_line": 621,
+        "last_line": 683,
+        "heading": "### WEB_07 R-004 INDEPENDENT SOURCE CHECKPOINT / 2026-10-14 — NOT RUNTIME ACCEPTED",
+        "chars": 19891,
+        "sha256_utf8": "e88f3074dbe75612c7f06fe17beb66892afb380766f45c415ac0053cd33228ff"
+      },
+      {
+        "record_id": "S053",
+        "first_line": 684,
+        "last_line": 692,
+        "heading": "## CURRENT WEB_07 HANDOFF — 2026-10-13",
+        "chars": 1983,
+        "sha256_utf8": "f3c59ef8bc7ea347a5eb9c187f6ffdea484d9e69fc0da2d23f5701736d6ae928"
+      },
+      {
+        "record_id": "S054",
+        "first_line": 693,
+        "last_line": 710,
+        "heading": "# 34 — TACTICAL CONTEXT / Живой тактический контекст",
+        "chars": 6546,
+        "sha256_utf8": "8d345c6987d4ffb1dcb05b9c9d753d53e90a0f1dc04388cfaf21ca90244ab46b"
+      },
+      {
+        "record_id": "S055",
+        "first_line": 711,
+        "last_line": 727,
+        "heading": "## ULTRA-ONLY CONTINUITY / 2026-10-13 — курс после Web Alarm, S1 research и автоматизация",
+        "chars": 4812,
+        "sha256_utf8": "33a5df18336c6206be2a4fac3c569692b150c58cf3a0246b925d6a2dde3bc210"
+      },
+      {
+        "record_id": "S056",
+        "first_line": 728,
+        "last_line": 729,
+        "heading": "## 0. Переход в новый Chat — короткий и самостоятельный",
+        "chars": 57,
+        "sha256_utf8": "4019ea90883edfb3126948522dda4d8f0d9a04405a50a6d96d3752578da88114"
+      },
+      {
+        "record_id": "S057",
+        "first_line": 730,
+        "last_line": 745,
+        "heading": "### CURRENT WEB-02 / 2026-10-11 — WA4-O technical PASS, WA4-R next candidate",
+        "chars": 5281,
+        "sha256_utf8": "ba873f8cc9a1495a221c210c5ad4add24e9a0c4b3178c9ee68e89f39320551d0"
+      },
+      {
+        "record_id": "S058",
+        "first_line": 746,
+        "last_line": 773,
+        "heading": "### GitHub Actions — первоначальный smoke CI №256 (исторический обзор)",
+        "chars": 5274,
+        "sha256_utf8": "02e758870e109d6c45d0f99bb9dcffa9bb67503f102ea483223bac865376ccc3"
+      },
+      {
+        "record_id": "S059",
+        "first_line": 774,
+        "last_line": 794,
+        "heading": "## 1. Что сейчас происходит",
+        "chars": 6186,
+        "sha256_utf8": "bac8fa4c39979b20554ee4ff45b3942937215333509f646541c382906308c04a"
+      },
+      {
+        "record_id": "S060",
+        "first_line": 795,
+        "last_line": 803,
+        "heading": "## 2. Ограничения и открытые вопросы",
+        "chars": 1165,
+        "sha256_utf8": "e4a16d94a81dd9605c6e13c32c4f70f7602caa60f2865cf6298da64139ef4cc1"
+      },
+      {
+        "record_id": "S061",
+        "first_line": 804,
+        "last_line": 809,
+        "heading": "## 3. Git и среда — снимок, перепроверять",
+        "chars": 710,
+        "sha256_utf8": "2d4195950fa4d487b9c82d0ea86f47d30980ecb61c9bf82f455774b3d82ca0c2"
+      },
+      {
+        "record_id": "S062",
+        "first_line": 810,
+        "last_line": 830,
+        "heading": "## 4. Карта чтения — брать только по потребности",
+        "chars": 2216,
+        "sha256_utf8": "4220c3ced14533189186248610bdf861e26ac3c32bdbb89f6e2fd50fef3ca293"
+      },
+      {
+        "record_id": "S063",
+        "first_line": 831,
+        "last_line": 837,
+        "heading": "## 5. NEXT SAFE ACTION",
+        "chars": 1716,
+        "sha256_utf8": "96b86efc36a8e42e9e289fa6de100c265c2ccc287d402e9e4ad0fa4ff82d87d1"
+      },
+      {
+        "record_id": "S064",
+        "first_line": 838,
+        "last_line": 847,
+        "heading": "## 5а. RT-002 — завершённое планирование, актуальный инженерный маршрут",
+        "chars": 1960,
+        "sha256_utf8": "cad315ae6bcc580d8caef231f9035d1b32efe2acd49729b50a18b411302123b9"
+      },
+      {
+        "record_id": "S065",
+        "first_line": 848,
+        "last_line": 861,
+        "heading": "## 6. Обязательное сопровождение — DELTA, а не переписывание истории",
+        "chars": 2341,
+        "sha256_utf8": "7c886b31b7a801cb59a8c76d4c7e94c21935d485f47289a357e9a76c48312394"
+      },
+      {
+        "record_id": "S066",
+        "first_line": 862,
+        "last_line": 870,
+        "heading": "## 7. Последний тактический handoff",
+        "chars": 2230,
+        "sha256_utf8": "52dc3212445fe9c17658952bf5bb40f345be4a24a1e3df996d2e395d7ea9cf80"
+      }
+    ]
+  },
+  {
+    "source": "Документация/36_Единая архитектура тестирования.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/36_Единая архитектура тестирования.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 6,
+        "heading": "# 36 — Единая архитектура тестирования",
+        "chars": 678,
+        "sha256_utf8": "1923d10d1c5870a0c48050d24bc0576365f75ff4208588f6f542c814c47fd0a2"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 7,
+        "last_line": 16,
+        "heading": "## CURRENT / 2026-10-21 — GitHub Actions как основная тестовая лаборатория",
+        "chars": 2917,
+        "sha256_utf8": "bd13491f44b18e36ac38718e979a88b529011ab1179a92aba2e4720a9e2a146c"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 17,
+        "last_line": 31,
+        "heading": "## ChatGPT ↔ GitHub Actions: обязательный маршрут и проверка полномочий (2026-10-13)",
+        "chars": 3535,
+        "sha256_utf8": "33af87aa406009ec70cb6cc31cb1e6bec6b8b61342f1c6deebc78c47be02dd27"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 32,
+        "last_line": 37,
+        "heading": "## Разделение тестовых областей (решение 2026-10-13)",
+        "chars": 868,
+        "sha256_utf8": "e21b7d7ab3f35dd9bccb50ddcb6fca5614e3edc7e7b6e60a1a5061a3eb401c23"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 38,
+        "last_line": 57,
+        "heading": "## 1. Навигация: одна ветка в Obsidian",
+        "chars": 1067,
+        "sha256_utf8": "fce5745dee9966dc5289fac628d0770dbc7e3d80b72499f83f67126a717d716a"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 58,
+        "last_line": 69,
+        "heading": "## Общий цикл: исполнитель → независимый verifier → накопленная база (2026-10-13)",
+        "chars": 2946,
+        "sha256_utf8": "7afe7872924106b80338ccc04ca231116ae3172f6c85b46dcf5e0543f6eeead3"
+      },
+      {
+        "record_id": "S007",
+        "first_line": 70,
+        "last_line": 79,
+        "heading": "## 2. Зачем и что переиспользуем",
+        "chars": 1251,
+        "sha256_utf8": "bb886b4e21fc93a32deb823bf68a40ba1bfe65c452134847830ce1e43abc796e"
+      },
+      {
+        "record_id": "S008",
+        "first_line": 80,
+        "last_line": 98,
+        "heading": "## 3. Обязательная обратная связь разработки",
+        "chars": 1149,
+        "sha256_utf8": "fbd48bd3082ecfcf4d5c28eb564d4c2fb3034a0d8331a0a4083b02620feaf148"
+      },
+      {
+        "record_id": "S009",
+        "first_line": 99,
+        "last_line": 114,
+        "heading": "## 4. Классы тестов, не фиксированные партии «по 200»",
+        "chars": 1510,
+        "sha256_utf8": "418e0553515a5f9a4cd6f4ba42ffa78d4318c22a3cdf2d39e572fc57525ac728"
+      },
+      {
+        "record_id": "S010",
+        "first_line": 115,
+        "last_line": 133,
+        "heading": "## 5. Тесты как живой продукт",
+        "chars": 1005,
+        "sha256_utf8": "56098fc85fcda7e11a0c7ac1336b62cca051450dfe7d882ecbe8a67b45326df5"
+      },
+      {
+        "record_id": "S011",
+        "first_line": 134,
+        "last_line": 142,
+        "heading": "## 6. Нельзя выдавать за доказательство",
+        "chars": 838,
+        "sha256_utf8": "e4fce1fcb0ed3dd627a5d736d636485df910772ae1e9ef871bec83bf6165e7ac"
+      },
+      {
+        "record_id": "S012",
+        "first_line": 143,
+        "last_line": 148,
+        "heading": "## 7. Безопасность, стоимость, пределы",
+        "chars": 789,
+        "sha256_utf8": "b3165bb501243cba3bc34f8b099d0fc2c589c77c5ba394b15aadf1d3f2f1bab6"
+      },
+      {
+        "record_id": "S013",
+        "first_line": 149,
+        "last_line": 155,
+        "heading": "## 8. Происхождение и граница текущего внедрения",
+        "chars": 1127,
+        "sha256_utf8": "f311d196ee0232fce8f885ade61412981bf2086dde5a803d1d19a14721ae7e61"
+      }
+    ]
+  },
+  {
+    "source": "Документация/40_Оперативная координация направлений.md",
+    "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/40_Оперативная координация направлений.md.source.txt",
+    "parts": [
+      {
+        "record_id": "S001",
+        "first_line": 1,
+        "last_line": 4,
+        "heading": "# Оперативная координация направлений",
+        "chars": 411,
+        "sha256_utf8": "e846ab529b4aa2a03a9d1ba43f035b8193c70b6150e9888348dbbc653bf4b587"
+      },
+      {
+        "record_id": "S002",
+        "first_line": 5,
+        "last_line": 10,
+        "heading": "## Общий пользовательский запускатель — обязательный режим (USER 2026-10-27)",
+        "chars": 1237,
+        "sha256_utf8": "79bc50ae4a434c588bf8a7837197a72d931c79c8517a6d14ef7c7fd774ba3680"
+      },
+      {
+        "record_id": "S003",
+        "first_line": 11,
+        "last_line": 18,
+        "heading": "## ОБЯЗАТЕЛЬНОЕ СКВОЗНОЕ ТРЕБОВАНИЕ — переносимость (решение пользователя 2026-10-26)",
+        "chars": 1564,
+        "sha256_utf8": "72323e3302c2023e705fa0edb0d0ed2cc88c508ff8446ac1fc5a52d40a42d69b"
+      },
+      {
+        "record_id": "S004",
+        "first_line": 19,
+        "last_line": 27,
+        "heading": "## А — Ultra Chat",
+        "chars": 1929,
+        "sha256_utf8": "f08350ba6fc926ab349845fad5a329ebf25b76aca96e129e5cfaf09f60f3c5d8"
+      },
+      {
+        "record_id": "S005",
+        "first_line": 28,
+        "last_line": 36,
+        "heading": "## Б — Web Alarm Core / WA4-R",
+        "chars": 1567,
+        "sha256_utf8": "b066c5ca88cc6937c7b9d754bf1ca1647fb92cbe364582051b8da3e00e52009a"
+      },
+      {
+        "record_id": "S006",
+        "first_line": 37,
+        "last_line": 47,
+        "heading": "## Правила для обоих рабочих чатов",
+        "chars": 1788,
+        "sha256_utf8": "0ab53c6c977196cf5c9961ee00f71d771e87907abdcca32c43f93b240550f485"
+      }
+    ]
+  }
+]

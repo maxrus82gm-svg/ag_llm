@@ -1,0 +1,502 @@
+# Навигация по задачам и рискам
+
+**Редакция навигации:** 27.10.2026. Всё прежнее содержимое реестра сохранено ниже без удаления и перестановки. Этот вход не подтверждает новые технические PASS. Порядок ведения — №18 → DOC-CONTEXT-OPS-01; формы — №07. На обычном старте №05 целиком не читать.
+
+## Как найти запись
+
+1. Выбрать тему из таблицы. При известном TASK ID искать его только в нужной записи/индексе №05.
+2. Разрешить exact heading + TASK/record_id; одинаковый TASK в разных событиях различать датой/ревизией/supersedes. Строки — подсказка для закреплённого исходника, не постоянный адрес.
+3. Прочитать запись со шапкой таблицы и относящимися оговорками. Поля executor/status/result_kind/review брать из текста; UNKNOWN при отсутствии. Старый PASS не распространяется на новую версию, а старое NOT STARTED не отменяет позднее принятое событие.
+4. Перейти к точному report или историческому locator только по необходимости и в разрешённом scope. Полные №06/001/профильные архивы и рекурсивную историю не загружать.
+
+| Тема | Точный существующий заголовок / вход | Профиль |
+| --- | --- | --- |
+| Ultra Chat / Stage0–1 | WEB15 / 2026-10-27 — Stage1 Ultra Chat: независимая ограниченная приёмка; WEB_14 / 2026-10-26 — результат подготовительного этапа Ultra Chat | №37/03 |
+| Программа Ultra / архитектура | WEB_14 / 2026-10-26 — независимая приёмка кандидатной программы №37; WEB_14 / 2026-10-26 — независимая архитектурная приёмка Ultra | №37/19 |
+| Web Alarm Core / WA / RC / WA4-R | Ветка WA: Web Alarm Workspace; датированные LLM12/LLM13-записи по TASK | №23/24/25 |
+| Desktop MCP / tunnel / security | USER FREEZE 2026-10-25 — ordinary ChatGPT Desktop MCP / archive №39; WEB_12 strict admission/sing и WEB_10 по TASK | №19/39; FROZEN |
+| Ultra runtime / Context | Архитектурная серия TASK 132–143 и стабилизация 144–151; Этап 06: Система чатов и управление контекстом | №01/03/13 |
+| Round Table / B2 | Ветка DOC: архитектура и регламент Круглого стола | №20/28/33.3 |
+| Модели / интеграции | Ветка MM: Мультимодельная архитектура; FUTURE без присвоенного TASK ID | №11/19 |
+| Verifier / Final Audit | Ветка V: Execution Verifier; адресные TASK серии 132–151 | №13 |
+| Переносимость / Web UI | Этап 07: Переносимость; Этап 08: Web UI; новые записи №37 | №03/37 |
+| CI / инфраструктура | Завершенные задачи (инфраструктура); Общая архитектура тестирования — проектная документация | №22/36 |
+| Документация / регламент | Ветка DOC; DOC-строки ветки WA; документационные TASK по ID | №18/07 |
+| Необычное размещение | Ссылки → строка WEB-02 F-5/F-6 / CLAUDE-WA-017 | Не пропускать запись из-за положения после списка ссылок |
+
+## Уточнённые указатели на технические пакеты
+
+Проверено локальное наличие при подготовке навигации; опубликованная версия и независимый verdict устанавливаются отдельно. Эти указатели не меняют исторические статусы TASK.
+
+| TASK | Точный пакет | Исторический адрес |
+| --- | --- | --- |
+| CLAUDE-WUA-CHAT-S1-READONLY-UI-001 | `reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/report.md`, соседний manifest | №06/№001 Claude: точный event locator предоставляет координатор; LOCATOR PENDING до адресной сверки |
+| CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001 | `reports/CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001/report.md`, соседний manifest | №06/№001 Claude по TASK; точный locator ещё требует адресной сверки |
+| ASTRA-WUA-37-ROADMAP-REVISION-001 | `reports/ASTRA-WUA-37-ROADMAP-REVISION-001/report.md`, соседний manifest | №06/№001 Codex по TASK, точный locator требует адресной сверки |
+| ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001 | `Документация/Дополнительная аналитика Астры.md`; 137301 bytes, SHA-256 7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5 в исходном снимке | №06/№001 Codex адресно; стандартный report-путь не выдумывать |
+| CODEX-WA4-O-001 | `reports/CODEX-WA4-O-001/report.md` | №06/25/№001 Codex по TASK, exact locator по разрешённой сверке |
+
+## Оперативные риск-карточки
+
+### RISK-DOC-CURRENT-001 — ошибочное чтение исторического CURRENT
+
+**TASK:** ASTRA-DOC-CONTEXT-OPTIMIZATION-001 / прямое поручение по каркасам 27.10.2026. **Подсистема:** документация/планирование. **Тип:** RISK_HYPOTHESIS; наблюдаемый факт — несколько датированных CURRENT и несовместимых старых инструкций в исходных документах.
+
+**Сценарий:** новый чат открывает старый раздел без даты/области → принимает его за действующее назначение/разрешение → планирует неверный следующий шаг или пропускает gate. **Основание:** №41 → 2.3; исходные snapshots №34/08/000 в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/`; это не доказанный инцидент исполнения.
+
+**Impact:** UNASSESSED; зависит от действия, которое было бы ошибочно разрешено. **Likelihood:** UNKNOWN, частота инцидентов не измерялась. **Confidence:** наличие старых CURRENT подтверждено текстом; вероятность перехода к неверному действию не проверена. **Affected gate:** независимая приёмка новой схемы cold start/closeout, не все технические работы проекта.
+
+**Owner:** ChatGPT-координатор. **Verifier:** UNASSIGNED до назначения независимого проверяющего этой дельты. **Action:** проверить сценарии обычного старта, поиска старого TASK, REVISE, неизвестного риска и переполнения; подтвердить, что архивные адреса не используются как authority. **Closure evidence:** независимый протокол по точной редакции №08/000/34/18, результаты сценариев и разрешённые исправления; назначенные owner/verifier.
+
+**Status:** MITIGATED / INDEPENDENT VERIFICATION OPEN: текущая картина отделена, прежние байты сохранены, исторические адреса обозначены. **Updated:** 27.10.2026. **Next review trigger:** независимая приёмка пакета и следующая смена координирующего чата. **Residual decision:** пользователь риск не принимал отдельно; CLOSED/VERIFIED не заявляется.
+
+Другие открытые технические gates остаются в своих TASK/профилях и кратко в №34. Отсутствие нормализованной риск-карточки не означает отсутствие риска. Новые карточки добавляет координатор по №18 → OPS-RISK; каждому риску постоянный ID, единый владелец записи, evidence/action/closure. Это поле реестра, не Obsidian-тег и не новое разрешение.
+
+## Адресный индекс существующих записей
+
+Найдено 170 существующих строк записей, включая направления и составные задачи; это не число уникальных TASK. Устойчивые ключи REG-LEGACY-001 и далее назначены строкам без изменения их содержимого. Точный индекс: `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/evidence/registry_record_index.json` → records → record_id/identity. Для чтения: выбрать ключ/TASK → exact heading + first_cell → сверить row_sha256_utf8. original_line относится только к исходному snapshot и не является адресом текущей строки. Индекс охватывает существующие строки; новые записи добавляются координатором с собственным record_id прямо в запись. Статус, executor, result_kind и review извлекаются из выбранной полной записи, не угадываются по префиксу или чату. При отсутствии поля — UNKNOWN/уточнить.
+
+Ниже весь прежний реестр сохранён в исходном порядке. Датированные CURRENT и статусы в нём принадлежат своим датам/ревизиям; актуальность устанавливается по TASK + событию + независимому verdict.
+
+## WEB15 / 2026-10-27 — Stage1 Ultra Chat: независимая ограниченная приёмка
+
+| TASK | Статус | Открытые gates |
+| --- | --- | --- |
+| `CLAUDE-WUA-CHAT-S1-READONLY-UI-001`, main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6 | **PARTIAL / BOUNDED INDEPENDENT SOURCE & PUBLISHED EVIDENCE ACCEPTED; WINDOWS/VISUAL OPEN**: 33/33 SHA-256+bytes independently verified, адресный source/test review, авторский evidence 1024 PASS/2 SKIP и 36/36 mutants без независимого запуска | Stage1 Windows/visual + EVM OPEN; БЛОК 1 Claude сохраняется, Stage2 не назначен |
+| №37 / кандидат 2, §2.4/H24 | **USER PLAN APPROVED 2026-10-27** | PORTABILITY TARGET / NOT VERIFIED; отдельные GO для B2/live и Stage2 |
+
+Записи ниже — исторические снимки на соответствующие даты.
+
+---
+
+## WEB_14 / 2026-10-26 — результат подготовительного этапа Ultra Chat
+
+| Задача | Независимый статус | Следующий gate |
+| --- | --- | --- |
+| `CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001`, №37 этап 0 (Claude 008), ревизия 2 / AMENDMENT-1 | **PASS / BOUNDED ARCHITECTURE + EVIDENCE INTEGRITY**, независимая сверка 17/17 manifest SHA/bytes, source+prototype reviewed, author 60/60+55/55+32/32+28/28 and mutants 10/10 **не перезапускались** | Документационное закрытие Claude в личной карточке B1/001/БЛОК 4 и общих №06/34; отдельно USER GO для этапа 1, EVM Windows gate, WA4-R ownership |
+
+**Сохранённые условия:** №37 всё ещё помечен как программа-кандидат (USER PLAN APPROVAL pending; разрешён только запуск подготовительного этапа 0). Stage1 **NOT ASSIGNED**. EVM Windows/visual independent gate OPEN; разрешить пересекающуюся запись `web_alarm/server.py`/`ui.py` только после разделения с WA4-R/LLM15; B2 V-13 ordinary Chat DEFERRED, stage5 mock отдельно от paid stage7; MCP №39 FROZEN. Независимая read capability защищает от посторонних сайтов, **не обеспечивает OS-user isolation**: другая локальная программа может обратиться к loopback и получить токен. На этапе 1 нужны точные Host/Origin checks, ограниченное I/O, проверка идентичности и race/reparse path swap; `lstat` перед `open` сам по себе не доказывает TOCTOU-безопасность. Реальные данные, EVM Windows visual, настоящий UI/GigaChat/API, full regression NOT RUN по этой TASK.
+
+---
+
+## WEB_14 / 2026-10-26 — независимая приёмка кандидатной программы №37
+
+| 🟨 Задача / направление | Статус и основания | Следующая граница |
+| --- | --- | --- |
+| `ASTRA-WUA-37-ROADMAP-REVISION-001` / редакция №37 | **PASS / INDEPENDENT DOCUMENTARY & BOUNDED ARCHITECTURE REVIEW**: 9/9 SHA/bytes, 8 этапов, 23 истории, 11 рекомендаций. Runtime/CI/live NOT RUN | Документационная TASK принята, Codex БЛОК 1 → архив и WAITING после подтверждения |
+| Ultra Chat 0–7 / Ordinary Chat B2 | **PROPOSAL / USER PLAN APPROVAL PENDING / NO IMPLEMENTATION** | Отдельное USER GO на план, V-13 simple dialogue/B2, затем адресная синхронизация R01–R11 |
+
+№20 §5а, №24, immutable RT-002 safety, EVM Windows/visual, WA4-R, frozen Desktop MCP №39 не пересогласованы и не закрыты этим review.
+
+---
+
+## WEB_14 / 2026-10-26 — независимая архитектурная приёмка Ultra
+
+| TASK / направление | Независимый статус | Следующий gate |
+| --- | --- | --- |
+| `ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001`, rev2 / перенос Python/Tkinter Ultra | **PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, WEB_14: 30/30 SHA256+bytes source pins №436, 8/8 corrections R2 checked; report `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30` #438, 137301 bytes / SHA256 `7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5` | Full B1 in Codex 001; B4, №06/34 current. Document `PROPOSAL / AWAITING USER APPROVAL`; only user merges GPT → main |
+| `WUA-2A-CHAT-READONLY-001` / чтение существующих Workspace/Chat | **PROPOSED / NOT ASSIGNED / NOT IMPLEMENTED** | Separate EVM Windows/visual acceptance, shared `web_alarm/server.py`/`ui.py` ownership with LLM15, read privacy/identity/size controls, explicit USER GO |
+
+**Контур Desktop ChatGPT MCP/Tunnel/V2Ray остаётся FROZEN №39; Windows/CI/visual/live и WA4-R/B2 paid S3 не приняты данным source review. Устаревшие записи ниже — исторические датированные снимки, не активная Codex TASK.**
+
+---
+
+## USER FREEZE 2026-10-25 — ordinary ChatGPT Desktop MCP / archive №39
+
+| Контур | Приоритет / статус | Канонические доказательства / что нельзя сделать |
+| --- | --- | --- |
+| Обычный ChatGPT Desktop Chat → local WUA MCP plugin / Secure MCP Tunnel → Web Alarm Ultra; STRICT_V2RAY_BROKER для этого transport | **FROZEN / USER HOLD / НЕ ОТМЕНЁН** | `39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25` ↔ №19; история и source/manifest в `reports/CODEX-WUA-0-*` и отдельных Claude reviews; ordinary Chat 0/4, Plus entitlement UNVERIFIED, host no-DIRECT/WFP/hosted Chat E2E NOT VERIFIED; туннель не запускать |
+| `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` | **PUBLISHED, AUTHOR PASS BOUNDED / AWAITING INDEPENDENT WEB_12**, paused | БЛОК 1 сохранять полностью и не ротировать; независимый closeout ещё не проведён, freeze ≠ terminal verdict |
+| Web Alarm Ultra: provider model APIs, Connection/Model Registry, GigaChat first, UI Chat/Turn/Workspace, перенос Ultra | **Новый активный пользовательский приоритет** | `37_Старт перехода - Web Alarm Ultra`; отдельный USER GO перед исполняемой TASK или платными API |
+
+**Остальные gates неизменны:** `can_apply=false`, `can_start_tunnel=false`, `install_uninstall=BLOCKED`, `HOSTED_TUNNEL_ON_HOLD_BY_USER`. Старые статусы ниже — исторические.
+
+---
+
+## WEB_12 / 2026-10-25 — strict admission policy / completed offline task
+
+| Назначение | Independent status | Open native/security gates |
+| --- | --- | --- |
+| `CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001` — reject unsafe MCP proxy configurations | **PASS / INDEPENDENT BOUNDED OFFLINE SOURCE & EVIDENCE ACCEPTED**; `main@6456d669a8a804ddd75a0dbca242782c18d914da`; independent manifest **53/53**; Codex 52/52 offline + 51/51 compatible (19 overlapping), first RED 19/21, 7/7 mutants; WEB_12 read source/evidence, native independently NOT RUN | Upstream credential-in-error leakage still SECURITY BLOCKER, secret store, real Windows C/B/NPFS, SID/WFP IPv4/IPv6/DNS, actual no DIRECT/B-only egress, real ChatGPT MCP E2E BLOCKED |
+| Следующий шаг | **PROPOSAL ONLY / user assignment required** — read-only Windows C/B + WFP lab readiness, controlled rollback/recovery plan | No real host changes/network/engine/tunnel until separate GO, `can_apply=false`, `can_start_tunnel=false` |
+
+Details: Codex personal B4/001, №06/19/34, `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/report.md`; previous sing source-research terminal PARTIAL remains valid history. `GPT → main` and local sync done by user.
+
+---
+
+## WEB_12 / 2026-10-25 — secure ChatGPT MCP / Codex sing dependency
+
+| Понятная задача | Статус | Следующие границы |
+| --- | --- | --- |
+| Проверить точные исходники sing HTTP CONNECT/auth/JSON | `CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001` **TERMINAL PARTIAL / INDEPENDENT BOUNDED SOURCE & EVIDENCE ACCEPTED**; `main@257084ae6e8b7e81d82f1987a80ac2bc5e67fb34`; published manifest **87/87**, official source **6/6** and **33/33** locators, Codex offline **51/51** | Exact Go stdlib/x/sys/native Windows, real proxy physical route, empty users/credential logging, CONNECT 200-before-dial, JSON/default-DIRECT/UoT, C/B WFP, ordinary ChatGPT E2E all open |
+| Строгий конфигурационный admission/default deny | **NEXT / PROPOSAL — not assigned** | Offline code + negative evidence first; native/network tests and all live system changes separately approved; `can_apply=false`, `can_start_tunnel=false`, tunnel HOLD |
+
+References: Codex B4/001, №06/19/34 and `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`. `GPT → main` and local sync by user only.
+
+---
+
+## 🟨 LLM13 / 2026-10-20 — независимый Windows-прогон восстановления журнала завершён, остаточные риски открыты
+
+| Понятная задача | Статус | Независимое доказательство / дальнейшее действие |
+| --- | --- | --- |
+| Проверить ручное восстановление оборванной записи в журнале (AUD-01T-R = остаточная транспортная находка аудита 01) | **WINDOWS TEST GATE PASS / WA4-R PARTIAL** | [Windows Actions #39461766337](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/39461766337) 5/5 jobs SUCCESS; полный raw 909 уникальных результатов = 909 PASS, 0 FAIL/ERROR/SKIP, 0 violations; 35/35 новых тестов PASS; 4 ZIP по SHA-256 сверены и unpacked. PR #17 НЕ объединять |
+| Сохранить исходные FAIL при ненадёжной проверке ограничения записей (F-T1) | **OPEN / SUSPECT TEST-HARNESS DEFECT** | Старый focused-r3 FAIL+isolation; baseline 2/10 FAIL, current 0/10 в материалах Claude, чистый CI не устраняет причину. Адресное инженерное исправление и негативные тесты — отдельное пользовательское назначение |
+| Безопасно очистить публикуемую диагностику от персональных Windows-путей | **OPEN / PRIVACY PUBLICATION DEFECT** | Независимо выявлены `focused-r3`, `flake-baseline-05`, `green1` summaries (в последнем 19 полей). Не стирать Git-историю/оригиналы; утвердить безопасные копии + map SHA |
+| Проверить полноту forensic-архива при повторном подтверждении | **FOLLOW-UP / NOT TESTED** | `_proven_attempts` не проверяет отдельно `tail.bin` и `receipt.json`; полный `original.bin` при этом содержит tail. Требуется отдельный негативный oracle и контракт |
+| Живое хранилище, потеря питания, операторское применение, W3 и режимы WARN/STRICT | **NOT RUN / NOT APPROVED** | Никаких production операций или автоматического повышения release-gate; AUD-02c/AUD-04, PWR-01, F-1..F-4 остаются открыты |
+
+Историческая запись LLM12 ниже — этап до завершения CI. Личная карточка Claude/Codex, особенно БЛОК 1, НЕ изменена. Не создавать новую задачу агенту без пользовательского утверждения.
+
+---
+
+## 🟨 LLM12 / 2026-10-20 — ручное восстановление повреждённого журнала событий
+
+| Человеческая задача | TASK / статус | Доказательства и что осталось |
+| --- | --- | --- |
+| Безопасно восстановить оборванный конец транспортного журнала без потери оригинала | `CLAUDE-WA4-R-TRANSPORT-TAIL-RECOVERY-001` (`AUD-01T-R`); **PUBLISHED / RESULT READY / INDEPENDENT REVIEW PARTIAL** | [Публикация #376](https://github.com/maxrus82gm-svg/ag_llm/commit/25feb142052ee57f0b70fbafe1818bc96f713174), 2 новых source/test, пакет 151/151 путей, 9/9 ключевых SHA+bytes; локальный полный прогон 909 = 907 PASS +2 SKIP, 0 FAIL/ERROR (отчёт Claude) |
+| Проверить ремонт независимо на Windows | GitHub Actions [#39439901294](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/39439901294), диагностический [PR #17](https://github.com/maxrus82gm-svg/ag_llm/pull/17) | **RUNNING / RESULT PENDING** на момент записи; PR только для CI, **не сливать** |
+| Исправить обезличивание опубликованных диагностических сводок | Publication safety finding | **OPEN**: в части error strings обнаружены локальные Windows user paths; готовить безопасные очищенные публикационные копии с сохранением original evidence и пересчётом manifest |
+| Стабилизировать старую проверку файловых ограничений тестового runner | `F-T1` | **OPEN / separate decision**: случайная ложная isolation violation, проявлялась и на базовом коде (2/10 по опубликованному отчету); не изменять runner в текущей task |
+| Реальное использование инструмента, live storage и последующие уровни защиты | `W3`, `PWR-01`, `WA4-R` | **NOT APPROVED / NOT RUN; WA4-R PARTIAL**; ни зелёный CI, ни наличие инструмента не разрешают production apply или WARN/STRICT |
+
+БЛОК 1 персональной карточки агента — **только под контролем пользователя**; координатор в рамках этого обзора его не менял.
+
+---
+
+## WEB_10 / 2026-10-20 — portable MCP setup toolkit, offline stage
+
+| Понятная задача | TASK ID | Статус / подтверждение |
+| --- | --- | --- |
+| Переносимая подготовка защищённого MCP на новой Windows | `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001` | **PUBLISHED / BOUNDED SOURCE+ARTIFACT REVIEW PASS; TOOLKIT PREPARATION PARTIAL**: [user-published Codex toolkit / commit #374](https://github.com/maxrus82gm-svg/ag_llm/commit/6b3403f034b56b3dbb89f3ffcb44695f8d194101); 87/87 manifest paths and manifest present, 10/10 critical SHA/byte checks matched; B1 Codex waiting and card history preserved. Discovery/Plan/static Verify/rollback planner ready as offline tools |
+| Автоматический сбор и проверка параметров | 55-field contract / local Discovery | 55/55 represented, **14 metadata VERIFIED / 42 blocking requirements** per Codex local run; not 55 safe facts, no OS enforcement proof |
+| Действующая безопасная установка и проверка V2Ray-only | Native WFP/backend/host binding | **BLOCKED / NOT IMPLEMENTED**: Install/Uninstall guarded, PS7 synthetic 62/62 per agent evidence (not verifier runtime); source archive, lab, WFP SID/loopback/BFE, DNS and E2E open, hosted hold active |
+
+WEB_10 independently verified 10 selected critical files by SHA-256 and checked all 87 published manifest paths. Full data/control-plane and whole Windows not exposed to discovery; original secrets/SIDs never portable. Separate USER GO required for any OS/native/security backend changes.
+
+---
+
+## 🟨 LLM12 / 2026-10-20 — независимая проверка Claude на Windows (W1)
+
+| Понятная задача | Машинный код | Статус / доказательство |
+| --- | --- | --- |
+| Независимо проверить исправления после аварийного завершения на Windows | W1; CI = Continuous Integration (автоматическая проверка кода) | **ТЕСТОВЫЙ ЗАПУСК PASS / 5 CI jobs SUCCESS**; [run #39387538904](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/39387538904), checked commit `7d14b2672110e14bf0be5fdf5cd9fc06e39130c2`: полная регрессия 874/OK, Windows Python 3.12. Остальные направленные и race-наборы OK; подробные ZIP/raw JSON ещё не разобраны независимо. |
+| Подтвердить доказательства проверки, не только зелёную галочку | W1 evidence closeout | **PARTIAL**: 4 артефакта зарегистрированы и доступны до 2026-10-27, детальное чтение ZIP/raw JSON и все независимые oracle-гарантии NOT VERIFIED; исторические красные сохранены |
+| Осмотреть живое хранилище без изменений | W3 | **NOT RUN / отдельное разрешение пользователя** |
+| Дальнейшая надёжность Web Alarm | WA4-R | **PARTIAL**; ремонт Claude прошёл Windows CI в ограниченном смысле; открыты AUD-01T-R, AUD-02c, AUD-04, PWR-01 и исторические случаи; WARN/STRICT/rollout NOT AUTHORIZED |
+
+Диагностический [PR #16](https://github.com/maxrus82gm-svg/ag_llm/pull/16) создавался **только для автозапуска**: отдельная ветка с одним Markdown-маркером, **DO NOT MERGE**, `main` и программный код не менялись.
+
+---
+
+## WEB_10 / 2026-10-19 — MCP identity/SID egress architecture research (not runtime verified)
+
+| Area / task | Current status | Evidence / next |
+| --- | --- | --- |
+| `CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001` | **PUBLISHED / INDEPENDENT BOUNDED DOCUMENTARY+SHA REVIEW PASS; DESIGN CONDITIONAL / OS NOT VERIFIED** | [Codex 007 architecture report, user-published #372](https://github.com/maxrus82gm-svg/ag_llm/commit/68ba4fed795077ce594de41166d8cdafa77137b6). 12/12 artifact sizes/hashes verified with original line endings; own Codex card B1 waiting, B2/B3/history preserved. Local Windows native/system/network tests 0 |
+| `MCP no-VM design` | **T1 PROPOSAL / NOT APPROVED FOR DEPLOYMENT** | Two Windows SIDs, disjoint WFP deny policy, client exact loopback endpoint, broker remote pin and no DIRECT; P1 insufficient/P2 still unproven. T2, DNS/brokers, listener ownership and BFE/boot remain blocking |
+| `MCP live security and ordinary Chat E2E` | **BLOCKED / HOLD** | Source pack missing, isolated lab not selected, WFP not enforced or tested; `HOSTED_TUNNEL_ON_HOLD_BY_USER`; native fail-closed, V2Ray remote route and ordinary Chat MCP calls NOT VERIFIED |
+
+No changes authorized to live Windows, V2Ray, hosted tunnel or WA4-R/LLM12. Detailed architecture and gates remain in 19 and current tactical 34.
+
+---
+
+## LLM12 / 2026-10-18 — WA4-R crash-consistency repair latest gate
+
+| Area / task | Status | Evidence / next |
+| --- | --- | --- |
+| `CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001` | **PUBLISHED / BOUNDED INDEPENDENT SOURCE+INTEGRITY REVIEW PASS WITH RISKS; FULL DONE/VERIFIED PENDING** | [published Claude repair / commit 366](https://github.com/maxrus82gm-svg/ag_llm/commit/2789587880bc79d10d8524773b2d87f7082d43c3), task `Alarm/ALARM_TASK_SESSION/TASK_CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001/`; all nine modified source/tests + six critical evidence artifacts SHA-256/size **15/15** match, **142/142** task-manifest files present; final Claude-local 874 = 873 PASS / 1 SKIP |
+| `AUD-02b-R HIGH / R-MT` | **IMPLEMENTED / REVIEWED, NOT FULLY VERIFIED** | Pre-CAS durable INTENT, CAS, commit/abandon/reconcile; legacy VERIFIED without evidence blocks closeout until separate `reaffirm` re-check, not automatic acceptance |
+| `AUD-03 MEDIUM / R-OP` | **IMPLEMENTED / REVIEWED, NOT FULLY VERIFIED** | Limited reconstructible INTENT rev1 pending journal restored under lock; the reconciling call performs no physical apply, ambiguous cases fail closed |
+| `WA4-R` | **PARTIAL / bounded OBSERVE** | W1 new clean exact-source Windows CI NOT RUN; W3 live-storage read-only preflight NOT RUN; WARN/GATEWAY REQUIRED/STRICT/Final Audit NOT AUTHORIZED |
+| `OTHER OPEN` | **NOT ASSIGNED / FOLLOW-UP** | AUD-01T-R, AUD-02c, AUD-04, PWR-01; F-1 executor message, F-2 completion missing event, F-3 post-completion rejection event, F-4 unsafe rollback policy |
+
+Claude's older `LOCAL ONLY` handoff predates user publication; complete 4.88 MB raw per-test result exists in GitHub but was not returned in full by verifier's connector. The published summary/compare are readable, source and test oracles examined. No 001 confirmed-history entry until independent `DONE/VERIFIED`. Historical dated rows below are preserved; RT-001 Web Alarm belongs to LLM12, MCP belongs to WEB_10.
+
+---
+
+## LLM12 / 2026-10-17 — WA4-R AUD-02b-R/AUD-03 crash design review (latest for RT-001)
+
+| Area / task | Current status | Evidence / next |
+| --- | --- | --- |
+| `CLAUDE-WA4-R-CRASH-CONSISTENCY-DESIGN-001` | **PUBLISHED / INDEPENDENT BOUNDED DESIGN RESEARCH SOURCE+EVIDENCE ACCEPTED; no implementation VERIFIED** | [Claude research published](https://github.com/maxrus82gm-svg/ag_llm/commit/6256ac0cb072d4b40e04c506a8549dbfbf136f26), 39/39 artifact SHA+byte sizes, 3×13 local crash probes with 8 PASS / 5 deliberate INVARIANT FAIL each, schema 4/4 local |
+| `AUD-02b-R` | **HIGH / REPRODUCED / OPEN** | Real child-process death after VERIFIED CAS leaves no evidence event; fresh closeout returns COMPLETED; require USER-approved crash-consistency protocol |
+| `AUD-03` | **MEDIUM / REPRODUCED / OPEN** | Missing OPERATION_INTENT rev1 is fail-closed but causes TASK-wide OPERATIONS_UNREADABLE and no working recovery path |
+| `R-OP + R-MT` | **DESIGN PROPOSAL / NOT APPROVED / NO CODE TASK** | User to choose policy for pending/roll-forward, legacy VERIFIED, all writers, compatibility and power-loss scope |
+| `WA4-R rollout` | **PARTIAL / bounded OBSERVE only** | W1 and W3 NOT RUN; WARN/GATEWAY REQUIRED/STRICT/Final Audit NOT AUTHORIZED |
+
+Claude B1 WAITING after self-rotation; no authority for next implementation task without direct user assignment. Earlier dated 05 entries below are historical; WEB_10 MCP does not inherit RT-001 reliability work.
+
+---
+
+## LLM12 / 2026-10-17 — Web Alarm WA4-R latest published review (supersedes dated 2026-10-16 top rows)
+
+| TASK / component | Current gate | Provenance / next |
+| --- | --- | --- |
+| `CLAUDE-WA4-R-AUD01T02B-REPAIR-001` | **PUBLISHED / bounded ChatGPT SOURCE+INTEGRITY REVIEW PASS WITH OPEN RISKS; task DONE/VERIFIED NOT GRANTED** | [published commit #354](https://github.com/maxrus82gm-svg/ag_llm/commit/3fd942b783ea36b969f801045c7f3ec550689a44); six modified source/tests + seven key evidence SHA/size 13/13 match, 55/55 task manifest files present; Claude local full 848 PASS + 1 SKIP, independent full and W1 NOT RUN |
+| `AUD-01T / AUD-02b` | **IMPLEMENTED / BOUNDED REVIEW ONLY** | Framing/transport interprocess append and microtask status+event lock ordering; not process-death transaction proof |
+| `AUD-02b-R / AUD-03` | **OPEN / NEEDS USER CONTRACT DECISION** | Status/INTENT persisted before event; require fail-closed detection and crash/reopen acceptance |
+| `AUD-01T-R / AUD-02c / AUD-04` | **OPEN / NOT ASSIGNED** | Transport torn-tail lossless recovery; invalid middle-line report append; invalid-ID pre-lock side-effect |
+| `WA4-R` | **PARTIAL / bounded OBSERVE only** | W1 fresh exact-source Windows CI not run, W3 separately authorized read-only live-storage preflight not run; WARN/GATEWAY REQUIRED/STRICT/Final Audit **NOT AUTHORIZED** |
+
+**DOC-SCOPE:** Web Alarm RT-001 owned by LLM12; WEB_10 (successor WEB_09) handles MCP/V2Ray, not WA4-R source/acceptance. Original stages WA-1…WA-3, RC-0…RC-6, WA4-E/A previously VERIFIED; WA4-O technical PASS but full visual suite not signed off. Only USER can assign next engineer/rollout. Older register entries below remain dated historical snapshots.
+
+---
+
+## WEB_09 / 2026-10-16 — current Web Alarm and MCP independent streams
+
+| TASK/area | Verified status | Evidence / next |
+| --- | --- | --- |
+| `CLAUDE-WA4-R-AUD010205-REPAIR-001` | **RESULT READY / bounded independent SOURCE+EVIDENCE ACCEPTED; CI/own full NOT RUN** | #352, AUD-01/02/05 repaired in 3 modules + 1 test; locally 821 PASS/1 SKIP |
+| `WA4-R AUD-01T / AUD-02b` | **OPEN / negative repro confirmed / next Claude TASK candidate NOT ASSIGNED** | global transport JSONL + status/event consistency |
+| `WA4-R AUD-03 / AUD-04` | **OPEN / separate user decision** | crash INTENT/event and lock-before-validation |
+| `CODEX-WUA-0-DESKTOP-MCP-E2E-001` | **0.2.1 local gates A–D PASS; ChatGPT Desktop E2E NOT VERIFIED** | bounded activation user-authorized, actual ordinary Chat E2E not proven |
+| `WA4-R rollout` | **PARTIAL / OBSERVE bounded / WARN & STRICT NOT AUTHORIZED** | CI, preflight, independent gates & USER GO pending |
+
+**SOURCE:** [commit #352](https://github.com/maxrus82gm-svg/ag_llm/commit/7778c9e255ee6982391c58e30c77d89f296cd0e0) published Claude 008 AUD-01/02/05 repair, report and test/evidence. ChatGPT independently accepted bounded source+evidence only (not own full Windows execution or clean CI); Claude reported 822 = 821 PASS / 0 FAIL / 0 ERROR / 1 SKIP, repair 20/20, RAM mutation controls 4/4, old R-006 11/11, prior quality 12/12, bounded concurrency passes. **WA4-R PARTIAL**, bounded OBSERVE only, WARN/GATEWAY REQUIRED/STRICT/Final Audit NOT AUTHORIZED.
+
+**Open:** AUD-01T HIGH transport_event_store global Unicode JSONL/torn-tail; AUD-02b MEDIUM state_machine status/event ordering; earlier AUD-03 crash INTENT-event gap and AUD-04 lock-before-invalid-ID. Adjacent probes for AUD-01T (2) + AUD-02b (1) intentionally FAIL; nothing has repaired them yet. Next Claude TASK candidate AUD-01T/02b still needs user manual assignment. Clean CI on exact source SHA and explicitly authorized read-only live-storage preflight pending.
+
+**Ownership:** only ChatGPT (with user GO) changes shared docs; user manually puts new TASK in Claude B1 and starts agent; agent self-rotates own card. Previous WEB_07 CURRENT below is dated historical material; Web Alarm Ultra / Blueprint plan #37 is future, no coding GO.
+
+---
+
+# Реестр задач GigaChat Ultra Local Agent
+
+## CURRENT WEB-02 TASK STATUS — 2026-10-13
+
+| ID | Задача | Статус | Зависит от | Результат |
+| --- | --- | --- | --- | --- |
+| CODEX-WA4-R-001 / bounded OBSERVE | Read-only diagnostic preflight | **INDEPENDENT ACCEPT WITH OPEN RISKS (bounded OBSERVE only)** | WA4-O technical PASS | Windows CI 228/228 focused, 750/750 full; no new mutation authority; F1–F3 OPEN |
+| WEB07-WA4-R-OBSERVE-CLOSEOUT-001 | Documentation and independent acceptance | **CLOSED / DOCUMENTED** | CI + source review | Atomic docs-only closeout; WA4-R overall remains IN PROGRESS |
+| WA4-R subsequent stages | WARN → GATEWAY REQUIRED → STRICT → Final Audit | **NOT AUTHORIZED / NOT VERIFIED** | Separate USER GO and safety evidence | No automatic rollout |
+
+**CURRENT VERIFIED UPDATE / 2026-10-13 / WEB_07 / CODEX-WA4-R-001:** bounded read-only **OBSERVE ACCEPTED WITH OPEN RISKS** after independent source/HTTP/CLI/test review and GitHub Windows job-log verification. Pinned source `7caee3af61679f963eb90a323e57a1015f9a565e`; Actions [38229502661](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38229502661), rerun job `115156352428`: WA4-A 167/167, WA4-O 29/29, OBSERVE 228/228, closeout diagnostic 20/20 (80 rounds), JS 23/23, full Web Alarm 750/750 PASS (zero FAIL/ERROR/SKIP). Astra [38258103453](https://github.com/maxrus82gm-svg/ag_llm/actions/runs/38258103453), job `115156365504`: P1–P3 3/3 and focused 103/103 PASS. Workflow artifacts and job logs confirmed; original artifact ZIP payloads not independently unpacked in this closeout. **Only bounded on-demand observation is accepted**, not filesystem watching, writer attribution, mutation gateway, enforcement, lifecycle transition or global STRICT acceptance. `DONE` receipts are historical evidence only, not proof of current bytes. F1 RC-5 Windows closeout, F2 direct-close vs MutationExecutor, F3 WA-017 crash race remain OPEN; historical CI failures are not erased by green reruns. `CODEX-WA4-R-001-DIAG-01` establishes a controlled native WinError 5 safe pre-move refusal, **not** the root cause or terminal invariants of the original red CI. WA4-R overall **IN PROGRESS / STRICT NOT VERIFIED**. **NEXT SAFE ACTION:** separately authorize F1–F3 deterministic raw-state/fresh-process evidence or next bounded rollout decision; **no automatic WARN / GATEWAY REQUIRED / STRICT / Final Audit**. Prior `NOT STARTED / NOT ASSIGNED` lines below are preserved as historical snapshots and superseded by this current update.
+
+---
+
+
+Этот документ содержит рабочий список задач со статусами, зависимостями и критериями приёмки. Статусы обновляются по мере выполнения.
+
+**Связанный живой контекст:** [[34_TACTICAL_CONTEXT|34 — Tactical Context]] — обязательный оперативный handoff при каждой значимой TASK; это не замена канонических статусов данного реестра. При смене чата или исполнителя открыть 34, затем сверить его с этим реестром и фактическим Git/evidence.
+
+## Формат таблицы
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+
+## Общая архитектура тестирования — проектная документация
+
+| ID | Задача | Статус | Зависит от | Результат |
+| --- | --- | --- | --- | --- |
+| DOC-TEST-001 | Общая архитектура тестирования для всех LLM и отдельные профили Web Alarm / Ultra | **MERGED TO MAIN; ASTRA REVIEW COMPLETE; R1/R2 CORRECTIONS PUBLISHED / POST-FIX INDEPENDENT REVIEW NOT RUN** (2026-10-12) | Исследование ASTRA-WEB02-TEST-ARCH-001; аудит ASTRA-TEST-ARCH-REVIEW-001; действующие 08/18/09/23 | Документы 36–36.3 и TEST-DEV/COV/EXEC/QA/FLAKY/EVID/SCOPE@1, graph 00→36→3 children. Астра нашла R1 HIGH (unsafe direct `test_final_audit` under default no-Git) и R2 MEDIUM (ADOPT допускает новый receipt). Пользователь одобрил; 36.2/36.3 адресно исправлены ChatGPT, source сверены, без runtime/test/CI изменений. Пилот Astra через PR №13 сохранён; F1–F3/runner quality OPEN, one-click FUTURE. Итоговый отчёт `reports/ASTRA-TEST-ARCH-REVIEW-001/report.md`; independent acceptance именно исправленной ревизии NOT RUN. |
+
+## Ветка WA: Web Alarm Workspace
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| WA-1 | Фундамент состояния и файловое ядро | DONE / VERIFIED | — | WA-1.1–WA-1.6 завершены; файловая основа и CLI проверены |
+| WA-1.1 | Схемы данных Web Alarm Workspace | DONE / VERIFIED | WA-1 | Новый `web_alarm/models.py`: versioned records, stable IDs/timestamps, recovery/replay states; focused tests 7/7 PASS, diff-check PASS |
+| WA-1.2 | Workspace Registry | DONE / VERIFIED | WA-1.1 | Disk-backed registry внешних Workspace, stable identity, persistence/reopen, dedupe root и fail-closed validation; combined focused regression 15/15 PASS, diff-check PASS |
+| WA-1.3 | TASK и план микрозадач | DONE / VERIFIED | WA-1.2 | Persistent task.json/task.md/plan.json + microtasks, immutable RAW TASK, ordered/current plan restart-proof, complete→completed и archive; WA focused regression 25/25 PASS, diff-check PASS |
+| WA-1.4 | Manifest и Snapshot | DONE / VERIFIED | WA-1.3 | Per-microtask verified restore_point, existing/new pre-state, hash/reread validation, explicit restore, corruption/path tamper fail-closed; WA focused regression 36/36 PASS, diff-check PASS |
+| WA-1.5 | Event Log и Checkpoint | DONE / VERIFIED | WA-1.4 | Append-only events.jsonl + atomic checkpoint.json + generated checkpoint.md/NEXT SAFE ACTION; restart/fail-closed regression 42/42 PASS, diff-check PASS |
+| WA-1.6 | Базовый CLI | DONE / VERIFIED | WA-1.5 | `python -m web_alarm`: task/microtask/snapshot/checkpoint/status/report lifecycle; full WA regression 47/47 PASS, module-entrypoint smoke PASS, diff-check PASS |
+| WA-2 | Local Web Alarm Server + UI | DONE / VERIFIED | WA-1 | WA-2.1–WA-2.4 завершены; Server/UI/Context Pack проверены |
+| WA-2.1 | Server API | DONE / VERIFIED | WA-1 | Loopback-only-by-default typed advisory HTTP API; status/workspaces/tasks/plan/microtasks/prepare/snapshot-verify/report/recover-entry; 57/57 PASS, diff-check PASS |
+| WA-2.2 | Server-owned state machine | DONE / VERIFIED | WA-2.1 | Authoritative transitions, verified-snapshot/order gates, checkpoint/event updates, computed NEXT SAFE ACTION, 409 rejection contract; full WA regression 64/64 PASS, diff-check PASS |
+| WA-2.3 | Минимальный UI | DONE / VERIFIED | WA-2.2 | Local HTML/JS dashboard + read-only task aggregate; Workspace/TASK creation/inspection, manifest/reports/recovery/NEXT SAFE ACTION; 69/69 PASS, HTTP UI smoke PASS, diff-check PASS |
+| WA-2.4 | Entry Context Pack | DONE / VERIFIED | WA-2.3 | One-operation restart-safe context from persistent state; all required fields, no event-history growth, read-only; full WA regression 75/75 PASS, diff-check PASS |
+| WA-3 | Remote recovery + replay protection | DONE / VERIFIED | WA-2 | WA-3.1–WA-3.7 complete; old stricter combined post-change criterion не объявлен PASS, а закрыт RT-001 как SUPERSEDED / DEFERRED и перенесён по смыслу в отдельный WA4-A (deterministic HTTP lost-response уже независимо принят; WA-3.7 real Remote CTRL-002 не переименован в тот же test) |
+| WA-3.1 | Канонический Remote entry | DONE / VERIFIED | WA-2 | `webalarm enter`/`status --active`, fail-closed active TASK resolver, recovery-aware read-only Entry Context Pack; real disconnect reconciliation + full WA regression 82/82 PASS, diff-check PASS |
+| WA-3.2 | Operation ID / replay identity | DONE / VERIFIED | WA-3.1 | Persistent operation store, canonical fingerprint/conflict gate, replay-safe lifecycle, RECONCILE_REQUIRED for STARTED/UNKNOWN; full WA regression 90/90 PASS, diff-check PASS |
+| WA-3.3 | Reconciliation | DONE / VERIFIED | WA-3.2 | Evidence + Decision + Server/Remote integration + final recovery matrix завершены; full WA 133/133 PASS |
+| WA-3.3.1 | Reconciliation Evidence / read-only inspector | DONE / VERIFIED | WA-3.2 | Per-target pre/snapshot/current/expected-post evidence, pure snapshot integrity, drift/missing-evidence classification; focused 10/10, full WA 100/100 PASS, diff-check PASS |
+| WA-3.3.2 | Deterministic Decision Engine | DONE / VERIFIED | WA-3.3.1 | Pure deterministic four-way fail-closed decision policy, evidence fingerprint, no mutation authority; focused 16/16 + full WA 116/116 PASS, diff-check PASS |
+| WA-3.3.3 | Server / Remote integration | DONE / VERIFIED | WA-3.3.2 | ReconciliationService + read-only Server endpoint + Context/Remote integration; focused 7/7, full WA 123/123, fresh-process restart checks 3/3 PASS, diff-check PASS |
+| WA-3.3.4 | Recovery scenarios / final verification | DONE / VERIFIED | WA-3.3.3 | Core four-way 4/4 PASS; extended recovery matrix 10/10 PASS; final full WA regression 133/133 PASS, no runtime repair required |
+| WA-3.4 | Recovery после restart Chat/Server | DONE / VERIFIED | WA-3.3 | Process-level live-Server/new-Chat 1/1 PASS; repeated new Chat+new Server process 2/2 PASS; full WA 135/135 PASS |
+| WA-3.5 | Watchdog signal, not authority | DONE / VERIFIED | WA-3.4 | A+B+C+D complete; authority-negative 7/7, transport 29/29, full WA 164/164 PASS; no runtime repair; fresh reopen PASS |
+| WA-3.6 | Short machine-usable Recovery Report | DONE / VERIFIED; FRESH REOPEN PASS | WA-3.5 | Persistent report schema/store + deterministic builder + Server/Context integration + adversarial acceptance; 33/33 combined, full WA 197/197 PASS; evidence-only, none/partial/full/ambiguous; M004 docs closeout пережил live transport interruption через snapshot reconciliation |
+| WA-3.7 | Controlled real Remote transport-disconnect acceptance gate | DONE / VERIFIED; FRESH REOPEN PASS | WA-3.6 | `CTRL-001` FULL/no-disconnect retained as non-acceptance; `CTRL-002` real offline/recovered + exact PRE_STATE + RETRY_SAFE + side_effect none + no replay + report/fresh-process PASS; focused 95/95, full WA 197/197, compileall/diff-check PASS. Stricter combined criterion later SUPERSEDED / DEFERRED by RT-001, not retroactively PASS |
+| RC-0 | Baseline + normalization policy | DONE / VERIFIED | RT-001 / P00 | 197/197 baseline independently reproduced; physical bytes SHA-256 + size accepted as authority; manifest checkout drift reproduced 121/115/6/1; `.gitattributes` FOLLOW-UP deferred |
+| RC-1 | Durable Operation Contract + backward compatibility | DONE / VERIFIED | RC-0 | `CLAUDE-WA-003`; 241/241 full regression PASS, 44 focused PASS, multiprocess storage lock independently rechecked, legacy WA-3.7 records fresh-process readable without storage mutation |
+| RC-2 | Tracked Resolver / evidence revision | DONE / VERIFIED | RC-1 | `CLAUDE-WA-004`; persistent ADOPT/RETRY/ROLLBACK/ABORT bound to evidence fingerprint + operation revision; stale/rejected fail-closed; Recovery Report derives resolver facts/NEXT from persistence; independent full 266/266 + focused/concurrency 25/25 + extra race 5/5 PASS. Context Pack projection follow-up deferred to RC-5/RC-6 |
+| RC-3 | Canonical-target conflict gate + mutation-boundary CAS | DONE / VERIFIED | RC-2 | `CLAUDE-WA-005`; one persistent owner per canonical physical target; interprocess target locks; replay-safe acquire/release; crash-safe ownership; mutation authority only inside CAS boundary; independent focused 20/20, full 286/286, extra concurrency 5/5 PASS. WA4-E lock-held STARTED-before-write integration recorded |
+| RC-4 | Tracked safe rollback | DONE / VERIFIED | RC-3 | `CLAUDE-WA-006`; persistent rollback identity, preserved current state before destructive restore, all-target RC-3 ownership incl. NOOP, per-target CAS/receipts, final full-target byte proof before VERIFIED, crash-safe pending claim release and partial/restart-safe recovery; independent RC-4 focused 43/43, RC2/3/4 focused 88/88, full 329/329 + custom NOOP-race probe PASS. NEXT = RC-5 |
+| RC-5 / CLAUDE-WA-016 | Projection correctness + pure inspection | DONE / VERIFIED — 2026-10-09 | RC-4 / RC-6 | Independent GitHub audit and home Desktop tests: 60/60 targeted, 593 OK (1 skip), commit d53ec14; F-5/F-6 OPEN. |
+| RC-6 / CLAUDE-WA-014 | Project recovery closure and activation authority repair | DONE / VERIFIED — GitHub review 2026-10-08 | RC-5 implementation (deferred independent review) | After Repair #1…\#4B, ABORT/ROLLBACK accepted before ACTIVE blocks activation under TASK-lock; legitimate pre-ABORT ACTIVE preserves rollback. 11/11 new tests, full 580 OK (1 skip) ×2 in saved logs; independent code/evidence PASS commit `2c104782`, verifier did not rerun tests. |
+| WA4-E | Authoritative Mutation Executor/Gateway | **DONE / VERIFIED** — independent ChatGPT 2026-10-09 | RC-6 / RC-5 design constraints | CLAUDE-WA-018, commit `a142817b33964691584aadbd6ea6464779df1815` (177): server-owned write/edit/create/delete and two-step non-atomic move/rename; durable STARTED-before-write, exact post-proof/receipt, replay. Verifier reran focused 36/36 and full 643 OK (1 skipped), exit 0; unchanged GitHub blob SHA verified 2026-10-11. P-1…P-4/R-1…R-4 remain open; WA4-A DONE / VERIFIED, WA4-O/R NOT ASSIGNED. |
+| WA4-A / CODEX-WA4-A-001 | Deterministic Lost-Response Acceptance | **DONE / VERIFIED — ChatGPT independent 2026-10-11** | WA4-E | Код/evidence №259 `b009f803`; 46 new A1–A8 tests and v2 receipt/history gate. GitHub Windows PR №5 run `38135287346`: 166/166 focused, 689/689 full, 5/5 smoke PASS, zero skip/guard violations; CI repair №261. Real network/Remote disconnect not retested; P/R retained. |
+| WA4-O / CODEX-WA4-O-001 | Authoritative progress / UX-Ops | **IMPLEMENTED / INDEPENDENT AUTOMATED PASS; INTERIM USER UI REVIEW** | WA4-A | PR №7 merged; GitHub Actions 38153364378: 719/719 full, 29/29 operator+launcher, 23/23 JS, 167/167 focused, 5/5 smoke. User previewed demo and accepted interim style; full human visual suite NOT confirmed. User-requested 3-column UX A/B/C NOT IMPLEMENTED, deferred until post-WA4-R. |
+| WA4-R / proposed CODEX-WA4-R-001 | Strict rollout + final audit | **NEXT CANDIDATE / NOT STARTED** | WA4-O technical PASS; interim UI | Original OBSERVE→WARN→GATEWAY REQUIRED→STRICT→Final Audit. First limited preflight/OBSERVE task composed in prior chat but NOT in Codex БЛОК 1 / NOT launched. WARN/STRICT not authorized. Requires separate user placement/start, independent acceptance and later separate rollout gates. |
+| CODEX-ALARM-CLEANUP-001 | Remove recoverable local-agent safety copies | RESULT VERIFIED IN GITHUB DIFF, byte-by-byte checks per executor report | WA-014 | Commit `91f46923`: полный локальный Git diff подтвердил ровно 450 удалённых `.py` только из `Alarm/**/safety_copies/`, без удалений исходников, тестов и отчётов. Исполнитель сообщил 7 445 289 байт и 450/450 byte-identity с Git; verifier отдельно хеши всех копий не пересчитывал. UI-изменение `.obsidian/workspace.json` не приписывается Codex. |
+| DOC-WA-REMOTE-CONCLUSIONS-001 | Consolidated Remote failure conclusions | DONE / VERIFIED | WA-3.4 | INC-REMOTE-001…013 сведены в baseline-модель; инварианты подняты в 23, требования WA-3.5/3.6/WA-4 — в 24; runtime не изменялся |
+| DOC-WA-REMOTE-OBS-001 | Remote transport/recovery evidence journal | DONE / VERIFIED | WA-3.2 | Создан документ 26 с real incident cases, process/runtime evidence, transport source analysis и instrumentation fields; Obsidian link только из 23 |
+
+## Завершенные задачи (инфраструктура)
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| 256 | GitHub-hosted Windows CI smoke для Web Alarm WA4-E | **DONE / CI PASS (5/5)**, 2026-10-11 | WA4-E existing tests | Один файл `.github/workflows/web-alarm-tests.yml`, коммит `f211045d`, PR №2 merged в main. GitHub Windows/Python 3.12: push run 38124155634 — 5/5 OK (5.631 s), PR run 38124184732 — SUCCESS. Не полный 36/643; не Ultra; не live storage. |
+| 257 | Документальное сохранение GitHub Actions CI capability | **DOCUMENTED / GitHub verification 2026-10-11** | 256 | Факты и ограничения записаны в 05/06/22/25/34 одним документационным коммитом; код, workflow и Ultra без изменений. |
+| 260–261 | GitHub Actions focused/full + guard repair | **DONE / CI PASS — 2026-10-11** | 256, WA4-A | PR №4 red on recursion/temp mismatch; repaired №261; successful PR №5: 166/166 focused + 689/689 full, 5/5 smoke; no Ultra/runtime changes. |
+| 05 | Базовая инфраструктура локального Ultra — ГОТОВО | ГОТОВО | — | Автономное приложение с Tkinter UI, file tools, trace/events, runtime change warning, боковой панелью ЛОГ ДЕЙСТВИЙ, Workspace-specific RUN logs и успешным диагностическим run. Исторические подэтапы 05A* объединены в этот завершённый этап. |
+
+### Архитектурная серия TASK 132–143 и стабилизация 144–151
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| 132 | Run Store v2 / index → ID → lazy load / role isolation / token usage / text verify | DONE | — | Раздельные RUN records, T/R aliases, lazy Audit, role usage, context deltas и `verify_file_content` |
+| 133 | Hotfix verify result contract + event source routing | DONE | 132 | VERIFY mismatch идёт по обычному failure path; SERVER / PLANNER / EXECUTOR / DREDD source attribution исправлен |
+| 135 | Audit export / Treeview theme / verification-stage contract | DONE по code/tests | 133 | TXT export подтверждён live; отдельное live-доказательство Treeview theme не заявляется |
+| 136 | Planner repair robustness / Dredd review observability / strict JSON diagnostics | DONE + LIVE REGRESSION VERIFIED | 135 | Hard protocol, location-aware JSON errors и отдельный `planner_dredd_review_failed`; post-hardening successful live RUN подтверждён T-011/R-011 |
+| 137 | Documentation sync commits 132–136 и external integration architecture | DONE | 136 | Canonical CURRENT синхронизирован; FUTURE-направления вынесены в документ 19 |
+| 138 | Persistence stage auto-advance после подтверждённого server readback | DONE + LIVE VERIFIED | 136 | T-010 воспроизвёл цикл повторного WRITE; fix немедленно закрывает SATISFIED persistence stage и делает stage reset. T-011/R-011 прошёл WRITE → READ → VERIFY → Final Audit |
+| 139 | Executor Context Policy V1 — task-scoped seed для Planner-enabled RUN | DONE по code/tests; PARTIAL LIVE VERIFIED | 138 | Live подтвердил task_scoped_v1 и отсутствие старых Chat TASK в Executor seed; token footprint заметно снизился. Полный post-change SUCCESS ещё не получен |
+| 140 | Non-persistence stage completion по server-owned tool evidence | DONE по code/tests; PARTIAL LIVE VERIFIED / EVIDENCE CONTRACT GAP | 139 | Live подтвердил закрытие READ/VERIFY stage по server-owned evidence, но T-015 показал два дефекта: повторные READ/find_text до stop и слишком грубую проверку capability-only — успешный `contains` смог закрыть VERIFY-stage, хотя completion criterion требовал успешный `equals` |
+| 141 | Replan obligation-change validation внутри bounded Planner repair | DONE по code/tests; LIVE RETEST PENDING | 140 | Server-owned invariants replan-transition теперь выполняются candidate validator внутри REPLAN ask: duplicate/unknown/unproven changes, dropped obligation и cancel+kept artifact получают normal Planner feedback/Dredd repair до принятия plan version |
+| 142 | Existing target / ALREADY_SATISFIED lifecycle без no-op write | DONE по code/tests; LIVE RETEST PENDING | 141 | Create-conflict fact теперь содержит postcondition_holds; replan с неизменённым уже выполненным postcondition обязан явно разрешить ALREADY_SATISFIED, после чего persistence stage закрывается на baseline без dispatcher/no-op write и без fake receipt |
+| 143 | Run Store transient PermissionError hardening + Audit UI graceful degradation | CODE/TESTS PASS; LIVE FAIL CONFIRMED | 142 | Два live RUN 20260930_080921 и 20260930_081041 снова получили `audit_storage_error: PermissionError`; retry не устранил корень. Planner/Audit UI остались пустыми. Требуется root-cause audit |
+| 144 | Stabilization master audit / recovery plan | DONE — DOCUMENTATION ONLY | 143 | Зафиксирован порядок повторной проверки Chat/Context/Planner/Lifecycle/Run Store/UI и критерии выхода из стабилизации |
+| 145 | Run Store / Audit PermissionError root-cause audit | DONE — ROOT CAUSE FOUND | 144 | Windows Restart Manager показал единственного locker для `.ultra/audit/index.json`: `node.exe` Remote Desktop Commander, PID 26660. Прямой `os.replace()` воспроизводит `PermissionError`, errno=13, winerror=5, пока handle открыт |
+| 146 | Run Store / Audit repair по доказанному external-lock root cause | DONE + LIVE VERIFIED | 145 | WinAPI integration доказал generation fallback под persistent lock; T-015/R-015 затем завершился SUCCESS/Final Audit PASS без `audit_storage_error`, Planner/Audit/usage снова записались и отображаются, canonical index revision=5, pending generations=0 |
+| 147 | Chat storage / identity / Working Representation audit | DONE — AUDIT VERIFIED | 146 | 158 RAW messages: identity errors=0; Working Representation всех Chat читается fail-closed; existing SUMMARY 9+3 валидны; restart и UI switch 26→2→26 без leakage. Найдены orphan-create и failed-run terminal-message durability gaps |
+| 147A | Chat create atomicity / orphan cleanup | DONE по code/tests + LIVE STORAGE CLEANUP | 147 | `create_chat()` собирает полный Chat в `.ultra/chat_staging/...tmp` и atomically публикует directory через `os.replace`; metadata/publish failures не оставляют visible orphan. Старый пустой `chat_2224…` удалён; осталось 11 валидных Chat |
+| 147B | FAILED RUN terminal ASSISTANT persistence | DONE по code/tests + CONTROLLED WORKER PROOF | 147A | `_worker()` exception path persistent-сохраняет terminal ASSISTANT RAW с тем же `task_block_id`; valid run_started provenance переносится, early failure не получает выдуманный producer; storage failure остаётся видимой в UI payload |
+| 148 | Context compilation + Planner/Executor/Verifier boundary audit | DONE — AUDIT VERIFIED | 147B | R-015: Chat loaded 25/16801 chars, Executor included только current RAW TASK 1/293 chars и исключил 24/16508; exact RAW TASK в Executor base ровно один раз. Planner получает RAW TASK один раз в bounded local session + permissions/tools, без Project/Working Chat. Final Verifier one-shot получает RAW TASK + server evidence, без Chat history. Выявлены budget hotspots: Global Context 16151 chars и Final Audit evidence ~104k chars |
+| 149 | Lifecycle / stage transition / tool-budget + evidence-contract audit | DONE + LIVE VERIFIED | 148 | T-021/R-021: SUCCESS/Final Audit PASS; 6 Executor API, ровно 3 physical tools. Sequence: WRITE → exact READ → exact EQUALS. Wrong `verify exists` перехвачен Evidence Gate с `executed=false`. Финальный `<` пойман до Audit и repaired в human-readable answer. Full suite 299/299 + UI smoke PASS |
+| 149C | Exact Evidence Gate | DONE + LIVE VERIFIED T-020/T-021 | 149 | Server фильтрует `server_evidence` stage до remaining exact requirements и проверяет arguments fingerprint до dispatcher; wrong READ/VERIFY не исполняются и не списывают tool budget |
+| 149D | Final Response Sanity Gate | DONE + LIVE VERIFIED T-021 | 149C | Punctuation-only final `<` в T-021 вызвал `final_response_repair_requested`; corrected human-readable candidate только после этого передан Final Audit, который дал PASS |
+| 149E | Planner Exact Text Escape Guard | DONE + LIVE VERIFIED T-020/T-021 | 149D | Double-escaped exact text отклоняется до Executor. T-020 live доказал repair со второй INITIAL attempt; T-021 Planner сразу вернул валидный exact multiline contract |
+| 149F | Final Response Tool-Markup Gate | DONE по code/tests | 149E | Serialized `<tool_calls>/<invoke>` final content детерминированно направляется в тот же bounded repair path; exact markup branch покрыта regression test, общий repair path live-подтверждён T-021. Full suite 299/299 + UI smoke PASS |
+| 150 | UI binding audit: Chat → Task Block → RUN → Planner/Audit | DONE — AUDIT + REPAIR VERIFIED | 149F | Run Store v2: 21 Task / 21 RUN, modern identity mismatches=0; T-021 restart восстановил правильные Task/RUN/Planner; controlled switch всех 11 Chat не смешал modern RUN. 33 legacy RUN читаются fallback; два исторически потерянных storage-case выявили UX gap → 150A. Targeted UI/Audit 64/64, Run Store 9/9, full suite 299/299, UI smoke PASS |
+| 150A | Missing Audit Storage UX / stale-panel fallback | DONE по code/tests + LIVE LEGACY CASES | 150 | При selected RUN без v2 summary и без legacy Audit UI больше не пустой: summary содержит `AUDIT: НЕДОСТУПЕН`, Audit и Planner показывают явное объяснение. Missing index incremental refresh перерисовывает fallback вместо silent return/stale panel |
+| 151 | Integrated regression matrix + CURRENT documentation reconciliation / STABLE BASELINE S1 | DONE + S1 BASELINE VERIFIED | 150A | T-022/R-022: SUCCESS / Final Audit PASS; accepted Planner contract без repair/reject, ровно 3 physical tools WRITE → exact READ → exact EQUALS, wrong exists blocked executed=false, final tool-markup repaired до Dredd. 9 model calls / 72 594 tokens; exact 51-byte probe с terminal newline; Run Store identity/streams/usage clean; pre-live runtime SHA snapshot unchanged. КТ-0 DONE |
+| 151A | Benchmark + Context Accounting + Usage Accounting | DONE — КТ-1 ACCOUNTING CLOSED | 151 | Provider/context/usage accounting реализован и статистически закрыт: по 5 positive SUCCESS/PASS на B1-clean, B1-dirty, bounded B2 и B3 exact. Median/range tokens: B1-clean 36 060 (31 229–36 875), B1-dirty 30 647 (25 158–41 175), B2 46 284 (43 694–60 044), B3 33 019 (31 596–38 668). Все positives имеют complete started/terminal identity и context accounting; retained HTTP 429 хранит UNKNOWN usage как UNKNOWN. R-027 остаётся отдельным 1 736 351-token stress baseline для 151G. T-030 false-PASS был repaired fail-closed и exact no-mutation B3 series прошла clean. КТ-1 DONE; следующий этап 151B. |
+| 151B | Evidence Freshness / plan-state revision binding | DONE — КТ-2 FRESHNESS CLOSED | 151A | Evidence identity теперь связывает task/run/plan/stage/generation/requirement/tool/args/dependencies/state/sequence/result/source record; REPLAN/repair не наследуют stale PASS, target/dependency drift переоткрывает stage, Final Audit PASS привязан к evidence snapshot и повторно проверяется перед SUCCESS. Focused/regression matrix 150 tests OK, full suite 320 OK, UI smoke/diff-check PASS; fresh live B1/B2/B3 `20261001_154859_053216` / `20261001_154927_e54fa7` / `20261001_155015_f999db` — SUCCESS/PASS. КТ-2 DONE; следующий этап 151C. |
+| 151G-DIAG-R031 | Executor Context / Token Explosion Audit | DONE — DIAGNOSTIC, NO RUNTIME MUTATION | 151B live baseline | R-031 `20261001_182057_e90f93` воспроизвёл context amplification: 668 898 total tokens, Executor 665 505; два full `read_file(ultra_ui.py)` дали по ~279 325 serialized chars и раздули request context ~27k → ~319k → ~604k в одной stage. Root causes: full tool results остаются в live transcript до stage reset, `read_file` разрешает до 2 MiB, stage READ visibility capability-scoped без target scope, Guard P1 не ловит separated duplicate reads. Дополнительно fixture был dirty и RAW TASK paths/verify contract были некорректны. Finding закреплён как обязательный input/negative case для будущей 151G; канонический NEXT всё ещё 151C. |
+| 151C | Compact Final Audit Packet + Task-scoped Git Evidence | **PARKED по решению пользователя 2026-10-10 / RESULT READY / AWAITING INDEPENDENT VERIFICATION — КТ-3 НЕ DONE** | 151B | Codex recovery технически сдан, независимая приёмка не выполнялась. Старую отдельную TASK сняли из активной очереди, чтобы сначала провести REVIEW плана RT-002; не трактовать как отказ от safety/evidence gates. Ревьюер 33.1 обязан предложить безопасную перепривязку T0/151C. 151D самостоятельно не запускать. |
+| 151D | Server Direct Exact Evidence | PLANNED / QUALITY TRANSITION | 151C | Exact read_file/verify_file_content из accepted contract выполнять через существующие Server gates без лишнего Executor decision call. КТ-4 |
+| 151E | Server Factual Final Report | PLANNED / QUALITY TRANSITION | 151D | Для deterministic tasks Server строит factual candidate из authoritative facts; semantic final остаётся model-owned при смысловой задаче. КТ-5 |
+| 151F | Modular Global Context | PLANNED / QUALITY TRANSITION | 151E | CORE + applicable policy modules; уменьшить повторяемый SYSTEM без ослабления authority/permissions |
+| 151G | Stage Context Compiler | PLANNED / QUALITY TRANSITION | 151F | Передавать bounded working set stage вместо неограниченного tool/function transcript; full outputs сохранять в Run Store |
+| 151H | Planner Prompt Optimization | PLANNED / QUALITY TRANSITION | 151G | COMMON CORE + mode-specific INITIAL/READINESS/REPLAN projections при сохранении validation/repair/control chat |
+| 151I | Role Budgets | PLANNED / QUALITY TRANSITION | 151H | Включить bounded enforcement после доказанной context composition; RAW TASK/actual material/negative evidence не обрезать молча. КТ-6 |
+| 151J | Integrated Optimization Regression / Consolidation | PLANNED / QUALITY TRANSITION | 151I | B1/B2/B3 + negative matrix + rollback; целевой B1 ≤20k при сохранении обязательных проверок. КТ-7 |
+| 152 | Server Structured Task Digest | PLANNED / MEMORY PHASE | 151J | После terminal RUN Server формирует structured derived record из RAW TASK + status/receipts/evidence/open items/source refs; optional Compressor narrative не владеет facts |
+| 153 | Rolling Chat Micro History | PLANNED / MEMORY PHASE | 152 | Recent digests + chronological ledger + pinned OPEN items + archive overview; source digests сохраняются |
+| 154 | Relevant Prior Facts / Context Compiler V2 | PLANNED / MEMORY PHASE | 153 | Bounded historical context + retrieval from structured digests/source records; full Chat не передаётся автоматически, authority contexts не lossy-compress. КТ-8 |
+
+TASK 134 здесь не определяется: существующие исторические commit/probe identifiers не переименовываются и не получают придуманного смысла.
+
+## Ветка DOC: архитектура и регламент Круглого стола
+
+| ID | Задача | Статус | Зависит от | Результат |
+| --- | --- | --- | --- | --- |
+| CODEX-RT-002-PLAN-REVIEW-001 | RT-002: завершённая критическая REVIEW исходного 33 / слот 33.1 | **SUBMITTED / EXTERNALLY SEALED** (2026-10-10), вердикт REWORK REQUIRED, 15 findings = 9 HIGH / 5 MEDIUM / 1 LOW | 32 APPROVED, 31 SEALED; исторический 33 DRAFT, 28 / PIM-REVIEW-1 | Исторический immutable REVIEW commit №238 / внешняя печать 28. Findings учтены в FINAL-B2, **проект B2 уже USER PLAN APPROVED и перенесён в канонический 20 §5а** (см. строку CHATGPT-RT-002-FINAL-B2). Не запускать REVIEW снова и не считать прежние слова «T0→S0 не утверждены» текущим статусом. 151C/КТ-3 по-прежнему PARKED/PENDING. |
+| CHATGPT-RT-002-FINAL-B2 | Итоговый вариант B2 / Круглый стол RT-002, новый workflow Ultra | **USER PLAN APPROVED / VERIFIED CANONICAL HANDOFF TO 20** (2026-10-10; USER AUTHORIZED STAGED START) | exact B2 №242 SHA256 c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf; внешняя запись 28 | Каноническая ветка B2 и новая dependency вставка S0/S6a/S13a→151G в 20, журнал 21. Исходный sealed B2 не перезаписан; числовые лимиты и live требуют отдельных решений. 151C PARKED/KT-3 PENDING, старая 151D/E ветка deferred. S0 independently VERIFIED; NEXT candidate S1 only after separate USER GO/TASK. |
+| ULTRA-S0-MANUAL-LIVE-20261011 | Ultra runtime live/manual scope and positive exact-file evidence | **USER LIVE REVIEWED / TWO SCENARIOS OBSERVED — NOT FINAL S0 ACCEPTANCE** (2026-10-11) | CODEX S0 amendment #252 published; RT-002/B2 §5а | T-036/R-036 denied out-of-scope WRITE, terminal BLOCKED, 26,478 tokens; T-037/R-037 exact WRITE/READ/EQUALS SUCCESS + Dredd PASS, 39,549 tokens. Diagnostic exports delivered by user, summary/source reviewed by ChatGPT; runtime store not uploaded to GitHub. Planner acceptance of scope-invalid 7-stage plan, invented hash placeholder, unnecessary REPORT.md and extra READ calls in first run; second run final response repair adds one Executor API. Future Planner optimization findings ONLY; do not misstate as confirmed defect in Codex callback repair. Details in `21`. Architecture: Ultra `01/13/20/21`, separate from WA `23–25` / voice `12`. |
+| CLAUDE-RT002-S2-001 + REPAIR-001/002 | RT-002/B2 S2: pure budget policy, estimated input and protected Final Audit reserve, scope and terminal accounting, offline calibration | **BOUNDED INDEPENDENT SOURCE-REVIEW ACCEPTED / EXECUTION LIMIT — 2026-10-14** | accepted S0/S1, approved B2 | User commit #324 `76335ffb8337`; 73 main tests + 1 provenance (manifest independently checked); Claude-reported 73/73, 74/74, S1 69/69, S0 166/166, NOT new ChatGPT executed runs. REPAIR-001 terminal/validation and REPAIR-002 scope/float math corrected. Defaults and S3a require USER GO; see 20/21/36.3 |
+| CLAUDE-RT002-S1-001 + REPAIR-001/002 | RT-002/B2 S1: baseline, RAW R-031, complete HTTP route inventory and guarded test gate | **S1 BOUNDED INDEPENDENT SOURCE-REVIEW ACCEPTED WITH EXECUTION LIMIT — 2026-10-14** | accepted S0, approved B2, user-assigned S1/repairs | Commit #318 b309b18e87b2; Claude-reported 69/69 guarded S1 and 166/166 S0, ChatGPT source/manifest review and negative-controls analysis, but **no independently executed new 69-test suite**. R-026 attribution unresolved; S2 USER GO required; see 20/21/36.3 |
+| CODEX-RT002-S0-REPAIR-001 | RT-002 S0 repair / source-bound evidence + terminal callback guard | **INDEPENDENT OFFLINE ACCEPTED / VERIFIED — 2026-10-11** | RT-002/B2 §5а, prior F01–F04 | ChatGPT independently ran unchanged RT-002 S0 guarded suite via authorized Desktop Commander DESKTOP-SC96D3U (M:\GitHub\ag_llm, Python 3.12.10): **166/166 PASS, 0 FAIL, 0 ERROR, 0 SKIP, 0 isolation violations; exit 0, 110.073 s**. Manifest contains original F01–F04 and all 11 terminal-callback methods. Command `.venv/Scripts/python.exe -B test_rt002_s0_kernel.py`. Original and post-run file hashes equal: server.py SHA-256 `44d8cc8affaf9c76272f74ec19e046352e8a19a094c3e48e2dc37ccda6159f54`, test_rt002_s0_repair.py `860f723f4c864deb0fbf6a7699a0ef9b44a29fc6c08038cffb026b36e32fb868`, runner `cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b`. Local temporary logfile `C:\Users\REX\AppData\Local\Temp\codex-rt002-s0-baq6h0ex\unittest.log` SHA-256 `c64fc45950b9c387b7cc1486459f5b30a4d13b3f5c49a131733eb79267ed5817` (hash independently reread), `result.json` manifest/observations. This is ChatGPT runtime evidence, not merely Codex-reported 166. **S0 bounded OFFLINE kernel gate: INDEPENDENT ACCEPTED / VERIFIED.** Historic user-operated live R-036/T-036 BLOCKED permission rejection and R-037/T-037 WRITE/READ/EQUALS SUCCESS + Dredd PASS remain separate; no real live destructive callback injection. A synchronous `on_event` can see provisional SUCCESS before corrective BLOCKED; very-late external races and unavailable durable corrective BLOCKED after storage failure remain known limits. No source changes, Git commands, paid models or network calls during guarded suite. **S1 NOT ASSIGNED — separate USER GO/TASK required.** Old 151C/KT3 PARKED/PENDING; S6b/151G gated by S13a. ARCH Ultra 01/13/20/21, not WA 23–25 or Voice 12. See 21 for full provenance. |
+| CODEX-RT002-S0-001 | RT-002/B2 S0: kernel integration/rebaseline safety review, baseline frozen | **RESULT REVIEWED: FINDINGS / NEW-WAVE SUITABILITY NOT ESTABLISHED; REPAIR NEEDED / NO S0 PASS** (2026-10-10) | approved FINAL-B2, 20 §5а; historical 151C/КТ-3 PARKED/PENDING | Codex report committed by user #247 `2fb37a266a0780191471cdcecea587fb449a4168`, 16 new probes + 81 selected legacy: **Codex-reported 97=93 PASS+4 FAIL**, 0 errors/skips (exit 1); S0-F01/F02: stale observed_state binding for READ/VERIFY; S0-F03/F04: required tool outcome may be absent from durable Run Store while Dredd=1/SUCCESS=1. **Independent GitHub source/test inspection supports both root causes**, but independent execution NOT RUN (Remote devices offline), local-vs-GitHub exact byte/EOL reconciliation for server.py/task_planner.py PENDING. Production source unchanged in #247; new `test_rt002_s0_kernel.py` and personal card only (also user-published two .obsidian UI-state files, attribution not proven). No S1+ authorization; propose one separate repair task, repeat independent S0 gate before advancing. |
+| ULTRA-UX-STOP-001 | Ultra UI: видимая кнопка «Остановить генерацию» / корректный interrupt текущего LLM RUN | **PROPOSED / PRIORITY UX BACKLOG / NOT ASSIGNED** (2026-10-10) | После сдачи и независимой проверки S0; при необходимости отдельное решение о приоритете до S1, не часть frozen B2 | Пользователь хочет досрочно управлять зависшим/долгим рассуждением. UI `ultra_ui.py` сейчас имеет Send, worker asyncio.run(run_agent_task), явной cancellation команды в этом пути нет; Server использует нестриминговый запрос. Future narrow TASK: кнопка активна только во время RUN, Cancel/Stopping indicator, cooperative cancellation bound through provider/Planner/Executor/Final Audit, запрет новых sends/tools/mutations после stop, no false SUCCESS, сохранение partial evidence и возможного UNKNOWN cost, restart/permission-wait/race/double-click safeguards; isolated mocked tests + видимый GUI smoke. Не гарантировать отмену уже списанных токенов. **Без текущего запуска и без изменения кода S0.** |
+| CHATGPT-DOC-RT-20261010-001 | Применить принятый проект Astra 28.1 v2.1 к документам Круглого стола, создать слоты A/B, устранить локальный Git-conflict | RESULT READY / AWAITING INDEPENDENT VERIFICATION (документационный пакет, без runtime) | Предложение Astra в пользовательском commit №199 и прямое поручение 2026-10-10 | 18/08/28/33 + 33.1/33.2 + 32/35 + персональные указатели/34; Rule-ID и восстановимый initial 33, PLAN APPROVAL не дан, blind-route технически не enforced. Карточка ChatGPT БЛОК 1 до безопасной ротации. |
+
+## Задачи в работе и запланированные
+
+### Этап 06: Система чатов и управление контекстом
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| 06.1 | Модель данных чатов и хранение на диске | ГОТОВО | 05 | Структура chat_XXX/, persistent history, API для чатов |
+| 06.2 | Навигация по чатам текущего workspace | В РАБОТЕ | 06.1 | Sidebar чатов, переключение, создание/переименование; удаление Chat — НЕ РЕАЛИЗОВАНО |
+| 06.3 | Multi-turn Chat storage / Working Representation | ГОТОВО; Executor policy изменена TASK 139 | 06.2 | История и RAW/SUMMARY representations сохраняются; normal Planner-enabled Executor теперь task-scoped, full-history compatibility остаётся для planner-disabled direct path |
+| 06.4 | Разделение raw history и active model context | ГОТОВО | 06.3 | Immutable RAW, Context Variants, active RAW/SUMMARY Working Representation и первый role-specific Executor Context Policy V1 |
+| 06.5 | Управляемое сжатие контекста | В РАБОТЕ | 06.4 + MM.4 | LLM Compressor, Proposal, Accept / Reject, ручная правка, Original / Restore работают; независимый трёхвызовный pipeline — будущий этап |
+
+### Ветка MM: Мультимодельная архитектура
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| MM.0 | Архитектурное решение мультимодельности | ГОТОВО | — | 11_Мультимодельная архитектура и назначение LLM |
+| MM.1 | MODEL REGISTRY | ГОТОВО | MM.0 | Единый реестр моделей и базовая модель данных |
+| MM.2 | GigaChat Multi-Model | ГОТОВО | MM.1 | Несколько моделей через GigaChat transport |
+| MM.3 | MAIN CHAT MODEL ASSIGNMENT | ГОТОВО | MM.2 | Выбор модели основного Chat Agent; per-Chat override остаётся MM.6 |
+| MM.4 | COMPRESSION MODEL ASSIGNMENT | ГОТОВО | MM.2 | Независимый выбор модели сжатия через MODEL REGISTRY |
+| MM.5 | LOCAL PROVIDER | ЗАПЛАНИРОВАНО | MM.1, MM.2 | Локальный inference backend через Provider Adapter; Ollama не обязателен |
+| MM.6 | PER-CHAT MODEL ASSIGNMENT | ЗАПЛАНИРОВАНО | MM.3 | Разные модели для разных Chat при сохранении их контекста |
+| MM.7 | AGENT PROFILES | ЗАПЛАНИРОВАНО | MM.1, MM.3 | role + model_assignment + role_context + context_policy + tool_set + permission_policy + state + execution_rules |
+| MM.8 | MULTI-AGENT COORDINATION / COORDINATOR | ЗАПЛАНИРОВАНО | MM.7 | Будущая координация Agent через runtime |
+
+### Этап 07: Переносимость
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| 07 | Переносимость между компьютерами | ЧАСТИЧНО РЕАЛИЗОВАНА | 06.5 | Start_Ultra.cmd с относительными путями; авто-.venv/requirements — НЕ РЕАЛИЗОВАНО |
+
+### Этап 08: Web UI
+
+| ID | Задача | Статус | Зависит от | Результат |
+|----|--------|--------|-----------|-----------|
+| 08 | Переход на web UI | ЗАПЛАНИРОВАНО | 07 | Браузерный интерфейс, сохранение ядра |
+
+### FUTURE без присвоенного TASK ID
+
+| Направление | Статус | Владелец / примечание |
+|-------------|--------|-----------------------|
+| Delete Chat | FUTURE | Незавершённая часть 06.2 |
+| Bounded RELEVANT PRIOR FACTS + context-budget manager | FUTURE / NEXT | После live token regression TASK 139; цель — возвращать нужный прошлый опыт без автоматической передачи всей истории |
+| Codex CLI Planner Adapter | FUTURE / NOT IMPLEMENTED | External transport — документ 19; role assignment — документ 11 |
+| ChatGPT Plugin/MCP Adapter | FUTURE / NOT IMPLEMENTED | Внешний client вызывает controlled Ultra tools; документ 19 |
+
+## Критерии приёмки для ближайших задач
+
+### TASK 06.1 — Модель данных чатов
+- [x] Создана структура директорий для чатов
+- [x] История сохраняется на диск
+- [x] Метаданные хранятся в JSON
+- [x] API для create/list/persistence/rename чатов реализован
+- [x] Проверка: чаты сохраняются после перезапуска
+
+### TASK 06.2 — Навигация по чатам
+- [x] Sidebar со списком чатов
+- [x] Создание нового чата
+- [x] Переключение между чатами
+- [x] Изоляция контекстов
+- [ ] Удаление чата — НЕ РЕАЛИЗОВАНО
+- [x] Переименование чата
+
+### TASK 06.3 — Multi-turn context
+- [x] История выбранного Chat хранится как persistent multi-turn RAW / SUMMARY Working Representation
+- [x] Устранено расхождение UI/API для Chat storage и Working Representation
+- [x] Несколько user/assistant сообщений сохраняются в Active Chat Context; normal Planner-enabled Executor после TASK 139 использует task-scoped seed вместо безусловной полной истории
+- [x] Legacy direct caller с `planner_enabled=False` сохраняет full-history compatibility path
+
+### TASK 06.4 — Разделение контекстов
+- [x] Raw history неизменна
+- [x] Active context хранит выбранную RAW / SUMMARY Working Representation отдельно от конкретного role model request
+- [x] Executor Context Policy V1 компилирует отдельный task-scoped prompt для normal Planner-enabled RUN
+- [ ] Автоматический context-budget manager, RELEVANT PRIOR FACTS и предупреждение при trimming — будущая отдельная работа
+
+### TASK 06.5 — Сжатие контекста
+- [x] Per-message LLM compression создаёт Proposal от immutable RAW
+- [x] Один отдельный Compressor call, soft guard и не более одного corrective retry
+- [x] Ручная правка, Accept / Reject, Original Viewer, Restore и повторное сжатие
+- [x] Active SUMMARY сохраняется как Working Representation и доступен context policy; TASK 139 не включает старые Chat messages в Executor автоматически
+- [x] Модель сжатия берётся через COMPRESSION MODEL ASSIGNMENT
+- [ ] Compression Review / Discussion Chat
+- [ ] Отдельные VERIFY и FINALIZE model calls в целевом COMPRESS → VERIFY → FINALIZE
+
+### Ветка V: Execution Verifier
+- [x] V.1–V.5: Model Assignment, clean runtime, Final Audit и bounded same-RUN correction
+- [x] Permission capability escalation: реализовано в коде и покрыто tests; live пользовательский RUN не подтверждён
+- [x] V.6 V1: Task Planner / Persistence Contract, bounded readiness/recovery/replan, structured Final Audit routing — live proof T-002/R-002; post-hardening live regression и реальный `verify_file_content` подтверждены T-011/R-011 после TASK 138. Canonical owner: `13`, Model Assignment: `11`.
+- [ ] PREFLIGHT / MUTATION gates и автоматический Execution Consistency — будущие этапы; mutation intent trace сейчас diagnostic-only
+
+## Ссылки
+
+- `00_Главная - карта проекта`
+- 11_Мультимодельная архитектура и назначение LLM
+
+| WEB-02 F-5/F-6 / CLAUDE-WA-017 | Crash-safe completion and Windows rebuild race test | DONE / VERIFIED — independent 2026-10-09 | RC-5 / WA-016 | Commit c7681c38; 17/17 targeted and 607 full OK, skip 1. Non-blocking residual claims/Windows sharing tracked; F-1/F-3 deferred; WA4-E NOT STARTED. |

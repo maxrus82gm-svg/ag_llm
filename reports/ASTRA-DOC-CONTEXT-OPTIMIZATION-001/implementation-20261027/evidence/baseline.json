@@ -1,0 +1,2128 @@
+{
+  "task": "ASTRA-DOC-CONTEXT-OPTIMIZATION-001 / direct user implementation amendment 2026-10-27",
+  "files": {
+    ".github/scripts/gpt_evidence_sanitizer_probe.py": {
+      "sha256": "ed0663aed263439c38317434d8851b04d8760ab0a1d06c66e9ba6ecaf685373b",
+      "bytes": 1721
+    },
+    ".github/workflows/gpt-evidence-sanitizer-independent.yml": {
+      "sha256": "d6f26059689a61b14a486a25337465adcf892ca83dde2dd66e54bccf3d8458a0",
+      "bytes": 5297
+    },
+    ".github/workflows/gpt-ft1-archive-retry-independent.yml": {
+      "sha256": "0988f36d2a0311f9d3e75918ddd8cec1395ecb1ba475e3709b0262c465ec8fee",
+      "bytes": 6038
+    },
+    ".github/workflows/gpt-ft1-ci-repair-independent.yml": {
+      "sha256": "1d5bfdb99887a8908a2b32eeec12b8a659c91fc293aaec3a58a84b223b2cd57e",
+      "bytes": 6593
+    },
+    ".github/workflows/wa4-astra-pilot.yml": {
+      "sha256": "0e8e05f750608d4c944e733c0fffd50f7c0fceb0bbfa8e431ad2b7158090d147",
+      "bytes": 4467
+    },
+    ".github/workflows/web-alarm-tests.yml": {
+      "sha256": "6e1b67aaeea4e464bc09fcadb3f91a3b91dfef6d9580f7f5a6ca192fb7f30be8",
+      "bytes": 10333
+    },
+    ".gitignore": {
+      "sha256": "b6431afa9e91b5748582a20cdec23cb95d06ac63a4ce44d7556faf7092d6d9bb",
+      "bytes": 1496
+    },
+    ".obsidian/app.json": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    ".obsidian/appearance.json": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "bytes": 2
+    },
+    ".obsidian/community-plugins.json": {
+      "sha256": "e3a58e274aa0d86a28ed9c4ee9d986b4a6381f9a1b6e2140cb70ca4bfbc786b3",
+      "bytes": 18
+    },
+    ".obsidian/core-plugins.json": {
+      "sha256": "763cf20a921fd9955735b278006820b90b207b2fc04d9e79ca648279c7c14276",
+      "bytes": 696
+    },
+    ".obsidian/graph.json": {
+      "sha256": "b1b7935d9a6707a444b3c043cc719b8be568fb61d932df56f11c0698755ca347",
+      "bytes": 4025
+    },
+    ".obsidian/graph.json.pre_web02_branch.bak": {
+      "sha256": "1d87ad1c1b00848f6001560c77772d45e6c39d0d0cabc57f4ce21c2e8e949e62",
+      "bytes": 3170
+    },
+    ".obsidian/plugins/base-graph/main.js": {
+      "sha256": "05aaeb2af921a86badac08f996a162dda3551821e9aa8f20a3c65d5ecaf0213b",
+      "bytes": 105243
+    },
+    ".obsidian/plugins/base-graph/manifest.json": {
+      "sha256": "38e30be794a8747cccbeced7cbe781544b04610760a099ef109a013933da3643",
+      "bytes": 296
+    },
+    ".obsidian/plugins/base-graph/styles.css": {
+      "sha256": "68a6be925d76b0e121200ae501b9aaf91b625de96e42a5a72358e328df3b96f5",
+      "bytes": 3848
+    },
+    ".obsidian/workspace.json": {
+      "sha256": "40568ac36fd49dfced6ecaa149040202f6425ed45d47b16d73eabbee99398de2",
+      "bytes": 10059
+    },
+    "agent_global_context.py": {
+      "sha256": "529b56b9bbbb82f1b2d2dc0d57d9cc969476e5ad30a83ba10b0e3757ab7b2161",
+      "bytes": 4126
+    },
+    "apply_context_step1.py": {
+      "sha256": "539e255addc9f76fb812b047374756f0eecffdfafc323466344478ac1d11c7f9",
+      "bytes": 9218
+    },
+    "apply_ultra_ui_visual_patch.py": {
+      "sha256": "71c3f5609ee1b900f532caca5caea23cbbc8080385acbbbd5c6ba81fa7147615",
+      "bytes": 14163
+    },
+    "audit_storage.py": {
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c",
+      "bytes": 31728
+    },
+    "compressor_runtime.py": {
+      "sha256": "c69ab1d9594b4cb36aeb32703b10de091bea5ce5d876c5962068a9b2fb20940f",
+      "bytes": 22290
+    },
+    "compressor_settings.py": {
+      "sha256": "50f1b76fea3a3ae0d4d80b0c2bbe627985b3bdb3b7688e997ab80f75bde71b60",
+      "bytes": 4066
+    },
+    "conftest.py": {
+      "sha256": "5e6901b8938bb42a9769de89c5913ddc984f9293f13b33f4b5129af7c92b01c5",
+      "bytes": 252
+    },
+    "context_defaults.json": {
+      "sha256": "3397a1f1d866409254ad137b6380bc87e18cecca9c09cdf5a0d34029ecadab76",
+      "bytes": 21788
+    },
+    "context_editor_ui.py": {
+      "sha256": "df28ba9a94c4f45460f0ed9f16bfa6ad3b55f2366f77e619607c0097ac84c1e7",
+      "bytes": 18143
+    },
+    "context_registry.py": {
+      "sha256": "695ba9eabe5c4b792a7ce40470f958eab814cdc29ff5c2f687384e0d063f8ad1",
+      "bytes": 23542
+    },
+    "context_storage.py": {
+      "sha256": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+      "bytes": 58996
+    },
+    "fix_chat_raw_display.py": {
+      "sha256": "2cad956fb5462fb1f582f79306abb7002acf5e749ac9ba4be96a1160beb0b3f0",
+      "bytes": 2076
+    },
+    "gigachat_transport.py": {
+      "sha256": "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879",
+      "bytes": 1943
+    },
+    "integrations/wua_chatgpt_mcp/api_channel.py": {
+      "sha256": "767059689360dad0ba5a8b4b2e3f2dd6180c0123c65b5e3e390a267e31fa5928",
+      "bytes": 3742
+    },
+    "integrations/wua_chatgpt_mcp/api_fixture.py": {
+      "sha256": "77d919c122bcb6bf7dcc7962eb97d65a85da921a574cbb7b33dc9b8eedae849a",
+      "bytes": 3800
+    },
+    "integrations/wua_chatgpt_mcp/broker.py": {
+      "sha256": "91eed90941d36a4d8c3e9820e2bc76d18d48cc4ee840ce3872b53cb8242e62d7",
+      "bytes": 12425
+    },
+    "integrations/wua_chatgpt_mcp/broker_fixture.py": {
+      "sha256": "47254cdc489c84f44ae97f61e7de10c80dd4cc25343774f132ffc7dfd729e55f",
+      "bytes": 5044
+    },
+    "integrations/wua_chatgpt_mcp/common.py": {
+      "sha256": "12b8441ba72661fb2189c03e37e0203082a003e5e6be630b5d25dbe03809a209",
+      "bytes": 4841
+    },
+    "integrations/wua_chatgpt_mcp/configs/broker.contract.json": {
+      "sha256": "da0530ea237c69057e68e3c7c29455bdcd6d76b5e185a91bc3e395a82204c76d",
+      "bytes": 1288
+    },
+    "integrations/wua_chatgpt_mcp/configs/broker.v1.schema.json": {
+      "sha256": "74835d31db7e51b10586e811ae13ea4864b52ee814cb6d189f4205688fe13711",
+      "bytes": 3264
+    },
+    "integrations/wua_chatgpt_mcp/configs/broker.v1.synthetic.example.json": {
+      "sha256": "28d139e5650d9e923a5c62056d6f67d3a0b2c5ce9b24fa132c268496118e438a",
+      "bytes": 3084
+    },
+    "integrations/wua_chatgpt_mcp/configs/gateway.ipc.contract.json": {
+      "sha256": "6cff5177f06767ca08098d8650c819036eafb6330c3855ddd73dedd6d9f4b995",
+      "bytes": 1852
+    },
+    "integrations/wua_chatgpt_mcp/configs/health.contract.json": {
+      "sha256": "00a11ba408a80ff0de4db9e460981d4fa50b0c37be683e13a836d99189ecc69d",
+      "bytes": 883
+    },
+    "integrations/wua_chatgpt_mcp/configs/npfs.fixture.contract.json": {
+      "sha256": "5d3b546f3bad6a997ae3d7df19d8d59e2a8696cea854e39b48e5ed88b1e11365",
+      "bytes": 1150
+    },
+    "integrations/wua_chatgpt_mcp/configs/strict.synthetic.example.json": {
+      "sha256": "8f2790e25a1dbe03078636eae68f6a028698a8b1c0cb802679131de779a40409",
+      "bytes": 1433
+    },
+    "integrations/wua_chatgpt_mcp/configs/strict.template.json": {
+      "sha256": "6d7b8dc2c2acef40e9bddd748788e5ffa072b7df37b40f4eeaff306209506874",
+      "bytes": 1083
+    },
+    "integrations/wua_chatgpt_mcp/configs/tunnel-client.v0.0.16.disabled.yaml": {
+      "sha256": "ef6ad11c812b44d15c3d47710b7a3d88cba078ef595506d9c9a9c2d97f9de2a8",
+      "bytes": 508
+    },
+    "integrations/wua_chatgpt_mcp/configs/tunnel.launch.contract.json": {
+      "sha256": "7474c1e49b6bd80ce4a94fbcc6a853822f1040ef09e531bf3a967e08b29a0eb5",
+      "bytes": 2618
+    },
+    "integrations/wua_chatgpt_mcp/configs/v2ray.engine.disabled.contract.json": {
+      "sha256": "58fa57c952a894ed269af10311b3bc71019355dfcf7742c52f9049c730145769",
+      "bytes": 1501
+    },
+    "integrations/wua_chatgpt_mcp/diagnostics.py": {
+      "sha256": "0861851ac285eb025822086c13c93f04efa3287ed1823ad9640ef3b965102e45",
+      "bytes": 1607
+    },
+    "integrations/wua_chatgpt_mcp/engine_snapshot.py": {
+      "sha256": "7aadeff5f2527e0587faa6161b9bec9c414fa8c3d69918ca8c43d6683bcd5581",
+      "bytes": 13217
+    },
+    "integrations/wua_chatgpt_mcp/npfs/Gateway.cs": {
+      "sha256": "2b911d9d330e967e79a982affdaefa3e6cf9936538f929791dc8dac3ddc0a565",
+      "bytes": 12237
+    },
+    "integrations/wua_chatgpt_mcp/npfs/gateway_worker.py": {
+      "sha256": "eb6a7a630682dd7cb59b5aad6402135f47552d33567d4dbca134f7d32bfec843",
+      "bytes": 5078
+    },
+    "integrations/wua_chatgpt_mcp/npfs/Relay.cs": {
+      "sha256": "60ab73430736fd0d67f9ac1e2ad7a2c243f8e60a01f12e432434b6b2e9c02546",
+      "bytes": 2651
+    },
+    "integrations/wua_chatgpt_mcp/npfs/Shared.cs": {
+      "sha256": "12ce7c78444c931d35b6ca089766d887277bbddfe2c7764e70811a9e069f9f22",
+      "bytes": 12926
+    },
+    "integrations/wua_chatgpt_mcp/README.md": {
+      "sha256": "462d64cf25206c6ac527c3f196a1b1e53dd5da6d81ba812781eab72e2e76c678",
+      "bytes": 8899
+    },
+    "integrations/wua_chatgpt_mcp/reference_connect.py": {
+      "sha256": "ed73c4cc5086cd5aecf9ae8b15217ea34362cd9a32938d33b62be9fe87679457",
+      "bytes": 13314
+    },
+    "integrations/wua_chatgpt_mcp/route_simulation.py": {
+      "sha256": "bd436b92fd01c65c5dce24bbf972045303d03a13e5312d9447a76b1ceeea979b",
+      "bytes": 2718
+    },
+    "integrations/wua_chatgpt_mcp/security_contract.py": {
+      "sha256": "0ec182deab410d30c57ab0266e8b8821b7637fcbccb25bfb41f50722aac9ee80",
+      "bytes": 10849
+    },
+    "integrations/wua_chatgpt_mcp/server.py": {
+      "sha256": "b642b02599abdece141740b1eb3a9dc35b4ed69f25ba8207d737fb7523e2df67",
+      "bytes": 4539
+    },
+    "integrations/wua_chatgpt_mcp/singbox_source_review.py": {
+      "sha256": "500d9dcc13ef661bd0dc660c481caf8c956ccba95936b6fce0edd71f333d1169",
+      "bytes": 16914
+    },
+    "integrations/wua_chatgpt_mcp/tests/admission_suite.py": {
+      "sha256": "cc94fa9fa2e3bde3ed9979c45490a5ffb7975b8e70b24519a4cd247224d42593",
+      "bytes": 20472
+    },
+    "integrations/wua_chatgpt_mcp/tests/broker_regression.py": {
+      "sha256": "558bf6c19933cd406b4b60ad47123e017e47f185c1fb72846d3a5d18688d2c9c",
+      "bytes": 2796
+    },
+    "integrations/wua_chatgpt_mcp/tests/broker_suite.py": {
+      "sha256": "98481fa96c793da4311cd7db503550f0e0d14a186b6c601e88b8e9b219ae16eb",
+      "bytes": 29436
+    },
+    "integrations/wua_chatgpt_mcp/tests/engine_snapshot_suite.py": {
+      "sha256": "c7642f225d1b057dd33386f2729ce14762f08e0169c470ab660ce0b5a7f3928d",
+      "bytes": 16147
+    },
+    "integrations/wua_chatgpt_mcp/tests/mcp_smoke.py": {
+      "sha256": "870f431dfa1172febe4b82750bf633aa55fc2e11648a3c65e48c3b226afa7daa",
+      "bytes": 7995
+    },
+    "integrations/wua_chatgpt_mcp/tests/npfs_regression.py": {
+      "sha256": "6b911f0859b8afb59daa859da6b5b88fa8cdb12ee4bf5870939ebe475b3c01af",
+      "bytes": 1655
+    },
+    "integrations/wua_chatgpt_mcp/tests/probe_event_loop.py": {
+      "sha256": "99b643a4660e08fdbbad60e4929b78364fedb6f43cceb29d20ccf51072661848",
+      "bytes": 2325
+    },
+    "integrations/wua_chatgpt_mcp/tests/run_npfs.py": {
+      "sha256": "f3f2936036c32fb9b6e5d2da52f2da74df80273ed97478ea2cdde8b10c34d5cc",
+      "bytes": 37853
+    },
+    "integrations/wua_chatgpt_mcp/tests/run_suite.py": {
+      "sha256": "d3de1b8af6faa21eb76e83a7fa4eb84777ec71bcf83a5586e0b142c2e51e30ec",
+      "bytes": 2601
+    },
+    "integrations/wua_chatgpt_mcp/tests/singbox_source_review_suite.py": {
+      "sha256": "e678ea9ca57e875b76986d3a249016c2f79545f5c71b705b6ff642979d4da834",
+      "bytes": 19725
+    },
+    "integrations/wua_chatgpt_mcp/tests/test_security_routes.py": {
+      "sha256": "3fe7b2869aa05b381a539c65459ff25b1aa6c060c45a97f8a98464ce9c2705d8",
+      "bytes": 21177
+    },
+    "live_test_context_bridge.py": {
+      "sha256": "3c0551bcfda76d2c1aed9b3d4a2c2ae65915643fcdc07601db9fea4d6e53a9e2",
+      "bytes": 2920
+    },
+    "model_registry.py": {
+      "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+      "bytes": 2519
+    },
+    "patch_allow_py.py": {
+      "sha256": "81dd0a57860e24bc93155d9bff48a4688972b14147f272f21dfd73f82ae5e292",
+      "bytes": 1054
+    },
+    "planner_runtime.py": {
+      "sha256": "ab6c12c3fb02145e9acae692360099922048366a7668a977c350cf98af49384e",
+      "bytes": 40929
+    },
+    "probe_gigachat_models.py": {
+      "sha256": "1925a22f1d4806da397128cee846bd742cffbc79cc6c67910c70f50e3c512f36",
+      "bytes": 1247
+    },
+    "provider_accounting.py": {
+      "sha256": "dd83dbf7a22154347ac6f17ca2110e78757338248bd466f86a0d3599db510902",
+      "bytes": 4884
+    },
+    "README.md": {
+      "sha256": "bf87cb45c94ef43949a4219d38d0c8b83c68ed2322d1c484c0a03824db96aca1",
+      "bytes": 8
+    },
+    "run_store.py": {
+      "sha256": "a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6",
+      "bytes": 23844
+    },
+    "russian_trusted_root_ca_pem.crt": {
+      "sha256": "936a43fea6e8e525bcc0f81acd9c3d21b4fc4b9b68acea7906d698005afc6504",
+      "bytes": 2088
+    },
+    "server.py": {
+      "sha256": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401",
+      "bytes": 327746
+    },
+    "server_context_messages.py": {
+      "sha256": "992052656ca395cb721d93da7f1ed8b1f6a5a1feb99909d82e12b30ce13a2340",
+      "bytes": 5399
+    },
+    "server_context_messages.py.before_context_registry.bak": {
+      "sha256": "1ff1efeda12e2be5595a8c13d5c94187e1d6351c74dfeb16d7d3c3f6ecfa638a",
+      "bytes": 26225
+    },
+    "Start_Ultra.cmd": {
+      "sha256": "34bcd1f514b6a814f1941cc72ceacbcf264e7774c57de4dfb72cb331e061d406",
+      "bytes": 431
+    },
+    "Start_WebAlarm.bat": {
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6",
+      "bytes": 1482
+    },
+    "Start_WebAlarm_Demo.cmd": {
+      "sha256": "51bb15c69fac8eb8dac045d4c4b8de8c7b37b569074021c1c19684f8c524aec5",
+      "bytes": 428
+    },
+    "task_planner.py": {
+      "sha256": "c2ad7723b0ec51769e7fef8de87d97aa5e85cf50cbded2fc5f3082ec2b078346",
+      "bytes": 55904
+    },
+    "test_audit_lazy_ui.py": {
+      "sha256": "1874dce403e3c9f69a4f11c2c9893299e1338b3f927baea5b59efa16188eacae",
+      "bytes": 10713
+    },
+    "test_audit_observability.py": {
+      "sha256": "daabb1fdbd52a11bcfe1a4a8772124e3effa9dc4961776b310b913e9cd5af252",
+      "bytes": 52625
+    },
+    "test_audit_v2_compatibility.py": {
+      "sha256": "f472d8170ca09359c53db6ecd384eb6223f4cd6fef92a47020530c7ef9d4921c",
+      "bytes": 1136
+    },
+    "test_chat_create_atomicity.py": {
+      "sha256": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+      "bytes": 3271
+    },
+    "test_compressor_runtime.py": {
+      "sha256": "34a841af419635100c9127978bffbd197f419df9877c9b8c9322568c34f35fb3",
+      "bytes": 17833
+    },
+    "test_context_registry.py": {
+      "sha256": "3c0e7caa5acbe153637dec04b8121aca6021dd21a9756dbc58fca5a04b12a552",
+      "bytes": 6508
+    },
+    "test_executor_context_delta.py": {
+      "sha256": "db945c512633c729e055a67047088ac4beb0d9623ea0c9a0c5b28c6b266369cc",
+      "bytes": 1448
+    },
+    "test_executor_diagnostics.py": {
+      "sha256": "75339efcc26382072f764c17a3003d512b20ad8cffb4abea1f9f226d7db78313",
+      "bytes": 7067
+    },
+    "test_failed_run_terminal_message.py": {
+      "sha256": "bcd0d92b88714a04af17faff27de58adfc1e338f7928737f4cc4e30ae07b09db",
+      "bytes": 4564
+    },
+    "test_file_editing_toolbox.py": {
+      "sha256": "a17c274845d194a0abea7de69a205cbb8cdb2ba1a4d8bd587f091d9d89ba4197",
+      "bytes": 26847
+    },
+    "test_final_audit.py": {
+      "sha256": "87af23a1025353d482a5f3c16b9ff9702ca36473fb309a8459c2af6d3918390b",
+      "bytes": 117054
+    },
+    "test_final_audit_recovery.py": {
+      "sha256": "880881528c69714f0a9caba86649cc2a48ec7167eb0046caaf89747155b4ff6b",
+      "bytes": 24747
+    },
+    "test_git_runtime_ignores.py": {
+      "sha256": "95a67b54e6e4ddafb5d1db5dd305d1b0ec027a7a3c00f6869e88fd2aa5151ab2",
+      "bytes": 1534
+    },
+    "test_message_context.py": {
+      "sha256": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+      "bytes": 17234
+    },
+    "test_planner_control_ui.py": {
+      "sha256": "38400642aa5e5f46bb706611b0ae3853fb9e9391edb86000ce75d2cb11384977",
+      "bytes": 5420
+    },
+    "test_planner_diagnostics.py": {
+      "sha256": "37e6c925d0888fdd5538363b2dbb4aae805765b64298f82ea70a4ba7beafac1d",
+      "bytes": 18443
+    },
+    "test_planner_session.py": {
+      "sha256": "ebb5dcf6be28d875122bbe2ca72a4c7ba56e166758c7d2cfcf00b267e42b3ca7",
+      "bytes": 21757
+    },
+    "test_provider_accounting.py": {
+      "sha256": "5c16cc5ab0d55a9ca88720e4c1b42031f4c3cb5657501045403d235fddb00738",
+      "bytes": 2834
+    },
+    "test_provider_attempt_integration.py": {
+      "sha256": "127b226ce38f27975873df1813df42e1adfec19cb8fd552fdb518c5fe14ae10a",
+      "bytes": 12883
+    },
+    "test_rt002_final_audit_m1.py": {
+      "sha256": "818655949997168ff0ba0f5174d85bef36f44bda33aabbce5c51960c09958a65",
+      "bytes": 43190
+    },
+    "test_rt002_s0_kernel.py": {
+      "sha256": "cf9b1d771e7e83888378108a8a6de1fc8e5bcc6e3673f6fc0b6ec5b1fb821e3b",
+      "bytes": 28657
+    },
+    "test_rt002_s0_repair.py": {
+      "sha256": "860f723f4c864deb0fbf6a7699a0ef9b44a29fc6c08038cffb026b36e32fb868",
+      "bytes": 52829
+    },
+    "test_rt002_s1_routes.py": {
+      "sha256": "4465d47716e8876adf78f7245eb85a9505ac0a8b0aa6632d658afcb71576a66e",
+      "bytes": 113485
+    },
+    "test_rt002_s2_budget_policy.py": {
+      "sha256": "e029489b2ea34b56f0cc4d66fb6046a010a92e18d5ac799e4b634e5fa5eb1b17",
+      "bytes": 132484
+    },
+    "test_run_auth_failure.py": {
+      "sha256": "138118dfb31d65baa6d2857c9da73bba6f671a764e40ba1cd4aa9c756f9c5979",
+      "bytes": 3843
+    },
+    "test_run_store_v2.py": {
+      "sha256": "28334ef3a59d8ed375eaca7e91e97048cd07f1fdd53526672391546e8fe4b4a2",
+      "bytes": 8269
+    },
+    "test_safe_v3_verification.py": {
+      "sha256": "ee1a76daeadc1806eb7fcf1f9c5e3d7ee5c9c31be967f5678ac17c5d5abaf018",
+      "bytes": 3508
+    },
+    "test_server_context_messages.py": {
+      "sha256": "a5c65661d8c141e2b96ea101a224d2706f032a5597f3c7a8ec05f848a52169d4",
+      "bytes": 5374
+    },
+    "test_single_instance.py": {
+      "sha256": "8428caccef14978775a30d060b97644bfd203477f5034c820f2a2ca3b2c93d53",
+      "bytes": 5552
+    },
+    "test_stage_evidence_contract.py": {
+      "sha256": "3467538143c6b7bbab031211a9a6f8d18882899f3a60d877dcd4f91f6eaf12c9",
+      "bytes": 13509
+    },
+    "test_stage_tool_visibility.py": {
+      "sha256": "a2ddacb72168495a6df27c912e8ac1577108afc64a9411ef3d2ac5b812be81f3",
+      "bytes": 1088
+    },
+    "test_task_planner.py": {
+      "sha256": "49ba81617fb85da8656e67db3613a7b641479ad3f177238ad736df6ae019cfa9",
+      "bytes": 78867
+    },
+    "test_ui_state_isolation.py": {
+      "sha256": "7056f4dd772021be082431d049dce5fd38e789ea8e120fcfb98f22c54af4221f",
+      "bytes": 819
+    },
+    "test_ultra_chat_read.py": {
+      "sha256": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+      "bytes": 29266
+    },
+    "test_usage_accounting.py": {
+      "sha256": "f3536e3d381a8854eee58eb9d56f9a19775d357fe423693640d50fcb6819143c",
+      "bytes": 6413
+    },
+    "test_verifier_runtime.py": {
+      "sha256": "905b6b4cf5553b4f0cfd29edcf3157daa9faa4c78d96416323772880a520cd1a",
+      "bytes": 17908
+    },
+    "test_verify_file_content.py": {
+      "sha256": "23e85d841b60c923bcae3c75965a6bbc8fdb60b1a29738a0571376c7e854b4e6",
+      "bytes": 2483
+    },
+    "test_web_alarm_aud010205_repair.py": {
+      "sha256": "f0b1c492f38d711e135f571fff2cefa7781f87827b5a43781e0ac69ff4d543ba",
+      "bytes": 22192
+    },
+    "test_web_alarm_aud01t02b_repair.py": {
+      "sha256": "a1d7e25383afcf79c106f7d69d50c0d149ed2e73ed65a60214085357fa8e5136",
+      "bytes": 42213
+    },
+    "test_web_alarm_cli.py": {
+      "sha256": "da16d5b886309d369c8607ab85ec7aab2c3a3bcfd89212429a941b431eeeca59",
+      "bytes": 9366
+    },
+    "test_web_alarm_context_pack.py": {
+      "sha256": "0775e6d15091e42f46b32a1349725fd90041aedb38a46e743199029e45766d52",
+      "bytes": 6608
+    },
+    "test_web_alarm_crash_consistency.py": {
+      "sha256": "255b942fb0027c03fb373c5d4f5003e9d0885bb71b142113fb877e4197b44237",
+      "bytes": 34569
+    },
+    "test_web_alarm_event_checkpoint_store.py": {
+      "sha256": "de26ecc5698d8e90d7b7a00cc4675d281df01ce39093d7af9db1910e1675cb1c",
+      "bytes": 5298
+    },
+    "test_web_alarm_evidence_sanitizer.py": {
+      "sha256": "8bf399431e8b780fc82a18d8bc9d3bea260f071a56167e3515ae3f7f89b52953",
+      "bytes": 57897
+    },
+    "test_web_alarm_evm_ui.js": {
+      "sha256": "488ff35a4c285276ecdf49002d3117754afc6132d5b2f268f6fb131464d6c1b4",
+      "bytes": 12411
+    },
+    "test_web_alarm_folder_picker.py": {
+      "sha256": "ec46dbad11f5e18bce7fd3cb55523e45654224b69b1193499ee1be29b5b7a97e",
+      "bytes": 13564
+    },
+    "test_web_alarm_launcher.py": {
+      "sha256": "6ddd637ebf2af6700d166ce91ded0baa2ef8e057aa48817f8c64b1e0c2285899",
+      "bytes": 19192
+    },
+    "test_web_alarm_lost_response.py": {
+      "sha256": "1f48a0b175c89feedd29aa9dbdd356e8d1c47cb2a88502949a5a646bb0448cea",
+      "bytes": 25571
+    },
+    "test_web_alarm_manifest_store.py": {
+      "sha256": "d35fb7538581e681a08022138fcbf3da407d759f5104c935a3a6e89b0c50009b",
+      "bytes": 8991
+    },
+    "test_web_alarm_models.py": {
+      "sha256": "da0b930d37f8b2fcf39bc89e2458d8eeaede163f154f2906eac27551a3964ac1",
+      "bytes": 7748
+    },
+    "test_web_alarm_mutation_executor.py": {
+      "sha256": "a7e5aa5e1b4c9e029cca19f68f6ad2def8109d7656a260355fc3bd8f8bafa6be",
+      "bytes": 45321
+    },
+    "test_web_alarm_new_invariants.py": {
+      "sha256": "b4c9a86ca340699b12224d30b03f9d1305b53b3d3d04d842188016ecaac1978b",
+      "bytes": 15919
+    },
+    "test_web_alarm_observation.py": {
+      "sha256": "e895b409d4d63ac2d4a768eaedac0ccbc7fe3c24126704e034d9bc9155e70c9d",
+      "bytes": 20850
+    },
+    "test_web_alarm_operation_contract.py": {
+      "sha256": "dbf6bbc58a6e0d5cfabcaaedd747fd6b095056ae7f77d4edf6c7f532bd552bbf",
+      "bytes": 28904
+    },
+    "test_web_alarm_operation_store.py": {
+      "sha256": "ea79a121d3e460679db5d0cc77f9e80564657a37f7370cb728adf16373a405ba",
+      "bytes": 8331
+    },
+    "test_web_alarm_operation_store_concurrency.py": {
+      "sha256": "bab96f7d52a1f60085936c93c1cba7887a1b20dda05d8e92e6e8ba3e949a303b",
+      "bytes": 7574
+    },
+    "test_web_alarm_operator_ui.js": {
+      "sha256": "f8252b165dbfaadc99f1221300c54cda5831e107eb311da3e93729250ec70a41",
+      "bytes": 50939
+    },
+    "test_web_alarm_operator_ui.py": {
+      "sha256": "1ca15bb060a360b404cff4d5c45013340eb4ac805d4aeb39623eee29c695fc9a",
+      "bytes": 17801
+    },
+    "test_web_alarm_payload_store.py": {
+      "sha256": "9b232329cbe3fdf8b84091780967834537f447bc17c690b15a829a09f0303a0a",
+      "bytes": 5502
+    },
+    "test_web_alarm_projection.py": {
+      "sha256": "d338067a27db813dc0621ae4bb3264c7bc865c2c01d6f53653491e4c541cf7d9",
+      "bytes": 55291
+    },
+    "test_web_alarm_projection_concurrency.py": {
+      "sha256": "b3c257feb3a4a7da1c630e936f52583580d9188581e5f2301039138e3b10e09b",
+      "bytes": 23147
+    },
+    "test_web_alarm_projection_repair2.py": {
+      "sha256": "add847e7e4331ffc4e962948bd8bc94d9335ea15442827a04831c8715e0d23dc",
+      "bytes": 24855
+    },
+    "test_web_alarm_reconciliation.py": {
+      "sha256": "074b467b1b925aec12e12fe6e14dfa0f1223e48cf7f12675ae67034aa7e96605",
+      "bytes": 10522
+    },
+    "test_web_alarm_reconciliation_decision.py": {
+      "sha256": "4dd20a9a5bb58586dab2e6b47de09281ae62efdb37e50a5397032d4a89043b91",
+      "bytes": 10935
+    },
+    "test_web_alarm_reconciliation_integration.py": {
+      "sha256": "ced03d05078b77ebcbbd6f4b526806ee4a8e753bfcd40030df02ff7d6be8d334",
+      "bytes": 8623
+    },
+    "test_web_alarm_recovery_coordinator.py": {
+      "sha256": "c7408223f4ae462600a9c6384b6cc327068b1f8e54e5061b049c9c74770e8d7a",
+      "bytes": 14921
+    },
+    "test_web_alarm_recovery_coordinator_adversarial.py": {
+      "sha256": "0998303cc315f32926aaa215c659a4a0a48d58035d19ef138717c61339d3fb8e",
+      "bytes": 19779
+    },
+    "test_web_alarm_recovery_coordinator_concurrency.py": {
+      "sha256": "9ed892335426f5813d960d522429a917616e8b1a9591d3d5110e0c2cd180658b",
+      "bytes": 17445
+    },
+    "test_web_alarm_recovery_coordinator_repair1.py": {
+      "sha256": "90be1c61284e78f199131d333368a645820cf5f5a392df8a7a49ded7d5057493",
+      "bytes": 34236
+    },
+    "test_web_alarm_recovery_coordinator_repair2.py": {
+      "sha256": "42be3c91ee5f9af7e97a86bc7653c01f1963390bba78fe7597a5fa7c27c51c66",
+      "bytes": 32856
+    },
+    "test_web_alarm_recovery_coordinator_repair3.py": {
+      "sha256": "76244e276ffeb53737723a361c26b52479c39302b3d93ce68f22e074dc3b3016",
+      "bytes": 37339
+    },
+    "test_web_alarm_recovery_coordinator_repair4.py": {
+      "sha256": "016ce8bfd5c00ff5cfe56444f76fff033c12967603fa67d1ef1206fde3107211",
+      "bytes": 25424
+    },
+    "test_web_alarm_recovery_coordinator_repair4a.py": {
+      "sha256": "2cf70b19aac76f1752a88b012f081204446f18e39cb985fdaf06649651df8015",
+      "bytes": 16318
+    },
+    "test_web_alarm_recovery_coordinator_repair4b.py": {
+      "sha256": "d61b004360aeef1404d19f84450f62f992f6a74734b6d573d91295f5d05e85f3",
+      "bytes": 29426
+    },
+    "test_web_alarm_recovery_coordinator_wa014.py": {
+      "sha256": "f8381c97b87e30335e56a1314d4e6f2cf6f421899f84e2984cab8b886b530758",
+      "bytes": 13979
+    },
+    "test_web_alarm_recovery_report_acceptance.py": {
+      "sha256": "14d562590eb844b4f02d77546dc49cf9a35d9c8c7588061c370d058ae7a54ac5",
+      "bytes": 17168
+    },
+    "test_web_alarm_recovery_report_builder.py": {
+      "sha256": "35a0b5cc3ddc32f8ac0bc28d42d7ba15d9adb552a1d3b6102b0fd937556de73b",
+      "bytes": 7827
+    },
+    "test_web_alarm_recovery_report_integration.py": {
+      "sha256": "a1189a9b2a17cffb21cf3dc1bed617851188793277c1939628254218d656e840",
+      "bytes": 8676
+    },
+    "test_web_alarm_recovery_report_store.py": {
+      "sha256": "9e0ae8ec8b6506df921fbacaac56fe359f7edd8d9bd436aab022d7ba0ec195e4",
+      "bytes": 7164
+    },
+    "test_web_alarm_recovery_scenarios.py": {
+      "sha256": "f9a6ab823f1bf908a58581f49d73d66a5a8a50d205ebccf8a20fb57ec9bb1093",
+      "bytes": 13686
+    },
+    "test_web_alarm_reliability_wa017.py": {
+      "sha256": "edb7d2b0bc65568d3be3fc33f39b3c808f790c4906991e4b63c17c974489fabd",
+      "bytes": 28815
+    },
+    "test_web_alarm_remote_entry.py": {
+      "sha256": "e8b956d296588672f9a893aff0e7cb5e9fa0a0ae918d09f52720b8ab430a4be0",
+      "bytes": 4549
+    },
+    "test_web_alarm_resolver.py": {
+      "sha256": "0b9cd46389b397ff97d2a3d3686d1887baee920459e3d969769ebac6a7b06bbc",
+      "bytes": 27400
+    },
+    "test_web_alarm_resolver_concurrency.py": {
+      "sha256": "2b51c468df66c0a9441040814c1f59b9e17e3b73f4b3b1a00a13e07e9dac8d96",
+      "bytes": 4749
+    },
+    "test_web_alarm_restart_recovery.py": {
+      "sha256": "11807f4a50ec11d22f37d68105d73380fc2a2f3151915a6136554056c1ce9a3c",
+      "bytes": 7762
+    },
+    "test_web_alarm_rollback.py": {
+      "sha256": "17f9145fd8b7e578ce3680c63fff04eb404553c564b1a0c6482d1da7799b6aaa",
+      "bytes": 52957
+    },
+    "test_web_alarm_rollback_concurrency.py": {
+      "sha256": "c12bfee5c4b09ae62c9a934079a9325612f6e331587ad13dacb3f836f263e8c4",
+      "bytes": 10973
+    },
+    "test_web_alarm_runner_guard.py": {
+      "sha256": "836eb0b1b6bbd1c5a0eca7ba58cd12130f8d093eba0a5b4f81e76f08a69926c0",
+      "bytes": 16334
+    },
+    "test_web_alarm_server.py": {
+      "sha256": "7aa4fd2a77daacb50e990355d82a1046c338fd3a90df4b179cd26c144d89ea3f",
+      "bytes": 12744
+    },
+    "test_web_alarm_state_machine.py": {
+      "sha256": "483e913b6e3ae4b8059511987e0cd09f64d4a1e494e2bd939740e900fa592bfb",
+      "bytes": 8213
+    },
+    "test_web_alarm_state_machine_cas.py": {
+      "sha256": "e00c5f1bbce9c5900887b767bc52195737a783f3cac15baa8f84459e55ca7e77",
+      "bytes": 17567
+    },
+    "test_web_alarm_target_claims.py": {
+      "sha256": "a6fd3b43880f26a22ee2dbbfb2d076a9e8385c6a8ed006c1d27540537e844616",
+      "bytes": 23746
+    },
+    "test_web_alarm_target_claims_concurrency.py": {
+      "sha256": "48443dc39e85f27c77d92ce8ff39cbea5f1f62fa1403034cb64da57fb3052484",
+      "bytes": 5065
+    },
+    "test_web_alarm_target_identity.py": {
+      "sha256": "f7ad1b7977454412ca2f2fed2736bf7d34edfd66161baa88dad992d4c1ab163c",
+      "bytes": 5242
+    },
+    "test_web_alarm_task_store.py": {
+      "sha256": "df3dd3bfbfa9d97329a8d5b4af915b3a994fde7dd4c8918219f08582098eae3b",
+      "bytes": 7200
+    },
+    "test_web_alarm_transport_authority.py": {
+      "sha256": "3b5218ee6f623f3b9c889032c38f324d2671f7c0f0fcfc638f2ef9c6abd95c53",
+      "bytes": 13557
+    },
+    "test_web_alarm_transport_event_recovery.py": {
+      "sha256": "e8dc4e2058229608955f97fc503f27c0f8252c37717718d4247463528b6c85ef",
+      "bytes": 52828
+    },
+    "test_web_alarm_transport_event_store.py": {
+      "sha256": "d6654c2c110a10904e8ed21060ab29c1d65808a7bae7fd4d2d4aa7febbb21849",
+      "bytes": 5414
+    },
+    "test_web_alarm_transport_ingestion.py": {
+      "sha256": "765fa85afb8846855e3de15bbe1fbd4a1b3d24aec62778ad5f70810635cf07eb",
+      "bytes": 8340
+    },
+    "test_web_alarm_transport_recovery.py": {
+      "sha256": "de660a794815e9d58b0648ab84ecc4e90e398134d9e83d79a71793be078f20b1",
+      "bytes": 6605
+    },
+    "test_web_alarm_ui.py": {
+      "sha256": "fcfa67c3e352422a15197423fcae3a4598625b66d6d14b2e4c6af066420cc1b7",
+      "bytes": 5858
+    },
+    "test_web_alarm_ui_launcher.py": {
+      "sha256": "b67083d89b019e400958f42fe6e48ea41fbb13ced2c196b527f01c6b45519dc6",
+      "bytes": 758
+    },
+    "test_web_alarm_ui_ux.py": {
+      "sha256": "2eb379d90a8f2f0b121a1e55c350d6273241ba784acd33ab001e920cdc81cf96",
+      "bytes": 3874
+    },
+    "test_web_alarm_ultra_chat.py": {
+      "sha256": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+      "bytes": 35543
+    },
+    "test_web_alarm_ultra_chat_ui.js": {
+      "sha256": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+      "bytes": 22279
+    },
+    "test_web_alarm_ultra_connections.py": {
+      "sha256": "7c7ec39e999e6d2b4affb450a8766d4dd79f11f0207442f2a8540d48d856bfaf",
+      "bytes": 19830
+    },
+    "test_web_alarm_wa4r002_diagnostics.py": {
+      "sha256": "1d7a23480b726b4835692b53b3e80b72ead980907e145a3ffdbb85ff74083254",
+      "bytes": 44329
+    },
+    "test_web_alarm_wa4r006_local_gate.py": {
+      "sha256": "cfea279508859b4337e55d3377e7631bfe33b6b1138e1c7c94cd7521382ad8bd",
+      "bytes": 14757
+    },
+    "test_web_alarm_workspace_registry.py": {
+      "sha256": "16ac6c5b053cd8123b26004cda26dd080140d0332acea15ac5ecb760521984ed",
+      "bytes": 4479
+    },
+    "ui_state.py": {
+      "sha256": "fb137da5850d9255223b91dda7bd95ed4b553fd11216a5b175af7aa4226930e3",
+      "bytes": 8951
+    },
+    "ultra_budget_policy.py": {
+      "sha256": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+      "bytes": 55417
+    },
+    "ultra_ui.py": {
+      "sha256": "7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d",
+      "bytes": 246742
+    },
+    "verifier_runtime.py": {
+      "sha256": "7db030fee149d8f8af1a90d384f3ad23e5086cea5d5ce42e6c728fd096764228",
+      "bytes": 30368
+    },
+    "wa4a_acceptance.py": {
+      "sha256": "9473b76f0225213f2883361244eab66edf1db4050509049b041e654ac5647efd",
+      "bytes": 19365
+    },
+    "wa4o_ui_demo.py": {
+      "sha256": "fc762d3d1ae6a0e55e5abb3b6faec46931b715074f437629e8b86ebe8a59a0bd",
+      "bytes": 3993
+    },
+    "wa4o_ui_launcher.py": {
+      "sha256": "40b217a0a027f153599767fa748ce7e297e720f7f5df7fc49e36ed905810d89e",
+      "bytes": 4758
+    },
+    "web_alarm/__init__.py": {
+      "sha256": "61c846c127ee70d4b59a09be4de401432ed36872a38015c8aa70bf1560284410",
+      "bytes": 5319
+    },
+    "web_alarm/__main__.py": {
+      "sha256": "3d2438ae92f4746e9ffaa1f837b1fe803f6281091d1f31f8c95643716f257d9a",
+      "bytes": 80
+    },
+    "web_alarm/cli.py": {
+      "sha256": "20f6cb30fac5ff772fb749742cbb60dc156e249436b262bf047610a29d16ee41",
+      "bytes": 13167
+    },
+    "web_alarm/closeout.py": {
+      "sha256": "398fcaebebaab0efeb4fea4489dbfb1b8c49ed4e4bd23a005d3b660291504603",
+      "bytes": 5752
+    },
+    "web_alarm/context_pack.py": {
+      "sha256": "cbc374c8ae64d13a4e47b6ef51c334c69774a5365872bbd0464440fa95000ce2",
+      "bytes": 7616
+    },
+    "web_alarm/event_checkpoint_store.py": {
+      "sha256": "fb16db84ad4cb1bee851d3dbf84db60cfd614986aa343a6edb83b32b729a3042",
+      "bytes": 19244
+    },
+    "web_alarm/evidence_sanitizer.py": {
+      "sha256": "3d42f8b2466b19468de722f9c4b83984f392bee0f31002dcd0a31d7716dc6284",
+      "bytes": 58626
+    },
+    "web_alarm/file_state.py": {
+      "sha256": "041f188b39b472ef4b9a517df0faea0088b282301a1b734382b33593adb28ea1",
+      "bytes": 5943
+    },
+    "web_alarm/folder_picker.py": {
+      "sha256": "aa4580fffe7bf6574052e65be1c5eded508d08c71c7cd75c4904bba4c1a221f3",
+      "bytes": 4927
+    },
+    "web_alarm/launch_config.json": {
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2",
+      "bytes": 1769
+    },
+    "web_alarm/launcher.py": {
+      "sha256": "cc42b9f5fcc2a34409aeb6abd2589c04e0d5cd7d16821d7e6b7b2c2343e8184d",
+      "bytes": 21947
+    },
+    "web_alarm/manifest_store.py": {
+      "sha256": "7e5a3b470e612b4a2be99a10ef2bd04fbec02177aac4b27450f085454db2fff3",
+      "bytes": 36996
+    },
+    "web_alarm/microtask_gate.py": {
+      "sha256": "757fa32366ee2e12c2263016c177f65a4f703ca2eb2603c5a8b44d6c4e5ab24a",
+      "bytes": 23319
+    },
+    "web_alarm/models.py": {
+      "sha256": "bd5313dcb09f4bad27ef6e5f400bb4b717def00d703ce59e0060e44bd47d80cf",
+      "bytes": 12040
+    },
+    "web_alarm/mutation_executor.py": {
+      "sha256": "7e34e77e5339f10cdfc48a2439d589ac4c652907613184f1b70cfc460bbcd854",
+      "bytes": 39988
+    },
+    "web_alarm/observation.py": {
+      "sha256": "af7e592b6016ac470c27341d1db24128f2758af0376d6ae08f794b0ed241f1b1",
+      "bytes": 7166
+    },
+    "web_alarm/operation_contract.py": {
+      "sha256": "bedd5887df54093814244ed1b8b8f8d6480c2120e4e0dd3f791a2356cdf391b6",
+      "bytes": 27639
+    },
+    "web_alarm/operation_store.py": {
+      "sha256": "a36468717b8def5ca024cdaff751168fc86adbb6aad58f9679dbde2f4a626d48",
+      "bytes": 44850
+    },
+    "web_alarm/operator_view.py": {
+      "sha256": "96dd4f3cc00036b33876af2c3a688079189f6e82268c06ba75bedf23e48ffd4e",
+      "bytes": 7577
+    },
+    "web_alarm/payload_store.py": {
+      "sha256": "d3a7f2b2bd4224ba38b82bccaf44ca62f95021dc5bb38a7e818cef85772306f1",
+      "bytes": 5589
+    },
+    "web_alarm/projection.py": {
+      "sha256": "5f162c7b1dfa8b6232ac63d39cf40adc1e072dacdd88abf551e5a1cb2ce3a8c5",
+      "bytes": 77123
+    },
+    "web_alarm/reconciliation.py": {
+      "sha256": "ea038e3dff0f6511a7a4732871d6ce25d229d3fa5af5276812de6ba15f78c407",
+      "bytes": 24654
+    },
+    "web_alarm/reconciliation_decision.py": {
+      "sha256": "6b1a0cecdd2233c305c02e714c18e35ee8cd03e95b41eea607ab055ac68ea3bb",
+      "bytes": 11134
+    },
+    "web_alarm/reconciliation_service.py": {
+      "sha256": "7ccf2592f01b66723d9766e9dbac410edace77e19997ec21cd0141ae489222a0",
+      "bytes": 3217
+    },
+    "web_alarm/recovery_coordinator.py": {
+      "sha256": "4c71890bf19db6fd27c8d8d02c0d34ade3c638c99f667c3a283305813479dee0",
+      "bytes": 83713
+    },
+    "web_alarm/recovery_report_builder.py": {
+      "sha256": "6612f5eaf5b0df955b6a836750ded80a2deaf44f7757ae255807c635c8f69592",
+      "bytes": 10467
+    },
+    "web_alarm/recovery_report_service.py": {
+      "sha256": "a151956672a3e2392a8afd6b78f1dc04b9f46966b84cdf9122b9afeef0db0920",
+      "bytes": 6394
+    },
+    "web_alarm/recovery_report_store.py": {
+      "sha256": "9bd9fd82490bbe3fb48fe4dd529d585059dfb36cf5a80442ca0eb9b2f2681583",
+      "bytes": 14761
+    },
+    "web_alarm/remote_entry.py": {
+      "sha256": "ed60e936350dcdf996e6949ec0fdbf237c7bc904cfbc30ca80b6f424ad672cb5",
+      "bytes": 4429
+    },
+    "web_alarm/resolution_store.py": {
+      "sha256": "10cb472db7888ec169eb5165fa53dfb874f5a22446f05c651fd51003c1878641",
+      "bytes": 11052
+    },
+    "web_alarm/resolver_service.py": {
+      "sha256": "dc849eafee221d1007e29cbf586f7ada6fe5d008abc0a470dcd6e53cfa58bca2",
+      "bytes": 25279
+    },
+    "web_alarm/rollback_service.py": {
+      "sha256": "fc3da9b476ab17bad80eec257215061a8c9d3dfdb236bc6945dffea60f5cff69",
+      "bytes": 54374
+    },
+    "web_alarm/rollback_store.py": {
+      "sha256": "103dbbcc01fadf7ecc5975cd450f14e93aa891d37354d6e4e89e8030cddb9a72",
+      "bytes": 13940
+    },
+    "web_alarm/server.py": {
+      "sha256": "3a696d9da02219eb5938ab5a03374926b527f6b2f86a176f5f1529392f7a35e3",
+      "bytes": 63069
+    },
+    "web_alarm/state_machine.py": {
+      "sha256": "c9cd8145276ad414a095f96919197412a87b7245343480b511f4b3c1b1e30182",
+      "bytes": 39949
+    },
+    "web_alarm/storage_policy.py": {
+      "sha256": "1ffc7d61177ca8a4c62335243b153863fd696d8cf20ca5fe7aa0086a29192c76",
+      "bytes": 1298
+    },
+    "web_alarm/store_lock.py": {
+      "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+      "bytes": 2537
+    },
+    "web_alarm/target_claim_service.py": {
+      "sha256": "7649ff15ff8ca02c1872234c0bbfad758b8bf7dfe7be91bde5b46933b2c444ce",
+      "bytes": 30670
+    },
+    "web_alarm/target_claim_store.py": {
+      "sha256": "d069fc00ebfa246f18af4afcd9244f935fae281edd73f4f03149d9742d6db185",
+      "bytes": 11265
+    },
+    "web_alarm/target_identity.py": {
+      "sha256": "7aedd43e7595456f6a3b9fbafe6ccd54e6bc8c1ccce027982a95fb980d9b9e71",
+      "bytes": 4834
+    },
+    "web_alarm/task_store.py": {
+      "sha256": "fe446753140106da5ad424ce412f919676935f884bdafe0f771ac91790ab43ac",
+      "bytes": 26797
+    },
+    "web_alarm/transport_event_recovery.py": {
+      "sha256": "7f5e84079a5cbe6ee4f2458fdac2e8a97ed5752665baed9bab005e37e5b004ba",
+      "bytes": 27771
+    },
+    "web_alarm/transport_event_store.py": {
+      "sha256": "cbd74a2526932f2063fef4ea73bf31b53fdab3504abe5ff6ac5a611769a91d95",
+      "bytes": 11736
+    },
+    "web_alarm/ui.py": {
+      "sha256": "89f50541babc642d1a98bd4ab4f175a9bc9af23207653d57c42b60f655b1fa24",
+      "bytes": 87180
+    },
+    "web_alarm/ultra_chat.py": {
+      "sha256": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+      "bytes": 14789
+    },
+    "web_alarm/ultra_connections.py": {
+      "sha256": "d57a37774e9b1fa7ea5d3e954a0c7058aea2f3ca82446ecd9bd59c8b171b266b",
+      "bytes": 11898
+    },
+    "web_alarm/workspace_registry.py": {
+      "sha256": "f9c1eb7aee27f6197e7930863f87da213d2e4658f061dac324e2900e548ec556",
+      "bytes": 5854
+    },
+    "Wiki Links.md": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "workspace_runtime_settings.py": {
+      "sha256": "699026e592c27189f55ae80ace3eaf0449e874a887235e24083d9a52126b8c3b",
+      "bytes": 5419
+    },
+    "Документация/000_Задачи ChatGPT.md": {
+      "sha256": "258130fd14be5c529dfcd47150c6896ad5792c46899c9b8f70d4d3d271d605dd",
+      "bytes": 52371
+    },
+    "Документация/000_Задачи Claude.md": {
+      "sha256": "7be3e8caf57844c81d81f96266f896de1e2325e268ab6b549f0f9bae79228cda",
+      "bytes": 43931
+    },
+    "Документация/000_Задачи Codex.md": {
+      "sha256": "2978a2076fc446c75f4a2168e76fe5db6ac8d2f218d60b96ba9a6ae6138f998f",
+      "bytes": 36692
+    },
+    "Документация/000_Задачи Ultra Desktop.md": {
+      "sha256": "72b23c17cd2363e5b584c3cf2ce55ef3c7edee58b57d77a0053c6170df5964e5",
+      "bytes": 14188
+    },
+    "Документация/000_Задачи для агента.md": {
+      "sha256": "26d7cbc1e84f7f44c1c2fa74c73b50c0583715ca52664b0d73ac30f50347e2b7",
+      "bytes": 61344
+    },
+    "Документация/001_История выполнения задач Ultra Desktop.md": {
+      "sha256": "ca6eb5ebd31108f77f830de12ad5adc12816ea45f2b509bf13f53a173ba624eb",
+      "bytes": 4003
+    },
+    "Документация/001_История выполненных задач Claude.md": {
+      "sha256": "554da89983e4adfc2b38bdfe83368a10d43790d88f75325db1b05103388eeb8e",
+      "bytes": 791961
+    },
+    "Документация/001_История выполненных задач Codex.md": {
+      "sha256": "c47ad735f2252998e331f5609b90b3bec83f4f9c769f91b07a53aaff8bdc9c73",
+      "bytes": 763190
+    },
+    "Документация/00_Главная - карта проекта.md": {
+      "sha256": "84049d13e727838f243aea500e08beb678fb7f1e3edb29ab62ccea6d0767b453",
+      "bytes": 17882
+    },
+    "Документация/01_Архитектура и текущее состояние.md": {
+      "sha256": "91530faa602da984e5eaadcef24ee04dd38d4fee272cf6eb3166bc5ce5b39919",
+      "bytes": 64554
+    },
+    "Документация/01_Архитектура и текущее состояние.md.pre_web02_branch.bak": {
+      "sha256": "9ef8afc9323aa49c92043bdbb56d551ec336e1dd6037ee1566ca007fde69c3c8",
+      "bytes": 56205
+    },
+    "Документация/02_Правила разработки и работы с Ultra.md": {
+      "sha256": "04afa466422e9e719b3e2a0b95cbee54ead21527dd2811c8bbc445471fa78efc",
+      "bytes": 8602
+    },
+    "Документация/03_Чаты, проекты и контекст.md": {
+      "sha256": "91ee329abf1abcf2016e6f9f08aa75c7660747e5541e09a65fb89ced9cc9291d",
+      "bytes": 56005
+    },
+    "Документация/04_Дорожная карта разработки.md": {
+      "sha256": "5811f06f5d0f119df457e96be50f1ee28f38d287629caf8561537f305207f660",
+      "bytes": 20016
+    },
+    "Документация/05_Реестр задач.md": {
+      "sha256": "e40da816bd26cf1ef44adc51a7bb3b1be0e0036e1df462d0f807ec7ca8f4d331",
+      "bytes": 79075
+    },
+    "Документация/06_Журнал выполнения и отчёты.md": {
+      "sha256": "c2197ba349ea53736259c15f47f44dc332f3fdb58bb8d6fc4ed9b49a5e789029",
+      "bytes": 261460
+    },
+    "Документация/07_Шаблоны задач, отчётов и решений.md": {
+      "sha256": "90bbe5dac62ea9f727f81d4c381331121c078746f23a2b6b353839c732e747a0",
+      "bytes": 11913
+    },
+    "Документация/08_Старт.md": {
+      "sha256": "bf17c72a1ff2735a6299ef773bbacf2c42f315e8a896809529619306966fc686",
+      "bytes": 120714
+    },
+    "Документация/09_Обязательный регламент Ultra.md": {
+      "sha256": "ef4d4466a8fdf1ed7db9e30b29b4c6bf62775bf5c535c55dff45373b99a8a166",
+      "bytes": 21869
+    },
+    "Документация/10_рабочая микро_память_Ultra(концепт).md": {
+      "sha256": "462f22aa211fa1c8ebc95141a45ed8fa3a10b9a4bfd5f33b4d89f29e9b360750",
+      "bytes": 16746
+    },
+    "Документация/11_Мультимодельная архитектура и назначение LLM.md": {
+      "sha256": "5be0b493482738f721c5f8851011e5be8446bc8cb8472da6c12c77ea6138463c",
+      "bytes": 66019
+    },
+    "Документация/12_Архитектура голосового ввода и распознавания речи.md": {
+      "sha256": "eacf6b92107242796edebfc45b44a12192711b33360f53115b37b533910c7fde",
+      "bytes": 19307
+    },
+    "Документация/13_Архитектура оперативной верификации и контроля выполнения задач.md": {
+      "sha256": "51b6b7536aa622b45c9efad3f3a59bb2c547d1071b360ef2fceed437f3d55956",
+      "bytes": 101421
+    },
+    "Документация/14_Контекст проекта.md": {
+      "sha256": "e5e7ccec0eec00aefc15f8a7ef3f9aff80790fe4087adf72a7e93a37315d41cd",
+      "bytes": 31000
+    },
+    "Документация/15_Глобальный контекст Ultra.md": {
+      "sha256": "a2325161a07bcde57fd8daa2b046adfa0385c937cf12a9b352de3ed5e4588108",
+      "bytes": 28609
+    },
+    "Документация/16_Список_контекстов.md": {
+      "sha256": "376f6c2f2ff05fb3259099c36c9863f01a840789d2609a7fb74f8861c9c5b687",
+      "bytes": 5084
+    },
+    "Документация/17_Архитектура межчатового контекста и Cross-Chat Context Broker.md": {
+      "sha256": "e6587f71aed4a7bdceffabee8dcc25c0e0f85aaef88ce13963167fc431878898",
+      "bytes": 10729
+    },
+    "Документация/18_Регламент сопровождения документации.md": {
+      "sha256": "8ce23812363835e901f7fac88db047a79fcb927d86bf124814b323cb5473af96",
+      "bytes": 190122
+    },
+    "Документация/19_Архитектура внешних AI-интеграций - Codex CLI и ChatGPT MCP.md": {
+      "sha256": "ad726f9aa649faed6ab4a04844f403ef646a27ee3d235c596f0877b4d9d0e85a",
+      "bytes": 110552
+    },
+    "Документация/20_Программа качественного перехода - оптимизация runtime, контекстов и памяти.md": {
+      "sha256": "31f73e94bd485bbe4e281f0b02b37b91eb2c5685bfc338c4c19309955fb0ec61",
+      "bytes": 50463
+    },
+    "Документация/21_Журнал качественного перехода - решения, метрики и аудит.md": {
+      "sha256": "9094ad9dcd11e0cc9ed25c96dab2ce21be96f6fe0f79879b8431393478e27d97",
+      "bytes": 63812
+    },
+    "Документация/22_Техническая информация.md": {
+      "sha256": "9b4475db874024b478c4ec2c6ba0013291d5fcbea713f8b3f92307a248ec810a",
+      "bytes": 25765
+    },
+    "Документация/23_Архитектура Web Alarm Workspace.md": {
+      "sha256": "d64bdc888b1463e322322551c544a4de595b3f8e6259f3953074bd238d62b2ba",
+      "bytes": 78025
+    },
+    "Документация/24_План реализации Web Alarm Workspace.md": {
+      "sha256": "d7ea987943e3b31bf8caf15b5e550cb494519c1dff338e3317df14d079bea54e",
+      "bytes": 110356
+    },
+    "Документация/25_Журнал Web Alarm Workspace - выполненные задачи и аудит.md": {
+      "sha256": "ab01579cc7bb2c9de59ada8bfdf741e330f7b38b990856fe9a72a293d8e2bb3e",
+      "bytes": 103437
+    },
+    "Документация/26_Журнал наблюдений Remote - обрывы, transport и recovery evidence.md": {
+      "sha256": "55621a196e50c5487a93dd2d0f568d67d03c1146337bc0317655246e8fc9a39e",
+      "bytes": 59507
+    },
+    "Документация/27_Claude.md": {
+      "sha256": "06fdf8d10ab8615a3d95a3e78b8b1741f754e3881a1d56969176a6d2f70b9a60",
+      "bytes": 8030
+    },
+    "Документация/28.1_Архитектура круглого стола - предложение от Astra.md": {
+      "sha256": "e1bae7c7c98b3be9a49787024df3e834e5e6bc44731623e26bb3889f4889398f",
+      "bytes": 156761
+    },
+    "Документация/28_Круглый стол - протокол и текущий вопрос.md": {
+      "sha256": "1cbb8d05596085955a22575e0c46cb3a3ee05f5bc4ef74515ea593feec8fe9d1",
+      "bytes": 97529
+    },
+    "Документация/29.1_Круглый стол - перекрёстная оценка Claude.md": {
+      "sha256": "277d15a8646364859802ac4b86df78342df84cbe45b5b975d5e66da803a4eef8",
+      "bytes": 22975
+    },
+    "Документация/29_Круглый стол - независимый анализ Claude.md": {
+      "sha256": "9fea81462dc6616581bc26e444fc8b91c2b397cb35178a56baa28888ebad5806",
+      "bytes": 36558
+    },
+    "Документация/30.1_Круглый стол - перекрёстная оценка Codex.md": {
+      "sha256": "e8f58578a75e230df70751d62acae759bbc86499f4e53d7e3134e29adeebe91d",
+      "bytes": 13436
+    },
+    "Документация/30_Круглый стол - независимый анализ Codex.md": {
+      "sha256": "fdf1aeb56378da416fef30d3fb4678ba029cb4a7b6421f371290023f111a1997",
+      "bytes": 28426
+    },
+    "Документация/31.1_Круглый стол - проверка синтеза Claude.md": {
+      "sha256": "bd7d16e3b6007a52a4aff2ead7676bebe5f565573dde5c051e0405a13ca4490d",
+      "bytes": 26692
+    },
+    "Документация/31.2_Круглый стол - проверка синтеза Codex.md": {
+      "sha256": "142fcc7fc0e932d08c2207fc6371f36b07fafcdc0f16bfdb00b6f2e6cfc20e69",
+      "bytes": 27532
+    },
+    "Документация/31_Круглый стол - синтез и разногласия.md": {
+      "sha256": "34f8706348dad6b42e22ad3ca20515b48a3f633ad2eefb85e5e33a809223bf76",
+      "bytes": 52406
+    },
+    "Документация/32_Круглый стол - вердикт и реестр решений.md": {
+      "sha256": "75f7856b5dab09f82402b0b6cd196ee17147f343b48222cc1c2004dcf25f3826",
+      "bytes": 30985
+    },
+    "Документация/33.1_Круглый стол - альтернативное планирование A.md": {
+      "sha256": "2aa26d6e4b3638c6fa071a3f78b3980111e439041e7179403a769a576b11e6a8",
+      "bytes": 97191
+    },
+    "Документация/33.2_Круглый стол - альтернативное планирование B.md": {
+      "sha256": "f6afb410a26a95dc3b359ca6f4ec6b191fffea3aa606b5155e01c198e7319299",
+      "bytes": 6098
+    },
+    "Документация/33.3_Круглый стол - итоговый план.md": {
+      "sha256": "c331ffadff32231de04e5e29ccec351828678b31407bad6f75362a21d9cecfdf",
+      "bytes": 45043
+    },
+    "Документация/33_Круглый стол - план исполнения.md": {
+      "sha256": "834503dd0933a7a5cc1ca075f9348d07ee1b38bbe886821535b9d23895f5a63a",
+      "bytes": 59199
+    },
+    "Документация/34_TACTICAL_CONTEXT.md": {
+      "sha256": "32d2d248101c171d0361052ba4b31ccceb0f8b81de3c252ec3cf3c546636c8bb",
+      "bytes": 267942
+    },
+    "Документация/35_Круглый стол - краткая история.md": {
+      "sha256": "25aa72f57a5eaf1b7339f756fc3f5ea76e935d09d476dfc054e161e797bdcb2e",
+      "bytes": 4908
+    },
+    "Документация/36.1_Обязательный регламент тестирования для LLM.md": {
+      "sha256": "8e581be24b927dba339409f42148a70a92fdbdd761764a0333a2197d9be7e6b3",
+      "bytes": 31210
+    },
+    "Документация/36.2_Профиль тестирования Web Alarm Workspace.md": {
+      "sha256": "d6275fe8eeffef8414ff74367618a74f46a618d375f96e6fcea7324a8274fa9a",
+      "bytes": 42776
+    },
+    "Документация/36.3_Профиль тестирования Ultra.md": {
+      "sha256": "2ef3551c4141292bdc4d57c789758cbe9e211d65035d44f67e94fa9a4e81b072",
+      "bytes": 17873
+    },
+    "Документация/36_Единая архитектура тестирования.md": {
+      "sha256": "3238379402ba953059b20b1f09e529f422f2d70553aef8c63f4a2c9149c6c0e9",
+      "bytes": 31094
+    },
+    "Документация/37_Старт перехода - Web Alarm Ultra.md": {
+      "sha256": "e1c02a16de9019347023539f59919eded9b249b7ffaf5cbf7272d56d8276dfc3",
+      "bytes": 84288
+    },
+    "Документация/38_Контекст передачи в Сервер LLM12 - Web Alarm Ultra MVP.md": {
+      "sha256": "7362301b92db450e74e80754266a17153efb92712b1be8b65b5ddf2978aa364d",
+      "bytes": 13815
+    },
+    "Документация/39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25.md": {
+      "sha256": "ec631d0d1d4b85fd68b36bfee621a828317953e7cf2c8b2831b3dc288789b464",
+      "bytes": 33131
+    },
+    "Документация/40_Оперативная координация направлений.md": {
+      "sha256": "f5288e08e0390553db7eacb393f788fd1fe733e7732f8b5b3049d4a8fc2d03c8",
+      "bytes": 12957
+    },
+    "Документация/41_Оптимизация контекста документов.md": {
+      "sha256": "15542bec5f74b85b7eafd170fabf7b5c8d872a119c850394864138f018c13c57",
+      "bytes": 79975
+    },
+    "Документация/AG LLM Blender.md": {
+      "sha256": "ef4583b0eb6eea8b0f2bbf6761fbd7733bce5e811f148a55b353d4571c2ef244",
+      "bytes": 17
+    },
+    "Документация/AG LLM Connect.md": {
+      "sha256": "802380ccb90bc2592840a38f6376a3f74f25b393b684dc8d248675e7835a3020",
+      "bytes": 24683
+    },
+    "Документация/AG LLM Godot.md": {
+      "sha256": "ebb3e22b1a1ea5fbadb6c42336414a6efb0ceba52bd85b54c02adf7dc79849e6",
+      "bytes": 15
+    },
+    "Документация/AG LLM Unreal.md": {
+      "sha256": "d0d25f3e6fc47aee0eb969dd3f57888dc7b868b690238f25a4fb832010e17bb4",
+      "bytes": 16
+    },
+    "Документация/AG_LLM_Concept_Starting_Point_2026-09-27.docx": {
+      "sha256": "a0a1bf60ac56443c1a27614b1a2a793ffab591cd5a7dfa69923c19c6cf283058",
+      "bytes": 47664
+    },
+    "Документация/AI_Info.pur": {
+      "sha256": "426d2b10034e7285fe0da1a2bde743e809fb76224062c340aab8de3ee1aa0c81",
+      "bytes": 463257
+    },
+    "Документация/Blueprint LLM - тактический контекст.md": {
+      "sha256": "f9fe5fd625eb7cea0357ad5005cb3fc8e78afd7190c26a8fe4897c6ab52839a9",
+      "bytes": 13391
+    },
+    "Документация/Blueprint LLM.md": {
+      "sha256": "7c38b733f0cc43e1f8c97b6571e2c43215f2d378202dd5553340ffc07ba94def",
+      "bytes": 16646
+    },
+    "Документация/SAFE_MODE_v1_README.md": {
+      "sha256": "13a4fbe64223d24d6dfa9ab50c7196b5b01ae5f9c70c4fd98648b71b99de4389",
+      "bytes": 6937
+    },
+    "Документация/task151a_b1_probe.txt": {
+      "sha256": "475f11c57d9226d12425d6cfad18962e2412261ec9ce1c6f68d47c58285c446f",
+      "bytes": 51
+    },
+    "Документация/Аналитический контур.base": {
+      "sha256": "49d8d5c8ce24c757b2279d680894196e8ebcb9e90e8bec46aaabe8d73e0ad8f8",
+      "bytes": 756
+    },
+    "Документация/Архитектурное решение - управляемое сжатие контекста.md": {
+      "sha256": "43e8dae3a5ceb66aee347a6f55b5f924657592c67c36fcf65c06fc73a675d620",
+      "bytes": 59225
+    },
+    "Документация/Дом.txt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "Документация/Дополнительная аналитика Астры.md": {
+      "sha256": "7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5",
+      "bytes": 137301
+    },
+    "Документация/Решение пользователя - ChatGPT тесты и правки кода - 2026-10-22.md": {
+      "sha256": "abf42efdb521b95c420b039c2be77ae0524c18024a4fe861330df89d6de7eeb2",
+      "bytes": 4247
+    }
+  },
+  "targets": [
+    {
+      "source": "Документация/000_Задачи для агента.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи для агента.md.source.txt",
+      "sha256": "26d7cbc1e84f7f44c1c2fa74c73b50c0583715ca52664b0d73ac30f50347e2b7",
+      "bytes": 61344,
+      "chars": 45853,
+      "headings": [
+        "## WEB15 / CURRENT 2026-10-27 — №37 USER PLAN APPROVED, Stage1 RESULT READY / NOT VERIFIED",
+        "## WEB_14 / 2026-10-26 — 🟨 Claude Stage0 Ultra Chat: документально принят",
+        "## WEB_14 / 2026-10-26 — программа №37 проверена, утверждение пользователем ожидается",
+        "## WEB_14 / CURRENT 2026-10-26 — Astra rev2 принята в ограниченном source scope",
+        "## USER DIRECTION / 2026-10-25 — архив №39 и заморозка ChatGPT Desktop MCP",
+        "## WEB_12 / CURRENT 2026-10-25 — strict MCP broker admission offline PASS",
+        "## WEB_12 / CURRENT 2026-10-25 — secure MCP source audit closeout",
+        "## CURRENT / 2026-10-18 / LLM12 — WA4-R crash-consistency R-MT/R-OP published, independently bounded-reviewed",
+        "## CURRENT / 2026-10-17 / LLM12 — WA4-R crash consistency DESIGN RESEARCH, no implementation GO",
+        "# Задачи для агента",
+        "## ULTRA DESKTOP / отдельный контур координации и независимой проверки (2026-10-24)",
+        "### ПРАВИЛО: архитектурная экономия и постоянная локальная оптимизация (2026-10-24)",
+        "## CURRENT HANDOFF — WEB_07 / 2026-10-13",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "# БЛОК 2 — ПОСЛЕДНЯЯ ПОДТВЕРЖДЁННАЯ ЗАДАЧА",
+        "# БЛОК 3 — ОТЛОЖЕННАЯ ЗАДАЧА",
+        "### Замороженный контекст на момент откладывания",
+        "### Как вернуться к отложенной задаче",
+        "# БЛОК 4 — МИНИ-РЕЕСТР ПОСЛЕДНИХ 10 ЗНАЧИМЫХ TASK",
+        "## 5. Правило круговорота задач"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[40_Оперативная координация направлений]]": 1,
+          "[[34_TACTICAL_CONTEXT]]": 1,
+          "[[000_Задачи Ultra Desktop]]": 1
+        },
+        "active_wiki": {
+          "[[40_Оперативная координация направлений]]": 1,
+          "[[34_TACTICAL_CONTEXT]]": 1,
+          "[[000_Задачи Ultra Desktop]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/000_Задачи ChatGPT.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи ChatGPT.md.source.txt",
+      "sha256": "258130fd14be5c529dfcd47150c6896ad5792c46899c9b8f70d4d3d271d605dd",
+      "bytes": 52371,
+      "chars": 40053,
+      "headings": [
+        "# Задачи ChatGPT",
+        "## Правила",
+        "### Порядок ChatGPT: GitHub-first review и Remote Alarm",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "## Scope / обязательный порядок",
+        "## Factual result / handoff — 2026-10-10 (не независимая проверка)",
+        "## Входная историческая пометка (сохранена из прежнего БЛОКА 1)",
+        "# БЛОК 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА",
+        "# CHATGPT-WA-008 / RC-6 — REPAIR #1",
+        "## Scope",
+        "### B1 — settlement steals recovery focus forever",
+        "### B2 — false READY after foreign claim appears",
+        "### B3 — operation microtask != project current microtask",
+        "### B4 — own RC-4 effects incorrectly become stale",
+        "### B5 — false READY with invalid restore point",
+        "## F1 policy — ABORT / RECOVERY_REQUIRED",
+        "## F2 policy — partial/failed rollback close",
+        "## Truthful READY contract",
+        "## Settlement ordering",
+        "## Mandatory regression matrix",
+        "## Verification",
+        "## Out of scope / STOP",
+        "## Report / rotation",
+        "### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD",
+        "## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 2 — ПОСЛЕДНЯЯ ВЫПОЛНЕННАЯ ЗАДАЧА — ПОСТАНОВКА",
+        "# БЛОК 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ",
+        "### Исправлено",
+        "### Дополнительный adversarial finding исполнителя",
+        "### Проверки",
+        "### Evidence",
+        "### Scope",
+        "### СОХРАНЁННЫЙ ПРЕДЫДУЩИЙ RC-6 RECORD",
+        "## PRIOR RC-6 EXECUTOR RECORD — PRE-REPAIR BLOCK 3 — ОПЕРАЦИОННЫЙ РЕЗУЛЬТАТ",
+        "### Фактический результат",
+        "### Concurrency / restart",
+        "### Adversarial",
+        "### Проверки",
+        "### Evidence",
+        "### Findings / deferred",
+        "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[000_Задачи для агента]]": 1
+        },
+        "active_wiki": {
+          "[[000_Задачи для агента]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/000_Задачи Claude.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Claude.md.source.txt",
+      "sha256": "7be3e8caf57844c81d81f96266f896de1e2325e268ab6b549f0f9bae79228cda",
+      "bytes": 43931,
+      "chars": 28550,
+      "headings": [
+        "# Задачи Claude",
+        "## Правила",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "# Задача: Первый рабочий экран Ultra Chat и безопасное чтение истории",
+        "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ",
+        "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER",
+        "## 1. Последний — WEB15 / 2026-10-27 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+        "## 2. Предыдущий — WEB14 / 2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001",
+        "## 3. Предыдущий — WEB14 / 2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[000_Задачи для агента]]": 1,
+          "[[001_История выполненных задач Claude]]": 3
+        },
+        "active_wiki": {
+          "[[000_Задачи для агента]]": 1,
+          "[[001_История выполненных задач Claude]]": 3
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/000_Задачи Codex.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Codex.md.source.txt",
+      "sha256": "2978a2076fc446c75f4a2168e76fe5db6ac8d2f218d60b96ba9a6ae6138f998f",
+      "bytes": 36692,
+      "chars": 23377,
+      "headings": [
+        "# Задачи Codex",
+        "## Правила",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "# Задача: Оптимизация контекста документов",
+        "## 1. Цель",
+        "## 2. Документы, которые необходимо учитывать",
+        "## 3. Тактический контекст №34",
+        "## 4. Стартовый документ №08",
+        "## 5. Реестр задач №05",
+        "## 6. Исторические документы",
+        "## 7. Критическое ограничение: Obsidian Graph",
+        "## 8. Новый жизненный цикл завершения TASK",
+        "## 9. Независимый архитектурный анализ",
+        "## 10. Отчёт — документ №41",
+        "## 11. Границы разрешения",
+        "## 12. Критерии готовности",
+        "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ",
+        "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА",
+        "## 1. Последний вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001",
+        "## 2. Предыдущий — WEB_14 / 2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001",
+        "## 3. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[000_Задачи для агента]]": 1,
+          "[[001_История выполненных задач Codex]]": 2
+        },
+        "active_wiki": {
+          "[[000_Задачи для агента]]": 1,
+          "[[001_История выполненных задач Codex]]": 2
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/000_Задачи Ultra Desktop.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/000_Задачи Ultra Desktop.md.source.txt",
+      "sha256": "72b23c17cd2363e5b584c3cf2ce55ef3c7edee58b57d77a0053c6170df5964e5",
+      "bytes": 14188,
+      "chars": 8623,
+      "headings": [
+        "# Задачи Ultra Desktop",
+        "## Правила — общие для исполнителей",
+        "## Специальный рабочий протокол Ultra Desktop",
+        "## Известные ошибки — памятка из испытания 24.10.2026",
+        "## Рабочая область и публикация",
+        "## Ротация персональной карточки",
+        "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА",
+        "# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)",
+        "# БЛОК 3 — ПЯТЬ ПОСЛЕДНИХ ФАКТИЧЕСКИХ ИТОГОВ",
+        "# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[001_История выполнения задач Ultra Desktop]]": 1
+        },
+        "active_wiki": {
+          "[[001_История выполнения задач Ultra Desktop]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/05_Реестр задач.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/05_Реестр задач.md.source.txt",
+      "sha256": "e40da816bd26cf1ef44adc51a7bb3b1be0e0036e1df462d0f807ec7ca8f4d331",
+      "bytes": 79075,
+      "chars": 67263,
+      "headings": [
+        "## WEB15 / 2026-10-27 — Stage1 Ultra Chat: независимая ограниченная приёмка",
+        "## WEB_14 / 2026-10-26 — результат подготовительного этапа Ultra Chat",
+        "## WEB_14 / 2026-10-26 — независимая приёмка кандидатной программы №37",
+        "## WEB_14 / 2026-10-26 — независимая архитектурная приёмка Ultra",
+        "## USER FREEZE 2026-10-25 — ordinary ChatGPT Desktop MCP / archive №39",
+        "## WEB_12 / 2026-10-25 — strict admission policy / completed offline task",
+        "## WEB_12 / 2026-10-25 — secure ChatGPT MCP / Codex sing dependency",
+        "## 🟨 LLM13 / 2026-10-20 — независимый Windows-прогон восстановления журнала завершён, остаточные риски открыты",
+        "## 🟨 LLM12 / 2026-10-20 — ручное восстановление повреждённого журнала событий",
+        "## WEB_10 / 2026-10-20 — portable MCP setup toolkit, offline stage",
+        "## 🟨 LLM12 / 2026-10-20 — независимая проверка Claude на Windows (W1)",
+        "## WEB_10 / 2026-10-19 — MCP identity/SID egress architecture research (not runtime verified)",
+        "## LLM12 / 2026-10-18 — WA4-R crash-consistency repair latest gate",
+        "## LLM12 / 2026-10-17 — WA4-R AUD-02b-R/AUD-03 crash design review (latest for RT-001)",
+        "## LLM12 / 2026-10-17 — Web Alarm WA4-R latest published review (supersedes dated 2026-10-16 top rows)",
+        "## WEB_09 / 2026-10-16 — current Web Alarm and MCP independent streams",
+        "# Реестр задач GigaChat Ultra Local Agent",
+        "## CURRENT WEB-02 TASK STATUS — 2026-10-13",
+        "## Формат таблицы",
+        "## Общая архитектура тестирования — проектная документация",
+        "## Ветка WA: Web Alarm Workspace",
+        "## Завершенные задачи (инфраструктура)",
+        "### Архитектурная серия TASK 132–143 и стабилизация 144–151",
+        "## Ветка DOC: архитектура и регламент Круглого стола",
+        "## Задачи в работе и запланированные",
+        "### Этап 06: Система чатов и управление контекстом",
+        "### Ветка MM: Мультимодельная архитектура",
+        "### Этап 07: Переносимость",
+        "### Этап 08: Web UI",
+        "### FUTURE без присвоенного TASK ID",
+        "## Критерии приёмки для ближайших задач",
+        "### TASK 06.1 — Модель данных чатов",
+        "### TASK 06.2 — Навигация по чатам",
+        "### TASK 06.3 — Multi-turn context",
+        "### TASK 06.4 — Разделение контекстов",
+        "### TASK 06.5 — Сжатие контекста",
+        "### Ветка V: Execution Verifier",
+        "## Ссылки"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[34_TACTICAL_CONTEXT|34 — Tactical Context]]": 1
+        },
+        "active_wiki": {
+          "[[34_TACTICAL_CONTEXT|34 — Tactical Context]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/06_Журнал выполнения и отчёты.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/06_Журнал выполнения и отчёты.md.source.txt",
+      "sha256": "c2197ba349ea53736259c15f47f44dc332f3fdb58bb8d6fc4ed9b49a5e789029",
+      "bytes": 261460,
+      "chars": 208299,
+      "headings": [
+        "## 2026-10-27 — WEB15 / `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` / независимая bounded source/evidence приёмка",
+        "## 2026-10-27 — USER PLAN APPROVED / №37 Web Alarm Ultra, кандидат 2",
+        "## 2026-10-26 — USER architecture direction / Web Alarm Ultra: переносимость с этапа 0, №37 подготовлен к финальному утверждению",
+        "## 2026-10-26 — WEB_14 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001 / независимый обзор этапа 0 Ultra Chat, rev2",
+        "## 2026-10-26 — WEB_14 / ASTRA-WUA-37-ROADMAP-REVISION-001 / независимый обзор документа №37",
+        "## 2026-10-26 — WEB_14 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001 / independent architecture review PASS",
+        "## 2026-10-25 — USER HOLD / archive №39 / ChatGPT Desktop MCP freeze",
+        "## 2026-10-25 — WEB_12 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001 / independent bounded offline PASS",
+        "## 2026-10-25 — WEB_12 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001 / user-approved terminal PARTIAL",
+        "## 2026-10-24 — CLAUDE-WA4-R-FT1-CI-REPAIR-001 / независимая Windows приёмка",
+        "## 2026-10-24 — WEB_11 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001 amendment01 / PARTIAL",
+        "## 2026-10-24 — WEB_11 / CODEX-WUA-0-PROXY-ENGINE-SNAPSHOT-001 / PARTIAL",
+        "## 2026-10-24 — WEB_11: CODEX-WUA-0-V2RAY-BROKER-OFFLINE-001 / PARTIAL",
+        "## 2026-10-24 — WEB_11: CODEX-WUA-0-MCP-NOTCP-NPFS-001 / PARTIAL",
+        "## 2026-10-21 — независимый Linux-review Claude Evidence Sanitization / PARTIAL",
+        "## 2026-10-21 — независимый bounded offline-review Codex Windows MCP Lab / PARTIAL",
+        "## 2026-10-20 — 🟨 независимая Windows-верификация восстановления оборванного журнала / LLM13 (AUD-01T-R; RT-001)",
+        "## 2026-10-20 — WEB_10 independently reviewed Codex 007 portable WUA MCP deployment kit",
+        "## 2026-10-19 — WEB_10 independent bounded review of Codex no-VM SID/WFP MCP architecture",
+        "## 2026-10-18 — LLM12 independent bounded review / `CLAUDE-WA4-R-CRASH-CONSISTENCY-REPAIR-001` [Web Alarm RT-001]",
+        "## 2026-10-17 — LLM12 independent bounded crash-consistency research audit [ChatGPT; Web Alarm RT-001]",
+        "## 2026-10-17 — LLM12 bounded independent WA4-R AUD-01T/02b source/evidence audit [ChatGPT; ARCH Web Alarm]",
+        "## 2026-10-17 — documentation repair of agent-facing reporting instructions (#356)",
+        "## 2026-10-17 — coordinator documentation correction: project-local reports and explicit agent Git permissions",
+        "## 2026-10-16 — WEB_09 / WA4-R AUD-01/02/05 bounded review, documentation-only [ChatGPT; ARCH Web Alarm]",
+        "# Журнал выполнения и отчёты GigaChat Ultra Local Agent",
+        "## 2026-10-14 — RT-002/B2 S2-001 + REPAIR-001/002 — independent source-review closeout [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "## 2026-10-14 — RT-002/B2 S1 + REPAIR-001/002 independent source review [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "## 2026-10-13 — №302 / WEB07-WA4-R-OBSERVE-CLOSEOUT-001 [COORDINATOR: ChatGPT]",
+        "## 2026-10-12 — №301 / User-approved one-task-one-commit policy [COORDINATOR: ChatGPT]",
+        "## 2026-10-12 — ASTRA-TEST-ARCH-REVIEW-001 / targeted doc corrections [AUDITOR: Astra; COORDINATOR: ChatGPT]",
+        "## 2026-10-12 — DOC-TEST-001 / after user-authorized merge [AGENT: ChatGPT] [ARCH: Documentation + pilot CI]",
+        "## 2026-10-12 — DOC-TEST-001 / Cross-project cumulative testing architecture [AGENT/COORDINATOR: ChatGPT] [ARCH: Documentation / Testing QA, Ultra + Web Alarm]",
+        "## 2026-10-11 — №256 GitHub Actions Web Alarm smoke + №257 documentation closeout [AGENT: ChatGPT] [ARCH: CI infrastructure / Web Alarm; NOT Ultra]",
+        "## 2026-10-11 — CLAUDE-WA-018 / WA4-E documented independent acceptance (verification run 2026-10-09) [AGENT: Claude] [VERIFIER: ChatGPT] [ARCH: Web Alarm]",
+        "## 2026-10-11 — RT-002 Ultra S0 independently VERIFIED [AGENT: Codex] [VERIFIER: ChatGPT] [ARCH: Ultra]",
+        "## 2026-10-11 — ULTRA ARCHITECTURE ONLY / RT-002 S0 Amendment #252 + collaborative live T-036/T-037 — CONSERVATION",
+        "## 2026-10-10 — S0 REPAIR / CODEX-RT002-S0-REPAIR-001 — REPORTED 155 PASS; INDEPENDENT RUNTIME PENDING `[AGENT: Codex]` `[VERIFIER: ChatGPT GitHub source review only]`",
+        "## 2026-10-10 — S0 baseline / CODEX-RT002-S0-001 — FINDINGS / NO PASS `[AGENT: Codex]` `[VERIFIER: ChatGPT GitHub/source review]`",
+        "## 2026-10-08 — RC-6 CLOSEOUT / CLAUDE-WA-014 — DONE / VERIFIED `[AGENT: Claude]` `[VERIFIER: ChatGPT GitHub]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-08 — CODEX-ALARM-CLEANUP-001 — служебная очистка `[AGENT: Codex]`",
+        "## 2026-10-04 — CLAUDE-WA-005: RC-3 CANONICAL-TARGET CONFLICT GATE + MUTATION-BOUNDARY CAS — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-04 — CLAUDE-WA-004: RC-2 PERSISTENT RESOLVER + EVIDENCE REVISION BINDING — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-04 — CLAUDE-WA-003: RC-1 DURABLE OPERATION CONTRACT + BACKWARD COMPATIBILITY — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-04 — CLAUDE-WA-002: RC-0 BASELINE И NORMALIZATION POLICY — DONE / VERIFIED `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-04 — P00: CANONICAL PLAN HANDOFF RT-001 / EP-RT001-001 — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-03 — CLAUDE-WA-001: INDEPENDENT PREFLIGHT RT-001 / EP-RT001-001 — DONE / VERIFIED 2026-10-04 `[AGENT: Claude Opus 5.5]` `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-03 — CLAUDE-TEST-001: READ-ONLY REPOSITORY ANALYSIS — DONE `[AGENT: Claude Opus 5.5]`",
+        "## 2026-10-02 — WA-3.6: SHORT MACHINE-USABLE RECOVERY REPORT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.5.D: AUTHORITY-NEGATIVE TESTS / FINAL WATCHDOG VERIFICATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.5.C: RECOVERY / RESTART TRANSPORT PERSISTENCE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.5.B: WATCHDOG / SERVER TRANSPORT EVIDENCE INGESTION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.5.A: TRANSPORT EVENT MODEL / APPEND-ONLY STORE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — DOC-WA-REMOTE-CONCLUSIONS-001: CONSOLIDATED REMOTE FAILURE CONCLUSIONS — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.4: RECOVERY AFTER RESTART CHAT / SERVER — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.3.4: RECOVERY SCENARIOS / FINAL VERIFICATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.3.3: SERVER / REMOTE RECONCILIATION INTEGRATION — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.3.2: DETERMINISTIC RECONCILIATION DECISION ENGINE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.3.1: RECONCILIATION EVIDENCE / READ-ONLY INSPECTOR — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — DOC-WA-REMOTE-OBS-001: REMOTE TRANSPORT / RECOVERY EVIDENCE JOURNAL — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.2: WEB ALARM OPERATION ID / REPLAY IDENTITY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-3.1: WEB ALARM CANONICAL REMOTE ENTRY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-2.4: WEB ALARM ENTRY CONTEXT PACK — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-2.3: WEB ALARM MINIMAL UI — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-2.2: WEB ALARM SERVER-OWNED STATE MACHINE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-2.1: WEB ALARM SERVER API — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-1.6: WEB ALARM BASIC CLI — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-1.5: WEB ALARM EVENT LOG + CHECKPOINT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-02 — WA-1.4: WEB ALARM MANIFEST + SNAPSHOT — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-01 — WA-1.3: WEB ALARM TASK + MICROTASK PLAN STORAGE — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-01 — WA-1.2: WEB ALARM WORKSPACE REGISTRY — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-01 — WA-1.1: WEB ALARM WORKSPACE DATA SCHEMAS — DONE / VERIFIED `[ARCH: Web Alarm Workspace]`",
+        "## 2026-10-01 — TASK 151G-DIAG-R031: EXECUTOR CONTEXT / TOKEN EXPLOSION AUDIT — DONE, RUNTIME UNCHANGED `[ARCH: Quality Transition / Executor Context]`",
+        "## 2026-10-01 — TASK 151B: EVIDENCE FRESHNESS / REVISION BINDING — DONE / КТ-2 DONE `[ARCH: Quality Transition / Verification Freshness]`",
+        "## 2026-10-01 — TASK 151A: ACCOUNTING + STATISTICAL BENCHMARK CLOSURE — DONE / КТ-1 DONE `[ARCH: Quality Transition / Runtime + Context + Verification]`",
+        "## 2026-10-01 — TASK 151A: ACCOUNTING + LIVE BENCHMARKS — IN PROGRESS `[ARCH: Quality Transition / Runtime + Context + Verification]`",
+        "## 2026-10-01 — DESKTOP COMMANDER WATCHDOG V1 — MONITORING ADDED",
+        "## 2026-09-30 — TASK 151: INTEGRATED STABILIZATION / STABLE BASELINE S1 — DONE",
+        "## 2026-09-30 — TASK 150 / 150A: UI BINDING AUDIT + MISSING AUDIT STORAGE UX — DONE",
+        "## 2026-09-30 — ПРИНЯТА ПРОГРАММА КАЧЕСТВЕННОГО ПЕРЕХОДА 20/21 — DOCUMENTATION / ARCHITECTURAL DECISION",
+        "## 2026-09-30 — TASK 149: LIFECYCLE / TOOL BUDGET / EVIDENCE CONTRACT — LIVE PARTIAL VERIFIED + REPAIR PASS",
+        "### T-017 / R-017 — WRITE OFF",
+        "### T-018 / R-018 — WRITE ON",
+        "### Finding 149C — exact requirement не ограничивал pre-evidence exploration",
+        "#### TASK 149C — Exact Evidence Gate",
+        "### Finding 149D — garbage final candidate прошёл nonempty gate",
+        "#### TASK 149D — Final Response Sanity Gate",
+        "### Automated state after 149C/149D",
+        "### T-019 / R-019 — persistence runaway из-за double-escaped Planner exact text",
+        "#### TASK 149E — Planner Exact Text Escape Guard",
+        "### T-020 / R-020 — lifecycle SUCCESS, 149C/149E LIVE VERIFIED",
+        "### Finding 149F — serialized tool-call markup как final response",
+        "#### TASK 149F — Final Response Tool-Markup Gate",
+        "### T-021 / R-021 — TASK 149 FINAL LIVE CLOSE",
+        "### Current status",
+        "## 2026-09-30 — TASK 148: CONTEXT COMPILATION / ROLE BOUNDARY AUDIT — DONE",
+        "### R-015 live evidence — Chat vs Executor",
+        "### Planner boundary",
+        "### Final Verifier boundary",
+        "### Stage-local context growth",
+        "### Existing Compressor vs future historical memory",
+        "### Automated evidence",
+        "### Итог",
+        "## 2026-09-30 — TASK 147B: FAILED RUN TERMINAL ASSISTANT PERSISTENCE — DONE",
+        "### Реализация",
+        "### Regression tests",
+        "### Статус",
+        "## 2026-09-30 — TASK 147A: CHAT CREATE ATOMICITY / ORPHAN CLEANUP — DONE",
+        "### Реализация",
+        "### Regression tests",
+        "### Live storage cleanup",
+        "### Статус",
+        "## 2026-09-30 — TASK 147: CHAT STORAGE / IDENTITY / WORKING REPRESENTATION AUDIT — DONE",
+        "### Проверено",
+        "### Finding A — orphan Chat create durability",
+        "### Finding B — FAILED RUN terminal Chat persistence",
+        "### Итог",
+        "## 2026-09-30 — TASK 146: RUN STORE EXTERNAL-LOCK RECOVERY — DONE + LIVE VERIFIED",
+        "### Реализация",
+        "### Проверки",
+        "### Windows integration proof",
+        "### Cleanup диагностических артефактов",
+        "### Live verification — T-015 / R-015",
+        "### Отдельный lifecycle finding из T-015",
+        "## 2026-09-30 — TASK 145: RUN STORE / AUDIT PERMISSIONERROR ROOT-CAUSE AUDIT — DONE",
+        "### Доказанный root cause",
+        "### Что это означает для TASK 143",
+        "### Cleanup review тестовых артефактов",
+        "### Следующий шаг",
+        "## 2026-09-30 — TASK 144: STABILIZATION MASTER AUDIT / RECOVERY PLAN — DOCUMENTATION ONLY",
+        "### Фактическая карта CURRENT перед аудитом",
+        "### Что live уже доказал",
+        "### Решение",
+        "## 2026-09-30 — TASK 143: RUN STORE PERMISSIONERROR HARDENING — DONE ПО CODE/TESTS; LIVE FAIL CONFIRMED",
+        "## 2026-09-30 — TASK 142: EXISTING TARGET / ALREADY_SATISFIED — DONE ПО CODE/TESTS",
+        "## 2026-09-30 — TASK 141: REPLAN OBLIGATION-CHANGE VALIDATION — DONE ПО CODE/TESTS",
+        "## 2026-09-30 — TASK 140: NON-PERSISTENCE STAGE EVIDENCE — DONE ПО CODE/TESTS",
+        "## 2026-09-29 — TASK 138–139: PERSISTENCE AUTO-ADVANCE И EXECUTOR CONTEXT POLICY V1",
+        "### Причина",
+        "### TASK 138 — исправление перехода stage",
+        "### LIVE T-011 / R-011",
+        "### TASK 139 — Executor Context Policy V1",
+        "### Documentation Impact",
+        "## 2026-09-29 — TASK 132–137: RUN STORE V2, PLANNER HARDENING И DOCUMENTATION SYNC",
+        "### Реализовано в серии 132–136",
+        "### LIVE T-002 / R-002",
+        "### LIVE T-003 / R-003",
+        "## 2026-09-24 — GLOBAL DOCUMENTATION RECONCILIATION",
+        "## 2026-09-20 — TASK DOC-MULTI-SYNC-03",
+        "### Цель",
+        "### Фактически выполнено",
+        "### Статус реализации",
+        "### Проверено в этом RUN",
+        "## 2026-09-20 — TASK DOC-MULTI-SYNC-01",
+        "### Цель",
+        "### Фактически выполнено",
+        "### Проверено в этом RUN",
+        "## 2026-09-19 — Нормализация канонического журнала",
+        "### Причина",
+        "### Решение",
+        "### Архитектурный вывод",
+        "## 2026-09-19 — ОБНАРУЖЕННЫЙ GAP: NO-TOOL STOP",
+        "### Наблюдаемый факт",
+        "### Архитектурное значение",
+        "### Статус",
+        "## 2026-09-19 — GUARD P1: SERVER-SIDE SUPERVISOR",
+        "### Назначение",
+        "### Физический тест 1 — REPEATED READ",
+        "### Физический тест 2 — POSSIBLE DUPLICATE CREATE",
+        "### Известное ограничение GUARD P1",
+        "### Текущий статус GUARD P1",
+        "## 2026-09-19 — TASK DOC-SYNC-02A: Roadmap + Task Registry",
+        "### Цель",
+        "### Фактический trace",
+        "### Основные исправления",
+        "### Результат",
+        "## 2026-09-19 — TASK DOC-SYNC-01: первый большой проход синхронизации документации",
+        "### Цель",
+        "### Затронутые документы",
+        "### Что было сделано",
+        "### Важное историческое замечание",
+        "### Последующий review",
+        "## 2026-09-18 — TASK DOC-04: Обязательный регламент Ultra и автоматическая загрузка правил",
+        "### Цель",
+        "### Изменённые файлы",
+        "### Что реализовано",
+        "### Проверка",
+        "### Результат",
+        "### Известные проблемы",
+        "### Следующий шаг",
+        "### Требуется restart",
+        "## 2026-09-18 — TASK DOC-02: Упрощение системы нумерации и реестра задач",
+        "### Цель",
+        "### Изменённые файлы",
+        "### Что реализовано",
+        "### Проверка",
+        "### Результат",
+        "### Известные проблемы",
+        "### Следующий шаг",
+        "## 2026-09-18 — TASK DOC-01: Создание системы документации проекта",
+        "### Цель",
+        "### Изменённые файлы",
+        "### Что реализовано",
+        "### Проверка",
+        "### Результат",
+        "### Известные проблемы",
+        "### Следующий шаг",
+        "## Исторический итог (инфраструктура)",
+        "## 2026-10-03 — WA-3.7 CONTROLLED REAL REMOTE TRANSPORT-DISCONNECT — M002 VERIFIED / M003 CLOSEOUT",
+        "### WA-3 final reconciliation after WA-3.7 fresh reopen",
+        "## 2026-10-04 — Web Alarm RC-4 / CLAUDE-WA-006 — DONE / VERIFIED",
+        "## 2026-10-09 — RC-5 / CLAUDE-WA-016 — DONE / VERIFIED [AGENT: Claude] [VERIFIER: ChatGPT independent runtime]",
+        "## 2026-10-09 — CLAUDE-WA-017 / F-5/F-6 — DONE / VERIFIED [AGENT: Claude] [VERIFIER: ChatGPT independent runtime]",
+        "### 2026-10-10 / RT-002 B2 — approved planning → canonical execution programme",
+        "## 2026-10-11 — CODEX-WA4-A-001 / WA4-A — DONE / VERIFIED [AGENT: Codex] [VERIFIER: ChatGPT, GitHub-hosted Windows]",
+        "## 2026-10-11 — WA4-O Operator UI technical acceptance and planned WA4-R preflight [ARCH: Web Alarm Workspace]",
+        "## 2026-10-24 — CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001 / CHAT-ONLY AMENDMENT — PASS, BOUNDED OFFLINE VERIFIED",
+        "## 2026-10-27 — USER GO / `DOC-WUA-LAUNCH-01@1` — единый запускатель и обязательный возврат TEST→STANDARD"
+      ],
+      "graph": {
+        "raw_wiki": {},
+        "active_wiki": {},
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/07_Шаблоны задач, отчётов и решений.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/07_Шаблоны задач, отчётов и решений.md.source.txt",
+      "sha256": "90bbe5dac62ea9f727f81d4c381331121c078746f23a2b6b353839c732e747a0",
+      "bytes": 11913,
+      "chars": 7234,
+      "headings": [
+        "# Шаблоны задач, отчётов и архитектурных решений",
+        "## ШАБЛОН TASK",
+        "### DOCUMENTATION BLOCK для значимой технической TASK",
+        "## ШАБЛОН REPORT",
+        "## ШАБЛОН АРХИТЕКТУРНОГО РЕШЕНИЯ",
+        "## ПРИМЕР ИСПОЛЬЗОВАНИЯ",
+        "### Пример TASK",
+        "### Пример REPORT",
+        "## РЕКОМЕНДАЦИИ"
+      ],
+      "graph": {
+        "raw_wiki": {},
+        "active_wiki": {},
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/08_Старт.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/08_Старт.md.source.txt",
+      "sha256": "bf17c72a1ff2735a6299ef773bbacf2c42f315e8a896809529619306966fc686",
+      "bytes": 120714,
+      "chars": 76747,
+      "headings": [
+        "# Старт",
+        "## ОБЯЗАТЕЛЬНЫЙ ВХОД — GitHub, роли и испытания (решение пользователя 2026-10-21)",
+        "### Особый вход: независимый планировщик Круглого стола (INDEPENDENT_PLAN)",
+        "## COLD START / FAST ROUTE",
+        "### Удалённая работа ChatGPT / аварийная TASK-сессия",
+        "### Нормативный маршрутизатор Rule-ID (кратко)",
+        "## 1. Карта проекта",
+        "## 2. Назначение проекта",
+        "## 3. Что читать перед задачей",
+        "### Канонический реестр ответственности документов",
+        "### Маршрут новой TASK",
+        "### Обязательный Documentation Workflow",
+        "## 4. Текущее состояние runtime — короткий ориентир",
+        "## 5. SAFE Mode — текущее проверенное состояние",
+        "## 6. Автобэкап",
+        "## 7. Tool limit",
+        "## 8. Важный принцип работы с Ultra",
+        "## 9. Логи важнее отчёта Ultra",
+        "## 10. Известный важный инцидент",
+        "## 11. Глобальный контекст Ultra",
+        "## 12. Текущее состояние Obsidian",
+        "## 13. Куда идти за планом",
+        "## 14. Управляемое сжатие контекста — маршрут",
+        "## 15. Git",
+        "## 16. Python и окружение",
+        "## 17. Командная строка",
+        "## 18. Стиль работы в этом проекте",
+        "## 19. Что делать при команде «Старт»",
+        "## 20. Главный принцип"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[Wiki Links]]": 1
+        },
+        "active_wiki": {
+          "[[Wiki Links]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/18_Регламент сопровождения документации.md.source.txt",
+      "sha256": "8ce23812363835e901f7fac88db047a79fcb927d86bf124814b323cb5473af96",
+      "bytes": 190122,
+      "chars": 115936,
+      "headings": [
+        "# Регламент сопровождения документации",
+        "### DOC-TEST-START-01@1 — обязательное чтение тестовой архитектуры при каждом новом входе (2026-10-13)",
+        "## Нормативный индекс — правила и состояния",
+        "## DOC-WUA-LAUNCH-01 — Единая точка запуска Web Alarm Ultra и обязательный возврат из TEST",
+        "## DOC-TASK-CLOSEOUT-OWNER-01 — Единый владелец карточек, персональных архивов и закрытия TASK",
+        "## DOC-TEST-LIFECYCLE-01 — Длительные тесты, видимый статус и финальная сдача",
+        "## DOC-VERIFIER-BLOCK4-01 — Независимая проверка и БЛОК 4 персональных TASK",
+        "## DOC-TASK-READ-SCOPE-01 — Адресная матрица чтения при передаче TASK исполнителю",
+        "## DOC-HISTORY-ACCESS-01 — Чтение персональных исторических архивов только под руководством координатора",
+        "## DOC-TASK-READABLE-01 — Понятные пользователю названия задач и жёлтая метка",
+        "## DOC-PLAN-LANGUAGE-01 — Инженерный русский язык в планах и история решений",
+        "## DOC-PARALLEL-01 — Границы параллельных задач и контроль публикации",
+        "## DOC-GPT-BRANCH-01 — Личная ветка ChatGPT GPT и независимый GitHub CI",
+        "## DOC-GIT-01 — Доступ локальных агентов к Git и GitHub",
+        "## DOC-CODEX-SELF-PUBLISH-01 — Историческая политика отдельной публикации Codex; SUPERSEDED",
+        "## DOC-LOCAL-REPORT-HANDOFF-01 — Отчёты исполнителей внутри ag_llm; GitHub под контролем пользователя и координатора",
+        "## DOC-READ-01 — Адресное получение нормативных правил",
+        "## DOC-VERSION-01 — Версии, сохранение и восстановление",
+        "## DOC-CHANGE-01 — Проверка влияния документационной правки и порядок записи",
+        "## DOC-ULTRA-NOTE-01 — Короткие метки для будущей реализации в Ultra",
+        "## DOC-GITHUB-HANDOFF-01 — Обязательное заметное уведомление о принятии изменений",
+        "## DOC-COMMIT-01 — Один нумерованный коммит на логическую задачу",
+        "## Remote Chat-first preflight",
+        "## Живой Tactical Context 34 — обязательный delta-handoff",
+        "### Перспективная сверка Blueprint LLM — только ChatGPT (уточнение пользователя 2026-10-18)",
+        "## Координаторский цикл TASK → проверка → документация (постоянное правило 2026-10-10)",
+        "## DOC-AGENT-REPORT-TRIGGER-01 — Автозапуск независимой проверки по адресной сдаче агента в чат ChatGPT",
+        "## Локальные исполнители Claude / Codex — без Remote-continuity overhead (решение пользователя 2026-10-08)",
+        "## Совместная работа Claude / Codex и единый редактор общих документов (решение пользователя 2026-10-09)",
+        "## DOC-AGENT-ADDRESS-01 — Уважительное обращение и постоянные идентификаторы исполнителей",
+        "## DOC-ENGINEERING-ROLES-01 — Инженеры, независимые тесты ChatGPT и правки по поручению",
+        "## DOC-TASK-HUMAN-OUTCOME-01 — Обязательный третий блок для пользователя",
+        "## DOC-TASK-BLOCK1-01 — Ручное назначение и неизменность активной постановки",
+        "## Per-model task routing",
+        "## Самостоятельность сильного агента и adversarial review",
+        "## Cold start и профиль активной ветки",
+        "## Context reading policy",
+        "## Documentation Block и Impact Check",
+        "## Трёхуровневая фиксация работы",
+        "## Противоречия, дубли и новые документы",
+        "## Правило Obsidian: номера Repair не являются тегами",
+        "## Documentation health review",
+        "## Obsidian — контроль случайных связей и тегов"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[Wiki-ссылки]]": 1
+        },
+        "active_wiki": {},
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/34_TACTICAL_CONTEXT.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/34_TACTICAL_CONTEXT.md.source.txt",
+      "sha256": "32d2d248101c171d0361052ba4b31ccceb0f8b81de3c252ec3cf3c546636c8bb",
+      "bytes": 267942,
+      "chars": 212748,
+      "headings": [
+        "## CURRENT / WEB15 / 2026-10-27 — единый BAT и возврат после любого TEST",
+        "## HANDOFF / WEB15 — 2026-10-27 / Stage1 source/evidence bounded review",
+        "## HANDOFF / WEB15 — 2026-10-27 / финальное утверждение №37 и опубликованный Stage1",
+        "## HANDOFF / WEB_14 — 2026-10-26 / USER portability requirement, №37 revised for final approval",
+        "## HANDOFF / WEB_14 — 2026-10-26 / Ultra Chat Stage0 accepted as bounded architecture, Stage1 approval next",
+        "## HANDOFF / WEB_14 — 2026-10-26 / Astra №37 DOCUMENT PASS, roadmap still awaits user",
+        "## HANDOFF / WEB_14 — 2026-10-26 / Astra rev2 bounded PASS, user decision next",
+        "## HANDOFF / WEB_14 — 2026-10-26 / WEB_13 → Astra rev2 review, Ultra Chat migration",
+        "## HANDOFF / WEB_13 — 2026-10-25 / WEB_12 → Web Alarm Ultra API & Chat",
+        "## USER PRIORITY / 2026-10-25 — FREEZE CHATGPT DESKTOP MCP / RESUME WEB ALARM ULTRA API",
+        "## WEB_12 / CURRENT — 2026-10-25 / Codex strict admission independent offline PASS",
+        "## WEB_12 / CURRENT — 2026-10-25 / accepted bounded source review, user-approved terminal closeout",
+        "## WEB_11 → NEXT MCP CHAT / 2026-10-25 — краткий handoff",
+        "## CURRENT GOVERNANCE / 2026-10-24 — координация персональных TASK и архивов",
+        "## WEB_15 / CURRENT 2026-10-24 — независимый FT1-CI-REPAIR PASS; WA4-R PARTIAL",
+        "## WEB_11 / CURRENT 2026-10-24 — sing-box source review и dependency closure",
+        "## CURRENT HANDOFF / 2026-10-24 — Claude FT1/Archive Retry, НЕЗАВЕРШЁННАЯ независимая приёмка (следующий ChatGPT)",
+        "## CURRENT COORDINATION / 2026-10-24 — выдача TASK, общий контекст и Claude 409",
+        "## WEB_11 / CURRENT 2026-10-24 — проверены offline MCP NPFS и broker",
+        "## CROSS-CHAT CURRENT / 2026-10-21 — БЛОК 4, утверждённый общий регламент",
+        "## CROSS-CHAT CURRENT / 2026-10-21 — GitHub-права, роли и лаборатории (решение пользователя)",
+        "## WEB_11 / CURRENT 2026-10-21 — MCP Windows Lab Gate, независимая ограниченная OFFLINE-приёмка",
+        "## CURRENT / 2026-10-20 / LLM13 — AUD-01T-R independent Windows execution PASS; publication/operational gates OPEN (supersedes LLM12 RUNNING snapshot)",
+        "## CURRENT / 2026-10-20 / LLM12 — HANDOFF TO NEXT CHAT: complete AUD-01T-R independent verification (source, CI, evidence, safety)",
+        "## CURRENT / 2026-10-20 / LLM12 — Claude AUD-01T-R опубликован; независимая проверка ещё продолжается",
+        "## ARCH DECISION / 2026-10-20 / WEB_11 — универсальная ChatGPT MCP-интеграция и независимые сетевые профили",
+        "## CURRENT / 2026-10-20 / WEB_10 — portable MCP toolkit published and bounded independently reviewed",
+        "## CURRENT / 2026-10-20 / LLM12 — Web Alarm: W1 Windows CI выполнена, окончательная приёмка ограничена",
+        "## CURRENT / 2026-10-19 / WEB_10 — Codex SID/WFP no-VM architecture independently reviewed",
+        "## CURRENT / 2026-10-18 / WEB_10 — Claude no-VM identity-scoped egress analysis, bounded verifier review",
+        "## CURRENT / 2026-10-18 / LLM12 — Web Alarm WA4-R R-MT/R-OP published repair independent bounded review",
+        "## CURRENT / 2026-10-18 / WEB_10 — CODEX-WUA-0-OFFLINE-VM-PREFLIGHT-001 independent bounded review",
+        "## CURRENT / 2026-10-18 / WEB_10 — CODEX-WUA-0-NATIVE-EGRESS-GATE-001 independent bounded review",
+        "## CURRENT / 2026-10-18 / WEB_10 — AMENDMENT 07 bounded independent source/evidence review",
+        "## CURRENT / 2026-10-17 / LLM12 independent crash-consistency design review — AUD-02b-R and AUD-03",
+        "## CURRENT / 2026-10-17 / LLM12 — WA4-R AUD-01T/02b independent bounded review (GitHub-first)",
+        "## CURRENT / 2026-10-17 / WEB_10 — official tunnel-client v0.0.16 exact-tag source-only preflight (COORDINATOR RESEARCH)",
+        "## CURRENT / 2026-10-17 / WEB_10 — WUA MCP AMENDMENT 06, bounded independent review",
+        "## CURRENT / 2026-10-17 / WEB_10 — WUA MCP AMENDMENT 05, bounded independent GitHub review",
+        "## CURRENT / 2026-10-17 / HANDOFF WEB_09 → «Сервер WEB_10» — MCP, V2Ray, Secure Tunnel",
+        "## CURRENT / 2026-10-17 / USER WORKSTREAM CORRECTION — LLM12=WEB ALARM; WEB_09=MCP",
+        "## LLM12 / 2026-10-17 / CONTEXT TRANSFER — WEB ALARM ULTRA MVP (READ ONLY, NO GO)",
+        "## WEB_09 / 2026-10-17 / USER WORKFLOW OVERRIDE — LOCAL REPORTS, USER PUSH, GITHUB-FIRST COORDINATION",
+        "## WEB_09 / 2026-10-16 / CURRENT — Claude bounded repair review + two independent streams",
+        "## WEB_09 / 2026-10-16 / CONTEXT TRANSFER — WA4-R + MCP (coordination only)",
+        "## WEB ALARM ULTRA / 2026-10-15 / USER PRIORITY DECISION — WEB_08 FIRST, THEN TRANSITION",
+        "## WEB_08 / 2026-10-16 / USER DIRECTION — MCP FIRST FEASIBILITY + CODEX CHAT RELAY",
+        "## WEB_08 / 2026-10-15 / ChatGPT Desktop ↔ MCP ↔ Ultra — FUTURE FEASIBILITY CONCEPT",
+        "### WEB_08 / 2026-10-16 / AG LLM → WEB_08 — INITIAL MESSAGE RELAY SMOKE",
+        "### WEB_08 / 2026-10-15 / GitHub-only evidence handoff decision — PREPARED, NOT ASSIGNED",
+        "## WEB_08 HANDOFF / 2026-10-14 / WEB_07 — READ THIS FIRST (supersedes older CURRENT labels only where specified)",
+        "### WEB_07 R-004 INDEPENDENT SOURCE CHECKPOINT / 2026-10-14 — NOT RUNTIME ACCEPTED",
+        "## CURRENT WEB_07 HANDOFF — 2026-10-13",
+        "# 34 — TACTICAL CONTEXT / Живой тактический контекст",
+        "## ULTRA-ONLY CONTINUITY / 2026-10-13 — курс после Web Alarm, S1 research и автоматизация",
+        "## 0. Переход в новый Chat — короткий и самостоятельный",
+        "### CURRENT WEB-02 / 2026-10-11 — WA4-O technical PASS, WA4-R next candidate",
+        "### GitHub Actions — первоначальный smoke CI №256 (исторический обзор)",
+        "## 1. Что сейчас происходит",
+        "## 2. Ограничения и открытые вопросы",
+        "## 3. Git и среда — снимок, перепроверять",
+        "## 4. Карта чтения — брать только по потребности",
+        "## 5. NEXT SAFE ACTION",
+        "## 5а. RT-002 — завершённое планирование, актуальный инженерный маршрут",
+        "## 6. Обязательное сопровождение — DELTA, а не переписывание истории",
+        "## 7. Последний тактический handoff"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[05_Реестр задач]]": 2
+        },
+        "active_wiki": {
+          "[[05_Реестр задач]]": 2
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/36_Единая архитектура тестирования.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/36_Единая архитектура тестирования.md.source.txt",
+      "sha256": "3238379402ba953059b20b1f09e529f422f2d70553aef8c63f4a2c9149c6c0e9",
+      "bytes": 31094,
+      "chars": 19680,
+      "headings": [
+        "# 36 — Единая архитектура тестирования",
+        "## CURRENT / 2026-10-21 — GitHub Actions как основная тестовая лаборатория",
+        "## ChatGPT ↔ GitHub Actions: обязательный маршрут и проверка полномочий (2026-10-13)",
+        "## Разделение тестовых областей (решение 2026-10-13)",
+        "## 1. Навигация: одна ветка в Obsidian",
+        "## Общий цикл: исполнитель → независимый verifier → накопленная база (2026-10-13)",
+        "## 2. Зачем и что переиспользуем",
+        "## 3. Обязательная обратная связь разработки",
+        "## 4. Классы тестов, не фиксированные партии «по 200»",
+        "## 5. Тесты как живой продукт",
+        "## 6. Нельзя выдавать за доказательство",
+        "## 7. Безопасность, стоимость, пределы",
+        "## 8. Происхождение и граница текущего внедрения"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[36.1_Обязательный регламент тестирования для LLM]]": 1,
+          "[[36.2_Профиль тестирования Web Alarm Workspace]]": 1,
+          "[[36.3_Профиль тестирования Ultra]]": 1
+        },
+        "active_wiki": {
+          "[[36.1_Обязательный регламент тестирования для LLM]]": 1,
+          "[[36.2_Профиль тестирования Web Alarm Workspace]]": 1,
+          "[[36.3_Профиль тестирования Ultra]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    },
+    {
+      "source": "Документация/40_Оперативная координация направлений.md",
+      "snapshot": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/preservation/40_Оперативная координация направлений.md.source.txt",
+      "sha256": "f5288e08e0390553db7eacb393f788fd1fe733e7732f8b5b3049d4a8fc2d03c8",
+      "bytes": 12957,
+      "chars": 8496,
+      "headings": [
+        "# Оперативная координация направлений",
+        "## Общий пользовательский запускатель — обязательный режим (USER 2026-10-27)",
+        "## ОБЯЗАТЕЛЬНОЕ СКВОЗНОЕ ТРЕБОВАНИЕ — переносимость (решение пользователя 2026-10-26)",
+        "## А — Ultra Chat",
+        "## Б — Web Alarm Core / WA4-R",
+        "## Правила для обоих рабочих чатов"
+      ],
+      "graph": {
+        "raw_wiki": {
+          "[[000_Задачи для агента|Координаторский маршрутизатор]]": 1
+        },
+        "active_wiki": {
+          "[[000_Задачи для агента|Координаторский маршрутизатор]]": 1
+        },
+        "internal_markdown_targets": {},
+        "tags": {},
+        "blocks": {},
+        "reference_definitions": {},
+        "frontmatter": {}
+      }
+    }
+  ]
+}
