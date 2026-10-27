@@ -1,0 +1,175 @@
+{
+ "task": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+ "control": {
+  "exit": 0,
+  "failing": [],
+  "isolation_violations": 0,
+  "test_storages_left": 0,
+  "verdict": "PASS"
+ },
+ "results": [
+  {
+   "mutant": "M01 test profile may use the standard storage",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_l3_unsafe_or_broken_configurations_are_refused"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M02 test profile may use the standard port",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_l3_unsafe_or_broken_configurations_are_refused",
+    "test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M03 test page not marked",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_b2_standard_page_is_unchanged_and_test_page_is_marked",
+    "test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M04 no warning pause before the browser",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M05 listening server on the port not detected",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M06 port claim never refuses",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r9_a_second_launcher_on_the_same_port_is_refused_even_before_it_listens"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M07 reuse ignores the storage",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M08 shipped configuration left in test mode",
+   "file": "web_alarm/launch_config.json",
+   "exit": 1,
+   "failing_tests": [
+    "test_l1_the_shipped_configuration_is_the_standard_launch"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M09 standard banner painted red",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M10 test storage not removed",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page",
+    "test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once",
+    "test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused",
+    "test_r6_ctrl_break_stops_a_real_launcher_process_cleanly"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 4,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M11 break and close signals ignored",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r5_break_and_close_signals_end_the_server_through_the_same_stop_path",
+    "test_r6_ctrl_break_stops_a_real_launcher_process_cleanly"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 1,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M12 normal stop keeps the test storage",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once",
+    "test_r6_ctrl_break_stops_a_real_launcher_process_cleanly"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 2,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M13 refused launch keeps the test storage",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 1,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M14 self-test keeps the test storage",
+   "file": "web_alarm/launcher.py",
+   "exit": 1,
+   "failing_tests": [
+    "test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page"
+   ],
+   "isolation_violations": 0,
+   "test_storages_left_removed_by_tool": 1,
+   "verdict": "KILLED"
+  }
+ ],
+ "killed": 14,
+ "mutants": 14
+}

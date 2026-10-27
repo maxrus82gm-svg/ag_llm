@@ -1,0 +1,10 @@
+{
+ "task": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+ "run": "first run of test_web_alarm_launcher (guarded runner)",
+ "completed_ok_before_hang": 10,
+ "hung_in": "test_web_alarm_launcher.RunTests.test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused",
+ "stopped": "killed by the executor after more than 10 minutes; no results.json was written",
+ "classification": "PRODUCT DEFECT (TEST-FLAKY-01): on Windows two HTTPServers with SO_REUSEADDR share one port, so the launcher started a second server on a port already served by Web Alarm and served forever",
+ "probe": "isolated probe: a second ThreadingHTTPServer bound a port already used by another ThreadingHTTPServer (True); binding over a plain listening socket was refused (WinError 10013)",
+ "fix": "connect probe before starting plus a per-port launcher claim (InterProcessLock, released by process death); tests r4 and r9; refused cases use an opener that fails instead of serving"
+}

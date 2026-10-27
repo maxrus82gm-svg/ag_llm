@@ -1,0 +1,137 @@
+{
+ "task": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+ "executor": "Claude 008",
+ "source": "chat task (BLOCK 1 holds stage 1)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "new_files": {
+  "Start_WebAlarm.bat": {
+   "role": "the one permanent launcher (ASCII, CRLF)",
+   "bytes": 1482,
+   "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6",
+   "eol": "CRLF"
+  },
+  "web_alarm/launcher.py": {
+   "role": "launcher logic: standard launch, test profiles, marking, port guard",
+   "bytes": 21947,
+   "sha256": "cc42b9f5fcc2a34409aeb6abd2589c04e0d5cd7d16821d7e6b7b2c2343e8184d",
+   "eol": "LF"
+  },
+  "web_alarm/launch_config.json": {
+   "role": "launch selection, shipped with active=standard",
+   "bytes": 1769,
+   "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2",
+   "eol": "LF"
+  },
+  "test_web_alarm_launcher.py": {
+   "role": "16 tests, part of the Web Alarm 'all' discovery",
+   "bytes": 19192,
+   "sha256": "6ddd637ebf2af6700d166ce91ded0baa2ef8e057aa48817f8c64b1e0c2285899",
+   "eol": "LF"
+  }
+ },
+ "existing_files_changed": [],
+ "stage1_files_unchanged": {
+  "context_storage.py": true,
+  "web_alarm/ultra_chat.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_evm_ui.js": true
+ },
+ "evidence_summary": {
+  "bat_checks.json": {},
+  "first_run_hang.json": {},
+  "full_all.json": {
+   "purpose": "full Web Alarm 'all' set on the final bytes, CI-like TMPDIR=TEMP=TMP",
+   "runner_exit": 0,
+   "tests_run": 1042,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "launcher_tests.json": {
+   "purpose": "test_web_alarm_launcher on the final launcher and test bytes before the full run (cleanup asserted on every launch path)",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "mutants.json": {
+   "killed": 14,
+   "mutants": 14
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 11
+ },
+ "git_used": "one accidental read-only `git status --porcelain` at package closeout, after all checks; output discarded, nothing changed (DOC-GIT-01 breach, disclosed in report.md)",
+ "network_used": false,
+ "real_standard_storage_used": false,
+ "files": [
+  {
+   "path": "evidence/bat_checks.json",
+   "bytes": 2036,
+   "sha256": "7d533d5619db1690b14fa751ebe950069859ff2af6f89e54a80a1364afba6b23",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/first_run_hang.json",
+   "bytes": 954,
+   "sha256": "deb52523bf1258e46946bce9a088f6864023008644faac7754da6d7595cd864a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all.json",
+   "bytes": 161562,
+   "sha256": "e25756a85bf3e47787c70576ad6bb4c837836e693f215a2736345b71a40cfc71",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/launcher_tests.json",
+   "bytes": 2816,
+   "sha256": "c659b689cc23e21edbd791ba8ee1b5ef069ad692ee6901a81220de6eb5cf30ff",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 5117,
+   "sha256": "9716ee2e8f9715fdab3a1a20b04bdd90ecb53e7fa507041eeeb6fdf448fa84af",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 35595,
+   "sha256": "22e1a6e2d88155fd629bbdad859c9af9fcfc71ba194a3544ff0fbd1d9c9e79d7",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/bat_checks.py",
+   "bytes": 9735,
+   "sha256": "26484a53a5d9ef2b2d40b225610dc6668b380f96011f5c92ffb97c4473ba2a88",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 3540,
+   "sha256": "d91dadd53ecb596de076307bd457826d933fe85568e938e418b802006e3753fb",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1709,
+   "sha256": "b92beb99d086d9af8b4ae5103914ddefb718bfc4c4b06fbd81df812ba60802ef",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 6887,
+   "sha256": "4548afef4300b1a7977d9ee92a63323e1f7fabb3c9422c159d7728dd902fa405",
+   "eol": "LF"
+  }
+ ]
+}

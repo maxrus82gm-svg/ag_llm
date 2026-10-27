@@ -1,0 +1,86 @@
+{
+ "task": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+ "runner": "cmd.exe + Start_WebAlarm.bat, isolated LOCALAPPDATA/APPDATA in TEMP",
+ "python": "3.12.10",
+ "checks": {
+  "B1_standard_from_other_folder": {
+   "exit": 0,
+   "green_banner": true,
+   "red_banner": false,
+   "self_test": {
+    "standard": true,
+    "storage_is_default": true,
+    "page_unchanged_from_ui": true,
+    "page_marked_as_test": false,
+    "ultra_chat_available": true,
+    "status": 200,
+    "stopped": true,
+    "port": 8765
+   },
+   "standard_storage_created_in_isolated_folder": true
+  },
+  "B2_test_profile": {
+   "exit": 0,
+   "red_banner": true,
+   "profile_name_shown": true,
+   "green_banner": false,
+   "return_hint_shown": true,
+   "self_test": {
+    "standard": false,
+    "storage_is_default": false,
+    "page_marked_as_test": true,
+    "page_is_current": true,
+    "stopped": true
+   }
+  },
+  "B3_switch_back_to_standard": {
+   "exit": 0,
+   "green_banner": true,
+   "red_banner": false,
+   "standard": true,
+   "page_marked_as_test": false
+  },
+  "B4_desktop_shortcut_own_console": {
+   "shortcut_created": true,
+   "self_test": {
+    "standard": true,
+    "storage_is_default": true,
+    "page_unchanged_from_ui": true,
+    "console_colors": true,
+    "status": 200,
+    "stopped": true
+   }
+  },
+  "B5_portable_copy_without_venv": {
+   "exit": 0,
+   "fallback_python_announced": true,
+   "green_banner": true,
+   "self_test": {
+    "standard": true,
+    "page_unchanged_from_ui": true,
+    "status": 200,
+    "stopped": true
+   }
+  },
+  "B6_refused_configuration": {
+   "exit": 2,
+   "stopped_message": true,
+   "bat_reports_code": true,
+   "server_started": false
+  },
+  "B7_standard_port_busy": {
+   "exit": 3,
+   "busy_message": true,
+   "self_test_written": false
+  },
+  "B8_second_click_and_ctrl_break": {
+   "first_served": true,
+   "second_exit": 0,
+   "second_reused_running": true,
+   "second_started_another_server": false,
+   "first_stopped_message": true,
+   "port_free_after_stop": true
+  },
+  "real_standard_storage_untouched": true
+ }
+}

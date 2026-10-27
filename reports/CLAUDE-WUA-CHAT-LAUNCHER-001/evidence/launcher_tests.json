@@ -1,0 +1,81 @@
+{
+ "task": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+ "purpose": "test_web_alarm_launcher on the final launcher and test bytes before the full run (cleanup asserted on every launch path)",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "3.12.10",
+ "targets": [
+  "test_web_alarm_launcher"
+ ],
+ "runner_exit": 0,
+ "tests_run": 16,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_web_alarm_launcher.BannerAndPageTests.test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.BannerAndPageTests.test_b2_standard_page_is_unchanged_and_test_page_is_marked",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l1_the_shipped_configuration_is_the_standard_launch",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l3_unsafe_or_broken_configurations_are_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r1_standard_self_test_serves_the_unchanged_page_from_the_standard_storage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r5_break_and_close_signals_end_the_server_through_the_same_stop_path",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r6_ctrl_break_stops_a_real_launcher_process_cleanly",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r9_a_second_launcher_on_the_same_port_is_refused_even_before_it_listens",
+   "status": "PASS"
+  }
+ ]
+}
