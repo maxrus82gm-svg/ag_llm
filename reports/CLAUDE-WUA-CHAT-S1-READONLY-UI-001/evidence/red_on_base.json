@@ -1,0 +1,56 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "RED: stage-1 tests against the rebuilt stage-0 code",
+ "base_rebuilt_from_inverse_edits": {
+  "context_storage.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "test_web_alarm_evm_ui.js": true
+ },
+ "python": {
+  "test_ultra_chat_read": {
+   "exit": 1,
+   "tests_run": null,
+   "failures": null,
+   "errors": null,
+   "skips": null,
+   "isolation_violations": null,
+   "results": "MISSING (module import failed)",
+   "first_error": "AttributeError: module 'context_storage' has no attribute 'DEFAULT_READ_LIMITS'"
+  },
+  "test_web_alarm_ultra_chat": {
+   "exit": 1,
+   "tests_run": 1,
+   "failures": 0,
+   "errors": 1,
+   "skips": 0,
+   "isolation_violations": 0,
+   "first_error": "ImportError: cannot import name 'ultra_chat' from 'web_alarm' (<path>"
+  }
+ },
+ "node": {
+  "test_web_alarm_ultra_chat_ui.js": {
+   "exit": 1,
+   "failed": [
+    "U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge",
+    "U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere",
+    "U3 history renders server text as text, labels outcomes and never shows an old failure as an answer",
+    "U4 every data state is told apart: workspaces, chats and history",
+    "U5 older pages are fetched with the cursor, prepended once, and the button hides at the start",
+    "U6 after a server restart the page fetches one new capability and repeats once, then stops honestly",
+    "U7 an unavailable capability is explained and the other sections keep working",
+    "U8 the composer is visibly read-only and nothing is ever posted",
+    "U9 sections switch both ways and \\#operator / \\#evm open a section directly",
+    "U10 a late answer for a Workspace that is no longer selected is ignored",
+    "U11 malformed server answers show an error and invent nothing",
+    "U12 the EVM model badge tells every saved-choice state"
+   ],
+   "passed": 0
+  },
+  "test_web_alarm_evm_ui.js": {
+   "exit": 0,
+   "failed": [],
+   "passed": 9
+  }
+ }
+}

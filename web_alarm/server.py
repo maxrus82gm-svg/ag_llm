@@ -60,6 +60,7 @@ from .state_machine import (
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
 from .ui import INDEX_HTML
+from .ultra_chat import ULTRA_CHAT_CAPABILITY_PATH, UltraChatAccess, UltraChatError, UltraChatService
 from .ultra_connections import (
     ConnectionRequestError,
     DisabledConnectionError,
@@ -1122,20 +1123,26 @@ class _JsonHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
-    def _folder_picker_request(self, path: str) -> None:
-        # This capability is local UI transport, never a WebAlarmApi authority route.
+    def _require_local_ui_origin(self, code: str, label: str) -> None:
+        # Shared by the folder picker and Ultra Chat: loopback peer and bind, one exact Host, and Origin /
+        # Sec-Fetch-Site only when they match it. Each capability keeps its own token check.
         port = self.server.server_port
         hosts = self.headers.get_all('Host', [])
         peer = ipaddress.ip_address(self.client_address[0])
         bound = ipaddress.ip_address(self.server.server_address[0])
         if (not peer.is_loopback or not bound.is_loopback or len(hosts) != 1
                 or hosts[0] not in {f'127.0.0.1:{port}', f'localhost:{port}'}):
-            raise ApiError(403, 'folder_picker_forbidden', 'Folder picker requires its exact local origin')
+            raise ApiError(403, code, f'{label} requires its exact local origin')
         origins = self.headers.get_all('Origin', [])
         sites = self.headers.get_all('Sec-Fetch-Site', [])
         if (len(origins) > 1 or (origins and origins[0] != 'http://' + hosts[0])
                 or len(sites) > 1 or (sites and sites[0] not in {'same-origin', 'none'})):
-            raise ApiError(403, 'folder_picker_forbidden', 'Foreign or opaque origins are not allowed')
+            raise ApiError(403, code, 'Foreign or opaque origins are not allowed')
+
+    def _folder_picker_request(self, path: str) -> None:
+        # This capability is local UI transport, never a WebAlarmApi authority route.
+        self._require_local_ui_origin('folder_picker_forbidden', 'Folder picker')
+        origins = self.headers.get_all('Origin', [])
         if urlsplit(self.path).query:
             raise ApiError(400, 'invalid_folder_picker_request', 'Query parameters are not supported')
         picker = self.server.web_alarm_folder_picker
@@ -1166,11 +1173,35 @@ class _JsonHandler(BaseHTTPRequestHandler):
             raise ApiError(status, exc.code, str(exc)) from exc
         self._send_json(200, result)
 
+    def _ultra_chat_request(self, path: str) -> None:
+        # Ultra Chat stage 1: read-only private history behind its own capability, independent of the folder
+        # picker; local UI transport, never a WebAlarmApi authority route. Order: origin, method, query, token, data.
+        self._require_local_ui_origin('ultra_chat_forbidden', 'Ultra Chat')
+        if self.command != 'GET':
+            raise ApiError(405, 'method_not_allowed', 'Ultra Chat reading is GET only')
+        access = self.server.web_alarm_ultra_chat_access
+        query = urlsplit(self.path).query
+        try:
+            if path == ULTRA_CHAT_CAPABILITY_PATH:
+                if query:
+                    raise ApiError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
+                self._send_json(200, {'ultra_chat': access.capability()})
+                return
+            read = self.server.web_alarm_ultra_chat.route(path, query)
+            access.require(self.headers)
+            payload = read()
+        except UltraChatError as exc:
+            raise ApiError(exc.status, exc.code, exc.message) from None
+        self._send_json(200, payload)
+
     def _run(self) -> None:
         try:
             path = urlsplit(self.path).path
             if path in {'/ui/capabilities', '/ui/pick-workspace-folder'}:
                 self._folder_picker_request(path)
+                return
+            if path == ULTRA_CHAT_CAPABILITY_PATH or path == '/ultra/chat' or path.startswith('/ultra/chat/'):
+                self._ultra_chat_request(path)
                 return
             if self.command == "GET" and path in {"/", "/ui"}:
                 self._send_html(INDEX_HTML)
@@ -1228,6 +1259,7 @@ def create_server(
     allow_non_loopback: bool = False,
     enable_folder_picker: bool = False,
     folder_picker_timeout: float = 120,
+    enable_ultra_chat: bool = True,
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
@@ -1242,6 +1274,10 @@ def create_server(
     server.daemon_threads = True
     server.web_alarm_api = api  # type: ignore[attr-defined]
     server.web_alarm_folder_picker = picker  # type: ignore[attr-defined]
+    # Independent of the folder picker: own token, loopback only, off with --disable-ultra-chat.
+    server.web_alarm_ultra_chat_access = UltraChatAccess(  # type: ignore[attr-defined]
+        enabled=enable_ultra_chat, loopback=host in LOOPBACK_HOSTS)
+    server.web_alarm_ultra_chat = UltraChatService(api.registry)  # type: ignore[attr-defined]
     return server
 
 
@@ -1252,6 +1288,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--allow-non-loopback", action="store_true")
+    parser.add_argument("--disable-ultra-chat", action="store_true",
+                        help="Turn off the read-only Ultra Chat history routes; the operator panel and EVM keep working")
     return parser
 
 
@@ -1265,6 +1303,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             port=args.port,
             allow_non_loopback=args.allow_non_loopback,
             enable_folder_picker=args.enable_folder_picker,
+            enable_ultra_chat=not args.disable_ultra_chat,
         )
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

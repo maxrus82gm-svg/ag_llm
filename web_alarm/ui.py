@@ -129,12 +129,32 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm-model[data-selected=true]{border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
 .evm-model .row{gap:6px}
 .evm-add{border:1px dashed #526579;border-radius:10px;padding:12px;color:var(--muted);text-align:center;font-size:13px}
+/* Ultra Chat (programme No.37 stage 1): read-only history of the shared Ultra core; the default view. */
+.chat-layout{display:grid;grid-template-columns:300px minmax(0,1fr);max-width:2000px;margin:auto;height:calc(100dvh - 73px);min-height:0}
+.chat-side{padding:20px 14px;background:#121c27;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0}
+.chat-main{min-width:0;min-height:0;display:flex;flex-direction:column;gap:12px;padding:22px 28px 18px}
+.chat-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.chat-head h2{font-size:22px;margin:6px 0 0;overflow-wrap:anywhere}
+.chat-picks{display:grid;gap:8px}
+.chat-pick{width:100%;text-align:left;display:grid;gap:4px;background:#182431;border-color:#344454;overflow-wrap:anywhere}
+.chat-pick[aria-current=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.chat-history{list-style:none;margin:0;padding:0 4px 0 0;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;scrollbar-gutter:stable}
+.msg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);max-width:880px;width:fit-content;min-width:min(260px,100%);display:grid;gap:8px}
+.msg[data-role=user]{align-self:flex-end;background:#1d3044;border-color:#3d5f7d}
+.msg[data-outcome=failed]{border-color:#86505b;background:#2c1d23}
+.msg-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.msg-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+.chat-composer{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}
+.chat-composer label{margin:0}
+.chat-composer textarea{min-height:60px;resize:none}
+.chat-composer .row{justify-content:space-between;flex-wrap:nowrap}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(0,1fr) 240px}.columns{grid-template-columns:1fr}main{padding:22px 18px}.overview h2{font-size:24px}}
 @media(max-width:850px){body{height:auto;overflow:auto}.top{padding:12px 14px;flex-wrap:wrap;position:sticky}.top-actions{gap:8px}.mobile-toggle{display:inline-block}.layout{display:flex;flex-direction:column;height:auto;min-height:calc(100dvh - 100px)}aside{display:none;border:0;border-bottom:1px solid var(--line);max-height:330px;order:-1}.layout.show-workspaces .workspaces,.layout.show-tasks .tasks{display:flex}main{padding:18px 12px;overflow:visible}.card{padding:16px}.overview-top{flex-wrap:wrap}.overview h2{font-size:23px}.stage summary{flex-wrap:wrap}.stage-body{padding-left:16px}.operation-grid{grid-template-columns:90px minmax(0,1fr)}.composer textarea{min-height:280px}.connection{max-width:220px}.brand .live{display:none}.top-nav{order:3;width:100%;justify-content:flex-start}.evm{height:auto;padding:18px 12px;overflow:visible}.evm-columns{grid-template-columns:1fr}}
+@media(max-width:850px){.chat-layout{display:flex;flex-direction:column;height:auto}.chat-side{border-right:0;border-bottom:1px solid var(--line);overflow:visible;max-height:none}.chat-main{padding:16px 12px}.chat-history{overflow:visible}.chat-composer .row{flex-wrap:wrap}}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">К состоянию TASK</a>
+<a class="skip" id="skipLink" href="#chatMain">К истории диалога</a>
 <header class="top">
 <div class="brand">
 <span class="logo" aria-hidden="true">WA</span>
@@ -144,19 +164,47 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </div>
 </div>
 <nav class="top-nav" aria-label="Разделы Web Alarm">
-<button type="button" id="viewOperator" aria-pressed="true" aria-controls="layout">Операторская панель</button>
+<button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra, только чтение">Ultra Chat</button>
+<button type="button" id="viewOperator" aria-pressed="false" aria-controls="layout">Операторская панель</button>
 <button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
 </nav>
 <div class="top-actions">
 <span class="connection" id="serverStatus" role="status" data-state="checking">Проверяем соединение…</span>
-<button class="mobile-toggle" id="showWorkspaces" aria-controls="workspacesPanel">Проекты</button>
-<button class="mobile-toggle" id="showTasks" aria-controls="tasksPanel">Задачи</button>
+<button class="mobile-toggle" id="showWorkspaces" aria-controls="workspacesPanel" hidden>Проекты</button>
+<button class="mobile-toggle" id="showTasks" aria-controls="tasksPanel" hidden>Задачи</button>
 <label>
 <input type="checkbox" id="autoRefresh"> Наблюдать · 15 с</label>
 <button id="refresh">↻ Обновить</button>
 </div>
 </header>
-<div class="layout" id="layout">
+<section id="chatView" class="chat-view" aria-labelledby="chatHeading">
+<div class="chat-layout">
+<nav class="chat-side" aria-label="Workspace и диалоги Ultra">
+<div class="section-head"><div><p class="side-title">ULTRA CHAT · ТОЛЬКО ЧТЕНИЕ</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
+<p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
+<div id="chatError" class="notice error" role="alert" hidden></div>
+<p class="side-title spaced">WORKSPACE</p>
+<p id="chatWorkspaceState" class="muted" role="status"></p>
+<div id="chatWorkspaceList" class="chat-picks" aria-label="Зарегистрированные Workspace"></div>
+<p class="side-title spaced">ДИАЛОГИ</p>
+<p id="chatListState" class="muted" role="status">Выберите Workspace.</p>
+<div id="chatList" class="chat-picks" aria-label="Сохранённые диалоги"></div>
+<p class="muted spaced">Новую папку добавляют в операторской панели (+ у списка проектов). Ultra Chat ничего не записывает в Workspace.</p>
+</nav>
+<div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
+<div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
+<div id="chatNotice" class="notice" role="status" hidden></div>
+<button type="button" id="chatOlder" hidden>Показать ранее</button>
+<ol id="chatHistory" class="chat-history" aria-label="История диалога"></ol>
+<form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
+<label for="chatInput">Сообщение</label>
+<textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
+<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat только читает сохранённую историю.</p><button type="button" id="chatSend" disabled>Отправить</button></div>
+</form>
+</div>
+</div>
+</section>
+<div class="layout" id="layout" hidden>
 <aside class="workspaces" id="workspacesPanel" aria-label="Рабочие пространства">
 <div class="section-head"><div><p class="side-title">WORKSPACES</p><h2>Проекты</h2></div><button class="plus" id="addWorkspace" aria-label="Добавить Workspace" title="Зарегистрировать существующую папку">+</button></div>
 <div id="workspaceList" class="side-scroll" aria-label="Список Workspace"></div>
@@ -831,16 +879,26 @@ $('copyContext').onclick=()=>{
 ;
 // WUA-1 EVM: connections of the shared Ultra core. Nothing is requested until the tab is opened;
 // every model comes from the server read model of model_registry, never from a list in this page.
-const evm={epoch:0,busy:false,data:null,view:'operator'};
+const evm={epoch:0,busy:false,data:null,view:'chat'};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
-function showView(name){
-  const isEvm=name==='evm';evm.view=isEvm?'evm':'operator';
-  $('layout').hidden=isEvm;$('evmView').hidden=!isEvm;
-  $('viewEvm').setAttribute('aria-pressed',String(isEvm));$('viewOperator').setAttribute('aria-pressed',String(!isEvm));
-  $('showWorkspaces').hidden=isEvm;$('showTasks').hidden=isEvm;
-  if(isEvm){$('evmHeading').focus();return loadEvm()}
-  $('main').focus()
+// Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
+const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
+function initialView(){
+  try{return {'#operator':'operator','#evm':'evm','#chat':'chat'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
+}
+function rememberView(name){
+  try{if(typeof history!=='undefined'&&typeof location!=='undefined'&&history.replaceState)history.replaceState(null,'','#'+name)}catch(_){}
+}
+function showView(name,initial=false){
+  if(!VIEWS[name])name='chat';evm.view=name;
+  for(const [key,[region,button]] of Object.entries(VIEWS)){$(region).hidden=key!==name;$(button).setAttribute('aria-pressed',String(key===name))}
+  $('showWorkspaces').hidden=name!=='operator';$('showTasks').hidden=name!=='operator';
+  $('skipLink').setAttribute('href',VIEWS[name][2]);text('skipLink',VIEWS[name][3]);
+  if(!initial)rememberView(name);
+  if(name==='evm'){if(!initial)$('evmHeading').focus();return loadEvm()}
+  if(name==='chat'){if(!initial)$('chatHeading').focus();return startChat()}
+  if(!initial)$('main').focus()
 }
 function validEvm(data){
   const api=data?.columns?.api;
@@ -903,6 +961,157 @@ async function selectConnection(id){
 $('viewEvm').onclick=()=>showView('evm');
 $('viewOperator').onclick=()=>showView('operator');
 $('evmRefresh').onclick=()=>loadEvm();
+// Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
+// lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
+const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
+const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,chats:[],chat:null,messages:[],page:null,olderBusy:false};
+const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
+const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown']};
+function chatReason(code){return CHAT_REASON[code]||'Недоступно ('+String(code)+')'}
+function chatTime(value){return typeof value==='string'?value.replace('T',' ').slice(0,19):''}
+function chatCount(map){return Object.values(map||{}).reduce((sum,n)=>sum+(Number(n)||0),0)}
+async function loadChatAccess(){
+  const c=(await api('/ui/ultra-chat/capability'))?.ultra_chat;
+  if(!c||typeof c.available!=='boolean'||c.header!==CHAT_TOKEN_HEADER)throw Error('Некорректный ответ сервера о доступе к истории');
+  chat.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
+  if(!chat.token)throw Object.assign(Error(c.reason==='disabled'?'Чтение истории Ultra Chat выключено при запуске сервера.':
+    c.reason==='non_loopback_bind'?'Чтение истории Ultra Chat недоступно: сервер запущен не на локальном адресе.':'Чтение истории Ultra Chat недоступно в этом режиме сервера.'),{chatUnavailable:true});
+}
+async function chatGet(path){
+  if(!chat.token)await loadChatAccess();
+  try{return await api(path,{headers:{[CHAT_TOKEN_HEADER]:chat.token}})}
+  catch(e){
+    if(e.code!=='ultra_chat_token_invalid')throw e;
+    chat.token=null;await loadChatAccess();// the server was restarted: one new capability, one repeat
+    try{return await api(path,{headers:{[CHAT_TOKEN_HEADER]:chat.token}})}
+    catch(again){if(again.code==='ultra_chat_token_invalid'){chat.token=null;throw Error('Доступ к истории недействителен — обновите страницу.')}throw again}
+  }
+}
+function chatFailure(e){
+  if(e.chatUnavailable){text('chatAccess',e.message);notice('chatError','');chat.workspaces=[];chat.chats=[];renderChatWorkspaces();renderChatList();text('chatWorkspaceState','');text('chatListState','');return}
+  notice('chatError',e.message)
+}
+function chatPick(label,detail,current,onclick){
+  const b=element('button',null,'chat-pick');b.type='button';b.setAttribute('aria-current',String(current));
+  b.append(element('strong',label));if(detail)b.append(element('small',detail,'muted'));b.onclick=onclick;return b
+}
+function renderChatWorkspaces(){
+  $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),
+    w.wa_workspace_id===chat.workspace,()=>selectChatWorkspace(w.wa_workspace_id))))
+}
+function renderChatList(){
+  $('chatList').replaceChildren(...chat.chats.map(c=>{
+    const ok=c.status==='ok';
+    const b=chatPick(ok?c.title:c.status==='unsafe_storage_link'?'Ссылка вместо диалога — не читается':'Диалог повреждён',
+      ok?(c.created_at?'Создан '+chatTime(c.created_at):''):'ID '+c.chat_id,c.chat_id===chat.chat,()=>selectChat(c.chat_id));
+    b.setAttribute('data-status',c.status);if(!ok)b.disabled=true;return b
+  }))
+}
+function chatNotices(list){
+  $('chatNotice').className='notice'+(list[0]?.[0]==='error'?' error':list[0]?.[0]==='info'?' info':'');
+  notice('chatNotice',list.map(item=>item[1]).join('\n'))
+}
+function clearChatHistory(title){text('chatTitle',title);chatNotices([]);$('chatHistory').replaceChildren();$('chatOlder').hidden=true}
+function chatMessage(m){
+  const li=element('li',null,'msg'),failed=m.outcome==='failed',meta=element('div',null,'msg-meta');
+  li.setAttribute('data-role',m.role);li.setAttribute('data-outcome',m.outcome);li.setAttribute('data-message',m.message_id);
+  meta.append(element('strong',m.role==='user'?'Вы':m.role==='assistant'?(failed?'Ошибка выполнения':'Ultra'):m.role==='system'?'Система':'Инструмент'));
+  if(m.created_at)meta.append(element('span',chatTime(m.created_at)));
+  if(m.model&&!failed)meta.append(element('span',m.model,'tag'));
+  const outcome=CHAT_OUTCOME[m.outcome];if(outcome)meta.append(element('span',outcome[0],'tag '+outcome[1]));
+  li.append(meta,m.too_large_for_page?element('p','Сообщение слишком большое для одной страницы ('+m.size_bytes+' байт) и не показано.','muted'):element('div',m.text,'msg-text'));
+  return li
+}
+function validChatWorkspaces(d){return Boolean(d&&['ok','unavailable','too_large'].includes(d.state)&&Array.isArray(d.workspaces)&&d.workspaces.every(w=>w&&typeof w.wa_workspace_id==='string'&&typeof w.display_name==='string'&&typeof w.history==='string'))}
+function validChatList(d){return Boolean(d&&['ok','unavailable','too_large'].includes(d.state)&&Array.isArray(d.chats)&&d.chats.every(c=>c&&typeof c.chat_id==='string'&&typeof c.status==='string'&&(c.status!=='ok'||typeof c.title==='string')))}
+function validChatHistory(d){
+  return Boolean(d&&['complete','partial','empty','too_large','unavailable'].includes(d.history_state)&&Array.isArray(d.messages)&&d.page&&typeof d.page.has_more==='boolean'&&
+    d.messages.every(m=>m&&typeof m.message_id==='string'&&['user','assistant','system','tool'].includes(m.role)&&typeof m.outcome==='string'&&(typeof m.text==='string'||m.too_large_for_page===true)))
+}
+function renderChatHistory(data,older=false){
+  text('chatTitle',data.chat?.title||chat.chats.find(c=>c.chat_id===chat.chat)?.title||'Диалог');
+  const notes=[];
+  if(data.history_state==='unavailable')notes.push(['error','История недоступна: '+chatReason(data.reason)+'.']);
+  else if(data.history_state==='too_large')notes.push(['error',chatReason('history_too_large')+'. История не показана и не обрезана.']);
+  else if(data.history_state==='partial')notes.push(['warning','Показана не вся история: не показано записей — '+chatCount(data.excluded)+' (повреждены, принадлежат другому диалогу или недоступны).']);
+  else if(data.history_state==='empty')notes.push(['info','В этом диалоге нет сообщений.']);
+  if(data.outcome_source==='run_index_unavailable')notes.push(['info','Журнал запусков недоступен: исход старых ответов определён только по их тексту.']);
+  chatNotices(notes);
+  const box=$('chatHistory'),fromBottom=older?(box.scrollHeight||0)-(box.scrollTop||0):0;
+  box.replaceChildren(...chat.messages.map(chatMessage));
+  $('chatOlder').hidden=!chat.page?.has_more;
+  box.scrollTop=(box.scrollHeight||0)-fromBottom// a dialogue opens at its newest message; an older page keeps the place
+}
+async function loadChatModel(){
+  try{
+    const s=(await api('/ultra/connections/selection?role=chat'))?.selection;
+    if(!s||typeof s.state!=='string')throw Error('selection');
+    text('chatModel',s.state==='SAVED'&&typeof s.display_name==='string'?'Модель: '+s.display_name:s.state==='NOT_SELECTED'?'Модель не выбрана — откройте EVM':
+      s.state==='CORRUPT'?'Выбор модели повреждён — откройте EVM':s.state==='INVALID_REFERENCE'?'Выбранная модель недоступна — откройте EVM':
+      s.state==='REGISTRY_UNAVAILABLE'?'Реестр моделей недоступен':'Модель: неизвестное состояние '+s.state);
+    $('chatModel').className='tag '+(s.state==='SAVED'?'active':'warn')
+  }catch(_){text('chatModel','Модель: нет данных EVM');$('chatModel').className='tag warn'}
+}
+async function loadChatWorkspaces(){
+  const epoch=chat.epoch;text('chatWorkspaceState','Загружаем Workspace…');notice('chatError','');
+  try{
+    const data=await chatGet('/ultra/chat/workspaces');
+    if(epoch!==chat.epoch)return;
+    if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
+    text('chatAccess','Только чтение · данные проверяет сервер');chat.workspaces=data.workspaces;
+    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Добавьте папку в операторской панели.');
+    if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
+    renderChatWorkspaces();
+    if(chat.workspace)return loadChatList();
+    const first=chat.workspaces.find(w=>w.history==='ok');
+    if(first)return selectChatWorkspace(first.wa_workspace_id)
+  }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}}
+}
+function selectChatWorkspace(id){
+  chat.epoch++;chat.workspace=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
+  const w=chat.workspaces.find(item=>item.wa_workspace_id===id);text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
+  renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
+  return loadChatList()
+}
+async function loadChatList(){
+  if(!chat.workspace)return;
+  const epoch=chat.epoch;text('chatListState','Загружаем диалоги…');
+  try{
+    const data=await chatGet('/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats');
+    if(epoch!==chat.epoch)return;
+    if(!validChatList(data))throw Error('Некорректный ответ сервера о диалогах');
+    notice('chatError','');chat.chats=data.chats;const hidden=chatCount(data.excluded);
+    text('chatListState',data.state!=='ok'?chatReason(data.reason):(data.chats.length?'Диалогов: '+data.chats.length:'В этом Workspace нет сохранённых диалогов.')+(hidden?' · не показано посторонних записей: '+hidden:''));
+    if(chat.chat&&!chat.chats.some(c=>c.chat_id===chat.chat&&c.status==='ok')){chat.chat=null;clearChatHistory('Выберите диалог')}
+    renderChatList();
+    if(chat.chat)return loadChatHistory(false);
+    const newest=chat.chats.filter(c=>c.status==='ok').at(-1);// the list is in creation order: open the newest dialogue
+    if(newest)return selectChat(newest.chat_id)
+  }catch(e){if(epoch===chat.epoch){text('chatListState','Список диалогов не загружен');chatFailure(e)}}
+}
+function selectChat(id){
+  chat.epoch++;chat.chat=id;chat.messages=[];chat.page=null;chat.olderBusy=false;
+  renderChatList();clearChatHistory('Загружаем историю…');return loadChatHistory(false)
+}
+async function loadChatHistory(older){
+  if(!chat.workspace||!chat.chat||(older&&(chat.olderBusy||!chat.page?.next_before)))return;
+  const epoch=chat.epoch;
+  let path='/ultra/chat/workspaces/'+encodeURIComponent(chat.workspace)+'/chats/'+encodeURIComponent(chat.chat)+'/messages?limit='+CHAT_PAGE;
+  if(older){path+='&before='+encodeURIComponent(chat.page.next_before);chat.olderBusy=true;$('chatOlder').disabled=true}
+  try{
+    const data=await chatGet(path);
+    if(epoch!==chat.epoch)return;
+    if(!validChatHistory(data))throw Error('Некорректный ответ сервера об истории диалога');
+    notice('chatError','');chat.messages=older?[...data.messages,...chat.messages]:data.messages;chat.page=data.page;
+    renderChatHistory(data,older)
+  }catch(e){if(epoch===chat.epoch)chatFailure(e)}
+  finally{if(older&&epoch===chat.epoch){chat.olderBusy=false;$('chatOlder').disabled=false}}
+}
+function startChat(){if(chat.started)return;chat.started=true;loadChatModel();return loadChatWorkspaces()}
+$('viewChat').onclick=()=>showView('chat');
+$('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
+$('chatOlder').onclick=()=>loadChatHistory(true);
+$('chatComposer').onsubmit=e=>e.preventDefault();
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
   if(typeof saved.workspace==='string')view.workspace=saved.workspace;
@@ -916,6 +1125,7 @@ setInterval(()=>{
   if(view.loadedAt&&Date.now()-view.loadedAt>45000&&view.fresh)setFresh(false,'Снимок старше 45 секунд. Обновите перед использованием NEXT SAFE ACTION.')
 }
 ,15000);
+showView(initialView(),true);
 refresh();
 </script>
 </body></html>

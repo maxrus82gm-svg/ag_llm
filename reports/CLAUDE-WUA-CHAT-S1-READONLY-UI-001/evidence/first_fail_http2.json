@@ -1,0 +1,98 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "first runs of test_web_alarm_ultra_chat before fixing test defects (d2 fixture order, d8 naive word search, d8 subprocess.run patched by setUp); kept unchanged",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "3.12.10",
+ "targets": [
+  "test_web_alarm_ultra_chat"
+ ],
+ "runner_exit": 1,
+ "tests_run": 20,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c1_read_capability_works_with_the_folder_picker_off_by_default_and_on",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c2_tokens_never_cross_scopes",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c3_switched_off_chat_reading_leaves_picker_evm_and_operator_working",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c4_non_loopback_bind_gives_no_capability_and_no_history",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c5_command_line_switch_reaches_create_server",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c6_token_of_a_restarted_or_other_server_process_is_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d10_reading_over_http_while_the_tk_writer_appends_in_another_process",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d1_workspaces_are_named_with_their_history_state_and_never_with_paths",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d2_chats_list_shows_damaged_and_link_entries_and_hides_foreign_ones",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d3_pages_walk_the_whole_history_once_and_bad_requests_stay_off_the_disk",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d4_legacy_outcomes_are_classified_without_rewriting_raw",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d5_partial_empty_too_large_and_unavailable_histories_are_told_apart",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d6_page_is_cut_between_messages_at_the_byte_limit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d7_every_get_leaves_storage_and_workspaces_unchanged",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d8_adapter_imports_no_transport_and_core_errors_never_reach_the_browser",
+   "status": "FAIL",
+   "detail": "AssertionError: native folder dialog must not start"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d9_token_appears_only_in_the_capability_answer",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o1_foreign_or_opaque_origin_is_refused_on_every_route",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o2_normal_same_origin_reads_pass",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o3_other_methods_and_preflight_are_refused_without_cors",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.TokenTests.test_t1_invalid_tokens_are_refused_and_query_tokens_are_not_accepted",
+   "status": "PASS"
+  }
+ ]
+}

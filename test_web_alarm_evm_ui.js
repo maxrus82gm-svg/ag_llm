@@ -71,12 +71,18 @@ function harness() {
   return h;
 }
 
-test('E1 the operator panel stays the default view and nothing is asked about connections at load', async () => {
+test('E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge', async () => {
+  // Stage 1 (CLAUDE-WUA-CHAT-S1-READONLY-UI-001) made Ultra Chat the default; its model badge reads the saved
+  // choice once. The EVM catalog and any write stay untouched until the EVM tab is opened.
   const h = harness(); await settle();
-  assert.equal(h.evmCalls().length, 0);
+  assert.deepEqual(h.calls.filter(c => c.url.startsWith('/ultra/connections')).map(c => c.method + ' ' + c.url),
+    ['GET /ultra/connections/selection?role=chat']);
+  assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
   assert.equal(h.el('evmView').hidden, true);
-  assert.equal(h.el('layout').hidden, false);
-  assert.equal(h.el('viewOperator').getAttribute('aria-pressed'), 'true');
+  assert.equal(h.el('layout').hidden, true);
+  assert.equal(h.el('chatView').hidden, false);
+  assert.equal(h.el('viewChat').getAttribute('aria-pressed'), 'true');
+  assert.equal(h.el('viewOperator').getAttribute('aria-pressed'), 'false');
   assert.equal(h.el('viewEvm').getAttribute('aria-pressed'), 'false');
 });
 
@@ -170,13 +176,15 @@ test('E8 the way back restores the operator panel; refresh reloads the catalog',
   h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha')]));
   h.el('viewEvm').onclick(); await settle();
   h.el('evmRefresh').onclick(); await settle();
-  assert.equal(h.evmCalls().length, 2);
+  assert.equal(h.calls.filter(c => c.url === '/ultra/connections').length, 2);
+  const before = h.evmCalls().length;  // stage 1: the default Ultra Chat already read the chat badge at load
   h.el('viewOperator').onclick(); await settle();
   assert.equal(h.el('layout').hidden, false);
   assert.equal(h.el('evmView').hidden, true);
+  assert.equal(h.el('chatView').hidden, true);
   assert.equal(h.el('viewOperator').getAttribute('aria-pressed'), 'true');
   assert.equal(h.el('showWorkspaces').hidden, false);
-  assert.equal(h.evmCalls().length, 2, 'returning to the operator panel asked the connections API');
+  assert.equal(h.evmCalls().length, before, 'returning to the operator panel asked the /ultra/ API');
 });
 
 test('E9 the shipped page carries no model list of its own', () => {

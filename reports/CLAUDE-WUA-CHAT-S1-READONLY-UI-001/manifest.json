@@ -1,0 +1,311 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "program": "No.37 stage 1",
+ "executor": "Claude 008",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "open": [
+  "independent Windows/visual acceptance of stage 1",
+  "independent EVM Windows/visual gate (unchanged, OPEN)"
+ ],
+ "base": {
+  "published": "main@734cbfc9d5c5800cf610241c19693ddad9f77cd6 (stage 0, WEB_14 PASS)",
+  "method": "stage-0 baseline hashes vs local bytes, and inverse of the described edits (no Git)"
+ },
+ "changed_files": {
+  "context_storage.py": {
+   "role": "production, additive read functions only",
+   "bytes": 58996,
+   "sha256": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+   "eol": "LF",
+   "stage0_sha256": "8cf90ad41afb0d60173ecc8107c2ba9927d3dc9fc3e02607293c2cd043fde757"
+  },
+  "web_alarm/ultra_chat.py": {
+   "role": "production, new read-only adapter",
+   "bytes": 14789,
+   "sha256": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+   "eol": "LF",
+   "stage0_sha256": null
+  },
+  "web_alarm/server.py": {
+   "role": "production, routes, shared origin check, switch",
+   "bytes": 63069,
+   "sha256": "3a696d9da02219eb5938ab5a03374926b527f6b2f86a176f5f1529392f7a35e3",
+   "eol": "LF",
+   "stage0_sha256": "109cfbfaddb08b0553ca2ac882163468d48042d1e56e0bfbdb9de90b96340ac0"
+  },
+  "web_alarm/ui.py": {
+   "role": "production, Ultra Chat screen and three sections",
+   "bytes": 87180,
+   "sha256": "89f50541babc642d1a98bd4ab4f175a9bc9af23207653d57c42b60f655b1fa24",
+   "eol": "CRLF",
+   "stage0_sha256": "86b7326d24da8f489bde6745d823e07d40f6d6f72a36a067b0d411086346e6cb"
+  },
+  "test_ultra_chat_read.py": {
+   "role": "test, new",
+   "bytes": 29266,
+   "sha256": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+   "eol": "LF",
+   "stage0_sha256": null
+  },
+  "test_web_alarm_ultra_chat.py": {
+   "role": "test, new",
+   "bytes": 35543,
+   "sha256": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+   "eol": "LF",
+   "stage0_sha256": null
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "role": "test, new",
+   "bytes": 22279,
+   "sha256": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+   "eol": "LF",
+   "stage0_sha256": null
+  },
+  "test_web_alarm_evm_ui.js": {
+   "role": "test, E1/E8 only",
+   "bytes": 12411,
+   "sha256": "488ff35a4c285276ecdf49002d3117754afc6132d5b2f268f6fb131464d6c1b4",
+   "eol": "LF",
+   "stage0_sha256": "03c5fc14324e124757ffc56a2baa9b380dbb9b95daa898b2761531c78176c901"
+  }
+ },
+ "evidence_summary": {
+  "change_inventory.json": {
+   "all_complete": true
+  },
+  "compile_check.json": {},
+  "evm_e1_e8_red.json": {
+   "purpose": "RED: test_web_alarm_evm_ui.js after Ultra Chat became the default view, before adapting E1/E8",
+   "failures": {
+    "E1 the operator panel stays the default view and nothing is asked about connections at load": {
+     "expected": "0",
+     "actual": "1"
+    },
+    "E8 the way back restores the operator panel; refresh reloads the catalog": {
+     "expected": "2",
+     "actual": "3"
+    }
+   }
+  },
+  "first_fail_http1.json": {
+   "purpose": "first runs of test_web_alarm_ultra_chat before fixing test defects (d2 fixture order, d8 naive word search, d8 subprocess.run patched by setUp); kept unchanged",
+   "runner_exit": 1,
+   "tests_run": 20,
+   "failures": 1,
+   "errors": 1,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "first_fail_http2.json": {
+   "purpose": "first runs of test_web_alarm_ultra_chat before fixing test defects (d2 fixture order, d8 naive word search, d8 subprocess.run patched by setUp); kept unchanged",
+   "runner_exit": 1,
+   "tests_run": 20,
+   "failures": 1,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "first_fail_read1.json": {
+   "purpose": "first run of test_ultra_chat_read: one FAIL classified TEST/HARNESS DEFECT (scandir cached directory times), kept unchanged before any repeat",
+   "runner_exit": 1,
+   "tests_run": 28,
+   "failures": 1,
+   "errors": 0,
+   "skips": 1,
+   "isolation_violations": 0
+  },
+  "first_full_all.json": {
+   "purpose": "first full Web Alarm run (all, CI-like env) on the stage-1 code: 1 ERROR in test_web_alarm_ui_ux caused by the new chat markup, kept unchanged",
+   "runner_exit": 1,
+   "tests_run": 1024,
+   "failures": 0,
+   "errors": 1,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "full_all_final.json": {
+   "purpose": "final full Web Alarm run (all, CI-like env TMPDIR=TEMP=TMP) on the final stage-1 bytes",
+   "runner_exit": 0,
+   "tests_run": 1026,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "js_final.json": {},
+  "mutants.json": {
+   "killed": 36,
+   "mutants": 36
+  },
+  "new_tests_repeats.json": {
+   "purpose": "stability: the new core and HTTP tests repeated on the final bytes"
+  },
+  "preflight_base.json": {
+   "drift_since_stage0": []
+  },
+  "red_on_base.json": {
+   "purpose": "RED: stage-1 tests against the rebuilt stage-0 code"
+  },
+  "ultra_storage_regression.json": {
+   "purpose": "Ultra storage regression: existing chat-storage tests plus the new core read tests"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 25
+ },
+ "git_used": false,
+ "network_used": false,
+ "real_workspaces_used": false,
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 1637,
+   "sha256": "08a56556ea94569aebc02ef83097c79fdf3a1a9890bfa9b337654d0aabb72d62",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/compile_check.json",
+   "bytes": 995,
+   "sha256": "c2830b93f38a0fbfe9187cd0a35a46351951480b786d9d61afd996ece18473ea",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/evm_e1_e8_red.json",
+   "bytes": 1536,
+   "sha256": "a63043d6852df50a6e63e7fda88c1d013e6a92f337749b508889391ccc2b8586",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/first_fail_http1.json",
+   "bytes": 3761,
+   "sha256": "74730ac18bed48b512af9bccf5806bbced99b8abbe627da85f872c2b8a1cbdd1",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/first_fail_http2.json",
+   "bytes": 3434,
+   "sha256": "928bc50edccdd68e06a4b97881abda83f5fbecb22cabf90b42306fbf83ca5762",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/first_fail_read1.json",
+   "bytes": 4425,
+   "sha256": "b88a87a66dbfd2f3a47d24bac5bee8fa89a06014b3adea703c485bfe84511b0a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/first_full_all.json",
+   "bytes": 159020,
+   "sha256": "7c71f59e807a7cb6e63dd49fdb978f4880c8d7c4c210d90b377d9eeda240f105",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all_final.json",
+   "bytes": 159207,
+   "sha256": "0922fe168005960275575f4d2739c1015a49b9a1deff49fb14c8e90884b19188",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_final.json",
+   "bytes": 12830,
+   "sha256": "b7c33c8c1f12ad807664a6dd42f1f92e43036628149cdcbe88a244d84b8967c1",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 13084,
+   "sha256": "83b51aa29af779b60c6626265b484b891e30ed9de8b881f03b219d00b6c28f3a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/new_tests_repeats.json",
+   "bytes": 1985,
+   "sha256": "340de51207350092e1db2745cbba392b379df69cf7e6a08c13054efe294b593e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/preflight_base.json",
+   "bytes": 14885,
+   "sha256": "726a978366eefbb0256f27b454a1392bcb30a3ace207d98257284e21f2b1ae21",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/red_on_base.json",
+   "bytes": 2073,
+   "sha256": "2dd6eb9122a89f48335bfa298a6812c7f61264e31c813d8cd4472c1ed6411e7e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/ultra_storage_regression.json",
+   "bytes": 963,
+   "sha256": "69dd671443b9049b48f8653295ef0f628b6cee9acf39796f013ea4e64b6b93e1",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 48493,
+   "sha256": "aed692ec8db558698153a3b379f39deefa13998900a35066e6ceb57f11785b16",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/compile_check.py",
+   "bytes": 1701,
+   "sha256": "70e918862e8d9a98922ffa141fd580dd0df8dc32d2d31c0af6370bb04c85635f",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_ultra_chat.py",
+   "bytes": 5851,
+   "sha256": "2d9ae09f564d1d65435f092594b3bff378597c5e5f696a0fcb16f27f2a984ecb",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 3854,
+   "sha256": "cd78858d8ae180a3313da79e30b349d106e95a692d1a6dd44e6f60bc08e5dc3e",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/preflight_base.py",
+   "bytes": 2710,
+   "sha256": "fb895acd8fc761ad6b11ec9264b38a842e0ebcf45b50d43c147df15d5c8c7920",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1715,
+   "sha256": "a20448ef1e9bbe215a396145d7eab81471f3bf2517c3f65aa71f9930f5648ee5",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/red_on_base.py",
+   "bytes": 4739,
+   "sha256": "8127d3c14e450dc6f236759c38227fd1cfdb39b39b0c98da9f9b6da09c9e2eca",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/repeat_gate.py",
+   "bytes": 2677,
+   "sha256": "27c877f9abca9a0d81b9df7383c3e457c36c00ec0a4bc926ef13018333c5b483",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/reverse_check.py",
+   "bytes": 10654,
+   "sha256": "7a873c1e959ffca3ef929b4d8fc851ba55e4565bd20b37774630b184c6541d31",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 12662,
+   "sha256": "b8f70fdef03f241b6676898b570ad0145a60a636b79d7a276dbd4580ba29eb0f",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_node.py",
+   "bytes": 1343,
+   "sha256": "cf7596897a360159002ca1e17d51f42d82b907ede8c9973d39929deb25148383",
+   "eol": "LF"
+  }
+ ]
+}

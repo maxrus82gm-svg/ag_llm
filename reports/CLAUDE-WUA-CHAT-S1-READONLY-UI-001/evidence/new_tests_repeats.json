@@ -1,0 +1,86 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "stability: the new core and HTTP tests repeated on the final bytes",
+ "targets": [
+  "test_ultra_chat_read",
+  "test_web_alarm_ultra_chat"
+ ],
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "attempts": [
+  {
+   "attempt": 1,
+   "runner_exit": 0,
+   "tests_run": 50,
+   "failures": 0,
+   "errors": 0,
+   "skips": 1,
+   "isolation_violations": 0,
+   "concurrency_facts": [
+    {
+     "reads": 216,
+     "ok": 80,
+     "fail": 0,
+     "renamed": 10,
+     "rename_fail": 0
+    }
+   ],
+   "non_pass": [
+    {
+     "test": "test_ultra_chat_read.PathSafetyTests.test_file_symlink_is_refused_when_the_platform_allows_creating_one",
+     "status": "SKIP",
+     "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+    }
+   ]
+  },
+  {
+   "attempt": 2,
+   "runner_exit": 0,
+   "tests_run": 50,
+   "failures": 0,
+   "errors": 0,
+   "skips": 1,
+   "isolation_violations": 0,
+   "concurrency_facts": [
+    {
+     "reads": 207,
+     "ok": 80,
+     "fail": 0,
+     "renamed": 10,
+     "rename_fail": 0
+    }
+   ],
+   "non_pass": [
+    {
+     "test": "test_ultra_chat_read.PathSafetyTests.test_file_symlink_is_refused_when_the_platform_allows_creating_one",
+     "status": "SKIP",
+     "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+    }
+   ]
+  },
+  {
+   "attempt": 3,
+   "runner_exit": 0,
+   "tests_run": 50,
+   "failures": 0,
+   "errors": 0,
+   "skips": 1,
+   "isolation_violations": 0,
+   "concurrency_facts": [
+    {
+     "reads": 214,
+     "ok": 80,
+     "fail": 0,
+     "renamed": 10,
+     "rename_fail": 0
+    }
+   ],
+   "non_pass": [
+    {
+     "test": "test_ultra_chat_read.PathSafetyTests.test_file_symlink_is_refused_when_the_platform_allows_creating_one",
+     "status": "SKIP",
+     "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+    }
+   ]
+  }
+ ]
+}

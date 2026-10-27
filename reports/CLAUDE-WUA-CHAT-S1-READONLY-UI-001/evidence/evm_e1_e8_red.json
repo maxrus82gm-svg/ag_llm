@@ -1,0 +1,54 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "RED: test_web_alarm_evm_ui.js after Ultra Chat became the default view, before adapting E1/E8",
+ "tests": [
+  {
+   "test": "E1 the operator panel stays the default view and nothing is asked about connections at load",
+   "status": "FAIL"
+  },
+  {
+   "test": "E2 opening EVM renders exactly the server catalog in the API column, other columns empty",
+   "status": "PASS"
+  },
+  {
+   "test": "E3 choosing a model posts only role + connection_id once and shows the saved choice",
+   "status": "PASS"
+  },
+  {
+   "test": "E4 a refused choice is reported and the list is reloaded from the server, not changed locally",
+   "status": "PASS"
+  },
+  {
+   "test": "E5 malformed or failed catalog answers show an error and no invented models",
+   "status": "PASS"
+  },
+  {
+   "test": "E6 saved-choice states are told honestly",
+   "status": "PASS"
+  },
+  {
+   "test": "E7 disabled models cannot be chosen and server text is never markup",
+   "status": "PASS"
+  },
+  {
+   "test": "E8 the way back restores the operator panel; refresh reloads the catalog",
+   "status": "FAIL"
+  },
+  {
+   "test": "E9 the shipped page carries no model list of its own",
+   "status": "PASS"
+  }
+ ],
+ "failures": {
+  "E1 the operator panel stays the default view and nothing is asked about connections at load": {
+   "expected": "0",
+   "actual": "1"
+  },
+  "E8 the way back restores the operator panel; refresh reloads the catalog": {
+   "expected": "2",
+   "actual": "3"
+  }
+ },
+ "pass": 7,
+ "fail": 2
+}

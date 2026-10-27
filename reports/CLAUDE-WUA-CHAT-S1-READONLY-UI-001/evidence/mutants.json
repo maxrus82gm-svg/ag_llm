@@ -1,0 +1,538 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "controls": {
+  "test_ultra_chat_read": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_ultra_chat": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  }
+ },
+ "results": [
+  {
+   "mutant": "C01 file final path not compared",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_folder_swapped_between_listing_and_open_is_caught",
+    "test_folder_swapped_for_a_junction_after_its_check_is_caught_at_open"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C02 hard links accepted",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_hard_link_to_a_file_elsewhere_is_refused"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C03 directory checks removed",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_chats_folder_junction_refuses_the_listing",
+    "test_messages_folder_junction_is_refused"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C04 message workspace not checked",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_message_of_another_workspace_or_chat_is_excluded"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C05 file name not compared with id",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_copy_under_another_name_is_excluded_once_and_shown_once"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C06 oversized file read anyway",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_oversized_message_is_excluded_without_reading_its_content"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C07 physical read not capped",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_file_larger_than_its_stat_is_cut_at_the_limit"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C08 history size checked only after reading",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_too_many_files_or_bytes_refuse_the_history_before_any_message_is_read"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C09 byte budget not enforced",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_budget_holds_when_files_grow_after_the_listing"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C10 listing count unbounded",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_missing_chats_folder_is_an_empty_list_and_too_many_entries_are_refused",
+    "test_too_many_files_or_bytes_refuse_the_history_before_any_message_is_read"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C11 chat workspace not checked",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_chat_level_states",
+    "test_chat_of_another_workspace_is_excluded_and_counted"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C12 one damaged chat aborts the list",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_one_damaged_card_hides_nothing_else"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C13 reading creates storage",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_read"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_bare_folder_has_no_history_and_nothing_is_created",
+    "test_every_read_leaves_every_byte_name_and_time_unchanged",
+    "test_missing_relative_file_and_damaged_roots_are_named_not_raised"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H01 capability tied to the folder picker",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_c1_read_capability_works_with_the_folder_picker_off_by_default_and_on",
+    "test_c4_non_loopback_bind_gives_no_capability_and_no_history",
+    "test_c6_token_of_a_restarted_or_other_server_process_is_refused",
+    "test_d10_reading_over_http_while_the_tk_writer_appends_in_another_process",
+    "test_d11_damaged_or_oversized_run_index_leaves_history_readable",
+    "test_d12_newer_index_generation_wins_as_in_run_store",
+    "test_d1_workspaces_are_named_with_their_history_state_and_never_with_paths",
+    "test_d2_chats_list_shows_damaged_and_link_entries_and_hides_foreign_ones",
+    "test_d3_pages_walk_the_whole_history_once_and_bad_requests_stay_off_the_disk",
+    "test_d4_legacy_outcomes_are_classified_without_rewriting_raw",
+    "test_d5_partial_empty_too_large_and_unavailable_histories_are_told_apart",
+    "test_d6_page_is_cut_between_messages_at_the_byte_limit",
+    "test_d7_every_get_leaves_storage_and_workspaces_unchanged",
+    "test_d8_adapter_imports_no_transport_and_core_errors_never_reach_the_browser",
+    "test_d9_token_appears_only_in_the_capability_answer",
+    "test_o1_foreign_or_opaque_origin_is_refused_on_every_route",
+    "test_o2_normal_same_origin_reads_pass",
+    "test_o3_other_methods_and_preflight_are_refused_without_cors",
+    "test_t1_invalid_tokens_are_refused_and_query_tokens_are_not_accepted"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H02 history without token",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_c2_tokens_never_cross_scopes",
+    "test_c3_switched_off_chat_reading_leaves_picker_evm_and_operator_working",
+    "test_c6_token_of_a_restarted_or_other_server_process_is_refused",
+    "test_t1_invalid_tokens_are_refused_and_query_tokens_are_not_accepted"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H03 Host not checked",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_o1_foreign_or_opaque_origin_is_refused_on_every_route"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H04 Origin not compared",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_o1_foreign_or_opaque_origin_is_refused_on_every_route"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H05 query not validated",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d3_pages_walk_the_whole_history_once_and_bad_requests_stay_off_the_disk",
+    "test_t1_invalid_tokens_are_refused_and_query_tokens_are_not_accepted"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H06 capability on non-loopback bind",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_c4_non_loopback_bind_gives_no_capability_and_no_history"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H07 legacy Tk marker ignored",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d11_damaged_or_oversized_run_index_leaves_history_readable",
+    "test_d4_legacy_outcomes_are_classified_without_rewriting_raw"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H08 Workspace path in the answer",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d2_chats_list_shows_damaged_and_link_entries_and_hides_foreign_ones"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H09 page byte limit ignored",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d6_page_is_cut_between_messages_at_the_byte_limit"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H10 cursor ignored",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d3_pages_walk_the_whole_history_once_and_bad_requests_stay_off_the_disk",
+    "test_d6_page_is_cut_between_messages_at_the_byte_limit"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H11 folder token accepted for history",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_c2_tokens_never_cross_scopes"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H12 index generations ignored",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d12_newer_index_generation_wins_as_in_run_store"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H13 broken run index breaks the history",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_d11_damaged_or_oversized_run_index_leaves_history_readable"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U01 token sent to the EVM badge request",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U2",
+    "U6",
+    "U9"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U02 token stored in localStorage",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U2"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U03 history rendered as markup",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U3",
+    "U5"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U04 old failure shown as an answer",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U3"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U05 no new capability after a restart",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U6"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U06 operator panel stays the default",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U1",
+    "U10",
+    "U11",
+    "U12",
+    "U2",
+    "U3",
+    "U4",
+    "U5",
+    "U6",
+    "U7",
+    "U9"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U07 late answers not ignored",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U10"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U08 double click loads a page twice",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U5"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U09 partial history not told",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U4"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U10 composer enabled",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U8"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  }
+ ],
+ "killed": 36,
+ "mutants": 36
+}

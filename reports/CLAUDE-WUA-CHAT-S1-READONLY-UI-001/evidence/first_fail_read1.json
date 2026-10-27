@@ -1,0 +1,131 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "first run of test_ultra_chat_read: one FAIL classified TEST/HARNESS DEFECT (scandir cached directory times), kept unchanged before any repeat",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "3.12.10",
+ "targets": [
+  "test_ultra_chat_read"
+ ],
+ "runner_exit": 1,
+ "tests_run": 28,
+ "failures": 1,
+ "errors": 0,
+ "skips": 1,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_chat_folder_junction_is_reported_and_never_read",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_chat_of_another_workspace_is_excluded_and_counted",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_chats_are_listed_in_creation_order_with_titles",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_chats_folder_junction_refuses_the_listing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_folder_name_must_match_chat_id_and_odd_entries_are_ignored",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_missing_chats_folder_is_an_empty_list_and_too_many_entries_are_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ChatListingTests.test_one_damaged_card_hides_nothing_else",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ConcurrencyTests.test_reading_while_the_tk_writer_appends_and_renames_in_another_process",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.HistoryTests.test_chat_level_states",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.HistoryTests.test_copy_under_another_name_is_excluded_once_and_shown_once",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.HistoryTests.test_every_kind_of_damage_is_counted_while_good_messages_stay",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.HistoryTests.test_message_of_another_workspace_or_chat_is_excluded",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.HistoryTests.test_order_identity_and_legacy_records",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.LimitTests.test_a_file_larger_than_its_stat_is_cut_at_the_limit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.LimitTests.test_budget_holds_when_files_grow_after_the_listing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.LimitTests.test_default_limits_follow_the_stage0_contract",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.LimitTests.test_oversized_message_is_excluded_without_reading_its_content",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.LimitTests.test_too_many_files_or_bytes_refuse_the_history_before_any_message_is_read",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_file_symlink_is_refused_when_the_platform_allows_creating_one",
+   "status": "SKIP",
+   "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_folder_swapped_between_listing_and_open_is_caught",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_folder_swapped_for_a_junction_after_its_check_is_caught_at_open",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_generic_storage_reader_refuses_traversal_names",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_hard_link_to_a_file_elsewhere_is_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.PathSafetyTests.test_messages_folder_junction_is_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.ReadOnlyTests.test_every_read_leaves_every_byte_name_and_time_unchanged",
+   "status": "FAIL",
+   "detail": "Diff is 5771 characters long. Set self.maxDiff to None to see it."
+  },
+  {
+   "test": "test_ultra_chat_read.WorkspaceIdentityTests.test_bare_folder_has_no_history_and_nothing_is_created",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.WorkspaceIdentityTests.test_missing_relative_file_and_damaged_roots_are_named_not_raised",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_read.WorkspaceIdentityTests.test_ultra_folder_replaced_by_a_junction_is_refused",
+   "status": "PASS"
+  }
+ ]
+}

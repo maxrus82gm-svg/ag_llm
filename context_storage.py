@@ -4,7 +4,9 @@ import json
 import os
 import re
 import shutil
+import stat
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -1019,3 +1021,535 @@ def is_context_storage_path(
     context_root = (root / ULTRA_DIRNAME).resolve()
     path = Path(candidate).resolve()
     return path == context_root or context_root in path.parents
+
+
+# ---------------------------------------------------------------------------
+# Bounded read-only access for the web shell (Ultra Chat, programme No.37 stage 1).
+#
+# Everything above keeps its behaviour: Tkinter reads and writes through those functions and calls nothing below.
+# The functions below never create, repair or rewrite storage. Every file is opened without following a final
+# reparse point and checked through its own handle (regular file, a single link, final path under the same
+# Workspace root that was pinned at the start of the read), then read only up to its limit. A swapped directory or
+# file therefore fails the check at use, not only at an earlier lstat. Errors carry a short code, never a path.
+
+_FILE_ATTRIBUTE_REPARSE_POINT = 0x400
+_STORAGE_NAME_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$")
+_MESSAGE_ROLES = {"user", "assistant", "system", "tool"}
+
+
+@dataclass(frozen=True)
+class ReadLimits:
+    max_workspace_metadata_bytes: int = 64 * 1024
+    max_chat_entries: int = 2000
+    max_chats: int = 500
+    max_chat_metadata_bytes: int = 64 * 1024
+    max_message_files: int = 2000
+    max_history_bytes: int = 64 * 1024 * 1024
+    max_message_bytes: int = 4 * 1024 * 1024
+
+
+DEFAULT_READ_LIMITS = ReadLimits()
+
+
+class StorageReadError(Exception):
+    """A refused or impossible bounded read. ``code`` is safe to show; the message never carries a path."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+def _is_link_or_reparse(st: os.stat_result) -> bool:
+    return stat.S_ISLNK(st.st_mode) or bool(
+        getattr(st, "st_file_attributes", 0) & _FILE_ATTRIBUTE_REPARSE_POINT
+    )
+
+
+if os.name == "nt":
+    import ctypes
+    import msvcrt
+    import _winapi
+    from ctypes import wintypes
+
+    _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    _kernel32.GetFinalPathNameByHandleW.argtypes = [
+        wintypes.HANDLE, wintypes.LPWSTR, wintypes.DWORD, wintypes.DWORD,
+    ]
+    _kernel32.GetFinalPathNameByHandleW.restype = wintypes.DWORD
+    _GENERIC_READ = 0x80000000
+    _FILE_READ_ATTRIBUTES = 0x80
+    _SHARE_ALL = 0x1 | 0x2 | 0x4
+    _OPEN_EXISTING = 3
+    _FLAG_OPEN_REPARSE_POINT = 0x00200000
+    _FLAG_BACKUP_SEMANTICS = 0x02000000
+
+    def _final_path_of_handle(handle: int) -> str:
+        size = 512
+        while True:
+            buffer = ctypes.create_unicode_buffer(size)
+            length = _kernel32.GetFinalPathNameByHandleW(handle, buffer, size, 0)
+            if not length:
+                raise ctypes.WinError(ctypes.get_last_error())
+            if length < size:
+                return buffer.value
+            size = length + 1
+
+    def _final_directory_path(path: Path) -> str:
+        # The registered root itself may be a junction or a subst drive: it is followed once, here.
+        handle = _winapi.CreateFile(
+            str(path), _FILE_READ_ATTRIBUTES, _SHARE_ALL, 0, _OPEN_EXISTING, _FLAG_BACKUP_SEMANTICS, 0
+        )
+        try:
+            return _final_path_of_handle(handle)
+        finally:
+            _winapi.CloseHandle(handle)
+
+    def _open_file_no_follow(path: Path) -> int:
+        handle = _winapi.CreateFile(
+            str(path), _GENERIC_READ, _SHARE_ALL, 0, _OPEN_EXISTING, _FLAG_OPEN_REPARSE_POINT, 0
+        )
+        try:
+            return msvcrt.open_osfhandle(handle, os.O_RDONLY | os.O_BINARY)
+        except OSError:
+            _winapi.CloseHandle(handle)
+            raise
+
+    def _final_path_of_fd(fd: int) -> str:
+        return _final_path_of_handle(msvcrt.get_osfhandle(fd))
+
+else:
+
+    def _final_path_of_fd(fd: int) -> str:
+        try:
+            return os.readlink(f"/proc/self/fd/{fd}")
+        except OSError:
+            import fcntl
+
+            if not hasattr(fcntl, "F_GETPATH"):
+                raise StorageReadError("unsupported_platform") from None
+            raw = fcntl.fcntl(fd, fcntl.F_GETPATH, b"\0" * 1024)
+            return os.fsdecode(raw.split(b"\0", 1)[0])
+
+    def _final_directory_path(path: Path) -> str:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+        try:
+            return _final_path_of_fd(fd)
+        finally:
+            os.close(fd)
+
+    def _open_file_no_follow(path: Path) -> int:
+        return os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0))
+
+
+class _StorageAnchor:
+    """Workspace root pinned by its final path once per read; every later open must land under it."""
+
+    def __init__(self, workspace_root: str | Path) -> None:
+        root = Path(workspace_root)
+        if not root.is_absolute():
+            raise StorageReadError("missing_path")
+        try:
+            root_stat = os.stat(root)
+        except FileNotFoundError:
+            raise StorageReadError("missing_path") from None
+        except OSError:
+            raise StorageReadError("unreadable") from None
+        if not stat.S_ISDIR(root_stat.st_mode):
+            raise StorageReadError("not_directory")
+        try:
+            self.final = _final_directory_path(root)
+        except OSError:
+            raise StorageReadError("unreadable") from None
+        self.root = root
+
+    def path(self, parts: tuple[str, ...]) -> Path:
+        return self.root.joinpath(*parts)
+
+    def expected(self, parts: tuple[str, ...]) -> str:
+        return os.path.normcase(os.path.join(self.final, *parts))
+
+
+def _verify_directory(anchor: _StorageAnchor, parts: tuple[str, ...]) -> None:
+    path = anchor.path(parts)
+    try:
+        st = os.lstat(path)
+    except FileNotFoundError:
+        raise StorageReadError("missing") from None
+    except OSError:
+        raise StorageReadError("unreadable") from None
+    if _is_link_or_reparse(st):
+        raise StorageReadError("unsafe_storage_link")
+    if not stat.S_ISDIR(st.st_mode):
+        raise StorageReadError("damaged")
+    try:
+        # Followed on purpose: a directory swapped for a junction after the lstat resolves elsewhere.
+        final = _final_directory_path(path)
+    except FileNotFoundError:
+        raise StorageReadError("missing") from None
+    except OSError:
+        raise StorageReadError("unreadable") from None
+    if os.path.normcase(final) != anchor.expected(parts):
+        raise StorageReadError("unsafe_storage_link")
+
+
+def _read_up_to(fd: int, count: int) -> bytes:
+    chunks: list[bytes] = []
+    remaining = count
+    while remaining > 0:
+        chunk = os.read(fd, min(remaining, 1024 * 1024))
+        if not chunk:
+            break
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
+
+
+def _read_file_bounded(anchor: _StorageAnchor, parts: tuple[str, ...], limit: int) -> bytes:
+    """Open without following, verify through the handle, read at most ``limit`` bytes (``limit + 1`` probes)."""
+    try:
+        fd = _open_file_no_follow(anchor.path(parts))
+    except FileNotFoundError:
+        raise StorageReadError("missing") from None
+    except OSError:
+        # A directory, a junction or a link in the final position cannot be opened as a regular file.
+        raise StorageReadError("unreadable") from None
+    try:
+        st = os.fstat(fd)
+        if _is_link_or_reparse(st) or not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+            raise StorageReadError("unsafe_storage_link")
+        if os.path.normcase(_final_path_of_fd(fd)) != anchor.expected(parts):
+            raise StorageReadError("unsafe_storage_link")
+        if st.st_size > limit:
+            raise StorageReadError("too_large")
+        data = _read_up_to(fd, limit + 1)
+        if len(data) > limit:
+            raise StorageReadError("too_large")
+        return data
+    except OSError:
+        raise StorageReadError("unreadable") from None
+    finally:
+        os.close(fd)
+
+
+def _decode_json(data: bytes) -> Any:
+    try:
+        return json.loads(data.decode("utf-8-sig"))
+    except (UnicodeDecodeError, ValueError):
+        raise StorageReadError("damaged") from None
+
+
+def _read_json_bounded(anchor: _StorageAnchor, parts: tuple[str, ...], limit: int) -> Any:
+    return _decode_json(_read_file_bounded(anchor, parts, limit))
+
+
+def _scan_directory(
+    anchor: _StorageAnchor, parts: tuple[str, ...], max_entries: int
+) -> list[tuple[str, str, int]]:
+    """Names, kinds and sizes of at most ``max_entries`` entries; refuses (not truncates) a longer listing."""
+    entries: list[tuple[str, str, int]] = []
+    try:
+        with os.scandir(anchor.path(parts)) as iterator:
+            for entry in iterator:
+                if len(entries) >= max_entries:
+                    raise StorageReadError("listing_too_large")
+                try:
+                    st = entry.stat(follow_symlinks=False)
+                except OSError:
+                    entries.append((entry.name, "other", 0))
+                    continue
+                if _is_link_or_reparse(st):
+                    kind = "link"
+                elif stat.S_ISDIR(st.st_mode):
+                    kind = "dir"
+                elif stat.S_ISREG(st.st_mode):
+                    kind = "file"
+                else:
+                    kind = "other"
+                entries.append((entry.name, kind, st.st_size))
+    except FileNotFoundError:
+        raise StorageReadError("missing") from None
+    except NotADirectoryError:
+        raise StorageReadError("damaged") from None
+    except OSError:
+        raise StorageReadError("unreadable") from None
+    return entries
+
+
+def _open_workspace_bounded(
+    workspace_root: str | Path, limits: ReadLimits
+) -> tuple[_StorageAnchor, dict[str, Any]]:
+    anchor = _StorageAnchor(workspace_root)
+    try:
+        _verify_directory(anchor, (ULTRA_DIRNAME,))
+        data = _read_json_bounded(
+            anchor, (ULTRA_DIRNAME, WORKSPACE_METADATA_NAME), limits.max_workspace_metadata_bytes
+        )
+    except StorageReadError as exc:
+        code = {"missing": "missing_history", "damaged": "invalid_metadata", "too_large": "invalid_metadata"}
+        raise StorageReadError(code.get(exc.code, exc.code)) from None
+    if not isinstance(data, dict):
+        raise StorageReadError("invalid_metadata")
+    version = data.get("schema_version")
+    if isinstance(version, int) and not isinstance(version, bool) and version > SCHEMA_VERSION:
+        raise StorageReadError("unsupported_version")
+    workspace_id = data.get("workspace_id")
+    if version != SCHEMA_VERSION or not isinstance(workspace_id, str) or not _WORKSPACE_ID_RE.fullmatch(workspace_id):
+        raise StorageReadError("invalid_metadata")
+    display_name = data.get("display_name")
+    return anchor, {"workspace_id": workspace_id,
+                    "display_name": display_name if isinstance(display_name, str) else None}
+
+
+def read_workspace_identity_bounded(
+    workspace_root: str | Path, *, limits: ReadLimits = DEFAULT_READ_LIMITS
+) -> dict[str, Any]:
+    """Status of the Ultra history in a folder (``ok`` with its identity, or a reason code); creates nothing."""
+    try:
+        _anchor, identity = _open_workspace_bounded(workspace_root, limits)
+    except StorageReadError as exc:
+        return {"status": exc.code}
+    return {"status": "ok", **identity}
+
+
+def _chat_metadata_problem(data: Any, chat_id: str, workspace_id: str) -> str | None:
+    if not isinstance(data, dict):
+        return "damaged"
+    if data.get("chat_id") != chat_id:
+        return "damaged"
+    if data.get("workspace_id") != workspace_id:
+        return "foreign_identity"
+    title = data.get("title")
+    if not isinstance(title, str) or not title.strip():
+        return "damaged"
+    created_at = data.get("created_at")
+    if created_at is not None and not isinstance(created_at, str):
+        return "damaged"
+    return None
+
+
+def list_chats_bounded(
+    workspace_root: str | Path, *, limits: ReadLimits = DEFAULT_READ_LIMITS
+) -> dict[str, Any]:
+    """Chats of one Workspace: each card checked on its own, a damaged one never hides the others."""
+    anchor, identity = _open_workspace_bounded(workspace_root, limits)
+    workspace_id = identity["workspace_id"]
+    chats_parts = (ULTRA_DIRNAME, "chats")
+    excluded: dict[str, int] = {}
+    try:
+        _verify_directory(anchor, chats_parts)
+        entries = _scan_directory(anchor, chats_parts, limits.max_chat_entries)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            return {**identity, "chats": [], "excluded": excluded}
+        if exc.code == "listing_too_large":
+            raise StorageReadError("chats_listing_too_large") from None
+        raise
+    chats: list[dict[str, Any]] = []
+    for name, kind, _size in sorted(entries):
+        if not _CHAT_ID_RE.fullmatch(name) or kind not in {"dir", "link"}:
+            excluded["unexpected_entry"] = excluded.get("unexpected_entry", 0) + 1
+            continue
+        if kind == "link":
+            chats.append({"chat_id": name, "status": "unsafe_storage_link"})
+            continue
+        try:
+            _verify_directory(anchor, chats_parts + (name,))
+            metadata = _read_json_bounded(
+                anchor, chats_parts + (name, "metadata.json"), limits.max_chat_metadata_bytes
+            )
+        except StorageReadError as exc:
+            status = "unsafe_storage_link" if exc.code == "unsafe_storage_link" else "damaged"
+            chats.append({"chat_id": name, "status": status})
+            continue
+        problem = _chat_metadata_problem(metadata, name, workspace_id)
+        if problem == "foreign_identity":
+            excluded["foreign_identity"] = excluded.get("foreign_identity", 0) + 1
+            continue
+        if problem:
+            chats.append({"chat_id": name, "status": "damaged"})
+            continue
+        chats.append({"chat_id": name, "status": "ok", "title": metadata["title"],
+                      "created_at": metadata.get("created_at")})
+    if len(chats) > limits.max_chats:
+        raise StorageReadError("chats_listing_too_large")
+    chats.sort(key=lambda item: (str(item.get("created_at") or ""), item["chat_id"]))
+    return {**identity, "chats": chats, "excluded": excluded}
+
+
+def _message_problem(data: Any, message_id: str, chat_id: str, workspace_id: str) -> str | None:
+    if not isinstance(data, dict):
+        return "damaged"
+    version = data.get("schema_version", SCHEMA_VERSION)
+    if isinstance(version, int) and not isinstance(version, bool) and version > SCHEMA_VERSION:
+        return "unsupported_version"
+    if version != SCHEMA_VERSION:
+        return "damaged"
+    if data.get("message_id") != message_id:
+        return "name_mismatch"
+    if data.get("chat_id") != chat_id or data.get("workspace_id") != workspace_id:
+        return "foreign_identity"
+    if not isinstance(data.get("original_text"), str) or data.get("role") not in _MESSAGE_ROLES:
+        return "damaged"
+    if not isinstance(data.get("created_at"), str):
+        return "damaged"
+    if "producer" in data:
+        try:
+            _validate_producer(data["producer"])
+        except (TypeError, ValueError):
+            return "damaged"
+    if "task_block_id" in data:
+        try:
+            validate_task_block_id(data["task_block_id"])
+        except ValueError:
+            return "damaged"
+    return None
+
+
+def read_chat_history_bounded(
+    workspace_root: str | Path,
+    chat_id: str,
+    *,
+    limits: ReadLimits = DEFAULT_READ_LIMITS,
+) -> dict[str, Any]:
+    """All valid RAW messages of one chat in display order, with counted exclusions, under hard I/O limits.
+
+    The listing is refused above ``max_message_files`` entries and the whole history above ``max_history_bytes``;
+    a single file above ``max_message_bytes`` is excluded unread. Reading stops at the byte budget even if files
+    grow after they were listed. For display only: the model context keeps its own fail-closed path.
+    """
+    if not isinstance(chat_id, str) or not _CHAT_ID_RE.fullmatch(chat_id):
+        raise StorageReadError("invalid_chat_id")
+    anchor, identity = _open_workspace_bounded(workspace_root, limits)
+    workspace_id = identity["workspace_id"]
+    chat_parts = (ULTRA_DIRNAME, "chats", chat_id)
+    try:
+        _verify_directory(anchor, (ULTRA_DIRNAME, "chats"))
+        _verify_directory(anchor, chat_parts)
+    except StorageReadError as exc:
+        raise StorageReadError("chat_not_found" if exc.code == "missing" else exc.code) from None
+    try:
+        metadata = _read_json_bounded(anchor, chat_parts + ("metadata.json",), limits.max_chat_metadata_bytes)
+    except StorageReadError as exc:
+        raise StorageReadError("unsafe_storage_link" if exc.code == "unsafe_storage_link" else "chat_damaged") from None
+    problem = _chat_metadata_problem(metadata, chat_id, workspace_id)
+    if problem:
+        raise StorageReadError("foreign_identity" if problem == "foreign_identity" else "chat_damaged")
+    chat = {"chat_id": chat_id, "title": metadata["title"], "created_at": metadata.get("created_at")}
+    messages_parts = chat_parts + ("messages",)
+    try:
+        _verify_directory(anchor, messages_parts)
+        entries = _scan_directory(anchor, messages_parts, limits.max_message_files)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            entries = []
+        elif exc.code == "listing_too_large":
+            raise StorageReadError("history_too_large") from None
+        else:
+            raise
+    excluded: dict[str, int] = {}
+    excluded_ids: list[str] = []
+
+    def exclude(reason: str, message_id: str | None = None) -> None:
+        excluded[reason] = excluded.get(reason, 0) + 1
+        if message_id and len(excluded_ids) < 50:
+            excluded_ids.append(message_id)
+
+    candidates: list[str] = []
+    listed_bytes = 0
+    for name, kind, size in sorted(entries):
+        if not name.endswith(".json"):
+            continue  # writer temp files and foreign files, as Tk's glob("*.json")
+        message_id = name[:-5]
+        if not _MESSAGE_ID_RE.fullmatch(message_id):
+            exclude("name_mismatch")
+            continue
+        if kind == "link":
+            exclude("unsafe_storage_link", message_id)
+            continue
+        if kind != "file":
+            exclude("damaged", message_id)
+            continue
+        if size > limits.max_message_bytes:
+            exclude("too_large", message_id)
+            continue
+        listed_bytes += size
+        candidates.append(message_id)
+    if listed_bytes > limits.max_history_bytes:
+        raise StorageReadError("history_too_large")
+    budget = limits.max_history_bytes
+    messages: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for message_id in candidates:
+        cap = min(limits.max_message_bytes, budget)
+        try:
+            data = _read_file_bounded(anchor, messages_parts + (message_id + ".json",), cap)
+        except StorageReadError as exc:
+            if exc.code == "too_large" and cap < limits.max_message_bytes:
+                raise StorageReadError("history_too_large") from None
+            if exc.code != "missing":
+                exclude(exc.code if exc.code in {"too_large", "unsafe_storage_link"} else "damaged", message_id)
+            continue
+        budget -= len(data)
+        try:
+            record = _decode_json(data)
+        except StorageReadError:
+            exclude("damaged", message_id)
+            continue
+        reason = _message_problem(record, message_id, chat_id, workspace_id)
+        if reason is None and message_id in seen:
+            reason = "duplicate_id"
+        if reason:
+            exclude(reason, message_id)
+            continue
+        seen.add(message_id)
+        item: dict[str, Any] = {"message_id": message_id, "role": record["role"],
+                                "created_at": record["created_at"], "text": record["original_text"]}
+        if "task_block_id" in record:
+            item["task_block_id"] = record["task_block_id"]
+        producer = record.get("producer")
+        if isinstance(producer, dict):
+            item["producer"] = {key: producer[key] for key in ("kind", "run_id", "model_id", "model_display_name")
+                                if isinstance(producer.get(key), str)}
+        messages.append(item)
+    messages.sort(key=lambda item: (item["created_at"], item["message_id"]))
+    return {**identity, "chat": chat, "messages": messages, "excluded": excluded, "excluded_ids": excluded_ids,
+            "files_read": len(candidates), "bytes_read": limits.max_history_bytes - budget}
+
+
+def _storage_parts(relative_parts: tuple[str, ...]) -> tuple[str, ...]:
+    if not relative_parts or any(
+        not isinstance(part, str) or not _STORAGE_NAME_RE.fullmatch(part) or part in {".", ".."}
+        for part in relative_parts
+    ):
+        raise StorageReadError("invalid_path")
+    return (ULTRA_DIRNAME, *relative_parts)
+
+
+def read_ultra_json_bounded(
+    workspace_root: str | Path,
+    relative_parts: tuple[str, ...],
+    *,
+    max_bytes: int,
+    limits: ReadLimits = DEFAULT_READ_LIMITS,
+) -> Any:
+    """One JSON file under ``.ultra`` of a valid Workspace, with the same link and size checks as chat history."""
+    parts = _storage_parts(relative_parts)
+    anchor, _identity = _open_workspace_bounded(workspace_root, limits)
+    for depth in range(2, len(parts)):
+        _verify_directory(anchor, parts[:depth])
+    return _read_json_bounded(anchor, parts, max_bytes)
+
+
+def list_ultra_files_bounded(
+    workspace_root: str | Path,
+    relative_parts: tuple[str, ...],
+    *,
+    max_entries: int,
+    limits: ReadLimits = DEFAULT_READ_LIMITS,
+) -> list[str]:
+    """Names of regular files in one directory under ``.ultra``; refuses a longer listing instead of truncating."""
+    parts = _storage_parts(relative_parts)
+    anchor, _identity = _open_workspace_bounded(workspace_root, limits)
+    for depth in range(2, len(parts) + 1):
+        _verify_directory(anchor, parts[:depth])
+    return sorted(name for name, kind, _size in _scan_directory(anchor, parts, max_entries) if kind == "file")

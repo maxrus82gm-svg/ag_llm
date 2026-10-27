@@ -1,0 +1,39 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+ "purpose": "Ultra storage regression: existing chat-storage tests plus the new core read tests",
+ "targets": [
+  "test_message_context",
+  "test_chat_create_atomicity",
+  "test_failed_run_terminal_message",
+  "test_context_registry",
+  "test_ultra_chat_read"
+ ],
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "attempts": [
+  {
+   "attempt": 1,
+   "runner_exit": 0,
+   "tests_run": 53,
+   "failures": 0,
+   "errors": 0,
+   "skips": 1,
+   "isolation_violations": 0,
+   "concurrency_facts": [
+    {
+     "reads": 202,
+     "ok": 80,
+     "fail": 0,
+     "renamed": 10,
+     "rename_fail": 0
+    }
+   ],
+   "non_pass": [
+    {
+     "test": "test_ultra_chat_read.PathSafetyTests.test_file_symlink_is_refused_when_the_platform_allows_creating_one",
+     "status": "SKIP",
+     "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+    }
+   ]
+  }
+ ]
+}
