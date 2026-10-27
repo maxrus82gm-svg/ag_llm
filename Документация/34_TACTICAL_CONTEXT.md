@@ -1,3 +1,9 @@
+## CURRENT / WEB15 / 2026-10-27 — единый BAT и возврат после любого TEST
+
+**USER REQUIREMENT / `rule-ref:DOC-WUA-LAUNCH-01@1`:** пользователь хочет всегда открывать актуальный Web Alarm Ultra одним `Start_WebAlarm.bat` с рабочего стола. STANDARD: штатный target и проверенное постоянное хранилище, зелёная маркировка; TEST: временно другая цель только в разрешённой TASK, красное предупреждение с target/TASK ID. Тот, кто меняет launcher, должен восстановить стандартную маршрутизацию после проверки; перед каждой следующей TASK — независимо перепроверить и восстановить STANDARD. Если восстановление не доказано, статус RESTORE_BLOCKED и зелёный запрещён. Правило доступно новым чатам через №08 → №000 → №40 → №34 → №18 и личные разделы «Правила» ChatGPT/Claude/Codex; не надо создавать новый user-facing BAT при каждом этапе. Реализация BAT / Windows визуальный gate ещё не подтверждены, Stage1 PARTIAL, Stage2 не назначен. №37 APPROVED / PORTABILITY NOT VERIFIED; B2/WA4-R/MCP без изменений.
+
+---
+
 ## HANDOFF / WEB15 — 2026-10-27 / Stage1 source/evidence bounded review
 
 **CLAUDE-WUA-CHAT-S1-READONLY-UI-001: PARTIAL / BOUNDED INDEPENDENT SOURCE & PUBLISHED EVIDENCE ACCEPTED; WINDOWS/VISUAL OPEN**, main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6. 33/33 опубликованных файлов независимо совпали по SHA-256+bytes, исходники защищённого чтения/HTTP/адаптера/UI и структура тестов рассмотрены, авторские 1024 PASS/2 SKIP + 36/36 mutants только evidence, не наш Windows-run. Stage1 Windows/visual и EVM gates OPEN, БЛОК 1 Claude остаётся; Stage2 NO GO. №37 USER PLAN APPROVED, portability NOT VERIFIED. №40 — координатор двух направлений.
