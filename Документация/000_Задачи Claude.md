@@ -349,22 +349,24 @@ reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 ---
 
-**Автор:** ChatGPT, Claude READ-ONLY. Полный архив решений — журнал №06.
+**Автор:** ChatGPT / WEB15; для Claude этот БЛОК 4 READ-ONLY. Исторические verdict сохраняются в №06.
 
-## 1. Последний вердикт — WEB_14 / 2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001
+## 1. Последний — WEB15 / 2026-10-27 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001
 
-**Вердикт WEB_14, 2026-10-26:** **PASS / BOUNDED INDEPENDENT ARCHITECTURE & EVIDENCE REVIEW** по опубликованной редакции 2 `main@734cbfc9d5c5800cf610241c19693ddad9f77cd6` (пользовательский коммит 442). Claude подготовил `reports/CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001/architecture-contract.md`, `stage1-handoff.md`, `report.md`; добавил AMENDMENT-1 по независимому `ultra_chat_read` токену вместо зависимости от folder picker. ChatGPT независимо сверил байты/SHA-256 **17/17** файлов манифеста; просмотрел исходники `web_alarm/server.py`, `web_alarm/folder_picker.py`, `context_storage.py`, `run_store.py`, код проб `probe_s0_storage.py` и прототип `proto_ultra_chat_access.py`, структуру тестов и evidence 60/60 + 55/55 + 10/10 mutants + 32/32 + 28/28; выполнены и зафиксированы **исполнителем**, независимо не перезапускались. Исходные P1–P12 воспроизводят существующие дефекты, не исправления. Один Python core, раздельные ID `wa_workspace_id`/`ultra_workspace_id`, READ-only stage1, последовательность Turn/RAW и защита от повторов подтверждены на уровне согласуемой архитектуры. Контракт будущего сервера исправлен после ревизии 1; перенос токена из `/ui/capabilities` отвергнут. Не доказаны реальная production-запись, Windows/browser EVM/Ultra UI, POSIX, настоящая межпроцессная защищённость новых операций или реальные API.
+**Независимый вердикт: PARTIAL / BOUNDED INDEPENDENT SOURCE & PUBLISHED EVIDENCE ACCEPTED; WINDOWS/VISUAL OPEN.** Основа: main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6, `reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/report.md`, manifest и evidence. WEB15 независимо сверил **33/33** полных SHA-256 и размеров: 8 файлов кода/тестов и 25 файлов отчёта/evidence/tools; `web_alarm/ui.py` проверен с реконструкцией CRLF, 0 несовпадений. Адресно изучены read-only `context_storage.py`, адаптер `web_alarm/ultra_chat.py`, HTTP-обработчики `web_alarm/server.py`, интерфейс и структура Python/JS тестов: происхождение и local bind, собственная read capability, ID/ownership, проверки reparse/handle-final-path, ограниченное I/O, отсутствие записи через новые GET, безопасный вывод истории. Это **ограниченный source review, не доказательство безопасности любой гонки/ОС**.
 
-**Открытые условия:** полная программа №37 всё ещё помечена `КАНДИДАТ / USER PLAN APPROVAL PENDING`, разрешение пользователя на этап 0 явно дано, **этап 1 НЕ назначен**; EVM independent Windows/visual OPEN; `web_alarm/server.py`/`ui.py` требуют закрепления владельца относительно WA4-R; ограниченность capability: другая локальная программа, имеющая доступ к loopback, может запросить токен (не OS-user authentication). На этапе 1 MUST: защитить от подмены путей/reparse и ограничить физическое чтение; предусмотреть не только lstat→open, но и race/identity проверку, изолированные негативные сценарии. V-13 Ordinary Chat/B2 остаётся DEFERRED, платных отправок нет; Desktop MCP №39 FROZEN. Утверждение конкретных параметров limits и реализационных решений контракта — отдельный scope stage1/user.
+**Согласованность evidence подтверждена, но тесты не выполнялись WEB15 независимо:** `full_all_final.json` = 1026 = 1024 PASS / 2 SKIP / 0 FAIL / 0 ERROR, runner exit=0, isolation=0; `mutants.json` = 36/36 KILLED + 3/3 controls PASS; `js_final.json` = 12 Ultra Chat + 9 EVM + 77 operator PASS; повтор Python 3×50 (49 PASS + 1 SKIP), Ultra storage 52 PASS + 1 SKIP, RED и первые FAIL сохранены. Отдельного нового независимого Actions Windows run на Stage1 SHA не подтверждено.
 
-## 2. Предыдущий — WEB_14 / 2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001
+**OPEN:** обязательные 10 пунктов независимой Windows/визуальной приёмки Stage1 (§8 отчёта); независимый EVM visual gate; native symlink, UNC/subst/long-path, POSIX, альтернативные браузеры NOT RUN. Локальный read capability не является OS-user authentication. Приёмка фактического переноса на чистую Windows машину NOT VERIFIED. **До полного verdict или отдельного пользовательского terminal closeout БЛОК 1 `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` остаётся назначенным; БЛОКИ 2–3 и архив 001 не ротируются.** Stage2, B2 V-13, paid/live API не запущены.
 
-**PASS / BOUNDED WINDOWS TEST GATE** на опубликованных proof source, independent Windows focused 46 = 45 PASS + 1 SKIP, full 989 = 988 PASS + 1 SKIP, no isolation. Общее WA4-R остаётся PARTIAL. См. №06.
+## 2. Предыдущий — WEB14 / 2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001
 
-## 3. Предыдущий — WEB_14 / 2026-10-24 / CLAUDE-WA4-R-EVIDENCE-SANITIZER-REPAIR-001
+**PASS / BOUNDED ARCHITECTURE + EVIDENCE:** 17/17 hash/bytes; source/prototype reviewed, авторские пробные тесты не перезапускались. Подробности и ограничения — №06 и Claude 001.
 
-**PASS / BOUNDED OFFLINE VERIFIED**, 69/69 + 11/11 independent Windows checks, no permission escalation. Подробнее №06.
+## 3. Предыдущий — WEB14 / 2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001
+
+**PASS / BOUNDED WINDOWS TEST GATE:** focused 45 PASS / 1 SKIP, full 988 PASS / 1 SKIP; общий WA4-R PARTIAL. Подробности — №06.
 
 ---
 
-**БЛОК 1:** WAITING после verified archive readback. **Next:** решение пользователя по Stage1, EVM, WA4-R; не автоматически назначенная TASK.
+**БЛОК 1:** `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` остаётся активным; NEXT: Windows/visual и EVM gate. Новая TASK автоматически не назначена.

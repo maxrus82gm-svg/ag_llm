@@ -1,3 +1,9 @@
+## HANDOFF / WEB15 — 2026-10-27 / Stage1 source/evidence bounded review
+
+**CLAUDE-WUA-CHAT-S1-READONLY-UI-001: PARTIAL / BOUNDED INDEPENDENT SOURCE & PUBLISHED EVIDENCE ACCEPTED; WINDOWS/VISUAL OPEN**, main@ab527eae4afb5c37e3691e0bddf7d35de4d7e4d6. 33/33 опубликованных файлов независимо совпали по SHA-256+bytes, исходники защищённого чтения/HTTP/адаптера/UI и структура тестов рассмотрены, авторские 1024 PASS/2 SKIP + 36/36 mutants только evidence, не наш Windows-run. Stage1 Windows/visual и EVM gates OPEN, БЛОК 1 Claude остаётся; Stage2 NO GO. №37 USER PLAN APPROVED, portability NOT VERIFIED. №40 — координатор двух направлений.
+
+---
+
 ## HANDOFF / WEB15 — 2026-10-27 / финальное утверждение №37 и опубликованный Stage1
 
 **USER PLAN APPROVED:** пользователь явно утвердил кандидат 2 №37 от 2026-10-26 с обязательным §2.4/H24 о переносимости. Перенос на чистую Windows-машину NOT VERIFIED, новое implementation USER GO не выдавалось; Ordinary Chat B2 V-13, paid API, вывод Tkinter и MCP №39 остаются с отдельными условиями.
