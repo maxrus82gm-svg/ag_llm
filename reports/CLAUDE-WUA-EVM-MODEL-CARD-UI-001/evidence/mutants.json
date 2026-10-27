@@ -1,0 +1,431 @@
+{
+ "task": "CLAUDE-WUA-EVM-MODEL-CARD-UI-001",
+ "controls": {
+  "test_web_alarm_model_cards": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  }
+ },
+ "results": [
+  {
+   "mutant": "M01 30-day boundary exclusive",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M02 key presence outside the settings version",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M03 called model outside the settings version",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M04 simulated answer confirms the model",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m09_failures_simulations_and_checker_errors"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M05 failure after success ignored",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m09_failures_simulations_and_checker_errors"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M06 future timestamp accepted",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M07 description limit not enforced",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M08 base revision not compared",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m14_concurrent_saves_lose_nothing_silently",
+    "test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M09 damaged checks overwritten, not kept",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M10 key value read",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing",
+    "test_m02_role_marks_are_the_real_assignments_and_nothing_else",
+    "test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark",
+    "test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere",
+    "test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do",
+    "test_m09_failures_simulations_and_checker_errors",
+    "test_m10_unauthorised_default_sends_nothing_and_refusals",
+    "test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer",
+    "test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings",
+    "test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets",
+    "test_m14_concurrent_saves_lose_nothing_silently",
+    "test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose",
+    "test_m16_http_only_for_the_local_page_and_no_secret_anywhere"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M11 Tk fallback to defaults skipped",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M12 role switch ignored",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m02_role_marks_are_the_real_assignments_and_nothing_else"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M13 Dredd given the Planner model",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m02_role_marks_are_the_real_assignments_and_nothing_else"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M14 reading the cards writes a store",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing",
+    "test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere",
+    "test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do",
+    "test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings",
+    "test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M15 manual provider names an adapter",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M17 chat role shown as running",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m02_role_marks_are_the_real_assignments_and_nothing_else"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M16 Authorization values not hidden",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m09_failures_simulations_and_checker_errors"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "S01 model cards without the local origin",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m16_http_only_for_the_local_page_and_no_secret_anywhere"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "S02 writes without Origin",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m16_http_only_for_the_local_page_and_no_secret_anywhere"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "S03 real Tk settings for any storage",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "S04 check accepts a message",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m10_unauthorised_default_sends_nothing_and_refusals"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U01 unknown role shown as assigned",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E10"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U02 check answer paints the indicator",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E16"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U03 drafts dropped on close",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E15"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U04 description rendered as markup",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E12",
+    "E7",
+    "E9"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U05 settings saved without the read revision",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E13"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U06 choice button back in the card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E2"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U07 cards invented without card data",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E17"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U08 window status differs from the card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E11",
+    "E16"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U09 voice place enabled",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E19"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  }
+ ],
+ "killed": 30,
+ "mutants": 30
+}

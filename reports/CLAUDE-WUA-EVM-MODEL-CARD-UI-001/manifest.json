@@ -1,0 +1,228 @@
+{
+ "task": "CLAUDE-WUA-EVM-MODEL-CARD-UI-001",
+ "executor": "Claude 008",
+ "source": "user assignment pasted in chat; card BLOCK 1 still holds stage 1 (not changed)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "new_files": {
+  "web_alarm/model_cards.py": {
+   "role": "server side of the cards: role facts, card data, profiles, one API status, checks",
+   "bytes": 42477,
+   "sha256": "8f7cfaab975161ab32f7b718d4802a7c0b2cbb65a0f88f554c02d9f99b3d2939",
+   "eol": "LF"
+  },
+  "test_web_alarm_model_cards.py": {
+   "role": "17 tests, part of the Web Alarm 'all' discovery",
+   "bytes": 30842,
+   "sha256": "db617aa163af915c219e8f8c175468a825852ba14e6e3f101f05fb6757434cd6",
+   "eol": "LF"
+  }
+ },
+ "changed_files": {
+  "web_alarm/server.py": {
+   "role": "routes /ultra/model-cards*, local-origin guard for them, WebAlarmApi wiring",
+   "bytes": 66249,
+   "sha256": "ee046faad6da30b65133c51288ed2d11c2cbf70611c54b7d65b61800d6f673c7",
+   "eol": "LF",
+   "stage1_pin_sha256": "3a696d9da02219eb5938ab5a03374926b527f6b2f86a176f5f1529392f7a35e3"
+  },
+  "web_alarm/ui.py": {
+   "role": "EVM model card component, settings and diagnostics windows, chat choice outside the cards, disabled voice-input place in the chat composer",
+   "bytes": 117889,
+   "sha256": "be8f937b65d07608f9d229651066a9ca8b88a75a0383f34c81cff4b60e63f416",
+   "eol": "CRLF",
+   "stage1_pin_sha256": "89f50541babc642d1a98bd4ab4f175a9bc9af23207653d57c42b60f655b1fa24"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "role": "E2/E3/E4/E7 rewritten for the new cards, E10-E20 added",
+   "bytes": 34579,
+   "sha256": "62c39949941102efa9e0abe1d2441c30d7ae6e1b7e384bdf2fa3efc251ee9fe9",
+   "eol": "LF",
+   "stage1_pin_sha256": "488ff35a4c285276ecdf49002d3117754afc6132d5b2f268f6fb131464d6c1b4"
+  }
+ },
+ "other_changed_files": {
+  "test_web_alarm_ultra_connections.py": {
+   "role": "one needle: the removed card text 'API не проверено' is now required to be absent; the diagnostic window is required instead",
+   "bytes": 20136,
+   "sha256": "8c892a6abc97dd4e4735af5361bfbd18d143e819051255e9747fdcdbfed6ae8c",
+   "eol": "LF"
+  }
+ },
+ "stage1_files_unchanged": {
+  "context_storage.py": true,
+  "web_alarm/ultra_chat.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true
+ },
+ "launcher_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/launch_config.json": true,
+  "test_web_alarm_launcher.py": true
+ },
+ "evidence_summary": {
+  "change_inventory.json": {
+   "purpose": "change inventory against the stage-1 pinned bytes"
+  },
+  "focused_final.json": {
+   "purpose": "focused set after the expectation update (final source)",
+   "runner_exit": 0,
+   "tests_run": 113,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "focused_first_fail.json": {
+   "purpose": "first focused run (FAIL kept before any rerun, TEST-FLAKY-01)",
+   "runner_exit": 1,
+   "tests_run": 113,
+   "failures": 1,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "full_all.json": {
+   "purpose": "full Web Alarm set 'all' on the final bytes",
+   "runner_exit": 0,
+   "tests_run": 1059,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "js_final.json": {
+   "purpose": "page tests on the final bytes",
+   "tests_run": 109,
+   "pass": 109,
+   "fail": 0
+  },
+  "mutants.json": {
+   "killed": 30,
+   "mutants": 30
+  },
+  "visual_selfcheck.json": {
+   "purpose": "executor visual self-check on synthetic data; NOT the independent Windows/visual acceptance"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "BENIGN_ONLY": 1,
+  "CLEAN": 18
+ },
+ "git_used": false,
+ "network_used": false,
+ "real_standard_storage_used": false,
+ "real_tk_settings_read": false,
+ "live_or_paid_api_used": false,
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 7444,
+   "sha256": "2af409ebc7736e7a9ac0e32e084d1f011e4e55e1dcc109bf7deea08a1b9e6a4d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/focused_final.json",
+   "bytes": 17073,
+   "sha256": "3efd109eb84dbfd51c11f80dcadeb83913c39961ccfbb0258e7d1abbc008164d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/focused_first_fail.json",
+   "bytes": 17422,
+   "sha256": "89cc1b76c23a117d9cceb5f1540522ae682ae6823a3c73d44c7384c7be37172d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all.json",
+   "bytes": 164041,
+   "sha256": "a5ec4244f91b8b66aa3160f2ff3084eab98a748cd98e3d9a4c52a01107e65d35",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_final.json",
+   "bytes": 14326,
+   "sha256": "626ccabbabd3dc9695ba945b94079135b7deb513a233a7406bc7469c236bc54e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 10622,
+   "sha256": "c63575152a3d9e5cb2e70e9454b655a3d9b27c1c02da119933e6716249763008",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/screenshots/01-evm-model-cards.png",
+   "bytes": 112707,
+   "sha256": "dfeecc5549d3977d50015157e4e64af587cc92c5f9e9840ba69a40bffc56fa30",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/02-evm-settings-connection.png",
+   "bytes": 156058,
+   "sha256": "a6b074cc3aa2ebc83c3c7aefc5bd69df7e442682a1dff1a06ac61fb3592f5650",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/03-evm-api-check.png",
+   "bytes": 129115,
+   "sha256": "53bcd57145e46e3cb722abf1d7f8746da8e2cc98a70c274dc4f31e820063dd13",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/visual_selfcheck.json",
+   "bytes": 2499,
+   "sha256": "93bdad3e65a633c940d6692c357e3937c97aaa45d5a477a84507e35d31a4e086",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 46536,
+   "sha256": "3789b1f321b1693d4b0e1624768f4b29be08cf12d52501bdf0832a5646a0dd8b",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/capture_screenshots.js",
+   "bytes": 4956,
+   "sha256": "7e0de8a019865ed92c2efd6b75c3505806b70c2464777acdf3b84a98a47dadca",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2461,
+   "sha256": "798d431e0ff8e0b322ad4ed64ffa1fa3bfc00b6a75e1f2d5c6a692b1ef3690c8",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_evm_cards.py",
+   "bytes": 4558,
+   "sha256": "5c4754c3ff1358a7cc1cd055b49334b94bee5929be097ac7fef7baa9f8f9ad73",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/js_gate.py",
+   "bytes": 1482,
+   "sha256": "09ea78efb2e13c541cce28e3a1a9aee36f3147d19e5ea0e48cc71f1d93eed7a9",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 5155,
+   "sha256": "fab24737e820da58976f15f12552f826d9848bfe8bb39fd97988442806e9289a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1713,
+   "sha256": "32930ae44e0278301a1956e49cfc59bb3b19ae8169febf2844a86116a04ae622",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 10626,
+   "sha256": "0449139ab2a2f387d037e870efbccb7b473e8008807f0a19c63becca29ece35a",
+   "eol": "LF"
+  }
+ ]
+}

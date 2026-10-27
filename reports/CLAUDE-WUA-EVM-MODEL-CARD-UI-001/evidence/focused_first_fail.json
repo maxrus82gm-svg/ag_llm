@@ -1,0 +1,476 @@
+{
+ "task": "CLAUDE-WUA-EVM-MODEL-CARD-UI-001",
+ "purpose": "first focused run (FAIL kept before any rerun, TEST-FLAKY-01)",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "3.12.10",
+ "targets": [
+  "test_web_alarm_model_cards",
+  "test_web_alarm_ultra_connections",
+  "test_web_alarm_ultra_chat",
+  "test_web_alarm_server",
+  "test_web_alarm_ui_ux",
+  "test_web_alarm_operator_ui",
+  "test_web_alarm_launcher"
+ ],
+ "runner_exit": 1,
+ "tests_run": 113,
+ "failures": 1,
+ "errors": 0,
+ "skips": 0,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m07_thirty_day_boundary_restart_and_the_same_status_everywhere",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m08_card_text_and_profile_limits_never_reset_the_status_but_settings_do",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m09_failures_simulations_and_checker_errors",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m10_unauthorised_default_sends_nothing_and_refusals",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m11_damaged_checks_are_red_kept_for_diagnosis_and_replaced_by_the_next_answer",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.ApiStatus.test_m12_an_ordinary_answer_refreshes_only_with_the_exact_settings",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m01_cards_follow_the_shared_registry_and_reading_writes_nothing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m02_role_marks_are_the_real_assignments_and_nothing_else",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m03_tk_reading_mirrors_ui_state_and_the_tk_fallback",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m04_tk_defaults_and_provider_facts_match_their_owners",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m05_unreadable_missing_or_unconnected_tk_settings_never_give_a_check_mark",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.CatalogAndRoles.test_m06_an_instance_on_its_own_storage_reads_tk_settings_only_from_a_given_file",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.Http.test_m16_http_only_for_the_local_page_and_no_secret_anywhere",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.Http.test_m17_the_module_cannot_send_or_read_a_key",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.Settings.test_m13_card_data_is_validated_persisted_and_kept_apart_from_status_and_secrets",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.Settings.test_m14_concurrent_saves_lose_nothing_silently",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_model_cards.Settings.test_m15_damaged_settings_are_reported_kept_and_replaced_only_on_purpose",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_an_unavailable_shared_registry_is_reported_and_invents_nothing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_catalog_is_exactly_the_shared_registry_and_the_page_copies_no_model",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_registry_changes_are_seen_without_any_copy_in_web_alarm",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_status_lists_the_capability_and_wrong_methods_are_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.CatalogTests.test_viewing_writes_nothing_and_opens_no_network_or_transport",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.HttpTests.test_real_http_round_trip_never_carries_a_secret_or_a_log_line",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.HttpTests.test_selection_requires_json_and_the_page_offers_the_evm_entry_and_a_way_back",
+   "status": "FAIL",
+   "detail": "AssertionError: 'API не проверено' not found in '<!doctype html>\\n<html lang=\"ru\">\\n<head>\\n<meta charset=\"utf-8\">\\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\\n<title>Web Alarm Workspace</title>\\n<style>\\n:root{color-scheme:dark;--bg:#10151d;--panel:#17212c;--line:#344454;--"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_a_saved_model_that_later_disappears_or_is_disabled_is_reported_not_used",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_concurrent_choices_leave_one_valid_file",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_damaged_saved_choice_is_reported_kept_aside_and_replaced_only_by_an_explicit_choice",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_every_registry_model_selects_and_resolves_to_its_own_provider_model_id",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_pro_and_ultra_choice_survives_a_restart_and_is_stored_only_as_a_reference",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_roles_of_a_newer_version_are_kept_when_chat_is_saved",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_the_tkinter_ultra_state_and_the_transport_are_never_touched",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_connections.SelectionTests.test_unknown_malformed_and_disabled_connections_are_refused_without_writing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c1_read_capability_works_with_the_folder_picker_off_by_default_and_on",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c2_tokens_never_cross_scopes",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c3_switched_off_chat_reading_leaves_picker_evm_and_operator_working",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c4_non_loopback_bind_gives_no_capability_and_no_history",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c5_command_line_switch_reaches_create_server",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.CapabilityTests.test_c6_token_of_a_restarted_or_other_server_process_is_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d10_reading_over_http_while_the_tk_writer_appends_in_another_process",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d11_damaged_or_oversized_run_index_leaves_history_readable",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d12_newer_index_generation_wins_as_in_run_store",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d1_workspaces_are_named_with_their_history_state_and_never_with_paths",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d2_chats_list_shows_damaged_and_link_entries_and_hides_foreign_ones",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d3_pages_walk_the_whole_history_once_and_bad_requests_stay_off_the_disk",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d4_legacy_outcomes_are_classified_without_rewriting_raw",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d5_partial_empty_too_large_and_unavailable_histories_are_told_apart",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d6_page_is_cut_between_messages_at_the_byte_limit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d7_every_get_leaves_storage_and_workspaces_unchanged",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d8_adapter_imports_no_transport_and_core_errors_never_reach_the_browser",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.DataTests.test_d9_token_appears_only_in_the_capability_answer",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o1_foreign_or_opaque_origin_is_refused_on_every_route",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o2_normal_same_origin_reads_pass",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.OriginTests.test_o3_other_methods_and_preflight_are_refused_without_cors",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ultra_chat.TokenTests.test_t1_invalid_tokens_are_refused_and_query_tokens_are_not_accepted",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_invalid_target_shape_is_400",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_non_loopback_bind_requires_explicit_override",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_prepare_and_snapshot_verify_do_not_mutate_real_project",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_real_http_loopback_status_and_json_error",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_recover_rejects_invalid_step_budget",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_report_and_recovery_entry_are_state_only",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_snapshot_restore_is_not_exposed_by_server_api",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_status_reports_server_owned_state_machine",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_task_creation_requires_registered_workspace",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_tasks_listing_separates_active_and_completed",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_transition_endpoint_rejects_invalid_and_accepts_valid_route",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_server.WebAlarmServerApiTests.test_workspace_task_microtask_and_plan_endpoints",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ui_ux.OperatorUxTests.test_http_three_regions_single_input_and_no_obsolete_creation_fields",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ui_ux.OperatorUxTests.test_large_unicode_reports_stay_bound_to_their_stage_and_get_is_pure",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_ui_ux.OperatorUxTests.test_operation_notice_is_in_main_before_cards_and_does_not_mutate_fixture",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o10_existing_workspace_task_creation_and_api_preserved",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o1_corrupt_task_does_not_hide_other_workspaces",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o1_navigation_two_workspaces_and_three_tasks",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o2_plan_order_is_not_creation_sequence",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o2_real_lifecycle_statuses_are_not_ui_statuses",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o3_conflicting_verified_order_withholds_progress",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o3_done_and_unknown_do_not_count_as_verified",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_ambiguous_operations_never_pick_latest",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_closed_task_has_only_history_despite_unfinished_operation",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_operation_of_later_stage_is_not_current",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_terminal_receipt_is_history_not_current_or_byte_proof",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o4_unique_unfinished_operation_has_exact_identity",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_corrupt_checkpoint_is_visible_and_not_repaired_by_get",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_corrupt_operations_withhold_progress_and_identity",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_missing_recovery_evidence_is_explicit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_read_race_is_bounded_and_withholds_current_and_progress",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_real_partial_rollback_is_visible_over_http",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_stale_checkpoint_is_never_shown_valid",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_stale_resolver_decision_never_overrides_new_next",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o5_unknown_is_not_failed_and_next_is_projection_decision",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o6_recovery_report_cannot_override_authoritative_next",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o7_get_never_calls_execution_or_recovery_or_rebuild",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o7_navigation_rejects_mutating_method",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o7_refresh_and_evidence_have_no_persistent_side_effect",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o8_fresh_api_and_new_http_server_same_persisted_state",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o8_new_process_starts_http_and_reopens_authoritative_state",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o9_incorrect_status_returns_honest_http_error",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_operator_ui.OperatorHttpTests.test_o9_user_text_remains_data_and_root_does_not_embed_it",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.BannerAndPageTests.test_b1_standard_banner_is_green_and_test_banner_is_red_with_the_profile_name",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.BannerAndPageTests.test_b2_standard_page_is_unchanged_and_test_page_is_marked",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.BatTests.test_t1_the_bat_is_portable_ascii_and_only_delegates_to_the_launcher",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l1_the_shipped_configuration_is_the_standard_launch",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l2_missing_file_is_standard_and_every_shipped_profile_is_valid_and_non_standard",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l3_unsafe_or_broken_configurations_are_refused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.ConfigTests.test_l4_machine_port_binding_moves_the_standard_port_and_stays_visible",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r1_standard_self_test_serves_the_unchanged_page_from_the_standard_storage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r2_test_profile_uses_its_own_temp_storage_and_marks_the_page",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r3_test_warning_stays_five_seconds_before_the_browser_and_standard_opens_at_once",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r4_a_busy_port_is_reported_and_an_identical_running_launch_is_reused",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r5_break_and_close_signals_end_the_server_through_the_same_stop_path",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r6_ctrl_break_stops_a_real_launcher_process_cleanly",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r7_script_profile_warns_then_runs_the_script_and_cannot_self_test",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r8_a_refused_configuration_stops_with_a_red_message_and_nothing_starts",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_launcher.RunTests.test_r9_a_second_launcher_on_the_same_port_is_refused_even_before_it_listens",
+   "status": "PASS"
+  }
+ ]
+}

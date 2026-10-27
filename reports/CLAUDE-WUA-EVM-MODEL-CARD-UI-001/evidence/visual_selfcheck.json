@@ -1,0 +1,21 @@
+{
+ "task": "CLAUDE-WUA-EVM-MODEL-CARD-UI-001",
+ "purpose": "executor visual self-check on synthetic data; NOT the independent Windows/visual acceptance",
+ "where": "built-in browser pane of the Claude desktop app (Chromium), viewport emulation; headless Chrome for the three PNG files",
+ "data": "tools/demo_evm_cards.py: TEMP storage, synthetic Tk ui_state.json, fake environment (key present, PERS); three API states seeded as synthetic evidence, not API checks",
+ "page_marking": "the launcher TEST frame and badge are on every page of the demo",
+ "observations": [
+  {"viewport": "1400x950", "check": "cards per row", "result": "2 (grid auto-fill, min 500 px)"},
+  {"viewport": "1400x950", "check": "role grid of one card", "result": "4 columns x 2 rows, grid height 47 px (first try 3 x 3 with min 150 px; min lowered to 118 px)"},
+  {"viewport": "1400x950", "check": "role hint on hover", "result": "full hint under the role grid, inside the card width"},
+  {"viewport": "1400x950", "check": "settings window: three tabs, connection facts, disabled key buttons, provider read-only", "result": "as designed; disabled provider select was not visibly dimmed, fixed (opacity)"},
+  {"viewport": "1400x950", "check": "diagnostic window after 'Отправить тестовое сообщение'", "result": "message not sent, status unchanged, same indicator as the card; duplicated note text found and shortened"},
+  {"viewport": "1400x950", "check": "empty description box", "result": "first render padded and centred by the operator panel's global .empty rule; class renamed to .placeholder"},
+  {"viewport": "390x844", "check": "horizontal scroll", "result": "none (document scrollWidth 390 = innerWidth 390)"},
+  {"viewport": "390x844", "check": "role grid / card width", "result": "2 columns, card 328 px"},
+  {"viewport": "390x844", "check": "settings window", "result": "358 x 666 px inside 844 px height, buttons wrap"},
+  {"viewport": "1400x900", "check": "Ultra Chat composer", "result": "disabled voice-input place left of the disabled 'Отправить'; the launcher TEST badge covers the bottom-right corner in TEST launches (existing launcher design)"}
+ ],
+ "screenshots": ["screenshots/01-evm-model-cards.png", "screenshots/02-evm-settings-connection.png", "screenshots/03-evm-api-check.png"],
+ "not_checked": ["other browsers", "Windows high-contrast / 150% scaling", "screen readers", "keyboard-only walk through every control (Escape and focus return covered by tests)"]
+}

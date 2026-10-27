@@ -312,9 +312,12 @@ class HttpTests(Fixture):
         self.assertFalse(self.saved.exists())
         status, html = self.call(url + "/")
         self.assertEqual(status, 200)
+        # CLAUDE-WUA-EVM-MODEL-CARD-UI-001: the card no longer says "API не проверено"; the API status is one
+        # server indicator shared by the card and its diagnostic window.
         for needle in ('id="viewEvm"', 'id="viewOperator"', 'id="evmView"', ">API<", ">MCP / Агенты<",
-                       ">Локальные LLM<", "+ Добавить — следующий этап", "API не проверено"):
+                       ">Локальные LLM<", "+ Добавить — следующий этап", 'id="evmCheckWindow"', "Отправить тестовое сообщение"):
             self.assertIn(needle, html)
+        self.assertNotIn("API не проверено", html)
         self.assertIn(".evm-columns{grid-template-columns:1fr}", html, "no narrow-screen layout for the EVM columns")
         self.assertNotIn("innerHTML", html)
 

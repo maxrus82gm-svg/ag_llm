@@ -60,6 +60,15 @@ from .state_machine import (
 from .task_store import TaskStore, TaskStoreError
 from .transport_event_store import TransportEventStore, TransportEventStoreError
 from .ui import INDEX_HTML
+from .model_cards import (
+    CheckRefusedError,
+    ModelCardRequestError,
+    ModelCards,
+    ModelCardsStoreError,
+    SettingsConflictError,
+    UnknownModelCardError,
+    default_tk_state_path,
+)
 from .ultra_chat import ULTRA_CHAT_CAPABILITY_PATH, UltraChatAccess, UltraChatError, UltraChatService
 from .ultra_connections import (
     ConnectionRequestError,
@@ -109,6 +118,9 @@ def _jsonable(value: Any) -> Any:
     if isinstance(value, (list, tuple)):
         return [_jsonable(item) for item in value]
     return value
+
+
+_TK_STATE_DEFAULT = object()  # WebAlarmApi: "the Tk settings of the standard storage, none for any other root"
 
 
 def _require_object(value: Any) -> dict[str, Any]:
@@ -176,7 +188,13 @@ def _optional_object_list(body: Mapping[str, Any], key: str) -> list[dict[str, A
 class WebAlarmApi:
     """Narrow typed API façade over the verified WA-1 storage layer."""
 
-    def __init__(self, storage_root: str | Path | None = None) -> None:
+    def __init__(
+        self,
+        storage_root: str | Path | None = None,
+        *,
+        tk_state_path: Any = _TK_STATE_DEFAULT,
+        api_checker: Any = None,
+    ) -> None:
         self.registry = WorkspaceRegistry(storage_root)
         self.tasks = TaskStore(storage_root)
         self.manifests = ManifestSnapshotStore(storage_root)
@@ -195,6 +213,12 @@ class WebAlarmApi:
         self.closeout = CloseoutService(storage_root)
         self.executor = MutationExecutor(storage_root)
         self.ultra_connections = UltraConnections(self.tasks.storage_root)
+        # EVM model cards. Role assignments are read from the Tk Ultra settings only for the standard storage;
+        # an instance on its own storage root (tests, TEST launches) reads them only from a file it is given.
+        if tk_state_path is _TK_STATE_DEFAULT:
+            tk_state_path = default_tk_state_path() if storage_root is None else None
+        self.model_cards = ModelCards(self.tasks.storage_root, self.ultra_connections,
+                                      tk_state_path=tk_state_path, checker=api_checker)
 
     @property
     def storage_root(self) -> Path:
@@ -352,6 +376,7 @@ class WebAlarmApi:
                         "mutations",
                         "observe_diagnostics",
                         "ultra_connections",
+                        "ultra_model_cards",
                     ],
                 }
 
@@ -369,6 +394,23 @@ class WebAlarmApi:
                     return 200, {"selection": self.ultra_connections.select(
                         data.get("role", "chat"), data.get("connection_id"))}
                 raise ApiError(405, "method_not_allowed", "selection supports GET and POST")
+
+            # EVM model cards: card data, real role assignments and one server-side API status per model.
+            if parts == ["ultra", "model-cards"]:
+                if method != "GET":
+                    raise ApiError(405, "method_not_allowed", "the model cards list is read-only")
+                if query:
+                    raise ApiError(400, "invalid_model_card_request", "Query parameters are not supported")
+                return 200, self.model_cards.catalog()
+            if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] in {"settings", "check"}:
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", f"{parts[3]} requires POST")
+                data = _require_object(body)
+                if parts[3] == "settings":
+                    return 200, {"card": self.model_cards.save_settings(parts[2], data)}
+                if data:
+                    raise ApiError(400, "invalid_model_card_request", "the check accepts only an empty object")
+                return 200, self.model_cards.run_check(parts[2])
 
             if parts == ["transport", "events"]:
                 if method == "GET":
@@ -1074,6 +1116,16 @@ class WebAlarmApi:
             raise ApiError(503, "model_registry_unavailable", str(exc)) from exc
         except UltraConnectionsError as exc:
             raise ApiError(409, "connections_state_error", str(exc)) from exc
+        except ModelCardRequestError as exc:
+            raise ApiError(400, "invalid_model_card_request", str(exc)) from exc
+        except UnknownModelCardError as exc:
+            raise ApiError(404, "unknown_model", str(exc)) from exc
+        except SettingsConflictError as exc:
+            raise ApiError(409, "settings_revision_conflict", str(exc)) from exc
+        except CheckRefusedError as exc:
+            raise ApiError(409, "check_refused", str(exc)) from exc
+        except ModelCardsStoreError as exc:
+            raise ApiError(409, "model_cards_state_error", str(exc)) from exc
         except ValueError as exc:
             raise ApiError(400, "invalid_value", str(exc)) from exc
 class _JsonHandler(BaseHTTPRequestHandler):
@@ -1206,6 +1258,11 @@ class _JsonHandler(BaseHTTPRequestHandler):
             if self.command == "GET" and path in {"/", "/ui"}:
                 self._send_html(INDEX_HTML)
                 return
+            if path == '/ultra/model-cards' or path.startswith('/ultra/model-cards/'):
+                # EVM model cards answer only the local page of this server; every write carries its Origin.
+                self._require_local_ui_origin('model_cards_forbidden', 'EVM model cards')
+                if self.command != 'GET' and len(self.headers.get_all('Origin', [])) != 1:
+                    raise ApiError(403, 'model_cards_forbidden', 'A same-origin request is required')
             body = self._read_body() if self.command in {"POST", "PUT", "PATCH"} else None
             status, payload = self.api.dispatch(self.command, self.path, body)
             self._send_json(status, payload)

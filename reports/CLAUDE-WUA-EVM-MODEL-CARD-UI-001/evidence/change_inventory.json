@@ -1,0 +1,557 @@
+{
+ "task": "CLAUDE-WUA-EVM-MODEL-CARD-UI-001",
+ "purpose": "change inventory against the stage-1 pinned bytes",
+ "files": {
+  "web_alarm/server.py": {
+   "baseline_sha256": "3a696d9da02219eb5938ab5a03374926b527f6b2f86a176f5f1529392f7a35e3",
+   "baseline_equals_stage1_pin": true,
+   "new_sha256": "ee046faad6da30b65133c51288ed2d11c2cbf70611c54b7d65b61800d6f673c7",
+   "baseline_lines": 1324,
+   "new_lines": 1381,
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      63,
+      62
+     ],
+     "new_lines": [
+      63,
+      71
+     ]
+    },
+    {
+     "baseline_lines": [
+      112,
+      111
+     ],
+     "new_lines": [
+      121,
+      123
+     ]
+    },
+    {
+     "baseline_lines": [
+      179,
+      179
+     ],
+     "new_lines": [
+      191,
+      197
+     ]
+    },
+    {
+     "baseline_lines": [
+      198,
+      197
+     ],
+     "new_lines": [
+      216,
+      221
+     ]
+    },
+    {
+     "baseline_lines": [
+      355,
+      354
+     ],
+     "new_lines": [
+      379,
+      379
+     ]
+    },
+    {
+     "baseline_lines": [
+      372,
+      371
+     ],
+     "new_lines": [
+      397,
+      413
+     ]
+    },
+    {
+     "baseline_lines": [
+      1077,
+      1076
+     ],
+     "new_lines": [
+      1119,
+      1128
+     ]
+    },
+    {
+     "baseline_lines": [
+      1209,
+      1208
+     ],
+     "new_lines": [
+      1261,
+      1265
+     ]
+    }
+   ]
+  },
+  "web_alarm/ui.py": {
+   "baseline_sha256": "89f50541babc642d1a98bd4ab4f175a9bc9af23207653d57c42b60f655b1fa24",
+   "baseline_equals_stage1_pin": true,
+   "new_sha256": "be8f937b65d07608f9d229651066a9ca8b88a75a0383f34c81cff4b60e63f416",
+   "baseline_lines": 1132,
+   "new_lines": 1413,
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      124,
+      124
+     ],
+     "new_lines": [
+      124,
+      124
+     ]
+    },
+    {
+     "baseline_lines": [
+      126,
+      125
+     ],
+     "new_lines": [
+      126,
+      126
+     ]
+    },
+    {
+     "baseline_lines": [
+      127,
+      130
+     ],
+     "new_lines": [
+      128,
+      128
+     ]
+    },
+    {
+     "baseline_lines": [
+      132,
+      131
+     ],
+     "new_lines": [
+      130,
+      175
+     ]
+    },
+    {
+     "baseline_lines": [
+      202,
+      202
+     ],
+     "new_lines": [
+      246,
+      246
+     ]
+    },
+    {
+     "baseline_lines": [
+      392,
+      392
+     ],
+     "new_lines": [
+      436,
+      436
+     ]
+    },
+    {
+     "baseline_lines": [
+      397,
+      397
+     ],
+     "new_lines": [
+      441,
+      444
+     ]
+    },
+    {
+     "baseline_lines": [
+      399,
+      399
+     ],
+     "new_lines": [
+      446,
+      445
+     ]
+    },
+    {
+     "baseline_lines": [
+      403,
+      402
+     ],
+     "new_lines": [
+      449,
+      480
+     ]
+    },
+    {
+     "baseline_lines": [
+      882,
+      882
+     ],
+     "new_lines": [
+      960,
+      962
+     ]
+    },
+    {
+     "baseline_lines": [
+      915,
+      916
+     ],
+     "new_lines": [
+      995,
+      1065
+     ]
+    },
+    {
+     "baseline_lines": [
+      921,
+      920
+     ],
+     "new_lines": [
+      1070,
+      1070
+     ]
+    },
+    {
+     "baseline_lines": [
+      922,
+      933
+     ],
+     "new_lines": [
+      1072,
+      1077
+     ]
+    },
+    {
+     "baseline_lines": [
+      937,
+      936
+     ],
+     "new_lines": [
+      1081,
+      1082
+     ]
+    },
+    {
+     "baseline_lines": [
+      938,
+      941
+     ],
+     "new_lines": [
+      1084,
+      1093
+     ]
+    },
+    {
+     "baseline_lines": [
+      943,
+      943
+     ],
+     "new_lines": [
+      1095,
+      1094
+     ]
+    },
+    {
+     "baseline_lines": [
+      945,
+      945
+     ],
+     "new_lines": [
+      1096,
+      1096
+     ]
+    },
+    {
+     "baseline_lines": [
+      949,
+      949
+     ],
+     "new_lines": [
+      1100,
+      1100
+     ]
+    },
+    {
+     "baseline_lines": [
+      956,
+      956
+     ],
+     "new_lines": [
+      1107,
+      1107
+     ]
+    },
+    {
+     "baseline_lines": [
+      961,
+      960
+     ],
+     "new_lines": [
+      1112,
+      1229
+     ]
+    },
+    {
+     "baseline_lines": [
+      964,
+      963
+     ],
+     "new_lines": [
+      1233,
+      1244
+     ]
+    }
+   ]
+  },
+  "test_web_alarm_evm_ui.js": {
+   "baseline_sha256": "488ff35a4c285276ecdf49002d3117754afc6132d5b2f268f6fb131464d6c1b4",
+   "baseline_equals_stage1_pin": true,
+   "new_sha256": "62c39949941102efa9e0abe1d2441c30d7ae6e1b7e384bdf2fa3efc251ee9fe9",
+   "baseline_lines": 193,
+   "new_lines": 468,
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      34,
+      33
+     ],
+     "new_lines": [
+      34,
+      56
+     ]
+    },
+    {
+     "baseline_lines": [
+      53,
+      52
+     ],
+     "new_lines": [
+      76,
+      76
+     ]
+    },
+    {
+     "baseline_lines": [
+      69,
+      69
+     ],
+     "new_lines": [
+      93,
+      103
+     ]
+    },
+    {
+     "baseline_lines": [
+      89,
+      89
+     ],
+     "new_lines": [
+      123,
+      123
+     ]
+    },
+    {
+     "baseline_lines": [
+      91,
+      92
+     ],
+     "new_lines": [
+      125,
+      125
+     ]
+    },
+    {
+     "baseline_lines": [
+      97,
+      98
+     ],
+     "new_lines": [
+      130,
+      136
+     ]
+    },
+    {
+     "baseline_lines": [
+      104,
+      103
+     ],
+     "new_lines": [
+      142,
+      143
+     ]
+    },
+    {
+     "baseline_lines": [
+      106,
+      106
+     ],
+     "new_lines": [
+      146,
+      146
+     ]
+    },
+    {
+     "baseline_lines": [
+      111,
+      110
+     ],
+     "new_lines": [
+      151,
+      151
+     ]
+    },
+    {
+     "baseline_lines": [
+      115,
+      118
+     ],
+     "new_lines": [
+      156,
+      161
+     ]
+    },
+    {
+     "baseline_lines": [
+      126,
+      128
+     ],
+     "new_lines": [
+      169,
+      170
+     ]
+    },
+    {
+     "baseline_lines": [
+      133,
+      133
+     ],
+     "new_lines": [
+      175,
+      174
+     ]
+    },
+    {
+     "baseline_lines": [
+      135,
+      136
+     ],
+     "new_lines": [
+      176,
+      177
+     ]
+    },
+    {
+     "baseline_lines": [
+      139,
+      139
+     ],
+     "new_lines": [
+      180,
+      180
+     ]
+    },
+    {
+     "baseline_lines": [
+      141,
+      140
+     ],
+     "new_lines": [
+      182,
+      186
+     ]
+    },
+    {
+     "baseline_lines": [
+      166,
+      169
+     ],
+     "new_lines": [
+      212,
+      216
+     ]
+    },
+    {
+     "baseline_lines": [
+      171,
+      171
+     ],
+     "new_lines": [
+      218,
+      220
+     ]
+    },
+    {
+     "baseline_lines": [
+      176,
+      177
+     ],
+     "new_lines": [
+      225,
+      225
+     ]
+    },
+    {
+     "baseline_lines": [
+      194,
+      193
+     ],
+     "new_lines": [
+      242,
+      468
+     ]
+    }
+   ]
+  },
+  "test_web_alarm_ultra_connections.py": {
+   "baseline_sha256": "7c7ec39e999e6d2b4affb450a8766d4dd79f11f0207442f2a8540d48d856bfaf",
+   "baseline_equals_stage1_pin": "no stage-1 pin",
+   "new_sha256": "8c892a6abc97dd4e4735af5361bfbd18d143e819051255e9747fdcdbfed6ae8c",
+   "baseline_lines": 323,
+   "new_lines": 326,
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      315,
+      314
+     ],
+     "new_lines": [
+      315,
+      316
+     ]
+    },
+    {
+     "baseline_lines": [
+      316,
+      316
+     ],
+     "new_lines": [
+      318,
+      318
+     ]
+    },
+    {
+     "baseline_lines": [
+      318,
+      317
+     ],
+     "new_lines": [
+      320,
+      320
+     ]
+    }
+   ]
+  }
+ },
+ "all_baselines_equal_stage1_pins": true
+}
