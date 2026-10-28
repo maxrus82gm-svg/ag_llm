@@ -402,6 +402,10 @@ class WebAlarmApi:
                 if query:
                     raise ApiError(400, "invalid_model_card_request", "Query parameters are not supported")
                 return 200, self.model_cards.catalog()
+            if parts == ["ultra", "model-cards", "view"]:  # manual order of the EVM columns and favourites
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", "the board arrangement is saved with POST")
+                return 200, {"view": self.model_cards.save_view(_require_object(body))}
             if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] in {"settings", "check"}:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", f"{parts[3]} requires POST")

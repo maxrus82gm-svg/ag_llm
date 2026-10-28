@@ -9,7 +9,9 @@ and never copied into a second assignment store. This module keeps only what has
   count, which connection profile serves the model) and, separately, the non-secret connection
   profiles of providers and manually added provider entries. No secret is ever stored here;
 * ``ultra/api_checks.json`` - the evidence behind the API status: the settings version a confirmed
-  answer belongs to, its time, the last refusal and a bounded diagnostic text.
+  answer belongs to, its time, the last refusal and a bounded diagnostic text;
+* ``ultra/evm_view.json`` - how the user arranges the EVM board: the manual order of each column and
+  the ordered favourites, as lists of connection ids (references, never copies of a registry entry).
 
 Secrets stay with the existing mechanism (``GIGACHAT_CREDENTIALS`` in the environment, read by
 ``gigachat_transport``); this module only tells whether that variable is present. It makes no
@@ -37,7 +39,13 @@ from .ultra_connections import UltraConnections, connection_id_for
 
 SETTINGS_SCHEMA = "web_alarm.ultra_model_settings"
 CHECKS_SCHEMA = "web_alarm.ultra_api_checks"
+VIEW_SCHEMA = "web_alarm.ultra_evm_view"
 SCHEMA_VERSION = 1
+# EVM board: a column section -> the catalog column it shows and the connection kind its ids carry.
+BOARD_COLUMNS = {"api": ("api", "api"), "mcp": ("mcp_agents", "mcp"), "local": ("local_llm", "local")}
+VIEW_SECTIONS = ("favorites", *BOARD_COLUMNS)
+MAX_VIEW_IDS = 500
+_CONNECTION_ID = re.compile(r"(api|mcp|local):[A-Za-z0-9_.-]{1,80}:[A-Za-z0-9_.-]{1,110}")
 MAX_STORE_BYTES = 2 * 1024 * 1024
 MAX_TK_STATE_BYTES = 1024 * 1024
 MAX_DESCRIPTION = 500
@@ -379,6 +387,7 @@ class ModelCards:
         root = Path(storage_root)
         self.settings_path = root / "ultra" / "model_settings.json"
         self.checks_path = root / "ultra" / "api_checks.json"
+        self.view_path = root / "ultra" / "evm_view.json"
         self.lock_path = root / "locks" / "ultra" / "model_cards.lock"
         self.connections = connections
         self.tk_state_path = tk_state_path
@@ -585,6 +594,85 @@ class ModelCards:
             return {"state": "CORRUPT", "checks": {}}
         return {"state": loaded["state"], "checks": {k: v for k, v in checks.items() if isinstance(v, dict)}}
 
+    # --- view preferences: manual order of each column and favourites ------------------------------------
+
+    def _present(self) -> dict[str, list[str]]:
+        """Connection ids each board column shows now, in their natural order (the registry for API)."""
+        columns = self.connections.catalog()["columns"]
+        return {section: [c["connection_id"] for c in columns.get(column, {}).get("connections", [])
+                          if isinstance(c, dict) and isinstance(c.get("connection_id"), str)]
+                for section, (column, _) in BOARD_COLUMNS.items()}
+
+    def _view(self) -> dict[str, Any]:
+        """The stored arrangement; a damaged file is reported (natural order, no favourites), never replaced."""
+        empty = {section: [] for section in VIEW_SECTIONS}
+        loaded = self._load(self.view_path, VIEW_SCHEMA)
+        if loaded["state"] != "SAVED":
+            return {"state": loaded["state"], "revision": 0 if loaded["state"] == "EMPTY" else None, "stored": empty}
+        data, stored = loaded["data"], {}
+        revision, sections = data.get("revision"), data.get("sections")
+        valid = not isinstance(revision, bool) and isinstance(revision, int) and revision >= 0 and isinstance(sections, dict)
+        for section in VIEW_SECTIONS if valid else ():
+            ids = sections.get(section, [])
+            if (not isinstance(ids, list) or len(ids) > MAX_VIEW_IDS or len(set(map(str, ids))) != len(ids)
+                    or not all(isinstance(x, str) and _CONNECTION_ID.fullmatch(x) for x in ids)):
+                valid = False
+                break
+            stored[section] = list(ids)
+        if not valid:
+            return {"state": "CORRUPT", "revision": None, "stored": empty}
+        return {"state": "SAVED", "revision": revision, "stored": stored}
+
+    def view(self, present: dict[str, list[str]] | None = None) -> dict[str, Any]:
+        """Effective board: stored order of the ids present now, then new ids in natural order; favourites are
+        stored references to ids present anywhere. Stored ids that are absent now are kept, only not shown."""
+        present = present if present is not None else self._present()
+        stored = self._view()
+        sections, hidden = {}, 0
+        for section in BOARD_COLUMNS:
+            here = set(present[section])
+            kept = [x for x in stored["stored"][section] if x in here]
+            sections[section] = kept + [x for x in present[section] if x not in kept]
+            hidden += len(stored["stored"][section]) - len(kept)
+        everywhere = {x for ids in present.values() for x in ids}
+        sections["favorites"] = [x for x in stored["stored"]["favorites"] if x in everywhere]
+        hidden += len(stored["stored"]["favorites"]) - len(sections["favorites"])
+        return {"state": stored["state"], "revision": stored["revision"], "sections": sections, "hidden": hidden}
+
+    def save_view(self, body: Mapping[str, Any]) -> dict[str, Any]:
+        """Replace the order of one column (a complete permutation of what it shows) or the favourites (any ids
+        shown now). Refused when the arrangement or the list of entries changed since ``base_revision``."""
+        if set(body) - {"base_revision", "section", "order"}:
+            raise ModelCardRequestError("unknown fields: " + ", ".join(sorted(set(body) - {"base_revision", "section", "order"})))
+        section, order = body.get("section"), body.get("order")
+        if section not in VIEW_SECTIONS:
+            raise ModelCardRequestError("section must be one of: " + ", ".join(VIEW_SECTIONS))
+        if (not isinstance(order, list) or len(order) > MAX_VIEW_IDS
+                or not all(isinstance(x, str) and _CONNECTION_ID.fullmatch(x) for x in order)):
+            raise ModelCardRequestError("order must be a list of connection ids <kind>:<provider>:<id>")
+        if len(set(order)) != len(order):
+            raise ModelCardRequestError("order repeats a connection id")
+        if section != "favorites" and any(x.split(":", 1)[0] != BOARD_COLUMNS[section][1] for x in order):
+            raise ModelCardRequestError(f"the {section} column holds only {BOARD_COLUMNS[section][1]} connections")
+        present = self._present()
+        visible = {x for ids in present.values() for x in ids} if section == "favorites" else set(present[section])
+        if not set(order) <= visible or (section != "favorites" and set(order) != visible):
+            raise SettingsConflictError("the list of entries changed since it was read; reload and repeat")
+        lock = self._locked()
+        try:
+            current = self._view()
+            if body.get("base_revision") != current["revision"]:
+                raise SettingsConflictError("the board arrangement changed since it was read; reload and repeat")
+            if current["state"] == "CORRUPT":
+                self._set_aside(self.view_path)
+            stored = dict(current["stored"])
+            stored[section] = list(order) + [x for x in stored[section] if x not in visible and x not in order]
+            self._write(self.view_path, {"schema": VIEW_SCHEMA, "version": SCHEMA_VERSION,
+                                         "revision": (current["revision"] or 0) + 1, "sections": stored})
+        finally:
+            lock.release()
+        return self.view(present)
+
     # --- the read model -------------------------------------------------------------------------------
 
     def _context(self) -> dict[str, Any]:
@@ -661,6 +749,7 @@ class ModelCards:
             "live_check": {"authorized": bool(self.checker.authorized),
                            "reason": None if self.checker.authorized else self.checker.reason},
             "cards": [self._card(ctx, spec) for spec in ctx["registry"].list_model_specs()],
+            "view": self.view(),
         }
 
     def card(self, model_id: Any) -> dict[str, Any]:

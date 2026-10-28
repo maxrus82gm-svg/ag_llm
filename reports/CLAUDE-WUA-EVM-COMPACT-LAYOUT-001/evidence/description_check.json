@@ -1,0 +1,14 @@
+{
+ "task": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+ "purpose": "§7: is editing 'Сильные стороны модели' broken? Checked on the code as published (#455) before any change",
+ "data": "synthetic demo (reports/CLAUDE-WUA-EVM-MODEL-CARD-UI-001/tools/demo_evm_cards.py), TEMP storage, built-in browser pane",
+ "steps": [
+  {"step": "open «Настройки» of a card", "observed": "window opens on the tab «Подключение»; the description field is on the hidden tab «Модель»"},
+  {"step": "tab «Модель», type text into evmSetDescription, «Сохранить настройки»", "observed": "no error; notice «Настройки сохранены: …»; form refilled from the server with the new text"},
+  {"step": "reload the page", "observed": "the card shows the saved text"},
+  {"step": "server restart", "observed": "covered by test_web_alarm_model_cards m13 (a new server over the same storage keeps the text); not repeated by hand"}
+ ],
+ "verdict": "NO SAVE DEFECT FOUND",
+ "cause_of_the_report": "discoverability: the card shows the text in a box that looks like a field but is read-only, and «Настройки» open on «Подключение»; nothing in the card says where the text is edited",
+ "action": "a visible «Изменить описание» command (and a click on the description box) opens «Настройки → Модель» with the cursor in the field; the 500-character limit, errors and base_revision stay as they were"
+}

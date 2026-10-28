@@ -1,0 +1,298 @@
+{
+ "task": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+ "controls": {
+  "test_web_alarm_model_cards": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  }
+ },
+ "results": [
+  {
+   "mutant": "V01 absent entries dropped on save",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 0,
+   "failing_tests": [],
+   "isolation_violations": 0,
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "V02 incomplete column order accepted",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m19_requests_are_checked_before_anything_is_written"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V03 column kind not checked",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m19_requests_are_checked_before_anything_is_written",
+    "test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V04 board revision not compared",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m19_requests_are_checked_before_anything_is_written",
+    "test_m21_concurrent_saves_and_a_damaged_file"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V05 damaged board file overwritten, not kept",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m21_concurrent_saves_and_a_damaged_file"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V06 repeated ids in the stored board accepted",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "ultra_ev')"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V07 new entries not appended",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m18_order_and_favourites_persist_and_touch_nothing_else",
+    "test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate",
+    "test_m21_concurrent_saves_and_a_damaged_file",
+    "ultra_ev')"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "V08 favourites of absent entries shown",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U10 hover opens at once",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E21"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U11 hover replaces a pinned card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E22"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U12 leaving closes a pinned card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E22"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U13 the star opens the card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E22"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U14 a drag from the star moves the card",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E24"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U15 a card dropped into another column",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E24"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U16 a refused order kept locally",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E26"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U17 the card measured while hidden",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U18 the card placed under the sticky header",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U19 «Изменить описание» opens the connection tab",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E28"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U20 the picker reads the model list at load",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E3"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U21 the picker sends the chat token",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E3"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "U22 the star nested in the card button",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E2"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  }
+ ],
+ "killed": 20,
+ "mutants": 21,
+ "purpose": "first mutant pass (V01 SURVIVED, kept before the test was strengthened, TEST-FLAKY-01 / TEST-QA-01)"
+}

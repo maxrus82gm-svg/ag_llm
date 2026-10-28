@@ -429,6 +429,141 @@ class Settings(Fixture):
                          "a manual entry never names an adapter module")
 
 
+API_IDS = [f"api:{s.provider}:{s.model_id}" for s in model_registry.list_model_specs()]
+
+
+class BoardView(Fixture):
+    """CLAUDE-WUA-EVM-COMPACT-LAYOUT-001: manual order of the EVM columns and favourites, kept apart from everything else."""
+
+    def view(self, api=None):
+        return (api or self.api).dispatch("GET", "/ultra/model-cards")[1]["view"]
+
+    def put(self, section, order, api=None, revision=...):
+        api = api or self.api
+        base = self.view(api)["revision"] if revision is ... else revision
+        return api.dispatch("POST", "/ultra/model-cards/view", {"base_revision": base, "section": section, "order": order})[1]["view"]
+
+    def extra_columns(self, mcp=(), local=()):
+        from web_alarm.ultra_connections import UltraConnections
+        real = UltraConnections.catalog
+
+        def catalog(this):
+            data = real(this)
+            data["columns"]["mcp_agents"] = {"state": "AVAILABLE", "connections": [{"connection_id": x} for x in mcp]}
+            data["columns"]["local_llm"] = {"state": "AVAILABLE", "connections": [{"connection_id": x} for x in local]}
+            return data
+        patcher = mock.patch.object(UltraConnections, "catalog", catalog)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_m18_order_and_favourites_persist_and_touch_nothing_else(self):
+        self.api.dispatch("POST", "/ultra/connections/selection", {"connection_id": "api:gigachat:gigachat_2_max"})
+        self.save(description="Описание")
+        first = self.view()
+        self.assertEqual((first["state"], first["revision"], first["sections"]["api"], first["sections"]["favorites"]),
+                         ("EMPTY", 0, API_IDS, []))
+        others = {name: (self.storage / "ultra" / name).read_bytes() for name in ("model_settings.json", "connections.json")}
+        tk_before = (os.lstat(self.tk).st_mtime_ns, self.tk.read_bytes())
+        order = list(reversed(API_IDS))
+        self.put("api", order)
+        self.put("favorites", [API_IDS[2], API_IDS[0]])
+        restarted = self.make()
+        view = self.view(restarted)
+        self.assertEqual((view["state"], view["revision"], view["sections"]["api"], view["sections"]["favorites"]),
+                         ("SAVED", 2, order, [API_IDS[2], API_IDS[0]]))
+        self.assertEqual({name: (self.storage / "ultra" / name).read_bytes() for name in others}, others)
+        self.assertFalse((self.storage / "ultra" / "api_checks.json").exists())
+        self.assertEqual((os.lstat(self.tk).st_mtime_ns, self.tk.read_bytes()), tk_before)
+        self.assertEqual([c["model_id"] for c in self.cards(restarted).values()], [s.model_id for s in model_registry.list_model_specs()],
+                         "the registry order of the cards is not changed by the board order")
+        stored = json.loads((self.storage / "ultra" / "evm_view.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(stored), {"schema", "version", "revision", "sections"}, "only references are stored")
+        self.assertNotIn(SECRET, json.dumps(stored))
+
+    def test_m19_requests_are_checked_before_anything_is_written(self):
+        for body, code in (({"section": "api", "order": API_IDS, "extra": 1}, "invalid_model_card_request"),
+                           ({"section": "nope", "order": []}, "invalid_model_card_request"),
+                           ({"section": "api", "order": "x"}, "invalid_model_card_request"),
+                           ({"section": "api", "order": ["not an id"]}, "invalid_model_card_request"),
+                           ({"section": "api", "order": API_IDS + [API_IDS[0]]}, "invalid_model_card_request"),
+                           ({"section": "api", "order": ["local:gigachat:gigachat_2"] + API_IDS[1:]}, "invalid_model_card_request"),
+                           ({"section": "api", "order": API_IDS[:-1]}, "settings_revision_conflict"),
+                           ({"section": "api", "order": API_IDS[:-1] + ["api:gigachat:gone_model"]}, "settings_revision_conflict"),
+                           ({"section": "favorites", "order": ["api:gigachat:gone_model"]}, "settings_revision_conflict")):
+            with self.subTest(code=code, body=str(body)[:60]):
+                error = self.refused("POST", "/ultra/model-cards/view", {"base_revision": 0, **body})
+                self.assertEqual(error.code, code)
+        self.assertFalse((self.storage / "ultra" / "evm_view.json").exists())
+        self.put("api", API_IDS)
+        error = self.refused("POST", "/ultra/model-cards/view", {"base_revision": 0, "section": "favorites", "order": []})
+        self.assertEqual(error.code, "settings_revision_conflict", "a stale revision is refused")
+        self.assertEqual(self.refused("GET", "/ultra/model-cards/view").status, 405)
+
+    def test_m20_new_and_removed_entries_keep_preferences_and_never_duplicate(self):
+        self.put("api", list(reversed(API_IDS)))
+        self.put("favorites", [API_IDS[1]])
+        reduced = {k: v for k, v in model_registry.MODEL_REGISTRY.items() if k != "gigachat_2_max"}
+        with mock.patch.object(model_registry, "MODEL_REGISTRY", MappingProxyType(reduced)):
+            view = self.view()
+            self.assertNotIn(API_IDS[1], view["sections"]["api"])
+            self.assertEqual((view["sections"]["favorites"], view["hidden"]), ([], 2))
+            self.put("api", view["sections"]["api"])  # saving while the model is absent keeps its stored place
+            self.put("favorites", [API_IDS[0]])  # editing the favourites meanwhile must not drop the absent one
+        grown = dict(model_registry.MODEL_REGISTRY)
+        grown["zz_new_model"] = ModelSpec("zz_new_model", "New", "gigachat", "New-1")
+        with mock.patch.object(model_registry, "MODEL_REGISTRY", MappingProxyType(grown)):
+            view = self.view()
+            self.assertEqual(view["sections"]["api"][-1], "api:gigachat:zz_new_model", "a new model is appended")
+            self.assertEqual(len(view["sections"]["api"]), len(set(view["sections"]["api"])), "no duplicates")
+            self.assertIn(API_IDS[1], view["sections"]["api"], "a model that came back is shown again")
+            self.assertEqual(view["sections"]["favorites"], [API_IDS[0], API_IDS[1]], "its favourite came back too")
+        self.extra_columns(mcp=["mcp:prov:gigachat_2"], local=["local:prov:gigachat_2", "local:prov:other"])
+        view = self.view()
+        self.assertEqual((view["sections"]["mcp"], view["sections"]["local"]), (["mcp:prov:gigachat_2"], ["local:prov:gigachat_2", "local:prov:other"]))
+        self.put("local", ["local:prov:other", "local:prov:gigachat_2"])
+        self.put("favorites", [API_IDS[1], "local:prov:gigachat_2", "mcp:prov:gigachat_2"])
+        view = self.view()
+        self.assertEqual(view["sections"]["local"], ["local:prov:other", "local:prov:gigachat_2"])
+        self.assertEqual(view["sections"]["favorites"], [API_IDS[1], "local:prov:gigachat_2", "mcp:prov:gigachat_2"],
+                         "the same tail under different kinds is three different entries")
+        self.assertEqual(self.refused("POST", "/ultra/model-cards/view", {"base_revision": view["revision"], "section": "mcp",
+                                                                           "order": ["local:prov:other"]}).code, "invalid_model_card_request")
+
+    def test_m21_concurrent_saves_and_a_damaged_file(self):
+        base, barrier, results = self.view()["revision"], threading.Barrier(2), []
+
+        def save(order):
+            api = self.make()
+            barrier.wait()
+            try:
+                api.dispatch("POST", "/ultra/model-cards/view", {"base_revision": base, "section": "api", "order": order})
+                results.append(("ok", order))
+            except ApiError as exc:
+                results.append((exc.code, order))
+        threads = [threading.Thread(target=save, args=(o,)) for o in (list(reversed(API_IDS)), API_IDS[1:] + API_IDS[:1])]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(20)
+        self.assertEqual(sorted(r[0] for r in results), ["ok", "settings_revision_conflict"])
+        self.assertEqual(self.view()["sections"]["api"], next(o for s, o in results if s == "ok"))
+        path = self.storage / "ultra" / "evm_view.json"
+        for damaged in (b"{nope", json.dumps({"schema": mc.VIEW_SCHEMA, "version": 1, "revision": True, "sections": {}}).encode(),
+                        json.dumps({"schema": mc.VIEW_SCHEMA, "version": 1, "revision": 3, "sections": {"api": [API_IDS[0], API_IDS[0]]}}).encode(),
+                        json.dumps({"schema": mc.VIEW_SCHEMA, "version": 1, "revision": 3, "sections": {"favorites": ["../../x"]}}).encode()):
+            with self.subTest(damaged=damaged[:30]):
+                path.write_bytes(damaged)
+                view = self.view()
+                self.assertEqual((view["state"], view["revision"], view["sections"]["api"], view["sections"]["favorites"]),
+                                 ("CORRUPT", None, API_IDS, []))
+        self.assertEqual(self.refused("POST", "/ultra/model-cards/view", {"base_revision": 3, "section": "api", "order": API_IDS}).code,
+                         "settings_revision_conflict")
+        self.put("favorites", [API_IDS[0]], revision=None)
+        kept = [p.read_bytes() for p in path.parent.iterdir() if p.name.startswith("evm_view.json.corrupt-")]
+        self.assertEqual(len(kept), 1, "the damaged file is kept for diagnosis")
+        self.assertEqual((self.view()["state"], self.view()["revision"], self.view()["sections"]["favorites"]), ("SAVED", 1, [API_IDS[0]]))
+
+
 class Http(Fixture):
     def serve(self):
         server = create_server(self.api, host="127.0.0.1", port=0)
@@ -469,6 +604,9 @@ class Http(Fixture):
             ("GET", "/ultra/model-cards?x=1", {}, b"", 400, "invalid_model_card_request"),
             ("POST", "/ultra/model-cards", origin, b"{}", 405, "method_not_allowed"),
             ("POST", "/ultra/model-cards/nope/settings", origin, b'{"base_revision": 1}', 404, "unknown_model"),
+            ("POST", "/ultra/model-cards/view", {}, b'{"base_revision": 0, "section": "favorites", "order": []}', 403, "model_cards_forbidden"),
+            ("POST", "/ultra/model-cards/view", {"Origin": "http://evil.example"}, b'{"base_revision": 0, "section": "favorites", "order": []}', 403, "model_cards_forbidden"),
+            ("POST", "/ultra/model-cards/view", origin, b'{"base_revision": 0, "section": "favorites", "order": []}', 200, None),
         ]
         bodies = []
         for method, path, headers, body, status, code in cases:

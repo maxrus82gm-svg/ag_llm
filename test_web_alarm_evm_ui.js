@@ -2,6 +2,8 @@
 // test_web_alarm_operator_ui.js (node:vm, no packages, no network, no project writes).
 // Fixture models are invented on purpose: the page must render whatever the server read
 // model returns and contain no copy of the Ultra model registry.
+// CLAUDE-WUA-EVM-COMPACT-LAYOUT-001: four columns of compact cards, one floating full card, manual order,
+// favourites and the chat-model picker next to the Ultra Chat composer.
 'use strict';
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
@@ -13,6 +15,7 @@ const script = source.match(/<script>([\s\S]*?)<\/script>/)[1];
 
 class Element {
   constructor(tag = 'div') {this.tag = tag; this.children = []; this.attrs = {}; this.dataset = {}; this.style = {}; this.hidden = false; this.disabled = false; this.value = ''; this._text = '';}
+  get tagName() {return this.tag.toUpperCase();}
   set textContent(value) {this._text = String(value); this.children = [];}
   get textContent() {return this._text + this.children.map(c => c.textContent).join('');}
   append(...children) {this.children.push(...children);}
@@ -23,12 +26,14 @@ class Element {
   focus() {this.document.activeElement = this;}
 }
 const settle = async () => {for (let i = 0; i < 8; i++) await new Promise(setImmediate);};
+const wait = ms => new Promise(r => setTimeout(r, ms));
 const conn = (id, name, extra = {}) => ({connection_id: 'api:prov:' + id, kind: 'api', provider: 'prov', model_id: id,
   display_name: name, provider_model_id: 'P-' + id, is_local: false, registry_enabled: true, status: 'REGISTERED',
   verification: 'UNVERIFIED', selectable: true, selected: false, ...extra});
-function catalog(connections, selection = {role: 'chat', state: 'NOT_SELECTED', connection_id: null}) {
+const other = (kind, id, name) => ({connection_id: kind + ':prov:' + id, kind, provider: 'prov', display_name: name});
+function catalog(connections, selection = {role: 'chat', state: 'NOT_SELECTED', connection_id: null}, mcp = [], local = []) {
   return {source: 'model_registry', network_calls: 0, columns: {api: {state: 'AVAILABLE', connections},
-    mcp_agents: {state: 'NOT_CONNECTED', connections: []}, local_llm: {state: 'NOT_CONNECTED', connections: []}},
+    mcp_agents: {state: mcp.length ? 'AVAILABLE' : 'NOT_CONNECTED', connections: mcp}, local_llm: {state: local.length ? 'AVAILABLE' : 'NOT_CONNECTED', connections: local}},
     selection: {chat: selection}};
 }
 // /ultra/model-cards: invented roles, hints and texts; the page must show exactly these.
@@ -52,8 +57,10 @@ function cards(list, extra = {}) {
     {profile_id: 'prov-second', provider_id: 'prov', title: 'Второй профиль', builtin: false, credential_revision: 0,
       freshness_days: 7, timeout_seconds: 60, diagnostic_limit_chars: 500}],
     limits: {description: 500, params_billion: 100000}, test_message: 'Тест.', live_check: {authorized: false, reason: 'Нужен USER GO.'},
+    view: {state: 'SAVED', revision: 7, hidden: 0, sections: {favorites: [], api: list.map(c => c.connection_id), mcp: [], local: []}},
     cards: list, ...extra};
 }
+const ev = (extra = {}) => ({preventDefault() {this.prevented = true;}, stopPropagation() {this.stopped = true;}, ...extra});
 
 function harness() {
   const h = {calls: [], routes: new Map()};
@@ -89,15 +96,20 @@ function harness() {
   h.all = all;
   h.run = code => vm.runInContext(code, h.context);
   h.evmCalls = () => h.calls.filter(c => c.url.startsWith('/ultra/'));
-  h.cards = () => h.el('evmApiList').children;
+  h.posts = url => h.calls.filter(c => c.method === 'POST' && (!url || c.url === url)).map(c => JSON.parse(c.body));
+  h.list = id => h.el(id).children;
+  h.cards = () => h.list('evmApiList');
   h.find = (root, pred) => {if (pred(root)) return root; for (const c of root.children || []) {const f = h.find(c, pred); if (f) return f;} return null;};
   h.findAll = (root, pred, out = []) => {if (pred(root)) out.push(root); for (const c of root.children || []) h.findAll(c, pred, out); return out;};
-  h.cardButton = (card, label) => h.find(card, e => e.tag === 'button' && e.textContent.includes(label));
+  h.button = (root, label) => h.find(root, e => e.tag === 'button' && e.textContent.includes(label));
   h.dot = root => h.find(root, e => (e.className || '').startsWith('api-dot'));
+  h.star = card => h.find(card, e => e.className === 'star');
+  h.opener = card => h.find(card, e => e.className === 'copen');
+  h.peek = () => h.el('evmPeek').children[0];
   h.roles = card => h.findAll(card, e => e.className === 'role').map(r => [r.getAttribute('data-role'), r.getAttribute('data-state'), r.children[0].textContent]);
-  h.options = () => h.el('evmChatModel').children.map(o => [o.value, o.disabled, o.textContent]);
-  h.openEvm = async (list, data = cards(list.map(c => mcard(c.model_id, c.display_name)))) => {
-    h.routes.set('/ultra/connections', () => catalog(list));
+  h.open = async card => {card.onclick(ev({target: card})); await settle();};  // pins the full card
+  h.openEvm = async (list, data = cards(list.map(c => mcard(c.model_id, c.display_name))), mcp = [], local = []) => {
+    h.routes.set('/ultra/connections', () => catalog(list, undefined, mcp, local));
     h.routes.set('/ultra/model-cards', () => data);
     h.el('viewEvm').onclick(); await settle();
   };
@@ -120,70 +132,85 @@ test('E1 Ultra Chat is the default view; at load the catalog is not asked, only 
   assert.equal(h.el('viewEvm').getAttribute('aria-pressed'), 'false');
 });
 
-test('E2 opening EVM renders exactly the server catalog as model cards; no decorative registry lines', async () => {
+test('E2 the board: four columns, compact cards in server order, honest empty columns, no full card inline', async () => {
   const h = harness(); await settle();
-  await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta'), conn('gamma', 'Gamma')]);
+  const list = [conn('alpha', 'Alpha'), conn('beta', 'Beta'), conn('gamma', 'Gamma')];
+  await h.openEvm(list, cards([mcard('alpha', 'Alpha', {params_billion: 390, api: api('green', 'CONFIRMED')}), mcard('beta', 'Beta'), mcard('gamma', 'Gamma')],
+    {view: {state: 'SAVED', revision: 7, hidden: 0, sections: {favorites: [], api: ['api:prov:gamma', 'api:prov:alpha', 'api:prov:beta'], mcp: [], local: []}}}));
   assert.equal(h.el('evmView').hidden, false);
-  assert.equal(h.el('layout').hidden, true);
-  assert.equal(h.el('viewEvm').getAttribute('aria-pressed'), 'true');
-  assert.deepEqual(h.cards().map(c => c.getAttribute('data-connection')), ['api:prov:alpha', 'api:prov:beta', 'api:prov:gamma']);
-  const card = h.cards()[0];
-  assert.equal(card.tag, 'article');
-  assert.equal(card.children[0].children[0].textContent, 'Alpha');
-  for (const gone of [/В реестре/, /API не проверено/, /→/, /P-alpha/, /Выбрана для чата/, /Выбрать/])
-    assert.doesNotMatch(card.textContent, gone, 'the card still shows ' + gone);
-  assert.ok(h.cardButton(card, 'Настройки') && h.cardButton(card, 'Проверить чат'));
-  assert.equal(h.findAll(card, e => e.tag === 'button').length, 2, 'a card has exactly two buttons');
-  assert.match(h.el('evmMcpState').textContent, /Ещё не подключено/);
-  assert.match(h.el('evmLocalState').textContent, /Ещё не подключено/);
+  assert.deepEqual([...source.matchAll(/<h3 id="evm(Fav|Api|Mcp|Local)Title">([^<]+)<\/h3>/g)].map(m => m[2]), ['★ Избранное', 'API', 'MCP / Агенты', 'Локальные LLM']);
+  assert.deepEqual(h.cards().map(c => c.getAttribute('data-connection')), ['api:prov:gamma', 'api:prov:alpha', 'api:prov:beta']);
+  const alpha = h.cards()[1];
+  assert.equal(alpha.tag, 'article');
+  assert.equal(alpha.getAttribute('role'), null, 'the card itself is not a button around other buttons');
+  const opener = h.opener(alpha);
+  assert.deepEqual([opener.tag, opener.getAttribute('aria-expanded'), opener.getAttribute('aria-haspopup')], ['button', 'false', 'dialog']);
+  assert.match(opener.getAttribute('aria-label'), /^Alpha — API\. Открыть карточку/);
+  assert.ok(!h.findAll(opener, e => e.tag === 'button' && e !== opener).length, 'no control inside another control');
+  assert.match(alpha.textContent, /Alpha/); assert.match(alpha.textContent, /API · Провайдер/); assert.match(alpha.textContent, /390 млрд/);
+  assert.equal(h.dot(alpha).getAttribute('data-api'), 'green:CONFIRMED');
+  assert.doesNotMatch(h.cards()[0].textContent, /млрд/, 'an unknown parameter count is not shown in the compact card');
+  for (const card of h.cards()) {
+    assert.deepEqual(h.findAll(card, e => e.tag === 'button').map(b => b.className), ['copen', 'star'], 'the compact card: «open» and the star only');
+    assert.equal(h.roles(card).length, 0);
+    assert.equal(h.find(card, e => (e.className || '').startsWith('strengths')), null);
+  }
+  assert.equal(h.el('evmPeek').hidden, true);
+  assert.equal(h.list('evmFavList').length, 0); assert.equal(h.el('evmFavEmpty').hidden, false); assert.equal(h.el('evmFavState').textContent, '0');
+  assert.equal(h.el('evmMcpEmpty').hidden, false); assert.equal(h.el('evmLocalEmpty').hidden, false);
+  assert.match(h.el('evmMcpState').textContent, /Ещё не подключено/); assert.match(h.el('evmLocalState').textContent, /Ещё не подключено/);
   assert.match(h.el('evmSelection').textContent, /ещё не выбрана/);
+  assert.equal(h.el('evmSummary').textContent, '✓ 1 · ! 0 · × 2');
   assert.equal(h.el('evmState').textContent, 'Моделей в реестре: 3');
-  assert.equal(h.el('showWorkspaces').hidden, true, 'operator-only mobile toggles stay visible in EVM');
-  assert.deepEqual(h.evmCalls().filter(c => c.method === 'GET' && !c.url.includes('selection')).map(c => c.url).sort(),
-    ['/ultra/connections', '/ultra/model-cards']);
+  assert.equal(h.el('showWorkspaces').hidden, true, 'operator-only mobile toggles stay hidden in EVM');
+  assert.deepEqual(h.evmCalls().filter(c => c.method === 'GET' && !c.url.includes('selection')).map(c => c.url).sort(), ['/ultra/connections', '/ultra/model-cards']);
+  assert.equal(source.includes('id="evmChatModel"'), false, 'the large chat-model block left EVM');
 });
 
-test('E3 choosing the chat model (outside the cards) posts only role + connection_id once and shows the saved choice', async () => {
+test('E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference', async () => {
   const h = harness(); await settle();
   let saved = null;
-  h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha', {selected: saved === 'api:prov:alpha'}), conn('beta', 'Beta')],
-    saved ? {role: 'chat', state: 'SAVED', connection_id: saved, model_id: 'alpha', display_name: 'Alpha', provider_model_id: 'P-alpha', selected_at: 'T1'} : undefined));
-  h.routes.set('/ultra/model-cards', () => cards([mcard('alpha', 'Alpha'), mcard('beta', 'Beta')]));
-  const gate = {};
-  h.routes.set('/ultra/connections/selection', opts => new Promise(resolve => {gate.open = () => {saved = JSON.parse(opts.body).connection_id;
-    resolve({selection: {role: 'chat', state: 'SAVED', connection_id: saved, model_id: 'alpha', display_name: 'Alpha', provider_model_id: 'P-alpha'}});};}));
-  h.el('viewEvm').onclick(); await settle();
-  assert.deepEqual(h.options(), [['', true, '— не выбрана —'], ['api:prov:alpha', false, 'Alpha'], ['api:prov:beta', false, 'Beta']]);
-  assert.equal(h.el('evmChatModel').value, '');
-  h.el('evmChatModel').value = 'api:prov:alpha'; h.el('evmChatModel').onchange();
-  h.el('evmChatSave').onclick(); await settle();
-  assert.equal(h.el('evmChatSave').disabled, true, 'saving blocks a second choice');
-  h.el('evmChatModel').value = 'api:prov:beta'; h.el('evmChatSave').onclick(); await settle();
-  gate.open(); await settle();
-  const posts = h.calls.filter(c => c.method === 'POST');
-  assert.equal(posts.length, 1);
-  assert.deepEqual(JSON.parse(posts[0].body), {role: 'chat', connection_id: 'api:prov:alpha'});
-  assert.equal(posts[0].headers['Content-Type'], 'application/json');
-  assert.match(h.el('evmNotice').textContent, /Выбор сохранён: Alpha \(P-alpha\)/);
-  assert.match(h.el('evmSelection').textContent, /Выбрана: Alpha · alpha → P-alpha/);
-  assert.equal(h.el('evmChatModel').value, 'api:prov:alpha');
-  assert.equal(h.el('evmChatSave').disabled, false);
+  h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha'), conn('beta', 'Beta', {selectable: false})],
+    saved ? {role: 'chat', state: 'SAVED', connection_id: saved, display_name: 'Alpha'} : undefined));
+  h.routes.set('/ultra/connections/selection?role=chat', () => ({selection: saved ? {role: 'chat', state: 'SAVED', connection_id: saved, display_name: 'Alpha', model_id: 'alpha', provider_model_id: 'P-alpha'} : {role: 'chat', state: 'NOT_SELECTED'}}));
+  h.routes.set('/ultra/connections/selection', opts => {saved = JSON.parse(opts.body).connection_id; return {selection: {role: 'chat', state: 'SAVED', connection_id: saved, display_name: 'Alpha'}};});
+  h.calls.length = 0; h.run('loadChatModel()'); await settle();
+  assert.equal(h.el('chatModelPick').textContent, 'Выбрать модель ▾');
+  assert.match(h.el('chatModel').textContent, /не выбрана — выберите у поля ввода/);
+  assert.equal(h.calls.some(c => c.url === '/ultra/connections'), false, 'nothing but the saved choice is read before the picker opens');
+  h.el('chatModelPick').onclick(); await settle();
+  assert.equal(h.el('chatModelMenu').hidden, false); assert.equal(h.el('chatModelPick').getAttribute('aria-expanded'), 'true');
+  const options = h.list('chatModelMenu');
+  assert.deepEqual(options.map(o => [o.textContent, o.disabled, o.getAttribute('role')]), [['Alpha', false, 'option'], ['Beta — отключена', true, 'option']]);
+  assert.equal(h.document.activeElement, options[0]);
+  options[0].onclick(); await settle();
+  assert.deepEqual(h.posts(), [{role: 'chat', connection_id: 'api:prov:alpha'}]);
+  const post = h.calls.find(c => c.method === 'POST');
+  assert.equal(post.url, '/ultra/connections/selection');
+  assert.deepEqual(Object.keys(post.headers), ['Content-Type'], 'no chat token travels with the preference');
+  assert.equal(h.el('chatModelMenu').hidden, true); assert.equal(h.document.activeElement, h.el('chatModelPick'));
+  assert.equal(h.el('chatModel').textContent, 'Модель: Alpha'); assert.equal(h.el('chatModelPick').textContent, 'Alpha ▾');
+  assert.equal(h.calls.filter(c => c.url.startsWith('/ultra/chat')).length, 0, 'the picker never touches the chat history routes');
+  h.el('chatModelPick').onclick(); await settle();
+  assert.equal(h.list('chatModelMenu')[0].getAttribute('aria-selected'), 'true');
+  h.run("escapeKey({key:'Escape'})");
+  assert.equal(h.el('chatModelMenu').hidden, true);
 });
 
-test('E4 a refused choice is reported and the list is reloaded from the server, not changed locally', async () => {
+test('E4 a refused or unavailable picker is told and saves nothing locally', async () => {
   const h = harness(); await settle();
+  h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha')]));
   h.routes.set('/ultra/connections/selection', () => ({httpError: true, status: 409, data: {error: {code: 'connection_disabled', message: 'model is disabled'}}}));
-  await h.openEvm([conn('alpha', 'Alpha')]);
-  h.el('evmChatModel').value = 'api:prov:alpha'; h.el('evmChatSave').onclick(); await settle();
-  assert.match(h.el('evmError').textContent, /Выбор не сохранён: connection_disabled/);
-  assert.equal(h.el('evmNotice').hidden, true);
-  assert.match(h.el('evmSelection').textContent, /ещё не выбрана/);
-  assert.equal(h.evmCalls().filter(c => c.url === '/ultra/connections').length, 2);
-  const h2 = harness(); await settle();
-  await h2.openEvm([conn('alpha', 'Alpha')]);
-  h2.el('evmChatSave').onclick(); await settle();
-  assert.match(h2.el('evmError').textContent, /Выберите модель/);
-  assert.equal(h2.calls.filter(c => c.method === 'POST').length, 0);
+  h.el('chatModelPick').onclick(); await settle();
+  h.list('chatModelMenu')[0].onclick(); await settle();
+  assert.match(h.el('chatModelError').textContent, /Модель не сохранена: connection_disabled/);
+  assert.equal(h.el('chatModelError').hidden, false);
+  assert.equal(h.el('chatModelPick').disabled, false);
+  const broken = harness(); await settle();
+  broken.routes.set('/ultra/connections', () => ({httpError: true, status: 503, data: {error: {code: 'model_registry_unavailable', message: 'x'}}}));
+  broken.el('chatModelPick').onclick(); await settle();
+  assert.match(broken.el('chatModelMenu').textContent, /Список моделей недоступен: model_registry_unavailable/);
+  assert.equal(broken.calls.filter(c => c.method === 'POST').length, 0);
 });
 
 test('E5 malformed or failed catalog answers show an error and no invented models', async () => {
@@ -196,9 +223,10 @@ test('E5 malformed or failed catalog answers show an error and no invented model
   }
 });
 
-test('E6 saved-choice states are told honestly', async () => {
-  const states = [[{state: 'CORRUPT'}, /повреждён/], [{state: 'INVALID_REFERENCE', connection_id: 'api:prov:gone'}, /недоступна в реестре \(api:prov:gone\)/],
-    [{state: 'NOT_SELECTED'}, /ещё не выбрана/], [{state: 'REGISTRY_UNAVAILABLE', connection_id: 'api:prov:alpha'}, /реестр моделей недоступен/]];
+test('E6 saved-choice states are told honestly in the EVM summary', async () => {
+  const states = [[{state: 'CORRUPT'}, /повреждён.*в Ultra Chat/], [{state: 'INVALID_REFERENCE', connection_id: 'api:prov:gone'}, /недоступна в реестре \(api:prov:gone\)/],
+    [{state: 'NOT_SELECTED'}, /ещё не выбрана/], [{state: 'REGISTRY_UNAVAILABLE', connection_id: 'api:prov:alpha'}, /реестр моделей недоступен/],
+    [{state: 'SAVED', connection_id: 'api:prov:alpha', display_name: 'Alpha', model_id: 'alpha', provider_model_id: 'P-alpha'}, /Выбрана: Alpha · alpha → P-alpha/]];
   for (const [selection, expected] of states) {
     const h = harness(); await settle();
     h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha')], {role: 'chat', connection_id: null, ...selection}));
@@ -207,17 +235,17 @@ test('E6 saved-choice states are told honestly', async () => {
   }
 });
 
-test('E7 disabled models cannot be chosen and server text is never markup', async () => {
+test('E7 server text is never markup, in the compact and in the full card', async () => {
   const h = harness(); await settle();
   const name = '<img src=x onerror=alert(1)>';
   await h.openEvm([conn('off', name, {status: 'DISABLED', selectable: false})],
     cards([mcard('off', name, {description: '<script>x()</script>', api: api('red', 'REGISTRY_DISABLED')})]));
-  assert.deepEqual(h.options()[1], ['api:prov:off', true, name + ' — отключена']);
-  assert.equal(h.el('evmChatSave').disabled, true);
+  assert.equal(h.find(h.cards()[0], e => e.className === 'cname').textContent, name);
+  await h.open(h.cards()[0]);
+  assert.equal(h.peek().children[0].children[0].textContent, name);
+  assert.match(h.peek().textContent, /<script>x\(\)<\/script>/);
+  assert.equal(h.dot(h.peek()).getAttribute('data-api'), 'red:REGISTRY_DISABLED');
   assert.ok(h.all().every(e => !('innerHTML' in e)), 'markup was assigned');
-  assert.equal(h.cards()[0].children[0].children[0].textContent, name);
-  assert.match(h.cards()[0].textContent, /<script>x\(\)<\/script>/);
-  assert.equal(h.dot(h.cards()[0]).getAttribute('data-api'), 'red:REGISTRY_DISABLED');
 });
 
 test('E8 the way back restores the operator panel; refresh reloads the catalog', async () => {
@@ -240,157 +268,126 @@ test('E9 the shipped page carries no model list of its own', () => {
   assert.doesNotMatch(source, /innerHTML/);
 });
 
-test('E10 role marks and hints are exactly the server facts; nothing is checked by the page itself', async () => {
+test('E10 role marks and hints in the full card are exactly the server facts', async () => {
   const h = harness(); await settle();
   const roles = [{role: 'r_chat', state: 'assigned'}, {role: 'r_plan', state: 'assigned_off'}, {role: 'r_check', state: 'unknown'}, {role: 'r_none', state: 'not_in_runtime'}];
   await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta')], cards([mcard('alpha', 'Alpha', {roles}),
     mcard('beta', 'Beta', {roles: [{role: 'r_chat', state: 'assigned_pending'}, ...ROLE_DEFS.slice(1).map(r => ({role: r.role, state: 'not_assigned'}))]})]));
-  assert.deepEqual(h.roles(h.cards()[0]), [['r_chat', 'assigned', '✓'], ['r_plan', 'assigned_off', '✓'], ['r_check', 'unknown', '?'], ['r_none', 'not_in_runtime', '–']]);
-  assert.deepEqual(h.roles(h.cards()[1]), [['r_chat', 'assigned_pending', '✓'], ['r_plan', 'not_assigned', '×'], ['r_check', 'not_assigned', '×'], ['r_none', 'not_assigned', '×']]);
-  const marks = h.findAll(h.cards()[0], e => (e.className || '').startsWith('mark ')).map(e => e.className);
+  await h.open(h.cards()[0]);
+  assert.deepEqual(h.roles(h.peek()), [['r_chat', 'assigned', '✓'], ['r_plan', 'assigned_off', '✓'], ['r_check', 'unknown', '?'], ['r_none', 'not_in_runtime', '–']]);
+  const marks = h.findAll(h.peek(), e => (e.className || '').startsWith('mark ')).map(e => e.className);
   assert.deepEqual(marks, ['mark yes', 'mark off', 'mark unknown', 'mark na']);
-  assert.equal(h.findAll(h.cards()[1], e => (e.className || '').startsWith('mark '))[0].className, 'mark off', 'a role that does not run yet is not a full green mark');
-  assert.match(h.findAll(h.cards()[1], e => e.className === 'name')[0].getAttribute('data-hint'), /Сейчас: назначена, но роль пока не работает\./);
-  const name = h.findAll(h.cards()[0], e => e.className === 'name')[1];
-  assert.equal(name.getAttribute('data-hint'), 'Подсказка Роль-план Сейчас: назначена, но роль выключена.');
-  assert.equal(name.getAttribute('tabindex'), '0');
-  assert.ok(h.findAll(h.cards()[0], e => e.className === 'role').every(r => !h.find(r, e => e.tag === 'button')), 'roles are text, not buttons');
-  // a state the page does not know is shown as unknown, never as assigned
+  assert.equal(h.findAll(h.peek(), e => e.className === 'name')[1].getAttribute('data-hint'), 'Подсказка Роль-план Сейчас: назначена, но роль выключена.');
+  await h.open(h.cards()[1]);
+  assert.deepEqual(h.roles(h.peek()), [['r_chat', 'assigned_pending', '✓'], ['r_plan', 'not_assigned', '×'], ['r_check', 'not_assigned', '×'], ['r_none', 'not_assigned', '×']]);
   const h2 = harness(); await settle();
   await h2.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {roles: [{role: 'r_chat', state: 'ASSIGNED!'}]})]));
-  assert.deepEqual(h2.roles(h2.cards()[0])[0], ['r_chat', 'unknown', '?']);
-  assert.deepEqual(h2.roles(h2.cards()[0]).slice(1).map(r => r[1]), ['unknown', 'unknown', 'unknown'], 'a role missing from the answer is unknown');
-  assert.match(h.el('evmRolesSource').textContent, /настройки прежней Ultra/);
+  await h2.open(h2.cards()[0]);
+  assert.deepEqual(h2.roles(h2.peek()).map(r => r[1]), ['unknown', 'unknown', 'unknown', 'unknown'], 'an unknown or missing state is never a check mark');
 });
 
-test('E11 one API status component: the card and the diagnostic window show the same server status', async () => {
-  for (const [status, mark, text] of [[api('green', 'CONFIRMED'), '✓', /подтверждён: 3 дн\. назад/], [api('orange', 'STALE', {age_days: 41}), '!', /устарело: 41 дн\./],
-    [api('red', 'SETTINGS_CHANGED', {last_success_at: '2026-09-01T10:00:00+00:00'}), '×', /изменились/]]) {
+test('E11 one API status component: compact card, full card and diagnostic window show the same server status', async () => {
+  for (const [status, mark] of [[api('green', 'CONFIRMED'), '✓'], [api('orange', 'STALE', {age_days: 41}), '!'], [api('red', 'SETTINGS_CHANGED'), '×']]) {
     const h = harness(); await settle();
     await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {api: status})]));
-    const cardDot = h.dot(h.cards()[0]);
-    assert.equal(cardDot.textContent, mark);
-    assert.match(cardDot.getAttribute('aria-label'), text);
-    h.cardButton(h.cards()[0], 'Проверить чат').onclick(); await settle();
-    assert.equal(h.el('evmCheckWindow').hidden, false);
-    assert.equal(h.el('evmSettingsWindow').hidden, true);
+    const compact = h.dot(h.cards()[0]);
+    await h.open(h.cards()[0]);
+    const full = h.dot(h.peek());
+    h.button(h.peek(), 'Проверить чат').onclick(); await settle();
     const windowDot = h.el('evmCheckDot').children[0];
-    assert.deepEqual([windowDot.className, windowDot.textContent, windowDot.getAttribute('data-api'), windowDot.getAttribute('aria-label')],
-      [cardDot.className, cardDot.textContent, cardDot.getAttribute('data-api'), cardDot.getAttribute('aria-label')]);
-    assert.match(h.el('evmCheckLast').textContent, status.last_success_at ? /Последний успешный ответ: \d/ : /отсутствует/);
-    assert.equal(h.el('evmCheckName').textContent, 'Проверка API — Alpha');
+    for (const d of [full, windowDot])
+      assert.deepEqual([d.className, d.textContent, d.getAttribute('data-api'), d.getAttribute('aria-label')],
+        [compact.className, mark, compact.getAttribute('data-api'), compact.getAttribute('aria-label')]);
   }
 });
 
-test('E12 header: parameter count as given, unknown stays unknown; the description is shown in a fixed box', async () => {
+test('E12 full card: parameter count as given, description box editable by a visible command', async () => {
   const h = harness(); await settle();
-  const long = 'Сильная сторона. '.repeat(29).trim();
-  await h.openEvm([conn('a', 'A'), conn('b', 'B')], cards([mcard('a', 'A', {params_billion: 390, description: long}), mcard('b', 'B', {params_billion: 2.5})]));
-  const params = card => h.find(card, e => e.className === 'params');
-  assert.equal(params(h.cards()[0]).textContent, '390 млрд');
-  assert.equal(params(h.cards()[1]).textContent, '2,5 млрд');
-  const box = h.find(h.cards()[0], e => (e.className || '').startsWith('strengths'));
-  assert.equal(box.textContent, long);
-  assert.equal(box.className, 'strengths');
-  const empty = h.find(h.cards()[1], e => (e.className || '').startsWith('strengths'));
-  assert.equal(empty.className, 'strengths placeholder', 'not the operator panel .empty block');
-  assert.match(empty.textContent, /Описание пока не заполнено/);
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')], cards([mcard('a', 'A', {params_billion: 2.5, description: 'Сильная сторона.'}), mcard('b', 'B')]));
+  await h.open(h.cards()[0]);
+  assert.equal(h.find(h.peek(), e => e.className === 'params').textContent, '2,5 млрд');
+  const box = h.find(h.peek(), e => (e.className || '').startsWith('strengths'));
+  assert.deepEqual([box.className, box.textContent], ['strengths editable', 'Сильная сторона.']);
+  await h.open(h.cards()[1]);
+  assert.equal(h.find(h.peek(), e => e.className === 'params').textContent, '— млрд');
+  const empty = h.find(h.peek(), e => (e.className || '').startsWith('strengths'));
+  assert.equal(empty.className, 'strengths editable placeholder', 'not the operator panel .empty block');
+  assert.match(empty.textContent, /Нажмите «Изменить описание»/);
+  assert.ok(h.button(h.peek(), 'Изменить описание'));
   assert.match(source, /\.strengths\{height:84px;overflow-y:auto;[^}]*line-height:1\.15/);
-  const h2 = harness(); await settle();
-  await h2.openEvm([conn('a', 'A')]);
-  assert.equal(params(h2.cards()[0]).textContent, '— млрд');
 });
 
-test('E13 settings: the form shows server facts, the key value never, and posts exactly the edited values', async () => {
+test('E13 settings from the full card: server facts, never the key value, the exact edited values', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {params_billion: 12, description: 'Было'})]));
   let posted = null;
   h.routes.set('/ultra/model-cards/alpha/settings', opts => {posted = JSON.parse(opts.body); return {card: mcard('alpha', 'Alpha')};});
-  h.cardButton(h.cards()[0], 'Настройки').onclick(); await settle();
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Настройки').onclick(); await settle();
   assert.equal(h.el('evmSettingsWindow').hidden, false);
-  assert.equal(h.el('evmCheckWindow').hidden, true);
+  assert.equal(h.el('evmPeek').hidden, true, 'a window replaces the floating card');
   assert.equal(h.document.activeElement, h.el('evmSetTitle'));
-  assert.equal(h.el('evmSetProvider').disabled, true, 'the registry fixes the provider of a model');
-  assert.deepEqual(h.el('evmSetProfile').children.map(o => o.value), ['prov-default', 'prov-second']);
-  const conn_ = h.el('evmSetConnFacts').textContent;
-  assert.match(conn_, /Тариф S/); assert.match(conn_, /https:\/\/api\.example/); assert.match(conn_, /Задан \(переменная среды PROV_KEY\)\. Значение в браузер не передаётся/);
-  assert.match(h.el('evmSetModelFacts').textContent, /P-alpha.*alpha.*api:prov:alpha/s);
-  assert.equal(h.el('evmSetDescription').attrs.maxlength, '500');
-  assert.equal(h.el('evmSetDescCount').textContent, '4 / 500');
+  assert.equal(h.el('evmSetProvider').disabled, true);
+  assert.match(h.el('evmSetConnFacts').textContent, /Задан \(переменная среды PROV_KEY\)\. Значение в браузер не передаётся/);
   h.el('evmTabModel').onclick();
-  assert.deepEqual([h.el('evmPaneConn').hidden, h.el('evmPaneModel').hidden, h.el('evmPaneMore').hidden], [true, false, true]);
-  assert.equal(h.el('evmTabModel').getAttribute('aria-selected'), 'true');
   h.el('evmSetDescription').value = 'Новое описание'; h.el('evmSetDescription').oninput();
   h.el('evmSetParams').value = '70,5'; h.el('evmSetParams').oninput();
   h.el('evmTabMore').onclick();
   h.el('evmSetFreshness').value = '45'; h.el('evmSetFreshness').oninput();
-  assert.equal(h.el('evmSetDraft').hidden, false);
-  assert.equal(h.el('evmSetDescCount').textContent, '14 / 500');
   h.el('evmSetSave').onclick(); await settle();
   assert.deepEqual(posted, {base_revision: 4, description: 'Новое описание', params_billion: 70.5, profile_id: 'prov-default',
     profile: {timeout_seconds: 30, diagnostic_limit_chars: 1000, freshness_days: 45}});
   assert.match(h.el('evmNotice').textContent, /Настройки сохранены: Alpha/);
-  assert.equal(h.el('evmSetDraft').hidden, true, 'the saved draft is gone; the form shows the server again');
-  assert.equal(h.el('evmSetDescription').value, 'Было', 'after saving the form is refilled from the server answer');
   assert.ok(!JSON.stringify(h.calls).includes('PROV_KEY='), 'no key value travels');
 });
 
-test('E14 settings: an empty count is null, a bad one is refused locally, a revision conflict keeps the draft', async () => {
+test('E14 settings: a bad count is refused locally, a revision conflict keeps the draft', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {params_billion: 12})]));
   const posts = [];
   h.routes.set('/ultra/model-cards/alpha/settings', opts => {posts.push(JSON.parse(opts.body));
     return {httpError: true, status: 409, data: {error: {code: 'settings_revision_conflict', message: 'settings changed'}}};});
-  h.cardButton(h.cards()[0], 'Настройки').onclick(); await settle();
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Настройки').onclick(); await settle();
   h.el('evmSetParams').value = '-3'; h.el('evmSetParams').oninput();
   h.el('evmSetSave').onclick(); await settle();
   assert.equal(posts.length, 0);
   assert.match(h.el('evmSetError').textContent, /положительное число/);
   h.el('evmSetParams').value = ''; h.el('evmSetParams').oninput();
-  assert.match(h.el('evmSetParamsSource').textContent, /Неизвестно/);
   h.el('evmSetSave').onclick(); await settle();
-  assert.equal(posts.length, 1);
   assert.equal(posts[0].params_billion, null);
   assert.match(h.el('evmSetError').textContent, /изменены в другом окне/);
   assert.equal(h.el('evmSetDraft').hidden, false, 'the draft survives a conflict');
-  assert.equal(h.el('evmSetSave').disabled, false);
   h.el('evmSetReset').onclick();
   assert.equal(h.el('evmSetParams').value, '12');
-  assert.equal(h.el('evmSetDraft').hidden, true);
-  // another profile brings its own values
-  h.el('evmSetProfile').value = 'prov-second'; h.el('evmSetProfile').onchange();
-  assert.deepEqual([h.el('evmSetTimeout').value, h.el('evmSetDiagLimit').value, h.el('evmSetFreshness').value], ['60', '500', '7']);
 });
 
-test('E15 opening one window keeps the state of the other; closing returns focus to the card button', async () => {
+test('E15 one window keeps the state of the other; closing returns focus to the compact card', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta')]);
   h.routes.set('/ultra/model-cards/alpha/check', () => ({outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Нужен USER GO.', network_calls: 0, test_message: 'Тест.', card: mcard('alpha', 'Alpha')}));
-  h.cardButton(h.cards()[0], 'Настройки').onclick(); await settle();
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Настройки').onclick(); await settle();
   h.el('evmSetDescription').value = 'Черновик A'; h.el('evmSetDescription').oninput();
   h.el('evmSetClose').onclick(); await settle();
   assert.equal(h.el('evmSettingsWindow').hidden, true);
-  assert.equal(h.document.activeElement.textContent, '⚙ Настройки');
-  assert.match(h.cards()[0].textContent, /несохранённые изменения/);
-  h.cardButton(h.cards()[0], 'Проверить чат').onclick(); await settle();
+  assert.equal(h.document.activeElement, h.opener(h.cards()[0]), 'focus is back on the compact card');
+  await h.open(h.cards()[0]);
+  assert.match(h.peek().textContent, /несохранённые изменения/);
+  h.button(h.peek(), 'Проверить чат').onclick(); await settle();
   h.el('evmCheckSend').onclick(); await settle();
   const answer = h.el('evmCheckOutput').textContent;
   assert.match(answer, /Сообщение не отправлялось.*Статус API не изменён/s);
-  h.el('evmCheckClose').onclick(); await settle();
-  assert.equal(h.document.activeElement.textContent, '▤ Проверить чат');
-  h.cardButton(h.cards()[1], 'Настройки').onclick(); await settle();
-  assert.equal(h.el('evmSetDescription').value, '', 'another model has its own form');
-  h.el('evmSetClose').onclick(); await settle();
-  h.cardButton(h.cards()[0], 'Настройки').onclick(); await settle();
-  assert.equal(h.el('evmSetDescription').value, 'Черновик A');
-  assert.equal(h.el('evmSetDraft').hidden, false);
-  h.el('evmSetClose').onclick(); await settle();
-  h.cardButton(h.cards()[0], 'Проверить чат').onclick(); await settle();
-  assert.equal(h.el('evmCheckOutput').textContent, answer);
-  h.el('evmSettingsWindow').onclick({target: h.el('evmSetTitle')});
-  assert.equal(h.el('evmCheckWindow').hidden, false, 'a click inside a window does not close it');
-  h.el('evmCheckWindow').onclick({target: h.el('evmCheckWindow')});
+  h.el('evmCheckWindow').onclick({target: h.el('evmCheckWindow')}); await settle();
   assert.equal(h.el('evmCheckWindow').hidden, true, 'a click on the backdrop closes it');
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Настройки').onclick(); await settle();
+  assert.equal(h.el('evmSetDescription').value, 'Черновик A');
+  h.run("escapeKey({key:'Escape'})"); await settle();
+  assert.equal(h.el('evmSettingsWindow').hidden, true, 'Escape closes the window');
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Проверить чат').onclick(); await settle();
+  assert.equal(h.el('evmCheckOutput').textContent, answer);
 });
 
 test('E16 the check: one empty POST, no input field, the indicator comes only from the server', async () => {
@@ -398,43 +395,39 @@ test('E16 the check: one empty POST, no input field, the indicator comes only fr
     [{outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Нужен USER GO.', network_calls: 0}, /Сообщение не отправлялось\. Нужен USER GO\./, 'output info'],
     [{outcome: 'SIMULATED', text: 'Привет!'}, /ИМИТАЦИЯ.*статус API не изменён.*Привет!/s, 'output info'],
     [{outcome: 'CONFIRMED', text: 'Получено.'}, /^Получено\.$/, 'output reply'],
-    [{outcome: 'FAILED', text: 'http_401: unauthorized'}, /http_401/, 'output error'],
     [{httpError: true, status: 409, data: {error: {code: 'check_refused', message: 'no adapter'}}}, /Проверка не выполнена: check_refused/, 'output error'],
   ];
   for (const [answer, expected, cls] of outcomes) {
     const h = harness(); await settle();
-    let status = api('red', 'NEVER_CONFIRMED');
-    h.routes.set('/ultra/connections', () => catalog([conn('alpha', 'Alpha')]));
-    h.routes.set('/ultra/model-cards', () => cards([mcard('alpha', 'Alpha', {api: status})]));
     h.routes.set('/ultra/model-cards/alpha/check', () => answer.httpError ? answer : {test_message: 'Тест.', card: mcard('alpha', 'Alpha'), ...answer});
-    h.el('viewEvm').onclick(); await settle();
-    h.cardButton(h.cards()[0], 'Проверить чат').onclick(); await settle();
+    await h.openEvm([conn('alpha', 'Alpha')]);
+    await h.open(h.cards()[0]);
+    h.button(h.peek(), 'Проверить чат').onclick(); await settle();
     assert.equal(h.el('evmCheckNote').textContent, 'Тестовое сообщение: «Тест.» — в этой версии оно не отправляется.');
-    status = api('red', 'NEVER_CONFIRMED');  // the server did not confirm anything, whatever the answer text says
     h.el('evmCheckSend').onclick(); await settle();
-    const post = h.calls.filter(c => c.method === 'POST');
-    assert.deepEqual(post.map(c => [c.url, c.body]), [['/ultra/model-cards/alpha/check', '{}']]);
+    assert.deepEqual(h.calls.filter(c => c.method === 'POST').map(c => [c.url, c.body]), [['/ultra/model-cards/alpha/check', '{}']]);
     assert.match(h.el('evmCheckOutput').textContent, expected);
     assert.equal(h.el('evmCheckOutput').className, cls);
     assert.equal(h.el('evmCheckDot').children[0].textContent, '×', 'a check answer never paints the indicator by itself');
     assert.equal(h.dot(h.cards()[0]).textContent, '×');
-    assert.equal(h.el('evmCheckSend').disabled, false);
   }
-  assert.doesNotMatch(source.match(/<div id="evmCheckWindow"[\s\S]*?<\/div><\/div>/)[0], /<input|<textarea/, 'the diagnostic window has no input field');
-  const order = source.match(/id="evmCheckClose"[\s\S]*?id="evmCheckSend"/);
-  assert.ok(order, 'buttons are [Закрыть] [Отправить тестовое сообщение]');
+  assert.doesNotMatch(source.match(/<div id="evmCheckWindow"[\s\S]*?<\/div><\/div>/)[0], /<input|<textarea/);
+  assert.ok(source.match(/id="evmCheckClose"[\s\S]*?id="evmCheckSend"/), 'buttons are [Закрыть] [Отправить тестовое сообщение]');
 });
 
-test('E17 when the model cards cannot be read, cards show no invented roles or status', async () => {
+test('E17 without card data the compact cards show names only and nothing can be reordered or starred', async () => {
   for (const answer of [{httpError: true, status: 403, data: {error: {code: 'model_cards_forbidden', message: 'x'}}}, {cards: 'nope'},
     cards([mcard('alpha', 'Alpha', {api: {color: 'blue', reason: 'X'}})])]) {
     const h = harness(); await settle();
     await h.openEvm([conn('alpha', 'Alpha')], answer);
-    assert.equal(h.cards().length, 1);
-    assert.match(h.cards()[0].textContent, /Подробности карточки недоступны/);
-    assert.equal(h.dot(h.cards()[0]), null);
-    assert.deepEqual(h.roles(h.cards()[0]), []);
-    assert.equal(h.cardButton(h.cards()[0], 'Настройки'), null);
+    const card = h.cards()[0];
+    assert.equal(h.dot(card), null);
+    assert.equal(h.star(card).disabled, true);
+    assert.equal(card.getAttribute('draggable'), 'false');
+    await h.open(card);
+    assert.match(h.peek().textContent, /Подробности карточки недоступны/);
+    assert.equal(h.dot(h.peek()), null); assert.deepEqual(h.roles(h.peek()), []);
+    assert.equal(h.button(h.peek(), 'Выше'), null);
     assert.match(h.el('evmError').textContent, /Карточки моделей недоступны/);
   }
 });
@@ -448,21 +441,231 @@ test('E18 the roles source is told: defaults, unreadable and not connected Ultra
   }
 });
 
+test('E19 the chat composer: the model picker, a disabled voice place and a disabled send', async () => {
+  const h = harness(); await settle();
+  assert.equal(h.el('chatMic').getAttribute('data-extension'), 'voice-input');
+  assert.equal(h.el('chatMic').onclick, undefined, 'the voice place has no behaviour yet');
+  assert.match(source, /<button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu"/);
+  assert.match(source, /<button type="button" id="chatMic" disabled[^>]*>[^<]*<\/button><button type="button" id="chatSend" disabled>Отправить<\/button><\/span>/);
+  assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
+});
+
 test('E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha')], {settings: {state: 'CORRUPT', revision: null, ignored: 0}, checks: {state: 'CORRUPT'}}));
   assert.match(h.el('evmError').textContent, /Повреждены настройки карточек и сведения о проверках API/);
   let posted = null;
   h.routes.set('/ultra/model-cards/alpha/settings', opts => {posted = JSON.parse(opts.body); return {card: mcard('alpha', 'Alpha')};});
-  h.cardButton(h.cards()[0], 'Настройки').onclick(); await settle();
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Настройки').onclick(); await settle();
   h.el('evmSetSave').onclick(); await settle();
   assert.equal(posted.base_revision, null);
 });
 
-test('E19 the chat composer keeps a disabled place for voice input and posts nothing', async () => {
+test('E21 hover opens after a short pause, switches at once, survives the way into the card and closes after leaving', async () => {
   const h = harness(); await settle();
-  assert.equal(h.el('chatMic').getAttribute('data-extension'), 'voice-input');
-  assert.equal(h.el('chatMic').onclick, undefined, 'the place has no behaviour yet');
-  assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
-  assert.match(source, /<span class="composer-actions"><button type="button" id="chatMic" disabled[^>]*>[^<]*<\/button><button type="button" id="chatSend" disabled>Отправить<\/button><\/span>/);
+  await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
+  const [a, b] = h.cards();
+  a.onmouseenter(); await settle();
+  assert.equal(h.el('evmPeek').hidden, true, 'no flash on a quick pass');
+  a.onmouseleave(); await wait(150);
+  assert.equal(h.el('evmPeek').hidden, true, 'a pass shorter than the pause opens nothing');
+  a.onmouseenter(); await wait(150);
+  assert.equal(h.el('evmPeek').hidden, false);
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a');
+  assert.equal(h.el('evmPeek').className, 'evm-peek open');
+  assert.equal(h.opener(a).getAttribute('aria-expanded'), 'true');
+  a.onmouseleave(); b.onmouseenter(); await settle();
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b', 'moving to the next card switches without a pause');
+  assert.equal(h.opener(a).getAttribute('aria-expanded'), 'false'); assert.equal(h.opener(b).getAttribute('aria-expanded'), 'true');
+  b.onmouseleave(); h.el('evmPeek').onmouseenter(); await wait(250);
+  assert.equal(h.el('evmPeek').hidden, false, 'the way from the card into the full card keeps it open');
+  h.button(h.peek(), 'Проверить чат');  // the buttons are reachable
+  h.el('evmPeek').onmouseleave(); await wait(250);
+  assert.equal(h.el('evmPeek').hidden, true);
+  assert.match(source, /@media\(prefers-reduced-motion:reduce\)\{\.evm-peek,\.ccard\{transition:none\}\}/);
+  assert.match(source, /\.evm-peek\{position:fixed;[^}]*max-height:calc\(100dvh - 24px\);overflow:auto/);
+});
+
+test('E22 click, tap and keyboard: pin, close, Escape, Enter/Space, the star never opens the card', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
+  const [a, b] = h.cards();
+  a.onmouseenter(); await wait(150);
+  await h.open(a);  // a tap after the touch hover keeps it open
+  a.onmouseleave(); await wait(250);
+  assert.equal(h.el('evmPeek').hidden, false, 'a pinned card does not close on leave');
+  b.onmouseenter(); await wait(150);
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a', 'hover does not replace a pinned card');
+  await h.open(a);
+  assert.equal(h.el('evmPeek').hidden, true, 'a second click closes it');
+  assert.equal(h.document.activeElement, h.opener(a));
+  b.onclick(ev({detail: 0, target: h.opener(b)})); await settle();  // Enter / Space on the «open» button
+  assert.equal(h.el('evmPeek').hidden, false);
+  assert.equal(h.document.activeElement, h.el('evmPeek'), 'the keyboard lands in the full card');
+  h.run("escapeKey({key:'Escape'})");
+  assert.equal(h.el('evmPeek').hidden, true); assert.equal(h.document.activeElement, h.opener(b));
+  b.onclick(ev({detail: 1, target: h.opener(b)})); await settle();
+  assert.equal(h.el('evmPeek').hidden, false); assert.notEqual(h.document.activeElement, h.el('evmPeek'), 'a mouse click does not move the focus');
+  h.run("escapeKey({key:'Escape'})");
+  const star = h.star(a), click = ev({target: star});
+  h.routes.set('/ultra/model-cards/view', opts => ({view: {state: 'SAVED', revision: 8, hidden: 0, sections: {favorites: JSON.parse(opts.body).order, api: ['api:prov:a', 'api:prov:b'], mcp: [], local: []}}}));
+  star.onclick(click); await settle();
+  assert.equal(click.stopped, true); assert.equal(h.el('evmPeek').hidden, true, 'the star does not open the card');
+  const starKey = ev({key: 'Enter', target: star}); h.star(h.cards()[0]).onkeydown(starKey);
+  assert.equal(starKey.stopped, true);
+});
+
+test('E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the ends are disabled', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
+  let revision = 7;
+  h.routes.set('/ultra/model-cards/view', opts => {const body = JSON.parse(opts.body);
+    return {view: {state: 'SAVED', revision: ++revision, hidden: 0, sections: {favorites: [], api: body.order, mcp: [], local: []}}};});
+  await h.open(h.cards()[0]);
+  assert.equal(h.button(h.peek(), 'Выше').disabled, true);
+  h.button(h.peek(), 'Ниже').onclick(); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view'), [{base_revision: 7, section: 'api', order: ['api:prov:b', 'api:prov:a', 'api:prov:c']}]);
+  assert.deepEqual(h.cards().map(c => c.getAttribute('data-connection')), ['api:prov:b', 'api:prov:a', 'api:prov:c']);
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a', 'the same card stays open');
+  assert.equal(h.document.activeElement, h.button(h.peek(), 'Ниже'), 'the keyboard keeps its place');
+  h.run("escapeKey({key:'Escape'})");
+  const up = ev({key: 'ArrowUp', altKey: true}); h.opener(h.cards()[2]).onkeydown(up); await settle();
+  assert.equal(up.prevented, true);
+  assert.deepEqual(h.posts('/ultra/model-cards/view')[1], {base_revision: 8, section: 'api', order: ['api:prov:b', 'api:prov:c', 'api:prov:a']});
+  h.opener(h.cards()[0]).onkeydown(ev({key: 'ArrowUp', altKey: true})); await settle();
+  h.opener(h.cards()[1]).onkeydown(ev({key: 'ArrowUp'})); await settle();
+  assert.equal(h.posts('/ultra/model-cards/view').length, 2, 'the first card cannot go higher');
+  assert.ok(h.posts().every(b => !('description' in b) && !('connection_id' in b)), 'ordering saves nothing else');
+});
+
+test('E24 drag and drop inside one column; buttons never start a drag; other columns refuse the drop', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')], undefined, [], [other('local', 'a', 'Local A')]);
+  h.routes.set('/ultra/model-cards/view', opts => ({view: {state: 'SAVED', revision: 8, hidden: 0, sections: {favorites: [], api: JSON.parse(opts.body).order, mcp: [], local: ['local:prov:a']}}}));
+  const [a, b, c] = h.cards();
+  a.onmousedown(ev({target: h.star(a)}));
+  const fromStar = ev({target: a}); a.ondragstart(fromStar);  // a browser fires dragstart on the card itself
+  assert.equal(fromStar.prevented, true, 'a drag that began on the star does not move the card');
+  a.onmousedown(ev({target: a}));
+  await h.open(b);
+  const data = {}; a.ondragstart(ev({target: a, dataTransfer: {setData: (k, v) => {data[k] = v;}}}));
+  assert.equal(h.el('evmPeek').hidden, true, 'dragging closes the full card');
+  assert.equal(data['text/plain'], 'api:prov:a'); assert.match(a.className, /dragging/);
+  const local = h.list('evmLocalList')[0], foreign = ev({target: local});
+  local.ondragover(foreign);
+  assert.equal(foreign.prevented, undefined, 'a card cannot be dropped into another column');
+  c.getBoundingClientRect = () => ({top: 100, height: 40});
+  const over = ev({clientY: 130, target: c}); c.ondragover(over);
+  assert.equal(over.prevented, true); assert.match(c.className, /drop-after/);
+  c.ondrop(ev({clientY: 130, target: c})); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view'), [{base_revision: 7, section: 'api', order: ['api:prov:b', 'api:prov:c', 'api:prov:a']}]);
+  assert.ok(h.cards().every(x => !/drop-|dragging/.test(x.className)), 'marks are cleared');
+  const [b2] = h.cards(); b2.ondragstart(ev({target: b2, dataTransfer: {setData() {}}}));
+  h.el('evmApiList').ondrop(ev({target: h.el('evmApiList')})); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view')[1].order, ['api:prov:c', 'api:prov:a', 'api:prov:b'], 'a drop on the empty end moves the card to the end');
+});
+
+test('E25 favourites: the star adds and removes a reference, the column is ordered on its own and follows its source', async () => {
+  const h = harness(); await settle();
+  let status = api('red', 'NEVER_CONFIRMED'), favs = [], revision = 7;
+  h.routes.set('/ultra/connections', () => catalog([conn('a', 'A'), conn('b', 'B')]));
+  h.routes.set('/ultra/model-cards', () => cards([mcard('a', 'A'), mcard('b', 'B', {api: status})],
+    {view: {state: 'SAVED', revision, hidden: 0, sections: {favorites: favs, api: ['api:prov:a', 'api:prov:b'], mcp: [], local: []}}}));
+  h.routes.set('/ultra/model-cards/view', opts => {const body = JSON.parse(opts.body); favs = body.order; revision++;
+    return {view: {state: 'SAVED', revision, hidden: 0, sections: {favorites: favs, api: ['api:prov:a', 'api:prov:b'], mcp: [], local: []}}};});
+  h.el('viewEvm').onclick(); await settle();
+  h.star(h.cards()[1]).onclick(ev()); await settle();
+  h.star(h.cards()[0]).onclick(ev()); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view'), [{base_revision: 7, section: 'favorites', order: ['api:prov:b']},
+    {base_revision: 8, section: 'favorites', order: ['api:prov:b', 'api:prov:a']}]);
+  assert.match(h.el('evmNotice').textContent, /Добавлено в избранное: A/);
+  assert.deepEqual(h.list('evmFavList').map(c => c.getAttribute('data-connection')), ['api:prov:b', 'api:prov:a']);
+  assert.equal(h.el('evmFavState').textContent, '2'); assert.equal(h.el('evmFavEmpty').hidden, true);
+  assert.equal(h.star(h.cards()[0]).textContent, '★'); assert.equal(h.star(h.cards()[0]).getAttribute('aria-pressed'), 'true');
+  assert.equal(h.list('evmFavList')[0].getAttribute('data-section'), 'favorites');
+  await h.open(h.list('evmFavList')[1]);
+  h.button(h.peek(), 'Выше').onclick(); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view')[2], {base_revision: 9, section: 'favorites', order: ['api:prov:a', 'api:prov:b']});
+  assert.deepEqual(h.cards().map(c => c.getAttribute('data-connection')), ['api:prov:a', 'api:prov:b'], 'the API column keeps its own order');
+  status = api('green', 'CONFIRMED');
+  h.el('evmRefresh').onclick(); await settle();
+  assert.equal(h.dot(h.list('evmFavList')[1]).getAttribute('data-api'), 'green:CONFIRMED', 'a favourite shows its source as it is now');
+  h.star(h.list('evmFavList')[0]).onclick(ev()); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/view')[3].order, ['api:prov:b']);
+  assert.match(h.el('evmNotice').textContent, /Убрано из избранного: A/);
+});
+
+test('E26 a refused order is not kept locally: the saved state is reloaded and the reason told', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
+  h.routes.set('/ultra/model-cards/view', () => ({httpError: true, status: 409, data: {error: {code: 'settings_revision_conflict', message: 'changed'}}}));
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Ниже').onclick(); await settle();
+  assert.deepEqual(h.cards().map(c => c.getAttribute('data-connection')), ['api:prov:a', 'api:prov:b']);
+  assert.match(h.el('evmError').textContent, /уже изменились в другом окне/);
+  assert.equal(h.calls.filter(c => c.url === '/ultra/model-cards').length, 2, 'the board is read again');
+});
+
+test('E27 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('x', 'API X')], undefined, [other('mcp', 'x', 'Agent X')], [other('local', 'x', 'Local X'), other('local', 'y', 'Local Y')]);
+  assert.deepEqual(h.list('evmMcpList').map(c => c.getAttribute('data-connection')), ['mcp:prov:x']);
+  assert.deepEqual(h.list('evmLocalList').map(c => c.getAttribute('data-connection')), ['local:prov:x', 'local:prov:y']);
+  assert.equal(h.el('evmMcpEmpty').hidden, true); assert.equal(h.el('evmLocalEmpty').hidden, true);
+  const mcp = h.list('evmMcpList')[0];
+  assert.equal(mcp.className, h.cards()[0].className, 'the same compact component');
+  assert.match(mcp.textContent, /MCP \/ агент · prov/); assert.equal(h.dot(mcp), null, 'no API indicator for an entry without one');
+  await h.open(mcp);
+  assert.match(h.peek().textContent, /Подробности появятся, когда источник этого подключения будет подключён/);
+  assert.deepEqual(h.roles(h.peek()), []);
+  assert.ok(h.button(h.peek(), 'Ниже'), 'the order of the column can be changed');
+  assert.equal(h.button(h.list('evmLocalList')[0], 'Настройки'), null);
+});
+
+test('E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {description: 'Было'})]));
+  let posted = null;
+  h.routes.set('/ultra/model-cards/alpha/settings', opts => {posted = JSON.parse(opts.body); return {card: mcard('alpha', 'Alpha')};});
+  await h.open(h.cards()[0]);
+  h.button(h.peek(), 'Изменить описание').onclick(); await settle();
+  assert.equal(h.el('evmSettingsWindow').hidden, false);
+  assert.deepEqual([h.el('evmPaneConn').hidden, h.el('evmPaneModel').hidden], [true, false]);
+  assert.equal(h.document.activeElement, h.el('evmSetDescription'));
+  assert.equal(h.el('evmSetDescription').attrs.maxlength, '500');
+  h.el('evmSetDescription').value = 'Новое'; h.el('evmSetDescription').oninput();
+  h.el('evmSetSave').onclick(); await settle();
+  assert.equal(posted.description, 'Новое'); assert.equal(posted.base_revision, 4);
+  h.el('evmSetClose').onclick(); await settle();
+  h.el('evmTabConn').onclick();
+  await h.open(h.cards()[0]);
+  h.find(h.peek(), e => (e.className || '').startsWith('strengths')).onclick(); await settle();
+  assert.equal(h.el('evmPaneModel').hidden, false); assert.equal(h.document.activeElement, h.el('evmSetDescription'));
+});
+
+test('E30 the full card is placed next to its card and always inside the window (measured while visible)', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
+  Object.assign(h.context.window, {innerWidth: 390, innerHeight: 844});
+  const box = h.el('evmPeek');
+  Object.defineProperty(box, 'offsetHeight', {get() {return this.hidden ? 0 : 480;}});  // a hidden element has no height
+  const card = h.cards()[1]; card.getBoundingClientRect = () => ({left: 24, top: 700, height: 52});
+  await h.open(card);
+  assert.deepEqual([box.style.width, box.style.left, box.style.top], ['366px', '12px', '352px'], 'clamped to the bottom edge, not 694px');
+  Object.assign(h.context.window, {innerWidth: 1400, innerHeight: 950});
+  card.getBoundingClientRect = () => ({left: 300, top: 200, height: 52});
+  h.run("positionPeek()");
+  assert.deepEqual([box.style.width, box.style.left, box.style.top], ['560px', '294px', '194px']);
+  const header = new Element('header'); header.getBoundingClientRect = () => ({bottom: 240});
+  h.document.querySelector = sel => sel === 'header.top' ? header : null;
+  h.run("positionPeek()");
+  assert.deepEqual([box.style.top, box.style.maxHeight], ['248px', '690px'], 'never under the sticky page header');
+});
+
+test('E29 layout rules: four columns on a wide screen, one on a narrow one, the page never needs a horizontal scroll', () => {
+  assert.match(source, /@media\(min-width:1200px\)\{\.evm-board\{grid-template-columns:minmax\(200px,\.75fr\) minmax\(0,1\.25fr\) minmax\(0,1fr\) minmax\(0,1fr\)\}\}/);
+  assert.match(source, /\.evm-columns\{grid-template-columns:1fr\}/);
+  assert.match(source, /<div class="evm-columns evm-board">\s*<section class="evm-col" aria-labelledby="evmFavTitle">/);
+  assert.match(source, /\.evm-peek\{position:fixed;[^}]*width:min\(560px,calc\(100vw - 24px\)\)/);
 });

@@ -1,0 +1,23 @@
+{
+ "task": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+ "purpose": "executor visual self-check on synthetic data; NOT the independent Windows/visual acceptance",
+ "where": "built-in browser pane of the Claude desktop app (Chromium, viewport emulation) and headless Chrome over DevTools for the PNG files",
+ "data": "tools/demo_evm_board.py: TEMP storage, synthetic Tk ui_state.json, fake environment (key present, PERS); three API states seeded as synthetic evidence, not API checks; two favourites and one manual API order seeded",
+ "page_marking": "the launcher TEST frame and badge are on every page of the demo",
+ "observations": [
+  {"viewport": "1400x950", "check": "board", "result": "four columns 240 / 400 / 320 / 320 px, compact cards top to bottom, no horizontal scroll (scrollWidth = innerWidth)"},
+  {"viewport": "1400x950", "check": "hover with the pane's mouse", "result": "the full card opens over the list after the pause, the cards around it do not move; moving to another card switches at once; exactly one card is expanded"},
+  {"viewport": "1400x950", "check": "keyboard with real key presses", "result": "Enter on a card opens it and puts the focus in it, Tab moves inside, Escape closes it and returns the focus to the card"},
+  {"viewport": "1400x950", "check": "drag and drop", "result": "the pane's synthetic mouse drag does not start a native HTML5 drag (no dragstart): NOT RUN as an OS drag. DragEvent + DataTransfer dispatched in the real page ran the page handlers: dragover accepted, 'drop-before' mark, new order saved and kept after a reload"},
+  {"viewport": "1400x1000 (headless)", "check": "real mouse move over a card (Input.dispatchMouseEvent)", "result": "the full card opened; panel 296..856 x 596..924, inside the window"},
+  {"viewport": "390x844", "check": "narrow screen", "result": "one column, no horizontal scroll; first try: the pinned card ended at 872 px in an 844 px window (measured while hidden) - fixed; now 374..832"},
+  {"viewport": "390x844", "check": "chat-model picker", "result": "the menu opens upward inside the screen (12..252 px)"},
+  {"viewport": "933x667 at device scale 1.5 (a 1400 x 1000 screen at 150 %)", "check": "zoom", "result": "two columns; first try: the card covered the sticky page header - fixed (placed below the header); the page header itself wraps its buttons at this width (existing header layout, not changed here)"},
+  {"viewport": "1400x1000", "check": "full card width", "result": "520 px gave a 3 x 3 role grid; widened to 560 px for 4 x 2 as in the reference"},
+  {"check": "«Изменить описание»", "result": "opens «Настройки» on «Модель» with the cursor in the description field"}
+ ],
+ "screenshots": ["screenshots/01-evm-board-1400.png", "screenshots/02-evm-hover-full-card.png", "screenshots/03-evm-edit-description.png",
+                 "screenshots/04-chat-model-picker.png", "screenshots/05-evm-390-pinned-card.png", "screenshots/06-evm-150-percent.png"],
+ "screenshot_facts": "screenshot_facts.json (positions measured by the capture script)",
+ "not_checked": ["an OS-level mouse drag on Windows", "a real touch device", "Firefox / Safari", "screen readers", "Windows high-contrast mode"]
+}

@@ -121,14 +121,38 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm{max-width:2000px;margin:auto;height:calc(100dvh - 73px);overflow:auto;padding:26px 28px 44px}
 .evm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .evm-head h2{font-size:24px;margin:8px 0}
-.evm-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;align-items:start}
-.evm-col{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px;min-width:0;display:flex;flex-direction:column;gap:12px}
-.evm-api{margin-top:18px}
+/* EVM board (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): Favourites | API | MCP / agents | local LLM, compact cards top to bottom. */
+.evm-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px;align-items:start}
+@media(min-width:1200px){.evm-board{grid-template-columns:minmax(200px,.75fr) minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr)}}
+.evm-col{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.evm-col .section-head{margin-bottom:2px}
 .evm-col h3{font-size:16px}
-.evm-list{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,500px),1fr));align-items:start}
-.evm-add{border:1px dashed #526579;border-radius:10px;padding:12px;color:var(--muted);text-align:center;font-size:13px}
-.evm-chat{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.evm-chat label{margin:0}
-.evm-chat select{min-width:240px;max-width:100%;background:#1f2d3b;color:var(--text);border:1px solid #4a6075;padding:9px 10px}
+.evm-list{display:grid;gap:8px;grid-template-columns:minmax(0,1fr);align-content:start;min-height:12px}
+.evm-add{border:1px dashed #526579;border-radius:10px;padding:10px;color:var(--muted);text-align:center;font-size:13px}
+.evm-info{padding:14px 18px}.evm-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 22px}.evm-info-grid p{margin:4px 0 0}
+.ccard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:2px;padding:2px 4px 2px 6px;border:1px solid #3d5a74;border-radius:10px;background:#16212d;cursor:pointer;user-select:none;transition:border-color .12s ease-out,background .12s ease-out}
+.ccard:hover,.ccard:has(.copen[aria-expanded=true]){border-color:#6aa9dc;background:#1a2a39}
+.copen{display:block;min-width:0;padding:6px;background:none;border:0;color:inherit;text-align:left;font:inherit}
+.copen:hover{background:none}
+.ccard .grip{color:#6f8396;cursor:grab;font-size:15px;line-height:1;padding:2px}
+.ccard .cbody{display:grid;gap:2px;min-width:0}
+.ccard .ctitle{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap}
+.ccard .cname{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.ccard .csub{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.ccard .api-dot{width:20px;height:20px;font-size:11px;border-width:1.5px}
+.ccard .params{padding:1px 6px;font-size:11px}
+.ccard.dragging{opacity:.45}.ccard.drop-before{box-shadow:0 -3px 0 #6aa9dc}.ccard.drop-after{box-shadow:0 3px 0 #6aa9dc}
+.star{background:none;border:0;padding:2px 6px;font-size:19px;line-height:1;color:#7b8fa3}.star:hover{background:none;color:#ffd28e}.star[aria-pressed=true]{color:#ffd28e}
+.evm-peek{position:fixed;z-index:15;left:12px;top:12px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.55);opacity:0;transform:scale(.97);transform-origin:top left;transition:opacity .12s ease-out,transform .12s ease-out}
+.evm-peek.open{opacity:1;transform:none}.evm-peek[hidden]{display:none}.evm-peek:focus{outline:none}
+.mcard .link{background:none;border:0;padding:0 2px;color:var(--blue);text-decoration:underline;font-size:13px}
+.strengths.editable{cursor:text}.strengths.editable:hover{border-color:#6aa9dc}
+.chat-model-picker{position:relative;display:inline-flex}
+.chat-model-menu{position:absolute;right:0;bottom:calc(100% + 6px);z-index:6;min-width:240px;max-height:300px;overflow:auto;padding:6px;display:grid;gap:4px;background:#17212c;border:1px solid #6aa9dc;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.chat-model-menu[hidden]{display:none}.chat-model-menu button{text-align:left}.chat-model-menu button[aria-selected=true]{border-color:var(--blue);background:#213b50}
+.chat-model-error{font-size:12px;color:#ffbbbb}
+@media(max-width:850px){.chat-model-menu{right:auto;left:0;max-width:calc(100vw - 24px)}}
+@media(prefers-reduced-motion:reduce){.evm-peek,.ccard{transition:none}}
 /* EVM model card (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): one component for every model of every provider. */
 .mcard{border:1px solid #6aa9dc;background:#16212d;border-radius:12px;padding:16px 18px 14px 20px;display:flex;flex-direction:column;gap:11px;min-width:0;box-shadow:inset 4px 0 #6aa9dc}
 .mcard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -172,7 +196,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .output.reply{border-color:#3f9e6f}.output.error{border-color:#a9505b}.output.info{border-color:#526c85}
 .output-label{font:700 11px system-ui,Segoe UI,sans-serif;letter-spacing:.1em;color:var(--muted);margin:0 0 6px}
 .composer-actions{display:flex;gap:8px;align-items:center;flex:none}
-@media(max-width:640px){.form-grid{grid-template-columns:1fr}.mcard{padding:14px 12px 12px 16px}.mcard-name{font-size:21px}.facts-list{grid-template-columns:1fr}.evm-chat select{min-width:0;width:100%}}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr}.mcard{padding:14px 12px 12px 16px}.mcard-name{font-size:21px}.facts-list{grid-template-columns:1fr}.evm-info-grid{grid-template-columns:1fr}}
 /* Ultra Chat (programme No.37 stage 1): read-only history of the shared Ultra core; the default view. */
 .chat-layout{display:grid;grid-template-columns:300px minmax(0,1fr);max-width:2000px;margin:auto;height:calc(100dvh - 73px);min-height:0}
 .chat-side{padding:20px 14px;background:#121c27;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0}
@@ -243,7 +267,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat только читает сохранённую историю.</p><span class="composer-actions"><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
+<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat только читает сохранённую историю.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
 </div>
@@ -438,14 +462,18 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </div>
 <div id="evmError" class="notice error" role="alert" hidden></div>
 <div id="evmNotice" class="notice success" role="status" hidden></div>
-<div class="card spaced"><p class="side-title">Модель для Ultra Web Chat</p><p id="evmSelection" class="spaced">—</p>
-<div class="evm-chat spaced"><label for="evmChatModel">Модель чата</label><select id="evmChatModel" aria-describedby="evmChatNote"></select><button type="button" id="evmChatSave">Сохранить выбор</button></div>
-<p id="evmChatNote" class="muted spaced">Выбор хранится в Web Alarm и не меняет назначения моделей в прежней Ultra (Tkinter). Когда в Ultra Chat появится отправка сообщений, выбор переедет к полю ввода.</p></div>
-<section class="evm-col evm-api" aria-labelledby="evmApiTitle"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><p id="evmCardsNote" class="muted">Значок рядом с названием — статус API: ✓ ответ подтверждён в срок актуальности, ! подтверждение устарело, × подтверждения нет. Отметки ролей — фактические назначения, нажатие их не меняет.</p><p id="evmRolesSource" class="muted">—</p><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<div class="evm-columns">
-<section class="evm-col" aria-labelledby="evmMcpTitle"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><p class="muted">Подключения агентов появятся позже. Сейчас здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<section class="evm-col" aria-labelledby="evmLocalTitle"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><p class="muted">Локальные модели появятся позже. Сейчас здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<div class="card spaced evm-info"><div class="evm-info-grid">
+<div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
+<div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён в срок актуальности · ! подтверждение устарело · × подтверждения нет</p></div>
+<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Наведите курсор или нажмите на карточку, чтобы раскрыть её. Порядок меняется перетаскиванием или кнопками «Выше» / «Ниже».</p></div>
+</div></div>
+<div class="evm-columns evm-board">
+<section class="evm-col" aria-labelledby="evmFavTitle"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Отметьте модель звёздочкой ☆ — она появится здесь.</p></section>
+<section class="evm-col" aria-labelledby="evmApiTitle"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmMcpTitle"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmLocalTitle"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
+<div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Карточка модели" tabindex="-1" hidden></div>
 <div id="evmSettingsWindow" class="evm-backdrop" hidden><div class="evm-window" role="dialog" aria-modal="true" aria-labelledby="evmSetTitle">
 <div class="section-head"><h3 id="evmSetTitle" tabindex="-1">Настройки провайдера и модели</h3><button type="button" id="evmSetClose">Закрыть ×</button></div>
 <p id="evmSetModel" class="muted">—</p>
@@ -959,7 +987,10 @@ $('copyContext').onclick=()=>{
 // every model comes from the server read model of model_registry, never from a list in this page.
 // Model cards (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): one component for every model; roles, API status, hints and
 // limits come from /ultra/model-cards. Drafts and diagnostic answers live per model while the page is open.
-const evm={epoch:0,busy:false,data:null,cards:null,cardsError:null,view:'chat',drafts:{},outputs:{},window:null,buttons:{},tab:'conn',saving:false,checking:false,setError:'',chatTouched:false};
+// Compact board (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): every column draws the same compact card; the full card opens
+// in one floating panel over the list; the manual order and favourites are saved on the server (/ultra/model-cards/view).
+const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
+  ccards:{},copen:{},peek:{id:null,section:null,pinned:false},peekTimer:0,peekButtons:{},peekFocus:null,returnTo:null,drag:null,viewSaving:false};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
@@ -987,10 +1018,10 @@ function validEvm(data){
 }
 function evmSelectionText(s){
   if(s.state==='SAVED')return 'Выбрана: '+s.display_name+' · '+s.model_id+' → '+s.provider_model_id+(s.selected_at?' · сохранено '+s.selected_at:'');
-  if(s.state==='CORRUPT')return 'Сохранённый выбор повреждён и не используется. Выберите модель заново.';
-  if(s.state==='INVALID_REFERENCE')return 'Сохранённая модель недоступна в реестре ('+(s.connection_id||'—')+'). Выберите модель заново.';
+  if(s.state==='CORRUPT')return 'Сохранённый выбор повреждён и не используется. Выберите модель заново в Ultra Chat.';
+  if(s.state==='INVALID_REFERENCE')return 'Сохранённая модель недоступна в реестре ('+(s.connection_id||'—')+'). Выберите модель заново в Ultra Chat.';
   if(s.state==='REGISTRY_UNAVAILABLE')return 'Сохранённый выбор ('+(s.connection_id||'—')+') сейчас не проверить: общий реестр моделей недоступен.';
-  return 'Модель для Ultra Web Chat ещё не выбрана.'
+  return 'Модель для Ultra Chat ещё не выбрана.'
 }
 function validCards(d){
   return !!d&&Array.isArray(d.cards)&&Array.isArray(d.role_definitions)&&Array.isArray(d.providers)&&Array.isArray(d.profiles)&&!!d.settings&&!!d.limits&&!!d.live_check&&
@@ -1023,7 +1054,13 @@ function roleItem(def,state){
 function paramsText(v){return (typeof v==='number'?String(v).replace('.',','):'—')+' млрд'}
 function fmtTime(iso){const d=new Date(iso);return isNaN(d.getTime())?String(iso):d.toLocaleString('ru-RU')}
 function cardData(id){return evm.cards?.cards.find(c=>c.model_id===id)||null}
-function modelCard(c,data){
+const SECTIONS=[['favorites','evmFavList','evmFavEmpty'],['api','evmApiList',null,'api'],['mcp','evmMcpList','evmMcpEmpty','mcp_agents'],['local','evmLocalList','evmLocalEmpty','local_llm']];
+const KIND_LABEL={api:'API',mcp:'MCP / агент',local:'Локальная'};
+const SECTION_LABEL={favorites:'Избранное',api:'API',mcp:'MCP / Агенты',local:'Локальные LLM'};
+function mark(el,cls,on){if(!el)return;const set=new Set(String(el.className||'').split(' ').filter(Boolean));if(on)set.add(cls);else set.delete(cls);el.className=[...set].join(' ')}
+function editButton(label,c,cls){const b=element('button',label,cls);b.type='button';b.setAttribute('aria-label',label.replace(/^\W+\s*/,'')+': '+c.display_name);return b}
+// The full card: the same component for every model; it is shown in the floating panel, never inline in a column.
+function modelCard(c,data,section){
   const card=element('article',null,'mcard');card.setAttribute('data-connection',c.connection_id);card.setAttribute('data-model',c.model_id);card.setAttribute('aria-label','Модель '+c.display_name);
   const head=element('div',null,'mcard-head');
   const params=element('span',paramsText(c.params_billion),'params');params.setAttribute('title',c.params_billion==null?'Количество параметров не указано':'Количество параметров, указано пользователем');
@@ -1032,49 +1069,231 @@ function modelCard(c,data){
   const sub=element('div',null,'mcard-sub');sub.append(element('strong','Назначенные роли'),element('span','Наведите на название для описания','mcard-note'));
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
   const roles=element('div',null,'roles');roles.append(...data.role_definitions.map(def=>roleItem(def,states.get(def.role))));
-  const strengths=element('div',c.description||'Описание пока не заполнено. Сильные стороны модели указываются в «Настройках».','strengths'+(c.description?'':' placeholder'));
-  strengths.setAttribute('tabindex','0');strengths.setAttribute('aria-label','Сильные стороны модели '+c.display_name);
-  const settings=element('button','⚙ Настройки');settings.type='button';settings.setAttribute('aria-label','Настройки модели '+c.display_name);settings.onclick=()=>openWindow('settings',c.model_id);
-  const check=element('button','▤ Проверить чат','primary');check.type='button';check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id);
-  evm.buttons[c.model_id]={settings,check};
-  const actions=element('div',null,'mcard-actions');actions.append(settings,check);
-  card.append(head,sub,roles,element('span','Сильные стороны модели','mcard-label'),strengths,actions);
+  // The description is edited in «Настройки → Модель»; the command and a click on the box lead there directly.
+  const edit=editButton('✎ Изменить описание',c,'link');edit.onclick=()=>openWindow('settings',c.model_id,'model');
+  const label=element('div',null,'mcard-sub');label.append(element('span','Сильные стороны модели','mcard-label'),edit);
+  const strengths=element('div',c.description||'Описание пока не заполнено. Нажмите «Изменить описание».','strengths editable'+(c.description?'':' placeholder'));
+  strengths.setAttribute('tabindex','0');strengths.setAttribute('aria-label','Сильные стороны модели '+c.display_name+'. Нажмите, чтобы изменить');strengths.setAttribute('title','Нажмите, чтобы изменить описание');
+  strengths.onclick=()=>openWindow('settings',c.model_id,'model');
+  const settings=editButton('⚙ Настройки',c);settings.onclick=()=>openWindow('settings',c.model_id);
+  const check=editButton('▤ Проверить чат',c,'primary');check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id);
+  const actions=element('div',null,'mcard-actions');actions.append(settings,check,...moveButtons(section,c.connection_id));
+  evm.peekButtons={edit,settings,check,...evm.peekButtons};
+  card.append(head,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
   return card
 }
-function plainCard(c,reason){  // the registry entry is known, its card data is not: no invented roles or status
-  const card=element('article',null,'mcard');card.setAttribute('data-connection',c.connection_id);card.setAttribute('data-model',c.model_id);
-  const head=element('div',null,'mcard-head');head.append(element('h4',c.display_name,'mcard-name'));
-  card.append(head,element('p','Подробности карточки недоступны: '+reason,'mcard-note'));return card
+function entryCard(e,section){  // an entry without card data (MCP, local, or card data unavailable): nothing is invented
+  const card=element('article',null,'mcard');card.setAttribute('data-connection',e.base.connection_id);
+  const head=element('div',null,'mcard-head');head.append(element('h4',e.base.display_name||e.base.connection_id,'mcard-name'),element('span',KIND_LABEL[e.kind]||e.kind,'mcard-side'));
+  card.append(head,element('p',e.kind==='api'?'Подробности карточки недоступны: '+(evm.cardsError||'нет данных сервера'):'Подробности появятся, когда источник этого подключения будет подключён к EVM.','mcard-note'));
+  const moves=moveButtons(section,e.base.connection_id);
+  if(moves.length){const actions=element('div',null,'mcard-actions');actions.append(...moves);card.append(actions)}
+  return card
 }
 function rolesSourceText(cards){
   if(!cards)return 'Назначения ролей не загружены.';
   const r=cards.roles_source,tk={SAVED:'настройки прежней Ultra (Tkinter)',DEFAULTS:'значения прежней Ultra по умолчанию: её файл настроек не найден',
     UNREADABLE:'файл настроек прежней Ultra не читается, поэтому её роли показаны как «?»',NOT_CONNECTED:'этот запуск не подключён к настройкам прежней Ultra, поэтому её роли показаны как «?»'}[r.state]||String(r.state);
-  return 'Источник ролей: «Чат» — выбор выше; остальные — '+tk+'.'+(r.fallbacks?.length?' Сохранённая модель '+r.fallbacks.length+' роли(ей) отсутствует в реестре, Ultra использует свою модель по умолчанию.':'')
+  return 'Источник ролей: «Чат» — выбор в Ultra Chat; остальные — '+tk+'.'+(r.fallbacks?.length?' Сохранённая модель '+r.fallbacks.length+' роли(ей) отсутствует в реестре, Ultra использует свою модель по умолчанию.':'')
 }
-function renderChatChoice(api,s){
-  const select=$('evmChatModel'),keep=select.value;
-  const first=element('option','— не выбрана —');first.value='';first.disabled=true;
-  select.replaceChildren(first,...api.connections.map(c=>{const o=element('option',c.display_name+(c.selectable?'':' — отключена'));o.value=c.connection_id;o.disabled=!c.selectable;return o}));
-  select.value=evm.chatTouched&&api.connections.some(c=>c.connection_id===keep)?keep:(s.state==='SAVED'?s.connection_id:'');
-  $('evmChatSave').disabled=evm.busy||!api.connections.some(c=>c.selectable)
+function summaryText(cards){
+  if(!cards)return 'нет данных';
+  const n={green:0,orange:0,red:0};for(const c of cards.cards)n[c.api.color]++;
+  return '✓ '+n.green+' · ! '+n.orange+' · × '+n.red
+}
+// One source per entry for every column: the catalog entry plus its card data, if the server has it.
+function entryOf(id){
+  const cols=evm.data?.columns||{};
+  const base=[...(cols.api?.connections||[]),...(cols.mcp_agents?.connections||[]),...(cols.local_llm?.connections||[])].find(c=>c?.connection_id===id);
+  return base?{base,card:evm.cards?.cards.find(c=>c.connection_id===id)||null,kind:String(id).split(':')[0]}:null
+}
+function favorites(){return evm.cards?.view?.sections?.favorites||[]}
+function sectionIds(section){
+  if(section==='favorites')return favorites().filter(id=>entryOf(id));
+  const column={api:'api',mcp:'mcp_agents',local:'local_llm'}[section];
+  const natural=(evm.data?.columns?.[column]?.connections||[]).map(c=>c.connection_id);
+  const saved=(evm.cards?.view?.sections?.[section]||[]).filter(id=>natural.includes(id));  // the server order, checked against the catalog
+  return saved.concat(natural.filter(id=>!saved.includes(id)))
+}
+function compactCard(id,section){
+  const e=entryOf(id);if(!e)return null;
+  const name=e.card?.display_name||e.base.display_name||id,fav=favorites().includes(id),key=section+'|'+id;
+  // Two sibling controls, never one inside the other: the card's own «open» button and the star.
+  const el=element('article',null,'ccard');
+  el.setAttribute('data-connection',id);el.setAttribute('data-section',section);
+  el.draggable=!!evm.cards?.view;el.setAttribute('draggable',String(!!evm.cards?.view));
+  const open=element('button',null,'copen');open.type='button';
+  open.setAttribute('aria-haspopup','dialog');open.setAttribute('aria-expanded',String(evm.peek.section===section&&evm.peek.id===id));
+  open.setAttribute('aria-label',name+' — '+(KIND_LABEL[e.kind]||e.kind)+'. Открыть карточку; Alt+↑/↓ — переставить');
+  const grip=element('span','⠿','grip');grip.setAttribute('aria-hidden','true');grip.setAttribute('title','Перетащите, чтобы изменить порядок');
+  const title=element('div',null,'ctitle');title.append(element('span',name,'cname'));
+  if(e.card)title.append(apiDot(e.card.api));
+  if(typeof e.card?.params_billion==='number')title.append(element('span',paramsText(e.card.params_billion),'params'));
+  const provider=e.card?(evm.cards.providers.find(p=>p.provider_id===e.card.provider_id)?.display_name||e.card.provider_id):(e.base.provider||'');
+  const body=element('div',null,'cbody');body.append(title,element('span',[KIND_LABEL[e.kind]||e.kind,provider].filter(Boolean).join(' · '),'csub'));
+  const star=element('button',fav?'★':'☆','star');star.type='button';star.setAttribute('aria-pressed',String(fav));star.setAttribute('draggable','false');
+  star.setAttribute('aria-label',(fav?'Убрать из избранного: ':'Добавить в избранное: ')+name);star.disabled=!evm.cards?.view;
+  star.onclick=ev=>{ev?.stopPropagation?.();toggleFavorite(id)};star.onkeydown=ev=>ev?.stopPropagation?.();  // the star never opens the card
+  open.append(body);el.append(grip,open,star);  // the grip is outside the button: some browsers do not drag from a button
+  el.onmouseenter=()=>peekHover(id,section);el.onmouseleave=()=>peekLeave();
+  el.onclick=ev=>peekClick(id,section,ev?.detail===0&&ev?.target===open);  // Enter / Space on «open» arrive as a click
+  open.onkeydown=ev=>cardKey(ev,id,section);
+  el.onmousedown=ev=>{evm.pressOnButton=ev?.target===star};
+  el.ondragstart=ev=>dragStart(ev,id,section);el.ondragover=ev=>dragOver(ev,id,section,el);el.ondragleave=()=>{mark(el,'drop-before',false);mark(el,'drop-after',false)};
+  el.ondrop=ev=>{ev?.stopPropagation?.();dropOn(ev,id,section,el)};el.ondragend=()=>dragEnd();
+  evm.ccards[key]=el;evm.copen[key]=open;
+  return el
 }
 function renderEvm(){
   const data=evm.data;if(!data)return;
-  const api=data.columns.api,s=data.selection.chat,cards=evm.cards;
-  $('evmApiState').replaceChildren(evmTag(api.state));
-  $('evmMcpState').replaceChildren(evmTag(data.columns.mcp_agents.state));
-  $('evmLocalState').replaceChildren(evmTag(data.columns.local_llm.state));
-  text('evmSelection',evmSelectionText(s));
-  renderChatChoice(api,s);
-  if(api.state!=='AVAILABLE')notice('evmError','Общий реестр моделей недоступен: '+(api.reason||api.state));
-  const full=new Map((cards?.cards||[]).map(c=>[c.connection_id,c]));
-  evm.buttons={};
-  const list=api.connections.map(c=>full.has(c.connection_id)?modelCard(full.get(c.connection_id),cards):plainCard(c,evm.cardsError||'нет данных сервера'));
-  $('evmApiList').replaceChildren(...list);
-  text('evmRolesSource',rolesSourceText(cards));
-  text('evmState',list.length?'Моделей в реестре: '+list.length:'Реестр пуст')
+  const cols=data.columns,s=data.selection.chat,cards=evm.cards;
+  $('evmApiState').replaceChildren(evmTag(cols.api.state));
+  $('evmMcpState').replaceChildren(evmTag(cols.mcp_agents.state));
+  $('evmLocalState').replaceChildren(evmTag(cols.local_llm.state));
+  text('evmSelection',evmSelectionText(s));text('evmSummary',summaryText(cards));text('evmRolesSource',rolesSourceText(cards));
+  if(cols.api.state!=='AVAILABLE')notice('evmError','Общий реестр моделей недоступен: '+(cols.api.reason||cols.api.state));
+  evm.ccards={};evm.copen={};
+  for(const [section,list,empty] of SECTIONS){
+    const ids=sectionIds(section);
+    $(list).replaceChildren(...ids.map(id=>compactCard(id,section)).filter(Boolean));
+    if(empty)$(empty).hidden=ids.length>0;
+    $(list).ondragover=ev=>{if(evm.drag?.section===section)ev?.preventDefault?.()};
+    $(list).ondrop=ev=>{if(evm.drag?.section!==section)return;ev?.preventDefault?.();const dragged=evm.drag.id;dragEnd();saveOrder(section,sectionIds(section).filter(x=>x!==dragged).concat(dragged))};
+  }
+  text('evmFavState',String(sectionIds('favorites').length));
+  const count=cols.api.connections.length;
+  text('evmState',count?'Моделей в реестре: '+count:'Реестр пуст');
+  if(evm.peek.id){if(entryOf(evm.peek.id)&&evm.ccards[evm.peek.section+'|'+evm.peek.id])fillPeek();else closePeek()}
+}
+// Floating full card. Hover opens it after a short pause and switches at once between cards; a click or a tap pins it;
+// Enter / Space open it from the keyboard and Escape closes it. It never moves the cards around it.
+const PEEK_OPEN_MS=120,PEEK_CLOSE_MS=180;
+function peekHover(id,section){
+  if(evm.drag||evm.window)return;
+  clearTimeout(evm.peekTimer);
+  const same=evm.peek.id===id&&evm.peek.section===section;
+  if(same||evm.peek.pinned)return;  // a pinned card stays until it is closed
+  if(evm.peek.id){openPeek(id,section,false);return}  // already open: switch without a pause or a flicker
+  evm.peekTimer=setTimeout(()=>openPeek(id,section,false),PEEK_OPEN_MS)
+}
+function peekLeave(){clearTimeout(evm.peekTimer);if(evm.peek.id&&!evm.peek.pinned)evm.peekTimer=setTimeout(()=>closePeek(),PEEK_CLOSE_MS)}
+function peekClick(id,section,fromKeyboard){
+  clearTimeout(evm.peekTimer);
+  if(evm.peek.id===id&&evm.peek.section===section&&evm.peek.pinned){closePeek({focus:true});return}
+  openPeek(id,section,true,fromKeyboard)  // also pins a card that hover opened: a tap on a touch screen keeps it open
+}
+function cardKey(ev,id,section){
+  if(ev.altKey&&(ev.key==='ArrowUp'||ev.key==='ArrowDown')){ev.preventDefault?.();moveCard(section,id,ev.key==='ArrowUp'?-1:1,null)}
+}
+function openPeek(id,section,pinned,focus){
+  if(!entryOf(id))return;
+  clearTimeout(evm.peekTimer);
+  const same=evm.peek.id===id&&evm.peek.section===section;
+  evm.peek={id,section,pinned:!!pinned||(same&&evm.peek.pinned)};
+  const box=$('evmPeek');box.hidden=false;  // visible first: the position needs the real height
+  fillPeek();
+  box.className='evm-peek open';
+  if(focus)box.focus()
+}
+function fillPeek(){
+  const {id,section}=evm.peek,e=entryOf(id),box=$('evmPeek');
+  evm.peekButtons={};
+  box.replaceChildren(e.card&&evm.cards?modelCard(e.card,evm.cards,section):entryCard(e,section));
+  box.setAttribute('aria-label','Карточка: '+(e.card?.display_name||e.base.display_name||id)+' · '+SECTION_LABEL[section]);
+  for(const [key,el] of Object.entries(evm.copen))el.setAttribute('aria-expanded',String(key===section+'|'+id));
+  if(evm.peekFocus){  // after «Выше» / «Ниже» the keyboard stays on the same command (or the other one at an end)
+    const b=evm.peekButtons[evm.peekFocus],alt=evm.peekButtons[evm.peekFocus==='up'?'down':'up'];
+    (b&&!b.disabled?b:alt&&!alt.disabled?alt:box).focus();
+    if(!evm.viewSaving)evm.peekFocus=null
+  }
+  positionPeek()
+}
+function closePeek(opts={}){
+  clearTimeout(evm.peekTimer);
+  const {id,section}=evm.peek;if(!id)return;
+  evm.peek={id:null,section:null,pinned:false};evm.peekButtons={};
+  const box=$('evmPeek');box.hidden=true;box.className='evm-peek';box.replaceChildren();
+  for(const el of Object.values(evm.copen))el.setAttribute('aria-expanded','false');
+  if(opts.focus)evm.copen[section+'|'+id]?.focus()
+}
+function positionPeek(){  // next to its compact card, always inside the window
+  const box=$('evmPeek'),card=evm.ccards[evm.peek.section+'|'+evm.peek.id];
+  if(!card||typeof card.getBoundingClientRect!=='function'||typeof window==='undefined'||!window.innerWidth)return;
+  const r=card.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,w=Math.min(560,vw-24);
+  const head=typeof document.querySelector==='function'?document.querySelector('header.top'):null;  // never under the sticky header
+  const minTop=Math.max(12,Math.round((head&&typeof head.getBoundingClientRect==='function'?head.getBoundingClientRect().bottom:0)+8));
+  box.style.width=w+'px';box.style.maxHeight=Math.max(160,vh-minTop-12)+'px';
+  const left=Math.max(12,Math.min(r.left-6,vw-w-12)),h=box.offsetHeight||0,top=Math.max(minTop,Math.min(r.top-6,vh-h-12));
+  box.style.left=left+'px';box.style.top=top+'px'
+}
+// Manual order: drag and drop inside one column, or «Выше» / «Ниже» (also Alt+↑/↓). Columns are independent.
+function moveButtons(section,id){
+  if(!section||!evm.cards?.view)return [];
+  const ids=sectionIds(section),i=ids.indexOf(id);if(i<0)return [];
+  const up=element('button','↑ Выше'),down=element('button','↓ Ниже');
+  for(const [b,delta,label] of [[up,-1,'Выше'],[down,1,'Ниже']]){
+    b.type='button';b.setAttribute('aria-label',label+' в разделе «'+SECTION_LABEL[section]+'»');
+    b.disabled=delta<0?i===0:i===ids.length-1;b.onclick=()=>moveCard(section,id,delta,delta<0?'up':'down')
+  }
+  evm.peekButtons.up=up;evm.peekButtons.down=down;
+  return [up,down]
+}
+function moveCard(section,id,delta,focusAfter){
+  const ids=sectionIds(section),i=ids.indexOf(id),j=i+delta;
+  if(i<0||j<0||j>=ids.length)return;
+  [ids[i],ids[j]]=[ids[j],ids[i]];evm.peekFocus=focusAfter;
+  saveOrder(section,ids)
+}
+function dropPlace(ev,el){
+  const r=typeof el?.getBoundingClientRect==='function'?el.getBoundingClientRect():null;
+  return r&&typeof ev?.clientY==='number'&&ev.clientY>r.top+r.height/2?'after':'before'
+}
+function dragStart(ev,id,section){
+  // A drag that began on the star never moves the card (dragstart itself is fired on the card, so the press decides).
+  const fromStar=evm.pressOnButton;evm.pressOnButton=false;
+  if(!evm.cards?.view||fromStar){ev?.preventDefault?.();return}
+  closePeek();evm.drag={id,section};
+  try{ev.dataTransfer.effectAllowed='move';ev.dataTransfer.setData('text/plain',id)}catch(_){}
+  mark(evm.ccards[section+'|'+id],'dragging',true)
+}
+function dragOver(ev,id,section,el){
+  if(!evm.drag||evm.drag.section!==section||evm.drag.id===id)return;  // a card is dropped only into its own column
+  ev?.preventDefault?.();
+  const place=dropPlace(ev,el);mark(el,'drop-before',place==='before');mark(el,'drop-after',place==='after')
+}
+function dropOn(ev,id,section,el){
+  if(!evm.drag||evm.drag.section!==section)return;
+  ev?.preventDefault?.();
+  const dragged=evm.drag.id,place=dropPlace(ev,el);dragEnd();
+  if(dragged===id)return;
+  const ids=sectionIds(section).filter(x=>x!==dragged);
+  ids.splice(ids.indexOf(id)+(place==='after'?1:0),0,dragged);
+  saveOrder(section,ids)
+}
+function dragEnd(){
+  for(const el of Object.values(evm.ccards)){mark(el,'drop-before',false);mark(el,'drop-after',false);mark(el,'dragging',false)}
+  evm.drag=null
+}
+function toggleFavorite(id){
+  const f=favorites(),on=f.includes(id),name=entryOf(id)?.card?.display_name||entryOf(id)?.base.display_name||id;
+  saveOrder('favorites',on?f.filter(x=>x!==id):f.concat(id),(on?'Убрано из избранного: ':'Добавлено в избранное: ')+name)
+}
+async function saveOrder(section,order,done){
+  if(!evm.cards?.view||evm.viewSaving)return;
+  evm.viewSaving=true;notice('evmError','');notice('evmNotice','');
+  const before=evm.cards.view;
+  evm.cards.view={...before,sections:{...before.sections,[section]:order}};renderEvm();  // shown at once; the server decides
+  try{
+    const r=await api('/ultra/model-cards/view',{method:'POST',body:{base_revision:before.revision,section,order}});
+    if(!r?.view?.sections)throw new Error('Сервер не подтвердил порядок');
+    evm.viewSaving=false;evm.cards.view=r.view;renderEvm();
+    if(done)notice('evmNotice',done)
+  }catch(e){
+    evm.viewSaving=false;evm.cards.view=before;evm.peekFocus=null;
+    await loadEvm();
+    notice('evmError',(e.code==='settings_revision_conflict'?'Порядок или список уже изменились в другом окне. Показано сохранённое состояние — повторите действие. ':'Порядок не сохранён. ')+e.message)
+  }
 }
 async function loadEvm(){
   const epoch=++evm.epoch;$('evmRefresh').disabled=true;notice('evmError','');text('evmState','Загружаем реестр…');
@@ -1095,20 +1314,6 @@ async function loadEvm(){
     notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
   }finally{$('evmRefresh').disabled=false}
 }
-async function selectConnection(id){
-  if(evm.busy)return;evm.busy=true;notice('evmNotice','');notice('evmError','');
-  $('evmChatSave').disabled=true;
-  let saved=null,error=null;
-  try{
-    const r=await api('/ultra/connections/selection',{method:'POST',body:{role:'chat',connection_id:id}});
-    if(r?.selection?.state!=='SAVED'||r.selection.connection_id!==id)throw new Error('Сервер не подтвердил сохранение выбора');
-    saved=r.selection
-  }catch(e){error=e}
-  evm.busy=false;evm.chatTouched=false;
-  await loadEvm();
-  if(error)notice('evmError','Выбор не сохранён: '+error.message);
-  else notice('evmNotice','Выбор сохранён: '+saved.display_name+' ('+saved.provider_model_id+')')
-}
 // Settings and diagnostics windows. Only one is shown at a time; closing or switching keeps the draft of every
 // model and the last diagnostic answer, so opening one window never destroys the state of the other.
 const EVM_TABS={conn:['evmTabConn','evmPaneConn'],model:['evmTabModel','evmPaneModel'],more:['evmTabMore','evmPaneMore']};
@@ -1126,17 +1331,21 @@ function facts(id,rows){
   const list=[];for(const [k,v] of rows){list.push(element('dt',k),element('dd',v==null||v===''?'—':v))}
   $(id).replaceChildren(...list)
 }
-function openWindow(kind,id){
-  if(!cardData(id))return;
+function openWindow(kind,id,tab){
+  const c=cardData(id);if(!c)return;
+  evm.returnTo=evm.peek.id===c.connection_id?evm.peek.section+'|'+evm.peek.id:Object.keys(evm.ccards).find(k=>k.endsWith('|'+c.connection_id))||null;
+  closePeek();
   evm.window={kind,id};evm.setError='';
+  if(tab)evm.tab=tab;
   fillWindow();
-  $(kind==='settings'?'evmSetTitle':'evmCheckTitle').focus()
+  if(tab==='model')$('evmSetDescription').focus();  // «Изменить описание»: straight into the field
+  else $(kind==='settings'?'evmSetTitle':'evmCheckTitle').focus()
 }
 function closeWindow(){
   const w=evm.window;if(!w)return;
   evm.window=null;$('evmSettingsWindow').hidden=true;$('evmCheckWindow').hidden=true;
   renderEvm();
-  evm.buttons[w.id]?.[w.kind]?.focus()
+  evm.copen[evm.returnTo]?.focus();evm.returnTo=null
 }
 function fillWindow(){
   const w=evm.window;if(!w)return;
@@ -1230,8 +1439,13 @@ async function sendCheck(){
 $('viewEvm').onclick=()=>showView('evm');
 $('viewOperator').onclick=()=>showView('operator');
 $('evmRefresh').onclick=()=>loadEvm();
-$('evmChatModel').onchange=()=>{evm.chatTouched=true};
-$('evmChatSave').onclick=()=>{const id=$('evmChatModel').value;if(!id){notice('evmError','Выберите модель для чата.');return}selectConnection(id)};
+$('evmPeek').onmouseenter=()=>clearTimeout(evm.peekTimer);
+$('evmPeek').onmouseleave=()=>peekLeave();
+$('evmView').onscroll=()=>{if(evm.peek.id)positionPeek()};
+$('evmView').onclick=e=>{  // a click outside a pinned card closes it
+  const t=e?.target;
+  if(evm.peek.pinned&&t&&typeof t.closest==='function'&&!t.closest('.evm-peek,.ccard,.evm-backdrop'))closePeek()
+};
 for(const [key,[tab]] of Object.entries(EVM_TABS))$(tab).onclick=()=>selectTab(key);
 $('evmSetProfile').onchange=editDraft;
 for(const id of ['evmSetParams','evmSetDescription','evmSetTimeout','evmSetDiagLimit','evmSetFreshness'])$(id).oninput=editDraft;
@@ -1241,7 +1455,17 @@ $('evmSetClose').onclick=()=>closeWindow();
 $('evmCheckClose').onclick=()=>closeWindow();
 $('evmCheckSend').onclick=()=>sendCheck();
 for(const id of ['evmSettingsWindow','evmCheckWindow'])$(id).onclick=e=>{if(e?.target===$(id))closeWindow()};
-if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener('keydown',e=>{if(e.key==='Escape'&&evm.window)closeWindow()});
+function escapeKey(e){
+  if(e?.key!=='Escape')return;
+  if(picker.open){closePicker(true);return}
+  if(evm.window){closeWindow();return}
+  if(evm.peek.id)closePeek({focus:true})
+}
+if(typeof window!=='undefined'&&window.addEventListener){
+  window.addEventListener('keydown',escapeKey);
+  window.addEventListener('resize',()=>{if(evm.peek.id)positionPeek()});
+  window.addEventListener('scroll',()=>{if(evm.peek.id)positionPeek()},true)  // narrow screens scroll the page, not the board
+}
 // Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
@@ -1327,11 +1551,47 @@ async function loadChatModel(){
   try{
     const s=(await api('/ultra/connections/selection?role=chat'))?.selection;
     if(!s||typeof s.state!=='string')throw Error('selection');
-    text('chatModel',s.state==='SAVED'&&typeof s.display_name==='string'?'Модель: '+s.display_name:s.state==='NOT_SELECTED'?'Модель не выбрана — откройте EVM':
-      s.state==='CORRUPT'?'Выбор модели повреждён — откройте EVM':s.state==='INVALID_REFERENCE'?'Выбранная модель недоступна — откройте EVM':
+    text('chatModel',s.state==='SAVED'&&typeof s.display_name==='string'?'Модель: '+s.display_name:s.state==='NOT_SELECTED'?'Модель не выбрана — выберите у поля ввода':
+      s.state==='CORRUPT'?'Выбор модели повреждён — выберите заново у поля ввода':s.state==='INVALID_REFERENCE'?'Выбранная модель недоступна — выберите другую у поля ввода':
       s.state==='REGISTRY_UNAVAILABLE'?'Реестр моделей недоступен':'Модель: неизвестное состояние '+s.state);
-    $('chatModel').className='tag '+(s.state==='SAVED'?'active':'warn')
-  }catch(_){text('chatModel','Модель: нет данных EVM');$('chatModel').className='tag warn'}
+    $('chatModel').className='tag '+(s.state==='SAVED'?'active':'warn');
+    text('chatModelPick',(s.state==='SAVED'&&typeof s.display_name==='string'?s.display_name:'Выбрать модель')+' ▾')
+  }catch(_){text('chatModel','Модель: нет данных EVM');$('chatModel').className='tag warn';text('chatModelPick','Выбрать модель ▾')}
+}
+// Model preference next to the composer (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): the same saved choice as before
+// (/ultra/connections/selection, no chat token), no message, Turn or history write. The model list is read only
+// when the user opens the picker, so the chat screen still reads nothing else at load.
+const picker={open:false,busy:false,epoch:0};
+async function openPicker(){
+  if(picker.busy)return;
+  if(picker.open){closePicker(true);return}
+  const epoch=++picker.epoch;picker.open=true;notice('chatModelError','');
+  $('chatModelPick').setAttribute('aria-expanded','true');$('chatModelMenu').hidden=false;
+  $('chatModelMenu').replaceChildren(element('p','Загружаем модели…','muted'));
+  try{
+    const data=await api('/ultra/connections');
+    if(!picker.open||epoch!==picker.epoch)return;
+    if(!validEvm(data))throw new Error('Некорректный ответ сервера о моделях');
+    const s=data.selection.chat,items=data.columns.api.connections.map(c=>{
+      const b=element('button',c.display_name+(c.selectable?'':' — отключена'));b.type='button';b.setAttribute('role','option');
+      b.setAttribute('aria-selected',String(s.state==='SAVED'&&s.connection_id===c.connection_id));b.disabled=!c.selectable;
+      b.onclick=()=>chooseChatModel(c.connection_id);return b});
+    $('chatModelMenu').replaceChildren(...(items.length?items:[element('p','В реестре нет моделей.','muted')]));
+    (items.find(b=>b.getAttribute('aria-selected')==='true'&&!b.disabled)||items.find(b=>!b.disabled))?.focus()
+  }catch(e){if(picker.open&&epoch===picker.epoch)$('chatModelMenu').replaceChildren(element('p','Список моделей недоступен: '+e.message,'chat-model-error'))}
+}
+function closePicker(focus){
+  picker.open=false;picker.epoch++;$('chatModelMenu').hidden=true;$('chatModelMenu').replaceChildren();
+  $('chatModelPick').setAttribute('aria-expanded','false');if(focus)$('chatModelPick').focus()
+}
+async function chooseChatModel(id){
+  if(picker.busy)return;picker.busy=true;$('chatModelPick').disabled=true;
+  try{
+    const r=await api('/ultra/connections/selection',{method:'POST',body:{role:'chat',connection_id:id}});
+    if(r?.selection?.state!=='SAVED'||r.selection.connection_id!==id)throw new Error('Сервер не подтвердил сохранение выбора');
+    closePicker(true)
+  }catch(e){closePicker(true);notice('chatModelError','Модель не сохранена: '+e.message)}
+  finally{picker.busy=false;$('chatModelPick').disabled=false;await loadChatModel()}
 }
 async function loadChatWorkspaces(){
   const epoch=chat.epoch;text('chatWorkspaceState','Загружаем Workspace…');notice('chatError','');
@@ -1393,6 +1653,7 @@ $('viewChat').onclick=()=>showView('chat');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
 $('chatOlder').onclick=()=>loadChatHistory(true);
 $('chatComposer').onsubmit=e=>e.preventDefault();
+$('chatModelPick').onclick=()=>openPicker();
 try{
   const saved=JSON.parse(localStorage.getItem('webAlarm.selection')||'{}');
   if(typeof saved.workspace==='string')view.workspace=saved.workspace;

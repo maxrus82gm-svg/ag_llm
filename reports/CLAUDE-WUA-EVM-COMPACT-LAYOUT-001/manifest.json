@@ -1,0 +1,255 @@
+{
+ "task": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (user assignment) + AMENDMENT (local sources after the user's sync, one package)",
+ "base": "published main #455 content of the EVM package (local checkout compared by content; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "web_alarm/ui.py": {
+   "role": "four-column EVM board, compact cards, one floating full card, order and favourites, «Изменить описание», chat-model picker next to the Ultra Chat composer",
+   "bytes": 138501,
+   "sha256": "9a6c1b28b179d1f73e7f536f57b4efbcf9d4e49c31799b79fb3b3bac6ecefe6c",
+   "eol": "CRLF",
+   "published_455_sha256": "be8f937b65d07608f9d229651066a9ca8b88a75a0383f34c81cff4b60e63f416"
+  },
+  "web_alarm/server.py": {
+   "role": "POST /ultra/model-cards/view (under the existing local-origin guard of /ultra/model-cards*)",
+   "bytes": 67973,
+   "sha256": "2170b8032eb75e71927ecf364621f15b093ae3b2858e4814333cf10130bc1680",
+   "eol": "CRLF",
+   "published_455_sha256": "ee046faad6da30b65133c51288ed2d11c2cbf70611c54b7d65b61800d6f673c7"
+  },
+  "web_alarm/model_cards.py": {
+   "role": "ultra/evm_view.json: manual order per column and favourites (references only), view in the catalog",
+   "bytes": 49395,
+   "sha256": "cf8ddc8aeda1dc795be45e4f0e7a27b5a819ecd84d301f17a8c8fc06f2c74ec5",
+   "eol": "CRLF",
+   "published_455_sha256": "8f7cfaab975161ab32f7b718d4802a7c0b2cbb65a0f88f554c02d9f99b3d2939"
+  },
+  "test_web_alarm_model_cards.py": {
+   "role": "m18-m21 board view tests, three HTTP cases in m16",
+   "bytes": 41548,
+   "sha256": "45a67e2da477a7d7f8f929d37bd788dae5df7d356511ceea391d8435804fb5fe",
+   "eol": "CRLF",
+   "published_455_sha256": "db617aa163af915c219e8f8c175468a825852ba14e6e3f101f05fb6757434cd6"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "role": "rewritten for the board: E1-E30",
+   "bytes": 50779,
+   "sha256": "75d75c3705ac5cd8eef8d51b0b035251db3b2f325ea46b1b5f0c5e63632e4bcd",
+   "eol": "CRLF",
+   "published_455_sha256": "62c39949941102efa9e0abe1d2441c30d7ae6e1b7e384bdf2fa3efc251ee9fe9"
+  }
+ },
+ "evm_files_unchanged": {
+  "test_web_alarm_ultra_connections.py": true
+ },
+ "stage1_files_unchanged": {
+  "context_storage.py": true,
+  "web_alarm/ultra_chat.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true
+ },
+ "launcher_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/launch_config.json": true,
+  "test_web_alarm_launcher.py": true
+ },
+ "evidence_summary": {
+  "change_inventory.json": {
+   "purpose": "change inventory against the published #455 content"
+  },
+  "description_check.json": {
+   "purpose": "§7: is editing 'Сильные стороны модели' broken? Checked on the code as published (#455) before any change",
+   "verdict": "NO SAVE DEFECT FOUND"
+  },
+  "focused_final.json": {
+   "purpose": "focused set on the final bytes",
+   "runner_exit": 0,
+   "tests_run": 117,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "full_all.json": {
+   "purpose": "full Web Alarm set 'all' on the final bytes",
+   "runner_exit": 0,
+   "tests_run": 1063,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "js_final.json": {
+   "purpose": "page tests on the final bytes",
+   "tests_run": 119,
+   "pass": 119,
+   "fail": 0
+  },
+  "mutants.json": {
+   "purpose": "final mutant pass on the final bytes",
+   "killed": 21,
+   "mutants": 21
+  },
+  "mutants_first.json": {
+   "purpose": "first mutant pass (V01 SURVIVED, kept before the test was strengthened, TEST-FLAKY-01 / TEST-QA-01)",
+   "killed": 20,
+   "mutants": 21
+  },
+  "screenshot_facts.json": {},
+  "visual_selfcheck.json": {
+   "purpose": "executor visual self-check on synthetic data; NOT the independent Windows/visual acceptance"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 23
+ },
+ "git_used": false,
+ "network_used": false,
+ "real_standard_storage_used": false,
+ "real_tk_settings_read": false,
+ "live_or_paid_api_used": false,
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 13764,
+   "sha256": "50f43cf56c997bca719dca3ea3d536df5aad35ce0c9d756e0e3121e463a05616",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/description_check.json",
+   "bytes": 1514,
+   "sha256": "4103c25758b152f3263f5afcbc03bf5386a320b5189c2e22d300ea88c77d0cb2",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/focused_final.json",
+   "bytes": 17602,
+   "sha256": "21ec7e35beae30eca0e7b5de486855f10e277ea995ff0bde9ccf3d44d7884647",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all.json",
+   "bytes": 164595,
+   "sha256": "06b6ef3413900b95f33df197ab26c4b880835817c87b5f1c9fdea4d2880ecf31",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_final.json",
+   "bytes": 15844,
+   "sha256": "7aefda43486be10e75fae6a7361d8b7e85b554530c1a60f1032b3ccb66e22e1f",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 6467,
+   "sha256": "ced0418ca9e433f03bd28fc02c1938b72da914208a77e50723686b1238060fe6",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants_first.json",
+   "bytes": 6452,
+   "sha256": "49a3a3b5646ff35c7a8a0c0a569b3a782f4dd61669b9196de282b134ca9054b5",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/screenshot_facts.json",
+   "bytes": 887,
+   "sha256": "d1e58f5ab37909bec04508c10cac0f4ca0f3b57c49430bec11ef0365284005e7",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/screenshots/01-evm-board-1400.png",
+   "bytes": 107690,
+   "sha256": "6a415340d57b6abfdba97c53c0beb9c251286afc99cfd0b5316f9d618ea1bced",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/02-evm-hover-full-card.png",
+   "bytes": 124026,
+   "sha256": "1b4391957e12bfca53475ca647ed1d013b338adf7feec40347c7ee225b0883de",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/03-evm-edit-description.png",
+   "bytes": 106840,
+   "sha256": "8505670fc093c85523de936cc8825430153cbd4dddde73c7ba72df2ee063fbfd",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/04-chat-model-picker.png",
+   "bytes": 67092,
+   "sha256": "99ba763b3e474b17518f4bf9055260cfc3458bb4cfdf28db90890ac3b967d916",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/05-evm-390-pinned-card.png",
+   "bytes": 50865,
+   "sha256": "1d92403950ce7dfa02f94d2b4f757390460776921ff8c4afa0ea8181738e0b30",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/06-evm-150-percent.png",
+   "bytes": 133852,
+   "sha256": "38aa88e8d1f42b10ff6289c7f94c545a9ca807f1922aa344f5ba781b0be35eb4",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/visual_selfcheck.json",
+   "bytes": 3218,
+   "sha256": "9888f34af3f09ec1c22685bbdb7fe668de077ff9c17c100fdc0be1adc1523f1b",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 33295,
+   "sha256": "e448e502074c19307c108f161169d7adb1abd7507fcb91a705b7ee132e3103ec",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/capture_screenshots.js",
+   "bytes": 6871,
+   "sha256": "092d31388e4924fe493e5ea223f1358c9301c3cb0930f126d7dca5d3723da668",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2526,
+   "sha256": "60a98fad8599ad0fefd2576dc6b914700f51e1ea70e81399318d4a427a656ba0",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_evm_board.py",
+   "bytes": 4858,
+   "sha256": "88c749df5ccdc518ef0d785360303c4da53cbbd2a5fa4987c9e37aecb1dea664",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/js_gate.py",
+   "bytes": 1483,
+   "sha256": "e55bf9ea59e99a42838bde713cbf81d385f24cab3b855f9734b21485c95d9ed1",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 5564,
+   "sha256": "c14d6d528f2e41f87c997613fea7acbbe39ecc5c6c6c2e6652fa7342ad388ad9",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1714,
+   "sha256": "d6cabca8bfa1e24544c778ad989fa0812248bfc90340a2a7abd0b54682c58623",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 9450,
+   "sha256": "d56baacd52018e8170ae51a82fe5bf21ec50dffcbd2db2d17083ca3ba9cc1fe0",
+   "eol": "LF"
+  }
+ ]
+}
