@@ -1,0 +1,27 @@
+{
+ "command": "python -B tools/task_slot_rotate.py rotate --card \"Документация/000_Задачи Claude.md\" --task-id CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 --no-chat-amendment",
+ "exit": 0,
+ "protocol": {
+  "command": "rotate",
+  "card": "Документация/000_Задачи Claude.md",
+  "mode": "dry-run",
+  "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "old_card_sha256": "75ee6144c468b5c700881e1c170fa8346565a2ee904c770c11202726f2a34f14",
+  "previous_slot": {
+   "state": "PLACEHOLDER",
+   "archived": "NOT_NEEDED"
+  },
+  "new_card_sha256": "0e3dfb642859d0fb81a1f3a53564349cc917ec53b2ca7c2ddeaa2614a1b37752",
+  "copy_sha256_lf": "973f2ea8e3fed2d792b34f174e04e642f199bf481ca3e3ea3991d5a20ea12879",
+  "copy_lines": 251,
+  "copied_exact": true,
+  "outside_slots_unchanged": true,
+  "block1_after": "WAITING",
+  "eol": "LF",
+  "snapshot": "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md",
+  "snapshot_state": "NEW",
+  "chat_amendments": 0,
+  "result": "DRY RUN OK"
+ }
+}

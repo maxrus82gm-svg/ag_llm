@@ -1,0 +1,9 @@
+{
+ "purpose": "first mutation pass, before test_r03 checked the reported line count; recorded from the console output of that run (evidence/mutants.json was overwritten by the rerun)",
+ "mutants": 24,
+ "killed": 23,
+ "survived": [
+  "M19 - lines split not only on LF (bytes.splitlines): the copy stays byte-exact, but the reported copy_lines would be wrong"
+ ],
+ "fix": "test_r03 now asserts copy_lines == number of LF in the copied text"
+}

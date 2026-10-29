@@ -1,0 +1,39 @@
+{
+ "command": "python -B tools/task_slot_rotate.py install-markers --card \"Документация/000_Задачи Claude.md\" --apply",
+ "exit": 0,
+ "protocol": {
+  "command": "install-markers",
+  "card": "Документация/000_Задачи Claude.md",
+  "mode": "apply",
+  "old_card_sha256": "047071ecfa188b0f03595e20be80de244f0e03d05a97e389d3682d54c55c3d7c",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+   "problems": []
+  },
+  "block1_1": {
+   "state": "PLACEHOLDER",
+   "problems": []
+  },
+  "marker_lines_after_install": [
+   45,
+   297,
+   303,
+   305
+  ],
+  "left_outside": [
+   {
+    "line": 43,
+    "text": "---"
+   },
+   {
+    "line": 299,
+    "text": "---"
+   }
+  ],
+  "new_card_sha256": "75ee6144c468b5c700881e1c170fa8346565a2ee904c770c11202726f2a34f14",
+  "only_marker_lines_added": true,
+  "eol": "LF",
+  "result": "MARKERS INSTALLED"
+ }
+}

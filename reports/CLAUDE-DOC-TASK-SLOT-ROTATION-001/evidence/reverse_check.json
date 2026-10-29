@@ -1,0 +1,26 @@
+{
+ "purpose": "prove that the cards changed only by the instruction paragraph, the markers and the rotation",
+ "imports_rotation_script": false,
+ "cards": {
+  "000_Задачи Claude.md": {
+   "instruction_lines_removed": 6,
+   "marker_lines": 4,
+   "copy_lines_moved_back": 251,
+   "expected_sha256": "166beba53757d405134184805ca28c9a03d384bd3d4fc4c43dd810a93d154657",
+   "reconstructed_sha256": "166beba53757d405134184805ca28c9a03d384bd3d4fc4c43dd810a93d154657",
+   "match": true,
+   "reconstructed_sha256_lf": "166beba53757d405134184805ca28c9a03d384bd3d4fc4c43dd810a93d154657",
+   "final_card_sha256": "0e3dfb642859d0fb81a1f3a53564349cc917ec53b2ca7c2ddeaa2614a1b37752"
+  },
+  "000_Задачи Codex.md": {
+   "instruction_lines_removed": 6,
+   "marker_lines": 4,
+   "expected_sha256": "e910cb1273650c05a10dc949c7fd1a27d249c0d89019622ed24c3547c43b18da",
+   "reconstructed_sha256": "e910cb1273650c05a10dc949c7fd1a27d249c0d89019622ed24c3547c43b18da",
+   "match": true,
+   "reconstructed_sha256_lf": "3750c6ec81269614a09a84fec4be54c78ee7d22803ba047dce850ff7bc1f98c7",
+   "final_card_sha256": "604e20b5ef6a9a4f25cbbf9858a81c3d1baf2dae75815e7b662a20c5dc22487d"
+  }
+ },
+ "verdict": "PASS"
+}

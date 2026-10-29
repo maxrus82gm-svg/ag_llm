@@ -1,0 +1,346 @@
+{
+ "task": "CLAUDE-DOC-TASK-SLOT-ROTATION-001",
+ "executor": "Claude 008",
+ "source": "coordinator's service assignment pasted by the user on 2026-10-29 (no TASK ID given; ID assigned by the executor); rule №18 DOC-BLOCK1-SLOT-01@1 (#460)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "rotated_task": {
+  "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "independent_acceptance": "NOT DONE (EVM #457 is not accepted)"
+ },
+ "project_files": {
+  "tools/task_slot_rotate.py": {
+   "kind": "NEW",
+   "role": "single rotation script for Claude/Codex cards: check, install-markers, rotate",
+   "bytes": 29731,
+   "sha256": "ac4220e2d02cef74ecd9fae0dcde436c3f066e3bad9f456a8c7e164c4faf9892",
+   "sha256_lf": "ac4220e2d02cef74ecd9fae0dcde436c3f066e3bad9f456a8c7e164c4faf9892",
+   "eol": "LF"
+  },
+  "tools/test_task_slot_rotate.py": {
+   "kind": "NEW",
+   "role": "43 tests: valid cards (LF, CRLF, BOM, separators) and wrong pastes",
+   "bytes": 27847,
+   "sha256": "8b14ad19ec115ea6dd48928bdeae5a5b2a9cb45fb896ddd01d856aa7342ebf99",
+   "sha256_lf": "8b14ad19ec115ea6dd48928bdeae5a5b2a9cb45fb896ddd01d856aa7342ebf99",
+   "eol": "LF"
+  },
+  "Документация/000_Задачи Claude.md": {
+   "kind": "CHANGED",
+   "role": "instruction paragraph (+6 lines), four slot markers, first rotation BLOCK 1 -> BLOCK 1.1",
+   "bytes": 36139,
+   "sha256": "0e3dfb642859d0fb81a1f3a53564349cc917ec53b2ca7c2ddeaa2614a1b37752",
+   "sha256_lf": "0e3dfb642859d0fb81a1f3a53564349cc917ec53b2ca7c2ddeaa2614a1b37752",
+   "eol": "LF"
+  },
+  "Документация/000_Задачи Codex.md": {
+   "kind": "CHANGED",
+   "role": "instruction paragraph (+6 lines), four slot markers; its BLOCK 1 text untouched, no rotation",
+   "bytes": 36928,
+   "sha256": "604e20b5ef6a9a4f25cbbf9858a81c3d1baf2dae75815e7b662a20c5dc22487d",
+   "sha256_lf": "086bc445eeb3af7cfb2c09dcc746b300ef02a79a6927cabf1ba817539c14bb04",
+   "eol": "CRLF"
+  },
+  "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md": {
+   "kind": "NEW",
+   "role": "snapshot of the rotated task written by the script",
+   "bytes": 20137,
+   "sha256": "681730d67eac860aa79a5db9d32f74411ba513ec7ceb24205d73cf49cd1de002",
+   "sha256_lf": "681730d67eac860aa79a5db9d32f74411ba513ec7ceb24205d73cf49cd1de002",
+   "eol": "LF"
+  }
+ },
+ "evm_sources_unchanged": {
+  "web_alarm/ui.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/model_cards.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_evm_ui.js": true
+ },
+ "not_changed": [
+  "card BLOCKS 2-4",
+  "№001 archives",
+  "№18 and other shared documents",
+  "Ultra Desktop card",
+  "Codex BLOCK 1 text",
+  "Git (not used, not read)"
+ ],
+ "evidence_summary": {
+  "check_claude_after_markers.json": {
+   "exit": 0,
+   "result": "OK"
+  },
+  "check_claude_after_rotation.json": {
+   "exit": 0,
+   "result": "OK"
+  },
+  "check_codex_after_markers.json": {
+   "exit": 0,
+   "result": "OK"
+  },
+  "check_codex_final.json": {
+   "exit": 0,
+   "result": "OK"
+  },
+  "evm_launch_message.json": {
+   "purpose": "exact launch message of CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 pasted by the user; it refers to the full statement in BLOCK 1 and adds no requirement, so it is not a CHAT-ONLY AMENDMENT"
+  },
+  "install_claude_apply.json": {
+   "exit": 0,
+   "result": "MARKERS INSTALLED"
+  },
+  "install_claude_dry_run.json": {
+   "exit": 0,
+   "result": "DRY RUN OK"
+  },
+  "install_codex_apply.json": {
+   "exit": 0,
+   "result": "MARKERS INSTALLED"
+  },
+  "install_codex_dry_run.json": {
+   "exit": 0,
+   "result": "DRY RUN OK"
+  },
+  "mutants.json": {
+   "purpose": "each mutant disables one guard of tools/task_slot_rotate.py; the tests must fail",
+   "mutants": 24,
+   "killed": 24
+  },
+  "mutants_first_pass.json": {
+   "purpose": "first mutation pass, before test_r03 checked the reported line count; recorded from the console output of that run (evidence/mutants.json was overwritten by the rerun)",
+   "mutants": 24,
+   "killed": 23
+  },
+  "previous_block11.json": {
+   "purpose": "exact content of BLOCK 1.1 of the Claude card before the first rotation (kept because the task asks to secure the previous slot; it is the placeholder, no TASK in it)",
+   "state": "PLACEHOLDER"
+  },
+  "reverse_check.json": {
+   "purpose": "prove that the cards changed only by the instruction paragraph, the markers and the rotation",
+   "verdict": "PASS"
+  },
+  "rotate_claude_apply.json": {
+   "exit": 0,
+   "result": "ROTATED"
+  },
+  "rotate_claude_dry_run.json": {
+   "exit": 0,
+   "result": "DRY RUN OK"
+  },
+  "rotate_claude_repeat_refused.json": {
+   "exit": 3,
+   "result": "NO ROTATE"
+  },
+  "tests_before_markers.json": {
+   "purpose": "first full run before the markers were installed in the real cards: the real-card check is expected to FAIL (no markers yet)",
+   "exit": 1,
+   "tests_run": 39,
+   "pass": 38,
+   "fail": 1,
+   "errors": 0,
+   "skips": 0
+  },
+  "tests_final.json": {
+   "purpose": "final run on the final script and tests, after the markers and the rotation (real cards valid)",
+   "exit": 0,
+   "tests_run": 43,
+   "pass": 43,
+   "fail": 0,
+   "errors": 0,
+   "skips": 0
+  }
+ },
+ "publication_scans": {
+  "CLAUDE-DOC-TASK-SLOT-ROTATION-001": {
+   "exit": 0,
+   "classes": {
+    "CLEAN": 25
+   }
+  },
+  "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001": {
+   "exit": 0,
+   "classes": {
+    "CLEAN": 25
+   }
+  }
+ },
+ "git_used": false,
+ "network_used": false,
+ "files": [
+  {
+   "path": "evidence/check_claude_after_markers.json",
+   "bytes": 652,
+   "sha256": "54f2180dca7dfca6092ab54bac71a04251b5c036e685ec416c193a5e9a8f8377",
+   "sha256_lf": "54f2180dca7dfca6092ab54bac71a04251b5c036e685ec416c193a5e9a8f8377",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/check_claude_after_rotation.json",
+   "bytes": 732,
+   "sha256": "9d0761203a14e669cbd7dac8d3a5e51858cbb23ead762e97d4149386d9f4b793",
+   "sha256_lf": "9d0761203a14e669cbd7dac8d3a5e51858cbb23ead762e97d4149386d9f4b793",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/check_codex_after_markers.json",
+   "bytes": 653,
+   "sha256": "e3fcee02885359146ff0a316bc711100d8bd76be55f27867185c1859f418e9b3",
+   "sha256_lf": "e3fcee02885359146ff0a316bc711100d8bd76be55f27867185c1859f418e9b3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/check_codex_final.json",
+   "bytes": 653,
+   "sha256": "e3fcee02885359146ff0a316bc711100d8bd76be55f27867185c1859f418e9b3",
+   "sha256_lf": "e3fcee02885359146ff0a316bc711100d8bd76be55f27867185c1859f418e9b3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/evm_launch_message.json",
+   "bytes": 1646,
+   "sha256": "842334c21ba9e4b38914c5a694621db7345872f09bd7e548b5484c9df9d4e96d",
+   "sha256_lf": "842334c21ba9e4b38914c5a694621db7345872f09bd7e548b5484c9df9d4e96d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/install_claude_apply.json",
+   "bytes": 906,
+   "sha256": "6ffe02fc5e57bfa4c177b0cc01bbb2e726eb48bbf2ac63b76eba50c5d900c9c2",
+   "sha256_lf": "6ffe02fc5e57bfa4c177b0cc01bbb2e726eb48bbf2ac63b76eba50c5d900c9c2",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/install_claude_dry_run.json",
+   "bytes": 893,
+   "sha256": "723d87e46d52b8370c1715e95ea0daa0d1e9ce27c5881048bb2af770f3fc9bf6",
+   "sha256_lf": "723d87e46d52b8370c1715e95ea0daa0d1e9ce27c5881048bb2af770f3fc9bf6",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/install_codex_apply.json",
+   "bytes": 862,
+   "sha256": "bd5e53928bd17390dff20ba93bdb32d9a5fe03e42068adaad173d697f8544851",
+   "sha256_lf": "bd5e53928bd17390dff20ba93bdb32d9a5fe03e42068adaad173d697f8544851",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/install_codex_dry_run.json",
+   "bytes": 849,
+   "sha256": "a51634ea3258bf9e8df08ce0acfe44c5bad1f26484f0a944c1ee15f42d4bea6a",
+   "sha256_lf": "a51634ea3258bf9e8df08ce0acfe44c5bad1f26484f0a944c1ee15f42d4bea6a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 5358,
+   "sha256": "f5a1fbd2d836ab70092a5d8da9057e3a0f32981b17dc8a18a3a91f357565ee33",
+   "sha256_lf": "f5a1fbd2d836ab70092a5d8da9057e3a0f32981b17dc8a18a3a91f357565ee33",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants_first_pass.json",
+   "bytes": 441,
+   "sha256": "43bf1e26c40acc80e9e2275eaf3233dfe42ad44d936ebe7f23fb0c5fb58c04c6",
+   "sha256_lf": "43bf1e26c40acc80e9e2275eaf3233dfe42ad44d936ebe7f23fb0c5fb58c04c6",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/previous_block11.json",
+   "bytes": 985,
+   "sha256": "cfa73a4f4ebdc28766361ac6a6f592f9a30a49cddc35583bb842ce840bf94994",
+   "sha256_lf": "cfa73a4f4ebdc28766361ac6a6f592f9a30a49cddc35583bb842ce840bf94994",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/reverse_check.json",
+   "bytes": 1189,
+   "sha256": "ef3affe8d66062dd0ad04c80d461268d7d16364c8e246ec391ae4bfa3b7ac9e2",
+   "sha256_lf": "ef3affe8d66062dd0ad04c80d461268d7d16364c8e246ec391ae4bfa3b7ac9e2",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotate_claude_apply.json",
+   "bytes": 1134,
+   "sha256": "099f73bfdb9bd176411ba222a9431799129bb42a9fba83a5883d9759b66d559d",
+   "sha256_lf": "099f73bfdb9bd176411ba222a9431799129bb42a9fba83a5883d9759b66d559d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotate_claude_dry_run.json",
+   "bytes": 1042,
+   "sha256": "c79b45a5d8f7d9a59a454be75014356513fe1e46efd27605c1f1490bd6dc4b12",
+   "sha256_lf": "c79b45a5d8f7d9a59a454be75014356513fe1e46efd27605c1f1490bd6dc4b12",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotate_claude_repeat_refused.json",
+   "bytes": 1041,
+   "sha256": "7ae48e363e825d7df2a4e4664dc06ac57fcc8f4054586609d6cb1733f3108036",
+   "sha256_lf": "7ae48e363e825d7df2a4e4664dc06ac57fcc8f4054586609d6cb1733f3108036",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/tests_before_markers.json",
+   "bytes": 2413,
+   "sha256": "3b101ada6829ee6cb89cc21e977f6ae72873b7a64d0a2f17d0de1962dbdca3dd",
+   "sha256_lf": "3b101ada6829ee6cb89cc21e977f6ae72873b7a64d0a2f17d0de1962dbdca3dd",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/tests_final.json",
+   "bytes": 2598,
+   "sha256": "a189437c5d5ec6c104563029373000d2ff53797ddd9ff475217f28fda9928d52",
+   "sha256_lf": "a189437c5d5ec6c104563029373000d2ff53797ddd9ff475217f28fda9928d52",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 21479,
+   "sha256": "c9db967ff103ca2fc4711650608e3a5731546d155eadd4568e4de397c04816b5",
+   "sha256_lf": "c9db967ff103ca2fc4711650608e3a5731546d155eadd4568e4de397c04816b5",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/capture.py",
+   "bytes": 1306,
+   "sha256": "0ef89dbd5f317ac001fa1e8ef0f259115970dbcb6ea91b17035cb4ee23ef0b4d",
+   "sha256_lf": "0ef89dbd5f317ac001fa1e8ef0f259115970dbcb6ea91b17035cb4ee23ef0b4d",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 5059,
+   "sha256": "16f7c82433cf896ce6f6594a32edcc20cc6f8a230b5669653ba729f076dde04b",
+   "sha256_lf": "16f7c82433cf896ce6f6594a32edcc20cc6f8a230b5669653ba729f076dde04b",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/reverse_check.py",
+   "bytes": 4049,
+   "sha256": "162ed8a4c9b87e45daa38478421a6338a0d0b18a38a8293cd6b600cf04b284ae",
+   "sha256_lf": "162ed8a4c9b87e45daa38478421a6338a0d0b18a38a8293cd6b600cf04b284ae",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 6665,
+   "sha256": "4c8ba18a4188ab1eb1df7e6b6155ebd7d294cd509ab81d5fa4fd689c6c6098ef",
+   "sha256_lf": "4c8ba18a4188ab1eb1df7e6b6155ebd7d294cd509ab81d5fa4fd689c6c6098ef",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_tests.py",
+   "bytes": 2496,
+   "sha256": "3e4f571e40326800a115ddc04dbdb74f6456c4c080e1055591a96176e1d41df3",
+   "sha256_lf": "3e4f571e40326800a115ddc04dbdb74f6456c4c080e1055591a96176e1d41df3",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/save_before_rotation.py",
+   "bytes": 3122,
+   "sha256": "f58827b6795753af598259018e31ab02b23f157ba0e0338596dde612ed1f5b17",
+   "sha256_lf": "f58827b6795753af598259018e31ab02b23f157ba0e0338596dde612ed1f5b17",
+   "eol": "LF"
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "command": "python -B tools/task_slot_rotate.py rotate --card \"Документация/000_Задачи Claude.md\" --task-id CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 --no-chat-amendment --apply",
+ "exit": 3,
+ "protocol": {
+  "command": "rotate",
+  "card": "Документация/000_Задачи Claude.md",
+  "mode": "apply",
+  "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+  "status": "SUBMITTED / REVIEW PENDING",
+  "old_card_sha256": "0e3dfb642859d0fb81a1f3a53564349cc917ec53b2ca7c2ddeaa2614a1b37752",
+  "previous_slot": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+   "copy_sha256": "973f2ea8e3fed2d792b34f174e04e642f199bf481ca3e3ea3991d5a20ea12879"
+  },
+  "result": "NO ROTATE",
+  "problems": [
+   {
+    "code": "NOTHING_TO_ROTATE",
+    "detail": "BLOCK 1 is WAITING"
+   },
+   {
+    "code": "ALREADY_ROTATED",
+    "detail": "BLOCK 1.1 already holds this TASK"
+   },
+   {
+    "code": "SNAPSHOT_CONFLICT",
+    "detail": "handoff_task.md exists with another text"
+   }
+  ],
+  "card_unchanged": true
+ }
+}

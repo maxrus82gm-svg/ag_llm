@@ -1,0 +1,35 @@
+{
+ "command": "python -B tools/task_slot_rotate.py install-markers --card \"Документация/000_Задачи Codex.md\"",
+ "exit": 0,
+ "protocol": {
+  "command": "install-markers",
+  "card": "Документация/000_Задачи Codex.md",
+  "mode": "dry-run",
+  "old_card_sha256": "6c4789f8d90197b0ff634d4f4d2ff9be392eae3ccb4e4c9713aca7c3e7017dfe",
+  "block1": {
+   "state": "TASK",
+   "task_id": "ASTRA-DOC-CONTEXT-OPTIMIZATION-001",
+   "problems": []
+  },
+  "block1_1": {
+   "state": "PLACEHOLDER",
+   "problems": []
+  },
+  "marker_lines_after_install": [
+   42,
+   333,
+   339,
+   341
+  ],
+  "left_outside": [
+   {
+    "line": 335,
+    "text": "---"
+   }
+  ],
+  "new_card_sha256": "604e20b5ef6a9a4f25cbbf9858a81c3d1baf2dae75815e7b662a20c5dc22487d",
+  "only_marker_lines_added": true,
+  "eol": "CRLF",
+  "result": "DRY RUN OK"
+ }
+}

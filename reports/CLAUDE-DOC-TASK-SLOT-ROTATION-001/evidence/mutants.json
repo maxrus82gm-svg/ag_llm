@@ -1,0 +1,243 @@
+{
+ "purpose": "each mutant disables one guard of tools/task_slot_rotate.py; the tests must fail",
+ "control": {
+  "exit": 0,
+  "tests_run": 43,
+  "pass": 43,
+  "fail": 0,
+  "errors": 0,
+  "skips": 0
+ },
+ "mutants": 24,
+ "killed": 24,
+ "rows": [
+  {
+   "id": "M01",
+   "guard": "damaged marker line is not reported",
+   "killed": true,
+   "failing_tests": [
+    "test_n03_damaged_marker"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M02",
+   "guard": "duplicated marker is not reported",
+   "killed": true,
+   "failing_tests": [
+    "test_n02_whole_card_pasted_into_block1"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M03",
+   "guard": "text outside the markers is accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n05_task_pasted_above_the_marker"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M04",
+   "guard": "mixed line endings are accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n21_mixed_line_endings"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M05",
+   "guard": "TASK ID of BLOCK 1 is not compared with --task-id",
+   "killed": true,
+   "failing_tests": [
+    "test_n06_new_task_already_in_block1"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M06",
+   "guard": "TASK ID format (path safety) is not checked",
+   "killed": true,
+   "failing_tests": [
+    "test_n22_task_id_cannot_be_a_path"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M07",
+   "guard": "two different TASK IDs in BLOCK 1 are accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n08_two_tasks_mixed"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M08",
+   "guard": "the same task pasted twice is accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n09_same_task_pasted_twice"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M09",
+   "guard": "AMENDMENT for another TASK is accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n10_amendment_for_another_task"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M10",
+   "guard": "the previous BLOCK 1.1 counts as archived without proof",
+   "killed": true,
+   "failing_tests": [
+    "test_r05_two_rotations_need_the_archive"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M11",
+   "guard": "an edited BLOCK 1.1 copy is accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n14_block11_copy_edited"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M12",
+   "guard": "the same TASK can be rotated twice",
+   "killed": true,
+   "failing_tests": [
+    "test_n15_same_task_rotated_twice"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M13",
+   "guard": "an unfinished report package is accepted",
+   "killed": true,
+   "failing_tests": [
+    "test_n16_report_package_not_final",
+    "test_n28_bad_arguments_and_files"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M14",
+   "guard": "chat AMENDMENT status may stay undeclared",
+   "killed": true,
+   "failing_tests": [
+    "test_n17_chat_amendment_must_be_declared"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M15",
+   "guard": "an existing different snapshot is overwritten",
+   "killed": true,
+   "failing_tests": [
+    "test_n18_snapshot_conflict"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M16",
+   "guard": "the card is not re-read right before the write",
+   "killed": true,
+   "failing_tests": [
+    "test_n19_concurrent_edit_is_not_overwritten"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M17",
+   "guard": "the lock does not exclude a second rotation",
+   "killed": true,
+   "failing_tests": [
+    "test_n20_lock_held"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M18",
+   "guard": "dry run of rotate writes",
+   "killed": true,
+   "failing_tests": [
+    "test_r04_dry_run_writes_nothing"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M19",
+   "guard": "lines are split on Unicode separators too",
+   "killed": true,
+   "failing_tests": [
+    "test_r03_bom_and_unicode_separators_kept"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M20",
+   "guard": "the copy is normalised to LF inside a CRLF card",
+   "killed": true,
+   "failing_tests": [
+    "test_r02_crlf_card_stays_crlf"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M21",
+   "guard": "the waiting line differs from the regulation",
+   "killed": true,
+   "failing_tests": [
+    "test_n11_waiting_line_left_in_task",
+    "test_n13_block1_waiting_or_empty",
+    "test_n26_waiting_line_with_trailing_spaces_is_waiting",
+    "test_r01_rotate_lf_card_verbatim",
+    "test_r02_crlf_card_stays_crlf",
+    "test_r03_bom_and_unicode_separators_kept",
+    "test_r05_two_rotations_need_the_archive",
+    "test_r06_previous_archive_snapshot_needs_reference",
+    "test_real_cards_are_valid"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M22",
+   "guard": "a failed write leaves the temporary file",
+   "killed": true,
+   "failing_tests": [
+    "test_n25_failed_write_leaves_card_and_no_temp_file"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M23",
+   "guard": "a whole card pasted into BLOCK 1 is accepted when markers stay unique",
+   "killed": true,
+   "failing_tests": [
+    "test_n12_card_structure_in_task"
+   ],
+   "tests_run": 43
+  },
+  {
+   "id": "M24",
+   "guard": "install-markers changes text, not only adds marker lines",
+   "killed": true,
+   "failing_tests": [
+    "test_m01_install_only_adds_four_lines",
+    "test_m02_install_refuses_unknown_block11"
+   ],
+   "tests_run": 43
+  }
+ ],
+ "script_sha256": "ac4220e2d02cef74ecd9fae0dcde436c3f066e3bad9f456a8c7e164c4faf9892",
+ "real_cards_unchanged": true
+}

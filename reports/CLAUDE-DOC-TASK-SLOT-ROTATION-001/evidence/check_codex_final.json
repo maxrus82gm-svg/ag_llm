@@ -1,0 +1,28 @@
+{
+ "command": "python -B tools/task_slot_rotate.py check --card \"Документация/000_Задачи Codex.md\"",
+ "exit": 0,
+ "protocol": {
+  "command": "check",
+  "card": "Документация/000_Задачи Codex.md",
+  "card_sha256": "604e20b5ef6a9a4f25cbbf9858a81c3d1baf2dae75815e7b662a20c5dc22487d",
+  "eol": "CRLF",
+  "marker_lines": {
+   "b1b": 42,
+   "b1e": 333,
+   "b11b": 339,
+   "b11e": 341
+  },
+  "block1": {
+   "state": "TASK",
+   "task_id": "ASTRA-DOC-CONTEXT-OPTIMIZATION-001",
+   "problems": [],
+   "lines": 290
+  },
+  "block1_1": {
+   "state": "PLACEHOLDER",
+   "problems": []
+  },
+  "problems": [],
+  "result": "OK"
+ }
+}

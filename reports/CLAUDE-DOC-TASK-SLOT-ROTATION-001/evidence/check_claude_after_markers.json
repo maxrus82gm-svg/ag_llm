@@ -1,0 +1,28 @@
+{
+ "command": "python -B tools/task_slot_rotate.py check --card \"Документация/000_Задачи Claude.md\"",
+ "exit": 0,
+ "protocol": {
+  "command": "check",
+  "card": "Документация/000_Задачи Claude.md",
+  "card_sha256": "75ee6144c468b5c700881e1c170fa8346565a2ee904c770c11202726f2a34f14",
+  "eol": "LF",
+  "marker_lines": {
+   "b1b": 45,
+   "b1e": 297,
+   "b11b": 303,
+   "b11e": 305
+  },
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+   "problems": [],
+   "lines": 251
+  },
+  "block1_1": {
+   "state": "PLACEHOLDER",
+   "problems": []
+  },
+  "problems": [],
+  "result": "OK"
+ }
+}
