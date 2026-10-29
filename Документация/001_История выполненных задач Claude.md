@@ -12388,3 +12388,14 @@ reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/
 
 **БЛОК 1:** `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` остаётся активным; NEXT: Windows/visual и EVM gate. Новая TASK автоматически не назначена.
 ~~~
+
+
+## 2026-10-29 — CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 — закрытие итерации REVISE, №457
+- **Полная исходная TASK и AMENDMENT:** `reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md` (251 строк LF, SHA-256 `973f2ea8e3fed2d792b34f174e04e642f199bf481ca3e3ea3991d5a20ea12879`), а также сохранённый БЛОК 1.1. Публикация `main@f37e9a9b43a202298412fac7f1c3c5768e6c1fba` (№457), отчёт/manifest/evidence в той же папке.
+- **Factual результат:** четыре колонки, предпочтения порядка и избранного, выбор модели рядом с Ultra Chat. Авторские тесты JS 119/119, focused Python 117/117, full 1061 PASS/2 SKIP, мутанты 21/21; независимый rerun этих тестов НЕ ВЫПОЛНЯЛСЯ.
+- **Independent/user verdict:** **ITERATION DOC CLOSED / REVISE, PRODUCT NOT ACCEPTED**. Реальный пользовательский осмотр нашёл перекрывающую hover-панель и конфликт с манипуляциями мышью; физический Windows drag указан в отчёте как NOT RUN.
+- **OPEN:** №05 `FOLLOWUP-EVM-457-HOVER-001`, `FOLLOWUP-EVM-457-DND-001`, `FOLLOWUP-EVM-457-GUI-001`, `FOLLOWUP-EVM-457-REGRESSION-001`; №06 `EVT-WEB16-EVM-COMPACT-REVISE-20261029`. Пользователь локально назначил successor `CLAUDE-WUA-EVM-INTERACTION-DND-001`, по Claude `check OK`; старт только по отдельному GO.
+
+## 2026-10-29 — CLAUDE-DOC-TASK-SLOT-ROTATION-001 — опубликованный этап ротации №461
+- **Источник:** `main@12c53bf638c6705e77923ea08066c43ea4df6b6f` (№461), `tools/task_slot_rotate.py`, тесты и `reports/CLAUDE-DOC-TASK-SLOT-ROTATION-001/report.md`/manifest/evidence. Установлены четыре постоянных маркера, старый БЛОК 1 дословно сохранён в БЛОК 1.1 и в опубликованном снимке.
+- **Проверки:** автор 43/43 и 24/24 мутанта; независимый runtime/Obsidian NOT RUN. Открыто конкурентное редактирование/несохранённый текст и альтернативные ОС. Условие TASK ID и check — №18/07/08. №06 `EVT-WEB16-TASK-SLOT-20261029`.

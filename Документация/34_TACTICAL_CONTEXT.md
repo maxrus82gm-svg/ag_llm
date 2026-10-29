@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 28.10.2026, WEB16; GitHub readback документов терминального PARTIAL на ветке `GPT`. Актуальным в `main` это станет только после пользовательского merge. **Назначение:** короткая операционная картина без повторения истории, evidence и старых постановок.
+**Срез:** 29.10.2026, WEB16; технические №457 и №461 опубликованы в main; документационное закрытие EVM REVISE подготовлено в GPT и требует пользовательского merge. **Назначение:** короткая операционная картина без повторения истории, evidence и старых постановок.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB16 / Claude по пользовательскому назначению | Stage1 `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` и отдельная EVM `CLAUDE-WUA-EVM-MODEL-CARD-UI-001`: DOC CLOSED / **TERMINAL PARTIAL** 2026-10-28 в `GPT` (пользовательское решение), independent runtime/Windows gates OPEN; полная Stage1 сохранена в №001 Claude. Новый `CLAUDE-WUA-EVM-COMPACT-LAYOUT-001` подготовлен в чате, **пока не назначен в БЛОК 1**. | После пользовательского merge проверить локальную синхронизацию и стандартный BAT; пользователь назначает следующий TASK, Claude проверяет пересечения с направлением Б до правок `ui.py/server.py`. Stage2/paid по-прежнему не назначены |
+| А — Ultra Chat / EVM, WEB16 / Claude | EVM compact №457: **ITERATION DOC CLOSED / REVISE, PRODUCT NOT ACCEPTED** по пользовательскому UX. Hover overlay и real Windows DnD OPEN. Ротация №461 сохранила №457 в БЛОК 1.1; successor `CLAUDE-WUA-EVM-INTERACTION-DND-001` локально вставлена, Claude `check OK` | После DOC merge в main, local sync, STANDARD и проверки пересечений — отдельный GO пользователя на DnD. Stage2/paid не разрешены |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
@@ -35,6 +35,8 @@
 | EVM / карточки моделей (решение пользователя 27–28.10) | Реализована одна универсальная карточка: общий серверный статус API (30 суток), manual млрд, read-only роли, описание до 500 символов, отдельные настройки/тест; платный live-check не разрешён. Пользователь осмотрел экран и настройки на Windows; дизайн подтвердил лишь частично и попросил компактный hover, сортировку, избранное, перенос выбора в чат. Батарейки возможностей и LLM-новости — FUTURE. | `CLAUDE-WUA-EVM-MODEL-CARD-UI-001` опубликована `main@55cc4477`, DOC CLOSED / TERMINAL PARTIAL в `GPT` по решению 2026-10-28; independent regression/diagnostic a11y OPEN. №05 `REG-WEB16-EVM-20261028`, №06 `EVT-WEB16-EVM-CLOSE-20261028`, №001 Claude. Предложена **не назначена** TASK `CLAUDE-WUA-EVM-COMPACT-LAYOUT-001` |
 
 ## Открытые проверки и риски
+
+**EVM №457 FOLLOWUP:** №05 `FOLLOWUP-EVM-457-HOVER-001`, `FOLLOWUP-EVM-457-DND-001`, `FOLLOWUP-EVM-457-GUI-001`, `FOLLOWUP-EVM-457-REGRESSION-001`; локальный check новой TASK известен только по отчёту Claude, не independent runtime proof.
 
 | Пункт | Тип / влияние | Владелец и следующий шаг |
 | --- | --- | --- |
