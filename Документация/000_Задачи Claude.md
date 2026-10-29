@@ -310,16 +310,17 @@ MCP-подключение не объявлять нейросетевой мо
 
 Полный архив — [[001_История выполненных задач Claude]].
 
+- **2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001** — №457 `f37e9a9b`, **ITERATION DOC CLOSED / REVISE; PRODUCT NOT ACCEPTED**. В реальном UI hover перекрывает карточки, Windows mouse DnD NOT RUN. Полная постановка в `reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md` и БЛОКЕ 1.1; OPEN — №05 FOLLOWUP; successor `CLAUDE-WUA-EVM-INTERACTION-DND-001` локально `check OK` по Claude, отдельный GO ещё не дан.
 - **2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001** — единые карточки EVM и настройки; опубликовано `main@55cc4477`. **DOC CLOSED / TERMINAL PARTIAL** по решению пользователя; независимые Windows/CI и live checks OPEN. Источник №001/№05 `REG-WEB16-EVM-20261028`.
 - **2026-10-28 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001** — Stage1 Ultra Chat read-only опубликован `main@ab527eae`. **DOC CLOSED / TERMINAL PARTIAL**; независимые Windows/visual/portability gates OPEN. Полный БЛОК 1 — №001; №05 `REG-WEB16-S1-20261028`.
 - **2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001** — подготовительная архитектура Ultra Chat, `PASS / BOUNDED ARCHITECTURE & EVIDENCE`, 17/17 SHA; реальное production поведение не проверено.
 - **2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001** — ограниченная независимая Windows-верификация исправления test guard, PASS соответствующего gate; WA4-R остаётся PARTIAL.
-- **2026-10-24 / CLAUDE-WA4-R-FT1-ARCHIVE-RETRY-001** — исправления guard/archive retry, author evidence; полный источник и прежние формулировки сохранены в №001.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
+- **EVM compact №457:** реализованы 4 колонки, порядок, избранное и выбор модели в композере. Авторские JS 119/119, focused Python 117/117, full 1061 PASS/2 SKIP, мутанты 21/21; независимый полный rerun NOT RUN. User visual: мешающий hover/flyout и реальный drag ещё требуют исправления. №461 перенёс прежнюю TASK в БЛОК 1.1.
 - **Stage1:** `context_storage.py` / `web_alarm/ultra_chat.py` / read-only HTTP и UI, без отправки сообщений или записи чата. Пользователь сообщил, что чат визуально выглядит нормально. Полная независимая проверка Stage1 по обязательным Windows сценариям не завершена.
 - **EVM:** `web_alarm/model_cards.py` и общая UI-карточка; статусы и назначенные роли, настройки и безопасная заглушка API-check. Авторская регрессия 1057 PASS/2 SKIP; 109 JS PASS, 30/30 mutants; опубликованные SHA сверены WEB16, verifier full-run NOT RUN. Пользователь отметил пригодность экрана и настроек, хочет отдельную компактную переработку.
 - **Прочие предыдущие результаты:** сохранены посимвольно в №001 → `2026-10-28 — Claude БЛОКИ 2–4 — снимок до ротации`, исходные отчёты и №06. Никакие WA4-R/RT-002/B2/платные gates не закрываются от ротации.
@@ -329,6 +330,9 @@ MCP-подключение не объявлять нейросетевой мо
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 
 **Автор:** ChatGPT / WEB16. Для Claude этот блок READ-ONLY. Исторические verdict находятся в №06; этот блок — окно последних результатов.
+
+## 0. 2026-10-29 / EVM compact №457 — REVISE
+**ITERATION DOC CLOSED, PRODUCT NOT ACCEPTED.** Пользователь обнаружил hover-панель поверх списка и конфликт с сортировкой мышью; real Windows drag NOT RUN. Авторские тесты не перезапускались координатором. Полная TASK+AMENDMENT и хэш в `handoff_task.md`; №05 `FOLLOWUP-EVM-457-*`, №06 `EVT-WEB16-EVM-COMPACT-REVISE-20261029`. Новая DnD TASK не стартовала.
 
 ## 1. WEB16 / 2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001
 
@@ -344,4 +348,4 @@ MCP-подключение не объявлять нейросетевой мо
 
 ---
 
-**NEXT:** пользователь выбирает и назначает отдельную следующую TASK `CLAUDE-WUA-EVM-COMPACT-LAYOUT-001` (полная постановка и активатор уже выданы координатором в чате). Перед реализацией — STANDARD launcher, актуальный GitHub/local sync и отсутствие конфликтующих общих изменений. Не заменять это сообщение автоматическим GO.
+**NEXT 29.10:** пользователь локально назначил `CLAUDE-WUA-EVM-INTERACTION-DND-001`; Claude сообщил `check OK / exit 0`. После принятия документационного closeout в main, локальной синхронизации и отдельного GO начать EVM исправления. Не затирать БЛОК 1.1 и не расширять Stage2/paid.
