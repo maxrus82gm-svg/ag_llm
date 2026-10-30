@@ -1,0 +1,271 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "screenshots made scan-clean by a lossless PNG re-compression",
+ "files": [
+  {
+   "file": "01-board-1400.png",
+   "first_scan": {
+    "SUSPECT+UNSUPPORTED": 1
+   },
+   "original_sha256": "5b8b2a3fff7b5caef8866717127a575d0104ea319595e39a4f843b7a2c20bfc1",
+   "changed": true,
+   "zlib": {
+    "level": 9,
+    "strategy": 0,
+    "memLevel": 8
+   },
+   "attempts": 2,
+   "final_sha256": "daebbb2a2803a94e7a02b2078a104d48513124108bcde4ee7a0e0d105223d956",
+   "image_data_sha256": "9e8d039f35cf944ef3f82d7efe3dc30d6fce2282f8c2666edaf0b02a176129f6",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "02-two-cards-open-in-place.png",
+   "first_scan": {
+    "BENIGN_ONLY": 1
+   },
+   "original_sha256": "3ed611305a1a166f2dcd2b2bb18a942d5d128c613ad1ae5788469b1ec049af8b",
+   "changed": true,
+   "zlib": {
+    "level": 9,
+    "strategy": 0,
+    "memLevel": 9
+   },
+   "attempts": 1,
+   "final_sha256": "b438e175173bbe975b0d9782c7e49c424a88db70e2f4066b691bc4689c3d43c0",
+   "image_data_sha256": "c8b37e43aaf66bc4560e08e504b6dd64caf3545f30e22e3365ccd114fb2c9ee7",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "03-drag-inside-column-line.png",
+   "first_scan": {
+    "CONFIRMED+UNSUPPORTED": 1
+   },
+   "original_sha256": "787e44ed9f17381e1984565ce7dbfef613c2a8464b177be90d85618e48bfd5f6",
+   "changed": true,
+   "zlib": {
+    "level": 9,
+    "strategy": 0,
+    "memLevel": 8
+   },
+   "attempts": 2,
+   "final_sha256": "79775cb552fbc706421655d181bd0f53bec5c83d8bb1353fbabc14aacc18fa65",
+   "image_data_sha256": "347cf7437d390237f0c21166816e2906fbedd80e42e2951c984cecdeee03f70a",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "04-drag-into-favourites.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "b229fc25b2fab520b44d5e2ea35e36ee0cefff9656cf1d02b59c5fc2f4834834",
+   "changed": false,
+   "final_sha256": "b229fc25b2fab520b44d5e2ea35e36ee0cefff9656cf1d02b59c5fc2f4834834",
+   "image_data_sha256": "093ed12874850a02a930521b24e61c25c4c9206c0bddcf4a7b0b00ef31f42269",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "05-toast-board-still.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "22561139aab3c2db16247373f35b7bc7a5ac965e0e5d07c49abfcf7cedc8eddd",
+   "changed": false,
+   "final_sha256": "22561139aab3c2db16247373f35b7bc7a5ac965e0e5d07c49abfcf7cedc8eddd",
+   "image_data_sha256": "08f97d2a72490574ab115ce10b70838f8cfbdcbc3da3821bb46abb6a0cc14e34",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "06-ctrl-preview-api-right.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "9dab3a3111f13056d8c265114551d289dc7b8cdcdad9a8aff547666b1dc53360",
+   "changed": false,
+   "final_sha256": "9dab3a3111f13056d8c265114551d289dc7b8cdcdad9a8aff547666b1dc53360",
+   "image_data_sha256": "e6983edb6686509a0677eefc202babdf2ddc776ad2a11521f36749d37dccece9",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "07-ctrl-preview-local-left.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "521a912e4ffff4fbda13bd92b583a984f6043b6c8639b91375ed909ada6bde08",
+   "changed": false,
+   "final_sha256": "521a912e4ffff4fbda13bd92b583a984f6043b6c8639b91375ed909ada6bde08",
+   "image_data_sha256": "4fa74568a9a435304216c65d693d1706aaaae4fdf894ca5d0d96dbcf83660ded",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "08-zoom-150-open-card-and-panel.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "9d39cb740e2f4e36b0ed095367dda11487cba393802819fb896b1729ed902b3e",
+   "changed": false,
+   "final_sha256": "9d39cb740e2f4e36b0ed095367dda11487cba393802819fb896b1729ed902b3e",
+   "image_data_sha256": "455f7c0c2a43597b91230db50c599a84e1eb153d492ffeb400ea71e41ee79910",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "09-narrow-390-open-in-place.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "2ad0ef3e6c0baffa97ae3780a62ce44211a1688e92a200c052c500768b684cb7",
+   "changed": false,
+   "final_sha256": "2ad0ef3e6c0baffa97ae3780a62ce44211a1688e92a200c052c500768b684cb7",
+   "image_data_sha256": "d4a605f8cdfb54dd8d19a664a4377cadee4715b4ff29a7fc8c7006db793b13fd",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "10-narrow-390-sheet.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "4cdc498477e23886e31f59ed164111a035b022c915e17f8fdc30ebacd792cd43",
+   "changed": false,
+   "final_sha256": "4cdc498477e23886e31f59ed164111a035b022c915e17f8fdc30ebacd792cd43",
+   "image_data_sha256": "bed841c2f86ea036671c7c8d20c43d0e74d91768a9bc22b4d524ba5f03363bc2",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "11-three-windows-just-pinned.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "f475d7fa58e55f5954688dd5bd01069c7e82d52c6824b30afe94dcfe18a86824",
+   "changed": false,
+   "final_sha256": "f475d7fa58e55f5954688dd5bd01069c7e82d52c6824b30afe94dcfe18a86824",
+   "image_data_sha256": "c95816d5f8cafb3a37f179807d33dafaa3b8823341de9a9a7e2f4ab381194d3e",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "12-three-windows-side-by-side.png",
+   "first_scan": {
+    "BENIGN_ONLY": 1
+   },
+   "original_sha256": "6516745bbff0fd328749c560a3862b95cde8f5b9f1d9f055fff43e1101983033",
+   "changed": true,
+   "zlib": {
+    "level": 9,
+    "strategy": 1,
+    "memLevel": 9
+   },
+   "attempts": 3,
+   "final_sha256": "d2c7aab9313762a2e9d687b4cb54e1a70c119c601b3af1990d18d1be22de13f1",
+   "image_data_sha256": "57b2e2b5e1445829008fe43a6ae38c12a30c0bb9051968f8e8a16486dbe71485",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "13-preview-above-pinned-windows.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "5b11e08c14463d1dbe581b0e2f5ec3d88c55fa2e3cc8a9e8027a818991f77d09",
+   "changed": false,
+   "final_sha256": "5b11e08c14463d1dbe581b0e2f5ec3d88c55fa2e3cc8a9e8027a818991f77d09",
+   "image_data_sha256": "f4c73e02b838b741a70ba1f9f1d18d1c6132675558c7b2a484f300087a3e49e5",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "14-narrow-390-windows.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "d91f412413600eccec82c99cee42f0ebd4f69aeb3d0f8145c0edc16c9a02d06f",
+   "changed": false,
+   "final_sha256": "d91f412413600eccec82c99cee42f0ebd4f69aeb3d0f8145c0edc16c9a02d06f",
+   "image_data_sha256": "96942ba07bd49e28604c597b26ad09464d279fbf0ba2fad3c82e7caf1f744400",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "15-zoom-150-windows.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "ea7dd89f328542d62aa146eba371080ee25e3fe70e81e69838f42924aa936e2e",
+   "changed": false,
+   "final_sha256": "ea7dd89f328542d62aa146eba371080ee25e3fe70e81e69838f42924aa936e2e",
+   "image_data_sha256": "95ec7ed0ba5bc185caf646a06a2599e298e8a2d74cf280adb555686f96ff03c2",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "16-restored-after-server-restart.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "8e3903bef6122876cca1b85dc39762a2114f32e2bae3e57d9da58f1614b9be19",
+   "changed": false,
+   "final_sha256": "8e3903bef6122876cca1b85dc39762a2114f32e2bae3e57d9da58f1614b9be19",
+   "image_data_sha256": "a8f8fff836e17904800922707a91108d039dfbb2a063a0fa3df8f0bbcfbfe760",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  },
+  {
+   "file": "17-damaged-layout-told.png",
+   "first_scan": {
+    "CLEAN": 1
+   },
+   "original_sha256": "6bc20089925b0639463fc32cbedd96e6ec88e15f5e0a389f3d68afefdd66ca8f",
+   "changed": false,
+   "final_sha256": "6bc20089925b0639463fc32cbedd96e6ec88e15f5e0a389f3d68afefdd66ca8f",
+   "image_data_sha256": "5c253a96c1032d743fd333036df23a3d22d6ccef501bc24745f3850ddbb0d1b2",
+   "same_pixels": true,
+   "final_scan": {
+    "CLEAN": 1
+   }
+  }
+ ],
+ "changed": 4,
+ "all_same_pixels": true,
+ "all_clean": true
+}

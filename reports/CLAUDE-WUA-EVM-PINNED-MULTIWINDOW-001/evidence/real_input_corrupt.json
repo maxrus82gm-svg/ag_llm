@@ -1,0 +1,63 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "phase": "corrupt",
+ "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+ "browser": "Chrome/156.0.8078.79",
+ "steps": [
+  {
+   "step": "P13 a damaged saved layout is told, gives no window and leaves the board intact; the next window starts the layout again",
+   "checks": [
+    {
+     "ok": true,
+     "check": "no window from a damaged layout"
+    },
+    {
+     "ok": true,
+     "check": "the damage is told"
+    },
+    {
+     "ok": true,
+     "check": "the server reports it",
+     "value": {
+      "state": "CORRUPT",
+      "revision": null,
+      "boardRevision": 14,
+      "windows": []
+     }
+    },
+    {
+     "ok": true,
+     "check": "the board order and favourites are intact",
+     "value": {
+      "api": 6,
+      "favorites": 6
+     }
+    },
+    {
+     "ok": true,
+     "check": "the next window starts the layout again",
+     "value": {
+      "state": "SAVED",
+      "revision": 1,
+      "boardRevision": 14,
+      "windows": [
+       {
+        "id": "gigachat_2",
+        "x": 702,
+        "y": 617
+       }
+      ]
+     }
+    }
+   ],
+   "screenshots": [
+    "17-damaged-layout-told.png"
+   ]
+  }
+ ],
+ "checks": 5,
+ "failed": 0,
+ "screenshots": [
+  "17-damaged-layout-told.png"
+ ]
+}

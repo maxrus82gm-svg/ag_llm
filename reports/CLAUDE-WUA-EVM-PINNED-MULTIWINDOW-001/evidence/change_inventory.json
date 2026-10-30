@@ -1,0 +1,1069 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "change inventory against the published #464 / #457 content",
+ "files": {
+  "web_alarm/ui.py": {
+   "baseline_package": "#464",
+   "baseline_sha256": "b4cac4bafb87ea124d931048512969f8e27a498cf3b80e7c6f1a8a42974cf733",
+   "baseline_is_published_content": true,
+   "new_sha256": "3095764a598fc7c7ffc0e59d10525b1246f97f416eb0af336287506f8c277ae6",
+   "changed": true,
+   "baseline_lines": 1872,
+   "new_lines": 2058,
+   "eol": "CRLF",
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      162,
+      163
+     ],
+     "new_lines": [
+      162,
+      163
+     ]
+    },
+    {
+     "baseline_lines": [
+      167,
+      166
+     ],
+     "new_lines": [
+      167,
+      175
+     ]
+    },
+    {
+     "baseline_lines": [
+      174,
+      174
+     ],
+     "new_lines": [
+      183,
+      183
+     ]
+    },
+    {
+     "baseline_lines": [
+      487,
+      487
+     ],
+     "new_lines": [
+      496,
+      496
+     ]
+    },
+    {
+     "baseline_lines": [
+      495,
+      494
+     ],
+     "new_lines": [
+      504,
+      504
+     ]
+    },
+    {
+     "baseline_lines": [
+      1015,
+      1015
+     ],
+     "new_lines": [
+      1025,
+      1026
+     ]
+    },
+    {
+     "baseline_lines": [
+      1029,
+      1028
+     ],
+     "new_lines": [
+      1040,
+      1040
+     ]
+    },
+    {
+     "baseline_lines": [
+      1163,
+      1165
+     ],
+     "new_lines": [
+      1175,
+      1177
+     ]
+    },
+    {
+     "baseline_lines": [
+      1200,
+      1200
+     ],
+     "new_lines": [
+      1212,
+      1212
+     ]
+    },
+    {
+     "baseline_lines": [
+      1224,
+      1223
+     ],
+     "new_lines": [
+      1236,
+      1236
+     ]
+    },
+    {
+     "baseline_lines": [
+      1229,
+      1230
+     ],
+     "new_lines": [
+      1242,
+      1244
+     ]
+    },
+    {
+     "baseline_lines": [
+      1234,
+      1236
+     ],
+     "new_lines": [
+      1248,
+      1250
+     ]
+    },
+    {
+     "baseline_lines": [
+      1245,
+      1245
+     ],
+     "new_lines": [
+      1259,
+      1259
+     ]
+    },
+    {
+     "baseline_lines": [
+      1248,
+      1249
+     ],
+     "new_lines": [
+      1262,
+      1269
+     ]
+    },
+    {
+     "baseline_lines": [
+      1253,
+      1262
+     ],
+     "new_lines": [
+      1273,
+      1273
+     ]
+    },
+    {
+     "baseline_lines": [
+      1267,
+      1267
+     ],
+     "new_lines": [
+      1278,
+      1278
+     ]
+    },
+    {
+     "baseline_lines": [
+      1270,
+      1270
+     ],
+     "new_lines": [
+      1281,
+      1281
+     ]
+    },
+    {
+     "baseline_lines": [
+      1273,
+      1279
+     ],
+     "new_lines": [
+      1284,
+      1284
+     ]
+    },
+    {
+     "baseline_lines": [
+      1286,
+      1287
+     ],
+     "new_lines": [
+      1291,
+      1293
+     ]
+    },
+    {
+     "baseline_lines": [
+      1290,
+      1290
+     ],
+     "new_lines": [
+      1296,
+      1295
+     ]
+    },
+    {
+     "baseline_lines": [
+      1295,
+      1295
+     ],
+     "new_lines": [
+      1300,
+      1300
+     ]
+    },
+    {
+     "baseline_lines": [
+      1298,
+      1298
+     ],
+     "new_lines": [
+      1303,
+      1303
+     ]
+    },
+    {
+     "baseline_lines": [
+      1301,
+      1302
+     ],
+     "new_lines": [
+      1306,
+      1306
+     ]
+    },
+    {
+     "baseline_lines": [
+      1304,
+      1304
+     ],
+     "new_lines": [
+      1308,
+      1326
+     ]
+    },
+    {
+     "baseline_lines": [
+      1307,
+      1323
+     ],
+     "new_lines": [
+      1329,
+      1423
+     ]
+    },
+    {
+     "baseline_lines": [
+      1325,
+      1325
+     ],
+     "new_lines": [
+      1425,
+      1426
+     ]
+    },
+    {
+     "baseline_lines": [
+      1327,
+      1326
+     ],
+     "new_lines": [
+      1428,
+      1506
+     ]
+    },
+    {
+     "baseline_lines": [
+      1367,
+      1367
+     ],
+     "new_lines": [
+      1547,
+      1547
+     ]
+    },
+    {
+     "baseline_lines": [
+      1372,
+      1372
+     ],
+     "new_lines": [
+      1552,
+      1552
+     ]
+    },
+    {
+     "baseline_lines": [
+      1452,
+      1452
+     ],
+     "new_lines": [
+      1632,
+      1632
+     ]
+    },
+    {
+     "baseline_lines": [
+      1499,
+      1499
+     ],
+     "new_lines": [
+      1679,
+      1680
+     ]
+    },
+    {
+     "baseline_lines": [
+      1525,
+      1525
+     ],
+     "new_lines": [
+      1706,
+      1706
+     ]
+    },
+    {
+     "baseline_lines": [
+      1633,
+      1633
+     ],
+     "new_lines": [
+      1814,
+      1814
+     ]
+    },
+    {
+     "baseline_lines": [
+      1648,
+      1647
+     ],
+     "new_lines": [
+      1829,
+      1829
+     ]
+    },
+    {
+     "baseline_lines": [
+      1649,
+      1649
+     ],
+     "new_lines": [
+      1831,
+      1831
+     ]
+    },
+    {
+     "baseline_lines": [
+      1655,
+      1656
+     ],
+     "new_lines": [
+      1837,
+      1838
+     ]
+    },
+    {
+     "baseline_lines": [
+      1662,
+      1661
+     ],
+     "new_lines": [
+      1844,
+      1844
+     ]
+    },
+    {
+     "baseline_lines": [
+      1663,
+      1662
+     ],
+     "new_lines": [
+      1846,
+      1847
+     ]
+    },
+    {
+     "baseline_lines": [
+      1664,
+      1664
+     ],
+     "new_lines": [
+      1849,
+      1850
+     ]
+    }
+   ]
+  },
+  "test_web_alarm_evm_ui.js": {
+   "baseline_package": "#464",
+   "baseline_sha256": "1c9668c7044bc190ca05671f25c9dc761627b0c4ee64f19556005ccf875ce854",
+   "baseline_is_published_content": true,
+   "new_sha256": "ff2f8af938e8633c99fab26c639528fc24dc23d771553fed581b1133cc530892",
+   "changed": true,
+   "baseline_lines": 1093,
+   "new_lines": 1354,
+   "eol": "CRLF",
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      10,
+      9
+     ],
+     "new_lines": [
+      10,
+      11
+     ]
+    },
+    {
+     "baseline_lines": [
+      24,
+      25
+     ],
+     "new_lines": [
+      26,
+      28
+     ]
+    },
+    {
+     "baseline_lines": [
+      120,
+      119
+     ],
+     "new_lines": [
+      123,
+      128
+     ]
+    },
+    {
+     "baseline_lines": [
+      123,
+      125
+     ],
+     "new_lines": [
+      132,
+      135
+     ]
+    },
+    {
+     "baseline_lines": [
+      157,
+      156
+     ],
+     "new_lines": [
+      167,
+      176
+     ]
+    },
+    {
+     "baseline_lines": [
+      208,
+      208
+     ],
+     "new_lines": [
+      228,
+      228
+     ]
+    },
+    {
+     "baseline_lines": [
+      296,
+      297
+     ],
+     "new_lines": [
+      316,
+      317
+     ]
+    },
+    {
+     "baseline_lines": [
+      307,
+      307
+     ],
+     "new_lines": [
+      327,
+      331
+     ]
+    },
+    {
+     "baseline_lines": [
+      332,
+      333
+     ],
+     "new_lines": [
+      356,
+      357
+     ]
+    },
+    {
+     "baseline_lines": [
+      351,
+      351
+     ],
+     "new_lines": [
+      375,
+      375
+     ]
+    },
+    {
+     "baseline_lines": [
+      357,
+      358
+     ],
+     "new_lines": [
+      381,
+      384
+     ]
+    },
+    {
+     "baseline_lines": [
+      360,
+      360
+     ],
+     "new_lines": [
+      386,
+      386
+     ]
+    },
+    {
+     "baseline_lines": [
+      366,
+      367
+     ],
+     "new_lines": [
+      392,
+      393
+     ]
+    },
+    {
+     "baseline_lines": [
+      407,
+      407
+     ],
+     "new_lines": [
+      433,
+      433
+     ]
+    },
+    {
+     "baseline_lines": [
+      414,
+      414
+     ],
+     "new_lines": [
+      440,
+      440
+     ]
+    },
+    {
+     "baseline_lines": [
+      428,
+      428
+     ],
+     "new_lines": [
+      454,
+      454
+     ]
+    },
+    {
+     "baseline_lines": [
+      448,
+      448
+     ],
+     "new_lines": [
+      474,
+      475
+     ]
+    },
+    {
+     "baseline_lines": [
+      450,
+      450
+     ],
+     "new_lines": [
+      477,
+      477
+     ]
+    },
+    {
+     "baseline_lines": [
+      452,
+      455
+     ],
+     "new_lines": [
+      479,
+      482
+     ]
+    },
+    {
+     "baseline_lines": [
+      458,
+      459
+     ],
+     "new_lines": [
+      485,
+      485
+     ]
+    },
+    {
+     "baseline_lines": [
+      541,
+      541
+     ],
+     "new_lines": [
+      567,
+      567
+     ]
+    },
+    {
+     "baseline_lines": [
+      544,
+      544
+     ],
+     "new_lines": [
+      570,
+      571
+     ]
+    },
+    {
+     "baseline_lines": [
+      552,
+      554
+     ],
+     "new_lines": [
+      579,
+      581
+     ]
+    },
+    {
+     "baseline_lines": [
+      560,
+      560
+     ],
+     "new_lines": [
+      587,
+      586
+     ]
+    },
+    {
+     "baseline_lines": [
+      564,
+      564
+     ],
+     "new_lines": [
+      590,
+      590
+     ]
+    },
+    {
+     "baseline_lines": [
+      566,
+      566
+     ],
+     "new_lines": [
+      592,
+      591
+     ]
+    },
+    {
+     "baseline_lines": [
+      568,
+      568
+     ],
+     "new_lines": [
+      593,
+      593
+     ]
+    },
+    {
+     "baseline_lines": [
+      573,
+      581
+     ],
+     "new_lines": [
+      598,
+      609
+     ]
+    },
+    {
+     "baseline_lines": [
+      584,
+      584
+     ],
+     "new_lines": [
+      612,
+      612
+     ]
+    },
+    {
+     "baseline_lines": [
+      652,
+      653
+     ],
+     "new_lines": [
+      680,
+      681
+     ]
+    },
+    {
+     "baseline_lines": [
+      655,
+      658
+     ],
+     "new_lines": [
+      683,
+      687
+     ]
+    },
+    {
+     "baseline_lines": [
+      853,
+      853
+     ],
+     "new_lines": [
+      882,
+      882
+     ]
+    },
+    {
+     "baseline_lines": [
+      869,
+      869
+     ],
+     "new_lines": [
+      898,
+      898
+     ]
+    },
+    {
+     "baseline_lines": [
+      882,
+      885
+     ],
+     "new_lines": [
+      911,
+      914
+     ]
+    },
+    {
+     "baseline_lines": [
+      894,
+      894
+     ],
+     "new_lines": [
+      923,
+      923
+     ]
+    },
+    {
+     "baseline_lines": [
+      896,
+      896
+     ],
+     "new_lines": [
+      925,
+      925
+     ]
+    },
+    {
+     "baseline_lines": [
+      900,
+      900
+     ],
+     "new_lines": [
+      929,
+      929
+     ]
+    },
+    {
+     "baseline_lines": [
+      902,
+      902
+     ],
+     "new_lines": [
+      931,
+      931
+     ]
+    },
+    {
+     "baseline_lines": [
+      912,
+      912
+     ],
+     "new_lines": [
+      941,
+      941
+     ]
+    },
+    {
+     "baseline_lines": [
+      915,
+      937
+     ],
+     "new_lines": [
+      944,
+      962
+     ]
+    },
+    {
+     "baseline_lines": [
+      939,
+      940
+     ],
+     "new_lines": [
+      964,
+      967
+     ]
+    },
+    {
+     "baseline_lines": [
+      942,
+      955
+     ],
+     "new_lines": [
+      969,
+      969
+     ]
+    },
+    {
+     "baseline_lines": [
+      958,
+      958
+     ],
+     "new_lines": [
+      972,
+      972
+     ]
+    },
+    {
+     "baseline_lines": [
+      961,
+      961
+     ],
+     "new_lines": [
+      975,
+      975
+     ]
+    },
+    {
+     "baseline_lines": [
+      968,
+      968
+     ],
+     "new_lines": [
+      982,
+      982
+     ]
+    },
+    {
+     "baseline_lines": [
+      970,
+      970
+     ],
+     "new_lines": [
+      984,
+      984
+     ]
+    },
+    {
+     "baseline_lines": [
+      974,
+      974
+     ],
+     "new_lines": [
+      988,
+      988
+     ]
+    },
+    {
+     "baseline_lines": [
+      978,
+      986
+     ],
+     "new_lines": [
+      992,
+      1002
+     ]
+    },
+    {
+     "baseline_lines": [
+      1020,
+      1020
+     ],
+     "new_lines": [
+      1036,
+      1036
+     ]
+    },
+    {
+     "baseline_lines": [
+      1094,
+      1093
+     ],
+     "new_lines": [
+      1110,
+      1354
+     ]
+    }
+   ]
+  },
+  "web_alarm/model_cards.py": {
+   "baseline_package": "#457",
+   "baseline_sha256": "cf8ddc8aeda1dc795be45e4f0e7a27b5a819ecd84d301f17a8c8fc06f2c74ec5",
+   "baseline_is_published_content": true,
+   "new_sha256": "03d38fe36361a43fd11b5776cead7e6fe8f054c394d23c3760545b9dae36e02f",
+   "changed": true,
+   "baseline_lines": 891,
+   "new_lines": 964,
+   "eol": "CRLF",
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      48,
+      47
+     ],
+     "new_lines": [
+      48,
+      50
+     ]
+    },
+    {
+     "baseline_lines": [
+      372,
+      371
+     ],
+     "new_lines": [
+      375,
+      402
+     ]
+    },
+    {
+     "baseline_lines": [
+      611,
+      611
+     ],
+     "new_lines": [
+      642,
+      643
+     ]
+    },
+    {
+     "baseline_lines": [
+      623,
+      624
+     ],
+     "new_lines": [
+      655,
+      656
+     ]
+    },
+    {
+     "baseline_lines": [
+      640,
+      640
+     ],
+     "new_lines": [
+      672,
+      676
+     ]
+    },
+    {
+     "baseline_lines": [
+      666,
+      666
+     ],
+     "new_lines": [
+      702,
+      702
+     ]
+    },
+    {
+     "baseline_lines": [
+      670,
+      671
+     ],
+     "new_lines": [
+      706,
+      744
+     ]
+    }
+   ]
+  },
+  "web_alarm/server.py": {
+   "baseline_package": "#457",
+   "baseline_sha256": "2170b8032eb75e71927ecf364621f15b093ae3b2858e4814333cf10130bc1680",
+   "baseline_is_published_content": true,
+   "new_sha256": "a2bc94b4e3ebb3c175c6ce19fa155556bc539b14925aaef0d99df5ce38338886",
+   "changed": true,
+   "baseline_lines": 1385,
+   "new_lines": 1389,
+   "eol": "CRLF",
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      409,
+      408
+     ],
+     "new_lines": [
+      409,
+      412
+     ]
+    }
+   ]
+  },
+  "test_web_alarm_model_cards.py": {
+   "baseline_package": "#457",
+   "baseline_sha256": "45a67e2da477a7d7f8f929d37bd788dae5df7d356511ceea391d8435804fb5fe",
+   "baseline_is_published_content": true,
+   "new_sha256": "d1f8b5fef2915db6fb8c53eb0e95e0728e320101a2570f3e88b8c0141f6965d8",
+   "changed": true,
+   "baseline_lines": 639,
+   "new_lines": 797,
+   "eol": "CRLF",
+   "eol_kept": true,
+   "changed_regions": [
+    {
+     "baseline_lines": [
+      567,
+      566
+     ],
+     "new_lines": [
+      567,
+      720
+     ]
+    },
+    {
+     "baseline_lines": [
+      610,
+      609
+     ],
+     "new_lines": [
+      764,
+      767
+     ]
+    }
+   ]
+  }
+ },
+ "all_baselines_published": true,
+ "changed": [
+  "test_web_alarm_evm_ui.js",
+  "test_web_alarm_model_cards.py",
+  "web_alarm/model_cards.py",
+  "web_alarm/server.py",
+  "web_alarm/ui.py"
+ ]
+}

@@ -1,0 +1,436 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (coordinator text pasted by the user, TASK ID line included); user GO in chat",
+ "base": "published #464 (page) and #457 (server side) content (local checkout compared by content; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "web_alarm/ui.py": {
+   "role": "pinned EVM windows: a collection by connection_id in its own layer under the Ctrl preview; moved by the title, closed only by «×», saved per window and restored once per page load; the preview promoted by a press",
+   "bytes": 166861,
+   "sha256": "3095764a598fc7c7ffc0e59d10525b1246f97f416eb0af336287506f8c277ae6",
+   "eol": "CRLF",
+   "published_sha256": "b4cac4bafb87ea124d931048512969f8e27a498cf3b80e7c6f1a8a42974cf733"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "role": "E1-E44: 30 of #464 kept or adjusted, E15/E21/E31/E32 rewritten, E38-E44 new for the windows",
+   "bytes": 104154,
+   "sha256": "ff2f8af938e8633c99fab26c639528fc24dc23d771553fed581b1133cc530892",
+   "eol": "CRLF",
+   "published_sha256": "1c9668c7044bc190ca05671f25c9dc761627b0c4ee64f19556005ccf875ce854"
+  },
+  "web_alarm/model_cards.py": {
+   "role": "the optional layout part of ultra/evm_view.json (own revision, whole pixels, one window per entry); save_layout; an order save keeps the layout; a damaged layout is reported, set aside and never breaks the board",
+   "bytes": 54540,
+   "sha256": "03d38fe36361a43fd11b5776cead7e6fe8f054c394d23c3760545b9dae36e02f",
+   "eol": "CRLF",
+   "published_sha256": "cf8ddc8aeda1dc795be45e4f0e7a27b5a819ecd84d301f17a8c8fc06f2c74ec5"
+  },
+  "web_alarm/server.py": {
+   "role": "POST /ultra/model-cards/layout under the existing local-origin guard of /ultra/model-cards*",
+   "bytes": 68326,
+   "sha256": "a2bc94b4e3ebb3c175c6ce19fa155556bc539b14925aaef0d99df5ce38338886",
+   "eol": "CRLF",
+   "published_sha256": "2170b8032eb75e71927ecf364621f15b093ae3b2858e4814333cf10130bc1680"
+  },
+  "test_web_alarm_model_cards.py": {
+   "role": "m22-m25 for the layout (persistence, validation, two pages and concurrency, damage and absent entries), four HTTP cases in m16",
+   "bytes": 54331,
+   "sha256": "d1f8b5fef2915db6fb8c53eb0e95e0728e320101a2570f3e88b8c0141f6965d8",
+   "eol": "CRLF",
+   "published_sha256": "45a67e2da477a7d7f8f929d37bd788dae5df7d356511ceea391d8435804fb5fe"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "context_storage.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/ultra_chat.py": true
+ },
+ "server_side_changed": "layout only: web_alarm/model_cards.py, web_alarm/server.py",
+ "rotation": {
+  "card": "Документация/000_Задачи Claude.md",
+  "card_after_rotation": {
+   "bytes": 37671,
+   "sha256": "b4f3b060de887e082d05df0d6d8a1922600c9f96efd8a8377763e63881680e23",
+   "eol": "LF"
+  },
+  "snapshot": {
+   "bytes": 20237,
+   "sha256": "8960cf0f906f78409ce201c2b0577c260dbf3a4b49b2e8f435910a75570b3e10",
+   "eol": "LF"
+  },
+  "protocol": "evidence/rotation.json"
+ },
+ "evidence_summary": {
+  "change_inventory.json": {
+   "purpose": "change inventory against the published #464 / #457 content"
+  },
+  "focused_final.json": {
+   "purpose": "focused Python gate on the final bytes: EVM model cards (with the layout), connections, Ultra Chat stage 1, server, UI/UX, operator UI, launcher",
+   "runner_exit": 0,
+   "tests_run": 121,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "full_all.json": {
+   "purpose": "full Python regression (all) on the final bytes; source SHA identical before and after the run",
+   "runner_exit": 0,
+   "tests_run": 1067,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "js_final.json": {
+   "purpose": "page tests on the final bytes",
+   "tests_run": 133,
+   "pass": 133,
+   "fail": 0
+  },
+  "js_first_464_tests_on_new_page.json": {
+   "purpose": "first run: the accepted #464 page tests against the pinned windows (expected red where the panel semantics changed)",
+   "tests_run": 126,
+   "pass": 112,
+   "fail": 14
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the pinned windows and their layout (TEST-QA)",
+   "killed": 38,
+   "mutants": 38
+  },
+  "mutants_first.json": {
+   "purpose": "mutation gate of the pinned windows and their layout (TEST-QA)",
+   "killed": 36,
+   "mutants": 38
+  },
+  "pins_expected.json": {},
+  "prestart.json": {
+   "purpose": "pre-start state before the first edit"
+  },
+  "real_input_corrupt.json": {
+   "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+   "checks": 5,
+   "failed": 0
+  },
+  "real_input_main.json": {
+   "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+   "checks": 187,
+   "failed": 0
+  },
+  "real_input_red_trial.json": {
+   "purpose": "the red trial run of the real-input check, kept as found"
+  },
+  "real_input_restored.json": {
+   "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+   "checks": 6,
+   "failed": 0
+  },
+  "real_input_run.json": {
+   "purpose": "real browser input in three phases on one synthetic storage",
+   "checks": 198,
+   "failed": 0
+  },
+  "rotation.json": {
+   "result": "ROTATED"
+  },
+  "screenshots_png_safe.json": {
+   "purpose": "screenshots made scan-clean by a lossless PNG re-compression"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 47
+ },
+ "git_used": false,
+ "network_used": "loopback demo only",
+ "real_standard_storage_used": false,
+ "real_tk_settings_read": false,
+ "live_or_paid_api_used": false,
+ "physical_windows_mouse": "NOT RUN",
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 13943,
+   "sha256": "39d2813c1ebb1f1b05f83f116c2e93ae15e844bdef8f3da695ee7ef2220b3f86",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/focused_final.json",
+   "bytes": 18312,
+   "sha256": "69314c21d3c34e11c9ccb6dda6be570755b74086c12f9ba293e64d5f5ff8f152",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all.json",
+   "bytes": 165244,
+   "sha256": "45e4fe02b1ce468799fcad2e5f17156688539716c8683d365f5fd386c3585638",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_final.json",
+   "bytes": 18635,
+   "sha256": "32720214af7b164d255faaf7f97820aadf4de34dbf5f1839f2ac1cdd54946244",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_first_464_tests_on_new_page.json",
+   "bytes": 17374,
+   "sha256": "e0c9b742feb0ba10f829e466db53242c13873437eb54d5517df184f8a0ec6856",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 11635,
+   "sha256": "9280b3371c5f87253d91b2421fcff91655e4fd7bda2382835bbbe50b492c9d0e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants_first.json",
+   "bytes": 11480,
+   "sha256": "5c43b52cc60fdd2fd907a38a0817414556ff28736082d3c291acf24ad6168401",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/pins_expected.json",
+   "bytes": 287,
+   "sha256": "eda19bf408a4b73fcd6889b4fd7bcc4316b0c2557b8f59a13e3a2270fb4fd54f",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/prestart.json",
+   "bytes": 2451,
+   "sha256": "35ab1806764d5dbd512b99261fe013bcd765e2a8a37ebb2cd7d9e28d16c7e360",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_corrupt.json",
+   "bytes": 1281,
+   "sha256": "0cd0ebf091c9f7f2ff0cb5e7ae9481254b597b46c269649c7d585faa85884c74",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_main.json",
+   "bytes": 39953,
+   "sha256": "a22c0567473c790ce0f34f436ff0ec7897a6005f8a9a0fe2c62abb1b2b1ca7c9",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_red_trial.json",
+   "bytes": 2130,
+   "sha256": "4f91eda5c0295b44693775ccb61b635e910cc67a155debc77687a5d35b023b5d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_restored.json",
+   "bytes": 2456,
+   "sha256": "523a9a845d6717c584e4e96a30d2a7fcb0a3bf97bef72cf2a389bed8af7b50d5",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_run.json",
+   "bytes": 697,
+   "sha256": "8323748123c24e699ab266e955d9a08763424d98d56c13b554e8cd473ecb6e8a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotation.json",
+   "bytes": 1327,
+   "sha256": "f0b36961792e3048f9f346c3514e0dc3c21c17e02bddcb065e12361d3858d533",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/screenshots/01-board-1400.png",
+   "bytes": 117714,
+   "sha256": "daebbb2a2803a94e7a02b2078a104d48513124108bcde4ee7a0e0d105223d956",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/02-two-cards-open-in-place.png",
+   "bytes": 125044,
+   "sha256": "b438e175173bbe975b0d9782c7e49c424a88db70e2f4066b691bc4689c3d43c0",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/03-drag-inside-column-line.png",
+   "bytes": 131685,
+   "sha256": "79775cb552fbc706421655d181bd0f53bec5c83d8bb1353fbabc14aacc18fa65",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/04-drag-into-favourites.png",
+   "bytes": 134842,
+   "sha256": "b229fc25b2fab520b44d5e2ea35e36ee0cefff9656cf1d02b59c5fc2f4834834",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/05-toast-board-still.png",
+   "bytes": 136073,
+   "sha256": "22561139aab3c2db16247373f35b7bc7a5ac965e0e5d07c49abfcf7cedc8eddd",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/06-ctrl-preview-api-right.png",
+   "bytes": 153866,
+   "sha256": "9dab3a3111f13056d8c265114551d289dc7b8cdcdad9a8aff547666b1dc53360",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/07-ctrl-preview-local-left.png",
+   "bytes": 141512,
+   "sha256": "521a912e4ffff4fbda13bd92b583a984f6043b6c8639b91375ed909ada6bde08",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/08-zoom-150-open-card-and-panel.png",
+   "bytes": 123897,
+   "sha256": "9d39cb740e2f4e36b0ed095367dda11487cba393802819fb896b1729ed902b3e",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/09-narrow-390-open-in-place.png",
+   "bytes": 44506,
+   "sha256": "2ad0ef3e6c0baffa97ae3780a62ce44211a1688e92a200c052c500768b684cb7",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/10-narrow-390-sheet.png",
+   "bytes": 49579,
+   "sha256": "4cdc498477e23886e31f59ed164111a035b022c915e17f8fdc30ebacd792cd43",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/11-three-windows-just-pinned.png",
+   "bytes": 163227,
+   "sha256": "f475d7fa58e55f5954688dd5bd01069c7e82d52c6824b30afe94dcfe18a86824",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/12-three-windows-side-by-side.png",
+   "bytes": 158641,
+   "sha256": "d2c7aab9313762a2e9d687b4cb54e1a70c119c601b3af1990d18d1be22de13f1",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/13-preview-above-pinned-windows.png",
+   "bytes": 199758,
+   "sha256": "5b11e08c14463d1dbe581b0e2f5ec3d88c55fa2e3cc8a9e8027a818991f77d09",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/14-narrow-390-windows.png",
+   "bytes": 54027,
+   "sha256": "d91f412413600eccec82c99cee42f0ebd4f69aeb3d0f8145c0edc16c9a02d06f",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/15-zoom-150-windows.png",
+   "bytes": 170248,
+   "sha256": "ea7dd89f328542d62aa146eba371080ee25e3fe70e81e69838f42924aa936e2e",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/16-restored-after-server-restart.png",
+   "bytes": 200406,
+   "sha256": "8e3903bef6122876cca1b85dc39762a2114f32e2bae3e57d9da58f1614b9be19",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/17-damaged-layout-told.png",
+   "bytes": 131014,
+   "sha256": "6bc20089925b0639463fc32cbedd96e6ec88e15f5e0a389f3d68afefdd66ca8f",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots_png_safe.json",
+   "bytes": 8178,
+   "sha256": "bbff4cc746a4951503ee435c5cdaf4c996ee4850f3eabaefd391b24a13eff4e9",
+   "eol": "LF"
+  },
+  {
+   "path": "handoff_task.md",
+   "bytes": 20237,
+   "sha256": "8960cf0f906f78409ce201c2b0577c260dbf3a4b49b2e8f435910a75570b3e10",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 37618,
+   "sha256": "619806ae39c904d9e50060f42349bc8f711fd14d8c4fd8fb486de4c364fa78ab",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2778,
+   "sha256": "41970969fe3bd2fb11513a3a3d0da59ef476caccb602fead4193defb8578a9f1",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_evm_pins.py",
+   "bytes": 7146,
+   "sha256": "485def450816aaec323bd6ae257938dd27f94302d78ce01a78e8a5770067492c",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/js_gate.py",
+   "bytes": 1573,
+   "sha256": "9b4fe90373472410c909f7b4d9f813a10644150919072240822d5245bb189dea",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 6951,
+   "sha256": "e1ba5b71fc5e6e00e28a709766ea32e6df7f489627314c73019e5bf18a3e1d34",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/png_safe.py",
+   "bytes": 4916,
+   "sha256": "05b2d3889fdc5929fdacbf5d6763b7e6adacf888d89dc0c84d025b34afb97d8b",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/prestart.py",
+   "bytes": 3729,
+   "sha256": "22375260b518ab54446d40cc969737214bda0979a65990a23b2bc4ae263b8028",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/real_input_check.js",
+   "bytes": 58840,
+   "sha256": "cd4fcb7113b6c22cdf282af926f9234d172c95f9d85c39797a85a59fbb7bc8ff",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1761,
+   "sha256": "98a254c231b2fe04cdc95938b719534b76462a75a5e3bca1be6cefc3d5f23704",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/red_runs.py",
+   "bytes": 1481,
+   "sha256": "10b136385ddfa78d352212fb860c0bec8c747ec7ac2e759df07ba68a822b8ce3",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 14064,
+   "sha256": "239d1b1bbe5e0e9ef481bb44ce71ee8d1b930ba44229f3e06b05487f2b8ce0fd",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_real_input.py",
+   "bytes": 5041,
+   "sha256": "4d9d9c79affe491f3f7131e1feef3659900a76b0f6e220fc96c8e64fbfa72ba1",
+   "eol": "LF"
+  }
+ ]
+}

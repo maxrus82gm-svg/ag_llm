@@ -406,6 +406,10 @@ class WebAlarmApi:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", "the board arrangement is saved with POST")
                 return 200, {"view": self.model_cards.save_view(_require_object(body))}
+            if parts == ["ultra", "model-cards", "layout"]:  # pinned EVM windows: one per entry, position and stacking
+                if method != "POST":
+                    raise ApiError(405, "method_not_allowed", "the window layout is saved with POST")
+                return 200, {"view": self.model_cards.save_layout(_require_object(body))}
             if len(parts) == 4 and parts[:2] == ["ultra", "model-cards"] and parts[3] in {"settings", "check"}:
                 if method != "POST":
                     raise ApiError(405, "method_not_allowed", f"{parts[3]} requires POST")

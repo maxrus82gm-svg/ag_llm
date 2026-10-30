@@ -1,0 +1,566 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "page tests on the final bytes",
+ "node": "v22.20.0",
+ "tests_run": 133,
+ "pass": 133,
+ "fail": 0,
+ "files": {
+  "test_web_alarm_evm_ui.js": {
+   "exit": 0,
+   "tests": 44,
+   "pass": 44,
+   "fail": 0,
+   "results": [
+    {
+     "test": "E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge",
+     "status": "PASS"
+    },
+    {
+     "test": "E2 the board: four columns, compact cards in server order, honest empty columns, a closed card holds no full card",
+     "status": "PASS"
+    },
+    {
+     "test": "E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference",
+     "status": "PASS"
+    },
+    {
+     "test": "E4 a refused or unavailable picker is told and saves nothing locally",
+     "status": "PASS"
+    },
+    {
+     "test": "E5 malformed or failed catalog answers show an error and no invented models",
+     "status": "PASS"
+    },
+    {
+     "test": "E6 saved-choice states are told honestly in the EVM summary",
+     "status": "PASS"
+    },
+    {
+     "test": "E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview",
+     "status": "PASS"
+    },
+    {
+     "test": "E8 the way back restores the operator panel; refresh reloads the catalog",
+     "status": "PASS"
+    },
+    {
+     "test": "E9 the shipped page carries no model list of its own",
+     "status": "PASS"
+    },
+    {
+     "test": "E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview",
+     "status": "PASS"
+    },
+    {
+     "test": "E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status",
+     "status": "PASS"
+    },
+    {
+     "test": "E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)",
+     "status": "PASS"
+    },
+    {
+     "test": "E13 settings from the card in place: server facts, never the key value, the exact edited values",
+     "status": "PASS"
+    },
+    {
+     "test": "E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft",
+     "status": "PASS"
+    },
+    {
+     "test": "E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)",
+     "status": "PASS"
+    },
+    {
+     "test": "E16 the check: one empty POST, no input field, the indicator comes only from the server",
+     "status": "PASS"
+    },
+    {
+     "test": "E17 without card data the compact cards show names only and nothing can be reordered, dragged or starred",
+     "status": "PASS"
+    },
+    {
+     "test": "E18 the roles source is told: defaults, unreadable and not connected Ultra settings",
+     "status": "PASS"
+    },
+    {
+     "test": "E19 the chat composer: the model picker, a disabled voice place and a disabled send",
+     "status": "PASS"
+    },
+    {
+     "test": "E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose",
+     "status": "PASS"
+    },
+    {
+     "test": "E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it",
+     "status": "PASS"
+    },
+    {
+     "test": "E22 a click opens the full card in place under its row; several stay open; a second click closes; Enter / Space the same",
+     "status": "PASS"
+    },
+    {
+     "test": "E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled",
+     "status": "PASS"
+    },
+    {
+     "test": "E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move",
+     "status": "PASS"
+    },
+    {
+     "test": "E25 buttons never start a drag; Escape, a release outside, another column, a lost pointer cancel without saving",
+     "status": "PASS"
+    },
+    {
+     "test": "E26 favourites by mouse: a reference is added at the place shown, never twice; the source column keeps the model",
+     "status": "PASS"
+    },
+    {
+     "test": "E27 favourites by star: a reference, its own order, its source as it is now",
+     "status": "PASS"
+    },
+    {
+     "test": "E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same",
+     "status": "PASS"
+    },
+    {
+     "test": "E29 layout rules: four columns on a wide screen, one on a narrow one, no scroll anchoring jumps, no horizontal scroll",
+     "status": "PASS"
+    },
+    {
+     "test": "E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen",
+     "status": "PASS"
+    },
+    {
+     "test": "E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it",
+     "status": "PASS"
+    },
+    {
+     "test": "E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer",
+     "status": "PASS"
+    },
+    {
+     "test": "E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)",
+     "status": "PASS"
+    },
+    {
+     "test": "E34 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart",
+     "status": "PASS"
+    },
+    {
+     "test": "E35 near the edge of the board the list scrolls by itself during a drag, and the place is found again",
+     "status": "PASS"
+    },
+    {
+     "test": "E36 messages are toasts outside the flow: a drop that tells something never moves the board; success goes away by itself",
+     "status": "PASS"
+    },
+    {
+     "test": "E37 the drag label follows the pointer at its lower right and flips near the window edges, never hiding the place pointed at",
+     "status": "PASS"
+    },
+    {
+     "test": "E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it",
+     "status": "PASS"
+    },
+    {
+     "test": "E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back",
+     "status": "PASS"
+    },
+    {
+     "test": "E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view",
+     "status": "PASS"
+    },
+    {
+     "test": "E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it",
+     "status": "PASS"
+    },
+    {
+     "test": "E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window",
+     "status": "PASS"
+    },
+    {
+     "test": "E43 layout writes are queued in order; a refused write is told and the window stays where the user put it",
+     "status": "PASS"
+    },
+    {
+     "test": "E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back",
+     "status": "PASS"
+    }
+   ]
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "exit": 0,
+   "tests": 12,
+   "pass": 12,
+   "fail": 0,
+   "results": [
+    {
+     "test": "U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge",
+     "status": "PASS"
+    },
+    {
+     "test": "U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere",
+     "status": "PASS"
+    },
+    {
+     "test": "U3 history renders server text as text, labels outcomes and never shows an old failure as an answer",
+     "status": "PASS"
+    },
+    {
+     "test": "U4 every data state is told apart: workspaces, chats and history",
+     "status": "PASS"
+    },
+    {
+     "test": "U5 older pages are fetched with the cursor, prepended once, and the button hides at the start",
+     "status": "PASS"
+    },
+    {
+     "test": "U6 after a server restart the page fetches one new capability and repeats once, then stops honestly",
+     "status": "PASS"
+    },
+    {
+     "test": "U7 an unavailable capability is explained and the other sections keep working",
+     "status": "PASS"
+    },
+    {
+     "test": "U8 the composer is visibly read-only and nothing is ever posted",
+     "status": "PASS"
+    },
+    {
+     "test": "U9 sections switch both ways and \\#operator / \\#evm open a section directly",
+     "status": "PASS"
+    },
+    {
+     "test": "U10 a late answer for a Workspace that is no longer selected is ignored",
+     "status": "PASS"
+    },
+    {
+     "test": "U11 malformed server answers show an error and invent nothing",
+     "status": "PASS"
+    },
+    {
+     "test": "U12 the EVM model badge tells every saved-choice state",
+     "status": "PASS"
+    }
+   ]
+  },
+  "test_web_alarm_operator_ui.js": {
+   "exit": 0,
+   "tests": 77,
+   "pass": 77,
+   "fail": 0,
+   "results": [
+    {
+     "test": "O1 workspace filter and task selection never mix details",
+     "status": "PASS"
+    },
+    {
+     "test": "O2 timeline shows persisted DONE separately from VERIFIED",
+     "status": "PASS"
+    },
+    {
+     "test": "O3 inconsistent read has no progress value or usable copy action",
+     "status": "PASS"
+    },
+    {
+     "test": "O4 absent current operation stays undetermined",
+     "status": "PASS"
+    },
+    {
+     "test": "O5 offline retains last snapshot visibly stale and disables copying NEXT",
+     "status": "PASS"
+    },
+    {
+     "test": "O5 ageing snapshot becomes stale without inventing runtime status",
+     "status": "PASS"
+    },
+    {
+     "test": "O6 server NEXT copied exactly; no client authority decisions",
+     "status": "PASS"
+    },
+    {
+     "test": "O7 navigation refresh disclosure emit only GET",
+     "status": "PASS"
+    },
+    {
+     "test": "O8 restored browser selection still fetches server-owned state",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 old task response cannot repaint new selected task",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 loading clears old task details immediately",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 response identity mismatch is an error, never another workspace data",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 HTML and script input remains text in rendered nodes",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 repeated refresh is single-flight and stable ordering survives update",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 server refusal shows exact reason and refreshes facts",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 lost POST response never automatically reissues creation",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 repeated explicit registration submits once without a second form",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 cancelled confirmation causes no POST",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 empty navigator and unavailable clipboard are honest",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 narrow selection closes side panels and focuses the central card",
+     "status": "PASS"
+    },
+    {
+     "test": "O6 context export is forbidden when server read is incoherent",
+     "status": "PASS"
+    },
+    {
+     "test": "O5 context export is forbidden after offline response and restored on fresh read",
+     "status": "PASS"
+    },
+    {
+     "test": "O9 context export is forbidden after 45-second freshness timeout",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C empty plus is ephemeral: no draft record, task or POST on leave",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C autosave stores exact original text as browser draft, not server status",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C returning to draft and reload restore text without server creation",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C drafts and task rows remain isolated across workspace switches",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C quota failure warns and prevents POST and accidental unsaved navigation",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C saved or empty forms do not request beforeunload confirmation",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C malformed draft bytes are retained and never overwritten",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C storage read denial and missing Web Locks never authorize registration",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C second tab cannot overwrite a locked draft; reopening reads latest text",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C late lock callback cannot reopen a composer in another workspace",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C registration uses one field, server ID and no planner or execution routes",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C lost POST survives reload as unknown; never resubmit or delete automatically",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C server 500 or malformed acknowledgement stays unknown without second POST",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C in-flight registration cannot repaint or clear another workspace draft",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C deleting browser draft never deletes a registered TASK or emits HTTP DELETE",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-C missing workspace blocks registration while preserving local text",
+     "status": "PASS"
+    },
+    {
+     "test": "UX connection uses real health, ages explicitly and survives failure without changing enums",
+     "status": "PASS"
+    },
+    {
+     "test": "UX catalog failure does not mislabel reachable server or authorize POST",
+     "status": "PASS"
+    },
+    {
+     "test": "UX task source and human stage reports are complete inert text",
+     "status": "PASS"
+    },
+    {
+     "test": "UX task response arriving after plus never paints over the blank composer",
+     "status": "PASS"
+    },
+    {
+     "test": "UX UNKNOWN recovery is human readable without changing the machine state",
+     "status": "PASS"
+    },
+    {
+     "test": "UX workspace registration cannot discard an unsaved active draft",
+     "status": "PASS"
+    },
+    {
+     "test": "UX failed local cleanup after confirmed creation never enables duplicate registration",
+     "status": "PASS"
+    },
+    {
+     "test": "UX new card resets old scroll while refresh preserves the current reading position",
+     "status": "PASS"
+    },
+    {
+     "test": "UX unplanned task has no invented completion progress and explains absent restore point",
+     "status": "PASS"
+    },
+    {
+     "test": "UX incoherent empty plan never asserts that the plan is known empty",
+     "status": "PASS"
+    },
+    {
+     "test": "UX null health response clears the previously online signal",
+     "status": "PASS"
+    },
+    {
+     "test": "UX malformed progress or coherence cannot become a fresh authoritative view",
+     "status": "PASS"
+    },
+    {
+     "test": "UX failed rendering hides the partial snapshot and never retains it for export",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-001-A changed root blocks old draft and preserves its text under the original key",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-001-A submit guard independently rejects stale selected-workspace binding",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A workspace success is central green status with precise action and no execution claim",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A task success is a distinct exact registration result",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A lost workspace response is a warning retained across GET without retry",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A task unknown stays protected while central warning describes the operation",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A internal server error does not claim definitive failure or success",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A a pending result is replaced once by success and repeated refresh does not make it red",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A confirmed success survives a failed followup catalog read as a separate fact",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A malformed workspace acknowledgement cannot become success",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A names in operation messages remain inert text",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B unavailable picker is explicit and manual path remains usable",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B selected path uses protected JSON request and does not register before confirmation",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B cancellation leaves manual root and catalog untouched",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B picker failure preserves input and offers manual alternative",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B late selection cannot replace manually edited path",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B closed and reopened workspace form ignores old picker response",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B duplicate pick and registration during dialog do not issue additional POST",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B malformed capability or relative result never grants picker authority",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-B restarted server renews capability after refusal without automatic dialog retry",
+     "status": "PASS"
+    },
+    {
+     "test": "UX-002-A late workspace acknowledgement cannot close a newer form",
+     "status": "PASS"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "real browser input in three phases on one synthetic storage",
+ "phases": {
+  "main": {
+   "exit": 0,
+   "checks": 187,
+   "failed": 0,
+   "failed_checks": [],
+   "step_errors": []
+  },
+  "restored": {
+   "exit": 0,
+   "checks": 6,
+   "failed": 0,
+   "failed_checks": [],
+   "step_errors": []
+  },
+  "corrupt": {
+   "exit": 0,
+   "checks": 5,
+   "failed": 0,
+   "failed_checks": [],
+   "step_errors": []
+  }
+ },
+ "damaged": "layout.windows[0].x is a string; revision and sections kept as they were",
+ "after_corrupt_phase": {
+  "board_kept": true,
+  "layout_windows": 1,
+  "damaged_copies_kept": 1
+ },
+ "checks": 198,
+ "failed": 0
+}

@@ -1,0 +1,134 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "phase": "restored",
+ "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+ "browser": "Chrome/156.0.8078.79",
+ "steps": [
+  {
+   "step": "P12 after a server restart the saved windows come back where they were left, in their stacking order; the board is intact",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the restarted server has the same layout",
+     "value": [
+      [
+       {
+        "id": "gigachat_3_pro",
+        "x": 480,
+        "y": 84
+       },
+       {
+        "id": "gigachat_ultra",
+        "x": 900,
+        "y": 600
+       },
+       {
+        "id": "gigachat_2",
+        "x": 100,
+        "y": 300
+       }
+      ],
+      [
+       {
+        "id": "gigachat_3_pro",
+        "x": 480,
+        "y": 84
+       },
+       {
+        "id": "gigachat_ultra",
+        "x": 900,
+        "y": 600
+       },
+       {
+        "id": "gigachat_2",
+        "x": 100,
+        "y": 300
+       }
+      ]
+     ]
+    },
+    {
+     "ok": true,
+     "check": "window gigachat_3_pro at its saved place",
+     "value": {
+      "id": "gigachat_3_pro",
+      "left": 480,
+      "top": 84,
+      "right": 940,
+      "bottom": 526,
+      "z": 1,
+      "hidden": false,
+      "active": false,
+      "close": [
+       899,
+       90,
+       933,
+       115
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "window gigachat_ultra at its saved place",
+     "value": {
+      "id": "gigachat_ultra",
+      "left": 900,
+      "top": 600,
+      "right": 1360,
+      "bottom": 988,
+      "z": 2,
+      "hidden": false,
+      "active": false,
+      "close": [
+       1319,
+       606,
+       1353,
+       631
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "window gigachat_2 at its saved place",
+     "value": {
+      "id": "gigachat_2",
+      "left": 100,
+      "top": 300,
+      "right": 560,
+      "bottom": 742,
+      "z": 3,
+      "hidden": false,
+      "active": true,
+      "close": [
+       519,
+       306,
+       553,
+       331
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "in the saved stacking order",
+     "value": [
+      "gigachat_3_pro",
+      "gigachat_ultra",
+      "gigachat_2"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the board is intact"
+    }
+   ],
+   "screenshots": [
+    "16-restored-after-server-restart.png"
+   ]
+  }
+ ],
+ "checks": 6,
+ "failed": 0,
+ "screenshots": [
+  "16-restored-after-server-restart.png"
+ ]
+}

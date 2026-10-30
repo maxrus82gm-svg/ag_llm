@@ -1,0 +1,45 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "the red trial run of the real-input check, kept as found",
+ "trial": {
+  "main": {
+   "exit": 0,
+   "checks": 152,
+   "failed": 13,
+   "failed_checks": [
+    "S17: a sheet",
+    "P05: another view: EVM and its windows are hidden, not closed",
+    "P05: none was closed in the saved layout",
+    "P09: Escape closed the dialog, the windows stay",
+    "P09: the windows stay",
+    "P10: the second tab restored the same three windows"
+   ],
+   "step_errors": [
+    "P01: the card gigachat_3_pro stays covered by windows",
+    "P02: page script failed: TypeError: Cannot read properties of undefined (reading 'querySelector')\n    at <anonymous>:2:17\n    at <anonymous>:2:130",
+    "P03: the card gigachat_2 stays covered by windows",
+    "P04: page script failed: TypeError: Cannot read properties of undefined (reading 'querySelector')\n    at <anonymous>:2:17\n    at <anonymous>:2:130",
+    "P06: page script failed: TypeError: Cannot read properties of undefined (reading 'querySelector')\n    at <anonymous>:2:17\n    at <anonymous>:2:139",
+    "P10: page script failed: TypeError: Cannot read properties of undefined (reading 'querySelector')\n    at <anonymous>:2:17\n    at <anonymous>:2:130",
+    "P11: page script failed: TypeError: Cannot read properties of undefined (reading 'querySelector')\n    at <anonymous>:2:17\n    at <anonymous>:2:130"
+   ]
+  },
+  "restored": {
+   "exit": 0,
+   "checks": 0,
+   "failed": 1,
+   "failed_checks": [],
+   "step_errors": [
+    "P12: ENOENT: no such file or directory, open '<path>'"
+   ]
+  },
+  "corrupt": {
+   "exit": 0,
+   "checks": 5,
+   "failed": 0,
+   "failed_checks": [],
+   "step_errors": []
+  }
+ },
+ "cause": "script defect, not a product defect: the regression step S17 of #464 pressed «⧉» at 390 px to get the quick view sheet; «⧉» now pins a window, which was saved and restored on every later load. In P01 that window covered card B, and the later P steps cascaded. Fixed in the script: S17 shows the sheet with Ctrl + hover; free() tells what covers a card. Run 2 and the final run: 198/198."
+}

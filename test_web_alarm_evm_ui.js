@@ -7,6 +7,8 @@
 // CLAUDE-WUA-EVM-INTERACTION-DND-001: a click opens the full card in place; Ctrl + hover / Ctrl + click / «⧉» show the
 // same card in a side panel beside the column; the mouse reorders a column and adds references to «Избранное»
 // (Pointer Events with a movement threshold; the pointer handlers are called here as the browser would call them).
+// CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001: «⧉», Ctrl + click and a press on the preview give independent pinned windows
+// (one per connection_id) under the preview; moved by the title, closed only by their «×», saved per window.
 'use strict';
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
@@ -21,8 +23,9 @@ class Element {
   get tagName() {return this.tag.toUpperCase();}
   set textContent(value) {this._text = String(value); this.children = [];}
   get textContent() {return this._text + this.children.map(c => c.textContent).join('');}
-  append(...children) {this.children.push(...children);}
-  replaceChildren(...children) {this._text = ''; this.children = children;}
+  append(...children) {for (const c of children) if (c && typeof c === 'object') c.parentNode = this; this.children.push(...children);}
+  replaceChildren(...children) {this._text = ''; for (const c of children) if (c && typeof c === 'object') c.parentNode = this; this.children = children;}
+  remove() {const p = this.parentNode; if (p) p.children = p.children.filter(c => c !== this); this.parentNode = null;}
   setAttribute(name, value) {this.attrs[name] = String(value);}
   getAttribute(name) {return this.attrs[name] ?? null;}
   removeAttribute(name) {delete this.attrs[name];}
@@ -117,12 +120,19 @@ function harness() {
   h.inline = card => card.children[1]?.children[0] || null;  // the full card shown in place, if the card is open
   h.peek = () => h.el('evmPeek').children[1];  // the full card in the side panel ([0] is its bar)
   h.bar = () => h.el('evmPeek').children[0];
+  h.pins = () => h.el('evmPins').children;  // pinned windows in the order they were opened
+  h.pin = id => h.pins().find(p => p.getAttribute('data-connection') === (id.includes(':') ? id : 'api:prov:' + id)) || null;
+  h.pinBar = pin => pin.children[0];
+  h.pinCard = pin => pin.children[1].children[0] || null;  // the full card in a pinned window
+  h.pinClose = pin => h.find(pin.children[0], e => e.className === 'pin-close');
+  h.ctrlHover = (card, ctrl = true) => card.onmouseenter(ev({ctrlKey: ctrl}));  // the pointer enters a card
   h.roles = card => h.findAll(card, e => e.className === 'role').map(r => [r.getAttribute('data-role'), r.getAttribute('data-state'), r.children[0].textContent]);
   h.click = async (card, extra = {}) => {h.head(card).onclick(ev({detail: 1, target: h.opener(card), ...extra})); await settle();};  // a mouse click
   h.open = h.click;
-  h.quick = async (card, extra = {}) => {h.quickBtn(card).onclick(ev({detail: 1, ...extra})); await settle();};  // «⧉»: pins the side panel
-  h.full = async (card, mode) => {  // the full card of a compact card: in place ('inline') or in the side panel ('panel')
-    if (mode === 'panel') {await h.quick(card); return h.peek();}
+  h.quick = async (card, extra = {}) => {h.quickBtn(card).onclick(ev({detail: 1, ...extra})); await settle();};  // «⧉»: a pinned window
+  h.full = async (card, mode) => {  // the full card: in place ('inline'), in a pinned window ('pin') or in the preview ('preview')
+    if (mode === 'pin') {await h.quick(card); return h.pinCard(h.pin(card.getAttribute('data-connection')));}
+    if (mode === 'preview') {h.ctrlHover(card); return h.peek();}
     if (!h.inline(card)) await h.click(card);
     return h.inline(card);
   };
@@ -154,6 +164,16 @@ function harness() {
     h.routes.set('/ultra/model-cards/view', opts => {
       const body = JSON.parse(opts.body); saved[body.section] = body.order; revision++;
       return {view: {state: 'SAVED', revision, hidden: 0, sections: {...saved, api: saved.api || h.ids('evmApiList')}}};
+    });
+    return saved;
+  };
+  h.layoutRoute = (start = []) => {  // one window per entry; an open or a move puts it on top; null closes it
+    const saved = {windows: start.map(w => ({...w})), revision: 0};
+    h.routes.set('/ultra/model-cards/layout', opts => {
+      const body = JSON.parse(opts.body); saved.windows = saved.windows.filter(w => w.connection_id !== body.connection_id);
+      if (body.window) saved.windows.push({connection_id: body.connection_id, ...body.window});
+      saved.revision++;
+      return {view: {layout: {state: 'SAVED', revision: saved.revision, windows: saved.windows.map(w => ({...w})), hidden: 0}}};
     });
     return saved;
   };
@@ -205,7 +225,7 @@ test('E2 the board: four columns, compact cards in server order, honest empty co
   for (const card of h.cards()) {
     assert.deepEqual(h.findAll(card, e => e.tag === 'button').map(b => b.className), ['copen', 'cquick', 'star'], 'the compact card: «open», «⧉» and the star');
     assert.deepEqual([h.quickBtn(card).getAttribute('aria-haspopup'), h.quickBtn(card).getAttribute('aria-expanded')], ['dialog', 'false']);
-    assert.match(h.quickBtn(card).getAttribute('aria-label'), /^Быстрый просмотр: /);
+    assert.match(h.quickBtn(card).getAttribute('aria-label'), /^Закрепить в отдельном окне: /);
     assert.equal(h.roles(card).length, 0);
     assert.equal(h.find(card, e => (e.className || '').startsWith('strengths')), null);
     assert.equal(card.getAttribute('draggable'), null, 'no native drag-and-drop');
@@ -293,8 +313,8 @@ test('E6 saved-choice states are told honestly in the EVM summary', async () => 
   }
 });
 
-test('E7 server text is never markup, in the compact card, in place and in the side panel', async () => {
-  for (const mode of ['inline', 'panel']) {
+test('E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview', async () => {
+  for (const mode of ['inline', 'pin', 'preview']) {
     const h = harness(); await settle();
     const name = '<img src=x onerror=alert(1)>';
     await h.openEvm([conn('off', name, {status: 'DISABLED', selectable: false})],
@@ -304,7 +324,11 @@ test('E7 server text is never markup, in the compact card, in place and in the s
     assert.equal(full.children[0].children[0].textContent, name);
     assert.match(full.textContent, /<script>x\(\)<\/script>/);
     assert.equal(h.dot(full).getAttribute('data-api'), 'red:REGISTRY_DISABLED');
-    if (mode === 'panel') assert.equal(h.el('evmPeek').getAttribute('aria-label'), 'Быстрый просмотр: ' + name + ' · API');
+    if (mode === 'preview') assert.equal(h.el('evmPeek').getAttribute('aria-label'), 'Быстрый просмотр: ' + name + ' · API');
+    if (mode === 'pin') {
+      assert.equal(h.pin('off').getAttribute('aria-label'), 'Окно модели: ' + name);
+      assert.equal(h.find(h.pinBar(h.pin('off')), e => e.className === 'pin-title').textContent, name + ' · API');
+    }
     assert.ok(h.all().every(e => !('innerHTML' in e)), 'markup was assigned');
   }
 });
@@ -329,8 +353,8 @@ test('E9 the shipped page carries no model list of its own', () => {
   assert.doesNotMatch(source, /innerHTML/);
 });
 
-test('E10 role marks and hints in the full card are exactly the server facts, in place and in the side panel', async () => {
-  for (const mode of ['inline', 'panel']) {
+test('E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview', async () => {
+  for (const mode of ['inline', 'pin', 'preview']) {
     const h = harness(); await settle();
     const roles = [{role: 'r_chat', state: 'assigned'}, {role: 'r_plan', state: 'assigned_off'}, {role: 'r_check', state: 'unknown'}, {role: 'r_none', state: 'not_in_runtime'}];
     await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta')], cards([mcard('alpha', 'Alpha', {roles}),
@@ -348,23 +372,25 @@ test('E10 role marks and hints in the full card are exactly the server facts, in
   }
 });
 
-test('E11 one API status component: compact card, card in place, side panel and diagnostic window show the same server status', async () => {
+test('E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status', async () => {
   for (const [status, mark] of [[api('green', 'CONFIRMED'), '✓'], [api('orange', 'STALE', {age_days: 41}), '!'], [api('red', 'SETTINGS_CHANGED'), '×']]) {
     const h = harness(); await settle();
     await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {api: status})]));
     const compact = h.dot(h.cards()[0]);
     const inline = h.dot(await h.full(h.cards()[0], 'inline'));
-    const panel = h.dot(await h.full(h.cards()[0], 'panel'));
-    h.button(h.peek(), 'Проверить чат').onclick(); await settle();
+    const preview = h.dot(await h.full(h.cards()[0], 'preview'));
+    h.run('closePeek()');
+    const pin = h.dot(await h.full(h.cards()[0], 'pin'));
+    h.button(h.pinCard(h.pin('alpha')), 'Проверить чат').onclick(); await settle();
     const windowDot = h.el('evmCheckDot').children[0];
-    for (const d of [inline, panel, windowDot])
+    for (const d of [inline, preview, pin, windowDot])
       assert.deepEqual([d.className, d.textContent, d.getAttribute('data-api'), d.getAttribute('aria-label')],
         [compact.className, mark, compact.getAttribute('data-api'), compact.getAttribute('aria-label')]);
   }
 });
 
-test('E12 full card: parameter count as given, description box editable by a visible command (in place and in the panel)', async () => {
-  for (const mode of ['inline', 'panel']) {
+test('E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)', async () => {
+  for (const mode of ['inline', 'pin', 'preview']) {
     const h = harness(); await settle();
     await h.openEvm([conn('a', 'A'), conn('b', 'B')], cards([mcard('a', 'A', {params_billion: 2.5, description: 'Сильная сторона.'}), mcard('b', 'B')]));
     const first = await h.full(h.cards()[0], mode);
@@ -404,14 +430,14 @@ test('E13 settings from the card in place: server facts, never the key value, th
   assert.ok(!JSON.stringify(h.calls).includes('PROV_KEY='), 'no key value travels');
 });
 
-test('E14 settings from the side panel: a bad count is refused locally, a revision conflict keeps the draft', async () => {
+test('E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha')], cards([mcard('alpha', 'Alpha', {params_billion: 12})]));
   const posts = [];
   h.routes.set('/ultra/model-cards/alpha/settings', opts => {posts.push(JSON.parse(opts.body));
     return {httpError: true, status: 409, data: {error: {code: 'settings_revision_conflict', message: 'settings changed'}}};});
   await h.quick(h.cards()[0]);
-  h.button(h.peek(), 'Настройки').onclick(); await settle();
+  h.button(h.pinCard(h.pin('alpha')), 'Настройки').onclick(); await settle();
   h.el('evmSetParams').value = '-3'; h.el('evmSetParams').oninput();
   h.el('evmSetSave').onclick(); await settle();
   assert.equal(posts.length, 0);
@@ -425,7 +451,7 @@ test('E14 settings from the side panel: a bad count is refused locally, a revisi
   assert.equal(h.el('evmSetParams').value, '12');
 });
 
-test('E15 one window keeps the state of the other; closing gives the keyboard back to the command that opened it', async () => {
+test('E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('alpha', 'Alpha'), conn('beta', 'Beta')]);
   h.routes.set('/ultra/model-cards/alpha/check', () => ({outcome: 'LIVE_CHECK_NOT_AUTHORIZED', message: 'Нужен USER GO.', network_calls: 0, test_message: 'Тест.', card: mcard('alpha', 'Alpha')}));
@@ -445,18 +471,18 @@ test('E15 one window keeps the state of the other; closing gives the keyboard ba
   assert.equal(h.el('evmCheckWindow').hidden, true, 'a click on the backdrop closes it');
   assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[0]), 'Проверить чат'));
   await h.quick(h.cards()[0]);
-  h.button(h.peek(), 'Настройки').onclick(); await settle();
+  const pinCard = () => h.pinCard(h.pin('alpha'));
+  h.button(pinCard(), 'Настройки').onclick(); await settle();
   assert.equal(h.el('evmSetDescription').value, 'Черновик A');
-  assert.equal(h.el('evmPeek').hidden, false, 'a pinned side panel stays under the window');
+  assert.equal(h.pins().length, 1, 'the pinned window stays under the dialog');
   h.run("escapeKey({key:'Escape'})"); await settle();
-  assert.equal(h.el('evmSettingsWindow').hidden, true, 'Escape closes the window, not the panel under it');
-  assert.equal(h.el('evmPeek').hidden, false);
-  assert.equal(h.document.activeElement, h.button(h.peek(), 'Настройки'), 'the keyboard is back in the side panel');
-  h.button(h.peek(), 'Проверить чат').onclick(); await settle();
+  assert.equal(h.el('evmSettingsWindow').hidden, true, 'Escape closes the dialog, not the window under it');
+  assert.equal(h.pins().length, 1);
+  assert.equal(h.document.activeElement, h.button(pinCard(), 'Настройки'), 'the keyboard is back in the pinned window');
+  h.button(pinCard(), 'Проверить чат').onclick(); await settle();
   assert.equal(h.el('evmCheckOutput').textContent, answer);
   h.el('evmCheckClose').onclick(); await settle();
-  h.run('closePeek()');
-  h.run("openWindow('settings','beta')"); await settle();  // a window opened by no command of a card
+  h.run("openWindow('settings','beta')"); await settle();  // a dialog opened by no command of a card
   h.el('evmSetClose').onclick(); await settle();
   assert.equal(h.document.activeElement, h.opener(h.cards()[1]), 'then the keyboard lands on the compact card of that model');
 });
@@ -538,10 +564,11 @@ test('E20 damaged stores are reported, and a damaged settings file can still be 
   assert.equal(posted.base_revision, null);
 });
 
-test('E21 plain hover shows nothing; Ctrl + hover shows the side panel, switches without a blink and closes when Ctrl is released', async () => {
+test('E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
-  const [a, b] = h.cards(), box = h.el('evmPeek');
+  h.layoutRoute();
+  const [a, b, c] = h.cards(), box = h.el('evmPeek');
   a.onmouseenter(ev({ctrlKey: false})); await wait(250);
   assert.equal(box.hidden, true, 'a plain hover never opens a panel over the list');
   assert.equal(h.inline(a), null, 'nor the card in place');
@@ -549,39 +576,40 @@ test('E21 plain hover shows nothing; Ctrl + hover shows the side panel, switches
   assert.equal(box.hidden, false);
   assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a');
   assert.equal(box.className, 'evm-peek open');
-  assert.equal(h.bar().textContent, 'Быстрый просмотр · APICtrl + клик — закрепить×');
-  assert.equal(h.quickBtn(a).getAttribute('aria-expanded'), 'true');
-  assert.equal(h.opener(a).getAttribute('aria-expanded'), 'false', 'the side panel is not the card in place');
+  assert.equal(h.bar().textContent, 'Быстрый просмотр · APIНажмите на окно — закрепить×');
+  assert.equal(h.opener(a).getAttribute('aria-expanded'), 'false', 'the preview is not the card in place');
+  assert.equal(h.quickBtn(a).getAttribute('aria-expanded'), 'false', 'nor a pinned window');
   let hides = 0, shown = box.hidden;
   Object.defineProperty(box, 'hidden', {get: () => shown, set: v => {if (v) hides++; shown = v;}, configurable: true});
   a.onmouseleave(); b.onmouseenter(ev({ctrlKey: true}));
   assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b', 'moving to the next card switches at once');
   assert.equal(hides, 0, 'the panel is never hidden between two cards');
-  assert.deepEqual([h.quickBtn(a).getAttribute('aria-expanded'), h.quickBtn(b).getAttribute('aria-expanded')], ['false', 'true']);
   b.onmouseleave(); box.onmouseenter(); await wait(250);
   assert.equal(box.hidden, false, 'the way from the card into the panel keeps it open');
   box.onmouseleave(); await wait(250);
-  assert.equal(box.hidden, true, 'leaving both closes an unpinned panel');
+  assert.equal(box.hidden, true, 'leaving both closes it');
   b.onmouseenter(ev({ctrlKey: true}));
-  assert.equal(box.hidden, false);
   h.run('evmKeyUp')({key: 'Control'});
-  assert.equal(box.hidden, true, 'releasing Ctrl closes an unpinned panel');
+  assert.equal(box.hidden, true, 'releasing Ctrl closes it');
   b.onmouseenter(ev({ctrlKey: true}));
   h.run('evmBlur()');
   assert.equal(box.hidden, true, 'leaving the browser window closes it too');
   b.onmouseenter(ev({ctrlKey: true}));
-  box.onpointerdown(ev());
-  assert.match(h.bar().textContent, /^Закреплено · APIEsc или × — закрыть/, 'a press inside pins the panel');
-  assert.match(box.className, /pinned/);
-  h.run('evmKeyUp')({key: 'Control'}); b.onmouseleave(); await wait(250);
-  assert.equal(box.hidden, false, 'a pinned panel stays when Ctrl is released and the pointer leaves');
-  a.onmouseenter(ev({ctrlKey: true}));
-  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b', 'Ctrl + hover never replaces a pinned panel');
-  h.run('evmKeyDown')({key: 'Control'}); h.run('evmKeyUp')({key: 'Control'});
-  assert.equal(box.hidden, false);
+  box.onpointerdown(ev({button: 0, pointerId: 4}));
+  h.run('evmKeyUp')({key: 'Control'});
+  assert.equal(box.hidden, false, 'while a press inside lasts, releasing Ctrl keeps it');
+  h.run('previewRelease')(ev({pointerId: 4})); await wait(5);
+  assert.equal(box.hidden, true, 'after the press the preview is gone ...');
+  assert.deepEqual(h.pins().map(p => p.getAttribute('data-connection')), ['api:prov:b'], '... and stands as a pinned window');
+  assert.deepEqual(h.posts('/ultra/model-cards/layout'), [{connection_id: 'api:prov:b', window: {x: 0, y: 0}}], 'saved where it stood');
+  assert.equal(h.quickBtn(b).getAttribute('aria-expanded'), 'true');
+  c.onmouseenter(ev({ctrlKey: true}));
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:c', 'Ctrl + hover still previews other models over the window');
+  h.run('evmKeyUp')({key: 'Control'});
+  assert.equal(box.hidden, true); assert.equal(h.pins().length, 1, 'releasing Ctrl closes only the preview');
   h.run("evm.view='chat'"); h.run('closePeek()'); a.onmouseenter(ev({ctrlKey: true}));
   assert.equal(box.hidden, true, 'nothing opens while EVM is not the open section');
-  assert.match(source, /@media\(prefers-reduced-motion:reduce\)\{\.evm-peek,\.ccard\{transition:none\}\.evm-ghost\{transform:none\}\}/);
+  assert.match(source, /@media\(prefers-reduced-motion:reduce\)\{\.evm-peek,\.ccard\{transition:none\}\.evm-ghost\{transform:none\}\.evm-pin\.flash\{animation:none\}\}/);
   assert.match(source, /\.evm-peek\{position:fixed;[^}]*max-height:calc\(100dvh - 24px\);overflow:auto/);
 });
 
@@ -649,13 +677,14 @@ test('E23 «Выше» / «Ниже» and Alt+arrows save the order of one colum
   h.opener(h.cards()[0]).onkeydown(ev({key: 'ArrowUp', altKey: true})); await settle();
   h.opener(h.cards()[1]).onkeydown(ev({key: 'ArrowUp'})); await settle();
   assert.equal(h.posts('/ultra/model-cards/view').length, 3, 'the first card cannot go higher; an arrow alone moves nothing');
-  await h.quick(h.cards()[1]);  // the same commands in the side panel
-  const pUp = h.button(h.peek(), 'Выше'); pUp.focus(); pUp.onclick(); await settle();
+  await h.quick(h.cards()[1]);  // the same commands in a pinned window
+  const pinB = h.pin('b'), pUp = h.button(h.pinCard(pinB), 'Выше'); pUp.focus(); pUp.onclick(); await settle();
   assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:c', 'api:prov:a']);
-  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b', 'the panel stays on the moved card');
-  assert.equal(h.el('evmPeek').hidden, false);
-  assert.equal(h.document.activeElement, h.button(h.peek(), 'Ниже'), 'at the top the other command in the panel takes the keyboard');
-  assert.ok(h.posts().every(b => !('description' in b) && !('connection_id' in b)), 'ordering saves nothing else');
+  assert.equal(h.pin('b'), pinB, 'the same window stays, on the same model');
+  assert.equal(pinB.hidden, false);
+  assert.equal(h.document.activeElement, h.button(h.pinCard(pinB), 'Ниже'), 'at the top the other command in the window takes the keyboard');
+  assert.ok(h.posts('/ultra/model-cards/view').every(b => !('description' in b) && !('connection_id' in b)), 'ordering saves nothing else');
+  assert.deepEqual(h.posts('/ultra/model-cards/layout').map(b => Object.keys(b)), [['connection_id', 'window']], 'the window: its reference and place only');
 });
 
 test('E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move', async () => {
@@ -850,7 +879,7 @@ test('E28 «Изменить описание» opens Настройки → М�
   assert.equal(h.document.activeElement, h.button(h.inline(h.cards()[0]), 'Изменить описание'));
   h.el('evmTabConn').onclick();
   await h.quick(h.cards()[0]);
-  h.find(h.peek(), e => (e.className || '').startsWith('strengths')).onclick(); await settle();
+  h.find(h.pinCard(h.pin('alpha')), e => (e.className || '').startsWith('strengths')).onclick(); await settle();
   assert.equal(h.el('evmPaneModel').hidden, false); assert.equal(h.document.activeElement, h.el('evmSetDescription'));
 });
 
@@ -866,7 +895,7 @@ test('E29 layout rules: four columns on a wide screen, one on a narrow one, no s
   assert.match(source, /\.evm\.dragging\.drop-none,\.evm\.dragging\.drop-none \*\{cursor:no-drop!important\}/);
 });
 
-test('E30 the side panel stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen', async () => {
+test('E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('a', 'A'), conn('b', 'B')], undefined, [other('mcp', 'm', 'Agent M')], [other('local', 'l', 'Local L')]);
   h.viewRoute({favorites: ['api:prov:b']});
@@ -879,10 +908,10 @@ test('E30 the side panel stands beside the column of its card: right of the left
   const wide = {Fav: rect(28, 120, 243, 700), Api: rect(287, 120, 405, 700), Mcp: rect(708, 120, 324, 700), Local: rect(1048, 120, 324, 700)};
   const fav = h.list('evmFavList')[0], apiCard = h.cards()[0], mcp = h.list('evmMcpList')[0], local = h.list('evmLocalList')[0];
   place(fav, 'evmFavCol', wide.Fav, 200); place(apiCard, 'evmApiCol', wide.Api, 200); place(mcp, 'evmMcpCol', wide.Mcp, 300); place(local, 'evmLocalCol', wide.Local, 400);
-  await h.quick(fav); assert.deepEqual(at(), ['right', '560px', '281px', '200px'], 'favourites: to the right of the column');
-  await h.quick(apiCard); assert.deepEqual(at(), ['right', '560px', '702px', '200px'], 'API: to the right, over MCP, never over API');
-  await h.quick(mcp); assert.deepEqual(at(), ['left', '560px', '138px', '300px'], 'MCP: to the left');
-  await h.quick(local); assert.deepEqual(at(), ['left', '560px', '478px', '400px'], 'local: to the left');
+  h.ctrlHover(fav); assert.deepEqual(at(), ['right', '560px', '281px', '200px'], 'favourites: to the right of the column');
+  h.ctrlHover(apiCard); assert.deepEqual(at(), ['right', '560px', '702px', '200px'], 'API: to the right, over MCP, never over API');
+  h.ctrlHover(mcp); assert.deepEqual(at(), ['left', '560px', '138px', '300px'], 'MCP: to the left');
+  h.ctrlHover(local); assert.deepEqual(at(), ['left', '560px', '478px', '400px'], 'local: to the left');
   place(local, 'evmLocalCol', wide.Local, 800); h.run('positionPeek()');
   assert.equal(box.style.top, '458px', 'never below the window: 950 − 480 − 12');
   const header = new Element('header'); header.getBoundingClientRect = () => rect(0, 0, 1400, 240);
@@ -891,15 +920,15 @@ test('E30 the side panel stands beside the column of its card: right of the left
   assert.deepEqual([box.style.top, box.style.maxHeight], ['248px', '690px'], 'never under the sticky page header');
   h.document.querySelector = () => null;
   Object.assign(h.context.window, {innerWidth: 2400, innerHeight: 950});  // a very wide window: room on both sides
-  place(mcp, 'evmMcpCol', rect(1000, 120, 300, 700), 300); await h.quick(mcp);
+  place(mcp, 'evmMcpCol', rect(1000, 120, 300, 700), 300); h.ctrlHover(mcp);
   assert.deepEqual(at(), ['left', '560px', '430px', '300px'], 'with room on both sides MCP still opens to the left');
-  place(apiCard, 'evmApiCol', rect(400, 120, 300, 700), 200); await h.quick(apiCard);
+  place(apiCard, 'evmApiCol', rect(400, 120, 300, 700), 200); h.ctrlHover(apiCard);
   assert.deepEqual(at(), ['right', '560px', '710px', '200px'], 'and API to the right');
   Object.assign(h.context.window, {innerWidth: 1000, innerHeight: 900});  // two columns: less room beside them
   const mid = {Fav: rect(28, 120, 464, 400), Api: rect(508, 120, 464, 400)};
-  place(fav, 'evmFavCol', mid.Fav, 200); await h.quick(fav);
+  place(fav, 'evmFavCol', mid.Fav, 200); h.ctrlHover(fav);
   assert.deepEqual(at(), ['right', '486px', '502px', '200px'], 'narrower panel on the side with room');
-  place(apiCard, 'evmApiCol', mid.Api, 200); await h.quick(apiCard);
+  place(apiCard, 'evmApiCol', mid.Api, 200); h.ctrlHover(apiCard);
   assert.deepEqual(at(), ['left', '486px', '12px', '200px'], 'no room on the preferred side: the other side');
   Object.assign(h.context.window, {innerWidth: 390, innerHeight: 844});  // a phone: one column, no side room
   const one = rect(12, 120, 366, 1400);
@@ -909,81 +938,68 @@ test('E30 the side panel stands beside the column of its card: right of the left
   assert.deepEqual([...at(), box.style.maxHeight], ['above', '366px', '12px', '210px', '678px'], 'near the bottom: a sheet above the card');
 });
 
-test('E31 Ctrl + click, «⧉», «×» and Escape: pin, close and give the keyboard back; a press inside never closes it', async () => {
+test('E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
-  h.viewRoute();
-  const box = h.el('evmPeek');
-  let [a, b] = h.cards();
-  await h.click(a, {ctrlKey: true});
-  assert.equal(box.hidden, false); assert.match(box.className, /pinned/);
-  assert.equal(h.inline(a), null, 'Ctrl + click does not open the card in place');
-  assert.match(h.bar().textContent, /^Закреплено · API/);
-  a.onmouseleave(); h.run('evmKeyUp')({key: 'Control'}); await wait(250);
-  assert.equal(box.hidden, false, 'pinned: stays');
-  await h.click(b, {ctrlKey: true});
-  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b', 'Ctrl + click on another card moves the pinned panel there');
-  await h.click(b, {ctrlKey: true});
-  assert.equal(box.hidden, true, 'the same command again closes it');
-  await h.click(a);
-  assert.ok(h.inline(a), 'a plain click still opens the card in place');
-  h.quickBtn(b).focus(); await h.quick(b, {detail: 0});  // «⧉» from the keyboard
-  assert.equal(box.hidden, false); assert.equal(h.document.activeElement, box, 'the keyboard lands in the panel');
-  const pressInside = ev(); box.onpointerdown(pressInside);
-  h.button(h.peek(), 'Выше').onclick(); await settle();  // a button of the panel: the panel stays
-  [a, b] = h.cards();
-  assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:a']);
-  assert.equal(box.hidden, false); assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:b');
-  h.button(h.peek(), 'Ниже').focus();
+  h.layoutRoute();
+  h.quickBtn(h.cards()[0]).focus();
+  h.quickBtn(h.cards()[0]).onclick(ev({detail: 0})); await settle();  // Enter / Space on «⧉»
+  const pin = h.pin('a');
+  assert.equal(h.document.activeElement, pin, 'the keyboard lands in the window');
+  assert.deepEqual([pin.getAttribute('role'), pin.getAttribute('aria-modal'), pin.getAttribute('aria-label'), pin.getAttribute('tabindex')],
+    ['dialog', 'false', 'Окно модели: A', '-1']);
+  const bar = h.pinBar(pin);
+  assert.deepEqual([bar.getAttribute('tabindex'), bar.getAttribute('aria-label')], ['0', 'Окно «A»: перетащите за заголовок или двигайте стрелками']);
+  assert.equal(h.pinClose(pin).getAttribute('aria-label'), 'Закрыть окно: A');
+  const start = [pin.style.left, pin.style.top];
+  for (const key of ['ArrowRight', 'ArrowRight', 'ArrowDown']) {const e = ev({key}); bar.onkeydown(e); assert.equal(e.prevented, true);}
+  const shift = ev({key: 'ArrowLeft', shiftKey: true}); bar.onkeydown(shift);
+  assert.deepEqual([pin.style.left, pin.style.top], [(parseInt(start[0]) + 32 - 64) + 'px', (parseInt(start[1]) + 16) + 'px']);
+  assert.equal(h.posts('/ultra/model-cards/layout').length, 1, 'arrows do not save every step');
+  await wait(450);
+  assert.deepEqual(h.posts('/ultra/model-cards/layout')[1], {connection_id: 'api:prov:a', window: {x: parseInt(start[0]) - 32, y: parseInt(start[1]) + 16}},
+    'saved once after the last step');
+  bar.onkeydown(ev({key: 'x'}));
   h.run("escapeKey({key:'Escape'})");
-  assert.equal(box.hidden, true);
-  assert.equal(h.document.activeElement, h.quickBtn(h.cards()[0]), 'Escape gives the keyboard back to «⧉»');
+  assert.equal(h.pins().length, 1, 'Escape never closes a pinned window');
+  h.pinClose(pin).focus(); h.pinClose(pin).onclick(ev({detail: 0})); await settle();
+  assert.equal(h.pins().length, 0);
+  assert.equal(h.document.activeElement, h.quickBtn(h.cards()[0]), 'the keyboard goes back to «⧉» of the card it came from');
   assert.equal(h.quickBtn(h.cards()[0]).getAttribute('aria-expanded'), 'false');
-  await h.quick(h.cards()[0]);
-  const close = h.find(h.bar(), e => e.className === 'peek-close');
-  assert.equal(close.getAttribute('aria-label'), 'Закрыть быстрый просмотр');
-  close.focus(); close.onclick(); await settle();
-  assert.equal(box.hidden, true, '«×» closes it');
-  assert.equal(h.document.activeElement, h.quickBtn(h.cards()[0]));
-  await h.quick(h.cards()[0]);
-  h.opener(h.cards()[1]).focus();
-  h.run("escapeKey({key:'Escape'})");
-  assert.equal(box.hidden, true);
-  assert.equal(h.document.activeElement, h.opener(h.cards()[1]), 'when the keyboard was elsewhere, Escape leaves it there');
-  await h.quick(h.cards()[0]); await h.quick(h.cards()[0]);
-  assert.equal(box.hidden, true, '«⧉» again closes it');
-  assert.equal(source.includes(".evm-peek,.ccard,.evm-backdrop"), false, 'no click outside closes a pinned panel by surprise');
+  assert.deepEqual(h.posts('/ultra/model-cards/layout').slice(-1), [{connection_id: 'api:prov:a', window: null}]);
 });
 
-test('E32 a drag closes an unpinned panel and keeps it closed until the drop; a pinned panel steps aside and comes back', async () => {
+test('E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer', async () => {
   const h = harness(); await settle();
   await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
-  h.viewRoute(); h.layout();
+  h.viewRoute(); h.layoutRoute(); h.layout();
   const box = h.el('evmPeek');
   let [a, b] = h.cards();
   a.onmouseenter(ev({ctrlKey: true}));
   assert.equal(box.hidden, false);
   h.press(a, 400, 170);
   b.onmouseenter(ev({ctrlKey: true}));
-  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a', 'while the button is down the panel does not switch');
+  assert.equal(h.peek().getAttribute('data-connection'), 'api:prov:a', 'while the button is down the preview does not switch');
   h.move(400, 180);
-  assert.equal(box.hidden, true, 'the drag closed the unpinned panel');
+  assert.equal(box.hidden, true, 'the drag closed the preview');
   b.onmouseenter(ev({ctrlKey: true})); h.run('evmKeyDown')({key: 'Control'});
   assert.equal(box.hidden, true, 'and it does not come back during the drag');
   h.quickBtn(b).onclick(ev({detail: 1}));
-  assert.equal(box.hidden, true, 'nothing pins it during the drag');
+  assert.equal(h.pins().length, 0, 'nothing is pinned during a drag');
   await h.release(400, 280, a);
   assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:c', 'api:prov:a']);
   assert.equal(box.hidden, true, 'nothing reopens by itself after the drop');
-  h.layout(); [a, b] = h.cards();
-  await h.quick(b);
-  assert.equal(box.hidden, false);
-  h.press(a, 400, 170); h.move(400, 200);
-  assert.match(box.className, /\bhold\b/, 'a pinned panel steps aside during the drag');
-  assert.equal(box.hidden, false);
-  await h.release(400, 280, a);
-  assert.doesNotMatch(box.className, /\bhold\b/); assert.equal(box.hidden, false, 'and comes back after it');
-  assert.match(source, /\.evm-peek\.hold\{visibility:hidden\}/);
+  h.layout();
+  const [first, second] = h.cards(), pinnedId = second.getAttribute('data-connection');
+  await h.quick(second);
+  const pin = h.pin(pinnedId), at = [pin.style.left, pin.style.top];
+  h.press(first, 400, 170); h.move(400, 200);
+  assert.match(h.el('evmView').className, /\bdragging\b/);
+  assert.equal(h.pins().length, 1); assert.equal(pin.hidden, false, 'the window stays during the drag');
+  assert.match(source, /\.evm\.dragging \.evm-pins\{opacity:\.25\}\.evm\.dragging \.evm-pin\{pointer-events:none\}/, 'faded, the pointer goes through');
+  await h.release(400, 280, first);
+  assert.deepEqual([h.pins().length, pin.style.left, pin.style.top], [1, ...at], 'and is where it was after it');
+  assert.equal(h.pin(pinnedId), pin, 'the same window, not a new one');
 });
 
 test('E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)', async () => {
@@ -1017,7 +1033,7 @@ test('E34 one constructor for every kind: MCP and local entries, same tail of di
   const mcp = h.list('evmMcpList')[0];
   assert.equal(mcp.className, h.cards()[0].className, 'the same compact component');
   assert.match(mcp.textContent, /MCP \/ агент · prov/); assert.equal(h.dot(mcp), null, 'no API indicator for an entry without one');
-  for (const mode of ['inline', 'panel']) {
+  for (const mode of ['inline', 'preview', 'pin']) {
     const full = await h.full(h.list('evmMcpList')[0], mode);
     assert.match(full.textContent, /Подробности появятся, когда источник этого подключения будет подключён/);
     assert.deepEqual(h.roles(full), []);
@@ -1090,4 +1106,249 @@ test('E37 the drag label follows the pointer at its lower right and flips near t
   assert.match(source, /\.evm-drop-line\{position:fixed;z-index:31;/, 'the insertion line is drawn over the label');
   assert.match(source, /\.evm-ghost\{position:fixed;z-index:30;/);
   h.run("escapeKey({key:'Escape'})");
+});
+
+test('E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it', async () => {
+  const h = harness(); await settle();
+  const list = [conn('a', 'A'), conn('b', 'B'), conn('c', 'C'), conn('t1', 'Twin'), conn('t2', 'Twin')];
+  await h.openEvm(list, cards(list.map(c => mcard(c.model_id, c.display_name)),
+    {view: {state: 'SAVED', revision: 7, hidden: 0, sections: {favorites: ['api:prov:a'], api: list.map(c => c.connection_id), mcp: [], local: []}}}));
+  h.layoutRoute();
+  const [a, b, c, t1, t2] = h.cards();
+  await h.quick(a);
+  await h.quick(b);
+  await h.click(c, {ctrlKey: true});  // Ctrl + click pins too
+  assert.deepEqual(h.pins().map(p => p.getAttribute('data-connection')), ['api:prov:a', 'api:prov:b', 'api:prov:c']);
+  assert.deepEqual(h.pins().map(p => [p.style.left, p.style.top]), [['24px', '28px'], ['52px', '56px'], ['80px', '84px']],
+    'independent places: a new window never covers another exactly');
+  assert.deepEqual(h.pins().map(p => [p.style.zIndex, /\bactive\b/.test(p.className)]), [['1', false], ['2', false], ['3', true]]);
+  assert.equal(h.inline(c), null, 'Ctrl + click does not open the card in place');
+  assert.deepEqual(h.posts('/ultra/model-cards/layout'), [{connection_id: 'api:prov:a', window: {x: 24, y: 28}},
+    {connection_id: 'api:prov:b', window: {x: 52, y: 56}}, {connection_id: 'api:prov:c', window: {x: 80, y: 84}}]);
+  const fav = h.list('evmFavList')[0];
+  assert.equal(h.quickBtn(fav).getAttribute('aria-expanded'), 'true', '«⧉» in «Избранное» knows the window too');
+  assert.equal(h.quickBtn(fav).getAttribute('aria-label'), 'Показать окно модели: A');
+  await h.quick(fav);
+  await h.quick(a);
+  await h.click(a, {ctrlKey: true});
+  assert.equal(h.pins().length, 3, 'from «Избранное» and from its column: still one window A');
+  assert.deepEqual(h.pins().map(p => p.style.zIndex), ['3', '1', '2'], 'A was brought to the top');
+  assert.match(h.pin('a').className, /\bflash\b/, 'and shown with a short highlight');
+  assert.equal(h.posts('/ultra/model-cards/layout').length, 3, 'bringing forward saves nothing');
+  h.pin('b').onpointerdown(ev());
+  assert.deepEqual(h.pins().map(p => p.style.zIndex), ['2', '3', '1'], 'a press anywhere on a window raises it');
+  for (const p of h.pins()) {
+    const id = p.getAttribute('data-connection');
+    assert.equal(h.button(h.pinCard(p), 'Настройки').getAttribute('data-fk'), 'pin:' + id + ':settings', 'every window has its own keys');
+    assert.equal(h.pinCard(p).getAttribute('data-connection'), id, 'the same full card component');
+  }
+  await h.quick(t1); await h.quick(t2);
+  assert.deepEqual(h.pins().slice(3).map(p => p.getAttribute('data-connection')), ['api:prov:t1', 'api:prov:t2'], 'the same name, two models, two windows');
+  assert.equal(new Set(h.pins().map(p => p.getAttribute('data-connection'))).size, h.pins().length, 'never a duplicate');
+  assert.match(source, /<div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"><\/div>\s*<div id="evmPeek"/);
+});
+
+test('E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C')]);
+  Object.assign(h.context.window, {innerWidth: 1400, innerHeight: 900});
+  h.viewRoute(); h.layoutRoute(); h.layout();
+  await h.quick(h.cards()[0]);
+  const pin = h.pin('a'), bar = h.pinBar(pin), saves = () => h.posts('/ultra/model-cards/layout');
+  assert.deepEqual([pin.style.left, pin.style.top, pin.style.width], ['610px', '150px', '460px'], 'first beside the API column');
+  const down = ev({button: 0, pointerId: 7, clientX: 700, clientY: 160}); bar.onpointerdown(down);
+  assert.equal(down.prevented, true, 'no text selection while it moves');
+  h.run('pinMove')(ev({pointerId: 7, clientX: 702, clientY: 161}));
+  assert.equal(pin.style.left, '610px', 'a 2 px tremor does not move it');
+  h.run('pinMove')(ev({pointerId: 9, clientX: 100, clientY: 100}));
+  assert.equal(pin.style.left, '610px', 'another pointer does not move it');
+  h.run('pinMove')(ev({pointerId: 7, clientX: 500, clientY: 400}));
+  assert.deepEqual([pin.style.left, pin.style.top], ['410px', '390px']); assert.match(pin.className, /\bmoving\b/);
+  h.run('pinMove')(ev({pointerId: 7, clientX: 450, clientY: 420}));
+  assert.equal(saves().length, 1, 'nothing is saved while it moves');
+  h.run('pinEnd')(ev({pointerId: 7})); await settle();
+  assert.deepEqual(saves().slice(-1), [{connection_id: 'api:prov:a', window: {x: 360, y: 410}}]);
+  assert.doesNotMatch(pin.className, /\bmoving\b/);
+  bar.onpointerdown(ev({button: 0, pointerId: 7, clientX: 400, clientY: 420}));
+  h.run('pinMove')(ev({pointerId: 7, clientX: -1000, clientY: -1000}));
+  assert.deepEqual([pin.style.left, pin.style.top], ['0px', '12px'], 'the title never leaves the window or goes under the header');
+  h.run('pinMove')(ev({pointerId: 7, clientX: 5000, clientY: 5000}));
+  assert.deepEqual([pin.style.left, pin.style.top], ['940px', '852px'], 'and «×» stays on screen at the right and the bottom');
+  h.run('pinEnd')(ev({pointerId: 7})); await settle();
+  assert.deepEqual(saves().slice(-1)[0].window, {x: 940, y: 852});
+  bar.onpointerdown(ev({button: 0, pointerId: 7, clientX: 1000, clientY: 860}));
+  h.run('pinMove')(ev({pointerId: 7, clientX: 600, clientY: 500}));
+  h.run("escapeKey({key:'Escape'})");
+  assert.deepEqual([pin.style.left, pin.style.top], ['940px', '852px'], 'Escape puts it back where the move began');
+  h.run('pinMove')(ev({pointerId: 7, clientX: 300, clientY: 300}));
+  assert.deepEqual([pin.style.left, h.pins().length, saves().length], ['940px', 1, 3], 'the move is over, the window stays open, nothing saved');
+  bar.onpointerdown(ev({button: 2, pointerId: 7, clientX: 1000, clientY: 860}));
+  assert.equal(h.run('evm.winDrag'), null, 'only the main button moves it');
+  const closeDown = ev({button: 0, pointerId: 7}); h.pinClose(pin).onpointerdown(closeDown);
+  assert.equal(closeDown.stopped, true, '«×» never starts a move');
+  pin.onpointerdown(ev({button: 0, pointerId: 7}));  // a press inside the card body only raises the window
+  assert.equal(h.run('evm.winDrag'), null);
+  h.layout();
+  h.press(h.cards()[1], 400, 218); h.move(400, 230); h.move(400, 160);
+  assert.equal(h.run('evm.winDrag'), null, 'a card drag is a different gesture');
+  await h.release(400, 160, h.cards()[1]);
+  assert.deepEqual(h.ids('evmApiList'), ['api:prov:b', 'api:prov:a', 'api:prov:c']);
+  assert.deepEqual([pin.style.left, pin.style.top], ['940px', '852px'], 'and never moves a window');
+  assert.match(source, /\.pin-bar\{[^}]*cursor:move;[^}]*touch-action:none;/);
+});
+
+test('E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B'), conn('c', 'C'), conn('d', 'D')]);
+  h.viewRoute(); h.layoutRoute(); h.layout();
+  const [a, b, c, d] = h.cards();
+  await h.quick(a); await h.quick(b); await h.quick(c);
+  const ids = () => h.pins().map(p => p.getAttribute('data-connection')).sort();
+  const all = ['api:prov:a', 'api:prov:b', 'api:prov:c'];
+  d.onmouseenter(ev({ctrlKey: true})); h.run('evmKeyUp')({key: 'Control'});
+  h.run("escapeKey({key:'Escape'})"); h.run('evmBlur()');
+  await h.click(d);  // another model opens in place
+  h.el('viewChat').onclick(); await settle();
+  assert.equal(h.el('evmView').hidden, true);
+  assert.deepEqual(ids(), all, 'another view hides them with EVM, it does not close them');
+  h.el('viewEvm').onclick(); await settle();
+  assert.deepEqual(ids(), all);
+  assert.equal(h.pins().length, 3, 'no duplicate after coming back');
+  h.layout();
+  await h.drag(h.cards()[3], [400, 314], [400, 160], [[400, 300]]);
+  assert.deepEqual(ids(), all, 'a card drag does not close them');
+  assert.equal(h.posts('/ultra/model-cards/layout').filter(p => p.window === null).length, 0);
+  h.pinClose(h.pin('b')).onclick(ev({detail: 1})); await settle();
+  assert.deepEqual(ids(), ['api:prov:a', 'api:prov:c'], '«×» closes exactly that window');
+  assert.deepEqual(h.posts('/ultra/model-cards/layout').slice(-1), [{connection_id: 'api:prov:b', window: null}]);
+  assert.equal(h.quickBtn(h.cards().find(x => x.getAttribute('data-connection') === 'api:prov:b')).getAttribute('aria-expanded'), 'false');
+  await h.quick(h.cards().find(x => x.getAttribute('data-connection') === 'api:prov:b'));
+  assert.deepEqual(ids(), all, 'pinned again: exactly one new window B');
+});
+
+test('E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it', async () => {
+  assert.match(source, /\.evm-peek\{position:fixed;z-index:18;/);
+  assert.match(source, /\.evm-pins\{position:fixed;inset:0;z-index:16;pointer-events:none\}/);
+  assert.match(source, /\.evm-backdrop\{position:fixed;inset:0;z-index:20;/, 'dialogs stay above both');
+  const h = harness(); await settle();
+  await h.openEvm(['a', 'b', 'c', 'd', 'e'].map(x => conn(x, x.toUpperCase())));
+  h.layoutRoute();
+  const [a, b, c, d, e] = h.cards(), box = h.el('evmPeek');
+  await h.quick(a); await h.quick(b); await h.quick(c);
+  d.onmouseenter(ev({ctrlKey: true}));
+  assert.equal(box.hidden, false); assert.equal(h.pins().length, 3, 'the preview of D over A, B and C');
+  h.run('evmKeyUp')({key: 'Control'});
+  assert.deepEqual([box.hidden, h.pins().length], [true, 3]);
+  a.onmouseenter(ev({ctrlKey: true}));
+  assert.equal(box.hidden, true, 'no preview copy of a pinned model');
+  assert.deepEqual([h.pin('a').style.zIndex, /\bflash\b/.test(h.pin('a').className)], ['3', true], 'its window comes forward instead');
+  d.onmouseenter(ev({ctrlKey: true}));
+  box.onpointerdown(ev({button: 0, pointerId: 2}));
+  h.run('previewRelease')(ev({pointerId: 2}));  // pointerup, then the click of the browser on the pressed button
+  const settings = h.button(h.peek(), 'Настройки'); settings.focus(); settings.onclick();
+  assert.equal(h.el('evmSettingsWindow').hidden, false, 'the click of the button pressed in the preview still does its job');
+  assert.equal(box.hidden, false, 'the preview turns into a window only after that click');
+  await wait(5);
+  assert.equal(box.hidden, true);
+  assert.deepEqual(h.pins().map(p => p.getAttribute('data-connection')), ['api:prov:a', 'api:prov:b', 'api:prov:c', 'api:prov:d']);
+  assert.equal(h.run('evm.returnTo.key'), 'pin:api:prov:d:settings', 'the dialog returns to the pinned copy');
+  h.el('evmSetClose').onclick(); await settle();
+  assert.equal(h.document.activeElement, h.button(h.pinCard(h.pin('d')), 'Настройки'));
+  e.onmouseenter(ev({ctrlKey: true}));
+  const title = ev({button: 0, pointerId: 3, clientX: 10, clientY: 10}); h.bar().onpointerdown(title);
+  assert.equal(title.stopped, true);
+  assert.equal(box.hidden, true);
+  assert.ok(h.pin('e'), 'a press on the preview title pins it at once ...');
+  assert.equal(h.run('evm.winDrag.id'), 'api:prov:e', '... and the same press moves the new window');
+  h.run('pinMove')(ev({pointerId: 3, clientX: 110, clientY: 60}));
+  h.run('pinEnd')(ev({pointerId: 3})); await settle();
+  assert.deepEqual([h.pin('e').style.left, h.pin('e').style.top], ['100px', '50px']);
+  assert.deepEqual(h.posts('/ultra/model-cards/layout').slice(-2), [{connection_id: 'api:prov:e', window: {x: 0, y: 0}}, {connection_id: 'api:prov:e', window: {x: 100, y: 50}}]);
+  e.onmouseenter(ev({ctrlKey: true}));
+  assert.deepEqual([box.hidden, h.pins().length], [true, 5], 'E is pinned now: no preview copy of it');
+});
+
+test('E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window', async () => {
+  const h = harness(); await settle();
+  let status = api('red', 'NEVER_CONFIRMED'), list = [conn('a', 'A'), conn('b', 'B'), conn('c', 'C')];
+  const layout = {state: 'SAVED', revision: 3, hidden: 0, windows: [{connection_id: 'api:prov:b', x: 300, y: 200}, {connection_id: 'api:prov:a', x: 50, y: 60},
+    {connection_id: 'api:prov:gone', x: 1, y: 1}]};
+  h.routes.set('/ultra/connections', () => catalog(list));
+  h.routes.set('/ultra/model-cards', () => cards(list.map(c => mcard(c.model_id, c.display_name, c.model_id === 'b' ? {api: status} : {})),
+    {view: {state: 'SAVED', revision: 7, hidden: 0, sections: {favorites: [], api: list.map(c => c.connection_id), mcp: [], local: []}, layout}}));
+  h.el('viewEvm').onclick(); await settle();
+  assert.deepEqual(h.pins().map(p => [p.getAttribute('data-connection'), p.style.left, p.style.top, p.style.zIndex]),
+    [['api:prov:b', '300px', '200px', '1'], ['api:prov:a', '50px', '60px', '2']], 'in place and in the saved stacking order');
+  assert.equal(h.posts('/ultra/model-cards/layout').length, 0, 'restoring saves nothing');
+  const pinB = h.pin('b');
+  status = api('green', 'CONFIRMED');
+  h.el('evmRefresh').onclick(); await settle();
+  assert.equal(h.pins().length, 2, 'no duplicate after reading the board again');
+  assert.equal(h.pin('b'), pinB, 'the same window element');
+  assert.equal(pinB.style.left, '300px', 'at the same place');
+  assert.equal(h.dot(h.pinCard(pinB)).getAttribute('data-api'), 'green:CONFIRMED', 'with the new content');
+  list = [conn('a', 'A'), conn('c', 'C')];
+  h.el('evmRefresh').onclick(); await settle();
+  assert.deepEqual([pinB.hidden, h.pins().length, h.pinCard(pinB)], [true, 2, null], 'an absent model: its window is hidden, not broken');
+  list = [conn('a', 'A'), conn('b', 'B'), conn('c', 'C')];
+  h.el('evmRefresh').onclick(); await settle();
+  assert.deepEqual([pinB.hidden, pinB.style.left], [false, '300px'], 'it comes back with its model');
+  h.pinClose(h.pin('a')).onclick(ev({detail: 1})); await settle();
+  h.el('evmRefresh').onclick(); await settle();
+  assert.equal(h.pin('a'), null, 'a window closed by «×» is not restored by reading the board again');
+  const h2 = harness(); await settle();
+  await h2.openEvm([conn('a', 'A')], cards([mcard('a', 'A')], {view: {state: 'SAVED', revision: 1, hidden: 0,
+    sections: {favorites: [], api: ['api:prov:a'], mcp: [], local: []}, layout: {state: 'CORRUPT', revision: null, windows: [], hidden: 0}}}));
+  assert.equal(h2.pins().length, 0);
+  assert.match(h2.el('evmError').textContent, /Сохранённое расположение окон повреждено и не используется/);
+});
+
+test('E43 layout writes are queued in order; a refused write is told and the window stays where the user put it', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
+  let release, first = true;
+  h.routes.set('/ultra/model-cards/layout', opts => {
+    const body = JSON.parse(opts.body);
+    const answer = {view: {layout: {state: 'SAVED', revision: 1, windows: body.window ? [{connection_id: body.connection_id, ...body.window}] : [], hidden: 0}}};
+    if (first) {first = false; return new Promise(resolve => {release = () => resolve(answer);});}
+    return answer;
+  });
+  await h.quick(h.cards()[0]);
+  h.pinClose(h.pin('a')).onclick(ev({detail: 1})); await settle();
+  assert.equal(h.calls.filter(c => c.url === '/ultra/model-cards/layout').length, 1, 'the second write waits for the first');
+  release(); await settle();
+  assert.deepEqual(h.posts('/ultra/model-cards/layout').map(p => p.window), [{x: 24, y: 28}, null], 'in the order they were made');
+  h.routes.set('/ultra/model-cards/layout', () => ({httpError: true, status: 409, data: {error: {code: 'model_cards_state_error', message: 'lock busy'}}}));
+  await h.quick(h.cards()[1]);
+  assert.match(h.el('evmError').textContent, /Расположение окна не сохранено: model_cards_state_error/);
+  assert.deepEqual(h.pins().map(p => p.getAttribute('data-connection')), ['api:prov:b'], 'the window stays');
+  h.routes.set('/ultra/model-cards/layout', () => ({view: {layout: {state: 'SAVED', revision: 9, windows: [], hidden: 0}}}));
+  h.pinClose(h.pin('b')).onclick(ev({detail: 1})); await settle();
+  assert.equal(h.run('evm.cards.view.layout.revision'), 9, 'the answer of the server is kept');
+  assert.equal(h.run('evm.cards.view.revision'), 7, 'and the board revision is not touched by a window');
+});
+
+test('E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back', async () => {
+  const h = harness(); await settle();
+  await h.openEvm([conn('a', 'A'), conn('b', 'B')]);
+  h.layoutRoute(); h.layout();
+  Object.assign(h.context.window, {innerWidth: 1400, innerHeight: 900});
+  h.run("openPin('api:prov:a',{x:940,y:852})");
+  const pin = h.pin('a');
+  assert.deepEqual([pin.style.left, pin.style.top, pin.style.width, pin.style.maxHeight], ['940px', '852px', '460px', '120px']);
+  Object.assign(h.context.window, {innerWidth: 390, innerHeight: 844});  // a phone, or a narrow window at 150 %
+  h.run('placeAllPins()');
+  assert.deepEqual([pin.style.left, pin.style.top, pin.style.width], ['24px', '796px', '366px'], 'pulled inside: «×» reachable');
+  assert.equal(h.run("evm.pins['api:prov:a'].x"), 940, 'the kept position is not overwritten');
+  Object.assign(h.context.window, {innerWidth: 933, innerHeight: 667});  // 1400 x 1000 at 150 %
+  h.run('placeAllPins()');
+  assert.deepEqual([pin.style.left, pin.style.top], ['473px', '619px']);
+  Object.assign(h.context.window, {innerWidth: 1400, innerHeight: 900});
+  h.run('placeAllPins()');
+  assert.deepEqual([pin.style.left, pin.style.top], ['940px', '852px'], 'back where the user left it');
+  const header = new Element('header'); header.getBoundingClientRect = () => rect(0, 0, 1400, 240);
+  h.document.querySelector = sel => sel === 'header.top' ? header : null;
+  h.run("openPin('api:prov:b',{x:100,y:20})");
+  assert.equal(h.pin('b').style.top, '248px', 'never under the sticky page header');
+  assert.equal(h.posts('/ultra/model-cards/layout').length, 0, 'showing a window inside never saves it');
 });

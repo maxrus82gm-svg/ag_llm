@@ -159,11 +159,20 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm-ghost .gname{font-weight:700;overflow-wrap:anywhere}.evm-ghost .ghint{font-size:12px;color:var(--blue)}
 .evm-drop-line{position:fixed;z-index:31;height:3px;border-radius:2px;background:var(--blue);box-shadow:0 0 0 2px #10151d;pointer-events:none}
 .evm-ghost[hidden],.evm-drop-line[hidden]{display:none}
-.evm-peek{position:fixed;z-index:15;left:12px;top:12px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.55);opacity:0;transform:scale(.97);transform-origin:top left;transition:opacity .12s ease-out,transform .12s ease-out}
-.evm-peek.open{opacity:1;transform:none}.evm-peek[hidden]{display:none}.evm-peek:focus{outline:none}.evm-peek.hold{visibility:hidden}.evm-peek[data-place=left]{transform-origin:top right}
+.evm-peek{position:fixed;z-index:18;left:12px;top:12px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.55);opacity:0;transform:scale(.97);transform-origin:top left;transition:opacity .12s ease-out,transform .12s ease-out}
+.evm-peek.open{opacity:1;transform:none}.evm-peek[hidden]{display:none}.evm-peek:focus{outline:none}.evm-peek[data-place=left]{transform-origin:top right}
 .peek-bar{display:flex;align-items:center;gap:10px;padding:5px 6px 5px 16px;background:#10202e;border:1px solid #6aa9dc;border-bottom:0;border-radius:12px 12px 0 0;font-size:12px;color:var(--muted)}
 .peek-title{font-weight:700;color:var(--text)}.peek-hint{margin-left:auto}.peek-close{padding:2px 10px;font-size:17px;line-height:1.1}
 .evm-peek .mcard{border-radius:0 0 12px 12px}
+/* Pinned windows (CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001): their own layer over the board, under the preview (18) and the dialogs (20). */
+.evm-pins{position:fixed;inset:0;z-index:16;pointer-events:none}
+.evm-pin{position:absolute;pointer-events:auto;display:flex;flex-direction:column;width:min(460px,calc(100vw - 24px));border:1px solid #4d7fa8;border-radius:12px;background:#16212d;box-shadow:0 14px 40px rgba(0,0,0,.5);overflow:hidden}
+.evm-pin[hidden]{display:none}.evm-pin:focus{outline:none}.evm-pin.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 18px 48px rgba(0,0,0,.6)}
+.evm-pin.flash{animation:pin-flash .7s ease-out}@keyframes pin-flash{0%{box-shadow:0 0 0 5px #ffd28e}100%{box-shadow:0 0 0 1px var(--blue),0 18px 48px rgba(0,0,0,.6)}}
+.pin-bar{display:flex;align-items:center;gap:8px;padding:5px 6px 5px 14px;background:#10202e;border-bottom:1px solid #31475c;cursor:move;user-select:none;-webkit-user-select:none;touch-action:none;font-size:13px}
+.pin-title{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pin-close{padding:2px 10px;font-size:17px;line-height:1.1;cursor:pointer}
+.pin-body{overflow:auto;min-height:0;user-select:text;-webkit-user-select:text}.evm-pin .mcard{border:0;border-radius:0;box-shadow:none}
+.evm-pin.moving{opacity:.92}.evm.dragging .evm-pins{opacity:.25}.evm.dragging .evm-pin{pointer-events:none}
 .mcard .link{background:none;border:0;padding:0 2px;color:var(--blue);text-decoration:underline;font-size:13px}
 .strengths.editable{cursor:text}.strengths.editable:hover{border-color:#6aa9dc}
 .chat-model-picker{position:relative;display:inline-flex}
@@ -171,7 +180,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .chat-model-menu[hidden]{display:none}.chat-model-menu button{text-align:left}.chat-model-menu button[aria-selected=true]{border-color:var(--blue);background:#213b50}
 .chat-model-error{font-size:12px;color:#ffbbbb}
 @media(max-width:850px){.chat-model-menu{right:auto;left:0;max-width:calc(100vw - 24px)}}
-@media(prefers-reduced-motion:reduce){.evm-peek,.ccard{transition:none}.evm-ghost{transform:none}}
+@media(prefers-reduced-motion:reduce){.evm-peek,.ccard{transition:none}.evm-ghost{transform:none}.evm-pin.flash{animation:none}}
 /* EVM model card (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): one component for every model of every provider. */
 .mcard{border:1px solid #6aa9dc;background:#16212d;border-radius:12px;padding:16px 18px 14px 20px;display:flex;flex-direction:column;gap:11px;min-width:0;box-shadow:inset 4px 0 #6aa9dc}
 .mcard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -484,7 +493,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="card spaced evm-info"><div class="evm-info-grid">
 <div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
 <div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён в срок актуальности · ! подтверждение устарело · × подтверждения нет</p></div>
-<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется на месте. Ctrl + наведение — быстрый просмотр сбоку, Ctrl + клик или ⧉ его закрепляют. Потяните карточку мышью, чтобы изменить порядок или добавить её в «Избранное»; есть и кнопки «Выше» / «Ниже».</p></div>
+<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется на месте. Ctrl + наведение — быстрый просмотр сбоку; нажатие на него, Ctrl + клик или ⧉ дают отдельное окно: его можно перетащить за заголовок, а закрыть — только его крестиком. Потяните карточку мышью, чтобы изменить порядок или добавить её в «Избранное»; есть и кнопки «Выше» / «Ниже».</p></div>
 </div></div>
 <div class="evm-columns evm-board">
 <section class="evm-col" aria-labelledby="evmFavTitle" id="evmFavCol"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Перетащите модель сюда или отметьте её звёздочкой ☆. Здесь хранится ссылка: модель остаётся в своей колонке.</p></section>
@@ -492,6 +501,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <section class="evm-col" aria-labelledby="evmMcpTitle" id="evmMcpCol"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 <section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
+<div id="evmPins" class="evm-pins" role="group" aria-label="Закреплённые окна моделей"></div>
 <div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Быстрый просмотр" tabindex="-1" hidden></div>
 <div id="evmGhost" class="evm-ghost" aria-hidden="true" hidden></div><div id="evmDropLine" class="evm-drop-line" aria-hidden="true" hidden></div>
 <div id="evmSettingsWindow" class="evm-backdrop" hidden><div class="evm-window" role="dialog" aria-modal="true" aria-labelledby="evmSetTitle">
@@ -1012,7 +1022,8 @@ $('copyContext').onclick=()=>{
 // a press that moves more than a few pixels drags the card (Pointer Events only, no native drag-and-drop).
 // The manual order and favourites are saved on the server (/ultra/model-cards/view).
 const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
-  ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null,pinned:false,invoker:null},peekBar:null,peekTimer:0,
+  ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null},peekTimer:0,
+  pins:{},pinOrder:[],hinted:null,promote:null,winDrag:null,layoutQueue:Promise.resolve(),layoutLoaded:false,
   hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
@@ -1026,6 +1037,7 @@ function rememberView(name){
 }
 function showView(name,initial=false){
   if(!VIEWS[name])name='chat';evm.view=name;
+  if(name!=='evm'){closePeek();pinCancel()}  // pinned windows stay (hidden with EVM), the preview goes
   for(const [key,[region,button]] of Object.entries(VIEWS)){$(region).hidden=key!==name;$(button).setAttribute('aria-pressed',String(key===name))}
   $('showWorkspaces').hidden=name!=='operator';$('showTasks').hidden=name!=='operator';
   $('skipLink').setAttribute('href',VIEWS[name][2]);text('skipLink',VIEWS[name][3]);
@@ -1160,9 +1172,9 @@ function compactCard(id,section){
   const provider=e.card?(evm.cards.providers.find(p=>p.provider_id===e.card.provider_id)?.display_name||e.card.provider_id):(e.base.provider||'');
   const body=element('div',null,'cbody');body.append(title,element('span',[KIND_LABEL[e.kind]||e.kind,provider].filter(Boolean).join(' · '),'csub'));
   const quick=fk(element('button','⧉','cquick'),inst,'quick');quick.type='button';quick.setAttribute('aria-haspopup','dialog');
-  quick.setAttribute('aria-expanded',String(peekIs(id,section)));quick.setAttribute('aria-label','Быстрый просмотр: '+name);
-  quick.setAttribute('title','Быстрый просмотр сбоку (то же — Ctrl + наведение)');
-  quick.onclick=ev=>{ev?.stopPropagation?.();pinPeek(id,section,'quick',ev?.detail===0)};
+  quick.setAttribute('aria-expanded',String(!!pinned(id)));quick.setAttribute('aria-label',(pinned(id)?'Показать окно модели: ':'Закрепить в отдельном окне: ')+name);
+  quick.setAttribute('title','Отдельное окно (то же — Ctrl + клик); Ctrl + наведение — быстрый просмотр');
+  quick.onclick=ev=>{ev?.stopPropagation?.();pinModel(id,section,'quick',ev?.detail===0)};
   const star=fk(element('button',fav?'★':'☆','star'),inst,'star');star.type='button';star.setAttribute('aria-pressed',String(fav));
   star.setAttribute('aria-label',(fav?'Убрать из избранного: ':'Добавить в избранное: ')+name);star.disabled=!evm.cards?.view;
   star.onclick=ev=>{ev?.stopPropagation?.();toggleFavorite(id)};  // the star never opens the card
@@ -1197,7 +1209,7 @@ function toggleExpanded(id,section){  // several cards may stay open; opening on
 }
 function headClick(ev,id,section){
   if(ev?.detail!==0&&Date.now()<evm.suppressUntil){evm.suppressUntil=0;return}  // the release that ends a drag is not a click
-  if(ev?.ctrlKey){pinPeek(id,section,'open',false);return}  // Ctrl + click pins the side panel (or closes it)
+  if(ev?.ctrlKey){pinModel(id,section,'open',false);return}  // Ctrl + click pins the model in its own window
   toggleExpanded(id,section)
 }
 function renderEvm(){
@@ -1221,19 +1233,21 @@ function renderEvm(){
   const count=cols.api.connections.length;
   text('evmState',count?'Моделей в реестре: '+count:'Реестр пуст');
   if(evm.peek.id){if(entryOf(evm.peek.id)&&evm.ccards[evm.peek.section+'|'+evm.peek.id])fillPeek();else closePeek()}
+  for(const id of evm.pinOrder)fillPin(id);  // the same windows, same places: only their content is new
   restoreFocus(focusKey)
 }
 function restoreFocus(key){
   if(!key)return null;
   const cut=key.lastIndexOf(':'),inst=key.slice(0,cut),name=key.slice(cut+1),other={up:'down',down:'up'}[name];
-  // at an end of the list the other move command takes the keyboard; else the card's own «open»
-  const el=[key,other&&inst+':'+other,inst+':open'].map(k=>k&&evm.fk[k]).find(b=>b&&!b.disabled)||(inst==='peek'&&evm.peek.id?$('evmPeek'):null);
+  // at an end of the list the other move command takes the keyboard; else the card's own «open» (or the window itself)
+  const el=[key,other&&inst+':'+other,inst+':open'].map(k=>k&&evm.fk[k]).find(b=>b&&!b.disabled)||
+    (inst==='peek'&&evm.peek.id?$('evmPeek'):inst.startsWith('pin:')?pinned(inst.slice(4))?.el:null);
   el?.focus?.();
   return el||null
 }
-// Side panel (quick view). Plain hover shows nothing. Ctrl + hover shows the full card beside its column and switches
-// at once from card to card; releasing Ctrl closes it. Ctrl + click or «⧉» pins it; the same command again, «×» or
-// Escape closes it. A press inside an unpinned panel pins it. A drag closes an unpinned panel and hides a pinned one.
+// Temporary preview (#evmPeek). Plain hover shows nothing. Ctrl + hover shows the full card beside its column and
+// switches at once from card to card; releasing Ctrl, «×» or Escape closes it. It is always above the pinned windows.
+// A press inside it turns it into a pinned window where it stands; a press on its title pins it and moves it at once.
 const PEEK_CLOSE_MS=180,PEEK_W=560,PEEK_MIN=320;
 const COLUMNS={favorites:'evmFavCol',api:'evmApiCol',mcp:'evmMcpCol',local:'evmLocalCol'};
 function peekIs(id,section){return evm.peek.id===id&&evm.peek.section===section}
@@ -1242,88 +1256,254 @@ function hoverCard(ev,id,section){
   if(typeof ev?.ctrlKey==='boolean')evm.ctrl=ev.ctrlKey;
   ctrlPeek()
 }
-function leaveCard(){evm.hover=null;peekLeave()}
+function leaveCard(){evm.hover=null;evm.hinted=null;peekLeave()}
 function ctrlPeek(){
   const h=evm.hover;
-  if(!evm.ctrl||!h||evm.view!=='evm'||evm.press||evm.drag||evm.window||evm.peek.pinned||peekIs(h.id,h.section))return;
-  openPeek(h.id,h.section,false,null,false)  // already open: only the content changes, the panel does not blink
+  if(!evm.ctrl||!h||evm.view!=='evm'||evm.press||evm.drag||evm.winDrag||evm.window||evm.promote)return;
+  if(pinned(h.id)){  // no second copy of a pinned model: its window is shown instead, once per hover
+    if(evm.peek.id)closePeek();
+    if(evm.hinted!==h.id){evm.hinted=h.id;activatePin(h.id,{flash:true})}
+    return
+  }
+  if(peekIs(h.id,h.section))return;
+  openPeek(h.id,h.section)  // already open: only the content changes, the panel does not blink
 }
 function peekLeave(){
   clearTimeout(evm.peekTimer);
-  if(evm.peek.id&&!evm.peek.pinned)evm.peekTimer=setTimeout(()=>{if(!evm.peek.pinned&&!evm.hover)closePeek()},PEEK_CLOSE_MS)
-}
-function pinPeek(id,section,invoker,focus){
-  if(evm.drag)return;
-  if(peekIs(id,section)&&evm.peek.pinned){closePeek({focus:true});return}
-  openPeek(id,section,true,invoker,focus)
-}
-function pinCurrent(){  // a press inside an unpinned panel pins it: releasing Ctrl no longer closes it
-  if(!evm.peek.id||evm.peek.pinned)return;
-  evm.peek.pinned=true;mark($('evmPeek'),'pinned',true);peekBarText()
+  if(evm.peek.id&&!evm.promote)evm.peekTimer=setTimeout(()=>{if(!evm.promote&&!evm.hover)closePeek()},PEEK_CLOSE_MS)
 }
 function cardKey(ev,id,section){
   if(ev.altKey&&(ev.key==='ArrowUp'||ev.key==='ArrowDown')){ev.preventDefault?.();moveCard(section,id,ev.key==='ArrowUp'?-1:1)}
 }
-function openPeek(id,section,pinned,invoker,focus){
+function openPeek(id,section){
   if(!entryOf(id)||evm.drag)return;
   clearTimeout(evm.peekTimer);
-  evm.peek={id,section,pinned:!!pinned,invoker:invoker||(peekIs(id,section)?evm.peek.invoker:null)};
+  evm.peek={id,section};
   const box=$('evmPeek');box.hidden=false;  // visible first: the position needs the real height
   fillPeek();
-  box.className='evm-peek open'+(pinned?' pinned':'');
-  if(focus)box.focus()
-}
-function peekBarText(){
-  const b=evm.peekBar;if(!b)return;
-  b.title.textContent=(evm.peek.pinned?'Закреплено':'Быстрый просмотр')+' · '+SECTION_LABEL[evm.peek.section];
-  b.hint.textContent=evm.peek.pinned?'Esc или × — закрыть':'Ctrl + клик — закрепить'
+  box.className='evm-peek open'
 }
 function fillPeek(){
   const {id,section}=evm.peek,e=entryOf(id),box=$('evmPeek');
   for(const k of Object.keys(evm.fk))if(k.startsWith('peek:'))delete evm.fk[k];
   const bar=element('div',null,'peek-bar'),close=fk(element('button','×','peek-close'),'peek','close');
   close.type='button';close.setAttribute('aria-label','Закрыть быстрый просмотр');close.onclick=()=>closePeek({focus:true});
-  evm.peekBar={title:element('span','','peek-title'),hint:element('span','','peek-hint')};peekBarText();
-  bar.append(evm.peekBar.title,evm.peekBar.hint,close);
+  close.onpointerdown=ev=>ev?.stopPropagation?.();  // «×» closes, it never pins
+  bar.onpointerdown=ev=>previewBarPress(ev);
+  bar.append(element('span','Быстрый просмотр · '+SECTION_LABEL[section],'peek-title'),element('span','Нажмите на окно — закрепить','peek-hint'),close);
   box.replaceChildren(bar,fullCard(e,section,'peek'));
   box.setAttribute('aria-label','Быстрый просмотр: '+nameOf(id)+' · '+SECTION_LABEL[section]);
-  for(const [key,q] of Object.entries(evm.cquick))q.setAttribute('aria-expanded',String(key===section+'|'+id));
   positionPeek()
 }
 function closePeek(opts={}){
   clearTimeout(evm.peekTimer);
-  const {id,section,invoker}=evm.peek;if(!id)return;
+  const {id,section}=evm.peek;if(!id)return;
   const box=$('evmPeek'),active=document.activeElement;
   const inside=active===box||String(active?.getAttribute?.('data-fk')||'').startsWith('peek:');
-  evm.peek={id:null,section:null,pinned:false,invoker:null};evm.peekBar=null;
+  evm.peek={id:null,section:null};
   for(const k of Object.keys(evm.fk))if(k.startsWith('peek:'))delete evm.fk[k];
   box.hidden=true;box.className='evm-peek';box.replaceChildren();
-  for(const q of Object.values(evm.cquick))q.setAttribute('aria-expanded','false');
-  if(opts.focus&&inside){const key=section+'|'+id;(invoker==='quick'?evm.cquick[key]:evm.copen[key])?.focus()}
+  if(opts.focus&&inside)evm.copen[section+'|'+id]?.focus()
 }
-function positionPeek(){  // beside the column of its card, never over it; on a narrow screen a sheet above or below the card
-  const box=$('evmPeek'),r=rectOf(evm.cheads[evm.peek.section+'|'+evm.peek.id]);
-  if(!r||typeof window==='undefined'||!window.innerWidth)return;
-  const col=rectOf($(COLUMNS[evm.peek.section]))||r,vw=window.innerWidth,vh=window.innerHeight,M=12,G=10;
+function topLimit(){  // never under the sticky page header
   const head=rectOf(typeof document.querySelector==='function'?document.querySelector('header.top'):null);
-  const minTop=Math.max(M,Math.round((head?head.bottom:0)+8));  // never under the sticky page header
-  const room={right:vw-col.right-G-M,left:col.left-G-M},want=Math.min(PEEK_W,vw-2*M);
-  const sides=evm.peek.section==='favorites'||evm.peek.section==='api'?['right','left']:['left','right'];  // left columns open to the right
-  let side=sides.find(s=>room[s]>=want),width=want,left,top;
+  return Math.max(12,Math.round((head?head.bottom:0)+8))
+}
+function sidePlace(r,section,want,heightAt){  // beside the column of a card, never over it; a sheet above or below on a narrow screen
+  const col=rectOf($(COLUMNS[section]))||r,vw=window.innerWidth,vh=window.innerHeight,M=12,G=10,minTop=topLimit();
+  const room={right:vw-col.right-G-M,left:col.left-G-M};
+  const sides=section==='favorites'||section==='api'?['right','left']:['left','right'];  // left columns open to the right
+  let side=sides.find(s=>room[s]>=want),width=want;
   if(!side){const best=room.right>=room.left?'right':'left';if(room[best]>=PEEK_MIN){side=best;width=Math.floor(room[best])}}
   if(side){
-    left=side==='right'?col.right+G:col.left-G-width;
-    box.style.width=width+'px';box.style.maxHeight=Math.max(160,vh-minTop-M)+'px';
-    const h=box.offsetHeight||0;top=Math.max(minTop,Math.min(r.top,vh-h-M))
-  }else{  // no room beside the column: a sheet over the larger free part of the window, the card itself stays visible
-    const below=vh-M-(r.bottom+G),above=r.top-G-minTop;side=below>=above?'below':'above';
-    width=vw-2*M;left=M;const maxH=Math.max(160,Math.round(side==='below'?below:above));
-    box.style.width=width+'px';box.style.maxHeight=maxH+'px';
-    const h=Math.min(box.offsetHeight||0,maxH);
-    top=side==='below'?Math.max(minTop,Math.min(r.bottom+G,vh-M-h)):Math.max(minTop,r.top-G-h)
+    const maxH=Math.max(160,vh-minTop-M),h=heightAt(width,maxH);
+    return {side,width,maxH,left:side==='right'?col.right+G:col.left-G-width,top:Math.max(minTop,Math.min(r.top,vh-h-M))}
   }
-  box.setAttribute('data-place',side);box.style.left=Math.round(left)+'px';box.style.top=Math.round(top)+'px'
+  const below=vh-M-(r.bottom+G),above=r.top-G-minTop;side=below>=above?'below':'above';  // the card itself stays visible
+  width=vw-2*M;const maxH=Math.max(160,Math.round(side==='below'?below:above)),h=Math.min(heightAt(width,maxH),maxH);
+  return {side,width,maxH,left:M,top:side==='below'?Math.max(minTop,Math.min(r.bottom+G,vh-M-h)):Math.max(minTop,r.top-G-h)}
 }
+function positionPeek(){
+  const box=$('evmPeek'),r=rectOf(evm.cheads[evm.peek.section+'|'+evm.peek.id]);
+  if(!r||typeof window==='undefined'||!window.innerWidth)return;
+  const s=sidePlace(r,evm.peek.section,Math.min(PEEK_W,window.innerWidth-24),(w,maxH)=>{box.style.width=w+'px';box.style.maxHeight=maxH+'px';return box.offsetHeight||0});
+  box.style.width=s.width+'px';box.style.maxHeight=s.maxH+'px';
+  box.setAttribute('data-place',s.side);box.style.left=Math.round(s.left)+'px';box.style.top=Math.round(s.top)+'px'
+}
+function peekAt(){const b=$('evmPeek');return {x:Math.round(parseFloat(b.style.left)||0),y:Math.round(parseFloat(b.style.top)||0)}}
+function previewPress(ev){  // the preview becomes a pinned window where it stands, after this press (its click still works)
+  if(!evm.peek.id||evm.promote||ev?.button>0)return;
+  evm.promote={id:evm.peek.id,section:evm.peek.section,pointerId:ev?.pointerId}
+}
+function previewBarPress(ev){  // a press on its title: pinned at once and moved by the same pointer
+  ev?.stopPropagation?.();
+  if(!evm.peek.id||ev?.button>0)return;
+  const {id,section}=evm.peek,at=peekAt();
+  closePeek();evm.promote=null;
+  if(openPin(id,{section,from:section+'|'+id,save:true,...at}))pinPress(ev,id)
+}
+function previewRelease(ev){
+  const q=evm.promote;if(!q||(ev&&q.pointerId!=null&&ev.pointerId!==q.pointerId))return;
+  setTimeout(promotePreview,0)  // after the click of a button pressed inside the preview
+}
+function promotePreview(){
+  const q=evm.promote;evm.promote=null;
+  if(!q||!peekIs(q.id,q.section))return;
+  const at=peekAt(),back=evm.returnTo,active=document.activeElement?.getAttribute?.('data-fk');
+  closePeek();
+  if(!openPin(q.id,{section:q.section,from:q.section+'|'+q.id,save:true,...at}))return;
+  if(back?.key?.startsWith('peek:'))back.key='pin:'+q.id+back.key.slice(4);  // a window it opened returns to the pinned copy
+  if(active?.startsWith('peek:'))restoreFocus('pin:'+q.id+active.slice(4))
+}
+// Pinned windows (CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001): any number of independent windows, one per entry (its stable
+// connection_id), in their own layer under the preview and over the board. Each is dragged by its title, raised by a
+// press and closed only by its own «×» — never by Ctrl, Escape, a click outside, another model, a drag or another view.
+// The page keeps each window where the user put it; the server keeps the layout per window (/ultra/model-cards/layout).
+const PIN_W=460,PIN_STEP=28,PIN_MOVE_PX=3;
+function homeSection(id){const kind=String(id).split(':')[0];return COLUMNS[kind]&&kind!=='favorites'?kind:'api'}
+function pinned(id){const p=evm.pins[id];return p&&!p.missing?p:null}
+function pinModel(id,section,from,focus){  // Ctrl + click and «⧉»: pin the model, or bring its existing window forward
+  if(evm.drag||evm.winDrag)return;
+  if(evm.pins[id]){activatePin(id,{flash:true,focus});return}
+  const at=evm.peek.id===id?peekAt():null;
+  if(evm.peek.id===id)closePeek();
+  openPin(id,{section,from:section+'|'+id,focus,save:true,...(at||{})})
+}
+function openPin(id,opts={}){
+  if(!entryOf(id))return null;
+  if(evm.pins[id]){activatePin(id,{flash:true,focus:opts.focus});return evm.pins[id]}
+  const el=element('div',null,'evm-pin');el.setAttribute('role','dialog');el.setAttribute('aria-modal','false');el.setAttribute('tabindex','-1');
+  el.setAttribute('data-connection',id);
+  const bar=element('div',null,'pin-bar');bar.setAttribute('tabindex','0');
+  const title=element('span','','pin-title'),close=element('button','×','pin-close');close.type='button';
+  bar.append(title,close);
+  const body=element('div',null,'pin-body');
+  el.append(bar,body);
+  const p={id,el,bar,title,close,body,x:0,y:0,missing:false,from:opts.from||null};
+  evm.pins[id]=p;evm.pinOrder.push(id);
+  bar.onpointerdown=ev=>pinPress(ev,id);bar.onkeydown=ev=>pinKey(ev,id);
+  close.onpointerdown=ev=>ev?.stopPropagation?.();  // «×» never moves the window
+  close.onclick=ev=>{ev?.stopPropagation?.();closePin(id,{focus:true})};
+  el.onpointerdown=()=>activatePin(id);  // a press anywhere raises it over the other windows
+  $('evmPins').append(el);
+  fillPin(id);
+  const at=opts.x!=null?{x:opts.x,y:opts.y}:pinPlace(id,opts.section||homeSection(id));
+  p.x=Math.round(at.x);p.y=Math.round(at.y);placePin(p);
+  activatePin(id,{focus:opts.focus});
+  if(opts.save)saveWindow(id);
+  syncQuick();
+  return p
+}
+function fillPin(id){  // the window keeps its element and its place; only the content follows the board
+  const p=evm.pins[id];if(!p)return;
+  const e=entryOf(id);p.missing=!e;p.el.hidden=!e;
+  for(const k of Object.keys(evm.fk))if(k.startsWith('pin:'+id+':'))delete evm.fk[k];
+  if(!e){p.body.replaceChildren();return}  // an entry that left the catalog: no broken window, it comes back with it
+  const name=nameOf(id);
+  p.title.textContent=name+' · '+(KIND_LABEL[e.kind]||e.kind);
+  p.el.setAttribute('aria-label','Окно модели: '+name);
+  p.bar.setAttribute('aria-label','Окно «'+name+'»: перетащите за заголовок или двигайте стрелками');
+  fk(p.close,'pin:'+id,'close');p.close.setAttribute('aria-label','Закрыть окно: '+name);
+  const scrolled=p.body.scrollTop||0;  // reading the content where the user left it
+  p.body.replaceChildren(fullCard(e,homeSection(id),'pin:'+id));
+  if(scrolled)p.body.scrollTop=scrolled
+}
+function pinPlace(id,section){  // beside the column of its card, like the preview; shifted when another window stands there
+  const r=rectOf(evm.cheads[section+'|'+id]);
+  let at={x:24,y:topLimit()+16};
+  if(r&&typeof window!=='undefined'&&window.innerWidth){const s=sidePlace(r,section,Math.min(PIN_W,window.innerWidth-24),()=>0);at={x:s.left,y:s.top}}
+  for(let i=0;i<24&&Object.values(evm.pins).some(q=>q.id!==id&&Math.abs(q.x-at.x)<8&&Math.abs(q.y-at.y)<8);i++)at={x:at.x+PIN_STEP,y:at.y+PIN_STEP};
+  return at
+}
+function placePin(p){  // shown inside the window: the title and «×» always reachable; the kept position is not changed
+  let left=p.x,top=p.y;
+  if(typeof window!=='undefined'&&window.innerWidth){
+    const vw=window.innerWidth,vh=window.innerHeight,w=Math.min(PIN_W,vw-24),minTop=topLimit();
+    left=Math.min(Math.max(p.x,0),Math.max(0,vw-w));top=Math.min(Math.max(p.y,minTop),Math.max(minTop,vh-48));
+    p.el.style.width=w+'px';p.el.style.maxHeight=Math.max(120,vh-top-12)+'px'
+  }
+  p.el.style.left=Math.round(left)+'px';p.el.style.top=Math.round(top)+'px';
+  return {left,top}
+}
+function activatePin(id,opts={}){
+  const p=evm.pins[id];if(!p)return;
+  evm.pinOrder=evm.pinOrder.filter(x=>x!==id).concat(id);
+  evm.pinOrder.forEach((x,i)=>{const q=evm.pins[x];q.el.style.zIndex=String(i+1);mark(q.el,'active',x===id)});
+  if(opts.flash){mark(p.el,'flash',true);clearTimeout(p.flashTimer);p.flashTimer=setTimeout(()=>mark(p.el,'flash',false),700)}
+  if(opts.focus)p.el.focus()
+}
+function closePin(id,opts={}){
+  const p=evm.pins[id];if(!p)return;
+  const active=document.activeElement,inside=active===p.el||String(active?.getAttribute?.('data-fk')||'').startsWith('pin:'+id+':');
+  if(evm.winDrag?.id===id)evm.winDrag=null;
+  p.el.remove?.();delete evm.pins[id];evm.pinOrder=evm.pinOrder.filter(x=>x!==id);
+  for(const k of Object.keys(evm.fk))if(k.startsWith('pin:'+id+':'))delete evm.fk[k];
+  if(evm.hinted===id)evm.hinted=null;
+  saveWindow(id,true);syncQuick();
+  if(opts.focus&&inside){const home=homeSection(id)+'|'+id;(evm.cquick[p.from]||evm.cquick[home]||evm.copen[home])?.focus()}
+}
+function syncQuick(){  // «⧉» tells whether the model has its window
+  for(const [key,q] of Object.entries(evm.cquick)){
+    const id=key.slice(key.indexOf('|')+1),on=!!pinned(id);
+    q.setAttribute('aria-expanded',String(on));q.setAttribute('aria-label',(on?'Показать окно модели: ':'Закрепить в отдельном окне: ')+nameOf(id))
+  }
+}
+function pinPress(ev,id){  // the title moves the window; the card buttons inside it never do
+  if(ev?.button>0)return;
+  const p=evm.pins[id];if(!p)return;
+  activatePin(id);
+  const at=placePin(p);
+  evm.winDrag={id,pointerId:ev?.pointerId,dx:(ev?.clientX||0)-at.left,dy:(ev?.clientY||0)-at.top,x0:p.x,y0:p.y,sx:ev?.clientX||0,sy:ev?.clientY||0,moved:false};
+  try{p.bar.setPointerCapture?.(ev.pointerId)}catch(_){}
+  ev?.preventDefault?.()  // no text selection while the window moves
+}
+function pinMove(ev){
+  const d=evm.winDrag;if(!d||ev?.pointerId!==d.pointerId)return;
+  if(!d.moved&&Math.hypot(ev.clientX-d.sx,ev.clientY-d.sy)<PIN_MOVE_PX)return;  // a click on the title only raises it
+  const p=evm.pins[d.id];if(!p)return;
+  d.moved=true;mark(p.el,'moving',true);ev.preventDefault?.();
+  p.x=Math.round(ev.clientX-d.dx);p.y=Math.round(ev.clientY-d.dy);
+  const at=placePin(p);p.x=Math.round(at.left);p.y=Math.round(at.top)  // it stays exactly where it is seen
+}
+function pinEnd(ev){
+  const d=evm.winDrag;if(!d||(ev&&ev.pointerId!==d.pointerId))return;
+  evm.winDrag=null;const p=evm.pins[d.id];if(!p)return;
+  mark(p.el,'moving',false);
+  if(d.moved)saveWindow(d.id)  // saved once, on release, never on every pixel
+}
+function pinCancel(ev){  // Escape, a lost pointer or window: the window goes back where the move began
+  const d=evm.winDrag;if(!d||(ev&&ev.pointerId!=null&&ev.pointerId!==d.pointerId))return;
+  evm.winDrag=null;const p=evm.pins[d.id];if(!p)return;
+  mark(p.el,'moving',false);p.x=d.x0;p.y=d.y0;placePin(p)
+}
+function pinKey(ev,id){  // arrows move the focused title (Shift: farther); saved shortly after the last step
+  const step=ev.shiftKey?64:16,d={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[ev.key];
+  const p=evm.pins[id];if(!d||!p)return;
+  ev.preventDefault?.();
+  p.x+=d[0];p.y+=d[1];
+  const at=placePin(p);p.x=Math.round(at.left);p.y=Math.round(at.top);
+  clearTimeout(p.saveTimer);p.saveTimer=setTimeout(()=>saveWindow(id),400)
+}
+function saveWindow(id,closed){  // one window per request, queued in order; the server merges pages window by window
+  const p=evm.pins[id];
+  if(!evm.cards?.view||(!closed&&(!p||p.missing)))return evm.layoutQueue;
+  const place=closed?null:{x:Math.round(p.x),y:Math.round(p.y)};
+  evm.layoutQueue=evm.layoutQueue.then(async()=>{
+    try{
+      const r=await api('/ultra/model-cards/layout',{method:'POST',body:{connection_id:id,window:place}});
+      if(r?.view?.layout&&evm.cards?.view)evm.cards.view={...evm.cards.view,layout:r.view.layout}
+    }catch(e){notice('evmError','Расположение окна не сохранено: '+e.message+'. Окно осталось на месте, но после перезагрузки страницы может вернуться на прежнее.')}
+  });
+  return evm.layoutQueue
+}
+function restorePins(){  // once per page load: the saved windows come back where they were left, in their stacking order
+  const layout=evm.cards?.view?.layout;
+  if(evm.layoutLoaded||!layout)return;
+  evm.layoutLoaded=true;
+  if(layout.state==='CORRUPT')notice('evmError','Сохранённое расположение окон повреждено и не используется. Следующее закрепление начнёт его заново; файл сохранён для разбора.');
+  for(const w of layout.windows||[])if(entryOf(w.connection_id)&&!evm.pins[w.connection_id])openPin(w.connection_id,{x:w.x,y:w.y})
+}
+function placeAllPins(){for(const p of Object.values(evm.pins))placePin(p)}
 // Manual order: «Выше» / «Ниже» (also Alt+↑/↓) or the mouse. Columns are independent.
 function moveButtons(section,id,inst){
   if(!section||!evm.cards?.view)return [];
@@ -1364,12 +1544,12 @@ function pressMove(ev){
 function startDrag(){
   const p=evm.press,key=p.section+'|'+p.id,head=evm.cheads[key],r=rectOf(head);
   clearTimeout(evm.peekTimer);
-  if(evm.peek.id&&!evm.peek.pinned)closePeek();  // it stays closed until the drop (ctrlPeek and pinPeek wait for the drag)
+  if(evm.peek.id)closePeek();  // it stays closed until the drop (ctrlPeek and pinModel wait for the drag)
   const hint=element('span','','ghint');
   evm.drag={id:p.id,section:p.section,target:null,index:null,x:p.x,y:p.y,hint};
   try{head?.setPointerCapture?.(p.pointerId)}catch(_){}  // the drag keeps its pointer even outside the window
   try{window.getSelection?.()?.removeAllRanges?.()}catch(_){}
-  mark(evm.ccards[key],'dragging',true);mark($('evmView'),'dragging',true);mark($('evmPeek'),'hold',true);
+  mark(evm.ccards[key],'dragging',true);mark($('evmView'),'dragging',true);
   const g=$('evmGhost');g.replaceChildren(element('span',nameOf(p.id),'gname'),hint);
   if(r&&r.width)g.style.width=Math.min(260,Math.round(r.width))+'px';
   g.hidden=false
@@ -1449,7 +1629,7 @@ function endDrag(){
   evm.scrollFrame=0;
   for(const el of Object.values(evm.ccards))mark(el,'dragging',false);
   for(const id of Object.values(COLUMNS))mark($(id),'drop-target',false);
-  mark($('evmView'),'dragging',false);mark($('evmView'),'drop-none',false);mark($('evmPeek'),'hold',false);
+  mark($('evmView'),'dragging',false);mark($('evmView'),'drop-none',false);
   $('evmGhost').hidden=true;$('evmGhost').replaceChildren();$('evmDropLine').hidden=true;
   if(evm.peek.id)positionPeek()
 }
@@ -1496,7 +1676,8 @@ async function loadEvm(){
     renderEvm();
     const damaged=[evm.cards?.settings.state==='CORRUPT'?'настройки карточек':null,evm.cards?.checks?.state==='CORRUPT'?'сведения о проверках API':null].filter(Boolean);
     if(evm.cardsError)notice('evmError','Карточки моделей недоступны: '+evm.cardsError);
-    else if(damaged.length)notice('evmError','Повреждены '+damaged.join(' и ')+'. Файл сохранён для разбора; следующее сохранение начнёт запись заново, статусы до новой проверки — ×.');
+    restorePins();
+    if(damaged.length)notice('evmError','Повреждены '+damaged.join(' и ')+'. Файл сохранён для разбора; следующее сохранение начнёт запись заново, статусы до новой проверки — ×.');
     if(evm.window)fillWindow()
   }catch(e){
     notice('evmError','Не удалось получить подключения: '+e.message);text('evmState','Список не обновлён')
@@ -1522,7 +1703,7 @@ function facts(id,rows){
 function openWindow(kind,id,tab,from){
   const c=cardData(id);if(!c)return;
   evm.returnTo={key:from||null,id:c.connection_id};  // the control that opened the window gets the keyboard back
-  if(evm.peek.id&&!evm.peek.pinned)closePeek();  // a pinned side panel stays under the window
+  if(evm.peek.id&&!evm.promote)closePeek();  // pressed inside the preview: it becomes a pinned window after this click
   evm.window={kind,id};evm.setError='';
   if(tab)evm.tab=tab;
   fillWindow();
@@ -1630,7 +1811,7 @@ $('viewOperator').onclick=()=>showView('operator');
 $('evmRefresh').onclick=()=>loadEvm();
 $('evmPeek').onmouseenter=()=>clearTimeout(evm.peekTimer);
 $('evmPeek').onmouseleave=()=>peekLeave();
-$('evmPeek').onpointerdown=()=>pinCurrent();  // pressing anything in the side panel keeps it open
+$('evmPeek').onpointerdown=ev=>previewPress(ev);  // a press inside the preview pins it where it stands
 $('evmView').onscroll=()=>{if(evm.peek.id)positionPeek()};
 for(const [key,[tab]] of Object.entries(EVM_TABS))$(tab).onclick=()=>selectTab(key);
 $('evmSetProfile').onchange=editDraft;
@@ -1645,23 +1826,28 @@ function escapeKey(e){
   if(e?.key!=='Escape')return;
   if(picker.open){closePicker(true);return}
   if(evm.drag){cancelDrag();return}
+  if(evm.winDrag){pinCancel();return}
   if(evm.window){closeWindow();return}
-  if(evm.peek.id)closePeek({focus:true})
+  if(evm.peek.id)closePeek({focus:true})  // the preview only: pinned windows close with their own «×»
 }
 function evmKeyDown(e){
   if(e?.key==='Control'){evm.ctrl=true;ctrlPeek();return}  // Ctrl pressed over a card shows its side panel
   escapeKey(e)
 }
-function evmKeyUp(e){if(e?.key==='Control'){evm.ctrl=false;if(evm.peek.id&&!evm.peek.pinned)closePeek()}}
-function evmBlur(){evm.ctrl=false;cancelDrag();if(evm.peek.id&&!evm.peek.pinned)closePeek()}  // keys and buttons are lost with the window
+function evmKeyUp(e){if(e?.key==='Control'){evm.ctrl=false;if(evm.peek.id&&!evm.promote)closePeek()}}  // pinned windows stay
+function evmBlur(){evm.ctrl=false;cancelDrag();pinCancel();if(evm.peek.id&&!evm.promote)closePeek()}  // keys and buttons are lost with the window
 if(typeof window!=='undefined'&&window.addEventListener){
   window.addEventListener('keydown',evmKeyDown);
   window.addEventListener('keyup',evmKeyUp);
   window.addEventListener('blur',evmBlur);
   window.addEventListener('pointermove',pressMove,{passive:false});
+  window.addEventListener('pointermove',pinMove,{passive:false});
   window.addEventListener('pointerup',pressEnd);
+  window.addEventListener('pointerup',pinEnd);
+  window.addEventListener('pointerup',previewRelease);
   window.addEventListener('pointercancel',pressCancel);
-  window.addEventListener('resize',()=>{if(evm.peek.id)positionPeek()});
+  window.addEventListener('pointercancel',pinCancel);
+  window.addEventListener('resize',()=>{if(evm.peek.id)positionPeek();placeAllPins()});
   window.addEventListener('scroll',()=>{if(evm.peek.id)positionPeek()},true)  // narrow screens scroll the page, not the board
 }
 // Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token

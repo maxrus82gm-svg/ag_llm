@@ -564,6 +564,160 @@ class BoardView(Fixture):
         self.assertEqual((self.view()["state"], self.view()["revision"], self.view()["sections"]["favorites"]), ("SAVED", 1, [API_IDS[0]]))
 
 
+class BoardLayout(Fixture):
+    """CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001: pinned EVM windows, one per entry, kept in the view file with their own
+    revision; the column order, the favourites and their base_revision behave exactly as before."""
+
+    view, put, extra_columns = BoardView.view, BoardView.put, BoardView.extra_columns
+
+    def win(self, connection_id, x=None, y=None, api=None):
+        window = None if x is None else {"x": x, "y": y}
+        return (api or self.api).dispatch("POST", "/ultra/model-cards/layout", {"connection_id": connection_id, "window": window})[1]["view"]
+
+    def stored(self):
+        return json.loads((self.storage / "ultra" / "evm_view.json").read_text(encoding="utf-8"))
+
+    def test_m22_windows_persist_restart_and_touch_nothing_else(self):
+        first = self.view()["layout"]
+        self.assertEqual(first, {"state": "EMPTY", "revision": 0, "windows": [], "hidden": 0})
+        self.put("favorites", [API_IDS[0]])  # an order saved before any window: the old schema exactly
+        self.assertEqual(set(self.stored()), {"schema", "version", "revision", "sections"}, "no layout until a window is saved")
+        others = {name: (self.storage / "ultra" / name).read_bytes() for name in ("connections.json",) if (self.storage / "ultra" / name).exists()}
+        tk_before = (os.lstat(self.tk).st_mtime_ns, self.tk.read_bytes())
+        self.win(API_IDS[0], 100, 200)
+        self.win(API_IDS[1], 500, 120)
+        view = self.win(API_IDS[2], 900, 300)
+        self.assertEqual((view["state"], view["revision"]), ("SAVED", 1), "a window never moves the board revision")
+        self.assertEqual(view["layout"]["windows"], [{"connection_id": API_IDS[0], "x": 100, "y": 200},
+                                                     {"connection_id": API_IDS[1], "x": 500, "y": 120},
+                                                     {"connection_id": API_IDS[2], "x": 900, "y": 300}])
+        self.assertEqual(view["layout"]["revision"], 3)
+        view = self.win(API_IDS[0], -40, 75)  # a move raises the window: the last one is on top
+        self.assertEqual([(w["connection_id"], w["x"], w["y"]) for w in view["layout"]["windows"]],
+                         [(API_IDS[1], 500, 120), (API_IDS[2], 900, 300), (API_IDS[0], -40, 75)])
+        view = self.win(API_IDS[1])  # closed with its own «×»
+        self.assertEqual([w["connection_id"] for w in view["layout"]["windows"]], [API_IDS[2], API_IDS[0]])
+        before = (self.storage / "ultra" / "evm_view.json").read_bytes()
+        self.assertEqual(self.win(API_IDS[1])["layout"]["revision"], 5, "closing a closed window changes nothing")
+        self.assertEqual((self.storage / "ultra" / "evm_view.json").read_bytes(), before)
+        restarted = self.make()
+        again = self.view(restarted)
+        self.assertEqual((again["layout"], again["sections"]["favorites"]),
+                         ({"state": "SAVED", "revision": 5, "hidden": 0, "windows": [{"connection_id": API_IDS[2], "x": 900, "y": 300},
+                                                                                       {"connection_id": API_IDS[0], "x": -40, "y": 75}]},
+                          [API_IDS[0]]))
+        self.put("api", list(reversed(API_IDS)), api=restarted)  # an order change keeps the windows and their revision
+        stored = self.stored()
+        self.assertEqual((stored["revision"], stored["layout"]["revision"], len(stored["layout"]["windows"])), (2, 5, 2))
+        self.assertEqual(set(stored), {"schema", "version", "revision", "sections", "layout"})
+        self.assertEqual(set(stored["layout"]), {"revision", "windows"})
+        self.assertTrue(all(set(w) == {"connection_id", "x", "y"} for w in stored["layout"]["windows"]), "only references and pixels")
+        text = json.dumps(stored, ensure_ascii=False)
+        self.assertNotIn(SECRET, text)
+        self.assertNotIn("GigaChat", text, "no copy of registry records (names, provider model ids)")
+        self.assertEqual({name: (self.storage / "ultra" / name).read_bytes() for name in others}, others)
+        self.assertFalse((self.storage / "ultra" / "model_settings.json").exists())
+        self.assertEqual((os.lstat(self.tk).st_mtime_ns, self.tk.read_bytes()), tk_before)
+
+    def test_m23_layout_requests_are_checked_before_anything_is_written(self):
+        cases = (({"connection_id": API_IDS[0], "window": {"x": 1, "y": 2}, "extra": 1}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0]}, "invalid_model_card_request"),
+                 ({"window": None}, "invalid_model_card_request"),
+                 ({"connection_id": "not an id", "window": None}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": "x"}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": 1}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": 1, "y": 2, "z": 3}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": 1.5, "y": 2}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": True, "y": 2}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": "10", "y": 2}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": 100_001, "y": 2}}, "invalid_model_card_request"),
+                 ({"connection_id": API_IDS[0], "window": {"x": 0, "y": -100_001}}, "invalid_model_card_request"),
+                 ({"connection_id": "api:gigachat:gone_model", "window": {"x": 1, "y": 2}}, "settings_revision_conflict"))
+        for body, code in cases:
+            with self.subTest(code=code, body=str(body)[:70]):
+                self.assertEqual(self.refused("POST", "/ultra/model-cards/layout", body).code, code)
+        self.assertEqual(self.refused("POST", "/ultra/model-cards/layout", ["x"]).status, 400)
+        self.assertEqual(self.refused("GET", "/ultra/model-cards/layout").status, 405)
+        self.assertFalse((self.storage / "ultra" / "evm_view.json").exists(), "nothing was written")
+        self.assertEqual(self.win("api:gigachat:gone_model")["layout"]["windows"], [], "closing an unknown window is harmless")
+        self.assertFalse((self.storage / "ultra" / "evm_view.json").exists())
+        many = [f"mcp:prov:m{i:02d}" for i in range(mc.MAX_WINDOWS + 1)]
+        self.extra_columns(mcp=many)
+        for i, connection_id in enumerate(many[:-1]):
+            self.win(connection_id, i, i)
+        self.assertEqual(self.refused("POST", "/ultra/model-cards/layout", {"connection_id": many[-1], "window": {"x": 0, "y": 0}}).code,
+                         "invalid_model_card_request", "at most MAX_WINDOWS windows")
+        self.assertEqual(len(self.view()["layout"]["windows"]), mc.MAX_WINDOWS)
+        self.assertEqual(len(self.win(many[0], 5, 5)["layout"]["windows"]), mc.MAX_WINDOWS, "moving an open one is still possible")
+
+    def test_m24_two_pages_and_concurrent_writes_lose_no_window(self):
+        page_a, page_b = self.make(), self.make()
+        board = self.view(page_b)["revision"]
+        self.win(API_IDS[0], 10, 10, api=page_a)
+        self.win(API_IDS[1], 20, 20, api=page_b)
+        self.win(API_IDS[0], 30, 30, api=page_a)
+        view = self.win(API_IDS[0], 40, 40, api=page_b)  # the same window from the other page: the last move wins
+        self.assertEqual([(w["connection_id"], w["x"]) for w in view["layout"]["windows"]], [(API_IDS[1], 20), (API_IDS[0], 40)])
+        self.put("api", list(reversed(API_IDS)), api=page_b, revision=board)  # the order revision page B read is still valid
+        barrier, errors = threading.Barrier(len(API_IDS)), []
+
+        def open_window(i):
+            api = self.make()
+            barrier.wait()
+            try:
+                self.win(API_IDS[i], 100 * i, 50, api=api)
+            except ApiError as exc:
+                errors.append(exc.code)
+        threads = [threading.Thread(target=open_window, args=(i,)) for i in range(len(API_IDS))]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(20)
+        self.assertEqual(errors, [])
+        windows = self.view()["layout"]["windows"]
+        self.assertEqual(sorted(w["connection_id"] for w in windows), sorted(API_IDS), "every page kept its window")
+        self.assertEqual({w["connection_id"]: w["x"] for w in windows}, {c: 100 * i for i, c in enumerate(API_IDS)})
+        self.assertEqual(self.view()["layout"]["revision"], 4 + len(API_IDS))
+
+    def test_m25_damaged_or_absent_windows_never_break_the_board(self):
+        order = list(reversed(API_IDS))
+        self.put("api", order)
+        path = self.storage / "ultra" / "evm_view.json"
+        good = self.stored()
+        for layout in ("x", {"revision": -1, "windows": []}, {"revision": 1, "windows": [], "extra": 1}, {"revision": True, "windows": []},
+                       {"revision": 1, "windows": [{"connection_id": "../x", "x": 1, "y": 1}]},
+                       {"revision": 1, "windows": [{"connection_id": API_IDS[0], "x": 1.5, "y": 1}]},
+                       {"revision": 1, "windows": [{"connection_id": API_IDS[0], "x": 1, "y": 1, "name": "GigaChat"}]},
+                       {"revision": 1, "windows": [{"connection_id": API_IDS[0], "x": 1, "y": 1}] * 2},
+                       {"revision": 1, "windows": [{"connection_id": f"mcp:p:{i}", "x": 1, "y": 1} for i in range(mc.MAX_WINDOWS + 1)]}):
+            with self.subTest(layout=str(layout)[:50]):
+                path.write_text(json.dumps({**good, "layout": layout}), encoding="utf-8")
+                view = self.view()
+                self.assertEqual((view["state"], view["revision"], view["sections"]["api"]), ("SAVED", 1, order), "the board stays")
+                self.assertEqual(view["layout"], {"state": "CORRUPT", "revision": None, "windows": [], "hidden": 0})
+        view = self.win(API_IDS[2], 7, 8)  # the next window starts the layout again; the damaged file is kept aside
+        self.assertEqual((view["sections"]["api"], view["revision"], view["layout"]["revision"], view["layout"]["state"]), (order, 1, 1, "SAVED"))
+        self.assertEqual(len([p for p in path.parent.iterdir() if p.name.startswith("evm_view.json.corrupt-")]), 1)
+        path.write_text(json.dumps({**self.stored(), "layout": "x"}), encoding="utf-8")
+        self.put("favorites", [API_IDS[0]])  # an order save over a damaged layout keeps the file aside too
+        self.assertEqual((len([p for p in path.parent.iterdir() if p.name.startswith("evm_view.json.corrupt-")]), "layout" in self.stored()), (2, False))
+        self.win(API_IDS[1], 1, 1)
+        self.win(API_IDS[3], 2, 2)
+        reduced = {k: v for k, v in model_registry.MODEL_REGISTRY.items() if k != API_IDS[1].rsplit(":", 1)[1]}
+        with mock.patch.object(model_registry, "MODEL_REGISTRY", MappingProxyType(reduced)):
+            layout = self.view()["layout"]
+            self.assertEqual(([w["connection_id"] for w in layout["windows"]], layout["hidden"]), ([API_IDS[3]], 1), "no window of an absent model")
+            self.assertEqual(self.refused("POST", "/ultra/model-cards/layout", {"connection_id": API_IDS[1], "window": {"x": 0, "y": 0}}).code,
+                             "settings_revision_conflict")
+            self.win(API_IDS[4], 3, 3)  # changing another window meanwhile keeps the absent one
+        self.assertEqual([w["connection_id"] for w in self.view()["layout"]["windows"]], [API_IDS[1], API_IDS[3], API_IDS[4]], "it comes back")
+        path.write_bytes(b"{nope")
+        self.assertEqual((self.view()["state"], self.view()["layout"]["state"]), ("CORRUPT", "CORRUPT"))
+        view = self.win(API_IDS[0], 9, 9)
+        self.assertEqual((view["state"], view["revision"], [w["connection_id"] for w in view["layout"]["windows"]]), ("SAVED", 0, [API_IDS[0]]))
+        self.assertEqual(len([p for p in path.parent.iterdir() if p.name.startswith("evm_view.json.corrupt-")]), 3)
+
+
 class Http(Fixture):
     def serve(self):
         server = create_server(self.api, host="127.0.0.1", port=0)
@@ -607,6 +761,10 @@ class Http(Fixture):
             ("POST", "/ultra/model-cards/view", {}, b'{"base_revision": 0, "section": "favorites", "order": []}', 403, "model_cards_forbidden"),
             ("POST", "/ultra/model-cards/view", {"Origin": "http://evil.example"}, b'{"base_revision": 0, "section": "favorites", "order": []}', 403, "model_cards_forbidden"),
             ("POST", "/ultra/model-cards/view", origin, b'{"base_revision": 0, "section": "favorites", "order": []}', 200, None),
+            ("POST", "/ultra/model-cards/layout", {}, b'{"connection_id": "api:gigachat:gigachat_2", "window": {"x": 1, "y": 2}}', 403, "model_cards_forbidden"),
+            ("POST", "/ultra/model-cards/layout", {"Origin": "http://evil.example"}, b'{"connection_id": "api:gigachat:gigachat_2", "window": {"x": 1, "y": 2}}', 403, "model_cards_forbidden"),
+            ("POST", "/ultra/model-cards/layout", origin, b'{"connection_id": "api:gigachat:gigachat_2", "window": {"x": 1, "y": 2}}', 200, None),
+            ("GET", "/ultra/model-cards/layout", {}, b"", 405, "method_not_allowed"),
         ]
         bodies = []
         for method, path, headers, body, status, code in cases:

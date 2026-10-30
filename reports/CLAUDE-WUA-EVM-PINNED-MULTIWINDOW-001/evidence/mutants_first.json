@@ -1,0 +1,532 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "mutation gate of the pinned windows and their layout (TEST-QA)",
+ "controls": {
+  "test_web_alarm_model_cards": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  }
+ },
+ "results": [
+  {
+   "mutant": "L01 a window of an entry not shown is accepted",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m23_layout_requests_are_checked_before_anything_is_written",
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L02 an order save drops the windows",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [],
+   "isolation_violations": null,
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "L03 a window moves the board revision",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m22_windows_persist_restart_and_touch_nothing_else",
+    "test_m24_two_pages_and_concurrent_writes_lose_no_window",
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L04 a second window of the same entry",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m22_windows_persist_restart_and_touch_nothing_else",
+    "test_m23_layout_requests_are_checked_before_anything_is_written",
+    "test_m24_two_pages_and_concurrent_writes_lose_no_window"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L05 stored coordinates not checked",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L06 posted coordinates not checked",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "5,",
+    "test_m23_layout_requests_are_checked_before_anything_is_written"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L07 no limit of windows",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m23_layout_requests_are_checked_before_anything_is_written"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L08 a damaged layout overwritten, not kept",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L09 windows of absent entries shown",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L10 windows of absent entries dropped on a save",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L11 closing a closed window writes",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m22_windows_persist_restart_and_touch_nothing_else",
+    "test_m23_layout_requests_are_checked_before_anything_is_written"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L12 an order save over a damaged layout keeps nothing aside",
+   "file": "web_alarm/model_cards.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m25_damaged_or_absent_windows_never_break_the_board"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "L13 the layout route answers GET",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_model_cards"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_m16_http_only_for_the_local_page_and_no_secret_anywhere",
+    "test_m23_layout_requests_are_checked_before_anything_is_written"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W01 a pinned model gets a preview copy",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W02 Ctrl release closes the windows",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E21",
+    "E40",
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W03 Escape closes the top window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E31",
+    "E40"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W04 a second window of the same model",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 0,
+   "failing_tests": [],
+   "isolation_violations": null,
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "W05 «⧉» again closes the window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E38"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W06 the preview under the windows",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W07 a move saved on every pixel",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E39",
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W08 a tremor on the title moves the window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E39"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W09 a window may leave the screen",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E39",
+    "E44"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W10 showing a window inside overwrites its place",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E44"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W11 Escape does not cancel a window move",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E39"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W12 a redraw creates the windows again",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E23",
+    "E32",
+    "E40",
+    "E42"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W13 the saved windows restored on every read",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E42"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W14 a press inside the preview does not pin it",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E21",
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W15 the preview pinned before the click of its button",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W16 arrows save every step",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E31"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W17 layout writes not queued",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E43"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W18 a refused write is not told",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E43"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W19 «×» gives the keyboard to «open»",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E31"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W20 another view closes the windows",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E40"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W21 a card drag closes the windows",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E32",
+    "E40"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W22 a press does not raise a window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E38"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W23 an absent model leaves a broken window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E42"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W24 Ctrl + hover on a pinned model does not show its window",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E41"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "W25 «×» does not save the closing",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_evm_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "E31",
+    "E40",
+    "E43"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 38,
+ "killed": 36
+}

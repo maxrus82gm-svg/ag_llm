@@ -1,0 +1,2079 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "phase": "main",
+ "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+ "browser": "Chrome/156.0.8078.79",
+ "steps": [
+  {
+   "step": "S01 the board at 1400 px: four columns, the seeded order, nothing wider than the window",
+   "checks": [
+    {
+     "ok": true,
+     "check": "seeded API order (a new demo storage)",
+     "value": [
+      "gigachat_ultra",
+      "gigachat_2",
+      "gigachat_2_max",
+      "gigachat_2_pro",
+      "gigachat_3_lightning",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "four columns",
+     "value": 4
+    },
+    {
+     "ok": true,
+     "check": "no horizontal scroll"
+    }
+   ],
+   "server": {
+    "api": [
+     "gigachat_ultra",
+     "gigachat_2",
+     "gigachat_2_max",
+     "gigachat_2_pro",
+     "gigachat_3_lightning",
+     "gigachat_3_pro"
+    ],
+    "favorites": [
+     "gigachat_2",
+     "gigachat_3_pro"
+    ],
+    "mcp": [
+     "planner-agent",
+     "files-tool"
+    ],
+    "local": [
+     "llama-8b",
+     "qwen-14b"
+    ]
+   },
+   "screenshots": [
+    "01-board-1400.png"
+   ]
+  },
+  {
+   "step": "S02 a click opens the card in place: the cards below move down, the cards above and the scroll stay; several stay open",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the clicked card is open, the one above is not"
+    },
+    {
+     "ok": true,
+     "check": "the card above and the clicked card did not move",
+     "value": [
+      521,
+      521
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the next card moved down by exactly the growth",
+     "value": [
+      340,
+      340
+     ]
+    },
+    {
+     "ok": true,
+     "check": "no floating panel"
+    },
+    {
+     "ok": true,
+     "check": "no scroll jump"
+    },
+    {
+     "ok": true,
+     "check": "no horizontal overflow, nothing cut"
+    },
+    {
+     "ok": true,
+     "check": "the open card shows «Назначенные роли»"
+    },
+    {
+     "ok": true,
+     "check": "the open card shows «Сильные стороны модели»"
+    },
+    {
+     "ok": true,
+     "check": "the open card shows «Настройки»"
+    },
+    {
+     "ok": true,
+     "check": "the open card shows «Проверить чат»"
+    },
+    {
+     "ok": true,
+     "check": "the open card shows «Выше»"
+    },
+    {
+     "ok": true,
+     "check": "two cards open at once"
+    },
+    {
+     "ok": true,
+     "check": "a second click closes only that card"
+    },
+    {
+     "ok": true,
+     "check": "focus stays on «open» after a mouse click"
+    }
+   ],
+   "screenshots": [
+    "02-two-cards-open-in-place.png"
+   ]
+  },
+  {
+   "step": "S03 click and drag are told apart: a tremor below 6 px is a click; 7 px is a drag; a drag never opens the card",
+   "checks": [
+    {
+     "ok": true,
+     "check": "a press with a 5 px tremor opened the card (a click)"
+    },
+    {
+     "ok": true,
+     "check": "and saved nothing"
+    },
+    {
+     "ok": true,
+     "check": "a 7 px move started a drag (ghost shown)"
+    },
+    {
+     "ok": true,
+     "check": "the release after the drag did not open the card"
+    },
+    {
+     "ok": true,
+     "check": "a drop on its own place saved nothing"
+    }
+   ]
+  },
+  {
+   "step": "S04 drag inside a column: the first card to the end, the middle card to the top, the last card to the middle",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the first card went to the end and was saved",
+     "value": [
+      "gigachat_2",
+      "gigachat_2_max",
+      "gigachat_2_pro",
+      "gigachat_3_lightning",
+      "gigachat_3_pro",
+      "gigachat_ultra"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "and did not open"
+    },
+    {
+     "ok": true,
+     "check": "the middle card went to the top",
+     "value": [
+      "gigachat_2_pro",
+      "gigachat_2",
+      "gigachat_2_max",
+      "gigachat_3_lightning",
+      "gigachat_3_pro",
+      "gigachat_ultra"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the last card went to the middle",
+     "value": [
+      "gigachat_2_pro",
+      "gigachat_2",
+      "gigachat_ultra",
+      "gigachat_2_max",
+      "gigachat_3_lightning",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the page shows what the server saved"
+    }
+   ],
+   "screenshots": [
+    "03-drag-inside-column-line.png"
+   ],
+   "order": [
+    "gigachat_2_pro",
+    "gigachat_2",
+    "gigachat_ultra",
+    "gigachat_2_max",
+    "gigachat_3_lightning",
+    "gigachat_3_pro"
+   ]
+  },
+  {
+   "step": "S05 cancel: Escape during a drag, a release outside the board, a release over another column save nothing",
+   "checks": [
+    {
+     "ok": true,
+     "check": "Escape ended the drag; moving on did not restart it"
+    },
+    {
+     "ok": true,
+     "check": "the release after Escape opened nothing"
+    },
+    {
+     "ok": true,
+     "check": "over «Локальные LLM» the API card is refused"
+    },
+    {
+     "ok": true,
+     "check": "nothing was saved",
+     "value": [
+      5,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "step": "S06 drag into «Избранное»: a reference at the place shown; again: no duplicate; MCP and local too; the source keeps it",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the ghost tells «Добавить в избранное»"
+    },
+    {
+     "ok": true,
+     "check": "added as the first favourite",
+     "value": [
+      "gigachat_2_max",
+      "gigachat_2",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the API column keeps the model"
+    },
+    {
+     "ok": true,
+     "check": "the toast tells it"
+    },
+    {
+     "ok": true,
+     "check": "dropping a favourite again at its place: no duplicate",
+     "value": [
+      "gigachat_2_max",
+      "gigachat_2",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "MCP to the end, local into the middle",
+     "value": [
+      "gigachat_2_max",
+      "qwen-14b",
+      "gigachat_2",
+      "gigachat_3_pro",
+      "planner-agent"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "their own columns keep them"
+    },
+    {
+     "ok": true,
+     "check": "never a duplicate"
+    },
+    {
+     "ok": true,
+     "check": "a favourite moves inside its column",
+     "value": [
+      "planner-agent",
+      "gigachat_2_max",
+      "qwen-14b",
+      "gigachat_2",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "a favourite is never dropped into a source column"
+    }
+   ],
+   "screenshots": [
+    "04-drag-into-favourites.png"
+   ],
+   "favorites": [
+    "gigachat_2_max",
+    "qwen-14b",
+    "gigachat_2",
+    "gigachat_3_pro",
+    "planner-agent"
+   ]
+  },
+  {
+   "step": "S07 a toast never moves the board",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the toast is shown over the window",
+     "value": {
+      "top": 397,
+      "shown": true,
+      "text": "Добавлено в избранное: GigaChat 2 Pro",
+      "fixed": "fixed"
+     }
+    },
+    {
+     "ok": true,
+     "check": "the board did not move",
+     "value": [
+      397,
+      397
+     ]
+    }
+   ],
+   "screenshots": [
+    "05-toast-board-still.png"
+   ]
+  },
+  {
+   "step": "S08 Ctrl + hover: the side panel of every column edge card is beside its column, inside the window; switches without a blink",
+   "checks": [
+    {
+     "ok": true,
+     "check": "Ctrl over planner-agent shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: planner-agent",
+     "value": [
+      281,
+      392,
+      841,
+      567
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: planner-agent",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: planner-agent",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: planner-agent"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over gigachat_2_pro shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: gigachat_2_pro",
+     "value": [
+      281,
+      624,
+      841,
+      988
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: gigachat_2_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: gigachat_2_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: gigachat_2_pro"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over gigachat_2_pro shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: gigachat_2_pro",
+     "value": [
+      702,
+      402,
+      1262,
+      766
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: gigachat_2_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: gigachat_2_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: gigachat_2_pro"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over gigachat_3_pro shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: gigachat_3_pro",
+     "value": [
+      702,
+      624,
+      1262,
+      988
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: gigachat_3_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: gigachat_3_pro",
+     "value": "right"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: gigachat_3_pro"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over planner-agent shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: planner-agent",
+     "value": [
+      138,
+      402,
+      698,
+      577
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: planner-agent",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: planner-agent",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: planner-agent"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over files-tool shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: files-tool",
+     "value": [
+      138,
+      486,
+      698,
+      661
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: files-tool",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: files-tool",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: files-tool"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over llama-8b shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: llama-8b",
+     "value": [
+      478,
+      402,
+      1038,
+      577
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: llama-8b",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: llama-8b",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: llama-8b"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl over qwen-14b shows its panel"
+    },
+    {
+     "ok": true,
+     "check": "inside the window: qwen-14b",
+     "value": [
+      478,
+      466,
+      1038,
+      641
+     ]
+    },
+    {
+     "ok": true,
+     "check": "not over its own column: qwen-14b",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "left columns open to the right, right ones to the left: qwen-14b",
+     "value": "left"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closes it: qwen-14b"
+    },
+    {
+     "ok": true,
+     "check": "moving over three cards with Ctrl switched the panel without hiding it",
+     "value": [
+      "gigachat_2_max",
+      0
+     ]
+    },
+    {
+     "ok": true,
+     "check": "a plain hover shows nothing"
+    }
+   ],
+   "screenshots": [
+    "06-ctrl-preview-api-right.png",
+    "07-ctrl-preview-local-left.png"
+   ],
+   "places": [
+    {
+     "list": "evmFavList",
+     "card": "planner-agent",
+     "place": "right",
+     "panel": [
+      281,
+      392,
+      841,
+      567
+     ]
+    },
+    {
+     "list": "evmFavList",
+     "card": "gigachat_2_pro",
+     "place": "right",
+     "panel": [
+      281,
+      624,
+      841,
+      988
+     ]
+    },
+    {
+     "list": "evmApiList",
+     "card": "gigachat_2_pro",
+     "place": "right",
+     "panel": [
+      702,
+      402,
+      1262,
+      766
+     ]
+    },
+    {
+     "list": "evmApiList",
+     "card": "gigachat_3_pro",
+     "place": "right",
+     "panel": [
+      702,
+      624,
+      1262,
+      988
+     ]
+    },
+    {
+     "list": "evmMcpList",
+     "card": "planner-agent",
+     "place": "left",
+     "panel": [
+      138,
+      402,
+      698,
+      577
+     ]
+    },
+    {
+     "list": "evmMcpList",
+     "card": "files-tool",
+     "place": "left",
+     "panel": [
+      138,
+      486,
+      698,
+      661
+     ]
+    },
+    {
+     "list": "evmLocalList",
+     "card": "llama-8b",
+     "place": "left",
+     "panel": [
+      478,
+      402,
+      1038,
+      577
+     ]
+    },
+    {
+     "list": "evmLocalList",
+     "card": "qwen-14b",
+     "place": "left",
+     "panel": [
+      478,
+      466,
+      1038,
+      641
+     ]
+    }
+   ]
+  },
+  {
+   "step": "S09 Ctrl + click pins the model in its own window; Ctrl release, leaving, a button inside and Escape keep it; only «×» closes it",
+   "checks": [
+    {
+     "ok": true,
+     "check": "one pinned window of that model",
+     "value": [
+      {
+       "id": "planner-agent",
+       "left": 138,
+       "top": 402,
+       "right": 598,
+       "bottom": 594,
+       "z": 1,
+       "hidden": false,
+       "active": true,
+       "close": [
+        557,
+        408,
+        591,
+        433
+       ]
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "Ctrl + click does not open the card in place"
+    },
+    {
+     "ok": true,
+     "check": "no preview beside it"
+    },
+    {
+     "ok": true,
+     "check": "stays when the pointer leaves"
+    },
+    {
+     "ok": true,
+     "check": "a button inside («Ниже») keeps the window on the same model"
+    },
+    {
+     "ok": true,
+     "check": "and moved the card",
+     "value": [
+      "files-tool",
+      "planner-agent"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "Escape does not close a pinned window"
+    },
+    {
+     "ok": true,
+     "check": "«×» closes it"
+    },
+    {
+     "ok": true,
+     "check": "and the saved layout forgets it"
+    }
+   ]
+  },
+  {
+   "step": "S10 a card drag closes the preview and keeps it closed; a pinned window stays where it is (faded, the pointer goes through)",
+   "checks": [
+    {
+     "ok": true,
+     "check": "preview open"
+    },
+    {
+     "ok": true,
+     "check": "the drag closed it"
+    },
+    {
+     "ok": true,
+     "check": "Ctrl + hover during the drag does not bring it back"
+    },
+    {
+     "ok": true,
+     "check": "nothing reopened after the drop"
+    },
+    {
+     "ok": true,
+     "check": "«⧉» pinned a window",
+     "value": [
+      {
+       "id": "gigachat_2_max",
+       "left": 702,
+       "top": 594,
+       "right": 1162,
+       "bottom": 988,
+       "z": 1,
+       "hidden": false,
+       "active": true,
+       "close": [
+        1121,
+        600,
+        1155,
+        625
+       ]
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "during the drag the window fades and lets the pointer through",
+     "value": [
+      "0.25",
+      "none"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "and stays where it was",
+     "value": [
+      {
+       "id": "gigachat_2_max",
+       "left": 702,
+       "top": 594,
+       "right": 1162,
+       "bottom": 988,
+       "z": 1,
+       "hidden": false,
+       "active": true,
+       "close": [
+        1121,
+        600,
+        1155,
+        625
+       ]
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "full opacity again"
+    }
+   ]
+  },
+  {
+   "step": "S11 buttons never start a drag; the buttons of an open card work",
+   "checks": [
+    {
+     "ok": true,
+     "check": "a press on the star and a move did not drag"
+    },
+    {
+     "ok": true,
+     "check": "and changed nothing, opened nothing"
+    },
+    {
+     "ok": true,
+     "check": "a press on «Настройки» and a move did not drag"
+    },
+    {
+     "ok": true,
+     "check": "the open card stays open"
+    },
+    {
+     "ok": true,
+     "check": "«Настройки» opened the settings window"
+    },
+    {
+     "ok": true,
+     "check": "Escape closed it; the keyboard is back on «Настройки»"
+    },
+    {
+     "ok": true,
+     "check": "the card stayed open"
+    }
+   ]
+  },
+  {
+   "step": "S12 keyboard: Enter / Space open and close in place; «⧉» opens a window with the focus in it; arrows move it; Escape keeps it; «×» returns the focus",
+   "checks": [
+    {
+     "ok": true,
+     "check": "Enter opened the card in place"
+    },
+    {
+     "ok": true,
+     "check": "Space closed it"
+    },
+    {
+     "ok": true,
+     "check": "Tab reaches «⧉»"
+    },
+    {
+     "ok": true,
+     "check": "«⧉» opened a window with the focus inside"
+    },
+    {
+     "ok": true,
+     "check": "Tab reaches its title"
+    },
+    {
+     "ok": true,
+     "check": "arrows moved the window",
+     "value": [
+      702,
+      466,
+      686,
+      482
+     ]
+    },
+    {
+     "ok": true,
+     "check": "and the place was saved",
+     "value": {
+      "id": "gigachat_2",
+      "x": 686,
+      "y": 482
+     }
+    },
+    {
+     "ok": true,
+     "check": "Escape keeps it"
+    },
+    {
+     "ok": true,
+     "check": "Tab reaches «×»"
+    },
+    {
+     "ok": true,
+     "check": "«×» closed it and gave the focus back to «⧉»"
+    }
+   ]
+  },
+  {
+   "step": "S13 a write refused by the server (changed in another window): the order goes back and the reason is told",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the API order was not changed on the server"
+    },
+    {
+     "ok": true,
+     "check": "the page shows the saved order again",
+     "value": [
+      "gigachat_ultra",
+      "gigachat_2",
+      "gigachat_2_pro",
+      "gigachat_2_max",
+      "gigachat_3_lightning",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the reason is told"
+    }
+   ]
+  },
+  {
+   "step": "S14 reload keeps the order and the favourites",
+   "checks": [
+    {
+     "ok": true,
+     "check": "after a reload the page shows the saved board",
+     "value": {
+      "api": [
+       "gigachat_ultra",
+       "gigachat_2",
+       "gigachat_2_pro",
+       "gigachat_2_max",
+       "gigachat_3_lightning",
+       "gigachat_3_pro"
+      ],
+      "favorites": [
+       "planner-agent",
+       "gigachat_2_max",
+       "qwen-14b",
+       "gigachat_2",
+       "gigachat_3_pro",
+       "gigachat_2_pro"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "step": "S15 reduced motion: no transitions",
+   "checks": [
+    {
+     "ok": true,
+     "check": "transitions off, the ghost is not tilted",
+     "value": [
+      "0s",
+      "0s",
+      "none"
+     ]
+    }
+   ]
+  },
+  {
+   "step": "S16 150 %: a 1400 x 1000 screen at 150 % zoom (933 x 667 CSS px); open card and side panel inside the window",
+   "checks": [
+    {
+     "ok": true,
+     "check": "two columns"
+    },
+    {
+     "ok": true,
+     "check": "no horizontal overflow at 150 %"
+    },
+    {
+     "ok": true,
+     "check": "the panel is beside its column and inside the window",
+     "value": {
+      "hidden": false,
+      "pinned": false,
+      "hold": false,
+      "place": "right",
+      "id": "files-tool",
+      "left": 469,
+      "top": 381,
+      "right": 921,
+      "bottom": 580,
+      "vw": 933,
+      "vh": 667,
+      "hides": 0
+     }
+    }
+   ],
+   "panel": {
+    "hidden": false,
+    "pinned": false,
+    "hold": false,
+    "place": "right",
+    "id": "files-tool",
+    "left": 469,
+    "top": 381,
+    "right": 921,
+    "bottom": 580,
+    "vw": 933,
+    "vh": 667,
+    "hides": 0
+   },
+   "screenshots": [
+    "08-zoom-150-open-card-and-panel.png"
+   ]
+  },
+  {
+   "step": "S17 390 px: one column, the card opens in place, the Ctrl preview is a sheet that leaves the card visible",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the card opened in place"
+    },
+    {
+     "ok": true,
+     "check": "no horizontal overflow at 390 px"
+    },
+    {
+     "ok": true,
+     "check": "a sheet",
+     "value": "below"
+    },
+    {
+     "ok": true,
+     "check": "inside the window",
+     "value": {
+      "hidden": false,
+      "pinned": false,
+      "hold": false,
+      "place": "below",
+      "id": "gigachat_2",
+      "left": 12,
+      "top": 548,
+      "right": 378,
+      "bottom": 832,
+      "vw": 390,
+      "vh": 844,
+      "hides": 0
+     }
+    },
+    {
+     "ok": true,
+     "check": "the card itself stays visible",
+     "value": [
+      548,
+      832,
+      [
+       484,
+       538
+      ]
+     ]
+    }
+   ],
+   "header_bottom": 264,
+   "screenshots": [
+    "09-narrow-390-open-in-place.png",
+    "10-narrow-390-sheet.png"
+   ],
+   "sheet": {
+    "p": {
+     "hidden": false,
+     "pinned": false,
+     "hold": false,
+     "place": "below",
+     "id": "gigachat_2",
+     "left": 12,
+     "top": 548,
+     "right": 378,
+     "bottom": 832,
+     "vw": 390,
+     "vh": 844,
+     "hides": 0
+    },
+    "head": [
+     484,
+     538
+    ]
+   }
+  },
+  {
+   "step": "S18 the edge of the board scrolls by itself during a drag (1400 x 700)",
+   "checks": [
+    {
+     "ok": true,
+     "check": "near the bottom edge the board scrolled",
+     "value": {
+      "scrolled": 451,
+      "scrollHeight": 1078,
+      "clientHeight": 627
+     }
+    }
+   ]
+  },
+  {
+   "step": "P01 three models pinned three ways (⧉, Ctrl + click, a press on the preview): three independent windows",
+   "checks": [
+    {
+     "ok": true,
+     "check": "Ctrl + hover shows the preview of C",
+     "value": {
+      "hidden": false,
+      "pinned": false,
+      "hold": false,
+      "place": "right",
+      "id": "gigachat_ultra",
+      "left": 702,
+      "top": 553,
+      "right": 1262,
+      "bottom": 917,
+      "vw": 1400,
+      "vh": 1000,
+      "hides": 1
+     }
+    },
+    {
+     "ok": true,
+     "check": "three windows: A, B and C, one each",
+     "value": [
+      "gigachat_2",
+      "gigachat_3_pro",
+      "gigachat_ultra"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the preview became window C"
+    },
+    {
+     "ok": true,
+     "check": "three windows saved; the board revision untouched",
+     "value": {
+      "state": "SAVED",
+      "revision": 10,
+      "boardRevision": 14,
+      "windows": [
+       {
+        "id": "gigachat_2",
+        "x": 702,
+        "y": 617
+       },
+       {
+        "id": "gigachat_3_pro",
+        "x": 702,
+        "y": 624
+       },
+       {
+        "id": "gigachat_ultra",
+        "x": 702,
+        "y": 553
+       }
+      ]
+     }
+    }
+   ],
+   "screenshots": [
+    "11-three-windows-just-pinned.png"
+   ]
+  },
+  {
+   "step": "P02 each window moves by its title to its own place, side by side; none moves by itself; each place is saved on release",
+   "checks": [
+    {
+     "ok": true,
+     "check": "window gigachat_2 stands where it was dropped",
+     "value": {
+      "id": "gigachat_2",
+      "left": 20,
+      "top": 84,
+      "right": 480,
+      "bottom": 526,
+      "z": 3,
+      "hidden": false,
+      "active": true,
+      "close": [
+       439,
+       90,
+       473,
+       115
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "and its place is saved",
+     "value": {
+      "id": "gigachat_2",
+      "x": 20,
+      "y": 84
+     }
+    },
+    {
+     "ok": true,
+     "check": "window gigachat_3_pro stands where it was dropped",
+     "value": {
+      "id": "gigachat_3_pro",
+      "left": 480,
+      "top": 84,
+      "right": 940,
+      "bottom": 526,
+      "z": 2,
+      "hidden": false,
+      "active": false,
+      "close": [
+       899,
+       90,
+       933,
+       115
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "and its place is saved",
+     "value": {
+      "id": "gigachat_3_pro",
+      "x": 480,
+      "y": 84
+     }
+    },
+    {
+     "ok": true,
+     "check": "window gigachat_ultra stands where it was dropped",
+     "value": {
+      "id": "gigachat_ultra",
+      "left": 940,
+      "top": 84,
+      "right": 1400,
+      "bottom": 526,
+      "z": 1,
+      "hidden": false,
+      "active": false,
+      "close": [
+       1359,
+       90,
+       1393,
+       115
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "and its place is saved",
+     "value": {
+      "id": "gigachat_ultra",
+      "x": 940,
+      "y": 84
+     }
+    },
+    {
+     "ok": true,
+     "check": "nothing moves by itself"
+    }
+   ],
+   "screenshots": [
+    "12-three-windows-side-by-side.png"
+   ]
+  },
+  {
+   "step": "P03 the same model from «Избранное» and from its column: still one window A, brought forward",
+   "checks": [
+    {
+     "ok": true,
+     "check": "still three windows",
+     "value": [
+      "gigachat_2",
+      "gigachat_3_pro",
+      "gigachat_ultra"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "A came to the top",
+     "value": [
+      [
+       "gigachat_2",
+       3
+      ],
+      [
+       "gigachat_3_pro",
+       2
+      ],
+      [
+       "gigachat_ultra",
+       1
+      ]
+     ]
+    },
+    {
+     "ok": true,
+     "check": "and did not move"
+    },
+    {
+     "ok": true,
+     "check": "no new window saved"
+    }
+   ]
+  },
+  {
+   "step": "P04 the Ctrl preview of D stands above the pinned windows; releasing Ctrl closes only the preview",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the preview of D",
+     "value": {
+      "hidden": false,
+      "pinned": false,
+      "hold": false,
+      "place": "right",
+      "id": "gigachat_2_max",
+      "left": 702,
+      "top": 624,
+      "right": 1262,
+      "bottom": 988,
+      "vw": 1400,
+      "vh": 1000,
+      "hides": 2
+     }
+    },
+    {
+     "ok": true,
+     "check": "the preview overlaps window C",
+     "value": [
+      {
+       "hidden": false,
+       "pinned": false,
+       "hold": false,
+       "place": "right",
+       "id": "gigachat_2_max",
+       "left": 702,
+       "top": 624,
+       "right": 1262,
+       "bottom": 988,
+       "vw": 1400,
+       "vh": 1000,
+       "hides": 2
+      },
+      {
+       "id": "gigachat_ultra",
+       "left": 940,
+       "top": 560,
+       "right": 1400,
+       "bottom": 988,
+       "z": 3,
+       "hidden": false,
+       "active": true,
+       "close": [
+        1359,
+        566,
+        1393,
+        591
+       ]
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "where they overlap, the preview is on top",
+     "value": [
+      1101,
+      806
+     ]
+    },
+    {
+     "ok": true,
+     "check": "A, B and C stay"
+    },
+    {
+     "ok": true,
+     "check": "releasing Ctrl closed the preview"
+    },
+    {
+     "ok": true,
+     "check": "window C is there again"
+    },
+    {
+     "ok": true,
+     "check": "A, B and C are still open"
+    }
+   ],
+   "screenshots": [
+    "13-preview-above-pinned-windows.png"
+   ]
+  },
+  {
+   "step": "P05 Escape, a click outside, another view and a lost focus never close a pinned window",
+   "checks": [
+    {
+     "ok": true,
+     "check": "an empty point outside the windows"
+    },
+    {
+     "ok": true,
+     "check": "another view: EVM and its windows are hidden, not closed"
+    },
+    {
+     "ok": true,
+     "check": "the same three windows at the same places",
+     "value": [
+      {
+       "id": "gigachat_2",
+       "left": 20,
+       "top": 84,
+       "right": 480,
+       "bottom": 526,
+       "z": 2,
+       "hidden": false,
+       "active": false,
+       "close": [
+        439,
+        90,
+        473,
+        115
+       ]
+      },
+      {
+       "id": "gigachat_3_pro",
+       "left": 480,
+       "top": 84,
+       "right": 940,
+       "bottom": 526,
+       "z": 1,
+       "hidden": false,
+       "active": false,
+       "close": [
+        899,
+        90,
+        933,
+        115
+       ]
+      },
+      {
+       "id": "gigachat_ultra",
+       "left": 940,
+       "top": 560,
+       "right": 1400,
+       "bottom": 988,
+       "z": 3,
+       "hidden": false,
+       "active": true,
+       "close": [
+        1359,
+        566,
+        1393,
+        591
+       ]
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "none was closed in the saved layout"
+    }
+   ]
+  },
+  {
+   "step": "P06 «×» closes exactly window B; pinned again, B is exactly one new window",
+   "checks": [
+    {
+     "ok": true,
+     "check": "A and C stay",
+     "value": [
+      "gigachat_2",
+      "gigachat_ultra"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "B left the saved layout"
+    },
+    {
+     "ok": true,
+     "check": "exactly one new window B",
+     "value": [
+      "gigachat_2",
+      "gigachat_ultra",
+      "gigachat_3_pro"
+     ]
+    }
+   ]
+  },
+  {
+   "step": "P07 a moved window and the whole set come back after a page reload, in the saved stacking order",
+   "checks": [
+    {
+     "ok": true,
+     "check": "A saved at its new place",
+     "value": [
+      {
+       "id": "gigachat_ultra",
+       "x": 940,
+       "y": 560
+      },
+      {
+       "id": "gigachat_3_pro",
+       "x": 480,
+       "y": 84
+      },
+      {
+       "id": "gigachat_2",
+       "x": 40,
+       "y": 140
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "the same windows at the same places",
+     "value": [
+      [
+       {
+        "id": "gigachat_2",
+        "left": 40,
+        "top": 140,
+        "right": 500,
+        "bottom": 582,
+        "z": 3,
+        "hidden": false,
+        "active": true,
+        "close": [
+         459,
+         146,
+         493,
+         171
+        ]
+       },
+       {
+        "id": "gigachat_ultra",
+        "left": 940,
+        "top": 560,
+        "right": 1400,
+        "bottom": 988,
+        "z": 1,
+        "hidden": false,
+        "active": false,
+        "close": [
+         1359,
+         566,
+         1393,
+         591
+        ]
+       },
+       {
+        "id": "gigachat_3_pro",
+        "left": 480,
+        "top": 84,
+        "right": 940,
+        "bottom": 526,
+        "z": 2,
+        "hidden": false,
+        "active": false,
+        "close": [
+         899,
+         90,
+         933,
+         115
+        ]
+       }
+      ],
+      [
+       {
+        "id": "gigachat_ultra",
+        "left": 940,
+        "top": 560,
+        "right": 1400,
+        "bottom": 988,
+        "z": 1,
+        "hidden": false,
+        "active": false,
+        "close": [
+         1359,
+         566,
+         1393,
+         591
+        ]
+       },
+       {
+        "id": "gigachat_3_pro",
+        "left": 480,
+        "top": 84,
+        "right": 940,
+        "bottom": 526,
+        "z": 2,
+        "hidden": false,
+        "active": false,
+        "close": [
+         899,
+         90,
+         933,
+         115
+        ]
+       },
+       {
+        "id": "gigachat_2",
+        "left": 40,
+        "top": 140,
+        "right": 500,
+        "bottom": 582,
+        "z": 3,
+        "hidden": false,
+        "active": true,
+        "close": [
+         459,
+         146,
+         493,
+         171
+        ]
+       }
+      ]
+     ]
+    },
+    {
+     "ok": true,
+     "check": "in the saved stacking order",
+     "value": [
+      [
+       "gigachat_ultra",
+       "gigachat_3_pro",
+       "gigachat_2"
+      ],
+      [
+       "gigachat_ultra",
+       "gigachat_3_pro",
+       "gigachat_2"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "step": "P08 390 px and 150 %: every window inside the screen, title and «×» reachable; back at 1400 px each is where it was",
+   "checks": [
+    {
+     "ok": true,
+     "check": "390 px: gigachat_ultra inside, «×» reachable",
+     "value": {
+      "id": "gigachat_ultra",
+      "left": 24,
+      "top": 560,
+      "right": 390,
+      "bottom": 832,
+      "z": 1,
+      "hidden": false,
+      "active": false,
+      "close": [
+       349,
+       566,
+       383,
+       591
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "390 px: gigachat_3_pro inside, «×» reachable",
+     "value": {
+      "id": "gigachat_3_pro",
+      "left": 24,
+      "top": 272,
+      "right": 390,
+      "bottom": 765,
+      "z": 2,
+      "hidden": false,
+      "active": false,
+      "close": [
+       349,
+       278,
+       383,
+       303
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "390 px: gigachat_2 inside, «×» reachable",
+     "value": {
+      "id": "gigachat_2",
+      "left": 24,
+      "top": 272,
+      "right": 390,
+      "bottom": 765,
+      "z": 3,
+      "hidden": false,
+      "active": true,
+      "close": [
+       349,
+       278,
+       383,
+       303
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "390 px: «×» of the top window takes the click"
+    },
+    {
+     "ok": true,
+     "check": "933 px: gigachat_ultra inside, «×» reachable",
+     "value": {
+      "id": "gigachat_ultra",
+      "left": 473,
+      "top": 560,
+      "right": 933,
+      "bottom": 680,
+      "z": 1,
+      "hidden": false,
+      "active": false,
+      "close": [
+       892,
+       566,
+       926,
+       591
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "933 px: gigachat_3_pro inside, «×» reachable",
+     "value": {
+      "id": "gigachat_3_pro",
+      "left": 473,
+      "top": 176,
+      "right": 933,
+      "bottom": 618,
+      "z": 2,
+      "hidden": false,
+      "active": false,
+      "close": [
+       892,
+       182,
+       926,
+       207
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "933 px: gigachat_2 inside, «×» reachable",
+     "value": {
+      "id": "gigachat_2",
+      "left": 40,
+      "top": 176,
+      "right": 500,
+      "bottom": 618,
+      "z": 3,
+      "hidden": false,
+      "active": true,
+      "close": [
+       459,
+       182,
+       493,
+       207
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "933 px: «×» of the top window takes the click"
+    },
+    {
+     "ok": true,
+     "check": "back at 1400 px every window is where the user put it",
+     "value": [
+      {
+       "id": "gigachat_ultra",
+       "left": 940,
+       "top": 560,
+       "right": 1400,
+       "bottom": 988,
+       "z": 1,
+       "hidden": false,
+       "active": false,
+       "close": [
+        1359,
+        566,
+        1393,
+        591
+       ]
+      },
+      {
+       "id": "gigachat_3_pro",
+       "left": 480,
+       "top": 84,
+       "right": 940,
+       "bottom": 526,
+       "z": 2,
+       "hidden": false,
+       "active": false,
+       "close": [
+        899,
+        90,
+        933,
+        115
+       ]
+      },
+      {
+       "id": "gigachat_2",
+       "left": 40,
+       "top": 140,
+       "right": 500,
+       "bottom": 582,
+       "z": 3,
+       "hidden": false,
+       "active": true,
+       "close": [
+        459,
+        146,
+        493,
+        171
+       ]
+      }
+     ]
+    }
+   ],
+   "screenshots": [
+    "14-narrow-390-windows.png",
+    "15-zoom-150-windows.png"
+   ]
+  },
+  {
+   "step": "P09 «Настройки» and «Проверить чат» work from a window; dialogs stand above every window; Escape closes the dialog only",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the settings dialog opened"
+    },
+    {
+     "ok": true,
+     "check": "the dialog layer is above the windows"
+    },
+    {
+     "ok": true,
+     "check": "Escape closed the dialog, the windows stay"
+    },
+    {
+     "ok": true,
+     "check": "the keyboard is back on «Настройки» of the window"
+    },
+    {
+     "ok": true,
+     "check": "the check dialog opened"
+    },
+    {
+     "ok": true,
+     "check": "the windows stay"
+    }
+   ]
+  },
+  {
+   "step": "P10 two tabs move different windows: the server keeps both moves, no window is lost",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the second tab restored the same three windows",
+     "value": [
+      "gigachat_ultra",
+      "gigachat_3_pro",
+      "gigachat_2"
+     ]
+    },
+    {
+     "ok": true,
+     "check": "both moves kept",
+     "value": [
+      {
+       "id": "gigachat_3_pro",
+       "x": 480,
+       "y": 84
+      },
+      {
+       "id": "gigachat_ultra",
+       "x": 900,
+       "y": 600
+      },
+      {
+       "id": "gigachat_2",
+       "x": 100,
+       "y": 300
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "tab 1 shows both after a reload",
+     "value": [
+      {
+       "id": "gigachat_3_pro",
+       "left": 480,
+       "top": 84,
+       "right": 940,
+       "bottom": 526,
+       "z": 1,
+       "hidden": false,
+       "active": false,
+       "close": [
+        899,
+        90,
+        933,
+        115
+       ]
+      },
+      {
+       "id": "gigachat_ultra",
+       "left": 900,
+       "top": 600,
+       "right": 1360,
+       "bottom": 988,
+       "z": 2,
+       "hidden": false,
+       "active": false,
+       "close": [
+        1319,
+        606,
+        1353,
+        631
+       ]
+      },
+      {
+       "id": "gigachat_2",
+       "left": 100,
+       "top": 300,
+       "right": 560,
+       "bottom": 742,
+       "z": 3,
+       "hidden": false,
+       "active": true,
+       "close": [
+        519,
+        306,
+        553,
+        331
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "step": "P11 a refused layout write is told; the window stays where it was put; the server keeps the last saved place",
+   "checks": [
+    {
+     "ok": true,
+     "check": "the refusal is told",
+     "value": "Расположение окна не сохранено: model_cards_state_error: synthetic refusal. Окно осталось на месте, но после перезагрузки страницы может вернуться на прежнее."
+    },
+    {
+     "ok": true,
+     "check": "the window stays where it was put",
+     "value": {
+      "id": "gigachat_3_pro",
+      "left": 600,
+      "top": 500,
+      "right": 1060,
+      "bottom": 942,
+      "z": 3,
+      "hidden": false,
+      "active": true,
+      "close": [
+       1019,
+       506,
+       1053,
+       531
+      ]
+     }
+    },
+    {
+     "ok": true,
+     "check": "the server still has the last saved place",
+     "value": [
+      {
+       "id": "gigachat_3_pro",
+       "x": 480,
+       "y": 84
+      },
+      {
+       "id": "gigachat_ultra",
+       "x": 900,
+       "y": 600
+      },
+      {
+       "id": "gigachat_2",
+       "x": 100,
+       "y": 300
+      }
+     ]
+    },
+    {
+     "ok": true,
+     "check": "after a reload B is at its last saved place",
+     "value": [
+      {
+       "id": "gigachat_3_pro",
+       "left": 480,
+       "top": 84,
+       "right": 940,
+       "bottom": 526,
+       "z": 1,
+       "hidden": false,
+       "active": false,
+       "close": [
+        899,
+        90,
+        933,
+        115
+       ]
+      },
+      {
+       "id": "gigachat_ultra",
+       "left": 900,
+       "top": 600,
+       "right": 1360,
+       "bottom": 988,
+       "z": 2,
+       "hidden": false,
+       "active": false,
+       "close": [
+        1319,
+        606,
+        1353,
+        631
+       ]
+      },
+      {
+       "id": "gigachat_2",
+       "left": 100,
+       "top": 300,
+       "right": 560,
+       "bottom": 742,
+       "z": 3,
+       "hidden": false,
+       "active": true,
+       "close": [
+        519,
+        306,
+        553,
+        331
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "checks": 187,
+ "failed": 0,
+ "screenshots": [
+  "01-board-1400.png",
+  "02-two-cards-open-in-place.png",
+  "03-drag-inside-column-line.png",
+  "04-drag-into-favourites.png",
+  "05-toast-board-still.png",
+  "06-ctrl-preview-api-right.png",
+  "07-ctrl-preview-local-left.png",
+  "08-zoom-150-open-card-and-panel.png",
+  "09-narrow-390-open-in-place.png",
+  "10-narrow-390-sheet.png",
+  "11-three-windows-just-pinned.png",
+  "12-three-windows-side-by-side.png",
+  "13-preview-above-pinned-windows.png",
+  "14-narrow-390-windows.png",
+  "15-zoom-150-windows.png"
+ ]
+}

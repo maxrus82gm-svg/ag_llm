@@ -45,6 +45,9 @@ SCHEMA_VERSION = 1
 BOARD_COLUMNS = {"api": ("api", "api"), "mcp": ("mcp_agents", "mcp"), "local": ("local_llm", "local")}
 VIEW_SECTIONS = ("favorites", *BOARD_COLUMNS)
 MAX_VIEW_IDS = 500
+# Pinned EVM windows (CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001): one per entry, window position in CSS pixels of the page.
+MAX_WINDOWS = 24
+MAX_LAYOUT_COORD = 100_000
 _CONNECTION_ID = re.compile(r"(api|mcp|local):[A-Za-z0-9_.-]{1,80}:[A-Za-z0-9_.-]{1,110}")
 MAX_STORE_BYTES = 2 * 1024 * 1024
 MAX_TK_STATE_BYTES = 1024 * 1024
@@ -369,6 +372,34 @@ def _clean_title(value: Any) -> str:
     return value.strip()
 
 
+def _coordinate(value: Any) -> bool:
+    return not isinstance(value, bool) and isinstance(value, int) and -MAX_LAYOUT_COORD <= value <= MAX_LAYOUT_COORD
+
+
+_DAMAGED_LAYOUT = {"state": "CORRUPT", "revision": None, "windows": []}
+
+
+def _layout(data: Mapping[str, Any]) -> dict[str, Any]:
+    """The pinned windows part of the view file: absent (old files) = none; damaged = reported and ignored, while the
+    column order and favourites of the same file stay valid. Only references and whole pixels are ever stored."""
+    if "layout" not in data:
+        return {"state": "EMPTY", "revision": 0, "windows": []}
+    layout = data["layout"]
+    if not isinstance(layout, dict) or set(layout) != {"revision", "windows"}:
+        return dict(_DAMAGED_LAYOUT)
+    revision, windows = layout["revision"], layout["windows"]
+    if (isinstance(revision, bool) or not isinstance(revision, int) or revision < 0 or not isinstance(windows, list)
+            or len(windows) > MAX_WINDOWS):
+        return dict(_DAMAGED_LAYOUT)
+    for window in windows:
+        if not (isinstance(window, dict) and set(window) == {"connection_id", "x", "y"} and isinstance(window["connection_id"], str)
+                and _CONNECTION_ID.fullmatch(window["connection_id"]) and _coordinate(window["x"]) and _coordinate(window["y"])):
+            return dict(_DAMAGED_LAYOUT)
+    if len({w["connection_id"] for w in windows}) != len(windows):
+        return dict(_DAMAGED_LAYOUT)
+    return {"state": "SAVED", "revision": revision, "windows": [dict(w) for w in windows]}
+
+
 # --- the service -----------------------------------------------------------------------------------------
 
 
@@ -608,7 +639,8 @@ class ModelCards:
         empty = {section: [] for section in VIEW_SECTIONS}
         loaded = self._load(self.view_path, VIEW_SCHEMA)
         if loaded["state"] != "SAVED":
-            return {"state": loaded["state"], "revision": 0 if loaded["state"] == "EMPTY" else None, "stored": empty}
+            return {"state": loaded["state"], "revision": 0 if loaded["state"] == "EMPTY" else None, "stored": empty,
+                    "layout": _layout({}) if loaded["state"] == "EMPTY" else dict(_DAMAGED_LAYOUT)}
         data, stored = loaded["data"], {}
         revision, sections = data.get("revision"), data.get("sections")
         valid = not isinstance(revision, bool) and isinstance(revision, int) and revision >= 0 and isinstance(sections, dict)
@@ -620,8 +652,8 @@ class ModelCards:
                 break
             stored[section] = list(ids)
         if not valid:
-            return {"state": "CORRUPT", "revision": None, "stored": empty}
-        return {"state": "SAVED", "revision": revision, "stored": stored}
+            return {"state": "CORRUPT", "revision": None, "stored": empty, "layout": dict(_DAMAGED_LAYOUT)}
+        return {"state": "SAVED", "revision": revision, "stored": stored, "layout": _layout(data)}
 
     def view(self, present: dict[str, list[str]] | None = None) -> dict[str, Any]:
         """Effective board: stored order of the ids present now, then new ids in natural order; favourites are
@@ -637,7 +669,11 @@ class ModelCards:
         everywhere = {x for ids in present.values() for x in ids}
         sections["favorites"] = [x for x in stored["stored"]["favorites"] if x in everywhere]
         hidden += len(stored["stored"]["favorites"]) - len(sections["favorites"])
-        return {"state": stored["state"], "revision": stored["revision"], "sections": sections, "hidden": hidden}
+        layout = stored["layout"]  # windows of entries absent now are kept, only not shown (no broken window)
+        windows = [dict(w) for w in layout["windows"] if w["connection_id"] in everywhere]
+        return {"state": stored["state"], "revision": stored["revision"], "sections": sections, "hidden": hidden,
+                "layout": {"state": layout["state"], "revision": layout["revision"], "windows": windows,
+                           "hidden": len(layout["windows"]) - len(windows)}}
 
     def save_view(self, body: Mapping[str, Any]) -> dict[str, Any]:
         """Replace the order of one column (a complete permutation of what it shows) or the favourites (any ids
@@ -663,12 +699,49 @@ class ModelCards:
             current = self._view()
             if body.get("base_revision") != current["revision"]:
                 raise SettingsConflictError("the board arrangement changed since it was read; reload and repeat")
-            if current["state"] == "CORRUPT":
+            if current["state"] == "CORRUPT" or current["layout"]["state"] == "CORRUPT":
                 self._set_aside(self.view_path)
             stored = dict(current["stored"])
             stored[section] = list(order) + [x for x in stored[section] if x not in visible and x not in order]
-            self._write(self.view_path, {"schema": VIEW_SCHEMA, "version": SCHEMA_VERSION,
-                                         "revision": (current["revision"] or 0) + 1, "sections": stored})
+            data = {"schema": VIEW_SCHEMA, "version": SCHEMA_VERSION, "revision": (current["revision"] or 0) + 1, "sections": stored}
+            if current["layout"]["state"] == "SAVED":  # the windows survive an order change (absent: the old schema stays)
+                data["layout"] = {"revision": current["layout"]["revision"], "windows": current["layout"]["windows"]}
+            self._write(self.view_path, data)
+        finally:
+            lock.release()
+        return self.view(present)
+
+    def save_layout(self, body: Mapping[str, Any]) -> dict[str, Any]:
+        """Open, move (and raise) or close the pinned window of one entry: ``{connection_id, window: {x, y} | null}``.
+        One window per entry; the last opened or moved one is on top. The layout has its own revision inside the view
+        file: a moved window never makes a column order stale, and pages changing different windows lose nothing."""
+        if set(body) != {"connection_id", "window"}:
+            raise ModelCardRequestError("the layout takes exactly: connection_id, window")
+        connection_id, window = body["connection_id"], body["window"]
+        if not isinstance(connection_id, str) or not _CONNECTION_ID.fullmatch(connection_id):
+            raise ModelCardRequestError("connection_id must be <kind>:<provider>:<id>")
+        if window is not None and not (isinstance(window, dict) and set(window) == {"x", "y"}
+                                       and _coordinate(window["x"]) and _coordinate(window["y"])):
+            raise ModelCardRequestError(f"window must be null or {{x, y}} in whole pixels within ±{MAX_LAYOUT_COORD}")
+        present = self._present()
+        if window is not None and connection_id not in {x for ids in present.values() for x in ids}:
+            raise SettingsConflictError("the entry is not shown now; reload and repeat")
+        lock = self._locked()
+        try:
+            current = self._view()
+            layout = current["layout"]
+            windows = [w for w in layout["windows"] if w["connection_id"] != connection_id]
+            if window is None and len(windows) == len(layout["windows"]) and layout["state"] != "CORRUPT":
+                return self.view(present)  # closing a window that is not open changes nothing
+            if window is not None:
+                windows.append({"connection_id": connection_id, "x": window["x"], "y": window["y"]})
+            if len(windows) > MAX_WINDOWS:
+                raise ModelCardRequestError(f"at most {MAX_WINDOWS} pinned windows")
+            if current["state"] == "CORRUPT" or layout["state"] == "CORRUPT":
+                self._set_aside(self.view_path)
+            self._write(self.view_path, {"schema": VIEW_SCHEMA, "version": SCHEMA_VERSION, "revision": current["revision"] or 0,
+                                         "sections": current["stored"],
+                                         "layout": {"revision": (layout["revision"] or 0) + 1, "windows": windows}})
         finally:
             lock.release()
         return self.view(present)

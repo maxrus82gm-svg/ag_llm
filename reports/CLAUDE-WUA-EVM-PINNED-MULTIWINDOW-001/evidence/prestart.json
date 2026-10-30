@@ -1,0 +1,84 @@
+{
+ "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+ "purpose": "pre-start state before the first edit",
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "card_sha256": "0e965f35a080d5da7634a1a38c1e068b2b408d5ec8c865a06c4cbe4470eaea74",
+  "eol": "LF",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "problems": [],
+   "lines": 208
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+   "copy_sha256": "ba14a5f9efcf1af9c646251d7037df91e1e021169c1cc065268799fcd2a975cb",
+   "problems": []
+  }
+ },
+ "card_check_first": "INVALID (WAITING_LINE_LEFT_IN_TASK, line 46) before the user's fix; reported, not fixed by the executor",
+ "launcher": {
+  "config_active": "standard",
+  "load_launch": {
+   "name": "standard",
+   "standard": true,
+   "port": 8765,
+   "storage": "default"
+  }
+ },
+ "launcher_files_vs_published": {
+  "Start_WebAlarm.bat": {
+   "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  },
+  "web_alarm/launcher.py": {
+   "sha256": "cc42b9f5fcc2a34409aeb6abd2589c04e0d5cd7d16821d7e6b7b2c2343e8184d",
+   "eol": "LF",
+   "same_content_as_pin": true
+  },
+  "test_web_alarm_launcher.py": {
+   "sha256": "6ddd637ebf2af6700d166ce91ded0baa2ef8e057aa48817f8c64b1e0c2285899",
+   "eol": "LF",
+   "same_content_as_pin": true
+  }
+ },
+ "scope_vs_published": {
+  "web_alarm/ui.py": {
+   "pin": "#464",
+   "sha256": "b4cac4bafb87ea124d931048512969f8e27a498cf3b80e7c6f1a8a42974cf733",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  },
+  "test_web_alarm_evm_ui.js": {
+   "pin": "#464",
+   "sha256": "1c9668c7044bc190ca05671f25c9dc761627b0c4ee64f19556005ccf875ce854",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  },
+  "web_alarm/server.py": {
+   "pin": "#457",
+   "sha256": "2170b8032eb75e71927ecf364621f15b093ae3b2858e4814333cf10130bc1680",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  },
+  "web_alarm/model_cards.py": {
+   "pin": "#457",
+   "sha256": "cf8ddc8aeda1dc795be45e4f0e7a27b5a819ecd84d301f17a8c8fc06f2c74ec5",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  },
+  "test_web_alarm_model_cards.py": {
+   "pin": "#457",
+   "sha256": "45a67e2da477a7d7f8f929d37bd788dae5df7d356511ceea391d8435804fb5fe",
+   "eol": "CRLF",
+   "same_content_as_pin": true
+  }
+ },
+ "no_conflicting_changes": true,
+ "direction_b_active_files": "none (No.40, section B)",
+ "git_used": false
+}
