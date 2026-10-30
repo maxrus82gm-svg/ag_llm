@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 29.10.2026, WEB16; технические №457 и №461 опубликованы в main; документационное закрытие EVM REVISE подготовлено в GPT и требует пользовательского merge. **Назначение:** короткая операционная картина без повторения истории, evidence и старых постановок.
+**Срез:** 30.10.2026, WEB17. DnD EVM №464 опубликована в main; пользователь принял реализацию на Windows, документационный closeout №465 подготовлен в GPT до пользовательского merge. **Назначение:** оперативная картина без полного архива и без автоматического разрешения новых стадий.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB16 / Claude | EVM compact №457: **ITERATION DOC CLOSED / REVISE, PRODUCT NOT ACCEPTED** по пользовательскому UX. Hover overlay и real Windows DnD OPEN. Ротация №461 сохранила №457 в БЛОК 1.1; successor `CLAUDE-WUA-EVM-INTERACTION-DND-001` локально вставлена, Claude `check OK` | После DOC merge в main, local sync, STANDARD и проверки пересечений — отдельный GO пользователя на DnD. Stage2/paid не разрешены |
+| А — Ultra Chat / EVM, WEB17 / Claude | DnD `CLAUDE-WUA-EVM-INTERACTION-DND-001` №464: **PASS / USER ACCEPTED, DOC ITERATION CLOSED** для inline/preview/DnD/«Избранное». БЛОК 1 WAITING, полный БЛОК 1.1/пакет сохранены | Пользователь принимает документационный GPT→main. Затем новая TASK только по отдельному назначению: `FUTURE-EVM-PINNED-COMPARE-001` BACKLOG / UNASSIGNED. Stage2/paid не разрешены |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
@@ -32,11 +32,11 @@
 | Переносимость | Стабильные идентичности и безопасная перепривязка roots; внешние credentials и OS prerequisites подключаются заново | №37 → 2.4; №03/19/23/24 по конкретному аспекту |
 | Закрытие TASK | Исполнитель сдаёт report/manifest/evidence; независимый verifier принимает; координатор сохраняет историю/readback и закрывает карточку последним | №18 → DOC-TASK-CLOSEOUT-OWNER-01, DOC-CONTEXT-OPS-01 |
 | История и граф | Ничего уникального не вытеснять без проверенного владельца/снимка; текстовые указатели без новых графовых связей | №18 → DOC-HISTORY-ACCESS-01, DOC-CHANGE-01; OPS-LOCATOR/OPS-BUDGET |
-| EVM / карточки моделей (решение пользователя 27–28.10) | Реализована одна универсальная карточка: общий серверный статус API (30 суток), manual млрд, read-only роли, описание до 500 символов, отдельные настройки/тест; платный live-check не разрешён. Пользователь осмотрел экран и настройки на Windows; дизайн подтвердил лишь частично и попросил компактный hover, сортировку, избранное, перенос выбора в чат. Батарейки возможностей и LLM-новости — FUTURE. | `CLAUDE-WUA-EVM-MODEL-CARD-UI-001` опубликована `main@55cc4477`, DOC CLOSED / TERMINAL PARTIAL в `GPT` по решению 2026-10-28; independent regression/diagnostic a11y OPEN. №05 `REG-WEB16-EVM-20261028`, №06 `EVT-WEB16-EVM-CLOSE-20261028`, №001 Claude. Предложена **не назначена** TASK `CLAUDE-WUA-EVM-COMPACT-LAYOUT-001` |
+| EVM / карточки моделей (решение пользователя 27–30.10) | Базовые EVM-карточки получили компактное раскрытие и взаимодействие по №464: inline click, Ctrl-side preview, reorder, Favorites. Пользователь полностью принял реализованный UX 30.10; предыдущая compact №457 исторически REVISE. Авторские проверки подробны, independent full-run НЕ выполнялся. Платный live-check и Stage2 не разрешены; несколько draggable pinned windows — отдельный FUTURE. | №05 → `REG-WEB17-EVM-DND-20261030`, `FUTURE-EVM-PINNED-COMPARE-001`; №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`; №001 Claude 2026-10-30; №464 `f9a375a` |
 
 ## Открытые проверки и риски
 
-**EVM №457 FOLLOWUP:** №05 `FOLLOWUP-EVM-457-HOVER-001`, `FOLLOWUP-EVM-457-DND-001`, `FOLLOWUP-EVM-457-GUI-001`, `FOLLOWUP-EVM-457-REGRESSION-001`; локальный check новой TASK известен только по отчёту Claude, не independent runtime proof.
+**EVM №457 FOLLOWUP:** №05 `FOLLOWUP-EVM-457-HOVER-001` и `FOLLOWUP-EVM-457-DND-001` — ACCEPTED_BY_USER 2026-10-30 через №464. `FOLLOWUP-EVM-457-GUI-001` и `FOLLOWUP-EVM-457-REGRESSION-001` — VERIFICATION_GAP OPEN (независимые/платформенные тесты). Новая идея `FUTURE-EVM-PINNED-COMPARE-001` — BACKLOG / UNASSIGNED, не недоделка принятой №464.
 
 | Пункт | Тип / влияние | Владелец и следующий шаг |
 | --- | --- | --- |
@@ -54,6 +54,7 @@
 
 | Направление / TASK | Краткий результат и границы | Текстовый адрес |
 | --- | --- | --- |
+| А / CLAUDE-WUA-EVM-INTERACTION-DND-001, 30.10 | №464; source/evidence inspected, author Python 1061 PASS/2 SKIP, JS 126/126, real-input browser 125/125, mutants 35/35. User accepted Windows UX. Independent full runtime NOT RUN; platform gaps tracked. | №05 `REG-WEB17-EVM-DND-20261030`; №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`; №001 Claude 2026-10-30 |
 | А / CLAUDE-WUA-CHAT-S1-READONLY-UI-001, 27–28.10 | WEB15: bounded source/evidence 33/33, author 1024 PASS/2 SKIP и 36 mutants; WEB16: пользовательский terminal PARTIAL, документационно закрыто в `GPT`, но Windows/visual/regression OPEN. | №05 → `REG-WEB16-S1-20261028`; №06 → `EVT-WEB16-S1-CLOSE-20261028`; №001 Claude → `2026-10-28 — CLAUDE-WUA-CHAT-S1-READONLY-UI-001` |
 | А / CLAUDE-WUA-EVM-MODEL-CARD-UI-001, 27–28.10 | Опубликованная EVM #455; WEB16 independently reviewed source/6 SHA256 (UI CRLF), evidence авторских 1057 PASS/2 SKIP, JS 109/109, mutants 30/30, но independently tests/CI NOT RUN. Пользователь подтвердил основной экран и настройки; DOC CLOSED / TERMINAL PARTIAL в `GPT`; детали проверки OPEN. | №05 → `REG-WEB16-EVM-20261028`; №06 → `EVT-WEB16-EVM-CLOSE-20261028`; №001 Claude → `2026-10-28 — CLAUDE-WUA-EVM-MODEL-CARD-UI-001` |
 | А / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001, 26.10 | Bounded architecture/evidence integrity PASS; 17/17 hashes по прежней приёмке. Не разрешение на последующие стадии само по себе | №05 → WEB_14 / 2026-10-26 — результат подготовительного этапа Ultra Chat; `reports/CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001/report.md` |
@@ -69,8 +70,8 @@
 
 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
-3. Для текущей документационной дельты проверить её отчёт/manifest и статус независимой приёмки. Не ротировать карточки и не закрывать технические gates автоматически.
-4. Для Stage1/EVM читать новые адреса №05 и только релевантный report; для WA4-R — её прежнюю профильную запись. Новый технический этап требует пользовательского назначения, статус terminal PARTIAL не снимает OPEN.
+3. Для закрытия №464: после пользовательского merge GPT→main сделать адресный readback №05/06/001/34/40 и карточки Claude; не выдавать мою проверку evidence за независимый полный runtime PASS.
+4. Для следующей EVM UI-задачи: `FUTURE-EVM-PINNED-COMPARE-001` пока BACKLOG/UNASSIGNED; перед назначением сверить №05 FOLLOWUP и №40. Stage1/WA4-R/paid/live имеют собственные OPEN/gates.
 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
 
 ## Как сопровождать эту память
