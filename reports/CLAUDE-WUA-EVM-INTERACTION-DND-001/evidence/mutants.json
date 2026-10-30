@@ -1,0 +1,393 @@
+{
+ "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+ "purpose": "mutation gate of the new interaction rules (TEST-QA)",
+ "control": {
+  "exit": 0,
+  "failing": [],
+  "verdict": "PASS"
+ },
+ "results": [
+  {
+   "mutant": "M01 a tremor below the threshold drags",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E24"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M02 the release after a drag opens the card",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E24",
+    "E25",
+    "E33"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M03 any button drags",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E24"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M04 a cancelled press drags again",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M05 Escape does not cancel a drag",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25",
+    "E35"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M06 the place of the release is ignored",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E32"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M07 a press on the star drags",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M08 a press on the star ends as a click of the card",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M09 native drag-and-drop not blocked",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M10 a card dropped into another source column",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E25",
+    "E26"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M11 a favourite dropped again is duplicated",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E24",
+    "E26",
+    "E32"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M12 a refused drop stays on the page",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E33"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M13 the toast moves the board",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E36"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M14 autoscroll without a speed limit",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E35"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M15 the drag label under the pointer",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E37"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M16 the drag label leaves the window",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E37"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M17 a click floats the card (old behaviour)",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E10",
+    "E11",
+    "E12",
+    "E13",
+    "E15",
+    "E16",
+    "E17",
+    "E20",
+    "E22",
+    "E23",
+    "E24",
+    "E25",
+    "E27",
+    "E28",
+    "E31",
+    "E33",
+    "E34",
+    "E7"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M18 opening a card closes the others",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E22"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M19 open cards forgotten on a redraw",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E15",
+    "E22",
+    "E23",
+    "E24",
+    "E28",
+    "E33"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M20 the keyboard lost after a redraw",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E22",
+    "E23",
+    "E27"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M21 a plain hover opens the panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E21"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M22 releasing Ctrl keeps an unpinned panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E21"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M23 Ctrl + hover replaces a pinned panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E21"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M24 a press inside does not pin the panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E21"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M25 a drag keeps an unpinned panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E32"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M26 the panel comes back during a drag",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E32"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M27 a pinned panel stays in the way of a drag",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E32"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M28 a window closes the pinned panel",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E15"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M29 Ctrl + click opens the card in place",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E31"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M30 Escape gives the keyboard to «open», not to «⧉»",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E31"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M31 the panel over its own column",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M32 right columns prefer the right side",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M33 no sheet on a narrow screen",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M34 the sheet always below",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M35 the panel under the sticky header",
+   "file": "web_alarm/ui.py",
+   "target": "test_web_alarm_evm_ui.js",
+   "exit": 1,
+   "failing_tests": [
+    "E30"
+   ],
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 35,
+ "killed": 35
+}

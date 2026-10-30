@@ -1,0 +1,331 @@
+{
+ "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (coordinator text pasted by the user, TASK ID line included); user GO in chat",
+ "base": "published #457 content of the EVM package (local checkout compared by content; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "web_alarm/ui.py": {
+   "role": "EVM interaction: a click opens the full card in place; Ctrl + hover / Ctrl + click / «⧉» show it in a side panel beside the column (sheet on a narrow screen); Pointer Events drag with a 6 px threshold inside a column and into «Избранное» (references); toasts outside the flow; native DnD removed",
+   "bytes": 153946,
+   "sha256": "b4cac4bafb87ea124d931048512969f8e27a498cf3b80e7c6f1a8a42974cf733",
+   "eol": "CRLF",
+   "published_457_sha256": "9a6c1b28b179d1f73e7f536f57b4efbcf9d4e49c31799b79fb3b3bac6ecefe6c"
+  },
+  "test_web_alarm_evm_ui.js": {
+   "role": "E1-E37: 9 kept verbatim (E1, E3-E6, E8, E9, E18, E19), 28 rewritten or new for the interaction",
+   "bytes": 83107,
+   "sha256": "1c9668c7044bc190ca05671f25c9dc761627b0c4ee64f19556005ccf875ce854",
+   "eol": "CRLF",
+   "published_457_sha256": "75d75c3705ac5cd8eef8d51b0b035251db3b2f325ea46b1b5f0c5e63632e4bcd"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "context_storage.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ultra_chat.py": true
+ },
+ "server_side_changed": false,
+ "rotation": {
+  "card": "Документация/000_Задачи Claude.md",
+  "card_after_rotation": {
+   "bytes": 36347,
+   "sha256": "9ee7e7ca3dc318d60c957c1683c68d8fa467d8adc536c1608c0b147146251d08",
+   "eol": "CRLF"
+  },
+  "snapshot": {
+   "bytes": 18812,
+   "sha256": "4c7a34265412fe4fb0fee9204f4a1be8f26508856617acc76e8c1b9219d609de",
+   "eol": "LF"
+  },
+  "protocol": "evidence/rotation.json"
+ },
+ "evidence_summary": {
+  "change_inventory.json": {
+   "purpose": "change inventory against the published #457 content"
+  },
+  "focused_final.json": {
+   "purpose": "focused Python gate on the final bytes: EVM model cards, connections, Ultra Chat stage 1, server, UI/UX, operator UI, launcher",
+   "runner_exit": 0,
+   "tests_run": 117,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "full_all.json": {
+   "purpose": "full Python regression (all) on the final bytes; source SHA identical before and after the run",
+   "runner_exit": 0,
+   "tests_run": 1063,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "js_final.json": {
+   "purpose": "page tests on the final bytes",
+   "tests_run": 126,
+   "pass": 126,
+   "fail": 0
+  },
+  "js_first_old_tests_on_new_page.json": {
+   "purpose": "first run: the unchanged #457 page tests against the new interaction (expected red where the contract changed)",
+   "tests_run": 119,
+   "pass": 98,
+   "fail": 21
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the new interaction rules (TEST-QA)",
+   "killed": 35,
+   "mutants": 35
+  },
+  "mutants_first.json": {
+   "purpose": "mutation gate of the new interaction rules (TEST-QA)",
+   "killed": 35,
+   "mutants": 35
+  },
+  "prestart.json": {
+   "purpose": "pre-start state before the first edit"
+  },
+  "real_input.json": {
+   "purpose": "trusted browser input on the synthetic demo (not a physical mouse)",
+   "checks": 125,
+   "failed": 0
+  },
+  "real_input_red_runs.json": {
+   "purpose": "red runs of the real-input check kept as found (TEST-FLAKY-01)"
+  },
+  "restart_check.json": {
+   "purpose": "the board survives a server restart (two demo processes, one storage)",
+   "verdict": "PASS"
+  },
+  "rotation.json": {
+   "result": "ROTATED"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 35
+ },
+ "git_used": false,
+ "network_used": "loopback demo only",
+ "real_standard_storage_used": false,
+ "real_tk_settings_read": false,
+ "live_or_paid_api_used": false,
+ "physical_windows_mouse": "NOT RUN",
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 17331,
+   "sha256": "9953cefa1219ad1dd3bfca3d1fc629e236852e833b5232d15574ebb8aeddda8b",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/focused_final.json",
+   "bytes": 17730,
+   "sha256": "6912139f7931615712e0fdbd373bfad5058b2d522604d3cc0f29a72899aec444",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/full_all.json",
+   "bytes": 164680,
+   "sha256": "0072a3299b11d157377f3aad793cf18fca9d8f6c0e5b4f5fcecb36d8f9b1f9cd",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_final.json",
+   "bytes": 17283,
+   "sha256": "a8f7407f2730c7d764b8a318a4dec4269fcd5bb397f06339de501539e67d76ab",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/js_first_old_tests_on_new_page.json",
+   "bytes": 15926,
+   "sha256": "4be8f96964ed66a087dcd537b45a35cbb224e3808e1df1f3a8c4b26c79291c3a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 7889,
+   "sha256": "2a9043782b38bfd21f84c168df54c529d44669533ac1714f592f85941e03e1cb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants_first.json",
+   "bytes": 7889,
+   "sha256": "2a9043782b38bfd21f84c168df54c529d44669533ac1714f592f85941e03e1cb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/prestart.json",
+   "bytes": 1723,
+   "sha256": "7d47983f9f80de0234fe1fd6d4decc8ebd32b224816d23542a884c258b92c784",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input.json",
+   "bytes": 20376,
+   "sha256": "63d27da54292c4e98dc5fe049ab4f3d40d36e66d3c3be7af50713a63892bdd33",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/real_input_red_runs.json",
+   "bytes": 2476,
+   "sha256": "73f7dce479c46c731a563b76d2af20be4708c09c9c1163f43c85de94f7a23c9d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/restart_check.json",
+   "bytes": 854,
+   "sha256": "a9cd57fa7c3633d5108f422e18629734a7561b3f60b1aae024735c409833bf53",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotation.json",
+   "bytes": 1306,
+   "sha256": "4b192af44fd30800f614ea412f499739fde93e680133a8bea26a54d5203b30c5",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/screenshots/01-board-1400.png",
+   "bytes": 117961,
+   "sha256": "3a2bce09aa8ec3613b90013285dc72cf4efe59d532fa8ec63b06213454b1d3bf",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/02-two-cards-open-in-place.png",
+   "bytes": 127829,
+   "sha256": "fb1d645831c52e2cedebf335956d16e1f7db2ed62df9e47ba1c4b8cc4d12798b",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/03-drag-inside-column-line.png",
+   "bytes": 132380,
+   "sha256": "efc00537bf877ebdb7019056a7af4b6052151c3e49e26d5a3110bd149b136b14",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/04-drag-into-favourites.png",
+   "bytes": 134489,
+   "sha256": "7c59469ea614806fa7505c92104e451410df610b7810f3404afbe52bcfa784b8",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/05-toast-board-still.png",
+   "bytes": 135335,
+   "sha256": "e551f615bf04c81785619cc0f75e7f106285e473262d9f8850e1dd5d9a2bff19",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/06-ctrl-preview-api-right.png",
+   "bytes": 151896,
+   "sha256": "c0d022368da163ff829a1545b7cc4aca50612afc6146b7424d02352d4a63eda7",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/07-ctrl-preview-local-left.png",
+   "bytes": 139769,
+   "sha256": "1adac27947c42c71259141c1ffb6b82b207fc89e6e9cb8c9e7106d2c2678daf8",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/08-zoom-150-open-card-and-panel.png",
+   "bytes": 122952,
+   "sha256": "5370e97a4de90110642d896d54e6cfe14ff3af4a3484fc81e643f66d3134b754",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/09-narrow-390-open-in-place.png",
+   "bytes": 44515,
+   "sha256": "0d44a3fccb350496522c11cab2e9eae8a026a96f4200a6e4cbf925ead4c16399",
+   "eol": "binary"
+  },
+  {
+   "path": "evidence/screenshots/10-narrow-390-sheet.png",
+   "bytes": 48912,
+   "sha256": "4bf24050eb2b98725691de82c05bc720f80bce82416d9e198ddf35f7f1fa920a",
+   "eol": "binary"
+  },
+  {
+   "path": "handoff_task.md",
+   "bytes": 18812,
+   "sha256": "4c7a34265412fe4fb0fee9204f4a1be8f26508856617acc76e8c1b9219d609de",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 39755,
+   "sha256": "ca2cd4849baccc9b95b3ddb0ab2217bd121b670fd7bbdef1ed9bcc98ebbba759",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2606,
+   "sha256": "be62b7596abce32e76b1af2faf2635d8f306e103a03d340abcb33baa406b7d6d",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_evm_dnd.py",
+   "bytes": 7063,
+   "sha256": "876c8415e5dde573dc9e7d78dd1abd49cc062a4b437bda271d8c9b16d3f520e5",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/first_runs.py",
+   "bytes": 2335,
+   "sha256": "aad09c6c161c2c4bfce5f345bce395e43b67be52e934e9da5e60f4294f40c9e4",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/js_gate.py",
+   "bytes": 1570,
+   "sha256": "a37b3cfe17d4b627f9aafab3f5f7275cea84eaa36121b6164510962ca092a66f",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 6205,
+   "sha256": "59408eac94069a36786bcf7e8f7a367238eb716faa265ea1c5b5832ea3dfe7a9",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/prestart.py",
+   "bytes": 3091,
+   "sha256": "d4f2657b69a7536fcbc9ad89f1fe2f1b0777c6f4061841299776c9bd71ab0fa4",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/real_input_check.js",
+   "bytes": 34437,
+   "sha256": "11b47478893fd8895140e56889279032fb664d44c6ec558ae12a147fb3be54fd",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1758,
+   "sha256": "179a85dbf83e802a5498765118a146ed836806e81c6b4a4ffdbd95a9b7020bb7",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/restart_check.py",
+   "bytes": 4277,
+   "sha256": "e86caf953f4ae3b7db0f80eecbbd27ccf70eb730e2c65913b9c20bcca1d9ec1a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 8961,
+   "sha256": "065b9a6f85d6b6d1940450eeb55ba3a737935a03638f8ada11f408021512ed43",
+   "eol": "LF"
+  }
+ ]
+}

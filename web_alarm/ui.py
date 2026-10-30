@@ -118,7 +118,10 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 /* WUA-1 EVM tab: connections of the shared Ultra core (API | MCP / agents | local LLM). */
 .top-nav{display:flex;gap:6px;flex:1;justify-content:center;flex-wrap:wrap}
 .top-nav button[aria-pressed=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 0 -2px var(--blue)}
-.evm{max-width:2000px;margin:auto;height:calc(100dvh - 73px);overflow:auto;padding:26px 28px 44px}
+.evm{max-width:2000px;margin:auto;height:calc(100dvh - 73px);overflow:auto;padding:26px 28px 44px;overflow-anchor:none}
+.evm-board{overflow-anchor:none;margin-bottom:56px}
+.evm-toasts{position:fixed;z-index:25;left:50%;bottom:16px;transform:translateX(-50%);width:min(640px,calc(100vw - 32px));display:grid;gap:8px;pointer-events:none}
+.evm-toasts .notice{margin:0;pointer-events:auto;box-shadow:0 12px 32px rgba(0,0,0,.5)}.evm.dragging .evm-toasts{visibility:hidden}
 .evm-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .evm-head h2{font-size:24px;margin:8px 0}
 /* EVM board (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): Favourites | API | MCP / agents | local LLM, compact cards top to bottom. */
@@ -130,21 +133,37 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .evm-list{display:grid;gap:8px;grid-template-columns:minmax(0,1fr);align-content:start;min-height:12px}
 .evm-add{border:1px dashed #526579;border-radius:10px;padding:10px;color:var(--muted);text-align:center;font-size:13px}
 .evm-info{padding:14px 18px}.evm-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 22px}.evm-info-grid p{margin:4px 0 0}
-.ccard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:2px;padding:2px 4px 2px 6px;border:1px solid #3d5a74;border-radius:10px;background:#16212d;cursor:pointer;user-select:none;transition:border-color .12s ease-out,background .12s ease-out}
-.ccard:hover,.ccard:has(.copen[aria-expanded=true]){border-color:#6aa9dc;background:#1a2a39}
-.copen{display:block;min-width:0;padding:6px;background:none;border:0;color:inherit;text-align:left;font:inherit}
+.ccard{display:flex;flex-direction:column;min-width:0;border:1px solid #3d5a74;border-radius:10px;background:#16212d;transition:border-color .12s ease-out,background .12s ease-out}
+.ccard:hover,.ccard.expanded{border-color:#6aa9dc;background:#1a2a39}.ccard.expanded{box-shadow:inset 3px 0 #6aa9dc}
+.chead{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:2px;padding:2px 4px 2px 6px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.copen{display:block;min-width:0;padding:6px;background:none;border:0;color:inherit;text-align:left;font:inherit;cursor:inherit}
 .copen:hover{background:none}
-.ccard .grip{color:#6f8396;cursor:grab;font-size:15px;line-height:1;padding:2px}
+.ccard .grip{color:#6f8396;cursor:grab;font-size:15px;line-height:1;padding:2px;touch-action:none}
 .ccard .cbody{display:grid;gap:2px;min-width:0}
 .ccard .ctitle{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap}
 .ccard .cname{font-weight:700;font-size:15px;overflow-wrap:anywhere}
 .ccard .csub{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
 .ccard .api-dot{width:20px;height:20px;font-size:11px;border-width:1.5px}
 .ccard .params{padding:1px 6px;font-size:11px}
-.ccard.dragging{opacity:.45}.ccard.drop-before{box-shadow:0 -3px 0 #6aa9dc}.ccard.drop-after{box-shadow:0 3px 0 #6aa9dc}
+.ccard.dragging{opacity:.4}
+.cquick{background:none;border:0;padding:2px 5px;font-size:16px;line-height:1;color:#7b8fa3}.cquick:hover{background:none;color:#cfe6ff}.cquick[aria-expanded=true]{color:var(--blue)}
 .star{background:none;border:0;padding:2px 6px;font-size:19px;line-height:1;color:#7b8fa3}.star:hover{background:none;color:#ffd28e}.star[aria-pressed=true]{color:#ffd28e}
+.cexp{padding:0 8px 8px 10px;cursor:auto;user-select:text;-webkit-user-select:text;container-type:inline-size;min-width:0}.cexp[hidden]{display:none}
+.cexp .mcard{border:0;border-top:1px solid #31475c;border-radius:0;box-shadow:none;background:none;padding:10px 0 0;gap:9px}
+.cexp .mcard-head{display:none}
+@container (max-width:430px){.cexp .roles{gap:6px 10px}.cexp .role{font-size:13px;gap:6px}.cexp .mcard-actions{gap:6px}.cexp .mcard-actions button{padding:7px 9px;font-size:13px}}
+.evm.dragging,.evm.dragging *{cursor:grabbing!important;user-select:none!important}
+.evm.dragging.drop-none,.evm.dragging.drop-none *{cursor:no-drop!important}
+.evm-col.drop-target{border-color:#6aa9dc;background:#182838}
+.evm-ghost{position:fixed;z-index:30;left:0;top:0;pointer-events:none;display:grid;gap:2px;padding:8px 12px;border:1px solid #6aa9dc;border-radius:10px;background:#1d3247;box-shadow:0 14px 34px rgba(0,0,0,.55);transform:rotate(-1.5deg)}
+.evm-ghost .gname{font-weight:700;overflow-wrap:anywhere}.evm-ghost .ghint{font-size:12px;color:var(--blue)}
+.evm-drop-line{position:fixed;z-index:31;height:3px;border-radius:2px;background:var(--blue);box-shadow:0 0 0 2px #10151d;pointer-events:none}
+.evm-ghost[hidden],.evm-drop-line[hidden]{display:none}
 .evm-peek{position:fixed;z-index:15;left:12px;top:12px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.55);opacity:0;transform:scale(.97);transform-origin:top left;transition:opacity .12s ease-out,transform .12s ease-out}
-.evm-peek.open{opacity:1;transform:none}.evm-peek[hidden]{display:none}.evm-peek:focus{outline:none}
+.evm-peek.open{opacity:1;transform:none}.evm-peek[hidden]{display:none}.evm-peek:focus{outline:none}.evm-peek.hold{visibility:hidden}.evm-peek[data-place=left]{transform-origin:top right}
+.peek-bar{display:flex;align-items:center;gap:10px;padding:5px 6px 5px 16px;background:#10202e;border:1px solid #6aa9dc;border-bottom:0;border-radius:12px 12px 0 0;font-size:12px;color:var(--muted)}
+.peek-title{font-weight:700;color:var(--text)}.peek-hint{margin-left:auto}.peek-close{padding:2px 10px;font-size:17px;line-height:1.1}
+.evm-peek .mcard{border-radius:0 0 12px 12px}
 .mcard .link{background:none;border:0;padding:0 2px;color:var(--blue);text-decoration:underline;font-size:13px}
 .strengths.editable{cursor:text}.strengths.editable:hover{border-color:#6aa9dc}
 .chat-model-picker{position:relative;display:inline-flex}
@@ -152,7 +171,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .chat-model-menu[hidden]{display:none}.chat-model-menu button{text-align:left}.chat-model-menu button[aria-selected=true]{border-color:var(--blue);background:#213b50}
 .chat-model-error{font-size:12px;color:#ffbbbb}
 @media(max-width:850px){.chat-model-menu{right:auto;left:0;max-width:calc(100vw - 24px)}}
-@media(prefers-reduced-motion:reduce){.evm-peek,.ccard{transition:none}}
+@media(prefers-reduced-motion:reduce){.evm-peek,.ccard{transition:none}.evm-ghost{transform:none}}
 /* EVM model card (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): one component for every model of every provider. */
 .mcard{border:1px solid #6aa9dc;background:#16212d;border-radius:12px;padding:16px 18px 14px 20px;display:flex;flex-direction:column;gap:11px;min-width:0;box-shadow:inset 4px 0 #6aa9dc}
 .mcard-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -460,20 +479,21 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <p class="muted">Модели берутся из общего реестра Ultra (model_registry). Статус API считает сервер по подтверждённым ответам моделей; в этой версии настоящие запросы к API не отправляются.</p></div>
 <div class="row"><span id="evmState" class="live" role="status">Реестр ещё не загружен</span><button type="button" id="evmRefresh">↻ Обновить список</button></div>
 </div>
-<div id="evmError" class="notice error" role="alert" hidden></div>
-<div id="evmNotice" class="notice success" role="status" hidden></div>
+<div class="evm-toasts"><div id="evmError" class="notice error" role="alert" hidden></div>
+<div id="evmNotice" class="notice success" role="status" hidden></div></div>
 <div class="card spaced evm-info"><div class="evm-info-grid">
 <div><p class="side-title">Модель Ultra Chat</p><p id="evmSelection">—</p><p class="muted">Выбирается в Ultra Chat, у поля ввода сообщения.</p></div>
 <div><p class="side-title">Статус API</p><p id="evmSummary">—</p><p class="muted">✓ ответ подтверждён в срок актуальности · ! подтверждение устарело · × подтверждения нет</p></div>
-<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Наведите курсор или нажмите на карточку, чтобы раскрыть её. Порядок меняется перетаскиванием или кнопками «Выше» / «Ниже».</p></div>
+<div><p class="side-title">Роли и порядок</p><p id="evmRolesSource" class="muted">—</p><p class="muted">Нажмите на карточку — она раскроется на месте. Ctrl + наведение — быстрый просмотр сбоку, Ctrl + клик или ⧉ его закрепляют. Потяните карточку мышью, чтобы изменить порядок или добавить её в «Избранное»; есть и кнопки «Выше» / «Ниже».</p></div>
 </div></div>
 <div class="evm-columns evm-board">
-<section class="evm-col" aria-labelledby="evmFavTitle"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Отметьте модель звёздочкой ☆ — она появится здесь.</p></section>
-<section class="evm-col" aria-labelledby="evmApiTitle"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<section class="evm-col" aria-labelledby="evmMcpTitle"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
-<section class="evm-col" aria-labelledby="evmLocalTitle"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmFavTitle" id="evmFavCol"><div class="section-head"><h3 id="evmFavTitle">★ Избранное</h3><span id="evmFavState" class="tag">0</span></div><div id="evmFavList" class="evm-list" aria-label="Избранное"></div><p id="evmFavEmpty" class="muted">Перетащите модель сюда или отметьте её звёздочкой ☆. Здесь хранится ссылка: модель остаётся в своей колонке.</p></section>
+<section class="evm-col" aria-labelledby="evmApiTitle" id="evmApiCol"><div class="section-head"><h3 id="evmApiTitle">API</h3><span id="evmApiState" class="tag">—</span></div><div id="evmApiList" class="evm-list" aria-label="Модели API"></div><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmMcpTitle" id="evmMcpCol"><div class="section-head"><h3 id="evmMcpTitle">MCP / Агенты</h3><span id="evmMcpState" class="tag">—</span></div><div id="evmMcpList" class="evm-list" aria-label="Подключения MCP и агентов"></div><p id="evmMcpEmpty" class="muted">Подключений пока нет: источник MCP и агентов не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
+<section class="evm-col" aria-labelledby="evmLocalTitle" id="evmLocalCol"><div class="section-head"><h3 id="evmLocalTitle">Локальные LLM</h3><span id="evmLocalState" class="tag">—</span></div><div id="evmLocalList" class="evm-list" aria-label="Локальные модели"></div><p id="evmLocalEmpty" class="muted">Локальных моделей пока нет: их источник не подключён. Здесь ничего не запускается.</p><p class="evm-add" aria-disabled="true">+ Добавить — следующий этап</p></section>
 </div>
-<div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Карточка модели" tabindex="-1" hidden></div>
+<div id="evmPeek" class="evm-peek" role="dialog" aria-modal="false" aria-label="Быстрый просмотр" tabindex="-1" hidden></div>
+<div id="evmGhost" class="evm-ghost" aria-hidden="true" hidden></div><div id="evmDropLine" class="evm-drop-line" aria-hidden="true" hidden></div>
 <div id="evmSettingsWindow" class="evm-backdrop" hidden><div class="evm-window" role="dialog" aria-modal="true" aria-labelledby="evmSetTitle">
 <div class="section-head"><h3 id="evmSetTitle" tabindex="-1">Настройки провайдера и модели</h3><button type="button" id="evmSetClose">Закрыть ×</button></div>
 <p id="evmSetModel" class="muted">—</p>
@@ -987,10 +1007,13 @@ $('copyContext').onclick=()=>{
 // every model comes from the server read model of model_registry, never from a list in this page.
 // Model cards (CLAUDE-WUA-EVM-MODEL-CARD-UI-001): one component for every model; roles, API status, hints and
 // limits come from /ultra/model-cards. Drafts and diagnostic answers live per model while the page is open.
-// Compact board (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001): every column draws the same compact card; the full card opens
-// in one floating panel over the list; the manual order and favourites are saved on the server (/ultra/model-cards/view).
+// Compact board (CLAUDE-WUA-EVM-COMPACT-LAYOUT-001) with the interaction of CLAUDE-WUA-EVM-INTERACTION-DND-001:
+// a click opens a card in place inside its column; Ctrl + hover (or «⧉») shows the same full card in a side panel;
+// a press that moves more than a few pixels drags the card (Pointer Events only, no native drag-and-drop).
+// The manual order and favourites are saved on the server (/ultra/model-cards/view).
 const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},outputs:{},window:null,tab:'conn',saving:false,checking:false,setError:'',
-  ccards:{},copen:{},peek:{id:null,section:null,pinned:false},peekTimer:0,peekButtons:{},peekFocus:null,returnTo:null,drag:null,viewSaving:false};
+  ccards:{},cheads:{},copen:{},cquick:{},cexp:{},fk:{},expanded:new Set(),uid:0,peek:{id:null,section:null,pinned:false,invoker:null},peekBar:null,peekTimer:0,
+  hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
@@ -1059,8 +1082,11 @@ const KIND_LABEL={api:'API',mcp:'MCP / агент',local:'Локальная'};
 const SECTION_LABEL={favorites:'Избранное',api:'API',mcp:'MCP / Агенты',local:'Локальные LLM'};
 function mark(el,cls,on){if(!el)return;const set=new Set(String(el.className||'').split(' ').filter(Boolean));if(on)set.add(cls);else set.delete(cls);el.className=[...set].join(' ')}
 function editButton(label,c,cls){const b=element('button',label,cls);b.type='button';b.setAttribute('aria-label',label.replace(/^\W+\s*/,'')+': '+c.display_name);return b}
-// The full card: the same component for every model; it is shown in the floating panel, never inline in a column.
-function modelCard(c,data,section){
+// Every focusable control of a card instance has a stable key, so a redraw (after a move, a star or a window) gives
+// the keyboard back to the same control. Instances: 'x:<section>|<id>' (the card in its column) and 'peek'.
+function fk(el,inst,name){const key=inst+':'+name;el.setAttribute('data-fk',key);evm.fk[key]=el;return el}
+// The full card: the same component for every model, shown in place under its compact card or in the side panel.
+function modelCard(c,data,section,inst){
   const card=element('article',null,'mcard');card.setAttribute('data-connection',c.connection_id);card.setAttribute('data-model',c.model_id);card.setAttribute('aria-label','Модель '+c.display_name);
   const head=element('div',null,'mcard-head');
   const params=element('span',paramsText(c.params_billion),'params');params.setAttribute('title',c.params_billion==null?'Количество параметров не указано':'Количество параметров, указано пользователем');
@@ -1070,27 +1096,27 @@ function modelCard(c,data,section){
   const states=new Map(c.roles.map(r=>[r.role,r.state]));
   const roles=element('div',null,'roles');roles.append(...data.role_definitions.map(def=>roleItem(def,states.get(def.role))));
   // The description is edited in «Настройки → Модель»; the command and a click on the box lead there directly.
-  const edit=editButton('✎ Изменить описание',c,'link');edit.onclick=()=>openWindow('settings',c.model_id,'model');
+  const edit=fk(editButton('✎ Изменить описание',c,'link'),inst,'edit');edit.onclick=()=>openWindow('settings',c.model_id,'model',inst+':edit');
   const label=element('div',null,'mcard-sub');label.append(element('span','Сильные стороны модели','mcard-label'),edit);
-  const strengths=element('div',c.description||'Описание пока не заполнено. Нажмите «Изменить описание».','strengths editable'+(c.description?'':' placeholder'));
+  const strengths=fk(element('div',c.description||'Описание пока не заполнено. Нажмите «Изменить описание».','strengths editable'+(c.description?'':' placeholder')),inst,'desc');
   strengths.setAttribute('tabindex','0');strengths.setAttribute('aria-label','Сильные стороны модели '+c.display_name+'. Нажмите, чтобы изменить');strengths.setAttribute('title','Нажмите, чтобы изменить описание');
-  strengths.onclick=()=>openWindow('settings',c.model_id,'model');
-  const settings=editButton('⚙ Настройки',c);settings.onclick=()=>openWindow('settings',c.model_id);
-  const check=editButton('▤ Проверить чат',c,'primary');check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id);
-  const actions=element('div',null,'mcard-actions');actions.append(settings,check,...moveButtons(section,c.connection_id));
-  evm.peekButtons={edit,settings,check,...evm.peekButtons};
+  strengths.onclick=()=>openWindow('settings',c.model_id,'model',inst+':desc');
+  const settings=fk(editButton('⚙ Настройки',c),inst,'settings');settings.onclick=()=>openWindow('settings',c.model_id,null,inst+':settings');
+  const check=fk(editButton('▤ Проверить чат',c,'primary'),inst,'check');check.setAttribute('aria-label','Проверка API модели '+c.display_name);check.onclick=()=>openWindow('check',c.model_id,null,inst+':check');
+  const actions=element('div',null,'mcard-actions');actions.append(settings,check,...moveButtons(section,c.connection_id,inst));
   card.append(head,sub,roles,label,strengths,actions);
   if(evm.drafts[c.model_id])card.append(element('p','Есть несохранённые изменения настроек.','mcard-note'));
   return card
 }
-function entryCard(e,section){  // an entry without card data (MCP, local, or card data unavailable): nothing is invented
+function entryCard(e,section,inst){  // an entry without card data (MCP, local, or card data unavailable): nothing is invented
   const card=element('article',null,'mcard');card.setAttribute('data-connection',e.base.connection_id);
   const head=element('div',null,'mcard-head');head.append(element('h4',e.base.display_name||e.base.connection_id,'mcard-name'),element('span',KIND_LABEL[e.kind]||e.kind,'mcard-side'));
   card.append(head,element('p',e.kind==='api'?'Подробности карточки недоступны: '+(evm.cardsError||'нет данных сервера'):'Подробности появятся, когда источник этого подключения будет подключён к EVM.','mcard-note'));
-  const moves=moveButtons(section,e.base.connection_id);
+  const moves=moveButtons(section,e.base.connection_id,inst);
   if(moves.length){const actions=element('div',null,'mcard-actions');actions.append(...moves);card.append(actions)}
   return card
 }
+function fullCard(e,section,inst){return e.card&&evm.cards?modelCard(e.card,evm.cards,section,inst):entryCard(e,section,inst)}
 function rolesSourceText(cards){
   if(!cards)return 'Назначения ролей не загружены.';
   const r=cards.roles_source,tk={SAVED:'настройки прежней Ultra (Tkinter)',DEFAULTS:'значения прежней Ultra по умолчанию: её файл настроек не найден',
@@ -1116,34 +1142,63 @@ function sectionIds(section){
   const saved=(evm.cards?.view?.sections?.[section]||[]).filter(id=>natural.includes(id));  // the server order, checked against the catalog
   return saved.concat(natural.filter(id=>!saved.includes(id)))
 }
+function nameOf(id){const e=entryOf(id);return e?.card?.display_name||e?.base.display_name||id}
+function rectOf(el){return el&&typeof el.getBoundingClientRect==='function'?el.getBoundingClientRect():null}
 function compactCard(id,section){
   const e=entryOf(id);if(!e)return null;
-  const name=e.card?.display_name||e.base.display_name||id,fav=favorites().includes(id),key=section+'|'+id;
-  // Two sibling controls, never one inside the other: the card's own «open» button and the star.
-  const el=element('article',null,'ccard');
+  const name=nameOf(id),fav=favorites().includes(id),key=section+'|'+id,inst='x:'+key,expanded=evm.expanded.has(key);
+  // Controls side by side, never one inside another: «open» (shows the full card in place), «⧉» and the star.
+  const el=element('article',null,'ccard'+(expanded?' expanded':''));
   el.setAttribute('data-connection',id);el.setAttribute('data-section',section);
-  el.draggable=!!evm.cards?.view;el.setAttribute('draggable',String(!!evm.cards?.view));
-  const open=element('button',null,'copen');open.type='button';
-  open.setAttribute('aria-haspopup','dialog');open.setAttribute('aria-expanded',String(evm.peek.section===section&&evm.peek.id===id));
-  open.setAttribute('aria-label',name+' — '+(KIND_LABEL[e.kind]||e.kind)+'. Открыть карточку; Alt+↑/↓ — переставить');
-  const grip=element('span','⠿','grip');grip.setAttribute('aria-hidden','true');grip.setAttribute('title','Перетащите, чтобы изменить порядок');
+  const head=element('div',null,'chead');
+  const grip=element('span','⠿','grip');grip.setAttribute('aria-hidden','true');grip.setAttribute('title','Потяните мышью, чтобы переставить');
+  const open=fk(element('button',null,'copen'),inst,'open');open.type='button';open.setAttribute('aria-expanded',String(expanded));
+  open.setAttribute('aria-label',name+' — '+(KIND_LABEL[e.kind]||e.kind)+'. Раскрыть карточку; Alt+↑/↓ — переставить');
   const title=element('div',null,'ctitle');title.append(element('span',name,'cname'));
   if(e.card)title.append(apiDot(e.card.api));
   if(typeof e.card?.params_billion==='number')title.append(element('span',paramsText(e.card.params_billion),'params'));
   const provider=e.card?(evm.cards.providers.find(p=>p.provider_id===e.card.provider_id)?.display_name||e.card.provider_id):(e.base.provider||'');
   const body=element('div',null,'cbody');body.append(title,element('span',[KIND_LABEL[e.kind]||e.kind,provider].filter(Boolean).join(' · '),'csub'));
-  const star=element('button',fav?'★':'☆','star');star.type='button';star.setAttribute('aria-pressed',String(fav));star.setAttribute('draggable','false');
+  const quick=fk(element('button','⧉','cquick'),inst,'quick');quick.type='button';quick.setAttribute('aria-haspopup','dialog');
+  quick.setAttribute('aria-expanded',String(peekIs(id,section)));quick.setAttribute('aria-label','Быстрый просмотр: '+name);
+  quick.setAttribute('title','Быстрый просмотр сбоку (то же — Ctrl + наведение)');
+  quick.onclick=ev=>{ev?.stopPropagation?.();pinPeek(id,section,'quick',ev?.detail===0)};
+  const star=fk(element('button',fav?'★':'☆','star'),inst,'star');star.type='button';star.setAttribute('aria-pressed',String(fav));
   star.setAttribute('aria-label',(fav?'Убрать из избранного: ':'Добавить в избранное: ')+name);star.disabled=!evm.cards?.view;
-  star.onclick=ev=>{ev?.stopPropagation?.();toggleFavorite(id)};star.onkeydown=ev=>ev?.stopPropagation?.();  // the star never opens the card
-  open.append(body);el.append(grip,open,star);  // the grip is outside the button: some browsers do not drag from a button
-  el.onmouseenter=()=>peekHover(id,section);el.onmouseleave=()=>peekLeave();
-  el.onclick=ev=>peekClick(id,section,ev?.detail===0&&ev?.target===open);  // Enter / Space on «open» arrive as a click
+  star.onclick=ev=>{ev?.stopPropagation?.();toggleFavorite(id)};  // the star never opens the card
+  for(const b of [quick,star])b.onpointerdown=ev=>{  // a press on them never starts a drag, and never ends as a click of the card
+    ev?.stopPropagation?.();evm.suppressUntil=Infinity};  // (released elsewhere on the row, the browser clicks the row)
+  open.append(body);head.append(grip,open,quick,star);
+  const part=element('div',null,'cexp');part.id='evmx'+(++evm.uid);part.setAttribute('role','region');part.setAttribute('aria-label','Карточка: '+name);
+  open.setAttribute('aria-controls',part.id);
+  el.append(head,part);
+  head.onclick=ev=>headClick(ev,id,section);  // a mouse click, or Enter / Space on «open»
+  head.onpointerdown=ev=>pressStart(ev,id,section);
+  head.ondragstart=ev=>ev?.preventDefault?.();  // no native drag-and-drop: the pointer handlers are the only ones
   open.onkeydown=ev=>cardKey(ev,id,section);
-  el.onmousedown=ev=>{evm.pressOnButton=ev?.target===star};
-  el.ondragstart=ev=>dragStart(ev,id,section);el.ondragover=ev=>dragOver(ev,id,section,el);el.ondragleave=()=>{mark(el,'drop-before',false);mark(el,'drop-after',false)};
-  el.ondrop=ev=>{ev?.stopPropagation?.();dropOn(ev,id,section,el)};el.ondragend=()=>dragEnd();
-  evm.ccards[key]=el;evm.copen[key]=open;
+  el.onmouseenter=ev=>hoverCard(ev,id,section);el.onmouseleave=()=>leaveCard();
+  evm.ccards[key]=el;evm.cheads[key]=head;evm.copen[key]=open;evm.cquick[key]=quick;evm.cexp[key]=part;
+  fillExpanded(key);
   return el
+}
+function fillExpanded(key){  // the full card in place under its compact card: the cards below move down, nothing covers them
+  const part=evm.cexp[key],el=evm.ccards[key];if(!part)return;
+  const id=el.getAttribute('data-connection'),section=el.getAttribute('data-section'),e=entryOf(id),on=evm.expanded.has(key)&&!!e;
+  for(const name of ['edit','desc','settings','check','up','down'])delete evm.fk['x:'+key+':'+name];
+  part.replaceChildren(...(on?[fullCard(e,section,'x:'+key)]:[]));part.hidden=!on;
+  mark(el,'expanded',on);evm.copen[key].setAttribute('aria-expanded',String(on))
+}
+function toggleExpanded(id,section){  // several cards may stay open; opening one never closes another
+  const key=section+'|'+id;if(!evm.ccards[key])return;
+  if(evm.expanded.has(key))evm.expanded.delete(key);else evm.expanded.add(key);
+  fillExpanded(key);
+  if(!evm.expanded.has(key))evm.cheads[key]?.scrollIntoView?.({block:'nearest'});  // a closed card stays in view
+  if(evm.peek.id)positionPeek()
+}
+function headClick(ev,id,section){
+  if(ev?.detail!==0&&Date.now()<evm.suppressUntil){evm.suppressUntil=0;return}  // the release that ends a drag is not a click
+  if(ev?.ctrlKey){pinPeek(id,section,'open',false);return}  // Ctrl + click pins the side panel (or closes it)
+  toggleExpanded(id,section)
 }
 function renderEvm(){
   const data=evm.data;if(!data)return;
@@ -1153,131 +1208,264 @@ function renderEvm(){
   $('evmLocalState').replaceChildren(evmTag(cols.local_llm.state));
   text('evmSelection',evmSelectionText(s));text('evmSummary',summaryText(cards));text('evmRolesSource',rolesSourceText(cards));
   if(cols.api.state!=='AVAILABLE')notice('evmError','Общий реестр моделей недоступен: '+(cols.api.reason||cols.api.state));
-  evm.ccards={};evm.copen={};
+  const focusKey=document.activeElement?.getAttribute?.('data-fk')||null;  // the keyboard comes back to the same control
+  evm.ccards={};evm.cheads={};evm.copen={};evm.cquick={};evm.cexp={};evm.fk={};
   for(const [section,list,empty] of SECTIONS){
     const ids=sectionIds(section);
     $(list).replaceChildren(...ids.map(id=>compactCard(id,section)).filter(Boolean));
     if(empty)$(empty).hidden=ids.length>0;
-    $(list).ondragover=ev=>{if(evm.drag?.section===section)ev?.preventDefault?.()};
-    $(list).ondrop=ev=>{if(evm.drag?.section!==section)return;ev?.preventDefault?.();const dragged=evm.drag.id;dragEnd();saveOrder(section,sectionIds(section).filter(x=>x!==dragged).concat(dragged))};
   }
+  for(const key of [...evm.expanded])if(!evm.ccards[key])evm.expanded.delete(key);
+  if(evm.drag)mark(evm.ccards[evm.drag.section+'|'+evm.drag.id],'dragging',true);
   text('evmFavState',String(sectionIds('favorites').length));
   const count=cols.api.connections.length;
   text('evmState',count?'Моделей в реестре: '+count:'Реестр пуст');
   if(evm.peek.id){if(entryOf(evm.peek.id)&&evm.ccards[evm.peek.section+'|'+evm.peek.id])fillPeek();else closePeek()}
+  restoreFocus(focusKey)
 }
-// Floating full card. Hover opens it after a short pause and switches at once between cards; a click or a tap pins it;
-// Enter / Space open it from the keyboard and Escape closes it. It never moves the cards around it.
-const PEEK_OPEN_MS=120,PEEK_CLOSE_MS=180;
-function peekHover(id,section){
-  if(evm.drag||evm.window)return;
-  clearTimeout(evm.peekTimer);
-  const same=evm.peek.id===id&&evm.peek.section===section;
-  if(same||evm.peek.pinned)return;  // a pinned card stays until it is closed
-  if(evm.peek.id){openPeek(id,section,false);return}  // already open: switch without a pause or a flicker
-  evm.peekTimer=setTimeout(()=>openPeek(id,section,false),PEEK_OPEN_MS)
+function restoreFocus(key){
+  if(!key)return null;
+  const cut=key.lastIndexOf(':'),inst=key.slice(0,cut),name=key.slice(cut+1),other={up:'down',down:'up'}[name];
+  // at an end of the list the other move command takes the keyboard; else the card's own «open»
+  const el=[key,other&&inst+':'+other,inst+':open'].map(k=>k&&evm.fk[k]).find(b=>b&&!b.disabled)||(inst==='peek'&&evm.peek.id?$('evmPeek'):null);
+  el?.focus?.();
+  return el||null
 }
-function peekLeave(){clearTimeout(evm.peekTimer);if(evm.peek.id&&!evm.peek.pinned)evm.peekTimer=setTimeout(()=>closePeek(),PEEK_CLOSE_MS)}
-function peekClick(id,section,fromKeyboard){
+// Side panel (quick view). Plain hover shows nothing. Ctrl + hover shows the full card beside its column and switches
+// at once from card to card; releasing Ctrl closes it. Ctrl + click or «⧉» pins it; the same command again, «×» or
+// Escape closes it. A press inside an unpinned panel pins it. A drag closes an unpinned panel and hides a pinned one.
+const PEEK_CLOSE_MS=180,PEEK_W=560,PEEK_MIN=320;
+const COLUMNS={favorites:'evmFavCol',api:'evmApiCol',mcp:'evmMcpCol',local:'evmLocalCol'};
+function peekIs(id,section){return evm.peek.id===id&&evm.peek.section===section}
+function hoverCard(ev,id,section){
+  evm.hover={id,section};clearTimeout(evm.peekTimer);
+  if(typeof ev?.ctrlKey==='boolean')evm.ctrl=ev.ctrlKey;
+  ctrlPeek()
+}
+function leaveCard(){evm.hover=null;peekLeave()}
+function ctrlPeek(){
+  const h=evm.hover;
+  if(!evm.ctrl||!h||evm.view!=='evm'||evm.press||evm.drag||evm.window||evm.peek.pinned||peekIs(h.id,h.section))return;
+  openPeek(h.id,h.section,false,null,false)  // already open: only the content changes, the panel does not blink
+}
+function peekLeave(){
   clearTimeout(evm.peekTimer);
-  if(evm.peek.id===id&&evm.peek.section===section&&evm.peek.pinned){closePeek({focus:true});return}
-  openPeek(id,section,true,fromKeyboard)  // also pins a card that hover opened: a tap on a touch screen keeps it open
+  if(evm.peek.id&&!evm.peek.pinned)evm.peekTimer=setTimeout(()=>{if(!evm.peek.pinned&&!evm.hover)closePeek()},PEEK_CLOSE_MS)
+}
+function pinPeek(id,section,invoker,focus){
+  if(evm.drag)return;
+  if(peekIs(id,section)&&evm.peek.pinned){closePeek({focus:true});return}
+  openPeek(id,section,true,invoker,focus)
+}
+function pinCurrent(){  // a press inside an unpinned panel pins it: releasing Ctrl no longer closes it
+  if(!evm.peek.id||evm.peek.pinned)return;
+  evm.peek.pinned=true;mark($('evmPeek'),'pinned',true);peekBarText()
 }
 function cardKey(ev,id,section){
-  if(ev.altKey&&(ev.key==='ArrowUp'||ev.key==='ArrowDown')){ev.preventDefault?.();moveCard(section,id,ev.key==='ArrowUp'?-1:1,null)}
+  if(ev.altKey&&(ev.key==='ArrowUp'||ev.key==='ArrowDown')){ev.preventDefault?.();moveCard(section,id,ev.key==='ArrowUp'?-1:1)}
 }
-function openPeek(id,section,pinned,focus){
-  if(!entryOf(id))return;
+function openPeek(id,section,pinned,invoker,focus){
+  if(!entryOf(id)||evm.drag)return;
   clearTimeout(evm.peekTimer);
-  const same=evm.peek.id===id&&evm.peek.section===section;
-  evm.peek={id,section,pinned:!!pinned||(same&&evm.peek.pinned)};
+  evm.peek={id,section,pinned:!!pinned,invoker:invoker||(peekIs(id,section)?evm.peek.invoker:null)};
   const box=$('evmPeek');box.hidden=false;  // visible first: the position needs the real height
   fillPeek();
-  box.className='evm-peek open';
+  box.className='evm-peek open'+(pinned?' pinned':'');
   if(focus)box.focus()
+}
+function peekBarText(){
+  const b=evm.peekBar;if(!b)return;
+  b.title.textContent=(evm.peek.pinned?'Закреплено':'Быстрый просмотр')+' · '+SECTION_LABEL[evm.peek.section];
+  b.hint.textContent=evm.peek.pinned?'Esc или × — закрыть':'Ctrl + клик — закрепить'
 }
 function fillPeek(){
   const {id,section}=evm.peek,e=entryOf(id),box=$('evmPeek');
-  evm.peekButtons={};
-  box.replaceChildren(e.card&&evm.cards?modelCard(e.card,evm.cards,section):entryCard(e,section));
-  box.setAttribute('aria-label','Карточка: '+(e.card?.display_name||e.base.display_name||id)+' · '+SECTION_LABEL[section]);
-  for(const [key,el] of Object.entries(evm.copen))el.setAttribute('aria-expanded',String(key===section+'|'+id));
-  if(evm.peekFocus){  // after «Выше» / «Ниже» the keyboard stays on the same command (or the other one at an end)
-    const b=evm.peekButtons[evm.peekFocus],alt=evm.peekButtons[evm.peekFocus==='up'?'down':'up'];
-    (b&&!b.disabled?b:alt&&!alt.disabled?alt:box).focus();
-    if(!evm.viewSaving)evm.peekFocus=null
-  }
+  for(const k of Object.keys(evm.fk))if(k.startsWith('peek:'))delete evm.fk[k];
+  const bar=element('div',null,'peek-bar'),close=fk(element('button','×','peek-close'),'peek','close');
+  close.type='button';close.setAttribute('aria-label','Закрыть быстрый просмотр');close.onclick=()=>closePeek({focus:true});
+  evm.peekBar={title:element('span','','peek-title'),hint:element('span','','peek-hint')};peekBarText();
+  bar.append(evm.peekBar.title,evm.peekBar.hint,close);
+  box.replaceChildren(bar,fullCard(e,section,'peek'));
+  box.setAttribute('aria-label','Быстрый просмотр: '+nameOf(id)+' · '+SECTION_LABEL[section]);
+  for(const [key,q] of Object.entries(evm.cquick))q.setAttribute('aria-expanded',String(key===section+'|'+id));
   positionPeek()
 }
 function closePeek(opts={}){
   clearTimeout(evm.peekTimer);
-  const {id,section}=evm.peek;if(!id)return;
-  evm.peek={id:null,section:null,pinned:false};evm.peekButtons={};
-  const box=$('evmPeek');box.hidden=true;box.className='evm-peek';box.replaceChildren();
-  for(const el of Object.values(evm.copen))el.setAttribute('aria-expanded','false');
-  if(opts.focus)evm.copen[section+'|'+id]?.focus()
+  const {id,section,invoker}=evm.peek;if(!id)return;
+  const box=$('evmPeek'),active=document.activeElement;
+  const inside=active===box||String(active?.getAttribute?.('data-fk')||'').startsWith('peek:');
+  evm.peek={id:null,section:null,pinned:false,invoker:null};evm.peekBar=null;
+  for(const k of Object.keys(evm.fk))if(k.startsWith('peek:'))delete evm.fk[k];
+  box.hidden=true;box.className='evm-peek';box.replaceChildren();
+  for(const q of Object.values(evm.cquick))q.setAttribute('aria-expanded','false');
+  if(opts.focus&&inside){const key=section+'|'+id;(invoker==='quick'?evm.cquick[key]:evm.copen[key])?.focus()}
 }
-function positionPeek(){  // next to its compact card, always inside the window
-  const box=$('evmPeek'),card=evm.ccards[evm.peek.section+'|'+evm.peek.id];
-  if(!card||typeof card.getBoundingClientRect!=='function'||typeof window==='undefined'||!window.innerWidth)return;
-  const r=card.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,w=Math.min(560,vw-24);
-  const head=typeof document.querySelector==='function'?document.querySelector('header.top'):null;  // never under the sticky header
-  const minTop=Math.max(12,Math.round((head&&typeof head.getBoundingClientRect==='function'?head.getBoundingClientRect().bottom:0)+8));
-  box.style.width=w+'px';box.style.maxHeight=Math.max(160,vh-minTop-12)+'px';
-  const left=Math.max(12,Math.min(r.left-6,vw-w-12)),h=box.offsetHeight||0,top=Math.max(minTop,Math.min(r.top-6,vh-h-12));
-  box.style.left=left+'px';box.style.top=top+'px'
+function positionPeek(){  // beside the column of its card, never over it; on a narrow screen a sheet above or below the card
+  const box=$('evmPeek'),r=rectOf(evm.cheads[evm.peek.section+'|'+evm.peek.id]);
+  if(!r||typeof window==='undefined'||!window.innerWidth)return;
+  const col=rectOf($(COLUMNS[evm.peek.section]))||r,vw=window.innerWidth,vh=window.innerHeight,M=12,G=10;
+  const head=rectOf(typeof document.querySelector==='function'?document.querySelector('header.top'):null);
+  const minTop=Math.max(M,Math.round((head?head.bottom:0)+8));  // never under the sticky page header
+  const room={right:vw-col.right-G-M,left:col.left-G-M},want=Math.min(PEEK_W,vw-2*M);
+  const sides=evm.peek.section==='favorites'||evm.peek.section==='api'?['right','left']:['left','right'];  // left columns open to the right
+  let side=sides.find(s=>room[s]>=want),width=want,left,top;
+  if(!side){const best=room.right>=room.left?'right':'left';if(room[best]>=PEEK_MIN){side=best;width=Math.floor(room[best])}}
+  if(side){
+    left=side==='right'?col.right+G:col.left-G-width;
+    box.style.width=width+'px';box.style.maxHeight=Math.max(160,vh-minTop-M)+'px';
+    const h=box.offsetHeight||0;top=Math.max(minTop,Math.min(r.top,vh-h-M))
+  }else{  // no room beside the column: a sheet over the larger free part of the window, the card itself stays visible
+    const below=vh-M-(r.bottom+G),above=r.top-G-minTop;side=below>=above?'below':'above';
+    width=vw-2*M;left=M;const maxH=Math.max(160,Math.round(side==='below'?below:above));
+    box.style.width=width+'px';box.style.maxHeight=maxH+'px';
+    const h=Math.min(box.offsetHeight||0,maxH);
+    top=side==='below'?Math.max(minTop,Math.min(r.bottom+G,vh-M-h)):Math.max(minTop,r.top-G-h)
+  }
+  box.setAttribute('data-place',side);box.style.left=Math.round(left)+'px';box.style.top=Math.round(top)+'px'
 }
-// Manual order: drag and drop inside one column, or «Выше» / «Ниже» (also Alt+↑/↓). Columns are independent.
-function moveButtons(section,id){
+// Manual order: «Выше» / «Ниже» (also Alt+↑/↓) or the mouse. Columns are independent.
+function moveButtons(section,id,inst){
   if(!section||!evm.cards?.view)return [];
   const ids=sectionIds(section),i=ids.indexOf(id);if(i<0)return [];
-  const up=element('button','↑ Выше'),down=element('button','↓ Ниже');
+  const up=fk(element('button','↑ Выше'),inst,'up'),down=fk(element('button','↓ Ниже'),inst,'down');
   for(const [b,delta,label] of [[up,-1,'Выше'],[down,1,'Ниже']]){
     b.type='button';b.setAttribute('aria-label',label+' в разделе «'+SECTION_LABEL[section]+'»');
-    b.disabled=delta<0?i===0:i===ids.length-1;b.onclick=()=>moveCard(section,id,delta,delta<0?'up':'down')
+    b.disabled=delta<0?i===0:i===ids.length-1;b.onclick=()=>moveCard(section,id,delta)
   }
-  evm.peekButtons.up=up;evm.peekButtons.down=down;
   return [up,down]
 }
-function moveCard(section,id,delta,focusAfter){
+function moveCard(section,id,delta){
   const ids=sectionIds(section),i=ids.indexOf(id),j=i+delta;
   if(i<0||j<0||j>=ids.length)return;
-  [ids[i],ids[j]]=[ids[j],ids[i]];evm.peekFocus=focusAfter;
+  [ids[i],ids[j]]=[ids[j],ids[i]];
   saveOrder(section,ids)
 }
-function dropPlace(ev,el){
-  const r=typeof el?.getBoundingClientRect==='function'?el.getBoundingClientRect():null;
-  return r&&typeof ev?.clientY==='number'&&ev.clientY>r.top+r.height/2?'after':'before'
+// Order by mouse. A press on a compact card becomes a drag only after the pointer moves DRAG_PX (a tremor of the hand
+// is still a click); the release after a drag never opens the card. A card moves inside its own column or is dropped
+// into «Избранное» as a reference (its own column keeps it). Escape, a lost pointer or a release elsewhere cancel.
+const DRAG_PX=6,DRAG_TOUCH_PX=10,EDGE_PX=48,LISTS={favorites:'evmFavList',api:'evmApiList',mcp:'evmMcpList',local:'evmLocalList'};
+function pressStart(ev,id,section){
+  evm.suppressUntil=0;
+  if(ev?.button!==0||!evm.cards?.view||evm.window||evm.viewSaving)return;  // the main button only; nothing to order without the board
+  evm.press={id,section,x:ev.clientX,y:ev.clientY,pointerId:ev.pointerId,type:ev.pointerType||'mouse',cancelled:false}
 }
-function dragStart(ev,id,section){
-  // A drag that began on the star never moves the card (dragstart itself is fired on the card, so the press decides).
-  const fromStar=evm.pressOnButton;evm.pressOnButton=false;
-  if(!evm.cards?.view||fromStar){ev?.preventDefault?.();return}
-  closePeek();evm.drag={id,section};
-  try{ev.dataTransfer.effectAllowed='move';ev.dataTransfer.setData('text/plain',id)}catch(_){}
-  mark(evm.ccards[section+'|'+id],'dragging',true)
+function pressMove(ev){
+  const p=evm.press;if(!p||ev?.pointerId!==p.pointerId)return;
+  if(!evm.drag){
+    if(typeof ev.buttons==='number'&&!(ev.buttons&1)){evm.press=null;return}  // released where this page could not see it
+    if(p.cancelled)return;
+    if(Math.hypot(ev.clientX-p.x,ev.clientY-p.y)<(p.type==='mouse'?DRAG_PX:DRAG_TOUCH_PX))return;
+    startDrag()
+  }
+  ev.preventDefault?.();
+  dragTo(ev.clientX,ev.clientY)
 }
-function dragOver(ev,id,section,el){
-  if(!evm.drag||evm.drag.section!==section||evm.drag.id===id)return;  // a card is dropped only into its own column
-  ev?.preventDefault?.();
-  const place=dropPlace(ev,el);mark(el,'drop-before',place==='before');mark(el,'drop-after',place==='after')
+function startDrag(){
+  const p=evm.press,key=p.section+'|'+p.id,head=evm.cheads[key],r=rectOf(head);
+  clearTimeout(evm.peekTimer);
+  if(evm.peek.id&&!evm.peek.pinned)closePeek();  // it stays closed until the drop (ctrlPeek and pinPeek wait for the drag)
+  const hint=element('span','','ghint');
+  evm.drag={id:p.id,section:p.section,target:null,index:null,x:p.x,y:p.y,hint};
+  try{head?.setPointerCapture?.(p.pointerId)}catch(_){}  // the drag keeps its pointer even outside the window
+  try{window.getSelection?.()?.removeAllRanges?.()}catch(_){}
+  mark(evm.ccards[key],'dragging',true);mark($('evmView'),'dragging',true);mark($('evmPeek'),'hold',true);
+  const g=$('evmGhost');g.replaceChildren(element('span',nameOf(p.id),'gname'),hint);
+  if(r&&r.width)g.style.width=Math.min(260,Math.round(r.width))+'px';
+  g.hidden=false
 }
-function dropOn(ev,id,section,el){
-  if(!evm.drag||evm.drag.section!==section)return;
-  ev?.preventDefault?.();
-  const dragged=evm.drag.id,place=dropPlace(ev,el);dragEnd();
-  if(dragged===id)return;
-  const ids=sectionIds(section).filter(x=>x!==dragged);
-  ids.splice(ids.indexOf(id)+(place==='after'?1:0),0,dragged);
-  saveOrder(section,ids)
+function dragTo(x,y){
+  const d=evm.drag;if(!d)return;
+  d.x=x;d.y=y;
+  // the label follows the pointer at its lower right (or the other side near an edge): it never hides the place pointed at
+  const g=$('evmGhost'),gw=g.offsetWidth||0,gh=g.offsetHeight||0,vw=window.innerWidth||0,vh=window.innerHeight||0;
+  let gx=x+14,gy=y+16;
+  if(vw&&gx+gw>vw-4)gx=Math.max(4,x-14-gw);
+  if(vh&&gy+gh>vh-4)gy=Math.max(4,y-16-gh);
+  g.style.left=Math.round(gx)+'px';g.style.top=Math.round(gy)+'px';
+  const t=dropTarget(x,y);d.target=t?t.section:null;d.index=t?t.index:null;
+  showDrop(t);
+  autoScroll()
 }
-function dragEnd(){
-  for(const el of Object.values(evm.ccards)){mark(el,'drop-before',false);mark(el,'drop-after',false);mark(el,'dragging',false)}
-  evm.drag=null
+function dropTarget(x,y){  // the column under the pointer, if this card may go there, and the place between its cards
+  const d=evm.drag;
+  for(const section of d.section==='favorites'?['favorites']:[d.section,'favorites']){
+    const c=rectOf($(COLUMNS[section]));
+    if(!c||x<c.left||x>c.right||y<c.top||y>c.bottom)continue;
+    const ids=sectionIds(section).filter(i=>i!==d.id);
+    let index=ids.length;
+    for(let i=0;i<ids.length;i++){const r=rectOf(evm.ccards[section+'|'+ids[i]]);if(r&&y<r.top+r.height/2){index=i;break}}
+    return {section,index,ids}
+  }
+  return null
 }
+function showDrop(t){
+  const d=evm.drag,line=$('evmDropLine');
+  for(const [section,id] of Object.entries(COLUMNS))mark($(id),'drop-target',!!t&&t.section===section);
+  mark($('evmView'),'drop-none',!t);
+  const adding=!!t&&t.section==='favorites'&&d.section!=='favorites';
+  d.hint.textContent=!t?'Сюда нельзя':adding?(favorites().includes(d.id)?'★ Уже в избранном — новое место':'★ Добавить в избранное'):'Переставить сюда';
+  if(!t){line.hidden=true;return}
+  const list=rectOf($(LISTS[t.section])),rects=t.ids.map(i=>rectOf(evm.ccards[t.section+'|'+i]));
+  const y=!t.ids.length?(list?list.top:0):t.index<t.ids.length?(rects[t.index]?.top??0)-5:(rects[t.ids.length-1]?.bottom??0)+2;
+  line.hidden=false;line.style.top=Math.round(y)+'px';
+  if(list){line.style.left=Math.round(list.left)+'px';line.style.width=Math.round(list.width)+'px'}
+}
+function autoScroll(){  // near the top or bottom edge the board (or the page on a narrow screen) scrolls by itself
+  if(evm.scrollFrame||typeof requestAnimationFrame!=='function')return;
+  evm.scrollFrame=requestAnimationFrame(()=>{
+    evm.scrollFrame=0;const d=evm.drag;if(!d)return;
+    const sc=$('evmView'),own=sc.scrollHeight>sc.clientHeight+1;
+    const head=rectOf(typeof document.querySelector==='function'?document.querySelector('header.top'):null);
+    const box=own?rectOf(sc):{top:head?head.bottom:0,bottom:window.innerHeight};if(!box)return;
+    const v=d.y<box.top+EDGE_PX?-Math.ceil((box.top+EDGE_PX-d.y)/4):d.y>box.bottom-EDGE_PX?Math.ceil((d.y-box.bottom+EDGE_PX)/4):0;
+    if(!v)return;
+    const before=own?sc.scrollTop:window.scrollY;
+    if(own)sc.scrollTop+=Math.max(-24,Math.min(24,v));else window.scrollBy(0,Math.max(-24,Math.min(24,v)));
+    if((own?sc.scrollTop:window.scrollY)!==before)dragTo(d.x,d.y)  // the cards moved under the pointer: find the place again
+  })
+}
+function pressEnd(ev){
+  const p=evm.press;if(!p||(ev&&ev.pointerId!==p.pointerId))return;
+  if(evm.drag&&typeof ev?.clientX==='number')dragTo(ev.clientX,ev.clientY);  // the place where the button was released
+  evm.press=null;
+  if(!evm.drag){if(p.cancelled)evm.suppressUntil=Date.now()+400;return}
+  const d=evm.drag;endDrag();evm.suppressUntil=Date.now()+400;  // the click that follows this release is not a click
+  if(d.target)dropAt(d)
+}
+function pressCancel(ev){
+  const p=evm.press;if(!p||(ev&&ev.pointerId!==p.pointerId))return;
+  evm.press=null;
+  if(evm.drag){endDrag();evm.suppressUntil=Date.now()+400}
+}
+function cancelDrag(){  // Escape or a lost window: the card goes back, nothing is saved
+  if(!evm.drag)return;
+  endDrag();evm.suppressUntil=Date.now()+400;
+  if(evm.press)evm.press.cancelled=true  // the button is still down: no new drag and no click until it is released
+}
+function endDrag(){
+  evm.drag=null;
+  if(evm.scrollFrame&&typeof cancelAnimationFrame==='function')cancelAnimationFrame(evm.scrollFrame);
+  evm.scrollFrame=0;
+  for(const el of Object.values(evm.ccards))mark(el,'dragging',false);
+  for(const id of Object.values(COLUMNS))mark($(id),'drop-target',false);
+  mark($('evmView'),'dragging',false);mark($('evmView'),'drop-none',false);mark($('evmPeek'),'hold',false);
+  $('evmGhost').hidden=true;$('evmGhost').replaceChildren();$('evmDropLine').hidden=true;
+  if(evm.peek.id)positionPeek()
+}
+function dropAt(d){
+  const before=sectionIds(d.target),order=before.filter(i=>i!==d.id),adding=d.target==='favorites'&&d.section!=='favorites';
+  order.splice(Math.min(d.index,order.length),0,d.id);
+  if(order.join(' ')===before.join(' ')){if(adding)evmSay('Уже в избранном: '+nameOf(d.id));return}  // the same place: nothing to save
+  saveOrder(d.target,order,adding?(before.includes(d.id)?'Уже было в избранном — место изменено: ':'Добавлено в избранное: ')+nameOf(d.id):null)
+}
+// EVM messages are toasts over the bottom of the window (.evm-toasts), outside the flow: showing one never moves the
+// board under the pointer. A success message goes away by itself; an error stays until the next action.
+const EVM_SAY_MS=6000;
+function evmSay(message){clearTimeout(evm.noticeTimer);notice('evmNotice',message);if(message)evm.noticeTimer=setTimeout(()=>notice('evmNotice',''),EVM_SAY_MS)}
 function toggleFavorite(id){
-  const f=favorites(),on=f.includes(id),name=entryOf(id)?.card?.display_name||entryOf(id)?.base.display_name||id;
-  saveOrder('favorites',on?f.filter(x=>x!==id):f.concat(id),(on?'Убрано из избранного: ':'Добавлено в избранное: ')+name)
+  const on=favorites().includes(id);
+  saveOrder('favorites',on?favorites().filter(x=>x!==id):favorites().concat(id),(on?'Убрано из избранного: ':'Добавлено в избранное: ')+nameOf(id))
 }
 async function saveOrder(section,order,done){
   if(!evm.cards?.view||evm.viewSaving)return;
@@ -1288,9 +1476,9 @@ async function saveOrder(section,order,done){
     const r=await api('/ultra/model-cards/view',{method:'POST',body:{base_revision:before.revision,section,order}});
     if(!r?.view?.sections)throw new Error('Сервер не подтвердил порядок');
     evm.viewSaving=false;evm.cards.view=r.view;renderEvm();
-    if(done)notice('evmNotice',done)
+    if(done)evmSay(done)
   }catch(e){
-    evm.viewSaving=false;evm.cards.view=before;evm.peekFocus=null;
+    evm.viewSaving=false;evm.cards.view=before;
     await loadEvm();
     notice('evmError',(e.code==='settings_revision_conflict'?'Порядок или список уже изменились в другом окне. Показано сохранённое состояние — повторите действие. ':'Порядок не сохранён. ')+e.message)
   }
@@ -1331,10 +1519,10 @@ function facts(id,rows){
   const list=[];for(const [k,v] of rows){list.push(element('dt',k),element('dd',v==null||v===''?'—':v))}
   $(id).replaceChildren(...list)
 }
-function openWindow(kind,id,tab){
+function openWindow(kind,id,tab,from){
   const c=cardData(id);if(!c)return;
-  evm.returnTo=evm.peek.id===c.connection_id?evm.peek.section+'|'+evm.peek.id:Object.keys(evm.ccards).find(k=>k.endsWith('|'+c.connection_id))||null;
-  closePeek();
+  evm.returnTo={key:from||null,id:c.connection_id};  // the control that opened the window gets the keyboard back
+  if(evm.peek.id&&!evm.peek.pinned)closePeek();  // a pinned side panel stays under the window
   evm.window={kind,id};evm.setError='';
   if(tab)evm.tab=tab;
   fillWindow();
@@ -1345,7 +1533,8 @@ function closeWindow(){
   const w=evm.window;if(!w)return;
   evm.window=null;$('evmSettingsWindow').hidden=true;$('evmCheckWindow').hidden=true;
   renderEvm();
-  evm.copen[evm.returnTo]?.focus();evm.returnTo=null
+  const back=evm.returnTo;evm.returnTo=null;
+  if(back&&!restoreFocus(back.key))evm.copen[Object.keys(evm.copen).find(k=>k.endsWith('|'+back.id))]?.focus()
 }
 function fillWindow(){
   const w=evm.window;if(!w)return;
@@ -1404,7 +1593,7 @@ async function saveSettings(){
     if(r?.card?.model_id!==c.model_id)throw new Error('Сервер не подтвердил сохранение');
     delete evm.drafts[c.model_id];evm.saving=false;
     await loadEvm();
-    notice('evmNotice','Настройки сохранены: '+c.display_name)
+    evmSay('Настройки сохранены: '+c.display_name)
   }catch(e){
     evm.saving=false;
     evm.setError=(e.code==='settings_revision_conflict'?'Настройки уже изменены в другом окне. «Отменить изменения» загрузит сохранённые; затем повторите правку. ':'Настройки не сохранены. ')+e.message;
@@ -1441,11 +1630,8 @@ $('viewOperator').onclick=()=>showView('operator');
 $('evmRefresh').onclick=()=>loadEvm();
 $('evmPeek').onmouseenter=()=>clearTimeout(evm.peekTimer);
 $('evmPeek').onmouseleave=()=>peekLeave();
+$('evmPeek').onpointerdown=()=>pinCurrent();  // pressing anything in the side panel keeps it open
 $('evmView').onscroll=()=>{if(evm.peek.id)positionPeek()};
-$('evmView').onclick=e=>{  // a click outside a pinned card closes it
-  const t=e?.target;
-  if(evm.peek.pinned&&t&&typeof t.closest==='function'&&!t.closest('.evm-peek,.ccard,.evm-backdrop'))closePeek()
-};
 for(const [key,[tab]] of Object.entries(EVM_TABS))$(tab).onclick=()=>selectTab(key);
 $('evmSetProfile').onchange=editDraft;
 for(const id of ['evmSetParams','evmSetDescription','evmSetTimeout','evmSetDiagLimit','evmSetFreshness'])$(id).oninput=editDraft;
@@ -1458,11 +1644,23 @@ for(const id of ['evmSettingsWindow','evmCheckWindow'])$(id).onclick=e=>{if(e?.t
 function escapeKey(e){
   if(e?.key!=='Escape')return;
   if(picker.open){closePicker(true);return}
+  if(evm.drag){cancelDrag();return}
   if(evm.window){closeWindow();return}
   if(evm.peek.id)closePeek({focus:true})
 }
+function evmKeyDown(e){
+  if(e?.key==='Control'){evm.ctrl=true;ctrlPeek();return}  // Ctrl pressed over a card shows its side panel
+  escapeKey(e)
+}
+function evmKeyUp(e){if(e?.key==='Control'){evm.ctrl=false;if(evm.peek.id&&!evm.peek.pinned)closePeek()}}
+function evmBlur(){evm.ctrl=false;cancelDrag();if(evm.peek.id&&!evm.peek.pinned)closePeek()}  // keys and buttons are lost with the window
 if(typeof window!=='undefined'&&window.addEventListener){
-  window.addEventListener('keydown',escapeKey);
+  window.addEventListener('keydown',evmKeyDown);
+  window.addEventListener('keyup',evmKeyUp);
+  window.addEventListener('blur',evmBlur);
+  window.addEventListener('pointermove',pressMove,{passive:false});
+  window.addEventListener('pointerup',pressEnd);
+  window.addEventListener('pointercancel',pressCancel);
   window.addEventListener('resize',()=>{if(evm.peek.id)positionPeek()});
   window.addEventListener('scroll',()=>{if(evm.peek.id)positionPeek()},true)  // narrow screens scroll the page, not the board
 }

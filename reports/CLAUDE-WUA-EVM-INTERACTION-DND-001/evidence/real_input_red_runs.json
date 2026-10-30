@@ -1,0 +1,81 @@
+{
+ "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+ "purpose": "red runs of the real-input check kept as found (TEST-FLAKY-01)",
+ "runs": {
+  "run1": {
+   "checks": 124,
+   "failed": 1,
+   "failed_checks": [
+    {
+     "step": "S17",
+     "check": "a sheet",
+     "value": null
+    }
+   ],
+   "step_errors": [],
+   "cause": "first run, page before the drag-label and role-grid fixes (both found on its screenshots: the label hid the insertion line and left the window; role names broke inside words at 390 px); script step S17 scrolled the card under the 265 px sticky page header of a 390 px window, so both clicks hit the header (script defect; the header layout is pre-existing and out of scope). Fixed in the script: scroll below the header, check the card opened."
+  },
+  "run3": {
+   "checks": 125,
+   "failed": 7,
+   "failed_checks": [
+    {
+     "step": "S02",
+     "check": "two cards open at once"
+    },
+    {
+     "step": "S02",
+     "check": "a second click closes only that card"
+    },
+    {
+     "step": "S04",
+     "check": "the first card went to the end and was saved",
+     "value": [
+      "gigachat_ultra",
+      "gigachat_2",
+      "gigachat_2_max",
+      "gigachat_2_pro",
+      "gigachat_3_lightning",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "step": "S04",
+     "check": "the middle card went to the top",
+     "value": [
+      "gigachat_2_max",
+      "gigachat_ultra",
+      "gigachat_2",
+      "gigachat_2_pro",
+      "gigachat_3_lightning",
+      "gigachat_3_pro"
+     ]
+    },
+    {
+     "step": "S04",
+     "check": "the last card went to the middle",
+     "value": [
+      "gigachat_2_max",
+      "gigachat_ultra",
+      "gigachat_3_pro",
+      "gigachat_2",
+      "gigachat_2_pro",
+      "gigachat_3_lightning"
+     ]
+    },
+    {
+     "step": "S08",
+     "check": "Ctrl over gigachat_3_lightning shows its panel"
+    },
+    {
+     "step": "S11",
+     "check": "and changed nothing, opened nothing"
+    }
+   ],
+   "step_errors": [],
+   "cause": "first run on the final page bytes: the open card became taller (roles in two columns), the S02 click on the 4th card fell below a 1000 px window and left a card open; the following steps measured that layout (cascade, script defect). Fixed in the script: scroll a card into view before a click; every step starts on a reloaded page."
+  }
+ },
+ "run2": "125/125 on the page before the role-grid fix (not kept: superseded)",
+ "final": "evidence/real_input.json (fresh demo, final page bytes)"
+}

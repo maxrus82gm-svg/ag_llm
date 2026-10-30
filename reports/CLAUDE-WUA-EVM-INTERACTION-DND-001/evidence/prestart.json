@@ -1,0 +1,61 @@
+{
+ "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+ "purpose": "pre-start state before the first edit",
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "card_sha256": "cb0686cfa9b532a45c796bf798877c1ebce2678265b537c276390724d9a230cc",
+  "eol": "CRLF",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+   "problems": [],
+   "lines": 234
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+   "copy_sha256": "973f2ea8e3fed2d792b34f174e04e642f199bf481ca3e3ea3991d5a20ea12879",
+   "problems": []
+  }
+ },
+ "launcher": {
+  "config_active": "standard",
+  "load_launch": {
+   "name": "standard",
+   "standard": true,
+   "port": 8765,
+   "storage": "default",
+   "kind": "web_alarm"
+  }
+ },
+ "scope_vs_published_457": {
+  "web_alarm/ui.py": {
+   "sha256": "9a6c1b28b179d1f73e7f536f57b4efbcf9d4e49c31799b79fb3b3bac6ecefe6c",
+   "eol": "CRLF",
+   "same_content_as_published_457": true
+  },
+  "web_alarm/server.py": {
+   "sha256": "2170b8032eb75e71927ecf364621f15b093ae3b2858e4814333cf10130bc1680",
+   "eol": "CRLF",
+   "same_content_as_published_457": true
+  },
+  "web_alarm/model_cards.py": {
+   "sha256": "cf8ddc8aeda1dc795be45e4f0e7a27b5a819ecd84d301f17a8c8fc06f2c74ec5",
+   "eol": "CRLF",
+   "same_content_as_published_457": true
+  },
+  "test_web_alarm_model_cards.py": {
+   "sha256": "45a67e2da477a7d7f8f929d37bd788dae5df7d356511ceea391d8435804fb5fe",
+   "eol": "CRLF",
+   "same_content_as_published_457": true
+  },
+  "test_web_alarm_evm_ui.js": {
+   "sha256": "75d75c3705ac5cd8eef8d51b0b035251db3b2f325ea46b1b5f0c5e63632e4bcd",
+   "eol": "CRLF",
+   "same_content_as_published_457": true
+  }
+ },
+ "no_conflicting_changes": true,
+ "git_used": false
+}

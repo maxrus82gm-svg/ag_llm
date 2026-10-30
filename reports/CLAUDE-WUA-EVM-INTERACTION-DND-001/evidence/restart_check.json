@@ -1,0 +1,42 @@
+{
+ "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+ "purpose": "the board survives a server restart (two demo processes, one storage)",
+ "saved_before_restart": {
+  "revision": 4,
+  "api": [
+   "api:gigachat_3_pro",
+   "api:gigachat_3_lightning",
+   "api:gigachat_2_pro",
+   "api:gigachat_2_max",
+   "api:gigachat_2",
+   "api:gigachat_ultra"
+  ],
+  "favorites": [
+   "local:qwen-14b",
+   "api:gigachat_2",
+   "api:gigachat_3_pro",
+   "mcp:files-tool"
+  ]
+ },
+ "read_after_restart": {
+  "revision": 4,
+  "api": [
+   "api:gigachat_3_pro",
+   "api:gigachat_3_lightning",
+   "api:gigachat_2_pro",
+   "api:gigachat_2_max",
+   "api:gigachat_2",
+   "api:gigachat_ultra"
+  ],
+  "favorites": [
+   "local:qwen-14b",
+   "api:gigachat_2",
+   "api:gigachat_3_pro",
+   "mcp:files-tool"
+  ]
+ },
+ "same": true,
+ "processes": 2,
+ "ports_differ": true,
+ "verdict": "PASS"
+}
