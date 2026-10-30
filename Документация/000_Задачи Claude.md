@@ -293,42 +293,39 @@ Git/GitHub исполнитель не меняет без отдельного 
 
 Полный архив — [[001_История выполненных задач Claude]].
 
-- **2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001** — №457 `f37e9a9b`, **ITERATION DOC CLOSED / REVISE; PRODUCT NOT ACCEPTED**. В реальном UI hover перекрывает карточки, Windows mouse DnD NOT RUN. Полная постановка в `reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md` и БЛОКЕ 1.1; OPEN — №05 FOLLOWUP; successor `CLAUDE-WUA-EVM-INTERACTION-DND-001` локально `check OK` по Claude, отдельный GO ещё не дан.
-- **2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001** — единые карточки EVM и настройки; опубликовано `main@55cc4477`. **DOC CLOSED / TERMINAL PARTIAL** по решению пользователя; независимые Windows/CI и live checks OPEN. Источник №001/№05 `REG-WEB16-EVM-20261028`.
-- **2026-10-28 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001** — Stage1 Ultra Chat read-only опубликован `main@ab527eae`. **DOC CLOSED / TERMINAL PARTIAL**; независимые Windows/visual/portability gates OPEN. Полный БЛОК 1 — №001; №05 `REG-WEB16-S1-20261028`.
-- **2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001** — подготовительная архитектура Ultra Chat, `PASS / BOUNDED ARCHITECTURE & EVIDENCE`, 17/17 SHA; реальное production поведение не проверено.
-- **2026-10-24 / CLAUDE-WA4-R-FT1-CI-REPAIR-001** — ограниченная независимая Windows-верификация исправления test guard, PASS соответствующего gate; WA4-R остаётся PARTIAL.
+- **2026-10-30 / CLAUDE-WUA-EVM-INTERACTION-DND-001** — №464 `f9a375a`, **PASS / USER ACCEPTED; DOC ITERATION CLOSED** в scope EVM interaction. Inline click, Ctrl-preview, Pointer Events DnD, «Избранное» и сохранение порядка приняты пользователем на Windows. Авторские Python 1061 PASS/2 SKIP, JS 126/126, trusted browser input 125/125, mutants 35/35. Source/evidence просмотрены; independent rerun NOT RUN. №05 `REG-WEB17-EVM-DND-20261030`, №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`. Новый pinned multiwindow — отдельная идея `FUTURE-EVM-PINNED-COMPARE-001`, НЕ дефект этой TASK.
+- **2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001** — №457 `f37e9a9b`, **ITERATION DOC CLOSED / REVISE; PRODUCT NOT ACCEPTED** для этой прежней ревизии. Последующий DnD №464 закрывает замечания hover/drag в пользовательском UX-scope; независимые платформенные gaps отдельно в №05.
+- **2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001** — единые карточки EVM и настройки; `main@55cc4477`, **DOC CLOSED / TERMINAL PARTIAL**, отдельные Windows/CI/live-check gates оставались OPEN.
+- **2026-10-28 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001** — Ultra Chat Stage1 read-only, `main@ab527eae`, **DOC CLOSED / TERMINAL PARTIAL**, independent Windows/portability gates OPEN.
+- **2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001** — архитектурный и evidence PASS в ограниченном scope; Stage2/paid по-прежнему не разрешены.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **EVM compact №457:** реализованы 4 колонки, порядок, избранное и выбор модели в композере. Авторские JS 119/119, focused Python 117/117, full 1061 PASS/2 SKIP, мутанты 21/21; независимый полный rerun NOT RUN. User visual: мешающий hover/flyout и реальный drag ещё требуют исправления. №461 перенёс прежнюю TASK в БЛОК 1.1.
-- **Stage1:** `context_storage.py` / `web_alarm/ultra_chat.py` / read-only HTTP и UI, без отправки сообщений или записи чата. Пользователь сообщил, что чат визуально выглядит нормально. Полная независимая проверка Stage1 по обязательным Windows сценариям не завершена.
-- **EVM:** `web_alarm/model_cards.py` и общая UI-карточка; статусы и назначенные роли, настройки и безопасная заглушка API-check. Авторская регрессия 1057 PASS/2 SKIP; 109 JS PASS, 30/30 mutants; опубликованные SHA сверены WEB16, verifier full-run NOT RUN. Пользователь отметил пригодность экрана и настроек, хочет отдельную компактную переработку.
-- **Прочие предыдущие результаты:** сохранены посимвольно в №001 → `2026-10-28 — Claude БЛОКИ 2–4 — снимок до ротации`, исходные отчёты и №06. Никакие WA4-R/RT-002/B2/платные gates не закрываются от ротации.
+- **EVM DnD №464:** `web_alarm/ui.py` и `test_web_alarm_evm_ui.js`; клик раскрывает карточку внутри колонки, Ctrl открывает боковую панель, Pointer Events реализуют reorder/«Избранное»/отмену, порядок сохраняется при перезапуске. Новая серверная запись и реальные пользовательские данные не затронуты. Отчёт, manifest и десять скриншотов — `reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/`.
+- **Приёмка WEB17:** пользователь проверил и принял работу на Windows; координатор сверил опубликованный пакет и адресные участки кода/тестов. Независимые прогоны/physical Windows input проверяющим NOT RUN, их не выдавать за PASS. №05 FOLLOWUP: HOVER/DND приняты пользователем, GUI/REGRESSION остаются адресными verification gaps.
+- **Следующее пожелание:** `FUTURE-EVM-PINNED-COMPARE-001` — свободно перетаскиваемые одновременно закреплённые окна предпросмотра с сохранением координат и верхним слоем для незакреплённого Ctrl-hover. BACKLOG / UNASSIGNED, не относится к №464.
+- **Ранее:** Stage1 и исходная EVM закрыты terminal PARTIAL; compact №457 закрыта REVISE; все исторические source/verdict сохранены в №001, №05, №06.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 
-**Автор:** ChatGPT / WEB16. Для Claude этот блок READ-ONLY. Исторические verdict находятся в №06; этот блок — окно последних результатов.
+**Автор:** ChatGPT / WEB17. Для Claude этот блок READ-ONLY. Исторические verdict находятся в №06.
 
-## 0. 2026-10-29 / EVM compact №457 — REVISE
-**ITERATION DOC CLOSED, PRODUCT NOT ACCEPTED.** Пользователь обнаружил hover-панель поверх списка и конфликт с сортировкой мышью; real Windows drag NOT RUN. Авторские тесты не перезапускались координатором. Полная TASK+AMENDMENT и хэш в `handoff_task.md`; №05 `FOLLOWUP-EVM-457-*`, №06 `EVT-WEB16-EVM-COMPACT-REVISE-20261029`. Новая DnD TASK не стартовала.
+## 0. 2026-10-30 / CLAUDE-WUA-EVM-INTERACTION-DND-001 — PASS / USER ACCEPTED
 
-## 1. WEB16 / 2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001
+**Публикация:** `main@f9a375a47472375ce7e07ee82b490016e20e1922` (№464); `reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/``report.md`, `manifest.json`, `evidence/**` и точная постановка в `handoff_task.md` + неизменённом БЛОКЕ 1.1 (копия SHA-256 `ba14a5f9efcf1af9c646251d7037df91e1e021169c1cc065268799fcd2a975cb`). **Выполнено verifier:** прочитаны источник, manifest, test evidence и адресный код/тест; сверено отсутствие изменений серверного authority. **Не выполнено verifier:** самостоятельные Python/JS/CI/Windows-GUI прогоны. **Авторские:** Python 1061 PASS/2 SKIP, JS 126/126, browser trusted input 125/125, mutants 35/35, restart PASS. **USER ACCEPTED:** пользователь на Windows через AnyDesk проверил основной UX и 2026-10-30 явно утвердил результат. **Verdict:** **PASS / USER ACCEPTED (EVM interaction scope), DOC ITERATION CLOSED** в границах назначенной UI-задачи, без ложного «независимый полный runtime PASS». Непроверенные платформы/платные операции остаются OPEN; `FUTURE-EVM-PINNED-COMPARE-001` — отдельная будущая возможность. №05 `REG-WEB17-EVM-DND-20261030`; №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`.
 
-**TERMINAL PARTIAL / DOC CLOSED (USER DECISION).** `main@55cc4477a324460bf0db0b83b88cf93c8ad523d3`: WEB16 independently verified шестёрку SHA256 source/test с учётом LF→CRLF `ui.py`, просмотрел server/UI source и опубликованные evidence; author 1057 PASS/2 SKIP, JS 109/109, mutants 30/30. Реальный verifier CI/Windows regression NOT RUN; пользователь увидел основной экран EVM и настройки, отдельное диагностическое окно, browsers/a11y и live API OPEN. №05 `REG-WEB16-EVM-20261028`; №06 `EVT-WEB16-EVM-CLOSE-20261028`.
+## 1. 2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 — REVISE
 
-## 2. WEB16 / 2026-10-28 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001
+**ITERATION DOC CLOSED / REVISE, PRODUCT NOT ACCEPTED** для ревизии №457: перекрывающий hover/неудобный drag. Последующая задача №464 принята пользователем; прежний отрицательный verdict исторически не переписывается. №05 `FOLLOWUP-EVM-457-*`, №06 `EVT-WEB16-EVM-COMPACT-REVISE-20261029`.
 
-**TERMINAL PARTIAL / DOC CLOSED (USER DECISION).** WEB15 bounded source+manifest/evidence accepted: 33/33; авторские 1024 PASS/2 SKIP и 36 mutants, verifier suite NOT RUN. Пользователь подтвердил общий вид Ultra Chat; Windows/visual mandatory N1–N30, security/portability/native gates OPEN, Stage2 NOT ASSIGNED. Исходная постановка побуквенно в №001, №05 `REG-WEB16-S1-20261028`; №06 `EVT-WEB16-S1-CLOSE-20261028`.
+## 2. 2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001 — TERMINAL PARTIAL
 
-## 3. WEB14 / 2026-10-26 / CLAUDE-WUA-CHAT-S0-BASELINE-CONTRACT-001
-
-**PASS / BOUNDED ARCHITECTURE + EVIDENCE:** 17/17 source pins; архитектурные ограничения/Windows real runtime не сняты. Подробный источник №001 и №06.
+`main@55cc4477`; исходная EVM в ограниченной приёмке, полный independent Windows/CI NOT RUN. Полный источник №001 и №06 `EVT-WEB16-EVM-CLOSE-20261028`.
 
 ---
 
-**NEXT 29.10:** пользователь локально назначил `CLAUDE-WUA-EVM-INTERACTION-DND-001`; Claude сообщил `check OK / exit 0`. После принятия документационного closeout в main, локальной синхронизации и отдельного GO начать EVM исправления. Не затирать БЛОК 1.1 и не расширять Stage2/paid.
+**NEXT 30.10:** БЛОК 1 ожидает новую задачу, БЛОК 1.1 с полной постановкой №464 сохранить до следующей безопасной ротации. `FUTURE-EVM-PINNED-COMPARE-001` — BACKLOG / UNASSIGNED, без автоматического GO. Перед новой TASK сверить №05 FOLLOWUP, №40, STANDARD launcher и возможные пересечения; Stage2/paid/live не разрешены.
