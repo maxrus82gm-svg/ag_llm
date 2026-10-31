@@ -12427,6 +12427,6 @@ reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/
 
 ## 2026-10-31 — CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001 — ограниченный PASS по F-01
 
-- **Постановка:** `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, БЛОК 1.1, SHA-256 копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbeb09dd7a12b9517be363b` (см. манифест; фактический SHA копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbeb09dd7a12b9517be363b`); CHAT-ONLY AMENDMENT нет.
+- **Постановка:** `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, БЛОК 1.1, SHA-256 копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b` (см. манифест; фактический SHA копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b`); CHAT-ONLY AMENDMENT нет.
 - **Автор:** Claude 008, №475 `5678414d`, `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/report.md`, manifest, evidence. До ремонта 7/9 внешних записей; после 0/9. Focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8/9; first full run 1075 PASS/1 ERROR/2 SKIP (в авторском report ошибочно 1077 PASS).
 - **Independent:** SHA-256/bytes 4/4, source/evidence/negative oracle reviewed; Python/CI/Windows runtime NOT RUN. **Вердикт:** PASS / SOURCE+AUTHOR-EVIDENCE (F-01), DOC ITERATION CLOSED, не FULL RUNTIME. №05 `REG-WEB18-S2-REPAIR-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED, `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN; №06 `EVT-WEB18-S2-REPAIR-PASS-20261031`; `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. №473 исторически REVISE.
