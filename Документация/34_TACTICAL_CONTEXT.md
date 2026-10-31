@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 31.10.2026, WEB17. EVM pinned multiwindow №467 опубликована в main и лично принята пользователем на Windows с мышью и сенсорным вводом; closeout №470 готовится в GPT до пользовательского merge. **Назначение:** оперативная картина без полного архива и без автоматического разрешения новых стадий.
+**Срез:** 31.10.2026, WEB18. Stage2 `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001` опубликована №473, независимый source review **REVISE / PRODUCT NOT ACCEPTED**: F-01 directory junction в `message_context` при writer. Все OPEN сохраняются. Текущая картина без автоматического GO дальнейших стадий.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB17 / Claude | Pinned multiwindow `CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001` №467: **PASS / USER ACCEPTED, DOC ITERATION CLOSED** для нескольких закреплённых окон, их сохранения/восстановления и Ctrl-preview; мышь и сенсорный ввод подтверждены пользователем. БЛОК 1 WAITING, дословный БЛОК 1.1/отчёт сохранены | Принять GPT→main с документацией №470, затем по отдельному USER GO согласовать следующий этап №37: 2 «Общее хранение диалогов», с учётом Stage1 gates и пересечений №40; paid/live не разрешены |
+| А — Ultra Chat / EVM, WEB18 / Claude | Stage2 `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001` №473 опубликована; **REVISE / DOC ITERATION CLOSED; PRODUCT NOT ACCEPTED** после WEB18 source review. БЛОК 1 WAITING, БЛОК 1.1 exact Stage2. Автор full 1076/1078 + 2 SKIP, JS 140/140, mutants 39/39; verifier 8/8 source SHA и JSON counts, independent runtime NOT RUN. F-01: вложенный `message_context` junction при writer | Сохранить `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` OPEN/UNASSIGNED, предложить отдельно пользователю узкое repair; не разрешать Stage3/live/paid. База №473, отчёт `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md` |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
@@ -40,6 +40,7 @@
 
 | Пункт | Тип / влияние | Владелец и следующий шаг |
 | --- | --- | --- |
+| Stage2/F-01: nested `message_context`/ `variants` path | **FACT_DEFECT / SOURCE CONFIRMED** в №473; writer не проверяет вложенный junction до записи, внешний каталог может быть изменён. №05 `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` | Claude / verifier: изолированная repair TASK только после USER GO, negative junction oracle и независимый review. Product Stage2 REVISE, Stage3 BLOCKED |
 | Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; до этого не открывать Stage2/paid. №05 REG-WEB16-S1/EVM-20261028 |
 | WA4-R остаточные native/live/PWR/TOCTOU gates и P1/P2/P3 | OPEN в документах; не разрешены автоматически. Исторические gates сверять адресно с новым evidence, не считать все навечно открытыми по старому снимку | LLM15: перед действием сверить профиль №24/25, TASK и последнюю независимую запись |
 | Перенос на другую Windows-машину | PORTABILITY TARGET / NOT VERIFIED; архитектурное требование отдельно от испытания | Назначить адресные portability-проверки при соответствующем этапе по решению пользователя |
@@ -54,6 +55,7 @@
 
 | Направление / TASK | Краткий результат и границы | Текстовый адрес |
 | --- | --- | --- |
+| А / CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001, 31.10 | №473; общий writer + Web create/rename; автор 1076 PASS/2 SKIP full, 140 JS, 39 mutants; независимые 8/8 SHA и JSON counts; **REVISE**: F-01 вложенная junction при записи context state/variants; independent runtime NOT RUN. | №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001`; №06 `EVT-WEB18-S2-REVISE-20261031`; `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md` |
 | А / CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001, 31.10 | №467 `f4597868`; multiwindow и layout persistence, автор Python 1065 PASS/2 SKIP, JS 133/133, browser 198/198, mutants 38/38. Пользователь принял mouse+touch UX; verifier GitHub source/evidence reviewed, independent runtime NOT RUN. | №05 `REG-WEB17-EVM-PINS-20261031`; №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`; №001 Claude 2026-10-31 |
 
 | А / CLAUDE-WUA-EVM-INTERACTION-DND-001, 30.10 | №464; source/evidence inspected, author Python 1061 PASS/2 SKIP, JS 126/126, real-input browser 125/125, mutants 35/35. User accepted Windows UX. Independent full runtime NOT RUN; platform gaps tracked. | №05 `REG-WEB17-EVM-DND-20261030`; №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`; №001 Claude 2026-10-30 |
@@ -72,8 +74,8 @@
 
 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
-3. Для закрытия №467: после пользовательского merge GPT→main сделать адресный readback №05/06/001/34/40 и карточки Claude; не выдавать source/evidence review за независимый полный runtime PASS.
-4. Следующий этап №37 в продуктовом маршруте — этап 2 «Общее хранение диалогов», только по отдельному USER GO с проверкой зависимостей Stage1 и пересечений №40. Идея `FUTURE-EVM-PINNED-COMPARE-001` закрыта реализацией №467, не новая TASK. WA4-R/paid/live имеют собственные OPEN/gates.
+3. №467 ранее документально закрыта и принята пользователем; этот verdict не переписывать. Stage2 №473 требует исправления F-01 до продуктового PASS; review и сохранённый exact B1.1 читать адресно.
+4. Следующий разрешённый выбор — отдельная согласованная repair TASK по FOLLOWUP-WUA-S2-CONTEXT-PATH-001; этап 3 и live/paid не начинать. Stage1 и WA4-R gates не сняты.
 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
 
 ## Как сопровождать эту память

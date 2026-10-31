@@ -320,19 +320,20 @@
 
 Полный архив — [[001_История выполненных задач Claude]].
 
+- **2026-10-31 / `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001`** — №473 `c555312d`, **REVISE / DOC ITERATION CLOSED; PRODUCT NOT ACCEPTED**. Общий writer и Web create/rename опубликованы, но найден F-01: context variants/state могут писать через вложенный junction вне Workspace. Автор Python 1076 PASS/2 SKIP, JS 140/140, mutants 39/39; independent source/8 SHA и структуры evidence проверены, runtime НЕ перезапущен. №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001`.
 - **2026-10-31 / `CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001`** — №467 `f4597868`, **PASS / USER ACCEPTED; DOC ITERATION CLOSED**. Несколько независимых EVM-окон, сохранение после рестарта, Ctrl-preview выше окон, без дублей. Пользователь подтвердил обычную мышь и сенсорный ввод; авторские Python 1065 PASS/2 SKIP, JS 133/133, browser 198/198, mutants 38/38. Verifier source/evidence reviewed; independent rerun NOT RUN. №05 `REG-WEB17-EVM-PINS-20261031`, №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`.
 - **2026-10-30 / CLAUDE-WUA-EVM-INTERACTION-DND-001** — №464 `f9a375a`, **PASS / USER ACCEPTED; DOC ITERATION CLOSED**. Inline, Ctrl-preview, DnD и «Избранное» приняты пользователем; verifier independent rerun NOT RUN. №05 `REG-WEB17-EVM-DND-20261030`.
 - **2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001** — №457 `f37e9a9b`, **ITERATION DOC CLOSED / REVISE**; поздняя реализация №464 закрыла пользовательские UX-дефекты, исторический отрицательный verdict сохранён.
 - **2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001** — базовые EVM карточки, `main@55cc4477`, **DOC CLOSED / TERMINAL PARTIAL**; независимые платформенные gates OPEN.
-- **2026-10-28 / CLAUDE-WUA-CHAT-S1-READONLY-UI-001** — Ultra Chat Stage1 read-only, `main@ab527eae`, **DOC CLOSED / TERMINAL PARTIAL**; Stage2 требует отдельного GO.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
+- **Stage2 №473 / 31.10:** общий writer Workspace/Chat/RAW, межпроцессная блокировка, идемпотентный message_id и Web create/rename опубликованы; пользовательского/продуктового PASS нет. Verifier обнаружил F-01: невалидируемый вложенный `message_context` junction при записи state/variants. **REVISE**, продолжение `FOLLOWUP-WUA-S2-CONTEXT-PATH-001`, отдельное назначение. Полная регрессия и мутанты только author evidence; на точном SHA independent runtime NOT RUN.
 - **EVM pinned windows №467:** `web_alarm/ui.py`, `model_cards.py`, `server.py` и тесты; отдельные закреплённые окна по `connection_id`, координаты и порядок в прежнем `ultra/evm_view.json`; Ctrl-preview выше окон, перенос/закрытие без дублей, восстановление после перезапуска. Новый самостоятельный реестр моделей/секретов не создан.
 - **Проверки №467:** авторские Python 1065 PASS/2 SKIP, JS 133/133, trusted headless browser 198/198, mutants 38/38; physical Windows mouse author NOT RUN. Пользователь отдельно подтвердил мышь и сенсорный ввод в Ultra; verifier независимо не повторял тестовые команды, source/evidence проверены.
-- **Связь с №464 и roadmap:** DnD/inline/Favorites сохранены; `FUTURE-EVM-PINNED-COMPARE-001` реализован и принят в UX scope, больше не BACKLOG. Широкие независимые platform/regression gates остаются адресными, но это не открытая реализационная задача. №37 Stage2/paid/live только по отдельному GO.
+- **Связь с №464 и roadmap:** DnD/inline/Favorites сохранены; `FUTURE-EVM-PINNED-COMPARE-001` реализован и принят в UX scope, больше не BACKLOG. Широкие независимые platform/regression gates остаются адресными, но это не открытая реализационная задача. №37 Stage2 опубликован, но REVISE; Stage3/paid/live не разрешены.
 - **Ранее:** №464 PASS/USER ACCEPTED, compact №457 REVISE, Stage1/исходная EVM terminal PARTIAL. История/verdict в №001, №05, №06.
 
 ---
@@ -340,6 +341,10 @@
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 
 **Автор:** ChatGPT / WEB17. Для Claude этот блок READ-ONLY. Исторические verdict находятся в №06.
+
+## WEB18 / 2026-10-31 — CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001 — REVISE / DOC ITERATION CLOSED
+
+**Verified source:** main №473 `c555312d`; дословная TASK `handoff_task.md` и БЛОК 1.1, авторский report/manifest/evidence сохранены. Independent SHA-256 **8/8** changed/new engineer files, пересчитаны авторские 1078/122 test-list и 39 unique KILLED. **Independent Python/JS/CI/Windows runtime NOT RUN.** F-01: `restore_message_raw`/`create_message_context_variant` используют `_atomic_write_json` в `message_context` без no-follow для вложенных каталогов; заранее существующий junction может направить запись вне Workspace. **PRODUCT NOT ACCEPTED; исправление + изолированный negative oracle до PASS.** №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` (OPEN, UNASSIGNED); №06 `EVT-WEB18-S2-REVISE-20261031`; независимый протокол `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md`. Stage3/paid/live и другие риски не разрешены. БЛОК 1 WAITING, БЛОК 1.1 сохранить.
 
 ## 0. 2026-10-31 / CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001 — PASS / USER ACCEPTED
 
@@ -361,4 +366,4 @@
 
 ---
 
-**NEXT 31.10:** БЛОК 1 ожидает новую задачу, БЛОК 1.1 с дословной постановкой pinned multiwindow №467 сохранить до следующей безопасной ротации; №467 принят пользователем, DOC ITERATION CLOSED. По №37 дальнейший продуктовый этап — 2, общее хранение диалогов, лишь после отдельного USER GO и определения зависимостей Stage1. Перед любой новой TASK сверить №05 FOLLOWUP, №40, STANDARD launcher и пересечения; paid/live не разрешены.
+**NEXT WEB18 / 31.10:** БЛОК 1 WAITING, БЛОК 1.1 сохраняет Stage2 №473, вердикт REVISE. Пользователь отдельно назначает исправление F-01 после принятия документационного closeout; не переиспользовать старую постановку; направление Б остаётся на паузе.
