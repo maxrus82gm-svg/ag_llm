@@ -1,0 +1,66 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "method": "byte comparison with the pre-edit copies; no Git",
+ "files": {
+  "context_storage.py": {
+   "before": {
+    "sha256": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+    "sha256_lf": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+    "eol": "LF",
+    "lines": 2165
+   },
+   "after": {
+    "sha256": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+    "sha256_lf": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+    "eol": "LF",
+    "lines": 2288
+   },
+   "changed": true,
+   "added": 133,
+   "removed": 10
+  },
+  "test_ultra_chat_storage.py": {
+   "before": {
+    "sha256": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+    "sha256_lf": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+    "eol": "LF",
+    "lines": 883
+   },
+   "after": {
+    "sha256": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+    "sha256_lf": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+    "eol": "LF",
+    "lines": 1231
+   },
+   "changed": true,
+   "added": 348,
+   "removed": 0
+  },
+  "test_message_context.py": {
+   "before": {
+    "sha256": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "sha256_lf": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "eol": "LF",
+    "lines": 433
+   },
+   "after": {
+    "sha256": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "sha256_lf": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "eol": "LF",
+    "lines": 433
+   },
+   "changed": false,
+   "added": 0,
+   "removed": 0
+  }
+ },
+ "stage2_files_outside_scope_unchanged": {
+  "ultra_ui.py": true,
+  "web_alarm/ultra_chat.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_chat_storage.py": true
+ },
+ "all_outside_scope_unchanged": true
+}

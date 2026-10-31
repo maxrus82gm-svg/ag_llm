@@ -1,0 +1,79 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "pre-start state before the first edit",
+ "base": "main@254e48166407d3aabf6484c8627da86acf8b05df (No.474); engineering bytes = Stage2 package (No.473), checked by content",
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "card_sha256": "ffda3f5fa76dc12711098f9889001f6420a8e5a187edab83f2dde9c6847d0ec5",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+   "problems": [],
+   "lines": 165
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "copy_sha256": "6d5d2b2160f7b9797f02037272c3fdf5d3c7e559352a8d66c18ae196ff43ccf6",
+   "problems": []
+  }
+ },
+ "launcher": {
+  "config_active": "standard",
+  "load_launch_standard": true,
+  "launcher_files_same_as_package": {
+   "Start_WebAlarm.bat": true,
+   "web_alarm/launcher.py": true,
+   "web_alarm/launch_config.json": true
+  }
+ },
+ "stage2_files": {
+  "context_storage.py": {
+   "sha256_now": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+   "same_content_as_stage2_package": true
+  },
+  "ultra_ui.py": {
+   "sha256_now": "a076bab7d2aa3ec322cd2dcaf3557f6faf8a99ac009298c7c98faa60b908cd78",
+   "same_content_as_stage2_package": true
+  },
+  "web_alarm/ultra_chat.py": {
+   "sha256_now": "c222e8361d13cc5410702476cce067ad72a2cc1e8957e85079a9c94f702e5bc9",
+   "same_content_as_stage2_package": true
+  },
+  "web_alarm/server.py": {
+   "sha256_now": "4a6170c1842fe67b75ed408608a7a79b19113bdc1157299a2d534ca030680619",
+   "same_content_as_stage2_package": true
+  },
+  "web_alarm/ui.py": {
+   "sha256_now": "8949c4388b2378ce677dc56861da704725bcc76f3d718359371e76141122b967",
+   "same_content_as_stage2_package": true
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "sha256_now": "e13af2fc0a7182f2471dadb7ebdf809e775f1173b47024153e97609a49bc12da",
+   "same_content_as_stage2_package": true
+  },
+  "test_ultra_chat_storage.py": {
+   "sha256_now": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+   "same_content_as_stage2_package": true
+  },
+  "test_web_alarm_ultra_chat_storage.py": {
+   "sha256_now": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+   "same_content_as_stage2_package": true
+  }
+ },
+ "other_published_files_same": {
+  "Start_WebAlarm.bat": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_evm_ui.js": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true
+ },
+ "no_drift": true,
+ "parallel_work": "Direction B has no active TASK on these files (No.34/No.40); the Stage2 package is closed REVISE",
+ "git_used": false
+}

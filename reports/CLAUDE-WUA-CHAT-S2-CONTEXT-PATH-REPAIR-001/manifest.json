@@ -1,0 +1,295 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (user paste, TASK ID line included); FOLLOWUP-WUA-S2-CONTEXT-PATH-001 / F-01 of WEB18",
+ "base": "main@254e48166407d3aabf6484c8627da86acf8b05df (No.474) as published content (Stage2 bytes of No.473; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "context_storage.py": {
+   "role": "F-01 repair: the three message-context writers refuse a link at any existing level of message_context/<message_id>/variants before reading or writing, and write only into folders created or verified level by level right before the write (under the Workspace lock, checked); variants by exclusive publication, state.json by a verified replace with read-back; restore never overwrites a newer state and refuses a state.json that is not a regular file",
+   "bytes": 94743,
+   "sha256": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+   "eol": "LF",
+   "replaced_sha256": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+   "replaced_source": "Stage2 package (published No.473, base No.474)"
+  },
+  "test_ultra_chat_storage.py": {
+   "role": "MessageContextPathTests (12) and MessageContextLockTests (3): junctions at each level, links made after the first check, state.json kinds, damaged and newer state, ordinary folders and byte-identical old data, lock, two processes, crashes",
+   "bytes": 74564,
+   "sha256": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+   "eol": "LF",
+   "replaced_sha256": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+   "replaced_source": "Stage2 package (published No.473, base No.474)"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_evm_ui.js": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_storage.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "ultra_ui.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "web_alarm/ultra_chat.py": true
+ },
+ "rotation": {
+  "card": "Документация/000_Задачи Claude.md",
+  "card_after_rotation": {
+   "bytes": 33764,
+   "sha256": "dc128063504d0c83d9c421d12df3bd5ee026c7d2c38175f336590c0b24906764",
+   "eol": "LF"
+  },
+  "snapshot": {
+   "bytes": 11844,
+   "sha256": "e0cb50aaa4807b9a00e555b5dd71ae3e74a04c0c4f566245890462d6dd2a1299",
+   "eol": "LF"
+  },
+  "protocol": "evidence/rotation.json"
+ },
+ "evidence_summary": {
+  "change_inventory.json": {},
+  "final_state.json": {
+   "purpose": "final state before the hand-in"
+  },
+  "gate_all.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes, run 2",
+   "runner_exit": 0,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_all_run1.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes, run 1: one ERROR = known flake F-S1 (WinError 10053) in a folder-picker HTTP test",
+   "runner_exit": 1,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 1,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_focused.json": {
+   "purpose": "focused storage gate on the final bytes: shared writer + message-context repair tests, message context, compressor, Ultra storage set, stage-1 reader, HTTP write and stage-1 HTTP",
+   "runner_exit": 0,
+   "tests_run": 149,
+   "failures": 0,
+   "errors": 0,
+   "skips": 4,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun1.json": {
+   "purpose": "re-run 1 of test_web_alarm_folder_picker after the F-S1 flake of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun2.json": {
+   "purpose": "re-run 2 of test_web_alarm_folder_picker after the F-S1 flake of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun3.json": {
+   "purpose": "re-run 3 of test_web_alarm_folder_picker after the F-S1 flake of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the message-context write protection (TEST-QA)",
+   "killed": 8,
+   "mutants": 9
+  },
+  "prestart.json": {
+   "purpose": "pre-start state before the first edit"
+  },
+  "red_before_fix.json": {
+   "purpose": "reproduction BEFORE the fix: the new message-context path tests on the unfixed context_storage.py (base No.474 bytes); expected RED",
+   "runner_exit": 1,
+   "tests_run": 13,
+   "failures": 22,
+   "errors": 2,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "reproduce_after_fix.json": {
+   "purpose": "standalone F-01 reproduction: working tree, after the fix",
+   "cases": 9,
+   "wrote_outside": 0,
+   "refused": 9
+  },
+  "reproduce_before_fix.json": {
+   "purpose": "standalone F-01 reproduction: base bytes (No.474), before the fix",
+   "cases": 9,
+   "wrote_outside": 7,
+   "refused": 0
+  },
+  "rotation.json": {}
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 24
+ },
+ "git_used": false,
+ "network_used": "none (loopback test servers of the regression only)",
+ "real_workspaces_used": false,
+ "live_or_paid_api_used": false,
+ "launcher_switched": false,
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 2024,
+   "sha256": "ff95344cdeda166640caf26794b5463f3913ccb1296bd30692a0d1dbb2bc49ad",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/final_state.json",
+   "bytes": 893,
+   "sha256": "d88f504bfeb0330bc9b53c9c0e56412b5071f70ac38e440cf6f8904fe0169149",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all.json",
+   "bytes": 166940,
+   "sha256": "5d31e068d2079c13736a7f06ca700b61b5145b78610b356ec9df3c4c6c771016",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all_run1.json",
+   "bytes": 167208,
+   "sha256": "31b2d7993b627d10d50ffa0d94ff3ec68f16969b58cc443cf4d6e356838a6bc1",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_focused.json",
+   "bytes": 22715,
+   "sha256": "96a246db0d6bd0abac54dc713f573ca2f968ba54f6c645fa6aa917f09ad79735",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun1.json",
+   "bytes": 2709,
+   "sha256": "e310eaf2c638f19fe37407ab3fc55c3e6b1eefafbea829679922dfffcd6eabca",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun2.json",
+   "bytes": 2710,
+   "sha256": "fa755ca6b9e93bec34683c6f475e537cac6d02b8cd945ca67ecfa90ca79f14f9",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun3.json",
+   "bytes": 2710,
+   "sha256": "a1fa8309d1ba50db22ab9a574f18eb64f21f9c540774fb01d2b71b15ff7b0a28",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 2495,
+   "sha256": "0fafad9097cf16070ad2cbd8304470e54ca1668cdcaec151926997d19f9b464f",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/prestart.json",
+   "bytes": 2787,
+   "sha256": "db7c9f3a07baf8d22465a71428b9ac16d5c66b5dfdb5f639d8fbc280083de315",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/red_before_fix.json",
+   "bytes": 7369,
+   "sha256": "38d0f9f10a54edfe595b1f5d88c88ed4ca53cce2f16a916c0716831a9ad8ba86",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/reproduce_after_fix.json",
+   "bytes": 2073,
+   "sha256": "2f32e087c3f24cd16084400bda9c50c38078d65016e8a4557eaad3ae9c9f5879",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/reproduce_before_fix.json",
+   "bytes": 2284,
+   "sha256": "c018f30597f235e913d0e403e26d614a32f92eed240e57cb2a68945fc98fb04e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotation.json",
+   "bytes": 1275,
+   "sha256": "3b7594e440a9d093c4c50960e41137616c3a1b265266b429d9cbe2c24ef01fe8",
+   "eol": "LF"
+  },
+  {
+   "path": "handoff_task.md",
+   "bytes": 11844,
+   "sha256": "e0cb50aaa4807b9a00e555b5dd71ae3e74a04c0c4f566245890462d6dd2a1299",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 28642,
+   "sha256": "3dd6417d5685b30b01b68798b2c12aef9584ef3855ad17efe6c2531be6539cd1",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2647,
+   "sha256": "ebe5cb485cca681db412161a7ec65f3cbd8703a4fcaf4da170ce8285da3e4f05",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/final_state.py",
+   "bytes": 2871,
+   "sha256": "e3b916349f5703f2e3132e44d29db2824cc8ed8d83fca0bc6648a636686adbb3",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 6758,
+   "sha256": "a23545dc1ecdc5ac82cf2f178d984d54022a20c02a8bdaba0b259263248a1f10",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/prestart.py",
+   "bytes": 3894,
+   "sha256": "4d0d61fb9f6d4035d082b6a2fff2c1ad7f3936f80ccd4c0b360c3ac914003a5a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1766,
+   "sha256": "fcb1e5d77ebdc5e7cb94da2cac94d3613e8269910f07da5222fd3ead5a32fe43",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/reproduce_f01.py",
+   "bytes": 5079,
+   "sha256": "843f70da2f0689db8f132cad7654537346191ce19e5d724d79067ec080d50940",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 8133,
+   "sha256": "db55363a802406688f6bf1a8d79bc9b1851d3ade92cc7349d6479fabead7dec6",
+   "eol": "LF"
+  }
+ ]
+}

@@ -879,5 +879,353 @@ class PortabilityTests(Base):
         self.assertEqual(self.card(moved, chat)["title"], "Перемещён")
 
 
+
+def tree(base: Path) -> dict[str, tuple]:
+    """Independent oracle of a folder: every entry with kind, lstat mtime (folders included, so even a file created
+    and removed again is seen), size and SHA-256; never descends into links or junctions."""
+    result: dict[str, tuple] = {".": ("dir", os.lstat(base).st_mtime_ns)}
+    stack = [base]
+    while stack:
+        folder = stack.pop()
+        with os.scandir(folder) as entries:
+            for entry in entries:
+                st = os.lstat(entry.path)
+                rel = Path(entry.path).relative_to(base).as_posix()
+                if cs._is_link_or_reparse(st):
+                    result[rel] = ("link", st.st_mtime_ns)
+                elif entry.is_dir(follow_symlinks=False):
+                    result[rel] = ("dir", st.st_mtime_ns)
+                    stack.append(Path(entry.path))
+                else:
+                    result[rel] = ("file", st.st_size, st.st_mtime_ns, hashlib.sha256(Path(entry.path).read_bytes()).hexdigest())
+    return result
+
+
+class MessageContextPathTests(Base):
+    """FOLLOWUP-WUA-S2-CONTEXT-PATH-001 / F-01: the message-context writers never write through a link.
+
+    A synthetic Workspace gets one RAW with one Context Variant; then one level of
+    .ultra/chats/<chat>/message_context/<message_id>/variants is moved out of the Workspace into a synthetic outside
+    folder and replaced by a Windows junction to it. Every writer must refuse with unsafe_storage_link, and the
+    outside folder must keep every name, time and byte (oracle: tree())."""
+
+    def fixture(self):
+        root, _, chat = self.workspace()
+        cs.commit_raw_message(root, chat, mid(1), "user", "исходный текст")
+        variant = cs.create_message_context_variant(root, chat, mid(1), "сжатый вариант", source="manual_edit")
+        outside = self.base / "outside"
+        outside.mkdir()
+        (outside / "keep.txt").write_text("чужие данные", encoding="utf-8")
+        return root, chat, variant["context_variant_id"], outside
+
+    def context(self, root: Path, chat: str) -> Path:
+        return root / ".ultra" / "chats" / chat / "message_context"
+
+    def relink(self, real: Path, target: Path) -> None:
+        """Move a real folder of the fixture out of the Workspace and leave a junction to it in its place."""
+        shutil.move(str(real), str(target))
+        self.junction(target, real)
+
+    def writers(self, root, chat, variant):
+        return {"create": lambda: cs.create_message_context_variant(root, chat, mid(1), "новый вариант", source="manual_edit"),
+                "create without activation": lambda: cs.create_message_context_variant(root, chat, mid(1), "ещё", source="manual_edit",
+                                                                                        activate=False),
+                "activate": lambda: cs.activate_message_context_variant(root, chat, mid(1), variant),
+                "restore": lambda: cs.restore_message_raw(root, chat, mid(1))}
+
+    def assert_refused_everywhere(self, root, chat, variant, outside, *, code="unsafe_storage_link"):
+        for name, call in self.writers(root, chat, variant).items():
+            with self.subTest(writer=name):
+                outside_before, inside_before = tree(outside), without_lock(snapshot(root))
+                with self.assertRaises(cs.StorageWriteError) as caught:
+                    call()
+                self.assertEqual(caught.exception.code, code)
+                self.assertEqual(tree(outside), outside_before, "the outside folder changed")
+                self.assertEqual(without_lock(snapshot(root)), inside_before, "the Workspace changed")
+
+    def test_a_junction_at_message_context_is_refused_by_every_writer(self):
+        root, chat, variant, outside = self.fixture()
+        self.relink(self.context(root, chat), outside / "message_context")
+        self.assert_refused_everywhere(root, chat, variant, outside)
+
+    def test_a_junction_at_the_message_folder_is_refused_by_every_writer(self):
+        root, chat, variant, outside = self.fixture()
+        self.relink(self.context(root, chat) / mid(1), outside / "message")
+        self.assert_refused_everywhere(root, chat, variant, outside)
+
+    def test_a_junction_at_variants_is_refused_by_every_writer(self):
+        root, chat, variant, outside = self.fixture()
+        self.relink(self.context(root, chat) / mid(1) / "variants", outside / "variants")
+        self.assert_refused_everywhere(root, chat, variant, outside)
+
+    def test_a_junction_at_message_context_of_a_message_without_context_yet(self):
+        root, chat, _, outside = self.fixture()
+        cs.commit_raw_message(root, chat, mid(2), "assistant", "второе сообщение")
+        (outside / "empty").mkdir()
+        self.junction(outside / "empty", self.context(root, chat) / mid(2))
+        before = tree(outside)
+        for name, call in (("create", lambda: cs.create_message_context_variant(root, chat, mid(2), "x", source="manual_edit")),
+                           ("restore", lambda: cs.restore_message_raw(root, chat, mid(2)))):
+            with self.subTest(writer=name):
+                with self.assertRaises(cs.StorageWriteError) as caught:
+                    call()
+                self.assertEqual(caught.exception.code, "unsafe_storage_link")
+                self.assertEqual(tree(outside), before)
+
+    def test_directory_symlinks_are_refused_when_the_platform_allows_creating_them(self):
+        root, chat, variant, outside = self.fixture()
+        target = outside / "variants"
+        variants = self.context(root, chat) / mid(1) / "variants"
+        shutil.move(str(variants), str(target))
+        try:
+            os.symlink(target, variants, target_is_directory=True)
+        except OSError:
+            shutil.move(str(target), str(variants))
+            self.skipTest("symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)")
+        self.junctions.append(variants)
+        self.assert_refused_everywhere(root, chat, variant, outside)
+
+    def test_a_state_file_that_is_a_folder_is_never_written_through(self):
+        root, chat, variant, outside = self.fixture()
+        state = self.context(root, chat) / mid(1) / "state.json"
+        state.unlink()
+        state.mkdir()
+        before = without_lock(snapshot(root))
+        for name, call in self.writers(root, chat, variant).items():
+            with self.subTest(state="folder", writer=name):
+                with self.assertRaises((cs.StorageWriteError, RuntimeError)):
+                    call()
+                self.assertEqual(without_lock(snapshot(root)), before)
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.restore_message_raw(root, chat, mid(1))
+        self.assertEqual(caught.exception.code, "context_state_damaged")
+
+    def test_a_state_file_symlink_is_refused_when_the_platform_allows_creating_one(self):
+        root, chat, variant, outside = self.fixture()
+        state = self.context(root, chat) / mid(1) / "state.json"
+        state.unlink()
+        (outside / "state.json").write_text("{}", encoding="utf-8")
+        try:
+            os.symlink(outside / "state.json", state)
+        except OSError:
+            self.skipTest("symlink creation needs a privilege this host does not grant (NOT RUN, folder case covered)")
+        before = tree(outside)
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.restore_message_raw(root, chat, mid(1))
+        self.assertEqual((caught.exception.code, tree(outside)), ("unsafe_storage_link", before))
+
+    def test_a_link_made_after_the_first_check_is_still_refused_before_any_write(self):
+        root, chat, variant, outside = self.fixture()
+        real_load = cs.load_raw_message
+        for name, call in self.writers(root, chat, variant).items():
+            with self.subTest(writer=name):
+                context = self.context(root, chat)
+                target = outside / f"moved_{len(list(outside.iterdir()))}"
+                swapped = []
+
+                def swap_then_load(*args, **kwargs):
+                    if not swapped:  # the folder becomes a junction after the writer's first look
+                        self.relink(context, target)
+                        swapped.append(tree(target))
+                    return real_load(*args, **kwargs)
+                with patch.object(cs, "load_raw_message", side_effect=swap_then_load):
+                    with self.assertRaises(cs.StorageWriteError) as caught:
+                        call()
+                self.assertEqual(len(swapped), 1, "the swap did not happen inside the writer")
+                self.assertEqual(caught.exception.code, "unsafe_storage_link")
+                self.assertEqual(tree(target), swapped[0], "the folder moved outside changed")
+                # put the real folder back for the next writer (outside stays as the oracle saw it)
+                os.rmdir(context)
+                self.junctions.remove(context)
+                shutil.move(str(target), str(context))
+        self.assertEqual(sorted(p.name for p in outside.iterdir()), ["keep.txt"])
+
+    def test_a_chat_folder_swapped_after_the_first_check_gets_nothing_created_inside(self):
+        root, _, chat = self.workspace()
+        cs.commit_raw_message(root, chat, mid(1), "user", "без контекста")  # no message_context folder yet
+        outside = self.base / "outside"
+        outside.mkdir()
+        chat_dir = root / ".ultra" / "chats" / chat
+        real_load = cs.load_raw_message
+        for name, call in (("create", lambda: cs.create_message_context_variant(root, chat, mid(1), "x", source="manual_edit")),
+                           ("restore", lambda: cs.restore_message_raw(root, chat, mid(1)))):
+            with self.subTest(writer=name):
+                target = outside / f"chat_{name}"
+                seen = []
+
+                def swap_then_load(*args, **kwargs):
+                    if not seen:  # the whole chat folder becomes a junction after the writer's first look
+                        self.relink(chat_dir, target)
+                        seen.append(tree(target))
+                    return real_load(*args, **kwargs)
+                with patch.object(cs, "load_raw_message", side_effect=swap_then_load):
+                    with self.assertRaises(cs.StorageWriteError) as caught:
+                        call()
+                self.assertEqual(len(seen), 1, "the swap did not happen inside the writer")
+                self.assertEqual(caught.exception.code, "unsafe_storage_link")
+                self.assertEqual(tree(target), seen[0], "a folder was created inside the swapped chat")
+                os.rmdir(chat_dir)
+                self.junctions.remove(chat_dir)
+                shutil.move(str(target), str(chat_dir))
+        self.assertFalse((chat_dir / "message_context").exists())
+
+    def test_an_internal_context_writer_outside_the_workspace_lock_refuses(self):
+        root, chat, variant, _ = self.fixture()
+        before = without_lock(snapshot(root))
+        for name, call in (("restore", lambda: cs._restore_message_raw(root, chat, mid(1))),
+                           ("activate", lambda: cs._activate_message_context_variant(root, chat, mid(1), variant)),
+                           ("create", lambda: cs._create_message_context_variant(root, chat, mid(1), "x", source="manual_edit",
+                                                                                 activate=False))):
+            with self.subTest(writer=name):
+                with self.assertRaisesRegex(RuntimeError, "вне блокировки"):
+                    call()
+        self.assertEqual(without_lock(snapshot(root)), before)
+
+    def test_ordinary_folders_keep_working_and_old_data_stays_byte_identical(self):
+        root, workspace_id, chat = self.workspace()
+        raw = cs.commit_raw_message(root, chat, mid(1), "assistant", "ответ")
+        raw_path = Path(raw["path"])
+        fixed = {p: p.read_bytes() for p in (raw_path, root / ".ultra" / "workspace.json",
+                                             root / ".ultra" / "chats" / chat / "metadata.json")}
+        context = self.context(root, chat)
+        self.assertFalse(context.exists())
+        first = cs.create_message_context_variant(root, chat, mid(1), "первый", source="manual_edit", activate=False)
+        self.assertEqual(cs.get_message_context_state(root, chat, mid(1))["active_representation"], "raw")
+        first_path = context / mid(1) / "variants" / f"{first['context_variant_id']}.json"
+        stored = json.loads(first_path.read_bytes())
+        self.assertEqual(first_path.read_bytes(), (json.dumps(stored, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+        self.assertEqual({k: v for k, v in first.items() if k != "path"}, stored)
+        self.assertEqual(Path(first["path"]), first_path)
+        state = cs.activate_message_context_variant(root, chat, mid(1), first["context_variant_id"])
+        state_path = context / mid(1) / "state.json"
+        self.assertEqual(json.loads(state_path.read_bytes()), state)
+        second = cs.create_message_context_variant(root, chat, mid(1), "второй", source="manual_edit",
+                                                   parent_variant_id=first["context_variant_id"])
+        variants_before = {p.name: p.read_bytes() for p in (context / mid(1) / "variants").iterdir()}
+        self.assertEqual(len(variants_before), 2)
+        restored = cs.restore_message_raw(root, chat, mid(1))
+        self.assertEqual((restored["active_representation"], restored["active_variant_id"]), ("raw", None))
+        self.assertEqual({p.name: p.read_bytes() for p in (context / mid(1) / "variants").iterdir()}, variants_before,
+                         "a restore must keep every Context Variant")
+        cs.activate_message_context_variant(root, chat, mid(1), second["context_variant_id"])
+        self.assertEqual(cs.get_message_working_representation(root, chat, mid(1))["text"], "второй")
+        self.assertEqual({p: p.read_bytes() for p in fixed}, fixed, "RAW, workspace.json and the chat card are untouched")
+        self.assertEqual((cs.read_workspace_identity_bounded(root)["workspace_id"], self.card(root, chat)["chat_id"],
+                          json.loads(raw_path.read_bytes())["message_id"]), (workspace_id, chat, mid(1)))
+        self.assertEqual(self.leftovers(root), [])
+
+    def test_damaged_or_newer_state_is_handled_explicitly(self):
+        root, chat, variant, _ = self.fixture()
+        state = self.context(root, chat) / mid(1) / "state.json"
+        good = json.loads(state.read_bytes())
+        variants = self.context(root, chat) / mid(1) / "variants"
+        kept = {p.name: p.read_bytes() for p in variants.iterdir()}
+        state.write_text(json.dumps({**good, "schema_version": 2}), encoding="utf-8")
+        newer = state.read_bytes()
+        before = without_lock(snapshot(root))
+        for name, call in self.writers(root, chat, variant).items():
+            with self.subTest(newer=name):
+                with self.assertRaises((cs.StorageWriteError, RuntimeError)):
+                    call()
+                self.assertEqual(without_lock(snapshot(root)), before, "a newer state is never overwritten")
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.restore_message_raw(root, chat, mid(1))
+        self.assertEqual((caught.exception.code, state.read_bytes()), ("unsupported_version", newer))
+        for label, payload in (("broken json", b"{"), ("array", b"[]"), ("other message", json.dumps({**good, "message_id": mid(9)}).encode()),
+                               ("unknown representation", json.dumps({**good, "active_representation": "x"}).encode())):
+            with self.subTest(damaged=label):
+                state.write_bytes(payload)
+                for name in ("create", "activate"):
+                    before = without_lock(snapshot(root))
+                    with self.assertRaises(RuntimeError):
+                        self.writers(root, chat, variant)[name]()
+                    self.assertEqual(without_lock(snapshot(root)), before)
+                repaired = cs.restore_message_raw(root, chat, mid(1))  # the explicit user repair of a damaged pointer
+                self.assertEqual((repaired["active_representation"], json.loads(state.read_bytes())), ("raw", repaired))
+                self.assertEqual({p.name: p.read_bytes() for p in variants.iterdir()}, kept, "variants survive a repair")
+
+
+class MessageContextLockTests(Base):
+    def test_context_writers_wait_for_another_process_and_refuse_visibly(self):
+        root, _, chat = self.workspace()
+        cs.commit_raw_message(root, chat, mid(1), "user", "x")
+        variant = cs.create_message_context_variant(root, chat, mid(1), "сжато", source="manual_edit")["context_variant_id"]
+        held = self.base / "held"
+        holder = self.spawn(LockTests.HOLD, root, held, 30)
+        self.wait_for(held)
+        before = without_lock(snapshot(root))
+        with patch.object(cs, "WRITER_LOCK_TIMEOUT_SECONDS", 0.4):
+            for name, call in (("create", lambda: cs.create_message_context_variant(root, chat, mid(1), "y", source="manual_edit")),
+                               ("activate", lambda: cs.activate_message_context_variant(root, chat, mid(1), variant)),
+                               ("restore", lambda: cs.restore_message_raw(root, chat, mid(1)))):
+                with self.subTest(writer=name):
+                    with self.assertRaises(cs.WorkspaceBusyError):
+                        call()
+        self.assertEqual(without_lock(snapshot(root)), before)
+        holder.kill()
+        holder.communicate(timeout=30)
+        self.assertEqual(cs.restore_message_raw(root, chat, mid(1))["active_representation"], "raw")
+
+    def test_two_processes_create_variants_and_restore_without_losing_any(self):
+        root, _, chat = self.workspace()
+        cs.commit_raw_message(root, chat, mid(1), "user", "общий RAW")
+        code = ("root, chat, n = sys.argv[2], sys.argv[6], int(sys.argv[5])\nmade = []\n"
+                "for k in range(12):\n"
+                "    made.append(cs.create_message_context_variant(root, chat, sys.argv[7], 'p%d-%d' % (n, k), source='manual_edit')['context_variant_id'])\n"
+                "    if k % 4 == 3:\n        cs.restore_message_raw(root, chat, sys.argv[7])\n"
+                "print(json.dumps(made))\n")
+        children = self._start(code, root, chat)
+        made = [json.loads(self.finish(child)) for child in children]
+        variants = self.context_variants(root, chat)
+        self.assertEqual(sorted(variants), sorted(v for group in made for v in group), "a Context Variant was lost")
+        self.assertEqual(sorted(json.loads((self.ctx(root, chat) / f"{v}.json").read_bytes())["text"] for v in variants),
+                         sorted(f"p{n}-{k}" for n in range(2) for k in range(12)))
+        state = cs.get_message_context_state(root, chat, mid(1))
+        self.assertIn(state["active_representation"], {"raw", "summary"})
+        if state["active_representation"] == "summary":
+            self.assertIn(state["active_variant_id"], variants)
+        self.assertEqual(self.leftovers(root), [])
+
+    def _start(self, code, root, chat):
+        go = self.base / "go"
+        children = []
+        for n in range(2):
+            ready = self.base / f"ready{n}"
+            children.append(self.spawn(ConcurrencyTests.GO + code, root, ready, go, n, chat, mid(1)))
+        for n in range(2):
+            self.wait_for(self.base / f"ready{n}")
+        go.write_text("1")
+        return children
+
+    def ctx(self, root, chat):
+        return root / ".ultra" / "chats" / chat / "message_context" / mid(1) / "variants"
+
+    def context_variants(self, root, chat):
+        return [p.name[:-5] for p in self.ctx(root, chat).iterdir() if p.name.endswith(".json")]
+
+    def test_a_writer_that_dies_mid_publication_leaves_the_old_state_and_no_visible_half(self):
+        root, _, chat = self.workspace()
+        cs.commit_raw_message(root, chat, mid(1), "user", "x")
+        variant = cs.create_message_context_variant(root, chat, mid(1), "сжато", source="manual_edit")["context_variant_id"]
+        state = root / ".ultra" / "chats" / chat / "message_context" / mid(1) / "state.json"
+        old = state.read_bytes()
+        restore = "cs.restore_message_raw(sys.argv[2], sys.argv[5], sys.argv[6])\n"
+        child = self.spawn(CrashTests.DIE_AT + restore, root, "replace", "before", chat, mid(1))
+        child.communicate(timeout=120)
+        self.assertEqual(child.returncode, 17, "the child did not die at the replacement")
+        self.assertEqual(state.read_bytes(), old, "the old state is intact")
+        self.assertEqual(len(self.leftovers(root)), 1, "only the hidden temporary file of the dead writer")
+        self.assertEqual(cs.get_message_context_state(root, chat, mid(1))["active_variant_id"], variant)
+        publish = "rename" if os.name == "nt" else "link"
+        create = "cs.create_message_context_variant(sys.argv[2], sys.argv[5], sys.argv[6], 'не дошёл', source='manual_edit')\n"
+        child = self.spawn(CrashTests.DIE_AT + create, root, publish, "before", chat, mid(1))
+        child.communicate(timeout=120)
+        self.assertEqual(child.returncode, 17, "the child did not die at the variant publication")
+        variants = root / ".ultra" / "chats" / chat / "message_context" / mid(1) / "variants"
+        self.assertEqual([p.name for p in variants.iterdir() if p.name.endswith(".json")], [f"{variant}.json"])
+        self.assertEqual(cs.restore_message_raw(root, chat, mid(1))["active_representation"], "raw", "the restart repairs nothing by hand")
+        self.assertNotEqual(state.read_bytes(), old)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,103 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "mutation gate of the message-context write protection (TEST-QA)",
+ "targets": [
+  "test_ultra_chat_storage",
+  "test_message_context"
+ ],
+ "control": {
+  "targets": [
+   "test_ultra_chat_storage",
+   "test_message_context"
+  ],
+  "exit": 0,
+  "tests_run": 61,
+  "failing": [],
+  "isolation_violations": 0,
+  "verdict": "PASS"
+ },
+ "results": [
+  {
+   "mutant": "R01 no first check in any context writer",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_junction_at_variants_is_refused_by_every_writer"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R01a no first check in activate",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_junction_at_variants_is_refused_by_every_writer"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R01b no first check in restore",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_junction_at_variants_is_refused_by_every_writer"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R01c no first check in create (expected equivalent for writes)",
+   "exit": 0,
+   "failing_tests": [],
+   "isolation_violations": 0,
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "R02 folders made by plain mkdir right before the write",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_link_made_after_the_first_check_is_still_refused_before_any_write"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R03 restore overwrites a newer state",
+   "exit": 1,
+   "failing_tests": [
+    "test_damaged_or_newer_state_is_handled_explicitly"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R04 the kind of state.json not checked",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_state_file_that_is_a_folder_is_never_written_through"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R05 the lock guard of the internal writers removed",
+   "exit": 1,
+   "failing_tests": [
+    "test_an_internal_context_writer_outside_the_workspace_lock_refuses"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "R06 the parents of message_context not verified again",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_chat_folder_swapped_after_the_first_check_gets_nothing_created_inside"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 9,
+ "killed": 8,
+ "temp_leftovers_new": []
+}

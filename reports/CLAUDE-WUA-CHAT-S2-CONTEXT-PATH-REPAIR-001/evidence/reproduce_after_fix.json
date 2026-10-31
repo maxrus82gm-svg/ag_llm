@@ -1,0 +1,82 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "standalone F-01 reproduction: working tree, after the fix",
+ "oracle": "names and SHA-256 of the outside folder before/after, without context_storage code",
+ "cases": 9,
+ "wrote_outside": 0,
+ "refused": 9,
+ "rows": [
+  {
+   "junction_at": "message_context",
+   "writer": "create",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "message_context",
+   "writer": "activate",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "message_context",
+   "writer": "restore",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "message",
+   "writer": "create",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "message",
+   "writer": "activate",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "message",
+   "writer": "restore",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "variants",
+   "writer": "create",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "variants",
+   "writer": "activate",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "variants",
+   "writer": "restore",
+   "outcome": "refused unsafe_storage_link",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  }
+ ]
+}

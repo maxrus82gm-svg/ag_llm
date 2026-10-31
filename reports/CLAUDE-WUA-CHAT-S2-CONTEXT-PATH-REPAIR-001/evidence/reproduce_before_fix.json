@@ -1,0 +1,100 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "standalone F-01 reproduction: base bytes (No.474), before the fix",
+ "oracle": "names and SHA-256 of the outside folder before/after, without context_storage code",
+ "cases": 9,
+ "wrote_outside": 7,
+ "refused": 0,
+ "rows": [
+  {
+   "junction_at": "message_context",
+   "writer": "create",
+   "outcome": "accepted",
+   "outside_new_entries": [
+    "moved/<msg>/variants/ctxv_180760c35719409dbcc51be90bb1205e.json"
+   ],
+   "outside_changed_files": [
+    "moved/<msg>/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "message_context",
+   "writer": "activate",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [
+    "moved/<msg>/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "message_context",
+   "writer": "restore",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [
+    "moved/<msg>/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "message",
+   "writer": "create",
+   "outcome": "accepted",
+   "outside_new_entries": [
+    "moved/variants/ctxv_6085267f83ac49ebb5e93f359e746f2e.json"
+   ],
+   "outside_changed_files": [
+    "moved/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "message",
+   "writer": "activate",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [
+    "moved/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "message",
+   "writer": "restore",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [
+    "moved/state.json"
+   ],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "variants",
+   "writer": "create",
+   "outcome": "accepted",
+   "outside_new_entries": [
+    "moved/ctxv_abe52188974242bb85ce943caebe4b3f.json"
+   ],
+   "outside_changed_files": [],
+   "wrote_outside": true
+  },
+  {
+   "junction_at": "variants",
+   "writer": "activate",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  },
+  {
+   "junction_at": "variants",
+   "writer": "restore",
+   "outcome": "accepted",
+   "outside_new_entries": [],
+   "outside_changed_files": [],
+   "wrote_outside": false
+  }
+ ]
+}

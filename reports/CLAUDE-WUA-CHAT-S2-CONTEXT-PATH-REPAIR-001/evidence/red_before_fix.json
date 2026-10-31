@@ -1,0 +1,161 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "reproduction BEFORE the fix: the new message-context path tests on the unfixed context_storage.py (base No.474 bytes); expected RED",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "project .venv",
+ "targets": [
+  "test_ultra_chat_storage.MessageContextPathTests",
+  "test_ultra_chat_storage.MessageContextLockTests"
+ ],
+ "runner_exit": 1,
+ "wall_seconds": 14.551,
+ "tests_run": 13,
+ "failures": 22,
+ "errors": 2,
+ "skips": 2,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_is_refused_by_every_writer (writer='create')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_is_refused_by_every_writer (writer='create without activation')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_is_refused_by_every_writer (writer='activate')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_is_refused_by_every_writer (writer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_of_a_message_without_context_yet (writer='create')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_message_context_of_a_message_without_context_yet (writer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_the_message_folder_is_refused_by_every_writer (writer='create')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_the_message_folder_is_refused_by_every_writer (writer='create without activation')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_the_message_folder_is_refused_by_every_writer (writer='activate')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_the_message_folder_is_refused_by_every_writer (writer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_variants_is_refused_by_every_writer (writer='create')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_variants_is_refused_by_every_writer (writer='create without activation')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_variants_is_refused_by_every_writer (writer='activate')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_junction_at_variants_is_refused_by_every_writer (writer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_link_made_after_the_first_check_is_still_refused_before_any_write (writer='create')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_link_made_after_the_first_check_is_still_refused_before_any_write (writer='create without activation')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_link_made_after_the_first_check_is_still_refused_before_any_write (writer='activate')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_link_made_after_the_first_check_is_still_refused_before_any_write (writer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_link_made_after_the_first_check_is_still_refused_before_any_write",
+   "status": "FAIL",
+   "detail": "+ ['keep.txt']"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_state_file_symlink_is_refused_when_the_platform_allows_creating_one",
+   "status": "SKIP",
+   "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, folder case covered)"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_state_file_that_is_a_folder_is_never_written_through (state='folder', writer='restore')",
+   "status": "FAIL",
+   "detail": "PermissionError: [WinError 5] Отказано в доступе: '<path>' -> '<path>'"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_a_state_file_that_is_a_folder_is_never_written_through",
+   "status": "ERROR",
+   "detail": "PermissionError: [WinError 5] Отказано в доступе: '<path>' -> '<path>'"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_damaged_or_newer_state_is_handled_explicitly (newer='restore')",
+   "status": "FAIL",
+   "detail": "AssertionError: (<class 'context_storage.StorageWriteError'>, <class 'RuntimeError'>) not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_damaged_or_newer_state_is_handled_explicitly",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_directory_symlinks_are_refused_when_the_platform_allows_creating_them",
+   "status": "SKIP",
+   "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, junctions covered)"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextPathTests.test_ordinary_folders_keep_working_and_old_data_stays_byte_identical",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextLockTests.test_a_writer_that_dies_mid_publication_leaves_the_old_state_and_no_visible_half",
+   "status": "FAIL",
+   "detail": "AssertionError: 0 != 17 : the child did not die at the variant publication"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextLockTests.test_context_writers_wait_for_another_process_and_refuse_visibly",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.MessageContextLockTests.test_two_processes_create_variants_and_restore_without_losing_any",
+   "status": "PASS"
+  }
+ ]
+}

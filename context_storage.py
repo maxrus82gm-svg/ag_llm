@@ -1071,8 +1071,7 @@ def _activate_message_context_variant(
         "active_variant_id": context_variant_id,
         "updated_at": _utc_now_iso(),
     }
-    state_path = _message_context_root(chat_dir, message_id) / "state.json"
-    _atomic_write_json(state_path, state)
+    _write_message_context_state(root, chat_id, message_id, state)
     return state
 
 
@@ -1127,8 +1126,11 @@ def _create_message_context_variant(
         if not isinstance(compression, dict):
             raise TypeError("compression metadata должна быть словарём.")
         variant["compression"] = dict(compression)
-    path = _message_context_root(chat_dir, message_id) / "variants" / f"{variant_id}.json"
-    _atomic_write_json(path, variant)
+    # A Context Variant is a new, never replaced file: exclusive publication into the verified variants folder.
+    anchor, folder = _message_context_folder_for_write(root, chat_id, message_id, variants=True)
+    variant_parts = folder + (f"{variant_id}.json",)
+    _publish_new_file(anchor, variant_parts, _json_bytes(variant))
+    path = anchor.path(variant_parts)
     if activate:
         activate_message_context_variant(
             root,
@@ -1148,17 +1150,21 @@ def _restore_message_raw(
     root, workspace_metadata = _require_existing_workspace(workspace_root)
     chat_dir, _chat_metadata = _require_chat(root, workspace_metadata, chat_id)
     load_raw_message(root, chat_id, message_id)
+    # Restore is the user's repair of a damaged pointer, but a state of a newer format is never overwritten.
+    _refuse_newer_message_context_state(root, chat_id, message_id)
     state = _default_message_context_state(
         workspace_metadata["workspace_id"], chat_id, message_id
     )
     state["updated_at"] = _utc_now_iso()
-    _atomic_write_json(_message_context_root(chat_dir, message_id) / "state.json", state)
+    _write_message_context_state(root, chat_id, message_id, state)
     return state
 
 
 
-# Message context writers: the same lock, identity and path rule as every other writer (stage 2). The bodies above
-# keep their checks unchanged; a nested call (create -> activate) re-enters the lock held by its own thread.
+# Message context writers: the same lock, identity and path rule as every other writer (stage 2). Repair of F-01
+# (FOLLOWUP-WUA-S2-CONTEXT-PATH-001): every existing level of message_context/<message_id>/variants is checked for
+# links before anything is read or written, and the bodies above write only into folders created or verified
+# level by level right before the write. A nested call (create -> activate) re-enters the lock of its thread.
 def activate_message_context_variant(
     workspace_root: str | Path,
     chat_id: str,
@@ -1167,7 +1173,8 @@ def activate_message_context_variant(
     *,
     require_raw: bool = False,
 ) -> dict[str, Any]:
-    with _chat_writer(workspace_root, chat_id):
+    with _chat_writer(workspace_root, chat_id) as writer:
+        _refuse_linked_message_context(writer, chat_id, message_id)
         return _activate_message_context_variant(
             workspace_root, chat_id, message_id, context_variant_id, require_raw=require_raw
         )
@@ -1186,7 +1193,8 @@ def create_message_context_variant(
     activate: bool = True,
     require_raw: bool = False,
 ) -> dict[str, Any]:
-    with _chat_writer(workspace_root, chat_id):
+    with _chat_writer(workspace_root, chat_id) as writer:
+        _refuse_linked_message_context(writer, chat_id, message_id)
         return _create_message_context_variant(
             workspace_root,
             chat_id,
@@ -1206,7 +1214,8 @@ def restore_message_raw(
     chat_id: str,
     message_id: str,
 ) -> dict[str, Any]:
-    with _chat_writer(workspace_root, chat_id):
+    with _chat_writer(workspace_root, chat_id) as writer:
+        _refuse_linked_message_context(writer, chat_id, message_id)
         return _restore_message_raw(workspace_root, chat_id, message_id)
 
 
@@ -2163,3 +2172,117 @@ def _read_existing_raw(writer: _WorkspaceWriter, parts: tuple[str, ...]) -> dict
 def _raw_canonical(record: dict[str, Any]) -> dict[str, Any]:
     """Fields that make two RAW records the same message; ``created_at`` is when, not what."""
     return {key: record[key] for key in _RAW_COMPARED_FIELDS if key in record}
+
+
+# ---------------------------------------------------------------------------
+# Message context storage under the writer contract (repair of F-01, FOLLOWUP-WUA-S2-CONTEXT-PATH-001).
+#
+# .ultra/chats/<chat_id>/message_context/<message_id>/{state.json, variants/<ctxv_id>.json} is written only through
+# folders that are real directories under the pinned Workspace root. Two checks, both built on the stage-2 helpers:
+#   1. before anything is read or written (_refuse_linked_message_context): every EXISTING level is not a link and
+#      resolves under the root - a pre-existing junction or symlink is refused, nothing is created;
+#   2. right before each write (_message_context_folder_for_write): every level from .ultra down is verified again
+#      and a missing level is created only inside a verified parent, so a link made after check 1 is refused too.
+# The file itself is published with the temporary file's location checked before any byte is written and read back
+# afterwards. A swap in the remaining window (after the temporary file is checked, before the rename) is only
+# detected by the read-back; the stage 0 contract does not promise defence against another program of the same user.
+
+_MAX_MESSAGE_CONTEXT_STATE_BYTES = 64 * 1024
+
+
+def _message_context_parts(chat_id: str, message_id: str) -> tuple[str, ...]:
+    return (ULTRA_DIRNAME, "chats", chat_id, "message_context", message_id)
+
+
+def _refuse_linked_message_context(writer: _WorkspaceWriter, chat_id: str, message_id: str) -> None:
+    """Every existing level of message_context/<message_id>/variants is a real folder under the root (check 1)."""
+    _validate_message_id(message_id)
+    parts = (ULTRA_DIRNAME, "chats", chat_id)
+    for name in ("message_context", message_id, "variants"):
+        parts = parts + (name,)
+        if not os.path.lexists(writer.anchor.path(parts)):
+            return
+        _verify_write_directory(writer.anchor, parts)
+
+
+def _message_context_folder_for_write(
+    root: Path, chat_id: str, message_id: str, *, variants: bool = False
+) -> tuple[_StorageAnchor, tuple[str, ...]]:
+    """The verified folder a context writer writes into, created level by level only inside verified parents (check 2).
+
+    Called by the internal writers, always under the Workspace writer lock of this thread (checked here)."""
+    anchor = _write_anchor(root)
+    if anchor.expected((ULTRA_DIRNAME, LOCKS_DIRNAME, WRITER_LOCK_NAME)) not in _held_writer_locks():
+        raise RuntimeError("Запись контекста сообщения вне блокировки Workspace запрещена.")
+    for parts in ((ULTRA_DIRNAME,), (ULTRA_DIRNAME, "chats"), (ULTRA_DIRNAME, "chats", chat_id)):
+        _verify_write_directory(anchor, parts)
+    folder = _message_context_parts(chat_id, message_id)
+    _ensure_write_directory(anchor, folder[:-1])
+    _ensure_write_directory(anchor, folder)
+    if variants:
+        folder = folder + ("variants",)
+        _ensure_write_directory(anchor, folder)
+    return anchor, folder
+
+
+def _replace_verified(anchor: _StorageAnchor, parts: tuple[str, ...], payload: bytes) -> None:
+    """Replace one file atomically: temporary file (O_EXCL) checked in place before any byte, fsync, replace with the
+    bounded retry, read back. The counterpart of _publish_new_file for a file that is meant to be replaced."""
+    directory = anchor.path(parts[:-1])
+    target = directory / parts[-1]
+    temp = directory / f".{parts[-1]}.{uuid.uuid4().hex}.tmp"
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(temp, flags, 0o600)
+    try:
+        try:
+            if os.path.normcase(_final_path_of_fd(fd)) != anchor.expected(parts[:-1] + (temp.name,)):
+                raise _write_refusal(StorageReadError("unsafe_storage_link"))
+            view = memoryview(payload)
+            while view:
+                view = view[os.write(fd, view):]
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        _replace_with_retry(temp, target)
+    finally:
+        try:
+            os.unlink(temp)
+        except FileNotFoundError:
+            pass
+    _verify_published(anchor, parts, payload)
+
+
+def _write_message_context_state(root: Path, chat_id: str, message_id: str, state: dict[str, Any]) -> None:
+    anchor, folder = _message_context_folder_for_write(root, chat_id, message_id)
+    target = folder + ("state.json",)
+    try:
+        st = os.lstat(anchor.path(target))
+    except FileNotFoundError:
+        st = None
+    if st is not None:
+        if _is_link_or_reparse(st):
+            raise _write_refusal(StorageReadError("unsafe_storage_link"))
+        if not stat.S_ISREG(st.st_mode):
+            raise StorageWriteError(
+                "context_state_damaged", f"MESSAGE CONTEXT state не является обычным файлом: {message_id}"
+            )
+    _replace_verified(anchor, target, _json_bytes(state))
+
+
+def _refuse_newer_message_context_state(root: Path, chat_id: str, message_id: str) -> None:
+    """A state.json of a newer format is never overwritten; a missing or damaged one may be (restore repairs it)."""
+    anchor = _write_anchor(root)
+    try:
+        data = _read_json_bounded(
+            anchor, _message_context_parts(chat_id, message_id) + ("state.json",), _MAX_MESSAGE_CONTEXT_STATE_BYTES
+        )
+    except StorageReadError as exc:
+        if exc.code == "unsafe_storage_link":
+            raise _write_refusal(exc) from None
+        return  # missing, damaged, unreadable or not a file: decided by the write itself
+    version = data.get("schema_version") if isinstance(data, dict) else None
+    if isinstance(version, int) and not isinstance(version, bool) and version > MESSAGE_CONTEXT_SCHEMA_VERSION:
+        raise StorageWriteError(
+            "unsupported_version",
+            f"MESSAGE CONTEXT state новее поддерживаемой версии ({version!r}): перезапись запрещена.",
+        )

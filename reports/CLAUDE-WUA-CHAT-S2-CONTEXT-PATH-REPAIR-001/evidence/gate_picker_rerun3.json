@@ -1,0 +1,82 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+ "purpose": "re-run 3 of test_web_alarm_folder_picker after the F-S1 flake of all run 1",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "project .venv",
+ "targets": [
+  "test_web_alarm_folder_picker"
+ ],
+ "runner_exit": 0,
+ "wall_seconds": 10.435,
+ "tests_run": 16,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_body_and_media_type_are_strict",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_capability_get_is_pure_and_does_not_open_dialog",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_disabled_mode_is_unavailable_without_side_effects",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_foreign_capability_get_does_not_disclose_token",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_native_route_rejects_other_methods",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_non_ascii_capability_is_rejected_before_native_helper",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_remote_bind_metadata_is_rejected_even_for_loopback_client",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_selected_path_and_cancel_do_not_register_or_mutate",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_single_flight_and_release_after_completion",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_timeout_and_startup_failure_are_honest_and_release_lock",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_ui_cannot_be_framed_by_external_site",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerHttpTests.test_wrong_origin_host_token_and_fetch_metadata_never_reach_helper",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerWorkerTests.test_default_server_and_broker_are_disabled",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerWorkerTests.test_invalid_native_outputs_fail_closed_without_writes",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerWorkerTests.test_native_selection_uses_existing_directory_dialog_and_destroys_owner",
+   "status": "PASS"
+  },
+  {
+   "test": "test_web_alarm_folder_picker.PickerWorkerTests.test_real_bounded_subprocess_is_killed_and_reaped",
+   "status": "PASS"
+  }
+ ]
+}
