@@ -12423,3 +12423,10 @@ reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/
 - **Исполнение:** Claude 008, коммит №473 `main@c555312dbdcb5bd3e85e0bebebb9d708f578b6cb`, общий writer Workspace/Chat/RAW и HTTP create/rename; `reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/report.md`, `manifest.json`, `evidence/`; author 1076 PASS/2 SKIP full, 140/140 JS, 39/39 mutations.
 - **Independent WEB18:** пересчитаны SHA-256 8/8 изменённых/новых инженерных файлов и структура author evidence. Непроверенные вложенные пути `message_context` при записи вариантов/состояния (F-01) допускают внешний directory junction; подробный протокол `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md`. Независимые runtime/Windows/CI **NOT RUN**.
 - **Вердикт:** **REVISE / DOC ITERATION CLOSED / PRODUCT NOT ACCEPTED**. №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` OPEN / successor UNASSIGNED; №06 `EVT-WEB18-S2-REVISE-20261031`. Stage3/live/paid не разрешены; исправление отдельной пользовательской TASK. Предыдущие verdict сохранены.
+
+
+## 2026-10-31 — CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001 — ограниченный PASS по F-01
+
+- **Постановка:** `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, БЛОК 1.1, SHA-256 копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbeb09dd7a12b9517be363b` (см. манифест; фактический SHA копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbeb09dd7a12b9517be363b`); CHAT-ONLY AMENDMENT нет.
+- **Автор:** Claude 008, №475 `5678414d`, `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/report.md`, manifest, evidence. До ремонта 7/9 внешних записей; после 0/9. Focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8/9; first full run 1075 PASS/1 ERROR/2 SKIP (в авторском report ошибочно 1077 PASS).
+- **Independent:** SHA-256/bytes 4/4, source/evidence/negative oracle reviewed; Python/CI/Windows runtime NOT RUN. **Вердикт:** PASS / SOURCE+AUTHOR-EVIDENCE (F-01), DOC ITERATION CLOSED, не FULL RUNTIME. №05 `REG-WEB18-S2-REPAIR-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED, `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN; №06 `EVT-WEB18-S2-REPAIR-PASS-20261031`; `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. №473 исторически REVISE.

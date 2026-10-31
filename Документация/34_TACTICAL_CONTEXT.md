@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 31.10.2026, WEB18. Stage2 `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001` опубликована №473, независимый source review **REVISE / PRODUCT NOT ACCEPTED**: F-01 directory junction в `message_context` при writer. Все OPEN сохраняются. Текущая картина без автоматического GO дальнейших стадий.
+**Срез:** 31.10.2026, WEB18: Stage2 F-01 исправлен №475, bounded SOURCE/EVIDENCE PASS; independent runtime NOT RUN, исходная №473 REVISE сохраняется.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB18 / Claude | Stage2 `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001` №473 опубликована; **REVISE / DOC ITERATION CLOSED; PRODUCT NOT ACCEPTED** после WEB18 source review. БЛОК 1 WAITING, БЛОК 1.1 exact Stage2. Автор full 1076/1078 + 2 SKIP, JS 140/140, mutants 39/39; verifier 8/8 source SHA и JSON counts, independent runtime NOT RUN. F-01: вложенный `message_context` junction при writer | Сохранить `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` OPEN/UNASSIGNED, предложить отдельно пользователю узкое repair; не разрешать Stage3/live/paid. База №473, отчёт `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md` |
+| А — Ultra Chat / EVM, WEB18 / Claude | №475 `5678414d` закрыл F-01 в проверенном source/author-evidence scope; до 7/9 внешних записей, после 0/9, full run2 1076 PASS/2 SKIP, focused 145 PASS/4 SKIP. Independent source+hash review 4/4, runtime NOT RUN. Stage2 BOUNDED, №473 REVISE исторически неизменен | `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED, `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED, отдельно USER GO на дальнейший repair. Stage3 блокируют Run Store P9, решения Stage1 и отдельный GO. №05 `REG-WEB18-S2-REPAIR-20261031`, `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md` |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
@@ -74,8 +74,8 @@
 
 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
-3. №467 ранее документально закрыта и принята пользователем; этот verdict не переписывать. Stage2 №473 требует исправления F-01 до продуктового PASS; review и сохранённый exact B1.1 читать адресно.
-4. Следующий разрешённый выбор — отдельная согласованная repair TASK по FOLLOWUP-WUA-S2-CONTEXT-PATH-001; этап 3 и live/paid не начинать. Stage1 и WA4-R gates не сняты.
+3. №467 ранее документально закрыта и принята пользователем; этот verdict не переписывать. F-01 исправлен №475 в bounded source/evidence scope; full independent runtime NOT RUN, точный БЛОК 1.1 repair сохранён.
+4. Следующая рекомендуемая техническая задача — `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` после USER GO; Stage3/live/paid пока не начинать.
 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
 
 ## Как сопровождать эту память

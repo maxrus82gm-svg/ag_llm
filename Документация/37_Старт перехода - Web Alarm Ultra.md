@@ -165,7 +165,9 @@ Tkinter сохраняется до доказанного соответств�
 
 **За пределами:** real API и широкая переработка контекстного движка. При невозможности безопасной записи сервис сообщает отказ, сохраняя читаемые данные.
 
-### Этап 3. Отправка сообщений и восстановление
+### Этап 3. Отправка сообщений и восстановление**Дополнение WEB18 / Stage2 Repair №475:** **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`.
+
+
 
 **Зачем:** пользователь должен понимать, принят ли запрос, и не получать дубли из-за повторного нажатия или перезапуска.
 

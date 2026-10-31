@@ -224,16 +224,17 @@ Git/GitHub не использовать. Коммит и публикация �
 
 Полный архив — [[001_История выполненных задач Claude]].
 
+- **2026-10-31 / `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001`** — №475 `5678414d`, PASS / SOURCE+AUTHOR-EVIDENCE (F-01); DOC ITERATION CLOSED. 9/9 отказ небезопасным ссылкам, focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP; independent runtime NOT RUN. №05 `REG-WEB18-S2-REPAIR-20261031`.
 - **2026-10-31 / `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001`** — №473 `c555312d`, **REVISE / DOC ITERATION CLOSED; PRODUCT NOT ACCEPTED**. Общий writer и Web create/rename опубликованы, но найден F-01: context variants/state могут писать через вложенный junction вне Workspace. Автор Python 1076 PASS/2 SKIP, JS 140/140, mutants 39/39; independent source/8 SHA и структуры evidence проверены, runtime НЕ перезапущен. №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001`.
 - **2026-10-31 / `CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001`** — №467 `f4597868`, **PASS / USER ACCEPTED; DOC ITERATION CLOSED**. Несколько независимых EVM-окон, сохранение после рестарта, Ctrl-preview выше окон, без дублей. Пользователь подтвердил обычную мышь и сенсорный ввод; авторские Python 1065 PASS/2 SKIP, JS 133/133, browser 198/198, mutants 38/38. Verifier source/evidence reviewed; independent rerun NOT RUN. №05 `REG-WEB17-EVM-PINS-20261031`, №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`.
 - **2026-10-30 / CLAUDE-WUA-EVM-INTERACTION-DND-001** — №464 `f9a375a`, **PASS / USER ACCEPTED; DOC ITERATION CLOSED**. Inline, Ctrl-preview, DnD и «Избранное» приняты пользователем; verifier independent rerun NOT RUN. №05 `REG-WEB17-EVM-DND-20261030`.
 - **2026-10-29 / CLAUDE-WUA-EVM-COMPACT-LAYOUT-001** — №457 `f37e9a9b`, **ITERATION DOC CLOSED / REVISE**; поздняя реализация №464 закрыла пользовательские UX-дефекты, исторический отрицательный verdict сохранён.
-- **2026-10-28 / CLAUDE-WUA-EVM-MODEL-CARD-UI-001** — базовые EVM карточки, `main@55cc4477`, **DOC CLOSED / TERMINAL PARTIAL**; независимые платформенные gates OPEN.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
+- **Stage2 repair №475:** `context_storage.py` теперь проверяет nested `message_context` и `variants` и пишет через проверенные операции. **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`.
 - **Stage2 №473 / 31.10:** общий writer Workspace/Chat/RAW, межпроцессная блокировка, идемпотентный message_id и Web create/rename опубликованы; пользовательского/продуктового PASS нет. Verifier обнаружил F-01: невалидируемый вложенный `message_context` junction при записи state/variants. **REVISE**, продолжение `FOLLOWUP-WUA-S2-CONTEXT-PATH-001`, отдельное назначение. Полная регрессия и мутанты только author evidence; на точном SHA independent runtime NOT RUN.
 - **EVM pinned windows №467:** `web_alarm/ui.py`, `model_cards.py`, `server.py` и тесты; отдельные закреплённые окна по `connection_id`, координаты и порядок в прежнем `ultra/evm_view.json`; Ctrl-preview выше окон, перенос/закрытие без дублей, восстановление после перезапуска. Новый самостоятельный реестр моделей/секретов не создан.
 - **Проверки №467:** авторские Python 1065 PASS/2 SKIP, JS 133/133, trusted headless browser 198/198, mutants 38/38; physical Windows mouse author NOT RUN. Пользователь отдельно подтвердил мышь и сенсорный ввод в Ultra; verifier независимо не повторял тестовые команды, source/evidence проверены.
@@ -243,6 +244,10 @@ Git/GitHub не использовать. Коммит и публикация �
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
+
+## WEB18 / 2026-10-31 — CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001 — BOUNDED PASS / DOC ITERATION CLOSED
+
+**Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. Independent SHA-256/bytes 4/4 (code/test/card/task snapshot) и raw evidence пересчитаны, source path review выполнен. Авторский first-run ERROR folder-picker зарегистрирован, повтор модуля 16/16 ×3; 4 symlink SKIP, independent regression NOT RUN. БЛОК 1 WAITING, 1.1 exact repair сохранён.
 
 **Автор:** ChatGPT / WEB17. Для Claude этот блок READ-ONLY. Исторические verdict находятся в №06.
 
@@ -270,4 +275,4 @@ Git/GitHub не использовать. Коммит и публикация �
 
 ---
 
-**NEXT WEB18 / 31.10:** БЛОК 1 WAITING, БЛОК 1.1 сохраняет Stage2 №473, вердикт REVISE. Пользователь отдельно назначает исправление F-01 после принятия документационного closeout; не переиспользовать старую постановку; направление Б остаётся на паузе.
+**NEXT WEB18 / 31.10:** ремонт №475 рассмотрен, Stage2 ограниченно SOURCE/EVIDENCE ACCEPTED. Новый кандидат FOLLOWUP-WUA-S2-REPLACE-HARDEN-001 — только по отдельному USER GO. Stage3/paid/live и Codex B не запускать.
