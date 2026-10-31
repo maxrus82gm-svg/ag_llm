@@ -1,0 +1,578 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "purpose": "mutation gate of the shared writer, the web write path, the page and the Tk writer (TEST-QA)",
+ "controls": {
+  "test_web_alarm_ultra_chat_ui.js": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  },
+  "test_ultra_chat_storage": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "test_web_alarm_ultra_chat_storage": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": 0,
+   "verdict": "PASS"
+  },
+  "tk_contour_check": {
+   "exit": 0,
+   "failing": [],
+   "isolation_violations": null,
+   "verdict": "PASS"
+  }
+ },
+ "results": [
+  {
+   "mutant": "C01 no inter-process lock",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_held_lock_makes_writers_wait_and_then_refuse_visibly",
+    "test_a_writer_waits_for_a_short_holder_and_then_succeeds",
+    "test_ensure_chat_from_two_processes_makes_one_chat",
+    "test_nested_calls_reenter_and_other_threads_wait",
+    "test_two_processes_write_raw_create_and_rename_without_losing_anything",
+    "test_two_renames_from_the_same_seen_title_never_lose_one_silently"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C02 identity not read again under the lock",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_expected_identity_is_checked_again_under_the_lock"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C03 RAW published by replace (may overwrite)",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_directory_swapped_after_its_check_is_refused_before_publication",
+    "test_a_record_published_by_a_writer_outside_the_lock_is_never_overwritten",
+    "test_crash_before_and_after_raw_publication_then_restart"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C04 RAW conflict not detected",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_foreign_or_damaged_record_under_the_name_is_a_conflict_never_overwritten",
+    "test_a_record_published_by_a_writer_outside_the_lock_is_never_overwritten",
+    "test_crash_before_and_after_raw_publication_then_restart",
+    "test_new_id_same_content_conflict_and_same_text_under_two_ids",
+    "test_two_processes_commit_one_message_id"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C05 created_at compared (a repeat becomes a conflict)",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_foreign_or_damaged_record_under_the_name_is_a_conflict_never_overwritten",
+    "test_crash_before_and_after_raw_publication_then_restart",
+    "test_new_id_same_content_conflict_and_same_text_under_two_ids",
+    "test_the_largest_allowed_text_round_trips_byte_exact",
+    "test_two_processes_commit_one_message_id"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C06 chat ownership not checked by writers",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_rename_checks_the_seen_title_ownership_and_keeps_a_repeat_free"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C07 newer chat card version accepted",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_newer_or_damaged_formats_are_refused_by_every_writer_without_any_change"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C08 newer workspace version accepted by writers",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_newer_or_damaged_formats_are_refused_by_every_writer_without_any_change"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C09 temporary file location not checked",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_directory_swapped_after_its_check_is_refused_before_publication"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C10 new identity minted next to an orphaned history",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_no_writer_creates_a_workspace_or_chat_on_a_read_error"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C11 storage initialised without lock, identity by replace (old code)",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_processes_that_initialise_one_folder_share_one_identity"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C12 no replace retry",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_replacement_blocked_by_an_open_reader_is_retried_then_refused_visibly"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C13 rename ignores the seen title",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_rename_checks_the_seen_title_ownership_and_keeps_a_repeat_free",
+    "test_two_renames_from_the_same_seen_title_never_lose_one_silently"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C14 no chat limit",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_default_titles_ignore_damaged_cards_and_the_chat_limit_is_kept"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C15 a repeated create with another title passes",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_create_with_a_chosen_id_is_idempotent_and_conflicts_are_explicit"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C16 lock not reentrant in its thread",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_ensure_chat_from_two_processes_makes_one_chat",
+    "test_nested_calls_reenter_and_other_threads_wait"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C17 control characters in titles",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_titles_are_validated_before_any_write"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C18 locked byte 0 (blocks readers and copies)",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_held_lock_makes_writers_wait_and_then_refuse_visibly",
+    "test_a_workspace_can_be_read_and_copied_while_a_writer_holds_the_lock"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C19 published bytes not read back",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_directory_swapped_after_its_check_is_refused_before_publication"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "C20 no retry for a chat folder that cannot move yet",
+   "file": "context_storage.py",
+   "targets": [
+    "test_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_a_chat_folder_that_cannot_move_yet_is_retried_then_refused_without_leftovers"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H01 the read capability authorises writes",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w10_a_busy_workspace_is_a_visible_refusal_and_nothing_is_written",
+    "test_w11_a_copied_workspace_registered_anew_keeps_its_ids_and_history",
+    "test_w1_the_write_capability_is_separate_and_switchable",
+    "test_w2_tokens_never_cross_scopes",
+    "test_w3_create_and_rename_are_seen_by_the_web_the_core_and_the_tk_readers_and_survive_a_restart",
+    "test_w4_rename_refuses_a_stale_title_and_a_repeat_is_free",
+    "test_w6_registration_identity_and_ownership_are_checked_and_nothing_is_created",
+    "test_w7_requests_are_refused_by_origin_method_size_type_and_shape_before_any_disk_access",
+    "test_w8_core_failures_reach_the_page_as_codes_without_paths",
+    "test_w9_web_and_a_tk_writer_in_another_process_lose_nothing"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H02 no Origin required for writes",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w7_requests_are_refused_by_origin_method_size_type_and_shape_before_any_disk_access"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H03 writes on although reading is off",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w1_the_write_capability_is_separate_and_switchable"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H04 any chat_id from the page",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w7_requests_are_refused_by_origin_method_size_type_and_shape_before_any_disk_access"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H05 no history check before the core",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w6_registration_identity_and_ownership_are_checked_and_nothing_is_created"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H06 the core message reaches the page",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w8_core_failures_reach_the_page_as_codes_without_paths"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H07 no body size refusal",
+   "file": "web_alarm/server.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w7_requests_are_refused_by_origin_method_size_type_and_shape_before_any_disk_access"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H08 the adapter drops the seen title",
+   "file": "web_alarm/ultra_chat.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_storage"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "test_w4_rename_refuses_a_stale_title_and_a_repeat_is_free"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J01 both tokens on a write",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U13"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J02 a new chat_id on every Save",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U15"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J03 the refreshed title not taken after a refusal",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U14"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J04 no guard while saving",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U15",
+    "U16",
+    "U17",
+    "U18",
+    "U19"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J05 the write capability asked at load",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U13"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J06 the list not re-read after a change",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U13",
+    "U14"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J07 create offered without history",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U18"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J08 a Workspace switch keeps the form",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U18"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J09 a refused save stays open after a Workspace switch",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U19"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "J10 a taken chat_id does not re-read the list",
+   "file": "web_alarm/ui.py",
+   "targets": [
+    "test_web_alarm_ultra_chat_ui.js"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "U19"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "T01 Tk rename without the seen title",
+   "file": "ultra_ui.py",
+   "targets": [
+    "tk_contour_check"
+   ],
+   "exit": 1,
+   "failing_tests": [
+    "tk_stale_rename_refused_and_shown",
+    "web_lists_tk_chat",
+    "web_title_kept"
+   ],
+   "isolation_violations": null,
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 39,
+ "killed": 39,
+ "temp_leftovers_new": [
+  "wa_s2_store_hur0d3mi"
+ ]
+}

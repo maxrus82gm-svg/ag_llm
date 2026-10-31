@@ -57,7 +57,8 @@ function harness({routes = {}, hash = null, storage = null} = {}) {
     return {httpError: true, status: 404, data: {error: {code: 'not_found', message: 'fixture has no route'}}};
   };
   const storageMap = storage || new Map();
-  const context = {document, console, AbortController, setTimeout: (fn, ms) => {const t = setTimeout(fn, ms); t.unref(); return t;}, clearTimeout,
+  const context = {document, console, AbortController, crypto: require('node:crypto').webcrypto,
+    setTimeout: (fn, ms) => {const t = setTimeout(fn, ms); t.unref(); return t;}, clearTimeout,
     setInterval: () => 0, Date, localStorage: {getItem: k => storageMap.get(k) ?? null, setItem: (k, v) => {h.stored.push([k, String(v)]); storageMap.set(k, String(v));}, removeItem: k => storageMap.delete(k)},
     window: {confirm: () => true, matchMedia: () => ({matches: false}), scrollTo: () => {}, addEventListener: () => {}},
     navigator: {locks: {request: async (k, o, fn) => fn({name: k})}, clipboard: {writeText: async () => {}}},
@@ -234,7 +235,8 @@ test('U8 the composer is visibly read-only and nothing is ever posted', async ()
   const h = harness(); await settle();
   assert.equal(h.el('chatInput').disabled, true);
   assert.equal(h.el('chatSend').disabled, true);
-  assert.match(source, /<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе\. Сейчас Ultra Chat только читает сохранённую историю\.<\/p>/);
+  // Stage 2 (CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001): the composer still sends nothing; the note now names create/rename.
+  assert.match(source, /<p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе\. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги\.<\/p>/);
   assert.equal(h.el('chatInput').getAttribute('aria-describedby'), 'chatComposerNote');
   let prevented = false;
   h.el('chatComposer').onsubmit({preventDefault: () => {prevented = true;}});
@@ -301,4 +303,217 @@ test('U12 the EVM model badge tells every saved-choice state', async () => {
   const broken = harness({routes: {'/ultra/connections/selection?role=chat': () => ({httpError: true, status: 503, data: {error: {code: 'x', message: 'y'}}})}});
   await settle();
   assert.match(broken.el('chatModel').textContent, /нет данных EVM/);
+});
+
+// ---- Stage 2 (CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001): create and rename through the separate write capability ----
+const WTOKEN = 'W'.repeat(43);
+const WHEADER = 'X-WebAlarm-Ultra-Chat-Write-Token';
+const wcap = (extra = {}) => ({ultra_chat_write: {available: true, reason: null, scope: 'ultra_chat_write', header: WHEADER, token: WTOKEN, ...extra}});
+const CHATS_A = '/ultra/chat/workspaces/ws_a/chats';
+const RENAME_A = CHATS_A + '/chat_a/title';
+const refused = (status, code) => ({httpError: true, status, data: {error: {code, message: 'refused by the fixture'}}});
+const submit = h => h.el('chatNameForm').onsubmit({preventDefault() {}});
+
+// A tiny stand-in for the server's chat list: GET lists, POST create appends (idempotent by chat_id, like the core).
+function chatServer(initial = [chatItem('chat_a', 'Первый диалог')]) {
+  const s = {chats: initial.map(c => ({...c})), posts: []};
+  s.route = opts => {
+    if ((opts.method || 'GET') === 'GET') return {wa_workspace_id: 'ws_a', display_name: 'Проект А', state: 'ok', chats: s.chats.map(c => ({...c})), excluded: {}};
+    const body = JSON.parse(opts.body);
+    s.posts.push({body, headers: {...opts.headers}});
+    const known = s.chats.find(c => c.chat_id === body.chat_id);
+    if (known) return {wa_workspace_id: 'ws_a', chat: known, created: false};
+    const item = {chat_id: body.chat_id, status: 'ok', title: body.title || 'Чат ' + (s.chats.length + 1), created_at: '2026-10-31T10:00:00+00:00'};
+    s.chats.push(item);
+    return {wa_workspace_id: 'ws_a', chat: item, created: true};
+  };
+  return s;
+}
+
+test('U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read', async () => {
+  const srv = chatServer();
+  const h = harness({routes: {[CHATS_A]: srv.route, '/ui/ultra-chat/write-capability': () => wcap()}}); await settle();
+  assert.equal(h.calls.some(c => c.url === '/ui/ultra-chat/write-capability'), false, 'no write capability is asked at load');
+  assert.equal(h.el('chatNew').disabled, false);
+  assert.equal(h.el('chatNameForm').hidden, true);
+  h.el('chatNew').onclick();
+  assert.equal(h.el('chatNameForm').hidden, false);
+  assert.equal(h.el('chatNameInput').value, '');
+  assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0, 'opening the form writes nothing');
+  h.el('chatNameInput').value = '  Новый план  ';
+  await submit(h); await settle();
+  assert.equal(srv.posts.length, 1);
+  const [post] = srv.posts;
+  assert.match(post.body.chat_id, /^chat_[0-9a-f]{32}$/);
+  assert.deepEqual(Object.keys(post.body).sort(), ['chat_id', 'title']);
+  assert.equal(post.body.title, 'Новый план');
+  assert.equal(post.headers[WHEADER], WTOKEN);
+  assert.equal(post.headers[HEADER], undefined, 'the read token never goes with a write');
+  assert.equal(h.el('chatNameForm').hidden, true);
+  assert.equal(h.calls.filter(c => c.url === CHATS_A && c.method === 'GET').length, 2, 'the list is re-read from the server');
+  assert.deepEqual(h.picks('chatList').map(b => [b.textContent.split('Создан')[0], b.getAttribute('aria-current')]),
+    [['Первый диалог', 'false'], ['Новый план', 'true']]);
+  assert.ok(h.calls.some(c => c.url === `${CHATS_A}/${post.body.chat_id}/messages?limit=50`), 'the new dialogue is opened');
+  // An empty title lets the server choose «Чат N»: the body then carries the chat_id only.
+  h.el('chatNew').onclick(); await submit(h); await settle();
+  assert.deepEqual(Object.keys(srv.posts[1].body), ['chat_id']);
+  assert.notEqual(srv.posts[1].body.chat_id, post.body.chat_id, 'a new form is a new dialogue');
+  for (const c of h.calls) {
+    const read = c.headers[HEADER] === TOKEN, write = c.headers[WHEADER] === WTOKEN;
+    assert.ok(!(read && write), 'never both tokens');
+    if (write) assert.ok(c.method === 'POST' && c.url.startsWith('/ultra/chat/workspaces/'), c.url);
+    if (read) assert.equal(c.method, 'GET', c.url);
+    assert.ok(!c.url.includes(TOKEN) && !c.url.includes(WTOKEN), 'token in a URL');
+  }
+  assert.ok(!h.stored.some(([k, v]) => (k + v).includes(WTOKEN) || (k + v).includes(TOKEN)), 'a token written to localStorage');
+});
+
+test('U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save', async () => {
+  let title = 'Первый диалог';
+  const posts = [];
+  const h = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(),
+    [CHATS_A]: () => ({wa_workspace_id: 'ws_a', display_name: 'Проект А', state: 'ok', chats: [chatItem('chat_a', title)], excluded: {}}),
+    [RENAME_A]: opts => {
+      const body = JSON.parse(opts.body); posts.push({body, headers: {...opts.headers}});
+      if (body.expected_title !== title) return refused(409, 'title_changed');
+      title = body.title; return {wa_workspace_id: 'ws_a', chat: chatItem('chat_a', title)};
+    }}});
+  await settle();
+  h.el('chatRename').onclick();
+  assert.equal(h.el('chatNameInput').value, 'Первый диалог');
+  h.el('chatNameInput').value = '   ';
+  await submit(h); await settle();
+  assert.equal(posts.length, 0, 'an empty title is not sent');
+  assert.match(h.el('chatNameError').textContent, /не может быть пустым/);
+  title = 'Переименован в Tk'; // another window renames the dialogue while this form is open
+  h.el('chatNameInput').value = 'Из веба';
+  await submit(h); await settle();
+  assert.deepEqual(posts[0].body, {title: 'Из веба', expected_title: 'Первый диалог'});
+  assert.equal(posts[0].headers[WHEADER], WTOKEN);
+  assert.equal(title, 'Переименован в Tk', 'the newer title is not overwritten silently');
+  assert.equal(h.el('chatNameForm').hidden, false, 'the form stays open with the typed title');
+  assert.match(h.el('chatNameError').textContent, /уже изменено в другом окне/);
+  assert.match(h.picks('chatList')[0].textContent, /Переименован в Tk/, 'the list shows what is stored now');
+  await submit(h); await settle();
+  assert.deepEqual(posts[1].body, {title: 'Из веба', expected_title: 'Переименован в Tk'});
+  assert.equal(title, 'Из веба');
+  assert.equal(h.el('chatNameForm').hidden, true);
+  assert.match(h.picks('chatList')[0].textContent, /Из веба/);
+});
+
+test('U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing', async () => {
+  const srv = chatServer();
+  let release;
+  const gate = new Promise(resolve => {release = resolve;});
+  let attempt = 0;
+  const h = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(), [CHATS_A]: async opts => {
+    if ((opts.method || 'GET') === 'POST') {
+      attempt += 1;
+      if (attempt === 1) {srv.route(opts); throw new TypeError('Failed to fetch');} // stored, but the answer is lost
+      await gate;
+    }
+    return srv.route(opts);
+  }}});
+  await settle();
+  h.el('chatNew').onclick(); h.el('chatNameInput').value = 'Однажды';
+  await submit(h); await settle();
+  assert.match(h.el('chatNameError').textContent, /Failed to fetch/);
+  assert.equal(h.el('chatNameForm').hidden, false);
+  const pending = submit(h);
+  assert.equal(h.el('chatNew').disabled, true, 'actions are off while a change is saved');
+  await submit(h); // a second press during the first
+  release(); await pending; await settle();
+  assert.equal(srv.posts.length, 2, 'one lost attempt and one repeat, nothing from the second press');
+  assert.equal(srv.posts[1].body.chat_id, srv.posts[0].body.chat_id, 'the repeat is the same request');
+  assert.equal(srv.chats.length, 2, 'one dialogue was created');
+  assert.equal(h.el('chatNameForm').hidden, true);
+});
+
+test('U16 an unavailable write capability is explained and nothing is posted', async () => {
+  for (const [reason, expected] of [['disabled', /выключены при запуске сервера/], ['non_loopback_bind', /не на локальном адресе/]]) {
+    const srv = chatServer();
+    const h = harness({routes: {[CHATS_A]: srv.route, '/ui/ultra-chat/write-capability': () => wcap({available: false, reason, token: null})}});
+    await settle();
+    h.el('chatNew').onclick(); h.el('chatNameInput').value = 'x';
+    await submit(h); await settle();
+    assert.match(h.el('chatNameError').textContent, expected, reason);
+    assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0, reason);
+    assert.equal(h.el('chatHistory').children.length, 2, 'reading keeps working');
+  }
+});
+
+test('U17 after a server restart one new write capability is fetched and the refused request repeated once', async () => {
+  const srv = chatServer();
+  let refusals = 1, capabilities = 0;
+  const h = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap({token: 'V'.repeat(42) + String(++capabilities)}),
+    [CHATS_A]: opts => ((opts.method || 'GET') === 'POST' && refusals-- > 0 ? (srv.posts.push({body: JSON.parse(opts.body)}), refused(403, 'ultra_chat_write_token_invalid')) : srv.route(opts))}});
+  await settle();
+  h.el('chatNew').onclick(); h.el('chatNameInput').value = 'После перезапуска';
+  await submit(h); await settle();
+  assert.equal(capabilities, 2);
+  assert.equal(srv.posts.length, 2);
+  assert.equal(srv.posts[1].body.chat_id, srv.posts[0].body.chat_id);
+  assert.equal(srv.chats.at(-1).title, 'После перезапуска');
+  const stuck = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(), [CHATS_A]: opts => ((opts.method || 'GET') === 'POST' ? refused(403, 'ultra_chat_write_token_invalid') : chatServer().route(opts))}});
+  await settle();
+  stuck.el('chatNew').onclick(); await submit(stuck); await settle();
+  assert.equal(stuck.calls.filter(c => c.method === 'POST').length, 2, 'one repeat, then an honest error');
+  assert.equal(stuck.el('chatNameError').hidden, false);
+});
+
+test('U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch', async () => {
+  const srv = chatServer();
+  const h = harness({routes: {[CHATS_A]: srv.route, '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Проект А'), ws('ws_b', 'Без истории', 'missing_history')]}),
+    '/ultra/chat/workspaces/ws_b/chats': () => ({wa_workspace_id: 'ws_b', display_name: 'Без истории', state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}})}});
+  await settle();
+  assert.deepEqual([h.el('chatNew').disabled, h.el('chatRename').disabled], [false, false]);
+  h.el('chatRename').onclick();
+  assert.equal(h.el('chatNameForm').hidden, false);
+  h.el('chatNameInput').onkeydown({key: 'Escape', preventDefault() {}});
+  assert.equal(h.el('chatNameForm').hidden, true);
+  h.el('chatNew').onclick(); h.el('chatNameCancel').onclick();
+  assert.equal(h.el('chatNameForm').hidden, true);
+  h.el('chatNew').onclick();
+  h.picks('chatWorkspaceList')[1].onclick(); await settle();
+  assert.equal(h.el('chatNameForm').hidden, true, 'a Workspace switch closes the form');
+  assert.deepEqual([h.el('chatNew').disabled, h.el('chatRename').disabled], [true, true], 'no history: nothing to create in or rename');
+  h.el('chatNew').onclick(); h.el('chatRename').onclick();
+  assert.equal(h.el('chatNameForm').hidden, true);
+  assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
+  // Server refusals are told in words, never as a bare code.
+  for (const [code, expected] of [['workspace_busy', /занят другой записью/], ['workspace_unavailable', /нет доступной истории Ultra/],
+    ['invalid_title', /длиннее 200 символов/], ['chats_limit_reached', /слишком много диалогов/], ['unsupported_version', /более новой версией/]]) {
+    const one = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(),
+      [CHATS_A]: opts => ((opts.method || 'GET') === 'POST' ? refused(409, code) : chatServer().route(opts))}});
+    await settle();
+    one.el('chatNew').onclick(); await submit(one); await settle();
+    assert.match(one.el('chatNameError').textContent, expected, code);
+  }
+});
+
+test('U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list', async () => {
+  const srv = chatServer();
+  let release;
+  const gate = new Promise(resolve => {release = resolve;});
+  const h = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces/ws_b/chats': () => ({wa_workspace_id: 'ws_b', display_name: 'Проект Б', state: 'ok', chats: [], excluded: {}}),
+    [CHATS_A]: async opts => {if ((opts.method || 'GET') === 'POST') {await gate; return refused(503, 'workspace_busy');} return srv.route(opts);}}});
+  await settle();
+  h.el('chatNew').onclick(); h.el('chatNameInput').value = 'В пути';
+  const pending = submit(h); await settle();
+  h.picks('chatWorkspaceList')[1].onclick(); await settle(); // another Workspace while the POST waits
+  release(); await pending; await settle();
+  assert.equal(h.el('chatNameForm').hidden, true, 'the form of the old Workspace is closed');
+  assert.equal(h.el('chatNameError').hidden, true, 'its refusal is not shown over the new Workspace');
+  assert.equal(h.el('chatWorkspaceName').textContent, 'Проект Б');
+  assert.equal(h.picks('chatList').length, 0, 'nothing of the old Workspace is shown in the new one');
+  let gets = 0;
+  const taken = harness({routes: {'/ui/ultra-chat/write-capability': () => wcap(),
+    [CHATS_A]: opts => ((opts.method || 'GET') === 'POST' ? refused(409, 'chat_id_conflict') : (gets++, chatServer().route(opts)))}});
+  await settle();
+  const before = gets;
+  taken.el('chatNew').onclick(); await submit(taken); await settle();
+  assert.match(taken.el('chatNameError').textContent, /идентификатор уже занят/);
+  assert.equal(gets, before + 1, 'the list is re-read so a chat stored by a lost answer becomes visible');
 });

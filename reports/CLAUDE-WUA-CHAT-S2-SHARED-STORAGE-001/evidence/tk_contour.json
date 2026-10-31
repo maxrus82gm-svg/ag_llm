@@ -1,0 +1,28 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "ui_smoke_test": {
+  "exit": 0,
+  "result": "OK: UltraApp constructed",
+  "isolation": "LOCALAPPDATA/APPDATA/USERPROFILE/HOME and cwd in TEMP; checked before import"
+ },
+ "tk_contour": {
+  "exit": 0,
+  "checks": {
+   "tk_created_workspace_and_first_chat": true,
+   "web_create_rename_status": [
+    201,
+    200
+   ],
+   "tk_sidebar_shows_web_chat": true,
+   "web_sees_tk_rename": true,
+   "tk_stale_rename_refused_and_shown": true,
+   "web_title_kept": true,
+   "web_lists_tk_chat": true,
+   "tk_chat_view_shows_shared_raw": true,
+   "web_history_shows_shared_raw": true,
+   "unexpected_error_dialogs": 0
+  }
+ },
+ "passed": true,
+ "network": "loopback web server of the child only; no LLM, no provider"
+}

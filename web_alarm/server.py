@@ -69,7 +69,15 @@ from .model_cards import (
     UnknownModelCardError,
     default_tk_state_path,
 )
-from .ultra_chat import ULTRA_CHAT_CAPABILITY_PATH, UltraChatAccess, UltraChatError, UltraChatService
+from .ultra_chat import (
+    MAX_WRITE_BODY_BYTES as ULTRA_CHAT_MAX_WRITE_BODY_BYTES,
+    ULTRA_CHAT_CAPABILITY_PATH,
+    ULTRA_CHAT_WRITE_CAPABILITY_PATH,
+    UltraChatAccess,
+    UltraChatError,
+    UltraChatService,
+    UltraChatWriteAccess,
+)
 from .ultra_connections import (
     ConnectionRequestError,
     DisabledConnectionError,
@@ -1233,26 +1241,72 @@ class _JsonHandler(BaseHTTPRequestHandler):
             raise ApiError(status, exc.code, str(exc)) from exc
         self._send_json(200, result)
 
+    def _ultra_chat_body(self) -> tuple[bytes | None, str | None]:
+        # A small body is read at once, before any refusal, so a refused client still receives its answer.
+        lengths = self.headers.get_all('Content-Length', [])
+        if (self.headers.get('Transfer-Encoding') is not None or len(lengths) != 1 or not lengths[0].isdigit()
+                or len(lengths[0]) > 6):
+            return None, 'bad_length'
+        length = int(lengths[0])
+        if length > ULTRA_CHAT_MAX_WRITE_BODY_BYTES:
+            if length <= 64 * 1024:
+                self.rfile.read(length)
+            return None, 'too_large'
+        return self.rfile.read(length), None
+
     def _ultra_chat_request(self, path: str) -> None:
-        # Ultra Chat stage 1: read-only private history behind its own capability, independent of the folder
-        # picker; local UI transport, never a WebAlarmApi authority route. Order: origin, method, query, token, data.
+        # Ultra Chat: read-only history (stage 1) and Chat create/rename (stage 2), each behind its own capability,
+        # independent of the folder picker; local UI transport, never a WebAlarmApi authority route.
+        # Order: origin, method, route and query, size and type, token, body, data.
+        body, body_problem = self._ultra_chat_body() if self.command not in {'GET', 'HEAD'} else (b'', None)
         self._require_local_ui_origin('ultra_chat_forbidden', 'Ultra Chat')
+        service = self.server.web_alarm_ultra_chat
+        query = urlsplit(self.path).query
+        if self.command == 'POST' and service.is_write_path(path):
+            self._ultra_chat_write(path, query, body, body_problem)
+            return
         if self.command != 'GET':
             raise ApiError(405, 'method_not_allowed', 'Ultra Chat reading is GET only')
         access = self.server.web_alarm_ultra_chat_access
-        query = urlsplit(self.path).query
         try:
-            if path == ULTRA_CHAT_CAPABILITY_PATH:
+            if path in {ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH}:
                 if query:
                     raise ApiError(400, 'invalid_ultra_chat_request', 'Query parameters are not supported')
-                self._send_json(200, {'ultra_chat': access.capability()})
+                if path == ULTRA_CHAT_CAPABILITY_PATH:
+                    self._send_json(200, {'ultra_chat': access.capability()})
+                else:
+                    self._send_json(200, {'ultra_chat_write': self.server.web_alarm_ultra_chat_write_access.capability()})
                 return
-            read = self.server.web_alarm_ultra_chat.route(path, query)
+            read = service.route(path, query)
             access.require(self.headers)
             payload = read()
         except UltraChatError as exc:
             raise ApiError(exc.status, exc.code, exc.message) from None
         self._send_json(200, payload)
+
+    def _ultra_chat_write(self, path: str, query: str, body: bytes | None, body_problem: str | None) -> None:
+        # Stage 2 write: the exact Origin once (as the folder picker and EVM writes), its own write token (the read
+        # token is never accepted), a small JSON body; the core then checks registration, identity and ownership.
+        if len(self.headers.get_all('Origin', [])) != 1:
+            raise ApiError(403, 'ultra_chat_forbidden', 'A same-origin request is required')
+        try:
+            run = self.server.web_alarm_ultra_chat.write_route(path, query)
+            if body_problem == 'too_large':
+                raise ApiError(413, 'request_too_large', 'request body is too large')
+            if body is None:
+                raise ApiError(400, 'invalid_ultra_chat_request', 'A small JSON request with Content-Length is required')
+            if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
+                raise ApiError(415, 'unsupported_media_type', 'Content-Type must be application/json')
+            self.server.web_alarm_ultra_chat_write_access.require(self.headers)
+            try:
+                data = json.loads(body.decode('utf-8'))
+            except (UnicodeDecodeError, ValueError):
+                raise ApiError(400, 'invalid_json', 'request body is not valid UTF-8 JSON') from None
+            status, payload = run(data)
+        except UltraChatError as exc:
+            raise ApiError(exc.status, exc.code, exc.message,
+                           details={'reason': exc.reason} if exc.reason else None) from None
+        self._send_json(status, payload)
 
     def _run(self) -> None:
         try:
@@ -1260,7 +1314,8 @@ class _JsonHandler(BaseHTTPRequestHandler):
             if path in {'/ui/capabilities', '/ui/pick-workspace-folder'}:
                 self._folder_picker_request(path)
                 return
-            if path == ULTRA_CHAT_CAPABILITY_PATH or path == '/ultra/chat' or path.startswith('/ultra/chat/'):
+            if (path in {ULTRA_CHAT_CAPABILITY_PATH, ULTRA_CHAT_WRITE_CAPABILITY_PATH} or path == '/ultra/chat'
+                    or path.startswith('/ultra/chat/')):
                 self._ultra_chat_request(path)
                 return
             if self.command == "GET" and path in {"/", "/ui"}:
@@ -1325,6 +1380,7 @@ def create_server(
     enable_folder_picker: bool = False,
     folder_picker_timeout: float = 120,
     enable_ultra_chat: bool = True,
+    enable_ultra_chat_write: bool = True,
 ) -> ThreadingHTTPServer:
     if not allow_non_loopback and host not in LOOPBACK_HOSTS:
         raise ValueError(
@@ -1342,6 +1398,9 @@ def create_server(
     # Independent of the folder picker: own token, loopback only, off with --disable-ultra-chat.
     server.web_alarm_ultra_chat_access = UltraChatAccess(  # type: ignore[attr-defined]
         enabled=enable_ultra_chat, loopback=host in LOOPBACK_HOSTS)
+    # Stage 2 Chat create/rename: a second token of its own scope; off with reading or with --disable-ultra-chat-write.
+    server.web_alarm_ultra_chat_write_access = UltraChatWriteAccess(  # type: ignore[attr-defined]
+        enabled=enable_ultra_chat and enable_ultra_chat_write, loopback=host in LOOPBACK_HOSTS)
     server.web_alarm_ultra_chat = UltraChatService(api.registry)  # type: ignore[attr-defined]
     return server
 
@@ -1355,6 +1414,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--allow-non-loopback", action="store_true")
     parser.add_argument("--disable-ultra-chat", action="store_true",
                         help="Turn off the read-only Ultra Chat history routes; the operator panel and EVM keep working")
+    parser.add_argument("--disable-ultra-chat-write", action="store_true",
+                        help="Keep Ultra Chat read-only: no chat creation or renaming from the web page")
     return parser
 
 
@@ -1369,6 +1430,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             allow_non_loopback=args.allow_non_loopback,
             enable_folder_picker=args.enable_folder_picker,
             enable_ultra_chat=not args.disable_ultra_chat,
+            enable_ultra_chat_write=not args.disable_ultra_chat_write,
         )
     except (OSError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

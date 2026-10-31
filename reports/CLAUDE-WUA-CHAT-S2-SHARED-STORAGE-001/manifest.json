@@ -1,0 +1,288 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (user paste, TASK ID line included); user GO in chat",
+ "base": "main@cd25b8d6ef71dc3a266adfb6945d30aa3cc8f66d as published content (local checkout compared by content; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "context_storage.py": {
+   "role": "shared writer contract: Workspace writer lock (.ultra/locks/writer.lock, per-thread reentrant, visible timeout), identity read again under the lock, ownership/version/link checks for every writer, exclusive publication with read-back, replace retry, commit_raw_message (local RAW idempotency), create_chat_record (idempotent by chat_id), rename with the seen title, no new identity next to an orphaned history; message-context writers under the same lock",
+   "bytes": 87951,
+   "sha256": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+   "eol": "LF",
+   "replaced_sha256": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+   "replaced_source": "published package pin"
+  },
+  "ultra_ui.py": {
+   "role": "Tk Chat writers only: create with the registered identity, rename with the title shown in the dialog",
+   "bytes": 247833,
+   "sha256": "a076bab7d2aa3ec322cd2dcaf3557f6faf8a99ac009298c7c98faa60b908cd78",
+   "eol": "CRLF",
+   "replaced_sha256": "7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d",
+   "replaced_source": "pre-start record (no package pins it)"
+  },
+  "web_alarm/ultra_chat.py": {
+   "role": "separate write capability (ultra_chat_write) and the create/rename routes over the shared writer",
+   "bytes": 23369,
+   "sha256": "c222e8361d13cc5410702476cce067ad72a2cc1e8957e85079a9c94f702e5bc9",
+   "eol": "LF",
+   "replaced_sha256": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+   "replaced_source": "published package pin"
+  },
+  "web_alarm/server.py": {
+   "role": "POST create/rename and GET /ui/ultra-chat/write-capability under the local-origin gate; --disable-ultra-chat-write; small bodies read before any refusal",
+   "bytes": 72125,
+   "sha256": "4a6170c1842fe67b75ed408608a7a79b19113bdc1157299a2d534ca030680619",
+   "eol": "CRLF",
+   "replaced_sha256": "a2bc94b4e3ebb3c175c6ce19fa155556bc539b14925aaef0d99df5ce38338886",
+   "replaced_source": "published package pin"
+  },
+  "web_alarm/ui.py": {
+   "role": "Ultra Chat area only: «+ Новый диалог», «✎ Переименовать», name form; write token asked on demand",
+   "bytes": 175525,
+   "sha256": "8949c4388b2378ce677dc56861da704725bcc76f3d718359371e76141122b967",
+   "eol": "CRLF",
+   "replaced_sha256": "3095764a598fc7c7ffc0e59d10525b1246f97f416eb0af336287506f8c277ae6",
+   "replaced_source": "published package pin"
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "role": "U8 composer note updated; U13-U19 new (create, rename, retries, refusals, tokens)",
+   "bytes": 36563,
+   "sha256": "e13af2fc0a7182f2471dadb7ebdf809e775f1173b47024153e97609a49bc12da",
+   "eol": "LF",
+   "replaced_sha256": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+   "replaced_source": "published package pin"
+  }
+ },
+ "new_files": {
+  "test_ultra_chat_storage.py": {
+   "role": "shared writer: format, RAW idempotency, chats, lock, two processes, crashes, links, portability",
+   "bytes": 52709,
+   "sha256": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+   "eol": "LF"
+  },
+  "test_web_alarm_ultra_chat_storage.py": {
+   "role": "HTTP write path over the real server: capability, tokens, refusals, ownership, restart, concurrency",
+   "bytes": 29770,
+   "sha256": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+   "eol": "LF"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_evm_ui.js": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true
+ },
+ "write_scope_files_not_changed": [
+  "web_alarm/store_lock.py",
+  "test_chat_create_atomicity.py",
+  "test_ultra_chat_read.py",
+  "test_web_alarm_ultra_chat.py"
+ ],
+ "rotation": {
+  "card": "Документация/000_Задачи Claude.md",
+  "card_after_rotation": {
+   "bytes": 40701,
+   "sha256": "f30f38be468bd9a9a28b627675e58186f31ef9eaa12be4c48aed49100fb3b1aa",
+   "eol": "LF"
+  },
+  "snapshot": {
+   "bytes": 20794,
+   "sha256": "6efb617990c4eabdd60f95882aa74a08f3989eebc853a535f89538a95a854dc5",
+   "eol": "LF"
+  },
+  "protocol": "evidence/rotation.json"
+ },
+ "evidence_summary": {
+  "browser_check.json": {
+   "purpose": "the shipped page in the built-in browser pane of the desktop app, driven with real clicks and keys, on the synthetic demo (tools/demo_s2.py: one Workspace with two chats, one registered folder without Ultra history; TEMP storage)",
+   "result": "PASS"
+  },
+  "change_inventory.json": {},
+  "final_state.json": {
+   "purpose": "final state before the hand-in"
+  },
+  "gate_all.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes",
+   "runner_exit": 0,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_focused.json": {
+   "purpose": "focused gate on the final bytes: shared writer (new), Ultra storage set, stage-1 reader, HTTP write (new) and stage-1 HTTP",
+   "runner_exit": 0,
+   "tests_run": 122,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_js.json": {
+   "purpose": "page tests on the final bytes: Ultra Chat (stage 1 + stage 2), EVM No.467, operator panel",
+   "tests_run": 140,
+   "pass": 140,
+   "fail": 0
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the shared writer, the web write path, the page and the Tk writer (TEST-QA)",
+   "killed": 39,
+   "mutants": 39
+  },
+  "prestart.json": {
+   "purpose": "pre-start state before the first edit"
+  },
+  "rotation.json": {
+   "result": "ROTATED"
+  },
+  "tk_contour.json": {
+   "passed": true
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 22
+ },
+ "git_used": false,
+ "network_used": "loopback test and demo servers only",
+ "real_workspaces_used": false,
+ "real_tk_settings_read": false,
+ "live_or_paid_api_used": false,
+ "launcher_switched": false,
+ "files": [
+  {
+   "path": "evidence/browser_check.json",
+   "bytes": 2284,
+   "sha256": "6b7c900bf07b2165d05eb76cdf268e8671eb6cc5b35142558536a1061c46a1c5",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 6938,
+   "sha256": "9aed7d1a027a4fd0f765efe94194cc2711487c42105da57a674a31387056bcf3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/final_state.json",
+   "bytes": 1044,
+   "sha256": "dcf4b042db4261c0b4ecbcf911c584221dbc28d9196388ec71d4e83832822163",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all.json",
+   "bytes": 166928,
+   "sha256": "ecdf460e14a924bdea5ed651143e10f40dcedc037cab0771709858ea68ba6c48",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_focused.json",
+   "bytes": 18355,
+   "sha256": "c5d732327e44a69a3f84848ddc68a50a66fd3561b1cfb556eb94cccd5e89f12b",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_js.json",
+   "bytes": 19757,
+   "sha256": "2d1d57661073f267b272979af7cdd27793270e04e43b1c1ba6fc256ce8efbc9c",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 14652,
+   "sha256": "ac6605b2329ce0394871f64407ae9fcf136565e01b3ac091335b6ff719eedf9e",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/prestart.json",
+   "bytes": 3632,
+   "sha256": "809f4a07bdbaa2a64f587c7ff84237d6f78b213420701cc591e9fe3de2c25b07",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotation.json",
+   "bytes": 1265,
+   "sha256": "866c488400b12175791dd44eb9a10b3e8609446a47ff84563c966d8e0b0f912d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/tk_contour.json",
+   "bytes": 759,
+   "sha256": "5a605f2cbdd4d8fc07de3e850e13c285bdfe4a3a2629a56fc9637fd122ca9f2d",
+   "eol": "LF"
+  },
+  {
+   "path": "handoff_task.md",
+   "bytes": 20794,
+   "sha256": "6efb617990c4eabdd60f95882aa74a08f3989eebc853a535f89538a95a854dc5",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 48742,
+   "sha256": "5e704b1e2d2262b02902b1c02c9122bae008b450ef78981a5147a3a37194bd4a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 3597,
+   "sha256": "d65fe64258216deca5cc5ce94122f304aef69db45a2682671b737d36ba0fc58a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/demo_s2.py",
+   "bytes": 2568,
+   "sha256": "903bc561a76408f7144fdf2690c573be3db1b6477bedc727dfed30c77c4624a7",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/final_state.py",
+   "bytes": 2877,
+   "sha256": "d6a767e0879519212b7cc123ad858604841eb74b738c5317379de8474e5b746c",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/js_gate.py",
+   "bytes": 1573,
+   "sha256": "4c3f895a21c26c0398fb1fba5da98f6024e281fc83e27e2be045004009d48d49",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 7868,
+   "sha256": "1d3f1c13249c1be33b0b12e4f692a4d53704b4c9e6700839ed0079fbf7abb311",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/prestart.py",
+   "bytes": 3977,
+   "sha256": "a3819e0ae5ab5d51fd2137f971b202dd800d2c92503cd876804632715efe170e",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1761,
+   "sha256": "ffb1d95d1c319b94ea3b5b9ff607eb91d3bbe48f0cd52b83cc7160d1d5972662",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 16467,
+   "sha256": "4e3c6d619527d7eae738c95480282b525c2e90fa767620e65917e08029178469",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/tk_contour_check.py",
+   "bytes": 9521,
+   "sha256": "7f6699da75eac4a16776236938f34575b70c69db9c00d29d282b6ab80c352543",
+   "eol": "LF"
+  }
+ ]
+}

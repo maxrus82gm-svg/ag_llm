@@ -1,0 +1,110 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "purpose": "pre-start state before the first edit",
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "card_sha256": "9ed51ddbb9013dc56a8ce91d9a4146afa17d2174633aa88c165150f28329a169",
+  "eol": "LF",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "problems": [],
+   "lines": 261
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "copy_sha256": "99e2642ab902449287ffa760aeff0106258a2eb36f617b9e5b1600c1291f20ba",
+   "problems": []
+  }
+ },
+ "card_check_first": "INVALID (WAITING_LINE_LEFT_IN_TASK, line 46) before the user's fix; reported, not fixed by the executor",
+ "launcher": {
+  "config_active": "standard",
+  "load_launch": {
+   "name": "standard",
+   "standard": true,
+   "port": 8765,
+   "storage": "default"
+  }
+ },
+ "files": {
+  "context_storage.py": {
+   "sha256": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content_as_pin": true
+  },
+  "ultra_ui.py": {
+   "sha256": "7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d",
+   "eol": "CRLF"
+  },
+  "web_alarm/ultra_chat.py": {
+   "sha256": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content_as_pin": true
+  },
+  "web_alarm/server.py": {
+   "sha256": "a2bc94b4e3ebb3c175c6ce19fa155556bc539b14925aaef0d99df5ce38338886",
+   "eol": "CRLF",
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content_as_pin": true
+  },
+  "web_alarm/ui.py": {
+   "sha256": "3095764a598fc7c7ffc0e59d10525b1246f97f416eb0af336287506f8c277ae6",
+   "eol": "CRLF",
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content_as_pin": true
+  },
+  "web_alarm/store_lock.py": {
+   "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+   "eol": "LF"
+  },
+  "test_chat_create_atomicity.py": {
+   "sha256": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+   "eol": "LF"
+  },
+  "test_ultra_chat_read.py": {
+   "sha256": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content_as_pin": true
+  },
+  "test_web_alarm_ultra_chat.py": {
+   "sha256": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content_as_pin": true
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "sha256": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content_as_pin": true
+  },
+  "Start_WebAlarm.bat": {
+   "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6",
+   "eol": "CRLF",
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content_as_pin": true
+  },
+  "web_alarm/launcher.py": {
+   "sha256": "cc42b9f5fcc2a34409aeb6abd2589c04e0d5cd7d16821d7e6b7b2c2343e8184d",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content_as_pin": true
+  },
+  "web_alarm/launch_config.json": {
+   "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2",
+   "eol": "LF",
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content_as_pin": true
+  }
+ },
+ "no_conflicting_changes": true,
+ "direction_b_active_files": "none (No.40, section B)",
+ "published_467_closed": "PASS / USER ACCEPTED (card BLOCKS 2/4, No.40)",
+ "git_used": false
+}

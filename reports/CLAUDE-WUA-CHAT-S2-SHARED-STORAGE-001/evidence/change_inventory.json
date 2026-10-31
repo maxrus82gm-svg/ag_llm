@@ -1,0 +1,234 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "method": "byte comparison with the pre-edit copies; no Git",
+ "files": {
+  "context_storage.py": {
+   "before": {
+    "sha256": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+    "sha256_lf": "2a9613427ed8baf91a9f1f6644b671648f3c5f1737a1bec585876a0c8524a879",
+    "eol": "LF",
+    "lines": 1555
+   },
+   "after": {
+    "sha256": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+    "sha256_lf": "ff53ad7091a74ad8765ebbac14efe08b04d35ba08e5e72af70abc67f7ee791f2",
+    "eol": "LF",
+    "lines": 2165
+   },
+   "added": 763,
+   "removed": 153,
+   "changed": true,
+   "eol_kept": true
+  },
+  "ultra_ui.py": {
+   "before": {
+    "sha256": "7bd32cad56c6f94056a291cc7beb570475be4bb3af88fd6749d66ceb021e547d",
+    "sha256_lf": "d60ffce6686f842e0b8f1485db17d21c2cd12ce09a68ba978185b53f958cfa23",
+    "eol": "CRLF",
+    "lines": 6165
+   },
+   "after": {
+    "sha256": "a076bab7d2aa3ec322cd2dcaf3557f6faf8a99ac009298c7c98faa60b908cd78",
+    "sha256_lf": "e2cea1b001991766b6f60273deae280b051e8ea1621e5c293e61619a34f17252",
+    "eol": "CRLF",
+    "lines": 6194
+   },
+   "added": 41,
+   "removed": 12,
+   "changed": true,
+   "eol_kept": true
+  },
+  "web_alarm/ultra_chat.py": {
+   "before": {
+    "sha256": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+    "sha256_lf": "e14bd79ccc1c975e9deeccbeb6423925dc698044207e1cb491a6ee2b644a1102",
+    "eol": "LF",
+    "lines": 292
+   },
+   "after": {
+    "sha256": "c222e8361d13cc5410702476cce067ad72a2cc1e8957e85079a9c94f702e5bc9",
+    "sha256_lf": "c222e8361d13cc5410702476cce067ad72a2cc1e8957e85079a9c94f702e5bc9",
+    "eol": "LF",
+    "lines": 430
+   },
+   "added": 143,
+   "removed": 5,
+   "changed": true,
+   "eol_kept": true
+  },
+  "web_alarm/server.py": {
+   "before": {
+    "sha256": "a2bc94b4e3ebb3c175c6ce19fa155556bc539b14925aaef0d99df5ce38338886",
+    "sha256_lf": "8b1ae62118b9283f426266df02883ddd1ef777c90f483dad7cf81eaf04f0e3a4",
+    "eol": "CRLF",
+    "lines": 1389
+   },
+   "after": {
+    "sha256": "4a6170c1842fe67b75ed408608a7a79b19113bdc1157299a2d534ca030680619",
+    "sha256_lf": "d34102ebd893f837b605a5ba77b671d892aab669d2499b5f325e3ec036c2bf3f",
+    "eol": "CRLF",
+    "lines": 1451
+   },
+   "added": 70,
+   "removed": 8,
+   "changed": true,
+   "eol_kept": true
+  },
+  "web_alarm/ui.py": {
+   "before": {
+    "sha256": "3095764a598fc7c7ffc0e59d10525b1246f97f416eb0af336287506f8c277ae6",
+    "sha256_lf": "ab0e54bcd8f5eedf09bf654c94d47fd3c6446af6961b8876ece5d6c105989d84",
+    "eol": "CRLF",
+    "lines": 2058
+   },
+   "after": {
+    "sha256": "8949c4388b2378ce677dc56861da704725bcc76f3d718359371e76141122b967",
+    "sha256_lf": "fec26d639a2fec72f6700381816e5d02eef459fc703815919981f89de3111fc7",
+    "eol": "CRLF",
+    "lines": 2152
+   },
+   "added": 101,
+   "removed": 7,
+   "changed": true,
+   "eol_kept": true
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "before": {
+    "sha256": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+    "sha256_lf": "a9c9c9d0b7f482c39f986fce301c022f1ca49e04b8cd007212b2471acdff84d2",
+    "eol": "LF",
+    "lines": 304
+   },
+   "after": {
+    "sha256": "e13af2fc0a7182f2471dadb7ebdf809e775f1173b47024153e97609a49bc12da",
+    "sha256_lf": "e13af2fc0a7182f2471dadb7ebdf809e775f1173b47024153e97609a49bc12da",
+    "eol": "LF",
+    "lines": 519
+   },
+   "added": 217,
+   "removed": 2,
+   "changed": true,
+   "eol_kept": true
+  },
+  "web_alarm/store_lock.py": {
+   "before": {
+    "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "sha256_lf": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "eol": "LF",
+    "lines": 83
+   },
+   "after": {
+    "sha256": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "sha256_lf": "6ae82859cb51f89dfcaa2f09ab560cf816236615ed7ad24c8cb89abde72ba4c7",
+    "eol": "LF",
+    "lines": 83
+   },
+   "added": 0,
+   "removed": 0,
+   "changed": false,
+   "eol_kept": true
+  },
+  "test_chat_create_atomicity.py": {
+   "before": {
+    "sha256": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+    "sha256_lf": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+    "eol": "LF",
+    "lines": 97
+   },
+   "after": {
+    "sha256": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+    "sha256_lf": "d6931a39cff28d510256a7c0e645d70d8b6927ec835db7d113accc43a801d959",
+    "eol": "LF",
+    "lines": 97
+   },
+   "added": 0,
+   "removed": 0,
+   "changed": false,
+   "eol_kept": true
+  },
+  "test_ultra_chat_read.py": {
+   "before": {
+    "sha256": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+    "sha256_lf": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+    "eol": "LF",
+    "lines": 548
+   },
+   "after": {
+    "sha256": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+    "sha256_lf": "8a5bfaeb0968fa37163079d7b67fa2309818949b7f364d39f90b3bd990b49eb4",
+    "eol": "LF",
+    "lines": 548
+   },
+   "added": 0,
+   "removed": 0,
+   "changed": false,
+   "eol_kept": true
+  },
+  "test_web_alarm_ultra_chat.py": {
+   "before": {
+    "sha256": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+    "sha256_lf": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+    "eol": "LF",
+    "lines": 606
+   },
+   "after": {
+    "sha256": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+    "sha256_lf": "19df94d8035a8e8c4b34f4e984ca07b40420c362e63e71b02b13970115feb618",
+    "eol": "LF",
+    "lines": 606
+   },
+   "added": 0,
+   "removed": 0,
+   "changed": false,
+   "eol_kept": true
+  },
+  "test_ultra_chat_storage.py": {
+   "new": true,
+   "after": {
+    "sha256": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+    "sha256_lf": "180af92319a89ad54b8e07cb02e2276ee813ab254583b3305f9a947d86189f81",
+    "eol": "LF",
+    "lines": 883
+   },
+   "added": 883,
+   "removed": 0,
+   "changed": true
+  },
+  "test_web_alarm_ultra_chat_storage.py": {
+   "new": true,
+   "after": {
+    "sha256": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "sha256_lf": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "eol": "LF",
+    "lines": 496
+   },
+   "added": 496,
+   "removed": 0,
+   "changed": true
+  }
+ },
+ "changed_in_scope": [
+  "context_storage.py",
+  "test_web_alarm_ultra_chat_ui.js",
+  "ultra_ui.py",
+  "web_alarm/server.py",
+  "web_alarm/ui.py",
+  "web_alarm/ultra_chat.py"
+ ],
+ "new_files": [
+  "test_ultra_chat_storage.py",
+  "test_web_alarm_ultra_chat_storage.py"
+ ],
+ "unchanged_in_scope": [
+  "test_chat_create_atomicity.py",
+  "test_ultra_chat_read.py",
+  "test_web_alarm_ultra_chat.py",
+  "web_alarm/store_lock.py"
+ ],
+ "launcher_files_identical_to_prestart": {
+  "Start_WebAlarm.bat": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/launch_config.json": true
+ },
+ "store_lock_changed": false
+}

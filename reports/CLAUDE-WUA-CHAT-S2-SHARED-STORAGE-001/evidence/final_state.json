@@ -1,0 +1,41 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "purpose": "final state before the hand-in",
+ "launcher": {
+  "config_active": "standard",
+  "load_launch_standard": true,
+  "name": "standard",
+  "files_identical_to_prestart": {
+   "Start_WebAlarm.bat": true,
+   "web_alarm/launcher.py": true,
+   "web_alarm/launch_config.json": true
+  },
+  "test_switch_made": false
+ },
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "problems": [],
+   "lines": 261
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "copy_sha256": "99e2642ab902449287ffa760aeff0106258a2eb36f617b9e5b1600c1291f20ba",
+   "problems": []
+  }
+ },
+ "python_compile_in_memory": {
+  "context_storage.py": "OK",
+  "ultra_ui.py": "OK",
+  "web_alarm/ultra_chat.py": "OK",
+  "web_alarm/server.py": "OK",
+  "web_alarm/ui.py": "OK",
+  "test_ultra_chat_storage.py": "OK",
+  "test_web_alarm_ultra_chat_storage.py": "OK"
+ },
+ "git_used": false
+}

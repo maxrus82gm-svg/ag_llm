@@ -2723,7 +2723,8 @@ class UltraApp(tk.Tk):
             self._sidebar_button(
                 workspace_row,
                 "+",
-                lambda p=path: self._create_chat_for_workspace(p),
+                lambda p=path, wid=item["workspace_id"]:
+                    self._create_chat_for_workspace(p, wid),
                 width=2,
             ).pack(side="left", padx=(2, 0))
 
@@ -2780,8 +2781,9 @@ class UltraApp(tk.Tk):
                 self._sidebar_button(
                     chat_row,
                     "✎",
-                    lambda p=path, cid=chat["chat_id"]:
-                        self._rename_chat_ui(p, cid),
+                    lambda p=path, cid=chat["chat_id"],
+                    wid=item["workspace_id"]:
+                        self._rename_chat_ui(p, cid, wid),
                     width=2,
                 ).pack(side="right")
 
@@ -3161,7 +3163,10 @@ class UltraApp(tk.Tk):
             entry = self._register_workspace_path(workspace)
             chats = list_chats(workspace)
             if not chats:
-                chat = create_chat(workspace)
+                chat = create_chat(
+                    workspace,
+                    expected_workspace_id=entry["workspace_id"],
+                )
                 entry["last_chat_id"] = chat["chat_id"]
             self._activate_workspace(
                 workspace,
@@ -3180,11 +3185,17 @@ class UltraApp(tk.Tk):
         # В UI создание и подключение Workspace выполняется справа.
         self._add_workspace_dialog()
 
-    def _create_chat_for_workspace(self, workspace: Path) -> None:
+    def _create_chat_for_workspace(
+        self,
+        workspace: Path,
+        workspace_id: str | None = None,
+    ) -> None:
         if self.running or self.compressor_running:
             return
         try:
-            chat = create_chat(workspace)
+            # Shared writer contract (No.37 stage 2): with the registered identity the
+            # storage is never created anew; a changed folder is refused visibly.
+            chat = create_chat(workspace, expected_workspace_id=workspace_id)
             self._activate_workspace(
                 workspace,
                 preferred_chat_id=chat["chat_id"],
@@ -3510,14 +3521,24 @@ class UltraApp(tk.Tk):
         name_entry.focus_set()
         name_entry.selection_range(0, "end")
 
-    def _rename_chat_ui(self, workspace: Path, chat_id: str) -> None:
+    def _rename_chat_ui(
+        self,
+        workspace: Path,
+        chat_id: str,
+        workspace_id: str | None = None,
+    ) -> None:
         if self.running or self.compressor_running:
             return
         try:
-            chats = {
-                item["chat_id"]: item
-                for item in list_chats(workspace)
-            }
+            listed = (
+                list_existing_chats(
+                    workspace,
+                    expected_workspace_id=workspace_id,
+                )
+                if workspace_id
+                else list_chats(workspace)
+            )
+            chats = {item["chat_id"]: item for item in listed}
             current = chats.get(chat_id)
             if current is None:
                 raise FileNotFoundError(f"Чат не найден: {chat_id}")
@@ -3530,7 +3551,15 @@ class UltraApp(tk.Tk):
             )
             if new_name is None:
                 return
-            rename_chat(workspace, chat_id, new_name)
+            # The title shown in the dialog: a rename made meanwhile in the web (or
+            # another window) is refused instead of silently overwritten.
+            rename_chat(
+                workspace,
+                chat_id,
+                new_name,
+                expected_title=current["title"],
+                expected_workspace_id=workspace_id,
+            )
             self._render_workspace_sidebar()
         except Exception as exc:
             messagebox.showerror(

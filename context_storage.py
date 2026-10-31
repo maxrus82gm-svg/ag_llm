@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import re
 import shutil
 import stat
+import threading
+import time
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -69,6 +72,19 @@ def _validate_workspace_root(workspace_root: str | Path) -> Path:
     return root.resolve()
 
 
+def _replace_with_retry(source: Path, destination: Path) -> None:
+    # Windows refuses to replace a file while any reader holds it open, even with FILE_SHARE_DELETE (stage 0, P11/P12).
+    # A short bounded retry, as in Run Store; after the last attempt the error is visible and the old file is intact.
+    for delay in (*_REPLACE_RETRY_DELAYS, None):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError:
+            if delay is None:
+                raise
+            time.sleep(delay)
+
+
 def _atomic_write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
@@ -77,7 +93,7 @@ def _atomic_write_text(path: Path, text: str) -> None:
             file.write(text)
             file.flush()
             os.fsync(file.fileno())
-        os.replace(temp_path, path)
+        _replace_with_retry(temp_path, path)
     finally:
         try:
             temp_path.unlink()
@@ -271,38 +287,67 @@ def _require_existing_workspace(
     )
 
 
+_STORAGE_SUBDIRECTORIES = ("chats", "proposals", "project_context_history")
+
+
 def ensure_workspace_storage(workspace_root: str | Path) -> dict[str, Any]:
+    """Use the Ultra storage of a folder, creating what is missing; only for an explicit user action.
+
+    A complete storage is only read (no lock, no write). Anything missing is created under the Workspace writer lock
+    after a second look, so two processes never mint two identities or overwrite a fresh Project Context. A
+    ``workspace.json`` that is missing next to an existing chat history is refused: a new ID would orphan it.
+    """
     root = _validate_workspace_root(workspace_root)
     ultra_dir = root / ULTRA_DIRNAME
     workspace_path = ultra_dir / WORKSPACE_METADATA_NAME
     project_context_path = ultra_dir / PROJECT_CONTEXT_NAME
 
     storage_created = not ultra_dir.exists()
-    workspace_created = not workspace_path.exists()
-    project_context_created = not project_context_path.exists()
+    workspace_created = False
+    project_context_created = False
 
-    ultra_dir.mkdir(parents=True, exist_ok=True)
-
-    for directory in (
-        ultra_dir / "chats",
-        ultra_dir / "proposals",
-        ultra_dir / "project_context_history",
-    ):
-        directory.mkdir(parents=True, exist_ok=True)
-
-    if workspace_path.exists():
+    complete = (
+        not storage_created
+        and all((ultra_dir / name).is_dir() for name in _STORAGE_SUBDIRECTORIES)
+        and workspace_path.is_file()
+        and project_context_path.exists()
+    )
+    if complete:
         metadata = _load_workspace_metadata(workspace_path)
     else:
-        metadata = {
-            "schema_version": SCHEMA_VERSION,
-            "workspace_id": f"ws_{uuid.uuid4().hex}",
-            "display_name": root.name or "workspace",
-            "created_at": _utc_now_iso(),
-        }
-        _atomic_write_json(workspace_path, metadata)
-
-    if not project_context_path.exists():
-        _atomic_write_text(project_context_path, PROJECT_CONTEXT_TEMPLATE)
+        anchor = _write_anchor(root)
+        if storage_created:
+            _ensure_write_directory(anchor, (ULTRA_DIRNAME,))
+        with _workspace_writer_lock(anchor):
+            for name in _STORAGE_SUBDIRECTORIES:
+                _ensure_write_directory(anchor, (ULTRA_DIRNAME, name))
+            if not os.path.lexists(workspace_path):
+                if _has_chat_history(anchor):
+                    raise StorageWriteError(
+                        "missing_workspace_metadata",
+                        "Workspace metadata отсутствует, но в папке есть история чатов: "
+                        "новый Workspace ID не создаётся. Восстановите .ultra/workspace.json.",
+                    )
+                new_metadata = {
+                    "schema_version": SCHEMA_VERSION,
+                    "workspace_id": f"ws_{uuid.uuid4().hex}",
+                    "display_name": root.name or "workspace",
+                    "created_at": _utc_now_iso(),
+                }
+                try:
+                    _publish_new_file(anchor, (ULTRA_DIRNAME, WORKSPACE_METADATA_NAME), _json_bytes(new_metadata))
+                    workspace_created = True
+                except FileExistsError:
+                    pass  # another writer outside this lock published first: its identity is the one kept
+            metadata = _load_workspace_metadata(workspace_path)
+            if not os.path.lexists(project_context_path):
+                try:
+                    _publish_new_file(
+                        anchor, (ULTRA_DIRNAME, PROJECT_CONTEXT_NAME), PROJECT_CONTEXT_TEMPLATE.encode("utf-8")
+                    )
+                    project_context_created = True
+                except FileExistsError:
+                    pass
 
     return {
         "workspace_root": str(root),
@@ -320,18 +365,17 @@ def ensure_workspace_storage(workspace_root: str | Path) -> dict[str, Any]:
 
 def rename_workspace(workspace_root: str | Path, display_name: str) -> dict[str, Any]:
     root = _validate_workspace_root(workspace_root)
-    info = ensure_workspace_storage(root)
-    path = Path(info["workspace_path"])
-    metadata = _load_workspace_metadata(path)
-
     name = str(display_name).strip()
     if not name:
         raise ValueError("Название Workspace не может быть пустым.")
     if len(name) > 200:
         raise ValueError("Название Workspace слишком длинное.")
 
-    metadata["display_name"] = name
-    _atomic_write_json(path, metadata)
+    ensure_workspace_storage(root)
+    with _existing_workspace_writer(root) as writer:
+        metadata = dict(writer.metadata)  # read again under the lock: every other field is kept as found
+        metadata["display_name"] = name
+        _atomic_write_json(writer.anchor.path((ULTRA_DIRNAME, WORKSPACE_METADATA_NAME)), metadata)
     return metadata
 
 
@@ -376,10 +420,6 @@ def load_existing_project_context(
 
 def save_project_context(workspace_root: str | Path, text: str) -> dict[str, Any]:
     root = _validate_workspace_root(workspace_root)
-    info = ensure_workspace_storage(root)
-    path = Path(info["project_context_path"])
-    history_dir = Path(info["ultra_dir"]) / "project_context_history"
-
     if not isinstance(text, str):
         raise TypeError("PROJECT CONTEXT должен быть строкой.")
     encoded = text.encode("utf-8")
@@ -389,20 +429,25 @@ def save_project_context(workspace_root: str | Path, text: str) -> dict[str, Any
             f"{len(encoded)} байт. Лимит: {MAX_PROJECT_CONTEXT_BYTES} байт."
         )
 
-    old_text = path.read_text(encoding="utf-8-sig") if path.exists() else ""
-    if old_text == text:
-        return {"changed": False, "project_context_path": str(path)}
+    info = ensure_workspace_storage(root)
+    path = Path(info["project_context_path"])
+    history_dir = Path(info["ultra_dir"]) / "project_context_history"
 
-    revision_path = None
-    if old_text:
-        history_dir.mkdir(parents=True, exist_ok=True)
-        revision_path = (
-            history_dir
-            / f"project_context_{_compact_utc_stamp()}_{uuid.uuid4().hex[:8]}.md"
-        )
-        _atomic_write_text(revision_path, old_text)
+    with _existing_workspace_writer(root) as writer:
+        old_text = path.read_text(encoding="utf-8-sig") if path.exists() else ""
+        if old_text == text:
+            return {"changed": False, "project_context_path": str(path)}
 
-    _atomic_write_text(path, text)
+        revision_path = None
+        if old_text:
+            _ensure_write_directory(writer.anchor, (ULTRA_DIRNAME, "project_context_history"))
+            revision_path = (
+                history_dir
+                / f"project_context_{_compact_utc_stamp()}_{uuid.uuid4().hex[:8]}.md"
+            )
+            _atomic_write_text(revision_path, old_text)
+
+        _atomic_write_text(path, text)
     return {
         "changed": True,
         "project_context_path": str(path),
@@ -421,7 +466,19 @@ def _chat_staging_root(root: Path) -> Path:
 
 
 def _publish_chat_directory(staging_dir: Path, chat_dir: Path) -> None:
-    os.replace(staging_dir, chat_dir)
+    # rename, not replace: on Windows it fails on an existing name, so a published Chat is never replaced.
+    # Windows also refuses to move a folder while any file in it is open (an antivirus scanning the fresh card):
+    # the same short bounded retry as a file replacement, then a visible error with the staging removed.
+    for delay in (*_REPLACE_RETRY_DELAYS, None):
+        try:
+            os.rename(staging_dir, chat_dir)
+            return
+        except FileExistsError:
+            raise
+        except PermissionError:
+            if delay is None:
+                raise
+            time.sleep(delay)
 
 
 def _load_chat_metadata(path: Path) -> dict[str, Any]:
@@ -497,96 +554,151 @@ def _next_default_chat_title(chats: list[dict[str, Any]]) -> str:
     return f"Чат {number}"
 
 
+def create_chat_record(
+    workspace_root: str | Path,
+    title: str | None = None,
+    *,
+    chat_id: str | None = None,
+    expected_workspace_id: str | None = None,
+) -> dict[str, Any]:
+    """Create one Chat through the shared writer contract; ``{"chat": metadata, "created": bool}``.
+
+    With ``expected_workspace_id`` the Workspace must already exist with exactly that identity (the web path and
+    the Tk sidebar); without it the folder's storage is first ensured, as the Tk "new Workspace" action always did.
+    A caller-chosen ``chat_id`` makes a repeated request idempotent: the same ID with the same (or no) title returns
+    the existing Chat without a write, the same ID with another title is a conflict. The Chat is assembled in
+    staging and published with one directory rename under the Workspace writer lock.
+    """
+    requested_title = _clean_chat_title(title, allow_empty=True)
+    if chat_id is not None and (not isinstance(chat_id, str) or not _CHAT_ID_RE.fullmatch(chat_id)):
+        raise ValueError(f"Некорректный chat_id: {chat_id!r}")
+    if expected_workspace_id is None:
+        ensure_workspace_storage(workspace_root)
+    with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
+        anchor = writer.anchor
+        chats_parts = (ULTRA_DIRNAME, "chats")
+        _ensure_write_directory(anchor, chats_parts)
+        if chat_id is not None and os.path.lexists(anchor.path(chats_parts + (chat_id,))):
+            try:
+                _parts, existing = _require_chat_for_write(writer, chat_id)
+            except ChatNotFoundError:
+                raise StorageWriteError(
+                    "chat_id_conflict", f"Папка с этим chat_id уже существует без карточки чата: {chat_id}"
+                ) from None
+            if requested_title is not None and existing.get("title") != requested_title:
+                raise StorageWriteError(
+                    "chat_id_conflict", f"Чат {chat_id} уже создан с другим названием: повтор отклонён."
+                )
+            return {"chat": existing, "created": False}
+
+        try:
+            listing = list_chats_bounded(writer.root)
+        except StorageReadError as exc:
+            if exc.code == "chats_listing_too_large":
+                raise StorageWriteError("chats_limit_reached", "В Workspace слишком много чатов.") from None
+            raise _write_refusal(exc) from None
+        if len(listing["chats"]) >= MAX_CHATS_PER_WORKSPACE:
+            raise StorageWriteError(
+                "chats_limit_reached",
+                f"В Workspace уже {len(listing['chats'])} чатов: больше этого числа история не читается.",
+            )
+        clean_title = requested_title or _next_default_chat_title(
+            [item for item in listing["chats"] if item["status"] == "ok"]
+        )
+
+        new_chat_id = chat_id or f"chat_{uuid.uuid4().hex}"
+        chat_dir = anchor.path(chats_parts + (new_chat_id,))
+        staging_parts = (ULTRA_DIRNAME, "chat_staging")
+        _ensure_write_directory(anchor, staging_parts)
+        staging_root = anchor.path(staging_parts)
+        staging_dir = staging_root / f"{new_chat_id}.{uuid.uuid4().hex}.tmp"
+        staging_dir.mkdir(parents=False, exist_ok=False)
+
+        metadata = {
+            "schema_version": SCHEMA_VERSION,
+            "workspace_id": writer.workspace_id,
+            "chat_id": new_chat_id,
+            "title": clean_title,
+            "created_at": _utc_now_iso(),
+        }
+        try:
+            (staging_dir / "messages").mkdir(parents=False, exist_ok=False)
+            (staging_dir / "summaries").mkdir(parents=False, exist_ok=False)
+            _atomic_write_json(staging_dir / "metadata.json", metadata)
+            _publish_chat_directory(staging_dir, chat_dir)
+        finally:
+            if staging_dir.exists():
+                shutil.rmtree(staging_dir)
+            try:
+                staging_root.rmdir()  # safe: every cooperating writer stages only under the same lock
+            except OSError:
+                pass
+        _parts, published = _require_chat_for_write(writer, new_chat_id)
+        if published != metadata:
+            raise StorageWriteError("verify_failed", f"Опубликованный чат не совпадает с записанным: {new_chat_id}")
+        return {"chat": metadata, "created": True}
+
+
 def create_chat(
     workspace_root: str | Path,
     title: str | None = None,
+    *,
+    chat_id: str | None = None,
+    expected_workspace_id: str | None = None,
 ) -> dict[str, Any]:
-    root = _validate_workspace_root(workspace_root)
-    info = ensure_workspace_storage(root)
-    existing = list_chats(root)
-
-    if title is None or not str(title).strip():
-        clean_title = _next_default_chat_title(existing)
-    else:
-        clean_title = str(title).strip()
-    if len(clean_title) > 200:
-        raise ValueError("Название чата слишком длинное.")
-
-    chat_id = f"chat_{uuid.uuid4().hex}"
-    chat_dir = _chat_root(root, chat_id)
-    staging_root = _chat_staging_root(root)
-    staging_root.mkdir(parents=True, exist_ok=True)
-    staging_dir = staging_root / f"{chat_id}.{uuid.uuid4().hex}.tmp"
-    staging_dir.mkdir(parents=False, exist_ok=False)
-
-    metadata = {
-        "schema_version": SCHEMA_VERSION,
-        "workspace_id": info["workspace_id"],
-        "chat_id": chat_id,
-        "title": clean_title,
-        "created_at": _utc_now_iso(),
-    }
-    try:
-        (staging_dir / "messages").mkdir(parents=False, exist_ok=False)
-        (staging_dir / "summaries").mkdir(parents=False, exist_ok=False)
-        _atomic_write_json(staging_dir / "metadata.json", metadata)
-        _publish_chat_directory(staging_dir, chat_dir)
-    finally:
-        if staging_dir.exists():
-            shutil.rmtree(staging_dir)
-        try:
-            staging_root.rmdir()
-        except OSError:
-            pass
-    return metadata
+    return create_chat_record(
+        workspace_root, title, chat_id=chat_id, expected_workspace_id=expected_workspace_id
+    )["chat"]
 
 
 def ensure_chat(workspace_root: str | Path) -> dict[str, Any]:
-    chats = list_chats(workspace_root)
-    if chats:
-        return chats[-1]
-    return create_chat(workspace_root)
+    root = _validate_workspace_root(workspace_root)
+    ensure_workspace_storage(root)
+    with _existing_workspace_writer(root):  # listing and creation as one step: two callers get one Chat
+        chats = _list_existing_chats_from_root(root)
+        if chats:
+            return chats[-1]
+        return create_chat(root)
 
 
 def rename_chat(
     workspace_root: str | Path,
     chat_id: str,
     title: str,
+    *,
+    expected_title: str | None = None,
+    expected_workspace_id: str | None = None,
 ) -> dict[str, Any]:
-    root = _validate_workspace_root(workspace_root)
-    chat_dir = _chat_root(root, chat_id)
-    metadata_path = chat_dir / "metadata.json"
-    if not metadata_path.is_file():
-        raise FileNotFoundError(f"Чат не найден: {chat_id}")
+    """Atomically replace the title in the Chat card under the Workspace writer lock.
 
-    clean_title = str(title).strip()
-    if not clean_title:
-        raise ValueError("Название чата не может быть пустым.")
-    if len(clean_title) > 200:
-        raise ValueError("Название чата слишком длинное.")
+    The card must belong to this Workspace and have a supported version; every other field is kept as found.
+    ``expected_title`` is the title the user saw: if another window changed it meanwhile, the rename is refused
+    instead of silently overwriting that change. Repeating the same rename is a no-op.
+    """
+    clean_title = _clean_chat_title(title)
+    _chat_root(Path("."), chat_id)  # the ID is checked before any lock or disk access
+    with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
+        parts, metadata = _require_chat_for_write(writer, chat_id)
+        if metadata.get("title") == clean_title:
+            return metadata
+        if expected_title is not None and metadata.get("title") != expected_title:
+            raise StorageWriteError(
+                "title_changed",
+                "Название чата уже изменено в другом окне: обновите список и повторите.",
+            )
+        updated = {**metadata, "title": clean_title}
+        payload = _json_bytes(updated)
+        _atomic_write_json(writer.anchor.path(parts + ("metadata.json",)), updated)
+        _verify_published(writer.anchor, parts + ("metadata.json",), payload)
+        return updated
 
-    metadata = _load_chat_metadata(metadata_path)
-    metadata["title"] = clean_title
-    _atomic_write_json(metadata_path, metadata)
-    return metadata
 
-
-def append_raw_message(
-    workspace_root: str | Path,
-    chat_id: str,
+def _validated_raw_fields(
     role: str,
     original_text: str,
-    *,
-    producer: dict[str, Any] | None = None,
-    task_block_id: str | None = None,
+    producer: dict[str, Any] | None,
+    task_block_id: str | None,
 ) -> dict[str, Any]:
-    root = _validate_workspace_root(workspace_root)
-    info = ensure_workspace_storage(root)
-    chat_dir = _chat_root(root, chat_id)
-    metadata_path = chat_dir / "metadata.json"
-    if not metadata_path.is_file():
-        raise FileNotFoundError(f"Чат не найден: {chat_id}")
-
     clean_role = str(role).strip().lower()
     if clean_role not in {"user", "assistant", "system", "tool"}:
         raise ValueError(f"Неподдерживаемая роль сообщения: {role!r}")
@@ -599,30 +711,101 @@ def append_raw_message(
             f"RAW MESSAGE слишком большой: {len(encoded)} байт. "
             f"Лимит: {MAX_MESSAGE_BYTES} байт."
         )
-
-    message_id = f"msg_{uuid.uuid4().hex}"
-    message = {
-        "schema_version": SCHEMA_VERSION,
-        "workspace_id": info["workspace_id"],
-        "chat_id": chat_id,
-        "message_id": message_id,
-        "role": clean_role,
-        "created_at": _utc_now_iso(),
-        "original_text": original_text,
-    }
+    fields: dict[str, Any] = {"role": clean_role, "original_text": original_text}
     if producer is not None:
-        message["producer"] = _validate_producer(producer)
+        fields["producer"] = _validate_producer(producer)
     if task_block_id is not None:
-        message["task_block_id"] = validate_task_block_id(task_block_id)
+        fields["task_block_id"] = validate_task_block_id(task_block_id)
+    return fields
 
-    messages_dir = chat_dir / "messages"
-    messages_dir.mkdir(parents=True, exist_ok=True)
-    message_path = messages_dir / f"{message_id}.json"
-    if message_path.exists():
+
+def commit_raw_message(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    role: str,
+    original_text: str,
+    *,
+    producer: dict[str, Any] | None = None,
+    task_block_id: str | None = None,
+    expected_workspace_id: str | None = None,
+) -> dict[str, Any]:
+    """Save one RAW MESSAGE under a caller-chosen ``message_id`` exactly once (local storage idempotency).
+
+    A new ID gives one new record. The same ID with the same content returns the stored record (``created`` is
+    False, nothing is written). The same ID with other content or identity is a ``message_id_conflict``: the stored
+    record is never overwritten. Publication is exclusive (a rename that fails on an existing name), so even a
+    writer outside this lock cannot be overwritten. The Workspace must already exist; nothing is created for it.
+    This is not a Turn: a retry key and the outcome of a provider call belong to stage 3.
+    """
+    _validate_message_id(message_id)
+    _chat_root(Path("."), chat_id)  # the ID is checked before any lock or disk access
+    fields = _validated_raw_fields(role, original_text, producer, task_block_id)
+    with _existing_workspace_writer(workspace_root, expected_workspace_id) as writer:
+        chat_parts, _chat_metadata = _require_chat_for_write(writer, chat_id)
+        messages_parts = chat_parts + ("messages",)
+        _ensure_write_directory(writer.anchor, messages_parts)
+        target_parts = messages_parts + (f"{message_id}.json",)
+        target_path = writer.anchor.path(target_parts)
+        candidate = {
+            "schema_version": SCHEMA_VERSION,
+            "workspace_id": writer.workspace_id,
+            "chat_id": chat_id,
+            "message_id": message_id,
+            **fields,
+        }
+        existing = _read_existing_raw(writer, target_parts)
+        if existing is None:
+            message = {  # the field order append_raw_message has always written
+                "schema_version": SCHEMA_VERSION,
+                "workspace_id": writer.workspace_id,
+                "chat_id": chat_id,
+                "message_id": message_id,
+                "role": fields["role"],
+                "created_at": _utc_now_iso(),
+                "original_text": fields["original_text"],
+            }
+            for key in ("producer", "task_block_id"):
+                if key in fields:
+                    message[key] = fields[key]
+            try:
+                _publish_new_file(writer.anchor, target_parts, _json_bytes(message))
+                return {**message, "path": str(target_path), "created": True}
+            except FileExistsError:
+                existing = _read_existing_raw(writer, target_parts)
+                if existing is None:
+                    raise
+        if _raw_canonical(existing) != _raw_canonical(candidate):
+            raise StorageWriteError(
+                "message_id_conflict",
+                f"RAW MESSAGE {message_id} уже сохранён с другим содержимым или идентичностью: перезапись запрещена.",
+            )
+        return {**existing, "path": str(target_path), "created": False}
+
+
+def append_raw_message(
+    workspace_root: str | Path,
+    chat_id: str,
+    role: str,
+    original_text: str,
+    *,
+    producer: dict[str, Any] | None = None,
+    task_block_id: str | None = None,
+) -> dict[str, Any]:
+    """Save a new RAW MESSAGE with a fresh ID; a compatible wrapper over ``commit_raw_message``."""
+    message_id = f"msg_{uuid.uuid4().hex}"
+    result = commit_raw_message(
+        workspace_root,
+        chat_id,
+        message_id,
+        role,
+        original_text,
+        producer=producer,
+        task_block_id=task_block_id,
+    )
+    if not result.pop("created"):
         raise RuntimeError(f"Коллизия message_id: {message_id}")
-    _atomic_write_json(message_path, message)
-
-    return {**message, "path": str(message_path)}
+    return result
 
 
 def load_chat_messages(
@@ -863,7 +1046,7 @@ def load_context_variant(
     return data
 
 
-def activate_message_context_variant(
+def _activate_message_context_variant(
     workspace_root: str | Path,
     chat_id: str,
     message_id: str,
@@ -893,7 +1076,7 @@ def activate_message_context_variant(
     return state
 
 
-def create_message_context_variant(
+def _create_message_context_variant(
     workspace_root: str | Path,
     chat_id: str,
     message_id: str,
@@ -957,7 +1140,7 @@ def create_message_context_variant(
     return {**variant, "path": str(path)}
 
 
-def restore_message_raw(
+def _restore_message_raw(
     workspace_root: str | Path,
     chat_id: str,
     message_id: str,
@@ -971,6 +1154,60 @@ def restore_message_raw(
     state["updated_at"] = _utc_now_iso()
     _atomic_write_json(_message_context_root(chat_dir, message_id) / "state.json", state)
     return state
+
+
+
+# Message context writers: the same lock, identity and path rule as every other writer (stage 2). The bodies above
+# keep their checks unchanged; a nested call (create -> activate) re-enters the lock held by its own thread.
+def activate_message_context_variant(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    context_variant_id: str,
+    *,
+    require_raw: bool = False,
+) -> dict[str, Any]:
+    with _chat_writer(workspace_root, chat_id):
+        return _activate_message_context_variant(
+            workspace_root, chat_id, message_id, context_variant_id, require_raw=require_raw
+        )
+
+
+def create_message_context_variant(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+    text: str,
+    *,
+    source: str,
+    parent_variant_id: str | None = None,
+    manually_edited: bool = False,
+    compression: dict[str, Any] | None = None,
+    activate: bool = True,
+    require_raw: bool = False,
+) -> dict[str, Any]:
+    with _chat_writer(workspace_root, chat_id):
+        return _create_message_context_variant(
+            workspace_root,
+            chat_id,
+            message_id,
+            text,
+            source=source,
+            parent_variant_id=parent_variant_id,
+            manually_edited=manually_edited,
+            compression=compression,
+            activate=activate,
+            require_raw=require_raw,
+        )
+
+
+def restore_message_raw(
+    workspace_root: str | Path,
+    chat_id: str,
+    message_id: str,
+) -> dict[str, Any]:
+    with _chat_writer(workspace_root, chat_id):
+        return _restore_message_raw(workspace_root, chat_id, message_id)
 
 
 def get_message_working_representation(
@@ -1553,3 +1790,376 @@ def list_ultra_files_bounded(
     for depth in range(2, len(parts) + 1):
         _verify_directory(anchor, parts[:depth])
     return sorted(name for name, kind, _size in _scan_directory(anchor, parts, max_entries) if kind == "file")
+
+
+# ---------------------------------------------------------------------------
+# Shared writer contract (Ultra Chat, programme No.37 stage 2).
+#
+# One rule for every writer of the Ultra storage, Tk and web alike. A public write function:
+#   1. checks the Workspace identity before anything is created (a refusal leaves the folder untouched);
+#   2. takes the Workspace writer lock <root>/.ultra/locks/writer.lock - an OS byte-range lock that its process
+#      releases on death - and reads the identity again under it;
+#   3. checks every directory it writes through (no link or junction, final path under the pinned root), the
+#      ownership of the Chat and the version of what it changes;
+#   4. publishes atomically (replace with a bounded retry, or an exclusive rename that never overwrites) and reads
+#      the published bytes back through the same no-follow checks as the stage-1 reader.
+# The lock is reentrant per thread, held for milliseconds, never over a network call or a user dialog, and a busy
+# Workspace is a visible WorkspaceBusyError after WRITER_LOCK_TIMEOUT_SECONDS. It does not replace steps 1, 3, 4.
+
+WRITER_LOCK_TIMEOUT_SECONDS = 10.0
+_WRITER_LOCK_POLL_SECONDS = 0.01
+_REPLACE_RETRY_DELAYS = (0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.8)
+LOCKS_DIRNAME = "locks"
+WRITER_LOCK_NAME = "writer.lock"
+# The locked byte lies far past the end of the always-empty lock file: Windows byte-range locks are mandatory,
+# so a lock on byte 0 would make the file unreadable and a copy of the Workspace fail while a writer works.
+_WRITER_LOCK_OFFSET = 1 << 30
+# The web listing refuses more chats than this (stage 1); creating more would hide every chat of the Workspace.
+MAX_CHATS_PER_WORKSPACE = DEFAULT_READ_LIMITS.max_chats
+MAX_CHAT_TITLE_CHARS = 200
+_TITLE_FORBIDDEN_RE = re.compile(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]")
+_RAW_COMPARED_FIELDS = (
+    "schema_version", "workspace_id", "chat_id", "message_id",
+    "role", "original_text", "producer", "task_block_id", "turn_id",
+)
+_MAX_WRITER_JSON_BYTES = 16 * 1024 * 1024  # a 2 MiB RAW text may grow when JSON escapes it
+
+
+class StorageWriteError(RuntimeError):
+    """A refused or unverifiable write. ``code`` is safe to show; the stored data is left as it was."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+
+
+class WorkspaceBusyError(StorageWriteError):
+    def __init__(self) -> None:
+        super().__init__("workspace_busy", "Workspace занят другой операцией записи. Повторите позже.")
+
+
+class ChatNotFoundError(FileNotFoundError):
+    """The Chat card does not exist; a FileNotFoundError, as the old writers raised."""
+
+    code = "chat_not_found"
+
+
+def _json_bytes(data: dict[str, Any]) -> bytes:
+    return (json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+
+
+def _clean_chat_title(title: object, *, allow_empty: bool = False) -> str | None:
+    clean = "" if title is None else str(title).strip()
+    if not clean:
+        if allow_empty:
+            return None
+        raise ValueError("Название чата не может быть пустым.")
+    if len(clean) > MAX_CHAT_TITLE_CHARS:
+        raise ValueError("Название чата слишком длинное.")
+    if _TITLE_FORBIDDEN_RE.search(clean):
+        raise ValueError("Название чата содержит управляющие символы или перевод строки.")
+    return clean
+
+
+def _write_refusal(exc: StorageReadError) -> StorageWriteError:
+    if exc.code == "unsafe_storage_link":
+        return StorageWriteError(
+            "unsafe_storage_link",
+            "Внутри хранилища Ultra ссылка вместо папки или файла: запись запрещена.",
+        )
+    return StorageWriteError("storage_unavailable", f"Хранилище Ultra недоступно для записи ({exc.code}).")
+
+
+def _write_anchor(root: Path) -> _StorageAnchor:
+    try:
+        return _StorageAnchor(root)
+    except StorageReadError as exc:
+        raise _write_refusal(exc) from None
+
+
+def _verify_write_directory(anchor: _StorageAnchor, parts: tuple[str, ...]) -> None:
+    try:
+        _verify_directory(anchor, parts)
+    except StorageReadError as exc:
+        raise _write_refusal(exc) from None
+
+
+def _ensure_write_directory(anchor: _StorageAnchor, parts: tuple[str, ...]) -> None:
+    """One directory level whose parent the caller has verified: created if missing, then verified itself."""
+    try:
+        os.mkdir(anchor.path(parts))
+    except FileExistsError:
+        pass
+    _verify_write_directory(anchor, parts)
+
+
+_writer_locks_held = threading.local()
+
+
+def _held_writer_locks() -> dict[str, int]:
+    held = getattr(_writer_locks_held, "held", None)
+    if held is None:
+        held = _writer_locks_held.held = {}
+    return held
+
+
+def _try_lock_byte(handle: Any) -> bool:
+    try:
+        if os.name == "nt":
+            handle.seek(_WRITER_LOCK_OFFSET)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        return False
+    return True
+
+
+def _release_lock_byte(handle: Any) -> None:
+    try:
+        if os.name == "nt":
+            handle.seek(_WRITER_LOCK_OFFSET)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+    finally:
+        handle.close()
+
+
+@contextlib.contextmanager
+def _workspace_writer_lock(anchor: _StorageAnchor):
+    """Exclusive writer of one physical Workspace folder: other threads and processes wait or time out."""
+    parts = (ULTRA_DIRNAME, LOCKS_DIRNAME, WRITER_LOCK_NAME)
+    key = anchor.expected(parts)
+    held = _held_writer_locks()
+    if key in held:  # the same thread, one logical operation (create -> activate): no second handle, no wait
+        held[key] += 1
+        try:
+            yield
+        finally:
+            held[key] -= 1
+        return
+    _verify_write_directory(anchor, (ULTRA_DIRNAME,))
+    _ensure_write_directory(anchor, parts[:2])
+    path = anchor.path(parts)
+    try:
+        if _is_link_or_reparse(os.lstat(path)):
+            raise _write_refusal(StorageReadError("unsafe_storage_link"))
+    except FileNotFoundError:
+        pass
+    handle = open(path, "a+b")
+    try:
+        if os.path.normcase(_final_path_of_fd(handle.fileno())) != key:
+            raise _write_refusal(StorageReadError("unsafe_storage_link"))
+        deadline = time.monotonic() + WRITER_LOCK_TIMEOUT_SECONDS
+        while not _try_lock_byte(handle):
+            if time.monotonic() >= deadline:
+                raise WorkspaceBusyError()
+            time.sleep(_WRITER_LOCK_POLL_SECONDS)
+    except BaseException:
+        handle.close()
+        raise
+    held[key] = 1
+    try:
+        yield
+    finally:
+        del held[key]
+        _release_lock_byte(handle)
+
+
+def _read_workspace_metadata_for_write(anchor: _StorageAnchor) -> dict[str, Any]:
+    """The whole ``workspace.json`` (every field kept) of a valid Workspace, through the no-follow reader."""
+    try:
+        _verify_directory(anchor, (ULTRA_DIRNAME,))
+        data = _read_json_bounded(
+            anchor, (ULTRA_DIRNAME, WORKSPACE_METADATA_NAME), DEFAULT_READ_LIMITS.max_workspace_metadata_bytes
+        )
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            raise StorageWriteError(
+                "missing_history", "В папке нет истории Ultra (.ultra/workspace.json): запись не выполняется."
+            ) from None
+        if exc.code in {"damaged", "too_large"}:
+            raise StorageWriteError("invalid_metadata", "Workspace metadata повреждена: запись не выполняется.") from None
+        raise _write_refusal(exc) from None
+    if not isinstance(data, dict):
+        raise StorageWriteError("invalid_metadata", "Workspace metadata повреждена: запись не выполняется.")
+    version = data.get("schema_version")
+    if version != SCHEMA_VERSION:
+        newer = isinstance(version, int) and not isinstance(version, bool) and version > SCHEMA_VERSION
+        raise StorageWriteError(
+            "unsupported_version" if newer else "invalid_metadata",
+            f"Неподдерживаемая версия workspace schema: {version!r}. Ожидалась версия {SCHEMA_VERSION}.",
+        )
+    workspace_id = data.get("workspace_id")
+    if not isinstance(workspace_id, str) or not _WORKSPACE_ID_RE.fullmatch(workspace_id):
+        raise StorageWriteError("invalid_metadata", "Некорректный workspace_id: ID нельзя молча пересоздавать.")
+    return data
+
+
+class _WorkspaceWriter:
+    def __init__(self, root: Path, anchor: _StorageAnchor, metadata: dict[str, Any]) -> None:
+        self.root = root
+        self.anchor = anchor
+        self.metadata = metadata
+        self.workspace_id: str = metadata["workspace_id"]
+
+
+def _check_expected_workspace(metadata: dict[str, Any], expected_workspace_id: str | None) -> None:
+    if expected_workspace_id is not None and metadata["workspace_id"] != expected_workspace_id:
+        raise StorageWriteError(
+            "workspace_identity_changed",
+            "В этой папке теперь другой Workspace Ultra: запись отменена.",
+        )
+
+
+@contextlib.contextmanager
+def _existing_workspace_writer(workspace_root: str | Path, expected_workspace_id: str | None = None):
+    """Writer session of an existing Workspace; refuses before creating anything (not even the lock file)."""
+    root = _validate_workspace_root(workspace_root)
+    anchor = _write_anchor(root)
+    _check_expected_workspace(_read_workspace_metadata_for_write(anchor), expected_workspace_id)
+    with _workspace_writer_lock(anchor):
+        metadata = _read_workspace_metadata_for_write(anchor)  # it may have changed while this writer waited
+        _check_expected_workspace(metadata, expected_workspace_id)
+        yield _WorkspaceWriter(root, anchor, metadata)
+
+
+def _require_chat_for_write(writer: _WorkspaceWriter, chat_id: str) -> tuple[tuple[str, ...], dict[str, Any]]:
+    """The Chat card a writer may change: own folder (no link), own Workspace, supported version."""
+    if not isinstance(chat_id, str) or not _CHAT_ID_RE.fullmatch(chat_id):
+        raise ValueError(f"Некорректный chat_id: {chat_id!r}")
+    chats_parts = (ULTRA_DIRNAME, "chats")
+    parts = chats_parts + (chat_id,)
+    try:
+        _verify_directory(writer.anchor, chats_parts)
+        _verify_directory(writer.anchor, parts)
+        data = _read_json_bounded(writer.anchor, parts + ("metadata.json",), DEFAULT_READ_LIMITS.max_chat_metadata_bytes)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            raise ChatNotFoundError(f"Чат не найден: {chat_id}") from None
+        if exc.code == "unsafe_storage_link":
+            raise _write_refusal(exc) from None
+        raise StorageWriteError("chat_damaged", f"Повреждён chat metadata: {chat_id}") from None
+    problem = _chat_metadata_problem(data, chat_id, writer.workspace_id)
+    if problem == "foreign_identity":
+        raise StorageWriteError("foreign_identity", f"Чат принадлежит другому Workspace: {chat_id}")
+    if problem:
+        raise StorageWriteError("chat_damaged", f"Повреждён chat metadata: {chat_id}")
+    version = data.get("schema_version", SCHEMA_VERSION)
+    if version != SCHEMA_VERSION:
+        newer = isinstance(version, int) and not isinstance(version, bool) and version > SCHEMA_VERSION
+        raise StorageWriteError(
+            "unsupported_version" if newer else "chat_damaged",
+            f"Неподдерживаемая версия chat metadata: {version!r}. Ожидалась версия {SCHEMA_VERSION}.",
+        )
+    return parts, data
+
+
+@contextlib.contextmanager
+def _chat_writer(workspace_root: str | Path, chat_id: str):
+    with _existing_workspace_writer(workspace_root) as writer:
+        _require_chat_for_write(writer, chat_id)
+        yield writer
+
+
+def _has_chat_history(anchor: _StorageAnchor) -> bool:
+    try:
+        _verify_directory(anchor, (ULTRA_DIRNAME, "chats"))
+        entries = _scan_directory(anchor, (ULTRA_DIRNAME, "chats"), DEFAULT_READ_LIMITS.max_chat_entries)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            return False
+        if exc.code == "listing_too_large":
+            return True
+        raise _write_refusal(exc) from None
+    return any(_CHAT_ID_RE.fullmatch(name) for name, _kind, _size in entries)
+
+
+def _verify_published(anchor: _StorageAnchor, parts: tuple[str, ...], payload: bytes) -> None:
+    """The bytes now under ``parts`` are exactly ``payload`` and live under the pinned root (no swapped path)."""
+    try:
+        data = _read_file_bounded(anchor, parts, max(len(payload), 1))
+    except StorageReadError as exc:
+        if exc.code == "unsafe_storage_link":
+            raise _write_refusal(exc) from None
+        raise StorageWriteError("verify_failed", "Записанный файл не читается обратно.") from None
+    if data != payload:
+        raise StorageWriteError("verify_failed", "Записанный файл не совпадает с отправленными байтами.")
+
+
+def _publish_new_file(anchor: _StorageAnchor, parts: tuple[str, ...], payload: bytes) -> None:
+    """Publish ``payload`` under a name that must not exist yet; FileExistsError instead of any overwrite.
+
+    temp file (O_EXCL) -> fsync -> rename. On Windows ``os.rename`` refuses an existing target; on POSIX a hard
+    link does the same and the temporary name is then removed. A crash leaves at most the hidden temporary file,
+    which no reader lists (it does not end in ``.json`` / is not ``metadata.json``).
+    """
+    directory = anchor.path(parts[:-1])
+    target = directory / parts[-1]
+    temp = directory / f".{parts[-1]}.{uuid.uuid4().hex}.tmp"
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(temp, flags, 0o600)
+    try:
+        try:
+            # The temporary file must be where the checked directory is: a folder swapped for a link after its
+            # check is refused here, before any byte is written or published elsewhere.
+            if os.path.normcase(_final_path_of_fd(fd)) != anchor.expected(parts[:-1] + (temp.name,)):
+                raise _write_refusal(StorageReadError("unsafe_storage_link"))
+            view = memoryview(payload)
+            while view:
+                view = view[os.write(fd, view):]
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        for delay in (*_REPLACE_RETRY_DELAYS, None):
+            try:
+                if os.name == "nt":
+                    os.rename(temp, target)
+                else:
+                    os.link(temp, target)
+                break
+            except FileExistsError:
+                raise
+            except PermissionError:
+                if delay is None:
+                    raise
+                time.sleep(delay)
+    finally:
+        try:
+            os.unlink(temp)
+        except FileNotFoundError:
+            pass
+    _verify_published(anchor, parts, payload)
+
+
+def _read_existing_raw(writer: _WorkspaceWriter, parts: tuple[str, ...]) -> dict[str, Any] | None:
+    """The record already stored under this message ID, or None; anything unreadable is never overwritten."""
+    try:
+        data = _read_file_bounded(writer.anchor, parts, _MAX_WRITER_JSON_BYTES)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            return None
+        if exc.code == "unsafe_storage_link":
+            raise _write_refusal(exc) from None
+        raise StorageWriteError(
+            "existing_record_damaged", "Под этим message_id лежит недоступная запись: перезапись запрещена."
+        ) from None
+    try:
+        record = _decode_json(data)
+    except StorageReadError:
+        record = None
+    if not isinstance(record, dict):
+        raise StorageWriteError(
+            "existing_record_damaged", "Под этим message_id лежит повреждённая запись: перезапись запрещена."
+        )
+    return record
+
+
+def _raw_canonical(record: dict[str, Any]) -> dict[str, Any]:
+    """Fields that make two RAW records the same message; ``created_at`` is when, not what."""
+    return {key: record[key] for key in _RAW_COMPARED_FIELDS if key in record}

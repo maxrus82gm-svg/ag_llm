@@ -1,0 +1,17 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+ "purpose": "the shipped page in the built-in browser pane of the desktop app, driven with real clicks and keys, on the synthetic demo (tools/demo_s2.py: one Workspace with two chats, one registered folder without Ultra history; TEMP storage)",
+ "viewport": "emulated 1400x900, reset to desktop afterwards",
+ "steps": [
+  {"step": "open #chat", "observed": "Ultra Chat opens; sidebar header 'ULTRA CHAT'; access line 'Данные проверяет сервер · сообщения не отправляются'; list 'Диалогов: 2'; «+ Новый диалог» and «✎ Переименовать» enabled"},
+  {"step": "click «+ Новый диалог»", "observed": "form shown, label 'Название нового диалога (пусто — «Чат N»)', focus in the field; no request sent"},
+  {"step": "type 'Создан в браузере', Enter", "observed": "GET write-capability 200; POST .../chats 201; list re-read (3 chats); the new chat selected and opened ('В этом диалоге нет сообщений.'); form closed, no error"},
+  {"step": "click «✎ Переименовать», Ctrl+A, type 'Переименован в браузере', click «Сохранить»", "observed": "POST .../title 200; list and title show the new name"},
+  {"step": "select the folder without history", "observed": "'В папке нет истории Ultra'; both buttons disabled; form closed"},
+  {"step": "stop and restart the demo server over the same TEMP storage (new tokens), select the Workspace again in the open page", "observed": "GET .../chats 403 (old read token) -> new capability -> 200; the renamed chat is still there"},
+  {"step": "rename to 'После перезапуска' in the same open page", "observed": "POST .../title 403 (old write token) -> GET write-capability 200 -> POST .../title 200; list re-read; one repeat only"}
+ ],
+ "screenshots": "one in-pane screenshot taken during the rename (form open under the list, buttons and composer note visible); further screenshots timed out because the app window was hidden; not published",
+ "network": "loopback demo server only; no LLM, no provider; the browser sent Origin on every POST",
+ "result": "PASS"
+}

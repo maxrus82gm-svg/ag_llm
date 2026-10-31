@@ -234,6 +234,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .chat-picks{display:grid;gap:8px}
 .chat-pick{width:100%;text-align:left;display:grid;gap:4px;background:#182431;border-color:#344454;overflow-wrap:anywhere}
 .chat-pick[aria-current=true]{background:#213b50;border-color:var(--blue);box-shadow:inset 3px 0 var(--blue)}
+.chat-actions{display:flex;gap:8px;flex-wrap:wrap}.chat-name-form{display:grid;gap:6px}.chat-name-form[hidden]{display:none}.chat-name-form label{margin:0}
 .chat-history{list-style:none;margin:0;padding:0 4px 0 0;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;scrollbar-gutter:stable}
 .msg{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--panel);max-width:880px;width:fit-content;min-width:min(260px,100%);display:grid;gap:8px}
 .msg[data-role=user]{align-self:flex-end;background:#1d3044;border-color:#3d5f7d}
@@ -260,7 +261,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </div>
 </div>
 <nav class="top-nav" aria-label="Разделы Web Alarm">
-<button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra, только чтение">Ultra Chat</button>
+<button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra">Ultra Chat</button>
 <button type="button" id="viewOperator" aria-pressed="false" aria-controls="layout">Операторская панель</button>
 <button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
 </nav>
@@ -276,7 +277,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <section id="chatView" class="chat-view" aria-labelledby="chatHeading">
 <div class="chat-layout">
 <nav class="chat-side" aria-label="Workspace и диалоги Ultra">
-<div class="section-head"><div><p class="side-title">ULTRA CHAT · ТОЛЬКО ЧТЕНИЕ</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
+<div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
 <p class="side-title spaced">WORKSPACE</p>
@@ -285,7 +286,14 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <p class="side-title spaced">ДИАЛОГИ</p>
 <p id="chatListState" class="muted" role="status">Выберите Workspace.</p>
 <div id="chatList" class="chat-picks" aria-label="Сохранённые диалоги"></div>
-<p class="muted spaced">Новую папку добавляют в операторской панели (+ у списка проектов). Ultra Chat ничего не записывает в Workspace.</p>
+<div class="chat-actions"><button type="button" id="chatNew" disabled title="Создать пустой диалог в выбранном Workspace">+ Новый диалог</button><button type="button" id="chatRename" disabled title="Переименовать выбранный диалог">✎ Переименовать</button></div>
+<form id="chatNameForm" class="chat-name-form" aria-label="Название диалога" hidden>
+<label for="chatNameInput" id="chatNameLabel">Название диалога</label>
+<input id="chatNameInput" maxlength="200" autocomplete="off">
+<div class="chat-actions"><button type="submit" id="chatNameSave" class="primary">Сохранить</button><button type="button" id="chatNameCancel">Отмена</button></div>
+<p id="chatNameError" class="chat-model-error" role="alert" hidden></p>
+</form>
+<p class="muted spaced">Новую папку добавляют в операторской панели (+ у списка проектов). Здесь можно создать и переименовать диалог в общей истории Ultra — его видит и Tk-интерфейс. Сообщения отсюда пока не отправляются.</p>
 </nav>
 <div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
 <div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
@@ -295,7 +303,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatComposer" class="chat-composer" aria-label="Новое сообщение">
 <label for="chatInput">Сообщение</label>
 <textarea id="chatInput" disabled aria-describedby="chatComposerNote" placeholder="Отправка появится на следующем этапе"></textarea>
-<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat только читает сохранённую историю.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
+<div class="row"><p id="chatComposerNote" class="muted">Отправка сообщений появится на следующем этапе. Сейчас Ultra Chat читает сохранённую историю, создаёт и переименовывает диалоги.</p><span class="composer-actions"><span id="chatModelError" class="chat-model-error" role="alert" hidden></span><span class="chat-model-picker"><button type="button" id="chatModelPick" aria-haspopup="listbox" aria-expanded="false" aria-controls="chatModelMenu" title="Модель Ultra Chat: сохраняется как предпочтение, сообщения не отправляются">Выбрать модель ▾</button><div id="chatModelMenu" class="chat-model-menu" role="listbox" aria-label="Модель Ultra Chat" hidden></div></span><button type="button" id="chatMic" disabled data-extension="voice-input" aria-label="Голосовой ввод — появится позже" title="Голосовой ввод появится позже">🎤</button><button type="button" id="chatSend" disabled>Отправить</button></span></div>
 </form>
 </div>
 </div>
@@ -1886,7 +1894,8 @@ function chatPick(label,detail,current,onclick){
 }
 function renderChatWorkspaces(){
   $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),
-    w.wa_workspace_id===chat.workspace,()=>selectChatWorkspace(w.wa_workspace_id))))
+    w.wa_workspace_id===chat.workspace,()=>selectChatWorkspace(w.wa_workspace_id))));
+  syncChatActions()
 }
 function renderChatList(){
   $('chatList').replaceChildren(...chat.chats.map(c=>{
@@ -1894,7 +1903,8 @@ function renderChatList(){
     const b=chatPick(ok?c.title:c.status==='unsafe_storage_link'?'Ссылка вместо диалога — не читается':'Диалог повреждён',
       ok?(c.created_at?'Создан '+chatTime(c.created_at):''):'ID '+c.chat_id,c.chat_id===chat.chat,()=>selectChat(c.chat_id));
     b.setAttribute('data-status',c.status);if(!ok)b.disabled=true;return b
-  }))
+  }));
+  syncChatActions()
 }
 function chatNotices(list){
   $('chatNotice').className='notice'+(list[0]?.[0]==='error'?' error':list[0]?.[0]==='info'?' info':'');
@@ -1983,7 +1993,7 @@ async function loadChatWorkspaces(){
     const data=await chatGet('/ultra/chat/workspaces');
     if(epoch!==chat.epoch)return;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
-    text('chatAccess','Только чтение · данные проверяет сервер');chat.workspaces=data.workspaces;
+    text('chatAccess','Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
     text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Добавьте папку в операторской панели.');
     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
     renderChatWorkspaces();
@@ -1993,6 +2003,7 @@ async function loadChatWorkspaces(){
   }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}}
 }
 function selectChatWorkspace(id){
+  closeChatName();
   chat.epoch++;chat.workspace=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
   const w=chat.workspaces.find(item=>item.wa_workspace_id===id);text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
   renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
@@ -2015,6 +2026,7 @@ async function loadChatList(){
   }catch(e){if(epoch===chat.epoch){text('chatListState','Список диалогов не загружен');chatFailure(e)}}
 }
 function selectChat(id){
+  if(chatEdit.mode==='rename'&&chatEdit.chatId!==id)closeChatName();
   chat.epoch++;chat.chat=id;chat.messages=[];chat.page=null;chat.olderBusy=false;
   renderChatList();clearChatHistory('Загружаем историю…');return loadChatHistory(false)
 }
@@ -2033,9 +2045,91 @@ async function loadChatHistory(older){
   finally{if(older&&epoch===chat.epoch){chat.olderBusy=false;$('chatOlder').disabled=false}}
 }
 function startChat(){if(chat.started)return;chat.started=true;loadChatModel();return loadChatWorkspaces()}
+// Ultra Chat stage 2: create and rename a dialogue in the shared Ultra core. The write token is a second capability
+// of its own scope, asked for only when the user saves a change, kept only here and sent only with these POSTs in
+// its own header; the read token never goes with a write. The list is always re-read from the server afterwards.
+const CHAT_WRITE_HEADER='X-WebAlarm-Ultra-Chat-Write-Token';
+const chatEdit={token:null,mode:null,busy:false,workspace:null,chatId:null,expected:null,pendingId:null};
+const CHAT_WRITE_REASON={title_changed:'Название уже изменено в другом окне. Список обновлён; нажмите «Сохранить» ещё раз, чтобы заменить новое название.',
+  chat_not_found:'Диалог не найден — список обновлён.',chat_id_conflict:'Не удалось создать диалог: этот идентификатор уже занят. Откройте форму заново.',
+  workspace_unavailable:'В этом Workspace нет доступной истории Ultra — изменение не выполнено.',workspace_busy:'Workspace занят другой записью — повторите через несколько секунд.',
+  chats_limit_reached:'В этом Workspace слишком много диалогов.',invalid_title:'Название пустое, длиннее 200 символов или содержит перевод строки.',
+  foreign_identity:'Диалог принадлежит другому Workspace — изменение запрещено.',chat_damaged:'Карточка диалога повреждена — изменение запрещено.',
+  unsupported_version:'Данные сохранены более новой версией — изменение запрещено.',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — запись запрещена.',
+  workspace_identity_changed:'В папке теперь другой Workspace Ultra — обновите список.',storage_write_failed:'Изменение не сохранено: ошибка записи на диск.',
+  unknown_workspace:'Workspace больше не зарегистрирован — обновите список.'};
+function newChatId(){const b=new Uint8Array(16);crypto.getRandomValues(b);return 'chat_'+Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
+function syncChatActions(){
+  const w=chat.workspaces.find(x=>x.wa_workspace_id===chat.workspace);
+  $('chatNew').disabled=chatEdit.busy||!w||w.history!=='ok';
+  $('chatRename').disabled=chatEdit.busy||!chat.chats.some(c=>c.chat_id===chat.chat&&c.status==='ok')
+}
+async function loadChatWriteAccess(){
+  const c=(await api('/ui/ultra-chat/write-capability'))?.ultra_chat_write;
+  if(!c||typeof c.available!=='boolean'||c.header!==CHAT_WRITE_HEADER)throw Error('Некорректный ответ сервера о праве изменения');
+  chatEdit.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
+  if(!chatEdit.token)throw Error(c.reason==='disabled'?'Создание и переименование диалогов выключены при запуске сервера.':
+    c.reason==='non_loopback_bind'?'Создание и переименование недоступны: сервер запущен не на локальном адресе.':'Создание и переименование недоступны в этом режиме сервера.')
+}
+async function chatPost(path,body){
+  if(!chatEdit.token)await loadChatWriteAccess();
+  try{return await api(path,{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body})}
+  catch(e){
+    if(e.code!=='ultra_chat_write_token_invalid')throw e;
+    chatEdit.token=null;await loadChatWriteAccess();// the server was restarted: the refused request wrote nothing, one repeat
+    return await api(path,{method:'POST',headers:{[CHAT_WRITE_HEADER]:chatEdit.token},body})
+  }
+}
+function openChatName(mode){
+  if(chatEdit.busy)return;
+  const current=chat.chats.find(c=>c.chat_id===chat.chat&&c.status==='ok');
+  if(mode==='rename'?!current:$('chatNew').disabled)return;
+  // A new dialogue gets its ID now: saving again after a lost answer repeats the same request, never a second chat.
+  Object.assign(chatEdit,{mode,workspace:chat.workspace,chatId:current&&mode==='rename'?current.chat_id:null,
+    expected:mode==='rename'?current.title:null,pendingId:mode==='create'?newChatId():null});
+  text('chatNameLabel',mode==='create'?'Название нового диалога (пусто — «Чат N»)':'Новое название диалога');
+  $('chatNameInput').value=mode==='rename'?current.title:'';notice('chatNameError','');
+  $('chatNameForm').hidden=false;$('chatNameInput').focus()
+}
+function closeChatName(){
+  if(chatEdit.busy)return;
+  Object.assign(chatEdit,{mode:null,workspace:null,chatId:null,expected:null,pendingId:null});
+  $('chatNameForm').hidden=true;notice('chatNameError','')
+}
+async function saveChatName(){
+  if(chatEdit.busy||!chatEdit.mode)return;
+  const mode=chatEdit.mode,ws=chatEdit.workspace,title=String($('chatNameInput').value||'').trim();
+  if(mode==='rename'&&!title){notice('chatNameError','Название не может быть пустым.');return}
+  const base='/ultra/chat/workspaces/'+encodeURIComponent(ws)+'/chats';
+  chatEdit.busy=true;$('chatNameSave').disabled=true;notice('chatNameError','');syncChatActions();
+  let saved=null;
+  try{
+    const r=mode==='create'?await chatPost(base,title?{chat_id:chatEdit.pendingId,title}:{chat_id:chatEdit.pendingId}):
+      await chatPost(base+'/'+encodeURIComponent(chatEdit.chatId)+'/title',{title,expected_title:chatEdit.expected});
+    if(!r?.chat||typeof r.chat.chat_id!=='string')throw Error('Некорректный ответ сервера об изменении диалога');
+    saved=r.chat.chat_id
+  }catch(e){
+    notice('chatNameError',CHAT_WRITE_REASON[e.code]||e.message);
+    if(['title_changed','chat_not_found','chat_id_conflict'].includes(e.code)&&ws===chat.workspace){
+      await loadChatList();// what is stored now; a second «Сохранить» replaces the newer title knowingly
+      const fresh=chat.chats.find(c=>c.chat_id===chatEdit.chatId&&c.status==='ok');
+      if(fresh)chatEdit.expected=fresh.title
+    }
+  }finally{chatEdit.busy=false;$('chatNameSave').disabled=false;syncChatActions()}
+  if(ws!==chat.workspace){closeChatName();return}// the user moved to another Workspace meanwhile: nothing of the old one stays
+  if(!saved)return;
+  closeChatName();
+  chat.epoch++;chat.chat=saved;chat.messages=[];chat.page=null;chat.olderBusy=false;clearChatHistory('Загружаем историю…');
+  return loadChatList()
+}
 $('viewChat').onclick=()=>showView('chat');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
 $('chatOlder').onclick=()=>loadChatHistory(true);
+$('chatNew').onclick=()=>openChatName('create');
+$('chatRename').onclick=()=>openChatName('rename');
+$('chatNameForm').onsubmit=e=>{e.preventDefault();return saveChatName()};
+$('chatNameCancel').onclick=()=>closeChatName();
+$('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};
 $('chatComposer').onsubmit=e=>e.preventDefault();
 $('chatModelPick').onclick=()=>openPicker();
 try{
