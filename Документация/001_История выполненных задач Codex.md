@@ -10196,3 +10196,13 @@ Source risks: `users=[]` disables proxy authentication; 407/error logs can expos
 Новых implementation TASK и разрешений на реализацию эта работа не создаёт.
 
 ---
+
+---
+
+## 2026-11-01 — ASTRA-DOC-CONTEXT-OPTIMIZATION-001 — USER-DIRECTED ADMINISTRATIVE SLOT RELEASE
+
+- **Полная исходная постановка:** дословный текст из БЛОКА 1 карточки Codex при `main/GPT@05939a5a01a0a6751649fdc47d9a203ec75a4770` (blob `117813bbc3c505b593589a7f6aa3b3804451d25f`), теперь в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md`. Прямое пользовательское продолжение 27.10 на внедрение не было второй TASK БЛОКА 1.
+- **Factual:** Astra/Codex 007 подготовил исследование №41; `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/report.md`, `manifest.json`. По прямому поручению пользователя 27.10 внедрены каркасы 13 документов: `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/report.md`, `manifest.json`, `preservation/`, `evidence/`.
+- **Independent:** опубликованные документы исследовались адресно, но миграция имеет **PARTIAL / semantic locators, Obsidian live graph, cold-start OPEN**; не `DONE / VERIFIED`. `RISK-DOC-CURRENT-001` остаётся OPEN. Статус `PROPOSAL` в №41 относится только к исходной аналитической фазе.
+- **USER GO 01.11.2026:** убрать устаревшую TASK Astra из текущего БЛОКА 1, не уничтожая её. **ADMINISTRATIVE SLOT RELEASE**, не independent PASS внедрения. БЛОК 1 теперь `WAITING`, БЛОК 1.1 не переписывался и скрипт ротации не запускался. Старый текст закреплён также Git/blob выше.
+- **История событий:** №05 `REG-WEB19-ASTRA-SLOT-20261101`; №06 `EVT-WEB19-ASTRA-SLOT-20261101`.
