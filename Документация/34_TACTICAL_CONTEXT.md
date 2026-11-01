@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 01.11.2026, WEB19. №483 документный ремонт BOUNDED PASS / DOC CLOSED; Astra PARTIAL/OPEN. Stage2 №479 bounded PASS + WEB19 focused Windows PASS; full regression NOT RUN. Staging OPEN, P9 priority, Tk P1–P6 OPEN; Stage3/live/paid HOLD.
+**Срез:** 02.11.2026, LLM15 + WEB20 coordination. LLM15: `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` GitHub independent bounded diagnostic/architecture PASS, **task PARTIAL** (.77 Colibri NOT VERIFIED); 28/28 evidence integrity including CRLF reconstruction. WEB20 P9 candidate (assignment unconfirmed). Stage2 №479 bounded PASS + WEB19 focused Windows PASS; full regression, Stage3/live/paid NOT RUN/HOLD. WA4-R PARTIAL.
 
 ## Постоянные ориентиры
 
@@ -15,10 +15,10 @@
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
 | А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
-| Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
+| Б — Web Alarm Core + локальные LLM, LLM15 / Codex | `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`: исследование опубликовано, ограниченная независимая архитектурная приёмка PASS; задача PARTIAL, .77/Colibri UNKNOWN. Core WA4-R PARTIAL; новую implementation TASK не назначали | Сверить `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` (адресная проверка .77) и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` (mock-first multi-host discovery); отдельно согласовать USER GO. WEB20 ведёт Run Store P9, server.py/ui.py не трогать |
 | Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. №483 `CODEX-WUA-DOC-WEB19-REPAIR-001`: шесть документов, WEB19 BOUNDED PASS / DOC CLOSED; БЛОК 1 WAITING | №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №001 Codex; `RISK-DOC-CURRENT-001` OPEN |
 
-Направление Б ждёт технического назначения. №482 архивировал Astra; №483 ремонт принят WEB19, Codex WAITING. Это не запуск Core, проверки миграции OPEN; пересечения — №40.
+Направление Б завершило только исследовательскую итерацию локальных LLM (№05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102`), новых coding TASK нет. №482 архивировал Astra; №483 принят WEB19; проверки миграции OPEN. Пересечения и WEB20 P9 — №40.
 
 ## Действующие пользовательские решения и границы
 
@@ -50,6 +50,8 @@
 Открытые запреты и проверки не исчезают из-за возраста. Полную риск-карточку хранить у №05, evidence — в отчёте/профильном журнале. Если нового риска ещё нет в нормализованном реестре, это не означает отсутствия рисков. Поля/статусы — №18 → OPS-RISK; форма — №07.
 
 ## Последние существенные результаты
+
+**LLM15 / 02.11:** `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — 28/28 опубликованных артефактов согласованы с манифестом (12 CRLF реконструированы); .9 Ollama GET observed, .77 Colibri NOT VERIFIED; `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` OPEN. Нет реализованного провайдерного adapter, E2E или изменения серверов.
 
 **WEB19 / independent Stage2 storage check:** №479 source SHA pinned, two Windows Python versions `68 run/4 SKIP` each, additional reviewer probes 4/4 PASS; only focused execution. `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`. Run Store P9 NEXT, Stage3 HOLD.
 

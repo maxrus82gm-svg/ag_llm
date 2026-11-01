@@ -10234,3 +10234,77 @@ Source risks: `users=[]` disables proxy authentication; 407/error logs can expos
 ---
 
 
+
+
+---
+
+## 2026-11-02 — CODEX-WUA-LOCAL-LLM-DISCOVERY-001 — LLM15 independent bounded closeout
+
+**TASK:** `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` · исполнитель Codex 007 · user assignment/activation in Codex local chat, 01.11.2026 · published result in main@faf041438cc41990d8e4a254a59b06dc93d5c3b9.
+
+**Полный текст постановки дословно:** постоянный опубликованный snapshot `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/assignment_source.txt`, **28274 UTF-8 байта**, SHA256 `287af2ebf4eb1e0dd584135d4ed8c80dc8f943d558e379782d4133e7c3c10587`, independently verified with GitHub byte readback. Сама постановка не скопирована вторично в архив, адрес постоянный; CHAT-ONLY AMENDMENT отсутствуют по package.
+
+**Factual Codex:** read-only diagnosis on host 192.168.0.9; Ollama 0.40.13 installed deepseek-r1:8b, loaded 0; .77 Colibri/host unknown; 10 GET inventory, no inference/network reconfiguration/production code changes. Report `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/report.md` SHA256 `fe18393e70868b08485224967a1856c77b0d6402e667bd55201baf4af788c763`; manifest.json 28 entries and evidence. Author 16/16 package checks, 248 source unmodified author-only.
+
+**Independent LLM15:** 28/28 published artefacts verified in GitHub: 16 exact raw published SHA/bytes, 12 exact manifest SHA/bytes after local CRLF reconstruction from LF-normalized Git blobs. Primary HTTP evidence, hardware snapshot and relevant shared source code independently inspected; actual Windows hosts/inference/Colibri E2E/author 248-source unchanged NOT rerun. **PASS / BOUNDED DIAGNOSTIC & ARCHITECTURE REVIEW, TASK PARTIAL / DOC ITERATION CLOSED after user merge**. Review `reports/CHATGPT-LLM15-LOCAL-LLM-DISCOVERY-REVIEW-20261102.md`, №05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102`, №06 `EVT-LLM15-LOCAL-LLM-DISCOVERY-20261102`.
+
+**OPEN:** `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` (server .77 read-only diagnosis), `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` (mock-first core implementation by separate USER GO). Run Store P9 WEB20, Stage3/B2/WA4-R/MCP frozen gates unchanged. No new Codex assignment.
+
+### Archive-preserved previous Codex card blocks 2–4 before 02.11 compact rotation
+
+Original older snapshot of the working card, preserved in this historical Markdown excerpt:
+
+```markdown
+# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
+
+Полный архив — №001 Codex; предыдущий исторический БЛОК 2 сохранён там при closeout WEB19.
+
+- **01.11 / CODEX-WUA-DOC-WEB19-REPAIR-001, №483:** шесть документов исправлены; WEB19 BOUNDED PASS / DOC CLOSED; full runtime NOT RUN.
+- **01.11 / ASTRA-DOC-CONTEXT-OPTIMIZATION-001, №482:** USER SLOT RELEASE; миграция PARTIAL/OPEN.
+- **26.10 / ASTRA-WUA-37-ROADMAP-REVISION-001:** bounded document PASS, план утверждён 27.10, portability NOT VERIFIED.
+- **26.10 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001:** bounded architecture PASS; live NOT RUN.
+- **25.10 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001:** bounded offline PASS; native/WFP/Chat NOT VERIFIED.
+
+---
+
+# БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
+
+- **CODEX-WUA-DOC-WEB19-REPAIR-001:** №483, шесть Markdown-документов, author 53/53, WEB19 BOUNDED DOCUMENT PASS / DOC CLOSED. Product runtime/CI/Obsidian live Graph NOT RUN; старая миграция Astra PARTIAL/OPEN.
+- **ASTRA-DOC-CONTEXT-OPTIMIZATION-001:** №482, архивирование по решению пользователя; semantic/graph/cold-start OPEN.
+
+- **ASTRA-WUA-37-ROADMAP-REVISION-001** — `main@d15d026bf17c1184a004f8891186c0ea02f8887e`, №37 SHA256 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45`, manifest `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`, independent 9/9; авторские 21/21 не перезапускались, no runtime/CI/live; B2 V-13 unresolved.
+- **ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — architecture rev2 `Документация/Дополнительная аналитика Астры.md`, `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30`, 137301 bytes, SHA256 `7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5`; independently source 30/30 pinned №436 and eight R2 corrections accepted; no runtime/CI/API. WUA-2A **NOT ASSIGNED**; frozen B1 archived verbatim in Codex 001.
+- **CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — new `strict_preflight`, separated structural vs strict policy statuses; controller-owned canonical/source pins, opaque auth refs, CONNECT-only exact destination and deny DIRECT/fallback/secondary/DNS/UDP/UoT/IPv6/merge/reload. Codex 52/52 offline, 51/51 overlapping compatible tests, 7 mutants caught, preserved RED 19/21, WEB_12 53/53 manifest SHA. **OFFLINE PASS only**, upstream credentials in 407/error logs still SECURITY BLOCKER. Real C/B SID/NPFS, WFP, secret-store and ChatGPT E2E NOT VERIFIED. `reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/report.md`.
+- **CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — WEB_12 terminal bounded source-only PARTIAL, 87/87 files and 6/6 upstream SHA/33 locators; no native/real egress. `reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/report.md`.
+- **CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — WEB_11 bounded 30/30 Codex, sing-box defaults DIRECT/DNS/UoT/other conditional route risks. `reports/CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001/report.md`.
+
+---
+
+# БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
+---
+
+## WEB19 / 2026-11-01 — CODEX-WUA-DOC-WEB19-REPAIR-001 — BOUNDED DOCUMENT PASS
+
+**№483 `33f95db6`:** 6/6 baseline + 6/6 final source comparisons, 7/7 FOLLOWUP, event headings №473/475/479, №34/37/40, дословная TASK в БЛОК 1.1 и snapshot. Авторские 53/53 и 44/44 не перезапускались полностью; runtime/CI/live Obsidian Graph/cold-start NOT RUN. Пользователь принял ambient .obsidian. **DOC ITERATION CLOSED**, full product review не заявлен. `reports/CHATGPT-WEB19-DOC-REPAIR-REVIEW-20261101.md`; №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №06 `EVT-WEB19-CODEX-DOC-REPAIR-20261101`. Stage3/live/paid HOLD.
+
+**Verifier:** WEB_14 / ChatGPT; Codex READ-ONLY. Полный архив №001 и журнал №06.
+
+## 1. Исторический вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001
+
+**PASS / INDEPENDENT DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** Астра / Codex, результат `main@d15d026bf17c1184a004f8891186c0ea02f8887e`: №37 переработан в программу из восьми этапов 0–7, 23 изменения истории H01–H23 и 11 групп рекомендаций R01–R11. **WEB_14 independent PASS / DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** SHA256 №37 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45` (71042 байта), manifest CRLF `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`. Независимо сверены 9/9 артефактов по SHA256/размерам (четыре CRLF восстановлены), исходный №37 с прежней ревизией, кандидат с опубликованным текстом; без блокирующих противоречий в общем Python-ядре, RAW/Turn/RUN/TASK, бюджете, полномочиях Web Alarm и WA4-R. Авторские 21/21 документных проверок независимо не запускались. Windows/UI/runtime/live/paid/CI NOT RUN. №37 остаётся **ПРОГРАММА-КАНДИДАТ / USER PLAN APPROVAL PENDING**, отложенный B2 V-13 Ordinary Chat требует отдельного решения пользователя, исторический RT-002 и MCP freeze №39 не изменены.
+
+**Не является:** USER PLAN APPROVAL, S3a/S3b implementation PASS, EVM Windows/visual PASS, разрешением paid GigaChat, изменением V-13 или запуском первого этапа. Новую TASK пользователь не назначал.
+
+## 2. Предыдущий — WEB_14 / 2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001
+
+**PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, source pins 30/30 at №436 and eight R2 corrections. Нет Windows/production/live.
+
+## 3. Предыдущий — WEB_12 / 2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001
+
+**PASS / BOUNDED OFFLINE SOURCE & EVIDENCE**, native Windows/WFP/ChatGPT Desktop E2E not verified.
+
+---
+
+**Статус 01.11.2026:** БЛОК 1 ожидает нового поручения; №37 утверждён 27.10, но Stage3 не запускать. Astra сохранена в архиве, независимая полная приёмка миграции всё ещё OPEN.
+
+```
