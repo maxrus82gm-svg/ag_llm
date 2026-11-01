@@ -1,0 +1,259 @@
+--- before/Документация/03_Чаты, проекты и контекст.md
++++ after/Документация/03_Чаты, проекты и контекст.md
+@@ -746,19 +746,21 @@
+ 
+ ---
+ 
+-# 21. MESSAGE CONTEXT STATE## 20.2. Shared Storage replace hardening (№479, 2026-11-01)
++## 20.1. Правило записи Context State/Variants после ремонта Stage2 №475
++
++**Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`.
++
++`create_message_context_variant`, `activate_message_context_variant`, `restore_message_raw` проверяют существующие каталоги `message_context/<message_id>/variants` на junction/symlink до чтения; затем под Workspace-lock перепроверяют папки непосредственно перед записью. Context Variant публикуется эксклюзивно, `state.json` — проверенной атомарной заменой с read-back. Более новая версия `state.json` не перезаписывается; restore может восстановить повреждённый state в RAW, не удаляя варианты. Внешние same-user TOCTOU после последней проверки остаются residual и не считаются закрытыми этим ремонтом.
++
++## 20.2. Shared Storage replace hardening (№479, 2026-11-01)
+ 
+ **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`.
+ 
+ `workspace.json` при rename_workspace, `metadata.json` при rename_chat и `project_context.md` при save_project_context теперь публикуются через `_replace_verified`: проверка temp-file location через открытый дескриптор до записи содержимого, ограниченная atomic replace и read-back. Предыдущий Project Context считывается bounded без перехода по символическим/жёстким ссылкам; история публикуется новым именем через `_publish_new_file`, существующие ревизии не перезаписываются. Ошибки `project_context_unreadable` / `revision_exists` явные. Остаточная активная подмена после финальной проверки не считается устранённой.
+ 
+-## 20.1. Правило записи Context State/Variants после ремонта Stage2 №475
+-
+-**Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`.
+-
+-`create_message_context_variant`, `activate_message_context_variant`, `restore_message_raw` проверяют существующие каталоги `message_context/<message_id>/variants` на junction/symlink до чтения; затем под Workspace-lock перепроверяют папки непосредственно перед записью. Context Variant публикуется эксклюзивно, `state.json` — проверенной атомарной заменой с read-back. Более новая версия `state.json` не перезаписывается; restore может восстановить повреждённый state в RAW, не удаляя варианты. Внешние same-user TOCTOU после последней проверки остаются residual и не считаются закрытыми этим ремонтом.
+-
+-
++Эти дополнения фиксируют исторические verdict WEB18. Последующая независимая адресная Windows-проверка №479: №05 `REG-WEB19-S2-INDEP-WINDOWS-20261101`; full regression/CI и Stage3 gates остаются NOT RUN/HOLD.
++
++# 21. MESSAGE CONTEXT STATE
+ 
+ `state.json` определяет, какое представление конкретного сообщения сейчас активно.
+ 
+--- before/Документация/05_Реестр задач.md
++++ after/Документация/05_Реестр задач.md
+@@ -1,8 +1,4 @@
+ # Навигация по задачам и рискам
+-
+-## 2026-11-01 — Astra: освобождение рабочего БЛОКА 1 Codex
+-
+-**record_id: `REG-WEB19-ASTRA-SLOT-20261101`** · USER-DIRECTED ADMINISTRATIVE SLOT RELEASE, **не** технический independent PASS. TASK `ASTRA-DOC-CONTEXT-OPTIMIZATION-001` дословно сохранена в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md` и №001 Codex. №41 и применение 13 документных каркасов 27.10 опубликованы; independent `PARTIAL`, полная semantic/graph/cold-start сверка OPEN, `RISK-DOC-CURRENT-001` OPEN. Codex БЛОК 1 WAITING. №06 `EVT-WEB19-ASTRA-SLOT-20261101`.
+ 
+ **Редакция навигации:** 27.10.2026. Всё прежнее содержимое реестра сохранено ниже без удаления и перестановки. Этот вход не подтверждает новые технические PASS. Порядок ведения — №18 → DOC-CONTEXT-OPS-01; формы — №07. На обычном старте №05 целиком не читать.
+ 
+@@ -39,30 +35,32 @@
+ | `FOLLOWUP-EVM-457-DND-001` | №457 `f37e9a9b`, report §7 | `FACT_DEFECT / NOT_IMPLEMENTED`: drag в списке затруднён, DnD в Избранное отсутствует | EVM DnD, Claude + verifier | Real mouse reorder с линией вставки, drag в Избранное без дублей и потери оригинала | ACCEPTED_BY_USER 2026-10-30 (Windows UX; revisit on reproducible drag defect) / successor `CLAUDE-WUA-EVM-INTERACTION-DND-001` №464 |
+ | `FOLLOWUP-EVM-457-GUI-001` | №457 `f37e9a9b`, report §7 | `VERIFICATION_GAP`: physical Windows drag, touch, a11y, 150% NOT RUN | GUI gate, Claude/пользователь/verifier | Реальная мышь, клавиатура, Ctrl/Escape, responsive 390/1400, масштаб 150%, no overlay | OPEN only for unsupported/independent scope: UX mouse and sensory/touch input user accepted №467 (2026-10-31); assistive technology, tablet-device matrix, non-Chrome browser and independent 150% confirmation NOT RUN |
+ | `FOLLOWUP-EVM-457-REGRESSION-001` | №457 `f37e9a9b`, report §5/7 | `VERIFICATION_GAP`: только author Python/JS/mutants, independent full regression NOT RUN | Independent verifier | Сверка successor published source/evidence, независимые EVM/Stage1 regression gates; paid/live отдельно | OPEN / author full regression in №464 and №467 reports, verifier independent full suite NOT RUN (user explicitly accepted UI and closed №467) |
+-
+ | `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` | `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001`, №473 `c555312d`, `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md` F-01 | **FACT_DEFECT / SOURCE CONFIRMED:** `restore_message_raw`, `create_message_context_variant`, `activate_message_context_variant` записывают в вложенный `message_context` без no-follow проверки directory junction/symlink | Ultra Storage, Claude / independent verifier; Stage2 path-safety gate | На одноразовом Workspace заранее сделать junction `message_context` и `variants` на внешний синтетический каталог; все writers должны дать `unsafe_storage_link`, не менять внешний каталог, сохранить допустимые обычные операции; независимый source+negative oracle, адресная/full regression | **CLOSED / SOURCE+AUTHOR-EVIDENCE** 2026-10-31 via successor `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475; independent runtime NOT RUN; №473 historical REVISE unchanged |
+-
+-Новые пункты добавляются только по фактическому review/closeout.
+ | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` | №475 `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001`, `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md` | **RESIDUAL_HARDENING**: `rename_workspace`, `save_project_context`, `rename_chat` используют replace без handle-проверки места временного файла, возможен same-user folder swap | Ultra Storage / Claude после отдельного USER GO | Проверить адресный перевод заменяемых файлов на безопасный verified replace, негативные junction/restart/failure tests, не обещать полной TOCTOU-защиты | **CLOSED / SOURCE+AUTHOR-EVIDENCE** via `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` №479 `508cba49`; full independent runtime NOT RUN, same-user TOCTOU residual OPEN separately |
+- До назначения пользовательской TASK значение successor_task_id
+ | `FOLLOWUP-WUA-S2-CHAT-STAGING-001` | `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` №479, `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/report.md`, `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md` | **RESIDUAL**: `create_chat` записывает карточку в staging через прежний `_atomic_write_json`, хотя staging создаётся под проверенным parent | Ultra Chat storage / Claude по отдельному USER GO | Проверить текущие гарантии, negative synthetic junction/race oracle, целесообразность перехода на verified/exclusive publish; не утверждать exploitable без воспроизведения | **OPEN / UNASSIGNED**, не блокирующий автоматически Stage3 при Stage0 threat model |
+ 
+- = UNASSIGNED, а пункт остаётся OPEN. Закрытие пункта требует evidence/независимой проверки либо явного принятия остаточного риска пользователем. Новая постановка обязана перечислить относящиеся к ней FOLLOWUP-ID.
++Новые пункты добавляются только по фактическому review/closeout. До назначения пользовательской TASK значение successor_task_id = UNASSIGNED, а пункт остаётся OPEN. Закрытие пункта требует evidence/независимой проверки либо явного принятия остаточного риска пользователем. Новая постановка обязана перечислить относящиеся к ней FOLLOWUP-ID.
++
++## 2026-11-01 — Astra: освобождение рабочего БЛОКА 1 Codex
++
++**record_id: `REG-WEB19-ASTRA-SLOT-20261101`** · USER-DIRECTED ADMINISTRATIVE SLOT RELEASE, **не** технический independent PASS. TASK `ASTRA-DOC-CONTEXT-OPTIMIZATION-001` дословно сохранена в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md` и №001 Codex. №41 и применение 13 документных каркасов 27.10 опубликованы; independent `PARTIAL`, полная semantic/graph/cold-start сверка OPEN, `RISK-DOC-CURRENT-001` OPEN. Codex БЛОК 1 WAITING. №06 `EVT-WEB19-ASTRA-SLOT-20261101`.
++
++## WEB19 / 2026-11-01 — independent focused Windows test, №479
++
++**record_id:** `REG-WEB19-S2-INDEP-WINDOWS-20261101`. WEB19 independently executed Windows storage test module on exact №479: Python 3.12.10 **68 run / 64 PASS / 4 SKIP / exit 0**, Python 3.13.8 **68 run / 64 PASS / 4 SKIP / exit 0**, hardening+concurrency subset **17 run / 16 PASS / 1 SKIP / exit 0**, reviewer-authored synthetic negative probes **4/4 PASS / exit 0**. Two source SHA-256 match published manifest. Full 1078 regression, CI, GUI and Stage3 gates NOT RUN. Original WEB18 bounded closeout unchanged. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 priority, Stage3 HOLD. Report `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`.
++
++## WEB18 / 2026-11-01 — Stage2 replace hardening №479
++
++**record_id:** `REG-WEB18-S2-HARDEN-20261101`. **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`. Source `main@508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19`; пакет `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/`. Verdict bounded PASS; no independent runtime.
++
++
++## WEB18 / 2026-10-31 — Stage2 repair №475 — bounded PASS
++
++**record_id:** `REG-WEB18-S2-REPAIR-20261031`. **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. Опубликованный исходник `main@5678414d795756c58e64e60f28a9a1f1a348849e`; exact task `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, author report/manifest/evidence там же. Independent source, raw evidence и SHA-256 4/4; not independent runtime. №06 `EVT-WEB18-S2-REPAIR-PASS-20261031`, №001 Claude. БЛОК 1 WAITING, 1.1 exact repair.
++
++
+ 
+ ## WEB18 / 2026-10-31 — Stage2 №473 — независимый verdict REVISE
+-## WEB18 / 2026-11-01 — Stage2 replace hardening №479
+-
+-**record_id:** `REG-WEB18-S2-HARDEN-20261101`. **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`. Source `main@508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19`; пакет `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/`. Verdict bounded PASS; no independent runtime.
+-
+-## WEB19 / 2026-11-01 — independent focused Windows test, №479
+-
+-**record_id:** `REG-WEB19-S2-INDEP-WINDOWS-20261101`. WEB19 independently executed Windows storage test module on exact №479: Python 3.12.10 **68 run / 64 PASS / 4 SKIP / exit 0**, Python 3.13.8 **68 run / 64 PASS / 4 SKIP / exit 0**, hardening+concurrency subset **17 run / 16 PASS / 1 SKIP / exit 0**, reviewer-authored synthetic negative probes **4/4 PASS / exit 0**. Two source SHA-256 match published manifest. Full 1078 regression, CI, GUI and Stage3 gates NOT RUN. Original WEB18 bounded closeout unchanged. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 priority, Stage3 HOLD. Report `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`.
+-
+-## WEB18 / 2026-10-31 — Stage2 repair №475 — bounded PASS
+-
+-**record_id:** `REG-WEB18-S2-REPAIR-20261031`. **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. Опубликованный исходник `main@5678414d795756c58e64e60f28a9a1f1a348849e`; exact task `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, author report/manifest/evidence там же. Independent source, raw evidence и SHA-256 4/4; not independent runtime. №06 `EVT-WEB18-S2-REPAIR-PASS-20261031`, №001 Claude. БЛОК 1 WAITING, 1.1 exact repair.
+-
+-
+ 
+ **record_id:** `REG-WEB18-S2-REVISE-20261031`. **TASK:** `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001`, Claude 008. **Published source:** `main@c555312dbdcb5bd3e85e0bebebb9d708f578b6cb` (#473), exact task `reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/handoff_task.md` + Claude БЛОК 1.1 (copy SHA256 `6d5d2b2160f7b9797f02037272c3fdf5d3c7e559352a8d66c18ae196ff43ccf6`). **Factual:** общий writer Workspace/Chat/RAW, Web create/rename; авторские Python full 1076 PASS/2 SKIP, focused 120 PASS/2 SKIP, JS 140/140, mutation 39/39, Tk contour reported PASS. **Independent WEB18:** SHA-256 всех 8/8 new/changed инженерных файлов совпали с manifest, пересчитаны авторские JSON списки 1078/122 тестов и 39 unique mutants; Python/JS/CI/Windows независимо НЕ запускались. **Finding F-01:** вложенный `message_context`/ `variants` не проходит no-follow перед `_atomic_write_json`, возможен переход записи по уже существующему junction за Workspace. **Verdict: REVISE / PRODUCT NOT ACCEPTED; DOC ITERATION CLOSED** с открытым `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` (successor UNASSIGNED). Статически доказан code-path, не утверждается наблюдавшаяся атака. Не запускать Stage3/live/paid до ремонта и нового решения. Полный протокол `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md`, событие №06 `EVT-WEB18-S2-REVISE-20261031`, личная история №001 Claude. БЛОК 1 уже WAITING; БЛОК 1.1 сохраняет точную TASK.
+ 
+--- before/Документация/06_Журнал выполнения и отчёты.md
++++ after/Документация/06_Журнал выполнения и отчёты.md
+@@ -1,30 +1,35 @@
+ # Адресное чтение и ведение общего журнала
+ 
++**Вход обновлён 27.10.2026.** Это исторический журнал, а не обычный стартовый контекст. Вся прежняя история ниже сохранена без изменения и в исходном порядке. Текущую картину читать в №34; конкретную задачу искать через тематическую навигацию №05.
++
++Координатор добавляет новые события/независимые verdict по №18 → DOC-CONTEXT-OPS-01 → OPS-CLOSE; форма — №07 → Форма истории №06 и персональной №001. Каждая запись: event_id, TASK, дата/ревизия, тип события, factual результат, report/digest, verifier/scope/NOT RUN, остаточные ограничения и NEXT. Полная постановка/AMENDMENT — в соответствующем №001 или проверенном постоянном snapshot; подробный технический evidence — в отчёте. Указатели — обычный текст, без новых графовых связей.
++
++Чтение только по точному TASK/event_id/заголовку и нужному диапазону; не загружать журнал целиком ради записи новой строки. При добавлении проверять только новый участок и неизменность старого префикса; не переписывать прежние verdict. Сохранённая история и readback предшествуют очистке карточки. Отсутствующий locator — конкретный незакрытый пробел, не повод угадывать путь.
++
++Этот вход не является событием независимой приёмки текущей миграции и не закрывает никакую TASK.
++
+ ## 2026-11-01 — WEB19 / административное освобождение Astra TASK из Codex БЛОК 1
+ 
+ **event_id: `EVT-WEB19-ASTRA-SLOT-20261101`** · USER GO 01.11, ADMINISTRATIVE SLOT RELEASE, **not independent PASS**. `ASTRA-DOC-CONTEXT-OPTIMIZATION-001` / Codex 007: proposal №41 и отчёт `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/report.md`, продолжение внедрения 13 документов `implementation-20261027/report.md` и preservation/manifest опубликованы. Исходный полный текст в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md`, №001 Codex; БЛОК 1 WAITING, пустой БЛОК 1.1 неизменён. Независимая оценка миграции PARTIAL; semantic/graph/cold-start OPEN, `RISK-DOC-CURRENT-001` OPEN; №05 `REG-WEB19-ASTRA-SLOT-20261101`.
+ 
+-**Вход обновлён 27.10.2026.** Это исторический журнал, а не обычный стартовый контекст. Вся прежняя история ниже сохранена без изменения и в исходном порядке. Текущую картину читать в №34; конкретную задачу искать через тематическую навигацию №05.
+-
+-Координатор добавляет новые события/независимые verdict по №18 → DOC-CONTEXT-OPS-01 → OPS-CLOSE; форма — №07 → Форма истории №06 и персональной №001. Каждая запись: event_id, TASK, дата/ревизия, тип события, factual результат, report/digest, verifier/scope/NOT RUN, остаточные ограничения и NEXT. Полная постановка/AMENDMENT — в соответствующем №001 или проверенном постоянном snapshot; подробный технический evidence — в отчёте. Указатели — обычный текст, без новых графовых связей.
+-
+-Чтение только по точному TASK/event_id/заголовку и нужному диапазону; не загружать журнал целиком ради записи новой строки. При добавлении проверять только новый участок и неизменность старого префикса; не переписывать прежние verdict. Сохранённая история и readback предшествуют очистке карточки. Отсутствующий locator — конкретный незакрытый пробел, не повод угадывать путь.
+-
+-Этот вход не является событием независимой приёмки текущей миграции и не закрывает никакую TASK.
+-
+ ## 2026-11-01 — WEB19 / independent focused Windows verification of №479
+ 
+ **event_id:** `EVT-WEB19-S2-INDEP-WINDOWS-20261101`. WEB19 independently executed Windows storage test module on exact №479: Python 3.12.10 **68 run / 64 PASS / 4 SKIP / exit 0**, Python 3.13.8 **68 run / 64 PASS / 4 SKIP / exit 0**, hardening+concurrency subset **17 run / 16 PASS / 1 SKIP / exit 0**, reviewer-authored synthetic negative probes **4/4 PASS / exit 0**. Two source SHA-256 match published manifest. Full 1078 regression, CI, GUI and Stage3 gates NOT RUN. This is new independent execution, distinct from the 2026-11-01 WEB18 source-only review; that verdict/closeout unchanged. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN; Stage3 not authorized. Report `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`; №05 `REG-WEB19-S2-INDEP-WINDOWS-20261101`.
+ 
+-## 2026-10-31 — WEB18 / Stage2 №473 — REVISE после source review## 2026-10-31 — WEB18 / Stage2 F-01 repair №475 — bounded PASS## 2026-11-01 — WEB18 / Stage2 shared-storage replace hardening №479
++
++## 2026-11-01 — WEB18 / Stage2 shared-storage replace hardening №479
+ 
+ **event_id:** `EVT-WEB18-S2-HARDEN-PASS-20261101`. **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`. Source `main@508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19`, evidence `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/`; independent source+raw-result review only; no independently executed Python/Windows/CI. Historical run1 ERROR documented, not hidden. БЛОК 1 WAITING, БЛОК 1.1 intact. Не назначать следующую задачу без пользователя.
+ 
+ 
+ 
++## 2026-10-31 — WEB18 / Stage2 F-01 repair №475 — bounded PASS
++
+ **event_id:** `EVT-WEB18-S2-REPAIR-PASS-20261031`. **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. Source `main@5678414d795756c58e64e60f28a9a1f1a348849e`, отчёт `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/report.md`, independent review `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. SHA-256/bytes 4/4, reader/code/oracle review; independent runtime NOT RUN, GitHub Actions on SHA не найдено. Архив №001 Claude, №05 `REG-WEB18-S2-REPAIR-20261031`. БЛОК 1 WAITING / БЛОК 1.1 exact repair. Никакого автоматического Stage3 GO.
+ 
+ 
++
++## 2026-10-31 — WEB18 / Stage2 №473 — REVISE после source review
+ 
+ **event_id:** `EVT-WEB18-S2-REVISE-20261031`. **TASK:** `CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001`, Claude 008; опубликовано `main@c555312dbdcb5bd3e85e0bebebb9d708f578b6cb`. Полная TASK `reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/handoff_task.md`, manifest/report/evidence там же. **Author:** Python 1076 PASS/2 SKIP из 1078; focused 120 PASS/2 SKIP из 122; JS 140/140, 39/39 mutation, Tk contour/synthetic browser reported PASS. **Independent:** 8/8 sha256 new/changed source/test совпали, JSON перечень/статусы/counts протестированы структурно; независимо не запускались Python/JS/CI/физическая Windows. **F-01 SOURCE DEFECT:** path `message_context`/ `variants` не проверяется на directory junction/symlink перед записью `_atomic_write_json`; возможна запись вне Workspace даже без конкурентной гонки. **Verdict: REVISE / DOC ITERATION CLOSED; PRODUCT NOT ACCEPTED.** Продолжение №05 `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` OPEN/UNASSIGNED; №05 `REG-WEB18-S2-REVISE-20261031`; source rationale и безопасный критерий восстановления: `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md`. Stage3/live/paid не разрешены. БЛОК 1 Claude WAITING, БЛОК 1.1 не очищать; пользовательский merge GPT→main отдельно.
+ 
+--- before/Документация/34_TACTICAL_CONTEXT.md
++++ after/Документация/34_TACTICAL_CONTEXT.md
+@@ -16,9 +16,9 @@
+ | --- | --- | --- |
+ | А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
+ | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
+-| Документационные каркасы — Astra/Codex | Опубликованы 27.10; independent миграции PARTIAL, полная semantic/graph/cold-start сверка OPEN. По USER GO 01.11 исходная TASK дословно архивирована, БЛОК 1 Codex WAITING; это не independent PASS внедрения | №001 Codex `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`; `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 `REG-WEB19-ASTRA-SLOT-20261101`, `RISK-DOC-CURRENT-001` |
+-
+-Направление Б ожидает отдельного технического назначения. Документационная TASK Astra больше не занимает БЛОК 1 Codex; открытые verification gaps миграции остаются. Подробности пересечений — №40. Прошлые independent verdict неизменны.
++| Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. Текущая сдача `CODEX-WUA-DOC-WEB19-REPAIR-001`: ремонт шести документов, LOCAL RESULT READY / review WEB19 PENDING | №05 `REG-WEB19-ASTRA-SLOT-20261101`; №001 Codex / Astra; `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/`; `RISK-DOC-CURRENT-001` OPEN |
++
++Направление Б ждёт технического назначения. По №482 Astra архивирована и слот Codex был освобождён; затем пользователь назначил текущий документационный ремонт. Это не запуск Core. Остаточные проверки миграции OPEN; пересечения — №40.
+ 
+ ## Действующие пользовательские решения и границы
+ 
+@@ -32,7 +32,7 @@
+ | Переносимость | Стабильные идентичности и безопасная перепривязка roots; внешние credentials и OS prerequisites подключаются заново | №37 → 2.4; №03/19/23/24 по конкретному аспекту |
+ | Закрытие TASK | Исполнитель сдаёт report/manifest/evidence; независимый verifier принимает; координатор сохраняет историю/readback и закрывает карточку последним | №18 → DOC-TASK-CLOSEOUT-OWNER-01, DOC-CONTEXT-OPS-01 |
+ | История и граф | Ничего уникального не вытеснять без проверенного владельца/снимка; текстовые указатели без новых графовых связей | №18 → DOC-HISTORY-ACCESS-01, DOC-CHANGE-01; OPS-LOCATOR/OPS-BUDGET |
+-| EVM / карточки моделей (решение пользователя 27–31.10) | №464 inline/Ctrl-preview/reorder/Favorites и №467 независимые закреплённые окна с сохранением/восстановлением приняты пользователем. Мышь и сенсорный ввод подтверждены на Windows; авторские проверки полные в отчётах, independent full-run NOT RUN. №457 сохраняет исторический REVISE. Платный live-check и Stage2 не разрешены; идея FUTURE реализована в №467. | №05 → `REG-WEB17-EVM-PINS-20261031`, `REG-WEB17-EVM-DND-20261030`, `FUTURE-EVM-PINNED-COMPARE-001` (IMPLEMENTED); №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`; №001 Claude 2026-10-31; №467 `f4597868` |
++| EVM / карточки моделей (решение пользователя 27–31.10) | №464 inline/Ctrl-preview/reorder/Favorites и №467 независимые закреплённые окна с сохранением/восстановлением приняты пользователем. Мышь и сенсорный ввод подтверждены на Windows; авторские проверки полные в отчётах, independent full-run NOT RUN. №457 сохраняет исторический REVISE. Платный live-check и новые этапы требуют USER GO; идея FUTURE реализована в №467. | №05 → `REG-WEB17-EVM-PINS-20261031`, `REG-WEB17-EVM-DND-20261030`, `FUTURE-EVM-PINNED-COMPARE-001` (IMPLEMENTED); №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`; №001 Claude 2026-10-31; №467 `f4597868` |
+ 
+ ## Открытые проверки и риски
+ 
+@@ -40,12 +40,12 @@
+ 
+ | Пункт | Тип / влияние | Владелец и следующий шаг |
+ | --- | --- | --- |
+-| Stage2/F-01: nested `message_context`/ `variants` path | **FACT_DEFECT / SOURCE CONFIRMED** в №473; writer не проверяет вложенный junction до записи, внешний каталог может быть изменён. №05 `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` | Claude / verifier: изолированная repair TASK только после USER GO, negative junction oracle и независимый review. Product Stage2 REVISE, Stage3 BLOCKED |
+-| Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; до этого не открывать Stage2/paid. №05 REG-WEB16-S1/EVM-20261028 |
++| Stage2 / F-01 и replace hardening | F-01 №473 исправлен №475: `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED в bounded scope; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED по №479. Исторический REVISE №473 сохранён | WEB19 независимо выполнил focused Windows-проверки №479; full independent regression/CI NOT RUN. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 и Tk readers P1–P6 OPEN, Stage3/live/paid HOLD |
++| Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; новые этапы/live/paid требуют USER GO. №05 REG-WEB16-S1/EVM-20261028 |
+ | WA4-R остаточные native/live/PWR/TOCTOU gates и P1/P2/P3 | OPEN в документах; не разрешены автоматически. Исторические gates сверять адресно с новым evidence, не считать все навечно открытыми по старому снимку | LLM15: перед действием сверить профиль №24/25, TASK и последнюю независимую запись |
+ | Перенос на другую Windows-машину | PORTABILITY TARGET / NOT VERIFIED; архитектурное требование отдельно от испытания | Назначить адресные portability-проверки при соответствующем этапе по решению пользователя |
+ | `RISK-DOC-CURRENT-001` | Риск принять старый CURRENT за нынешнее разрешение. Мера: отделены текущая картина и архивные адреса; независимая оценка остатка OPEN | ChatGPT-координатор, verifier UNASSIGNED до назначения; №05 → Оперативные риск-карточки → risk_id. Закрытие после проверки cold-start сценариев и отсутствия ложных разрешений |
+-| Приёмка опубликованной документационной дельты | Опубликовано; независимая полная семантическая приёмка PARTIAL/OPEN. Адресно сверены №06 S001/S004/S005/S006/S216 и соответствующие №001 для четырёх задач; **Stage1 архивирована с терминальным PARTIAL в №001 Claude 2026-10-28 (ветка GPT, до merge)**. Это не 13/13 семантический PASS | ChatGPT: проверять только оставшиеся locators и сквозные сценарии; слот Astra освобождён по USER GO 01.11, однако независимые semantic/graph/cold-start gaps OPEN; Stage1 БЛОК 1 очищать только после readback и сохранения истории |
++| Приёмка опубликованной документационной дельты | Опубликовано; независимая полная семантическая приёмка PARTIAL/OPEN. Адресно сверены №06 S001/S004/S005/S006/S216 и соответствующие №001 для четырёх задач; **Stage1 архивирована с терминальным PARTIAL в №001 Claude 2026-10-28 (ветка GPT, до merge)**. Это не 13/13 семантический PASS | ChatGPT: проверять только оставшиеся locators и сквозные сценарии; слот Astra освобождён по USER GO 01.11, однако независимые semantic/graph/cold-start gaps OPEN; архивирование Astra по №482 не закрыло эти проверки |
+ 
+ Открытые запреты и проверки не исчезают из-за возраста. Полную риск-карточку хранить у №05, evidence — в отчёте/профильном журнале. Если нового риска ещё нет в нормализованном реестре, это не означает отсутствия рисков. Поля/статусы — №18 → OPS-RISK; форма — №07.
+ 
+@@ -77,8 +77,8 @@
+ 
+ 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
+ 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
+-3. №467 ранее документально закрыта и принята пользователем; этот verdict не переписывать. F-01 исправлен №475 в bounded source/evidence scope; full independent runtime NOT RUN, точный БЛОК 1.1 repair сохранён.
+-4. Следующая рекомендуемая техническая задача — `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` после USER GO; Stage3/live/paid пока не начинать.
++3. №467 USER ACCEPTED сохраняется. F-01 закрыт №475 в bounded scope; REPLACE-HARDEN закрыт №479. WEB19 добавил focused Windows PASS; full independent regression/CI, Tk readers P1–P6 и Stage3 prerequisites OPEN. №05/06 дают точные record/event ID.
++4. Run Store P9 — следующий технический приоритет для рассмотрения после USER GO. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; закрытый REPLACE-HARDEN повторно не назначать. Stage3/live/paid пока не начинать.
+ 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
+ 
+ ## Как сопровождать эту память
+--- before/Документация/37_Старт перехода - Web Alarm Ultra.md
++++ after/Документация/37_Старт перехода - Web Alarm Ultra.md
+@@ -165,11 +165,13 @@
+ 
+ **За пределами:** real API и широкая переработка контекстного движка. При невозможности безопасной записи сервис сообщает отказ, сохраняя читаемые данные.
+ 
+-### Этап 3. Отправка сообщений и восстановление**Техническое дополнение Stage2 / №479 (01.11.2026):** **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`.
+-
+ **Дополнение WEB18 / Stage2 Repair №475:** **Review WEB18 31.10.2026:** `CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001` №475 `5678414d` принят **PASS / SOURCE+AUTHOR-EVIDENCE** в ограниченном F-01 scope; full independent Python/Windows/CI NOT RUN. Автор F-01: 7/9 внешних записей до, 0/9 после; focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8 KILLED/1 SURVIVED (R01c). Первый full-run: **1075 PASS/1 ERROR/2 SKIP** (ошибка арифметики в отчёте Claude: 1077 PASS). `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED после №475, residual `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED; Stage2 bounded SOURCE/EVIDENCE ACCEPTED, не FULL RUNTIME/PRODUCTION PASS. Исторический №473 REVISE неизменен; Stage3/live/paid без отдельного GO. Протокол: `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`.
+ 
+-
++**Техническое дополнение Stage2 / №479 (01.11.2026):** **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`.
++
++Последующая адресная Windows-проверка WEB19: №06 `EVT-WEB19-S2-INDEP-WINDOWS-20261101`; полная independent regression/CI NOT RUN. Stage3/live/paid остаются без USER GO.
++
++### Этап 3. Отправка сообщений и восстановление
+ 
+ **Зачем:** пользователь должен понимать, принят ли запрос, и не получать дубли из-за повторного нажатия или перезапуска.
+ 
+--- before/Документация/40_Оперативная координация направлений.md
++++ after/Документация/40_Оперативная координация направлений.md
+@@ -1,12 +1,12 @@
+ # Оперативная координация направлений
+ 
+-**Сводка 2026-11-01 / WEB19:** №479 bounded source/evidence accepted in WEB18; WEB19 independent focused Windows storage tests PASS (68 run/4 SKIP on each Python 3.12/3.13, 4 reviewer probes PASS). Full independent regression/CI NOT RUN; Stage3 HOLD, Run Store P9 priority; Claude idle, Codex B on hold.
++**Сводка 2026-11-01 / WEB19:** №479 bounded source/evidence accepted in WEB18; WEB19 independent focused Windows storage tests PASS (68 run/4 SKIP on each Python 3.12/3.13, 4 reviewer probes PASS). Full independent regression/CI NOT RUN; Stage3 HOLD, Run Store P9 priority; Claude idle; Codex сдаёт документационный ремонт, техническое направление Б на паузе.
+ 
+ ## Общий пользовательский запускатель — обязательный режим (USER 2026-10-27)
+ 
+ **`rule-ref:DOC-WUA-LAUNCH-01@1` (№18):** один `Start_WebAlarm.bat` для WEB15/Claude и LLM15/Codex. Стандартная проверенная цель — зелёный `СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA`; перенаправление во временную тестовую конфигурацию — красный `ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК`, TEST/TASK ID и точная цель. Временное перенаправление разрешается только исполнителю согласованной TASK в её scope; после тестов вернуть STANDARD и зафиксировать подтверждение. **При каждой следующей TASK проверять и при необходимости восстанавливать STANDARD до начала работы**; если не удалось — RESTORE_BLOCKED (не показывать зелёный статус).
+ 
+-**Текущий статус 27.10:** `CLAUDE-WUA-CHAT-LAUNCHER-001` опубликован пользователем в `main`: `Start_WebAlarm.bat`, `web_alarm/launcher.py`, конфигурация и пакет `reports/CLAUDE-WUA-CHAT-LAUNCHER-001/`. Авторские тесты описаны, но независимый реальный Windows STANDARD-launch, target/root и визуальная проверка **OPEN**; публикация не равна независимому PASS. Не менять Stage1 PARTIAL; Stage2 №473 опубликована, но REVISE, не запускать Stage3. Пересечения launcher с `server.py/ui.py` согласовывать, без жёстких машинных путей/скрытого Demo-хранилища.
++**Текущий статус 27.10:** `CLAUDE-WUA-CHAT-LAUNCHER-001` опубликован пользователем в `main`: `Start_WebAlarm.bat`, `web_alarm/launcher.py`, конфигурация и пакет `reports/CLAUDE-WUA-CHAT-LAUNCHER-001/`. Авторские тесты описаны, но независимый реальный Windows STANDARD-launch, target/root и визуальная проверка **OPEN**; публикация не равна независимому PASS. Stage1 PARTIAL сохраняется. №473 — исторический REVISE; F-01 исправлен №475, replace hardening принят №479 в bounded scope, WEB19 добавил focused Windows PASS. Stage3 HOLD. Пересечения launcher с `server.py/ui.py` согласовывать, без жёстких машинных путей/скрытого Demo-хранилища.
+ 
+ ## ОБЯЗАТЕЛЬНОЕ СКВОЗНОЕ ТРЕБОВАНИЕ — переносимость (решение пользователя 2026-10-26)
+ 
+@@ -19,17 +19,17 @@
+ ## А — Ultra Chat
+ 
+ - **WEB19 / Claude 008:** БЛОК 1 WAITING, БЛОК 1.1 содержит exact №479; новая TASK ещё не назначена. Added independent focused verification report `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`; no repeated closeout.
+-- **№479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001`:** bounded PASS / DOC ITERATION CLOSED (source+author evidence). Реализованы verified replacement и exclusive Project Context revisions, author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent runtime NOT RUN; source/report/raw evidence reviewed.
++- **№479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001`:** bounded PASS / DOC ITERATION CLOSED (source+author evidence). Реализованы verified replacement и exclusive Project Context revisions, author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; WEB18 проверил source/report/raw evidence без своего runtime; позднее WEB19 выполнил focused Windows storage tests (64 PASS/4 SKIP из 68 на Python 3.12 и 3.13, probes 4/4 PASS). Full independent regression/CI NOT RUN.
+ - **OPEN:** `FOLLOWUP-WUA-S2-CHAT-STAGING-001` staging-карточка `create_chat`; same-user TOCTOU после final check отдельно не устранён. Run Store P9, Tk P1–P6, Stage1 и перенос clean Windows NOT VERIFIED; Stage3/live/paid не разрешены.
+-- **NEXT:** представить пользователю выбор узкой проверки staging или отдельного исследования P9. Codex / направление Б на паузе. Источники: №05 `REG-WEB18-S2-HARDEN-20261101`, №06 `EVT-WEB18-S2-HARDEN-PASS-20261101`, `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`, `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/report.md`.
++- **NEXT:** Run Store P9 — следующий технический приоритет для рассмотрения; staging остаётся OPEN/UNASSIGNED, Tk readers P1–P6 OPEN. Новая техническая TASK только по USER GO. Источники: №05 `REG-WEB19-S2-INDEP-WINDOWS-20261101`, `REG-WEB18-S2-HARDEN-20261101`; №06 `EVT-WEB19-S2-INDEP-WINDOWS-20261101`; отчёты WEB18/WEB19 по №479.
+ 
+ ## Б — Web Alarm Core / WA4-R
+ 
+ - **Текущий чат / исполнитель:** LLM15 / Codex (назначение меняется с задачей).
+-- **Оперативный статус:** **WAITING / новая техническая TASK Core не подтверждена этим снимком**. Прежняя документационная TASK Astra архивирована и БЛОК 1 Codex освобождён 01.11 по USER GO; новая техническая TASK не назначена. Незавершённые независимые проверки миграции PARTIAL/OPEN сохраняются отдельно. Картина — №34 и №001 Codex. Направление — надёжность исполнения Web Alarm, TOCTOU, восстановление и регрессионные проверки. Незавершённые проверки WA4-R не становятся закрытыми от отсутствия активной TASK.
++- **Оперативный статус:** технический Core **WAITING / NOT ASSIGNED**. Astra архивирована и слот Codex освобождён по №482; текущая сдача `CODEX-WUA-DOC-WEB19-REPAIR-001` — документационная, LOCAL RESULT READY / review WEB19 PENDING. Миграция PARTIAL/OPEN и WA4-R gates сохраняются. Состояние слота после сдачи сверять по карточке и её `БЛОК 1.1`; ротация не означает независимую приёмку.
+ - **Ближайшая цель:** дальнейшие адресные задачи по безопасности и надёжности после согласования их конкретного scope.
+ - **Portability constraint:** следующая согласованная TASK должна оценивать перенос реестра Workspace/TASK и безопасную смену корневых путей; это пока не отдельная назначенная задача.
+-- **Файлы активной задачи:** **нет**. `web_alarm/server.py`, `web_alarm/ui.py` **планируются временно для Claude Stage1**; LLM15/Codex не меняет их параллельно без новой сверки №40 и отдельного согласования. Это координация конкретной TASK, не постоянная собственность Claude.
++- **Файлы текущего документационного ремонта:** №03/05/06/34/37/40 и `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/`. Общий №40 менять последовательно с guard по hash. Программный код вне scope; `web_alarm/server.py` и `web_alarm/ui.py` не заняты этой TASK. БЛОК 1 → 1.1 — только по действующему механизму после сдачи.
+ - **Ссылки:** [карточка / БЛОК 1](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/000_%D0%97%D0%B0%D0%B4%D0%B0%D1%87%D0%B8%20Codex.md) · [предыдущие задачи](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/000_%D0%97%D0%B0%D0%B4%D0%B0%D1%87%D0%B8%20Codex.md) · [действующие ограничения WA4-R](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/34_TACTICAL_CONTEXT.md).
+ 
+ ## Правила для обоих рабочих чатов
+@@ -44,6 +44,8 @@
+ 
+ **Правило графа Obsidian:** единственная внутренняя связь этого документа — с `000_Задачи для агента`; ссылки на карточки, историю и контекст остаются внешними GitHub-ссылками, чтобы не создавать дополнительных рёбер.
+ 
++[[000_Задачи для агента|Координаторский маршрутизатор]]
++
+ ## Обслуживание этой сводки
+ 
+ Канон — №18 → DOC-CONTEXT-OPS-01; форма — №07 → Форма координации №40. Одна текущая строка на направление: чат/исполнитель, TASK или отсутствие назначения, execution/review, write-scope, пересечения, NEXT, дата/источник. При смене состояния заменить строку, не дописывать историю. Технический scope и занятость агента — разные поля. Проверки, риски и требования не выводить из слова WAITING; указать exact record-id №05 и risk-id, если они назначены.

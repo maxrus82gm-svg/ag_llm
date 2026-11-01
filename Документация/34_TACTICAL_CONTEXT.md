@@ -16,9 +16,9 @@
 | --- | --- | --- |
 | А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
-| Документационные каркасы — Astra/Codex | Опубликованы 27.10; independent миграции PARTIAL, полная semantic/graph/cold-start сверка OPEN. По USER GO 01.11 исходная TASK дословно архивирована, БЛОК 1 Codex WAITING; это не independent PASS внедрения | №001 Codex `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`; `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 `REG-WEB19-ASTRA-SLOT-20261101`, `RISK-DOC-CURRENT-001` |
+| Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. Текущая сдача `CODEX-WUA-DOC-WEB19-REPAIR-001`: ремонт шести документов, LOCAL RESULT READY / review WEB19 PENDING | №05 `REG-WEB19-ASTRA-SLOT-20261101`; №001 Codex / Astra; `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/`; `RISK-DOC-CURRENT-001` OPEN |
 
-Направление Б ожидает отдельного технического назначения. Документационная TASK Astra больше не занимает БЛОК 1 Codex; открытые verification gaps миграции остаются. Подробности пересечений — №40. Прошлые independent verdict неизменны.
+Направление Б ждёт технического назначения. По №482 Astra архивирована и слот Codex был освобождён; затем пользователь назначил текущий документационный ремонт. Это не запуск Core. Остаточные проверки миграции OPEN; пересечения — №40.
 
 ## Действующие пользовательские решения и границы
 
@@ -32,7 +32,7 @@
 | Переносимость | Стабильные идентичности и безопасная перепривязка roots; внешние credentials и OS prerequisites подключаются заново | №37 → 2.4; №03/19/23/24 по конкретному аспекту |
 | Закрытие TASK | Исполнитель сдаёт report/manifest/evidence; независимый verifier принимает; координатор сохраняет историю/readback и закрывает карточку последним | №18 → DOC-TASK-CLOSEOUT-OWNER-01, DOC-CONTEXT-OPS-01 |
 | История и граф | Ничего уникального не вытеснять без проверенного владельца/снимка; текстовые указатели без новых графовых связей | №18 → DOC-HISTORY-ACCESS-01, DOC-CHANGE-01; OPS-LOCATOR/OPS-BUDGET |
-| EVM / карточки моделей (решение пользователя 27–31.10) | №464 inline/Ctrl-preview/reorder/Favorites и №467 независимые закреплённые окна с сохранением/восстановлением приняты пользователем. Мышь и сенсорный ввод подтверждены на Windows; авторские проверки полные в отчётах, independent full-run NOT RUN. №457 сохраняет исторический REVISE. Платный live-check и Stage2 не разрешены; идея FUTURE реализована в №467. | №05 → `REG-WEB17-EVM-PINS-20261031`, `REG-WEB17-EVM-DND-20261030`, `FUTURE-EVM-PINNED-COMPARE-001` (IMPLEMENTED); №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`; №001 Claude 2026-10-31; №467 `f4597868` |
+| EVM / карточки моделей (решение пользователя 27–31.10) | №464 inline/Ctrl-preview/reorder/Favorites и №467 независимые закреплённые окна с сохранением/восстановлением приняты пользователем. Мышь и сенсорный ввод подтверждены на Windows; авторские проверки полные в отчётах, independent full-run NOT RUN. №457 сохраняет исторический REVISE. Платный live-check и новые этапы требуют USER GO; идея FUTURE реализована в №467. | №05 → `REG-WEB17-EVM-PINS-20261031`, `REG-WEB17-EVM-DND-20261030`, `FUTURE-EVM-PINNED-COMPARE-001` (IMPLEMENTED); №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`; №001 Claude 2026-10-31; №467 `f4597868` |
 
 ## Открытые проверки и риски
 
@@ -40,12 +40,12 @@
 
 | Пункт | Тип / влияние | Владелец и следующий шаг |
 | --- | --- | --- |
-| Stage2/F-01: nested `message_context`/ `variants` path | **FACT_DEFECT / SOURCE CONFIRMED** в №473; writer не проверяет вложенный junction до записи, внешний каталог может быть изменён. №05 `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` | Claude / verifier: изолированная repair TASK только после USER GO, negative junction oracle и независимый review. Product Stage2 REVISE, Stage3 BLOCKED |
-| Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; до этого не открывать Stage2/paid. №05 REG-WEB16-S1/EVM-20261028 |
+| Stage2 / F-01 и replace hardening | F-01 №473 исправлен №475: `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED в bounded scope; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED по №479. Исторический REVISE №473 сохранён | WEB19 независимо выполнил focused Windows-проверки №479; full independent regression/CI NOT RUN. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 и Tk readers P1–P6 OPEN, Stage3/live/paid HOLD |
+| Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; новые этапы/live/paid требуют USER GO. №05 REG-WEB16-S1/EVM-20261028 |
 | WA4-R остаточные native/live/PWR/TOCTOU gates и P1/P2/P3 | OPEN в документах; не разрешены автоматически. Исторические gates сверять адресно с новым evidence, не считать все навечно открытыми по старому снимку | LLM15: перед действием сверить профиль №24/25, TASK и последнюю независимую запись |
 | Перенос на другую Windows-машину | PORTABILITY TARGET / NOT VERIFIED; архитектурное требование отдельно от испытания | Назначить адресные portability-проверки при соответствующем этапе по решению пользователя |
 | `RISK-DOC-CURRENT-001` | Риск принять старый CURRENT за нынешнее разрешение. Мера: отделены текущая картина и архивные адреса; независимая оценка остатка OPEN | ChatGPT-координатор, verifier UNASSIGNED до назначения; №05 → Оперативные риск-карточки → risk_id. Закрытие после проверки cold-start сценариев и отсутствия ложных разрешений |
-| Приёмка опубликованной документационной дельты | Опубликовано; независимая полная семантическая приёмка PARTIAL/OPEN. Адресно сверены №06 S001/S004/S005/S006/S216 и соответствующие №001 для четырёх задач; **Stage1 архивирована с терминальным PARTIAL в №001 Claude 2026-10-28 (ветка GPT, до merge)**. Это не 13/13 семантический PASS | ChatGPT: проверять только оставшиеся locators и сквозные сценарии; слот Astra освобождён по USER GO 01.11, однако независимые semantic/graph/cold-start gaps OPEN; Stage1 БЛОК 1 очищать только после readback и сохранения истории |
+| Приёмка опубликованной документационной дельты | Опубликовано; независимая полная семантическая приёмка PARTIAL/OPEN. Адресно сверены №06 S001/S004/S005/S006/S216 и соответствующие №001 для четырёх задач; **Stage1 архивирована с терминальным PARTIAL в №001 Claude 2026-10-28 (ветка GPT, до merge)**. Это не 13/13 семантический PASS | ChatGPT: проверять только оставшиеся locators и сквозные сценарии; слот Astra освобождён по USER GO 01.11, однако независимые semantic/graph/cold-start gaps OPEN; архивирование Astra по №482 не закрыло эти проверки |
 
 Открытые запреты и проверки не исчезают из-за возраста. Полную риск-карточку хранить у №05, evidence — в отчёте/профильном журнале. Если нового риска ещё нет в нормализованном реестре, это не означает отсутствия рисков. Поля/статусы — №18 → OPS-RISK; форма — №07.
 
@@ -77,8 +77,8 @@
 
 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
-3. №467 ранее документально закрыта и принята пользователем; этот verdict не переписывать. F-01 исправлен №475 в bounded source/evidence scope; full independent runtime NOT RUN, точный БЛОК 1.1 repair сохранён.
-4. Следующая рекомендуемая техническая задача — `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` после USER GO; Stage3/live/paid пока не начинать.
+3. №467 USER ACCEPTED сохраняется. F-01 закрыт №475 в bounded scope; REPLACE-HARDEN закрыт №479. WEB19 добавил focused Windows PASS; full independent regression/CI, Tk readers P1–P6 и Stage3 prerequisites OPEN. №05/06 дают точные record/event ID.
+4. Run Store P9 — следующий технический приоритет для рассмотрения после USER GO. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; закрытый REPLACE-HARDEN повторно не назначать. Stage3/live/paid пока не начинать.
 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
 
 ## Как сопровождать эту память

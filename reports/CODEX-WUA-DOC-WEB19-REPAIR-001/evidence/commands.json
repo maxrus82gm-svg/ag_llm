@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-01",
+  "python": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "commands": [
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/collect_history.py",
+      "exit": 0,
+      "result": "9 addressed cases; 8 personal sections; 2/2 source pins match"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/repair_docs.py build",
+      "exit": 0,
+      "result": "6 candidates; final 34 = 24676 LF chars"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/repair_docs.py apply",
+      "exit": 1,
+      "result": "Initial own checker defect: 38/4; no target writes; original failure preserved"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/repair_docs.py apply",
+      "exit": 0,
+      "result": "Corrected initial gate 42/42 then applied readback 44/44"
+    },
+    {
+      "command": "Guarded update of local submission wording in 34/40; build and verify(False)",
+      "exit": 0,
+      "result": "Final candidate checks 51/51; source readback guard passed"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/repair_docs.py verify",
+      "exit": 0,
+      "result": "Final 53/53 applied checks"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-DOC-WEB19-REPAIR-001/tools/finish_slots.py",
+      "exit": 0,
+      "result": "Existing slot tool check OK, DRY RUN OK, ROTATED; outside slots/readback exact"
+    }
+  ],
+  "not_run": [
+    "application",
+    "product tests",
+    "CI",
+    "GUI",
+    "live/paid",
+    "Stage3",
+    "network services",
+    "Git/GitHub",
+    "Obsidian live graph"
+  ],
+  "prior_inventory_scan": "Initial broad task-owned baseline process stopped before a baseline/source write; exit 1. Actual bounded baseline 605 files."
+}

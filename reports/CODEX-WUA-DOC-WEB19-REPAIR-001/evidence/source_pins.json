@@ -1,0 +1,22 @@
+{
+  "declared_base": "№482 / 553d3746143c97102cc94edaa02549e010e41e04 from user B1",
+  "engineering_base": "№479 / 508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19",
+  "source": "local Claude manifest and WEB19 report",
+  "engineering_pins": [
+    {
+      "path": "context_storage.py",
+      "expected_sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+      "actual_sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+      "bytes": 97846,
+      "matches": true
+    },
+    {
+      "path": "test_ultra_chat_storage.py",
+      "expected_sha256": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2",
+      "actual_sha256": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2",
+      "bytes": 96913,
+      "matches": true
+    }
+  ],
+  "limitation": "Documentary state and pinned source bytes confirmed locally; Git object/clean status NOT CHECKED (prohibited). No competing Claude task; unsaved editor contents unknown."
+}

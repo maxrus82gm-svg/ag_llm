@@ -1,0 +1,247 @@
+[
+  {
+    "publication": "457",
+    "task": "CLAUDE-WUA-EVM-COMPACT-LAYOUT-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-29 — CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 — закрытие итерации REVISE, №457",
+      "first_line": 12393,
+      "last_line": 12398,
+      "excerpt": "## 2026-10-29 — CLAUDE-WUA-EVM-COMPACT-LAYOUT-001 — закрытие итерации REVISE, №457\n- **Полная исходная TASK и AMENDMENT:** `reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md` (251 строк LF, SHA-256 `973f2ea8e3fed2d792b34f174e04e642f199bf481ca3e3ea3991d5a20ea12879`), а также сохранённый БЛОК 1.1. Публикация `main@f37e9a9b43a202298412fac7f1c3c5768e6c1fba` (№457), отчёт/manifest/evidence в той же папке.\n- **Factual результат:** четыре колонки, предпочтения порядка и избранного, выбор модели рядом с Ultra Chat. Авторские тесты JS 119/119, focused Python 117/117, full 1061 PASS/2 SKIP, мутанты 21/21; независимый rerun этих тестов НЕ ВЫПОЛНЯЛСЯ.\n- **Independent/user verdict:** **ITERATION DOC CLOSED / REVISE, PRODUCT NOT ACCEPTED**. Реальный пользовательский осмотр нашёл перекрывающую hover-панель и конфликт с манипуляциями мышью; физический Windows drag указан в отчёте как NOT RUN.\n- **OPEN:** №05 `FOLLOWUP-EVM-457-HOVER-001`, `FOLLOWUP-EVM-457-DND-001`, `FOLLOWUP-EVM-457-GUI-001`, `FOLLOWUP-EVM-457-REGRESSION-001`; №06 `EVT-WEB16-EVM-COMPACT-REVISE-20261029`. Пользователь локально назначил successor `CLAUDE-WUA-EVM-INTERACTION-DND-001`, по Claude `check OK`; старт только по отдельному GO.\n",
+      "excerpt_sha256_utf8_lf": "75293d3ca5df5859539bd14c2c8485fc6f96046ad454ddfac617cc3ba49ee7db"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/report.md",
+        "sha256": "e448e502074c19307c108f161169d7adb1abd7507fcb91a705b7ee132e3103ec",
+        "bytes": 33295
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/manifest.json",
+        "sha256": "bf877ba653ec3932b0d6cf7540aedbde1779367b1e8de756c8546e12602603b7",
+        "bytes": 8070
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/handoff_task.md",
+        "sha256": "681730d67eac860aa79a5db9d32f74411ba513ec7ceb24205d73cf49cd1de002",
+        "bytes": 20137
+      }
+    ]
+  },
+  {
+    "publication": "461",
+    "task": "CLAUDE-DOC-TASK-SLOT-ROTATION-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-29 — CLAUDE-DOC-TASK-SLOT-ROTATION-001 — опубликованный этап ротации №461",
+      "first_line": 12399,
+      "last_line": 12403,
+      "excerpt": "## 2026-10-29 — CLAUDE-DOC-TASK-SLOT-ROTATION-001 — опубликованный этап ротации №461\n- **Источник:** `main@12c53bf638c6705e77923ea08066c43ea4df6b6f` (№461), `tools/task_slot_rotate.py`, тесты и `reports/CLAUDE-DOC-TASK-SLOT-ROTATION-001/report.md`/manifest/evidence. Установлены четыре постоянных маркера, старый БЛОК 1 дословно сохранён в БЛОК 1.1 и в опубликованном снимке.\n- **Проверки:** автор 43/43 и 24/24 мутанта; независимый runtime/Obsidian NOT RUN. Открыто конкурентное редактирование/несохранённый текст и альтернативные ОС. Условие TASK ID и check — №18/07/08. №06 `EVT-WEB16-TASK-SLOT-20261029`.\n\n",
+      "excerpt_sha256_utf8_lf": "ce0215efb3f8fc181805e886be149982c8896e2ec0ddba11eeb9d61a6367ce3e"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-DOC-TASK-SLOT-ROTATION-001/report.md",
+        "sha256": "c9db967ff103ca2fc4711650608e3a5731546d155eadd4568e4de397c04816b5",
+        "bytes": 21479
+      },
+      {
+        "path": "reports/CLAUDE-DOC-TASK-SLOT-ROTATION-001/manifest.json",
+        "sha256": "e4bab1dd709db430eb69346adb5b45721516099aa91473aaea5de4e028a06ff7",
+        "bytes": 11715
+      }
+    ]
+  },
+  {
+    "publication": "464",
+    "task": "CLAUDE-WUA-EVM-INTERACTION-DND-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-30 — CLAUDE-WUA-EVM-INTERACTION-DND-001 — USER ACCEPTED / DOC ITERATION CLOSED, №464",
+      "first_line": 12404,
+      "last_line": 12411,
+      "excerpt": "## 2026-10-30 — CLAUDE-WUA-EVM-INTERACTION-DND-001 — USER ACCEPTED / DOC ITERATION CLOSED, №464\n\n- **Задача и source:** `main@f9a375a47472375ce7e07ee82b490016e20e1922` (№464); полная постановка дословно в `reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/handoff_task.md` и в БЛОКЕ 1.1 персональной карточки (SHA-256 скопированного текста `ba14a5f9efcf1af9c646251d7037df91e1e021169c1cc065268799fcd2a975cb`, `evidence/rotation.json`: `ROTATED`, `copied_exact=true`, `outside_slots_unchanged=true`). Авторский пакет: `report.md`, `manifest.json`, `evidence/`; CHAT-ONLY AMENDMENT: 0.\n- **Factual:** inline раскрытие карточки, боковой Ctrl-preview, Pointer Events drag/reorder/favorites, возврат при ошибке/отмене и сохранение серверного порядка без изменений `model_cards.py`/`server.py`; source-файлы `web_alarm/ui.py`, `test_web_alarm_evm_ui.js`. Авторские тесты Python 1061 PASS/2 SKIP, JS 126/126, trusted browser input 125/125, mutants 35/35, restart PASS; первый RED и NOT RUN сохранены в evidence. Физическая мышь Windows у автора NOT RUN.\n- **Verifier/USER:** Опубликованные source/report/manifest/evidence и соответствующие обработчики `web_alarm/ui.py`/тесты просмотрены координатором; независимый запуск Python/JS/Windows GUI/CI не проводился. Авторские Python 1061 PASS/2 SKIP, JS 126/126, trusted browser input 125/125, mutations 35/35, restart PASS. Пользователь подтвердил рабочее поведение интерфейса на Windows через AnyDesk и явно принял реализацию 2026-10-30. Вне принятого функционального scope остаются платные/live API, физические touch/экранный диктор/другие браузеры и независимая полная регрессия; Stage2 не назначен.\n- **Вердикт:** **PASS / USER ACCEPTED (EVM interaction scope), DOC ITERATION CLOSED** в UI scope по явно выраженному пользовательскому решению; это не независимый полный runtime/платформенный PASS. Предшествующий REVISE №457 сохранён исторически. `FOLLOWUP-EVM-457-HOVER-001` и `FOLLOWUP-EVM-457-DND-001` приняты пользователем в UX scope; GUI/REGRESSION verification gaps остаются OPEN с уточнёнными критериями.\n- **История:** №05 `REG-WEB17-EVM-DND-20261030`, №06 `EVT-WEB17-EVM-DND-ACCEPT-20261030`; новая идея нескольких закрепляемых предпросмотров `FUTURE-EVM-PINNED-COMPARE-001` отдельно в BACKLOG, не дефект сданной TASK и не назначение.\n",
+      "excerpt_sha256_utf8_lf": "42692b2c0c68925812a322b120704adfee8c0d1883bf055d547665012c920d78"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/report.md",
+        "sha256": "ca2cd4849baccc9b95b3ddb0ab2217bd121b670fd7bbdef1ed9bcc98ebbba759",
+        "bytes": 39755
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/manifest.json",
+        "sha256": "c60454f030bbdf631b9e182bb748f8252d54dcab10497478d1bab8ce3fef2edd",
+        "bytes": 10165
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/handoff_task.md",
+        "sha256": "4c7a34265412fe4fb0fee9204f4a1be8f26508856617acc76e8c1b9219d609de",
+        "bytes": 18812
+      }
+    ]
+  },
+  {
+    "publication": "467",
+    "task": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-31 — CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001 — USER ACCEPTED / DOC ITERATION CLOSED, №467",
+      "first_line": 12412,
+      "last_line": 12419,
+      "excerpt": "## 2026-10-31 — CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001 — USER ACCEPTED / DOC ITERATION CLOSED, №467\n\n- **Полная постановка:** `reports/CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001/handoff_task.md`, дословный БЛОК 1.1 (SHA-256 `99e2642ab902449287ffa760aeff0106258a2eb36f617b9e5b1600c1291f20ba`, rotation `evidence/rotation.json`). `main@f4597868ef3af6ef1f57f40c6993fbca76119e7d` №467. Сдача: `report.md` + `manifest.json` + `evidence/`, 17 скриншотов.\n- **Сделано:** независимые закреплённые окна для карточек моделей, отсутствие дублей, свободный перенос, сохранение на сервере и восстановление после рестарта, временный Ctrl-preview поверх, сохранены inline и DnD. Изменены `web_alarm/ui.py`, `model_cards.py`, `server.py` и два тестовых файла. Идея №05 `FUTURE-EVM-PINNED-COMPARE-001` реализована в UX scope.\n- **Авторские доказательства:** полный Python 1065 PASS / 2 SKIP, JS 133/133, браузерный ввод 198/198, мутанты 38/38; оригинальные FAIL/red/mutation artifacts сохранены. Исполнитель физическую Windows-мышь не тестировал.\n- **Independent/USER:** координатор адресно изучил отчёт, GitHub-код, данные тестов и манифест, но не перезапускал Python/JS/CI/physical Windows тесты. Пользователь 31.10 лично проверил мышь и сенсорное управление, перемещение нескольких окон и сохранение раскладки; подтвердил приёмку и разрешил документально закрыть итерацию.\n- **Вердикт:** **PASS / USER ACCEPTED (pinned multiwindow UX scope), DOC ITERATION CLOSED**; без ложного independent full runtime PASS. Широкие проверки a11y/разных браузеров/платформ и независимая регрессия остаются verification gaps, не исправлениями принятой задачи. Stage2/paid/live требуют отдельного GO. №05 `REG-WEB17-EVM-PINS-20261031`; №06 `EVT-WEB17-EVM-PINS-ACCEPT-20261031`. Исторические verdict №457/№464 не переписаны.\n",
+      "excerpt_sha256_utf8_lf": "c460c060aafac67743c13d3defd7cac78c1e4f1e97979ca3a92a0d4129a267d2"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001/report.md",
+        "sha256": "619806ae39c904d9e50060f42349bc8f711fd14d8c4fd8fb486de4c364fa78ab",
+        "bytes": 37618
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001/manifest.json",
+        "sha256": "030e41f72a85a544a21544fc2a0a6eed46f51dc8ba14c33812c7c77435b9f128",
+        "bytes": 13933
+      },
+      {
+        "path": "reports/CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001/handoff_task.md",
+        "sha256": "8960cf0f906f78409ce201c2b0577c260dbf3a4b49b2e8f435910a75570b3e10",
+        "bytes": 20237
+      }
+    ]
+  },
+  {
+    "publication": "473",
+    "task": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-31 — CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001 — Stage2, независимое REVISE",
+      "first_line": 12420,
+      "last_line": 12427,
+      "excerpt": "## 2026-10-31 — CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001 — Stage2, независимое REVISE\n\n- **Источник/полная постановка:** `reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/handoff_task.md` (SHA-256 `6efb617990c4eabdd60f95882aa74a08f3989eebc853a535f89538a95a854dc5`); точный БЛОК 1.1 Claude (SHA-256 копии `6d5d2b2160f7b9797f02037272c3fdf5d3c7e559352a8d66c18ae196ff43ccf6`); чатовых AMENDMENT нет.\n- **Исполнение:** Claude 008, коммит №473 `main@c555312dbdcb5bd3e85e0bebebb9d708f578b6cb`, общий writer Workspace/Chat/RAW и HTTP create/rename; `reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/report.md`, `manifest.json`, `evidence/`; author 1076 PASS/2 SKIP full, 140/140 JS, 39/39 mutations.\n- **Independent WEB18:** пересчитаны SHA-256 8/8 изменённых/новых инженерных файлов и структура author evidence. Непроверенные вложенные пути `message_context` при записи вариантов/состояния (F-01) допускают внешний directory junction; подробный протокол `reports/CHATGPT-WEB18-S2-REVIEW-20261031.md`. Независимые runtime/Windows/CI **NOT RUN**.\n- **Вердикт:** **REVISE / DOC ITERATION CLOSED / PRODUCT NOT ACCEPTED**. №05 `REG-WEB18-S2-REVISE-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` OPEN / successor UNASSIGNED; №06 `EVT-WEB18-S2-REVISE-20261031`. Stage3/live/paid не разрешены; исправление отдельной пользовательской TASK. Предыдущие verdict сохранены.\n\n",
+      "excerpt_sha256_utf8_lf": "efbec6467aa42292c353432d415f82c00652c330b7b54852b8853eb401df983a"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/report.md",
+        "sha256": "5e704b1e2d2262b02902b1c02c9122bae008b450ef78981a5147a3a37194bd4a",
+        "bytes": 48742
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/manifest.json",
+        "sha256": "7a2ef6e83305cdf1e281424b38d21ed861defb90948118a1e8d6dca087615e80",
+        "bytes": 9859
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/handoff_task.md",
+        "sha256": "6efb617990c4eabdd60f95882aa74a08f3989eebc853a535f89538a95a854dc5",
+        "bytes": 20794
+      }
+    ]
+  },
+  {
+    "publication": "475",
+    "task": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-10-31 — CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001 — ограниченный PASS по F-01",
+      "first_line": 12428,
+      "last_line": 12434,
+      "excerpt": "## 2026-10-31 — CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001 — ограниченный PASS по F-01\n\n- **Постановка:** `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md`, БЛОК 1.1, SHA-256 копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b` (см. манифест; фактический SHA копии `2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b`); CHAT-ONLY AMENDMENT нет.\n- **Автор:** Claude 008, №475 `5678414d`, `reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/report.md`, manifest, evidence. До ремонта 7/9 внешних записей; после 0/9. Focused 145 PASS/4 SKIP, full run2 1076 PASS/2 SKIP, mutants 8/9; first full run 1075 PASS/1 ERROR/2 SKIP (в авторском report ошибочно 1077 PASS).\n- **Independent:** SHA-256/bytes 4/4, source/evidence/negative oracle reviewed; Python/CI/Windows runtime NOT RUN. **Вердикт:** PASS / SOURCE+AUTHOR-EVIDENCE (F-01), DOC ITERATION CLOSED, не FULL RUNTIME. №05 `REG-WEB18-S2-REPAIR-20261031`, `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED, `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN; №06 `EVT-WEB18-S2-REPAIR-PASS-20261031`; `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md`. №473 исторически REVISE.\n\n",
+      "excerpt_sha256_utf8_lf": "603001e00ec94403e188657ec475b967b899e6606f58312616138283abd39a79"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/report.md",
+        "sha256": "3dd6417d5685b30b01b68798b2c12aef9584ef3855ad17efe6c2531be6539cd1",
+        "bytes": 28642
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/manifest.json",
+        "sha256": "e2a700031ef6bc14a68ca633481f62e1bc7c2e2b96a2722188c2099819ba53ea",
+        "bytes": 9418
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/handoff_task.md",
+        "sha256": "e0cb50aaa4807b9a00e555b5dd71ae3e74a04c0c4f566245890462d6dd2a1299",
+        "bytes": 11844
+      }
+    ]
+  },
+  {
+    "publication": "479",
+    "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+    "history": "Документация/001_История выполненных задач Claude.md",
+    "history_sha256": "b16aff236bd8df43fa4bb51d68c4e1b81cc7df33ad2458499e0df1bf13017083",
+    "section": {
+      "heading": "## 2026-11-01 — CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001 — bounded source/evidence PASS",
+      "first_line": 12435,
+      "last_line": 12439,
+      "excerpt": "## 2026-11-01 — CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001 — bounded source/evidence PASS\n\n**WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`.\n\n**Источник:** `main@508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19`, `reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/handoff_task.md`, `manifest.json`, `report.md`, `evidence/*`. БЛОК 1.1 сохранён, предыдущий блок 1.1 архивирован через пакет №475; отчёты редактировать задним числом запрещено. №05 `REG-WEB18-S2-HARDEN-20261101`, №06 `EVT-WEB18-S2-HARDEN-PASS-20261101`.",
+      "excerpt_sha256_utf8_lf": "bee30e804128235286a6b54ed5407e18a76140d49494834a74a60b453435ed0d"
+    },
+    "package_sources": [
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/report.md",
+        "sha256": "4e5dcd37b00b2a8328838a907f38c5d5866c316d1d85e58d276b87d5d9bdf4b1",
+        "bytes": 28552
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/manifest.json",
+        "sha256": "0e9332e57c3b4bb8ec30a05f2249c5a9f417391419f554f37f5e7b3a0a52100c",
+        "bytes": 9058
+      },
+      {
+        "path": "reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/handoff_task.md",
+        "sha256": "af4ba3de5ded2b4c124deb7a6cb027987c48214a26b180b6623205d5bc001111",
+        "bytes": 11617
+      }
+    ]
+  },
+  {
+    "publication": "482",
+    "task": "ASTRA-DOC-CONTEXT-OPTIMIZATION-001",
+    "history": "Документация/001_История выполненных задач Codex.md",
+    "history_sha256": "40dc0bdd8c0df4cf03d5229387da8c2e42df2696b32a89fd660c4529ad950237",
+    "section": {
+      "heading": "## 2026-11-01 — ASTRA-DOC-CONTEXT-OPTIMIZATION-001 — USER-DIRECTED ADMINISTRATIVE SLOT RELEASE",
+      "first_line": 10202,
+      "last_line": 10208,
+      "excerpt": "## 2026-11-01 — ASTRA-DOC-CONTEXT-OPTIMIZATION-001 — USER-DIRECTED ADMINISTRATIVE SLOT RELEASE\n\n- **Полная исходная постановка:** дословный текст из БЛОКА 1 карточки Codex при `main/GPT@05939a5a01a0a6751649fdc47d9a203ec75a4770` (blob `117813bbc3c505b593589a7f6aa3b3804451d25f`), теперь в `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md`. Прямое пользовательское продолжение 27.10 на внедрение не было второй TASK БЛОКА 1.\n- **Factual:** Astra/Codex 007 подготовил исследование №41; `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/report.md`, `manifest.json`. По прямому поручению пользователя 27.10 внедрены каркасы 13 документов: `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/report.md`, `manifest.json`, `preservation/`, `evidence/`.\n- **Independent:** опубликованные документы исследовались адресно, но миграция имеет **PARTIAL / semantic locators, Obsidian live graph, cold-start OPEN**; не `DONE / VERIFIED`. `RISK-DOC-CURRENT-001` остаётся OPEN. Статус `PROPOSAL` в №41 относится только к исходной аналитической фазе.\n- **USER GO 01.11.2026:** убрать устаревшую TASK Astra из текущего БЛОКА 1, не уничтожая её. **ADMINISTRATIVE SLOT RELEASE**, не independent PASS внедрения. БЛОК 1 теперь `WAITING`, БЛОК 1.1 не переписывался и скрипт ротации не запускался. Старый текст закреплён также Git/blob выше.\n- **История событий:** №05 `REG-WEB19-ASTRA-SLOT-20261101`; №06 `EVT-WEB19-ASTRA-SLOT-20261101`.",
+      "excerpt_sha256_utf8_lf": "300cdd81b16a78c56640031b6f0a0e48d63f0f3a4e530f6a4ad213ec18aca944"
+    },
+    "package_sources": [
+      {
+        "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/report.md",
+        "sha256": "0cbc3d93d9276460e0f4974eca6e99cd95263b133304da9a75c672ffad0530f5",
+        "bytes": 17208
+      },
+      {
+        "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/manifest.json",
+        "sha256": "36ff7ced2457030463736cf15de96027fe151da119d918d50fd4175116212e0f",
+        "bytes": 3770
+      },
+      {
+        "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md",
+        "sha256": "0bb70ebc09a06deff1156eca0b248a6a84df691777e345546f5825deeb5eef43",
+        "bytes": 18777
+      }
+    ]
+  },
+  {
+    "publication": "481",
+    "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+    "history": "Документация/06_Журнал выполнения и отчёты.md",
+    "event_id": "EVT-WEB19-S2-INDEP-WINDOWS-20261101",
+    "source": "reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md",
+    "source_sha256": "a445e31b61f0e7392c47379ff0903ef9d48c6af5d5feed0a01382bb97bf09014",
+    "excerpt": "# WEB19 — independently executed Windows tests for Stage2 replace hardening №479\n\n**Review:** 2026-11-01, ChatGPT / WEB19. **TASK:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001`. **Pinned source:** `main@508cba49c8f21b0e8a9c451b84f1c0f1a8fb6a19`; main/GPT HEAD №480 `e288fe308d87a5a30ddaa2b19acdf3b49ee54ed2` at test-start. **Outcome:** **INDEPENDENT FOCUSED WINDOWS PASS**, not full regression, CI, Stage3 or product verification.\n\n## Source and setup\n\nGitHub files `context_storage.py` and `test_ultra_chat_storage.py` were independently fetched from №479 into isolated `%TEMP%\\WEB19_S2_REVIEW_e288fe3` on an authorized Windows computer, **not** into the live project. Raw local SHA-256 checked against Claude's manifest:\n- `context_storage.py`: **97846 bytes**, `7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280`\n- `test_ultra_chat_storage.py`: **96913 bytes**, `d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2`\n\nBoth matched exactly. Python 3.13.8 AST parse succeeded (`AST_COMPILE_OK`). No source tracked files changed, Git commands, paid/live APIs, real Workspace, launcher switch or external network in these tests; test fixtures used disposable TEMP directories.\n\n## New independent execution\n\n| Selector in isolated scratch directory | Python | Raw outcome |\n| --- | --- | --- |\n| `python -B -m unittest -q test_ultra_chat_storage` | 3.13.8 / Windows | **68 run, 64 PASS, 4 SKIP, 0 FAIL/ERROR**, exit 0, 12.915 s |\n| `python -B -m unittest -v test_ultra_chat_storage.ReplaceHardeningTests test_ultra_chat_storage.ReplaceConcurrencyTests` | 3.13.8 / Windows | **17 run, 16 PASS, 1 SKIP**, exit 0, 2.086 s |\n| `py -3.12 -B -m unittest -q test_ultra_chat_storage` | 3.12.10 / Windows | **68 run, 64 PASS, 4 SKIP**, exit 0, 15.176 s |\n| Reviewer-authored `py -3.12 -B web19_independent_probe.py` | 3.12.10 / Windows | **4/4 original assertions PASS**, exit 0 |\n\nReviewer independently authored a scratch-only probe (not copied from Claude test code) checking: (1) stale Chat `expected_title` cannot overwrite bytes; Workspace/Chat IDs preserved; (2) original Project Context history revision bytes unchanged after subsequent saves; (3) synthetic external file hardlinked to Project Context refuses with `unsafe_storage_link` and outside SHA-256 unchanged; (4) pre-existing Windows junction targeting synthetic outside history refuses with `unsafe_storage_link` and outside file list/bytes unchanged. Probe raw result: `{\"status\":\"PASS\",\"checks\":[\"ids_and_stale_title_no_lost_update\",\"exclusive_history_revision_unchanged\",\"hardlink_outside_unchanged\",\"history_junction_outside_unchanged\"],\"count\":4}`, exit 0.\n\nFocused suite symlink-creation case SKIP due to insufficient privilege. Three other module-level SKIPs were not exhaustively investigated; they must not be counted as PASS.\n\n## Source review and limits\n\n`rename_workspace` and `rename_chat` call `_replace_verified`; `save_project_context` uses `_read_project_context_for_write`, exclusive `_publish_project_context_revision`, and `_replace_verified`. Tests confirm selected path/atomicity/identity expectations on Windows. After-final-check same-user directory swap remains a TOCTOU risk; read-back detection is not prevention. `create_chat` staging metadata card remains on earlier `_atomic_write_json` path — `FOLLOWUP-WUA-S2-CHAT-STAGING-001` **OPEN/UNASSIGNED**.\n\n**NOT RUN:** independently executed 1078-suite `all`, author 166-case multi-module focused gate, 9 mutation tests, GitHub Actions/CI, Tk readers P1–P6, clean-machine portability, Windows GUI, real Workspace, paid/live, post-final-check exploit races. Historical author first-run ERROR remains recorded in WEB18.\n\n**Verdict:** Additional **INDEPENDENT FOCUSED WINDOWS PASS** on pinned №479 bytes. Original WEB18 bounded source+author-evidence PASS and DOC ITERATION CLOSED preserved, not retroactively changed to FULL PASS. Stage3 **HOLD**; Run Store P9 next priority; no new Claude TASK. Source: `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`.\n",
+    "note": "No separate WEB19 event in the addressed personal-history headings; retain journal and standalone report as owners. No invented №001 record."
+  }
+]

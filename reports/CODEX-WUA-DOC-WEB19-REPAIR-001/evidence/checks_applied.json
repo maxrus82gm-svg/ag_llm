@@ -1,0 +1,287 @@
+{
+  "task": "CODEX-WUA-DOC-WEB19-REPAIR-001",
+  "kind": "AUTHOR DOCUMENTARY CHECKS / INDEPENDENT REVIEW PENDING",
+  "applied": true,
+  "passed": 53,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "graph syntax: 03_Чаты, проекты и контекст.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 03_Чаты, проекты и контекст.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original content paragraphs retained: 03_Чаты, проекты и контекст.md",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "graph syntax: 05_Реестр задач.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 05_Реестр задач.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original content paragraphs retained: 05_Реестр задач.md",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "graph syntax: 06_Журнал выполнения и отчёты.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 06_Журнал выполнения и отчёты.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original content paragraphs retained: 06_Журнал выполнения и отчёты.md",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "graph syntax: 34_TACTICAL_CONTEXT.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 34_TACTICAL_CONTEXT.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "graph syntax: 37_Старт перехода - Web Alarm Ultra.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 37_Старт перехода - Web Alarm Ultra.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "original content paragraphs retained: 37_Старт перехода - Web Alarm Ultra.md",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "graph syntax: 40_Оперативная координация направлений.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all originally valid headings retained: 40_Оперативная координация направлений.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "record_id multiplicity preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "event_id multiplicity preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all historical event payloads unchanged",
+      "pass": true,
+      "detail": {
+        "events": 11
+      }
+    },
+    {
+      "name": "all registry table rows preserved exactly",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "entire earlier history suffix unchanged: 05_Реестр задач.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "entire earlier history suffix unchanged: 06_Журнал выполнения и отчёты.md",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all FOLLOWUP rows unchanged",
+      "pass": true,
+      "detail": {
+        "rows": 7
+      }
+    },
+    {
+      "name": "FOLLOWUP is one table with seven data rows",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "FOLLOWUP explanation restored",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "05 header owns S2-REVISE",
+      "pass": true,
+      "detail": "## WEB18 / 2026-10-31 — Stage2 №473 — независимый verdict REVISE"
+    },
+    {
+      "name": "05 header owns S2-REPAIR",
+      "pass": true,
+      "detail": "## WEB18 / 2026-10-31 — Stage2 repair №475 — bounded PASS"
+    },
+    {
+      "name": "05 header owns S2-HARDEN",
+      "pass": true,
+      "detail": "## WEB18 / 2026-11-01 — Stage2 replace hardening №479"
+    },
+    {
+      "name": "06 header owns S2-REVISE",
+      "pass": true,
+      "detail": "## 2026-10-31 — WEB18 / Stage2 №473 — REVISE после source review"
+    },
+    {
+      "name": "06 header owns S2-REPAIR",
+      "pass": true,
+      "detail": "## 2026-10-31 — WEB18 / Stage2 F-01 repair №475 — bounded PASS"
+    },
+    {
+      "name": "06 header owns S2-HARDEN",
+      "pass": true,
+      "detail": "## 2026-11-01 — WEB18 / Stage2 shared-storage replace hardening №479"
+    },
+    {
+      "name": "06 intro precedes 482 event",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "03 historical additions ordered before state",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "37 Stage2 history before Stage3",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "37 Stage3 architecture unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 historical appendix unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 target budget",
+      "pass": true,
+      "detail": {
+        "before": 24599,
+        "after": 24676
+      }
+    },
+    {
+      "name": "34 no obsolete replacement assignment",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: FOLLOWUP-WUA-S2-CHAT-STAGING-001",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: Run Store P9",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: P1–P6",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: Stage3",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: RISK-DOC-CURRENT-001",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: B2",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "34 key boundary retained: WA4-R",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "40 distinguishes independent focused execution and full suite gap",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "40 exactly one restored graph edge",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "negative control: event loss detectable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "negative control: FOLLOWUP status change detectable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "negative control: unauthorized graph edge detectable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "negative control: Stage3 contract loss detectable",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "unrelated inventory stable",
+      "pass": true,
+      "detail": {
+        "changed": [
+          ".obsidian/workspace.json"
+        ],
+        "missing": [],
+        "workspace_json_is_observed_not_attributed": true
+      }
+    },
+    {
+      "name": "applied readback matches all six candidates",
+      "pass": true,
+      "detail": null
+    }
+  ]
+}
