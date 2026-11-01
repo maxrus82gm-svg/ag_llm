@@ -1,0 +1,190 @@
+[
+  {
+    "url": "http://127.0.0.1:11434/api/version",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.050693+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "bytes_observed": 21,
+    "truncated": false,
+    "body_sha256": "ef17eb8e0e3e9539f9dac3ea997f2e44764c656a4f3aa4a732fc30b077c35ef6",
+    "data": {
+      "version": "0.40.13"
+    },
+    "classification": "HTTP_OBSERVED; not an inference or identity proof",
+    "elapsed_ms": 33.9
+  },
+  {
+    "url": "http://127.0.0.1:11434/api/tags",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.084727+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "bytes_observed": 458,
+    "truncated": false,
+    "body_sha256": "625f45ba4045a456b7d66b35a22d741f553b8d7e409b6b5e7bc4aef56622ca2b",
+    "data": {
+      "models": [
+        {
+          "name": "deepseek-r1:8b",
+          "model": "deepseek-r1:8b",
+          "modified_at": "2026-09-20T14:59:05.8297902+05:00",
+          "size": 5225376047,
+          "digest": "6995872bfe4c521a67b32da386cd21d5c6e819b6e0d62f79f64ec83be99f5763",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "8.2B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 131072,
+            "embedding_length": 4096,
+            "runner": "ggml"
+          },
+          "capabilities": [
+            "tools",
+            "thinking",
+            "completion"
+          ]
+        }
+      ]
+    },
+    "classification": "HTTP_OBSERVED; not an inference or identity proof",
+    "elapsed_ms": 48.2
+  },
+  {
+    "url": "http://127.0.0.1:11434/api/ps",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.132987+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "bytes_observed": 13,
+    "truncated": false,
+    "body_sha256": "a6fe9ec6e26a38d99fca418b69826e0238b7a2bb319ff05eb153a6fcfd1fa28d",
+    "data": {
+      "models": []
+    },
+    "classification": "HTTP_OBSERVED; not an inference or identity proof",
+    "elapsed_ms": 1.9
+  },
+  {
+    "url": "http://127.0.0.1:11434/v1/models",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.134901+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "status": 200,
+    "content_type": "application/json",
+    "bytes_observed": 110,
+    "truncated": false,
+    "body_sha256": "24e5efa95eae1befcb2950579597b7bcad9741fa46158c49b890a434a8aed17d",
+    "data": {
+      "object": "list",
+      "data": [
+        {
+          "id": "deepseek-r1:8b",
+          "object": "model",
+          "created": 1789898345,
+          "owned_by": "library"
+        }
+      ]
+    },
+    "classification": "HTTP_OBSERVED; not an inference or identity proof",
+    "elapsed_ms": 6.7
+  },
+  {
+    "url": "http://127.0.0.1:8000/health",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.141660+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "RemoteDisconnected",
+    "error": "Remote end closed connection without response",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 48.6
+  },
+  {
+    "url": "http://127.0.0.1:8000/v1/models",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.190329+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "RemoteDisconnected",
+    "error": "Remote end closed connection without response",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 0.8
+  },
+  {
+    "url": "http://127.0.0.1:8000/openapi.json",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.191113+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "RemoteDisconnected",
+    "error": "Remote end closed connection without response",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 0.5
+  },
+  {
+    "url": "http://192.168.0.77:8000/health",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:14.191584+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "URLError",
+    "error": "<urlopen error timed out>",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 2010.0
+  },
+  {
+    "url": "http://192.168.0.77:8000/v1/models",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:16.201572+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "URLError",
+    "error": "<urlopen error timed out>",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 2003.8
+  },
+  {
+    "url": "http://192.168.0.77:8000/openapi.json",
+    "method": "GET",
+    "time_utc": "2026-11-01T18:36:18.205441+00:00",
+    "timeout_seconds": 2,
+    "proxy": false,
+    "redirects": false,
+    "auth_sent": false,
+    "error_type": "URLError",
+    "error": "<urlopen error timed out>",
+    "classification": "NOT ACCESSIBLE FROM DIAGNOSTIC HOST",
+    "elapsed_ms": 2006.9
+  }
+]

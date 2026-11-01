@@ -1,0 +1,32 @@
+{
+  "command": "python -B tools/task_slot_rotate.py check --card <Codex card>",
+  "exit": 0,
+  "protocol": {
+    "command": "check",
+    "card": "Документация/000_Задачи Codex.md",
+    "card_sha256": "f26d215c64969a7e086cf671091877f989b3bfc1524312cb7fb2f077f93521b6",
+    "eol": "LF",
+    "marker_lines": {
+      "b1b": 42,
+      "b1e": 387,
+      "b11b": 393,
+      "b11e": 642
+    },
+    "block1": {
+      "state": "TASK",
+      "task_id": "CODEX-WUA-LOCAL-LLM-DISCOVERY-001",
+      "problems": [],
+      "lines": 344
+    },
+    "block1_1": {
+      "state": "FILLED",
+      "task_id": "CODEX-WUA-DOC-WEB19-REPAIR-001",
+      "copy_sha256": "9df0792f3fd465453ecb0a46f687f4038028924ffd66a42e654ec08b44256453",
+      "problems": []
+    },
+    "problems": [],
+    "result": "OK"
+  },
+  "stderr": "",
+  "rotation": "NOT RUN / forbidden by this TASK write scope"
+}

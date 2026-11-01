@@ -1,0 +1,246 @@
+CODEX-WUA-LOCAL-LLM-DISCOVERY-001 — RESULT READY / PARTIAL DIAGNOSTICS / AWAITING INDEPENDENT VERIFICATION.
+
+Адресат: ChatGPT LLM15. Основание передачи: пользователь разместил TASK в БЛОКЕ 1 Codex, §10: «Передайте требования и предложенный интерфейс данных WEB20 через координатора LLM15». Прямой старт пользователем подтверждён в текущем чате. Передаётся технический кандидат и требования для WEB20; реализация/UI/настройки не разрешены. Просьба рассматривать по этой существующей TASK, без нового инженерного запуска и без приписывания независимой приёмки недоступным файлам.
+
+Ключевые измеренные факты:
+- Диагностическая машина 192.168.0.9, а целевой сервер 192.168.0.77 — другой host.
+- На .9 работает Ollama 0.40.13, bind 127.0.0.1:11434. GET /api/version, /api/tags, /api/ps, /v1/models = 200.
+- Installed deepseek-r1:8b, GGUF/Q4_K_M, 5 225 376 047 байт; loaded models=[]; metadata tools/thinking/completion не испытаны inference.
+- .77:8000 /health,/v1/models,/openapi.json = timeout по 2 с; Colibri identity/version/models/hardware и загрузка дополнительной модели NOT VERIFIED.
+- На .9 :8000 принадлежит Manager.exe PID5156; те же GET закрываются без HTTP. Его нельзя объявить Colibri.
+- GET-only inventory; inference/model lifecycle/benchmarks/admin/network reconfiguration/Git/GitHub/Desktop Commander не использовались. Код, UI, config, документы и карточка неизменны по 248 source hashes; запись только в reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/.
+- Local №40 ещё WEB19/№483. TASK разрешает следовать пользовательскому распределению WEB20/LLM15 до sync; расхождение записано, файл не исправлен.
+- Рекомендация: существующий Model Registry + стабильные endpoint/model refs + общая HTTP/security основа и узкие protocol profiles. Первый шаг только discovery. P9/Tk P1–P6/Stage3/live/paid gates сохраняются.
+
+Полный локальный пакет: report.md, host-inventory.md, provider-api-matrix.md, ultra-source-map.md, multi-provider-contract.md, blueprint-integration.md, test-plan.md, next-task-proposal.md, server-side-checklist.md, manifest/evidence. Пользовательская публикация ещё требуется. В этом сообщении выбранные точные тексты; полный файловый hash/readback возможен после публикации. Авторские package checks 16/16 не являются independent adapter E2E.
+
+
+=== provider-api-matrix.md / SHA-256 3f92868a750fa773995d9f3e051b4de19965b71fc053521fab14cd3689a6701b ===
+# Матрица API и доказательств
+
+Статусы: **OBSERVED** — реальный HTTP результат; **DOC ONLY** — актуальная публичная документация, не испытание установленной версии; **NOT RUN** — не вызывалось; **NOT VERIFIED** — нельзя подтвердить. Ошибка discovery не равна UNSUPPORTED. Никаких POST/DELETE, inference, load/unload или model management в этой TASK не выполнялось.
+
+| Метод / свойство | Ollama .9:11434 | Colibri / .77:8000 | Вывод для адаптера |
+| --- | --- | --- | --- |
+| GET /api/version | OBSERVED 200, 0.40.13 | NOT RUN: это не подтверждённый маршрут Colibri | Версия сервера отдельно от версии adapter/protocol |
+| GET /api/tags | OBSERVED 200, один installed deepseek-r1:8b | NOT RUN / identity unknown | Native discovery сохраняет digest/size/details и provenance |
+| GET /api/ps | OBSERVED 200, models=[] | NOT VERIFIED | installed ≠ loaded; не прогревать автоматически |
+| GET /v1/models | OBSERVED 200, тот же ID | На .77 timeout; на локальном :8000 RemoteDisconnected | Подтверждён только listing shape у Ollama; chat compatibility из него не следует |
+| GET /health | Не вызывался, /api/version уже отвечает | .77 timeout, локальный :8000 disconnect | Не навязывать всем движкам одну health URL |
+| GET /openapi.json | Не вызывался | .77 timeout, локальный :8000 disconnect | Нет server schema evidence; маршруты Colibri неизвестны |
+| POST /api/chat | DOC ONLY / NOT RUN | NOT VERIFIED | Native chat model/messages; отдельный capability gate |
+| POST /api/generate | DOC ONLY / NOT RUN | NOT VERIFIED | Native prompt interface, не молчаливая замена chat |
+| POST /v1/chat/completions | DOC ONLY / NOT RUN | Только гипотеза из TASK; NOT VERIFIED | Частичная совместимость проверяется по конкретным полям/модели |
+| POST /v1/completions | DOC ONLY / NOT RUN | NOT VERIFIED | Не смешивать prompt и messages API |
+| Stream | Native NDJSON описан документацией; NOT RUN | NOT VERIFIED | Раздельные parser profiles для native NDJSON и OpenAI-style SSE; фактический SSE installed-version NOT RUN |
+| Cancel | NOT RUN; backend cancellation semantics не установлены | NOT VERIFIED | Закрытие клиента не доказывает остановку вычисления/отсутствие результата |
+| Load/unload/keep_alive | DOC ONLY, не исполнялись | NOT VERIFIED | Это операции управления ресурсом, не discovery |
+| Usage / timing | Документированы prompt_eval_count/eval_count и durations; NOT RUN | NOT VERIFIED | Сохранять provider raw; не выдумывать token usage или цену из отсутствия полей |
+| Error / busy / timeout | Установленный inference API не испытывался на ошибки; клиентские disconnect/timeout наблюдались на :8000 | Timeout/disconnect; HTTP 401/404/429/503 не наблюдались | Разделять transport failure, HTTP error и mid-stream error |
+| Queue / parallelism | Реальные параметры сервера неизвестны | NOT VERIFIED | Никакой нагрузки ради определения capacity; admission limits задавать отдельно |
+| Auth / bind | Анонимные inventory GET приняты на loopback; auth других методов NOT VERIFIED | NOT VERIFIED; локальный listener :: принадлежит Manager.exe | Нельзя считать все методы анонимными либо сервис безопасным по одному GET |
+| Tools / reasoning / images / JSON schema | tags advertises tools/thinking/completion; выполнение NOT RUN, images/schema не подтверждены | NOT VERIFIED | Capabilities по tuple connection/model/revision и method, с источником/датой |
+
+## Источники публичного контракта
+
+Ollama прямо описывает **подмножество** OpenAI API; совпадение /v1/models не доказывает полную совместимость payload, streaming, ошибок, usage или tools. Для установленной 0.40.13 проверены только GET выше. [Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility).
+
+Native /api/chat и /api/generate имеют разные входные формы; документация описывает model/messages либо prompt, опции и счётчики ответа. Поддержка конкретных параметров установленным сервером и выбранной моделью остаётся NOT RUN. [Chat](https://docs.ollama.com/api/chat), [Generate](https://docs.ollama.com/api/generate).
+
+Документация native streaming описывает NDJSON и отключение через stream=false. Mid-stream error может прийти после начала HTTP 200, поэтому завершение HTTP не должно автоматически означать успешную генерацию. [Streaming](https://docs.ollama.com/api/streaming), [Errors](https://docs.ollama.com/api/errors).
+
+FAQ описывает настройку bind, keep_alive, загрузку/выгрузку и зависимость параллелизма от памяти. Эти возможности здесь не проверялись и не применялись. [Ollama FAQ](https://docs.ollama.com/faq).
+
+Техническое первичное описание установленного Colibri вне Git/GitHub не получено. Результаты поиска сторонних обзоров/зеркал не использовались как доказательство; запрет Git/GitHub через зеркала не обходился. Не приписывать неизвестной установке общий backend Ollama или поведение JustVugg/colibri.
+
+
+=== ultra-source-map.md / SHA-256 7bc835417c0963d9ad7dea03063295ac5a45dc4d136e9388e3c523ef86ea37de ===
+# Адресная карта существующего ядра
+
+Метод: статическое чтение Python/AST без импорта и выполнения runtime, без чтения живой переписки/секретов. Исходные hashes — evidence/source_baseline.json; символы и диапазоны — evidence/source_selectors.json. Git revision не устанавливался. Статическая пригодность не является runtime/production PASS.
+
+| Источник / адрес | Что уже есть | Что требуется для многохостовой интеграции |
+| --- | --- | --- |
+| model_registry.py:9–15, 18–70, 73–94 | Frozen ModelSpec(model_id, display_name, provider, provider_model_id, enabled, is_local), MappingProxyType, шесть builtin моделей GigaChat, enabled guard | Расширить этот логический владелец discovery bindings; нет endpoint URL, server ID, credential_ref, catalog TTL. Не заводить второй независимый Model Registry |
+| web_alarm/ultra_connections.py:67–78, 101–131 | Текущий `api:provider:model_id` ID, parser ровно трёх сегментов, проверка shared registry, REGISTERED/DISABLED, UNVERIFIED | ID описывает binding модели, не server endpoint. Для одинаковой модели у двух серверов нужен отдельный connection_ref; migration mapping для старых IDs, без автоматической переинтерпретации |
+| web_alarm/ultra_connections.py:135–233 | Выбор роли chat хранится в ultra/connections.json, catalog строится из общего реестра; local_llm = NOT_CONNECTED, network_calls=0 | Этот файл сейчас хранит selection, **не полноценный серверный реестр**. Сохранить selection ownership и представить новые bindings через общий core |
+| web_alarm/model_cards.py:102–150 | Provider metadata, builtin GigaChat OAuth/API URLs; adapter availability = find_spec, не execution | Runtime adapter factory с allowlisted provider types. Наличие Python module не означает API reachability |
+| web_alarm/model_cards.py:486–549 | Пользовательские provider/profiles; вручную добавленный provider намеренно получает adapter=None; profiles хранят limits/credential_revision | Существующий settings/profile механизм использовать как владельца endpoint profiles после отдельной версионированной дельты; произвольные URL и user adapter imports не включать |
+| web_alarm/model_cards.py:553–619, 767–826 | Presence-only credential facts, settings_version hash, API check age/status, EVM presentation | Включить endpoint/config/credential revision в fingerprint и держать discovery факты отдельно от inference success. Карточка не должна зеленеть только от GET models |
+| web_alarm/model_cards.py:927–964 | ApiChecker authorization, simulation не подтверждает реальную модель, check фактически посылает короткое сообщение при разрешении | Не использовать run_check как лёгкий discovery: это inference. Отдельные health/list_models без тестового prompt |
+| web_alarm/ultra_chat.py:126–179 | Read routes Workspace/Chat/messages, Stage2 POST create/rename, раздельные read/write capabilities | Здесь нет отправки provider chat/Turn. Нельзя подключить inference простым добавлением model card |
+| context_storage.py:719–780 | commit_raw_message: caller-chosen ID, same ID/same content idempotent, conflict иначе; exclusive publication, Workspace guard/lock | Переиспользовать для RAW после отдельного Turn/attempt contract. Docstring явно: это не Turn и не результат повторной provider-отправки |
+| context_storage.py:_existing_workspace_writer, _replace_verified | Общие writers, bounded identity/no-follow, verified replacement | Не создавать альтернативное дерево чатов и не обходить existing locks/safety; сохранять Stage2 residual gates |
+| gigachat_transport.py:10–65 | GigaChat endpoints, OAuth/cache, extract_usage без выдумывания недостающих счётчиков | Это GigaChat-specific helper, не универсальный transport API и не готовая Ollama интеграция |
+| server.py:558–601, 3418–3537; planner_runtime.py / verifier_runtime.py / compressor_runtime.py callers | Фактические GigaChat calls/headers и отдельные attempt diagnostic hooks, hardcoded CHAT_URL на call sites | Будущий execution facade должен согласованно вынести обращение; одного переименования gigachat_transport недостаточно. В этой TASK код не импортировался/не менялся |
+| run_store.py:45–145, 289–334, 369–445, 506–557 | Workspace-local RUN/index, append-only records/checksums и provider started/terminal accounting | Переиспользовать RUN/attempt identity, но **P9 OPEN**: наличие checksum не доказывает согласованный durability/recovery/no-follow/concurrency contract для нового Turn. Provider adapter не закрывает P9 |
+| ultra_budget_policy.py:582–692, 878–993 | reserve/send/not_sent/terminal liability, evaluate_request/preflight | Сохранять единый бюджетный authority и UNKNOWN obligations; pure policy-функции не означают, что новый provider уже подключён к durable journal |
+
+## Архитектурные владельцы и границы
+
+№37 §2.1–2.4: одно Python-ядро, Tkinter и Web — клиенты; Model/Connection refs фиксируются для принятого Turn, перед физической отправкой повторно проверяются разрешения; один логический владелец при двух процессах. Стабильные ID отделены от machine-local URL/paths; ключи/OS credentials заново авторизуются после переноса. §5 и Blueprint остаются дальнейшим направлением, не разрешением запуска.
+
+№11 → Model Registry / Provider Adapter / Local runtime: provider abstraction предусмотрена концептуально; эксперимент с DeepSeek/Ollama не является production dependency. №19 → USER DIRECTION 25.10: Desktop MCP/V2Ray/WFP FROZEN. Текущая локальная №40 ещё WEB19/№483, а БЛОК 1 сообщает решение о WEB20/LLM15 до подтверждённого main sync. **VERSION DIVERGENCE RECORDED:** для этого исследования приоритет у прямой постановки; UI/server файлы не менять, требования UI передать через LLM15 к WEB20. Самостоятельной правки №40 нет.
+
+Stage3/live/paid HOLD; P9, Tk readers P1–P6, staging, независимые regression/CI/portability gates сохраняются. Полная history/№001 не загружалась для исследования providers. БЛОК 4 Codex прочитан как исторический независимый verdict, прав на текущую реализацию из него не следует.
+
+
+=== multi-provider-contract.md / SHA-256 2a31357e6443096956d2ea9fb471d3fbc29ad9cc2f3682ae4b48d63f7ac484ce ===
+# Минимальный многохостовый контракт — ПРОЕКТ
+
+Статус **PROPOSAL / IMPLEMENTATION NOT AUTHORIZED**. Это контракт дальнейшей работы, не описание реализованного адаптера. Наблюдения установки — host-inventory.md и provider-api-matrix.md. Сохраняются №37 §2.1–2.4, общий Model Registry, Workspace/Chat/RAW, будущий Turn и существующие RUN/attempt/budget authorities.
+
+## Выбор варианта
+
+| Вариант | Преимущества | Ограничения по полученным фактам |
+| --- | --- | --- |
+| Полностью отдельные Ollama/Colibri adapters | Native inventory, load state, engine-specific diagnostics | Colibri не идентифицирован; написание ColibriAdapter сейчас зафиксирует догадки. Полное дублирование HTTP/errors/streaming нежелательно |
+| Один OpenAI-compatible transport для всех | Общие list_models/chat и часть stream/parser, проще новый совместимый сервер | Ollama GET models работает, но chat не испытан. Native tags/ps/digest/load policy теряются; Colibri compatibility неизвестна. OpenAI-compatible не равно полное равенство протоколов |
+| **Рекомендация: тонкие protocol adapters + общая HTTP/security основа** | Общая сеть, deadlines, лимиты, диагностика; узкие Ollama-native и OpenAI-chat profiles; engine identity отдельно | Нужны schema/version/capability tests каждого реально включённого профиля. На первом шаге только discovery, без inference/UI |
+
+Существующий GigaChat helper сохраняется до отдельного безопасного выделения execution facade. Название Colibri не регистрируется как поддерживаемый engine без его identity/version. При подтверждении OpenAI-compatible Colibri можно подключить через такой профиль с узким override; новый IP не создаёт новую ветку кода.
+
+## Единственные логические владельцы
+
+1. **Model Registry** остаётся model_registry.py / общий core. Builtin ModelSpec и прежние IDs продолжают читаться. Discovery добавляет проверенные bindings через расширение этого владельца, а не второй каталог моделей у UI/Blueprint.
+2. **Endpoint profile** — расширение существующего settings/profile механизма, не замена файла selection. Текущий ultra/connections.json хранит выбор роли; нельзя объявить его уже готовым connection server registry или молча переписать его схему.
+3. **Selection** остаётся shared/core ref; EVM отображает общий catalog. Tk/web clients не заводят отдельные модели/ключи и не посылают HTTP к inference host напрямую.
+4. **Execution** — будущий общий сервис Turn/attempt/budget/recorder по №37. Адаптер переводит протокол, но не создаёт параллельные Chat/RAW/Task/Run/budget stores. P9 и Stage3 разрешения — отдельные gates.
+
+В первой узкой реализации endpoint profiles передаются сервису как явно разрешённые read-only параметры. Постоянное редактирование/перенос настроек и UI идут отдельной принятой дельтой. Это позволяет проверить discovery, не создавая преждевременно второе хранилище.
+
+## Идентичности и версии
+
+Кандидат EndpointProfile:
+
+```json
+{
+  "connection_ref": "conn_example_a",
+  "provider_kind": "ollama_native",
+  "protocol_profile": "ollama_http_v1",
+  "config_revision": 1,
+  "endpoint_binding_ref": "machine_local_endpoint_a",
+  "credential_ref": null,
+  "credential_revision": 0,
+  "security_policy_ref": "explicit_host_policy_a",
+  "enabled": true
+}
+```
+
+Значения — синтетические примеры. Физический URL хранится в проверяемой machine-local binding-конфигурации, секрет — только по credential_ref в выбранном credential store; store/политика требуют отдельного решения. URL не входит в Blueprint/переносимый Chat и не является стабильным ID. Один физический сервер может иметь несколько API endpoints; endpoint identity не равна утверждению об одном физическом компьютере.
+
+ModelBinding общего Model Registry: `model_ref`, `connection_ref`, `provider_model_id` (неизменяемая строка, например deepseek-r1:8b), `display_name`, `observed_model_revision/digest` (nullable), `capabilities`, `source`, `observed_at`, `valid_until`, `enabled`. `model_ref` — стабильный внутренний ID привязки; уникальность минимум `(connection_ref, provider_model_id)`, а используемый digest фиксируется снимком при исполнении. Одинаковые названия на conn_A/conn_B — разные bindings. На смене тега/digest наблюдение устаревает; старый RUN не переписывается. Если backend не позволяет закрепить digest, строгая воспроизводимость отмечается UNVERIFIED, а не обещается по tag.
+
+Существующий `api:provider:model_id` остаётся **legacy binding ID**, не server ID. Нужны явная versioned mapping и сохранение старого выбора; нельзя просто добавить двоеточия и пройти parser ровно трёх сегментов. Ни rename IP, ни импорт Workspace не создают новую identity модели/чата автоматически. Удаление/disable endpoint сохраняет references в истории и возвращает понятную ошибку, не выбирает другой host молча.
+
+## Discovery и состояния
+
+Факты независимы, а не один зелёный последовательный статус:
+
+| Факт | Достаточное свидетельство | Что он не доказывает |
+| --- | --- | --- |
+| CONFIGURED | Валидный разрешённый profile с revision | Что реальный сервер доступен |
+| REACHABLE | HTTP ответ от разрешённого destination, timestamp | Что ответил нужный engine либо нужный API |
+| AUTHENTICATED | Принята применимая auth для указанного scope; для анонимного discovery — NOT_REQUIRED_FOR_THIS_METHOD | Что inference/управление моделью разрешены |
+| API_COMPATIBLE | Валидный ответ конкретного method/profile/schema | Полную совместимость /v1/chat/completions по одному /v1/models |
+| MODEL_AVAILABLE | Нужная identity в свежем catalog этого connection | Что она в памяти, помещается в VRAM и отвечает |
+| INFERENCE_CONFIRMED | Отдельно разрешённая реальная успешная попытка, точные version/model/config, scope и время | Product PASS, tools/vision support или разрешение следующей попытки |
+
+Каждый факт: `value`, `verification=VERIFIED/UNVERIFIED/UNSUPPORTED`, `scope`, `observed_at`, `expires_at`, `config_fingerprint`, `evidence_ref`. UNSUPPORTED только по явному контракту/доказанному отказу, не по timeout. Отдельно `execution_permission=DENIED/NOT_GRANTED/GRANTED` с authority ref; discovery никогда её не повышает. На смене URL/credentials/protocol/model revision прежние подтверждения инвалидируются, история остаётся.
+
+Discovery явно запускается пользователем или принятой политикой; health/list_models без auto-inference, pull, warm-up, unload, model switching. TTL cache с ограничением числа записей/байт; stale catalog виден как stale, не подтверждает доступность. Недоступный host не удаляет его модели/выбор/историю. API не даёт достоверного active-download статуса — вернуть UNKNOWN.
+
+## Интерфейс адаптера
+
+Кандидат `health(connection_snapshot, deadline)`, `list_models(...)`, `get_capabilities(model_ref, ...)`; позже `chat(request, attempt_ref, permission_snapshot)`, `generate(...)`, `stream(...)`, `cancel(attempt_ref)`. Каждый метод имеет явный supported/verification scope. API methods не запускают shell, не подхватывают user-named Python modules и не выбирают адрес из произвольного prompt.
+
+Результат discovery: `connection_ref`, `config_revision`, `protocol_profile`, `server_version`, `engine_identity={value,verification}`, `observed_at`, `models[]`, `facts[]`, `warnings[]`, `error={code,retryability,scope}`. Неподдерживаемое необязательное поле — null/UNVERIFIED; не придумывать windows/context/capacity из display name.
+
+Поздний stream нормализует `text_delta`, отдельные optional reasoning/tool deltas, `usage`, `terminal`, `error`, сохраняя профиль исходного протокола. NDJSON/SSE парсеры раздельные; incomplete terminal/потерянный final usage не становятся SUCCESS/нулевым расходом. Tool declaration не даёт прав выполнять tools; выполнение по authority Ultra/Web Alarm.
+
+## Ошибки, ресурсы и восстановление
+
+Обязательная классификация: CONFIG_INVALID, DESTINATION_DENIED, CONNECT_FAILED, CONNECT_TIMEOUT, AUTH_REQUIRED/REJECTED, API_SCHEMA_MISMATCH, MODEL_NOT_FOUND, SERVER_BUSY, RESOURCE_EXHAUSTED, READ_TIMEOUT, STREAM_ERROR, CANCEL_REQUESTED, CANCEL_CONFIRMED (только доказанно), OUTCOME_UNKNOWN, USAGE_UNKNOWN. Отдельно HTTP status, provider error code и безопасная диагностика; без raw headers/secrets/prompts по умолчанию.
+
+Discovery GET можно ограниченно повторять по отдельной политике. Inference после возможной отправки при timeout/disconnect/cancel — UNKNOWN с существующей attempt identity/обязательствами. Не повторять автоматически на другом сервере, не уменьшать бюджет до нуля и не объявлять отмену backend подтверждённой только по закрытию клиента. Host outage/rename/disabling сохраняет историю; восстановление не повторяет физическую отправку по одному наличию RAW.
+
+Очередь/лимиты: admission на connection и общую resource group, поскольку два endpoints могут делить GPU. Max in-flight сначала консервативно 1 для отдельно принятой execution-политики; реальные capacity/серверные queue limits UNKNOWN до измерений. Это проектное значение, не диагностика сегодняшнего Ollama. При невозможности durable записи attempt/result — fail closed по будущему execution contract. Не превращать diagnostic callback в авторитетный журнал.
+
+## Сетевой доступ и перенос
+
+Все вызовы идут из общего Python-ядра. До запроса: allowlisted scheme/host/port/path profile, запрет URL userinfo/fragment, control chars и произвольных query, canonical IP/IPv6, ограниченные redirects (на первом шаге запрещены), time/response/body/model-count limits. Environment proxy не должен расширять destination; TLS verification не отключать.
+
+LAN-сети требуют **явного адресного разрешения**, а не общего разрешения на любой private IP. DNS rebind, IPv4-mapped IPv6 и redirects не должны обходить проверку фактического peer. Link-local metadata/service endpoints, Unix sockets, file/FTP и иные schemes запрещены по умолчанию. Credential не переносится на другой origin; логирование редактирует чувствительные поля.
+
+Для нынешней .77 доступ не доказан. Будущий безопасный вариант: отдельно согласованный bind на нужный интерфейс плюс адресный firewall и auth/TLS proxy/VPN по выбранной политике. Это варианты для USER GO, без текущей настройки. MCP/V2Ray/WFP freeze не обходится созданием туннеля. Loopback допустим только на своей машине; после переноса URL перепривязывается, все факты revalidated, credentials/OS rights авторизуются заново. Второй/третий host — новые data records в том же профиле, без if-ветвей по IP.
+
+
+=== blueprint-integration.md / SHA-256 1eb335f7b5ae726295a0fece7b48fb891ffbe824725861398bfbc9209ff1706b ===
+# Стыковка с Blueprint LLM — кандидат
+
+Blueprint LLM.md §3/§5/§6 и его тактический контекст описывают концепцию. Исполняемого графа, окончательной схемы node или нового USER GO на конструктор эта TASK не создаёт.
+
+| Кандидат поля | Смысл / владелец |
+| --- | --- |
+| node_id | Стабильный ID узла будущего blueprint definition; не API URL |
+| kind | Версионированный тип, например llm.call; ещё не действующий enum |
+| connection_ref | Ссылка на общий EndpointProfile, machine-local URL разрешает core |
+| model_ref | Binding из существующего расширенного Model Registry; обязан принадлежать connection_ref |
+| role_ref | Ссылка на общий role/model assignment, не вторая копия инструкции |
+| context_refs | Ссылки на разрешённые версии контекста с provenance; не файловые права из самого графа |
+| input | Typed вход или ссылка на принятую пользовательскую запись; read-only snapshot на запуск |
+| response | Ссылка на результат/RAW/артефакт существующего ядра после выполнения; не второй storage текста |
+| status | Состояние node invocation; не подмена Turn/RUN/attempt state |
+| error | Безопасная ссылка/структура ошибки ядра; UNKNOWN не превращать в SUCCESS |
+| usage | Ссылка на фактические provider usage и существующий accounting; неизвестное остаётся неизвестным |
+| run_ref | Ссылка на существующий RUN/attempt; для отдельного graph execution потребуется поздний mapping |
+
+Configuration definition (node_id/kind/refs/input-binding) отделить от invocation result (resolved versions/response/status/error/usage/run_ref). При запуске заморозить config/model/context revisions, затем повторно проверить действующие права перед физической отправкой. Изменение URL во время очереди не должно переключить уже принятую попытку на другой endpoint незаметно.
+
+Путь будущего вызова: **Blueprint node → общий execution facade → разрешения/Turn/attempt/budget/recorder → protocol adapter**. Tk и Web используют тот же путь; provider adapter не исполняет граф и не создаёт сессии/agent tools. Разрешённость tools/function calling — отдельный authority, даже если модель объявляет такую capability.
+
+Узлы не хранят IP, ключи, OAuth tokens или machine-specific paths. При выключенном/неперепривязанном connection_ref вернуть явную ошибку; историю сохранить. Alias модели не смешивает одинаковые имена разных серверов. Никакой автоматической paid/live или другой host fallback после неизвестного исхода.
+
+Число выходов не ограничивать придуманными двумя/тремя состояниями: первоисточник допускает именованные typed outputs/ветви; политика отказов/циклов/повторов потребует отдельной архитектуры. Текущая рекомендация только сохраняет совместимость refs, не утверждает полную схему графа.
+
+
+=== next-task-proposal.md / SHA-256 34e4b8b05fac28441864146f665adc36c4fbe8aeebccad48f320e899d5e7efe6 ===
+# Проект следующей узкой TASK — НЕ НАЗНАЧЕНА
+
+Кандидат ID `CODEX-WUA-MULTIHOST-DISCOVERY-ADAPTERS-001`. **DRAFT PROPOSAL / NOT ASSIGNED / USER GO REQUIRED / IMPLEMENTATION NOT STARTED**. Это предложение в рамках исследовательского отчёта, не новая активная TASK и не заполнение БЛОКА 1.
+
+## Цель
+
+Реализовать **только безопасный read-only discovery core**: явно переданные endpoint profiles → проверенный destination → bounded health/list_models → нормализованный catalog/facts общего Model Registry. Поддержать два host с одинаковой моделью без смешения ID. Никаких prompts, chat/generate/stream/cancel/load/unload, автоматического inference, UI или постоянной настройки серверов.
+
+## Предполагаемая область
+
+- Новый небольшой модуль `llm_provider_discovery.py`: typed profile/facts/result, injected HTTP interface, Ollama inventory profile и OpenAI models profile. Engine identity Colibri остаётся UNKNOWN до серверного подтверждения; не создавать специфический ColibriAdapter по названию.
+- `model_registry.py`: минимальные обратносовместимые типы/фасад для discovery bindings и явное различение connection_ref/model_ref. Существующие шесть GigaChat ModelSpec, IDs, enabled guard, list/get поведение сохранить. Один логический владелец; не создавать второй независимый catalog у UI.
+- Новые адресные `test_llm_provider_discovery.py`, `test_model_registry_discovery.py`; корректировка существующих registry tests только при доказанной необходимости и явном включении координатором.
+- Собственный `reports/<new-task-id>/`. Input profiles в первом шаге передаются вызывающим кодом/fake fixtures; **без нового постоянного settings store или изменения selection файла**.
+- Исключены `web_alarm/server.py`, `web_alarm/ui.py`, credentials/config services, существующий Run Store, Turn/RAW writers, budget journal, B2/WA4-R и MCP. Названия/точный diff утверждает координатор при назначении, это не текущее write-разрешение.
+
+## Зависимости и стоп-условия
+
+1. Независимая приёмка этого исследования LLM15, согласование candidate contract и versioned ID migration plan.
+2. Подтверждённый scope WEB20/LLM15: локальная №40 ещё WEB19. UI requirements передаются WEB20 через LLM15, локальный исполнитель документ не меняет.
+3. Для реального smoke отдельно перечислить host/port/method. Проверенная .9:11434 доступна только в её loopback; `127.0.0.1` на другой машине означает другой сервер. Не использовать .77:11434, пока её listener и разрешение не подтверждены.
+4. Discovery можно проверить на mocks независимо от P9. **Любое расширение до отправки сообщений — BLOCKED до отдельного P9/Turn/permission/budget решения и USER GO.** Stage3 не открывается успешным inventory.
+5. Инжектируемый transport по умолчанию не посылает сеть при import/init. Нельзя тестировать на настоящих Workspace или «проверять» отсутствующую модель её скачиванием.
+
+## Приёмочные критерии
+
+- Два connection profiles с одним provider_model_id дают разные стабильные model_ref; смена machine URL не уничтожает refs, но сбрасывает актуальность подтверждений.
+- GET inventory не вызывает POST/inference/model mutation; ограничены timeout/body/models/redirects, host policy, схемы URL и фактический destination. Auth failures/schema failures не превращаются в пустой успешный catalog.
+- Старые GigaChat records/selection IDs читаются прежним способом; manual provider metadata с adapter=None не становится выполняемым кодом.
+- Понятные facts CONFIGURED/REACHABLE/AUTH*/API_COMPATIBLE/MODEL_AVAILABLE; INFERENCE_CONFIRMED остаётся UNVERIFIED, permissions не повышаются.
+- Cache stale/offline не удаляет history/selection; нет скрытого fallback к другой машине. No credentials/raw headers/private prompts в output/logs.
+- Targeted tests и отрицательные controls из test-plan.md; scope/команды/source hashes/raw initial FAIL сохранены. Полный продуктовый прогон только по impact/разрешению, без сети/paid/live.
+- Документированный Python data contract пригоден для будущей UI-интеграции WEB20 и Blueprint refs, реализация этих клиентов не входит.
+
+## Требования для WEB20 через LLM15
+
+Сценарий настройки: «Добавить сервер» → provider/API profile и machine-local URL → policy/auth ref → **«Проверить доступность» без модели/inference** → catalog с provenance/датой → выбор binding для chat. UI различает доступность, модель на диске/в памяти, устаревшую проверку, разрешённость и отдельно подтверждённый inference. Для непройденной проверки — причина и безопасное повторение; сервер можно disable без удаления истории, URL перепривязать с revalidation.
+
+UI payload: `connection_ref`, `config_revision`, `protocol_profile`, `display_name`, `facts[]`, `observed_at`, `models[{model_ref,connection_ref,provider_model_id,revision,capabilities}]`, `error`, `warnings`, `execution_permission`. В UI нет credential values и кнопки, скрыто запускающей тяжёлый прогрев. «Тест модели» — отдельное будущее действие с явным разрешением. Browser работает с Python-ядром, не напрямую с inference hosts.

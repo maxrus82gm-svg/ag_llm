@@ -1,0 +1,159 @@
+{
+  "time_utc": "2026-11-01T18:37:50.7796103Z",
+  "host_scope": "DIAGNOSTIC HOST ONLY; remote 192.168.0.77 resources not inspected",
+  "os": {
+    "FreeMemoryKiB": 15322240,
+    "Build": "19045",
+    "Caption": "Майкрософт Windows 10 Pro",
+    "Version": "10.0.19045",
+    "TotalMemoryKiB": 33374584,
+    "Architecture": "64-разрядная"
+  },
+  "ipv4": [
+    {
+      "IPAddress": "192.168.0.9",
+      "InterfaceAlias": "Ethernet 3",
+      "PrefixLength": 24
+    },
+    {
+      "IPAddress": "127.0.0.1",
+      "InterfaceAlias": "Loopback Pseudo-Interface 1",
+      "PrefixLength": 8
+    }
+  ],
+  "cpu": [
+    {
+      "Name": "12th Gen Intel(R) Core(TM) i5-12400F",
+      "NumberOfCores": 6,
+      "NumberOfLogicalProcessors": 12,
+      "MaxClockSpeed": 2500,
+      "LoadPercentage": 30
+    }
+  ],
+  "gpu": [
+    {
+      "Name": "Meta Virtual Monitor",
+      "AdapterRAM": null,
+      "DriverVersion": "11.1.45.729",
+      "Status": "OK"
+    },
+    {
+      "Name": "NVIDIA GeForce RTX 3070 Ti",
+      "AdapterRAM": 4293918720,
+      "DriverVersion": "32.0.16.1088",
+      "Status": "OK"
+    }
+  ],
+  "nvidia_gpu_query": "NVIDIA GeForce RTX 3070 Ti, 8192, 3583, 2, 610.88",
+  "fixed_logical_disks": [
+    {
+      "DeviceID": "C:",
+      "Size": 498353565696,
+      "FreeSpace": 17168187392
+    },
+    {
+      "DeviceID": "D:",
+      "Size": 499437780992,
+      "FreeSpace": 34891640832
+    },
+    {
+      "DeviceID": "F:",
+      "Size": 250057060352,
+      "FreeSpace": 61377687552
+    },
+    {
+      "DeviceID": "G:",
+      "Size": 2000263573504,
+      "FreeSpace": 406500253696
+    },
+    {
+      "DeviceID": "M:",
+      "Size": 2000381014016,
+      "FreeSpace": 62652194816
+    }
+  ],
+  "listeners": [
+    {
+      "LocalAddress": "::",
+      "LocalPort": 8000,
+      "OwningProcess": 5156
+    },
+    {
+      "LocalAddress": "127.0.0.1",
+      "LocalPort": 11434,
+      "OwningProcess": 24684
+    }
+  ],
+  "processes": [
+    {
+      "Pid": 5156,
+      "ParentPid": 3912,
+      "Name": "Manager.exe",
+      "Executable": null,
+      "FileVersion": null,
+      "OllamaVerbOnly": null,
+      "ExecutableUnavailable": true
+    },
+    {
+      "Pid": 20620,
+      "ParentPid": 9244,
+      "Name": "ollama app.exe",
+      "Executable": "%USERPROFILE%\\AppData\\Local\\Programs\\Ollama\\ollama app.exe",
+      "FileVersion": null,
+      "OllamaVerbOnly": null,
+      "ExecutableUnavailable": false
+    },
+    {
+      "Pid": 24684,
+      "ParentPid": 20620,
+      "Name": "ollama.exe",
+      "Executable": "%USERPROFILE%\\AppData\\Local\\Programs\\Ollama\\ollama.exe",
+      "FileVersion": null,
+      "OllamaVerbOnly": "serve",
+      "ExecutableUnavailable": false
+    }
+  ],
+  "matching_services": [],
+  "commands": [
+    {
+      "Name": "ollama",
+      "Path": "%USERPROFILE%\\AppData\\Local\\Programs\\Ollama\\ollama.exe"
+    },
+    {
+      "Name": "nvidia-smi",
+      "Path": "C:\\Windows\\system32\\nvidia-smi.exe"
+    }
+  ],
+  "selected_nonsecret_process_environment": {
+    "OLLAMA_MODELS": null,
+    "OLLAMA_KEEP_ALIVE": null,
+    "OLLAMA_CONTEXT_LENGTH": null,
+    "OLLAMA_MAX_LOADED_MODELS": null,
+    "OLLAMA_NUM_PARALLEL": null,
+    "OLLAMA_HOST": null
+  },
+  "installed_app_metadata": [
+    {
+      "DisplayName": "Ollama version 0.40.13",
+      "DisplayVersion": "0.40.13",
+      "Publisher": "Ollama"
+    }
+  ],
+  "default_or_configured_model_path": "%USERPROFILE%\\.ollama\\models",
+  "local_model_manifest_metadata": [
+    {
+      "RelativePath": "manifests\\registry.ollama.ai\\library\\deepseek-r1\\8b",
+      "Bytes": 857,
+      "UpdatedUtc": "2026-09-20T09:59:05.8297902Z"
+    }
+  ],
+  "local_partial_blob_metadata": [],
+  "limits": [
+    "No process command lines or general environment dump saved",
+    "No secret values read",
+    "Null executable is unavailable, not proof of no executable",
+    "Win32 AdapterRAM can be inaccurate for >4GB; nvidia-smi preferred",
+    "No remote administrative access",
+    "Service enumeration does not cover containers, WSL, other users or every startup mechanism"
+  ]
+}

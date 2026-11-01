@@ -1,0 +1,311 @@
+[
+  {
+    "path": "model_registry.py",
+    "sha256": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+    "symbols": [
+      {
+        "symbol": "ModelSpec",
+        "first_line": 9,
+        "last_line": 15,
+        "docstring": null
+      },
+      {
+        "symbol": "get_model_spec",
+        "first_line": 73,
+        "last_line": 90,
+        "docstring": null
+      },
+      {
+        "symbol": "list_model_specs",
+        "first_line": 93,
+        "last_line": 94,
+        "docstring": null
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "web_alarm/ultra_connections.py",
+    "sha256": "d57a37774e9b1fa7ea5d3e954a0c7058aea2f3ca82446ecd9bd59c8b171b266b",
+    "symbols": [
+      {
+        "symbol": "UltraConnectionsError",
+        "first_line": 35,
+        "last_line": 36,
+        "docstring": "Base error of the connections read model."
+      },
+      {
+        "symbol": "ConnectionRequestError",
+        "first_line": 39,
+        "last_line": 40,
+        "docstring": "The request itself is malformed (role, connection_id)."
+      },
+      {
+        "symbol": "UnknownConnectionError",
+        "first_line": 43,
+        "last_line": 44,
+        "docstring": "The connection_id names no model of the shared registry."
+      },
+      {
+        "symbol": "DisabledConnectionError",
+        "first_line": 47,
+        "last_line": 48,
+        "docstring": "The model exists in the shared registry but is disabled there."
+      },
+      {
+        "symbol": "RegistryUnavailableError",
+        "first_line": 51,
+        "last_line": 52,
+        "docstring": "The shared model registry cannot be imported."
+      },
+      {
+        "symbol": "SelectionStoreError",
+        "first_line": 55,
+        "last_line": 56,
+        "docstring": "The saved choice cannot be persisted."
+      },
+      {
+        "symbol": "_registry",
+        "first_line": 59,
+        "last_line": 64,
+        "docstring": null
+      },
+      {
+        "symbol": "connection_id_for",
+        "first_line": 67,
+        "last_line": 69,
+        "docstring": "Stable connection identity of a registry model: ``api:<provider>:<model_id>``."
+      },
+      {
+        "symbol": "_parse_connection_id",
+        "first_line": 72,
+        "last_line": 78,
+        "docstring": null
+      },
+      {
+        "symbol": "_role",
+        "first_line": 81,
+        "last_line": 84,
+        "docstring": null
+      },
+      {
+        "symbol": "UltraConnections",
+        "first_line": 87,
+        "last_line": 265,
+        "docstring": null
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "web_alarm/model_cards.py",
+    "sha256": "03d38fe36361a43fd11b5776cead7e6fe8f054c394d23c3760545b9dae36e02f",
+    "symbols": [
+      {
+        "symbol": "Provider",
+        "first_line": 102,
+        "last_line": 113,
+        "docstring": null
+      },
+      {
+        "symbol": "ModelCards",
+        "first_line": 406,
+        "last_line": 964,
+        "docstring": null
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "web_alarm/ultra_chat.py",
+    "sha256": "c222e8361d13cc5410702476cce067ad72a2cc1e8957e85079a9c94f702e5bc9",
+    "symbols": [
+      {
+        "symbol": "UltraChatAccess",
+        "first_line": 55,
+        "last_line": 72,
+        "docstring": "Read capability of this server process: one scope, GET /ultra/chat/*; the token lives in memory only."
+      },
+      {
+        "symbol": "UltraChatWriteAccess",
+        "first_line": 75,
+        "last_line": 96,
+        "docstring": "Write capability of this server process: its own scope and token, never derived from the read token.\n\nOne scope, POST /ultra/chat/workspaces/<id>/chats (create) and .../chats/<chat_id>/title (rename). The token\nlives in memory only; it exists only on a loopback bind, with Ultra Chat reading on and writing not switched off."
+      },
+      {
+        "symbol": "UltraChatService",
+        "first_line": 120,
+        "last_line": 285,
+        "docstring": "Routes of /ultra/chat/*; every answer is built from the registry and the bounded core functions."
+      },
+      {
+        "symbol": "_run_index",
+        "first_line": 330,
+        "last_line": 359,
+        "docstring": "Run Store v2 index (canonical or newest generation, as run_store picks it), bounded; never required."
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "gigachat_transport.py",
+    "sha256": "ee1db75ed04ea432224324d9ffb8271e211985e2d4f3a25f72dff89db251a879",
+    "symbols": [
+      {
+        "symbol": "extract_usage",
+        "first_line": 17,
+        "last_line": 28,
+        "docstring": "Return provider-reported token usage without estimating missing values."
+      },
+      {
+        "symbol": "get_access_token",
+        "first_line": 31,
+        "last_line": 65,
+        "docstring": null
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "context_storage.py",
+    "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+    "symbols": [
+      {
+        "symbol": "create_chat_record",
+        "first_line": 555,
+        "last_line": 637,
+        "docstring": "Create one Chat through the shared writer contract; ``{\"chat\": metadata, \"created\": bool}``.\n\nWith ``expected_workspace_id`` the Workspace must already exist with exactly that identity (the web path and\nthe Tk sidebar); without it the folder's storage is first ensured, as the Tk \"new Workspace\" action always did.\nA caller-chosen ``chat_id`` makes a repeated request idempotent: the same ID with the same (or no) title returns\nthe existing Chat without a write, the same ID with another title is a conflict. The Chat is assembled in\nstaging and published with one directory rename under the Workspace writer lock."
+      },
+      {
+        "symbol": "commit_raw_message",
+        "first_line": 719,
+        "last_line": 780,
+        "docstring": "Save one RAW MESSAGE under a caller-chosen ``message_id`` exactly once (local storage idempotency).\n\nA new ID gives one new record. The same ID with the same content returns the stored record (``created`` is\nFalse, nothing is written). The same ID with other content or identity is a ``message_id_conflict``: the stored\nrecord is never overwritten. Publication is exclusive (a rename that fails on an existing name), so even a\nwriter outside this lock cannot be overwritten. The Workspace must already exist; nothing is created for it.\nThis is not a Turn: a retry key and the outcome of a provider call belong to stage 3."
+      },
+      {
+        "symbol": "_existing_workspace_writer",
+        "first_line": 2027,
+        "last_line": 2035,
+        "docstring": "Writer session of an existing Workspace; refuses before creating anything (not even the lock file)."
+      },
+      {
+        "symbol": "_replace_verified",
+        "first_line": 2225,
+        "last_line": 2249,
+        "docstring": "Replace one file atomically: temporary file (O_EXCL) checked in place before any byte, fsync, replace with the\nbounded retry, read back. The counterpart of _publish_new_file for a file that is meant to be replaced."
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "run_store.py",
+    "sha256": "a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6",
+    "symbols": [
+      {
+        "symbol": "audit_root",
+        "first_line": 45,
+        "last_line": 46,
+        "docstring": null
+      },
+      {
+        "symbol": "load_workspace_run_index",
+        "first_line": 104,
+        "last_line": 116,
+        "docstring": null
+      },
+      {
+        "symbol": "append_run_record",
+        "first_line": 369,
+        "last_line": 402,
+        "docstring": null
+      },
+      {
+        "symbol": "list_run_records",
+        "first_line": 405,
+        "last_line": 410,
+        "docstring": null
+      },
+      {
+        "symbol": "load_run_record",
+        "first_line": 413,
+        "last_line": 445,
+        "docstring": null
+      },
+      {
+        "symbol": "record_provider_attempt_started",
+        "first_line": 506,
+        "last_line": 527,
+        "docstring": null
+      },
+      {
+        "symbol": "record_provider_attempt_terminal",
+        "first_line": 530,
+        "last_line": 557,
+        "docstring": null
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "ultra_budget_policy.py",
+    "sha256": "bd82618dfe929577e1cde0b57a9a35469f905972b5d181e34b4e6681e002fc13",
+    "symbols": [
+      {
+        "symbol": "AttemptRecord",
+        "first_line": 582,
+        "last_line": 628,
+        "docstring": null
+      },
+      {
+        "symbol": "reserve_attempt",
+        "first_line": 631,
+        "last_line": 635,
+        "docstring": null
+      },
+      {
+        "symbol": "mark_sent",
+        "first_line": 638,
+        "last_line": 641,
+        "docstring": null
+      },
+      {
+        "symbol": "mark_not_sent",
+        "first_line": 644,
+        "last_line": 648,
+        "docstring": "Only a PROVEN not-sent (S3b) releases a reservation; never after SENT."
+      },
+      {
+        "symbol": "apply_terminal",
+        "first_line": 657,
+        "last_line": 692,
+        "docstring": "Settle one terminal event. One physical attempt has one terminal truth:\n- a replay of an already accepted (outcome, usage) event is idempotent (at-least-once delivery);\n- an UNKNOWN attempt may be refined (see _refines): with usage it becomes RECONCILED;\n- anything else contradicts what is already settled -> ANOMALY, whose liability is the largest of the\n  reservation and every claim (never lowered by contradictory data); ANOMALY is absorbing."
+      },
+      {
+        "symbol": "evaluate_request",
+        "first_line": 878,
+        "last_line": 958,
+        "docstring": "Pure pre-send decision for ONE physical attempt. S3b must call it with the exact wire measure."
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  },
+  {
+    "path": "server.py",
+    "sha256": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401",
+    "symbols": [
+      {
+        "symbol": "ask_gigachat",
+        "first_line": 558,
+        "last_line": 601,
+        "docstring": null
+      },
+      {
+        "symbol": "_request_audit_diagnostic",
+        "first_line": 3418,
+        "last_line": 3537,
+        "docstring": "One bounded, tool-free call on an isolated copy of Executor context."
+      }
+    ],
+    "method": "AST static parse only, no application import"
+  }
+]

@@ -1,0 +1,58 @@
+{
+  "python": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+  "created_utc": "2026-11-01T18:54:36.750206+00:00",
+  "commands": [
+    {
+      "action": "Get-NetIPAddress; Get-NetTCPConnection limited to 8000/11434; selected process/service/command metadata",
+      "result": "Read-only location/listener discovery. Initial optional Env lookup exit 1 from absent variables; not an API failure."
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/tools/http_inventory.py",
+      "exit": 0,
+      "result": "10 explicit GET probes: 4 HTTP200, 3 local disconnect, 3 remote timeout; failures preserved"
+    },
+    {
+      "command": "reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/tools/host_inventory.ps1",
+      "exit": 0,
+      "result": "CIM/hardware, selected process environment only; no credentials or complete command lines"
+    },
+    {
+      "action": "Get-PhysicalDisk selected fields; ollama --version",
+      "exit": 0,
+      "result": "hardware_extra.json; CLI 0.40.13"
+    },
+    {
+      "command": "python -B -X utf8 reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/tools/project_inventory.py",
+      "exit": 0,
+      "result": "248 source hashes, 9 addressed AST maps, 11 rules/required definitions; no production imports"
+    },
+    {
+      "action": "Static addressed file reads / rg / AST",
+      "result": "Model registry, model cards, connections/chat, GigaChat helper/callers, Context Store, Run Store, Budget, profiles and Blueprint"
+    },
+    {
+      "action": "Read-only slot check",
+      "exit": 0,
+      "result": "See card_check.json; no rotation"
+    },
+    {
+      "action": "Official vendor web documentation",
+      "result": "Seven Ollama pages; Colibri primary installation/version not available"
+    }
+  ],
+  "scope": "Only reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001 written; no generation/model mutation/admin/service/production edits/Git/Desktop Commander",
+  "not_run": [
+    "inference",
+    "stream/cancel runtime",
+    "load/unload/pull/delete",
+    "parallelism/benchmarks",
+    "remote OS resources",
+    "Colibri exact identity",
+    "product test suites",
+    "Stage3",
+    "live/paid",
+    "network reconfiguration",
+    "Git/GitHub",
+    "Desktop Commander"
+  ]
+}

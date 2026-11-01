@@ -1,0 +1,96 @@
+{
+  "task": "CODEX-WUA-LOCAL-LLM-DISCOVERY-001",
+  "classification": "AUTHOR PACKAGE/EVIDENCE CHECKS, NOT ADAPTER E2E OR INDEPENDENT VERDICT",
+  "passed": 16,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "all required review documents nonempty",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all 248 recorded project inputs unchanged",
+      "pass": true,
+      "detail": {
+        "count": 248,
+        "drift": []
+      }
+    },
+    {
+      "name": "direct rules and requires extracted",
+      "pass": true,
+      "detail": {
+        "rules": 11
+      }
+    },
+    {
+      "name": "exact ten allowlisted explicit HTTP probes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "GET-only, no proxy/redirect/auth, bounded timeout and response",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "four local inventory methods returned 200",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "installed versus loaded distinction evidenced",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "version evidence pinned",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "remote host failures preserved, not converted to empty catalog",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "local 8000 disconnect preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "diagnostic host distinct from target",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Ollama loopback listener evidenced",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "8000 observed process not relabeled Colibri",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "publication JWT-pattern scan",
+      "pass": true,
+      "detail": {
+        "findings": [],
+        "limit": "No heuristic scanner proves absence of every possible secret; collectors use whitelisted fields and no secret reads."
+      }
+    },
+    {
+      "name": "authored Markdown has no Wiki edges",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "draft engineering proposal is unassigned",
+      "pass": true,
+      "detail": null
+    }
+  ]
+}
