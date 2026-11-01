@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 01.11.2026, WEB18. Stage2 shared storage №479 bounded source/evidence PASS, no independent runtime. FOLLOWUP-WUA-S2-CHAT-STAGING-001 OPEN; Stage3/paid/live not authorized.
+**Срез:** 01.11.2026, WEB19. Stage2 №479 bounded source/evidence PASS plus independent focused Windows storage tests (68 run/4 SKIP on each Python 3.12 and 3.13, 4 reviewer probes PASS); full independent regression NOT RUN. FOLLOWUP-WUA-S2-CHAT-STAGING-001 OPEN; Run Store P9 priority; Stage3/paid/live not authorized.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB18 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed, runtime NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
+| А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
@@ -50,6 +50,9 @@
 Открытые запреты и проверки не исчезают из-за возраста. Полную риск-карточку хранить у №05, evidence — в отчёте/профильном журнале. Если нового риска ещё нет в нормализованном реестре, это не означает отсутствия рисков. Поля/статусы — №18 → OPS-RISK; форма — №07.
 
 ## Последние существенные результаты
+
+**WEB19 / independent Stage2 storage check:** №479 source SHA pinned, two Windows Python versions `68 run/4 SKIP` each, additional reviewer probes 4/4 PASS; only focused execution. `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`. Run Store P9 NEXT, Stage3 HOLD.
+
 
 Это короткая рабочая выборка по локальным документным свидетельствам; числа не являются новым исполнением тестов этой TASK. Полные отчёты и исходные FAIL остаются у владельцев.
 

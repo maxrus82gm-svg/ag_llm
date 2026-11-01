@@ -249,6 +249,11 @@ Git и GitHub со стороны Claude запрещены.
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА / VERIFIER
 
+## WEB19 / 2026-11-01 — дополнительный INDEPENDENT FOCUSED WINDOWS PASS по №479
+
+WEB19 independently executed Windows storage test module on exact №479: Python 3.12.10 **68 run / 64 PASS / 4 SKIP / exit 0**, Python 3.13.8 **68 run / 64 PASS / 4 SKIP / exit 0**, hardening+concurrency subset **17 run / 16 PASS / 1 SKIP / exit 0**, reviewer-authored synthetic negative probes **4/4 PASS / exit 0**. Two source SHA-256 match published manifest. Full 1078 regression, CI, GUI and Stage3 gates NOT RUN. Reviewer evidence `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`. Original WEB18 bounded PASS/closeout and earlier historical verdicts preserved. Staging FOLLOWUP OPEN/UNASSIGNED; Stage3 HOLD; Claude БЛОК 1 WAITING.
+
+
 ## WEB18 / 2026-11-01 — `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — BOUNDED PASS
 
 **WEB18 01.11.2026 / №479 `508cba49`:** `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` — **PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE, DOC ITERATION CLOSED**. `rename_workspace`, `rename_chat`, `save_project_context` используют проверенную замену; Project Context revision — эксклюзивная публикация, старый текст читается с no-follow. Автор focused 166 = 161 PASS/5 SKIP; all run1 1075 PASS/1 ERROR/2 SKIP, run2 1076 PASS/2 SKIP; mutants run1 8/9 и финально 9/9 KILLED; baseline RED сохранён. Исходный код и raw JSON evidence проверены независимо по GitHub, **самостоятельный Python/Windows/CI запуск NOT RUN**. Same-user TOCTOU после final check остаётся вне защищённой границы; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED для оговорённого scope, `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Stage3/live/paid без USER GO; Run Store P9 и Tk readers P1–P6 OPEN. Подробнее `reports/CHATGPT-WEB18-S2-HARDEN-REVIEW-20261101.md`. БЛОК 1 WAITING, БЛОК 1.1 с данной TASK и копией постановки; предыдущая №475 сохранена в пакете/истории. Исторические verdict №473/№475 не переписываются.
