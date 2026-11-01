@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 31.10.2026, WEB18: Stage2 F-01 исправлен №475, bounded SOURCE/EVIDENCE PASS; independent runtime NOT RUN, исходная №473 REVISE сохраняется.
+**Срез:** 01.11.2026, WEB18. Stage2 shared storage №479 bounded source/evidence PASS, no independent runtime. FOLLOWUP-WUA-S2-CHAT-STAGING-001 OPEN; Stage3/paid/live not authorized.
 
 ## Постоянные ориентиры
 
@@ -14,7 +14,7 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB18 / Claude | №475 `5678414d` закрыл F-01 в проверенном source/author-evidence scope; до 7/9 внешних записей, после 0/9, full run2 1076 PASS/2 SKIP, focused 145 PASS/4 SKIP. Independent source+hash review 4/4, runtime NOT RUN. Stage2 BOUNDED, №473 REVISE исторически неизменен | `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED, `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` OPEN/UNASSIGNED, отдельно USER GO на дальнейший repair. Stage3 блокируют Run Store P9, решения Stage1 и отдельный GO. №05 `REG-WEB18-S2-REPAIR-20261031`, `reports/CHATGPT-WEB18-S2-REPAIR-REVIEW-20261031.md` |
+| А — Ultra Chat / EVM, WEB18 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed, runtime NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
 | Документационные каркасы — Astra/Codex | Оптимизация опубликована в `main` 27.10.2026, независимая приёмка PARTIAL: прежние байты шести ключевых документов проверены по архивным копиям, полная сквозная восстановимость указателей OPEN. Astra подтвердила сохранение исходников всех 13 изменённых документов в авторском пакете; это не 13/13 независимый PASS | `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/implementation-20261027/`; №05 → `LOCATOR PENDING` / `RISK-DOC-CURRENT-001`; не закрывать TASK до адресной проверки |
 
