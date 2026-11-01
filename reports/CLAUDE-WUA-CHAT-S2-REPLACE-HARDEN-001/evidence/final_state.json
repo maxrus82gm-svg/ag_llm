@@ -1,0 +1,36 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "purpose": "final state before the hand-in",
+ "launcher": {
+  "config_active": "standard",
+  "load_launch_standard": true,
+  "name": "standard",
+  "files_same_as_launcher_package": {
+   "Start_WebAlarm.bat": true,
+   "web_alarm/launcher.py": true,
+   "web_alarm/launch_config.json": true
+  },
+  "test_switch_made": false
+ },
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+   "problems": [],
+   "lines": 168
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+   "copy_sha256": "2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b",
+   "problems": []
+  }
+ },
+ "python_compile_in_memory": {
+  "context_storage.py": "OK",
+  "test_ultra_chat_storage.py": "OK"
+ },
+ "git_used": false
+}

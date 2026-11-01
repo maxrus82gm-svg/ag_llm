@@ -1,0 +1,111 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "purpose": "FIRST mutation run (before the oracle fix of the no-revision subcase): H03 SURVIVED because ensure_workspace_storage refused first; kept as evidence",
+ "targets": [
+  "test_ultra_chat_storage",
+  "test_message_context"
+ ],
+ "control": {
+  "targets": [
+   "test_ultra_chat_storage",
+   "test_message_context"
+  ],
+  "exit": 0,
+  "tests_run": 78,
+  "failing": [],
+  "isolation_violations": 0,
+  "verdict": "PASS"
+ },
+ "results": [
+  {
+   "mutant": "H01 rename_workspace by the old unchecked replace",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published",
+    "test_write_failures_leave_the_old_bytes_and_no_temporary_files"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H02 rename_chat by the old replace plus read-back",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_chat_folder_swapped_before_the_temporary_file_gets_no_published_bytes",
+    "test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published",
+    "test_write_failures_leave_the_old_bytes_and_no_temporary_files"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H03 project_context.md by the old unchecked replace",
+   "exit": 0,
+   "failing_tests": [],
+   "isolation_violations": 0,
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "H04 the old text read by following links",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_project_context_hard_linked_to_an_outside_file_is_refused",
+    "test_a_project_context_that_is_a_folder_is_refused_explicitly"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H05 a revision written by replace (may overwrite)",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_history_folder_swapped_before_the_temporary_file_gets_no_revision",
+    "test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published",
+    "test_an_existing_revision_name_is_never_overwritten",
+    "test_write_failures_leave_the_old_bytes_and_no_temporary_files"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H06 verified replace without the temporary-file location check",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_chat_folder_swapped_before_the_temporary_file_gets_no_published_bytes",
+    "test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H07 verified replace without the read-back",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_swap_after_the_last_check_is_detected_by_the_read_back_not_prevented"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H08 a linked Project Context reported as merely unreadable",
+   "exit": 1,
+   "failing_tests": [
+    "test_a_project_context_hard_linked_to_an_outside_file_is_refused"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "H09 the old text not seen as Path.read_text saw it (newlines)",
+   "exit": 1,
+   "failing_tests": [
+    "test_ordinary_renames_and_project_context_history_keep_every_byte_and_field"
+   ],
+   "isolation_violations": 0,
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 9,
+ "killed": 8,
+ "temp_leftovers_new": []
+}

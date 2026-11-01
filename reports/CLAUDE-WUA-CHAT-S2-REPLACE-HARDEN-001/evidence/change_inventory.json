@@ -1,0 +1,83 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "method": "byte comparison with the pre-edit copies; no Git",
+ "files": {
+  "context_storage.py": {
+   "before": {
+    "sha256": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+    "sha256_lf": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+    "eol": "LF",
+    "lines": 2288
+   },
+   "after": {
+    "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+    "sha256_lf": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+    "eol": "LF",
+    "lines": 2337
+   },
+   "changed": true,
+   "added": 63,
+   "removed": 14
+  },
+  "test_ultra_chat_storage.py": {
+   "before": {
+    "sha256": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+    "sha256_lf": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+    "eol": "LF",
+    "lines": 1231
+   },
+   "after": {
+    "sha256": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2",
+    "sha256_lf": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2",
+    "eol": "LF",
+    "lines": 1608
+   },
+   "changed": true,
+   "added": 377,
+   "removed": 0
+  },
+  "test_message_context.py": {
+   "before": {
+    "sha256": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "sha256_lf": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "eol": "LF",
+    "lines": 433
+   },
+   "after": {
+    "sha256": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "sha256_lf": "e98f5509b41146bdf1c8db7d3423072ba6745e61b7e13e25c4f7c732d9a32704",
+    "eol": "LF",
+    "lines": 433
+   },
+   "changed": false,
+   "added": 0,
+   "removed": 0
+  },
+  "test_web_alarm_ultra_chat_storage.py": {
+   "before": {
+    "sha256": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "sha256_lf": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "eol": "LF",
+    "lines": 496
+   },
+   "after": {
+    "sha256": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "sha256_lf": "c2ce5282ecf9c50bb24f2066710d7d6a55534be7ff258afc20975c0bd8a083cf",
+    "eol": "LF",
+    "lines": 496
+   },
+   "changed": false,
+   "added": 0,
+   "removed": 0
+  }
+ },
+ "stage2_files_outside_scope_unchanged": {
+  "ultra_ui.py": true,
+  "web_alarm/ultra_chat.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_chat_storage.py": true
+ },
+ "all_outside_scope_unchanged": true
+}

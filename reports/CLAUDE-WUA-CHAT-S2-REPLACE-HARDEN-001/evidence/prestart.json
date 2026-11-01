@@ -1,0 +1,107 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "purpose": "pre-start state before the first edit",
+ "base": "main@ffeb5d192924172f9ae6558cee961731b49295ce (No.477) as published content; Git not used",
+ "card_check": {
+  "exit": 0,
+  "result": "OK",
+  "card_sha256": "1532d90b927d396c5390e280a2049b3f4ef586e147a9052a31364f8b754ae64b",
+  "block1": {
+   "state": "TASK",
+   "task_id": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+   "problems": [],
+   "lines": 168
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+   "copy_sha256": "2de70a975c57c351b8d97a3e0c00dce1e7860a23fbfeb09dd7a12b9517be363b",
+   "problems": []
+  }
+ },
+ "launcher": {
+  "config_active": "standard",
+  "load_launch_standard": true
+ },
+ "files": {
+  "Start_WebAlarm.bat": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "context_storage.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+   "same_content": true
+  },
+  "test_ultra_chat_read.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content": true
+  },
+  "test_ultra_chat_storage.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001",
+   "same_content": true
+  },
+  "test_web_alarm_evm_ui.js": {
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content": true
+  },
+  "test_web_alarm_launcher.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "test_web_alarm_model_cards.py": {
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content": true
+  },
+  "test_web_alarm_ultra_chat.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S1-READONLY-UI-001",
+   "same_content": true
+  },
+  "test_web_alarm_ultra_chat_storage.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "test_web_alarm_ultra_chat_ui.js": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "ultra_ui.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "web_alarm/launch_config.json": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "web_alarm/launcher.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "web_alarm/model_cards.py": {
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content": true
+  },
+  "web_alarm/server.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "web_alarm/ui.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "web_alarm/ultra_chat.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  }
+ },
+ "no_drift": true,
+ "f01_repair_present": {
+  "def _refuse_linked_message_context": true,
+  "def _message_context_folder_for_write": true,
+  "def _replace_verified": true,
+  "def _write_message_context_state": true,
+  "def _refuse_newer_message_context_state": true,
+  "three_writers_guarded": true
+ },
+ "parallel_work": "Direction B: no active TASK on these files (No.34/No.40)",
+ "git_used": false
+}

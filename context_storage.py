@@ -375,7 +375,8 @@ def rename_workspace(workspace_root: str | Path, display_name: str) -> dict[str,
     with _existing_workspace_writer(root) as writer:
         metadata = dict(writer.metadata)  # read again under the lock: every other field is kept as found
         metadata["display_name"] = name
-        _atomic_write_json(writer.anchor.path((ULTRA_DIRNAME, WORKSPACE_METADATA_NAME)), metadata)
+        # verified replace: the temporary file's location is checked before any byte, the result is read back
+        _replace_verified(writer.anchor, (ULTRA_DIRNAME, WORKSPACE_METADATA_NAME), _json_bytes(metadata))
     return metadata
 
 
@@ -431,23 +432,20 @@ def save_project_context(workspace_root: str | Path, text: str) -> dict[str, Any
 
     info = ensure_workspace_storage(root)
     path = Path(info["project_context_path"])
-    history_dir = Path(info["ultra_dir"]) / "project_context_history"
 
     with _existing_workspace_writer(root) as writer:
-        old_text = path.read_text(encoding="utf-8-sig") if path.exists() else ""
+        context_parts = (ULTRA_DIRNAME, PROJECT_CONTEXT_NAME)
+        old_text = _read_project_context_for_write(writer.anchor, context_parts)
         if old_text == text:
             return {"changed": False, "project_context_path": str(path)}
 
         revision_path = None
         if old_text:
-            _ensure_write_directory(writer.anchor, (ULTRA_DIRNAME, "project_context_history"))
-            revision_path = (
-                history_dir
-                / f"project_context_{_compact_utc_stamp()}_{uuid.uuid4().hex[:8]}.md"
-            )
-            _atomic_write_text(revision_path, old_text)
+            history_parts = (ULTRA_DIRNAME, "project_context_history")
+            _ensure_write_directory(writer.anchor, history_parts)
+            revision_path = _publish_project_context_revision(writer.anchor, history_parts, old_text)
 
-        _atomic_write_text(path, text)
+        _replace_verified(writer.anchor, context_parts, text.encode("utf-8"))
     return {
         "changed": True,
         "project_context_path": str(path),
@@ -687,9 +685,8 @@ def rename_chat(
                 "Название чата уже изменено в другом окне: обновите список и повторите.",
             )
         updated = {**metadata, "title": clean_title}
-        payload = _json_bytes(updated)
-        _atomic_write_json(writer.anchor.path(parts + ("metadata.json",)), updated)
-        _verify_published(writer.anchor, parts + ("metadata.json",), payload)
+        # verified replace: the temporary file's location is checked before any byte, the result is read back
+        _replace_verified(writer.anchor, parts + ("metadata.json",), _json_bytes(updated))
         return updated
 
 
@@ -2286,3 +2283,55 @@ def _refuse_newer_message_context_state(root: Path, chat_id: str, message_id: st
             "unsupported_version",
             f"MESSAGE CONTEXT state новее поддерживаемой версии ({version!r}): перезапись запрещена.",
         )
+
+
+# ---------------------------------------------------------------------------
+# Verified replacement of the other replaceable files (FOLLOWUP-WUA-S2-REPLACE-HARDEN-001).
+#
+# rename_workspace (workspace.json), save_project_context (project_context.md and a new file in
+# project_context_history) and rename_chat (the Chat card) use the same publication as the message-context writers:
+# the folder is verified under the Workspace lock, the temporary file's real location is checked through its open
+# handle before any byte is written, a replaceable file goes through _replace_verified, a new revision through the
+# exclusive _publish_new_file (an existing revision is never overwritten), and the result is read back. The old text
+# of the Project Context is read without following a link. A swap after the temporary file is checked and before
+# it is renamed is only detected by the read-back (residual of the stage 0 contract, section 9).
+
+_MAX_PROJECT_CONTEXT_READ_BYTES = _MAX_WRITER_JSON_BYTES  # the old text may exceed today's save limit; it is kept
+_REVISION_NAME_ATTEMPTS = 5
+
+
+def _read_project_context_for_write(anchor: _StorageAnchor, parts: tuple[str, ...]) -> str:
+    """The current Project Context as Path.read_text(encoding="utf-8-sig") gave it, read without following a link.
+
+    Missing -> "". A link, a junction or a hard link -> unsafe_storage_link (nothing is copied into the history,
+    nothing is replaced). A folder, an unreadable or an oversized file -> project_context_unreadable.
+    """
+    try:
+        data = _read_file_bounded(anchor, parts, _MAX_PROJECT_CONTEXT_READ_BYTES)
+    except StorageReadError as exc:
+        if exc.code == "missing":
+            return ""
+        if exc.code == "unsafe_storage_link":
+            raise _write_refusal(exc) from None
+        raise StorageWriteError(
+            "project_context_unreadable",
+            "PROJECT CONTEXT не читается (не обычный файл, занят или слишком большой): запись не выполняется.",
+        ) from None
+    text = data.decode("utf-8-sig")
+    return text.replace("\r\n", "\n").replace("\r", "\n")  # the universal-newline view of Path.read_text
+
+
+def _publish_project_context_revision(anchor: _StorageAnchor, history: tuple[str, ...], old_text: str) -> Path:
+    """Keep the previous text as a new revision file; an existing revision name is never overwritten."""
+    payload = old_text.encode("utf-8")
+    for _attempt in range(_REVISION_NAME_ATTEMPTS):
+        name = f"project_context_{_compact_utc_stamp()}_{uuid.uuid4().hex[:8]}.md"
+        try:
+            _publish_new_file(anchor, history + (name,), payload)
+        except FileExistsError:
+            continue
+        return anchor.path(history + (name,))
+    raise StorageWriteError(
+        "revision_exists",
+        "Не удалось выбрать свободное имя ревизии PROJECT CONTEXT: существующие ревизии не перезаписываются.",
+    )

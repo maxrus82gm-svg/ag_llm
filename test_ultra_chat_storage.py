@@ -17,6 +17,7 @@ import tempfile
 import threading
 import time
 import unittest
+import uuid
 from pathlib import Path
 from unittest.mock import patch
 
@@ -1225,6 +1226,382 @@ class MessageContextLockTests(Base):
         self.assertEqual([p.name for p in variants.iterdir() if p.name.endswith(".json")], [f"{variant}.json"])
         self.assertEqual(cs.restore_message_raw(root, chat, mid(1))["active_representation"], "raw", "the restart repairs nothing by hand")
         self.assertNotEqual(state.read_bytes(), old)
+
+
+
+class ReplaceHardeningTests(Base):
+    """FOLLOWUP-WUA-S2-REPLACE-HARDEN-001: rename_workspace, save_project_context (with its revision history) and
+    rename_chat publish through the verified writer - the temporary file's real location is checked before any byte
+    is written, an existing revision is never overwritten, the replaced file is read back. Oracles: raw bytes, lstat,
+    and tree() of a synthetic outside folder; the swap points are the same moments in the old and the new code (the
+    temporary-name uuid4() right before the temporary file is opened; _replace_with_retry right before publication)."""
+
+    def fixture(self):
+        root, workspace_id, chat = self.workspace()
+        outside = self.base / "outside"
+        outside.mkdir()
+        (outside / "keep.txt").write_text("чужие данные", encoding="utf-8")
+        return root, workspace_id, chat, outside
+
+    def relink(self, real: Path, target: Path) -> None:
+        # a plain rename: a failed shutil.move would fall back to copy-and-delete inside the Workspace
+        os.rename(real, target)
+        self.junction(target, real)
+
+    def unlink_back(self, real: Path, target: Path) -> None:
+        os.rmdir(real)
+        self.junctions.remove(real)
+        os.rename(target, real)
+
+    @staticmethod
+    def files_only(snap: dict) -> dict:
+        """tree() without folder times: names, kinds, sizes, hashes (what a reader of the folder would get)."""
+        return {k: v for k, v in snap.items() if v[0] != "dir"}
+
+    def swap_at_uuid(self, call_number: int, real: Path, target: Path, seen: list):
+        """uuid4 replacement that swaps ``real`` for a junction at its ``call_number``-th call (then behaves normally)."""
+        original = uuid.uuid4
+        calls = []
+
+        def fake():
+            calls.append(1)
+            if len(calls) == call_number and not seen:
+                self.relink(real, target)
+                seen.append(tree(target))
+            return original()
+        return patch.object(cs.uuid, "uuid4", side_effect=fake)
+
+    # 1. ordinary use
+    def test_ordinary_renames_and_project_context_history_keep_every_byte_and_field(self):
+        root, workspace_id, chat, _ = self.fixture()
+        raw = cs.commit_raw_message(root, chat, mid(1), "user", "RAW до операций")
+        raw_bytes = Path(raw["path"]).read_bytes()
+        meta = root / ".ultra" / "workspace.json"
+        data = json.loads(meta.read_bytes())
+        data["future_field"] = {"kept": True}
+        meta.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        renamed = cs.rename_workspace(root, "Новое имя")
+        stored = json.loads(meta.read_bytes())
+        self.assertEqual((stored, renamed), ({**data, "display_name": "Новое имя"},) * 2)
+        self.assertEqual(meta.read_bytes(), (json.dumps(stored, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+        context = root / ".ultra" / "project_context.md"
+        template = context.read_bytes()
+        first = cs.save_project_context(root, "Первый\nконтекст")
+        self.assertEqual((first["changed"], context.read_bytes()), (True, "Первый\nконтекст".encode("utf-8")))
+        first_revision = Path(first["previous_revision_path"])
+        self.assertEqual((first_revision.parent.name, first_revision.read_bytes()), ("project_context_history", template))
+        second = cs.save_project_context(root, "Второй")
+        self.assertEqual(Path(second["previous_revision_path"]).read_bytes(), "Первый\nконтекст".encode("utf-8"))
+        self.assertEqual(first_revision.read_bytes(), template, "an older revision is kept as it was")
+        st = os.lstat(context)
+        self.assertEqual(cs.save_project_context(root, "Второй"), {"changed": False, "project_context_path": str(context)})
+        self.assertEqual((os.lstat(context).st_mtime_ns, len(list(first_revision.parent.iterdir()))), (st.st_mtime_ns, 2))
+        context.write_bytes(b"\xef\xbb\xbfold\r\nline\r")  # an outside editor: BOM, CRLF and a lone CR
+        third = cs.save_project_context(root, "Третий")
+        self.assertEqual(Path(third["previous_revision_path"]).read_bytes(), b"old\nline\n",
+                         "the revision keeps the old text as Path.read_text always gave it")
+        card = root / ".ultra" / "chats" / chat / "metadata.json"
+        card_data = json.loads(card.read_bytes())
+        card_data["future_field"] = [1, 2]
+        card.write_text(json.dumps(card_data, ensure_ascii=False), encoding="utf-8")
+        chat_meta = cs.rename_chat(root, chat, "Переименован", expected_title="Диалог")
+        self.assertEqual((json.loads(card.read_bytes()), chat_meta), ({**card_data, "title": "Переименован"},) * 2)
+        self.assertEqual((Path(raw["path"]).read_bytes(), cs.read_workspace_identity_bounded(root)["workspace_id"],
+                          json.loads(card.read_bytes())["chat_id"]), (raw_bytes, workspace_id, chat))
+        self.assertEqual(self.leftovers(root), [])
+
+    # 2. stale title
+    def test_a_stale_title_is_refused_without_a_lost_update(self):
+        root, _, chat, _ = self.fixture()
+        cs.rename_chat(root, chat, "Из другого окна")
+        card = root / ".ultra" / "chats" / chat / "metadata.json"
+        raw, mtime = card.read_bytes(), os.lstat(card).st_mtime_ns
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.rename_chat(root, chat, "Устаревшее окно", expected_title="Диалог")
+        self.assertEqual((caught.exception.code, card.read_bytes(), os.lstat(card).st_mtime_ns),
+                         ("title_changed", raw, mtime))
+
+    # 3. links that exist before the call
+    def test_a_junction_at_the_history_folder_is_refused_and_nothing_is_written(self):
+        root, _, _, outside = self.fixture()
+        history = root / ".ultra" / "project_context_history"
+        self.relink(history, outside / "history")
+        context = root / ".ultra" / "project_context.md"
+        before, old = tree(outside), context.read_bytes()
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.save_project_context(root, "новый")
+        self.assertEqual((caught.exception.code, tree(outside), context.read_bytes()), ("unsafe_storage_link", before, old))
+
+    def test_a_project_context_hard_linked_to_an_outside_file_is_refused(self):
+        root, _, _, outside = self.fixture()
+        shared = outside / "shared.md"
+        shared.write_text("ЧУЖОЙ ТЕКСТ", encoding="utf-8")
+        context = root / ".ultra" / "project_context.md"
+        context.unlink()
+        os.link(shared, context)
+        history = root / ".ultra" / "project_context_history"
+        before = tree(outside)
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.save_project_context(root, "новый")
+        self.assertEqual(caught.exception.code, "unsafe_storage_link")
+        self.assertEqual(tree(outside), before)
+        self.assertEqual(list(history.iterdir()), [], "the outside text was not copied into the history")
+        self.assertEqual(os.lstat(context).st_nlink, 2, "the link itself was not replaced")
+
+    def test_a_project_context_that_is_a_folder_is_refused_explicitly(self):
+        root, _, _, _ = self.fixture()
+        context = root / ".ultra" / "project_context.md"
+        context.unlink()
+        context.mkdir()
+        before = without_lock(snapshot(root))
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.save_project_context(root, "новый")
+        self.assertEqual((caught.exception.code, without_lock(snapshot(root))), ("project_context_unreadable", before))
+
+    def test_a_project_context_symlink_is_refused_when_the_platform_allows_creating_one(self):
+        root, _, _, outside = self.fixture()
+        context = root / ".ultra" / "project_context.md"
+        context.unlink()
+        try:
+            os.symlink(outside / "keep.txt", context)
+        except OSError:
+            self.skipTest("symlink creation needs a privilege this host does not grant (NOT RUN, hard link and junction covered)")
+        before = tree(outside)
+        with self.assertRaises(cs.StorageWriteError) as caught:
+            cs.save_project_context(root, "новый")
+        self.assertEqual((caught.exception.code, tree(outside)), ("unsafe_storage_link", before))
+
+    # 4. a folder swapped after the folder checks, before the temporary file is opened
+    def test_a_chat_folder_swapped_before_the_temporary_file_gets_no_published_bytes(self):
+        root, _, chat, outside = self.fixture()
+        chat_dir = root / ".ultra" / "chats" / chat
+        target = outside / "chat"
+        seen = []
+        with self.swap_at_uuid(1, chat_dir, target, seen):
+            with self.assertRaises(cs.StorageWriteError) as caught:
+                cs.rename_chat(root, chat, "Через подмену")
+        self.assertEqual((len(seen), caught.exception.code), (1, "unsafe_storage_link"))
+        self.assertEqual(self.files_only(tree(target)), self.files_only(seen[0]),
+                         "no byte was published into the swapped-in folder")
+        self.unlink_back(chat_dir, target)
+        self.assertEqual(self.card(root, chat)["title"], "Диалог")
+
+    def test_a_history_folder_swapped_before_the_temporary_file_gets_no_revision(self):
+        root, _, _, outside = self.fixture()
+        history = root / ".ultra" / "project_context_history"
+        context = root / ".ultra" / "project_context.md"
+        old = context.read_bytes()
+        target = outside / "history"
+        seen = []
+        with self.swap_at_uuid(2, history, target, seen):  # 1: revision name, 2: its temporary file
+            with self.assertRaises(cs.StorageWriteError) as caught:
+                cs.save_project_context(root, "новый")
+        self.assertEqual((len(seen), caught.exception.code), (1, "unsafe_storage_link"))
+        self.assertEqual(self.files_only(tree(target)), self.files_only(seen[0]), "no revision was published outside")
+        self.assertEqual(context.read_bytes(), old, "the context is not replaced after a refused revision")
+        self.unlink_back(history, target)
+
+    def test_the_ultra_folder_cannot_be_swapped_while_its_lock_is_held_on_windows(self):
+        # Characterisation: workspace.json and project_context.md live in .ultra itself, and .ultra holds the open lock
+        # file; Windows refuses to move a folder with an open file in it, so the swap attempt fails and the write is
+        # the normal one. On a platform that allows the move, the write must be refused instead.
+        root, _, _, outside = self.fixture()
+        ultra = root / ".ultra"
+        target = outside / "ultra"
+        outcome = []
+        original = uuid.uuid4
+
+        def fake():
+            if not outcome:
+                try:
+                    os.rename(ultra, target)
+                except OSError:
+                    outcome.append("blocked")
+                else:
+                    self.junction(target, ultra)
+                    outcome.append("moved")
+            return original()
+        with patch.object(cs.uuid, "uuid4", side_effect=fake):
+            try:
+                cs.rename_workspace(root, "Под замком")
+                result = "written"
+            except cs.StorageWriteError as exc:
+                result = exc.code
+        if outcome == ["blocked"]:
+            self.assertEqual(result, "written")
+            self.assertEqual(json.loads((ultra / "workspace.json").read_bytes())["display_name"], "Под замком")
+            self.assertEqual(sorted(p.name for p in outside.iterdir()), ["keep.txt"])
+        else:
+            self.assertEqual(result, "unsafe_storage_link")
+            self.unlink_back(ultra, target)
+
+    # 4b. the residual: a swap after the temporary file is checked and before it is published
+    def test_a_swap_after_the_last_check_is_detected_by_the_read_back_not_prevented(self):
+        root, _, chat, outside = self.fixture()
+        chat_dir = root / ".ultra" / "chats" / chat
+        target = outside / "chat"
+        real = cs._replace_with_retry
+
+        def swap_then_replace(source, destination):
+            self.relink(chat_dir, target)
+            return real(source, destination)
+        with patch.object(cs, "_replace_with_retry", side_effect=swap_then_replace):
+            with self.assertRaises(cs.StorageWriteError) as caught:
+                cs.rename_chat(root, chat, "Поздняя подмена")
+        self.assertEqual(caught.exception.code, "unsafe_storage_link", "the write must not be reported as a success")
+        # OPEN residual, characterised: the new card was published in the swapped-in folder.
+        self.assertEqual(json.loads((target / "metadata.json").read_bytes())["title"], "Поздняя подмена")
+        self.unlink_back(chat_dir, target)
+
+    def test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published(self):
+        # Negative oracle of the location check itself: the OS answer for the temporary file is made foreign.
+        root, _, chat, _ = self.fixture()
+        real = cs._final_path_of_fd
+
+        def elsewhere(fd):
+            path = real(fd)
+            return "Z:\\elsewhere\\" + os.path.basename(path) if path.endswith(".tmp") else path
+        context = root / ".ultra" / "project_context.md"
+        writers = {"rename workspace": lambda: cs.rename_workspace(root, "Где-то"),
+                   "project context": lambda: cs.save_project_context(root, "Где-то"),
+                   "project context without a revision": lambda: cs.save_project_context(root, "Где-то"),
+                   "rename chat": lambda: cs.rename_chat(root, chat, "Где-то")}
+        for name, call in writers.items():
+            with self.subTest(writer=name):
+                if name == "project context without a revision":
+                    # an empty old text: no revision, only the replacement of project_context.md itself (deleting the
+                    # file instead would make ensure_workspace_storage publish a template first and refuse there)
+                    context.write_bytes(b"")
+                before = without_lock(snapshot(root))
+                with patch.object(cs, "_final_path_of_fd", side_effect=elsewhere):
+                    with self.assertRaises(cs.StorageWriteError) as caught:
+                        call()
+                self.assertEqual((caught.exception.code, without_lock(snapshot(root))), ("unsafe_storage_link", before))
+
+    # 5. failures
+    def test_write_failures_leave_the_old_bytes_and_no_temporary_files(self):
+        root, _, chat, _ = self.fixture()
+        meta = root / ".ultra" / "workspace.json"
+        context = root / ".ultra" / "project_context.md"
+        card = root / ".ultra" / "chats" / chat / "metadata.json"
+        history = root / ".ultra" / "project_context_history"
+        old = {p: p.read_bytes() for p in (meta, context, card)}
+        cases = (("fsync", "fsync", OSError(5, "I/O error")), ("write", "write", OSError(28, "No space left")),
+                 ("replace", "replace", PermissionError(13, "held by a reader")))
+        for label, function, error in cases:
+            for name, call in (("rename workspace", lambda: cs.rename_workspace(root, "Сбой")),
+                               ("project context", lambda: cs.save_project_context(root, "Сбой")),
+                               ("rename chat", lambda: cs.rename_chat(root, chat, "Сбой"))):
+                with self.subTest(failure=label, writer=name):
+                    with patch.object(cs, "_REPLACE_RETRY_DELAYS", (0.01,)), patch.object(cs.os, function, side_effect=error):
+                        with self.assertRaises(OSError):
+                            call()
+                    self.assertEqual({p: p.read_bytes() for p in old}, old)
+                    self.assertEqual(self.leftovers(root), [])
+        revisions = sorted(p.name for p in history.iterdir())
+        with patch.object(cs, "_REPLACE_RETRY_DELAYS", (0.01,)), \
+                patch.object(cs.os, "rename" if os.name == "nt" else "link", side_effect=PermissionError(13, "busy")):
+            with self.assertRaises(PermissionError):
+                cs.save_project_context(root, "Ревизия не опубликована")
+        self.assertEqual((context.read_bytes(), sorted(p.name for p in history.iterdir())), (old[context], revisions),
+                         "no revision and no new context when the revision cannot be published")
+        self.assertEqual(self.leftovers(root), [])
+
+    def test_a_reader_holding_the_file_is_waited_for_then_refused_visibly(self):
+        root, _, _, _ = self.fixture()
+        context = root / ".ultra" / "project_context.md"
+        handle = open(context, "rb")
+        timer = threading.Timer(0.25, handle.close)
+        timer.start()
+        self.assertTrue(cs.save_project_context(root, "После читателя")["changed"])
+        timer.join()
+        old = context.read_bytes()
+        with open(context, "rb"):
+            with patch.object(cs, "_REPLACE_RETRY_DELAYS", (0.01, 0.01)):
+                with self.assertRaises(PermissionError):
+                    cs.save_project_context(root, "Не пройдёт")
+        self.assertEqual(context.read_bytes(), old)
+        self.assertEqual(self.leftovers(root), [])
+
+    def test_a_writer_killed_mid_replacement_leaves_the_old_bytes(self):
+        root, _, chat, _ = self.fixture()
+        files = {"rename_workspace": root / ".ultra" / "workspace.json",
+                 "save_project_context": root / ".ultra" / "project_context.md",
+                 "rename_chat": root / ".ultra" / "chats" / chat / "metadata.json"}
+        calls = {"rename_workspace": "cs.rename_workspace(sys.argv[2], 'Не дошло')\n",
+                 "save_project_context": "cs.save_project_context(sys.argv[2], 'Не дошло')\n",
+                 "rename_chat": "cs.rename_chat(sys.argv[2], sys.argv[5], 'Не дошло')\n"}
+        for name, code in calls.items():
+            with self.subTest(writer=name):
+                old = files[name].read_bytes()
+                child = self.spawn(CrashTests.DIE_AT + code, root, "replace", "before", chat)
+                child.communicate(timeout=120)
+                self.assertEqual(child.returncode, 17, "the child did not die at the replacement")
+                self.assertEqual(files[name].read_bytes(), old, "the old bytes are intact")
+        self.assertEqual(cs.rename_workspace(root, "После рестарта")["display_name"], "После рестарта")
+        self.assertTrue(cs.save_project_context(root, "После рестарта")["changed"])
+        self.assertEqual(cs.rename_chat(root, chat, "После рестарта")["title"], "После рестарта")
+
+    # 6. an existing revision is never overwritten
+    def test_an_existing_revision_name_is_never_overwritten(self):
+        root, _, _, _ = self.fixture()
+        history = root / ".ultra" / "project_context_history"
+        context = root / ".ultra" / "project_context.md"
+        fixed = uuid.UUID(int=7)
+        with patch.object(cs, "_compact_utc_stamp", return_value="20261101T000000_000000Z"), \
+                patch.object(cs.uuid, "uuid4", return_value=fixed):
+            name = f"project_context_20261101T000000_000000Z_{fixed.hex[:8]}.md"
+            (history / name).write_bytes(b"EARLIER REVISION")
+            old = context.read_bytes()
+            with self.assertRaises(cs.StorageWriteError) as caught:
+                cs.save_project_context(root, "новый")
+        self.assertEqual(caught.exception.code, "revision_exists")
+        self.assertEqual(((history / name).read_bytes(), context.read_bytes()), (b"EARLIER REVISION", old))
+        self.assertEqual(self.leftovers(root), [])
+
+
+class ReplaceConcurrencyTests(Base):
+    def _start(self, code, root, count=2):
+        go = self.base / "go"
+        children = []
+        for n in range(count):
+            children.append(self.spawn(ConcurrencyTests.GO + code, root, self.base / f"ready{n}", go, n))
+        for n in range(count):
+            self.wait_for(self.base / f"ready{n}")
+        go.write_text("1")
+        return children
+
+    def test_two_processes_save_project_context_without_losing_a_revision(self):
+        root, _, _ = self.workspace()
+        template = (root / ".ultra" / "project_context.md").read_text(encoding="utf-8")
+        code = ("for k in range(10):\n"
+                "    cs.save_project_context(sys.argv[2], 'p%s-%d' % (sys.argv[5], k))\n")
+        for child in self._start(code, root):
+            self.finish(child)
+        final = (root / ".ultra" / "project_context.md").read_text(encoding="utf-8")
+        texts = {f"p{n}-{k}" for n in range(2) for k in range(10)}
+        revisions = [p.read_text(encoding="utf-8") for p in (root / ".ultra" / "project_context_history").iterdir()]
+        self.assertIn(final, texts)
+        self.assertEqual(len(revisions), 20, "every save of a new text keeps exactly one previous revision")
+        self.assertEqual(sorted(revisions + [final]), sorted(texts | {template}), "a previous text was lost")
+        self.assertEqual(self.leftovers(root), [])
+
+    def test_two_processes_rename_the_workspace_and_keep_its_identity_and_fields(self):
+        root, workspace_id, _ = self.workspace()
+        meta = root / ".ultra" / "workspace.json"
+        data = json.loads(meta.read_bytes())
+        data["future_field"] = "kept"
+        meta.write_text(json.dumps(data), encoding="utf-8")
+        code = ("for k in range(10):\n"
+                "    cs.rename_workspace(sys.argv[2], 'w%s-%d' % (sys.argv[5], k))\n")
+        for child in self._start(code, root):
+            self.finish(child)
+        stored = json.loads(meta.read_bytes())
+        self.assertIn(stored["display_name"], {f"w{n}-{k}" for n in range(2) for k in range(10)})
+        self.assertEqual({k: v for k, v in stored.items() if k != "display_name"},
+                         {k: v for k, v in data.items() if k != "display_name"})
+        self.assertEqual(cs.read_workspace_identity_bounded(root)["workspace_id"], workspace_id)
+        self.assertEqual(self.leftovers(root), [])
 
 
 if __name__ == "__main__":

@@ -1,0 +1,276 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (user assignment in chat); FOLLOWUP-WUA-S2-REPLACE-HARDEN-001 of WEB18 repair review",
+ "base": "main@ffeb5d192924172f9ae6558cee961731b49295ce (No.477) as published content (engineering bytes of No.475/No.473; Git not used)",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "context_storage.py": {
+   "role": "replace hardening: rename_workspace, rename_chat and project_context.md go through _replace_verified (temporary-file location checked through its handle before any byte, read-back); the previous Project Context text is read without following links (hard links refused); a revision is an exclusive new file and an existing revision is never overwritten",
+   "bytes": 97846,
+   "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280",
+   "eol": "LF",
+   "replaced_sha256": "ee6555c21e166e3bb6d7a90944192fb7d0c608f4fd17b5689416f0830b0c69bb",
+   "replaced_source": "F-01 repair package (published No.475, base No.477)"
+  },
+  "test_ultra_chat_storage.py": {
+   "role": "ReplaceHardeningTests (15) and ReplaceConcurrencyTests (2): ordinary use and old formats, stale title, links before the call, swaps before the temporary file and after the last check (residual, characterised), the .ultra swap blocked by the open lock, failures, a killed writer, no revision overwrite, two processes",
+   "bytes": 96913,
+   "sha256": "d1b8733f00f8d33cd36552b1ee16aaf3aeb879b971c22559fe94c66b5c780cc2",
+   "eol": "LF",
+   "replaced_sha256": "976d7fc49e770af55eb0d464f016d92557762e7714ba8c94d20b4dc0f4607216",
+   "replaced_source": "F-01 repair package (published No.475, base No.477)"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "test_ultra_chat_read.py": true,
+  "test_web_alarm_evm_ui.js": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_storage.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "ultra_ui.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "web_alarm/ultra_chat.py": true
+ },
+ "rotation": {
+  "card": "Документация/000_Задачи Claude.md",
+  "card_after_rotation": {
+   "bytes": 35966,
+   "sha256": "19d986ce60aa087344d2ada040d916513d19662b273b7a2df12e65a8740386f7",
+   "eol": "LF"
+  },
+  "snapshot": {
+   "bytes": 11617,
+   "sha256": "af4ba3de5ded2b4c124deb7a6cb027987c48214a26b180b6623205d5bc001111",
+   "eol": "LF"
+  },
+  "protocol": "evidence/rotation.json"
+ },
+ "evidence_summary": {
+  "change_inventory.json": {},
+  "final_state.json": {
+   "purpose": "final state before the hand-in"
+  },
+  "gate_all.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes, run 2",
+   "runner_exit": 0,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_all_run1.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes, run 1: one ERROR WinError 10053 in a folder-picker HTTP test (signature of the known flake F-S1; module does not use context_storage)",
+   "runner_exit": 1,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 1,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_focused.json": {
+   "purpose": "focused storage gate on the final bytes: shared writer + F-01 + replace hardening tests, message context, compressor, Ultra storage set, stage-1 reader, HTTP write and stage-1 HTTP",
+   "runner_exit": 0,
+   "tests_run": 166,
+   "failures": 0,
+   "errors": 0,
+   "skips": 5,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun1.json": {
+   "purpose": "re-run 1 of test_web_alarm_folder_picker after the WinError 10053 of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun2.json": {
+   "purpose": "re-run 2 of test_web_alarm_folder_picker after the WinError 10053 of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "gate_picker_rerun3.json": {
+   "purpose": "re-run 3 of test_web_alarm_folder_picker after the WinError 10053 of all run 1",
+   "runner_exit": 0,
+   "tests_run": 16,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "isolation_violations": 0
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the verified replacement of workspace.json, project_context.md (+history) and the Chat card",
+   "killed": 9,
+   "mutants": 9
+  },
+  "mutants_run1.json": {
+   "purpose": "FIRST mutation run (before the oracle fix of the no-revision subcase): H03 SURVIVED because ensure_workspace_storage refused first; kept as evidence",
+   "killed": 8,
+   "mutants": 9
+  },
+  "prestart.json": {
+   "purpose": "pre-start state before the first edit"
+  },
+  "red_before_change.json": {
+   "purpose": "RED BEFORE the change: the new replace-hardening tests on the unchanged context_storage.py (base No.477 bytes)",
+   "runner_exit": 1,
+   "tests_run": 17,
+   "failures": 14,
+   "errors": 1,
+   "skips": 1,
+   "isolation_violations": 0
+  },
+  "rotation.json": {}
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 22
+ },
+ "git_used": false,
+ "network_used": "none (loopback test servers of the regression only)",
+ "real_workspaces_used": false,
+ "live_or_paid_api_used": false,
+ "launcher_switched": false,
+ "files": [
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 2563,
+   "sha256": "e8b3e7016b1c09f1ef4ed4eca1986a567e3df0cff2f3a55d67dd2a15836c803a",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/final_state.json",
+   "bytes": 888,
+   "sha256": "9f038211290bf672d84a318e063b83d8c3f54df6e694b46b0f4f89fcd5949933",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all.json",
+   "bytes": 166934,
+   "sha256": "f2c6749bb75f4f7fe6c9ace62c47d802af29a9566894010c83a23480a8f06e51",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all_run1.json",
+   "bytes": 167255,
+   "sha256": "34908c6571687c284839e6cdf58f91a1dd3057873502bbf307f1c5ce483039e7",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_focused.json",
+   "bytes": 25502,
+   "sha256": "0bad8c955c75c55b1b18d8b90726d2b947d6a71fbe8f4616a1d034c7f01e35ca",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun1.json",
+   "bytes": 2709,
+   "sha256": "0e1d7b27d7bf42f4bb20ca574b4fd226a05fd58bb067a738747b9e54b2fd0895",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun2.json",
+   "bytes": 2708,
+   "sha256": "0f273bd470777d6a30bbbb46f61454c086f07ee154ebd6bb6a0ea37365f00288",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_picker_rerun3.json",
+   "bytes": 2709,
+   "sha256": "c87bc91e6a999831ff505b7069bf147c3debef775cacd9be3aa4ace0d6e16bf3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 3336,
+   "sha256": "e7f30f9aaf58ac814fbcadd7460905a83c8eb8944190a7c4fe983e4bb69a4808",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants_run1.json",
+   "bytes": 3298,
+   "sha256": "a1ca4bbdf4e2bef8f4a1b1796a940a4680ec61d8c23d9e6624b776fe3798c88d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/prestart.json",
+   "bytes": 3143,
+   "sha256": "119d7393c97856078f67d57688a72823a1449dbe4a529c0c2d0a205dde89f196",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/red_before_change.json",
+   "bytes": 5897,
+   "sha256": "df856f756340166c99076f3713bfb01094080edebd3924a88abb2191b89320eb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/rotation.json",
+   "bytes": 1275,
+   "sha256": "7580800f653ff5b33ff71d680d61b3476051916ee09384b7aa7db8bb390a0c07",
+   "eol": "LF"
+  },
+  {
+   "path": "handoff_task.md",
+   "bytes": 11617,
+   "sha256": "af4ba3de5ded2b4c124deb7a6cb027987c48214a26b180b6623205d5bc001111",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 28552,
+   "sha256": "4e5dcd37b00b2a8328838a907f38c5d5866c316d1d85e58d276b87d5d9bdf4b1",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 2739,
+   "sha256": "4978052d2eea4f62b569ae1b146f326bac103ceb20640751c171a81187ce45c0",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/final_state.py",
+   "bytes": 2861,
+   "sha256": "b45a30f4dd8e93e0734e7d4282f8a1c82dcf8d9a8a1b2ee3ee2c51e762c24c3a",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 6883,
+   "sha256": "281503f26412e351055d3f0fd9df59ec2c2408965c70d50dc6e7739ab0d16be6",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/prestart.py",
+   "bytes": 4106,
+   "sha256": "ada64e23c27ab8605b562fcfc1caf5c5496fbee6bc5ee37f2c381d7a342ca937",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1761,
+   "sha256": "a56068b084ca4b54e711a0b59060b3f132e4109593ea1250b9129b7e203f89aa",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 7634,
+   "sha256": "2bcb05279b14f5fc682cfbf275c6fd18724931ef073429e2cfc413e910fa6514",
+   "eol": "LF"
+  }
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "task": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+ "purpose": "RED BEFORE the change: the new replace-hardening tests on the unchanged context_storage.py (base No.477 bytes)",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "project .venv",
+ "targets": [
+  "test_ultra_chat_storage.ReplaceHardeningTests",
+  "test_ultra_chat_storage.ReplaceConcurrencyTests"
+ ],
+ "runner_exit": 1,
+ "wall_seconds": 6.966,
+ "tests_run": 17,
+ "failures": 14,
+ "errors": 1,
+ "skips": 1,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_chat_folder_swapped_before_the_temporary_file_gets_no_published_bytes",
+   "status": "FAIL",
+   "detail": "+                    '49bed206b28ae34298ba2a622c83161d6a461693d163448ef74a9d92b59a9c9f')} : no byte was published into the swapped-in folder"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_history_folder_swapped_before_the_temporary_file_gets_no_revision",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_junction_at_the_history_folder_is_refused_and_nothing_is_written",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_project_context_hard_linked_to_an_outside_file_is_refused",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_project_context_symlink_is_refused_when_the_platform_allows_creating_one",
+   "status": "SKIP",
+   "detail": "symlink creation needs a privilege this host does not grant (NOT RUN, hard link and junction covered)"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_project_context_that_is_a_folder_is_refused_explicitly",
+   "status": "ERROR",
+   "detail": "PermissionError: [Errno 13] Permission denied: '<path>'"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_reader_holding_the_file_is_waited_for_then_refused_visibly",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_stale_title_is_refused_without_a_lost_update",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_swap_after_the_last_check_is_detected_by_the_read_back_not_prevented",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published (writer='rename workspace')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published (writer='project context')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_temporary_file_reported_elsewhere_by_the_os_is_never_published (writer='rename chat')",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_a_writer_killed_mid_replacement_leaves_the_old_bytes",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_an_existing_revision_name_is_never_overwritten",
+   "status": "FAIL",
+   "detail": "AssertionError: StorageWriteError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_ordinary_renames_and_project_context_history_keep_every_byte_and_field",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_the_ultra_folder_cannot_be_swapped_while_its_lock_is_held_on_windows",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='write', writer='rename workspace')",
+   "status": "FAIL",
+   "detail": "AssertionError: OSError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='write', writer='project context')",
+   "status": "FAIL",
+   "detail": "AssertionError: OSError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='write', writer='rename chat')",
+   "status": "FAIL",
+   "detail": "AssertionError: OSError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='replace', writer='rename workspace')",
+   "status": "FAIL",
+   "detail": "Diff is 35186 characters long. Set self.maxDiff to None to see it."
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='replace', writer='project context')",
+   "status": "FAIL",
+   "detail": "AssertionError: OSError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files (failure='replace', writer='rename chat')",
+   "status": "FAIL",
+   "detail": "AssertionError: OSError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceHardeningTests.test_write_failures_leave_the_old_bytes_and_no_temporary_files",
+   "status": "FAIL",
+   "detail": "AssertionError: PermissionError not raised"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceConcurrencyTests.test_two_processes_rename_the_workspace_and_keep_its_identity_and_fields",
+   "status": "PASS"
+  },
+  {
+   "test": "test_ultra_chat_storage.ReplaceConcurrencyTests.test_two_processes_save_project_context_without_losing_a_revision",
+   "status": "PASS"
+  }
+ ]
+}
