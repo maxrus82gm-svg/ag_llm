@@ -1,6 +1,6 @@
 # Рабочая карточка исполнителя — Codex 007
 
-**Назначение:** персональная TASK и factual результаты Codex 007. Правила актуализированы 27.10.2026 по прямому поручению пользователя Astra/Codex о документационных каркасах. БЛОКИ 2–4 ниже содержат исторические результаты на свои даты. БЛОК 1 освобождён 01.11 по USER GO; исходная TASK Astra дословно сохранена в №001 и `reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/handoff_task.md`. Старый verdict не даёт новую задачу.
+**Назначение:** персональная TASK и factual результаты Codex 007. Правила актуализированы 27.10.2026 по прямому поручению пользователя Astra/Codex о документационных каркасах. БЛОКИ 2–4 ниже содержат исторические результаты на свои даты. №482 архивировал Astra; №483 Codex выполнил документный ремонт, независимый WEB19 BOUNDED PASS / DOC CLOSED. БЛОК 1 WAITING, полная последняя TASK — в БЛОКЕ 1.1 и `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/handoff_task.md`. Старые verdict относятся к своим датам.
 
 ## Рабочий порядок
 
@@ -300,19 +300,20 @@
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-**Исторический срез до 27.10.2026:** текущая ротация Astra отражена в №001/05/06; нижеприведённый список не обновлялся этой административной правкой.
+Полный архив — №001 Codex; предыдущий исторический БЛОК 2 сохранён там при closeout WEB19.
 
-Полный архив — [[001_История выполненных задач Codex]].
-
-- **2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001** — документ №37, 0–7, H01–H23, R01–R11; independent bounded DOCUMENT PASS, 9/9 artifact hashes; программа ожидает USER PLAN APPROVAL.
-- **2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — rev2 Astra after Sol 6.1 rev1; 30/30 published source pins SHA/size independently checked at №436, R2-01…R2-08 source/reasoning review. **WEB_14 PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, Windows/live NOT RUN; roadmap awaits user approval.
-- **2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — admission policy inside existing broker/security pipeline; Codex 52/52 offline, 51/51 regression (19 overlap), 7/7 mutants, WEB_12 independent 53/53 manifest; **PASS / BOUNDED OFFLINE ACCEPTED**, native/WFP/Chat NOT VERIFIED.
-- **2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — source-only exact sing dependency; Codex 51/51, WEB_12 87/87, six upstream files and 33 locators. **TERMINAL PARTIAL**, native blocked.
-- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only sing-box v1.13.4, defaults DIRECT/DNS/UoT; WEB_11 bounded source accepted, native not run.
+- **01.11 / CODEX-WUA-DOC-WEB19-REPAIR-001, №483:** шесть документов исправлены; WEB19 BOUNDED PASS / DOC CLOSED; full runtime NOT RUN.
+- **01.11 / ASTRA-DOC-CONTEXT-OPTIMIZATION-001, №482:** USER SLOT RELEASE; миграция PARTIAL/OPEN.
+- **26.10 / ASTRA-WUA-37-ROADMAP-REVISION-001:** bounded document PASS, план утверждён 27.10, portability NOT VERIFIED.
+- **26.10 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001:** bounded architecture PASS; live NOT RUN.
+- **25.10 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001:** bounded offline PASS; native/WFP/Chat NOT VERIFIED.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
+
+- **CODEX-WUA-DOC-WEB19-REPAIR-001:** №483, шесть Markdown-документов, author 53/53, WEB19 BOUNDED DOCUMENT PASS / DOC CLOSED. Product runtime/CI/Obsidian live Graph NOT RUN; старая миграция Astra PARTIAL/OPEN.
+- **ASTRA-DOC-CONTEXT-OPTIMIZATION-001:** №482, архивирование по решению пользователя; semantic/graph/cold-start OPEN.
 
 - **ASTRA-WUA-37-ROADMAP-REVISION-001** — `main@d15d026bf17c1184a004f8891186c0ea02f8887e`, №37 SHA256 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45`, manifest `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`, independent 9/9; авторские 21/21 не перезапускались, no runtime/CI/live; B2 V-13 unresolved.
 - **ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — architecture rev2 `Документация/Дополнительная аналитика Астры.md`, `main@900f107fc89b3ca9e80e4f66b34ab0c9f4b32c30`, 137301 bytes, SHA256 `7cf81d95be92924dd62a6eb1e623882dd2fa69359c9e31032c19a35ee185d3f5`; independently source 30/30 pinned №436 and eight R2 corrections accepted; no runtime/CI/API. WUA-2A **NOT ASSIGNED**; frozen B1 archived verbatim in Codex 001.
@@ -325,9 +326,13 @@
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
+## WEB19 / 2026-11-01 — CODEX-WUA-DOC-WEB19-REPAIR-001 — BOUNDED DOCUMENT PASS
+
+**№483 `33f95db6`:** 6/6 baseline + 6/6 final source comparisons, 7/7 FOLLOWUP, event headings №473/475/479, №34/37/40, дословная TASK в БЛОК 1.1 и snapshot. Авторские 53/53 и 44/44 не перезапускались полностью; runtime/CI/live Obsidian Graph/cold-start NOT RUN. Пользователь принял ambient .obsidian. **DOC ITERATION CLOSED**, full product review не заявлен. `reports/CHATGPT-WEB19-DOC-REPAIR-REVIEW-20261101.md`; №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №06 `EVT-WEB19-CODEX-DOC-REPAIR-20261101`. Stage3/live/paid HOLD.
+
 **Verifier:** WEB_14 / ChatGPT; Codex READ-ONLY. Полный архив №001 и журнал №06.
 
-## 1. Последний вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001
+## 1. Исторический вердикт — WEB_14 / 2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001
 
 **PASS / INDEPENDENT DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** Астра / Codex, результат `main@d15d026bf17c1184a004f8891186c0ea02f8887e`: №37 переработан в программу из восьми этапов 0–7, 23 изменения истории H01–H23 и 11 групп рекомендаций R01–R11. **WEB_14 independent PASS / DOCUMENT & BOUNDED ARCHITECTURAL REVIEW.** SHA256 №37 `dd2520691cbddbe68157775b42c0373fa3a4009de4b93f008f60ceb180e1df45` (71042 байта), manifest CRLF `5cf52fb16438f59f798b633ea0a3f4d8a8456d892b7772e71d0408477b80ed34`. Независимо сверены 9/9 артефактов по SHA256/размерам (четыре CRLF восстановлены), исходный №37 с прежней ревизией, кандидат с опубликованным текстом; без блокирующих противоречий в общем Python-ядре, RAW/Turn/RUN/TASK, бюджете, полномочиях Web Alarm и WA4-R. Авторские 21/21 документных проверок независимо не запускались. Windows/UI/runtime/live/paid/CI NOT RUN. №37 остаётся **ПРОГРАММА-КАНДИДАТ / USER PLAN APPROVAL PENDING**, отложенный B2 V-13 Ordinary Chat требует отдельного решения пользователя, исторический RT-002 и MCP freeze №39 не изменены.
 

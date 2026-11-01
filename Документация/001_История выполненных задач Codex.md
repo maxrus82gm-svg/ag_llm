@@ -10206,3 +10206,31 @@ Source risks: `users=[]` disables proxy authentication; 407/error logs can expos
 - **Independent:** опубликованные документы исследовались адресно, но миграция имеет **PARTIAL / semantic locators, Obsidian live graph, cold-start OPEN**; не `DONE / VERIFIED`. `RISK-DOC-CURRENT-001` остаётся OPEN. Статус `PROPOSAL` в №41 относится только к исходной аналитической фазе.
 - **USER GO 01.11.2026:** убрать устаревшую TASK Astra из текущего БЛОКА 1, не уничтожая её. **ADMINISTRATIVE SLOT RELEASE**, не independent PASS внедрения. БЛОК 1 теперь `WAITING`, БЛОК 1.1 не переписывался и скрипт ротации не запускался. Старый текст закреплён также Git/blob выше.
 - **История событий:** №05 `REG-WEB19-ASTRA-SLOT-20261101`; №06 `EVT-WEB19-ASTRA-SLOT-20261101`.
+
+---
+
+## 2026-11-01 — CODEX-WUA-DOC-WEB19-REPAIR-001 — BOUNDED DOCUMENT PASS / DOC ITERATION CLOSED
+
+- **Постановка:** полная TASK в `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/handoff_task.md` и дословно в БЛОК 1.1 Codex, копия SHA-256 `9df0792f3fd465453ecb0a46f687f4038028924ffd66a42e654ec08b44256453`. БЛОК 1 WAITING.
+- **Исполнение:** №483 `33f95db67fa0910b074247824f6db24a638feeba`, шесть исправленных документов; `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/report.md`, manifest, changes.patch, before/after snapshots и evidence. Автор 53/53 documentary checks, 44/44 hashes, первоначальный ошибочный checker-run сохранён.
+- **Independent WEB19:** точное сравнение 6/6 baseline и 6/6 final, FOLLOWUP 7 × 6, заголовки/event_id №473/475/479, №03/37 Stage2-Stage3, №34 24 676 символов, №40 восстановленное прежнее Obsidian ребро, дословная TASK в 1.1 и snapshot. **BOUNDED DOCUMENT PASS / DOC ITERATION CLOSED**, не independent full author-suite/runtime PASS.
+- **Ambient Obsidian:** изменены графовый scale и история открытых файлов, пользователь 01.11 признал нормой и не требует отката. Live Graph/cold-start NOT RUN.
+- **Остаток:** Astra migration PARTIAL/OPEN, `RISK-DOC-CURRENT-001` OPEN, staging/P9/Tk P1–P6 OPEN, Stage3/live/paid HOLD. №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №06 `EVT-WEB19-CODEX-DOC-REPAIR-20261101`; `reports/CHATGPT-WEB19-DOC-REPAIR-REVIEW-20261101.md`.
+
+### Прежний состав БЛОКА 2, архивирован перед актуализацией WEB19
+
+# БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
+
+**Исторический срез до 27.10.2026:** текущая ротация Astra отражена в №001/05/06; нижеприведённый список не обновлялся этой административной правкой.
+
+Полный архив — [[001_История выполненных задач Codex]].
+
+- **2026-10-26 / ASTRA-WUA-37-ROADMAP-REVISION-001** — документ №37, 0–7, H01–H23, R01–R11; independent bounded DOCUMENT PASS, 9/9 artifact hashes; программа ожидает USER PLAN APPROVAL.
+- **2026-10-26 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001** — rev2 Astra after Sol 6.1 rev1; 30/30 published source pins SHA/size independently checked at №436, R2-01…R2-08 source/reasoning review. **WEB_14 PASS / BOUNDED ARCHITECTURAL SOURCE REVIEW**, Windows/live NOT RUN; roadmap awaits user approval.
+- **2026-10-25 / CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001** — admission policy inside existing broker/security pipeline; Codex 52/52 offline, 51/51 regression (19 overlap), 7/7 mutants, WEB_12 independent 53/53 manifest; **PASS / BOUNDED OFFLINE ACCEPTED**, native/WFP/Chat NOT VERIFIED.
+- **2026-10-25 / CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001** — source-only exact sing dependency; Codex 51/51, WEB_12 87/87, six upstream files and 33 locators. **TERMINAL PARTIAL**, native blocked.
+- **2026-10-24 / CODEX-WUA-0-SINGBOX-SOURCE-REVIEW-001** — source-only sing-box v1.13.4, defaults DIRECT/DNS/UoT; WEB_11 bounded source accepted, native not run.
+
+---
+
+

@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 01.11.2026, WEB19. Stage2 №479 bounded source/evidence PASS plus independent focused Windows storage tests (68 run/4 SKIP on each Python 3.12 and 3.13, 4 reviewer probes PASS); full independent regression NOT RUN. FOLLOWUP-WUA-S2-CHAT-STAGING-001 OPEN; Run Store P9 priority; Stage3/paid/live not authorized.
+**Срез:** 01.11.2026, WEB19. №483 документный ремонт BOUNDED PASS / DOC CLOSED; Astra PARTIAL/OPEN. Stage2 №479 bounded PASS + WEB19 focused Windows PASS; full regression NOT RUN. Staging OPEN, P9 priority, Tk P1–P6 OPEN; Stage3/live/paid HOLD.
 
 ## Постоянные ориентиры
 
@@ -16,9 +16,9 @@
 | --- | --- | --- |
 | А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
 | Б — Web Alarm Core, LLM15 / Codex по назначению | Надёжность, TASK/Workspace authority, recovery, WA4-R. Общий WA4-R PARTIAL. Новая техническая Core TASK не подтверждена этим снимком | Согласовать следующий ограниченный scope, проверить пересечения по №40 и реальные остаточные gates |
-| Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. Текущая сдача `CODEX-WUA-DOC-WEB19-REPAIR-001`: ремонт шести документов, LOCAL RESULT READY / review WEB19 PENDING | №05 `REG-WEB19-ASTRA-SLOT-20261101`; №001 Codex / Astra; `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/`; `RISK-DOC-CURRENT-001` OPEN |
+| Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. №483 `CODEX-WUA-DOC-WEB19-REPAIR-001`: шесть документов, WEB19 BOUNDED PASS / DOC CLOSED; БЛОК 1 WAITING | №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №001 Codex; `RISK-DOC-CURRENT-001` OPEN |
 
-Направление Б ждёт технического назначения. По №482 Astra архивирована и слот Codex был освобождён; затем пользователь назначил текущий документационный ремонт. Это не запуск Core. Остаточные проверки миграции OPEN; пересечения — №40.
+Направление Б ждёт технического назначения. №482 архивировал Astra; №483 ремонт принят WEB19, Codex WAITING. Это не запуск Core, проверки миграции OPEN; пересечения — №40.
 
 ## Действующие пользовательские решения и границы
 
