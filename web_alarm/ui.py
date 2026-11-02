@@ -262,6 +262,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </div>
 <nav class="top-nav" aria-label="Разделы Web Alarm">
 <button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra">Ultra Chat</button>
+<button type="button" id="viewBlueprint" aria-pressed="false" aria-controls="blueprintView">Блюпринт LLM</button>
 <button type="button" id="viewOperator" aria-pressed="false" aria-controls="layout">Операторская панель</button>
 <button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
 </nav>
@@ -307,6 +308,10 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 </form>
 </div>
 </div>
+</section>
+<section id="blueprintView" class="bp-view" aria-label="Блюпринт LLM" hidden>
+<h2 id="blueprintHeading" class="bp-sr-only" tabindex="-1">Блюпринт LLM</h2>
+<!-- BLUEPRINT_CONTENT -->
 </section>
 <div class="layout" id="layout" hidden>
 <aside class="workspaces" id="workspacesPanel" aria-label="Рабочие пространства">
@@ -1036,9 +1041,9 @@ const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},ou
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
 // Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
-const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
+const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
 function initialView(){
-  try{return {'#operator':'operator','#evm':'evm','#chat':'chat'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
+  try{return {'#operator':'operator','#evm':'evm','#chat':'chat','#blueprint':'blueprint'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
 }
 function rememberView(name){
   try{if(typeof history!=='undefined'&&typeof location!=='undefined'&&history.replaceState)history.replaceState(null,'','#'+name)}catch(_){}
@@ -1050,6 +1055,7 @@ function showView(name,initial=false){
   $('showWorkspaces').hidden=name!=='operator';$('showTasks').hidden=name!=='operator';
   $('skipLink').setAttribute('href',VIEWS[name][2]);text('skipLink',VIEWS[name][3]);
   if(!initial)rememberView(name);
+  if(name==='blueprint'){if(!initial)$('blueprintHeading').focus();if(window.UltraBlueprint)window.UltraBlueprint.open();return}
   if(name==='evm'){if(!initial)$('evmHeading').focus();return loadEvm()}
   if(name==='chat'){if(!initial)$('chatHeading').focus();return startChat()}
   if(!initial)$('main').focus()
@@ -2123,6 +2129,7 @@ async function saveChatName(){
   return loadChatList()
 }
 $('viewChat').onclick=()=>showView('chat');
+$('viewBlueprint').onclick=()=>showView('blueprint');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
 $('chatOlder').onclick=()=>loadChatHistory(true);
 $('chatNew').onclick=()=>openChatName('create');
@@ -2150,3 +2157,7 @@ refresh();
 </script>
 </body></html>
 '''
+
+# Keep the existing client and its DOM contract intact; the editor is an isolated module.
+from .blueprint_ui import install_blueprint_ui
+INDEX_HTML = install_blueprint_ui(INDEX_HTML)

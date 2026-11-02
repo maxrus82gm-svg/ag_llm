@@ -1,0 +1,47 @@
+<div class="bp-toolbar">
+  <div class="bp-identity"><span class="bp-logo" aria-hidden="true">⌘</span><div><span class="bp-eyebrow">ULTRA / КОНСТРУКТОР ПРОЦЕССОВ</span><input id="bpName" aria-label="Название схемы" maxlength="120" value="Новая схема"></div></div>
+  <div class="bp-toolbar-actions"><span id="bpSaveState" class="bp-save-state" role="status">Черновик</span><button id="bpReload" type="button" hidden>Отменить правки и загрузить</button><button id="bpValidate" type="button">Проверить схему</button><button id="bpSaveCopy" type="button" title="Сохранить под новым именем">Сохранить копию</button><button id="bpSave" class="bp-primary" type="button">Сохранить</button></div>
+</div>
+<div id="bpNotice" class="bp-notice" role="status" hidden></div>
+<div class="bp-workbench">
+  <nav class="bp-library" aria-label="Схемы и блоки">
+    <div class="bp-side-heading"><span>МОИ СХЕМЫ</span><button id="bpNew" class="bp-icon-button" type="button" title="Новая схема" aria-label="Новая схема">＋</button></div>
+    <div id="bpSchemes" class="bp-schemes"><p class="bp-muted">Загружаем схемы…</p></div>
+    <div class="bp-side-heading bp-divider"><span>БЛОКИ</span><span class="bp-count">01</span></div>
+    <button id="bpAdd" class="bp-palette" type="button"><span class="bp-palette-icon" aria-hidden="true">✦</span><span><strong>LLM-блок</strong><small>Модель, роль, контекст</small></span><span aria-hidden="true">＋</span></button>
+    <p class="bp-library-note">Один тип блока.<br>Любая роль.<br>Собственная модель у каждого экземпляра.</p>
+    <button id="bpExample" class="bp-example" type="button">Создать схему из двух блоков <span aria-hidden="true">↗</span></button>
+    <div class="bp-library-bottom"><span class="bp-eyebrow">НАВИГАЦИЯ</span><p>Перетаскивайте блок за заголовок. Тяните свободное поле для перемещения. Масштаб — кнопками или Ctrl + колесо.</p><p>Выход → вход одного цвета.<br>Delete — удалить выбранное.<br>Ctrl + D — копия блока.</p></div>
+  </nav>
+  <div class="bp-center">
+    <div class="bp-canvas-top"><div><span class="bp-status-dot"></span><span id="bpGraphStats">0 блоков · 0 связей</span></div><span id="bpConnectHint">Выберите блок или добавьте новый</span><div class="bp-zoom"><button id="bpZoomOut" type="button" aria-label="Уменьшить масштаб">−</button><span id="bpZoomLabel">100%</span><button id="bpZoomIn" type="button" aria-label="Увеличить масштаб">＋</button><button id="bpFit" type="button" title="Показать всю схему">⤢</button></div></div>
+    <div id="bpCanvas" class="bp-canvas" tabindex="0" role="region" aria-label="Полотно LLM-блоков">
+      <div id="bpStage" class="bp-stage"><svg id="bpWires" class="bp-wires" width="22000" height="22000" aria-label="Связи блоков"></svg><div id="bpNodes"></div></div>
+      <div id="bpEmpty" class="bp-empty"><span class="bp-empty-symbol" aria-hidden="true">⌘</span><h3>С чего начнём?</h3><p>Добавьте LLM-блок, выберите модель<br>и задайте ему роль в процессе.</p><button id="bpEmptyAdd" class="bp-primary" type="button">＋ Добавить первый блок</button><small>Схему можно собрать до подключения моделей</small></div>
+      <div class="bp-canvas-legend"><span class="bp-dot" data-type="text"></span>Текст <span class="bp-dot" data-type="context"></span>Контекст <span class="bp-dot" data-type="json"></span>Данные <span class="bp-dot" data-type="event"></span>Событие</div>
+    </div>
+    <section class="bp-preview" aria-label="Предпросмотр процесса">
+      <div class="bp-preview-head"><div><strong>Диалог с процессом</strong><span class="bp-badge">Предпросмотр</span></div><button id="bpPreviewToggle" class="bp-icon-button" type="button" aria-expanded="true" aria-controls="bpPreviewBody" title="Свернуть диалог">⌄</button></div>
+      <div id="bpPreviewBody" class="bp-preview-body"><div id="bpMessages" class="bp-messages" aria-live="polite"><p class="bp-preview-intro">Проверьте, как вопрос и контекст проходят между блоками. Здесь используются демонстрационные ответы; нейросети пока не вызываются.</p></div>
+      <form id="bpPreviewForm" class="bp-preview-form"><textarea id="bpPrompt" rows="1" maxlength="8000" placeholder="Введите пример вопроса для вашей схемы…" aria-label="Пример вопроса"></textarea><button id="bpPreviewSend" class="bp-primary" type="submit" title="Предпросмотр с демонстрационными ответами">Предпросмотр <span aria-hidden="true">↑</span></button></form></div>
+    </section>
+  </div>
+  <div class="bp-inspector" aria-label="Настройки выбранного блока">
+    <div class="bp-side-heading"><span>НАСТРОЙКИ БЛОКА</span><span id="bpInspectorNumber" class="bp-count">—</span></div>
+    <div id="bpInspectorEmpty" class="bp-inspector-empty"><span aria-hidden="true">↖</span><p>Выберите блок на поле,<br>чтобы изменить его настройки.</p></div>
+    <div id="bpInspector" hidden>
+      <div class="bp-inspector-actions"><span class="bp-badge">LLM-блок</span><button id="bpDuplicate" type="button" title="Создать независимую копию">Копия</button><button id="bpDelete" type="button" class="bp-danger" title="Удалить блок и его связи">Удалить</button></div>
+      <label for="bpNodeTitle">Название</label><input id="bpNodeTitle" maxlength="100" placeholder="Название блока">
+      <label for="bpExecutor">Исполнитель</label><select id="bpExecutor"></select><p id="bpExecutorStatus" class="bp-field-note"></p>
+      <label for="bpRole">Роль <span class="bp-label-hint">можно написать свою</span></label><input id="bpRole" list="bpRoles" maxlength="100" autocomplete="off"><datalist id="bpRoles"></datalist>
+      <label for="bpInstruction">Инструкция</label><textarea id="bpInstruction" rows="4" maxlength="8000" placeholder="Что должен делать этот экземпляр блока?"></textarea>
+      <label class="bp-check"><input id="bpFinal" type="checkbox"> Ответ этого блока — итог процесса</label>
+      <details open><summary>Вход и контекст</summary><label for="bpInput">Задача блока</label><textarea id="bpInput" rows="2" maxlength="8000" placeholder="По умолчанию — вопрос из диалога"></textarea><label for="bpContext">Дополнительный контекст</label><textarea id="bpContext" rows="3" maxlength="8000" placeholder="Ограничения, факты, требования…"></textarea><label for="bpContextRefs">Ссылки на источники</label><textarea id="bpContextRefs" rows="2" maxlength="6500" placeholder="project:context_id&#10;artifact:document_id"></textarea><p class="bp-field-note">Одна ссылка на строку. Ссылки сохраняются; чтение источников будет доступно вместе с исполнением Ultra.</p></details>
+      <details><summary>Параметры модели</summary><div class="bp-two"><label>Температура<input id="bpTemperature" type="number" min="0" max="2" step="0.1"></label><label>Лимит ответа<input id="bpMaxTokens" type="number" min="1" max="32768" step="1"></label></div><p class="bp-field-note">Применимость параметров проверит адаптер выбранной модели при подключении исполнения.</p></details>
+      <details><summary>Входы и выходы</summary><div id="bpPortList" class="bp-port-list"></div><div class="bp-new-port"><input id="bpPortLabel" maxlength="80" placeholder="Название нового пина" aria-label="Название нового пина"><div class="bp-two"><select id="bpPortDirection" aria-label="Направление пина"><option value="input">Вход</option><option value="output">Выход</option></select><select id="bpPortType" aria-label="Тип пина"><option value="text">Текст</option><option value="context">Контекст</option><option value="json">Данные / JSON</option><option value="artifact">Артефакт</option><option value="event">Событие</option></select></div><label class="bp-check"><input id="bpPortMultiple" type="checkbox"> Несколько источников / значений</label><label class="bp-check"><input id="bpPortRequired" type="checkbox"> Обязательный вход</label><button id="bpPortAdd" type="button">＋ Добавить пин</button></div></details>
+      <details open><summary>Связи блока</summary><div id="bpLinkList" class="bp-link-list"></div></details>
+    </div>
+    <div id="bpEdgeInspector" hidden><p class="bp-muted">Выбрана связь</p><p id="bpEdgeDescription"></p><button id="bpDeleteEdge" class="bp-danger" type="button">Удалить связь</button></div>
+    <details id="bpValidationPanel" class="bp-validation"><summary>Диагностика схемы <span id="bpValidationCount"></span></summary><div id="bpValidationList"><p class="bp-muted">Нажмите «Проверить схему».</p></div></details>
+  </div>
+</div>
