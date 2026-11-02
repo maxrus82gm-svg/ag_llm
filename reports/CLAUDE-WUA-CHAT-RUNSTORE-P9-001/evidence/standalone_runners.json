@@ -1,0 +1,62 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "self-guarded standalone Audit/Run regression runners, base and final bytes",
+ "runs": {
+  "m1_base": {
+   "runner_task": "CLAUDE-RT002-FA-M1-001",
+   "gate": "PASS",
+   "exit_code": 0,
+   "run": 25,
+   "passed": 25,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "isolation_violations": 0,
+   "problems": [],
+   "python": "3.12.10",
+   "log_sha256": "fff9eb7eb07a2247d05283feea79166b0b4b3e5b733d7e1a081cc02ea53a7ceb"
+  },
+  "s2_base": {
+   "runner_task": "CLAUDE-RT002-S2-001",
+   "gate": "PASS",
+   "exit_code": 0,
+   "run": 73,
+   "passed": 73,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "isolation_violations": 0,
+   "problems": [],
+   "python": "3.12.10",
+   "log_sha256": "6430c17d757c2695683e4e0fa9559c2f11e1c61284da7d9ae363b9cac47540d9"
+  },
+  "m1_final": {
+   "runner_task": "CLAUDE-RT002-FA-M1-001",
+   "gate": "PASS",
+   "exit_code": 0,
+   "run": 25,
+   "passed": 25,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "isolation_violations": 0,
+   "problems": [],
+   "python": "3.12.10",
+   "log_sha256": "86c040dfc68a1ea8293bf935a9ffb9fe36caeeedd7cc5eeeb5a3a9bddee5411d"
+  },
+  "s2_final": {
+   "runner_task": "CLAUDE-RT002-S2-001",
+   "gate": "PASS",
+   "exit_code": 0,
+   "run": 73,
+   "passed": 73,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0,
+   "isolation_violations": 0,
+   "problems": [],
+   "python": "3.12.10",
+   "log_sha256": "cb138dfe32f25fea9153428018df40b4f3dd7cf6b44bc05e34bca4688a8802ba"
+  }
+ }
+}

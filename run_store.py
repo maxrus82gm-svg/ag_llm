@@ -1,6 +1,7 @@
 """Workspace-local append-only RUN Store v2."""
 from __future__ import annotations
 
+import contextlib
 import copy
 import hashlib
 import json
@@ -10,6 +11,8 @@ import time
 import uuid
 from pathlib import Path
 from typing import Any
+
+import context_storage as _ultra_core
 
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
@@ -71,6 +74,30 @@ def _atomic_json(path: Path, value: dict, *, retry_replace: bool = True) -> None
         temporary.unlink(missing_ok=True)
 
 
+@contextlib.contextmanager
+def _index_lock(workspace_root: str | Path):
+    """One Run Store index mutation at a time per Workspace (P9): the Workspace writer lock of the shared Ultra core.
+
+    The same OS lock as every other Ultra writer (<root>/.ultra/locks/writer.lock): reentrant in its own thread, so
+    ensure_run_index_entry -> ensure_task_index_entry nests without waiting; released by the OS when its process
+    dies; a busy Workspace is a visible WorkspaceBusyError after the core's timeout, never an endless wait. Unlike the
+    core's chat writers it does not require .ultra/workspace.json, only an existing root with a real .ultra folder
+    (created here, as the Run Store always created it); .ultra replaced by a link is refused by the lock itself.
+    """
+    root = Path(workspace_root).resolve()
+    (root / ".ultra").mkdir(exist_ok=True)
+    with _ultra_core._workspace_writer_lock(_ultra_core._write_anchor(root)):
+        yield
+
+
+def _require_index_lock(workspace_root: str | Path) -> None:
+    """Guard of the index publication: the current thread must hold the Workspace writer lock of this root."""
+    anchor = _ultra_core._write_anchor(Path(workspace_root).resolve())
+    key = anchor.expected((_ultra_core.ULTRA_DIRNAME, _ultra_core.LOCKS_DIRNAME, _ultra_core.WRITER_LOCK_NAME))
+    if key not in _ultra_core._held_writer_locks():
+        raise RuntimeError("Run Store index is written only under the Workspace writer lock")
+
+
 def _empty_index() -> dict:
     return {"schema_version": 2, "revision": 0, "next_task_number": 1,
             "next_run_number": 1, "tasks": {}, "runs": {}}
@@ -108,7 +135,12 @@ def load_workspace_run_index(workspace_root: str | Path) -> dict:
         value = _load_index_file(canonical)
         candidates.append((int(value["revision"]), True, value))
     for path in _generation_paths(workspace_root):
-        value = _load_index_file(path)
+        try:
+            value = _load_index_file(path)
+        except FileNotFoundError:
+            # A lock-free reader may list a generation that a writer then compacts: it was folded into a canonical
+            # index of an equal or higher revision, so the reader gets an older but whole index, never a crash (P9).
+            continue
         candidates.append((int(value["revision"]), False, value))
     if not candidates:
         return _empty_index()
@@ -128,6 +160,8 @@ def _cleanup_index_generations(workspace_root: str | Path,
 
 
 def _save_index(workspace_root: str | Path, index: dict) -> None:
+    # The index read by the caller and the revision computed from it are only current under the lock (P9).
+    _require_index_lock(workspace_root)
     snapshot = copy.deepcopy(index)
     revision = int(snapshot.get("revision", 0)) + 1
     snapshot["revision"] = revision
@@ -149,17 +183,18 @@ def ensure_task_index_entry(workspace_root: str | Path, task_block_id: str,
                             chat_id: str | None) -> dict:
     _safe(task_block_id)
     safe_chat = _safe(chat_id)
-    index = load_workspace_run_index(workspace_root)
-    entry = index["tasks"].get(task_block_id)
-    if entry is None:
-        number = int(index["next_task_number"])
-        entry = {"display_id": f"T-{number:03d}", "task_block_id": task_block_id,
-                 "chat_id": chat_id, "runs": []}
-        index["tasks"][task_block_id] = entry
-        index["next_task_number"] = number + 1
-        _save_index(workspace_root, index)
-    elif entry.get("chat_id") != chat_id:
-        raise ValueError("Task index identity mismatch")
+    with _index_lock(workspace_root):  # read, number and publish as one step (P9)
+        index = load_workspace_run_index(workspace_root)
+        entry = index["tasks"].get(task_block_id)
+        if entry is None:
+            number = int(index["next_task_number"])
+            entry = {"display_id": f"T-{number:03d}", "task_block_id": task_block_id,
+                     "chat_id": chat_id, "runs": []}
+            index["tasks"][task_block_id] = entry
+            index["next_task_number"] = number + 1
+            _save_index(workspace_root, index)
+        elif entry.get("chat_id") != chat_id:
+            raise ValueError("Task index identity mismatch")
     return copy.deepcopy(entry)
 
 
@@ -170,27 +205,30 @@ def run_storage_dir(workspace_root: str | Path, chat_id: str | None,
 
 def ensure_run_index_entry(workspace_root: str | Path, run_id: str,
                            task_block_id: str, chat_id: str | None) -> dict:
-    task = ensure_task_index_entry(workspace_root, task_block_id, chat_id)
-    index = load_workspace_run_index(workspace_root)
-    entry = index["runs"].get(run_id)
-    if entry is None:
-        number = int(index["next_run_number"])
-        summary = (Path(_safe(chat_id)) / _safe(run_id) / "summary.json").as_posix()
-        entry = {"display_id": f"R-{number:03d}", "run_id": run_id,
-                 "task_block_id": task_block_id, "chat_id": chat_id,
-                 "run_status": "RUNNING", "final_audit": "PENDING",
-                 "storage_version": 2, "summary_path": summary}
-        index["runs"][run_id] = entry
-        index["next_run_number"] = number + 1
-        task_entry = index["tasks"][task_block_id]
-        if run_id not in task_entry["runs"]:
-            task_entry["runs"].append(run_id)
-        _save_index(workspace_root, index)
-    elif (entry.get("task_block_id") != task_block_id
-          or entry.get("chat_id") != chat_id):
-        raise ValueError("Run index identity mismatch")
-    directory = run_storage_dir(workspace_root, chat_id, run_id)
-    directory.mkdir(parents=True, exist_ok=True)
+    _safe(run_id)
+    _safe(chat_id)
+    with _index_lock(workspace_root):  # the task and its run in one step; the nested task call re-enters (P9)
+        task = ensure_task_index_entry(workspace_root, task_block_id, chat_id)
+        index = load_workspace_run_index(workspace_root)
+        entry = index["runs"].get(run_id)
+        if entry is None:
+            number = int(index["next_run_number"])
+            summary = (Path(_safe(chat_id)) / _safe(run_id) / "summary.json").as_posix()
+            entry = {"display_id": f"R-{number:03d}", "run_id": run_id,
+                     "task_block_id": task_block_id, "chat_id": chat_id,
+                     "run_status": "RUNNING", "final_audit": "PENDING",
+                     "storage_version": 2, "summary_path": summary}
+            index["runs"][run_id] = entry
+            index["next_run_number"] = number + 1
+            task_entry = index["tasks"][task_block_id]
+            if run_id not in task_entry["runs"]:
+                task_entry["runs"].append(run_id)
+            _save_index(workspace_root, index)
+        elif (entry.get("task_block_id") != task_block_id
+              or entry.get("chat_id") != chat_id):
+            raise ValueError("Run index identity mismatch")
+        directory = run_storage_dir(workspace_root, chat_id, run_id)
+        directory.mkdir(parents=True, exist_ok=True)
     return copy.deepcopy(entry)
 
 
@@ -288,16 +326,17 @@ def _refresh_total_usage(summary: dict) -> None:
 
 def create_run_summary(workspace_root: str | Path, workspace_id: str,
                        chat_id: str | None, task_block_id: str, run_id: str) -> dict:
-    task = ensure_task_index_entry(workspace_root, task_block_id, chat_id)
-    run = ensure_run_index_entry(workspace_root, run_id, task_block_id, chat_id)
-    summary = {"schema_version": 2, "workspace_id": workspace_id,
-               "chat_id": chat_id, "task_block_id": task_block_id,
-               "task_display_id": task["display_id"], "run_id": run_id,
-               "run_display_id": run["display_id"], "run_status": "RUNNING",
-               "final_audit": "PENDING", "api_requests": 0, "tool_calls": 0,
-               "usage": empty_usage_summary(),
-               "provider_accounting": empty_provider_accounting_summary()}
-    _atomic_json(run_storage_dir(workspace_root, chat_id, run_id) / "summary.json", summary)
+    with _index_lock(workspace_root):  # index entries and the summary they point to as one step (P9)
+        task = ensure_task_index_entry(workspace_root, task_block_id, chat_id)
+        run = ensure_run_index_entry(workspace_root, run_id, task_block_id, chat_id)
+        summary = {"schema_version": 2, "workspace_id": workspace_id,
+                   "chat_id": chat_id, "task_block_id": task_block_id,
+                   "task_display_id": task["display_id"], "run_id": run_id,
+                   "run_display_id": run["display_id"], "run_status": "RUNNING",
+                   "final_audit": "PENDING", "api_requests": 0, "tool_calls": 0,
+                   "usage": empty_usage_summary(),
+                   "provider_accounting": empty_provider_accounting_summary()}
+        _atomic_json(run_storage_dir(workspace_root, chat_id, run_id) / "summary.json", summary)
     return summary
 
 
@@ -316,21 +355,22 @@ def load_run_summary(workspace_root: str | Path, run_id: str,
 
 def update_run_summary_index(workspace_root: str | Path, run_id: str,
                              updates: dict) -> dict:
-    entry = get_run_index_entry(workspace_root, run_id)
-    if entry is None:
-        raise KeyError(run_id)
-    summary_path = audit_root(workspace_root) / entry["summary_path"]
-    summary = json.loads(summary_path.read_text(encoding="utf-8"))
-    summary.update(copy.deepcopy(updates))
-    _atomic_json(summary_path, summary)
-    index = load_workspace_run_index(workspace_root)
-    index_changed = False
-    for key in ("run_status", "final_audit"):
-        if key in updates and index["runs"][run_id].get(key) != updates[key]:
-            index["runs"][run_id][key] = updates[key]
-            index_changed = True
-    if index_changed:
-        _save_index(workspace_root, index)
+    with _index_lock(workspace_root):  # the summary and the index status read and written as one step (P9)
+        entry = get_run_index_entry(workspace_root, run_id)
+        if entry is None:
+            raise KeyError(run_id)
+        summary_path = audit_root(workspace_root) / entry["summary_path"]
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        summary.update(copy.deepcopy(updates))
+        _atomic_json(summary_path, summary)
+        index = load_workspace_run_index(workspace_root)
+        index_changed = False
+        for key in ("run_status", "final_audit"):
+            if key in updates and index["runs"][run_id].get(key) != updates[key]:
+                index["runs"][run_id][key] = updates[key]
+                index_changed = True
+        if index_changed:
+            _save_index(workspace_root, index)
     return summary
 
 

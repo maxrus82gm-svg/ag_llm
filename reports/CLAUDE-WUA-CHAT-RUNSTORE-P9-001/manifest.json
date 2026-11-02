@@ -1,0 +1,296 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "executor": "Claude 008",
+ "source": "BLOCK 1 of the Claude card (user assignment in chat, WEB20 task text); P9 of the Stage2 report section 11",
+ "base": "main@2494f9fb13e13a6146ed514b385154a12b3efbe1 named by the task; local files compared by content with the published packages; Git not used",
+ "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+ "changed_files": {
+  "run_store.py": {
+   "role": "P9: every Run Store index mutation (ensure_task_index_entry, ensure_run_index_entry, update_run_summary_index, create_run_summary) runs its read-modify-write under the Workspace writer lock of context_storage (reentrant per thread, released on process death, bounded timeout); _save_index refuses to publish without that lock; a lock-free reader skips a generation compacted while it reads",
+   "bytes": 26478,
+   "sha256": "f63d7d15670a290355fa034d21d9e979d890e11d7bf52b02bbb1598a00cab12e",
+   "eol": "LF",
+   "replaced_sha256": "a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6",
+   "replaced_source": "pre-edit copy (no published package pins this file)"
+  },
+  "test_run_store_v2.py": {
+   "role": "12 new P9 tests: two and four processes without lost updates or reused numbers, repeat registration, identity conflicts, nested calls and a waiting thread, bounded busy refusal, a process dying at publication, generation fallback and recovery, status updates, the publication guard, a junction at .ultra, a damaged index, a reader during compaction",
+   "bytes": 23937,
+   "sha256": "9f7f90f29932d75fbfaf51956ccf1f51f377e4110922fde1d0bd1c8ff1509d82",
+   "eol": "CRLF",
+   "replaced_sha256": "28334ef3a59d8ed375eaca7e91e97048cd07f1fdd53526672391546e8fe4b4a2",
+   "replaced_source": "pre-edit copy (no published package pins this file)"
+  }
+ },
+ "published_files_unchanged": {
+  "Start_WebAlarm.bat": true,
+  "context_storage.py": true,
+  "test_ultra_chat_read.py": true,
+  "test_ultra_chat_storage.py": true,
+  "test_web_alarm_evm_ui.js": true,
+  "test_web_alarm_launcher.py": true,
+  "test_web_alarm_model_cards.py": true,
+  "test_web_alarm_ultra_chat.py": true,
+  "test_web_alarm_ultra_chat_storage.py": true,
+  "test_web_alarm_ultra_chat_ui.js": true,
+  "test_web_alarm_ultra_connections.py": true,
+  "ultra_ui.py": true,
+  "web_alarm/launch_config.json": true,
+  "web_alarm/launcher.py": true,
+  "web_alarm/model_cards.py": true,
+  "web_alarm/server.py": true,
+  "web_alarm/ui.py": true,
+  "web_alarm/ultra_chat.py": true
+ },
+ "rotation": null,
+ "evidence_summary": {
+  "adversarial.json": {
+   "purpose": "adversarial probes of the P9 change (synthetic TEMP Workspaces)"
+  },
+  "change_inventory.json": {},
+  "gate_all.json": {
+   "purpose": "full Web Alarm regression (all) on the final bytes",
+   "runner_exit": 0,
+   "tests_run": 1078,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_regression_unittest.json": {
+   "purpose": "unittest Run Store regression on the final bytes (guarded runner); two modules skip as wholes: they run only through their own main(), recorded separately",
+   "runner_exit": 0,
+   "tests_run": 52,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "gate_regression_unittest_base.json": {
+   "purpose": "unittest Run Store regression on the BASE bytes (before the change)",
+   "runner_exit": 0,
+   "tests_run": 52,
+   "failures": 0,
+   "errors": 0,
+   "skips": 2,
+   "isolation_violations": 0
+  },
+  "mutants.json": {
+   "purpose": "mutation gate of the P9 index protection (TEST-QA)",
+   "killed": 6,
+   "mutants": 7
+  },
+  "pytest_baseline.json": {
+   "purpose": "baseline of the existing Run Store tests on the base bytes (before any change)",
+   "tests_run": 9,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "passed": 9,
+   "exit": 0
+  },
+  "pytest_focused.json": {
+   "purpose": "focused: test_run_store_v2.py on the final bytes",
+   "tests_run": 21,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "passed": 21,
+   "exit": 0
+  },
+  "pytest_regression.json": {
+   "purpose": "pytest-style Run Store regression on the final bytes",
+   "tests_run": 20,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "passed": 20,
+   "exit": 0
+  },
+  "pytest_regression_base.json": {
+   "purpose": "baseline of the pytest-style Run Store regression on the base bytes",
+   "tests_run": 20,
+   "failures": 0,
+   "errors": 0,
+   "skips": 0,
+   "passed": 20,
+   "exit": 0
+  },
+  "red_on_base.json": {
+   "purpose": "RED: the final test_run_store_v2.py on the ORIGINAL run_store.py (TEMP mirror)",
+   "tests_run": 21,
+   "failures": 8,
+   "errors": 0,
+   "skips": 0,
+   "passed": 13,
+   "exit": 1
+  },
+  "reproduce_after_fix.json": {
+   "purpose": "standalone P9 reproduction: working tree, final bytes after the fix",
+   "defects_observed": 0,
+   "scenarios": 5
+  },
+  "reproduce_before_fix.json": {
+   "purpose": "standalone P9 reproduction: base bytes, before the fix",
+   "defects_observed": 5,
+   "scenarios": 5
+  },
+  "standalone_runners.json": {
+   "purpose": "self-guarded standalone Audit/Run regression runners, base and final bytes"
+  }
+ },
+ "evidence_sanitizer_scan_before_manifest": {
+  "CLEAN": 24
+ },
+ "git_used": false,
+ "network_used": "none (loopback test servers of the regression only)",
+ "real_workspaces_used": false,
+ "live_or_paid_api_used": false,
+ "launcher_switched": false,
+ "files": [
+  {
+   "path": "evidence/adversarial.json",
+   "bytes": 2014,
+   "sha256": "19fd7baaab1e880640bcdb6df6e75bc69a7545de997332752219448eb04b3bf5",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/change_inventory.json",
+   "bytes": 3292,
+   "sha256": "d4092616afaead7e4794032933c3427683172224583e448540171af80b76593b",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_all.json",
+   "bytes": 166921,
+   "sha256": "bc8e057a2089cad2e29020e8793a748ef5a71e37f5d49f966685072a81c35ebb",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_regression_unittest.json",
+   "bytes": 8670,
+   "sha256": "9b5365e502897a81bab923bd6bc5dbbe70c45525841d4ca827f50dbaca6b944f",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/gate_regression_unittest_base.json",
+   "bytes": 8584,
+   "sha256": "14ee0590e874411d22131feb34581d203c6a505abe09e214305745d13a50d27b",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/mutants.json",
+   "bytes": 2573,
+   "sha256": "0d06936272f3591c185ef216ef8b3f970514f9657f91ebdfe0a6cc3e7b10270c",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/pytest_baseline.json",
+   "bytes": 1414,
+   "sha256": "768e240fa31f4d1ab4d0ce1add25cadc9b3f883dd9caf337ef58ceaa23bdffbf",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/pytest_focused.json",
+   "bytes": 2882,
+   "sha256": "c922bc510adcdb18f237846133a0f37a2fe547276af641f5042bd86c4bd0a32d",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/pytest_regression.json",
+   "bytes": 2762,
+   "sha256": "608d0859656ba5ae8c48186992335c9aa0a881900d7d5b4dcdcd778871579df9",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/pytest_regression_base.json",
+   "bytes": 2777,
+   "sha256": "23c972b0d81cf75a15600a87d9eb827ac795d82dbc781ce9df915d9559394b8c",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/red_on_base.json",
+   "bytes": 3567,
+   "sha256": "aba5c8c7fe5b6b2c1a28452dd6602c378ec01286c8937b4433fbc7a1a0ac71f3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/reproduce_after_fix.json",
+   "bytes": 3044,
+   "sha256": "c40b32f3c1a05b7358b63cc033b87c12f31db70845fb6fc6012c8d684955bbe3",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/reproduce_before_fix.json",
+   "bytes": 3134,
+   "sha256": "b17a76a479c584387f7e8a100a268e32f8de07ffea518ccc7e599aebee3e630c",
+   "eol": "LF"
+  },
+  {
+   "path": "evidence/standalone_runners.json",
+   "bytes": 1511,
+   "sha256": "3724f27c60b4ce85ab90bd3305da0c71a0611b16f8bf2abfa652b21f749ea6f3",
+   "eol": "LF"
+  },
+  {
+   "path": "report.md",
+   "bytes": 24161,
+   "sha256": "232e02468c65633499265235675bea86532f00003a5a364b3435224452cca9a3",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/adversarial_p9.py",
+   "bytes": 7306,
+   "sha256": "50dcdb79f52508b3a558832febfe8aeda72a20d9714520d8c830f262a6b6871d",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/change_inventory.py",
+   "bytes": 5893,
+   "sha256": "f5e28304ff11b8e10fc1b2d59b184f672e7c9185144690712eb96b7695f03617",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/make_manifest.py",
+   "bytes": 7191,
+   "sha256": "ed03c4a9e60817a4892eb8beee35fc502f0488efbe99a7d966f966947b904b7c",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_gate.py",
+   "bytes": 1755,
+   "sha256": "c8c138743e05865333726418dbfba5ed5e6112b03edc3de81a12254aa7372c20",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/record_standalone.py",
+   "bytes": 1853,
+   "sha256": "66a3c2e689b63561f1d1c0d3b3a28e298b753f9ee7ab823d86f58ac53739a632",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/red_on_base.py",
+   "bytes": 1749,
+   "sha256": "c0babe96f14afd8da1b89d650c97d6627d9fa825a704ce32de00127cf344bae6",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/reproduce_p9.py",
+   "bytes": 10665,
+   "sha256": "37a39185c2b5b4cef0a1e9dd61c6f63b1c90f375e623b7bde7bd5bfb134bf28b",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_mutants.py",
+   "bytes": 8137,
+   "sha256": "f0be4b3e5a4f522a67ec8628254e3900d2cab2301bdf4f4eaaaf76a71e93befe",
+   "eol": "LF"
+  },
+  {
+   "path": "tools/run_pytest.py",
+   "bytes": 4645,
+   "sha256": "c3a0c3aa8ca317a64c98b6178ddfb0b26bd951ca29e24d46bfb30c2eba09b85f",
+   "eol": "LF"
+  }
+ ]
+}

@@ -1,0 +1,120 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "method": "byte comparison; no Git",
+ "changed": {
+  "run_store.py": {
+   "before": {
+    "sha256": "a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6",
+    "sha256_lf": "a57a250a20ea49ab3cc5b85cd8eaccdc2666baf694209ce4382bb3456d50b8b6",
+    "crlf_lines": 0,
+    "lines": 576
+   },
+   "after": {
+    "sha256": "f63d7d15670a290355fa034d21d9e979d890e11d7bf52b02bbb1598a00cab12e",
+    "sha256_lf": "f63d7d15670a290355fa034d21d9e979d890e11d7bf52b02bbb1598a00cab12e",
+    "crlf_lines": 0,
+    "lines": 616
+   },
+   "changed": true,
+   "added": 98,
+   "removed": 58
+  },
+  "test_run_store_v2.py": {
+   "before": {
+    "sha256": "28334ef3a59d8ed375eaca7e91e97048cd07f1fdd53526672391546e8fe4b4a2",
+    "sha256_lf": "61e42c327d4425a946775d830f764e566edcdfb95307bf57f5c8e5b3afc2bd3a",
+    "crlf_lines": 1,
+    "lines": 192
+   },
+   "after": {
+    "sha256": "9f7f90f29932d75fbfaf51956ccf1f51f377e4110922fde1d0bd1c8ff1509d82",
+    "sha256_lf": "6558b23bbccd16e7aa69d42c67f7ecc965b9948fe181dfcc8bd16b3efcd725e7",
+    "crlf_lines": 1,
+    "lines": 505
+   },
+   "changed": true,
+   "added": 313,
+   "removed": 0
+  }
+ },
+ "read_only_files": {
+  "context_storage.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+   "same_content": true
+  },
+  "web_alarm/store_lock.py": {
+   "pinned_by": "SHA-256 recorded before the first edit (6ae82859...)",
+   "same_content": true
+  },
+  "web_alarm/server.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "web_alarm/ui.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "ultra_ui.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "web_alarm/model_cards.py": {
+   "pinned_by": "CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001",
+   "same_content": true
+  },
+  "web_alarm/ultra_chat.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001",
+   "same_content": true
+  },
+  "Start_WebAlarm.bat": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "web_alarm/launcher.py": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "web_alarm/launch_config.json": {
+   "pinned_by": "CLAUDE-WUA-CHAT-LAUNCHER-001",
+   "same_content": true
+  },
+  "audit_storage.py": {
+   "pinned_by": "pre-edit copy (no package pins it)",
+   "same_content": true
+  }
+ },
+ "read_only_all_unchanged": true,
+ "read_only_without_a_published_pin": {
+  "server.py": {
+   "sha256_now": "3f950f0329b7605eb790ce61245a95985146d649d3d5c805660b57374fb6c401",
+   "last_modified_before_the_pre_edit_copy": true
+  },
+  "model_registry.py": {
+   "sha256_now": "2b6a9ea77974eea47cb10c5fb8e8ef5787d6a369826be10fa60d0a84dc318e53",
+   "last_modified_before_the_pre_edit_copy": true
+  }
+ },
+ "launcher": {
+  "config_active": "standard",
+  "load_launch_standard": true
+ },
+ "card_check": {
+  "result": "INVALID",
+  "block1": {
+   "state": "INVALID",
+   "task_id": null,
+   "problems": [
+    {
+     "code": "NO_TASK_ID"
+    }
+   ],
+   "lines": 175
+  },
+  "block1_1": {
+   "state": "FILLED",
+   "task_id": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+   "copy_sha256": "d1e2437c16166a71f26a9e734f4b424b4c166c8a343b9784d9e539a27a69dd2e",
+   "problems": []
+  }
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "mutation gate of the P9 index protection (TEST-QA)",
+ "targets": [
+  "test_run_store_v2.py"
+ ],
+ "control": {
+  "exit": 0,
+  "tests_run": 21,
+  "failing": [],
+  "verdict": "PASS"
+ },
+ "results": [
+  {
+   "mutant": "M01 ensure_task_index_entry without the lock",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal",
+    "test_p9_a_junction_at_ultra_is_refused_and_the_target_untouched",
+    "test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates",
+    "test_p9_nested_calls_reenter_and_another_thread_waits",
+    "test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M02 ensure_run_index_entry without its own lock",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates",
+    "test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M03 update_run_summary_index without the lock",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_status_updates_from_two_processes_are_all_kept"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M04 the publication guard removed",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_the_index_is_never_published_outside_the_lock"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M05 create_run_summary without its own lock (expected equivalent)",
+   "exit": 0,
+   "tests_run": 21,
+   "failing_tests": [],
+   "verdict": "SURVIVED"
+  },
+  {
+   "mutant": "M06 a lock that does not exclude other processes",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal",
+    "test_p9_a_junction_at_ultra_is_refused_and_the_target_untouched",
+    "test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates",
+    "test_p9_nested_calls_reenter_and_another_thread_waits",
+    "test_p9_status_updates_from_two_processes_are_all_kept",
+    "test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index"
+   ],
+   "verdict": "KILLED"
+  },
+  {
+   "mutant": "M07 a reader crashes on a compacted generation",
+   "exit": 1,
+   "tests_run": 21,
+   "failing_tests": [
+    "test_p9_a_reader_tolerates_a_generation_compacted_while_it_reads"
+   ],
+   "verdict": "KILLED"
+  }
+ ],
+ "mutants": 7,
+ "killed": 6,
+ "temp_leftovers_new": []
+}

@@ -1,0 +1,241 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "unittest Run Store regression on the final bytes (guarded runner); two modules skip as wholes: they run only through their own main(), recorded separately",
+ "runner": "wa4a_acceptance.py via run_gate.py (TEMP isolation)",
+ "python": "project .venv",
+ "targets": [
+  "test_audit_observability",
+  "test_provider_attempt_integration",
+  "test_planner_diagnostics",
+  "test_run_auth_failure",
+  "test_rt002_final_audit_m1",
+  "test_rt002_s2_budget_policy"
+ ],
+ "runner_exit": 0,
+ "wall_seconds": 8.918,
+ "tests_run": 52,
+ "failures": 0,
+ "errors": 0,
+ "skips": 2,
+ "isolation_violations": 0,
+ "tests": [
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_consistency_lifecycle_persists_and_renders_without_changing_final_issues",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_consistency_terminal_is_unresolved_and_legacy_panel_stays_clean",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_final_audit_skipped_is_recorded_as_disabled",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_issue_diagnostic_tool_activity_pass_and_reload",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_list_chat_threads_links_task_id_and_keeps_legacy_readable",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_no_issue_and_absent_thread_are_neutral",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_permission_lifecycle_is_persisted_and_rendered",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_terminal_fail_keeps_open_issues_unresolved",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.AuditStorageTests.test_write_and_delete_permission_sections_remain_separate",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.CompactLayoutTests.test_security_interface_and_bottom_composer_structure",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.DiagnosticForkTests.test_provider_failure_is_exposed_to_caller_without_mutation",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.DiagnosticForkTests.test_tool_free_fork_does_not_mutate_executor_messages",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_explicit_audit_button_rereads_same_selected_run_from_disk",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_legacy_assistant_audit_button_remains_available",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_reopen_rebuilds_index_and_failed_run_remains_selected",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_running_task_gets_audit_button_when_run_started_is_observed",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_scroll_resolver_and_debounce_do_not_rerender_same_block",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_send_creates_one_id_and_worker_persists_it_on_assistant",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TaskBlockUiTests.test_user_assistant_buttons_and_explicit_selection_resolve_same_audit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_append_failure_is_local_and_error_events_are_tagged",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_audit_panel_widget_renders_read_only_and_missing_storage_is_explicit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_audit_render_and_producer_linkage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_error_and_audit_colors_apply_to_distinct_tags",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_final_audit_lifecycle_formatting_and_non_error_tags",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_formatter_failure_cannot_stop_polling_or_next_event",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_live_audit_events_refresh_current_run_panel",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_mutation_intent_classification_is_visible_in_live_trace",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_nested_sash_ratios_capture_and_apply",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_new_color_swatches_refresh",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_permission_dialog_rejects_worker_thread",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_permission_request_crosses_worker_to_main_event_queue",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_precise_arguments_are_compact_and_dredd_label_is_ui_only",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_reset_panels_restores_nested_defaults_and_visibility",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_server_rejections_use_error_tags_in_trace_and_audit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_observability.TraceAndUiStateTests.test_ui_state_persists_colors_ratios_visibility",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_audit_diagnostic_emits_executor_attempt_and_usage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_audit_diagnostic_parse_error_closes_attempt",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_audit_routes_attempts_to_role_streams_and_aggregates_once",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_compressor_request_emits_provider_attempt_accounting",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_dredd_emits_completed_and_parse_error_terminals",
+   "status": "PASS"
+  },
+  {
+   "test": "test_provider_attempt_integration.ProviderAttemptIntegrationTests.test_planner_session_emits_started_and_completed_terminal",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticPersistenceTests.test_audit_persists_order_full_content_and_bounded_entries",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticUiTests.test_diagnostics_refresh_audit_without_entering_action_log",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticUiTests.test_filters_tooltips_and_existing_audit_layout",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticUiTests.test_missing_run_store_entry_rerenders_explicit_fallback",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticUiTests.test_render_filters_are_reversible_and_plan_failure_is_explicit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerDiagnosticUiTests.test_ui_state_defaults_saved_values_and_legacy_default",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerRuntimeDiagnosticTests.test_diagnostic_callback_failure_does_not_change_planner_result",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerRuntimeDiagnosticTests.test_invalid_json_preserves_raw_response_before_real_error",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerRuntimeDiagnosticTests.test_normal_response_reports_request_context_response_in_order",
+   "status": "PASS"
+  },
+  {
+   "test": "test_planner_diagnostics.PlannerRuntimeDiagnosticTests.test_runtime_error_diagnostic_uses_safe_message",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_auth_failure.ProviderAuthFailureRunStoreTests.test_missing_credentials_closes_run_as_failed",
+   "status": "PASS"
+  },
+  {
+   "test": "setUpModule (test_rt002_final_audit_m1)",
+   "status": "SKIP",
+   "detail": "run through main(): guards and sandbox are installed there"
+  },
+  {
+   "test": "setUpModule (test_rt002_s2_budget_policy)",
+   "status": "SKIP",
+   "detail": "NOT AN S2 ACCEPTANCE RUN: use the guarded standalone runner"
+  }
+ ]
+}

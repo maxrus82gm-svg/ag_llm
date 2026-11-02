@@ -1,0 +1,70 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "adversarial probes of the P9 change (synthetic TEMP Workspaces)",
+ "rows": [
+  {
+   "result": "refused unsafe_storage_link",
+   "outside_entries_after": [],
+   "verdict": "PROTECTED",
+   "probe": "A1 junction at .ultra"
+  },
+  {
+   "result": "accepted",
+   "outside_entries_after": [
+    "index.json"
+   ],
+   "verdict": "OPEN (pre-existing: Run Store does not verify .ultra/audit; not changed by P9)",
+   "probe": "A2 junction at .ultra/audit"
+  },
+  {
+   "cases": {
+    "broken json": {
+     "result": "refused JSONDecodeError",
+     "bytes_unchanged": true
+    },
+    "array": {
+     "result": "refused ValueError",
+     "bytes_unchanged": true
+    },
+    "newer schema": {
+     "result": "refused ValueError",
+     "bytes_unchanged": true
+    }
+   },
+   "verdict": "PROTECTED (visible error, nothing overwritten)",
+   "probe": "A3 damaged index"
+  },
+  {
+   "loaded_tasks_with_two_equal_revisions": [
+    "tb_11111111111111111111111111111111",
+    "tb_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   ],
+   "next_entry": "T-003",
+   "canonical_revision_after": 3,
+   "generations_left": 0,
+   "verdict": "CHARACTERISED: two generations of one revision (possible only from writers before P9) resolve deterministically to one; the other's entries are not merged back (pre-existing loss stays lost)",
+   "probe": "A4 legacy duplicate generations"
+  },
+  {
+   "result": "refused storage_unavailable",
+   "index_written": false,
+   "verdict": "PROTECTED (visible refusal, no write)",
+   "probe": "A5 .ultra/locks is a file"
+  },
+  {
+   "display_ids": [
+    "T-001",
+    "R-001"
+   ],
+   "seconds": 0.015,
+   "verdict": "NO DEADLOCK (same lock, reentrant in its thread)",
+   "probe": "A6 Run Store under the core lock in the same thread"
+  },
+  {
+   "result": "refused FileNotFoundError",
+   "root_created": false,
+   "verdict": "visible refusal, nothing created (before P9: the root and .ultra were created silently)",
+   "probe": "A7 missing Workspace root"
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "RED: the final test_run_store_v2.py on the ORIGINAL run_store.py (TEMP mirror)",
+ "runner": "pytest via .venv (isolated, see tool docstring)",
+ "selectors": [
+  "test_run_store_v2.py"
+ ],
+ "exit": 1,
+ "wall_seconds": 10.8,
+ "tests_run": 21,
+ "passed": 13,
+ "failures": 8,
+ "errors": 0,
+ "skips": 0,
+ "repository_root_changed": [],
+ "tests": [
+  {
+   "test": "test_run_store_v2.test_ids_and_utf8_offsets_are_stable",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_atomic_json_retries_transient_permission_error",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_persistent_canonical_lock_falls_back_to_generation",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_generation_path_preserves_monotonic_task_and_run_ids",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_primary_index_recovers_and_compacts_generations_after_unlock",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_generation_write_failure_remains_visible",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_summary_only_update_does_not_rewrite_workspace_index",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_new_recorder_has_directory_not_monolith",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_event_sources_reflect_record_ownership",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates",
+   "status": "FAIL",
+   "detail": "assert False"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_repeat_registration_from_two_processes_creates_one_entry",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_identity_conflicts_are_refused_without_any_write",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_nested_calls_reenter_and_another_thread_waits",
+   "status": "FAIL",
+   "detail": "AssertionError: another thread wrote the index while the lock was held"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal",
+   "status": "FAIL",
+   "detail": "AssertionError: a busy Workspace must be refused visibly"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index",
+   "status": "FAIL",
+   "detail": "assert False"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_status_updates_from_two_processes_are_all_kept",
+   "status": "FAIL",
+   "detail": "AssertionError: assert ['DONE_a', 'D...'DONE_a', ...] == ['DONE_a', 'D...'DONE_a', ...]"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_the_index_is_never_published_outside_the_lock",
+   "status": "FAIL",
+   "detail": "AssertionError: an index publication without the lock must be refused"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_a_junction_at_ultra_is_refused_and_the_target_untouched",
+   "status": "FAIL",
+   "detail": "AssertionError: a junction at .ultra must be refused"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_a_damaged_index_is_a_visible_error_and_is_not_overwritten",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_p9_a_reader_tolerates_a_generation_compacted_while_it_reads",
+   "status": "FAIL",
+   "detail": "FileNotFoundError: <tmp>\\basetemp\\test_p9_a_reader_tolerates_a_g0\\.ultra\\audit\\index_generations\\index-00000000000000000001-8f492d3768144cb59bcd5a98441744e"
+  }
+ ]
+}

@@ -1,0 +1,101 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "baseline of the pytest-style Run Store regression on the base bytes",
+ "runner": "pytest via .venv (isolated, see tool docstring)",
+ "selectors": [
+  "test_audit_v2_compatibility.py",
+  "test_usage_accounting.py",
+  "test_executor_context_delta.py",
+  "test_audit_lazy_ui.py"
+ ],
+ "exit": 0,
+ "wall_seconds": 4.1,
+ "tests_run": 20,
+ "passed": 20,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "repository_root_changed": [],
+ "tests": [
+  {
+   "test": "test_audit_v2_compatibility.test_legacy_read_and_lightweight_lookup",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_v2_compatibility.test_v2_compatibility_is_explicit",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_extract_and_aggregate_usage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_provider_attempt_started_without_terminal_is_incomplete",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_unknown_terminal_usage_stays_unknown_not_zero",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_recorder_accounts_each_provider_role_and_not_synthetic_dispatch",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_duplicate_terminal_marks_accounting_incomplete_without_double_count",
+   "status": "PASS"
+  },
+  {
+   "test": "test_usage_accounting.test_verifier_result_preserves_provider_usage",
+   "status": "PASS"
+  },
+  {
+   "test": "test_executor_context_delta.test_executor_base_delta_and_reconstruction",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_chat_startup_has_no_full_audit_listing",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_selected_run_loads_summary_index_then_one_record",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_planner_chat_reads_only_planner_stream",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_trace_limit_constant",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_missing_selected_run_storage_is_explicit_in_audit_and_planner",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_v2_visibility_filters_keep_general_facts",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_planner_error_filter_hides_only_planner_error_records",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_export_is_filtered_chronological_read_only_and_never_uses_legacy",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_copy_export_uses_one_complete_snapshot",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_save_export_writes_utf8_same_snapshot",
+   "status": "PASS"
+  },
+  {
+   "test": "test_audit_lazy_ui.test_audit_treeview_uses_dedicated_theme_style",
+   "status": "PASS"
+  }
+ ]
+}

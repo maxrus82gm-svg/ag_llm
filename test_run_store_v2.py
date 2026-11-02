@@ -190,3 +190,316 @@ def test_event_sources_reflect_record_ownership(tmp_path: Path):
         recorder._persist_event({'event': event, 'timestamp': sequence})
     recorded = {item['event']: item['source'] for item in list_run_records(tmp_path, 'run')}
     assert recorded == expected
+
+
+# --- P9 (CLAUDE-WUA-CHAT-RUNSTORE-P9-001): concurrent writers of the Run Store v2 index -------------------------------
+# Real child processes released together by a file barrier; the oracle reads the index files with plain json (canonical
+# index.json and index_generations/*.json, highest revision wins) instead of run_store's own loader where it matters.
+
+import hashlib as _hashlib
+import os as _os
+import subprocess as _subprocess
+import sys as _sys
+import threading as _threading
+import time as _time
+
+import context_storage as _core
+
+_REPO = Path(run_store.__file__).resolve().parent
+_CHILD = r"""
+import json, sys, time
+from pathlib import Path
+repo, root, prefix, count, ready, go, mode = sys.argv[1:8]
+sys.path.insert(0, repo)
+import run_store
+Path(ready).write_text("1")
+while not Path(go).exists():
+    time.sleep(0.001)
+returned, errors = {}, []
+for k in range(int(count)):
+    task = "tb_" + ("%032d" % k if mode == "same" else (prefix + "%031d" % k)[-32:])
+    try:
+        if mode in ("new", "same"):
+            returned[task] = run_store.ensure_task_index_entry(root, task, "chat")["display_id"]
+            if mode == "new":
+                run = "run_%s_%03d" % (prefix, k)
+                returned[run] = run_store.ensure_run_index_entry(root, run, task, "chat")["display_id"]
+        else:
+            run_store.update_run_summary_index(root, "run_%s_%03d" % (prefix, k), {"run_status": "DONE_" + prefix})
+    except Exception as exc:
+        errors.append(type(exc).__name__)
+print(json.dumps({"returned": returned, "errors": errors}))
+"""
+
+
+def _raw_index(root: Path) -> dict:
+    audit = root / ".ultra" / "audit"
+    found = []
+    if (audit / "index.json").is_file():
+        value = json.loads((audit / "index.json").read_text(encoding="utf-8"))
+        found.append((value["revision"], 1, value))
+    for path in sorted((audit / "index_generations").glob("index-*.json")) if (audit / "index_generations").is_dir() else []:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        found.append((value["revision"], 0, value))
+    return max(found, key=lambda item: (item[0], item[1]))[2]
+
+
+def _together(root: Path, prefixes, count, mode, *, hold_index=False):
+    base = root.parent
+    go = base / "go"
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+                                   str(base / f"ready_{p}"), str(go), mode],
+                                  stdout=_subprocess.PIPE, stderr=_subprocess.PIPE, text=True, encoding="utf-8")
+                for p in prefixes]
+    try:
+        for p in prefixes:
+            deadline = _time.monotonic() + 60
+            while not (base / f"ready_{p}").exists():
+                assert _time.monotonic() < deadline, "a child did not start"
+                _time.sleep(0.01)
+        holder = open(run_store.workspace_index_path(root), "rb") if hold_index else None
+        go.write_text("1")
+        answers = []
+        try:
+            for child in children:
+                out, err = child.communicate(timeout=300)
+                assert child.returncode == 0, err[-600:]
+                answers.append(json.loads(out.strip().splitlines()[-1]))
+        finally:
+            if holder is not None:
+                holder.close()
+        return answers
+    finally:
+        for child in children:
+            if child.poll() is None:
+                child.kill()
+                child.communicate(timeout=30)
+
+
+def _numbers(display_ids):
+    return sorted(int(d.split("-")[1]) for d in display_ids)
+
+
+def test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates(tmp_path: Path):
+    root = tmp_path / "w"
+    root.mkdir()
+    for prefixes, count in ((["a", "b"], 25), (["c", "d", "e", "f"], 8)):
+        before = len(_raw_index(root)["tasks"]) if run_store.workspace_index_path(root).is_file() else 0
+        answers = _together(root, prefixes, count, "new")
+        assert all(a["errors"] == [] for a in answers)
+        index = _raw_index(root)
+        added = len(prefixes) * count
+        assert len(index["tasks"]) == before + added and len(index["runs"]) == before + added, "an entry was lost"
+        assert _numbers(t["display_id"] for t in index["tasks"].values()) == list(range(1, before + added + 1))
+        assert _numbers(r["display_id"] for r in index["runs"].values()) == list(range(1, before + added + 1))
+        assert index["next_task_number"] == index["next_run_number"] == before + added + 1
+        for run in index["runs"].values():
+            assert run["run_id"] in index["tasks"][run["task_block_id"]]["runs"]
+        handed = [(key, display) for a in answers for key, display in a["returned"].items()]
+        final = {**{k: v["display_id"] for k, v in index["tasks"].items()}, **{k: v["display_id"] for k, v in index["runs"].items()}}
+        assert all(final[key] == display for key, display in handed), "a caller was given a number that is not stored"
+    assert index["revision"] == 2 * len(index["tasks"]), "one confirmed revision per new task and per new run"
+    assert not (root / ".ultra/audit/index_generations").exists()
+    assert not list((root / ".ultra/audit").glob(".*.tmp"))
+
+
+def test_p9_repeat_registration_from_two_processes_creates_one_entry(tmp_path: Path):
+    root = tmp_path / "w"
+    root.mkdir()
+    answers = _together(root, ["a", "b"], 15, "same")
+    index = _raw_index(root)
+    assert len(index["tasks"]) == 15 and index["next_task_number"] == 16
+    assert answers[0]["returned"] == answers[1]["returned"], "both callers must get the same number for the same task"
+    assert _numbers(t["display_id"] for t in index["tasks"].values()) == list(range(1, 16))
+
+
+def test_p9_identity_conflicts_are_refused_without_any_write(tmp_path: Path):
+    task, other = "tb_" + "1" * 32, "tb_" + "2" * 32
+    create_run_summary(tmp_path, "ws", "chat", task, "run1")
+    ensure_task_index_entry(tmp_path, other, "chat")
+    canonical = run_store.workspace_index_path(tmp_path)
+    before = canonical.read_bytes()
+    for call in (lambda: ensure_task_index_entry(tmp_path, task, "other_chat"),
+                 lambda: ensure_run_index_entry(tmp_path, "run1", other, "chat"),
+                 lambda: ensure_run_index_entry(tmp_path, "run1", task, "other_chat")):
+        try:
+            call()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("a conflicting identity was accepted")
+    assert canonical.read_bytes() == before
+    assert ensure_run_index_entry(tmp_path, "run1", task, "chat")["display_id"] == "R-001"
+    assert canonical.read_bytes() == before, "a repeated registration writes nothing"
+
+
+def test_p9_nested_calls_reenter_and_another_thread_waits(tmp_path: Path):
+    task = "tb_" + "3" * 32
+    started = _time.monotonic()
+    create_run_summary(tmp_path, "ws", "chat", task, "run1")  # create -> ensure_run -> ensure_task, one lock
+    assert _time.monotonic() - started < 5, "a nested call waited for its own lock"
+    anchor = _core._write_anchor(tmp_path.resolve())
+    results = []
+    with _core._workspace_writer_lock(anchor):
+        worker = _threading.Thread(target=lambda: results.append(
+            ensure_task_index_entry(tmp_path, "tb_" + "4" * 32, "chat")["display_id"]))
+        worker.start()
+        _time.sleep(0.3)
+        assert results == [], "another thread wrote the index while the lock was held"
+    worker.join(15)
+    assert results == ["T-002"]
+    assert _core._held_writer_locks() == {}
+
+
+def test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal(tmp_path: Path, monkeypatch):
+    task = "tb_" + "5" * 32
+    ensure_task_index_entry(tmp_path, task, "chat")
+    canonical = run_store.workspace_index_path(tmp_path)
+    before = canonical.read_bytes()
+    held = tmp_path / "held"
+    hold = ("import sys, time\nfrom pathlib import Path\nsys.path.insert(0, sys.argv[1])\nimport context_storage as cs\n"
+            "with cs._workspace_writer_lock(cs._write_anchor(Path(sys.argv[2]).resolve())):\n"
+            "    open(sys.argv[3], 'w').close()\n    time.sleep(60)\n")
+    holder = _subprocess.Popen([_sys.executable, "-B", "-c", hold, str(_REPO), str(tmp_path), str(held)])
+    try:
+        deadline = _time.monotonic() + 60
+        while not held.exists():
+            assert _time.monotonic() < deadline
+            _time.sleep(0.01)
+        monkeypatch.setattr(_core, "WRITER_LOCK_TIMEOUT_SECONDS", 0.4)
+        for call in (lambda: ensure_task_index_entry(tmp_path, "tb_" + "6" * 32, "chat"),
+                     lambda: create_run_summary(tmp_path, "ws", "chat", task, "run1")):
+            started = _time.monotonic()
+            try:
+                call()
+            except _core.WorkspaceBusyError as exc:
+                assert exc.code == "workspace_busy"
+            else:
+                raise AssertionError("a busy Workspace must be refused visibly")
+            assert 0.35 <= _time.monotonic() - started < 10, "the wait must be bounded"
+        assert canonical.read_bytes() == before
+    finally:
+        holder.kill()
+        holder.communicate(timeout=30)
+    monkeypatch.setattr(_core, "WRITER_LOCK_TIMEOUT_SECONDS", 5)
+    assert ensure_task_index_entry(tmp_path, "tb_" + "6" * 32, "chat")["display_id"] == "T-002", "after the holder died"
+
+
+def test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success(tmp_path: Path):
+    canonical = run_store.workspace_index_path(tmp_path)
+    ensure_task_index_entry(tmp_path, "tb_" + "7" * 32, "chat")
+    die = ("import os, sys\nsys.path.insert(0, sys.argv[1])\nimport run_store\nreal = os.replace\n"
+           "def die(*a, **k):\n    if sys.argv[3] == 'after':\n        real(*a, **k)\n    os._exit(17)\n"
+           "os.replace = die\nrun_store.ensure_run_index_entry(sys.argv[2], 'run_x', 'tb_' + '8' * 32, 'chat')\n")
+    before = canonical.read_bytes()
+    child = _subprocess.run([_sys.executable, "-B", "-c", die, str(_REPO), str(tmp_path), "before"], capture_output=True)
+    assert child.returncode == 17
+    assert canonical.read_bytes() == before, "nothing unconfirmed was published"
+    child = _subprocess.run([_sys.executable, "-B", "-c", die, str(_REPO), str(tmp_path), "after"], capture_output=True)
+    assert child.returncode == 17
+    first = load_workspace_run_index(tmp_path)
+    assert first["tasks"]["tb_" + "8" * 32]["display_id"] == "T-002", "the task step was published before the death"
+    assert "run_x" not in first["runs"]
+    entry = ensure_run_index_entry(tmp_path, "run_x", "tb_" + "8" * 32, "chat")  # the repeat after a restart
+    again = load_workspace_run_index(tmp_path)
+    assert (entry["display_id"], again["tasks"]["tb_" + "8" * 32]["display_id"], again["next_task_number"]) == ("R-001", "T-002", 3)
+
+
+def test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index(tmp_path: Path):
+    root = tmp_path / "w"
+    root.mkdir()
+    ensure_task_index_entry(root, "tb_" + "f" * 32, "chat")
+    answers = _together(root, ["a", "b"], 8, "new", hold_index=True)
+    assert all(a["errors"] == [] for a in answers)
+    generations = sorted((root / ".ultra/audit/index_generations").glob("index-*.json"))
+    revisions = [json.loads(p.read_text(encoding="utf-8"))["revision"] for p in generations]
+    assert len(revisions) == len(set(revisions)) == 32, "every fallback write got its own revision"
+    index = _raw_index(root)
+    assert len(index["tasks"]) == 17 and len(index["runs"]) == 16
+    ensure_task_index_entry(root, "tb_" + "e" * 32, "chat")  # the index is free again: canonical recovers
+    canonical = json.loads(run_store.workspace_index_path(root).read_text(encoding="utf-8"))
+    assert canonical["revision"] == max(revisions) + 1 and len(canonical["tasks"]) == 18
+    assert not list((root / ".ultra/audit/index_generations").glob("index-*.json")), "generations compacted"
+
+
+def test_p9_status_updates_from_two_processes_are_all_kept(tmp_path: Path):
+    root = tmp_path / "w"
+    root.mkdir()
+    for prefix in ("a", "b"):
+        for k in range(12):
+            create_run_summary(root, "ws", "chat", "tb_" + (prefix + "%031d" % k)[-32:], "run_%s_%03d" % (prefix, k))
+    _together(root, ["a", "b"], 12, "status")
+    runs = _raw_index(root)["runs"]
+    assert sorted(r["run_status"] for r in runs.values()) == ["DONE_a"] * 12 + ["DONE_b"] * 12
+
+
+def test_p9_the_index_is_never_published_outside_the_lock(tmp_path: Path):
+    ensure_task_index_entry(tmp_path, "tb_" + "9" * 32, "chat")
+    index = load_workspace_run_index(tmp_path)
+    before = run_store.workspace_index_path(tmp_path).read_bytes()
+    try:
+        run_store._save_index(tmp_path, index)
+    except RuntimeError as exc:
+        assert "lock" in str(exc)
+    else:
+        raise AssertionError("an index publication without the lock must be refused")
+    assert run_store.workspace_index_path(tmp_path).read_bytes() == before
+
+
+def test_p9_a_junction_at_ultra_is_refused_and_the_target_untouched(tmp_path: Path):
+    import _winapi
+    outside = tmp_path / "outside"
+    (outside / ".ultra_target").mkdir(parents=True)
+    root = tmp_path / "w"
+    root.mkdir()
+    _winapi.CreateJunction(str(outside / ".ultra_target"), str(root / ".ultra"))
+    try:
+        before = sorted(p.name for p in (outside / ".ultra_target").rglob("*"))
+        try:
+            ensure_task_index_entry(root, "tb_" + "a" * 32, "chat")
+        except _core.StorageWriteError as exc:
+            assert exc.code == "unsafe_storage_link"
+        else:
+            raise AssertionError("a junction at .ultra must be refused")
+        assert sorted(p.name for p in (outside / ".ultra_target").rglob("*")) == before
+    finally:
+        _os.rmdir(root / ".ultra")
+
+
+def test_p9_a_damaged_index_is_a_visible_error_and_is_not_overwritten(tmp_path: Path):
+    ensure_task_index_entry(tmp_path, "tb_" + "b" * 32, "chat")
+    canonical = run_store.workspace_index_path(tmp_path)
+    for payload in (b"{", b"[]", json.dumps({"schema_version": 3, "tasks": {}, "runs": {}}).encode()):
+        canonical.write_bytes(payload)
+        try:
+            ensure_task_index_entry(tmp_path, "tb_" + "c" * 32, "chat")
+        except ValueError:  # json.JSONDecodeError is a ValueError
+            pass
+        else:
+            raise AssertionError("a damaged index must not be replaced by a fresh one")
+        assert canonical.read_bytes() == payload
+
+
+def test_p9_a_reader_tolerates_a_generation_compacted_while_it_reads(tmp_path: Path, monkeypatch):
+    real_replace = run_store.os.replace
+    canonical = run_store.workspace_index_path(tmp_path).resolve()
+    locked = {"value": True}
+
+    def sometimes_locked(source, destination):
+        if locked["value"] and Path(destination).resolve() == canonical:
+            raise PermissionError("held by a reader")
+        return real_replace(source, destination)
+    monkeypatch.setattr(run_store.os, "replace", sometimes_locked)
+    monkeypatch.setattr(run_store.time, "sleep", lambda _delay: None)
+    ensure_task_index_entry(tmp_path, "tb_" + "d" * 32, "chat")  # canonical held: written as a generation
+    generations = list((tmp_path / ".ultra/audit/index_generations").glob("index-*.json"))
+    assert len(generations) == 1
+    real_load = run_store._load_index_file
+
+    def compacted_meanwhile(path):
+        if path.parent.name == "index_generations":  # a writer published the canonical index and removed it
+            raise FileNotFoundError(path)
+        return real_load(path)
+    monkeypatch.setattr(run_store, "_load_index_file", compacted_meanwhile)
+    index = load_workspace_run_index(tmp_path)  # a lock-free reader: older but whole, never a crash
+    assert index["revision"] == 0 and index["tasks"] == {}

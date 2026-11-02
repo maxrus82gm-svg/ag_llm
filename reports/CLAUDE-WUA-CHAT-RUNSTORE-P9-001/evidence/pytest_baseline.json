@@ -1,0 +1,54 @@
+{
+ "task": "CLAUDE-WUA-CHAT-RUNSTORE-P9-001",
+ "purpose": "baseline of the existing Run Store tests on the base bytes (before any change)",
+ "runner": "pytest via .venv (isolated, see tool docstring)",
+ "selectors": [
+  "test_run_store_v2.py"
+ ],
+ "exit": 0,
+ "wall_seconds": 4.4,
+ "tests_run": 9,
+ "passed": 9,
+ "failures": 0,
+ "errors": 0,
+ "skips": 0,
+ "repository_root_changed": [],
+ "tests": [
+  {
+   "test": "test_run_store_v2.test_ids_and_utf8_offsets_are_stable",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_atomic_json_retries_transient_permission_error",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_persistent_canonical_lock_falls_back_to_generation",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_generation_path_preserves_monotonic_task_and_run_ids",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_primary_index_recovers_and_compacts_generations_after_unlock",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_generation_write_failure_remains_visible",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_summary_only_update_does_not_rewrite_workspace_index",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_new_recorder_has_directory_not_monolith",
+   "status": "PASS"
+  },
+  {
+   "test": "test_run_store_v2.test_event_sources_reflect_record_ownership",
+   "status": "PASS"
+  }
+ ]
+}
