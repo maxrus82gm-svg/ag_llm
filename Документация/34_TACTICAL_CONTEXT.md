@@ -2,6 +2,10 @@
 
 **Срез:** 02.11.2026, LLM15 + WEB20 coordination. LLM15: `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` GitHub independent bounded diagnostic/architecture PASS, **task PARTIAL** (.77 Colibri NOT VERIFIED); 28/28 evidence integrity including CRLF reconstruction. WEB20 P9 candidate (assignment unconfirmed). Stage2 №479 bounded PASS + WEB19 focused Windows PASS; full regression, Stage3/live/paid NOT RUN/HOLD. WA4-R PARTIAL.
 
+## Дополнение 02.11.2026 — Астра / Blueprint LLM
+
+**Старт работ зафиксирован:** актуальный отчёт Астры — [[42_Астра_Архитектура блока LLM.md]] (развёрнутый архитектурный анализ). В GitHub появился начальный редактор «Блюпринт LLM» с универсальными блоками, настройками, связями, сохранением и синтетическим предпросмотром; работа над прототипом продолжается, **независимая приёмка и реальные вызовы LLM не подтверждены**. Сегодня никаких новых задач не назначаем и архитектуру не меняем. После завершения текущей работы Астры — запросить план дальнейшей реализации по её отчёту и фактическому коду, затем согласовать исполнителей. Подробности: [[Blueprint LLM - тактический контекст]] → срез 02.11.2026.
+
 ## Постоянные ориентиры
 
 - Проект `ag_llm / Web Alarm Ultra`. Локальный корень этого снимка `M:/GitHub/ag_llm`; идентификатор репозитория `maxrus82gm-svg/ag_llm`. Переносимый продукт не должен жёстко зависеть от этого пути.
