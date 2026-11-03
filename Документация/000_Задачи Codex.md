@@ -1,6 +1,6 @@
 # Рабочая карточка исполнителя — Codex 007
 
-**Назначение:** персональная TASK и factual результаты Codex 007. Правила актуализированы 27.10.2026 по прямому поручению пользователя Astra/Codex о документационных каркасах. БЛОКИ 2–4 содержат последнее ограниченное независимое заключение LLM15 по `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` (BOUNDED PASS / TASK PARTIAL), историю №483 и прежние verdict. БЛОК 1 WAITING; БЛОК 1.1 сохраняет предыдущую постановку №483, а новая полная TASK восстановима из проверенного `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/assignment_source.txt` и №001. Никаких новых implementation GO.
+**Назначение:** персональная TASK и factual результаты Codex 007. Правила актуализированы 27.10.2026 по прямому поручению пользователя Astra/Codex о документационных каркасах. БЛОКИ 2–4 содержат последнее ограниченное независимое заключение LLM15 по `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` (BOUNDED PASS / TASK PARTIAL), историю №483 и прежние verdict. БЛОК 1 фактически занят сданной `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` / SLOT HOLD до штатной ротации; БЛОК 1.1 сохраняет предыдущую постановку №483, а полная TASK восстановима из проверенного `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/assignment_source.txt` и №001. Никаких новых implementation GO.
 
 ## Рабочий порядок
 
