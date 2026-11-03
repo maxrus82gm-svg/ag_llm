@@ -1,0 +1,20 @@
+# WEB21 — Independent bounded review — CODEX-WUA-CHAT-UI-INTEGRATION-001
+
+**Date:** 2026-11-04. **Verifier:** ChatGPT WEB21. **Published source:** `main@5ca3ed1b3a3259e5d95b7416b336aecf1df61d10` (№499). **Verdict:** **PASS / BOUNDED SOURCE + AUTHOR-EVIDENCE; independent runtime NOT RUN**, DOC ITERATION CLOSED in proposed GPT documentation, NOT full product/Windows/CI/E2E PASS.
+
+## Verification performed independently
+
+1. Read user's exact B1 task in Codex card and compared its text to `reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/assignment_source.txt`: **exact after trimming boundary whitespace**. Old discovery task correctly rotated into B1.1, evidenced by `slot_check.json`, `slot_dry_run.json`, `slot_rotate.json` (`ROTATED`, `copied_exact=true`), `slot_readback.json`, `handoff_task.md`; previous №483 snapshot preserved. Current B1 NOT ROTATED after UI task submission.
+2. Independently calculated SHA-256 and UTF-8 byte counts on all 13 published manifest paths: **13/13 match**. Five files original LF: `assignment_source.txt`, `browser_evidence.md`, `report.md`, `workspace_probe.py`, `test_web_alarm_ultra_chat_ui.js`; eight files matched exactly when GitHub-decoded LF was returned to original CRLF: `checks.json`, `privacy-before.tap`, `python-tests.txt`, `ui-after.tap`, `ui-before.tap`, `ui-intermediate.tap`, `workspace_probe.json`, `web_alarm/ui.py`. No unexplained mismatches. SHA calculation independently spot-validated using standard SHA256('abc').
+3. Reviewed original source patch: `web_alarm/ui.py` adds `chatRegisterWorkspace` button and dispatch to existing `addWorkspace` form, returns from operator view with `loadChatWorkspaces` without resetting a valid chat; known and unexpected read/write errors use controlled UI text. `test_web_alarm_ultra_chat_ui.js` adds corresponding DOM tests and adjusts one lost-reply expectation. No application API/storage/Blueprint/EVM/launcher implementation changed in task. `chatComposer` remains non-sending; `chatSend` disabled.
+4. Reviewed author's `checks.json` commands/exit=0, TAP logs (reported Node **66 PASS**), `python-tests.txt` (**57 tests, OK**), `workspace_probe.py` and `workspace_probe.json` (disposable TEMP, real loopback HTTP, registration, no duplicating create, RAW roundtrip, reopen), and `browser_evidence.md` (actual served browser narrative; native picker/form POST in browser NOT TESTED). These are **author reports**, NOT independently rerun by verifier.
+5. Published commit №499 also contains earlier, separately scoped Codex slot rotation and `.obsidian/workspace.json` user metadata. Report's "only UI files changed" means within this UI task's product/test code, not all files in the user publication. Do not attribute extra paths to Codex's UI write scope. No correction or revert of user Obsidian state made.
+
+## Findings and limits
+
+- No blocker found in the scoped source/evidence readback. No independent Windows/Tkinter launch, native picker, physical browser interaction, responsive screen sizes, independent Node/Python/HTTP/CI regression. The author's 66/57 PASS is NOT the verifier's runtime outcome.
+- Registration shares existing operator `POST /workspaces` and core services; common storage is **bounded synthetic evidence**, not a real user data migration. Existing write capability governs create/rename.
+- `FOLLOWUP-WUA-CHAT-UI-GUI-001` and `FOLLOWUP-WUA-CHAT-UI-INDEP-RUNTIME-001` remain OPEN/UNASSIGNED. Existing Stage3/P9 audit path, writer ownership, staging, Tk readers P1–P6, portability and inference gates NOT RESOLVED. Stage3/live/paid/MCP freeze unchanged.
+- User must accept the documentation-only commit and sync local main. Current Codex B1 remains full submitted UI TASK; before any next TASK, rotate by `tools/task_slot_rotate.py` with archive guard and submit new user-approved assignment. Never clear B1 manually, never overwrite 1.1 manually.
+
+**Documentation:** №05 `REG-WEB21-CODEX-UI-INTEGRATION-20261104`, №06 `EVT-WEB21-CODEX-UI-INTEGRATION-20261104`, №001 Codex, Codex B2–B4, №34, №37 supplementary note, №40. No runtime code/test changes in this document commit.

@@ -171,6 +171,8 @@ Tkinter сохраняется до доказанного соответств�
 
 Последующая адресная Windows-проверка WEB19: №06 `EVT-WEB19-S2-INDEP-WINDOWS-20261101`; полная independent regression/CI NOT RUN. Stage3/live/paid остаются без USER GO.
 
+**WEB21 / 04.11.2026 — уточнение доказательств Stage1–2 (НЕ изменение утверждённой программы):** `CODEX-WUA-CHAT-UI-INTEGRATION-001`, source №499 `main@5ca3ed1b3a3259e5d95b7416b336aecf1df61d10`, ограниченный source/evidence **PASS**, 13/13 manifest hashes/bytes, автор 66 JS PASS / 57 Python PASS и synthetic HTTP/browser smoke. На экране Ultra Chat добавлен переход к существующей регистрации Workspace, возврат обновляет каталог, выбранный действующий диалог сохраняется; общий storage/HTTP/core не дублируется. Реальный Tkinter GUI, native picker, responsive Windows viewport и independent runtime/CI **NOT RUN**; `FOLLOWUP-WUA-CHAT-UI-GUI-001`, `FOLLOWUP-WUA-CHAT-UI-INDEP-RUNTIME-001` OPEN. Отправка не активирована, это не product / Stage3 PASS и не live/provider GO; P9 audit-path, RUN writer, staging, Tk P1–P6 и все прежние gates остаются.
+
 ### Этап 3. Отправка сообщений и восстановление
 
 **Зачем:** пользователь должен понимать, принят ли запрос, и не получать дубли из-за повторного нажатия или перезапуска.

@@ -15,11 +15,18 @@
 
 ## Указатель пяти последних
 
-- 2026-10-21 — CODEX-WUA-0-MCP-CHATGPT-V2RAY-INTEGRATION-001 — RESULT READY; independent NOT VERIFIED
-- 2026-10-21 — CODEX-WUA-0-WINDOWS-LAB-GATE-001 — PARTIAL; BOUNDED OFFLINE ACCEPTED
-- 2026-10-20 — CODEX-WUA-0-WFP-OFFLINE-BACKEND-001 — RESULT READY; NATIVE NOT VERIFIED
-- 2026-10-20 — CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001 — RESULT READY; INSTALLER BLOCKED
-- 2026-10-19 — CODEX-WUA-0-IDENTITY-EGRESS-REVIEW-001 — RESULT READY; OS NOT VERIFIED
+- 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — WEB21 BOUNDED SOURCE+EVIDENCE PASS, independent runtime NOT RUN; report `reports/CHATGPT-WEB21-CODEX-UI-INTEGRATION-REVIEW-20261104/review.md`
+- 2026-11-02 — `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — LLM15 bounded PASS, TASK PARTIAL; 04.11 штатная ротация VERIFIED
+- 2026-11-01 — `CODEX-WUA-DOC-WEB19-REPAIR-001`, №483 — bounded document PASS
+- 2026-11-01 — `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`, №482 — USER SLOT RELEASE; PARTIAL
+- 2026-10-26 — `ASTRA-WUA-37-ROADMAP-REVISION-001` — bounded document PASS; №37 approved
+
+## 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — полная исходная постановка и независимая приёмка
+
+- **Исходная TASK (без пересказа и сокращения):** `reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/assignment_source.txt`, SHA-256 `40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628`, проверенное совпадение с БЛОКОМ 1 в `main@5ca3ed1b3a3259e5d95b7416b336aecf1df61d10`.
+- **Автор:** Codex 007, `RESULT READY / AWAITING INDEPENDENT VERIFICATION`. Фактический код: `web_alarm/ui.py` и `test_web_alarm_ultra_chat_ui.js`; отчет и 13-файловый манифест в `reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/`. Автор 66 JS PASS, 57 Python PASS, одноразовый loopback HTTP + browser smoke. Tkinter GUI, native picker, viewport resizing и полный independent runtime/CI NOT RUN.
+- **Независимо:** WEB21 `PASS / BOUNDED SOURCE + AUTHOR-EVIDENCE; independent runtime NOT RUN`, 13/13 hashes/sizes (5 LF, 8 CRLF), адресная проверка исходников, тестов и evidence, собственный runtime NOT RUN. Review `reports/CHATGPT-WEB21-CODEX-UI-INTEGRATION-REVIEW-20261104/review.md`; №05 `REG-WEB21-CODEX-UI-INTEGRATION-20261104`, №06 `EVT-WEB21-CODEX-UI-INTEGRATION-20261104`. БЛОК 1 намеренно не очищен до новой правильной ротации; БЛОК 1.1 = предыдущая диагностическая TASK после штатного slot ROTATED.
+- **NEXT / OPEN:** `FOLLOWUP-WUA-CHAT-UI-GUI-001`, `FOLLOWUP-WUA-CHAT-UI-INDEP-RUNTIME-001`, прежние P9/Tk/staging. Ни Stage3, ни inference/paid/live не запускались.
 
 ## Полный архив исходной карточки на 2026-10-23
 
