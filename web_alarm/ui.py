@@ -284,6 +284,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <p class="side-title spaced">WORKSPACE</p>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
 <div id="chatWorkspaceList" class="chat-picks" aria-label="Зарегистрированные Workspace"></div>
+<div class="chat-actions"><button type="button" id="chatRegisterWorkspace">Подключить папку Workspace</button></div>
 <p class="side-title spaced">ДИАЛОГИ</p>
 <p id="chatListState" class="muted" role="status">Выберите Workspace.</p>
 <div id="chatList" class="chat-picks" aria-label="Сохранённые диалоги"></div>
@@ -294,7 +295,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="chat-actions"><button type="submit" id="chatNameSave" class="primary">Сохранить</button><button type="button" id="chatNameCancel">Отмена</button></div>
 <p id="chatNameError" class="chat-model-error" role="alert" hidden></p>
 </form>
-<p class="muted spaced">Новую папку добавляют в операторской панели (+ у списка проектов). Здесь можно создать и переименовать диалог в общей истории Ultra — его видит и Tk-интерфейс. Сообщения отсюда пока не отправляются.</p>
+<p class="muted spaced">Чтобы открыть старые диалоги, подключите существующую папку Workspace Ultra и вернитесь в Ultra Chat. Выберите Workspace и диалог. История остаётся в исходной папке.</p>
 </nav>
 <div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
 <div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
@@ -1049,7 +1050,7 @@ function rememberView(name){
   try{if(typeof history!=='undefined'&&typeof location!=='undefined'&&history.replaceState)history.replaceState(null,'','#'+name)}catch(_){}
 }
 function showView(name,initial=false){
-  if(!VIEWS[name])name='chat';evm.view=name;
+  if(!VIEWS[name])name='chat';const previous=evm.view;evm.view=name;
   if(name!=='evm'){closePeek();pinCancel()}  // pinned windows stay (hidden with EVM), the preview goes
   for(const [key,[region,button]] of Object.entries(VIEWS)){$(region).hidden=key!==name;$(button).setAttribute('aria-pressed',String(key===name))}
   $('showWorkspaces').hidden=name!=='operator';$('showTasks').hidden=name!=='operator';
@@ -1057,7 +1058,11 @@ function showView(name,initial=false){
   if(!initial)rememberView(name);
   if(name==='blueprint'){if(!initial)$('blueprintHeading').focus();if(window.UltraBlueprint)window.UltraBlueprint.open();return}
   if(name==='evm'){if(!initial)$('evmHeading').focus();return loadEvm()}
-  if(name==='chat'){if(!initial)$('chatHeading').focus();return startChat()}
+  if(name==='chat'){
+    if(!initial)$('chatHeading').focus();
+    if(previous==='operator'&&chat.started)return loadChatWorkspaces();
+    return startChat()
+  }
   if(!initial)$('main').focus()
 }
 function validEvm(data){
@@ -1887,12 +1892,14 @@ async function chatGet(path){
     if(e.code!=='ultra_chat_token_invalid')throw e;
     chat.token=null;await loadChatAccess();// the server was restarted: one new capability, one repeat
     try{return await api(path,{headers:{[CHAT_TOKEN_HEADER]:chat.token}})}
-    catch(again){if(again.code==='ultra_chat_token_invalid'){chat.token=null;throw Error('Доступ к истории недействителен — обновите страницу.')}throw again}
+    catch(again){if(again.code==='ultra_chat_token_invalid'){chat.token=null;throw Object.assign(Error(),{chatTokenRejected:true})}throw again}
   }
 }
 function chatFailure(e){
   if(e.chatUnavailable){text('chatAccess',e.message);notice('chatError','');chat.workspaces=[];chat.chats=[];renderChatWorkspaces();renderChatList();text('chatWorkspaceState','');text('chatListState','');return}
-  notice('chatError',e.message)
+  notice('chatError',e.chatTokenRejected?'Доступ к истории недействителен — обновите страницу.':
+    e.httpStatus===403?'Сервер не разрешил чтение истории. Проверьте доступ и нажмите «Обновить».':
+    'Не удалось загрузить данные Ultra Chat. Проверьте, запущен ли Web Alarm, и нажмите «Обновить».')
 }
 function chatPick(label,detail,current,onclick){
   const b=element('button',null,'chat-pick');b.type='button';b.setAttribute('aria-current',String(current));
@@ -2074,8 +2081,8 @@ async function loadChatWriteAccess(){
   const c=(await api('/ui/ultra-chat/write-capability'))?.ultra_chat_write;
   if(!c||typeof c.available!=='boolean'||c.header!==CHAT_WRITE_HEADER)throw Error('Некорректный ответ сервера о праве изменения');
   chatEdit.token=c.available&&typeof c.token==='string'&&c.token.length>=32?c.token:null;
-  if(!chatEdit.token)throw Error(c.reason==='disabled'?'Создание и переименование диалогов выключены при запуске сервера.':
-    c.reason==='non_loopback_bind'?'Создание и переименование недоступны: сервер запущен не на локальном адресе.':'Создание и переименование недоступны в этом режиме сервера.')
+  if(!chatEdit.token)throw Object.assign(Error(c.reason==='disabled'?'Создание и переименование диалогов выключены при запуске сервера.':
+    c.reason==='non_loopback_bind'?'Создание и переименование недоступны: сервер запущен не на локальном адресе.':'Создание и переименование недоступны в этом режиме сервера.'),{chatWriteUnavailable:true})
 }
 async function chatPost(path,body){
   if(!chatEdit.token)await loadChatWriteAccess();
@@ -2115,7 +2122,8 @@ async function saveChatName(){
     if(!r?.chat||typeof r.chat.chat_id!=='string')throw Error('Некорректный ответ сервера об изменении диалога');
     saved=r.chat.chat_id
   }catch(e){
-    notice('chatNameError',CHAT_WRITE_REASON[e.code]||e.message);
+    notice('chatNameError',CHAT_WRITE_REASON[e.code]||(e.chatWriteUnavailable?e.message:
+      'Не удалось подтвердить сохранение диалога. Обновите список перед повтором.'));
     if(['title_changed','chat_not_found','chat_id_conflict'].includes(e.code)&&ws===chat.workspace){
       await loadChatList();// what is stored now; a second «Сохранить» replaces the newer title knowingly
       const fresh=chat.chats.find(c=>c.chat_id===chatEdit.chatId&&c.status==='ok');
@@ -2129,6 +2137,11 @@ async function saveChatName(){
   return loadChatList()
 }
 $('viewChat').onclick=()=>showView('chat');
+$('chatRegisterWorkspace').onclick=()=>{
+  showView('operator');
+  $('layout').className='layout show-workspaces';
+  return $('addWorkspace').onclick()
+};
 $('viewBlueprint').onclick=()=>showView('blueprint');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
 $('chatOlder').onclick=()=>loadChatHistory(true);

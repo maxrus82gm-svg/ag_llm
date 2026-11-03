@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: Workspace shortcut opens the existing registration form without posting
+not ok 1 - Workspace shortcut opens the existing registration form without posting
+  ---
+  duration_ms: 15.3103
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:87:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'onclick')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:89:38)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: returning from Workspace registration rereads the catalog and preserves a valid chat
+not ok 2 - returning from Workspace registration rereads the catalog and preserves a valid chat
+  ---
+  duration_ms: 5.1316
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:97:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'onclick')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:99:38)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 3 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 4.4347
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 4 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 2.609
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 5 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 3.7759
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 6 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 16.9208
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 7 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 4.9064
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 8 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 4.3787
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 9 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 6.7783
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 10 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 7.9333
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 11 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 6.3579
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 12 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 2.9237
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 13 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 8.0926
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 14 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 12.6155
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 15 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 4.903
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 16 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 3.874
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 17 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 3.3647
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 18 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 8.05
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 19 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 5.7664
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 20 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 16.9339
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 21 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 5.7874
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 19
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 219.8597

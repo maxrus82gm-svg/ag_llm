@@ -1,0 +1,406 @@
+TAP version 13
+# Subtest: E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge
+ok 1 - E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge
+  ---
+  duration_ms: 11.3797
+  type: 'test'
+  ...
+# Subtest: E2 the board: four columns, compact cards in server order, honest empty columns, a closed card holds no full card
+ok 2 - E2 the board: four columns, compact cards in server order, honest empty columns, a closed card holds no full card
+  ---
+  duration_ms: 5.3964
+  type: 'test'
+  ...
+# Subtest: E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference
+ok 3 - E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference
+  ---
+  duration_ms: 4.3553
+  type: 'test'
+  ...
+# Subtest: E4 a refused or unavailable picker is told and saves nothing locally
+ok 4 - E4 a refused or unavailable picker is told and saves nothing locally
+  ---
+  duration_ms: 5.2599
+  type: 'test'
+  ...
+# Subtest: E5 malformed or failed catalog answers show an error and no invented models
+ok 5 - E5 malformed or failed catalog answers show an error and no invented models
+  ---
+  duration_ms: 6.6139
+  type: 'test'
+  ...
+# Subtest: E6 saved-choice states are told honestly in the EVM summary
+ok 6 - E6 saved-choice states are told honestly in the EVM summary
+  ---
+  duration_ms: 12.0468
+  type: 'test'
+  ...
+# Subtest: E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview
+ok 7 - E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview
+  ---
+  duration_ms: 11.4131
+  type: 'test'
+  ...
+# Subtest: E8 the way back restores the operator panel; refresh reloads the catalog
+ok 8 - E8 the way back restores the operator panel; refresh reloads the catalog
+  ---
+  duration_ms: 3.0284
+  type: 'test'
+  ...
+# Subtest: E9 the shipped page carries no model list of its own
+ok 9 - E9 the shipped page carries no model list of its own
+  ---
+  duration_ms: 0.5341
+  type: 'test'
+  ...
+# Subtest: E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview
+ok 10 - E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview
+  ---
+  duration_ms: 20.617
+  type: 'test'
+  ...
+# Subtest: E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status
+ok 11 - E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status
+  ---
+  duration_ms: 22.1672
+  type: 'test'
+  ...
+# Subtest: E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)
+ok 12 - E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)
+  ---
+  duration_ms: 8.9604
+  type: 'test'
+  ...
+# Subtest: E13 settings from the card in place: server facts, never the key value, the exact edited values
+ok 13 - E13 settings from the card in place: server facts, never the key value, the exact edited values
+  ---
+  duration_ms: 5.2675
+  type: 'test'
+  ...
+# Subtest: E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft
+ok 14 - E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft
+  ---
+  duration_ms: 3.0346
+  type: 'test'
+  ...
+# Subtest: E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)
+ok 15 - E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)
+  ---
+  duration_ms: 7.8029
+  type: 'test'
+  ...
+# Subtest: E16 the check: one empty POST, no input field, the indicator comes only from the server
+ok 16 - E16 the check: one empty POST, no input field, the indicator comes only from the server
+  ---
+  duration_ms: 11.2001
+  type: 'test'
+  ...
+# Subtest: E17 without card data the compact cards show names only and nothing can be reordered, dragged or starred
+ok 17 - E17 without card data the compact cards show names only and nothing can be reordered, dragged or starred
+  ---
+  duration_ms: 10.116
+  type: 'test'
+  ...
+# Subtest: E18 the roles source is told: defaults, unreadable and not connected Ultra settings
+ok 18 - E18 the roles source is told: defaults, unreadable and not connected Ultra settings
+  ---
+  duration_ms: 5.8672
+  type: 'test'
+  ...
+# Subtest: E19 the chat composer: the model picker, a disabled voice place and a disabled send
+ok 19 - E19 the chat composer: the model picker, a disabled voice place and a disabled send
+  ---
+  duration_ms: 1.8673
+  type: 'test'
+  ...
+# Subtest: E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose
+ok 20 - E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose
+  ---
+  duration_ms: 2.9024
+  type: 'test'
+  ...
+# Subtest: E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it
+ok 21 - E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it
+  ---
+  duration_ms: 803.7542
+  type: 'test'
+  ...
+# Subtest: E22 a click opens the full card in place under its row; several stay open; a second click closes; Enter / Space the same
+ok 22 - E22 a click opens the full card in place under its row; several stay open; a second click closes; Enter / Space the same
+  ---
+  duration_ms: 6.5422
+  type: 'test'
+  ...
+# Subtest: E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled
+ok 23 - E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled
+  ---
+  duration_ms: 7.4273
+  type: 'test'
+  ...
+# Subtest: E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move
+ok 24 - E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move
+  ---
+  duration_ms: 6.4405
+  type: 'test'
+  ...
+# Subtest: E25 buttons never start a drag; Escape, a release outside, another column, a lost pointer cancel without saving
+ok 25 - E25 buttons never start a drag; Escape, a release outside, another column, a lost pointer cancel without saving
+  ---
+  duration_ms: 3.7676
+  type: 'test'
+  ...
+# Subtest: E26 favourites by mouse: a reference is added at the place shown, never twice; the source column keeps the model
+ok 26 - E26 favourites by mouse: a reference is added at the place shown, never twice; the source column keeps the model
+  ---
+  duration_ms: 9.7232
+  type: 'test'
+  ...
+# Subtest: E27 favourites by star: a reference, its own order, its source as it is now
+ok 27 - E27 favourites by star: a reference, its own order, its source as it is now
+  ---
+  duration_ms: 4.2075
+  type: 'test'
+  ...
+# Subtest: E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same
+ok 28 - E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same
+  ---
+  duration_ms: 3.5471
+  type: 'test'
+  ...
+# Subtest: E29 layout rules: four columns on a wide screen, one on a narrow one, no scroll anchoring jumps, no horizontal scroll
+ok 29 - E29 layout rules: four columns on a wide screen, one on a narrow one, no scroll anchoring jumps, no horizontal scroll
+  ---
+  duration_ms: 0.3505
+  type: 'test'
+  ...
+# Subtest: E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen
+ok 30 - E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen
+  ---
+  duration_ms: 4.7673
+  type: 'test'
+  ...
+# Subtest: E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it
+ok 31 - E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it
+  ---
+  duration_ms: 463.4114
+  type: 'test'
+  ...
+# Subtest: E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer
+ok 32 - E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer
+  ---
+  duration_ms: 3.7309
+  type: 'test'
+  ...
+# Subtest: E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)
+ok 33 - E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)
+  ---
+  duration_ms: 7.7562
+  type: 'test'
+  ...
+# Subtest: E34 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart
+ok 34 - E34 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart
+  ---
+  duration_ms: 2.5621
+  type: 'test'
+  ...
+# Subtest: E35 near the edge of the board the list scrolls by itself during a drag, and the place is found again
+ok 35 - E35 near the edge of the board the list scrolls by itself during a drag, and the place is found again
+  ---
+  duration_ms: 2.8519
+  type: 'test'
+  ...
+# Subtest: E36 messages are toasts outside the flow: a drop that tells something never moves the board; success goes away by itself
+ok 36 - E36 messages are toasts outside the flow: a drop that tells something never moves the board; success goes away by itself
+  ---
+  duration_ms: 3.7031
+  type: 'test'
+  ...
+# Subtest: E37 the drag label follows the pointer at its lower right and flips near the window edges, never hiding the place pointed at
+ok 37 - E37 the drag label follows the pointer at its lower right and flips near the window edges, never hiding the place pointed at
+  ---
+  duration_ms: 2.4691
+  type: 'test'
+  ...
+# Subtest: E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it
+ok 38 - E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it
+  ---
+  duration_ms: 4.4889
+  type: 'test'
+  ...
+# Subtest: E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back
+ok 39 - E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back
+  ---
+  duration_ms: 6.9212
+  type: 'test'
+  ...
+# Subtest: E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view
+ok 40 - E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view
+  ---
+  duration_ms: 4.8447
+  type: 'test'
+  ...
+# Subtest: E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it
+ok 41 - E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it
+  ---
+  duration_ms: 22.5547
+  type: 'test'
+  ...
+# Subtest: E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window
+ok 42 - E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window
+  ---
+  duration_ms: 5.8013
+  type: 'test'
+  ...
+# Subtest: E43 layout writes are queued in order; a refused write is told and the window stays where the user put it
+ok 43 - E43 layout writes are queued in order; a refused write is told and the window stays where the user put it
+  ---
+  duration_ms: 3.3063
+  type: 'test'
+  ...
+# Subtest: E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back
+ok 44 - E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back
+  ---
+  duration_ms: 2.6181
+  type: 'test'
+  ...
+# Subtest: Workspace shortcut opens the existing registration form without posting
+ok 45 - Workspace shortcut opens the existing registration form without posting
+  ---
+  duration_ms: 14.1729
+  type: 'test'
+  ...
+# Subtest: returning from Workspace registration rereads the catalog and preserves a valid chat
+ok 46 - returning from Workspace registration rereads the catalog and preserves a valid chat
+  ---
+  duration_ms: 3.8008
+  type: 'test'
+  ...
+# Subtest: a failed catalog request hides raw server details and can be retried
+ok 47 - a failed catalog request hides raw server details and can be retried
+  ---
+  duration_ms: 3.856
+  type: 'test'
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 48 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 3.4448
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 49 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 4.4385
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 50 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 3.0799
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 51 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 19.3747
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 52 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 5.1216
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 53 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 4.6333
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 54 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 8.0714
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 55 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 9.6613
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 56 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 8.9181
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 57 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 2.8945
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 58 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 8.2169
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 59 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 14.0144
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 60 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 4.9625
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 61 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 4.1467
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 62 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 3.5519
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 63 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 7.1132
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 64 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 6.0869
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 65 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 16.1798
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 66 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 5.2792
+  type: 'test'
+  ...
+1..66
+# tests 66
+# suites 0
+# pass 66
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1613.4055

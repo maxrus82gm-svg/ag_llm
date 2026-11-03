@@ -1,0 +1,50 @@
+{
+  "launcher_paths": [
+    "Start_WebAlarm.bat",
+    "web_alarm/launch_config.json"
+  ],
+  "unchanged": true,
+  "active": "standard",
+  "runs": [
+    {
+      "exit_code": 0,
+      "command": ".venv/Scripts/python.exe -B reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/workspace_probe.py"
+    },
+    {
+      "exit_code": 0,
+      "command": "node --test test_web_alarm_ultra_chat_ui.js test_web_alarm_evm_ui.js"
+    },
+    {
+      "exit_code": 0,
+      "command": ".venv/Scripts/python.exe -B -m unittest test_web_alarm_ui test_web_alarm_ui_ux test_web_alarm_ultra_chat test_web_alarm_ultra_chat_storage test_web_alarm_blueprints"
+    }
+  ],
+  "sha256_before": [
+    "D76ED1D27C2C81D93596E67BF3E665D7242B239085AAA1EDB2E7497414F9EAB6",
+    "73E2B634078CC1AF3079284F6BF0CD9CC816C92BE3FA534B70AFA6475497DFD2"
+  ],
+  "sha256_after": [
+    "D76ED1D27C2C81D93596E67BF3E665D7242B239085AAA1EDB2E7497414F9EAB6",
+    "73E2B634078CC1AF3079284F6BF0CD9CC816C92BE3FA534B70AFA6475497DFD2"
+  ],
+  "preceding_ui_attempts": [
+    {
+      "fail": 2,
+      "exit_code": 1,
+      "file": "ui-before.tap",
+      "pass": 19
+    },
+    {
+      "fail": 1,
+      "exit_code": 1,
+      "file": "privacy-before.tap",
+      "pass": 21
+    },
+    {
+      "fail": 1,
+      "exit_code": 1,
+      "file": "ui-intermediate.tap",
+      "pass": 65
+    }
+  ]
+}

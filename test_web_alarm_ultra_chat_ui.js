@@ -84,6 +84,40 @@ function harness({routes = {}, hash = null, storage = null} = {}) {
   return h;
 }
 
+test('Workspace shortcut opens the existing registration form without posting', async () => {
+  const h = harness(); await settle();
+  await h.el('chatRegisterWorkspace').onclick();
+  assert.equal(h.el('layout').hidden, false);
+  assert.equal(h.el('layout').className, 'layout show-workspaces');
+  assert.equal(h.el('workspaceFormPanel').hidden, false);
+  assert.equal(h.context.document.activeElement, h.el('wsName'));
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0);
+});
+
+test('returning from Workspace registration rereads the catalog and preserves a valid chat', async () => {
+  const h = harness(); await settle();
+  await h.el('chatRegisterWorkspace').onclick();
+  h.routes.set('/ultra/chat/workspaces', () => ({state: 'ok', workspaces: [
+    ws('ws_a', 'Проект А'), ws('ws_new', 'Добавленная папка')
+  ]}));
+  await h.el('viewChat').onclick(); await settle();
+  assert.match(h.el('chatWorkspaceList').textContent, /Добавленная папка/);
+  assert.match(h.el('chatHistory').textContent, /привет/);
+});
+
+test('a failed catalog request hides raw server details and can be retried', async () => {
+  const url = '/ultra/chat/workspaces';
+  const h = harness({routes: {[url]: () => ({httpError: true, status: 500,
+    data: {error: {message: 'Internal path C:/synthetic/private'}}})}});
+  await settle();
+  assert.equal(h.el('chatError').hidden, false);
+  assert.doesNotMatch(h.el('chatError').textContent, /synthetic\/private/);
+  h.routes.delete(url);
+  await h.el('chatRefresh').onclick(); await settle();
+  assert.equal(h.el('chatError').hidden, true);
+  assert.match(h.el('chatHistory').textContent, /привет/);
+});
+
 test('U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge', async () => {
   const h = harness(); await settle();
   assert.equal(h.el('chatView').hidden, false);
@@ -417,7 +451,8 @@ test('U15 a lost answer is repeated with the same chat_id, and Save pressed agai
   await settle();
   h.el('chatNew').onclick(); h.el('chatNameInput').value = 'Однажды';
   await submit(h); await settle();
-  assert.match(h.el('chatNameError').textContent, /Failed to fetch/);
+  assert.match(h.el('chatNameError').textContent, /Не удалось подтвердить сохранение диалога/);
+  assert.doesNotMatch(h.el('chatNameError').textContent, /Failed to fetch/);
   assert.equal(h.el('chatNameForm').hidden, false);
   const pending = submit(h);
   assert.equal(h.el('chatNew').disabled, true, 'actions are off while a change is saved');

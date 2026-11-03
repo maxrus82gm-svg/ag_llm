@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "transport": "real loopback HTTP; new server instance on restart",
+  "verified": [
+    "served HTML",
+    "existing Workspace registration via POST /workspaces",
+    "registration/read leave original files intact",
+    "RAW roundtrip",
+    "create and idempotent repeat",
+    "rename visible through common core",
+    "catalog and RAW persist on reopen"
+  ],
+  "browser": "NOT RUN",
+  "tk_gui": "NOT RUN",
+  "llm_requests": 0
+}
