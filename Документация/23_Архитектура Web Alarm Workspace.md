@@ -659,10 +659,9 @@ Web Alarm должен сохранять возможность масштаб�
 00_Главная - карта проекта
         ↓
 37_Старт перехода - Web Alarm Ultra
-        ├──→ 44_Заморожен
-        │      └──→ 23_Архитектура Web Alarm Workspace
-        │             ├──→ 25_Журнал Web Alarm Workspace - выполненные задачи и аудит
-        │             └──→ [[26_Журнал наблюдений Remote - обрывы, transport и recovery evidence]]
+        ├──→ 23_Архитектура Web Alarm Workspace
+        │      ├──→ 25_Журнал Web Alarm Workspace - выполненные задачи и аудит
+        │      └──→ [[26_Журнал наблюдений Remote - обрывы, transport и recovery evidence]]
         └──→ 24_План реализации Web Alarm Workspace
 ```
 

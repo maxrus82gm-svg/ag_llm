@@ -1,6 +1,6 @@
 ### USER DIRECTION / 2026-10-25 — ChatGPT Desktop MCP: FROZEN, archive №39
 
-**PRIORITY STATUS OVERRIDE:** направление **обычный ChatGPT Desktop ↔ MCP ↔ Web Alarm/Ultra**, включая локальный plugin/STDIO, Secure MCP Tunnel, `STRICT_V2RAY_BROKER`, Windows C/B/NPFS/WFP и связанные native/source исследования, **заморожено решением пользователя**; новый USER GO нужен для любых дальнейших действий. Полная доказательная история, source/report locators, границы тестов и условия возврата: `39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25`.
+**PRIORITY STATUS OVERRIDE:** направление **обычный ChatGPT Desktop ↔ MCP ↔ Web Alarm/Ultra**, включая локальный plugin/STDIO, Secure MCP Tunnel, `STRICT_V2RAY_BROKER`, Windows C/B/NPFS/WFP и связанные native/source исследования, **заморожено решением пользователя**; новый USER GO нужен для любых дальнейших действий. Полная доказательная история, source/report locators, границы тестов и условия возврата: [[39_Архив ChatGPT Desktop MCP - Web Alarm Ultra - заморозка 2026-10-25]].
 
 **ACTIVE USER PRIORITY:** сама Web Alarm Ultra, Connection Registry, внешние нейросети через официальные API и пользовательский веб-чат; исходные правила Web Alarm/WA4-R не отменяются. Архитектура API и Codex CLI/App Server не приравнивается к замороженному Desktop ChatGPT MCP. Старые разделы ниже — **история**, не текущий план запуска. Последний Codex `CODEX-WUA-0-WINDOWS-ISOLATION-READINESS-001` опубликован, но `AWAITING INDEPENDENT VERIFICATION WEB_12`; его активный БЛОК 1 не очищать и не закрывать автоматически.
 
@@ -307,7 +307,7 @@ V2Ray нужен **для выбранного текущего строгого
 
 **Инженерная граница:** текущий `CODEX-WUA-0-PORTABLE-DEPLOY-KIT-001` — offline Discovery/Plan/static Verify/rollback planner, не готовый системный установщик. Следующий этап Codex должен отделять transport/профили от проверяемого security backend строгого режима. Реальные Windows-пробы только в отдельно подтверждённой лаборатории и по отдельному разрешению. Это уточнение **не назначает Codex задачу автоматически**.
 
-Состав команды и назначения моделей описывает [[11_Мультимодельная архитектура и назначение LLM]]; Program/Stage, permissions и recovery — `23_Архитектура Web Alarm Workspace.md`. Это ориентир будущего onboarding, а не новый CURRENT stage и не разрешение на немедленную установку/изменение подключений.
+Состав команды и назначения моделей описывает `11_Мультимодельная архитектура и назначение LLM`; Program/Stage, permissions и recovery — `23_Архитектура Web Alarm Workspace.md`. Это ориентир будущего onboarding, а не новый CURRENT stage и не разрешение на немедленную установку/изменение подключений.
 
 
 ### 7.2. FUTURE — независимые границы MCP transport, reachability и egress (архитектурная сверка 2026-10-20)
