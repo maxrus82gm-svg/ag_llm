@@ -1,0 +1,61 @@
+--- before/server.py
++++ web_alarm/server.py
+@@ -61,4 +61,8 @@
+ from .transport_event_store import TransportEventStore, TransportEventStoreError
+ from .ui import INDEX_HTML
++from .blueprints import (
++    BlueprintError, BlueprintService, CAPABILITY_PATH as BLUEPRINT_CAPABILITY_PATH,
++    MAX_BYTES as BLUEPRINT_MAX_BYTES,
++)
+ from .model_cards import (
+     CheckRefusedError,
+@@ -222,4 +226,5 @@
+         self.executor = MutationExecutor(storage_root)
+         self.ultra_connections = UltraConnections(self.tasks.storage_root)
++        self.blueprints = BlueprintService(self.tasks.storage_root, self.ultra_connections)
+         # EVM model cards. Role assignments are read from the Tk Ultra settings only for the standard storage;
+         # an instance on its own storage root (tests, TEST launches) reads them only from a file it is given.
+@@ -1309,7 +1314,43 @@
+         self._send_json(status, payload)
+ 
++    def _blueprint_request(self, path: str) -> None:
++        # A separate local design capability. It grants no model, Chat, TASK or RUN execution authority.
++        self._require_local_ui_origin('blueprint_forbidden', 'Blueprint editor')
++        if urlsplit(self.path).query:
++            raise ApiError(400, 'invalid_blueprint_request', 'Query parameters are not supported')
++        service = self.api.blueprints
++        try:
++            if path == BLUEPRINT_CAPABILITY_PATH:
++                if self.command != 'GET':
++                    raise ApiError(405, 'method_not_allowed', 'Capability is read-only')
++                self._send_json(200, {'blueprints': service.capability()})
++                return
++            service.require(self.headers)
++            body = None
++            if self.command != 'GET':
++                self.close_connection = True
++                if self.command not in {'POST', 'PUT'}:
++                    raise ApiError(405, 'method_not_allowed', 'Unsupported blueprint method')
++                if len(self.headers.get_all('Origin', [])) != 1:
++                    raise ApiError(403, 'blueprint_forbidden', 'A same-origin request is required')
++                lengths = self.headers.get_all('Content-Length', [])
++                if (len(lengths) != 1 or not lengths[0].isdigit() or len(lengths[0]) > 7
++                        or self.headers.get('Transfer-Encoding') is not None):
++                    raise ApiError(400, 'invalid_blueprint_request', 'A fixed JSON body is required')
++                if not 0 < int(lengths[0]) <= BLUEPRINT_MAX_BYTES:
++                    raise ApiError(413, 'request_too_large', 'Blueprint request is too large')
++                if self.headers.get('Content-Type', '').split(';')[0].strip().lower() != 'application/json':
++                    raise ApiError(415, 'unsupported_media_type', 'Content-Type must be application/json')
++                body = self._read_body()
++            self._send_json(200, service.request(self.command, path, body))
++        except BlueprintError as exc:
++            raise ApiError(exc.status, exc.code, exc.message, details=exc.details) from None
++
+     def _run(self) -> None:
+         try:
+             path = urlsplit(self.path).path
++            if path == BLUEPRINT_CAPABILITY_PATH or path == '/ultra/blueprints' or path.startswith('/ultra/blueprints/'):
++                self._blueprint_request(path)
++                return
+             if path in {'/ui/capabilities', '/ui/pick-workspace-folder'}:
+                 self._folder_picker_request(path)

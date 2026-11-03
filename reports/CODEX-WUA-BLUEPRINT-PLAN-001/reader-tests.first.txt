@@ -1,0 +1,43 @@
+test_duplicate_even_after_requested_record_is_refused (tools.test_read_task_record.ReadTaskRecordTests.test_duplicate_even_after_requested_record_is_refused) ... ok
+test_exact_record_and_lines_exclude_surrounding_tasks (tools.test_read_task_record.ReadTaskRecordTests.test_exact_record_and_lines_exclude_surrounding_tasks) ... FAIL
+test_invalid_id_is_rejected_before_opening_any_file (tools.test_read_task_record.ReadTaskRecordTests.test_invalid_id_is_rejected_before_opening_any_file) ... ok
+test_malformed_nested_missing_and_mismatched_boundaries (tools.test_read_task_record.ReadTaskRecordTests.test_malformed_nested_missing_and_mismatched_boundaries) ... ok
+test_missing_id_does_not_print_full_registry (tools.test_read_task_record.ReadTaskRecordTests.test_missing_id_does_not_print_full_registry) ... ok
+test_output_budget_never_silently_truncates (tools.test_read_task_record.ReadTaskRecordTests.test_output_budget_never_silently_truncates) ... FAIL
+
+======================================================================
+FAIL: test_exact_record_and_lines_exclude_surrounding_tasks (tools.test_read_task_record.ReadTaskRecordTests.test_exact_record_and_lines_exclude_surrounding_tasks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_read_task_record.py", line 28, in test_exact_record_and_lines_exclude_surrounding_tasks
+    self.assertEqual(result.text, block("BP-0001", "������ ������"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '<!--[25 chars]N -->\r\n������ ������\r\n<!-- TASK-RECORD BP-0001 END -->\r\n' != '<!--[25 chars]N -->\n������ ������\n<!-- TASK-RECORD BP-0001 END -->\n'
+- <!-- TASK-RECORD BP-0001 BEGIN -->
+
+?                                   -
++ <!-- TASK-RECORD BP-0001 BEGIN -->
+- ������ ������
+
+?              -
++ ������ ������
+- <!-- TASK-RECORD BP-0001 END -->
+
+?                                 -
++ <!-- TASK-RECORD BP-0001 END -->
+
+
+======================================================================
+FAIL: test_output_budget_never_silently_truncates (tools.test_read_task_record.ReadTaskRecordTests.test_output_budget_never_silently_truncates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_read_task_record.py", line 61, in test_output_budget_never_silently_truncates
+    self.assertEqual(read_record(self.path, "BP-0001", 1000).text, block("BP-0001", "x" * 200))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '<!--[26 chars] -->\r\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[198 chars]\r\n' != '<!--[26 chars] -->\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx[192 chars]->\n'
+Diff is 832 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.054s
+
+FAILED (failures=2)

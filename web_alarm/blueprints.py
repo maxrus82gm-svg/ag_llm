@@ -59,6 +59,10 @@ def _object(value: Any, fields: set[str], label: str) -> dict:
 def _text(value: Any, limit: int, label: str, *, empty: bool = True) -> str:
     if not isinstance(value, str) or len(value) > limit or (not empty and not value.strip()) or "\x00" in value:
         _bad(f"{label}: требуется текст длиной до {limit} символов.")
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        _bad(f"{label}: недопустимая последовательность Unicode.")
     return value
 
 
@@ -69,8 +73,8 @@ def _id(value: Any, label: str) -> str:
 
 
 def _number(value: Any, low: float, high: float, label: str, *, integer: bool = False):
-    if (isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value)
-            or not low <= value <= high or (integer and not isinstance(value, int))):
+    if (isinstance(value, bool) or not isinstance(value, (int, float)) or not low <= value <= high
+            or not math.isfinite(value) or (integer and not isinstance(value, int))):
         _bad(f"{label}: допустимый диапазон {low}–{high}.")
     return value
 
@@ -120,7 +124,7 @@ def definition(value: Any) -> dict:
         for port in node["ports"]:
             _object(port, {"id", "label", "direction", "type", "multiple", "required"}, "Пин")
             pid = _id(port["id"], "ID пина")
-            if pid in port_ids or port["direction"] not in {"input", "output"} or port["type"] not in TYPES:
+            if pid in port_ids or port["direction"] not in ("input", "output") or port["type"] not in TYPES:
                 _bad("Повторный ID, неизвестное направление или тип пина.")
             port_ids.add(pid)
             _text(port["label"], 80, "Название пина", empty=False)
@@ -348,7 +352,11 @@ class BlueprintService:
             raise BlueprintError(422, "invalid_connections", "Исправьте связи перед сохранением.", validation=check)
         lock_dir = self._directory(("locks", "ultra"), create=True)
         lock_path = lock_dir / "blueprints.lock"
-        if lock_path.exists() and (_is_link(lock_path.lstat()) or not stat.S_ISREG(lock_path.lstat().st_mode)):
+        try:
+            lock_stat = lock_path.lstat()
+        except FileNotFoundError:
+            lock_stat = None
+        if lock_stat and (_is_link(lock_stat) or not stat.S_ISREG(lock_stat.st_mode)):
             raise BlueprintError(409, "unsafe_blueprint_storage", "Недопустимый файл блокировки.")
         try:
             with InterProcessLock(lock_path):
@@ -358,8 +366,10 @@ class BlueprintService:
                     return current
                 if expected != revision:
                     raise BlueprintError(409, "blueprint_revision_conflict", "Схема изменена в другом окне. Сохраните копию или загрузите свежую версию.", current_revision=revision)
-                if current is None and len(self.list()["items"]) + len(self.list()["damaged"]) >= MAX_DEFINITIONS:
-                    raise BlueprintError(409, "blueprint_catalog_full", "Каталог схем заполнен.")
+                if current is None:
+                    catalog = self.list()
+                    if len(catalog["items"]) + len(catalog["damaged"]) >= MAX_DEFINITIONS:
+                        raise BlueprintError(409, "blueprint_catalog_full", "Каталог схем заполнен.")
                 directory = self._directory(("ultra", "blueprints"), create=True)
                 path = directory / (bid + ".json")
                 record = {"revision": revision + 1, "definition": graph}

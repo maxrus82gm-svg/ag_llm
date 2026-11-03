@@ -31,6 +31,16 @@ def graph():
 
 
 class BlueprintContractTests(unittest.TestCase):
+    def test_malformed_json_field_types_and_unserializable_text_are_client_errors(self):
+        for field, value in (("direction", []), ("type", {})):
+            with self.subTest(field=field):
+                g = graph(); g["nodes"][0]["ports"][0][field] = value
+                with self.assertRaises(BlueprintError): definition(g)
+        g = graph(); g["nodes"][0]["parameters"]["max_output_tokens"] = 10**400
+        with self.assertRaises(BlueprintError): definition(g)
+        g = graph(); g["nodes"][0]["instruction"] = "\ud800"
+        with self.assertRaises(BlueprintError): definition(g)
+
     def test_one_type_custom_roles_independent_settings_and_arbitrary_named_ports(self):
         g = graph(); g["nodes"][0]["role"] = "Историк со своим заданием"
         g["nodes"][0]["ports"].append({"id": "assessment", "label": "Оценка", "direction": "output", "type": "json", "multiple": False, "required": False})

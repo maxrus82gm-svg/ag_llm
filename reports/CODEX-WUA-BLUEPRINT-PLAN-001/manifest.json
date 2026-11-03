@@ -1,0 +1,96 @@
+{
+  "task": "CODEX-WUA-BLUEPRINT-PLAN-001",
+  "revision": 1,
+  "date": "2026-11-03",
+  "status": "AUTHOR CHECKED / LOCAL RESULT",
+  "files": [
+    {
+      "source": "Документация/000_Задачи для агента.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/000_Задачи для агента.md.source.txt",
+      "bytes": 21754,
+      "sha256": "9fb4c90a08f660db70c92fe1fee9f4d725e8984ad06b25dfed008a0e7699c970"
+    },
+    {
+      "source": "Документация/07_Шаблоны задач, отчётов и решений.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/07_Шаблоны задач, отчётов и решений.md.source.txt",
+      "bytes": 20696,
+      "sha256": "b1562e1c21bbbfca77e82f16beb54aad2ce0491b61c2ff1c59410eec8408af82"
+    },
+    {
+      "source": "Документация/08_Старт.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/08_Старт.md.source.txt",
+      "bytes": 25849,
+      "sha256": "21fa203e0aad2e527275fce3fb822951a29783c41631ad33fe1956397f60aad8"
+    },
+    {
+      "source": "Документация/18_Регламент сопровождения документации.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/18_Регламент сопровождения документации.md.source.txt",
+      "bytes": 231444,
+      "sha256": "2457a52a27bbbaf5c96b2f6cfcab2c4e1e245b52cdba5af97233b1d3475d1fd8"
+    },
+    {
+      "source": "Документация/34_TACTICAL_CONTEXT.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/34_TACTICAL_CONTEXT.md.source.txt",
+      "bytes": 37765,
+      "sha256": "deb27ede7a16208c1be39097af3001a04aa7e70ada87ef72a92df3f7c6764596"
+    },
+    {
+      "source": "Документация/Blueprint LLM.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/Blueprint LLM.md.source.txt",
+      "bytes": 17592,
+      "sha256": "70c87e207d3fcf242c9391f34a10644a94e1b0bbc16ff085d1c2896da1841cc1"
+    },
+    {
+      "source": "Документация/Blueprint LLM - тактический контекст.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/Blueprint LLM - тактический контекст.md.source.txt",
+      "bytes": 20306,
+      "sha256": "8996dd86374bf947c6842b47bbfb1ae5b642162a1e99f95641571c93769ecc0f"
+    },
+    {
+      "source": "Документация/43_План работ по Blueprint LLM.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/43_План работ по Blueprint LLM.md.source.txt",
+      "bytes": 38660,
+      "sha256": "76101de1b6a8fe968d61c6be10a7d0fecab27d9ce63d646b99f5e9b770af1e2f"
+    },
+    {
+      "source": "Документация/43.1_ID задач Blueprint LLM.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/43.1_ID задач Blueprint LLM.md.source.txt",
+      "bytes": 5756,
+      "sha256": "319359a1aec304f34731a78d0ed8b8621260f34ae9e475d13d6b353d033aa842"
+    },
+    {
+      "source": "Документация/43.2_Реестр задач Blueprint LLM.md",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/Документация/43.2_Реестр задач Blueprint LLM.md.source.txt",
+      "bytes": 24560,
+      "sha256": "e6c3bf0131218a6ca1f642af5f42ccd71d46a82fb326b0b99898aa0090994244"
+    },
+    {
+      "source": "tools/read_task_record.py",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/tools/read_task_record.py.source.txt",
+      "bytes": 4295,
+      "sha256": "8cb60887700a09311d0057b3409258cec7cdf73be3ea5025b724546508fa1c66"
+    },
+    {
+      "source": "tools/test_read_task_record.py",
+      "snapshot": "reports/CODEX-WUA-BLUEPRINT-PLAN-001/snapshots/v1/tools/test_read_task_record.py.source.txt",
+      "bytes": 3598,
+      "sha256": "7f3ff55730802e8a8cecc400b6c9e3dcd6cf5175b3aa0324aa2d0ab99e468261"
+    }
+  ],
+  "evidence": {
+    "000_Задачи для агента.md.diff.txt": "34b79c08721ceaec213a4fae03d03cece1e91b5f8c746b693b7922222a1e4bbb",
+    "07_Шаблоны задач, отчётов и решений.md.diff.txt": "0257d940ef343f0957427ecf61fe5094facd6c86221fbadf8c9c3c45950a1d14",
+    "08_Старт.md.diff.txt": "6acdda58e3d439cb12d5b9989f813ec8a6fb77eaac3e9a91cbd2a9cc844a4e1e",
+    "18_Регламент сопровождения документации.md.diff.txt": "749fa5f147c81c2c94cd6c59efdf771168b5f0b5efad37c922c8421d33a8f648",
+    "34_TACTICAL_CONTEXT.md.diff.txt": "1fdcb84ec11539198263ba8df8c44974e95e74c481eca85e41042c4c261a5319",
+    "Blueprint LLM - тактический контекст.md.diff.txt": "d9b82957a5096628b46ed1b820de8fc427cbeadecccd02a22c65ab9f6d0f111c",
+    "Blueprint LLM.md.diff.txt": "9d713042239b7a89f6ee4f6b8ef1fc85b183e5544528c6eb346d9a60e2aaa963",
+    "BP-0001.readback.txt": "0e70aabcf70d289a51487f44a7403d533a468e8e59e576fe444615d2bc29b6dd",
+    "BP-0002.readback.txt": "c40b7cc83500bb4913f2df28bd5dccdb1a6ea8bd6c894830ea141db691a345a5",
+    "checks.json": "6be27560312f0cc693759681de5707232a7623494d551a9e85b5693db6f9b316",
+    "handoff.txt": "237db892f49a108a56b28fc493f5d32eca8b9d5bd7d1865f051292b34b5ae9ea",
+    "inputs-sha256.json": "2f4d984850bbfc683f8ef0702d1b9ba164b3fa093cd12518c9d7c3afefd1be35",
+    "reader-tests.first.txt": "feb0604b28a16af07476e05e3bd66621b6deffdcf8e1195dc901fc64d273627f",
+    "reader-tests.txt": "a12959631e41b828d1817ba6ef31af697a6de1d9c44b549d2f32d6cfc2a9e3ea"
+  }
+}

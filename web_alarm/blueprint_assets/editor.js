@@ -10,8 +10,8 @@
   const colors = {text: '#70ccdf', context: '#b59aef', json: '#e3bd74', artifact: '#ed9dc0', event: '#94aabc'};
   const typeNames = {text: 'Текст', context: 'Контекст', json: 'Данные / JSON', artifact: 'Артефакт', event: 'Событие'};
   const state = {graph: null, revision: 0, dirty: false, selected: null, edge: null, pending: null,
-    catalog: null, list: [], drafts: new Map(), saved: new Map(), token: null, cap: null,
-    initializing: null, initialized: false, saving: false, previewing: false, epoch: 0,
+    catalog: null, list: [], drafts: new Map(), baselines: new Map(), token: null, cap: null,
+    initializing: null, initialized: false, saving: false, previewing: false, epoch: 0, navigation: 0,
     pan: {x: 38, y: 40}, zoom: 1, gesture: null, wireFrame: 0, previewNodes: new Set()};
 
   function el(tag, text, className) {
@@ -57,14 +57,15 @@
     state.drafts.set(state.graph.blueprint_id, {definition: clone(state.graph), revision: state.revision});
   }
   function changed() {
-    state.dirty = state.saved.get(state.graph.blueprint_id) !== JSON.stringify(state.graph);
+    state.dirty = state.baselines.get(state.graph.blueprint_id) !== JSON.stringify(state.graph);
     state.previewNodes.clear(); state.epoch++;
+    for (const footer of $('bpNodes').querySelectorAll('.bp-node-state')) footer.textContent = '○ Настроен для схемы';
     $('bpValidationCount').textContent = '';
     $('bpValidationList').replaceChildren(el('p', 'Схема изменена. Проверка относится к предыдущей версии.', 'bp-muted'));
     rememberDraft(); updateSaveState(); renderSchemes(); updateStats();
   }
   function updateSaveState() {
-    $('bpSaveState').textContent = state.saving ? 'Сохраняем…' : state.dirty ? 'Есть изменения' : 'Сохранено · v' + state.revision;
+    $('bpSaveState').textContent = state.saving ? 'Сохраняем…' : state.dirty ? 'Есть изменения' : state.revision ? 'Сохранено · v' + state.revision : 'Черновик';
     $('bpSaveState').dataset.dirty = String(state.dirty);
     $('bpSave').disabled = state.saving || !state.graph;
     $('bpSaveCopy').disabled = state.saving || !state.graph;
@@ -91,10 +92,11 @@
     $('bpMessages').replaceChildren(el('p', 'Проверьте передачу вопроса и контекста. Предпросмотр использует демонстрационные ответы и не вызывает нейросети.', 'bp-preview-intro'));
   }
   function adopt(record, fromServer = false) {
+    state.navigation++;
     state.graph = clone(record.definition); state.revision = record.revision; state.selected = null;
     state.edge = null; state.pending = null; state.epoch++; state.pan = {x: 38, y: 40}; state.zoom = 1;
-    if (fromServer) state.saved.set(state.graph.blueprint_id, JSON.stringify(state.graph));
-    state.dirty = state.saved.get(state.graph.blueprint_id) !== JSON.stringify(state.graph);
+    if (fromServer) state.baselines.set(state.graph.blueprint_id, JSON.stringify(state.graph));
+    state.dirty = state.baselines.get(state.graph.blueprint_id) !== JSON.stringify(state.graph);
     $('bpName').value = state.graph.name; $('bpReload').hidden = true;
     resetPreview(); notice(); renderAll();
     $('bpValidationCount').textContent = '';
@@ -115,15 +117,19 @@
       state.graph.edges.push({id: id('edge'), source: a.id, source_port: 'result', target: b.id, target_port: 'prior'});
       state.selected = a.id;
     }
+    // An untouched empty canvas is a baseline, not work that needs an unload warning.
+    if (!example) state.baselines.set(state.graph.blueprint_id, JSON.stringify(state.graph));
     changed(); renderAll(); requestAnimationFrame(fit);
   }
   async function loadGraph(bid, discard = false) {
     rememberDraft();
+    const navigation = ++state.navigation;
     try {
       const cached = !discard && state.drafts.get(bid);
       const record = cached || await api('/ultra/blueprints/' + encodeURIComponent(bid));
+      if (navigation !== state.navigation) return;
       adopt(record, !cached);
-    } catch (error) { report(error); }
+    } catch (error) { if (navigation === state.navigation) report(error); }
   }
   async function refreshList() {
     const response = await api('/ultra/blueprints'); state.list = response.items; renderSchemes();
@@ -152,7 +158,7 @@
     state.saving = true; updateSaveState(); notice();
     try {
       const saved = await api('/ultra/blueprints/' + bid, 'PUT', {expected_revision: revision, definition: snapshot});
-      state.saved.set(bid, JSON.stringify(snapshot));
+      state.baselines.set(bid, JSON.stringify(snapshot));
       const draft = state.drafts.get(bid);
       if (draft) draft.revision = saved.revision;
       if (state.graph.blueprint_id === bid) {
@@ -162,9 +168,11 @@
       }
       await refreshList();
     } catch (error) {
-      if (error.code === 'blueprint_revision_conflict') $('bpReload').hidden = false;
-      if (error.details?.validation) showValidation(error.details.validation);
-      report(error);
+      if (state.graph.blueprint_id === bid) {
+        if (error.code === 'blueprint_revision_conflict') $('bpReload').hidden = false;
+        if (error.details?.validation) showValidation(error.details.validation);
+        report(error);
+      } else notice('Не удалось сохранить «' + snapshot.name + '». Черновик остался в списке схем.', true);
     } finally { state.saving = false; updateSaveState(); }
   }
   function showValidation(result) {
@@ -187,7 +195,7 @@
       const result = await api('/ultra/blueprints/validate', 'POST', {definition: snapshot});
       if (epoch !== state.epoch) { notice('Схема изменилась во время проверки. Проверьте новую версию.'); return; }
       showValidation(result); notice(result.valid ? 'Структура проверена. Замечания — в диагностике справа.' : 'Исправьте ошибки связей.', !result.valid);
-    } catch (error) { report(error); } finally { $('bpValidate').disabled = false; }
+    } catch (error) { if (epoch === state.epoch) report(error); } finally { $('bpValidate').disabled = false; }
   }
 
   function transform() {
@@ -252,7 +260,7 @@
     }
   }
   function nodePort(node, port) {
-    const button = el('button', undefined, 'bp-port ' + port.direction);
+    const button = el('button', undefined, 'bp-port bp-' + port.direction);
     button.type = 'button'; button.id = 'bpPin_' + node.id + '_' + port.id;
     button.dataset.node = node.id; button.dataset.port = port.id; button.dataset.direction = port.direction;
     button.setAttribute('aria-label', `${node.title}: ${port.direction === 'input' ? 'вход' : 'выход'} ${port.label}, ${typeNames[port.type]}`);
@@ -447,10 +455,13 @@
       $('bpMessages').scrollTop = $('bpMessages').scrollHeight;
       state.previewNodes = new Set(response.trace.map(row => row.node_id)); renderNodes(); showValidation(response.validation);
       notice('Предпросмотр завершён. Запросов к моделям: 0. В историю Ultra Chat ничего не записано.');
-    } catch (error) { if (error.details?.validation) showValidation(error.details.validation); report(error); }
+    } catch (error) {
+      if (epoch === state.epoch) { if (error.details?.validation) showValidation(error.details.validation); report(error); }
+    }
     finally { state.previewing = false; updateStats(); }
   }
   async function open() {
+    syncViewport();
     if (state.initialized) { drawSoon(); return; }
     if (state.initializing) return state.initializing;
     $('bpAdd').disabled = true; $('bpExample').disabled = true; $('bpEmptyAdd').disabled = true;
@@ -539,7 +550,7 @@
     if (gesture.kind === 'node' && gesture.moved) changed();
     if (gesture.kind === 'pan' && !gesture.moved) { state.selected = null; state.edge = null; state.pending = null; renderNodes(); renderInspector(); }
     if (gesture.kind === 'wire') {
-      const drop = document.elementFromPoint(event.clientX, event.clientY)?.closest('.bp-port.input');
+      const drop = document.elementFromPoint(event.clientX, event.clientY)?.closest('.bp-port.bp-input');
       if (drop) { connect(drop.dataset.node, drop.dataset.port); event.preventDefault(); }
     }
   }
@@ -548,16 +559,22 @@
   window.addEventListener('keydown', event => {
     if (root.hidden || !state.graph) return;
     if (event.key === 'Escape') { state.pending = null; state.gesture = null; updateConnectionHint(); drawSoon(); return; }
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); save(); return; }
     if (event.target.closest('input,textarea,select,[contenteditable=true]')) return;
     if (event.key === 'Delete' || event.key === 'Backspace') { event.preventDefault(); if (state.edge) deleteEdge(); else deleteNode(); }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'd') { event.preventDefault(); duplicate(); }
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); save(); }
   });
   window.addEventListener('beforeunload', event => {
     rememberDraft();
-    if ([...state.drafts].some(([bid, record]) => state.saved.get(bid) !== JSON.stringify(record.definition))) { event.preventDefault(); event.returnValue = ''; }
+    if ([...state.drafts].some(([bid, record]) => state.baselines.get(bid) !== JSON.stringify(record.definition))) { event.preventDefault(); event.returnValue = ''; }
   });
-  window.addEventListener('resize', drawSoon);
+  function syncViewport() {
+    if (root.hidden) return;
+    root.style.setProperty('--bp-top', Math.max(0, root.getBoundingClientRect().top) + 'px');
+    drawSoon();
+  }
+  window.addEventListener('resize', syncViewport);
+  new ResizeObserver(syncViewport).observe(document.querySelector('.top'));
   window.UltraBlueprint = {open};
   if (!root.hidden) open();
 })();

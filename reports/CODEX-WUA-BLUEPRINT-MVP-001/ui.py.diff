@@ -1,0 +1,48 @@
+--- before/ui.py
++++ web_alarm/ui.py
+@@ -263,4 +263,5 @@
+ <nav class="top-nav" aria-label="Разделы Web Alarm">
+ <button type="button" id="viewChat" aria-pressed="true" aria-controls="chatView" title="Сохранённые диалоги Ultra">Ultra Chat</button>
++<button type="button" id="viewBlueprint" aria-pressed="false" aria-controls="blueprintView">Блюпринт LLM</button>
+ <button type="button" id="viewOperator" aria-pressed="false" aria-controls="layout">Операторская панель</button>
+ <button type="button" id="viewEvm" aria-pressed="false" aria-controls="evmView" title="Подключения моделей общего ядра Ultra">EVM · Подключения Ultra</button>
+@@ -308,4 +309,8 @@
+ </div>
+ </div>
++</section>
++<section id="blueprintView" class="bp-view" aria-label="Блюпринт LLM" hidden>
++<h2 id="blueprintHeading" class="bp-sr-only" tabindex="-1">Блюпринт LLM</h2>
++<!-- BLUEPRINT_CONTENT -->
+ </section>
+ <div class="layout" id="layout" hidden>
+@@ -1036,8 +1041,8 @@
+ const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
+ function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
+-// Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
+-const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
++// Sections share one shell; their URL hashes also support direct navigation.
++const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
+ function initialView(){
+-  try{return {'#operator':'operator','#evm':'evm','#chat':'chat'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
++  try{return {'#operator':'operator','#evm':'evm','#chat':'chat','#blueprint':'blueprint'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
+ }
+ function rememberView(name){
+@@ -1051,4 +1056,5 @@
+   $('skipLink').setAttribute('href',VIEWS[name][2]);text('skipLink',VIEWS[name][3]);
+   if(!initial)rememberView(name);
++  if(name==='blueprint'){if(!initial)$('blueprintHeading').focus();if(window.UltraBlueprint)window.UltraBlueprint.open();return}
+   if(name==='evm'){if(!initial)$('evmHeading').focus();return loadEvm()}
+   if(name==='chat'){if(!initial)$('chatHeading').focus();return startChat()}
+@@ -2124,4 +2130,5 @@
+ }
+ $('viewChat').onclick=()=>showView('chat');
++$('viewBlueprint').onclick=()=>showView('blueprint');
+ $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
+ $('chatOlder').onclick=()=>loadChatHistory(true);
+@@ -2151,2 +2158,6 @@
+ </body></html>
+ '''
++
++# Keep the existing client and its DOM contract intact; the editor is an isolated module.
++from .blueprint_ui import install_blueprint_ui
++INDEX_HTML = install_blueprint_ui(INDEX_HTML)

@@ -1,0 +1,67 @@
+# Оперативная координация направлений
+
+**Сводка 2026-11-01 / WEB19:** №479 bounded source/evidence accepted in WEB18; WEB19 independent focused Windows storage tests PASS (68 run/4 SKIP on each Python 3.12/3.13, 4 reviewer probes PASS). Full independent regression/CI NOT RUN; Stage3 HOLD, Run Store P9 priority; Claude WAITING, WEB20 готовит P9 TASK (не назначена); Codex `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` опубликован в main; LLM15 bounded independent diagnostic review PASS, **TASK PARTIAL** (.77/Colibri unverified), DOC closeout proposed in GPT; новых implementation TASK нет.
+
+## WEB20 / LLM15 — разграничение миграции Ultra Chat и локального моста Colibri (USER DIRECTION 2026-11-01)
+
+**Статус 01.11.2026:** WEB20 готовит `CLAUDE-WUA-CHAT-RUNSTORE-P9-001` (**PROPOSED / NOT ASSIGNED**) — адресное устранение гонки индекса RUN до Stage3. LLM15 независимо проверил опубликованное в main исследование Codex `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`: **PASS / BOUNDED DIAGNOSTIC REVIEW**, инженерная задача **PARTIAL** из-за .77/Colibri NOT VERIFIED; 28/28 manifest files checked. Только `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/`, production-код не менялся; следующая implementation TASK не назначена. Это распределение не разрешает Stage3, сетевые изменения, live/paid запросы и замороженный MCP.
+
+| Направление | Ответственность | Ближайший разрешённый шаг / граница |
+| --- | --- | --- |
+| **WEB20 / Claude 008** | Продолжение миграции Ultra Chat. Следующая предложенная TASK `CLAUDE-WUA-CHAT-RUNSTORE-P9-001`: устранение известной потери записей при конкурентной модификации Run Store v2 index в общем Python-ядре до Stage3, без UI или provider adapters. | **PROPOSED / NOT ASSIGNED** до вставки пользователем в БЛОК 1. Планируемый write-scope: `run_store.py`, `test_run_store_v2.py`, отдельные адресные тесты только при обосновании, `reports/<TASK-ID>/`; `context_storage.py`, `web_alarm/store_lock.py`, UI, модели и сервер — READ-ONLY. Проверить deadlock/старые callers/fallback generations и Tk readers P1–P6 как OPEN вне scope. Без работы над Colibri/Ollama. |
+| **LLM15 / Codex 007** | Локальные Ollama/Colibri и будущий многохостовый provider bridge. Исследование `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` сдано; 28/28 опубликованных файлов проверены, bounded PASS / task PARTIAL. | **WAITING / NEXT USER GO**: (1) безопасная диагностика Colibri непосредственно на 192.168.0.77, (2) отдельно — mock-first read-only discovery adapter на существующем Model Registry. Контракты/требования интерфейса передать WEB20. `server.py`, `ui.py`, `run_store.py` не менять. P9 остаётся направлением WEB20; Stage3 и MCP замороженные/ограниченные gates не открываются. |
+
+**Целевая логическая цепочка (проектная, не E2E PASS):** `Ultra Chat / Tkinter → общий Python-сервис Web Alarm Ultra (Workspace, Chat, RAW, Turn/Run, контекст, полномочия, учёт) → provider adapter → локальный API Colibri → выбранная Qwen/DeepSeek → ответ/метаданные через общий сервис в те же данные и UI`. Веб-интерфейс не должен напрямую обращаться к Colibri в обход серверного контроля. Один реестр моделей/подключений; существующие `model_cards.py`/EVM и `model_registry.py` использовать по их реальным границам: добавленная вручную карточка провайдера ещё не означает реализованный адаптер. Run Store P9 остаётся отдельным открытым архитектурным приоритетом, не закрытым таким мостом.
+
+**Граница безопасности и переносимости:** локальная Colibri уже исследовалась как отдельный inference-сервер; доступность её API именно с хоста Web Alarm, поддержка нужных endpoints, streaming/cancel, модельные лимиты, параллельность и нагрузка ещё требуют адресной проверки. `127.0.0.1` на сервере Colibri не является автоматически доступным адресом с другого компьютера. Адреса/пути/порты — только в проверяемой machine-local конфигурации; не вшивать LAN IP, UNC или credentials в переносимое ядро. Без самовольного открытия портов наружу, скачивания моделей, запуска внешних служб, изменения V2Ray/WFP/настроек ОС. В первой инженерной задаче предпочтительны read-only анализ, синтетический mock и безвредные негативные проверки; реальные сетевые/модельные испытания — по точному USER GO.
+
+**Разделение исходников:** Codex владеет узким provider/adapter API после назначения; Claude — UI-поверхностью и её подключением к согласованному API. Любой shared scope в `server.py`, `ui.py`, реестре моделей, Turn/Run или хранении согласуется здесь ДО двух параллельных изменений. Контракт межнаправленного handoff хранится у владельца инженерной TASK и адресно отражается здесь, без создания второго канонического документа. Дальнейшая миграция №37 и Bridge Colibri могут готовиться независимо, но интеграция после независимой приёмки контракта и необходимых этапных gates.
+
+## Общий пользовательский запускатель — обязательный режим (USER 2026-10-27)
+
+**`rule-ref:DOC-WUA-LAUNCH-01@1` (№18):** один `Start_WebAlarm.bat` для WEB15/Claude и LLM15/Codex. Стандартная проверенная цель — зелёный `СТАНДАРТНЫЙ ЗАПУСК — WEB ALARM ULTRA`; перенаправление во временную тестовую конфигурацию — красный `ВНИМАНИЕ! НЕСТАНДАРТНЫЙ ТЕСТОВЫЙ ЗАПУСК`, TEST/TASK ID и точная цель. Временное перенаправление разрешается только исполнителю согласованной TASK в её scope; после тестов вернуть STANDARD и зафиксировать подтверждение. **При каждой следующей TASK проверять и при необходимости восстанавливать STANDARD до начала работы**; если не удалось — RESTORE_BLOCKED (не показывать зелёный статус).
+
+**Текущий статус 27.10:** `CLAUDE-WUA-CHAT-LAUNCHER-001` опубликован пользователем в `main`: `Start_WebAlarm.bat`, `web_alarm/launcher.py`, конфигурация и пакет `reports/CLAUDE-WUA-CHAT-LAUNCHER-001/`. Авторские тесты описаны, но независимый реальный Windows STANDARD-launch, target/root и визуальная проверка **OPEN**; публикация не равна независимому PASS. Stage1 PARTIAL сохраняется. №473 — исторический REVISE; F-01 исправлен №475, replace hardening принят №479 в bounded scope, WEB19 добавил focused Windows PASS. Stage3 HOLD. Пересечения launcher с `server.py/ui.py` согласовывать, без жёстких машинных путей/скрытого Demo-хранилища.
+
+## ОБЯЗАТЕЛЬНОЕ СКВОЗНОЕ ТРЕБОВАНИЕ — переносимость (решение пользователя 2026-10-26)
+
+**Статус:** USER ARCHITECTURE DIRECTION / PORTABILITY TARGET — NOT VERIFIED. В №37 §2.4 изложены обязательные границы. №03 — Workspace/история; №19 — агентские/API-подключения; №23/24 — Web Alarm authority. Редакция №37 официально утверждена пользователем 2026-10-27 (**USER PLAN APPROVED**); реализация переносимости остаётся NOT VERIFIED. Этот раздел — маршрутизация, а не новая TASK и не право автоматически запускать реализацию.
+
+- **А — Ultra Chat (WEB15 / Claude по назначению):** переносимость Chat/RAW/Turn/моделей и UI, отсутствие жёстких путей, изолированные испытания после соответствующих этапов. Уже выданная пользователю Stage1 `CLAUDE-WUA-CHAT-S1-READONLY-UI-001` не расширяется автоматически: выявленные portability-препятствия передать в дальнейший handoff.
+- **Б — Web Alarm Core (LLM15 / Codex по назначению):** machine-local Workspace Registry, безопасная перепривязка прежнего `workspace_id`, восстановление/права TASK, хранение реестров и непрерывность защит при смене компьютера. Пока **NOT ASSIGNED**: следующую техническую работу отдельно согласовать с пользователем, сохраняя WA4-R и не занимая Stage1 `server.py`/`ui.py`.
+- **Оба:** разработка без хардкода machine-specific путей и секретов, совместимый перенос данных без автоматического копирования OS credentials; на новой машине повторно подключаются Claude/Codex/API и системные prerequisites. Замороженный MCP/V2Ray/WFP №39 не возобновлять. Clean Windows перенос **пока не проверен**.
+
+## А — Ultra Chat
+
+- **WEB19 / Claude 008:** БЛОК 1 WAITING, БЛОК 1.1 содержит exact №479; новая TASK ещё не назначена. Added independent focused verification report `reports/CHATGPT-WEB19-S2-INDEPENDENT-WINDOWS-20261101.md`; no repeated closeout.
+- **№479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001`:** bounded PASS / DOC ITERATION CLOSED (source+author evidence). Реализованы verified replacement и exclusive Project Context revisions, author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; WEB18 проверил source/report/raw evidence без своего runtime; позднее WEB19 выполнил focused Windows storage tests (64 PASS/4 SKIP из 68 на Python 3.12 и 3.13, probes 4/4 PASS). Full independent regression/CI NOT RUN.
+- **OPEN:** `FOLLOWUP-WUA-S2-CHAT-STAGING-001` staging-карточка `create_chat`; same-user TOCTOU после final check отдельно не устранён. Run Store P9, Tk P1–P6, Stage1 и перенос clean Windows NOT VERIFIED; Stage3/live/paid не разрешены.
+- **NEXT:** Run Store P9 — следующий технический приоритет для рассмотрения; staging остаётся OPEN/UNASSIGNED, Tk readers P1–P6 OPEN. Новая техническая TASK только по USER GO. Источники: №05 `REG-WEB19-S2-INDEP-WINDOWS-20261101`, `REG-WEB18-S2-HARDEN-20261101`; №06 `EVT-WEB19-S2-INDEP-WINDOWS-20261101`; отчёты WEB18/WEB19 по №479.
+
+## Б — Web Alarm Core / WA4-R и локальные LLM
+
+- **Текущий чат / исполнитель:** LLM15 / Codex (назначение меняется с задачей).
+- **Текущая исследовательская TASK:** `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` опубликована в main, independent 28/28 package check с CRLF, bounded architecture PASS / task PARTIAL, без code changes; `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` OPEN/UNASSIGNED. Следующая техническая TASK не назначена. №05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102` / №06 `EVT-LLM15-LOCAL-LLM-DISCOVERY-20261102`.
+- **Оперативный статус:** технический Core **WAITING / NOT ASSIGNED**. Astra архивирована №482; документационная сдача Codex №483 принята WEB19 **BOUNDED DOCUMENT PASS / DOC ITERATION CLOSED**. БЛОК 1 WAITING, 1.1 точная последняя TASK. Миграция Astra PARTIAL/OPEN, WA4-R gates остаются.
+- **Ближайшая цель:** дальнейшие адресные задачи по безопасности и надёжности после согласования их конкретного scope.
+- **Portability constraint:** следующая согласованная TASK должна оценивать перенос реестра Workspace/TASK и безопасную смену корневых путей; это пока не отдельная назначенная задача.
+- **Последний документный scope (история, CLOSED):** №03/05/06/34/37/40, `reports/CODEX-WUA-DOC-WEB19-REPAIR-001/`, independent `reports/CHATGPT-WEB19-DOC-REPAIR-REVIEW-20261101.md`. Runtime-код не менялся, новые файлы Core никем не заняты этой TASK. №06 `EVT-WEB19-CODEX-DOC-REPAIR-20261101`; прежний №479 `EVT-WEB18-S2-HARDEN-PASS-20261101` остаётся в журнале.
+- **Ссылки:** [карточка / БЛОК 1](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/000_%D0%97%D0%B0%D0%B4%D0%B0%D1%87%D0%B8%20Codex.md) · [предыдущие задачи](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/000_%D0%97%D0%B0%D0%B4%D0%B0%D1%87%D0%B8%20Codex.md) · [действующие ограничения WA4-R](https://github.com/maxrus82gm-svg/ag_llm/blob/main/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F/34_TACTICAL_CONTEXT.md).
+
+## Правила для обоих рабочих чатов
+
+1. **Перед новой постановкой** читать **только эту сводку** в свежем опубликованном GitHub; при пересечении файлов, функций, хранилища или API — переходить по адресным ссылкам. Не читать чужие полные архивы без причины.
+2. **До фактического старта** обновить свою строку: `PLANNED` → после подтверждённого запуска `ACTIVE`; TASK ID, одна фраза о цели, исполнитель, **разрешённые изменения** и **возможные пересечения**. Состояние из неподтверждённого чата не считать опубликованным. Публикация в `main` и локальная синхронизация — за пользователем.
+3. **При изменении scope** сначала актуализировать сводку и согласовать новый конфликт. Совпадение имени файла не означает автоматический запрет: проверить конкретные участки, совместимость и последовательность интеграции. Право изменять файл принадлежит конкретной разрешённой TASK, а не направлению навсегда.
+4. **После независимой проверки** обновить итог и ссылку, не копируя отчёт. Старые детали остаются у исторических владельцев №06/профильных журналов/№001 и в отчётах; №34 обновляется без накопления истории. Два рабочих чата обновляют **один файл последовательно**, перечитывая текущую ревизию перед записью; при конфликте Git сначала согласовать изменения.
+5. **Не переопределять ограничения:** постановка TASK — три блока **в чат**, БЛОК 1 заполняет пользователь; Claude/Codex не получают Git-права автоматически; `GPT → main` объединяет только пользователь. EVM gate, №37 approval, B2 V-13 и заморозка MCP №39 остаются как прежде.
+
+**При смене чата** меняются только его название, исполнитель и текущие сведения; направления А и Б сохраняются.
+
+**Правило графа Obsidian:** единственная внутренняя связь этого документа — с `000_Задачи для агента`; ссылки на карточки, историю и контекст остаются внешними GitHub-ссылками, чтобы не создавать дополнительных рёбер.
+
+[[000_Задачи для агента|Координаторский маршрутизатор]]
+
+## Обслуживание этой сводки
+
+Канон — №18 → DOC-CONTEXT-OPS-01; форма — №07 → Форма координации №40. Одна текущая строка на направление: чат/исполнитель, TASK или отсутствие назначения, execution/review, write-scope, пересечения, NEXT, дата/источник. При смене состояния заменить строку, не дописывать историю. Технический scope и занятость агента — разные поля. Проверки, риски и требования не выводить из слова WAITING; указать exact record-id №05 и risk-id, если они назначены.

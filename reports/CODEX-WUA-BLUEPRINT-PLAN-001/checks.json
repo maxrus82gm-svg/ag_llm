@@ -1,0 +1,271 @@
+{
+  "scope": "Author documentation and address-reader checks; no runtime or independent acceptance",
+  "checks": [
+    {
+      "check": "before snapshot intact: 000_Задачи для агента.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: 000_Задачи для агента.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: 07_Шаблоны задач, отчётов и решений.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: 07_Шаблоны задач, отчётов и решений.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: 08_Старт.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: 08_Старт.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: 18_Регламент сопровождения документации.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: 18_Регламент сопровождения документации.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: 34_TACTICAL_CONTEXT.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: 34_TACTICAL_CONTEXT.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: Blueprint LLM.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: Blueprint LLM.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "before snapshot intact: Blueprint LLM - тактический контекст.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "existing headings retained: Blueprint LLM - тактический контекст.md",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "only two requested links removed",
+      "ok": true,
+      "details": [
+        {
+          "source": "34_TACTICAL_CONTEXT.md",
+          "link": "[[42_Астра_Архитектура блока LLM.md]]",
+          "count": 1
+        },
+        {
+          "source": "34_TACTICAL_CONTEXT.md",
+          "link": "[[Blueprint LLM - тактический контекст]]",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "check": "only requested Blueprint branch added",
+      "ok": true,
+      "details": [
+        {
+          "source": "Blueprint LLM.md",
+          "link": "[[43_План работ по Blueprint LLM]]",
+          "count": 1
+        },
+        {
+          "source": "43_План работ по Blueprint LLM.md",
+          "link": "[[43.1_ID задач Blueprint LLM]]",
+          "count": 1
+        },
+        {
+          "source": "43.1_ID задач Blueprint LLM.md",
+          "link": "[[43.2_Реестр задач Blueprint LLM]]",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "check": "new link resolves: 43_План работ по Blueprint LLM",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "new link resolves: 43.1_ID задач Blueprint LLM",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "new link resolves: 43.2_Реестр задач Blueprint LLM",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "index description 15-20 words: BP-0001",
+      "ok": true,
+      "details": 17
+    },
+    {
+      "check": "line locator correct: BP-0001",
+      "ok": true,
+      "details": [
+        9,
+        106
+      ]
+    },
+    {
+      "check": "one record only: BP-0001",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "CLI exact record and success: BP-0001",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "index description 15-20 words: BP-0002",
+      "ok": true,
+      "details": 18
+    },
+    {
+      "check": "line locator correct: BP-0002",
+      "ok": true,
+      "details": [
+        108,
+        150
+      ]
+    },
+    {
+      "check": "one record only: BP-0002",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "CLI exact record and success: BP-0002",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "8 editor source files unchanged",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: Документация/42_Астра_Архитектура блока LLM.md.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: Документация/37_Старт перехода - Web Alarm Ultra.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: Документация/40_Оперативная координация направлений.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CODEX-WUA-BLUEPRINT-MVP-001/README.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CODEX-WUA-BLUEPRINT-MVP-001/source-sha256.json",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CODEX-WUA-BLUEPRINT-MVP-001/python-checks.txt",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CODEX-WUA-BLUEPRINT-MVP-001/ui-regression.txt",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CLAUDE-WUA-CHAT-RUNSTORE-P9-001/report.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "read-only input preserved: reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/report.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "document size limit: 08_Старт.md",
+      "ok": true,
+      "details": {
+        "characters": 15934,
+        "limit": 16000
+      }
+    },
+    {
+      "check": "document size limit: 34_TACTICAL_CONTEXT.md",
+      "ok": true,
+      "details": {
+        "characters": 26673,
+        "limit": 50000
+      }
+    },
+    {
+      "check": "one canonical rule definition",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "rule indexed",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "routing references canonical rule: 000_Задачи для агента.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "routing references canonical rule: 07_Шаблоны задач, отчётов и решений.md",
+      "ok": true,
+      "details": null
+    },
+    {
+      "check": "routing references canonical rule: 08_Старт.md",
+      "ok": true,
+      "details": null
+    }
+  ],
+  "passed": 44,
+  "total": 44,
+  "reader_tests": {
+    "passed": 7,
+    "total": 7,
+    "initial_run": "6 tests, 2 failures due to newline handling; original output retained in reader-tests.first.txt"
+  }
+}

@@ -1040,7 +1040,7 @@ const evm={epoch:0,data:null,cards:null,cardsError:null,view:'chat',drafts:{},ou
   hover:null,ctrl:false,press:null,drag:null,scrollFrame:0,suppressUntil:0,returnTo:null,viewSaving:false,noticeTimer:0};
 const EVM_STATUS={REGISTERED:['В реестре',''],DISABLED:['Отключена в реестре','bad'],NOT_CONNECTED:['Ещё не подключено','unknown'],AVAILABLE:['Реестр загружен',''],REGISTRY_UNAVAILABLE:['Реестр недоступен','bad']};
 function evmTag(code){const [label,cls]=EVM_STATUS[code]||[String(code??'Неизвестно'),'unknown'];const t=element('span',label,'tag'+(cls?' '+cls:''));t.setAttribute('title',String(code??''));return t}
-// Three sections: Ultra Chat (default), the operator panel and EVM. #operator / #evm / #chat open one directly.
+// Sections share one shell; their URL hashes also support direct navigation.
 const VIEWS={chat:['chatView','viewChat','#chatMain','К истории диалога'],blueprint:['blueprintView','viewBlueprint','#blueprintHeading','К редактору схемы'],operator:['layout','viewOperator','#main','К состоянию TASK'],evm:['evmView','viewEvm','#evmHeading','К подключениям Ultra']};
 function initialView(){
   try{return {'#operator':'operator','#evm':'evm','#chat':'chat','#blueprint':'blueprint'}[typeof location==='undefined'?'':String(location.hash||'')]||'chat'}catch(_){return 'chat'}
