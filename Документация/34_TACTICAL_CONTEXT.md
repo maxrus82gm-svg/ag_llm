@@ -1,6 +1,6 @@
 # Оперативная память проекта — №34
 
-**Срез:** 02.11.2026, LLM15 + WEB20 coordination. LLM15: `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` GitHub independent bounded diagnostic/architecture PASS, **task PARTIAL** (.77 Colibri NOT VERIFIED); 28/28 evidence integrity including CRLF reconstruction. WEB20 P9 candidate (assignment unconfirmed). Stage2 №479 bounded PASS + WEB19 focused Windows PASS; full regression, Stage3/live/paid NOT RUN/HOLD. WA4-R PARTIAL.
+**Срез:** 03.11.2026, WEB21 / P9 review: `CLAUDE-WUA-CHAT-RUNSTORE-P9-001` — **PASS / BOUNDED SOURCE+EVIDENCE**, DOC closeout опубликован в GPT / merge пользователя ожидается. Author 1076 PASS/2 SKIP, 5/5 RED→0/5 defects, независимый runtime NOT RUN. БЛОК 1 Claude SLOT HOLD (missing TASK ID); Stage3 HOLD, audit junction/Tk P1–P6/verification gates OPEN; №43 Blueprint отдельно по утверждённому плану.
 
 ## Дополнение 02.11.2026 — Астра / Blueprint LLM
 
@@ -20,8 +20,8 @@
 
 | Направление | Назначение и состояние среза | Ближайший разрешённый шаг |
 | --- | --- | --- |
-| А — Ultra Chat / EVM, WEB19 / Claude | №479 `CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001` **BOUNDED PASS / DOC ITERATION CLOSED**; author full 1076 PASS/2 SKIP, focused 161 PASS/5 SKIP, mutants 9/9; independent source/raw evidence reviewed; additional WEB19 independent focused Windows storage tests PASS, full regression/CI NOT RUN. БЛОК 1 WAITING, БЛОК 1.1 exact №479; Stage2 original №473 REVISE remains historical | `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED in bounded scope; `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED. Need USER GO to start another TASK; Run Store P9, Tk P1–P6 remain Stage3 prereqs |
-| Б — Web Alarm Core + локальные LLM, LLM15 / Codex | `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`: исследование опубликовано, ограниченная независимая архитектурная приёмка PASS; задача PARTIAL, .77/Colibri UNKNOWN. Core WA4-R PARTIAL; новую implementation TASK не назначали | Сверить `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` (адресная проверка .77) и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` (mock-first multi-host discovery); отдельно согласовать USER GO. WEB20 ведёт Run Store P9, server.py/ui.py не трогать |
+| А — Ultra Chat / EVM, WEB21 / Claude 008 (лимиты, временно недоступен) | №479 Stage2 bounded PASS; P9 `CLAUDE-WUA-CHAT-RUNSTORE-P9-001` опубликован в main и независимо принят WEB21 **PASS / BOUNDED SOURCE+EVIDENCE**, author full 1076 PASS/2 SKIP, verifier runtime NOT RUN. БЛОК 1 P9 удержан из-за `NO_TASK_ID`; БЛОК 1.1 №479 сохранён. | DOC closeout P9 — `REG-WEB21-P9-REVIEW-20261103`; ротация только штатным скриптом после исправления TASK ID и архивного readback; `FOLLOWUP-WUA-P9-AUDIT-PATH-001` / Run writer / independent runtime / staging / Tk P1–P6 OPEN. Stage3 только после отдельного GO и gates |
+| Б — Web Alarm Core + локальные LLM, LLM15 / Codex | `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`: исследование опубликовано, ограниченная независимая архитектурная приёмка PASS; задача PARTIAL, .77/Colibri UNKNOWN. Core WA4-R PARTIAL; новую implementation TASK не назначали | Сверить `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` (адресная проверка .77) и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` (mock-first multi-host discovery); отдельно согласовать USER GO. P9 WEB21 bounded review завершён; следующие назначения только по USER GO, server.py/ui.py не трогать |
 | Документация / Codex 007 | Astra архивирована по №482; миграция PARTIAL, semantic/graph/cold-start OPEN. №483 `CODEX-WUA-DOC-WEB19-REPAIR-001`: шесть документов, WEB19 BOUNDED PASS / DOC CLOSED; БЛОК 1 WAITING | №05 `REG-WEB19-CODEX-DOC-REPAIR-20261101`; №001 Codex; `RISK-DOC-CURRENT-001` OPEN |
 
 Направление Б завершило только исследовательскую итерацию локальных LLM (№05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102`), новых coding TASK нет. №482 архивировал Astra; №483 принят WEB19; проверки миграции OPEN. Пересечения и WEB20 P9 — №40.
@@ -46,7 +46,7 @@
 
 | Пункт | Тип / влияние | Владелец и следующий шаг |
 | --- | --- | --- |
-| Stage2 / F-01 и replace hardening | F-01 №473 исправлен №475: `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED в bounded scope; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED по №479. Исторический REVISE №473 сохранён | WEB19 независимо выполнил focused Windows-проверки №479; full independent regression/CI NOT RUN. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 и Tk readers P1–P6 OPEN, Stage3/live/paid HOLD |
+| Stage2 / F-01 и replace hardening | F-01 №473 исправлен №475: `FOLLOWUP-WUA-S2-CONTEXT-PATH-001` CLOSED в bounded scope; `FOLLOWUP-WUA-S2-REPLACE-HARDEN-001` CLOSED по №479. Исторический REVISE №473 сохранён | WEB19 независимо выполнил focused Windows-проверки №479; full independent regression/CI NOT RUN. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; Run Store P9 bounded PASS по source/evidence, независимый runtime и audit-path OPEN; Tk readers P1–P6 OPEN, Stage3/live/paid HOLD |
 | Stage1/EVM независимые Windows/visual/regression | VERIFICATION_GAP остаётся **OPEN**, хотя обе завершённые инженерные задачи архивированы как terminal PARTIAL; это не доказательство дефекта UI и не полный runtime PASS | ChatGPT/verifier: на отдельном разрешённом scope проверить Windows N1–N30, EVM check-window, independent regression; новые этапы/live/paid требуют USER GO. №05 REG-WEB16-S1/EVM-20261028 |
 | WA4-R остаточные native/live/PWR/TOCTOU gates и P1/P2/P3 | OPEN в документах; не разрешены автоматически. Исторические gates сверять адресно с новым evidence, не считать все навечно открытыми по старому снимку | LLM15: перед действием сверить профиль №24/25, TASK и последнюю независимую запись |
 | Перенос на другую Windows-машину | PORTABILITY TARGET / NOT VERIFIED; архитектурное требование отдельно от испытания | Назначить адресные portability-проверки при соответствующем этапе по решению пользователя |
@@ -56,6 +56,8 @@
 Открытые запреты и проверки не исчезают из-за возраста. Полную риск-карточку хранить у №05, evidence — в отчёте/профильном журнале. Если нового риска ещё нет в нормализованном реестре, это не означает отсутствия рисков. Поля/статусы — №18 → OPS-RISK; форма — №07.
 
 ## Последние существенные результаты
+
+**WEB21 / 03.11 / P9:** source+published evidence 26/26 verified (25 exact+один CR reconstructed), author 5/5 RED→0/5 defects, 21 focused PASS, full 1076 PASS/2 SKIP; независимый runtime NOT RUN. `FOLLOWUP-WUA-P9-AUDIT-PATH-001`, `FOLLOWUP-WUA-P9-SINGLE-RUN-WRITER-001`, `FOLLOWUP-WUA-P9-INDEPENDENT-RUNTIME-001`, `FOLLOWUP-CLAUDE-P9-SLOT-001` OPEN. №05 `REG-WEB21-P9-REVIEW-20261103`, №06 `EVT-WEB21-P9-REVIEW-20261103`, reviewer `reports/CHATGPT-WEB21-P9-REVIEW-20261103/review.md`. Stage3 HOLD.
 
 **LLM15 / 02.11:** `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — 28/28 опубликованных артефактов согласованы с манифестом (12 CRLF реконструированы); .9 Ollama GET observed, .77 Colibri NOT VERIFIED; `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001` и `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` OPEN. Нет реализованного провайдерного adapter, E2E или изменения серверов.
 
@@ -86,7 +88,7 @@
 1. Определить конкретное поручение пользователя и роль; отличить документационную работу от технических направлений А/Б. Дату этого снимка не выдавать за свежую проверку внешнего состояния.
 2. Сверить актуальный №40 и личную карточку исполнителя в относящемся scope. При конфликте источников сохранить обе версии и запросить/получить точный первоисточник доступным разрешённым способом.
 3. №467 USER ACCEPTED сохраняется. F-01 закрыт №475 в bounded scope; REPLACE-HARDEN закрыт №479. WEB19 добавил focused Windows PASS; full independent regression/CI, Tk readers P1–P6 и Stage3 prerequisites OPEN. №05/06 дают точные record/event ID.
-4. Run Store P9 — следующий технический приоритет для рассмотрения после USER GO. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; закрытый REPLACE-HARDEN повторно не назначать. Stage3/live/paid пока не начинать.
+4. P9 принят в bounded source+evidence scope 03.11; теперь приоритет — Stage3 prerequisites: audit-path, Tk P1–P6, независимый runtime и карточка Claude SLOT HOLD, затем решение пользователя по следующей TASK. `FOLLOWUP-WUA-S2-CHAT-STAGING-001` OPEN/UNASSIGNED; закрытый REPLACE-HARDEN повторно не назначать. Stage3/live/paid пока не начинать.
 5. При передаче новому чату назвать: цель, TASK/источник разрешения, read/write-scope, достигнутое состояние, OPEN/риски, следующий шаг и точные locators. Не переносить полную переписку и все архивы.
 
 ## Как сопровождать эту память
