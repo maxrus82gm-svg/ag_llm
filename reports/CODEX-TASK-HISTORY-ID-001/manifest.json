@@ -1,0 +1,526 @@
+{
+  "status": "RESULT READY / LOCAL; INDEPENDENT REVIEW PENDING",
+  "task_id": "CODEX-TASK-HISTORY-ID-001",
+  "history_id": "H-CODEX-000011",
+  "validation": {
+    "tests_run": 123,
+    "pass": 122,
+    "fail": 1,
+    "preexisting_failure": "Claude active task has NO_TASK_ID",
+    "note": "Program tests from base implementation; amendment 01 verified as documentation-only."
+  },
+  "files": [
+    {
+      "path": "reports/ASTRA-DOC-CONTEXT-OPTIMIZATION-001/task_record.json",
+      "bytes": 1124,
+      "sha256": "4cab2730e0cbece11a854d67b5db13c8fe237809299f403197f941dfadfc3ca6"
+    },
+    {
+      "path": "reports/ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001/task_record.json",
+      "bytes": 738,
+      "sha256": "b75efe26575fad0ebc2b1f03f73a5b59f704f6ce8dba990fcce79a6efce024bf"
+    },
+    {
+      "path": "reports/ASTRA-WUA-37-ROADMAP-REVISION-001/task_record.json",
+      "bytes": 913,
+      "sha256": "0270f28020508def819894da6b2cdc9496426586ec34e8a96349f40b9c77221e"
+    },
+    {
+      "path": "reports/CLAUDE-DOC-TASK-SLOT-ROTATION-001/task_record.json",
+      "bytes": 915,
+      "sha256": "bbfa7c8360709de0c949f921e91f01dbcfe48008ef28037ea8c7bc1efb5cbf27"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-CHAT-RUNSTORE-P9-001/task_record.json",
+      "bytes": 910,
+      "sha256": "fbb6516b31dc9c3addaa523e2c44d8c1b1b331bcba5696843505042337558063"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-CHAT-S1-READONLY-UI-001/task_record.json",
+      "bytes": 930,
+      "sha256": "60ac81ee44b800d3b229e5dc86a43d1f7388fbdb9b5f81a296e857434f6da50a"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-CHAT-S2-CONTEXT-PATH-REPAIR-001/task_record.json",
+      "bytes": 1129,
+      "sha256": "e74492e2523007dba9529ff34b7859f565ef72b929035a79c9fbd6d13cfc26a1"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001/task_record.json",
+      "bytes": 1117,
+      "sha256": "0a4358d1072ea31236e7d3923b69a648b5206263fe90c1b09cf7e391cf3af67d"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-CHAT-S2-SHARED-STORAGE-001/task_record.json",
+      "bytes": 1086,
+      "sha256": "c595695b64b0206f039fbf472f2c19035edc9721fad10d6d6716468c41c270d1"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-EVM-COMPACT-LAYOUT-001/task_record.json",
+      "bytes": 1093,
+      "sha256": "0900e3afe2cd4380a8e4af5656e06bcf0cc68448a7de328caf9e3f66ae083c34"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-EVM-INTERACTION-DND-001/task_record.json",
+      "bytes": 1146,
+      "sha256": "b12faad9e6534d66de75d0269f93f83fbeca4adbea8fdf480f941757f9357369"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-EVM-MODEL-CARD-UI-001/task_record.json",
+      "bytes": 894,
+      "sha256": "ea5eff061f6f818104e273f8fc24d94f8fa4a6e77873d127287ba6d2f61ea6a5"
+    },
+    {
+      "path": "reports/CLAUDE-WUA-EVM-PINNED-MULTIWINDOW-001/task_record.json",
+      "bytes": 1127,
+      "sha256": "bf9c774fc6ec689cb63058ed32afb0ef47b0b80ced2722a17e2b67b3ec1a854e"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/assignment.md",
+      "bytes": 3704,
+      "sha256": "2856a18938b552815b2e747b7d903f52be37fb9e81388499a7a2713a98917b18"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before.json",
+      "bytes": 1096,
+      "sha256": "3e69346ce24f97f28afb63541289122b0a3258073c4efb94cede5232b8522015"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/000_Задачи для агента.md",
+      "bytes": 12344,
+      "sha256": "16fe4fdec572b5fc1ea4abf1fc8a7b9022b7a2189e911819a92a622da456e68e"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/05_Реестр задач.md",
+      "bytes": 28849,
+      "sha256": "5e4e9b7be1a8dfff6316e5e86420eac561a39ea78ba7e8bcf9002e54f4411026"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/08_Старт.md",
+      "bytes": 13949,
+      "sha256": "cad2c2e9d53b98aba4ec5c71dd6e20c5b103b68e08fe0e98b4a51329349ff4ef"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/18_Регламент сопровождения документации.md",
+      "bytes": 27595,
+      "sha256": "0e0cd93862f973de8e36dae06058d4a5b3ee9c3037250581851b9eb7000cc184"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/34_TACTICAL_CONTEXT.md",
+      "bytes": 46662,
+      "sha256": "f5d5de992b0aa3c45a06676efa86b5fc4a9343191ec0ce073bd4cef635dc8ab1"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/Правила/DOC-ITERATION-CLOSEOUT-01.md",
+      "bytes": 4759,
+      "sha256": "205bbdeae49db035ba85ed2b47560b1ea76caafcea3d97b11ec5d1531d9423c2"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before/Правила/DOC-TASK-HANDOFF-USER-01.md",
+      "bytes": 3653,
+      "sha256": "164a5e8e017853f30cad73c2b419dfbb6e3c8da763674abffc936ec05c7908d4"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/before_manifest.json",
+      "bytes": 18516,
+      "sha256": "0f720d7fe31c6c3a4ebaab8c673714b456b92bd0e3d1703d246b717532a0e799"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/report.md",
+      "bytes": 5481,
+      "sha256": "65387802ebea76d245af07f131a69e7f31f74dfc3667716dd39ee0da2d58ced5"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/amendment_01/verification.json",
+      "bytes": 1883,
+      "sha256": "cef1c98bd390221ec275b2df7fb6051ee6ce4522cf85b1869f8d4d27454a7d3a"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/assignment.md",
+      "bytes": 8541,
+      "sha256": "6bd7328bbcabaf8cf864d67e658d98e46f4b9b5cd872a40cf99c164051bc6bbf"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/e2e_and_preservation.json",
+      "bytes": 1391,
+      "sha256": "10a18eb9d824f0860e8d164595fc3d0d8a40c0e89a234a2f5572819fe5508e9b"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/migrate.py",
+      "bytes": 17704,
+      "sha256": "6050904ae0e5fd42cfd1b5b9bb4b23755bf4a9f4f629594df56a2f1b6d0f13e2"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/migration.json",
+      "bytes": 5499,
+      "sha256": "3d2dcdbca4580bb53d8c783a64fb59867af026002ade51be24354e88d6acb00c"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/new000.md",
+      "bytes": 8023,
+      "sha256": "a2b84efb1675ed1565103c3059979451c3f3715eea9f930a7cb33dfaa133038a"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/new08.md",
+      "bytes": 10717,
+      "sha256": "dffeff3aed97aae49bd38098ea828f862ff4d603a2d7fe940294d776cab09204"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/new18.md",
+      "bytes": 25361,
+      "sha256": "5dfe7ef3672529ed18023fbe17b9d369c5df53c08863b592c4c2f10159c851c1"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/000_Задачи ChatGPT.md",
+      "bytes": 44629,
+      "sha256": "6505572400e693ff31b2097044d7cee108659082eeee9c9985146ca16e7e90ca"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/000_Задачи Claude.md",
+      "bytes": 42813,
+      "sha256": "624d2d5f13ad45518d1523d2599550452e6ee933e79843db511ba3efc210ba15"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/000_Задачи Codex.md",
+      "bytes": 41421,
+      "sha256": "51e3d707b6f98147aecb0a818e7dd35d5cbe3618c790c24415c937423ce93512"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/000_Задачи Ultra Desktop.md",
+      "bytes": 16041,
+      "sha256": "7dc162281df5a3a487f630888f7ad4aea46b3ffe3327add9676ff6d3c1b1feb8"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/000_Задачи для агента.md",
+      "bytes": 24369,
+      "sha256": "9fb74211fce1a0a90583e617fd2565e61d89b0647868437f5cc90c6ae8f6fa95"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполнения задач Ultra Desktop.md",
+      "bytes": 4003,
+      "sha256": "ca6eb5ebd31108f77f830de12ad5adc12816ea45f2b509bf13f53a173ba624eb"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Claude.md",
+      "bytes": 828986,
+      "sha256": "7799930a7803362f09375f2652d330eecf24e3010265a0dc9a4ca304917289ea"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/001_История выполненных задач Codex.md",
+      "bytes": 784670,
+      "sha256": "08a192c80a80086827cc9eef9a5519ddf1bc3c0000a5f41e0d1136f9eec4bac5"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/05_Реестр задач.md",
+      "bytes": 137251,
+      "sha256": "679ccc01aabae241dc1cc1d037f6c86ad09ad8298f9ade162b1a8048979ede64"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/07_Шаблоны задач, отчётов и решений.md",
+      "bytes": 20696,
+      "sha256": "b1562e1c21bbbfca77e82f16beb54aad2ce0491b61c2ff1c59410eec8408af82"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/08_Старт.md",
+      "bytes": 25800,
+      "sha256": "280a6291c671d3922c9d99974d164abe2d5bd165dbdaa45ad93fa3b79234e54d"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/18_Регламент сопровождения документации.md",
+      "bytes": 238624,
+      "sha256": "3beac0cbcc2e952c61f48f72e18c895f71fa6c80e3d8f3212adfc69da411d864"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/34_TACTICAL_CONTEXT.md",
+      "bytes": 45465,
+      "sha256": "d0a41a30cd3139467409a50a79d6fa29cde31fd2cf49c7373cbdf183936299c5"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/tools/TASK_SLOT_ROTATION.md",
+      "bytes": 13885,
+      "sha256": "3add0fe3665c06571deadb9ce4116e606e6524493dc9300f9c84b0817a6f3382"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/preservation/tools/task_slot_monitor.py",
+      "bytes": 37022,
+      "sha256": "8101ba23da67fe9603c0dc46375be870c080b7302714377f75091d9b7b03e67b"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/report.md",
+      "bytes": 11746,
+      "sha256": "6881a2d89e3d49f831f4518bf65c3da17206bd3557d88a12967241e34875e569"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/task_record.json",
+      "bytes": 1704,
+      "sha256": "6ff4d323bf1dcc35047d6e0665f9e36ac74e7795b3401a9bd2c4256064976f38"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/tests.json",
+      "bytes": 1076,
+      "sha256": "b13502f88d03931a2110072ea69a249748b3a92ef9e3af54488ca385688b5e89"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/tests.txt",
+      "bytes": 1364,
+      "sha256": "259ede6163f8da982da0a68b1689d994f57d096e76e3bf940bc7c919ab9fb5bf"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/verification.json",
+      "bytes": 3414,
+      "sha256": "4ba7abb08a078ef29d8a4cc363f440bb5a9032786131719f3b9776c73d7787c9"
+    },
+    {
+      "path": "reports/CODEX-TASK-HISTORY-ID-001/verify.py",
+      "bytes": 4649,
+      "sha256": "397afb81f44e66807f8e19b531e77ca236bd48816c43816fc2fe548bfee3315d"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-SING-DEPENDENCY-REVIEW-001/task_record.json",
+      "bytes": 942,
+      "sha256": "e67a605d345f9cd037d15d33661f99627b9a752209d11af4975cd3a212066cd0"
+    },
+    {
+      "path": "reports/CODEX-WUA-0-STRICT-ADMISSION-CONTRACT-001/task_record.json",
+      "bytes": 913,
+      "sha256": "143b2654f4fae88872b2de9723a5ec59c2ebc1bfabf6194b60fa2db2cf9107d3"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/task_record.json",
+      "bytes": 1103,
+      "sha256": "e1a23930431f96997d91e6f57d98bd7d210c8ac0e5865a26c20740c7b8a56e2f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/task_record.json",
+      "bytes": 1087,
+      "sha256": "31b543bbfc1944dfe01b3b6af5bfb21f4ece79e746743b5769fee40166c6084e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/task_record.json",
+      "bytes": 1091,
+      "sha256": "d2aeddb83098cde0e84780f5e1e5fdc4c709c26e9a6887e2b186068e6094eeaf"
+    },
+    {
+      "path": "reports/CODEX-WUA-DOC-WEB19-REPAIR-001/task_record.json",
+      "bytes": 1098,
+      "sha256": "5d062eff1563a2402d5e33166396c14156611824b02be17b7970e05964296dae"
+    },
+    {
+      "path": "reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/task_record.json",
+      "bytes": 1102,
+      "sha256": "0603656316000898801167c241d8dadab0a7948b76d68be4249f3bd369668698"
+    },
+    {
+      "path": "reports/task_history_sequences.json",
+      "bytes": 28,
+      "sha256": "3c32947b7b86dd4f691f0f3078846cdcd4a7bc2380467d7f1659ccc34eb25e4c"
+    },
+    {
+      "path": "tools/TASK_SLOT_ROTATION.md",
+      "bytes": 16751,
+      "sha256": "157a1f57fe6f0831af47d33a9bd61ece16f2de66864816142f33a0e1dca28020"
+    },
+    {
+      "path": "tools/task_history.py",
+      "bytes": 18027,
+      "sha256": "8a852fb48fbaba89ee580c748516b75880126acbc064672cf19b6a153666a42f"
+    },
+    {
+      "path": "tools/task_slot_monitor.py",
+      "bytes": 37478,
+      "sha256": "4e51facaab8ba0908304f441b9669991d904f794f57235d664abd74cb92565d3"
+    },
+    {
+      "path": "tools/task_slot_rotate.py",
+      "bytes": 48188,
+      "sha256": "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    },
+    {
+      "path": "tools/test_task_history.py",
+      "bytes": 9105,
+      "sha256": "4cedda8875cb47dfd6b3a26758af426c8542571a809f9c80483dee2adaa14447"
+    },
+    {
+      "path": "Документация/000_Задачи ChatGPT.md",
+      "bytes": 45702,
+      "sha256": "8695a8bae98ce49340761c92d3bffb9e9b309aaaeed4620dd2e3952a478d9ed0"
+    },
+    {
+      "path": "Документация/000_Задачи Claude.md",
+      "bytes": 43888,
+      "sha256": "6531fd84f4f0baac8976e837f3b46e488a3e86ce6711dd69e1ca81b10ae4f6b9"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "bytes": 42496,
+      "sha256": "86f4d1f728a17bb7b32a5b42bc608a7da673de7814bd537584a4b537a98e944c"
+    },
+    {
+      "path": "Документация/000_Задачи Ultra Desktop.md",
+      "bytes": 17116,
+      "sha256": "4f6481b0529f4a6799a64760c60a8301ac69bf6bc38b28dc46adf0a7359696f6"
+    },
+    {
+      "path": "Документация/000_Задачи для агента.md",
+      "bytes": 14808,
+      "sha256": "cda501930299ad75344a1fdc63e49b95680b870200c15171dab7e7fcbf1e34ba"
+    },
+    {
+      "path": "Документация/001_История выполнения задач Ultra Desktop.md",
+      "bytes": 1677,
+      "sha256": "70725230dcae1f6ef9a350f5f277f874164c53b4ce491a20ba03cf68516180de"
+    },
+    {
+      "path": "Документация/001_История выполненных задач Claude.md",
+      "bytes": 5335,
+      "sha256": "64875d3ba3b72e2a0f2c5ee0a42cecf7e7aebacdfd107f66a18659ea260efee8"
+    },
+    {
+      "path": "Документация/001_История выполненных задач Codex.md",
+      "bytes": 5344,
+      "sha256": "cbbeff986d72d2b9d0b82a9a17961ef18ee280a1b2218f4e2fd9b95323ec4f6b"
+    },
+    {
+      "path": "Документация/05_Реестр задач.md",
+      "bytes": 29680,
+      "sha256": "8d1fb68dff18867d20ca46cb3a6fb20d5b16bbb9a21818da6fe5cfd9746ce69f"
+    },
+    {
+      "path": "Документация/07_Шаблоны задач, отчётов и решений.md",
+      "bytes": 21456,
+      "sha256": "8085353dff63e1847a0f351032114bdef0af31ca408ba88b63cd840851e2e3b9"
+    },
+    {
+      "path": "Документация/08_Старт.md",
+      "bytes": 15795,
+      "sha256": "7c7cc8aa1e16c0b42f3116f1b741988124bd5c20764062798629cc818bc017b4"
+    },
+    {
+      "path": "Документация/18_Регламент сопровождения документации.md",
+      "bytes": 31956,
+      "sha256": "353aa013ae606a36fbccd83e7e8b6dab46311728fd03082717968d7b4a7864a8"
+    },
+    {
+      "path": "Документация/34_TACTICAL_CONTEXT.md",
+      "bytes": 48022,
+      "sha256": "a0fd8edd7cf2864ea583db8ac7eae8e8dbdd804fcab22d15aeee332f2b5e14f6"
+    },
+    {
+      "path": "Документация/Правила/DOC-AGENT-ADDRESS-01.md",
+      "bytes": 4191,
+      "sha256": "0c15c12b2d94e2d124fd28144133b735a1fe8cbc521b80ead93df229ba94b721"
+    },
+    {
+      "path": "Документация/Правила/DOC-AGENT-REPORT-TRIGGER-01.md",
+      "bytes": 8791,
+      "sha256": "7ac9e3cf94447354b42af706704f3ac035113c605738eff0c1ca9cdfe92ca389"
+    },
+    {
+      "path": "Документация/Правила/DOC-CHANGE-01.md",
+      "bytes": 6450,
+      "sha256": "6dc7d0c56182c3976e17c22174449e581bb363fa2f25f515dbdb034daa2c4398"
+    },
+    {
+      "path": "Документация/Правила/DOC-CODEX-SELF-PUBLISH-01.md",
+      "bytes": 2763,
+      "sha256": "f2faaa12b82108b331ab55d7aacd0aca66efa5d3460e6c30393945e7056f8f7a"
+    },
+    {
+      "path": "Документация/Правила/DOC-COMMIT-01.md",
+      "bytes": 5908,
+      "sha256": "5115c7b6fde69a36c1962193c99bd169f4fd11de8ff96469b3d0449e8f3399ed"
+    },
+    {
+      "path": "Документация/Правила/DOC-ENGINEERING-ROLES-01.md",
+      "bytes": 4225,
+      "sha256": "79d0f77d123f7796eaf01e78c3d57a419f05aedb7398fadc12fdab04d3e9d3f5"
+    },
+    {
+      "path": "Документация/Правила/DOC-GIT-01.md",
+      "bytes": 3955,
+      "sha256": "70ce00bb1f27107820bf3e44fc1bdad5371752a047208bc530567775ada6df4f"
+    },
+    {
+      "path": "Документация/Правила/DOC-GITHUB-HANDOFF-01.md",
+      "bytes": 5859,
+      "sha256": "f105aacd057ff05d78264c7c9a728b0967f46a30f746b18beda25d39361b0847"
+    },
+    {
+      "path": "Документация/Правила/DOC-GPT-BRANCH-01.md",
+      "bytes": 5943,
+      "sha256": "5e05c077cde2f2deb8fe75ddb46be1b2689b06a62bea5539ee1ca1f9cee02293"
+    },
+    {
+      "path": "Документация/Правила/DOC-ITERATION-CLOSEOUT-01.md",
+      "bytes": 5584,
+      "sha256": "e1c695795f75a02584b17ae8dd2ffaccd2d4664a7cb9590eb98d0f9ebfe4c248"
+    },
+    {
+      "path": "Документация/Правила/DOC-LOCAL-REPORT-HANDOFF-01.md",
+      "bytes": 8170,
+      "sha256": "e6fa935dc8c5302ed5e256e324a6894461b983dd898fd51f63db95e5bdc15f81"
+    },
+    {
+      "path": "Документация/Правила/DOC-PARALLEL-01.md",
+      "bytes": 4522,
+      "sha256": "d3ea58523c201fef5e8eb5513c83fef86a1da5eb3dd1ef2066cfdad3b02fe6dd"
+    },
+    {
+      "path": "Документация/Правила/DOC-PLAN-LANGUAGE-01.md",
+      "bytes": 3294,
+      "sha256": "8ad9212d76bb1f3d898150b6af55b50e8c30b3f494387a69d86f9107308e3e2d"
+    },
+    {
+      "path": "Документация/Правила/DOC-TASK-BLOCK1-01.md",
+      "bytes": 9474,
+      "sha256": "3084bd05578ea125e1740e456cd74a2ddb609e5cf6833bc4f9bd4ff5a48a8f52"
+    },
+    {
+      "path": "Документация/Правила/DOC-TASK-HANDOFF-USER-01.md",
+      "bytes": 4094,
+      "sha256": "22a1d1694639c5937eb79eb39c6c0a33415563cbd3b591f00a621b24ab2a4534"
+    },
+    {
+      "path": "Документация/Правила/DOC-TASK-HUMAN-OUTCOME-01.md",
+      "bytes": 4767,
+      "sha256": "800aeba33ad87e3286a83176cba7425a4560dd3ac2c4b934143fcbd9850a7ea9"
+    },
+    {
+      "path": "Документация/Правила/DOC-TASK-READ-SCOPE-01.md",
+      "bytes": 6739,
+      "sha256": "aa07fc32375cd6c07de4d278f5d86630de44ea2d94ab54f6f962fe61d01d8af1"
+    },
+    {
+      "path": "Документация/Правила/DOC-TASK-READABLE-01.md",
+      "bytes": 4554,
+      "sha256": "b518ec5e210ea2be58bad99624ab60a08f4f498445698a150542d9ce521e29cf"
+    },
+    {
+      "path": "Документация/Правила/DOC-TEST-LIFECYCLE-01.md",
+      "bytes": 6456,
+      "sha256": "fa99fa92db14e3cc990bb258bae4b14d68d01fd4fb1cdc68c50ba5342d3ec69c"
+    },
+    {
+      "path": "Документация/Правила/DOC-ULTRA-NOTE-01.md",
+      "bytes": 2896,
+      "sha256": "3ec2203af130517f34d0587a30170188a365650ce8f50d0f313aca78b7cc8479"
+    },
+    {
+      "path": "Документация/Правила/DOC-VERIFIER-BLOCK4-01.md",
+      "bytes": 7231,
+      "sha256": "0e184c4ac74293d1a5125a43073701a2676026995bb845761b6fe308b9cb343c"
+    },
+    {
+      "path": "Документация/Правила/DOC-VERSION-01.md",
+      "bytes": 2881,
+      "sha256": "b21cf38a02df5eff6e1245f4669cb3d8a914b6fdd419a98d4db7dfa5102ca77d"
+    },
+    {
+      "path": "Документация/Правила/DOC-WUA-LAUNCH-01.md",
+      "bytes": 7458,
+      "sha256": "a4f60e532b75be16b4756f913bfda49e516b263623f8ae5fd737fdd98e21fdea"
+    }
+  ],
+  "latest_amendment": "amendment_01",
+  "latest_document_checks": "amendment_01/verification.json"
+}

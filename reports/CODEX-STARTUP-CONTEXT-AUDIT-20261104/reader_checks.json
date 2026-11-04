@@ -1,0 +1,55 @@
+[
+  {
+    "case": "blueprint_one_record",
+    "command": [
+      "C:\\Python313\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "tools/read_task_record.py",
+      "--registry",
+      "Документация/43.2_Реестр задач Blueprint LLM.md",
+      "--id",
+      "BP-0001"
+    ],
+    "exit_code": 0,
+    "stdout_chars": 6216,
+    "stderr": ""
+  },
+  {
+    "case": "blueprint_limit_refusal",
+    "command": [
+      "C:\\Python313\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "tools/read_task_record.py",
+      "--registry",
+      "Документация/43.2_Реестр задач Blueprint LLM.md",
+      "--id",
+      "BP-0001",
+      "--max-chars",
+      "20"
+    ],
+    "exit_code": 2,
+    "stdout_chars": 0,
+    "stderr": "Task record not returned: Record BP-0001, starting at line 9, exceeds 20 characters. Request a deliberate larger --max-chars value for this ID only."
+  },
+  {
+    "case": "registry05_no_markers",
+    "command": [
+      "C:\\Python313\\python.exe",
+      "-B",
+      "-X",
+      "utf8",
+      "tools/read_task_record.py",
+      "--registry",
+      "Документация/05_Реестр задач.md",
+      "--id",
+      "REG-WEB22-CODEX-S3-PREREQ-20261104"
+    ],
+    "exit_code": 2,
+    "stdout_chars": 0,
+    "stderr": "Task record not returned: Record REG-WEB22-CODEX-S3-PREREQ-20261104 not found. Consult the short index; no archive fallback."
+  }
+]

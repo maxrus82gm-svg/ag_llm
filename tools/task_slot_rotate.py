@@ -33,6 +33,11 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
+try:
+    from tools import task_history
+except ModuleNotFoundError:
+    import task_history
+
 H1 = "# БЛОК 1 — ТЕКУЩАЯ ЗАДАЧА"
 H11 = "# БЛОК 1.1 — ПОСЛЕДНЯЯ СДАННАЯ ЗАДАЧА"
 H2_PREFIX = "# БЛОК 2 — "
@@ -63,7 +68,8 @@ TASK_ID_RE = re.compile(ID)
 META_RE = re.compile(r"\*\*SUBMITTED / REVIEW PENDING\*\* · TASK ID `(?P<task>" + ID + r")` · "
                      r"перенесено (?P<date>\d{4}-\d{2}-\d{2}) · SHA-256 копии `(?P<sha>[0-9a-f]{64})` · "
                      r"CHAT-ONLY AMENDMENT: (?P<amend>нет|\d+ в снимке) · снимок `(?P<snap>[^`]+)` · "
-                     r"отчёт `(?P<report>[^`]+)`")
+                      r"отчёт `(?P<report>[^`]+)`"
+                      r"(?: · HISTORY ID `(?P<history_id>H-[A-Z0-9_]+-\d{6})` · запись `(?P<history_record>[^`]+)`)?")
 DECL_RE = re.compile(r"(?:\*\*)?TASK ID:?(?:\*\*)?:?[ \t]+`(?:\*\*)?(" + ID + r")(?:\*\*)?`")
 AMEND_RE = re.compile(r"AMENDMENT(?:\*\*)?\s+(?:к|для|to|for)(?:\*\*)?\s*`(?:\*\*)?(" + ID + r")(?:\*\*)?`")
 SNAP_BEGIN = "<!-- TASK-SNAPSHOT:BEGIN -->"
@@ -240,7 +246,8 @@ def classify_block11(lines, texts, base):
         return {"state": "INVALID", "problems": [problem("SLOT_1_1_DAMAGED", "status line or layout", base)]}
     copy = b"".join(lines[2:])
     result = {"state": "FILLED", "task_id": match["task"], "copy": copy, "copy_sha256": sha_lf(copy),
-              "meta": match.groupdict(), "problems": []}
+              "meta": match.groupdict(), "history_id": match['history_id'],
+              "history_record": match['history_record'], "problems": []}
     if result["copy_sha256"] != match["sha"]:
         result["problems"].append(problem("SLOT_1_1_COPY_CHANGED", "the copy does not match its SHA-256", base + 2))
     if task_chars(copy.decode("utf-8")) < MIN_TASK_CHARS:
@@ -547,6 +554,12 @@ def cmd_assign(args, proto):
     payload, task = new_task_bytes(source.read_bytes(), card.eol)
     if check["block1_1"].get("task_id") == task:
         raise Refused([problem("TASK_ALREADY_SUBMITTED", "this TASK ID is already in block 1.1")])
+    try:
+        known = task_history.record_path(repo_root(path, args.repo), task)
+        if known.exists():
+            raise Refused([problem('TASK_ID_ALREADY_IN_HISTORY', 'Use a new TASK ID; existing history is immutable identity')])
+    except (OSError, ValueError) as error:
+        raise Refused([problem('HISTORY_INDEX_INVALID', str(error))])
     new = b"".join(card.lines[:card.idx["b1b"] + 1] + [payload] + card.lines[card.idx["b1e"]:])
     plan = parse(new)
     if plan.problems:
@@ -705,6 +718,15 @@ def cmd_rotate(args, proto):
     snap_rel, report_rel = rel(snap_path, repo), rel(report_dir / "report.md", repo)
     amend = "нет" if not amendments else f"{len(amendments)} в снимке"
     meta = META.format(task=task, date=date, sha=sha256(copy_lf), amend=amend, snap=snap_rel, report=report_rel)
+    try:
+        history_id = task_history.preview_history_id(repo, task, card_path)
+    except (OSError, ValueError, KeyError) as error:
+        raise Refused([problem('HISTORY_INDEX_INVALID', str(error))])
+    if block11.get('task_id') == task and block11.get('history_id'):
+        if block11['history_id'] != history_id or block11.get('history_record') != f'reports/{task}/task_record.json':
+            raise Refused([problem('HISTORY_ID_MISMATCH', 'block 1.1 differs from the registered history identity')])
+    meta += f" · HISTORY ID `{history_id}` · запись `reports/{task}/task_record.json`"
+    proto['history_id'] = history_id
     eol, idx = card.eol, card.idx
     new_slot = lines11 if duplicate or already else [meta.encode("utf-8") + eol, eol] + lines1
     new = b"".join(card.lines[:idx["b1b"] + 1] + [WAITING.encode("utf-8") + eol] + card.lines[idx["b1e"]:idx["b11b"] + 1]
@@ -758,6 +780,15 @@ def cmd_rotate(args, proto):
         for p, old, payload in artifacts:
             if bounded_bytes(p) != payload:
                 raise Refused([problem("ARCHIVE_CHANGED", rel(p, repo))])
+        try:
+            receipt = task_history.register_submission(repo, card_path, task, snap_path, report_dir / 'report.md', date)
+            if receipt['history_id'] != history_id:
+                raise ValueError('History number reserved concurrently; record is safe, retry finish')
+            proto['history'] = receipt
+        except (OSError, ValueError, KeyError) as error:
+            raise Refused([problem('HISTORY_SAVE_FAILED', str(error))])
+        if card_path.read_bytes() != data:
+            raise Refused([problem('CARD_CHANGED', 'card changed during history registration')])
         if new != data:
             atomic_write(card_path, new)
         if card_path.read_bytes() != new:
@@ -807,6 +838,8 @@ def cmd_finish(args, proto):
     final = proto["steps"][-2] if args.apply else proto["steps"][-1]
     proto["result"] = final["result"]
     proto["task_id"] = args.task_id
+    if 'history' in final:
+        proto['history'] = final['history']
     if args.apply:
         readback = proto["steps"][-1]
         if readback["block1"]["state"] != "WAITING" or readback["block1_1"].get("task_id") != args.task_id:

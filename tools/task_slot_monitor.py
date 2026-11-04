@@ -445,7 +445,7 @@ def show_window(args, argv, settings, folder):
         task = check["block1"]["task_id"]
         ttk.Label(body, text=task, wraplength=650).pack(anchor="w")
         ttk.Label(body, text=check["block1"].get("title", ""), wraplength=650).pack(anchor="w", pady=(0, 8))
-        ttk.Label(body, text="Скрипт сохранит постановку, перенесёт её в БЛОК 1.1 и освободит БЛОК 1.\n"
+        ttk.Label(body, text="Скрипт сохранит постановку и номер истории, перенесёт её в БЛОК 1.1 и освободит БЛОК 1.\n"
                   "Независимая приёмка этим не подтверждается.\nПакет: reports/" + task + "/", wraplength=650).pack(anchor="w")
         ready = tk.BooleanVar(value=False)
         amendment_choice = tk.StringVar(value="unset")
@@ -528,13 +528,19 @@ def show_window(args, argv, settings, folder):
                     slot_state.set("БЛОК 1: " + ("ОЖИДАЕТ НОВУЮ ЗАДАЧУ" if slot["state"] == "WAITING"
                                    else "СОДЕРЖИТ ЗАДАЧУ " + slot["task_id"] if slot.get("task_id")
                                    else "ОШИБКА СТРУКТУРЫ / " + slot["state"]))
-                    previous_state.set("БЛОК 1.1: " + latest["block1_1"].get("task_id", latest["block1_1"]["state"]))
+                    last_slot = latest['block1_1']
+                    history_id = last_slot.get('history_id') or protocol.get('history', {}).get('history_id')
+                    previous_state.set("БЛОК 1.1: " + last_slot.get("task_id", last_slot["state"]) +
+                                       (" · История " + history_id if history_id else ""))
                     if slot.get("title"):
                         task_label.set(slot["title"])
                     elif state["args"].command == "watch":
                         task_label.set("Просмотр локальной карточки · обновление каждые " + str(settings["refresh_minutes"]) + " мин")
                 row = {"time": time.strftime("%Y-%m-%d %H:%M:%S"), "task_id": protocol.get("task_id", state["args"].task_id),
                        "result": result, "exit_code": code}
+                if protocol.get('history'):
+                    row['history_id'] = protocol['history']['history_id']
+                    row['record'] = protocol['history']['record']
                 watching = state["args"].command == "watch"
                 assigning = state["args"].command == "assign"
                 if not watching:

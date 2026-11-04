@@ -1,0 +1,58 @@
+{
+  "Codex": {
+    "block1_unchanged": true,
+    "block1_1_unchanged": true
+  },
+  "Claude": {
+    "block1_unchanged": true,
+    "block1_1_unchanged": true
+  },
+  "pre_migration_claude_check": {
+    "exit": 3,
+    "result": {
+      "command": "check",
+      "card": "000_Задачи Claude.md",
+      "card_sha256": "624d2d5f13ad45518d1523d2599550452e6ee933e79843db511ba3efc210ba15",
+      "eol": "CRLF",
+      "marker_lines": {
+        "b1b": 45,
+        "b1e": 221,
+        "b11b": 227,
+        "b11e": 398
+      },
+      "block1": {
+        "state": "INVALID",
+        "task_id": null,
+        "problems": [
+          {
+            "code": "NO_TASK_ID"
+          }
+        ],
+        "lines": 175
+      },
+      "block1_1": {
+        "state": "FILLED",
+        "task_id": "CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001",
+        "copy_sha256": "d1e2437c16166a71f26a9e734f4b424b4c166c8a343b9784d9e539a27a69dd2e",
+        "history_id": null,
+        "history_record": null,
+        "problems": []
+      },
+      "problems": [
+        {
+          "code": "NO_TASK_ID"
+        }
+      ],
+      "result": "INVALID"
+    }
+  },
+  "synthetic_e2e": {
+    "finish": "PASS",
+    "history_id": "H-CODEX-000001",
+    "slot_id": "PASS",
+    "read_by_id": "PASS",
+    "review": "PASS",
+    "repeat_preserves_review": "PASS",
+    "render": "PASS"
+  }
+}
