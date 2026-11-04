@@ -7,7 +7,7 @@ USER GO 04.11.2026. Это короткий индекс, а не место д�
 <!-- TASK-HISTORY-INDEX:BEGIN -->
 | Дата | ID | Задача | Статус / проверка | Адрес подробностей |
 | --- | --- | --- | --- | --- |
-| 2026-11-04 | `H-CODEX-000012` / `CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001` | Защита Run Store v2 перед Stage 3 | SUBMITTED / REVIEW PENDING; PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE (Windows/CI NOT RUN) | `reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json` |
+| 2026-11-04 | `H-CODEX-000012` / `CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001` | Защита Run Store v2 перед Stage 3 | SUBMITTED / REVIEW PENDING; PASS / INDEPENDENT WINDOWS CI 56/56; full regression NOT RUN | `reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000011` / `CODEX-TASK-HISTORY-ID-001` | История по ID, автоматическая нумерация и порядок веб-планировщика | SUBMITTED / REVIEW PENDING; NOT VERIFIED | `reports/CODEX-TASK-HISTORY-ID-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000010` / `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001` | Проверка условий восстановления Turn и Run Store | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/task_record.json` |
 | 2026-11-04 | `H-CODEX-000009` / `CODEX-WUA-CHAT-UX-LIVE-FIX-001` | Исправление создания и переименования чатов | HISTORICAL — результат в источнике; исторический verdict сохранён; заново не проверен | `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/task_record.json` |
