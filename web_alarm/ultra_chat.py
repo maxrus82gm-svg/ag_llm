@@ -147,8 +147,8 @@ class UltraChatService:
                 raise UltraChatError(400, "invalid_ultra_chat_request", "limit must be 1..200")
             wa_workspace_id, limit = _wa_id(parts[3]), int(limit_text)
             return lambda: self.messages(wa_workspace_id, chat_id, before, limit)
-        if self._is_rename_path(parts):
-            raise UltraChatError(405, "method_not_allowed", "Renaming a chat requires POST")
+        if self._is_rename_path(parts) or self._is_workspace_rename_path(parts):
+            raise UltraChatError(405, "method_not_allowed", "Renaming requires POST")
         raise UltraChatError(404, "not_found", "Unknown Ultra Chat route")
 
     # --- stage 2: create and rename (POST only, write capability) ------------------------------------------
@@ -159,10 +159,14 @@ class UltraChatService:
                 and parts[6] == "title")
 
     @staticmethod
+    def _is_workspace_rename_path(parts: list[str]) -> bool:
+        return len(parts) == 5 and parts[:3] == ["ultra", "chat", "workspaces"] and parts[4] == "title"
+
+    @staticmethod
     def is_write_path(path: str) -> bool:
         parts = path.split("/")[1:]
         create = len(parts) == 5 and parts[:3] == ["ultra", "chat", "workspaces"] and parts[4] == "chats"
-        return create or UltraChatService._is_rename_path(parts)
+        return create or UltraChatService._is_rename_path(parts) or UltraChatService._is_workspace_rename_path(parts)
 
     def write_route(self, path: str, raw_query: str) -> Callable[[Any], tuple[int, dict[str, Any]]]:
         """Validate a POST route and its IDs without touching any disk; the caller checks the token first."""
@@ -176,7 +180,26 @@ class UltraChatService:
             if not _CHAT_ID_RE.fullmatch(chat_id):
                 raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
             return lambda body: self.rename_chat(wa_workspace_id, chat_id, body)
+        if self._is_workspace_rename_path(parts):
+            wa_workspace_id = _wa_id(parts[3])
+            return lambda body: self.rename_workspace(wa_workspace_id, body)
         raise UltraChatError(404, "not_found", "Unknown Ultra Chat route")
+
+    def rename_workspace(self, wa_workspace_id: str, body: Any) -> tuple[int, dict[str, Any]]:
+        """Rename only the registered label. Existing shared Ultra data is never changed."""
+        if (not isinstance(body, dict) or set(body) != {"title", "expected_title"}
+                or not isinstance(body["title"], str) or not isinstance(body["expected_title"], str)):
+            raise UltraChatError(400, "invalid_ultra_chat_request", "Expected {title, expected_title}")
+        try:
+            record = self.registry.rename_display_name(wa_workspace_id, body["title"], body["expected_title"])
+        except WorkspaceRegistryError as exc:
+            code = str(exc)
+            if code == "invalid_workspace_title":
+                raise UltraChatError(400, "invalid_workspace_title", "Invalid Workspace name") from None
+            if code == "workspace_title_changed":
+                raise UltraChatError(409, "workspace_title_changed", "Workspace name changed elsewhere") from None
+            raise UltraChatError(409, "workspace_registry_unavailable", "Workspace registration unavailable") from None
+        return 200, {"wa_workspace_id": wa_workspace_id, "display_name": record.display_name}
 
     def _writable_workspace(self, core: Any, wa_workspace_id: str) -> tuple[str, str]:
         """Root and Ultra identity of a registered Workspace whose history exists; nothing is created here."""

@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+ok 1 - Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+  ---
+  duration_ms: 21.3718
+  type: 'test'
+  ...
+# Subtest: cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+ok 2 - cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+  ---
+  duration_ms: 10.9351
+  type: 'test'
+  ...
+# Subtest: Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+ok 3 - Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+  ---
+  duration_ms: 6.337
+  type: 'test'
+  ...
+# Subtest: a failed catalog request hides raw server details and can be retried
+ok 4 - a failed catalog request hides raw server details and can be retried
+  ---
+  duration_ms: 6.6361
+  type: 'test'
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 5 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 5.2727
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 6 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 5.8709
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 7 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 4.8056
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 8 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 32.6608
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 9 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 5.7205
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 10 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 9.0012
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 11 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 12.5018
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 12 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 7.3302
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 13 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 11.1849
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 14 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 5.8743
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 15 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 15.573
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 16 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 30.0634
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 17 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 10.2072
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 18 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 10.087
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 19 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 9.0289
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 20 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 10.5647
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 21 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 12.838
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 22 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 33.0998
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 23 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 9.9186
+  type: 'test'
+  ...
+# Subtest: Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+ok 24 - Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+  ---
+  duration_ms: 9.7259
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+ok 25 - LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+  ---
+  duration_ms: 4.6345
+  type: 'test'
+  ...
+# Subtest: LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+ok 26 - LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+  ---
+  duration_ms: 3.5949
+  type: 'test'
+  ...
+# Subtest: LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+ok 27 - LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+  ---
+  duration_ms: 5.8387
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+ok 28 - LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+  ---
+  duration_ms: 5.5192
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 382.4557

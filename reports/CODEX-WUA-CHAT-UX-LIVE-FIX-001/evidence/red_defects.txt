@@ -1,0 +1,250 @@
+TAP version 13
+# Subtest: Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+ok 1 - Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+  ---
+  duration_ms: 20.8447
+  type: 'test'
+  ...
+# Subtest: cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+ok 2 - cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+  ---
+  duration_ms: 10.3929
+  type: 'test'
+  ...
+# Subtest: Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+not ok 3 - Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+  ---
+  duration_ms: 5.5382
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:132:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot set properties of null (setting 'hidden')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    closeWorkspaceName (evalmachine.<anonymous>:1390:65)
+    selectChatWorkspace (evalmachine.<anonymous>:1522:3)
+    Element.onclick (evalmachine.<anonymous>:1365:116)
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:143:41)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: a failed catalog request hides raw server details and can be retried
+ok 4 - a failed catalog request hides raw server details and can be retried
+  ---
+  duration_ms: 6.7385
+  type: 'test'
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 5 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 4.4561
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 6 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 5.0077
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 7 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 5.5697
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 8 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 32.9141
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 9 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 6.1103
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 10 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 7.8919
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 11 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 10.4143
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 12 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 10.0404
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 13 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 15.0817
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 14 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 6.4066
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 15 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 15.2255
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 16 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 26.5218
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 17 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 7.6315
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 18 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 6.5303
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 19 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 7.6143
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 20 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 13.1016
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 21 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 8.9602
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 22 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 31.5435
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 23 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 11.265
+  type: 'test'
+  ...
+# Subtest: Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+ok 24 - Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+  ---
+  duration_ms: 5.1151
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+not ok 25 - LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+  ---
+  duration_ms: 4.8278
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:621:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /Не удалось создать Workspace/. Input:
+    
+    'Не удалось создать Workspace. Проверьте выбор папки и список Workspace; если выбор папки недоступен, откройте операторскую панель. Автоматического повтора нет.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Не удалось создать Workspace. Проверьте выбор папки и список Workspace; если выбор папки недоступен, откройте операторскую панель. Автоматического повтора нет.'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:634:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+not ok 26 - LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+  ---
+  duration_ms: 7.1161
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:639:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /null/. Input:
+    
+    'Проект АИстория Ultra найдена✎+nullnullnullnullПроект БИстория Ultra найдена✎+'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Проект АИстория Ultra найдена✎+nullnullnullnullПроект БИстория Ultra найдена✎+'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:643:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+not ok 27 - LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+  ---
+  duration_ms: 6.9312
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:649:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot set properties of null (setting 'textContent')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    text (evalmachine.<anonymous>:9:20)
+    loadChatList (evalmachine.<anonymous>:1532:26)
+    loadChatWorkspaces (evalmachine.<anonymous>:1515:30)
+    async TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:653:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+not ok 28 - LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+  ---
+  duration_ms: 11.8938
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:664:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /привет/. Input:
+    
+    'Вы2026-10-01 10:00:03История второго'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Вы2026-10-01 10:00:03История второго'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:671:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 23
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 383.1231

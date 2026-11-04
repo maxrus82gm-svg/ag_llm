@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+    "--no-chat-amendment",
+    "--apply",
+    "--headless"
+  ],
+  "entry_point": "unmodified tools/task_slot_rotate.py through runpy __main__",
+  "code_changed": false,
+  "guards_changed": false,
+  "exit_code": 3,
+  "stderr": "",
+  "seconds": 0.22,
+  "os_errors": [
+    {
+      "type": "PermissionError",
+      "errno": 13,
+      "winerror": 5,
+      "filename": "M:\\GitHub\\ag_llm\\Документация\\.000_Задачи Codex.md.rotate-tmp",
+      "filename2": "M:\\GitHub\\ag_llm\\Документация\\000_Задачи Codex.md",
+      "message": "[WinError 5] Отказано в доступе: 'M:\\\\GitHub\\\\ag_llm\\\\Документация\\\\.000_Задачи Codex.md.rotate-tmp' -> 'M:\\\\GitHub\\\\ag_llm\\\\Документация\\\\000_Задачи Codex.md'",
+      "line": 458
+    }
+  ]
+}

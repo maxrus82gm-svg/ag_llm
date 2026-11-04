@@ -99,6 +99,25 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 .skip{position:absolute;left:12px;top:-80px}
 .skip:focus{top:12px;z-index:10;background:var(--panel);padding:12px;color:var(--text)}
 
+/* Ultra Chat: Workspace -> nested chats. All controls remain visible and keyboard accessible. */
+.chat-workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 8px}
+.chat-workspace-heading button{font-size:12px;padding:7px 9px;white-space:normal;text-align:center}
+.chat-workspace-group{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.chat-workspace-group[data-active=true]{border-color:var(--blue);background:#152637}
+.chat-workspace-row,.chat-dialog-row{display:flex;align-items:stretch;gap:3px;padding:3px}
+.chat-workspace-row .chat-pick,.chat-dialog-row .chat-pick{flex:1;min-width:0;margin:0;text-align:left}
+.chat-workspace-row .chat-pick{border:0;background:transparent}
+.chat-workspace-row .chat-pick[aria-expanded=true]{font-weight:700}
+.chat-workspace-row .chat-pick:before{content:'▸';display:inline-block;margin-right:8px;color:var(--blue)}
+.chat-workspace-row .chat-pick[aria-expanded=true]:before{content:'▾'}
+.chat-icon-button{flex:none;align-self:center;min-width:30px;height:32px;padding:4px 6px;font-size:16px;line-height:1}
+.chat-nested-panel{padding:0 7px 7px 19px}
+.chat-dialog-row{padding:2px 0}
+.chat-dialog-row .chat-pick{padding:8px}
+.chat-nested-actions{display:flex;justify-content:flex-start;gap:6px}
+.chat-nested-actions button{font-size:12px}
+.chat-nested-panel .chat-name-form{margin-top:9px}
+@media(max-width:450px){.chat-nested-panel{padding-left:8px}.chat-workspace-heading button{max-width:158px}}
 /* Each desktop column owns its scroll; mobile panels precede the card. */
 .side-scroll{min-height:0;overflow:auto;flex:1;scrollbar-gutter:stable}
 .workspace-button{width:100%;text-align:left;margin-bottom:8px;overflow-wrap:anywhere}
@@ -281,21 +300,27 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <div class="section-head"><div><p class="side-title">ULTRA CHAT</p><h2 id="chatHeading" tabindex="-1">Диалоги Ultra</h2></div><button type="button" id="chatRefresh" title="Перечитать Workspace, диалоги и модель">↻</button></div>
 <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
 <div id="chatError" class="notice error" role="alert" hidden></div>
-<p class="side-title spaced">WORKSPACE</p>
+<div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
+<div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
 <p id="chatWorkspaceState" class="muted" role="status"></p>
-<div id="chatWorkspaceList" class="chat-picks" aria-label="Зарегистрированные Workspace"></div>
-<div class="chat-actions"><button type="button" id="chatRegisterWorkspace">Подключить папку Workspace</button></div>
-<p class="side-title spaced">ДИАЛОГИ</p>
+<div id="chatWorkspaceList" class="chat-picks" aria-label="Workspace с вложенными диалогами"></div>
+<form id="chatWorkspaceNameForm" class="chat-name-form" hidden>
+<label for="chatWorkspaceNameInput">Переименовать Workspace</label><input id="chatWorkspaceNameInput" maxlength="120" autocomplete="off">
+<div class="chat-actions"><button type="submit" id="chatWorkspaceNameSave">Сохранить</button><button type="button" id="chatWorkspaceNameCancel">Отмена</button></div>
+<p id="chatWorkspaceNameError" class="chat-model-error" role="alert" hidden></p>
+</form>
+<div id="chatListDock" hidden>
 <p id="chatListState" class="muted" role="status">Выберите Workspace.</p>
-<div id="chatList" class="chat-picks" aria-label="Сохранённые диалоги"></div>
-<div class="chat-actions"><button type="button" id="chatNew" disabled title="Создать пустой диалог в выбранном Workspace">+ Новый диалог</button><button type="button" id="chatRename" disabled title="Переименовать выбранный диалог">✎ Переименовать</button></div>
+<div id="chatList" class="chat-picks chat-nested" aria-label="Сохранённые диалоги"></div>
+</div>
+<div class="chat-actions" hidden><button type="button" id="chatNew" disabled>+ Новый диалог</button><button type="button" id="chatRename" disabled>✎ Переименовать</button></div>
 <form id="chatNameForm" class="chat-name-form" aria-label="Название диалога" hidden>
 <label for="chatNameInput" id="chatNameLabel">Название диалога</label>
 <input id="chatNameInput" maxlength="200" autocomplete="off">
 <div class="chat-actions"><button type="submit" id="chatNameSave" class="primary">Сохранить</button><button type="button" id="chatNameCancel">Отмена</button></div>
 <p id="chatNameError" class="chat-model-error" role="alert" hidden></p>
 </form>
-<p class="muted spaced">Чтобы открыть старые диалоги, подключите существующую папку Workspace Ultra и вернитесь в Ultra Chat. Выберите Workspace и диалог. История остаётся в исходной папке.</p>
+<p class="muted spaced">Нажмите на Workspace, чтобы раскрыть чаты. «+» создаёт диалог, карандаш меняет название. История остаётся в исходной папке. Отправка сообщений пока отключена.</p>
 </nav>
 <div id="chatMain" class="chat-main" tabindex="-1" role="region" aria-labelledby="chatTitle">
 <div class="chat-head"><div><span class="eyebrow" id="chatWorkspaceName">Ultra Chat</span><h2 id="chatTitle">Выберите диалог</h2></div><span id="chatModel" class="tag" title="Модель, выбранная в EVM">Модель: —</span></div>
@@ -1872,7 +1897,7 @@ if(typeof window!=='undefined'&&window.addEventListener){
 // Ultra Chat (programme No.37 stage 1): saved dialogues of the shared Ultra core, read-only. The read token
 // lives only in this object and goes only to /ultra/chat/* in its own header; nothing here writes anything.
 const CHAT_TOKEN_HEADER='X-WebAlarm-Ultra-Chat-Token',CHAT_PAGE=50;
-const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,chats:[],chat:null,messages:[],page:null,olderBusy:false};
+const chat={epoch:0,started:false,token:null,workspaces:[],workspace:null,expanded:null,chats:[],chat:null,messages:[],page:null,olderBusy:false,creatingWorkspace:false,renamingWorkspace:false};
 const CHAT_REASON={missing_history:'В папке нет истории Ultra',missing_path:'Папка недоступна',not_directory:'Путь не является папкой',invalid_metadata:'Данные Ultra повреждены',unsupported_version:'Данные Ultra более новой версии',unsafe_storage_link:'Внутри хранилища Ultra ссылка вместо папки или файла — чтение запрещено',unreadable:'Данные не читаются',unsupported_registration_id:'Эта регистрация не поддерживается Ultra Chat',registry_unavailable:'Реестр Workspace недоступен',too_many_workspaces:'Слишком много Workspace',chats_listing_too_large:'Слишком много диалогов для просмотра',history_too_large:'История слишком большая для просмотра',foreign_identity:'Диалог принадлежит другому Workspace',chat_damaged:'Диалог повреждён',ultra_core_unavailable:'Общее ядро Ultra недоступно'};
 const CHAT_OUTCOME={failed:['Ошибка выполнения (старая запись), не ответ модели','bad'],no_answer:['Ответ не сохранён','warn'],interrupted:['Прервано · исход неизвестен','unknown'],unknown:['Исход неизвестен','unknown']};
 function chatReason(code){return CHAT_REASON[code]||'Недоступно ('+String(code)+')'}
@@ -1905,17 +1930,83 @@ function chatPick(label,detail,current,onclick){
   const b=element('button',null,'chat-pick');b.type='button';b.setAttribute('aria-current',String(current));
   b.append(element('strong',label));if(detail)b.append(element('small',detail,'muted'));b.onclick=onclick;return b
 }
+function chatIcon(label,title,onClick,enabled=true){
+  const b=element('button',label,'chat-icon-button');b.type='button';b.setAttribute('aria-label',title);b.title=title;
+  b.disabled=!enabled;b.onclick=e=>{e?.stopPropagation?.();return onClick()};return b
+}
 function renderChatWorkspaces(){
-  $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),
-    w.wa_workspace_id===chat.workspace,()=>selectChatWorkspace(w.wa_workspace_id))));
+  const selected=chat.workspace;
+  // Park the shared controls in the connected, hidden dock BEFORE replacing the tree. Collapsing the
+  // selected group otherwise detaches them: getElementById returns null and append prints "null".
+  const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
+  $('chatListDock').append(...nested);
+  $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>{
+    const active=w.wa_workspace_id===selected,open=active&&chat.expanded===selected;
+    const group=element('div',null,'chat-workspace-group');group.dataset.active=String(active);
+    const row=element('div',null,'chat-workspace-row');
+    const choose=chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),active,()=>selectChatWorkspace(w.wa_workspace_id));
+    choose.setAttribute('aria-expanded',String(open));row.append(choose);
+    row.append(chatIcon('✎','Переименовать Workspace «'+w.display_name+'»',()=>openWorkspaceName(w.wa_workspace_id),!chat.renamingWorkspace?.busy&&!chatEdit.busy));
+    row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>{if(chat.workspace===w.wa_workspace_id)openChatName('create')})}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},w.history==='ok'&&!chatEdit.busy));
+    group.append(row);
+    if(open){
+      const panel=element('div',null,'chat-nested-panel');
+      panel.append(...nested);
+      group.append(panel)
+    }
+    return group
+  }));
   syncChatActions()
 }
+function openWorkspaceName(id){
+  if(chat.renamingWorkspace?.busy||chatEdit.busy)return;
+  closeWorkspaceName();
+  if(chat.workspace!==id){selectChatWorkspace(id).then(()=>{if(chat.workspace===id)openWorkspaceName(id)});return}
+  const w=chat.workspaces.find(x=>x.wa_workspace_id===id);if(!w)return;
+  closeChatName();
+  chat.expanded=id;renderChatWorkspaces();
+  chat.renamingWorkspace={id,expected:w.display_name};
+  $('chatWorkspaceNameInput').value=w.display_name;notice('chatWorkspaceNameError','');
+  $('chatWorkspaceNameForm').hidden=false;$('chatWorkspaceNameInput').focus()
+}
+function closeWorkspaceName(){
+  if(chat.renamingWorkspace?.busy)return;
+  chat.renamingWorkspace=false;$('chatWorkspaceNameForm').hidden=true;notice('chatWorkspaceNameError','')
+}
+async function saveWorkspaceName(){
+  const edit=chat.renamingWorkspace;if(!edit||edit.busy)return;
+  const title=String($('chatWorkspaceNameInput').value||'').trim();
+  if(!title||title.length>120||/[\r\n]/.test(title)){notice('chatWorkspaceNameError','Введите название до 120 символов.');return}
+  edit.busy=true;$('chatWorkspaceNameSave').disabled=true;
+  try{
+    const r=await chatPost('/ultra/chat/workspaces/'+encodeURIComponent(edit.id)+'/title',{title,expected_title:edit.expected});
+    if(r?.wa_workspace_id!==edit.id||r?.display_name!==title)throw Error('rename_unconfirmed');
+    edit.busy=false;closeWorkspaceName();await loadChatWorkspaces();
+  }catch(e){
+    if(e.code==='workspace_title_changed'){
+      const refreshed=await loadChatWorkspaces();
+      const fresh=chat.workspaces.find(w=>w.wa_workspace_id===edit.id);
+      if(refreshed&&fresh)edit.expected=fresh.display_name;
+      notice('chatWorkspaceNameError',refreshed&&fresh?
+        'Название изменилось в другом окне. Список обновлён; проверьте название и нажмите «Сохранить» ещё раз.':
+        'Название изменилось в другом окне, но перечитать его не удалось. Нажмите «Обновить» и откройте форму заново.');
+    }else{
+      notice('chatWorkspaceNameError','Не удалось подтвердить изменение названия. Обновите список перед повтором.');
+    }
+  }finally{edit.busy=false;$('chatWorkspaceNameSave').disabled=false}
+}
 function renderChatList(){
+  const workspace=chat.workspace;
   $('chatList').replaceChildren(...chat.chats.map(c=>{
-    const ok=c.status==='ok';
+    const ok=c.status==='ok',row=element('div',null,'chat-dialog-row');
     const b=chatPick(ok?c.title:c.status==='unsafe_storage_link'?'Ссылка вместо диалога — не читается':'Диалог повреждён',
       ok?(c.created_at?'Создан '+chatTime(c.created_at):''):'ID '+c.chat_id,c.chat_id===chat.chat,()=>selectChat(c.chat_id));
-    b.setAttribute('data-status',c.status);if(!ok)b.disabled=true;return b
+    b.setAttribute('data-status',c.status);if(!ok)b.disabled=true;
+    row.append(b,chatIcon('✎','Переименовать диалог «'+(ok?c.title:c.chat_id)+'»',async()=>{
+      if(chat.chat!==c.chat_id)await selectChat(c.chat_id);
+      if(chat.workspace===workspace&&chat.chat===c.chat_id)openChatName('rename')
+    },ok&&!chatEdit.busy));
+    return row
   }));
   syncChatActions()
 }
@@ -2007,17 +2098,24 @@ async function loadChatWorkspaces(){
     if(epoch!==chat.epoch)return;
     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
     text('chatAccess','Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
-    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Добавьте папку в операторской панели.');
-    if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
+    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
+    if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
+    const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
+    text('chatWorkspaceName',selected?selected.display_name:'Ultra Chat');
     renderChatWorkspaces();
-    if(chat.workspace)return loadChatList();
+    if(chat.workspace){await loadChatList();return true}
     const first=chat.workspaces.find(w=>w.history==='ok');
-    if(first)return selectChatWorkspace(first.wa_workspace_id)
-  }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}}
+    if(first)await selectChatWorkspace(first.wa_workspace_id);
+    return true
+  }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}return false}
 }
 function selectChatWorkspace(id){
+  if(chat.renamingWorkspace?.busy)return Promise.resolve();
+  closeWorkspaceName();
+  if(chat.workspace===id){chat.expanded=chat.expanded===id?null:id;renderChatWorkspaces();return Promise.resolve()}
   closeChatName();
-  chat.epoch++;chat.workspace=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
+  $('chatNameForm').hidden=true;// a pending save of the old Workspace must not expose its editor in the new one
+  chat.epoch++;chat.workspace=id;chat.expanded=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
   const w=chat.workspaces.find(item=>item.wa_workspace_id===id);text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
   renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
   return loadChatList()
@@ -2094,9 +2192,11 @@ async function chatPost(path,body){
   }
 }
 function openChatName(mode){
-  if(chatEdit.busy)return;
+  if(chatEdit.busy||chat.renamingWorkspace?.busy)return;
   const current=chat.chats.find(c=>c.chat_id===chat.chat&&c.status==='ok');
   if(mode==='rename'?!current:$('chatNew').disabled)return;
+  closeWorkspaceName();
+  chat.expanded=chat.workspace;renderChatWorkspaces();
   // A new dialogue gets its ID now: saving again after a lost answer repeats the same request, never a second chat.
   Object.assign(chatEdit,{mode,workspace:chat.workspace,chatId:current&&mode==='rename'?current.chat_id:null,
     expected:mode==='rename'?current.title:null,pendingId:mode==='create'?newChatId():null});
@@ -2137,16 +2237,41 @@ async function saveChatName(){
   return loadChatList()
 }
 $('viewChat').onclick=()=>showView('chat');
-$('chatRegisterWorkspace').onclick=()=>{
-  showView('operator');
-  $('layout').className='layout show-workspaces';
-  return $('addWorkspace').onclick()
-};
+async function createChatWorkspace(){
+  if(chat.creatingWorkspace||chat.renamingWorkspace?.busy||chatEdit.busy)return;
+  let registrationStarted=false,registered=false;
+  chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;notice('chatError','');notice('chatWorkspaceResult','');
+  try{
+    const capability=(await api('/ui/capabilities'))?.folder_picker;
+    if(!capability?.available||typeof capability.token!=='string'||capability.token.length<32)throw Error('picker_unavailable');
+    const picked=await api('/ui/pick-workspace-folder',{method:'POST',body:{},headers:{'X-WebAlarm-Folder-Token':capability.token},timeoutMs:125000});
+    if(picked?.status==='CANCELLED')return;
+    if(picked?.status!=='SELECTED'||typeof picked.workspace_root!=='string'||! /^(?:[A-Za-z]:[\\/]|\\\\)/.test(picked.workspace_root))throw Error('picker_invalid');
+    const root=picked.workspace_root,parts=root.replace(/[\\/]+$/,'').split(/[\\/]/),name=parts.at(-1)||'Workspace';
+    registrationStarted=true;
+    const result=await api('/workspaces',{method:'POST',body:{display_name:name,workspace_root:root}});
+    if(typeof result?.workspace?.workspace_id!=='string')throw Error('registration_unconfirmed');
+    registered=true;notice('chatWorkspaceResult','Workspace подключён. История загружается отдельно.');
+    closeWorkspaceName();closeChatName();
+    chat.epoch++;chat.workspace=result.workspace.workspace_id;chat.expanded=chat.workspace;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;
+    await loadChatWorkspaces();
+  }catch(e){
+    notice('chatError',registered?'Workspace подключён, но загрузить его данные не удалось. Нажмите «Обновить».':
+      registrationStarted?(e.serverRejected&&e.httpStatus>=400&&e.httpStatus<500?
+        'Сервер отклонил регистрацию Workspace. Проверьте выбранную папку и обновите список.':
+        'Не удалось подтвердить регистрацию Workspace. Обновите список перед повтором. Автоматического повтора нет.'):
+      'Не удалось выбрать папку Workspace. Проверьте доступность системного выбора папки.');
+  }finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false}
+}
+$('chatRegisterWorkspace').onclick=createChatWorkspace;
 $('viewBlueprint').onclick=()=>showView('blueprint');
 $('chatRefresh').onclick=()=>{loadChatModel();return loadChatWorkspaces()};
 $('chatOlder').onclick=()=>loadChatHistory(true);
 $('chatNew').onclick=()=>openChatName('create');
 $('chatRename').onclick=()=>openChatName('rename');
+$('chatWorkspaceNameForm').onsubmit=e=>{e.preventDefault();return saveWorkspaceName()};
+$('chatWorkspaceNameCancel').onclick=closeWorkspaceName;
+$('chatWorkspaceNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeWorkspaceName()}};
 $('chatNameForm').onsubmit=e=>{e.preventDefault();return saveChatName()};
 $('chatNameCancel').onclick=()=>closeChatName();
 $('chatNameInput').onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();closeChatName()}};

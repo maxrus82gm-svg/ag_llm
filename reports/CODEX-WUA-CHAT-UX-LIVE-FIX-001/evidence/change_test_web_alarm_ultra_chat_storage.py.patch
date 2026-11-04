@@ -1,0 +1,67 @@
+--- before/test_web_alarm_ultra_chat_storage.py
++++ after/test_web_alarm_ultra_chat_storage.py
+@@ -28,6 +28,7 @@
+ from web_alarm import server as wa_server
+ from web_alarm import ultra_chat
+ from web_alarm.server import WebAlarmApi, build_parser, create_server
++from web_alarm.workspace_registry import WorkspaceRegistryError
+ 
+ ROOT = Path(cs.__file__).resolve().parent
+ CAP = "/ui/ultra-chat/capability"
+@@ -540,6 +541,56 @@
+         self.assertEqual(len(server.api.registry.list()), 1)
+         self.assertEqual(server.api.registry.get(wa_id).display_name, "Label")
+ 
++    def test_w15_http_registration_repeat_keeps_empty_folder_empty_and_reports_missing_history(self):
++        server = self.start()
++        root = self.base / "Empty"
++        root.mkdir()
++        before = snapshot(root)
++        status, data = self.post(server, "/workspaces", {"display_name": "Empty", "workspace_root": str(root)})
++        self.assertEqual(status, 201)
++        record = data["workspace"]
++        status, again = self.post(server, "/workspaces", {"display_name": "Different", "workspace_root": str(root)})
++        self.assertEqual((status, again["workspace"]), (201, record))
++        self.assertEqual(len(server.api.registry.list()), 1)
++        wa_id = record["workspace_id"]
++        status, catalog = server.read("/ultra/chat/workspaces")
++        self.assertEqual((status, catalog["workspaces"][0]["history"]), (200, "missing_history"))
++        status, chats = server.read(f"/ultra/chat/workspaces/{wa_id}/chats")
++        self.assertEqual((status, chats["state"], chats["reason"], chats["chats"]),
++                         (200, "unavailable", "missing_history", []))
++        status, error = self.post(server, f"/ultra/chat/workspaces/{wa_id}/chats", {"chat_id": new_id(100)})
++        self.assertEqual((status, error["error"]["code"]), (409, "workspace_unavailable"))
++        self.assertEqual(snapshot(root), before)
++        self.assertFalse((root / ".ultra").exists(), "registration and reading never initialise Ultra history")
++
++    def test_w16_workspace_rename_error_and_restart_preserve_identity_paths_and_raw_history(self):
++        server = self.start()
++        root, wa_id, chat = self.project(server, "label")
++        cs.append_raw_message(root, chat, "user", '<img src=x onerror="alert(1)"> Старая история')
++        before = snapshot(root)
++        original = server.api.registry.get(wa_id)
++        path = f"/ultra/chat/workspaces/{wa_id}/title"
++        with patch.object(server.api.registry, "_write", side_effect=WorkspaceRegistryError("private disk path")):
++            status, data = self.post(server, path, {"title": "Not saved", "expected_title": "Label"})
++        self.assertEqual((status, data["error"]["code"]), (409, "workspace_registry_unavailable"))
++        self.assertNotIn("private disk path", json.dumps(data))
++        self.assertEqual(server.api.registry.get(wa_id), original)
++        for title, expected in [("Новая метка <b>буквально</b>", "Label"), ("Повторное имя", "Новая метка <b>буквально</b>")]:
++            status, data = self.post(server, path, {"title": title, "expected_title": expected})
++            self.assertEqual((status, data["display_name"]), (200, title))
++        current = server.api.registry.get(wa_id)
++        self.assertEqual((current.workspace_id, current.workspace_root, current.created_at),
++                         (original.workspace_id, original.workspace_root, original.created_at))
++        self.assertEqual(snapshot(root), before)
++        server.stop()
++        reopened = self.start("storage")
++        status, catalog = reopened.read("/ultra/chat/workspaces")
++        self.assertEqual((status, catalog["workspaces"][0]["display_name"]), (200, "Повторное имя"))
++        status, history = reopened.read(f"/ultra/chat/workspaces/{wa_id}/chats/{chat}/messages")
++        self.assertEqual(status, 200)
++        self.assertIn('<img src=x onerror="alert(1)">', history["messages"][0]["text"])
++        self.assertEqual(snapshot(root), before)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

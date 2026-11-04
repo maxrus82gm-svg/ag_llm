@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+not ok 1 - Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+  ---
+  duration_ms: 17.2331
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\red_repro\\test_web_alarm_ultra_chat_ui.js:132:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot set properties of null (setting 'hidden')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    closeWorkspaceName (evalmachine.<anonymous>:1390:65)
+    selectChatWorkspace (evalmachine.<anonymous>:1522:3)
+    Element.onclick (evalmachine.<anonymous>:1365:116)
+    TestContext.<anonymous> (M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\red_repro\test_web_alarm_ultra_chat_ui.js:143:41)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+not ok 2 - LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+  ---
+  duration_ms: 8.9953
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\red_repro\\test_web_alarm_ultra_chat_ui.js:621:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /Не удалось создать Workspace/. Input:
+    
+    'Не удалось создать Workspace. Проверьте выбор папки и список Workspace; если выбор папки недоступен, откройте операторскую панель. Автоматического повтора нет.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Не удалось создать Workspace. Проверьте выбор папки и список Workspace; если выбор папки недоступен, откройте операторскую панель. Автоматического повтора нет.'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\red_repro\test_web_alarm_ultra_chat_ui.js:634:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+not ok 3 - LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+  ---
+  duration_ms: 4.958
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\red_repro\\test_web_alarm_ultra_chat_ui.js:639:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /null/. Input:
+    
+    'Проект АИстория Ultra найдена✎+nullnullnullnullПроект БИстория Ultra найдена✎+'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Проект АИстория Ultra найдена✎+nullnullnullnullПроект БИстория Ultra найдена✎+'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\red_repro\test_web_alarm_ultra_chat_ui.js:643:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+not ok 4 - LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+  ---
+  duration_ms: 6.655
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\red_repro\\test_web_alarm_ultra_chat_ui.js:649:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot set properties of null (setting 'textContent')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    text (evalmachine.<anonymous>:9:20)
+    loadChatList (evalmachine.<anonymous>:1532:26)
+    loadChatWorkspaces (evalmachine.<anonymous>:1515:30)
+    async TestContext.<anonymous> (M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\red_repro\test_web_alarm_ultra_chat_ui.js:653:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+not ok 5 - LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+  ---
+  duration_ms: 5.4084
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\red_repro\\test_web_alarm_ultra_chat_ui.js:664:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /привет/. Input:
+    
+    'Вы2026-10-01 10:00:03История второго'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Вы2026-10-01 10:00:03История второго'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\red_repro\test_web_alarm_ultra_chat_ui.js:671:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 0
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 107.1775

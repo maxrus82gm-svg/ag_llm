@@ -11,11 +11,18 @@ const source = fs.readFileSync(path.join(__dirname, 'web_alarm/ui.py'), 'utf8');
 const script = source.match(/<script>([\s\S]*?)<\/script>/)[1];
 
 class Element {
-  constructor(tag = 'div') {this.tag = tag; this.children = []; this.attrs = {}; this.dataset = {}; this.style = {}; this.hidden = false; this.disabled = false; this.value = ''; this._text = '';}
-  set textContent(value) {this._text = String(value); this.children = [];}
+  constructor(tag = 'div') {this.tag = tag; this.children = []; this.parentNode = null; this.attrs = {}; this.dataset = {}; this.style = {}; this.hidden = false; this.disabled = false; this.value = ''; this._text = '';}
+  set textContent(value) {this.replaceChildren(); this._text = value == null ? '' : String(value);}
   get textContent() {return this._text + this.children.map(c => c.textContent).join('');}
-  append(...children) {this.children.push(...children);}
-  replaceChildren(...children) {this._text = ''; this.children = children;}
+  append(...children) {
+    for (let child of children) {
+      // DOM append converts null to a text node and MOVES existing nodes. A detached ID is not discoverable.
+      if (!(child instanceof Element)) {const text = new Element('#text'); text.textContent = String(child); child = text;}
+      if (child.parentNode) child.parentNode.children.splice(child.parentNode.children.indexOf(child), 1);
+      child.parentNode = this; this.children.push(child);
+    }
+  }
+  replaceChildren(...children) {this._text = ''; for (const child of this.children) child.parentNode = null; this.children = []; this.append(...children);}
   setAttribute(name, value) {this.attrs[name] = String(value);}
   getAttribute(name) {return this.attrs[name] ?? null;}
   removeAttribute(name) {delete this.attrs[name];}
@@ -35,15 +42,20 @@ const MESSAGES_A = '/ultra/chat/workspaces/ws_a/chats/chat_a/messages?limit=50';
 function harness({routes = {}, hash = null, storage = null} = {}) {
   const h = {calls: [], routes: new Map(Object.entries(routes)), stored: [], replaced: []};
   const elements = {};
-  for (const m of source.matchAll(/<([a-z0-9]+)[^>]*\bid="([^"]+)"[^>]*>/g)) {
-    const e = new Element(m[1]); e.id = m[2]; e.hidden = m[0].includes(' hidden');
+  const root = new Element('document'), stack = [root];
+  const markup = source.slice(source.indexOf('<body'), source.indexOf('<script>'));
+  for (const m of markup.matchAll(/<(\/?)([a-z0-9]+)\b[^>]*>/g)) {
+    if (m[1]) {while (stack.length > 1 && stack.pop().tag !== m[2]) {} continue;}
+    const e = new Element(m[2]); e.hidden = /\shidden(?:\s|>)/.test(m[0]);
     for (const [, name, value] of m[0].matchAll(/\s([a-z][a-z-]*)="([^"]*)"/g)) e.attrs[name] = value;
     e.disabled = /\sdisabled[\s>]/.test(m[0]);
-    elements[e.id] = e;
+    if (e.attrs.id) {e.id = e.attrs.id; elements[e.id] = e;}
+    stack.at(-1).append(e);
+    if (!['input', 'br', 'hr', 'img', 'meta', 'link'].includes(e.tag)) stack.push(e);
   }
-  const all = () => {const s = new Set(Object.values(elements)); const add = e => {for (const c of e.children) {s.add(c); add(c);}}; Object.values(elements).forEach(add); return [...s];};
-  const document = {hidden: false, activeElement: null, getElementById: id => elements[id], createElement: tag => {const e = new Element(tag); e.document = document; return e;}, querySelectorAll: () => []};
-  Object.values(elements).forEach(e => e.document = document);
+  const all = () => {const nodes = []; const add = e => {nodes.push(e); e.children.forEach(add);}; add(root); return nodes;};
+  const document = {hidden: false, activeElement: null, getElementById: id => all().find(e => e.id === id) || null, createElement: tag => {const e = new Element(tag); e.document = document; return e;}, querySelectorAll: () => []};
+  all().forEach(e => e.document = document);
   const defaults = url => {
     if (url === '/status') return {service: 'web_alarm_server', mode: 'server', api_version: 1};
     if (url === '/workspaces') return {workspaces: []};
@@ -79,30 +91,58 @@ function harness({routes = {}, hash = null, storage = null} = {}) {
   h.run = code => vm.runInContext(code, h.context);
   h.chatCalls = () => h.calls.filter(c => c.url.startsWith('/ultra/chat/'));
   h.items = () => h.el('chatHistory').children;
-  h.picks = id => h.el(id).children;
+  h.picks = id => id === 'chatWorkspaceList' ? h.el(id).children.map(g => g.children[0].children[0]) :
+    id === 'chatList' ? h.el(id).children.map(row => row.children[0]) : h.el(id).children;
   vm.runInContext(script, h.context);
   return h;
 }
 
-test('Workspace shortcut opens the existing registration form without posting', async () => {
-  const h = harness(); await settle();
-  await h.el('chatRegisterWorkspace').onclick();
-  assert.equal(h.el('layout').hidden, false);
-  assert.equal(h.el('layout').className, 'layout show-workspaces');
-  assert.equal(h.el('workspaceFormPanel').hidden, false);
-  assert.equal(h.context.document.activeElement, h.el('wsName'));
-  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0);
+test('Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view', async () => {
+  const h = harness({routes: {
+    '/ui/capabilities': () => ({folder_picker: {available: true, token: 'P'.repeat(42)}}),
+    '/ui/pick-workspace-folder': () => ({status: 'SELECTED', workspace_root: 'C:\\\\Synthetic\\\\Новая папка'}),
+    '/workspaces': opts => ((opts.method || 'GET') === 'POST' ?
+      {workspace: {workspace_id: 'ws_new', display_name: 'Новая папка', workspace_root: 'C:\\\\Synthetic\\\\Новая папка'}} :
+      {workspaces: []}),
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Проект А'), ws('ws_new', 'Новая папка')]}),
+    '/ultra/chat/workspaces/ws_new/chats': () => ({wa_workspace_id: 'ws_new', display_name: 'Новая папка', state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}})
+  }}); await settle();
+  await h.el('chatRegisterWorkspace').onclick(); await settle();
+  assert.equal(h.el('layout').hidden, true);
+  assert.equal(h.el('chatView').hidden, false);
+  const posts = h.calls.filter(c => c.method === 'POST');
+  assert.deepEqual(posts.map(p => p.url), ['/ui/pick-workspace-folder', '/workspaces']);
+  assert.equal(posts[0].headers['X-WebAlarm-Folder-Token'], 'P'.repeat(42));
+  assert.equal(JSON.parse(posts[1].body).display_name, 'Новая папка');
+  assert.equal(h.el('chatWorkspaceList').textContent.includes('Новая папка'), true);
+  assert.equal(h.run('chat.workspace'), 'ws_new');
 });
 
-test('returning from Workspace registration rereads the catalog and preserves a valid chat', async () => {
+test('cancelled or unavailable folder picker does not register a workspace or reveal secret paths', async () => {
+  const cancelled = harness({routes: {'/ui/capabilities': () => ({folder_picker: {available: true, token: 'P'.repeat(42)}}),
+    '/ui/pick-workspace-folder': () => ({status: 'CANCELLED'})}}); await settle();
+  await cancelled.el('chatRegisterWorkspace').onclick(); await settle();
+  assert.equal(cancelled.calls.some(c => c.url === '/workspaces' && c.method === 'POST'), false);
+  const absent = harness(); await settle();
+  await absent.el('chatRegisterWorkspace').onclick(); await settle();
+  assert.equal(absent.el('chatError').hidden, false);
+  assert.equal(absent.calls.some(c => c.url === '/workspaces' && c.method === 'POST'), false);
+});
+
+test('Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection', async () => {
   const h = harness(); await settle();
-  await h.el('chatRegisterWorkspace').onclick();
-  h.routes.set('/ultra/chat/workspaces', () => ({state: 'ok', workspaces: [
-    ws('ws_a', 'Проект А'), ws('ws_new', 'Добавленная папка')
-  ]}));
-  await h.el('viewChat').onclick(); await settle();
-  assert.match(h.el('chatWorkspaceList').textContent, /Добавленная папка/);
-  assert.match(h.el('chatHistory').textContent, /привет/);
+  assert.equal(h.el('chatWorkspaceList').children.length, 2);
+  const first = h.el('chatWorkspaceList').children[0];
+  assert.equal(first.dataset.active, 'true');
+  assert.equal(first.children.length, 2, 'row and nested chat panel');
+  assert.equal(first.children[0].children[0].getAttribute('aria-expanded'), 'true');
+  assert.match(first.textContent, /Первый диалог/);
+  await first.children[0].children[0].onclick(); await settle();
+  assert.equal(h.el('chatWorkspaceList').children[0].children.length, 1, 'collapsed: no chat panel');
+  assert.equal(h.run('chat.workspace'), 'ws_a');
+  await h.picks('chatWorkspaceList')[0].onclick(); await settle();
+  assert.equal(h.el('chatWorkspaceList').children[0].children.length, 2);
+  assert.equal(h.el('chatHistory').textContent.includes('ответ'), true);
 });
 
 test('a failed catalog request hides raw server details and can be retried', async () => {
@@ -551,4 +591,227 @@ test('U19 a save refused after a Workspace switch closes its form there; a taken
   taken.el('chatNew').onclick(); await submit(taken); await settle();
   assert.match(taken.el('chatNameError').textContent, /идентификатор уже занят/);
   assert.equal(gets, before + 1, 'the list is re-read so a chat stored by a lost answer becomes visible');
+});
+
+test('Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path', async () => {
+  const store = [ws('ws_a', 'Проект А'), ws('ws_b', 'Проект Б')];
+  const posts = [];
+  const h = harness({routes: {
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: store.map(w => ({...w}))}),
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces/ws_a/title': opts => {
+      const body = JSON.parse(opts.body); posts.push({body, headers: opts.headers});
+      if (store[0].display_name !== body.expected_title) return refused(409, 'workspace_title_changed');
+      store[0].display_name = body.title; return {wa_workspace_id: 'ws_a', display_name: body.title};
+    }
+  }}); await settle();
+  const pencil = h.el('chatWorkspaceList').children[0].children[0].children[1];
+  assert.match(pencil.getAttribute('aria-label'), /Переименовать Workspace/);
+  pencil.onclick(); await settle();
+  h.el('chatWorkspaceNameInput').value = 'Новая метка';
+  await h.el('chatWorkspaceNameForm').onsubmit({preventDefault() {}}); await settle();
+  assert.deepEqual(posts[0].body, {title:'Новая метка', expected_title:'Проект А'});
+  assert.equal(posts[0].headers[WHEADER], WTOKEN);
+  assert.equal(posts[0].headers[HEADER], undefined);
+  assert.match(h.el('chatWorkspaceList').textContent, /Новая метка/);
+  assert.equal(h.run('chat.workspace'), 'ws_a');
+  assert.match(h.el('chatHistory').textContent, /ответ/);
+});
+
+test('LIVE RED: a confirmed registration after collapse must not be reported as creation failure', async () => {
+  let registered = false;
+  const h = harness({routes: {
+    '/ui/capabilities': () => ({folder_picker: {available: true, token: 'P'.repeat(42)}}),
+    '/ui/pick-workspace-folder': () => ({status: 'SELECTED', workspace_root: 'C:\\Synthetic\\Empty'}),
+    '/workspaces': opts => opts.method === 'POST' ? (registered = true, {workspace: {workspace_id: 'ws_new'}}) : {workspaces: []},
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Проект А'), ...(registered ? [ws('ws_new', 'Empty', 'missing_history')] : [])]}),
+    '/ultra/chat/workspaces/ws_new/chats': () => ({state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}})
+  }}); await settle();
+  await h.picks('chatWorkspaceList')[0].onclick(); // collapse removes the current panel from the document
+  await h.el('chatRegisterWorkspace').onclick(); await settle();
+  assert.equal(registered, true);
+  assert.equal(h.calls.filter(c => c.url === '/workspaces' && c.method === 'POST').length, 1);
+  assert.doesNotMatch(h.el('chatError').textContent, /Не удалось создать Workspace/);
+  assert.match(h.el('chatListState').textContent, /нет истории Ultra/);
+  assert.doesNotMatch(h.el('chatWorkspaceList').textContent, /null/);
+});
+
+test('LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null', async () => {
+  const h = harness(); await settle();
+  await h.picks('chatWorkspaceList')[0].onclick();
+  h.run('chat.expanded=chat.workspace;renderChatWorkspaces()');
+  assert.doesNotMatch(h.el('chatWorkspaceList').textContent, /null/);
+  for (const id of ['chatWorkspaceNameForm', 'chatListState', 'chatList', 'chatNameForm']) {
+    assert.equal(h.context.document.getElementById(id), h.el(id), id + ' remains in the document');
+  }
+});
+
+test('LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace', async () => {
+  const h = harness(); await settle();
+  await h.picks('chatWorkspaceList')[0].onclick();
+  // A direct refresh was another real entry point to the detached panel.
+  await h.el('chatRefresh').onclick(); await settle();
+  const pencil = h.el('chatWorkspaceList').children[0].children[0].children[1];
+  pencil.onclick(); await settle();
+  assert.equal(h.context.document.getElementById('chatWorkspaceNameInput'), h.el('chatWorkspaceNameInput'));
+  assert.equal(h.el('chatWorkspaceNameForm').hidden, false);
+  h.el('chatWorkspaceNameCancel').onclick();
+  h.el('chatList').children[0].children[1].onclick(); await settle();
+  assert.equal(h.context.document.getElementById('chatNameInput'), h.el('chatNameInput'));
+  assert.equal(h.el('chatNameForm').hidden, false);
+});
+
+test('LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue', async () => {
+  const h = harness({routes: {
+    '/ultra/chat/workspaces/ws_a/chats': () => ({state: 'ok', chats: [chatItem('chat_a', 'Первый'), chatItem('chat_b', 'Второй')], excluded: {}}),
+    '/ultra/chat/workspaces/ws_a/chats/chat_b/messages?limit=50': () => page([msg(3, 'user', 'История второго', 'request')], {chat_id: 'chat_b', chat: {title: 'Второй'}})
+  }}); await settle();
+  await h.el('chatList').children[0].children[1].onclick(); await settle();
+  assert.equal(h.run('chat.chat'), 'chat_a');
+  assert.match(h.el('chatHistory').textContent, /привет/);
+  assert.doesNotMatch(h.el('chatHistory').textContent, /История второго/);
+  assert.equal(h.el('chatNameInput').value, 'Первый');
+});
+
+test('LIVE registration separates confirmation from catalog/list/history failure, rejection and an unknown POST outcome', async () => {
+  for (const failure of ['catalog', 'list', 'history', 'rejected', 'lost', 'malformed']) {
+    let posted = false;
+    const h = harness({routes: {
+      '/ui/capabilities': () => ({folder_picker: {available: true, token: 'P'.repeat(42)}}),
+      '/ui/pick-workspace-folder': () => ({status: 'SELECTED', workspace_root: 'C:\\Synthetic\\Empty'}),
+      '/workspaces': opts => {
+        if (opts.method !== 'POST') return {workspaces: []};
+        posted = true;
+        if (failure === 'rejected') return refused(400, 'invalid_workspace');
+        if (failure === 'lost') throw Error('private transport details');
+        return failure === 'malformed' ? {} : {workspace: {workspace_id: 'ws_new'}};
+      },
+      '/ultra/chat/workspaces': () => posted && failure === 'catalog' ? refused(500, 'private catalog error') :
+        {state: 'ok', workspaces: [ws('ws_a', 'Проект А'), ...(posted ? [ws('ws_new', 'Empty')] : [])]},
+      '/ultra/chat/workspaces/ws_new/chats': () => failure === 'list' ? refused(500, 'private list error') :
+        {state: 'ok', chats: [chatItem('chat_new', 'Новый')], excluded: {}},
+      '/ultra/chat/workspaces/ws_new/chats/chat_new/messages?limit=50': () => refused(500, 'private history error')
+    }}); await settle();
+    await h.el('chatRegisterWorkspace').onclick(); await settle();
+    assert.equal(h.calls.filter(c => c.url === '/workspaces' && c.method === 'POST').length, 1, failure);
+    assert.equal(h.el('chatError').hidden, false, failure);
+    assert.doesNotMatch(h.el('chatError').textContent, /Не удалось создать Workspace|private/, failure);
+    if (['rejected', 'lost', 'malformed'].includes(failure)) {
+      assert.match(h.el('chatError').textContent, failure === 'rejected' ? /отклонил регистрацию/ : /подтвердить регистрацию/, failure);
+      assert.equal(h.el('chatWorkspaceResult').hidden, true);
+    } else {
+      assert.match(h.el('chatWorkspaceResult').textContent, /Workspace подключён/);
+      assert.match(h.el('chatError').textContent, /загрузить данные/);
+    }
+    assert.equal(h.el('chatRegisterWorkspace').disabled, false);
+  }
+});
+
+test('LIVE empty, single and multiple dialogue trees survive repeated collapse, refresh and Workspace switches', async () => {
+  for (const count of [0, 1, 3]) {
+    const items = Array.from({length: count}, (_, n) => chatItem('chat_' + n, 'Диалог ' + n));
+    const h = harness({routes: {
+      '/ultra/chat/workspaces/ws_a/chats': () => ({state: 'ok', chats: items, excluded: {}}),
+      '/ultra/chat/workspaces/ws_b/chats': () => ({state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}}),
+      ...Object.fromEntries(items.map(c => ['/ultra/chat/workspaces/ws_a/chats/' + c.chat_id + '/messages?limit=50', () => page([])]))
+    }}); await settle();
+    for (let cycle = 0; cycle < 3; cycle++) {
+      assert.equal(h.picks('chatList').length, count);
+      await h.picks('chatWorkspaceList')[0].onclick();
+      await h.el('chatRefresh').onclick(); await settle();
+      assert.equal(h.picks('chatWorkspaceList')[0].getAttribute('aria-expanded'), 'false', 'refresh respects collapse');
+      assert.equal(h.run('chat.workspace'), 'ws_a');
+      await h.picks('chatWorkspaceList')[1].onclick(); await settle();
+      assert.match(h.el('chatListState').textContent, /нет истории Ultra/);
+      assert.equal(h.picks('chatList').length, 0);
+      await h.picks('chatWorkspaceList')[0].onclick(); await settle();
+      assert.equal(h.picks('chatWorkspaceList')[0].getAttribute('aria-current'), 'true');
+      assert.doesNotMatch(h.el('chatWorkspaceList').textContent, /null|undefined/);
+      for (const id of ['chatWorkspaceNameForm', 'chatListState', 'chatList', 'chatNameForm']) assert.ok(h.context.document.getElementById(id));
+    }
+  }
+});
+
+test('LIVE Workspace rename conflict refreshes the label and keeps the typed title for an explicit second Save', async () => {
+  let title = 'Проект А';
+  const posts = [];
+  const h = harness({routes: {
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', title)]}),
+    '/ultra/chat/workspaces/ws_a/title': opts => {
+      const body = JSON.parse(opts.body); posts.push(body);
+      if (posts.length === 1) {title = 'Из другого окна'; return refused(409, 'workspace_title_changed');}
+      if (body.expected_title !== title) return refused(409, 'workspace_title_changed');
+      title = body.title; return {wa_workspace_id: 'ws_a', display_name: title};
+    }
+  }}); await settle();
+  h.el('chatWorkspaceList').children[0].children[0].children[1].onclick();
+  h.el('chatWorkspaceNameInput').value = 'Моя метка';
+  await h.el('chatWorkspaceNameForm').onsubmit({preventDefault() {}}); await settle();
+  assert.equal(title, 'Из другого окна');
+  assert.match(h.el('chatWorkspaceList').textContent, /Из другого окна/);
+  assert.equal(h.el('chatWorkspaceNameInput').value, 'Моя метка');
+  assert.equal(h.el('chatWorkspaceNameForm').hidden, false);
+  assert.match(h.el('chatWorkspaceNameError').textContent, /Сохранить/);
+  await h.el('chatWorkspaceNameForm').onsubmit({preventDefault() {}}); await settle();
+  assert.equal(posts[1].expected_title, 'Из другого окна');
+  assert.equal(title, 'Моя метка');
+  assert.equal(h.el('chatWorkspaceName').textContent, 'Моя метка', 'the selected Workspace header refreshes too');
+  assert.equal(h.el('chatWorkspaceNameForm').hidden, true);
+  h.el('chatWorkspaceList').children[0].children[0].children[1].onclick();
+  assert.equal(h.el('chatWorkspaceNameInput').value, 'Моя метка');
+});
+
+test('LIVE both rename forms keep server errors as safe text and can be cancelled and reopened', async () => {
+  const h = harness({routes: {
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces/ws_a/title': () => refused(500, '<img src=x onerror=alert(1)>'),
+    '/ultra/chat/workspaces/ws_a/chats/chat_a/title': () => refused(500, '<script>alert(1)</script>')
+  }}); await settle();
+  h.el('chatWorkspaceList').children[0].children[0].children[1].onclick();
+  h.el('chatWorkspaceNameInput').value = '<b>Workspace</b>';
+  await h.el('chatWorkspaceNameForm').onsubmit({preventDefault() {}}); await settle();
+  assert.equal(h.el('chatWorkspaceNameForm').hidden, false);
+  assert.equal(h.el('chatWorkspaceNameSave').disabled, false);
+  assert.doesNotMatch(h.el('chatWorkspaceNameError').textContent, /<img|onerror/);
+  h.el('chatWorkspaceNameCancel').onclick();
+  await h.el('chatList').children[0].children[1].onclick();
+  h.el('chatNameInput').value = '<b>Диалог</b>';
+  await submit(h); await settle();
+  assert.equal(h.el('chatNameForm').hidden, false);
+  assert.equal(h.el('chatNameSave').disabled, false);
+  assert.doesNotMatch(h.el('chatNameError').textContent, /<script/);
+  h.el('chatNameCancel').onclick();
+  await h.el('chatList').children[0].children[1].onclick();
+  assert.equal(h.el('chatNameInput').value, 'Первый диалог');
+  assert.ok(h.all().every(e => !('innerHTML' in e)));
+});
+
+test('LIVE a failed Workspace-conflict readback never claims the list was refreshed', async () => {
+  let conflict = false;
+  const h = harness({routes: {
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces': () => conflict ? refused(500, 'readback failed') : {state: 'ok', workspaces: [ws('ws_a', 'Проект А')]},
+    '/ultra/chat/workspaces/ws_a/title': () => {conflict = true; return refused(409, 'workspace_title_changed');}
+  }}); await settle();
+  h.el('chatWorkspaceList').children[0].children[0].children[1].onclick();
+  h.el('chatWorkspaceNameInput').value = 'Моя метка';
+  await h.el('chatWorkspaceNameForm').onsubmit({preventDefault() {}}); await settle();
+  assert.doesNotMatch(h.el('chatWorkspaceNameError').textContent, /Список обновлён/);
+  assert.match(h.el('chatWorkspaceNameError').textContent, /не удалось|Не удалось/);
+  assert.equal(h.el('chatWorkspaceNameInput').value, 'Моя метка');
+  assert.equal(h.el('chatWorkspaceNameForm').hidden, false);
+});
+
+test('LIVE a late plus-click for another Workspace cannot open an editor in the new selection', async () => {
+  let release;
+  const delayed = new Promise(resolve => {release = resolve;});
+  const h = harness({routes: {
+    '/ultra/chat/workspaces/ws_b/chats': async () => {await delayed; return {state: 'ok', chats: [], excluded: {}};}
+  }}); await settle();
+  h.el('chatWorkspaceList').children[1].children[0].children[2].onclick(); await settle();
+  await h.picks('chatWorkspaceList')[0].onclick(); await settle();
+  release(); await settle();
+  assert.equal(h.run('chat.workspace'), 'ws_a');
+  assert.equal(h.el('chatNameForm').hidden, true, 'the delayed action belongs to ws_b only');
 });

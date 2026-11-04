@@ -1,0 +1,69 @@
+{
+ "command": "finish",
+ "card": "Документация/000_Задачи Codex.md",
+ "steps": [
+  {
+   "command": "check",
+   "card_sha256": "7ca14f61447b3d10ef46634bd905f521cae94cfb941b377adb1e33dd2231b20c",
+   "eol": "LF",
+   "marker_lines": {
+    "b1b": 46,
+    "b1e": 237,
+    "b11b": 243,
+    "b11e": 453
+   },
+   "block1": {
+    "state": "TASK",
+    "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+    "problems": [],
+    "title": "Ultra Chat — устранение дефектов нового интерфейса по результатам Windows-проверки.",
+    "lines": 190
+   },
+   "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+    "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+    "problems": []
+   },
+   "problems": [],
+   "result": "OK"
+  },
+  {
+   "command": "dry-run",
+   "mode": "dry-run",
+   "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+   "status": "SUBMITTED / REVIEW PENDING",
+   "old_card_sha256": "7ca14f61447b3d10ef46634bd905f521cae94cfb941b377adb1e33dd2231b20c",
+   "previous_slot": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+    "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+    "publication": "NOT VERIFIED",
+    "archived": "IN_SNAPSHOT",
+    "action": "REUSED",
+    "locator": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/handoff_task.md",
+    "archive_sha256": "188bd7a9693d543f794ac2acfd00143dd346062dd028ebf23e28c7917647806c"
+   },
+   "new_card_sha256": "97f12b965a3fc9c00abab172d059a9b75f13147b97e2a89580265306a52101e2",
+   "copy_sha256_lf": "c0301361b6bb8055d46b3ef66aae023900ec831b9f14415998f7c08e3a086ae0",
+   "copy_lines": 190,
+   "copied_exact": true,
+   "outside_slots_unchanged": true,
+   "block1_after": "WAITING",
+   "eol": "LF",
+   "snapshot": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/handoff_task.md",
+   "snapshot_state": "NEW",
+   "chat_amendments": 0,
+   "result": "DRY RUN OK",
+   "planned_action": "ROTATED"
+  }
+ ],
+ "result": "REFUSED",
+ "problems": [
+  {
+   "code": "WRITE_FAILED",
+   "detail": "000_Задачи Codex.md: PermissionError"
+  }
+ ],
+ "card_unchanged": true
+}

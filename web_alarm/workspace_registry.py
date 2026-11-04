@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import replace
 from pathlib import Path
 from typing import Iterable
 
 from .models import (
     SCHEMA_VERSION,
     WorkspaceRegistration,
+    utc_now_iso,
     new_id,
     record_to_dict,
 )
@@ -105,6 +107,19 @@ class WorkspaceRegistry:
         if not path.is_file():
             raise WorkspaceRegistryError(f"unknown workspace_id: {workspace_id}")
         return self._load_path(path)
+
+    def rename_display_name(self, workspace_id: str, title: str, expected: str) -> WorkspaceRegistration:
+        """Change only the registry label, never the folder, identity or Ultra history."""
+        if (not isinstance(title, str) or not title.strip() or len(title.strip()) > 120
+                or "\n" in title or "\r" in title):
+            raise WorkspaceRegistryError("invalid_workspace_title")
+        record = self.get(workspace_id)
+        if record.display_name != expected:
+            raise WorkspaceRegistryError("workspace_title_changed")
+        new = replace(record, display_name=title.strip(), updated_at=utc_now_iso())
+        if new.display_name != record.display_name:
+            self._write(new)
+        return new
 
     def find_by_root(
         self, workspace_root: str | os.PathLike[str]

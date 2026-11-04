@@ -28,6 +28,7 @@ import context_storage as cs
 from web_alarm import server as wa_server
 from web_alarm import ultra_chat
 from web_alarm.server import WebAlarmApi, build_parser, create_server
+from web_alarm.workspace_registry import WorkspaceRegistryError
 
 ROOT = Path(cs.__file__).resolve().parent
 CAP = "/ui/ultra-chat/capability"
@@ -490,6 +491,105 @@ class PortabilityTests(Base):
 
 def data_title(root: Path, chat_id: str) -> str:
     return json.loads((root / ".ultra" / "chats" / chat_id / "metadata.json").read_text(encoding="utf-8"))["title"]
+
+
+class WorkspaceUxTests(Base):
+    def test_w12_workspace_label_rename_is_persistent_and_never_changes_ultra_history(self):
+        server = self.start()
+        root, wa_id, chat = self.project(server, "label")
+        before = snapshot(root)
+        path = f"/ultra/chat/workspaces/{wa_id}/title"
+        status, data = self.post(server, path, {"title": "Новая метка", "expected_title": "Label"})
+        self.assertEqual((status, data), (200, {"wa_workspace_id": wa_id, "display_name": "Новая метка"}))
+        self.assertEqual(server.api.registry.get(wa_id).display_name, "Новая метка")
+        self.assertEqual(snapshot(root), before)
+        workspaces = server.read("/ultra/chat/workspaces")[1]["workspaces"]
+        self.assertEqual(next(x for x in workspaces if x["wa_workspace_id"] == wa_id)["display_name"], "Новая метка")
+        status, data = server.read(f"/ultra/chat/workspaces/{wa_id}/chats/{chat}/messages")
+        self.assertEqual((status, data["chat_id"]), (200, chat))
+        self.assert_no_leaks()
+
+    def test_w13_workspace_label_rename_rejects_conflicts_and_malformed_or_unauthorised_writes(self):
+        server = self.start()
+        root, wa_id, _ = self.project(server, "label")
+        path = f"/ultra/chat/workspaces/{wa_id}/title"
+        before = snapshot(root)
+        for body, status, code in (
+            ({"title": "  ", "expected_title": "Label"}, 400, "invalid_workspace_title"),
+            ({"title": "x" * 121, "expected_title": "Label"}, 400, "invalid_workspace_title"),
+            ({"title": "Next", "expected_title": "Old"}, 409, "workspace_title_changed"),
+            ({"title": "Next"}, 400, "invalid_ultra_chat_request"),
+        ):
+            with self.subTest(body=body):
+                got, data = self.post(server, path, body)
+                self.assertEqual((got, data["error"]["code"]), (status, code))
+        status, _, raw = server.request("GET", path, {READ: server.capability(CAP,"ultra_chat")["token"]})
+        self.assertEqual((status, json.loads(raw)["error"]["code"]), (405, "method_not_allowed"))
+        status, _, raw = server.request("POST", path,
+            {"Content-Type":"application/json",WRITE:server.capability()["token"]},
+            body=json.dumps({"title":"Lost","expected_title":"Label"}).encode())
+        self.assertEqual(status, 403)
+        self.assertEqual(server.api.registry.get(wa_id).display_name, "Label")
+        self.assertEqual(snapshot(root), before)
+        self.assert_no_leaks()
+
+    def test_w14_duplicate_workspace_root_is_registered_once(self):
+        server = self.start()
+        root, wa_id, _ = self.project(server, "label")
+        second = server.api.registry.register("Another name", root)
+        self.assertEqual(second.workspace_id, wa_id)
+        self.assertEqual(len(server.api.registry.list()), 1)
+        self.assertEqual(server.api.registry.get(wa_id).display_name, "Label")
+
+    def test_w15_http_registration_repeat_keeps_empty_folder_empty_and_reports_missing_history(self):
+        server = self.start()
+        root = self.base / "Empty"
+        root.mkdir()
+        before = snapshot(root)
+        status, data = self.post(server, "/workspaces", {"display_name": "Empty", "workspace_root": str(root)})
+        self.assertEqual(status, 201)
+        record = data["workspace"]
+        status, again = self.post(server, "/workspaces", {"display_name": "Different", "workspace_root": str(root)})
+        self.assertEqual((status, again["workspace"]), (201, record))
+        self.assertEqual(len(server.api.registry.list()), 1)
+        wa_id = record["workspace_id"]
+        status, catalog = server.read("/ultra/chat/workspaces")
+        self.assertEqual((status, catalog["workspaces"][0]["history"]), (200, "missing_history"))
+        status, chats = server.read(f"/ultra/chat/workspaces/{wa_id}/chats")
+        self.assertEqual((status, chats["state"], chats["reason"], chats["chats"]),
+                         (200, "unavailable", "missing_history", []))
+        status, error = self.post(server, f"/ultra/chat/workspaces/{wa_id}/chats", {"chat_id": new_id(100)})
+        self.assertEqual((status, error["error"]["code"]), (409, "workspace_unavailable"))
+        self.assertEqual(snapshot(root), before)
+        self.assertFalse((root / ".ultra").exists(), "registration and reading never initialise Ultra history")
+
+    def test_w16_workspace_rename_error_and_restart_preserve_identity_paths_and_raw_history(self):
+        server = self.start()
+        root, wa_id, chat = self.project(server, "label")
+        cs.append_raw_message(root, chat, "user", '<img src=x onerror="alert(1)"> Старая история')
+        before = snapshot(root)
+        original = server.api.registry.get(wa_id)
+        path = f"/ultra/chat/workspaces/{wa_id}/title"
+        with patch.object(server.api.registry, "_write", side_effect=WorkspaceRegistryError("private disk path")):
+            status, data = self.post(server, path, {"title": "Not saved", "expected_title": "Label"})
+        self.assertEqual((status, data["error"]["code"]), (409, "workspace_registry_unavailable"))
+        self.assertNotIn("private disk path", json.dumps(data))
+        self.assertEqual(server.api.registry.get(wa_id), original)
+        for title, expected in [("Новая метка <b>буквально</b>", "Label"), ("Повторное имя", "Новая метка <b>буквально</b>")]:
+            status, data = self.post(server, path, {"title": title, "expected_title": expected})
+            self.assertEqual((status, data["display_name"]), (200, title))
+        current = server.api.registry.get(wa_id)
+        self.assertEqual((current.workspace_id, current.workspace_root, current.created_at),
+                         (original.workspace_id, original.workspace_root, original.created_at))
+        self.assertEqual(snapshot(root), before)
+        server.stop()
+        reopened = self.start("storage")
+        status, catalog = reopened.read("/ultra/chat/workspaces")
+        self.assertEqual((status, catalog["workspaces"][0]["display_name"]), (200, "Повторное имя"))
+        status, history = reopened.read(f"/ultra/chat/workspaces/{wa_id}/chats/{chat}/messages")
+        self.assertEqual(status, 200)
+        self.assertIn('<img src=x onerror="alert(1)">', history["messages"][0]["text"])
+        self.assertEqual(snapshot(root), before)
 
 
 if __name__ == "__main__":

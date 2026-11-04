@@ -1,0 +1,38 @@
+{
+  "command": [
+    "C:\\Python313\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "test_web_alarm_folder_picker.PickerHttpTests.test_remote_bind_metadata_is_rejected_even_for_loopback_client"
+  ],
+  "exit_code": 0,
+  "seconds": 1.07,
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.13.8 (tags/v3.13.8:a15ae61, Oct  7 2025, 12:34:25) [MSC v.1944 64 bit (AMD64)]",
+  "source": {
+    "web_alarm/ui.py": {
+      "bytes": 184819,
+      "sha256": "e8f030e453d79ac978a5a11426481f5d8e62188c3e512007666757aa58892d92"
+    },
+    "web_alarm/ultra_chat.py": {
+      "bytes": 25025,
+      "sha256": "f5466ce3f2883658adacf29c6993ab7fe411c12efa9e5b8b4e7eb8814ddc6091"
+    },
+    "web_alarm/workspace_registry.py": {
+      "bytes": 6645,
+      "sha256": "fca678ed353096b3acb17c89c24455b46fc703d1387d0c8895a0b1453f579948"
+    },
+    "test_web_alarm_ultra_chat_ui.js": {
+      "bytes": 55980,
+      "sha256": "82addd4c6448cc3f8326a8a7d1f921b4c848a06f68026a94db0509b1711f6086"
+    },
+    "test_web_alarm_ultra_chat_storage.py": {
+      "bytes": 36258,
+      "sha256": "477d133429dedc93996fed6846765ba07dd7dacb5fe02ad60505e4b92caa4f7b"
+    }
+  }
+}

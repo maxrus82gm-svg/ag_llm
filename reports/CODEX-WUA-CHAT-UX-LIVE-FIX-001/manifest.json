@@ -1,0 +1,337 @@
+{
+  "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+  "status": "PARTIAL / SLOT FINISH BLOCKED; UI FIX READY / AWAITING INDEPENDENT VERIFICATION",
+  "source_basis": "exact local pre-fix bytes in before/; no Git read",
+  "hash": "SHA-256",
+  "files": [
+    {
+      "path": "web_alarm/ui.py",
+      "size": 184819,
+      "sha256": "e8f030e453d79ac978a5a11426481f5d8e62188c3e512007666757aa58892d92"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "size": 25025,
+      "sha256": "f5466ce3f2883658adacf29c6993ab7fe411c12efa9e5b8b4e7eb8814ddc6091"
+    },
+    {
+      "path": "web_alarm/workspace_registry.py",
+      "size": 6645,
+      "sha256": "fca678ed353096b3acb17c89c24455b46fc703d1387d0c8895a0b1453f579948"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "size": 55980,
+      "sha256": "82addd4c6448cc3f8326a8a7d1f921b4c848a06f68026a94db0509b1711f6086"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_storage.py",
+      "size": 36258,
+      "sha256": "477d133429dedc93996fed6846765ba07dd7dacb5fe02ad60505e4b92caa4f7b"
+    },
+    {
+      "path": "Документация/000_Задачи Codex.md",
+      "size": 39220,
+      "sha256": "7ca14f61447b3d10ef46634bd905f521cae94cfb941b377adb1e33dd2231b20c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/test_web_alarm_ultra_chat_storage.py",
+      "size": 32713,
+      "sha256": "8b7f47db5fa796df9361819566e936a111ac83d23f2b69047cef5ca625a2fe53"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/test_web_alarm_ultra_chat_ui.js",
+      "size": 42372,
+      "sha256": "b82addb04d3f430685095563cdc4ef9a18963609cc803bb2c85420cbc3986502"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/web_alarm/ui.py",
+      "size": 182586,
+      "sha256": "604ed72e690dc3002a6ee22cd1ad5a79832b8e10f0c8edf66dadde04d72e1210"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/web_alarm/ultra_chat.py",
+      "size": 25025,
+      "sha256": "f5466ce3f2883658adacf29c6993ab7fe411c12efa9e5b8b4e7eb8814ddc6091"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/web_alarm/workspace_registry.py",
+      "size": 6645,
+      "sha256": "fca678ed353096b3acb17c89c24455b46fc703d1387d0c8895a0b1453f579948"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 39220,
+      "sha256": "7ca14f61447b3d10ef46634bd905f521cae94cfb941b377adb1e33dd2231b20c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/diagnose_finish.py",
+      "size": 1910,
+      "sha256": "e369d74d21e212075c8278c238ad4233e49398d15dbda4e21630b6a3514b4c76"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/baseline_preservation.json",
+      "size": 140118,
+      "sha256": "f44c0c92421b62270f3ae2d076e619e9b518c8dc12badb3cda478a539b5f3c9a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/card_boundaries_readback.json",
+      "size": 284,
+      "sha256": "60c5840a0c009b114692ceefe78cba82796ef8ae59d2b8adaed39f0d434b61b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/card_write_diagnostic.json",
+      "size": 377,
+      "sha256": "e80e057b8e16d559ac9917d7e5ce40fa1899416140354425d941f37049d600cf"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/change_test_web_alarm_ultra_chat_storage.py.patch",
+      "size": 4220,
+      "sha256": "54cc729fb3e970375f44fbffc80f5bd89f96dee41d6f6bff413ce04a55178834"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/change_test_web_alarm_ultra_chat_ui.js.patch",
+      "size": 17336,
+      "sha256": "a9bfa1ad208c515da3bacff4b3301c3f14c53b20d007b86a602347e5c0badaea"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/change_web_alarm_ui.py.patch",
+      "size": 12555,
+      "sha256": "5b4097324f018922120e6baa9e421de390152b466137578a6a9f6f03be2c44cb"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/change_web_alarm_ultra_chat.py.patch",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/change_web_alarm_workspace_registry.py.patch",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish.json",
+      "size": 2269,
+      "sha256": "0089febf0736b48e543d36c58fb469d8abadb4324c201ba08dd2c0bc17ec456e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish_attempt_1.json",
+      "size": 2256,
+      "sha256": "65d6dbe766365ab3ec6bfdc324a2cc7407037ef1332433051749d813f5a60d19"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish_attempt_2.json",
+      "size": 2269,
+      "sha256": "0089febf0736b48e543d36c58fb469d8abadb4324c201ba08dd2c0bc17ec456e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish_execution.json",
+      "size": 1038,
+      "sha256": "34958e74671f06e32bf7917c6c4c3156e28e57ef9937ed556e02bd2a055c129b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish_execution_attempt_1.json",
+      "size": 368,
+      "sha256": "81f403e59c0295daa564dca3f27bef28c16b5d50c95031691fa41eaf90b03929"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/finish_execution_attempt_2.json",
+      "size": 521,
+      "sha256": "9a0d816c1fdfcd76c06fdd59bc3594fcd699244b28c8d1c1e684a7cc8dbc5bf8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/green_extended.txt",
+      "size": 8427,
+      "sha256": "156a61304b43b3d040fde1278c0be5a57b728bccf9a09bc5905481193eebbe30"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/green_initial.txt",
+      "size": 7301,
+      "sha256": "6c547434928bd1a57aa25a358c3cd7c39fdf0fbadaba0455268800cd01927501"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/gui_red_fixture.json",
+      "size": 377,
+      "sha256": "3a728ac74f93c6487da0ccf36547f88776f9d363662ba4c27062a2df89162241"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/gui_red_readback.json",
+      "size": 333,
+      "sha256": "7a79aff551baf4514153184638fd4ab795bc25f6307c1ca835a9fd1bbabc9d2e"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/js_regression.json",
+      "size": 1129,
+      "sha256": "b5aa8e95ece6f08adcc6dabcf743b85fe7904c18e15250de4866e80bb03532b2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/js_regression.txt",
+      "size": 38163,
+      "sha256": "14bf4e6822762ad1934468d2b918b6d1702881c64c60414397d768b7315c99ae"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/js_regression_final.json",
+      "size": 1131,
+      "sha256": "99080b62459187c7ffb245afe12d1aa58c40b8504ce31c21ae590788d038a1b4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/js_regression_final.txt",
+      "size": 38644,
+      "sha256": "c0ce1978b8256101131584d9b2974301fc12d27d0e5a14300bfa5c123437c3a4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/launcher_readback.json",
+      "size": 850,
+      "sha256": "5c333d30f37bd471613a4dca50a94a7afdbee4c75b92ba1efac7fcddefe72e83"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/picker_diagnostic_regression_original_environment.json",
+      "size": 1214,
+      "sha256": "b0b455fc71cb4bb18a52f97980222e5f423c0e7ceab81bb2139c81413eb9e54b"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/picker_diagnostic_regression_original_environment.txt",
+      "size": 283,
+      "sha256": "376c0dddea9c31599be54a75613fd752966f9e6e1bf4ddb50637f20aebed6222"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/python_core_regression_final.json",
+      "size": 1356,
+      "sha256": "76245f3ed3b859f8b87cf4f923d1170a4a1550f4b22b4c8a298aa8be4627f7f6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/python_core_regression_final.txt",
+      "size": 27060,
+      "sha256": "dd319829705bf4fe7c8c9f9cdce5657e1245c94d4d8c677cd23cc9992ba45743"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/python_regression.json",
+      "size": 1370,
+      "sha256": "603007a6b7ee260f9b4c9ea89ed78f789080ba49ade81770158b3496796402d6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/python_regression.txt",
+      "size": 31131,
+      "sha256": "6d5b94f1c4f47dc79dae813472c6548ee3f7bdff59b17cad227451cf9b22ddfb"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_conflict.txt",
+      "size": 9497,
+      "sha256": "a1b7415d36db48c55f7cbba9c9e35dc27f73e4de3f9760f20e39b17f8e57f675"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_connected_dom.json",
+      "size": 139,
+      "sha256": "909f931be35c3d728d34bb0e68fd426cb9d461deb5b8228ee1b560ba0f1c8053"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_connected_dom.txt",
+      "size": 6865,
+      "sha256": "9620374217616e0f9c5fb4ca20fe083aa288fe6d7fd45b5f814f7d65c0e3198f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_defects.json",
+      "size": 83,
+      "sha256": "18674caf4e274c97a47feec2a1307cd559be427ade1dc7981408eaed6f385f9d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_defects.txt",
+      "size": 11189,
+      "sha256": "beeb9eb9b0dfc8f1d411b4a76d5c70be442631df5327fa706d28825be28fa869"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_late_and_readback.txt",
+      "size": 10415,
+      "sha256": "21641eaf77febfdf0d86e3eb3e8533a5009509ceeb2631d3150c75cb301764c2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_reproduced.json",
+      "size": 498,
+      "sha256": "76f81c527ca6f157744b4d1ca64ac0e80d22b102f509a75930c4266ef04f5fc6"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/red_reproduced.txt",
+      "size": 5901,
+      "sha256": "a82a1f1dd6b2de35d19ca65a7b7d90e8a8b07360b2144076ad5ae465e387b5b2"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/slot_final_check.json",
+      "size": 788,
+      "sha256": "e136974bb06cbdd60ecaccf54e062d4fb8361d293800e14ff183dc58cdc87a01"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/syntax_and_diff.json",
+      "size": 783,
+      "sha256": "4432af939567d7857139c0a593d5270e0215b9e761dc32885049f48bb7ca683a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/user_data_readback.json",
+      "size": 215,
+      "sha256": "9e1acb7014f1ff05cc04b57710e0ac82de420f6477ef3a47377ef1ee1331c2c1"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/user_data_readback_final.json",
+      "size": 788,
+      "sha256": "088b6def1da57be2e0f52356d2caeacf6e088b435208ac485da5d06ea504176a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/evidence/windows_gui.json",
+      "size": 762,
+      "sha256": "7a651707346321bdd5cdca07193fc8cb29be6df59fd7525df7d16572122c4e80"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/handoff_task.md",
+      "size": 12288,
+      "sha256": "0b20e2075892e203935d9bceadf10cfdc878accb6b12317dbf3460587989bb7d"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/handoff_to_coordinator.txt",
+      "size": 3293,
+      "sha256": "9b11acdd5cd15a39121e7353c13235d51411f10af2986ab291e7dbdfe0543189"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/live_fixture.py",
+      "size": 3416,
+      "sha256": "f53c8060acff79ac0be9a1b248aab5dde4411eeb01662dd29f0244b3dcde13b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/red_repro/test_web_alarm_ultra_chat_ui.js",
+      "size": 55980,
+      "sha256": "82addd4c6448cc3f8326a8a7d1f921b4c848a06f68026a94db0509b1711f6086"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/red_repro/web_alarm/ui.py",
+      "size": 182586,
+      "sha256": "604ed72e690dc3002a6ee22cd1ad5a79832b8e10f0c8edf66dadde04d72e1210"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/report.md",
+      "size": 22525,
+      "sha256": "5fc982a1d03c3e27e56a855066298863707078027c7575a3a7feba78e5f71839"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/reproduce_red.py",
+      "size": 1862,
+      "sha256": "69d3e2736957f02a0a30a971d654efa659de3e804bf639c5b93890befb9b7d9c"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/run_checks.py",
+      "size": 2544,
+      "sha256": "8d43e77c51796b7ac545ae94b2a3a5901154d99ecaad8825fb1b6eb2d8e32412"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/stop_red_fixture",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/verify_package.py",
+      "size": 4257,
+      "sha256": "504237259ca9cfa674c4d2de29974e6e16013a202d99700fb8475a6ef1667487"
+    }
+  ],
+  "exclusions": [
+    "manifest.json (self-reference)"
+  ],
+  "user_data_contents_in_package": false
+}

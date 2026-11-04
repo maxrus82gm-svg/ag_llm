@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "task_id": "CHATGPT-WEB21-ULTRA-CHAT-UX-20261104",
+  "status": "LOCAL_ONLY_REVIEW_PENDING",
+  "base_head": "9142f0967612fb7ef37ec632eb6ab87626c94be5",
+  "published": false,
+  "independent_review": "NOT_RUN",
+  "node_pass": 145,
+  "python_pass": 44,
+  "files": [
+    {
+      "path": "web_alarm/ui.py",
+      "bytes": 182586,
+      "sha256": "604ed72e690dc3002a6ee22cd1ad5a79832b8e10f0c8edf66dadde04d72e1210"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "bytes": 25025,
+      "sha256": "f5466ce3f2883658adacf29c6993ab7fe411c12efa9e5b8b4e7eb8814ddc6091"
+    },
+    {
+      "path": "web_alarm/workspace_registry.py",
+      "bytes": 6645,
+      "sha256": "fca678ed353096b3acb17c89c24455b46fc703d1387d0c8895a0b1453f579948"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "bytes": 42372,
+      "sha256": "b82addb04d3f430685095563cdc4ef9a18963609cc803bb2c85420cbc3986502"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_storage.py",
+      "bytes": 32713,
+      "sha256": "8b7f47db5fa796df9361819566e936a111ac83d23f2b69047cef5ca625a2fe53"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/report.md",
+      "bytes": 4295,
+      "sha256": "185dea23ded951effac6c79195a9cc5ca53b180c617f86b86720ea20d9173adf"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/evidence/manual_observations.md",
+      "bytes": 1913,
+      "sha256": "51a7b0fc065553c4feb9dcb476a25a356cbcf978343031101838b797fcd42502"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/evidence/node_ui_tests.txt",
+      "bytes": 35077,
+      "sha256": "4089212c618cf94d512b0e4a627f0d3aad2dcc09f20a33663e80b7a1059c0a29"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/evidence/python_ui_tests.txt",
+      "bytes": 103,
+      "sha256": "0ca9be8904858ee7a334187676e8a858424ad0999f205b57649357f78ea7a351"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/evidence/initial_red_ui_tests.txt",
+      "bytes": 10588,
+      "sha256": "913c4e13ff5bc1312cb8c275c4dbdc57e1db914c4fd3dfd6cf39873a072e231c"
+    },
+    {
+      "path": "reports/CHATGPT-WEB21-ULTRA-CHAT-UX-20261104/evidence/workspace_rename_http_tests.txt",
+      "bytes": 722,
+      "sha256": "f1808fc0b1b8675448df260a87ba725df137854150b9cf290ed84a130449b714"
+    }
+  ]
+}

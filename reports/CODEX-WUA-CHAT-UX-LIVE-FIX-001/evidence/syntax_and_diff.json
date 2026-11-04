@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "path": "web_alarm/ui.py",
+      "changed": true,
+      "syntax": "PASS"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "changed": false,
+      "syntax": "PASS"
+    },
+    {
+      "path": "web_alarm/workspace_registry.py",
+      "changed": false,
+      "syntax": "PASS"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "changed": true,
+      "syntax": "see node --check"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_storage.py",
+      "changed": true,
+      "syntax": "PASS"
+    }
+  ],
+  "js_check": {
+    "command": [
+      "node",
+      "--check"
+    ],
+    "input": "first shipped <script>",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "git_used": false
+}

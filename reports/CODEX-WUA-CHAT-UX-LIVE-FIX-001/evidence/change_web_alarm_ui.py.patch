@@ -1,0 +1,159 @@
+--- before/web_alarm/ui.py
++++ after/web_alarm/ui.py
+@@ -301,6 +301,7 @@
+ <p id="chatAccess" class="live" role="status">Проверяем доступ к истории…</p>
+ <div id="chatError" class="notice error" role="alert" hidden></div>
+ <div class="chat-workspace-heading"><span class="side-title">WORKSPACE</span><button type="button" id="chatRegisterWorkspace" title="Выбрать существующую папку или создать новую в окне Windows">+ Создать Workspace</button></div>
++<div id="chatWorkspaceResult" class="notice info" role="status" hidden></div>
+ <p id="chatWorkspaceState" class="muted" role="status"></p>
+ <div id="chatWorkspaceList" class="chat-picks" aria-label="Workspace с вложенными диалогами"></div>
+ <form id="chatWorkspaceNameForm" class="chat-name-form" hidden>
+@@ -1935,18 +1936,22 @@
+ }
+ function renderChatWorkspaces(){
+   const selected=chat.workspace;
++  // Park the shared controls in the connected, hidden dock BEFORE replacing the tree. Collapsing the
++  // selected group otherwise detaches them: getElementById returns null and append prints "null".
++  const nested=['chatWorkspaceNameForm','chatListState','chatList','chatNameForm'].map($);
++  $('chatListDock').append(...nested);
+   $('chatWorkspaceList').replaceChildren(...chat.workspaces.map(w=>{
+     const active=w.wa_workspace_id===selected,open=active&&chat.expanded===selected;
+     const group=element('div',null,'chat-workspace-group');group.dataset.active=String(active);
+     const row=element('div',null,'chat-workspace-row');
+     const choose=chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),active,()=>selectChatWorkspace(w.wa_workspace_id));
+     choose.setAttribute('aria-expanded',String(open));row.append(choose);
+-    row.append(chatIcon('✎','Переименовать Workspace «'+w.display_name+'»',()=>openWorkspaceName(w.wa_workspace_id),!chat.renamingWorkspace));
+-    row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>openChatName('create'))}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},w.history==='ok'&&!chatEdit.busy));
++    row.append(chatIcon('✎','Переименовать Workspace «'+w.display_name+'»',()=>openWorkspaceName(w.wa_workspace_id),!chat.renamingWorkspace?.busy&&!chatEdit.busy));
++    row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>{if(chat.workspace===w.wa_workspace_id)openChatName('create')})}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},w.history==='ok'&&!chatEdit.busy));
+     group.append(row);
+     if(open){
+       const panel=element('div',null,'chat-nested-panel');
+-      panel.append($('chatWorkspaceNameForm'),$('chatListState'),$('chatList'),$('chatNameForm'));
++      panel.append(...nested);
+       group.append(panel)
+     }
+     return group
+@@ -1954,9 +1959,11 @@
+   syncChatActions()
+ }
+ function openWorkspaceName(id){
+-  if(chat.renamingWorkspace)return;
+-  if(chat.workspace!==id){selectChatWorkspace(id).then(()=>openWorkspaceName(id));return}
++  if(chat.renamingWorkspace?.busy||chatEdit.busy)return;
++  closeWorkspaceName();
++  if(chat.workspace!==id){selectChatWorkspace(id).then(()=>{if(chat.workspace===id)openWorkspaceName(id)});return}
+   const w=chat.workspaces.find(x=>x.wa_workspace_id===id);if(!w)return;
++  closeChatName();
+   chat.expanded=id;renderChatWorkspaces();
+   chat.renamingWorkspace={id,expected:w.display_name};
+   $('chatWorkspaceNameInput').value=w.display_name;notice('chatWorkspaceNameError','');
+@@ -1977,21 +1984,27 @@
+     edit.busy=false;closeWorkspaceName();await loadChatWorkspaces();
+   }catch(e){
+     if(e.code==='workspace_title_changed'){
+-      notice('chatWorkspaceNameError','Название изменилось в другом окне. Обновите список и повторите.');
++      const refreshed=await loadChatWorkspaces();
++      const fresh=chat.workspaces.find(w=>w.wa_workspace_id===edit.id);
++      if(refreshed&&fresh)edit.expected=fresh.display_name;
++      notice('chatWorkspaceNameError',refreshed&&fresh?
++        'Название изменилось в другом окне. Список обновлён; проверьте название и нажмите «Сохранить» ещё раз.':
++        'Название изменилось в другом окне, но перечитать его не удалось. Нажмите «Обновить» и откройте форму заново.');
+     }else{
+-      notice('chatWorkspaceNameError','Название не изменено. Проверьте доступ и повторите.');
++      notice('chatWorkspaceNameError','Не удалось подтвердить изменение названия. Обновите список перед повтором.');
+     }
+   }finally{edit.busy=false;$('chatWorkspaceNameSave').disabled=false}
+ }
+ function renderChatList(){
++  const workspace=chat.workspace;
+   $('chatList').replaceChildren(...chat.chats.map(c=>{
+     const ok=c.status==='ok',row=element('div',null,'chat-dialog-row');
+     const b=chatPick(ok?c.title:c.status==='unsafe_storage_link'?'Ссылка вместо диалога — не читается':'Диалог повреждён',
+       ok?(c.created_at?'Создан '+chatTime(c.created_at):''):'ID '+c.chat_id,c.chat_id===chat.chat,()=>selectChat(c.chat_id));
+     b.setAttribute('data-status',c.status);if(!ok)b.disabled=true;
+-    row.append(b,chatIcon('✎','Переименовать диалог «'+(ok?c.title:c.chat_id)+'»',()=>{
+-      if(chat.chat!==c.chat_id){chat.chat=c.chat_id;renderChatList()}
+-      openChatName('rename')
++    row.append(b,chatIcon('✎','Переименовать диалог «'+(ok?c.title:c.chat_id)+'»',async()=>{
++      if(chat.chat!==c.chat_id)await selectChat(c.chat_id);
++      if(chat.workspace===workspace&&chat.chat===c.chat_id)openChatName('rename')
+     },ok&&!chatEdit.busy));
+     return row
+   }));
+@@ -2085,20 +2098,23 @@
+     if(epoch!==chat.epoch)return;
+     if(!validChatWorkspaces(data))throw Error('Некорректный ответ сервера о Workspace');
+     text('chatAccess','Данные проверяет сервер · сообщения не отправляются');chat.workspaces=data.workspaces;
+-    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Добавьте папку в операторской панели.');
++    text('chatWorkspaceState',data.state!=='ok'?chatReason(data.reason):data.workspaces.length?'':'Нет зарегистрированных Workspace. Нажмите «+ Создать Workspace».');
+     if(chat.workspace&&!chat.workspaces.some(w=>w.wa_workspace_id===chat.workspace)){chat.workspace=null;chat.expanded=null;chat.chat=null;chat.chats=[];renderChatList();clearChatHistory('Выберите диалог')}
+-    if(chat.workspace&&!chat.expanded)chat.expanded=chat.workspace;
++    const selected=chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace);
++    text('chatWorkspaceName',selected?selected.display_name:'Ultra Chat');
+     renderChatWorkspaces();
+-    if(chat.workspace)return loadChatList();
++    if(chat.workspace){await loadChatList();return true}
+     const first=chat.workspaces.find(w=>w.history==='ok');
+-    if(first)return selectChatWorkspace(first.wa_workspace_id)
+-  }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}}
++    if(first)await selectChatWorkspace(first.wa_workspace_id);
++    return true
++  }catch(e){if(epoch===chat.epoch){text('chatWorkspaceState','Список Workspace не загружен');chatFailure(e)}return false}
+ }
+ function selectChatWorkspace(id){
+   if(chat.renamingWorkspace?.busy)return Promise.resolve();
+   closeWorkspaceName();
+   if(chat.workspace===id){chat.expanded=chat.expanded===id?null:id;renderChatWorkspaces();return Promise.resolve()}
+   closeChatName();
++  $('chatNameForm').hidden=true;// a pending save of the old Workspace must not expose its editor in the new one
+   chat.epoch++;chat.workspace=id;chat.expanded=id;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;chat.olderBusy=false;
+   const w=chat.workspaces.find(item=>item.wa_workspace_id===id);text('chatWorkspaceName',w?w.display_name:'Ultra Chat');
+   renderChatWorkspaces();renderChatList();clearChatHistory('Выберите диалог');
+@@ -2176,9 +2192,11 @@
+   }
+ }
+ function openChatName(mode){
+-  if(chatEdit.busy)return;
++  if(chatEdit.busy||chat.renamingWorkspace?.busy)return;
+   const current=chat.chats.find(c=>c.chat_id===chat.chat&&c.status==='ok');
+   if(mode==='rename'?!current:$('chatNew').disabled)return;
++  closeWorkspaceName();
++  chat.expanded=chat.workspace;renderChatWorkspaces();
+   // A new dialogue gets its ID now: saving again after a lost answer repeats the same request, never a second chat.
+   Object.assign(chatEdit,{mode,workspace:chat.workspace,chatId:current&&mode==='rename'?current.chat_id:null,
+     expected:mode==='rename'?current.title:null,pendingId:mode==='create'?newChatId():null});
+@@ -2220,8 +2238,9 @@
+ }
+ $('viewChat').onclick=()=>showView('chat');
+ async function createChatWorkspace(){
+-  if(chat.creatingWorkspace)return;
+-  chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;notice('chatError','');
++  if(chat.creatingWorkspace||chat.renamingWorkspace?.busy||chatEdit.busy)return;
++  let registrationStarted=false,registered=false;
++  chat.creatingWorkspace=true;$('chatRegisterWorkspace').disabled=true;notice('chatError','');notice('chatWorkspaceResult','');
+   try{
+     const capability=(await api('/ui/capabilities'))?.folder_picker;
+     if(!capability?.available||typeof capability.token!=='string'||capability.token.length<32)throw Error('picker_unavailable');
+@@ -2229,12 +2248,19 @@
+     if(picked?.status==='CANCELLED')return;
+     if(picked?.status!=='SELECTED'||typeof picked.workspace_root!=='string'||! /^(?:[A-Za-z]:[\\/]|\\\\)/.test(picked.workspace_root))throw Error('picker_invalid');
+     const root=picked.workspace_root,parts=root.replace(/[\\/]+$/,'').split(/[\\/]/),name=parts.at(-1)||'Workspace';
++    registrationStarted=true;
+     const result=await api('/workspaces',{method:'POST',body:{display_name:name,workspace_root:root}});
+     if(typeof result?.workspace?.workspace_id!=='string')throw Error('registration_unconfirmed');
++    registered=true;notice('chatWorkspaceResult','Workspace подключён. История загружается отдельно.');
++    closeWorkspaceName();closeChatName();
+     chat.epoch++;chat.workspace=result.workspace.workspace_id;chat.expanded=chat.workspace;chat.chat=null;chat.chats=[];chat.messages=[];chat.page=null;
+     await loadChatWorkspaces();
+-  }catch(_){
+-    notice('chatError','Не удалось создать Workspace. Проверьте выбор папки и список Workspace; если выбор папки недоступен, откройте операторскую панель. Автоматического повтора нет.');
++  }catch(e){
++    notice('chatError',registered?'Workspace подключён, но загрузить его данные не удалось. Нажмите «Обновить».':
++      registrationStarted?(e.serverRejected&&e.httpStatus>=400&&e.httpStatus<500?
++        'Сервер отклонил регистрацию Workspace. Проверьте выбранную папку и обновите список.':
++        'Не удалось подтвердить регистрацию Workspace. Обновите список перед повтором. Автоматического повтора нет.'):
++      'Не удалось выбрать папку Workspace. Проверьте доступность системного выбора папки.');
+   }finally{chat.creatingWorkspace=false;$('chatRegisterWorkspace').disabled=false}
+ }
+ $('chatRegisterWorkspace').onclick=createChatWorkspace;
