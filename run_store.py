@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import time
 import uuid
 from pathlib import Path
@@ -25,6 +26,72 @@ STREAM_BY_SOURCE = {
 USAGE_ROLES = ("planner", "executor", "dredd")
 _ATOMIC_REPLACE_RETRY_DELAYS = (0.02, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 2.0)
 _INDEX_GENERATION_DIRNAME = "index_generations"
+_MAX_AUDIT_BYTES = 64 * 1024 * 1024
+
+
+class RunStoreRecoveryRequired(ValueError):
+    """An unindexed stream tail must be inspected/recovered explicitly, never replayed as success."""
+
+
+def _audit_location(path: Path):
+    path = Path(os.path.abspath(path))  # lexical: do not follow an untrusted audit link
+    directory = next((p for p in (path, *path.parents)
+                      if p.name == "audit" and p.parent.name == ".ultra"), None)
+    if directory is None:
+        raise ValueError("Not a Run Store audit path")
+    anchor = _ultra_core._write_anchor(directory.parent.parent)
+    return anchor, path.relative_to(anchor.root).parts
+
+
+def _checked_path(path: Path, *, directory: bool = False, create: bool = False) -> Path:
+    anchor, parts = _audit_location(path)
+    parents = parts if directory else parts[:-1]
+    for n in range(1, len(parents) + 1):
+        prefix = parents[:n]
+        if not os.path.lexists(anchor.path(prefix)):
+            if not create:
+                return anchor.path(parts)
+            _ultra_core._ensure_write_directory(anchor, prefix)
+        else:
+            _ultra_core._verify_write_directory(anchor, prefix)
+    target = anchor.path(parts)
+    if not directory and os.path.lexists(target):
+        info = target.lstat()
+        if _ultra_core._is_link_or_reparse(info) or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            raise _ultra_core.StorageWriteError("unsafe_storage_link", "Unsafe Run Store file")
+    return target
+
+
+def _read_bytes(path: Path) -> bytes:
+    path = _checked_path(path)
+    anchor, parts = _audit_location(path)
+    try:
+        return _ultra_core._read_file_bounded(anchor, parts, _MAX_AUDIT_BYTES)
+    except _ultra_core.StorageReadError as exc:
+        if exc.code == "missing":
+            raise FileNotFoundError(path) from None
+        raise _ultra_core._write_refusal(exc) from None
+
+
+def _read_json(path: Path):
+    return json.loads(_read_bytes(path).decode("utf-8"))
+
+
+@contextlib.contextmanager
+def _append_file(path: Path):
+    path = _checked_path(path, create=True)
+    anchor, parts = _audit_location(path)
+    fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_APPEND | getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    try:
+        info = os.fstat(fd)
+        if (_ultra_core._is_link_or_reparse(info) or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                or os.path.normcase(_ultra_core._final_path_of_fd(fd)) != anchor.expected(parts)):
+            raise _ultra_core.StorageWriteError("unsafe_storage_link", "Unsafe Run Store handle")
+        with os.fdopen(fd, "a+b", closefd=False) as stream:
+            stream.seek(0, os.SEEK_END)
+            yield stream
+    finally:
+        os.close(fd)
 
 
 def _replace_with_retry(source: Path, destination: Path) -> None:
@@ -46,30 +113,40 @@ def _safe(value: str | None, fallback: str = "direct") -> str:
 
 
 def audit_root(workspace_root: str | Path) -> Path:
-    return Path(workspace_root).resolve() / ".ultra" / "audit"
+    return _checked_path(Path(workspace_root).resolve() / ".ultra" / "audit", directory=True)
 
 
 def workspace_index_path(workspace_root: str | Path) -> Path:
-    return audit_root(workspace_root) / "index.json"
+    return _checked_path(audit_root(workspace_root) / "index.json")
 
 
 def _index_generation_dir(workspace_root: str | Path) -> Path:
-    return audit_root(workspace_root) / _INDEX_GENERATION_DIRNAME
+    return _checked_path(audit_root(workspace_root) / _INDEX_GENERATION_DIRNAME, directory=True)
 
 
 def _atomic_json(path: Path, value: dict, *, retry_replace: bool = True) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    encoded = (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    if len(encoded) > _MAX_AUDIT_BYTES:
+        raise ValueError("Run Store JSON read limit exceeded")
+    path = _checked_path(path, create=True)
+    anchor, parts = _audit_location(path)
     temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
     try:
-        with temporary.open("w", encoding="utf-8", newline="\n") as stream:
-            json.dump(value, stream, ensure_ascii=False, indent=2)
-            stream.write("\n")
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0), 0o600)
+        with os.fdopen(fd, "wb") as stream:
+            if os.path.normcase(_ultra_core._final_path_of_fd(stream.fileno())) != anchor.expected(parts[:-1]+(temporary.name,)):
+                raise _ultra_core.StorageWriteError("unsafe_storage_link", "Unsafe Run Store temporary file")
+            if stream.write(encoded) != len(encoded):
+                raise OSError("Partial Run Store JSON write")
             stream.flush()
             os.fsync(stream.fileno())
+        _checked_path(path)
         if retry_replace:
             _replace_with_retry(temporary, path)
         else:
             os.replace(temporary, path)
+        if _read_bytes(path) != encoded:
+            raise ValueError("Run Store JSON readback mismatch")
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -87,6 +164,7 @@ def _index_lock(workspace_root: str | Path):
     root = Path(workspace_root).resolve()
     (root / ".ultra").mkdir(exist_ok=True)
     with _ultra_core._workspace_writer_lock(_ultra_core._write_anchor(root)):
+        _checked_path(root / ".ultra/audit", directory=True, create=True)
         yield
 
 
@@ -114,11 +192,16 @@ def _validate_index(value: object) -> dict:
         raise ValueError("Invalid Run Store index revision")
     result = copy.deepcopy(value)
     result["revision"] = revision
+    for run_id, entry in result["runs"].items():
+        if (not isinstance(entry, dict) or entry.get("run_id") != run_id
+                or (entry.get("chat_id") is not None and not isinstance(entry["chat_id"], str))
+                or entry.get("summary_path") != (Path(_safe(entry.get("chat_id"))) / _safe(run_id) / "summary.json").as_posix()):
+            raise ValueError("Invalid Run Store summary locator")
     return result
 
 
 def _load_index_file(path: Path) -> dict:
-    return _validate_index(json.loads(path.read_text(encoding="utf-8")))
+    return _validate_index(_read_json(path))
 
 
 def _generation_paths(workspace_root: str | Path) -> list[Path]:
@@ -171,7 +254,7 @@ def _save_index(workspace_root: str | Path, index: dict) -> None:
         _atomic_json(canonical, snapshot, retry_replace=not fallback_active)
     except PermissionError:
         directory = _index_generation_dir(workspace_root)
-        directory.mkdir(parents=True, exist_ok=True)
+        _checked_path(directory, directory=True, create=True)
         generation = directory / f"index-{revision:020d}-{uuid.uuid4().hex}.json"
         _atomic_json(generation, snapshot)
     else:
@@ -200,7 +283,7 @@ def ensure_task_index_entry(workspace_root: str | Path, task_block_id: str,
 
 def run_storage_dir(workspace_root: str | Path, chat_id: str | None,
                     run_id: str) -> Path:
-    return audit_root(workspace_root) / _safe(chat_id) / _safe(run_id)
+    return _checked_path(audit_root(workspace_root) / _safe(chat_id) / _safe(run_id), directory=True)
 
 
 def ensure_run_index_entry(workspace_root: str | Path, run_id: str,
@@ -228,7 +311,7 @@ def ensure_run_index_entry(workspace_root: str | Path, run_id: str,
               or entry.get("chat_id") != chat_id):
             raise ValueError("Run index identity mismatch")
         directory = run_storage_dir(workspace_root, chat_id, run_id)
-        directory.mkdir(parents=True, exist_ok=True)
+        _checked_path(directory, directory=True, create=True)
     return copy.deepcopy(entry)
 
 
@@ -347,10 +430,10 @@ def load_run_summary(workspace_root: str | Path, run_id: str,
         return None
     if chat_id is not None and entry.get("chat_id") != chat_id:
         return None
-    path = audit_root(workspace_root) / entry["summary_path"]
+    path = _checked_path(audit_root(workspace_root) / entry["summary_path"])
     if not path.is_file():
         return None
-    return json.loads(path.read_text(encoding="utf-8"))
+    return _read_json(path)
 
 
 def update_run_summary_index(workspace_root: str | Path, run_id: str,
@@ -359,8 +442,8 @@ def update_run_summary_index(workspace_root: str | Path, run_id: str,
         entry = get_run_index_entry(workspace_root, run_id)
         if entry is None:
             raise KeyError(run_id)
-        summary_path = audit_root(workspace_root) / entry["summary_path"]
-        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        summary_path = _checked_path(audit_root(workspace_root) / entry["summary_path"])
+        summary = _read_json(summary_path)
         summary.update(copy.deepcopy(updates))
         _atomic_json(summary_path, summary)
         index = load_workspace_run_index(workspace_root)
@@ -383,33 +466,180 @@ def run_component_path(workspace_root: str | Path, run_id: str,
                "planner.jsonl", "server.jsonl", "dredd.jsonl", "records.idx.jsonl"}
     if component not in allowed:
         raise ValueError("Unknown Run Store component")
-    return run_storage_dir(workspace_root, entry.get("chat_id"), run_id) / component
+    return _checked_path(run_storage_dir(workspace_root, entry.get("chat_id"), run_id) / component)
 
 
 def audit_exists(workspace_root: str | Path, chat_id: str | None, run_id: str) -> bool:
     if get_run_index_entry(workspace_root, run_id) is not None:
         return run_component_path(workspace_root, run_id, "summary.json").is_file()
-    legacy = audit_root(workspace_root) / _safe(chat_id) / f"{_safe(run_id)}.json"
+    legacy = _checked_path(audit_root(workspace_root) / _safe(chat_id) / f"{_safe(run_id)}.json")
     return legacy.is_file()
 
 
 def _next_sequence(index_path: Path) -> int:
-    if not index_path.is_file():
-        return 1
-    last = None
-    with index_path.open("rb") as stream:
-        for line in stream:
-            if line.strip():
-                last = line
-    if last is None:
-        return 1
-    return int(json.loads(last.decode("utf-8"))["sequence"]) + 1
+    return len(_record_index(index_path)) + 1
+
+
+def _record_index(path: Path) -> list[dict]:
+    try:
+        raw = _read_bytes(path)
+    except FileNotFoundError:
+        return []
+    return _parse_record_index(raw)
+
+
+def _parse_record_index(raw: bytes) -> list[dict]:
+    if raw and not raw.endswith(b"\n"):
+        raise ValueError("Partial Run Store index; manual inspection required")
+    result, ids = [], set()
+    for line in raw.split(b"\n"):
+        if not line.strip():
+            continue
+        item = json.loads(line.decode("utf-8"))
+        if (not isinstance(item, dict) or type(item.get("sequence")) is not int
+                or item["sequence"] != len(result)+1
+                or not isinstance(item.get("record_id"), str) or item["record_id"] in ids
+                or item.get("source") not in STREAM_BY_SOURCE
+                or item.get("stream") != STREAM_BY_SOURCE[item["source"]]
+                or type(item.get("offset")) is not int or item["offset"] < 0
+                or type(item.get("length")) is not int or item["length"] <= 0):
+            raise ValueError("Invalid Run Store record index")
+        ids.add(item["record_id"])
+        result.append(item)
+    return result
+
+
+def _scan_run(workspace_root: str | Path, run_id: str, *, records=None):
+    if records is None:
+        records = _record_index(run_component_path(workspace_root, run_id, "records.idx.jsonl"))
+    streams, ends = {}, {name: 0 for name in STREAM_BY_SOURCE.values()}
+    for name in ends:
+        try:
+            streams[name] = _read_bytes(run_component_path(workspace_root, run_id, name))
+        except FileNotFoundError:
+            streams[name] = b""
+    if sum(map(len, streams.values())) > _MAX_AUDIT_BYTES:
+        raise ValueError("Run Store stream read limit exceeded")
+    decoded = []
+    for item in records:
+        name = item["stream"]
+        if item["offset"] != ends[name]:
+            raise ValueError("Run Store stream offset gap/overlap")
+        end = item["offset"] + item["length"]
+        encoded = streams[name][item["offset"]:end]
+        if len(encoded) != item["length"] or not encoded.endswith(b"\n"):
+            raise ValueError("Partial confirmed Run Store stream")
+        if "sha256" in item and hashlib.sha256(encoded).hexdigest() != item["sha256"]:
+            raise ValueError("Run Store record checksum mismatch")
+        value = json.loads(encoded.decode("utf-8"))
+        if not isinstance(value, dict) or any(value.get(k) != item.get(k) for k in ("record_id", "sequence", "source", "event", "timestamp")):
+            raise ValueError("Run Store record/index identity mismatch")
+        decoded.append(value)
+        ends[name] = end
+    tails = {name: len(streams[name])-end for name, end in ends.items() if len(streams[name]) != end}
+    return records, decoded, ends, tails
+
+
+def recover_run_records(workspace_root: str | Path, run_id: str) -> dict:
+    """Recover one interrupted append, using its durable intent; never replay an event.
+
+    The intent pins the exact previous index prefix and the planned record. Unexplained corruption or
+    orphan bytes without an intent are refused. A complete record before a lost reply remains committed.
+    """
+    with _index_lock(workspace_root):
+        pending = _pending_path(workspace_root, run_id)
+        if not os.path.lexists(pending):
+            if _scan_run(workspace_root, run_id)[3]:
+                raise RunStoreRecoveryRequired("Orphan stream without append intent; manual inspection required")
+            return {"removed_bytes": {}, "committed": False}
+        intent = _read_json(pending)
+        if (not isinstance(intent, dict) or intent.get("schema_version") != 1
+                or intent.get("run_id") != run_id or type(intent.get("index_size")) is not int
+                or intent["index_size"] < 0 or not isinstance(intent.get("index_sha256"), str)
+                or not re.fullmatch(r"[0-9a-f]{64}", intent["index_sha256"])
+                or not isinstance(intent.get("record"), dict)
+                or not isinstance(intent["record"].get("sha256"), str)
+                or not re.fullmatch(r"[0-9a-f]{64}", intent["record"]["sha256"])):
+            raise ValueError("Invalid Run Store append intent")
+        item = intent["record"]
+        index_path = run_component_path(workspace_root, run_id, "records.idx.jsonl")
+        try:
+            raw = _read_bytes(index_path)
+        except FileNotFoundError:
+            raw = b""
+        prefix = raw[:intent["index_size"]]
+        if len(prefix) != intent["index_size"] or hashlib.sha256(prefix).hexdigest() != intent["index_sha256"]:
+            raise ValueError("Run Store committed index prefix changed")
+        planned = _index_bytes(item)
+        # Validate even a tampered intent with the same index schema as real receipts.
+        _parse_record_index(prefix + planned)
+        suffix = raw[intent["index_size"]:]
+        if suffix == planned:
+            _records, _decoded, _ends, tails = _scan_run(workspace_root, run_id)
+            if tails:
+                raise ValueError("Unexpected stream tail after committed append")
+            _clear_pending(pending)
+            return {"removed_bytes": {}, "committed": True}
+        if suffix and not planned.startswith(suffix):
+            raise ValueError("Unrecognised Run Store index tail")
+        # Validate the previous confirmed index against the streams BEFORE any truncation.
+        old_records = _parse_record_index(prefix)
+        _records, _decoded, ends, tails = _scan_run(workspace_root, run_id, records=old_records)
+        name = item["stream"]
+        if item["offset"] != ends[name] or any(k != name for k in tails) or tails.get(name, 0) > item["length"]:
+            raise ValueError("Unrecognised Run Store stream tail")
+        if tails.get(name) == item["length"]:
+            tail = _read_bytes(run_component_path(workspace_root, run_id, name))[ends[name]:]
+            if hashlib.sha256(tail).hexdigest() != item.get("sha256"):
+                raise ValueError("Unconfirmed Run Store record checksum mismatch")
+        if suffix:
+            _truncate(index_path, intent["index_size"])
+        if tails:
+            _truncate(run_component_path(workspace_root, run_id, name), ends[name])
+        if _scan_run(workspace_root, run_id)[3]:
+            raise ValueError("Run Store recovery readback failed")
+        _clear_pending(pending)
+        return {"removed_bytes": tails, "committed": False}
+
+
+def _pending_path(workspace_root: str | Path, run_id: str) -> Path:
+    entry = get_run_index_entry(workspace_root, run_id)
+    if entry is None:
+        raise KeyError(run_id)
+    return _checked_path(run_storage_dir(workspace_root, entry.get("chat_id"), run_id) / "append.pending.json")
+
+
+def _clear_pending(path: Path) -> None:
+    _checked_path(path).unlink()
+
+
+def _truncate(path: Path, size: int) -> None:
+    with _append_file(path) as stream:
+        stream.truncate(size)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def _index_bytes(record: dict) -> bytes:
+    return (json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
 
 
 def append_run_record(workspace_root: str | Path, run_id: str, *, source: str,
                       event: str, payload: dict, timestamp: float) -> dict:
+    with _index_lock(workspace_root):
+        return _append_run_record_locked(workspace_root, run_id, source=source, event=event, payload=payload, timestamp=timestamp)
+
+
+def _append_run_record_locked(workspace_root: str | Path, run_id: str, *, source: str,
+                              event: str, payload: dict, timestamp: float) -> dict:
     if source not in STREAM_BY_SOURCE:
         raise ValueError("Unknown Run Store source")
+    pending = _pending_path(workspace_root, run_id)
+    if os.path.lexists(pending):
+        raise RunStoreRecoveryRequired("Pending Run Store append; explicit recovery required")
+    _records, _decoded, ends, tails = _scan_run(workspace_root, run_id)
+    if tails:
+        raise RunStoreRecoveryRequired("Unindexed Run Store stream tail; explicit recovery required")
     index_path = run_component_path(workspace_root, run_id, "records.idx.jsonl")
     sequence = _next_sequence(index_path)
     record_id = "rec_" + uuid.uuid4().hex
@@ -418,13 +648,7 @@ def append_run_record(workspace_root: str | Path, run_id: str, *, source: str,
     stream_name = STREAM_BY_SOURCE[source]
     stream_path = run_component_path(workspace_root, run_id, stream_name)
     encoded = (json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
-    stream_path.parent.mkdir(parents=True, exist_ok=True)
-    with stream_path.open("ab") as stream:
-        offset = stream.tell()
-        if stream.write(encoded) != len(encoded):
-            raise OSError("Partial Run Store outcome append")
-        stream.flush()
-        os.fsync(stream.fileno())
+    offset = ends[stream_name]
     index_record = {"record_id": record_id, "sequence": sequence, "source": source,
                     "event": event, "stream": stream_name, "offset": offset,
                     "length": len(encoded), "timestamp": timestamp,
@@ -432,22 +656,38 @@ def append_run_record(workspace_root: str | Path, run_id: str, *, source: str,
     for key in ("stage_id", "api_request_number", "status", "mode"):
         if payload.get(key) is not None:
             index_record[key] = payload[key]
-    index_encoded = (json.dumps(index_record, ensure_ascii=False,
-                                separators=(",", ":")) + "\n").encode("utf-8")
-    with index_path.open("ab") as index_stream:
+    index_encoded = _index_bytes(index_record)
+    try:
+        old_index = _read_bytes(index_path)
+    except FileNotFoundError:
+        old_index = b""
+    if (len(old_index) + len(index_encoded) > _MAX_AUDIT_BYTES
+            or sum(ends.values()) + len(encoded) > _MAX_AUDIT_BYTES):
+        raise ValueError("Run Store append read limit exceeded")
+    _atomic_json(pending, {"schema_version": 1, "run_id": run_id, "index_size": len(old_index),
+                           "index_sha256": hashlib.sha256(old_index).hexdigest(), "record": index_record})
+    with _append_file(stream_path) as stream:
+        if stream.tell() != offset:
+            raise ValueError("Run Store stream changed outside the writer lock")
+        if stream.write(encoded) != len(encoded):
+            raise OSError("Partial Run Store outcome append")
+        stream.flush()
+        os.fsync(stream.fileno())
+    with _append_file(index_path) as index_stream:
         if index_stream.write(index_encoded) != len(index_encoded):
             raise OSError("Partial Run Store index append")
         index_stream.flush()
         os.fsync(index_stream.fileno())
+    persisted = load_run_record(workspace_root, run_id, record_id, expected_sha256=index_record["sha256"])
+    if persisted != record:
+        raise ValueError("Run Store acknowledgement readback failed")
+    _clear_pending(pending)
     return index_record
 
 
 def list_run_records(workspace_root: str | Path, run_id: str) -> list[dict]:
     path = run_component_path(workspace_root, run_id, "records.idx.jsonl")
-    if not path.is_file():
-        return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
-            if line.strip()]
+    return _record_index(path)
 
 
 def load_run_record(workspace_root: str | Path, run_id: str,
@@ -465,9 +705,7 @@ def load_run_record(workspace_root: str | Path, run_id: str,
             or type(item.get("length")) is not int or item["length"] <= 0):
         raise ValueError("Invalid Run Store record locator")
     path = run_component_path(workspace_root, run_id, item["stream"])
-    with path.open("rb") as stream:
-        stream.seek(item["offset"])
-        encoded = stream.read(item["length"])
+    encoded = _read_bytes(path)[item["offset"]:item["offset"]+item["length"]]
     if len(encoded) != item["length"] or not encoded.endswith(b"\n"):
         raise ValueError("Partial Run Store record")
     # Older indexes remain readable. Current certified outcomes additionally bind
@@ -513,11 +751,10 @@ def load_stream_records(workspace_root: str | Path, run_id: str,
                         source: str) -> list[dict]:
     if source not in STREAM_BY_SOURCE:
         raise ValueError("Unknown Run Store source")
-    path = run_component_path(workspace_root, run_id, STREAM_BY_SOURCE[source])
-    if not path.is_file():
-        return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
-            if line.strip()]
+    _records, decoded, _ends, tails = _scan_run(workspace_root, run_id)
+    if tails:
+        raise RunStoreRecoveryRequired("Unindexed Run Store stream tail; explicit recovery required")
+    return [record for record in decoded if record["source"] == source]
 
 
 def _apply_terminal_usage(bucket: dict, usage: dict | None) -> None:
@@ -600,7 +837,7 @@ def record_provider_attempt_terminal(
 def reconstruct_executor_context(workspace_root: str | Path, run_id: str,
                                  api_request_number: int) -> list[dict]:
     base_path = run_component_path(workspace_root, run_id, "executor_base.json")
-    base = json.loads(base_path.read_text(encoding="utf-8"))
+    base = _read_json(base_path)
     messages = copy.deepcopy(base["messages"])
     if int(base.get("api_request_number", 1)) == api_request_number:
         return messages

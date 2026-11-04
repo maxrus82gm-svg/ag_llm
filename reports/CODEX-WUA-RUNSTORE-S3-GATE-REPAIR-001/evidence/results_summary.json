@@ -1,0 +1,240 @@
+{
+  "task_id": "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "pytest": "9.1.1",
+  "utc": "2026-11-04T17:42:01.893881+00:00",
+  "baseline_red": {
+    "published_red": {
+      "tests": 3,
+      "passed": 1,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 1
+    },
+    "pending_validation": {
+      "failed": 1,
+      "exit_code": 1
+    },
+    "projected_limit": {
+      "failed": 2,
+      "exit_code": 1
+    }
+  },
+  "runs": [
+    {
+      "label": "run_store_final1",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "test_run_store_v2.py",
+        "test_audit_v2_compatibility.py",
+        "test_audit_observability.py::AuditStorageTests"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "passed": 55
+      },
+      "seconds": 33.39,
+      "guard_receipts": 17,
+      "guard_denials": 0
+    },
+    {
+      "label": "run_store_final2",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "test_run_store_v2.py",
+        "test_audit_v2_compatibility.py",
+        "test_audit_observability.py::AuditStorageTests"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "passed": 60
+      },
+      "seconds": 32.86,
+      "guard_receipts": 17,
+      "guard_denials": 0
+    },
+    {
+      "label": "run_store_final3",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "test_run_store_v2.py",
+        "test_audit_v2_compatibility.py",
+        "test_audit_observability.py::AuditStorageTests"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "passed": 62
+      },
+      "seconds": 42.59,
+      "guard_receipts": 17,
+      "guard_denials": 0
+    },
+    {
+      "label": "prerequisites_final1",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_ultra_chat_turn"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "seconds": 4.17,
+      "guard_receipts": 3,
+      "guard_denials": 0
+    },
+    {
+      "label": "prerequisites_final3",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_ultra_chat_turn"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "seconds": 3.94,
+      "guard_receipts": 3,
+      "guard_denials": 0
+    },
+    {
+      "label": "python_final1",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_ultra_chat_storage",
+        "test_web_alarm_ultra_chat",
+        "test_web_alarm_ui",
+        "test_web_alarm_ui_ux",
+        "test_ultra_chat_storage",
+        "test_ultra_chat_read",
+        "test_web_alarm_workspace_registry",
+        "test_web_alarm_folder_picker"
+      ],
+      "exit_code": 1,
+      "counts": {
+        "tests": 171,
+        "failures": 0,
+        "errors": 1,
+        "skipped": 5,
+        "passed": 165
+      },
+      "seconds": 68.52,
+      "guard_receipts": 26,
+      "guard_denials": 0
+    },
+    {
+      "label": "python_final2",
+      "command": [
+        "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-X",
+        "utf8",
+        "-m",
+        "unittest",
+        "-v",
+        "test_web_alarm_ultra_chat_storage",
+        "test_web_alarm_ultra_chat",
+        "test_web_alarm_ui",
+        "test_web_alarm_ui_ux",
+        "test_ultra_chat_storage",
+        "test_ultra_chat_read",
+        "test_web_alarm_workspace_registry",
+        "test_web_alarm_folder_picker"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 171,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 166
+      },
+      "seconds": 72.67,
+      "guard_receipts": 26,
+      "guard_denials": 0
+    },
+    {
+      "label": "js_final1",
+      "command": [
+        "node",
+        "--test",
+        "test_web_alarm_ultra_chat_ui.js",
+        "test_web_alarm_operator_ui.js",
+        "test_web_alarm_evm_ui.js"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "tests": 158,
+        "pass": 158,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "seconds": 2.2,
+      "guard_receipts": 0,
+      "guard_denials": 0
+    }
+  ],
+  "final_distinct_tests": {
+    "passed": 389,
+    "skipped": 5,
+    "failed": 0,
+    "errors": 0,
+    "total": 394
+  },
+  "calculation": "62 Run Store/audit + 3 prerequisites + 166 Python passed + 158 JS; 5 Python symlink skips",
+  "first_regression_error": "python_final1: 165 PASS / 1 ERROR WinError 10053 / 5 SKIP; retained, not counted as repaired",
+  "guard_limit": "Python receipts exclude children terminated with os._exit; Node VM tests mock fetch; no OS-wide egress claim"
+}

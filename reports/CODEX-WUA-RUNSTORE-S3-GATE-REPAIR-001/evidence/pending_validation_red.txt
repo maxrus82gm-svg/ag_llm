@@ -1,0 +1,27 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+______________ test_gate_corrupt_pending_intent_is_not_discarded ______________
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-5/test_gate_corrupt_pending_inte0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002C91A4A09E0>
+
+    def test_gate_corrupt_pending_intent_is_not_discarded(tmp_path, monkeypatch):
+        root = _gate_run(tmp_path)
+        with monkeypatch.context() as scoped:
+            @contextlib.contextmanager
+            def fail_before_stream(_path):
+                raise OSError('before stream'); yield
+            scoped.setattr(run_store, '_append_file', fail_before_stream)
+            with pytest.raises(OSError): _append_gate(root)
+        pending=root/'.ultra/audit/chat/run/append.pending.json'
+        data=json.loads(pending.read_bytes()); del data['record']['sha256']
+        pending.write_text(json.dumps(data), encoding='utf-8')
+        before = _files(root/'.ultra/audit')
+>       with pytest.raises(ValueError): run_store.recover_run_records(root, 'run')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+test_run_store_v2.py:161: Failed
+=========================== short test summary info ===========================
+FAILED test_run_store_v2.py::test_gate_corrupt_pending_intent_is_not_discarded
+1 failed in 0.39s

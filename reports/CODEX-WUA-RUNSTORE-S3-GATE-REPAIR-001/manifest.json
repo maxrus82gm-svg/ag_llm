@@ -1,0 +1,980 @@
+{
+  "task_id": "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "generated_utc": "2026-11-04T17:45:39.785854+00:00",
+  "history_id": "H-CODEX-000012",
+  "independent_review": "NOT VERIFIED",
+  "publication": "LOCAL ONLY; Git/GitHub not used",
+  "write_scope": [
+    "run_store.py",
+    "test_run_store_v2.py",
+    "test_web_alarm_ultra_chat_turn.py",
+    "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/"
+  ],
+  "native_finish_exception": "Unmodified tools/task_slot_rotate.py finish; generated card/history artifacts only",
+  "sources": [
+    {
+      "path": "run_store.py",
+      "size": 38605,
+      "sha256": "dbfd491183a13e550ca1d690245e6bd1cda7784d45f58b9ed16ad9cb28c0a63e"
+    },
+    {
+      "path": "test_run_store_v2.py",
+      "size": 38598,
+      "sha256": "4250c32cc302ccbdc8df4472fc4940699a1db90c04e2f0b19d163f3ad92f17bf"
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_turn.py",
+      "size": 7683,
+      "sha256": "fc1bd907a96b44be011c9b2f1abffd21dc02da597885640074e54193aa3c0320"
+    }
+  ],
+  "readonly_sources": [
+    {
+      "path": "context_storage.py",
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    {
+      "path": "audit_storage.py",
+      "size": 31728,
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c"
+    },
+    {
+      "path": "web_alarm/server.py",
+      "size": 74735,
+      "sha256": "3158050afb26ad22f0a2b095703534a5b9b97bdf60cef7ed9d9c0d8717ba6bd5"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "size": 185654,
+      "sha256": "626c0253b7d2c9e79774f879a2518900ac5c0365bd73a860b83e80b68d0a391a"
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "size": 26620,
+      "sha256": "6d1883838fd5f28be2191db05d678cb454319a2325531758781176012d958028"
+    },
+    {
+      "path": "Start_WebAlarm.bat",
+      "size": 1482,
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    },
+    {
+      "path": "web_alarm/launch_config.json",
+      "size": 1769,
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    {
+      "path": "tools/task_slot_rotate.py",
+      "size": 48188,
+      "sha256": "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    }
+  ],
+  "files": [
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/audit_storage.py.source.txt",
+      "size": 31728,
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/context_storage.py.source.txt",
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/native_finish/reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/handoff_task.md.source.txt",
+      "size": 24295,
+      "sha256": "b38ad6917ff608a9ae1e809b6c1fb48f9bf593b358cb72fe49975d0c29ab8c9d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/native_finish/reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/task_record.json.source.txt",
+      "size": 1103,
+      "sha256": "e1a23930431f96997d91e6f57d98bd7d210c8ac0e5865a26c20740c7b8a56e2f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/native_finish/reports/task_history_sequences.json.source.txt",
+      "size": 28,
+      "sha256": "3c32947b7b86dd4f691f0f3078846cdcd4a7bc2380467d7f1659ccc34eb25e4c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/run_store.py.source.txt",
+      "size": 26478,
+      "sha256": "f63d7d15670a290355fa034d21d9e979d890e11d7bf52b02bbb1598a00cab12e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/Start_WebAlarm.bat.source.txt",
+      "size": 1482,
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/test_run_store_v2.py.source.txt",
+      "size": 23937,
+      "sha256": "9f7f90f29932d75fbfaf51956ccf1f51f377e4110922fde1d0bd1c8ff1509d82"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/test_web_alarm_ultra_chat_turn.py.source.txt",
+      "size": 7572,
+      "sha256": "c15230f9d85bd3451f507f60556327e367d8131d7a4ff947dd237dfee711168e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/tools/task_slot_rotate.py.source.txt",
+      "size": 48188,
+      "sha256": "d87645b20c92cb0c01cc7734765b74b4cf29a0f1b2fa4cf8fbb8afd39cac0d17"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/web_alarm/launch_config.json.source.txt",
+      "size": 1769,
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/web_alarm/server.py.source.txt",
+      "size": 74735,
+      "sha256": "3158050afb26ad22f0a2b095703534a5b9b97bdf60cef7ed9d9c0d8717ba6bd5"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/web_alarm/ui.py.source.txt",
+      "size": 185654,
+      "sha256": "626c0253b7d2c9e79774f879a2518900ac5c0365bd73a860b83e80b68d0a391a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/web_alarm/ultra_chat.py.source.txt",
+      "size": 26620,
+      "sha256": "6d1883838fd5f28be2191db05d678cb454319a2325531758781176012d958028"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/before/Документация/000_Задачи Codex.md.source.txt",
+      "size": 49386,
+      "sha256": "747ae06b33912b2fa9d75079716059e0ba03eac6f026184c03599cce77e74ef3"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/build_manifest.py",
+      "size": 2379,
+      "sha256": "c45f65b01269fc653b219037a4c87d588dd166a7eade9d3c28d729c0e77d8e79"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/baseline.json",
+      "size": 142432,
+      "sha256": "a7f3e4709801ff2ded2fe4b3f0e9e57cca8e39b6c1307d6227ba282caef299e8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/conservation_after_finish.json",
+      "size": 3613,
+      "sha256": "e37c1ce214a131275764f787559de3888c579fb1152d5032ffeb72f18d126c61"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/conservation_before_finish.json",
+      "size": 3126,
+      "sha256": "1a6a6f3c9f5c189f71559164ea6c65ba05e74557c50233a54aab6bb33d3b73c7"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/conservation_before_finish_reviewed.json",
+      "size": 3613,
+      "sha256": "03b8e3a90df9f7190aafdf27ff132ecde0cb54b9243dff07c52031042a856045"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/conservation_initial_result.json",
+      "size": 397,
+      "sha256": "e1398731a9db70e661b67a020fa67d3b3724016bcb8d52f7fec04470a0e694a7"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/finish.json",
+      "size": 4797,
+      "sha256": "7ceea2de6ceabb5c9d2636700c42428fb5dbe51b59e1bcd1cb2036e96544d58f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/finish_result.json",
+      "size": 383,
+      "sha256": "9f1e60dfd1249298f170b536c2f0d9364b29b5518140656f53021e8019c65e7f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/finish_stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_finish/45748.json",
+      "size": 86,
+      "sha256": "a49133c39ea67a9b1384befb896332839d30a58faa90a3fd325283a1e0c78357"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_history_readback/43580.json",
+      "size": 86,
+      "sha256": "628bf196960b719c6b82ab3ba8a94c6a62bc26ba0a2da746d2b61dec7026c666"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final1/45828.json",
+      "size": 86,
+      "sha256": "b40a2170b9bee383b46ae1a7de1c49d9492df40bfef95f0b80bf2e9839cb74bf"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final1/55556.json",
+      "size": 86,
+      "sha256": "a0163f817cbab56e2c66437b1a398455f1b458c5f46eec64d0eb68d503fa870d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final1/56580.json",
+      "size": 86,
+      "sha256": "0136c0786d261ccec1083e295406bc9aaa0d0b20e7e3e7e45eb5d2c1324a235b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final3/26168.json",
+      "size": 86,
+      "sha256": "599171c63736463adcf79273da9db599c13337f95f927c781123dc984ca6ee3d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final3/35196.json",
+      "size": 86,
+      "sha256": "1524c35e1bdc397e22796dd153873da103aaf23b6448679504dac485c5cbd814"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_prerequisites_final3/48948.json",
+      "size": 86,
+      "sha256": "a39e7831769c9ec1dbd6a8d2baea5a57b7414cd9611d4883f2d48bdb6b8a571b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/14392.json",
+      "size": 86,
+      "sha256": "eb94c4e8c5094a86c7ce6ea19a107c5d5da3f07a4db704ea6bdb1237da8b143c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/21572.json",
+      "size": 86,
+      "sha256": "fb0714a2f43e10b3cd126f4b32477943402f8287e1fb2834069d73c832754e8e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/24816.json",
+      "size": 86,
+      "sha256": "925a1919504a9606d9029b90f07aaf0e754556e548304b67c69d7ea7ccb9d021"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/31928.json",
+      "size": 86,
+      "sha256": "8d96c6d27b93745ce91aa7f58218cbf57c5ff1966183967e962bc1de38838d86"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/35300.json",
+      "size": 86,
+      "sha256": "6bf73d8a0f3842c10fc1856bd9bad4d7f74d858946511f215d897baae2e9e0e8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/36256.json",
+      "size": 86,
+      "sha256": "cf96dcb7493b62688df0921c25a6105e1d69e35123eff45fd1ddd4f4e1fb6b33"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/37536.json",
+      "size": 86,
+      "sha256": "22fd806ffcce007386d98a5c35c177d96d54e6c696628fd3350edbbc7f9cf83f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/37932.json",
+      "size": 86,
+      "sha256": "ab3705ea51e1681802a4ac2c585240d03f7214c856ac2935bc54f24b3aeef8b8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/39432.json",
+      "size": 86,
+      "sha256": "0c13ffacd1faa5681730dfffc8f38cabfff21fb5c70ea7d36552bf0129aa2f38"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/40332.json",
+      "size": 86,
+      "sha256": "b8e37973dfc883997fac99453dda20beaeac03463814a10443a88aaaa2a9eafc"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/43300.json",
+      "size": 86,
+      "sha256": "1a46547a3d2487757324bbb60a03841ee82d546195ffb9bf449320a5d14c1d97"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/43904.json",
+      "size": 86,
+      "sha256": "1c9d41d6e39b81f64cef756bb78cccff26067257c2120e3401a20720ce543394"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/44960.json",
+      "size": 86,
+      "sha256": "531099c379f3273bc508e649b913d7a9f6d8bf3a6bc1b1f7c000f7146f9e72d4"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/47032.json",
+      "size": 86,
+      "sha256": "fc847277d7ba616d4c02beb4f307093abddecb8e984ca0305334aa472c495d7a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/49984.json",
+      "size": 86,
+      "sha256": "e30d7f49f1dc92d61e67edd11ff869ac2f27700459ea6ab1483f5680d4d2e4e8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/50668.json",
+      "size": 86,
+      "sha256": "9c389fe721f3ba8f292983cd5f43d9783c92fff4657fa0624c8a5e7a3b7fe375"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/52820.json",
+      "size": 86,
+      "sha256": "c7362d3a9b92526bd5b849285b8c443eb3caa3ec0ae663caa8da38b62dc4aa13"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/53388.json",
+      "size": 86,
+      "sha256": "2463694a2f1adae439020b1cc37e1c1ecb9ecc809655e26b8c93d3b9bb4cd68f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/53544.json",
+      "size": 86,
+      "sha256": "bef29fc7e5ddf5df62ee8877d68644a61d37b38128fceffcabea6d0e8765696d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/53624.json",
+      "size": 86,
+      "sha256": "f3801763c102b117d9e5e59f3d0f5e8a8c9b81a2251580a5e53c9cb536c053fb"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/54208.json",
+      "size": 86,
+      "sha256": "76ceeccc662a6600b5b14e7a5a32cce5e566291c97b21d7df99c21c95559fdcf"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/54464.json",
+      "size": 86,
+      "sha256": "5c2afc489a5c674f76d41f0c846bf8c9565050b614ddffc4b07a593eae01b863"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/54980.json",
+      "size": 86,
+      "sha256": "3502a2679759d04a43c1927cff8c6cbfa75f9a6c2556af6ca7af1b4f7304ba9b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/56944.json",
+      "size": 86,
+      "sha256": "78c5e53a6a3d063526c3eb34e4f4a4396c378d6b6381f23dac77cf2f09343b88"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/56956.json",
+      "size": 86,
+      "sha256": "5936382443ebdacce30a4a85415abd350024359f2f1e672b2899582a0d59d9f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final1/57000.json",
+      "size": 86,
+      "sha256": "b92bf3bc556972e35e02971e87c7a4f8b8cf093fbce28e05bc9ed8a660e53786"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/14372.json",
+      "size": 86,
+      "sha256": "4bb4b6145610eb2c1f74f7309369c6c7b423dac9bedfa0ff1526acfc004beee8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/19172.json",
+      "size": 86,
+      "sha256": "a15d1d0b10bfdd8649e67224b29cd01dfec2788ba06ff52e653e3d54d0f866d3"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/19804.json",
+      "size": 86,
+      "sha256": "d33b42eac9ef7d64ca6db51187c6da7b82df797520e5e2f4a76af293e3330c30"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/23460.json",
+      "size": 86,
+      "sha256": "ee485cf8d706e3cabf0d35560a66c04a410c44d358818ac259e5e605cebfc80c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/26516.json",
+      "size": 86,
+      "sha256": "96e62190b446e029ab1dfcdb178e7abeb1fc11d404e8ef0459b6f93ffd277a86"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/31868.json",
+      "size": 86,
+      "sha256": "153c942c2d4ea6c8bd084f255a6bf7176ff205956344c51d4c4db858e6a0474a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/35708.json",
+      "size": 86,
+      "sha256": "40f945b3eb7035574faf45c3ec0af948420f391042585c35de5dd5bed72cf666"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/3572.json",
+      "size": 85,
+      "sha256": "91ecf740f2e32147cdaf05cc41d42e779d7389bc528266ab4bdad1a971d0cb07"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/40144.json",
+      "size": 86,
+      "sha256": "78f239c4b2339fd06b3bb510d99eb46ed99ed3fc6d3818fb1b91a1c564481a08"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/40608.json",
+      "size": 86,
+      "sha256": "6a2f7a4ff74b4deafcfcf0fa9b58041a0d2ebfb3070682c8a99956256d5d612b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/42028.json",
+      "size": 86,
+      "sha256": "8dd7ba5f908d0f11669fc68d8c8635fc82fc24aef9ab6ec1368a705be4cb6dde"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/45644.json",
+      "size": 86,
+      "sha256": "5f48868cd9017ccb3f8bf444124564ce3219c8a5cf2cc1b79cdea024150490fd"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/45832.json",
+      "size": 86,
+      "sha256": "f878e542c573ae7b0980e7b1f0ef58f86c8f4042df5f572226b3e0438045f28a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/46220.json",
+      "size": 86,
+      "sha256": "5bb536cc7e89612baccbae91b57592f3d3f5ed81582deb703a298bd9670845f3"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/48008.json",
+      "size": 86,
+      "sha256": "cc225fee4119cc0be342cd1bceddf88f634efdeb6d1882274ca246ec01cf3e7d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/48724.json",
+      "size": 86,
+      "sha256": "f8fd4118948910be7ff7b73d434414176a39076626ce74717a7d4a35cc336e20"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/48776.json",
+      "size": 86,
+      "sha256": "48a61b13338d62d479afbdef04ba0b4e2de030ca894ee6a0cf74692ea7f1fb75"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/49216.json",
+      "size": 86,
+      "sha256": "085172a49342a0865a023d818ed581bd7b5aa73e0b526b3d9ca7791cdd6c0d89"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/49292.json",
+      "size": 86,
+      "sha256": "9b553cc258b78d756525b6e626988d34e0210a60108deb1babdc1b414ed84dd3"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/49396.json",
+      "size": 86,
+      "sha256": "40f5ab0dc2183b6cc560c9731d517bd5a08cf2acbed3e3842aa1e3e6f283daa1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/52444.json",
+      "size": 86,
+      "sha256": "0a9d7a987e081379b38a3d231503ded1a2c5a038d6fd6a627386d1859b21f181"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/55320.json",
+      "size": 86,
+      "sha256": "86b90163aaf236d360795ecaa09ab06938929ff5a77f493559d7cff1e69b50bb"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/56152.json",
+      "size": 86,
+      "sha256": "332964dec470dd2e44107221dfd154354b9c6bb61eb2b4f3299c24127d102384"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/56560.json",
+      "size": 86,
+      "sha256": "e3ec6e704512b045d7efbd504f71c5408114257bc210a4f3a430a045e30ff27f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/57188.json",
+      "size": 86,
+      "sha256": "0fe16ae4b2286366e49e0143a2a0a75694f566015e6776ec0cba6c0fe135302c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_python_final2/712.json",
+      "size": 84,
+      "sha256": "d087f9819aec68f69c2caec4e905e35cdf6bbbfb2307c8a1d55c89b5d970969e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/23160.json",
+      "size": 86,
+      "sha256": "089dc11c348983771ea224cc20715bb70d639e1a5ed0fed704a12f700cf58ab0"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/24364.json",
+      "size": 86,
+      "sha256": "1821df5cc449eccae912a4eb07b03ffb13e6ab142208318ab4b53bfaff6b514b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/29832.json",
+      "size": 86,
+      "sha256": "12329c0be9f5f4d60e9db7e1874ebbb685cb09282ab97cbd00a7ac3b838bf4b5"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/30880.json",
+      "size": 86,
+      "sha256": "8d20b1113887f264f3df1f38f88a486bc1b1aae3628dc5db3f71cda5b31f1d86"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/41380.json",
+      "size": 86,
+      "sha256": "d1e13f18cd6e000e80b548cdf8121b50d2fcbee26a81c35dc37d573413fadfd7"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/41580.json",
+      "size": 86,
+      "sha256": "b6cc05b9e935e92a217e5b82c8b73da9a648f64357995aba2814326f1ef4bd28"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/43164.json",
+      "size": 86,
+      "sha256": "45a77da76f70efe2a9c115c385adf8b3b332f57441e8e80cbb61bcd3a4c672a4"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/43648.json",
+      "size": 86,
+      "sha256": "2d89444f03449b389205ebd39bc98804b4092f6a0c3ab2177560630b47961a6c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/44960.json",
+      "size": 86,
+      "sha256": "531099c379f3273bc508e649b913d7a9f6d8bf3a6bc1b1f7c000f7146f9e72d4"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/47076.json",
+      "size": 86,
+      "sha256": "ed324e7b806095930cafbdb175e51921ac74ce17e836a30322a2357cc62454f4"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/47140.json",
+      "size": 86,
+      "sha256": "3f8348b669e4808dc0a51a8f58952069b6ed31d7808a588c4067f96150d597ec"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/48912.json",
+      "size": 86,
+      "sha256": "6814d44907e51719642e71b6a73d445c81c0d501e880f846f08ca53da6955e3e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/51228.json",
+      "size": 86,
+      "sha256": "77cf2663e226c578ba6e63d98a40e69a305c4ada3adba49f3b7168839634b70f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/54292.json",
+      "size": 86,
+      "sha256": "5dc87ba4cf34917de321c4d50ede630238bebecc3778b1f75a2996807ff985f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/54592.json",
+      "size": 86,
+      "sha256": "e940603357c69fa236e966c0a8294f6430b43d6cc94812330b9dde2fd45dbb33"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/56220.json",
+      "size": 86,
+      "sha256": "4c14045d57aa0cb4bdf242126aa0a30c6f87b28cb41a1dfeeda6d88fa553b6e1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final1/5980.json",
+      "size": 85,
+      "sha256": "0f935a46d8434e47779a4a40bd784526ecf2a86ee50790efbb5bd449c51fcad3"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/13896.json",
+      "size": 86,
+      "sha256": "804c1c97ebe6f27128fc477b09f523552e12bad6731e297d3d0d1de1dd442f9a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/14324.json",
+      "size": 86,
+      "sha256": "56535449f3bf6aaf2bb989db05dee1456f0d40d7c6b02b7808b4718f4b6f03ef"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/21576.json",
+      "size": 86,
+      "sha256": "80d4600de8eb4c0dbab17202a192160fd0f514c73d5fa2d882eb2455972c3c63"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/26168.json",
+      "size": 86,
+      "sha256": "599171c63736463adcf79273da9db599c13337f95f927c781123dc984ca6ee3d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/27548.json",
+      "size": 86,
+      "sha256": "f18aa926cc055dc30ef4a45e7cb9e409e5b30a1a589c4fd949c2e7fded114945"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/31488.json",
+      "size": 86,
+      "sha256": "7459ad399ed2657fa6ace90c77a4e77a4910dc81500dc23671f14ec63e55541d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/38804.json",
+      "size": 86,
+      "sha256": "971dfba624725d2864624897d6c221703b36d8a3ca87dd935bc8f166221d1a18"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/40980.json",
+      "size": 86,
+      "sha256": "473f12bee3c43e57d8f6d2cf0731ded7f247dd45d14f5d4e21e0003bd27e9381"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/42044.json",
+      "size": 86,
+      "sha256": "d74c6f2845495d91711cb72166f13e3bf06847e61522f05472b9dc7e9a87e41f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/44128.json",
+      "size": 86,
+      "sha256": "44df0258f16a691a248bb4392782757053dfde2cd680cdeb8cfba1d709717541"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/45412.json",
+      "size": 86,
+      "sha256": "5db73aab53eb6c11e96d3b8a3c26a6cde78b908c8e3fa6e0302bf7444879da21"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/47968.json",
+      "size": 86,
+      "sha256": "b3f9eed12b3887182ebd6ee07814c69c62b2a41ab93f7e01b357589ee291ca0a"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/48348.json",
+      "size": 86,
+      "sha256": "94b5447746c1a1cca24840d553f9bc9b93b2d9d9e4a0785ec236bad6073f3a3d"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/50472.json",
+      "size": 86,
+      "sha256": "a10a6fe38d1805dde6e954fe48bc5cc62d00ae33412b94d1dc9526bc4428bc8c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/52416.json",
+      "size": 86,
+      "sha256": "d8e283b777f486b588af22978d1b8ed3a7a4b4e270310ff00fee65132fd76a85"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/53936.json",
+      "size": 86,
+      "sha256": "da7817dbfeb704dcbe342f49ad6af61f4881b400be20779e6da01565dba30175"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final2/55352.json",
+      "size": 86,
+      "sha256": "ad4496a5e95663a5f02c2bc1f4dd14a01120830d67d65991168dea2253960217"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/11164.json",
+      "size": 86,
+      "sha256": "1ea272100bd52460c778b783162ec840c9bd6c30c354516b505a223c117551cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/12372.json",
+      "size": 86,
+      "sha256": "cd69a61f813d87fb2f306f11d5c82132b26d110f675ec63b38689ebc8ef57b1e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/14024.json",
+      "size": 86,
+      "sha256": "030bcacda12a1ffa471fe4b7e273581e80b974c308d8517a1ee46f019ea5d6c8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/31632.json",
+      "size": 86,
+      "sha256": "f065d90c3c84fac37a5c68213613fde06d9a1e04a6267182b31e25a2d07649a6"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/39720.json",
+      "size": 86,
+      "sha256": "a1e7168673259157f31daeba85c4cdaa96e0a0284b7d12bdfe9d6263b196eba2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/41888.json",
+      "size": 86,
+      "sha256": "8f330a1643ddfd03aae301297b62d787395f8c2020e851ad3cdf295672397f52"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/45412.json",
+      "size": 86,
+      "sha256": "5db73aab53eb6c11e96d3b8a3c26a6cde78b908c8e3fa6e0302bf7444879da21"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/46984.json",
+      "size": 86,
+      "sha256": "8d647b51c8bdd80b58be853437865c3e040fd6e9c1659efaba1925f1181e32ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/49616.json",
+      "size": 86,
+      "sha256": "7639c4f442c8dfbf7d36672837b14ba90954def832dd06efec47cd57089d0a04"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/49980.json",
+      "size": 86,
+      "sha256": "0cb9b4b4833c895252a87221294c5cbdcb2188a2eb741148a7dbffbda115e5b6"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/52840.json",
+      "size": 86,
+      "sha256": "7bb7de6f67acf91386aeb0a14ecd7f0fe1cc4fbc72d092c88937485b45c0f21e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/5396.json",
+      "size": 85,
+      "sha256": "a59cb198a5ec55d209aa2ef9a036a34f862d85420ee6d72dbb8d57c0e421985f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/54292.json",
+      "size": 86,
+      "sha256": "5dc87ba4cf34917de321c4d50ede630238bebecc3778b1f75a2996807ff985f2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/54964.json",
+      "size": 86,
+      "sha256": "68f251e484a86a93977f74f7e189b47b1047e9f169c07fdff244df14c7026ffe"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/55068.json",
+      "size": 86,
+      "sha256": "6fe29ea50317efcfe5d89656f5f1cec6cea6d38e698e7c20e8304c54cb9d17b1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/55464.json",
+      "size": 86,
+      "sha256": "c733dbd1df3c3c83f6a115e7ceccbd5a11facba5e7e2a3bf8dc5742bd7dfc75e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/guard_run_store_final3/56136.json",
+      "size": 86,
+      "sha256": "8bdc7846461cf4df74e737f9d53463cd4fc64b8473ba1971f59765634b32ceaa"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/history_readback.json",
+      "size": 771,
+      "sha256": "ddc770640ef3ce55e42c1a680346f3896ee0c083731bcc86d09b52adfd4329d8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/history_readback_result.json",
+      "size": 229,
+      "sha256": "1e11ce66ce0fce75d440909281835fe421f40766f72a9c266de760c9ef24200e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/js_final1.json",
+      "size": 1818,
+      "sha256": "e1a367ecd24c7c479140bac8cd62f613fbeaac851b6026d30f873159bd53697b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/js_final1.txt",
+      "size": 39506,
+      "sha256": "48982b11e36fa1b77af13c8551bf5f47823bde1a443acf39246b4e1074040dc2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/native_finish_before.json",
+      "size": 550,
+      "sha256": "a361e712b99f29d07b99fd8383a1f2df92df4cf76ddd2e66105c7db106645734"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final1/audit_path.json",
+      "size": 125,
+      "sha256": "f1dedf65eeab2dd3924e1f735e0e881f25918f8d410508f1bccd49c097d8e870"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final1/normal_run.json",
+      "size": 71,
+      "sha256": "2d205e427c3c08c8ad1fe30f3cd2c4eed7a2de7ef2160bbb114e963e8ed862d8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final1/same_run_writers.json",
+      "size": 1164,
+      "sha256": "1726a68ead2c23c37013d959a391e320f60a52ef931442e051edf6862c8512fe"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final3/audit_path.json",
+      "size": 125,
+      "sha256": "f1dedf65eeab2dd3924e1f735e0e881f25918f8d410508f1bccd49c097d8e870"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final3/normal_run.json",
+      "size": 71,
+      "sha256": "2d205e427c3c08c8ad1fe30f3cd2c4eed7a2de7ef2160bbb114e963e8ed862d8"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/oracles_final3/same_run_writers.json",
+      "size": 1164,
+      "sha256": "b4ed1c84efffb074b36bb19c739a34e10ea0765e138e98ad246a4b9273d0a6b1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/package_verification.json",
+      "size": 1026,
+      "sha256": "02c642eaebad94927384f65bf013ae574aeaa2de8b1b86721f55e8eca77bb2c9"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/pending_validation_red.json",
+      "size": 286,
+      "sha256": "97c940d4dd344eb56dc5453d89d6dcde72359d956566f90d2453bf56fca930ed"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/pending_validation_red.txt",
+      "size": 1515,
+      "sha256": "41a2dbd4b1709224dc83385112b72ce7299cb3fed91a3bed18cde3c357e073c5"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/prerequisites_final1.json",
+      "size": 1811,
+      "sha256": "3837391b91810da50744c2edba1a2b22abc99147a6784c57cc8bab725c9c8b81"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/prerequisites_final1.txt",
+      "size": 628,
+      "sha256": "97b693ddf3fd8ba79e340f42716667d04133fc1bde2cc9b8be7dd773627a34cc"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/prerequisites_final3.json",
+      "size": 1811,
+      "sha256": "04c802712a4f5370e120c4eac086ea6898d8d0636cab984314896eceedc56ec1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/prerequisites_final3.txt",
+      "size": 628,
+      "sha256": "a86468edb3b89d16991f70fd18b5d29dd49dd7f7061951f79ecbac9f3f3abf71"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/projected_limit_red.json",
+      "size": 235,
+      "sha256": "18d6fb0222fd2d36a5fefc4a240195710128d34afe6f6c4dd1c27ac58c18cc09"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/projected_limit_red.txt",
+      "size": 6104,
+      "sha256": "30c6ac515b7c3fc509fffc2a6d93ba612f1a324376a0d8881c661b2724b71797"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/published_red.json",
+      "size": 230,
+      "sha256": "bdae5f98525b509e7b67483746de6a0faaf2f9cdf0310ed87c66ddaf02ae9979"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/published_red.txt",
+      "size": 2596,
+      "sha256": "c16de83872205c21e694492452732cf45a77d87638e55bea87ca5b86fe2b19d7"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/python_final1.json",
+      "size": 1992,
+      "sha256": "7b8df86e44425b4212cf6cba60325ec0c643ffb6588e8d72a7b214184c618d7b"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/python_final1.txt",
+      "size": 32749,
+      "sha256": "da323eaff12b2a26f760a51dc2d53f2b0eca7b2f7bbeb2feb1a985a0bbb12b5f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/python_final2.json",
+      "size": 1992,
+      "sha256": "7c2f888238794bd23b67e2ada16a1dec2b2fd7001d25e7d362b14e6c1e26a69c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/python_final2.txt",
+      "size": 30756,
+      "sha256": "b78b93ff02d170f791459d33e84b963943c39a252adc1a7a6333fad38f237bf1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/results_summary.json",
+      "size": 5891,
+      "sha256": "97c80b27ea645f688d6df4c8be1acaccdeaf63c4c5e92261aa76ffdfe6c54c2c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store.py.diff.txt",
+      "size": 23870,
+      "sha256": "94969ab4be1eb68dff58545533e228b927e295d08f35a969c30e7b413ef19e15"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final1.json",
+      "size": 1878,
+      "sha256": "30555d7806e836a890cf81cceb17975c72cb5caf72e08269f415b1eb4259d373"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final1.txt",
+      "size": 102,
+      "sha256": "da99c0194610e46b0a3518e515ee81e5a72b00f38bf40e691a443f23f55a61d2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final2.json",
+      "size": 1878,
+      "sha256": "b39edffb38a6adfec3921c5e80dbd7be42fc84e177fcd4fb97db656bb500863f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final2.txt",
+      "size": 102,
+      "sha256": "da28f3c5880ecd8e7da8dfe5142aad66d07e6af3e9f5b1302341f8d466136a2f"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final3.json",
+      "size": 1878,
+      "sha256": "ba7fbb09106f747952fc748a3480c7c6635664036e0691b5fa97608c74e81aa1"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/run_store_final3.txt",
+      "size": 102,
+      "sha256": "caa1d5130de6acaaf4801257c06b14ada2767984d005ac1adc0e562aafbb3921"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/test_run_store_v2.py.diff.txt",
+      "size": 15854,
+      "sha256": "f8080392478faf0adb0f114bdda31a688b9deb57342f87c3852f29594b890305"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/test_web_alarm_ultra_chat_turn.py.diff.txt",
+      "size": 809,
+      "sha256": "00aa97b31563b6132481e205d55c9c92a0036148125012b0b05789cd7f620dbf"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/finish_receipt.md",
+      "size": 1363,
+      "sha256": "c0aa91017caf989d95b3a6a87c9cfaf6e62af20063952d97b8f9fc72e0fa8aaf"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/guard/sitecustomize.py",
+      "size": 2218,
+      "sha256": "744ef1baef161af76daf1d85f986cfbefd14debec452ed3eee64b5872ea52c1c"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/handoff_task.md",
+      "size": 8047,
+      "sha256": "eb98519ca41ad905e424c1cc30665e4004058d8a5cbba240bc59d6401a9156e0"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/handoff_to_coordinator.txt",
+      "size": 2821,
+      "sha256": "ee1340170cddfd834aed2f22e232f9c82efd529500519d8cf1243c8492253f9e"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/report.md",
+      "size": 19894,
+      "sha256": "8e75a054da63baf6795fa3e073797a37158fb3bd1d510e5def21926da2a4db27"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/run_checks.py",
+      "size": 4290,
+      "sha256": "b60ff4b54a830d1388006fec2ca2c694cf2b0f87973d92f5563b30e6b50c87e2"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/task_record.json",
+      "size": 722,
+      "sha256": "c90be512cf77b6a830fc719e920ea162392c63a7ab26a1cb82e3aebc73f36a22"
+    },
+    {
+      "path": "reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/verify_state.py",
+      "size": 3561,
+      "sha256": "d9fef4d80537113613a4ebb7c302e80dcce92e58caabf84dc50a04c3927a6d29"
+    }
+  ],
+  "manifest_self_hash": "excluded to avoid a circular digest",
+  "result_summary": "evidence/results_summary.json",
+  "open": [
+    "Independent WEB23 review pending",
+    "Same-user final TOCTOU residual",
+    "Picker WinError10053 intermittent; outside scope",
+    "Windows native file/directory symlink tests skipped for missing privilege",
+    "Stage3 HOLD; no implementation GO"
+  ]
+}

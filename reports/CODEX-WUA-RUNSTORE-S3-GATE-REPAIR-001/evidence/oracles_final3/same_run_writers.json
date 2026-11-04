@@ -1,0 +1,47 @@
+{
+  "controlled_phase_reached": true,
+  "second_finished_before_release": false,
+  "writers": [
+    {
+      "outcome": "recorded",
+      "sequence": 1,
+      "provider_calls": 0
+    },
+    {
+      "outcome": "recorded",
+      "sequence": 2,
+      "provider_calls": 0
+    }
+  ],
+  "sequences": [
+    1,
+    2
+  ],
+  "record_count": 2,
+  "raw_index": [
+    {
+      "record_id": "rec_ae6581a469444d4389fd94fc7fc3c7f6",
+      "sequence": 1,
+      "source": "SERVER",
+      "event": "s3_test",
+      "stream": "server.jsonl",
+      "offset": 0,
+      "length": 147,
+      "timestamp": 1.0,
+      "sha256": "68b5988c07cbdd6494bbb104ae547425eef29fc39967cc02b335e1351df476aa"
+    },
+    {
+      "record_id": "rec_2c917bc7ba464192990d4fcfb0154dd7",
+      "sequence": 2,
+      "source": "SERVER",
+      "event": "s3_test",
+      "stream": "server.jsonl",
+      "offset": 147,
+      "length": 148,
+      "timestamp": 1.0,
+      "sha256": "100e1da6e4f76469fe696968f1108883f407549f82ff1e2f8f5e1bbfe90c46b4"
+    }
+  ],
+  "raw_index_sha256": "ea9bae7e1445cf5fd5ecb824f2ea22b7f649d000916be0bb7ae1f10f0f94884d",
+  "provider_calls": 0
+}

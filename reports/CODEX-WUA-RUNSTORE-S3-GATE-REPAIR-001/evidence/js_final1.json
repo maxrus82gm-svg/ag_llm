@@ -1,0 +1,58 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "test_web_alarm_ultra_chat_ui.js",
+    "test_web_alarm_operator_ui.js",
+    "test_web_alarm_evm_ui.js"
+  ],
+  "exit_code": 0,
+  "seconds": 2.2,
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "counts": {
+    "tests": 158,
+    "pass": 158,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "source": {
+    "run_store.py": {
+      "size": 38304,
+      "sha256": "410d6e6b78d8c7478a01a337a62bd6d51e4def05dcccd541f3c281bbb01064e7"
+    },
+    "test_run_store_v2.py": {
+      "size": 34801,
+      "sha256": "62c582da7bf08bc5a9e7adb55cad36b100d6f25df29560efe8045e14d68fbd91"
+    },
+    "test_web_alarm_ultra_chat_turn.py": {
+      "size": 7683,
+      "sha256": "fc1bd907a96b44be011c9b2f1abffd21dc02da597885640074e54193aa3c0320"
+    },
+    "context_storage.py": {
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    "audit_storage.py": {
+      "size": 31728,
+      "sha256": "5d91a6f9842b1dd7e79afd69f7cd5bd984ec828c79a39939144c2d87b558851c"
+    },
+    "web_alarm/ultra_chat.py": {
+      "size": 26620,
+      "sha256": "6d1883838fd5f28be2191db05d678cb454319a2325531758781176012d958028"
+    },
+    "web_alarm/server.py": {
+      "size": 74735,
+      "sha256": "3158050afb26ad22f0a2b095703534a5b9b97bdf60cef7ed9d9c0d8717ba6bd5"
+    },
+    "web_alarm/ui.py": {
+      "size": 185654,
+      "sha256": "626c0253b7d2c9e79774f879a2518900ac5c0365bd73a860b83e80b68d0a391a"
+    }
+  },
+  "guard_receipts": 0,
+  "guard_denials": 0,
+  "network_guard": "Python children: loopback only; Node suites use mocked fetch/VM, no Python network instrumentation"
+}

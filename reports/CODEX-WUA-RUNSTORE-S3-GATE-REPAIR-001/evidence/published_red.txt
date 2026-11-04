@@ -1,0 +1,52 @@
+test_audit_junction_must_not_write_outside_workspace (test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_audit_junction_must_not_write_outside_workspace) ... FAIL
+test_normal_run_roundtrip_uses_existing_store (test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_normal_run_roundtrip_uses_existing_store) ... ok
+test_same_run_two_processes_have_unique_sequences_or_visible_refusal (test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_same_run_two_processes_have_unique_sequences_or_visible_refusal) ... FAIL
+
+======================================================================
+FAIL: test_audit_junction_must_not_write_outside_workspace (test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_audit_junction_must_not_write_outside_workspace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn.py", line 115, in test_audit_junction_must_not_write_outside_workspace
+    self.assertEqual(files, ['untouched.txt'], 'Run Store followed .ultra/audit junction and wrote outside the Workspace')
+AssertionError: Lists differ: ['chat_c06719bb462a40118281f3e2901251f6/run[44 chars]txt'] != ['untouched.txt']
+
+First differing element 0:
+'chat_c06719bb462a40118281f3e2901251f6/run_s3/summary.json'
+'untouched.txt'
+
+First list contains 2 additional elements.
+First extra element 1:
+'index.json'
+
+- ['chat_c06719bb462a40118281f3e2901251f6/run_s3/summary.json',
+-  'index.json',
+-  'untouched.txt']
+? ^
+
++ ['untouched.txt']
+? ^
+ : Run Store followed .ultra/audit junction and wrote outside the Workspace
+
+======================================================================
+FAIL: test_same_run_two_processes_have_unique_sequences_or_visible_refusal (test_web_alarm_ultra_chat_turn.TurnPrerequisiteTests.test_same_run_two_processes_have_unique_sequences_or_visible_refusal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_turn.py", line 156, in test_same_run_two_processes_have_unique_sequences_or_visible_refusal
+    self.assertEqual(sorted(sequences), list(range(1, recorded+1)), 'Two processes acknowledged the same RUN sequence')
+AssertionError: Lists differ: [1, 1] != [1, 2]
+
+First differing element 1:
+1
+2
+
+- [1, 1]
+?     ^
+
++ [1, 2]
+?     ^
+ : Two processes acknowledged the same RUN sequence
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.523s
+
+FAILED (failures=2)

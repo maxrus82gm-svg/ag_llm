@@ -2,6 +2,11 @@ import json
 from pathlib import Path
 
 import run_store
+import pytest
+import contextlib
+import hashlib
+import os
+import sys
 from audit_storage import AuditThreadRecorder
 from run_store import (
     append_run_record, create_run_summary, ensure_run_index_entry,
@@ -26,6 +31,308 @@ def test_ids_and_utf8_offsets_are_stable(tmp_path: Path):
     assert len(list_run_records(tmp_path,'run1'))==2
     assert load_workspace_run_index(tmp_path)['next_run_number']==3
     assert not list((tmp_path/'.ultra/audit').glob('.*.tmp'))
+
+
+def _gate_run(base):
+    root = base / 'workspace'
+    root.mkdir()
+    create_run_summary(root, 'ws_gate', 'chat', 'tb_gate', 'run')
+    return root
+
+
+def _append_gate(root, text='пример'):
+    return append_run_record(root, 'run', source='SERVER', event='gate', payload={'text': text}, timestamp=1.0)
+
+
+def _files(base):
+    return {p.relative_to(base).as_posix(): p.read_bytes() for p in base.rglob('*') if p.is_file()}
+
+
+@pytest.mark.parametrize('relative', ['.ultra/audit', '.ultra/audit/chat', '.ultra/audit/chat/run', '.ultra/audit/index_generations'])
+def test_gate_existing_directory_junction_is_refused_without_external_writes(tmp_path, relative):
+    if os.name != 'nt':
+        pytest.skip('Windows junction oracle')
+    import _winapi
+    root = _gate_run(tmp_path)
+    outside = tmp_path / 'outside'; outside.mkdir()
+    (outside/'marker').write_bytes(b'preserve')
+    link = root/relative
+    if link.exists():
+        backup = tmp_path/'original'
+        assert link.resolve().is_relative_to(tmp_path.resolve()) and backup.resolve().is_relative_to(tmp_path.resolve())
+        link.rename(backup)
+    _winapi.CreateJunction(str(outside), str(link))
+    before = _files(outside)
+    try:
+        with pytest.raises(run_store._ultra_core.StorageWriteError):
+            _append_gate(root)
+        assert _files(outside) == before
+    finally:
+        os.rmdir(link)
+
+
+@pytest.mark.parametrize('component', ['index.json', 'summary.json', 'server.jsonl', 'records.idx.jsonl', 'append.pending.json'])
+def test_gate_hardlinked_files_are_refused_without_touching_target(tmp_path, component):
+    root = _gate_run(tmp_path)
+    outside = tmp_path/'outside'; outside.mkdir()
+    path = run_store.workspace_index_path(root) if component=='index.json' else root/'.ultra/audit/chat/run'/component
+    target = outside/'target'
+    target.write_bytes(path.read_bytes() if path.exists() else b'')
+    path.unlink(missing_ok=True)
+    os.link(target, path)
+    before = _files(outside)
+    with pytest.raises(run_store._ultra_core.StorageWriteError):
+        if component=='summary.json':
+            update_run_summary_index(root, 'run', {'run_status':'COMPLETED'})
+        else:
+            _append_gate(root)
+    assert _files(outside) == before
+
+
+@pytest.mark.parametrize('relative', [False, True])
+def test_gate_index_summary_path_cannot_escape_workspace(tmp_path, relative):
+    root = _gate_run(tmp_path)
+    outside = tmp_path/'outside.json'; outside.write_bytes(b'{"untouched":true}')
+    path = run_store.workspace_index_path(root)
+    index = json.loads(path.read_bytes())
+    index['runs']['run']['summary_path'] = '../../outside.json' if relative else str(outside)
+    path.write_text(json.dumps(index), encoding='utf-8')
+    with pytest.raises(ValueError, match='locator'):
+        update_run_summary_index(root, 'run', {'run_status':'COMPLETED'})
+    assert outside.read_bytes() == b'{"untouched":true}'
+
+
+@pytest.mark.parametrize('partial_index', [False, True])
+def test_gate_disk_error_requires_explicit_recovery_preserving_confirmed_prefix(tmp_path, monkeypatch, partial_index):
+    root = _gate_run(tmp_path)
+    confirmed = _append_gate(root, 'confirmed')
+    index_path = run_component_path(root, 'run', 'records.idx.jsonl')
+    stream_path = run_component_path(root, 'run', 'server.jsonl')
+    before = (index_path.read_bytes(), stream_path.read_bytes())
+    original = run_store._append_file
+    class Partial:
+        def __init__(self, stream): self.stream = stream
+        def write(self, data):
+            self.stream.write(data[:len(data)//2]); self.stream.flush(); os.fsync(self.stream.fileno())
+            raise OSError('injected partial index')
+    @contextlib.contextmanager
+    def failing(path):
+        if path.name=='records.idx.jsonl':
+            if not partial_index: raise OSError('injected before index')
+            with original(path) as stream: yield Partial(stream)
+        else:
+            with original(path) as stream: yield stream
+    with monkeypatch.context() as scoped:
+        scoped.setattr(run_store, '_append_file', failing)
+        with pytest.raises(OSError): _append_gate(root, 'unconfirmed')
+    with pytest.raises(run_store.RunStoreRecoveryRequired): _append_gate(root, 'do not replay')
+    result = run_store.recover_run_records(root, 'run')
+    assert result['committed'] is False and result['removed_bytes']['server.jsonl'] > 0
+    assert (index_path.read_bytes(), stream_path.read_bytes()) == before
+    assert load_run_record(root, 'run', confirmed['record_id'], expected_sha256=confirmed['sha256'])
+    assert _append_gate(root, 'after recovery')['sequence'] == 2
+
+
+@pytest.mark.parametrize('corruption', ['missing_index', 'torn_index', 'bad_checksum'])
+def test_gate_unexplained_corruption_is_not_silently_repaired(tmp_path, corruption):
+    root = _gate_run(tmp_path); _append_gate(root)
+    index_path = run_component_path(root, 'run', 'records.idx.jsonl')
+    if corruption=='missing_index': index_path.unlink()
+    elif corruption=='torn_index': index_path.write_bytes(index_path.read_bytes()+b'{broken')
+    else:
+        value=json.loads(index_path.read_bytes()); value['sha256']='0'*64
+        index_path.write_text(json.dumps(value)+'\n', encoding='utf-8')
+    before = _files(root/'.ultra/audit')
+    with pytest.raises(ValueError): run_store.recover_run_records(root, 'run')
+    assert _files(root/'.ultra/audit') == before
+
+
+def test_gate_corrupt_pending_intent_is_not_discarded(tmp_path, monkeypatch):
+    root = _gate_run(tmp_path)
+    with monkeypatch.context() as scoped:
+        @contextlib.contextmanager
+        def fail_before_stream(_path):
+            raise OSError('before stream'); yield
+        scoped.setattr(run_store, '_append_file', fail_before_stream)
+        with pytest.raises(OSError): _append_gate(root)
+    pending=root/'.ultra/audit/chat/run/append.pending.json'
+    data=json.loads(pending.read_bytes()); del data['record']['sha256']
+    pending.write_text(json.dumps(data), encoding='utf-8')
+    before = _files(root/'.ultra/audit')
+    with pytest.raises(ValueError): run_store.recover_run_records(root, 'run')
+    assert _files(root/'.ultra/audit') == before
+
+
+def test_gate_partial_stream_write_is_visible_and_recovery_preserves_prefix(tmp_path, monkeypatch):
+    root = _gate_run(tmp_path); receipt = _append_gate(root, 'confirmed')
+    stream_path = run_component_path(root, 'run', 'server.jsonl')
+    index_path = run_component_path(root, 'run', 'records.idx.jsonl')
+    before = (stream_path.read_bytes(), index_path.read_bytes())
+    original = run_store._append_file
+    @contextlib.contextmanager
+    def partial(path):
+        with original(path) as stream:
+            if path.name == 'server.jsonl':
+                class ShortWrite:
+                    def tell(self): return stream.tell()
+                    def write(self, data):
+                        size = stream.write(data[:len(data)//2])
+                        stream.flush(); os.fsync(stream.fileno())
+                        return size
+                yield ShortWrite()
+            else:
+                yield stream
+    with monkeypatch.context() as scoped:
+        scoped.setattr(run_store, '_append_file', partial)
+        with pytest.raises(OSError, match='Partial'): _append_gate(root, 'incomplete')
+    with pytest.raises(run_store.RunStoreRecoveryRequired): _append_gate(root, 'no replay')
+    result = run_store.recover_run_records(root, 'run')
+    assert result['committed'] is False and result['removed_bytes']['server.jsonl'] > 0
+    assert (stream_path.read_bytes(), index_path.read_bytes()) == before
+    assert load_run_record(root, 'run', receipt['record_id'], expected_sha256=receipt['sha256'])
+    assert _append_gate(root)['sequence'] == 2
+
+
+@pytest.mark.parametrize('corruption', ['changed_prefix', 'extra_index', 'foreign_stream', 'bad_tail_hash'])
+def test_gate_pending_recovery_refuses_unexplained_changes_without_mutation(tmp_path, monkeypatch, corruption):
+    root = _gate_run(tmp_path); _append_gate(root, 'confirmed')
+    original = run_store._append_file
+    @contextlib.contextmanager
+    def before_index(path):
+        if path.name == 'records.idx.jsonl': raise OSError('injected before index')
+        with original(path) as stream: yield stream
+    with monkeypatch.context() as scoped:
+        scoped.setattr(run_store, '_append_file', before_index)
+        with pytest.raises(OSError): _append_gate(root, 'pending')
+    index_path = run_component_path(root, 'run', 'records.idx.jsonl')
+    if corruption == 'changed_prefix':
+        index_path.write_bytes(index_path.read_bytes().replace(b'gate', b'GATE', 1))
+    elif corruption == 'extra_index':
+        with index_path.open('ab') as stream: stream.write(b'not the planned receipt\n')
+    elif corruption == 'foreign_stream':
+        run_component_path(root, 'run', 'executor.jsonl').write_bytes(b'foreign\n')
+    else:
+        path = run_component_path(root, 'run', 'server.jsonl')
+        data = path.read_bytes(); path.write_bytes(data[:-2] + b'x\n')
+    before = _files(root/'.ultra/audit')
+    with pytest.raises(ValueError): run_store.recover_run_records(root, 'run')
+    assert _files(root/'.ultra/audit') == before
+
+
+@pytest.mark.parametrize('phase', ['after_intent', 'after_stream', 'after_index'])
+def test_gate_process_crash_recovery_never_loses_confirmed_records(tmp_path, phase):
+    root = _gate_run(tmp_path); first = _append_gate(root, 'first')
+    code = r'''
+import sys,os,contextlib
+sys.path.insert(0,sys.argv[1]); import run_store as rs
+if sys.argv[3]=='after_index':
+    rs._clear_pending=lambda p:os._exit(91)
+else:
+    original=rs._append_file
+    @contextlib.contextmanager
+    def stop(path):
+        if sys.argv[3]=='after_intent': os._exit(93)
+        if path.name=='records.idx.jsonl': os._exit(92)
+        with original(path) as stream: yield stream
+    rs._append_file=stop
+rs.append_run_record(sys.argv[2],'run',source='SERVER',event='crash',payload={'synthetic':True},timestamp=2)
+'''
+    result=_subprocess.run([sys.executable,'-B','-c',code,str(Path(__file__).resolve().parent),str(root),phase],capture_output=True,timeout=30)
+    assert result.returncode=={'after_index':91,'after_stream':92,'after_intent':93}[phase], result.stderr
+    recovered=run_store.recover_run_records(root, 'run')
+    assert recovered['committed'] is (phase=='after_index')
+    assert load_run_record(root,'run',first['record_id'],expected_sha256=first['sha256'])
+    records=list_run_records(root,'run')
+    assert len(records)==(2 if phase=='after_index' else 1)
+    assert _append_gate(root,'next')['sequence']==len(records)+1
+
+
+def test_gate_append_lock_timeout_is_visible_and_does_not_write(tmp_path, monkeypatch):
+    root = _gate_run(tmp_path)
+    ready=tmp_path/'ready'; release=tmp_path/'release'
+    code=r'''
+import sys,time
+from pathlib import Path
+sys.path.insert(0,sys.argv[1]); import run_store as rs
+with rs._index_lock(sys.argv[2]):
+    Path(sys.argv[3]).write_text('ready')
+    deadline=time.monotonic()+10
+    while not Path(sys.argv[4]).exists():
+        if time.monotonic()>deadline: raise RuntimeError('bounded timeout')
+        time.sleep(.01)
+'''
+    child=_subprocess.Popen([sys.executable,'-B','-c',code,str(Path(__file__).resolve().parent),str(root),str(ready),str(release)])
+    try:
+        deadline=_time.monotonic()+5
+        while not ready.exists():
+            assert child.poll() is None and _time.monotonic()<deadline
+            _time.sleep(.01)
+        before=_files(root/'.ultra/audit')
+        monkeypatch.setattr(run_store._ultra_core,'WRITER_LOCK_TIMEOUT_SECONDS',.05)
+        with pytest.raises(run_store._ultra_core.WorkspaceBusyError): _append_gate(root)
+        assert _files(root/'.ultra/audit')==before
+    finally:
+        release.write_text('go')
+        try: child.wait(timeout=10)
+        finally:
+            if child.poll() is None: child.kill(); child.wait(timeout=10)
+    assert child.returncode==0
+
+
+def test_gate_generation_hardlink_is_refused(tmp_path):
+    root=_gate_run(tmp_path)
+    outside=tmp_path/'outside.json'; outside.write_bytes(run_store.workspace_index_path(root).read_bytes())
+    folder=root/'.ultra/audit/index_generations'; folder.mkdir()
+    os.link(outside,folder/('index-'+('1'*20)+'-'+('a'*32)+'.json'))
+    before=outside.read_bytes()
+    with pytest.raises(run_store._ultra_core.StorageWriteError):
+        ensure_task_index_entry(root,'tb_other','chat')
+    assert outside.read_bytes()==before
+
+
+def test_gate_concurrent_run_offsets_hashes_and_restart(tmp_path):
+    root = _gate_run(tmp_path)
+    code = r'''
+import sys,json
+sys.path.insert(0,sys.argv[1]); import run_store as rs
+for i in range(12):
+    rs.append_run_record(sys.argv[2],'run',source=['SERVER','EXECUTOR','PLANNER'][int(sys.argv[3])],event='parallel',payload={'i':i,'writer':sys.argv[3],'text':'ёж 😀'},timestamp=i)
+print('done')
+'''
+    children=[_subprocess.Popen([sys.executable,'-B','-c',code,str(Path(__file__).resolve().parent),str(root),str(n)],stdout=_subprocess.PIPE,stderr=_subprocess.PIPE) for n in range(3)]
+    try:
+        for child in children:
+            out,err=child.communicate(timeout=60); assert child.returncode==0, err
+    finally:
+        for child in children:
+            if child.poll() is None: child.kill()
+            child.communicate(timeout=20)
+    records=list_run_records(root,'run')
+    assert [r['sequence'] for r in records]==list(range(1,37))
+    ends={name:0 for name in run_store.STREAM_BY_SOURCE.values()}
+    for receipt in records:
+        assert receipt['offset']==ends[receipt['stream']]
+        ends[receipt['stream']]+=receipt['length']
+        assert load_run_record(root,'run',receipt['record_id'],expected_sha256=receipt['sha256'])
+    assert run_store.recover_run_records(root,'run')=={'removed_bytes':{},'committed':False}
+
+
+@pytest.mark.parametrize('large_payload', [False, True])
+def test_gate_append_refuses_projected_read_limit_before_any_write(tmp_path, monkeypatch, large_payload):
+    root = _gate_run(tmp_path)
+    monkeypatch.setattr(run_store, '_MAX_AUDIT_BYTES', 8192)
+    text = 'x' * 9000 if large_payload else 'small'
+    for _ in range(80):
+        before = _files(root/'.ultra/audit')
+        try:
+            _append_gate(root, text)
+        except ValueError as exc:
+            assert 'limit' in str(exc).lower()
+            assert _files(root/'.ultra/audit') == before
+            assert run_store.recover_run_records(root,'run') == {'removed_bytes':{},'committed':False}
+            break
+    else:
+        pytest.fail('projected index or stream limit was not enforced')
 
 
 def test_atomic_json_retries_transient_permission_error(tmp_path: Path, monkeypatch):

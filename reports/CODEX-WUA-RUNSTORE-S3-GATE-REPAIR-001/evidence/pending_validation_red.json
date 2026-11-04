@@ -1,0 +1,15 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "test_run_store_v2.py::test_gate_corrupt_pending_intent_is_not_discarded"
+  ],
+  "exit_code": 1
+}

@@ -1,0 +1,14 @@
+--- before/test_web_alarm_ultra_chat_turn.py
++++ after/test_web_alarm_ultra_chat_turn.py
+@@ -74,8 +74,9 @@
+         directory = os.environ.get('S3_EVIDENCE_DIR')
+         if directory:
+             target = Path(directory).resolve()
+-            allowed = ROOT / 'reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001'
+-            self.assertTrue(target.is_relative_to(allowed))
++            allowed = [ROOT / 'reports' / name for name in
++                       ['CODEX-WUA-CHAT-S3-TURN-RECOVERY-001', 'CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001']]
++            self.assertTrue(any(target.is_relative_to(path) for path in allowed))
+             target.mkdir(parents=True, exist_ok=True)
+             (target / (name + '.json')).write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
+ 

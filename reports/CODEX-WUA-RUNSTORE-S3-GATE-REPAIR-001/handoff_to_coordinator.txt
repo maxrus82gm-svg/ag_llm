@@ -1,0 +1,22 @@
+TASK: CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001
+HISTORY ID: H-CODEX-000012
+EXECUTOR: Codex 007
+TO: ChatGPT WEB 23
+STATUS: RESULT READY / SUBMITTED / REVIEW PENDING; LOCAL ONLY, NOT INDEPENDENTLY VERIFIED
+
+Исправлены только Run Store prerequisites: безопасный audit-path через shared context_storage helpers; единый Workspace OS lock для append; контроль sequence/offset/length/SHA; pending-intent и явный recover без replay. Turn/Stage3/provider/UI не реализованы.
+
+Оба опубликованных RED воспроизведены до правок: 1 PASS / 2 FAIL. Дополнительные реальные RED сохранены. Итог: Run Store/audit 62 PASS; prerequisites 3 PASS; Python 166 PASS/5 SKIP; JS 158 PASS. Без сложения повторов 389 PASS/5 SKIP. Первый Python regression имел 1 ERROR WinError10053; лог сохранён, полный повтор прошёл, picker-риск OPEN. Native symlink SKIP из-за Windows privilege; junction/hardlink выполнены.
+
+601/601 пользовательских файлов storage совпадают по набору/размеру/SHA. .obsidian/workspace.json изменился вне операций агента, изменение сохранено и отражено отдельно. Проверенные read-only sources/launcher неизменны, STANDARD. Git/GitHub и реальные LLM/provider calls не использовались.
+
+finish: ROTATED exit 0, check/dry-run/apply/readback OK; БЛОК1 WAITING, БЛОК1.1 current TASK, прежний snapshot REUSED. task_record.json связывает H-CODEX-000012 с assignment/report.
+
+REPORT: reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/report.md
+MANIFEST: reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/manifest.json
+RESULTS: reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/results_summary.json
+FINISH: reports/CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001/evidence/finish.json
+
+DOC IMPACT: после независимой приёмки адресно обновить №05/37/40 и существующую историю; оценить FOLLOWUP-WUA-P9-AUDIT-PATH-001 и FOLLOWUP-WUA-P9-SINGLE-RUN-WRITER-001. Не закрывать residual TOCTOU, portability, picker или прочие OPEN авторским PASS. Stage3 остаётся HOLD до нового USER GO.
+
+NEXT: пользователь публикует безопасный локальный пакет; WEB23 сверяет source/manifest/RED и выполняет независимые адресные проверки. Windows independent runtime/CI, реальный browser/Tk, hardware power loss и clean-machine portability не выполнены автором.

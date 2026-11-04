@@ -1,0 +1,18 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-RUNSTORE-S3-GATE-REPAIR-001",
+    "--no-chat-amendment",
+    "--apply",
+    "--headless"
+  ],
+  "exit_code": 0
+}

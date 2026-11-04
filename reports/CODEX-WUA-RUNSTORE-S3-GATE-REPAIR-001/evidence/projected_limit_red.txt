@@ -1,0 +1,104 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+____ test_gate_append_refuses_projected_read_limit_before_any_write[False] ____
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-10/test_gate_append_refuses_proje0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000154A1BE98E0>
+large_payload = False
+
+    @pytest.mark.parametrize('large_payload', [False, True])
+    def test_gate_append_refuses_projected_read_limit_before_any_write(tmp_path, monkeypatch, large_payload):
+        root = _gate_run(tmp_path)
+        monkeypatch.setattr(run_store, '_MAX_AUDIT_BYTES', 8192)
+        text = 'x' * 9000 if large_payload else 'small'
+        for _ in range(80):
+            before = _files(root/'.ultra/audit')
+            try:
+>               _append_gate(root, text)
+
+test_run_store_v2.py:328: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:44: in _append_gate
+    return append_run_record(root, 'run', source='SERVER', event='gate', payload={'text': text}, timestamp=1.0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:628: in append_run_record
+    return _append_run_record_locked(workspace_root, run_id, source=source, event=event, payload=payload, timestamp=timestamp)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:676: in _append_run_record_locked
+    persisted = load_run_record(workspace_root, run_id, record_id, expected_sha256=index_record["sha256"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:690: in load_run_record
+    matches = [value for value in list_run_records(workspace_root, run_id)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:685: in list_run_records
+    return _record_index(path)
+           ^^^^^^^^^^^^^^^^^^^
+run_store.py:483: in _record_index
+    raw = _read_bytes(path)
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-10/test_gate_append_refuses_proje0/workspace/.ultra/audit/chat/run/records.idx.jsonl')
+
+    def _read_bytes(path: Path) -> bytes:
+        path = _checked_path(path)
+        anchor, parts = _audit_location(path)
+        try:
+            return _ultra_core._read_file_bounded(anchor, parts, _MAX_AUDIT_BYTES)
+        except _ultra_core.StorageReadError as exc:
+            if exc.code == "missing":
+                raise FileNotFoundError(path) from None
+>           raise _ultra_core._write_refusal(exc) from None
+E           context_storage.StorageWriteError: Хранилище Ultra недоступно для записи (too_large).
+
+run_store.py:73: StorageWriteError
+____ test_gate_append_refuses_projected_read_limit_before_any_write[True] _____
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-10/test_gate_append_refuses_proje1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000154A1C97890>
+large_payload = True
+
+    @pytest.mark.parametrize('large_payload', [False, True])
+    def test_gate_append_refuses_projected_read_limit_before_any_write(tmp_path, monkeypatch, large_payload):
+        root = _gate_run(tmp_path)
+        monkeypatch.setattr(run_store, '_MAX_AUDIT_BYTES', 8192)
+        text = 'x' * 9000 if large_payload else 'small'
+        for _ in range(80):
+            before = _files(root/'.ultra/audit')
+            try:
+>               _append_gate(root, text)
+
+test_run_store_v2.py:328: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:44: in _append_gate
+    return append_run_record(root, 'run', source='SERVER', event='gate', payload={'text': text}, timestamp=1.0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:628: in append_run_record
+    return _append_run_record_locked(workspace_root, run_id, source=source, event=event, payload=payload, timestamp=timestamp)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:676: in _append_run_record_locked
+    persisted = load_run_record(workspace_root, run_id, record_id, expected_sha256=index_record["sha256"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+run_store.py:703: in load_run_record
+    encoded = _read_bytes(path)[item["offset"]:item["offset"]+item["length"]]
+              ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-10/test_gate_append_refuses_proje1/workspace/.ultra/audit/chat/run/server.jsonl')
+
+    def _read_bytes(path: Path) -> bytes:
+        path = _checked_path(path)
+        anchor, parts = _audit_location(path)
+        try:
+            return _ultra_core._read_file_bounded(anchor, parts, _MAX_AUDIT_BYTES)
+        except _ultra_core.StorageReadError as exc:
+            if exc.code == "missing":
+                raise FileNotFoundError(path) from None
+>           raise _ultra_core._write_refusal(exc) from None
+E           context_storage.StorageWriteError: Хранилище Ultra недоступно для записи (too_large).
+
+run_store.py:73: StorageWriteError
+=========================== short test summary info ===========================
+FAILED test_run_store_v2.py::test_gate_append_refuses_projected_read_limit_before_any_write[False]
+FAILED test_run_store_v2.py::test_gate_append_refuses_projected_read_limit_before_any_write[True]
+2 failed in 3.19s
