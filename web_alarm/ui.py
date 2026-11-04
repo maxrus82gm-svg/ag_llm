@@ -317,6 +317,7 @@ pre{font:12px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow
 <form id="chatNameForm" class="chat-name-form" aria-label="Название диалога" hidden>
 <label for="chatNameInput" id="chatNameLabel">Название диалога</label>
 <input id="chatNameInput" maxlength="200" autocomplete="off">
+<p id="chatInitializeNotice" class="notice info" role="note" hidden></p>
 <div class="chat-actions"><button type="submit" id="chatNameSave" class="primary">Сохранить</button><button type="button" id="chatNameCancel">Отмена</button></div>
 <p id="chatNameError" class="chat-model-error" role="alert" hidden></p>
 </form>
@@ -1947,7 +1948,7 @@ function renderChatWorkspaces(){
     const choose=chatPick(w.display_name,w.history==='ok'?'История Ultra найдена':chatReason(w.history),active,()=>selectChatWorkspace(w.wa_workspace_id));
     choose.setAttribute('aria-expanded',String(open));row.append(choose);
     row.append(chatIcon('✎','Переименовать Workspace «'+w.display_name+'»',()=>openWorkspaceName(w.wa_workspace_id),!chat.renamingWorkspace?.busy&&!chatEdit.busy));
-    row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>{if(chat.workspace===w.wa_workspace_id)openChatName('create')})}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},w.history==='ok'&&!chatEdit.busy));
+    row.append(chatIcon('+','Новый диалог в Workspace «'+w.display_name+'»',()=>{if(!active){selectChatWorkspace(w.wa_workspace_id).then(()=>{if(chat.workspace===w.wa_workspace_id)openChatName('create')})}else{chat.expanded=selected;renderChatWorkspaces();openChatName('create')}},['ok','missing_history'].includes(w.history)&&!chatEdit.busy));
     group.append(row);
     if(open){
       const panel=element('div',null,'chat-nested-panel');
@@ -2160,7 +2161,7 @@ function startChat(){if(chat.started)return;chat.started=true;loadChatModel();re
 // of its own scope, asked for only when the user saves a change, kept only here and sent only with these POSTs in
 // its own header; the read token never goes with a write. The list is always re-read from the server afterwards.
 const CHAT_WRITE_HEADER='X-WebAlarm-Ultra-Chat-Write-Token';
-const chatEdit={token:null,mode:null,busy:false,workspace:null,chatId:null,expected:null,pendingId:null};
+const chatEdit={token:null,mode:null,busy:false,workspace:null,chatId:null,expected:null,pendingId:null,initialize:false};
 const CHAT_WRITE_REASON={title_changed:'Название уже изменено в другом окне. Список обновлён; нажмите «Сохранить» ещё раз, чтобы заменить новое название.',
   chat_not_found:'Диалог не найден — список обновлён.',chat_id_conflict:'Не удалось создать диалог: этот идентификатор уже занят. Откройте форму заново.',
   workspace_unavailable:'В этом Workspace нет доступной истории Ultra — изменение не выполнено.',workspace_busy:'Workspace занят другой записью — повторите через несколько секунд.',
@@ -2172,7 +2173,7 @@ const CHAT_WRITE_REASON={title_changed:'Название уже изменено
 function newChatId(){const b=new Uint8Array(16);crypto.getRandomValues(b);return 'chat_'+Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
 function syncChatActions(){
   const w=chat.workspaces.find(x=>x.wa_workspace_id===chat.workspace);
-  $('chatNew').disabled=chatEdit.busy||!w||w.history!=='ok';
+  $('chatNew').disabled=chatEdit.busy||!w||!['ok','missing_history'].includes(w.history);
   $('chatRename').disabled=chatEdit.busy||!chat.chats.some(c=>c.chat_id===chat.chat&&c.status==='ok')
 }
 async function loadChatWriteAccess(){
@@ -2195,29 +2196,33 @@ function openChatName(mode){
   if(chatEdit.busy||chat.renamingWorkspace?.busy)return;
   const current=chat.chats.find(c=>c.chat_id===chat.chat&&c.status==='ok');
   if(mode==='rename'?!current:$('chatNew').disabled)return;
+  const initialize=mode==='create'&&chat.workspaces.find(w=>w.wa_workspace_id===chat.workspace)?.history==='missing_history';
   closeWorkspaceName();
   chat.expanded=chat.workspace;renderChatWorkspaces();
   // A new dialogue gets its ID now: saving again after a lost answer repeats the same request, never a second chat.
   Object.assign(chatEdit,{mode,workspace:chat.workspace,chatId:current&&mode==='rename'?current.chat_id:null,
-    expected:mode==='rename'?current.title:null,pendingId:mode==='create'?newChatId():null});
+    expected:mode==='rename'?current.title:null,pendingId:mode==='create'?newChatId():null,initialize});
   text('chatNameLabel',mode==='create'?'Название нового диалога (пусто — «Чат N»)':'Новое название диалога');
+  notice('chatInitializeNotice',initialize?'После нажатия «Создать первый диалог» будет создано хранилище Ultra в выбранной папке и первый чат. Отмена ничего не создаёт.':'');
+  text('chatNameSave',initialize?'Создать первый диалог':mode==='create'?'Создать':'Сохранить');
   $('chatNameInput').value=mode==='rename'?current.title:'';notice('chatNameError','');
   $('chatNameForm').hidden=false;$('chatNameInput').focus()
 }
 function closeChatName(){
   if(chatEdit.busy)return;
-  Object.assign(chatEdit,{mode:null,workspace:null,chatId:null,expected:null,pendingId:null});
+  Object.assign(chatEdit,{mode:null,workspace:null,chatId:null,expected:null,pendingId:null,initialize:false});
   $('chatNameForm').hidden=true;notice('chatNameError','')
 }
 async function saveChatName(){
   if(chatEdit.busy||!chatEdit.mode)return;
-  const mode=chatEdit.mode,ws=chatEdit.workspace,title=String($('chatNameInput').value||'').trim();
+  const mode=chatEdit.mode,ws=chatEdit.workspace,initialize=chatEdit.initialize,title=String($('chatNameInput').value||'').trim();
   if(mode==='rename'&&!title){notice('chatNameError','Название не может быть пустым.');return}
   const base='/ultra/chat/workspaces/'+encodeURIComponent(ws)+'/chats';
   chatEdit.busy=true;$('chatNameSave').disabled=true;notice('chatNameError','');syncChatActions();
   let saved=null;
   try{
-    const r=mode==='create'?await chatPost(base,title?{chat_id:chatEdit.pendingId,title}:{chat_id:chatEdit.pendingId}):
+    const payload={chat_id:chatEdit.pendingId};if(title)payload.title=title;if(initialize)payload.initialize_workspace=true;
+    const r=mode==='create'?await chatPost(base,payload):
       await chatPost(base+'/'+encodeURIComponent(chatEdit.chatId)+'/title',{title,expected_title:chatEdit.expected});
     if(!r?.chat||typeof r.chat.chat_id!=='string')throw Error('Некорректный ответ сервера об изменении диалога');
     saved=r.chat.chat_id
@@ -2234,7 +2239,7 @@ async function saveChatName(){
   if(!saved)return;
   closeChatName();
   chat.epoch++;chat.chat=saved;chat.messages=[];chat.page=null;chat.olderBusy=false;clearChatHistory('Загружаем историю…');
-  return loadChatList()
+  return initialize?loadChatWorkspaces():loadChatList()
 }
 $('viewChat').onclick=()=>showView('chat');
 async function createChatWorkspace(){

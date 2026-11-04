@@ -552,9 +552,12 @@ test('U18 actions follow the selection: no history, no dialogue, Escape, Cancel 
   h.el('chatNew').onclick();
   h.picks('chatWorkspaceList')[1].onclick(); await settle();
   assert.equal(h.el('chatNameForm').hidden, true, 'a Workspace switch closes the form');
-  assert.deepEqual([h.el('chatNew').disabled, h.el('chatRename').disabled], [true, true], 'no history: nothing to create in or rename');
-  h.el('chatNew').onclick(); h.el('chatRename').onclick();
+  assert.deepEqual([h.el('chatNew').disabled, h.el('chatRename').disabled], [false, true], 'missing history permits only an explicit first create');
+  h.el('chatRename').onclick();
   assert.equal(h.el('chatNameForm').hidden, true);
+  h.el('chatNew').onclick();
+  assert.equal(h.el('chatNameForm').hidden, false);
+  h.el('chatNameCancel').onclick();
   assert.equal(h.calls.filter(c => c.method !== 'GET').length, 0);
   // Server refusals are told in words, never as a bare code.
   for (const [code, expected] of [['workspace_busy', /занят другой записью/], ['workspace_unavailable', /нет доступной истории Ultra/],
@@ -814,4 +817,94 @@ test('LIVE a late plus-click for another Workspace cannot open an editor in the 
   release(); await settle();
   assert.equal(h.run('chat.workspace'), 'ws_a');
   assert.equal(h.el('chatNameForm').hidden, true, 'the delayed action belongs to ws_b only');
+});
+
+test('AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree', async () => {
+  const srv = chatServer([]);
+  let initialized = false;
+  const h = harness({routes: {
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Новая папка', initialized ? 'ok' : 'missing_history')]}),
+    [CHATS_A]: opts => {
+      if (opts.method === 'POST') {initialized = true; return srv.route(opts);}
+      return initialized ? srv.route(opts) : {state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}};
+    }
+  }}); await settle();
+  const plus = () => h.el('chatWorkspaceList').children[0].children[0].children[2];
+  assert.equal(plus().disabled, false, 'a registered new folder must allow its first dialogue');
+  await plus().onclick(); await settle();
+  assert.equal(h.el('chatNameForm').hidden, false);
+  assert.equal(h.el('chatInitializeNotice').hidden, false);
+  assert.match(h.el('chatInitializeNotice').textContent, /хранилище Ultra.*создано|создано.*хранилище Ultra/);
+  assert.match(h.el('chatNameSave').textContent, /Создать первый диалог/);
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0, 'opening the form never initializes');
+  h.el('chatNameCancel').onclick();
+  assert.equal(h.calls.filter(c => c.method === 'POST').length, 0, 'cancel never initializes');
+  await plus().onclick(); await settle();
+  h.routes.set(CHATS_A + '/' + h.run('chatEdit.pendingId') + '/messages?limit=50', () => page([]));
+  await submit(h); await settle();
+  assert.equal(srv.posts[0].body.initialize_workspace, true);
+  assert.equal(srv.posts[0].headers[WHEADER], WTOKEN);
+  assert.equal(srv.posts[0].headers[HEADER], undefined);
+  assert.equal(h.run('chat.workspaces[0].history'), 'ok', 'catalog reread is required after initialization');
+  assert.equal(h.run('chat.chat'), srv.chats[0].chat_id);
+  assert.match(h.el('chatWorkspaceList').textContent, /Чат 1/);
+  assert.equal(h.el('chatNameForm').hidden, true);
+  assert.equal(h.el('chatError').hidden, true);
+  assert.equal(plus().disabled, false);
+  await plus().onclick(); await settle();
+  assert.equal(h.el('chatInitializeNotice').hidden, true);
+  await submit(h); await settle();
+  assert.equal(srv.posts[1].body.initialize_workspace, undefined, 'ordinary creates keep the existing strict path');
+  assert.equal(srv.chats.length, 2);
+  assert.doesNotMatch(h.el('chatWorkspaceList').textContent, /nullnull/);
+});
+
+test('AMENDMENT first chat: only ok and missing_history enable creation; unsafe states remain read-only', async () => {
+  for (const history of ['missing_path', 'not_directory', 'invalid_metadata', 'unsupported_version', 'unsafe_storage_link', 'unreadable', 'foreign_identity']) {
+    const h = harness({routes: {
+      '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Недоступный', history)]}),
+      [CHATS_A]: () => ({state: 'unavailable', reason: history, chats: [], excluded: {}})
+    }}); await settle();
+    assert.equal(h.el('chatWorkspaceList').children[0].children[0].children[2].disabled, true, history);
+    await h.picks('chatWorkspaceList')[0].onclick(); await settle();
+    h.el('chatNew').onclick();
+    assert.equal(h.el('chatNameForm').hidden, true, history);
+    assert.equal(h.calls.filter(c => c.method === 'POST').length, 0, history);
+  }
+});
+
+test('AMENDMENT first chat: a lost reply keeps the pending id and consent; retry creates no second dialogue', async () => {
+  const srv = chatServer([]);
+  let initialized = false, posts = 0;
+  const h = harness({routes: {
+    '/ui/ultra-chat/write-capability': () => wcap(),
+    '/ultra/chat/workspaces': () => ({state: 'ok', workspaces: [ws('ws_a', 'Новая папка', initialized ? 'ok' : 'missing_history')]}),
+    [CHATS_A]: opts => {
+      if (opts.method === 'POST') {
+        initialized = true;
+        const result = srv.route(opts);
+        if (++posts === 1) throw Error('lost reply');
+        return result;
+      }
+      return initialized ? srv.route(opts) : {state: 'unavailable', reason: 'missing_history', chats: [], excluded: {}};
+    }
+  }}); await settle();
+  h.el('chatWorkspaceList').children[0].children[0].children[2].onclick(); await settle();
+  const id = h.run('chatEdit.pendingId');
+  h.routes.set(CHATS_A + '/' + id + '/messages?limit=50', () => page([]));
+  await submit(h); await settle();
+  assert.match(h.el('chatNameError').textContent, /Не удалось подтвердить/);
+  assert.equal(h.el('chatNameForm').hidden, false);
+  assert.equal(srv.chats.length, 1);
+  await submit(h); await settle();
+  assert.equal(srv.posts.length, 2);
+  assert.equal(srv.posts[0].body.chat_id, id);
+  assert.equal(srv.posts[1].body.chat_id, id);
+  assert.equal(srv.posts[0].body.initialize_workspace, true);
+  assert.equal(srv.posts[1].body.initialize_workspace, true);
+  assert.equal(srv.chats.length, 1);
+  assert.equal(h.run('chat.workspaces[0].history'), 'ok');
+  assert.equal(h.el('chatNameForm').hidden, true);
+  assert.equal(h.el('chatError').hidden, true);
 });

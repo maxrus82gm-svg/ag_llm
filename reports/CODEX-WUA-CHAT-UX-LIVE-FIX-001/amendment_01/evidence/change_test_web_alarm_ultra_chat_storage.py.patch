@@ -1,0 +1,153 @@
+--- before-amendment/test_web_alarm_ultra_chat_storage.py
++++ after-amendment/test_web_alarm_ultra_chat_storage.py
+@@ -592,5 +592,150 @@
+         self.assertEqual(snapshot(root), before)
+ 
+ 
++class FirstChatAmendmentTests(Base):
++    def test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart(self):
++        server = self.start()
++        root, wa_id, _ = self.project(server, "first", history=False)
++        marker = root / "existing-user-file.txt"
++        marker.write_bytes(b"preserve existing project bytes")
++        before = snapshot(root)
++        url = f"/ultra/chat/workspaces/{wa_id}/chats"
++        self.assertEqual(server.read("/ultra/chat/workspaces")[1]["workspaces"][0]["history"], "missing_history")
++        self.assertEqual(server.read(url)[1]["reason"], "missing_history")
++        self.assertEqual(snapshot(root), before)
++        body = {"chat_id": new_id(101), "initialize_workspace": True}
++        with patch.object(cs, "ensure_workspace_storage", wraps=cs.ensure_workspace_storage) as ensure:
++            status, data = self.post(server, url, body)
++        self.assertEqual((status, data.get("created")), (201, True))
++        self.assertEqual(ensure.call_count, 1, "only the shared core initializes storage, on confirmed create")
++        self.assertEqual(data["chat"]["title"], "Чат 1")
++        identity = cs.read_workspace_identity_bounded(root)
++        self.assertEqual(identity["status"], "ok")
++        card = json.loads((root / ".ultra/chats" / new_id(101) / "metadata.json").read_text(encoding="utf-8"))
++        self.assertEqual(card["workspace_id"], identity["workspace_id"])
++        self.assertEqual(cs.list_existing_chats(root)[0]["chat_id"], new_id(101))
++        self.assertEqual(marker.read_bytes(), b"preserve existing project bytes")
++        self.assertEqual(server.api.registry.get(wa_id).workspace_root, str(root))
++        after = snapshot(root)
++        status, replay = self.post(server, url, body)
++        self.assertEqual((status, replay["created"], replay["chat"]), (200, False, data["chat"]))
++        self.assertEqual(snapshot(root), after, "a lost-answer repeat changes neither identity nor history")
++        status, second = self.post(server, url, {"chat_id": new_id(102)})
++        self.assertEqual((status, second["chat"]["title"]), (201, "Чат 2"))
++        self.assertEqual(cs.read_workspace_identity_bounded(root), identity)
++        self.assertEqual(len(list((root / ".ultra/chats").iterdir())), 2)
++        server.stop()
++        reopened = self.start("storage")
++        self.assertEqual(reopened.read("/ultra/chat/workspaces")[1]["workspaces"][0]["history"], "ok")
++        self.assertEqual([c["title"] for c in reopened.read(url)[1]["chats"]], ["Чат 1", "Чат 2"])
++        self.assertEqual(cs.load_chat_messages(root, new_id(101)), [])
++        self.assert_no_leaks()
++
++    def test_a02_first_chat_needs_exact_consent_valid_body_write_token_and_origin(self):
++        server = self.start()
++        root, wa_id, _ = self.project(server, "empty", history=False)
++        url = f"/ultra/chat/workspaces/{wa_id}/chats"
++        before = snapshot(root)
++        valid = {"chat_id": new_id(103), "initialize_workspace": True}
++        cases = [({"chat_id": new_id(103)}, 409, "workspace_unavailable")]
++        for flag in [False, 1, "true", None, {}, []]:
++            cases.append(({**valid, "initialize_workspace": flag}, 400, "invalid_ultra_chat_request"))
++        for title in ["a\nb", "x" * 201]:
++            cases.append(({**valid, "title": title}, 400, "invalid_title"))
++        cases.extend([({**valid, "title": {}}, 400, "invalid_ultra_chat_request"),
++                      ({**valid, "chat_id": "not-a-chat"}, 400, "invalid_ultra_chat_request"),
++                      ({**valid, "workspace_root": str(root)}, 400, "invalid_ultra_chat_request")])
++        for body, expected_status, expected_code in cases:
++            with self.subTest(body=body), patch.object(cs, "ensure_workspace_storage", wraps=cs.ensure_workspace_storage) as ensure:
++                status, data = self.post(server, url, body)
++                self.assertEqual((status, data["error"]["code"]), (expected_status, expected_code))
++                ensure.assert_not_called()
++                self.assertEqual(snapshot(root), before)
++        for options in [{"token": "x" * 43}, {"token": server.capability(CAP, "ultra_chat")["token"]},
++                        {"headers": {"Origin": "http://foreign.invalid"}}, {"omit": ("Origin",)}]:
++            with self.subTest(options=options), patch.object(cs, "ensure_workspace_storage", wraps=cs.ensure_workspace_storage) as ensure:
++                status, _ = self.post(server, url, valid, **options)
++                self.assertEqual(status, 403)
++                ensure.assert_not_called()
++                self.assertEqual(snapshot(root), before)
++        status, data = self.post(server, f"/ultra/chat/workspaces/ws_{'0'*32}/chats", valid)
++        self.assertEqual((status, data["error"]["code"]), (404, "unknown_workspace"))
++        self.assertEqual(snapshot(root), before)
++
++    def test_a03_unsafe_missing_damaged_and_orphaned_storage_never_gets_initialized(self):
++        server = self.start()
++        target, _, _ = self.project(server, "target")
++        fixtures = []
++        for name in ["missing", "file", "damaged", "newer", "storage_file", "linked_storage", "linked_root", "orphan"]:
++            root, wa_id, chat = self.project(server, "case_"+name, history=name in {"damaged", "newer", "orphan"})
++            if name == "missing":
++                root.rmdir()
++            elif name == "file":
++                root.rmdir(); root.write_bytes(b"original file")
++            elif name == "damaged":
++                (root / ".ultra/workspace.json").write_text("{", encoding="utf-8")
++            elif name == "newer":
++                path = root / ".ultra/workspace.json"
++                path.write_text(json.dumps({**json.loads(path.read_text(encoding="utf-8")), "schema_version": 999}), encoding="utf-8")
++            elif name == "storage_file":
++                (root / ".ultra").write_bytes(b"not a directory")
++            elif name == "linked_storage":
++                self.junction(target / ".ultra", root / ".ultra")
++            elif name == "linked_root":
++                root.rmdir()
++                empty_target = self.base / "empty_link_target"; empty_target.mkdir()
++                self.junction(empty_target, root)
++            elif name == "orphan":
++                (root / ".ultra/workspace.json").unlink()
++            fixtures.append((name, root, wa_id))
++        before = snapshot(self.base)
++        for name, root, wa_id in fixtures:
++            with self.subTest(name=name), patch.object(cs, "ensure_workspace_storage", wraps=cs.ensure_workspace_storage) as ensure:
++                status, data = self.post(server, f"/ultra/chat/workspaces/{wa_id}/chats",
++                                         {"chat_id": new_id(104), "initialize_workspace": True})
++                self.assertEqual((status, data["error"]["code"]), (409, "workspace_unavailable"))
++                ensure.assert_not_called()
++                self.assertEqual(snapshot(self.base), before)
++        self.assert_no_leaks()
++
++    def test_a04_empty_ultra_directory_is_allowed_but_partial_data_is_not_repaired(self):
++        server = self.start()
++        root, wa_id, _ = self.project(server, "empty_ultra", history=False)
++        (root / ".ultra").mkdir()
++        status, data = self.post(server, f"/ultra/chat/workspaces/{wa_id}/chats",
++                                 {"chat_id": new_id(105), "title": "Первый", "initialize_workspace": True})
++        self.assertEqual((status, data["chat"]["title"]), (201, "Первый"))
++        partial, partial_id, _ = self.project(server, "partial", history=False)
++        (partial / ".ultra").mkdir()
++        (partial / ".ultra/project_context.md").write_text("existing context", encoding="utf-8")
++        before = snapshot(partial)
++        status, data = self.post(server, f"/ultra/chat/workspaces/{partial_id}/chats",
++                                 {"chat_id": new_id(106), "initialize_workspace": True})
++        self.assertEqual((status, data["error"]["code"]), (409, "workspace_unavailable"))
++        self.assertEqual(snapshot(partial), before)
++
++    def test_a05_existing_identity_and_foreign_chat_guards_are_kept_with_consent_flag(self):
++        server = self.start()
++        root, wa_id, chat = self.project(server, "existing")
++        card = root / ".ultra/chats" / chat / "metadata.json"
++        data = json.loads(card.read_text(encoding="utf-8"))
++        card.write_text(json.dumps({**data, "workspace_id": "ws_"+"f"*32}), encoding="utf-8")
++        before = snapshot(root)
++        with patch.object(cs, "ensure_workspace_storage", wraps=cs.ensure_workspace_storage) as ensure:
++            status, error = self.post(server, f"/ultra/chat/workspaces/{wa_id}/chats",
++                                      {"chat_id": chat, "initialize_workspace": True})
++        self.assertEqual((status, error["error"]["code"]), (409, "foreign_identity"))
++        ensure.assert_not_called()
++        self.assertEqual(snapshot(root), before)
++        empty, empty_id, _ = self.project(server, "write_error", history=False)
++        before = snapshot(empty)
++        with patch.object(cs, "ensure_workspace_storage", side_effect=PermissionError("private disk path")):
++            status, error = self.post(server, f"/ultra/chat/workspaces/{empty_id}/chats",
++                                      {"chat_id": new_id(107), "initialize_workspace": True})
++        self.assertEqual((status, error["error"]["code"]), (503, "storage_write_failed"))
++        self.assertNotIn("private disk path", json.dumps(error))
++        self.assertEqual(snapshot(empty), before)
++
++
+ if __name__ == "__main__":
+     unittest.main()

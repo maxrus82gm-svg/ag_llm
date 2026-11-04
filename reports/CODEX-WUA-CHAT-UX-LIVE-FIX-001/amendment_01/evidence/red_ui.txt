@@ -1,0 +1,32 @@
+TAP version 13
+# Subtest: AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+not ok 1 - AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+  ---
+  duration_ms: 23.3605
+  type: 'test'
+  location: 'M:\\GitHub\\ag_llm\\test_web_alarm_ultra_chat_ui.js:819:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    a registered new folder must allow its first dialogue
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (M:\GitHub\ag_llm\test_web_alarm_ultra_chat_ui.js:831:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 105.2198

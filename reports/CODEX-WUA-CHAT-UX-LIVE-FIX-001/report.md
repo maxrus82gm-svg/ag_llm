@@ -1,3 +1,15 @@
+# Актуальная сдача — CODEX-WUA-CHAT-UX-LIVE-FIX-001 / AMENDMENT 01
+
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION. LOCAL ONLY.
+04.11.2026: реализовано создание первого чата из `missing_history` после явного подтверждения через общий core. JS 158 PASS; Python 171 collected / 166 PASS / 5 SKIP, exit 0; обязательные HTTP/UI 51 PASS.
+Штатный finish с `--chat-amendment` и отдельным адресом нового снимка завершён: ROTATED / exit 0. БЛОК 1 WAITING, БЛОК 1.1 содержит исходную TASK со ссылкой на snapshot с одним дополнением. Права/инструмент не менялись, ручного переноса нет.
+Текущий полный отчёт: `amendment_01/report.md`; буквальный AMENDMENT: `chat_amendment_01.md`; актуальная проверка пакета: `amendment_01/verify_package.py`. Корневой manifest обновлён. Проверки прежнего этапа сохранены и не заменяют новые.
+Данные диалогов совпали по SHA, изменения настроек открытого Obsidian не откатывались. Новый Windows GUI — NOT RUN, пользовательский сервер не перезапускался; ранее пользователь подтвердил исправление прежних UX-ошибок. Git/GitHub и реальные LLM-запросы не использовались.
+
+Далее сохранён исторический отчёт до AMENDMENT; его статус PARTIAL/отказ finish относится к прежней сдаче. Входная версия этого отчёта также сохранена в `amendment_01/before/`.
+
+---
+
 # CODEX-WUA-CHAT-UX-LIVE-FIX-001 — адресное исправление Ultra Chat
 
 STATUS: PARTIAL / SLOT FINISH BLOCKED. UI FIX READY / AWAITING INDEPENDENT VERIFICATION.

@@ -1,0 +1,66 @@
+{
+  "syntax": "PASS",
+  "javascript": {
+    "command": [
+      "node",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "changes": [
+    {
+      "path": "web_alarm/ui.py",
+      "changed": true
+    },
+    {
+      "path": "web_alarm/ultra_chat.py",
+      "changed": true
+    },
+    {
+      "path": "web_alarm/workspace_registry.py",
+      "changed": false
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_ui.js",
+      "changed": true
+    },
+    {
+      "path": "test_web_alarm_ultra_chat_storage.py",
+      "changed": true
+    }
+  ],
+  "readonly_sources": {
+    "context_storage.py": {
+      "size": 97846,
+      "sha256": "7e3881647d63f8119424bb67081c9b163194fdf9a395a63d7499c44104de1280"
+    },
+    "web_alarm/server.py": {
+      "size": 74735,
+      "sha256": "3158050afb26ad22f0a2b095703534a5b9b97bdf60cef7ed9d9c0d8717ba6bd5"
+    },
+    "Start_WebAlarm.bat": {
+      "size": 1482,
+      "sha256": "d76ed1d27c2c81d93596e67bf3e665d7242b239085aaa1edb2e7497414f9eab6"
+    },
+    "web_alarm/launcher.py": {
+      "size": 21947,
+      "sha256": "cc42b9f5fcc2a34409aeb6abd2589c04e0d5cd7d16821d7e6b7b2c2343e8184d"
+    },
+    "web_alarm/launch_config.json": {
+      "size": 1769,
+      "sha256": "73e2b634078cc1af3079284f6bf0cd9cc816c92be3fa534b70afa6475497dfd2"
+    },
+    "tools/task_slot_rotate.py": {
+      "size": 46210,
+      "sha256": "5483b52042ad1f12c96cddaa1b29365281906b5f8104229f61f507c2f3a4c52d"
+    }
+  },
+  "launcher": {
+    "mode": "standard",
+    "standard": true,
+    "configuration_changed_by_agent": false,
+    "user_server_restarted_by_agent": false
+  },
+  "card_before_finish_sha256": "7ca14f61447b3d10ef46634bd905f521cae94cfb941b377adb1e33dd2231b20c"
+}

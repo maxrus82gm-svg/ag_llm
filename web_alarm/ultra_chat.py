@@ -2,11 +2,11 @@
 
 A thin adapter. Workspace roots come from the Web Alarm registry (no second registration); the Ultra identity, the
 chats and every RAW message are read through the bounded functions of the shared core ``context_storage`` (no
-``ensure_*``, no second copy of the storage format). Private history needs its own capability, ``ultra_chat_read``,
+initialization on reads, no second copy of the storage format). Private history needs its own capability, ``ultra_chat_read``,
 which does not depend on the Windows folder picker. Stage 2 writes only through the shared writer contract of the
 core (Workspace lock, identity, ownership, exclusive publication) and only behind a second, separate capability,
-``ultra_chat_write``: the read token never authorises a write. A write goes only to a registered Workspace whose
-Ultra history already exists - nothing is created for an unregistered path or a folder without history. Nothing
+``ultra_chat_write``: the read token never authorises a write. A confirmed first-chat request may initialize an
+empty storage in a registered safe folder through the same core writer. Ordinary writes require an existing identity. Nothing
 here imports the GigaChat transport, the Tk shell or the agent runtime, and no response carries a filesystem path.
 """
 
@@ -15,6 +15,8 @@ from __future__ import annotations
 import json
 import re
 import secrets
+import stat
+from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from .workspace_registry import WorkspaceRegistry, WorkspaceRegistryError
@@ -201,25 +203,45 @@ class UltraChatService:
             raise UltraChatError(409, "workspace_registry_unavailable", "Workspace registration unavailable") from None
         return 200, {"wa_workspace_id": wa_workspace_id, "display_name": record.display_name}
 
-    def _writable_workspace(self, core: Any, wa_workspace_id: str) -> tuple[str, str]:
-        """Root and Ultra identity of a registered Workspace whose history exists; nothing is created here."""
+    def _writable_workspace(self, core: Any, wa_workspace_id: str, *, initialize: bool = False) -> tuple[str, str | None]:
+        """Read-only preflight. Only an explicit first-chat create may use the core's initialization path."""
         record = self._registration(wa_workspace_id)
         identity = core.read_workspace_identity_bounded(record.workspace_root)
+        if identity["status"] == "missing_history" and initialize:
+            root = Path(record.workspace_root)
+            try:
+                # The registry stored a resolved root. Refuse a later link/ancestor substitution before bootstrap.
+                if root.resolve(strict=True) != root:
+                    raise UltraChatError(409, "workspace_unavailable", "The Workspace root changed",
+                                         reason="unsafe_storage_link")
+                storage = root / core.ULTRA_DIRNAME
+                try:
+                    info = storage.lstat()
+                except FileNotFoundError:
+                    return record.workspace_root, None
+                linked = stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)
+                if stat.S_ISDIR(info.st_mode) and not linked and not any(storage.iterdir()):
+                    return record.workspace_root, None
+            except OSError:
+                raise UltraChatError(409, "workspace_unavailable", "The Workspace cannot be initialized",
+                                     reason="unreadable") from None
+            # Missing identity beside existing data is a recovery case, never permission to mint a new identity.
         if identity["status"] != "ok":
             raise UltraChatError(409, "workspace_unavailable", "The Ultra history of this Workspace is not writable",
                                  reason=identity["status"])
         return record.workspace_root, identity["workspace_id"]
 
     def create_chat(self, wa_workspace_id: str, body: Any) -> tuple[int, dict[str, Any]]:
-        if not isinstance(body, dict) or "chat_id" not in body or set(body) - {"chat_id", "title"}:
-            raise UltraChatError(400, "invalid_ultra_chat_request", "Expected {chat_id, title}")
+        if (not isinstance(body, dict) or "chat_id" not in body or set(body) - {"chat_id", "title", "initialize_workspace"}
+                or ("initialize_workspace" in body and body["initialize_workspace"] is not True)):
+            raise UltraChatError(400, "invalid_ultra_chat_request", "Expected {chat_id, title?, initialize_workspace?: true}")
         chat_id, title = body["chat_id"], body.get("title")
         if not isinstance(chat_id, str) or not _NEW_CHAT_ID_RE.fullmatch(chat_id):
             raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid chat_id")
         if title is not None and not isinstance(title, str):
             raise UltraChatError(400, "invalid_ultra_chat_request", "Invalid title")
         core = _core()
-        root, ultra_workspace_id = self._writable_workspace(core, wa_workspace_id)
+        root, ultra_workspace_id = self._writable_workspace(core, wa_workspace_id, initialize=body.get("initialize_workspace") is True)
         try:
             result = core.create_chat_record(root, title, chat_id=chat_id, expected_workspace_id=ultra_workspace_id)
         except Exception as exc:  # mapped to a safe code; anything unknown stays a 500 without detail

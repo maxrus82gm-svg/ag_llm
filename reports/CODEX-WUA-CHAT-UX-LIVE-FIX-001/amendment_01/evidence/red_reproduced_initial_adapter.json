@@ -1,0 +1,19 @@
+{
+  "ui_command": [
+    "node",
+    "--test",
+    "--test-name-pattern=AMENDMENT first chat: missing_history allows",
+    "M:\\GitHub\\ag_llm\\reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\amendment_01\\red_repro\\test_web_alarm_ultra_chat_ui.js"
+  ],
+  "ui_exit_code": 1,
+  "http_tests_run": 1,
+  "http_failures": 1,
+  "http_errors": 0,
+  "working_files_replaced": false,
+  "source": {
+    "reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\amendment_01\\before\\web_alarm\\ui.py": "e8f030e453d79ac978a5a11426481f5d8e62188c3e512007666757aa58892d92",
+    "reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\amendment_01\\before\\web_alarm\\ultra_chat.py": "f5466ce3f2883658adacf29c6993ab7fe411c12efa9e5b8b4e7eb8814ddc6091",
+    "reports\\CODEX-WUA-CHAT-UX-LIVE-FIX-001\\amendment_01\\red_repro\\test_web_alarm_ultra_chat_ui.js": "12415500fbec684c256f96dda55ec5858e3e1844fd999fdf7c89f163bce70620",
+    "test_web_alarm_ultra_chat_storage.py": "b5e1e29bab2f30a44d4483f431efb30160c2125b9ed3675b23f192fccf1bcb95"
+  }
+}

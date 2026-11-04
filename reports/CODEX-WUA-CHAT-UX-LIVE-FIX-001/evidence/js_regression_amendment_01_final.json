@@ -1,0 +1,35 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "test_web_alarm_ultra_chat_ui.js",
+    "test_web_alarm_operator_ui.js",
+    "test_web_alarm_evm_ui.js"
+  ],
+  "exit_code": 0,
+  "seconds": 1.77,
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "source": {
+    "web_alarm/ui.py": {
+      "bytes": 185654,
+      "sha256": "626c0253b7d2c9e79774f879a2518900ac5c0365bd73a860b83e80b68d0a391a"
+    },
+    "web_alarm/ultra_chat.py": {
+      "bytes": 26620,
+      "sha256": "6d1883838fd5f28be2191db05d678cb454319a2325531758781176012d958028"
+    },
+    "web_alarm/workspace_registry.py": {
+      "bytes": 6645,
+      "sha256": "fca678ed353096b3acb17c89c24455b46fc703d1387d0c8895a0b1453f579948"
+    },
+    "test_web_alarm_ultra_chat_ui.js": {
+      "bytes": 61261,
+      "sha256": "12415500fbec684c256f96dda55ec5858e3e1844fd999fdf7c89f163bce70620"
+    },
+    "test_web_alarm_ultra_chat_storage.py": {
+      "bytes": 45818,
+      "sha256": "b5e1e29bab2f30a44d4483f431efb30160c2125b9ed3675b23f192fccf1bcb95"
+    }
+  }
+}

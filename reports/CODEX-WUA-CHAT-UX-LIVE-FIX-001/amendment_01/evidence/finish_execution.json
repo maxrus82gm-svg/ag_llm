@@ -1,0 +1,21 @@
+{
+  "command": [
+    "M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe",
+    "-B",
+    "tools/task_slot_rotate.py",
+    "finish",
+    "--card",
+    "Документация/000_Задачи Codex.md",
+    "--task-id",
+    "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+    "--chat-amendment",
+    "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/chat_amendment_01.md",
+    "--report-dir",
+    "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01",
+    "--apply",
+    "--headless"
+  ],
+  "exit_code": 0,
+  "seconds": 0.25,
+  "stderr": ""
+}

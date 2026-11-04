@@ -1,15 +1,16 @@
 Для ChatGPT WEB21 / независимая проверка
 TASK: CODEX-WUA-CHAT-UX-LIVE-FIX-001
-STATUS: PARTIAL / SLOT FINISH BLOCKED. UI FIX READY / AWAITING INDEPENDENT VERIFICATION / LOCAL ONLY.
+STATUS: RESULT READY / AWAITING INDEPENDENT VERIFICATION / LOCAL ONLY. AMENDMENT 01 включён.
 Исправлено: ложная ошибка регистрации Workspace; nullnullnullnull; обе формы rename; чужая история при клике карандаша; конфликт/readback и запоздалый плюс.
 Изменения: web_alarm/ui.py; test_web_alarm_ultra_chat_ui.js; test_web_alarm_ultra_chat_storage.py. Предыдущие локальные правки сохранены. Backend-версии не менялись.
 RED: 5/5 воспроизводимых FAIL на сохранённом исходном UI; дополнительные RED конфликт/readback/late-action сохранены. Рабочий код не заменяется для воспроизведения.
-Итоговая регрессия: JS 155 PASS; Python core 150 collected, 145 PASS / 5 SKIP (symlink privilege); обязательные HTTP/UI 46 PASS без SKIP.
+AMENDMENT: первый чат в зарегистрированной безопасной папке missing_history создаётся только после «Создать первый диалог», с initialize_workspace:true и write-token, через context_storage.create_chat_record. Просмотр/регистрация/отмена ничего не инициализируют. Повреждения, orphan, junction и чужие Chat сохраняют отказы. После создания перечитывается дерево и становится доступен второй чат.
+Итоговая повторная регрессия: JS 158 PASS; Python 171 collected / 166 PASS / 5 SKIP (symlink privilege); обязательные HTTP/UI 51 PASS без SKIP. Новые RED: disabled plus и HTTP 400 вместо 201; восстановимы на сохранённых входных версиях.
 Отдельно: исходный расширенный Python 166 = 160 PASS / 5 SKIP / 1 ERROR WinError 10053 в неизменённом folder-picker тесте; адресный повтор 1 PASS. Причина INCONCLUSIVE, первоначальный FAIL сохранён.
 Windows Chrome/нативный picker: NOT RUN. Computer Use остановил доступ из-за невозможности надёжно определить текущий URL; ввод не выполнялся. Тестовый сервер остановлен, TEMP удалён.
-Данные диалогов совпадают по SHA; .obsidian/workspace.json изменился во время работы, агент его не записывал/не откатывал. STANDARD routing сохранён, пользовательский сервер не перезапускался.
+Данные диалогов совпадают по SHA (586 .ultra + 9 Чат_pro); .obsidian/graph.json и workspace.json менялись во время работы, агент их не записывал/не откатывал. STANDARD routing сохранён, пользовательский сервер не перезапускался.
 Риски: Windows GUI/independent review OPEN; непостоянный TCP-сбой; прежний межпроцессный Workspace rename gap остаётся.
 DOC IMPACT: координатору после review обновить №05/06/34/40 и БЛОК 4; исполнитель общие документы и БЛОКИ 2–4 не менял.
-Пакет: M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\report.md (manifest/evidence рядом).
+Актуальный полный отчёт: M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-UX-LIVE-FIX-001\amendment_01\report.md. Manifest обновлён в основной папке и amendment_01; прежние evidence сохранены.
 NEXT: независимый review ChatGPT WEB21; согласованный перезапуск STANDARD и реальная Windows GUI-проверка. Публикация пользователем; Git/GitHub исполнитель не использовал.
-Штатный finish выполнен: REFUSED / WRITE_FAILED, exit 3, WinError 5 на os.replace карточки. Три отказа с диагностикой сохранены, карточка побайтово прежняя. Собственный handoff_task.md создан штатным скриптом. Ручного переноса/обхода нет. Нужны разбор отказа доступа и повтор штатного finish; evidence/finish.json, finish_execution.json, slot_final_check.json.
+Штатный finish с --chat-amendment выполнен: ROTATED, exit 0. Новый report-dir amendment_01 сохраняет snapshot с исходной постановкой и одним AMENDMENT, без перезаписи прежнего handoff_task.md. БЛОК 1 WAITING, БЛОК 1.1 SUBMITTED / REVIEW PENDING. Вне слотов bytes совпадают. Прежний WinError 5 не повторился; права/инструмент не менялись, ручного переноса нет. Протокол: amendment_01/evidence/finish.json.

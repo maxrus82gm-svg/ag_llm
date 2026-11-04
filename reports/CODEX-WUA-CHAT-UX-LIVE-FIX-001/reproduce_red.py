@@ -10,8 +10,9 @@ REPORT = Path(__file__).resolve().parent
 ROOT = REPORT.parents[1]
 mirror = REPORT / 'red_repro'
 (mirror / 'web_alarm').mkdir(parents=True, exist_ok=True)
+saved_tests = mirror / 'test_web_alarm_ultra_chat_ui.js'
 for src, dst in [(REPORT / 'before/web_alarm/ui.py', mirror / 'web_alarm/ui.py'),
-                 (ROOT / 'test_web_alarm_ultra_chat_ui.js', mirror / 'test_web_alarm_ultra_chat_ui.js')]:
+                 (saved_tests if saved_tests.exists() else ROOT / 'test_web_alarm_ultra_chat_ui.js', saved_tests)]:
     content = src.read_bytes()
     if dst.exists() and dst.read_bytes() != content:
         raise RuntimeError('Refusing to overwrite a different RED fixture: ' + str(dst))

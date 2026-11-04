@@ -1,0 +1,958 @@
+TAP version 13
+# Subtest: E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge
+ok 1 - E1 Ultra Chat is the default view; at load the catalog is not asked, only the saved choice for the chat badge
+  ---
+  duration_ms: 14.6966
+  type: 'test'
+  ...
+# Subtest: E2 the board: four columns, compact cards in server order, honest empty columns, a closed card holds no full card
+ok 2 - E2 the board: four columns, compact cards in server order, honest empty columns, a closed card holds no full card
+  ---
+  duration_ms: 7.7123
+  type: 'test'
+  ...
+# Subtest: E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference
+ok 3 - E3 the chat-model picker next to the composer: reads the list only when opened, saves only the preference
+  ---
+  duration_ms: 3.3353
+  type: 'test'
+  ...
+# Subtest: E4 a refused or unavailable picker is told and saves nothing locally
+ok 4 - E4 a refused or unavailable picker is told and saves nothing locally
+  ---
+  duration_ms: 5.3664
+  type: 'test'
+  ...
+# Subtest: E5 malformed or failed catalog answers show an error and no invented models
+ok 5 - E5 malformed or failed catalog answers show an error and no invented models
+  ---
+  duration_ms: 7.7791
+  type: 'test'
+  ...
+# Subtest: E6 saved-choice states are told honestly in the EVM summary
+ok 6 - E6 saved-choice states are told honestly in the EVM summary
+  ---
+  duration_ms: 13.5104
+  type: 'test'
+  ...
+# Subtest: E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview
+ok 7 - E7 server text is never markup, in the compact card, in place, in a pinned window and in the preview
+  ---
+  duration_ms: 16.6197
+  type: 'test'
+  ...
+# Subtest: E8 the way back restores the operator panel; refresh reloads the catalog
+ok 8 - E8 the way back restores the operator panel; refresh reloads the catalog
+  ---
+  duration_ms: 4.3762
+  type: 'test'
+  ...
+# Subtest: E9 the shipped page carries no model list of its own
+ok 9 - E9 the shipped page carries no model list of its own
+  ---
+  duration_ms: 0.6903
+  type: 'test'
+  ...
+# Subtest: E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview
+ok 10 - E10 role marks and hints in the full card are exactly the server facts, in place, in a pinned window and in the preview
+  ---
+  duration_ms: 32.1928
+  type: 'test'
+  ...
+# Subtest: E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status
+ok 11 - E11 one API status component: compact card, card in place, preview, pinned window and diagnostic window show the same server status
+  ---
+  duration_ms: 32.7908
+  type: 'test'
+  ...
+# Subtest: E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)
+ok 12 - E12 full card: parameter count as given, description box editable by a visible command (in place, pinned, preview)
+  ---
+  duration_ms: 11.8658
+  type: 'test'
+  ...
+# Subtest: E13 settings from the card in place: server facts, never the key value, the exact edited values
+ok 13 - E13 settings from the card in place: server facts, never the key value, the exact edited values
+  ---
+  duration_ms: 4.8201
+  type: 'test'
+  ...
+# Subtest: E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft
+ok 14 - E14 settings from a pinned window: a bad count is refused locally, a revision conflict keeps the draft
+  ---
+  duration_ms: 4.9606
+  type: 'test'
+  ...
+# Subtest: E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)
+ok 15 - E15 one dialog keeps the state of the other; closing gives the keyboard back to the command that opened it (in place and in a pinned window)
+  ---
+  duration_ms: 13.289
+  type: 'test'
+  ...
+# Subtest: E16 the check: one empty POST, no input field, the indicator comes only from the server
+ok 16 - E16 the check: one empty POST, no input field, the indicator comes only from the server
+  ---
+  duration_ms: 15.7174
+  type: 'test'
+  ...
+# Subtest: E17 without card data the compact cards show names only and nothing can be reordered, dragged or starred
+ok 17 - E17 without card data the compact cards show names only and nothing can be reordered, dragged or starred
+  ---
+  duration_ms: 13.0794
+  type: 'test'
+  ...
+# Subtest: E18 the roles source is told: defaults, unreadable and not connected Ultra settings
+ok 18 - E18 the roles source is told: defaults, unreadable and not connected Ultra settings
+  ---
+  duration_ms: 9.0501
+  type: 'test'
+  ...
+# Subtest: E19 the chat composer: the model picker, a disabled voice place and a disabled send
+ok 19 - E19 the chat composer: the model picker, a disabled voice place and a disabled send
+  ---
+  duration_ms: 2.2807
+  type: 'test'
+  ...
+# Subtest: E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose
+ok 20 - E20 damaged stores are reported, and a damaged settings file can still be saved over on purpose
+  ---
+  duration_ms: 5.0119
+  type: 'test'
+  ...
+# Subtest: E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it
+ok 21 - E21 plain hover shows nothing; Ctrl + hover shows the preview, switches without a blink, closes on Ctrl release; a press inside pins it
+  ---
+  duration_ms: 805.9945
+  type: 'test'
+  ...
+# Subtest: E22 a click opens the full card in place under its row; several stay open; a second click closes; Enter / Space the same
+ok 22 - E22 a click opens the full card in place under its row; several stay open; a second click closes; Enter / Space the same
+  ---
+  duration_ms: 5.0568
+  type: 'test'
+  ...
+# Subtest: E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled
+ok 23 - E23 «Выше» / «Ниже» and Alt+arrows save the order of one column; the keyboard keeps its place; the ends are disabled
+  ---
+  duration_ms: 7
+  type: 'test'
+  ...
+# Subtest: E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move
+ok 24 - E24 a press becomes a drag only beyond the threshold; the release never opens the card; first, middle and last cards move
+  ---
+  duration_ms: 6.5491
+  type: 'test'
+  ...
+# Subtest: E25 buttons never start a drag; Escape, a release outside, another column, a lost pointer cancel without saving
+ok 25 - E25 buttons never start a drag; Escape, a release outside, another column, a lost pointer cancel without saving
+  ---
+  duration_ms: 5.0011
+  type: 'test'
+  ...
+# Subtest: E26 favourites by mouse: a reference is added at the place shown, never twice; the source column keeps the model
+ok 26 - E26 favourites by mouse: a reference is added at the place shown, never twice; the source column keeps the model
+  ---
+  duration_ms: 11.4114
+  type: 'test'
+  ...
+# Subtest: E27 favourites by star: a reference, its own order, its source as it is now
+ok 27 - E27 favourites by star: a reference, its own order, its source as it is now
+  ---
+  duration_ms: 5.5835
+  type: 'test'
+  ...
+# Subtest: E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same
+ok 28 - E28 «Изменить описание» opens Настройки → Модель with the cursor in the field; a click on the box does the same
+  ---
+  duration_ms: 4.4122
+  type: 'test'
+  ...
+# Subtest: E29 layout rules: four columns on a wide screen, one on a narrow one, no scroll anchoring jumps, no horizontal scroll
+ok 29 - E29 layout rules: four columns on a wide screen, one on a narrow one, no scroll anchoring jumps, no horizontal scroll
+  ---
+  duration_ms: 0.4611
+  type: 'test'
+  ...
+# Subtest: E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen
+ok 30 - E30 the Ctrl preview stands beside the column of its card: right of the left columns, left of the right ones, a sheet on a narrow screen
+  ---
+  duration_ms: 5.7336
+  type: 'test'
+  ...
+# Subtest: E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it
+ok 31 - E31 keyboard: «⧉» opens the window with the focus in it, arrows move it by its title, «×» returns the keyboard; Escape never closes it
+  ---
+  duration_ms: 455.9944
+  type: 'test'
+  ...
+# Subtest: E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer
+ok 32 - E32 a card drag closes the preview and keeps it closed; pinned windows stay where they are, faded and transparent to the pointer
+  ---
+  duration_ms: 3.9039
+  type: 'test'
+  ...
+# Subtest: E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)
+ok 33 - E33 a refused order is not kept: the saved state is read again and the reason told (buttons and drag)
+  ---
+  duration_ms: 7.9271
+  type: 'test'
+  ...
+# Subtest: E34 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart
+ok 34 - E34 one constructor for every kind: MCP and local entries, same tail of different kinds kept apart
+  ---
+  duration_ms: 3.534
+  type: 'test'
+  ...
+# Subtest: E35 near the edge of the board the list scrolls by itself during a drag, and the place is found again
+ok 35 - E35 near the edge of the board the list scrolls by itself during a drag, and the place is found again
+  ---
+  duration_ms: 3.2376
+  type: 'test'
+  ...
+# Subtest: E36 messages are toasts outside the flow: a drop that tells something never moves the board; success goes away by itself
+ok 36 - E36 messages are toasts outside the flow: a drop that tells something never moves the board; success goes away by itself
+  ---
+  duration_ms: 3.7206
+  type: 'test'
+  ...
+# Subtest: E37 the drag label follows the pointer at its lower right and flips near the window edges, never hiding the place pointed at
+ok 37 - E37 the drag label follows the pointer at its lower right and flips near the window edges, never hiding the place pointed at
+  ---
+  duration_ms: 2.5865
+  type: 'test'
+  ...
+# Subtest: E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it
+ok 38 - E38 three independent windows: one per model (stable connection_id), the same one from «Избранное», a press raises it
+  ---
+  duration_ms: 5.031
+  type: 'test'
+  ...
+# Subtest: E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back
+ok 39 - E39 a window moves by its title only, stays reachable at every edge, is saved once on release; Escape puts it back
+  ---
+  duration_ms: 9.5218
+  type: 'test'
+  ...
+# Subtest: E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view
+ok 40 - E40 a pinned window closes only with its own «×»: not by Ctrl, Escape, blur, another model, a card drag or another view
+  ---
+  duration_ms: 5.21
+  type: 'test'
+  ...
+# Subtest: E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it
+ok 41 - E41 the preview is above every pinned window; a pinned model gets no second copy; a press inside the preview (a button too) pins it
+  ---
+  duration_ms: 16.141
+  type: 'test'
+  ...
+# Subtest: E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window
+ok 42 - E42 the saved windows come back once, where they were left; a redraw keeps the same windows; an absent model leaves no broken window
+  ---
+  duration_ms: 6.7924
+  type: 'test'
+  ...
+# Subtest: E43 layout writes are queued in order; a refused write is told and the window stays where the user put it
+ok 43 - E43 layout writes are queued in order; a refused write is told and the window stays where the user put it
+  ---
+  duration_ms: 3.6168
+  type: 'test'
+  ...
+# Subtest: E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back
+ok 44 - E44 browser size and zoom: windows are shown inside the window with the title reachable; the kept position comes back
+  ---
+  duration_ms: 2.8076
+  type: 'test'
+  ...
+# Subtest: O1 workspace filter and task selection never mix details
+ok 45 - O1 workspace filter and task selection never mix details
+  ---
+  duration_ms: 30.2461
+  type: 'test'
+  ...
+# Subtest: O2 timeline shows persisted DONE separately from VERIFIED
+ok 46 - O2 timeline shows persisted DONE separately from VERIFIED
+  ---
+  duration_ms: 3.0867
+  type: 'test'
+  ...
+# Subtest: O3 inconsistent read has no progress value or usable copy action
+ok 47 - O3 inconsistent read has no progress value or usable copy action
+  ---
+  duration_ms: 4.7812
+  type: 'test'
+  ...
+# Subtest: O4 absent current operation stays undetermined
+ok 48 - O4 absent current operation stays undetermined
+  ---
+  duration_ms: 3.1711
+  type: 'test'
+  ...
+# Subtest: O5 offline retains last snapshot visibly stale and disables copying NEXT
+ok 49 - O5 offline retains last snapshot visibly stale and disables copying NEXT
+  ---
+  duration_ms: 3.3241
+  type: 'test'
+  ...
+# Subtest: O5 ageing snapshot becomes stale without inventing runtime status
+ok 50 - O5 ageing snapshot becomes stale without inventing runtime status
+  ---
+  duration_ms: 4.1023
+  type: 'test'
+  ...
+# Subtest: O6 server NEXT copied exactly; no client authority decisions
+ok 51 - O6 server NEXT copied exactly; no client authority decisions
+  ---
+  duration_ms: 4.3231
+  type: 'test'
+  ...
+# Subtest: O7 navigation refresh disclosure emit only GET
+ok 52 - O7 navigation refresh disclosure emit only GET
+  ---
+  duration_ms: 4.9073
+  type: 'test'
+  ...
+# Subtest: O8 restored browser selection still fetches server-owned state
+ok 53 - O8 restored browser selection still fetches server-owned state
+  ---
+  duration_ms: 5.7198
+  type: 'test'
+  ...
+# Subtest: O9 old task response cannot repaint new selected task
+ok 54 - O9 old task response cannot repaint new selected task
+  ---
+  duration_ms: 3.9912
+  type: 'test'
+  ...
+# Subtest: O9 loading clears old task details immediately
+ok 55 - O9 loading clears old task details immediately
+  ---
+  duration_ms: 4.6986
+  type: 'test'
+  ...
+# Subtest: O9 response identity mismatch is an error, never another workspace data
+ok 56 - O9 response identity mismatch is an error, never another workspace data
+  ---
+  duration_ms: 3.3446
+  type: 'test'
+  ...
+# Subtest: O9 HTML and script input remains text in rendered nodes
+ok 57 - O9 HTML and script input remains text in rendered nodes
+  ---
+  duration_ms: 3.5832
+  type: 'test'
+  ...
+# Subtest: O9 repeated refresh is single-flight and stable ordering survives update
+ok 58 - O9 repeated refresh is single-flight and stable ordering survives update
+  ---
+  duration_ms: 2.737
+  type: 'test'
+  ...
+# Subtest: O9 server refusal shows exact reason and refreshes facts
+ok 59 - O9 server refusal shows exact reason and refreshes facts
+  ---
+  duration_ms: 5.0569
+  type: 'test'
+  ...
+# Subtest: O9 lost POST response never automatically reissues creation
+ok 60 - O9 lost POST response never automatically reissues creation
+  ---
+  duration_ms: 3.8338
+  type: 'test'
+  ...
+# Subtest: O9 repeated explicit registration submits once without a second form
+ok 61 - O9 repeated explicit registration submits once without a second form
+  ---
+  duration_ms: 8.3815
+  type: 'test'
+  ...
+# Subtest: O9 cancelled confirmation causes no POST
+ok 62 - O9 cancelled confirmation causes no POST
+  ---
+  duration_ms: 2.6301
+  type: 'test'
+  ...
+# Subtest: O9 empty navigator and unavailable clipboard are honest
+ok 63 - O9 empty navigator and unavailable clipboard are honest
+  ---
+  duration_ms: 2.9219
+  type: 'test'
+  ...
+# Subtest: O9 narrow selection closes side panels and focuses the central card
+ok 64 - O9 narrow selection closes side panels and focuses the central card
+  ---
+  duration_ms: 3.4439
+  type: 'test'
+  ...
+# Subtest: O6 context export is forbidden when server read is incoherent
+ok 65 - O6 context export is forbidden when server read is incoherent
+  ---
+  duration_ms: 3.7176
+  type: 'test'
+  ...
+# Subtest: O5 context export is forbidden after offline response and restored on fresh read
+ok 66 - O5 context export is forbidden after offline response and restored on fresh read
+  ---
+  duration_ms: 5.24
+  type: 'test'
+  ...
+# Subtest: O9 context export is forbidden after 45-second freshness timeout
+ok 67 - O9 context export is forbidden after 45-second freshness timeout
+  ---
+  duration_ms: 2.8734
+  type: 'test'
+  ...
+# Subtest: UX-C empty plus is ephemeral: no draft record, task or POST on leave
+ok 68 - UX-C empty plus is ephemeral: no draft record, task or POST on leave
+  ---
+  duration_ms: 2.8239
+  type: 'test'
+  ...
+# Subtest: UX-C autosave stores exact original text as browser draft, not server status
+ok 69 - UX-C autosave stores exact original text as browser draft, not server status
+  ---
+  duration_ms: 5.1215
+  type: 'test'
+  ...
+# Subtest: UX-C returning to draft and reload restore text without server creation
+ok 70 - UX-C returning to draft and reload restore text without server creation
+  ---
+  duration_ms: 7.6564
+  type: 'test'
+  ...
+# Subtest: UX-C drafts and task rows remain isolated across workspace switches
+ok 71 - UX-C drafts and task rows remain isolated across workspace switches
+  ---
+  duration_ms: 3.6749
+  type: 'test'
+  ...
+# Subtest: UX-C quota failure warns and prevents POST and accidental unsaved navigation
+ok 72 - UX-C quota failure warns and prevents POST and accidental unsaved navigation
+  ---
+  duration_ms: 3.2499
+  type: 'test'
+  ...
+# Subtest: UX-C saved or empty forms do not request beforeunload confirmation
+ok 73 - UX-C saved or empty forms do not request beforeunload confirmation
+  ---
+  duration_ms: 2.97
+  type: 'test'
+  ...
+# Subtest: UX-C malformed draft bytes are retained and never overwritten
+ok 74 - UX-C malformed draft bytes are retained and never overwritten
+  ---
+  duration_ms: 2.7204
+  type: 'test'
+  ...
+# Subtest: UX-C storage read denial and missing Web Locks never authorize registration
+ok 75 - UX-C storage read denial and missing Web Locks never authorize registration
+  ---
+  duration_ms: 1.8868
+  type: 'test'
+  ...
+# Subtest: UX-C second tab cannot overwrite a locked draft; reopening reads latest text
+ok 76 - UX-C second tab cannot overwrite a locked draft; reopening reads latest text
+  ---
+  duration_ms: 4.4752
+  type: 'test'
+  ...
+# Subtest: UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap
+ok 77 - UX-C draft snapshot is reread inside acquired lock, closing the read/acquire gap
+  ---
+  duration_ms: 4.1676
+  type: 'test'
+  ...
+# Subtest: UX-C late lock callback cannot reopen a composer in another workspace
+ok 78 - UX-C late lock callback cannot reopen a composer in another workspace
+  ---
+  duration_ms: 3.5379
+  type: 'test'
+  ...
+# Subtest: UX-C registration uses one field, server ID and no planner or execution routes
+ok 79 - UX-C registration uses one field, server ID and no planner or execution routes
+  ---
+  duration_ms: 5.8089
+  type: 'test'
+  ...
+# Subtest: UX-C lost POST survives reload as unknown; never resubmit or delete automatically
+ok 80 - UX-C lost POST survives reload as unknown; never resubmit or delete automatically
+  ---
+  duration_ms: 5.3674
+  type: 'test'
+  ...
+# Subtest: UX-C server 500 or malformed acknowledgement stays unknown without second POST
+ok 81 - UX-C server 500 or malformed acknowledgement stays unknown without second POST
+  ---
+  duration_ms: 5.4008
+  type: 'test'
+  ...
+# Subtest: UX-C in-flight registration cannot repaint or clear another workspace draft
+ok 82 - UX-C in-flight registration cannot repaint or clear another workspace draft
+  ---
+  duration_ms: 2.8127
+  type: 'test'
+  ...
+# Subtest: UX-C deleting browser draft never deletes a registered TASK or emits HTTP DELETE
+ok 83 - UX-C deleting browser draft never deletes a registered TASK or emits HTTP DELETE
+  ---
+  duration_ms: 2.3357
+  type: 'test'
+  ...
+# Subtest: UX-C missing workspace blocks registration while preserving local text
+ok 84 - UX-C missing workspace blocks registration while preserving local text
+  ---
+  duration_ms: 3.2995
+  type: 'test'
+  ...
+# Subtest: UX connection uses real health, ages explicitly and survives failure without changing enums
+ok 85 - UX connection uses real health, ages explicitly and survives failure without changing enums
+  ---
+  duration_ms: 3.2532
+  type: 'test'
+  ...
+# Subtest: UX catalog failure does not mislabel reachable server or authorize POST
+ok 86 - UX catalog failure does not mislabel reachable server or authorize POST
+  ---
+  duration_ms: 5.0805
+  type: 'test'
+  ...
+# Subtest: UX task source and human stage reports are complete inert text
+ok 87 - UX task source and human stage reports are complete inert text
+  ---
+  duration_ms: 4.1707
+  type: 'test'
+  ...
+# Subtest: UX task response arriving after plus never paints over the blank composer
+ok 88 - UX task response arriving after plus never paints over the blank composer
+  ---
+  duration_ms: 5.0344
+  type: 'test'
+  ...
+# Subtest: UX UNKNOWN recovery is human readable without changing the machine state
+ok 89 - UX UNKNOWN recovery is human readable without changing the machine state
+  ---
+  duration_ms: 2.1642
+  type: 'test'
+  ...
+# Subtest: UX workspace registration cannot discard an unsaved active draft
+ok 90 - UX workspace registration cannot discard an unsaved active draft
+  ---
+  duration_ms: 2.5289
+  type: 'test'
+  ...
+# Subtest: UX failed local cleanup after confirmed creation never enables duplicate registration
+ok 91 - UX failed local cleanup after confirmed creation never enables duplicate registration
+  ---
+  duration_ms: 4.3141
+  type: 'test'
+  ...
+# Subtest: UX new card resets old scroll while refresh preserves the current reading position
+ok 92 - UX new card resets old scroll while refresh preserves the current reading position
+  ---
+  duration_ms: 3.5681
+  type: 'test'
+  ...
+# Subtest: UX unplanned task has no invented completion progress and explains absent restore point
+ok 93 - UX unplanned task has no invented completion progress and explains absent restore point
+  ---
+  duration_ms: 3.4227
+  type: 'test'
+  ...
+# Subtest: UX incoherent empty plan never asserts that the plan is known empty
+ok 94 - UX incoherent empty plan never asserts that the plan is known empty
+  ---
+  duration_ms: 5.2189
+  type: 'test'
+  ...
+# Subtest: UX null health response clears the previously online signal
+ok 95 - UX null health response clears the previously online signal
+  ---
+  duration_ms: 3.0065
+  type: 'test'
+  ...
+# Subtest: UX malformed progress or coherence cannot become a fresh authoritative view
+ok 96 - UX malformed progress or coherence cannot become a fresh authoritative view
+  ---
+  duration_ms: 9.1672
+  type: 'test'
+  ...
+# Subtest: UX failed rendering hides the partial snapshot and never retains it for export
+ok 97 - UX failed rendering hides the partial snapshot and never retains it for export
+  ---
+  duration_ms: 3.0007
+  type: 'test'
+  ...
+# Subtest: UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection
+ok 98 - UX-001-A empty draft keeps its workspace when catalog removes it; registration requires explicit selection
+  ---
+  duration_ms: 5.025
+  type: 'test'
+  ...
+# Subtest: UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns
+ok 99 - UX-001-A empty draft survives an empty catalog and resumes only when its own workspace returns
+  ---
+  duration_ms: 2.967
+  type: 'test'
+  ...
+# Subtest: UX-001-A changed root blocks old draft and preserves its text under the original key
+ok 100 - UX-001-A changed root blocks old draft and preserves its text under the original key
+  ---
+  duration_ms: 2.6174
+  type: 'test'
+  ...
+# Subtest: UX-001-A submit guard independently rejects stale selected-workspace binding
+ok 101 - UX-001-A submit guard independently rejects stale selected-workspace binding
+  ---
+  duration_ms: 1.9883
+  type: 'test'
+  ...
+# Subtest: UX-002-A workspace success is central green status with precise action and no execution claim
+ok 102 - UX-002-A workspace success is central green status with precise action and no execution claim
+  ---
+  duration_ms: 1.8833
+  type: 'test'
+  ...
+# Subtest: UX-002-A task success is a distinct exact registration result
+ok 103 - UX-002-A task success is a distinct exact registration result
+  ---
+  duration_ms: 3.2047
+  type: 'test'
+  ...
+# Subtest: UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error
+ok 104 - UX-002-A server refusal is an error and a fresh manual catalog read clears the completed error
+  ---
+  duration_ms: 2.6398
+  type: 'test'
+  ...
+# Subtest: UX-002-A lost workspace response is a warning retained across GET without retry
+ok 105 - UX-002-A lost workspace response is a warning retained across GET without retry
+  ---
+  duration_ms: 2.2267
+  type: 'test'
+  ...
+# Subtest: UX-002-A task unknown stays protected while central warning describes the operation
+ok 106 - UX-002-A task unknown stays protected while central warning describes the operation
+  ---
+  duration_ms: 2.7831
+  type: 'test'
+  ...
+# Subtest: UX-002-A internal server error does not claim definitive failure or success
+ok 107 - UX-002-A internal server error does not claim definitive failure or success
+  ---
+  duration_ms: 5.3876
+  type: 'test'
+  ...
+# Subtest: UX-002-A a pending result is replaced once by success and repeated refresh does not make it red
+ok 108 - UX-002-A a pending result is replaced once by success and repeated refresh does not make it red
+  ---
+  duration_ms: 4.9747
+  type: 'test'
+  ...
+# Subtest: UX-002-A confirmed success survives a failed followup catalog read as a separate fact
+ok 109 - UX-002-A confirmed success survives a failed followup catalog read as a separate fact
+  ---
+  duration_ms: 3.1878
+  type: 'test'
+  ...
+# Subtest: UX-002-A malformed workspace acknowledgement cannot become success
+ok 110 - UX-002-A malformed workspace acknowledgement cannot become success
+  ---
+  duration_ms: 2.0768
+  type: 'test'
+  ...
+# Subtest: UX-002-A names in operation messages remain inert text
+ok 111 - UX-002-A names in operation messages remain inert text
+  ---
+  duration_ms: 1.8778
+  type: 'test'
+  ...
+# Subtest: UX-002-B unavailable picker is explicit and manual path remains usable
+ok 112 - UX-002-B unavailable picker is explicit and manual path remains usable
+  ---
+  duration_ms: 2.0859
+  type: 'test'
+  ...
+# Subtest: UX-002-B selected path uses protected JSON request and does not register before confirmation
+ok 113 - UX-002-B selected path uses protected JSON request and does not register before confirmation
+  ---
+  duration_ms: 2.5204
+  type: 'test'
+  ...
+# Subtest: UX-002-B cancellation leaves manual root and catalog untouched
+ok 114 - UX-002-B cancellation leaves manual root and catalog untouched
+  ---
+  duration_ms: 3.5512
+  type: 'test'
+  ...
+# Subtest: UX-002-B picker failure preserves input and offers manual alternative
+ok 115 - UX-002-B picker failure preserves input and offers manual alternative
+  ---
+  duration_ms: 3.0222
+  type: 'test'
+  ...
+# Subtest: UX-002-B late selection cannot replace manually edited path
+ok 116 - UX-002-B late selection cannot replace manually edited path
+  ---
+  duration_ms: 2.2787
+  type: 'test'
+  ...
+# Subtest: UX-002-B closed and reopened workspace form ignores old picker response
+ok 117 - UX-002-B closed and reopened workspace form ignores old picker response
+  ---
+  duration_ms: 2.2815
+  type: 'test'
+  ...
+# Subtest: UX-002-B duplicate pick and registration during dialog do not issue additional POST
+ok 118 - UX-002-B duplicate pick and registration during dialog do not issue additional POST
+  ---
+  duration_ms: 2.7343
+  type: 'test'
+  ...
+# Subtest: UX-002-B malformed capability or relative result never grants picker authority
+ok 119 - UX-002-B malformed capability or relative result never grants picker authority
+  ---
+  duration_ms: 2.3043
+  type: 'test'
+  ...
+# Subtest: UX-002-B restarted server renews capability after refusal without automatic dialog retry
+ok 120 - UX-002-B restarted server renews capability after refusal without automatic dialog retry
+  ---
+  duration_ms: 4.0424
+  type: 'test'
+  ...
+# Subtest: UX-002-A late workspace acknowledgement cannot close a newer form
+ok 121 - UX-002-A late workspace acknowledgement cannot close a newer form
+  ---
+  duration_ms: 3.0349
+  type: 'test'
+  ...
+# Subtest: Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+ok 122 - Workspace create uses native picker in Ultra Chat and registers folder with its name; never opens operator view
+  ---
+  duration_ms: 23.5701
+  type: 'test'
+  ...
+# Subtest: cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+ok 123 - cancelled or unavailable folder picker does not register a workspace or reveal secret paths
+  ---
+  duration_ms: 14.8156
+  type: 'test'
+  ...
+# Subtest: Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+ok 124 - Workspace selection nests chats under expanded group; clicking the current Workspace collapses it without clearing selection
+  ---
+  duration_ms: 9.2611
+  type: 'test'
+  ...
+# Subtest: a failed catalog request hides raw server details and can be retried
+ok 125 - a failed catalog request hides raw server details and can be retried
+  ---
+  duration_ms: 8.2426
+  type: 'test'
+  ...
+# Subtest: U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+ok 126 - U1 Ultra Chat opens by default and reads only: capability, Workspaces, history and the EVM badge
+  ---
+  duration_ms: 7.8303
+  type: 'test'
+  ...
+# Subtest: U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+ok 127 - U2 the read token travels only in its own header to /ultra/chat/* and is stored nowhere
+  ---
+  duration_ms: 7.6355
+  type: 'test'
+  ...
+# Subtest: U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+ok 128 - U3 history renders server text as text, labels outcomes and never shows an old failure as an answer
+  ---
+  duration_ms: 7.6197
+  type: 'test'
+  ...
+# Subtest: U4 every data state is told apart: workspaces, chats and history
+ok 129 - U4 every data state is told apart: workspaces, chats and history
+  ---
+  duration_ms: 44.8502
+  type: 'test'
+  ...
+# Subtest: U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+ok 130 - U5 older pages are fetched with the cursor, prepended once, and the button hides at the start
+  ---
+  duration_ms: 9.6675
+  type: 'test'
+  ...
+# Subtest: U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+ok 131 - U6 after a server restart the page fetches one new capability and repeats once, then stops honestly
+  ---
+  duration_ms: 13.4764
+  type: 'test'
+  ...
+# Subtest: U7 an unavailable capability is explained and the other sections keep working
+ok 132 - U7 an unavailable capability is explained and the other sections keep working
+  ---
+  duration_ms: 16.6436
+  type: 'test'
+  ...
+# Subtest: U8 the composer is visibly read-only and nothing is ever posted
+ok 133 - U8 the composer is visibly read-only and nothing is ever posted
+  ---
+  duration_ms: 9.6435
+  type: 'test'
+  ...
+# Subtest: U9 sections switch both ways and \#operator / \#evm open a section directly
+ok 134 - U9 sections switch both ways and \#operator / \#evm open a section directly
+  ---
+  duration_ms: 18.5316
+  type: 'test'
+  ...
+# Subtest: U10 a late answer for a Workspace that is no longer selected is ignored
+ok 135 - U10 a late answer for a Workspace that is no longer selected is ignored
+  ---
+  duration_ms: 7.2264
+  type: 'test'
+  ...
+# Subtest: U11 malformed server answers show an error and invent nothing
+ok 136 - U11 malformed server answers show an error and invent nothing
+  ---
+  duration_ms: 20.661
+  type: 'test'
+  ...
+# Subtest: U12 the EVM model badge tells every saved-choice state
+ok 137 - U12 the EVM model badge tells every saved-choice state
+  ---
+  duration_ms: 30.3588
+  type: 'test'
+  ...
+# Subtest: U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+ok 138 - U13 a dialogue is created only on Save, with a page-made chat_id and the write token alone; the list is re-read
+  ---
+  duration_ms: 8.5915
+  type: 'test'
+  ...
+# Subtest: U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+ok 139 - U14 rename sends the title the user saw; a change made elsewhere is refused, re-read and replaced only on a second Save
+  ---
+  duration_ms: 7.2411
+  type: 'test'
+  ...
+# Subtest: U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+ok 140 - U15 a lost answer is repeated with the same chat_id, and Save pressed again while saving sends nothing
+  ---
+  duration_ms: 9.1639
+  type: 'test'
+  ...
+# Subtest: U16 an unavailable write capability is explained and nothing is posted
+ok 141 - U16 an unavailable write capability is explained and nothing is posted
+  ---
+  duration_ms: 9.4732
+  type: 'test'
+  ...
+# Subtest: U17 after a server restart one new write capability is fetched and the refused request repeated once
+ok 142 - U17 after a server restart one new write capability is fetched and the refused request repeated once
+  ---
+  duration_ms: 19.1189
+  type: 'test'
+  ...
+# Subtest: U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+ok 143 - U18 actions follow the selection: no history, no dialogue, Escape, Cancel and a Workspace switch
+  ---
+  duration_ms: 31.0147
+  type: 'test'
+  ...
+# Subtest: U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+ok 144 - U19 a save refused after a Workspace switch closes its form there; a taken chat_id re-reads the list
+  ---
+  duration_ms: 14.674
+  type: 'test'
+  ...
+# Subtest: Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+ok 145 - Workspace pencil renames registry display name via write token and keeps the Ultra history, never the real path
+  ---
+  duration_ms: 5.3995
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+ok 146 - LIVE RED: a confirmed registration after collapse must not be reported as creation failure
+  ---
+  duration_ms: 5.5191
+  type: 'test'
+  ...
+# Subtest: LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+ok 147 - LIVE RED: collapse and refresh keep all four nested nodes connected; never append literal null
+  ---
+  duration_ms: 4.7997
+  type: 'test'
+  ...
+# Subtest: LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+ok 148 - LIVE RED: both pencils open connected forms after collapsing and reopening the Workspace
+  ---
+  duration_ms: 7.1317
+  type: 'test'
+  ...
+# Subtest: LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+ok 149 - LIVE RED: a dialogue pencil selects its own history before renaming; no stale messages from another dialogue
+  ---
+  duration_ms: 4.9131
+  type: 'test'
+  ...
+# Subtest: LIVE registration separates confirmation from catalog/list/history failure, rejection and an unknown POST outcome
+ok 150 - LIVE registration separates confirmation from catalog/list/history failure, rejection and an unknown POST outcome
+  ---
+  duration_ms: 28.0528
+  type: 'test'
+  ...
+# Subtest: LIVE empty, single and multiple dialogue trees survive repeated collapse, refresh and Workspace switches
+ok 151 - LIVE empty, single and multiple dialogue trees survive repeated collapse, refresh and Workspace switches
+  ---
+  duration_ms: 39.3382
+  type: 'test'
+  ...
+# Subtest: LIVE Workspace rename conflict refreshes the label and keeps the typed title for an explicit second Save
+ok 152 - LIVE Workspace rename conflict refreshes the label and keeps the typed title for an explicit second Save
+  ---
+  duration_ms: 5.996
+  type: 'test'
+  ...
+# Subtest: LIVE both rename forms keep server errors as safe text and can be cancelled and reopened
+ok 153 - LIVE both rename forms keep server errors as safe text and can be cancelled and reopened
+  ---
+  duration_ms: 7.3471
+  type: 'test'
+  ...
+# Subtest: LIVE a failed Workspace-conflict readback never claims the list was refreshed
+ok 154 - LIVE a failed Workspace-conflict readback never claims the list was refreshed
+  ---
+  duration_ms: 5.1501
+  type: 'test'
+  ...
+# Subtest: LIVE a late plus-click for another Workspace cannot open an editor in the new selection
+ok 155 - LIVE a late plus-click for another Workspace cannot open an editor in the new selection
+  ---
+  duration_ms: 4.9557
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+ok 156 - AMENDMENT first chat: missing_history allows plus, asks for explicit create, then refreshes identity and tree
+  ---
+  duration_ms: 6.7133
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: only ok and missing_history enable creation; unsafe states remain read-only
+ok 157 - AMENDMENT first chat: only ok and missing_history enable creation; unsafe states remain read-only
+  ---
+  duration_ms: 26.5223
+  type: 'test'
+  ...
+# Subtest: AMENDMENT first chat: a lost reply keeps the pending id and consent; retry creates no second dialogue
+ok 158 - AMENDMENT first chat: a lost reply keeps the pending id and consent; retry creates no second dialogue
+  ---
+  duration_ms: 5.3227
+  type: 'test'
+  ...
+1..158
+# tests 158
+# suites 0
+# pass 158
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1695.3382

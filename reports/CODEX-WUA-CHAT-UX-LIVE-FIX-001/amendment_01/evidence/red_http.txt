@@ -1,0 +1,21 @@
+test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart (test_web_alarm_ultra_chat_storage.FirstChatAmendmentTests.test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart) ... FAIL
+
+======================================================================
+FAIL: test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart (test_web_alarm_ultra_chat_storage.FirstChatAmendmentTests.test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\test_web_alarm_ultra_chat_storage.py", line 609, in test_a01_explicit_first_chat_uses_shared_core_and_survives_replay_and_restart
+    self.assertEqual((status, data.get("created")), (201, True))
+AssertionError: Tuples differ: (400, None) != (201, True)
+
+First differing element 0:
+400
+201
+
+- (400, None)
++ (201, True)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.659s
+
+FAILED (failures=1)
