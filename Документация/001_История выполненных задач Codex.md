@@ -15,11 +15,18 @@
 
 ## Указатель пяти последних
 
+- 2026-11-04 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` / AMENDMENT 01 — WEB22 bounded source+evidence PASS; USER GUI ACCEPTED first/next chats; independent runtime NOT RUN
 - 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — WEB21 BOUNDED SOURCE+EVIDENCE PASS, independent runtime NOT RUN; report `reports/CHATGPT-WEB21-CODEX-UI-INTEGRATION-REVIEW-20261104/review.md`
 - 2026-11-02 — `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — LLM15 bounded PASS, TASK PARTIAL; 04.11 штатная ротация VERIFIED
 - 2026-11-01 — `CODEX-WUA-DOC-WEB19-REPAIR-001`, №483 — bounded document PASS
 - 2026-11-01 — `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`, №482 — USER SLOT RELEASE; PARTIAL
-- 2026-10-26 — `ASTRA-WUA-37-ROADMAP-REVISION-001` — bounded document PASS; №37 approved
+
+## 2026-11-04 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` / AMENDMENT 01 — исходная TASK, проверка и результат
+
+- **Назначение:** исходная прямая TASK из чата WEB21, позднее дословно сохранена в скриптовом snapshot. Полный текст 190 строк в `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/handoff_task.md`; task SHA256 `c0301361b6bb8055d46b3ef66aae023900ec831b9f14415998f7c08e3a086ae0`. Отдельный `CHAT-ONLY AMENDMENT 01` — `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/chat_amendment_01.md`, SHA256 `88cc0d056d6a24509d79f31d23f1ad29f24d64822eaaf975bca4375785eacbb9`, включён дословно в snapshot; не путать это с исходным назначением из БЛОКА1.
+- **Исполнитель Codex 007:** исходные UX-дефекты Workspace registration/DOM/rename устранены минимальными правками. По AMENDMENT first chat на safe `missing_history` инициирует общее Ultra storage лишь после явного подтверждения, обычное чтение и отмена без побочных записей. Текущий factual report `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/report.md`, manifest `reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/manifest.json`, авторские RED, 158 JS PASS, Python 166 PASS/5 SKIP, HTTP/UI 51 PASS. Локальный author `finish --chat-amendment` ROTATED/exit0 и readback; БЛОК1 WAITING, БЛОК1.1 полный текст+ссылка на amendment.
+- **Independent WEB22 / user:** published main@2e57cf2d2e59e225ab7c0d5aa7fd7097d15039ef (№501; проверенная публикация; технический пакет до документационного коммита); WEB22 `PASS / BOUNDED SOURCE + AUTHOR EVIDENCE` с проверкой source/selected test-oracle/report/slot evidence, но без собственного запуска Windows/Node/Python/CI. Пользователь 04.11 сообщил об успешном реальном создании Workspace и чатов; `USER GUI ACCEPTED` только для first/next chat happy path. Предыдущее подтверждение rename/save зафиксировано в авторском AMENDMENT, расширенная GUI матрица не проверена.
+- **OPEN:** `FOLLOWUP-WUA-CHAT-UX-INDEP-RUNTIME-001`, `FOLLOWUP-WUA-CHAT-UX-CRASH-001`, `FOLLOWUP-WUA-CHAT-UX-PICKER-10053-001`, ранее UI GUI/independent, P9/staging/Tk/Stage3 HOLD; WinError 10053 intermittent undiagnosed, crash-atomicity not claimed. Verifier `reports/CHATGPT-WEB22-CODEX-UX-LIVE-FIX-REVIEW-20261104/review.md`; №05 `REG-WEB22-CODEX-UX-LIVE-FIX-20261104`, №06 `EVT-WEB22-CODEX-UX-LIVE-FIX-20261104`. **DOC ITERATION CLOSED IN GPT / USER MERGE PENDING**. Следующее назначение — только пользователь.
 
 ## 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — полная исходная постановка и независимая приёмка
 
