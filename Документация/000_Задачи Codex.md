@@ -265,41 +265,45 @@ Git и GitHub, включая чтение через локального ис�
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Полная задача и проверенный report — №001 Codex / `reports/CODEX-WUA-LOCAL-LLM-DISCOVERY-001/assignment_source.txt`.
+Постоянный архив — №001 Codex и снимки `reports/<TASK-ID>/`.
 
-- **02.11 / CODEX-WUA-LOCAL-LLM-DISCOVERY-001:** Ollama/Colibri и multi-host contract; LLM15 independent 28/28 source package, **BOUNDED DIAGNOSTIC PASS / TASK PARTIAL / DOC CLOSED (GPT proposal)**; .77 unverified, no adapter implemented.
-- **01.11 / CODEX-WUA-DOC-WEB19-REPAIR-001, №483:** шесть документов исправлены; WEB19 BOUNDED PASS / DOC CLOSED; full runtime NOT RUN.
-- **01.11 / ASTRA-DOC-CONTEXT-OPTIMIZATION-001, №482:** USER SLOT RELEASE; миграция PARTIAL/OPEN.
-- **26.10 / ASTRA-WUA-37-ROADMAP-REVISION-001:** bounded document PASS, план утверждён 27.10, portability NOT VERIFIED.
-- **26.10 / ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001:** bounded architecture PASS; live NOT RUN.
+- **04.11 / `CODEX-WUA-CHAT-UI-INTEGRATION-001`:** WEB21 PASS / BOUNDED SOURCE + AUTHOR-EVIDENCE; independent runtime NOT RUN; 13/13 SHA+bytes (5 LF / 8 CRLF), author 66 JS PASS / 57 Python PASS, HTTP/browser synthetic; Tk/viewport/independent runtime NOT RUN. БЛОК 1 штатно освобождён скриптом; БЛОК 1.1 содержит сданную UI TASK. №05 `REG-WEB21-CODEX-UI-INTEGRATION-20261104`.
+- **02.11 / CODEX-WUA-LOCAL-LLM-DISCOVERY-001:** bounded diagnostic PASS / TASK PARTIAL / DOC CLOSED; Colibri .77 unknown, adapter NOT IMPLEMENTED. Штатная ротация 04.11 подтверждена её опубликованным protocol/readback.
+- **01.11 / CODEX-WUA-DOC-WEB19-REPAIR-001, №483:** bounded document PASS / DOC CLOSED, 6 Markdown docs.
+- **01.11 / ASTRA-DOC-CONTEXT-OPTIMIZATION-001, №482:** пользовательское архивирование, migration PARTIAL/OPEN.
+- **26.10 / ASTRA-WUA-37-ROADMAP-REVISION-001:** bounded architecture/document PASS, №37 user-approved, portability NOT VERIFIED.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **CODEX-WUA-LOCAL-LLM-DISCOVERY-001:** author 16/16 package checks; host .9 Ollama 0.40.13, deepseek-r1:8b installed, loaded=0, 4 GET 200; .9:8000 3 disconnect, .77:8000 3 timeout. Colibri identification, inference, resource capacity NOT RUN/NOT VERIFIED. LLM15 independently verified **28/28 published artifact SHA/bytes** (16 raw, 12 CRLF restored), core source patterns inspected. No code changes; design/model refs proposed, not implemented. `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001`, `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001` OPEN.
-- **CODEX-WUA-DOC-WEB19-REPAIR-001:** №483, шесть Markdown-документов, author 53/53, WEB19 BOUNDED DOCUMENT PASS / DOC CLOSED; runtime/CI NOT RUN.
-- **ASTRA-DOC-CONTEXT-OPTIMIZATION-001:** №482, архивирование по решению пользователя; semantic/graph/cold-start OPEN.
-- **ASTRA-WUA-37-ROADMAP-REVISION-001:** программа №37, independently 9/9 document artefacts, bounded PASS; реальная переносимость OPEN.
-- **ASTRA-WUA-2-MIGRATION-ARCH-REVIEW-001:** rev2 Astra, 30/30 source pins and R2 corrections, bounded architecture PASS; Windows/live NOT RUN.
+- **CODEX-WUA-CHAT-UI-INTEGRATION-001:** только `web_alarm/ui.py`, `test_web_alarm_ultra_chat_ui.js` в code/test scope: existing registration form shortcut, обновление каталога, сохранение допустимого выбора чата, sanitised generic errors. Отправка disabled; новые API, core, registry, Blueprint и launcher без правок. Verifier 13/13 SHA+bytes; автор 66 JS, 57 Python, loopback HTTP/browser; verifier runtime/Tk/responsive/CI NOT RUN.
+- **CODEX-WUA-LOCAL-LLM-DISCOVERY-001:** LLM15 28/28, Ollama .9 reachable, Colibri .77 unverified, adapter not implemented; slot ROTATED с архивом.
+- **CODEX-WUA-DOC-WEB19-REPAIR-001:** №483, six docs, WEB19 bounded PASS, independent runtime NOT RUN.
+- **ASTRA-DOC-CONTEXT-OPTIMIZATION-001:** №482 archive, semantic/graph/cold-start OPEN.
+- **ASTRA-WUA-37-ROADMAP-REVISION-001:** №37 approved, clean Windows portability unverified.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
 
-## LLM15 / 2026-11-02 — CODEX-WUA-LOCAL-LLM-DISCOVERY-001 — BOUNDED DIAGNOSTIC PASS / TASK PARTIAL
+## WEB21 / 04.11.2026 — CODEX-WUA-CHAT-UI-INTEGRATION-001 — BOUNDED PASS
 
-**Verifier: ChatGPT LLM15; source main@faf041438cc41990d8e4a254a59b06dc93d5c3b9.** Independently fetched **28/28** published package entries; SHA256/bytes match manifest for 16 direct-LF and 12 CRLF reconstructed originals, with no unexplained differences. Reviewed 10 HTTP GET results (4 Ollama 200, 3 local :8000 disconnect, 3 remote .77 timeout), .9 OS/GPU and source code structure of Model Registry/ultra_connections/model_cards/ultra_chat. `assignment_source.txt` preserved, SHA256 `287af2ebf4eb1e0dd584135d4ed8c80dc8f943d558e379782d4133e7c3c10587`. Author 16/16, 248 files unchanged not independently rerun; Colibri .77/stream/inference/CI/physical host not tested. **PASS limited to diagnostic evidence and viable multi-host architecture; TASK PARTIAL / DOC CLOSED after user merge**. №05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102`, №06 `EVT-LLM15-LOCAL-LLM-DISCOVERY-20261102`, review `reports/CHATGPT-LLM15-LOCAL-LLM-DISCOVERY-REVIEW-20261102.md`. Open: `FOLLOWUP-WUA-LOCAL-LLM-COLIBRI-001`, `FOLLOWUP-WUA-LOCAL-LLM-DISCOVERY-ADAPTER-001`. New coding TASK not assigned. B2/WA4-R/Stage3/MCP frozen gates unchanged.
+**Verifier:** ChatGPT WEB21. **Version:** `main@5ca3ed1b3a3259e5d95b7416b336aecf1df61d10`, №499. **Verdict:** **PASS / BOUNDED SOURCE + AUTHOR-EVIDENCE; independent runtime NOT RUN**, DOC ITERATION CLOSEOUT в GPT, не полный Windows/GUI/CI PASS. Manifest **13/13** SHA256/bytes совпали с опубликованными файлами (5 LF прямые, 8 CRLF восстановлены без расхождений). Проверены actual patches `web_alarm/ui.py` и `test_web_alarm_ultra_chat_ui.js`, авторские TAP 66/66, Python unittest 57/57, изолированный HTTP probe source/result, browser smoke narrative, STANDARD readback (автор). Полный независимый запуск Node/Python/HTTP/браузера/Windows не выполнен; нативный Tkinter, picker, responsive не проверены.
 
-## Предыдущий — WEB19 / 2026-11-01 — CODEX-WUA-DOC-WEB19-REPAIR-001
+В UI: кнопка ведёт в уже существующую регистрацию, возврат перечитывает Workspace, при допустимом выборе возвращает прежний Chat, ошибки общего чтения/записи не показывают сырую серверную информацию, send disabled. Server/storage/Blueprint/EVM не менялись. Прежняя SLOT ротация подтверждена опубликованными check/dry-run/rotate/readback и permanent snapshot, полная UI TASK теперь в БЛОКЕ 1.1 и сохранена в `reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/handoff_task.md`; БЛОК 1 освобождён штатным скриптом.
 
-**BOUNDED DOCUMENT PASS / DOC CLOSED**; №483 6/6 source and 6/6 final checks; independent runtime/cold-start NOT RUN. Полный прежний БЛОК 4 сохранён в №001 Codex (snapshot 02.11).
+OPEN: `FOLLOWUP-WUA-CHAT-UI-GUI-001`, `FOLLOWUP-WUA-CHAT-UI-INDEP-RUNTIME-001`, P9/security/staging/Tk P1–P6 gates. В user commit №499 присутствуют старый Codex slot и `.obsidian/workspace.json`; это сопутствующая публикация пользователя, не продуктовые правки по UI TASK. Review `reports/CHATGPT-WEB21-CODEX-UI-INTEGRATION-REVIEW-20261104/review.md`, №05 `REG-WEB21-CODEX-UI-INTEGRATION-20261104`, №06 `EVT-WEB21-CODEX-UI-INTEGRATION-20261104`. Stage3/live/paid HOLD.
 
-## Предыдущий — WEB14 / 2026-10-26 — ASTRA-WUA-37-ROADMAP-REVISION-001
+## Предыдущее — LLM15 / 02.11.2026 — CODEX-WUA-LOCAL-LLM-DISCOVERY-001
 
-**PASS / BOUNDED DOCUMENT & ARCHITECTURE**, 9/9 hash and bytes, no Windows/runtime/live. Исторический полный verifier snapshot сохранён в №001 Codex.
+Bounded diagnostic PASS / TASK PARTIAL / DOC CLOSED; independently 28/28 published package, remote Colibri unverified; details №001 Codex, №05 `REG-LLM15-LOCAL-LLM-DISCOVERY-20261102`, №06.
+
+## Предыдущее — WEB19 / 01.11.2026 — CODEX-WUA-DOC-WEB19-REPAIR-001
+
+Bounded document PASS / DOC CLOSED, six docs; full independent runtime NOT RUN; historical WEB14 and previous verdict in №001 Codex.
 
 ---
 
-**Статус 02.11.2026:** после документального closeout в GPT БЛОК 1 остаётся WAITING и БЛОК 1.1 от №483 не заменяется. Пользователь отдельно назначает следующую TASK только после GPT→main и безопасной локальной синхронизации. Stage3 и paid/live HOLD.
+**Статус 04.11.2026:** UI task bounded accepted, stage3 NOT STARTED. БЛОК 1 ожидает новую задачу; БЛОК 1.1 содержит сданную UI TASK. Новая задача назначается только пользователем после завершённой сдачи и проверки.
