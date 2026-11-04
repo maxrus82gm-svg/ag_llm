@@ -441,28 +441,34 @@ python -B tools/task_slot_rotate.py finish --card "Документация/000_
 
 # БЛОК 2 — ПЯТЬ ПОСЛЕДНИХ ЗАДАЧ (КОМПАКТНО)
 
-Постоянный архив — №001 Codex и снимки `reports/<TASK-ID>/`.
+Постоянный архив — №001 Codex и снимки reports/<TASK-ID>/.
 
-- **04.11 / `CODEX-WUA-CHAT-UX-LIVE-FIX-001` AMENDMENT 01:** WEB22 bounded source+author-evidence PASS, user Windows first/next chat GUI ACCEPTED; author 158 JS PASS / 166 Python PASS/5 SKIP, verifier runtime NOT RUN; slot ROTATED; №05 `REG-WEB22-CODEX-UX-LIVE-FIX-20261104`.
-- **04.11 / `CODEX-WUA-CHAT-UI-INTEGRATION-001`:** WEB21 PASS / BOUNDED SOURCE+EVIDENCE, author 66 JS / 57 Python, verifier runtime NOT RUN; №05 `REG-WEB21-CODEX-UI-INTEGRATION-20261104`.
-- **02.11 / `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** bounded diagnostic PASS / TASK PARTIAL; Colibri not verified, adapter NOT IMPLEMENTED.
-- **01.11 / `CODEX-WUA-DOC-WEB19-REPAIR-001`, №483:** bounded document PASS, DOC CLOSED.
-- **01.11 / `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`, №482:** USER SLOT RELEASE; semantic/graph checks OPEN.
+- **04.11 / `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001`:** diagnostic PARTIAL / Stage3 blocked by Run Store; author Windows 2 RED/1 PASS, JS 158 PASS, Python 166 PASS/5 SKIP, P9 21 PASS. WEB22 bounded source/evidence diagnostic PASS, independent runtime NOT RUN; script ROTATED; №05 REG-WEB22-CODEX-S3-PREREQ-20261104.
+- **04.11 / `CODEX-WUA-CHAT-UX-LIVE-FIX-001` AMENDMENT 01:** WEB22 bounded source/evidence PASS, user GUI first/next chat ACCEPTED; 158 JS / 166 Python PASS/5 SKIP; independent runtime NOT RUN.
+- **04.11 / `CODEX-WUA-CHAT-UI-INTEGRATION-001`:** WEB21 bounded PASS, 66 JS/57 Python author; runtime NOT RUN.
+- **02.11 / `CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** diagnostic PARTIAL, Colibri unavailable/unverified, adapter missing.
+- **01.11 / `CODEX-WUA-DOC-WEB19-REPAIR-001`:** bounded document PASS / DOC CLOSED.
 
 ---
 
 # БЛОК 3 — КРАТКИЕ ФАКТИЧЕСКИЕ ИТОГИ
 
-- **`CODEX-WUA-CHAT-UX-LIVE-FIX-001`:** прямое поручение WEB21 + AMENDMENT 01; исправления Workspace registration/DOM/rename, first chat in safe `missing_history` only after confirmation through shared core. Author 158 JS, 166 Python PASS/5 SKIP; GUI first/next chats USER ACCEPTED; independent runtime/negative Windows NOT RUN. `finish` ROTATED, 1.1 preserved; followups №05.
-- **`CODEX-WUA-CHAT-UI-INTEGRATION-001`:** existing Workspace registration shortcut + catalog refresh, source+author evidence accepted WEB21, independent runtime NOT RUN.
-- **`CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** Ollama reachable, Colibri .77 NOT VERIFIED, adapter missing; research closed partial.
-- **`CODEX-WUA-DOC-WEB19-REPAIR-001`:** six docs, WEB19 bounded PASS.
-- **`ASTRA-DOC-CONTEXT-OPTIMIZATION-001`:** archive preserved, independent cold-start/semantic/graph OPEN.
+- **`CODEX-WUA-CHAT-S3-TURN-RECOVERY-001`:** Stage3 not implemented due to shared Run Store blockers; author raw RED audit junction and duplicate [1,1] RUN event sequences; no product source changes, negative test and evidence only; script ROTATED/exit0 after user TASK ID format correction; bounded verifier PASS for diagnostic; independent runtime NOT RUN.
+- **`CODEX-WUA-CHAT-UX-LIVE-FIX-001`:** Workspace/chat UX fixes and first-Chat consent; user Windows GUI accepted, other negative GUI gates OPEN.
+- **`CODEX-WUA-CHAT-UI-INTEGRATION-001`:** Workspace registration UI and catalog refresh, bounded accepted.
+- **`CODEX-WUA-LOCAL-LLM-DISCOVERY-001`:** local LLM investigation PARTIAL; Colibri not verified.
+- **`CODEX-WUA-DOC-WEB19-REPAIR-001`:** bounded doc repairs PASS.
 
 ---
 
 # БЛОК 4 — НЕЗАВИСИМАЯ ПРИЁМКА
 ---
+
+## WEB22 / 04.11.2026 — CODEX-WUA-CHAT-S3-TURN-RECOVERY-001: BOUNDED DIAGNOSTIC PASS, PRODUCT STAGE3 PARTIAL
+
+**Source:** main@5088d307defdf3b6b92d4f119c45fc29863a6bb5; factual report reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/report.md, manifest, negative test and raw evidence. Verifier ChatGPT WEB22 examined published run_store.py against saved source, two RED oracles/audit/sequence JSON and author logs. Author prerequisite 1 PASS / 2 intentionally RED FAIL, JS 158 PASS, Python 166 PASS/5 SKIP, P9 21 PASS. **Verdict:** PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE for identified defects and safe stop, **NOT Stage3 implementation acceptance**. Independent Windows/Node/Python/CI and physical user-file integrity NOT RUN. Product source unchanged; Stage3 Turn/HTTP/TEST mock NOT IMPLEMENTED.
+
+**SLOT:** user corrected TASK ID declaration after original NO_TASK_ID exit3, normal finish script ROTATED exit0; 383-line task snapshot reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/handoff_task.md, receipt reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/slot_finish_1793806731834391500.json; B1 WAITING, B1.1 exact Stage3 assignment, previous UX task snapshot still published. No manual rotation. **OPEN:** P9 audit junction, same RUN writer duplicate sequence, independent P9 runtime, Stage3 implementation, other pre-existing UX/storage issues. User GO required to repair Run Store with its own writer and path safety, then independently accept, then separately resume Stage3; Stage4/live/paid/Colibri/Blueprint/MCP not assigned. Review reports/CHATGPT-WEB22-CODEX-S3-PREREQ-REVIEW-20261104/review.md, №05 REG-WEB22-CODEX-S3-PREREQ-20261104, №06 EVT-WEB22-CODEX-S3-PREREQ-20261104. DOC CLOSED IN GPT / USER MERGE PENDING.
 
 ## WEB22 / 04.11.2026 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` + AMENDMENT 01 — BOUNDED PASS / USER GUI ACCEPTED
 
@@ -480,4 +486,4 @@ Bounded diagnostic PASS / TASK PARTIAL / DOC CLOSED; independently checked 28/28
 
 ---
 
-**Статус 04.11.2026 / WEB22:** `CODEX-WUA-CHAT-UX-LIVE-FIX-001` bounded accepted, user GUI first/next Chat ACCEPTED; full independent runtime NOT RUN. БЛОК 1 ожидает новую задачу, БЛОК 1.1 содержит последнюю UX TASK с одним AMENDMENT. Новая задача — только по USER GO. Stage3/live/paid HOLD.
+**Статус 04.11.2026 / WEB22:** CODEX-WUA-CHAT-S3-TURN-RECOVERY-001 diagnostic PARTIAL, Stage3 NOT IMPLEMENTED; B1 WAITING, B1.1 latest Stage3 task, old UX archived. Next Run Store repair only by USER GO; independent full runtime NOT RUN; Stage4/live/paid/MCP HOLD.

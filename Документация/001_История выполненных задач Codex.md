@@ -15,11 +15,19 @@
 
 ## Указатель пяти последних
 
-- 2026-11-04 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` / AMENDMENT 01 — WEB22 bounded source+evidence PASS; USER GUI ACCEPTED first/next chats; independent runtime NOT RUN
-- 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — WEB21 BOUNDED SOURCE+EVIDENCE PASS, independent runtime NOT RUN; report `reports/CHATGPT-WEB21-CODEX-UI-INTEGRATION-REVIEW-20261104/review.md`
-- 2026-11-02 — `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — LLM15 bounded PASS, TASK PARTIAL; 04.11 штатная ротация VERIFIED
+- 2026-11-04 — `CODEX-WUA-CHAT-S3-TURN-RECOVERY-001` — Stage3 prerequisites PARTIAL, WEB22 bounded diagnostic PASS, runtime NOT RUN; script ROTATED
+- 2026-11-04 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` / AMENDMENT 01 — bounded PASS, user GUI accepted; full independent runtime NOT RUN
+- 2026-11-04 — `CODEX-WUA-CHAT-UI-INTEGRATION-001` — bounded PASS source/evidence, independent runtime NOT RUN
+- 2026-11-02 — `CODEX-WUA-LOCAL-LLM-DISCOVERY-001` — bounded diagnostic PASS, task PARTIAL
 - 2026-11-01 — `CODEX-WUA-DOC-WEB19-REPAIR-001`, №483 — bounded document PASS
-- 2026-11-01 — `ASTRA-DOC-CONTEXT-OPTIMIZATION-001`, №482 — USER SLOT RELEASE; PARTIAL
+
+## 2026-11-04 — CODEX-WUA-CHAT-S3-TURN-RECOVERY-001 — full task locator and independent WEB22 review
+
+- **Task:** Stage3 №37 user-assigned; full exact 383-line assignment reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/handoff_task.md, copied by normal rotation, SHA-256 d9af4724783c93dc2bb0e028426fa614cd603e9e6f2c2e58296340475d0dad91, no chat-only AMENDMENT; report reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/report.md, manifest.json, turn_contract.md (DESIGN ONLY), risk_test_matrix.md, negative oracles.
+- **Executor Codex 007:** PARTIAL / RUN STORE BLOCKED; out-of-scope shared run_store.py defects (audit junction writes externally, concurrent same RUN sequence [1,1]); added only negative test and report/evidence; product Turn/attempt/mock/HTTP/UI not implemented. Author prereq 1 PASS/2 RED FAIL, JS 158 PASS, Python 166 PASS/5 SKIP, P9 21 PASS, no provider calls; 601 real history files matching author SHA but not independent filesystem readback.
+- **Verifier WEB22:** GitHub source, test/fixture/raw evidence and slot receipt checked; PASS / BOUNDED SOURCE+AUTHOR-EVIDENCE for diagnostics, NOT Stage3 product acceptance. Independent fresh Windows/Node/Python/CI NOT RUN. Review reports/CHATGPT-WEB22-CODEX-S3-PREREQ-REVIEW-20261104/review.md; source main@5088d307defdf3b6b92d4f119c45fc29863a6bb5.
+- **Slot:** initial NO ROTATE / NO_TASK_ID exit3 due to heading syntax; user corrected only ID declaration. Published reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/slot_finish_1793806731834391500.json proves script check/dry-run/apply/readback ROTATED exit0; B1 WAITING, B1.1 exact current task, old UX saved in reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/handoff_task.md. Coordinator did not manually rotate.
+- **NEXT / OPEN:** №05 REG-WEB22-CODEX-S3-PREREQ-20261104, №06 EVT-WEB22-CODEX-S3-PREREQ-20261104, FOLLOWUP-WUA-P9-AUDIT-PATH-001, FOLLOWUP-WUA-P9-SINGLE-RUN-WRITER-001, FOLLOWUP-WUA-P9-INDEPENDENT-RUNTIME-001, FOLLOWUP-WUA-S3-TURN-IMPLEMENTATION-001. Separate approved Run Store repair before new Stage3. DOC CLOSED IN GPT / USER MERGE PENDING.
 
 ## 2026-11-04 — `CODEX-WUA-CHAT-UX-LIVE-FIX-001` / AMENDMENT 01 — исходная TASK, проверка и результат
 

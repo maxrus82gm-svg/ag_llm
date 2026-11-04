@@ -175,6 +175,8 @@ Tkinter сохраняется до доказанного соответств�
 
 ### Этап 3. Отправка сообщений и восстановление
 
+**CURRENT implementation note / WEB22 2026-11-04; approved roadmap unchanged:** CODEX-WUA-CHAT-S3-TURN-RECOVERY-001 on main@5088d307defdf3b6b92d4f119c45fc29863a6bb5 ended factual PARTIAL/RUN STORE BLOCKED. Published Windows author negative oracles show .ultra/audit junction external write and same RUN concurrent sequence [1,1]; WEB22 reviewed source/evidence only (independent runtime NOT RUN). Stage3 Turn/HTTP/mock/UI not implemented, requires separate user-approved Run Store prerequisite repair and independent acceptance before renewed Stage3 assignment. reports/CHATGPT-WEB22-CODEX-S3-PREREQ-REVIEW-20261104/review.md; №05 REG-WEB22-CODEX-S3-PREREQ-20261104. This note does not approve Stage4+/live/paid/MCP.
+
 **Зачем:** пользователь должен понимать, принят ли запрос, и не получать дубли из-за повторного нажатия или перезапуска.
 
 **Что делаем.** Реализуем Turn с постоянным `turn_id`, ключом повтора, ссылками на RAW, зафиксированными моделью/контекстом/политикой и явным состоянием. Отделяем принятие запроса, разрешение попытки, её возможную отправку и фиксацию ответа. Идентичность попытки и её связь с RUN сохраняются. HTTP и UI умеют запросить уже существующий Turn и восстановить состояние.
