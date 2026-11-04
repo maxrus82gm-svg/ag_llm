@@ -1,0 +1,82 @@
+--- a/run_store.py
++++ b/run_store.py
+@@ -87,6 +87,7 @@
+     root = Path(workspace_root).resolve()
+     (root / ".ultra").mkdir(exist_ok=True)
+     with _ultra_core._workspace_writer_lock(_ultra_core._write_anchor(root)):
++        _ultra_core._ensure_write_directory(_ultra_core._write_anchor(root), (".ultra", "audit"))
+         yield
+ 
+ 
+@@ -408,38 +409,39 @@
+ 
+ def append_run_record(workspace_root: str | Path, run_id: str, *, source: str,
+                       event: str, payload: dict, timestamp: float) -> dict:
+-    if source not in STREAM_BY_SOURCE:
+-        raise ValueError("Unknown Run Store source")
+-    index_path = run_component_path(workspace_root, run_id, "records.idx.jsonl")
+-    sequence = _next_sequence(index_path)
+-    record_id = "rec_" + uuid.uuid4().hex
+-    record = {"record_id": record_id, "sequence": sequence, "timestamp": timestamp,
+-              "source": source, "event": event, "payload": copy.deepcopy(payload)}
+-    stream_name = STREAM_BY_SOURCE[source]
+-    stream_path = run_component_path(workspace_root, run_id, stream_name)
+-    encoded = (json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+-    stream_path.parent.mkdir(parents=True, exist_ok=True)
+-    with stream_path.open("ab") as stream:
+-        offset = stream.tell()
+-        if stream.write(encoded) != len(encoded):
+-            raise OSError("Partial Run Store outcome append")
+-        stream.flush()
+-        os.fsync(stream.fileno())
+-    index_record = {"record_id": record_id, "sequence": sequence, "source": source,
+-                    "event": event, "stream": stream_name, "offset": offset,
+-                    "length": len(encoded), "timestamp": timestamp,
+-                    "sha256": hashlib.sha256(encoded).hexdigest()}
+-    for key in ("stage_id", "api_request_number", "status", "mode"):
+-        if payload.get(key) is not None:
+-            index_record[key] = payload[key]
+-    index_encoded = (json.dumps(index_record, ensure_ascii=False,
+-                                separators=(",", ":")) + "\n").encode("utf-8")
+-    with index_path.open("ab") as index_stream:
+-        if index_stream.write(index_encoded) != len(index_encoded):
+-            raise OSError("Partial Run Store index append")
+-        index_stream.flush()
+-        os.fsync(index_stream.fileno())
+-    return index_record
++    with _index_lock(workspace_root):
++        if source not in STREAM_BY_SOURCE:
++            raise ValueError("Unknown Run Store source")
++        index_path = run_component_path(workspace_root, run_id, "records.idx.jsonl")
++        sequence = _next_sequence(index_path)
++        record_id = "rec_" + uuid.uuid4().hex
++        record = {"record_id": record_id, "sequence": sequence, "timestamp": timestamp,
++                  "source": source, "event": event, "payload": copy.deepcopy(payload)}
++        stream_name = STREAM_BY_SOURCE[source]
++        stream_path = run_component_path(workspace_root, run_id, stream_name)
++        encoded = (json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
++        stream_path.parent.mkdir(parents=True, exist_ok=True)
++        with stream_path.open("ab") as stream:
++            offset = stream.tell()
++            if stream.write(encoded) != len(encoded):
++                raise OSError("Partial Run Store outcome append")
++            stream.flush()
++            os.fsync(stream.fileno())
++        index_record = {"record_id": record_id, "sequence": sequence, "source": source,
++                        "event": event, "stream": stream_name, "offset": offset,
++                        "length": len(encoded), "timestamp": timestamp,
++                        "sha256": hashlib.sha256(encoded).hexdigest()}
++        for key in ("stage_id", "api_request_number", "status", "mode"):
++            if payload.get(key) is not None:
++                index_record[key] = payload[key]
++        index_encoded = (json.dumps(index_record, ensure_ascii=False,
++                                    separators=(",", ":")) + "\n").encode("utf-8")
++        with index_path.open("ab") as index_stream:
++            if index_stream.write(index_encoded) != len(index_encoded):
++                raise OSError("Partial Run Store index append")
++            index_stream.flush()
++            os.fsync(index_stream.fileno())
++        return index_record
+ 
+ 
+ def list_run_records(workspace_root: str | Path, run_id: str) -> list[dict]:

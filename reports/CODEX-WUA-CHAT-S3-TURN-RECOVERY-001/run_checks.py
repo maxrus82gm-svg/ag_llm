@@ -1,0 +1,47 @@
+"""Bounded, guarded checks for this partial Stage3 handoff. Keep the product RED separate from regressions."""
+from pathlib import Path
+import argparse
+import hashlib
+import json
+import os
+import platform
+import subprocess
+import sys
+import time
+
+REPORT=Path(__file__).resolve().parent
+ROOT=REPORT.parents[1]
+parser=argparse.ArgumentParser()
+parser.add_argument('suite',choices=['prerequisites','js','python','run_store'])
+parser.add_argument('--label',default='')
+args=parser.parse_args()
+suffix=('_'+args.label) if args.label else ''
+assert all(c.isalnum() or c=='_' for c in suffix)
+if args.suite=='prerequisites':
+    cmd=[sys.executable,'-B','-X','utf8','-m','unittest','-v','test_web_alarm_ultra_chat_turn']
+elif args.suite=='js':
+    cmd=['node','--test','test_web_alarm_ultra_chat_ui.js','test_web_alarm_operator_ui.js','test_web_alarm_evm_ui.js']
+elif args.suite=='run_store':
+    cmd=[sys.executable,'-B','-X','utf8','-m','pytest','-q','-p','no:cacheprovider','test_run_store_v2.py']
+else:
+    cmd=[sys.executable,'-B','-X','utf8','-m','unittest','-v','test_web_alarm_ultra_chat_storage','test_web_alarm_ultra_chat',
+         'test_web_alarm_ui','test_web_alarm_ui_ux','test_ultra_chat_storage','test_ultra_chat_read',
+         'test_web_alarm_workspace_registry','test_web_alarm_folder_picker']
+source={}
+for name in ['run_store.py','context_storage.py','web_alarm/ultra_chat.py','web_alarm/server.py','web_alarm/ui.py','test_web_alarm_ultra_chat_turn.py']:
+    data=(ROOT/name).read_bytes(); source[name]=dict(size=len(data),sha256=hashlib.sha256(data).hexdigest())
+guard=REPORT/'evidence'/('guard_'+args.suite+suffix)
+env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1','PYTHONUTF8':'1','PYTEST_DISABLE_PLUGIN_AUTOLOAD':'1',
+     'PYTHONPATH':str(REPORT/'guard')+os.pathsep+str(ROOT),
+     'S3_GUARD_OUTPUT':str(guard),'S3_EVIDENCE_DIR':str(REPORT/'evidence'/(args.suite+'_oracles'+suffix))}
+started=time.monotonic()
+r=subprocess.run(cmd,cwd=ROOT,env=env,capture_output=True,text=True,encoding='utf-8',timeout=180)
+(REPORT/'evidence'/(args.suite+'_guarded'+suffix+'.txt')).write_text(r.stdout+r.stderr,encoding='utf-8')
+receipts=[json.loads(p.read_text(encoding='utf-8')) for p in guard.glob('*.json')] if guard.exists() else []
+meta=dict(command=cmd,exit_code=r.returncode,seconds=round(time.monotonic()-started,2),platform=platform.platform(),python=sys.version,
+          source=source,guard_receipts=len(receipts),guard_denials=sum(len(p['denied']) for p in receipts),external_provider_connections=0)
+(REPORT/'evidence'/(args.suite+'_guarded'+suffix+'.json')).write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
+print((r.stdout+r.stderr)[-1900:]); print(json.dumps({k:v for k,v in meta.items() if k!='source'},ensure_ascii=False))
+assert not any(p['denied'] for p in receipts), 'Unexpected forbidden attempt'
+if args.suite!='js': assert receipts, 'Python guard was not active'
+raise SystemExit(r.returncode)

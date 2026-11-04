@@ -1,0 +1,20 @@
+{
+  "compile_pass": [
+    "test_web_alarm_ultra_chat_turn.py",
+    "reports\\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\\run_checks.py",
+    "reports\\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\\guard\\sitecustomize.py"
+  ],
+  "js_check_exit": 0,
+  "launcher": {
+    "active": "standard",
+    "standard": true,
+    "target": "web_alarm.server",
+    "changed": false,
+    "user_server_restarted": false,
+    "gui_banner": "NOT RUN"
+  },
+  "new_turn_runtime_files": {
+    "ultra_turn_exists": false
+  },
+  "provider_connections": 0
+}

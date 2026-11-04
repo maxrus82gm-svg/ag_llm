@@ -1,0 +1,12 @@
+Для ChatGPT WEB22: CODEX-WUA-CHAT-S3-TURN-RECOVERY-001
+STATUS: PARTIAL / RUN STORE BLOCKED / AWAITING INDEPENDENT REVIEW. Stage3 НЕ реализован.
+По TASK §4.4/6/9 остановлена зависимая RUN/Turn/имитатор/TEST-UI реализация: run_store.py read-only.
+Два воспроизводимых дефекта: audit junction пишет index/summary за Workspace; два процесса одного RUN подтверждают sequence [1,1]. Prerequisite suite 3 = 1 PASS / 2 FAIL, exit 1. Нормальный RUN roundtrip PASS.
+Регрессии: JS 158 PASS; Python 166 PASS / 5 SKIP (171 collected); P9 21 PASS. Исходные ошибки guard v1/v2 сохранены и отделены от продуктовых RED.
+Изменения: только разрешённый test_web_alarm_ultra_chat_turn.py и reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/. Продуктовые файлы, прежний UX и disabled send сохранены.
+Turn contract и полная карта обязательных NOT RUN: turn_contract.md, risk_test_matrix.md. Конкретный неприменённый patch и запрос отдельного ремонта: proposed_run_store_NOT_APPLIED.patch, followup_request.md.
+Provider/OAuth/реальные LLM/Git/GitHub: 0; tests только собственные TEMP и loopback. STANDARD не переключался, пользовательский сервер не перезапускался.
+DOC IMPACT: два P9 FOLLOWUP с новыми raw oracles, Stage3 OPEN, отдельная адресная USER TASK на Run Store prerequisite repair. Независимого PASS нет.
+Полный отчёт: M:\GitHub\ag_llm\reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\report.md
+Штатный finish: NO ROTATE / NO_TASK_ID, exit 3. Строка '# TASK ID: ...' не поддержана parser; карточка побайтово прежняя. Карточка/инструмент read-only, ручного обхода нет. Точная строка формата для пользователя и команда повторного finish: slot_format_request.txt. Протокол evidence/finish.json.
+Сохранность: все 601 history-файл совпали (586 .ultra + 9 Чат_pro + 6 Чат_Pro_01), добавлений нет. Только .obsidian/workspace.json менялся во время работы; агент его не записывал/не откатывал. 14 прежних code/test/launcher/instrument файлов неизменны; добавлен один адресный тест и пакет.

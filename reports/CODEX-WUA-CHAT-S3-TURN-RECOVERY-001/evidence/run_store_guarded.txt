@@ -1,0 +1,265 @@
+.........FF..FFFF....                                                    [100%]
+================================== FAILURES ===================================
+___ test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates ___
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_concurrent_processes_c0')
+
+    def test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        for prefixes, count in ((["a", "b"], 25), (["c", "d", "e", "f"], 8)):
+            before = len(_raw_index(root)["tasks"]) if run_store.workspace_index_path(root).is_file() else 0
+>           answers = _together(root, prefixes, count, "new")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "\nimport json, sys, time\nfrom pathlib import Path\nrepo..._a C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_concurrent_processes_c0\\go new', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+______ test_p9_repeat_registration_from_two_processes_creates_one_entry _______
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_repeat_registration_fr0')
+
+    def test_p9_repeat_registration_from_two_processes_creates_one_entry(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+>       answers = _together(root, ["a", "b"], 15, "same")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:309: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "\nimport json, sys, time\nfrom pathlib import Path\nrepo...a C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_repeat_registration_fr0\\go same', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+_________ test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal __________
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_a_held_workspace_lock_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001AE9ECB2690>
+
+    def test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal(tmp_path: Path, monkeypatch):
+        task = "tb_" + "5" * 32
+        ensure_task_index_entry(tmp_path, task, "chat")
+        canonical = run_store.workspace_index_path(tmp_path)
+        before = canonical.read_bytes()
+        held = tmp_path / "held"
+        hold = ("import sys, time\nfrom pathlib import Path\nsys.path.insert(0, sys.argv[1])\nimport context_storage as cs\n"
+                "with cs._workspace_writer_lock(cs._write_anchor(Path(sys.argv[2]).resolve())):\n"
+                "    open(sys.argv[3], 'w').close()\n    time.sleep(60)\n")
+>       holder = _subprocess.Popen([_sys.executable, "-B", "-c", hold, str(_REPO), str(tmp_path), str(held)])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:363: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "import sys, time\nfrom pathlib import Path\nsys.path.ins...ck_0 C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_a_held_workspace_lock_0\\held', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+____ test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success _____
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_a_process_dying_at_pub0')
+
+    def test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success(tmp_path: Path):
+        canonical = run_store.workspace_index_path(tmp_path)
+        ensure_task_index_entry(tmp_path, "tb_" + "7" * 32, "chat")
+        die = ("import os, sys\nsys.path.insert(0, sys.argv[1])\nimport run_store\nreal = os.replace\n"
+               "def die(*a, **k):\n    if sys.argv[3] == 'after':\n        real(*a, **k)\n    os._exit(17)\n"
+               "os.replace = die\nrun_store.ensure_run_index_entry(sys.argv[2], 'run_x', 'tb_' + '8' * 32, 'chat')\n")
+        before = canonical.read_bytes()
+>       child = _subprocess.run([_sys.executable, "-B", "-c", die, str(_REPO), str(tmp_path), "before"], capture_output=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:395: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "import os, sys\nsys.path.insert(0, sys.argv[1])\nimport ...llm C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_a_process_dying_at_pub0 before', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+_ test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index _
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_writers_with_a_held_in0')
+
+    def test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        ensure_task_index_entry(root, "tb_" + "f" * 32, "chat")
+>       answers = _together(root, ["a", "b"], 8, "new", hold_index=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "\nimport json, sys, time\nfrom pathlib import Path\nrepo..._a C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_writers_with_a_held_in0\\go new', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+___________ test_p9_status_updates_from_two_processes_are_all_kept ____________
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-0/test_p9_status_updates_from_tw0')
+
+    def test_p9_status_updates_from_two_processes_are_all_kept(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        for prefix in ("a", "b"):
+            for k in range(12):
+                create_run_summary(root, "ws", "chat", "tb_" + (prefix + "%031d" % k)[-32:], "run_%s_%03d" % (prefix, k))
+>       _together(root, ["a", "b"], 12, "status")
+
+test_run_store_v2.py:431: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+event = 'subprocess.Popen'
+args = (None, 'M:\\GitHub\\ag_llm\\.venv\\Scripts\\python.exe -B -c "\nimport json, sys, time\nfrom pathlib import Path\nrepo...C:\\Users\\REX\\AppData\\Local\\Temp\\pytest-of-REX\\pytest-0\\test_p9_status_updates_from_tw0\\go status', None, None)
+
+    def audit(event,args):
+        if event=='socket.connect':
+            address=args[1]
+            if not isinstance(address,tuple) or str(address[0]).lower() not in loopback:
+                denied.append(dict(event=event,target=str(address)))
+                raise RuntimeError('S3 test guard: external socket denied')
+        elif event=='socket.getaddrinfo' and str(args[0]).lower() not in loopback:
+            denied.append(dict(event=event,target=str(args[0])))
+            raise RuntimeError('S3 test guard: external DNS denied')
+        elif event=='subprocess.Popen':
+            name=Path(str(args[0])).stem.lower()
+            if name not in {'python','pythonw','python3','node'}:
+                denied.append(dict(event=event,executable=name))
+>               raise RuntimeError('S3 test guard: unapproved executable denied')
+E               RuntimeError: S3 test guard: unapproved executable denied
+
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:23: RuntimeError
+=========================== short test summary info ===========================
+FAILED test_run_store_v2.py::test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates
+FAILED test_run_store_v2.py::test_p9_repeat_registration_from_two_processes_creates_one_entry
+FAILED test_run_store_v2.py::test_p9_a_held_workspace_lock_is_a_bounded_visible_refusal
+FAILED test_run_store_v2.py::test_p9_a_process_dying_at_publication_leaves_no_unconfirmed_success
+FAILED test_run_store_v2.py::test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index
+FAILED test_run_store_v2.py::test_p9_status_updates_from_two_processes_are_all_kept
+6 failed, 15 passed in 2.90s

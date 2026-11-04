@@ -1,0 +1,397 @@
+.........FF....FF....                                                    [100%]
+================================== FAILURES ===================================
+___ test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates ___
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-1/test_p9_concurrent_processes_c0')
+
+    def test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        for prefixes, count in ((["a", "b"], 25), (["c", "d", "e", "f"], 8)):
+            before = len(_raw_index(root)["tasks"]) if run_store.workspace_index_path(root).is_file() else 0
+>           answers = _together(root, prefixes, count, "new")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:288: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:24: in audit
+    executable=command[0] if isinstance(command,(tuple,list)) else shlex.split(command,posix=False)[0].strip('"')
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <shlex.shlex object at 0x0000021DF05A2870>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:191: ValueError
+______ test_p9_repeat_registration_from_two_processes_creates_one_entry _______
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-1/test_p9_repeat_registration_fr0')
+
+    def test_p9_repeat_registration_from_two_processes_creates_one_entry(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+>       answers = _together(root, ["a", "b"], 15, "same")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:309: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:24: in audit
+    executable=command[0] if isinstance(command,(tuple,list)) else shlex.split(command,posix=False)[0].strip('"')
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <shlex.shlex object at 0x0000021DF057AD80>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:191: ValueError
+_ test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index _
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-1/test_p9_writers_with_a_held_in0')
+
+    def test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        ensure_task_index_entry(root, "tb_" + "f" * 32, "chat")
+>       answers = _together(root, ["a", "b"], 8, "new", hold_index=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test_run_store_v2.py:412: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:24: in audit
+    executable=command[0] if isinstance(command,(tuple,list)) else shlex.split(command,posix=False)[0].strip('"')
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <shlex.shlex object at 0x0000021DF05A0050>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:191: ValueError
+___________ test_p9_status_updates_from_two_processes_are_all_kept ____________
+
+tmp_path = WindowsPath('C:/Users/REX/AppData/Local/Temp/pytest-of-REX/pytest-1/test_p9_status_updates_from_tw0')
+
+    def test_p9_status_updates_from_two_processes_are_all_kept(tmp_path: Path):
+        root = tmp_path / "w"
+        root.mkdir()
+        for prefix in ("a", "b"):
+            for k in range(12):
+                create_run_summary(root, "ws", "chat", "tb_" + (prefix + "%031d" % k)[-32:], "run_%s_%03d" % (prefix, k))
+>       _together(root, ["a", "b"], 12, "status")
+
+test_run_store_v2.py:431: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_run_store_v2.py:250: in _together
+    children = [_subprocess.Popen([_sys.executable, "-B", "-c", _CHILD, str(_REPO), str(root), p, str(count),
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\subprocess.py:1534: in _execute_child
+    sys.audit("subprocess.Popen", executable, args, cwd, env)
+reports\CODEX-WUA-CHAT-S3-TURN-RECOVERY-001\guard\sitecustomize.py:24: in audit
+    executable=command[0] if isinstance(command,(tuple,list)) else shlex.split(command,posix=False)[0].strip('"')
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <shlex.shlex object at 0x0000021DF057BE60>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+C:\Users\REX\AppData\Local\Programs\Python\Python312\Lib\shlex.py:191: ValueError
+=========================== short test summary info ===========================
+FAILED test_run_store_v2.py::test_p9_concurrent_processes_create_tasks_and_runs_without_lost_updates
+FAILED test_run_store_v2.py::test_p9_repeat_registration_from_two_processes_creates_one_entry
+FAILED test_run_store_v2.py::test_p9_writers_with_a_held_index_use_generations_then_recover_the_canonical_index
+FAILED test_run_store_v2.py::test_p9_status_updates_from_two_processes_are_all_kept
+4 failed, 17 passed in 3.22s
