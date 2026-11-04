@@ -1,0 +1,36 @@
+{
+  "real_card_unchanged": true,
+  "card_sha256": "d2caba2031ad20916b17277a23dfbafa154d2d527ec982f3ba8d348693c960ce",
+  "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+  },
+  "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+    "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+    "problems": []
+  },
+  "manual_finish_enabled_for_current_card": false,
+  "shortcut_readback": {
+    "result": "SHORTCUT READY",
+    "name": "Карточка Codex — статус.lnk",
+    "mode": "WATCH_WITH_MANUAL_FINISH",
+    "readback": true
+  },
+  "watch_process_alive_at_readback": true,
+  "native_window_observation": {
+    "method": "Computer Use sky.list_windows",
+    "old_window_closed_via": "Alt_L+F4; old process exited",
+    "new_window_count_for_card": 1,
+    "new_window_id": 15011740,
+    "title": "Ротация карточки — 000_Задачи Codex",
+    "screenshot": "NOT VERIFIED: window capture timed out: timed out waiting on channel",
+    "manual_dialog_ui_clickthrough": "NOT RUN; live card WAITING; no synthetic GUI claim"
+  },
+  "inspection_retry": "First readback found no owner after prior window observation. No rotation occurred. Reopened exact shortcut target with diagnostic stdout/stderr; check OK, stderr empty, one window observed. Readback does not require a viewer to remain open.",
+  "synthetic_workflow": "8 new tests; positive finish four phases and amendment bytes; negative waiting, declarations, missing package, same-ID/different-ID stale observation",
+  "real_task_rotation_this_followup": "NOT RUN; no task in BLOCK 1",
+  "network_and_git_operations": 0
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "mutant": "archive_match",
+    "selector": "test_a04_previous_snapshot_conflict_is_never_overwritten",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "c72413f3e46107b87d0c28b1cbf15449d947c5d0cb949db3506808d7c3a3e274"
+  },
+  {
+    "mutant": "snapshot_readback",
+    "selector": "test_a16_snapshot_readback_failure_keeps_card",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "b20b5aecc0f9c1d2c2c161ea80dfd9d77eeee234f77a800d92e1a0f0c12671da"
+  },
+  {
+    "mutant": "repeat_write",
+    "selector": "test_a07_repeat_is_successful_without_card_write",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "5d4613d31ba62e4a0d1774de0fbb942c08778fa2325b29f1e61cb1a06ce99991"
+  }
+]

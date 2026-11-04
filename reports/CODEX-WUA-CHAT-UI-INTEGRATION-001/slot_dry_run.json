@@ -1,0 +1,21 @@
+{
+ "command": "rotate",
+ "card": "Документация/000_Задачи Codex.md",
+ "mode": "dry-run",
+ "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+ "status": "SUBMITTED / REVIEW PENDING",
+ "old_card_sha256": "ba7601701d0dd56b82b0125040d86b5b232d63a6428ab70cce6e2063b23d7523",
+ "previous_slot": {
+  "state": "FILLED",
+  "task_id": "CODEX-WUA-LOCAL-LLM-DISCOVERY-001",
+  "copy_sha256": "287af2ebf4eb1e0dd584135d4ed8c80dc8f943d558e379782d4133e7c3c10587"
+ },
+ "result": "NO ROTATE",
+ "problems": [
+  {
+   "code": "PREVIOUS_SLOT_NOT_ARCHIVED",
+   "detail": "CODEX-WUA-LOCAL-LLM-DISCOVERY-001"
+  }
+ ],
+ "card_unchanged": true
+}

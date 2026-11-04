@@ -1,0 +1,37 @@
+[
+  {
+    "mutant": "archive_match",
+    "selector": "AutomaticArchive.test_a04_previous_snapshot_conflict_is_never_overwritten",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "a74dd17ab5285abdf55438d79a8ce3208c04c731e02299e5dffcdf03ad9da44c"
+  },
+  {
+    "mutant": "snapshot_readback",
+    "selector": "AutomaticArchive.test_a16_snapshot_readback_failure_keeps_card",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "c77298fa000c0bdbb6ce11e50596ea71d8422ab54272fe48276ba91d53e1c032"
+  },
+  {
+    "mutant": "repeat_write",
+    "selector": "AutomaticArchive.test_a07_repeat_is_successful_without_card_write",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "b7b4c2642e6dc97e0fea2107dfc331393d3fd6b2ecaf88f8b9b33e1f59e7093d"
+  },
+  {
+    "mutant": "assign_waiting",
+    "selector": "TaskAssignment.test_s04_active_task_cannot_be_overwritten",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "79dd1bae2e6285637e96d4072c7f3a2e7a8b87f77bb05a99bacb75b8cac38ebc"
+  },
+  {
+    "mutant": "assign_expected_hash",
+    "selector": "TaskAssignment.test_s06_stale_observation_cannot_assign_even_if_still_waiting",
+    "exit_code": 1,
+    "caught": true,
+    "source_sha256": "0e43f375f32b219218a6004311b8c2224edf9f6afbd12f3af46f57f879a707b9"
+  }
+]

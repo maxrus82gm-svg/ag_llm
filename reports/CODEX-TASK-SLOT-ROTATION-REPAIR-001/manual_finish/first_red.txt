@@ -1,0 +1,77 @@
+EEEEEEEE
+======================================================================
+ERROR: test_m01_waiting_invalid_or_missing_observation_cannot_finish (tools.test_task_slot_rotate.ManualFinish.test_m01_waiting_invalid_or_missing_observation_cannot_finish)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 806, in test_m01_waiting_invalid_or_missing_observation_cannot_finish
+    self.assertFalse(monitor.can_manual_finish(value))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'can_manual_finish'
+
+======================================================================
+ERROR: test_m02_manual_action_runs_all_four_existing_phases (tools.test_task_slot_rotate.ManualFinish.test_m02_manual_action_runs_all_four_existing_phases)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 818, in test_m02_manual_action_runs_all_four_existing_phases
+    self.assertTrue(monitor.can_manual_finish(check))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'can_manual_finish'
+
+======================================================================
+ERROR: test_m03_ready_package_must_be_explicitly_declared (tools.test_task_slot_rotate.ManualFinish.test_m03_ready_package_must_be_explicitly_declared)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 830, in test_m03_ready_package_must_be_explicitly_declared
+    monitor.manual_finish_argv(self.ws.card_path, check, no_chat_amendment=True)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+======================================================================
+ERROR: test_m04_no_implicit_or_conflicting_amendment_declaration (tools.test_task_slot_rotate.ManualFinish.test_m04_no_implicit_or_conflicting_amendment_declaration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 837, in test_m04_no_implicit_or_conflicting_amendment_declaration
+    monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, **kwargs)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+======================================================================
+ERROR: test_m05_selected_amendments_preserve_exact_text_and_order (tools.test_task_slot_rotate.ManualFinish.test_m05_selected_amendments_preserve_exact_text_and_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 845, in test_m05_selected_amendments_preserve_exact_text_and_order
+    argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, chat_amendments=files)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+======================================================================
+ERROR: test_m06_missing_final_package_stops_manual_finish (tools.test_task_slot_rotate.ManualFinish.test_m06_missing_final_package_stops_manual_finish)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 853, in test_m06_missing_final_package_stops_manual_finish
+    argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+======================================================================
+ERROR: test_m07_same_id_edit_after_confirmation_is_refused (tools.test_task_slot_rotate.ManualFinish.test_m07_same_id_edit_after_confirmation_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 862, in test_m07_same_id_edit_after_confirmation_is_refused
+    argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+======================================================================
+ERROR: test_m08_other_task_after_confirmation_is_refused (tools.test_task_slot_rotate.ManualFinish.test_m08_other_task_after_confirmation_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 874, in test_m08_other_task_after_confirmation_is_refused
+    argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'tools.task_slot_monitor' has no attribute 'manual_finish_argv'
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.081s
+
+FAILED (errors=8)

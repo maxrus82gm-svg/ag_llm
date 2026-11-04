@@ -1,0 +1,17 @@
+F
+======================================================================
+FAIL: test_s04_active_task_cannot_be_overwritten (tools.test_task_slot_rotate.TaskAssignment.test_s04_active_task_cannot_be_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 934, in test_s04_active_task_cannot_be_overwritten
+    self.refused(task_text(TASK2).encode(), 'BLOCK1_NOT_WAITING')
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 899, in refused
+    self.assertEqual(code, 3, result)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 3 : {'command': 'assign', 'card': 'Документация/000_Задачи Test.md', 'mode': 'apply', 'steps': [{'command': 'check', 'card_sha256': '7d30d5ea6ce4c68175db40cf9f3563aba724f366ea59a70a8f4cc7f83a51803c', 'eol': 'LF', 'marker_lines': {'b1b': 10, 'b1e': 29, 'b11b': 35, 'b11e': 37}, 'block1': {'state': 'TASK', 'task_id': 'CLAUDE-TEST-SLOT-001', 'problems': [], 'title': '🟨 Задача: проверочная постановка', 'lines': 18}, 'block1_1': {'state': 'PLACEHOLDER', 'problems': []}, 'problems': [], 'result': 'OK'}, {'command': 'readback', 'card_sha256': '462779737d934c92e3b809a7b01ae5617eb6ab1c7f58d8bcf5bf209fa2e7e03a', 'eol': 'LF', 'marker_lines': {'b1b': 10, 'b1e': 29, 'b11b': 35, 'b11e': 37}, 'block1': {'state': 'TASK', 'task_id': 'CLAUDE-TEST-SLOT-002', 'problems': [], 'title': '🟨 Задача: проверочная постановка', 'lines': 18}, 'block1_1': {'state': 'PLACEHOLDER', 'problems': []}, 'problems': [], 'result': 'OK'}], 'old_card_sha256': '7d30d5ea6ce4c68175db40cf9f3563aba724f366ea59a70a8f4cc7f83a51803c', 'task_id': 'CLAUDE-TEST-SLOT-002', 'new_card_sha256': '462779737d934c92e3b809a7b01ae5617eb6ab1c7f58d8bcf5bf209fa2e7e03a', 'task_sha256_lf': '4f0e69de3dd55d4ccbc5fb7f137de10511ef3c5b9cd0f00475b26cfae9ff5c70', 'block1_1_and_history_unchanged': True, 'only_block1_changed': True, 'result': 'ASSIGNED', 'card_unchanged': False}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.017s
+
+FAILED (failures=1)

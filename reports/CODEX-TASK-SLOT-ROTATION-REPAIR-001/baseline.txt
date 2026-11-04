@@ -1,0 +1,14 @@
+....F......................................
+======================================================================
+FAIL: test_real_cards_are_valid (tools.test_task_slot_rotate.RealCards.test_real_cards_are_valid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 541, in test_real_cards_are_valid
+    self.assertEqual(code, 0, proto)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 3 != 0 : {'command': 'check', 'card': '������������/000_������ Claude.md', 'card_sha256': '624d2d5f13ad45518d1523d2599550452e6ee933e79843db511ba3efc210ba15', 'eol': 'CRLF', 'marker_lines': {'b1b': 45, 'b1e': 221, 'b11b': 227, 'b11e': 398}, 'block1': {'state': 'INVALID', 'task_id': None, 'problems': [{'code': 'NO_TASK_ID'}], 'lines': 175}, 'block1_1': {'state': 'FILLED', 'task_id': 'CLAUDE-WUA-CHAT-S2-REPLACE-HARDEN-001', 'copy_sha256': 'd1e2437c16166a71f26a9e734f4b424b4c166c8a343b9784d9e539a27a69dd2e', 'problems': []}, 'problems': [{'code': 'NO_TASK_ID'}], 'result': 'INVALID'}
+
+----------------------------------------------------------------------
+Ran 43 tests in 1.908s
+
+FAILED (failures=1)

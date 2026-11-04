@@ -1,0 +1,21 @@
+F
+======================================================================
+FAIL: test_a16_snapshot_readback_failure_keeps_card (tools.test_task_slot_rotate.AutomaticArchive.test_a16_snapshot_readback_failure_keeps_card)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 682, in test_a16_snapshot_readback_failure_keeps_card
+    self.assertEqual((code, codes(p)), (3, {"SNAPSHOT_READBACK"}), p)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (0, set()) != (3, {'SNAPSHOT_READBACK'})
+
+First differing element 0:
+0
+3
+
+- (0, set())
++ (3, {'SNAPSHOT_READBACK'}) : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'apply', 'task_id': 'CLAUDE-TEST-SLOT-001', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '7d30d5ea6ce4c68175db40cf9f3563aba724f366ea59a70a8f4cc7f83a51803c', 'previous_slot': {'state': 'PLACEHOLDER', 'archived': 'NOT_NEEDED'}, 'new_card_sha256': '57153a103d1749d7d72c2da5cdabf3eaf8723083529f1cc4df87b2a3100f725d', 'copy_sha256_lf': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c', 'copy_lines': 18, 'copied_exact': True, 'outside_slots_unchanged': True, 'block1_after': 'WAITING', 'eol': 'LF', 'snapshot': 'reports/CLAUDE-TEST-SLOT-001/handoff_task.md', 'snapshot_state': 'NEW', 'chat_amendments': 0, 'snapshot_sha256': 'aa0e81dd67c85130604ea4d94102cb4feebc359f10694ccb83938470a247c163', 'result': 'ROTATED', 'card_unchanged': False}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.023s
+
+FAILED (failures=1)

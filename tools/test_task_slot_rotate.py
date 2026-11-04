@@ -193,7 +193,7 @@ class Rotation(Base):
         self.assertFalse((package / "handoff_task.md").exists())
         self.assertEqual(sorted(p.name for p in path.parent.iterdir()), [path.name])
 
-    def test_r05_two_rotations_need_the_archive(self):
+    def test_r05_exact_explicit_history_can_replace_a_missing_snapshot(self):
         self.ws.card(make_card())
         self.ws.package()
         self.assertEqual(self.rotate()[0], 0)
@@ -202,23 +202,24 @@ class Rotation(Base):
         # The user pastes the next task in place of the waiting line.
         self.ws.card(first.replace(WAITING_LITERAL.encode() + b"\n", task_text(TASK2, "вторая").encode()))
         self.ws.package(TASK2)
-        proto = self.assert_refused("PREVIOUS_SLOT_NOT_ARCHIVED", task=TASK2)
-        self.assertEqual(proto["previous_slot"]["task_id"], TASK)
-        # Archived with one changed character: still refused.
-        self.ws.archive(b"# Archive\n\n" + old_copy.replace("Пункт".encode(), "Пукнт".encode()))
-        self.assert_refused("PREVIOUS_SLOT_NOT_ARCHIVED", task=TASK2)
+        (self.ws.root / "reports" / TASK / "handoff_task.md").unlink()
+        # An inexact history is not accepted as the archived copy: plan a new exact snapshot.
+        archive = self.ws.archive(b"# Archive\n\n" + old_copy.replace("Пункт".encode(), "Пукнт".encode()))
+        code, proto = self.rotate("--archive-001", archive, task=TASK2, apply=False)
+        self.assertEqual(code, 0, proto)
+        self.assertEqual(proto["previous_slot"]["action"], "WILL_CREATE")
         # Exact copy in №001 (the coordinator archived it, CRLF there): rotation goes on.
         self.ws.archive((b"# Archive\n\n## " + TASK.encode() + b"\n\n" + old_copy).replace(b"\n", b"\r\n"))
         before = self.ws.card_path.read_bytes()
-        code, proto = self.rotate(task=TASK2)
+        code, proto = self.rotate("--archive-001", archive, task=TASK2)
         self.assertEqual(code, 0, proto)
         self.assertEqual(proto["previous_slot"]["archived"], "IN_001")
-        self.assertTrue(proto["previous_slot"]["locator"].endswith(":5"), proto)
+        self.assertTrue(proto["previous_slot"]["locator"].endswith("Test.md"), proto)
         slot = lines_between(self.ws.card_path.read_bytes(), tsr.B11_BEGIN, tsr.B11_END)
         self.assertIn(TASK2.encode(), slot.split(b"\n", 1)[0])
         self.assertEqual(slot.split(b"\n", 2)[2], lines_between(before, tsr.B1_BEGIN, tsr.B1_END))
 
-    def test_r06_previous_archive_snapshot_needs_reference(self):
+    def test_r06_previous_snapshot_reference_is_optional_and_not_publication_proof(self):
         self.ws.card(make_card())
         self.ws.package()
         self.rotate()
@@ -226,7 +227,9 @@ class Rotation(Base):
         self.ws.card(first.replace(WAITING_LITERAL.encode() + b"\n", task_text(TASK2, "вторая").encode()))
         self.ws.package(TASK2)
         snapshot = self.ws.root / "reports" / TASK / "handoff_task.md"
-        self.assert_refused("PREVIOUS_ARCHIVE_REF_MISSING", "--previous-archive", snapshot, task=TASK2)
+        code, proto = self.rotate("--previous-archive", snapshot, task=TASK2, apply=False)
+        self.assertEqual(code, 0, proto)
+        self.assertEqual(proto["previous_slot"]["publication"], "NOT VERIFIED")
         code, proto = self.rotate("--previous-archive", snapshot, "--previous-archive-ref", "main@abc #1", task=TASK2)
         self.assertEqual(code, 0, proto)
         self.assertEqual((proto["previous_slot"]["archived"], proto["previous_slot"]["reference"]),
@@ -335,7 +338,9 @@ class Refusals(Base):
         self.rotate()
         data = self.ws.card_path.read_bytes()
         self.ws.card(data.replace(WAITING_LITERAL.encode() + b"\n", task_text().encode()))
-        self.assert_refused("ALREADY_ROTATED")
+        code, proto = self.rotate()
+        self.assertEqual((code, proto["result"]), (0, "CLEARED_DUPLICATE_BLOCK1"))
+        self.assertEqual(lines_between(self.ws.card_path.read_bytes(), tsr.B1_BEGIN, tsr.B1_END), WAITING_LITERAL.encode() + b"\n")
 
     def test_n16_report_package_not_final(self):
         self.ws.card(make_card())
@@ -461,9 +466,10 @@ class Refusals(Base):
         self.assertEqual(path.read_bytes(), before, "the card is rolled back")
         (self.ws.root / "reports" / TASK / "handoff_task.md").unlink()
 
+        real_create = tsr.create_snapshot
         def broken_snapshot(target, data):
-            real(target, b"garbage\n" if target.name == "handoff_task.md" else data)
-        with unittest.mock.patch.object(tsr, "atomic_write", side_effect=broken_snapshot):
+            real_create(target, b"garbage\n")
+        with unittest.mock.patch.object(tsr, "create_snapshot", side_effect=broken_snapshot):
             code, proto = self.rotate()
         self.assertEqual((code, codes(proto)), (3, {"SNAPSHOT_READBACK"}), proto)
         self.assertEqual(path.read_bytes(), before, "the card is not written after a bad snapshot")
@@ -527,6 +533,525 @@ class Cli(Base):
                                capture_output=True, env=env)
         self.assertEqual(usage.returncode, 2)
         self.assertEqual(path.read_bytes(), make_card())
+
+
+class AutomaticArchive(Base):
+    def next_task(self, amend=("--no-chat-amendment",)):
+        self.ws.card(make_card())
+        self.ws.package()
+        self.assertEqual(self.rotate(amend=amend)[0], 0)
+        first = self.ws.card_path.read_bytes()
+        self.ws.card(first.replace(WAITING_LITERAL.encode() + b"\n", task_text(TASK2).encode()))
+        self.ws.package(TASK2)
+        return self.ws.root / "reports" / TASK / "handoff_task.md", first
+
+    def test_a01_saved_reference_is_used_without_history_scan(self):
+        snap, first = self.next_task()
+        saved, mtime = snap.read_bytes(), snap.stat().st_mtime_ns
+        with unittest.mock.patch.object(tsr, "find_001", side_effect=AssertionError("no history scan")):
+            code, p = self.rotate(task=TASK2)
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["previous_slot"]["action"], "REUSED")
+        self.assertEqual((snap.read_bytes(), snap.stat().st_mtime_ns), (saved, mtime))
+        self.assertEqual(p["previous_slot"]["publication"], "NOT VERIFIED")
+
+    def test_a02_missing_previous_snapshot_is_saved_before_replacement(self):
+        snap, first = self.next_task()
+        expected = tsr.snapshot_parts(snap.read_bytes())
+        snap.unlink()
+        code, p = self.rotate(task=TASK2)
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["previous_slot"]["action"], "CREATED")
+        self.assertEqual(tsr.snapshot_parts(snap.read_bytes()), expected)
+
+    def test_a03_dry_run_creates_no_missing_archive(self):
+        snap, first = self.next_task()
+        snap.unlink()
+        before = self.ws.card_path.read_bytes()
+        code, p = self.rotate(task=TASK2, apply=False)
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["previous_slot"]["action"], "WILL_CREATE")
+        self.assertFalse(snap.exists())
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_a04_previous_snapshot_conflict_is_never_overwritten(self):
+        snap, first = self.next_task()
+        snap.write_bytes(snap.read_bytes().replace("Пункт".encode(), "Пунктик".encode()))
+        bad = snap.read_bytes()
+        self.assert_refused("PREVIOUS_SNAPSHOT_CONFLICT", task=TASK2)
+        self.assertEqual(snap.read_bytes(), bad)
+
+    def test_a05_exact_duplicate_clears_only_block1(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        first = self.ws.card_path.read_bytes()
+        old_slot = lines_between(first, tsr.B11_BEGIN, tsr.B11_END)
+        self.ws.card(first.replace(WAITING_LITERAL.encode() + b"\n", task_text().encode()))
+        code, p = self.rotate()
+        self.assertEqual((code, p["result"]), (0, "CLEARED_DUPLICATE_BLOCK1"))
+        self.assertEqual(lines_between(self.ws.card_path.read_bytes(), tsr.B11_BEGIN, tsr.B11_END), old_slot)
+
+    def test_a06_conflicting_duplicate_refused(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        first = self.ws.card_path.read_bytes()
+        self.ws.card(first.replace(WAITING_LITERAL.encode() + b"\n", task_text(title="другое содержимое").encode()))
+        self.assert_refused("SAME_TASK_DIFFERENT_TEXT")
+
+    def test_a07_repeat_is_successful_without_card_write(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        before, mtime = self.ws.card_path.read_bytes(), self.ws.card_path.stat().st_mtime_ns
+        code, p = self.rotate()
+        self.assertEqual((code, p["result"]), (0, "ALREADY_ROTATED"))
+        self.assertTrue(p["card_unchanged"])
+        self.assertEqual((self.ws.card_path.read_bytes(), self.ws.card_path.stat().st_mtime_ns), (before, mtime))
+
+    def test_a08_retry_after_card_write_failure_reuses_archives(self):
+        snap, first = self.next_task(); snap.unlink()
+        before = self.ws.card_path.read_bytes()
+        with unittest.mock.patch.object(tsr, "atomic_write", side_effect=tsr.Refused([tsr.problem("WRITE_FAILED")])):
+            code, p = self.rotate(task=TASK2)
+        self.assertEqual(code, 3, p)
+        self.assertTrue(snap.exists())
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        code, p = self.rotate(task=TASK2)
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["previous_slot"]["action"], "REUSED")
+
+    def test_a09_missing_chat_amendments_block_reconstruction(self):
+        note = Path(self._tmp.name) / "note.txt"; note.write_text("Поправка", encoding="utf-8")
+        snap, first = self.next_task(amend=("--chat-amendment", note))
+        snap.unlink()
+        self.assert_refused("PREVIOUS_AMENDMENTS_MISSING", task=TASK2)
+
+    def test_a10_archive_changed_before_card_write_is_detected(self):
+        snap, first = self.next_task()
+        before = self.ws.card_path.read_bytes()
+        code, p = self.rotate(task=TASK2, hook=lambda card: snap.write_bytes(b"changed"))
+        self.assertEqual((code, codes(p)), (3, {"ARCHIVE_CHANGED"}), p)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_a11_snapshot_cannot_escape_reports(self):
+        snap, first = self.next_task()
+        text = self.ws.card_path.read_bytes()
+        text = text.replace(f"reports/{TASK}/handoff_task.md".encode(), b"../handoff_task.md")
+        self.ws.card_path.write_bytes(text)
+        self.assert_refused("UNSAFE_SNAPSHOT_PATH", task=TASK2)
+
+    def test_a12_finish_runs_all_phases_and_is_idempotent(self):
+        self.ws.card(make_card()); self.ws.package()
+        args = ["finish", "--card", self.ws.card_path, "--task-id", TASK, "--no-chat-amendment", "--date", DATE, "--apply"]
+        code, p = run(*args)
+        self.assertEqual(code, 0, p)
+        self.assertEqual([x["command"] for x in p["steps"]], ["check", "dry-run", "apply", "readback"])
+        self.assertEqual(p["result"], "ROTATED")
+        code, p = run(*args)
+        self.assertEqual((code, p["result"]), (0, "ALREADY_ROTATED"))
+
+    def test_a13_finish_dry_run_changes_nothing(self):
+        self.ws.card(make_card()); folder = self.ws.package()
+        before = self.ws.card_path.read_bytes()
+        code, p = run("finish", "--card", self.ws.card_path, "--task-id", TASK, "--no-chat-amendment", "--date", DATE)
+        self.assertEqual((code, p["result"]), (0, "DRY RUN OK"))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertFalse((folder / "handoff_task.md").exists())
+
+    def test_a14_debug_settings_and_single_window_mailbox(self):
+        from tools import task_slot_monitor as monitor
+        config = Path(self._tmp.name) / "debug.json"
+        config.write_text('{"enabled": false, "font_size": 99}', encoding="utf-8")
+        self.assertEqual(monitor.debug_settings(config)["font_size"], 16)
+        self.assertFalse(monitor.debug_settings(config)["enabled"])
+        folder = Path(self._tmp.name) / "monitor"
+        self.assertTrue(monitor.claim(folder, ["first"]))
+        self.assertFalse(monitor.claim(folder, ["repeat"]))
+        requests = list(folder.glob("request-*.json"))
+        self.assertEqual(len(requests), 1)
+        self.assertEqual(json.loads(requests[0].read_text())["argv"], ["repeat"])
+
+    def test_a15_new_snapshot_is_never_overwritten(self):
+        path = Path(self._tmp.name) / "handoff_task.md"; path.write_bytes(b"previous")
+        with self.assertRaises(tsr.Refused): tsr.create_snapshot(path, b"new")
+        self.assertEqual(path.read_bytes(), b"previous")
+
+    def test_a16_snapshot_readback_failure_keeps_card(self):
+        self.ws.card(make_card()); self.ws.package()
+        before = self.ws.card_path.read_bytes()
+        real = tsr.create_snapshot
+        def corrupt(path, data): real(path, data + b"corrupt")
+        with unittest.mock.patch.object(tsr, "create_snapshot", side_effect=corrupt):
+            code, p = self.rotate()
+        self.assertEqual((code, codes(p)), (3, {"SNAPSHOT_READBACK"}), p)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_a17_previous_amendment_tamper_is_detected(self):
+        note = Path(self._tmp.name) / "note.txt"; note.write_text("Поправка A", encoding="utf-8")
+        snap, first = self.next_task(amend=("--chat-amendment", note))
+        snap.write_bytes(snap.read_bytes().replace("Поправка A".encode(), "Поправка B".encode()))
+        self.assert_refused("PREVIOUS_SNAPSHOT_CONFLICT", task=TASK2)
+
+    def test_a18_old_archive_creation_error_keeps_card(self):
+        snap, first = self.next_task(); snap.unlink()
+        before = self.ws.card_path.read_bytes()
+        with unittest.mock.patch.object(tsr.os, "link", side_effect=PermissionError("unavailable")):
+            code, p = self.rotate(task=TASK2)
+        self.assertEqual((code, codes(p)), (3, {"ARCHIVE_CREATE_FAILED"}), p)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertFalse(snap.exists())
+
+    def test_a19_source_script_never_uses_windows_kill_for_liveness(self):
+        from tools import task_slot_monitor as monitor
+        if os.name == "nt":
+            with unittest.mock.patch.object(monitor.os, "kill", side_effect=AssertionError("unsafe on Windows")):
+                self.assertTrue(monitor.process_alive(os.getpid()))
+
+    def test_a20_malformed_debug_config_is_explicit(self):
+        from tools import task_slot_monitor as monitor
+        config = Path(self._tmp.name) / "debug.json"
+        config.write_text('{"enabled": "false"}', encoding="utf-8")
+        with self.assertRaises(ValueError): monitor.debug_settings(config)
+
+    def test_a21_waiting_line_never_replaces_the_submitted_task(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        before = self.ws.card_path.read_bytes()
+        slot = lines_between(before, tsr.B11_BEGIN, tsr.B11_END)
+        code, p = self.rotate()
+        self.assertEqual((code, p["result"]), (0, "ALREADY_ROTATED"))
+        self.assertEqual(lines_between(self.ws.card_path.read_bytes(), tsr.B11_BEGIN, tsr.B11_END), slot)
+        self.assertNotIn(WAITING_LITERAL.encode(), slot)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_a22_watch_is_read_only_and_needs_no_package(self):
+        self.ws.card(make_card())
+        before = self.ws.card_path.read_bytes()
+        code, p = run("watch", "--card", self.ws.card_path, "--headless")
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["block1"]["task_id"], TASK)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertFalse((self.ws.root / "reports").exists())
+
+    def test_a23_watch_defaults_to_thirty_minutes(self):
+        from tools import task_slot_monitor as monitor
+        config = Path(self._tmp.name) / "debug.json"
+        config.write_text('{"enabled": false}', encoding="utf-8")
+        self.assertEqual(monitor.debug_settings(config)["refresh_minutes"], 30)
+
+    def test_a24_watch_rereads_changed_local_card(self):
+        self.ws.card(make_card())
+        code, first = run("watch", "--card", self.ws.card_path, "--headless")
+        self.assertEqual((code, first["block1"]["state"]), (0, "TASK"))
+        self.ws.card(make_card(b1=WAITING_LITERAL + "\n"))
+        saved = self.ws.card_path.read_bytes()
+        code, second = run("watch", "--card", self.ws.card_path, "--headless")
+        self.assertEqual((code, second["block1"]["state"]), (0, "WAITING"))
+        self.assertEqual(self.ws.card_path.read_bytes(), saved)
+
+    def test_a25_title_is_display_data_without_changing_task(self):
+        text = task_text() + '\n**Название:** Проверочная задача\n'
+        self.ws.card(make_card(b1=text))
+        code, p = run("check", "--card", self.ws.card_path)
+        self.assertEqual(code, 0, p)
+        self.assertEqual(p["block1"]["title"], "Проверочная задача")
+
+    def test_a26_short_task_and_whitespace_padding_are_never_rotated(self):
+        self.ws.package()
+        text = f'**TASK ID:** `{TASK}`\n'
+        for padding in ('', ' ' * 500):
+            self.ws.card(make_card(b1=text + padding + '\n'))
+            self.assert_refused('TASK_TOO_SHORT')
+
+    def test_a27_short_previous_slot_is_not_an_archive_source(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        first = self.ws.card_path.read_bytes()
+        old_slot = lines_between(first, tsr.B11_BEGIN, tsr.B11_END)
+        short = f'**TASK ID:** `{TASK}`\n'.encode()
+        meta = tsr.META.format(task=TASK, date=DATE, amend='нет', snap=f'reports/{TASK}/handoff_task.md',
+                               report='r', sha=hashlib.sha256(short).hexdigest()).encode()
+        edited = first.replace(old_slot, meta + b'\n\n' + short).replace(WAITING_LITERAL.encode() + b'\n', task_text(TASK2).encode())
+        self.ws.card(edited); self.ws.package(TASK2)
+        self.assert_refused('PREVIOUS_TASK_TOO_SHORT', task=TASK2)
+
+    def test_a28_headless_entrypoint_needs_no_tkinter_or_monitor(self):
+        import runpy
+        self.ws.card(make_card()); self.ws.package()
+        argv = ['task_slot_rotate.py', 'finish', '--card', str(self.ws.card_path), '--task-id', TASK,
+                '--no-chat-amendment', '--date', DATE, '--apply', '--headless']
+        out = io.StringIO()
+        with unittest.mock.patch.object(sys, 'argv', argv), unittest.mock.patch.dict(sys.modules, {'tkinter': None, 'task_slot_monitor': None}), contextlib.redirect_stdout(out):
+            with self.assertRaises(SystemExit) as ended:
+                runpy.run_path(str(SCRIPT), run_name='__main__')
+        self.assertEqual(ended.exception.code, 0)
+        self.assertEqual(json.loads(out.getvalue())['result'], 'ROTATED')
+
+    def test_a29_minimum_is_exactly_one_hundred_unicode_characters(self):
+        prefix = f'**TASK ID:** `{TASK}`\n'
+        for size, expected in ((99, 3), (100, 0)):
+            text = prefix + 'я' * (size - tsr.task_chars(prefix)) + '\n'
+            self.assertEqual(tsr.task_chars(text), size)
+            self.ws.card(make_card(b1=text))
+            code, p = run('check', '--card', self.ws.card_path)
+            self.assertEqual(code, expected, p)
+
+
+class ManualFinish(Base):
+    """User action delegates to the same guarded workflow; no GUI is needed."""
+
+    def observed(self):
+        self.ws.card(make_card())
+        code, check = run('check', '--card', self.ws.card_path)
+        self.assertEqual(code, 0)
+        return check
+
+    def test_m01_waiting_invalid_or_missing_observation_cannot_finish(self):
+        from tools import task_slot_monitor as monitor
+        for value in (None, {}, {'result': 'INVALID', 'block1': {'state': 'TASK', 'task_id': TASK}}):
+            self.assertFalse(monitor.can_manual_finish(value))
+        self.ws.card(make_card(b1=WAITING_LITERAL + '\n'))
+        _, waiting = run('check', '--card', self.ws.card_path)
+        before = self.ws.card_path.read_bytes()
+        self.assertFalse(monitor.can_manual_finish(waiting))
+        with self.assertRaises(ValueError):
+            monitor.manual_finish_argv(self.ws.card_path, waiting, package_ready=True, no_chat_amendment=True)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_m02_manual_action_runs_all_four_existing_phases(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); self.ws.package()
+        self.assertTrue(monitor.can_manual_finish(check))
+        argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+        self.assertEqual(argv[0], 'finish')
+        code, result = run(*argv)
+        self.assertEqual((code, result['result']), (0, 'ROTATED'), result)
+        self.assertEqual([x['command'] for x in result['steps']], ['check', 'dry-run', 'apply', 'readback'])
+        self.assertEqual(result['steps'][-1]['block1']['state'], 'WAITING')
+
+    def test_m03_ready_package_must_be_explicitly_declared(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); self.ws.package()
+        with self.assertRaises(ValueError):
+            monitor.manual_finish_argv(self.ws.card_path, check, no_chat_amendment=True)
+
+    def test_m04_no_implicit_or_conflicting_amendment_declaration(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed()
+        for kwargs in ({}, {'no_chat_amendment': True, 'chat_amendments': ['amendment.md']}):
+            with self.assertRaises(ValueError):
+                monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, **kwargs)
+
+    def test_m05_selected_amendments_preserve_exact_text_and_order(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); package = self.ws.package()
+        files = [Path(self._tmp.name) / name for name in ('поправка 1.md', 'поправка 2.txt')]
+        contents = [b'# First amendment\n', '# Вторая поправка\n'.encode()]
+        for path, data in zip(files, contents): path.write_bytes(data)
+        argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, chat_amendments=files)
+        code, result = run(*argv)
+        self.assertEqual((code, result['result']), (0, 'ROTATED'), result)
+        self.assertEqual(tsr.snapshot_parts((package / 'handoff_task.md').read_bytes())[1], contents)
+
+    def test_m06_missing_final_package_stops_manual_finish(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); before = self.ws.card_path.read_bytes()
+        argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+        code, result = run(*argv)
+        self.assertEqual(code, 3, result)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertFalse((self.ws.root / 'reports').exists())
+
+    def test_m07_same_id_edit_after_confirmation_is_refused(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); self.ws.package()
+        argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+        self.ws.card(make_card(b1=task_text(extra='Изменение после просмотра.')))
+        before = self.ws.card_path.read_bytes()
+        code, result = run(*argv)
+        self.assertEqual(code, 3, result)
+        self.assertIn('CARD_CHANGED', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertFalse((self.ws.root / 'reports' / TASK / 'handoff_task.md').exists())
+
+    def test_m08_other_task_after_confirmation_is_refused(self):
+        from tools import task_slot_monitor as monitor
+        check = self.observed(); self.ws.package()
+        argv = monitor.manual_finish_argv(self.ws.card_path, check, package_ready=True, no_chat_amendment=True)
+        self.ws.card(make_card(b1=task_text(TASK2)))
+        before = self.ws.card_path.read_bytes()
+        code, result = run(*argv)
+        self.assertEqual(code, 3, result)
+        self.assertIn('CARD_CHANGED', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+
+class TaskAssignment(Base):
+    def ready(self, *, eol='\n', bom=False):
+        self.ws.card(make_card(b1=WAITING_LITERAL + '\n', eol=eol, bom=bom))
+        return run('check', '--card', self.ws.card_path)[1]
+
+    def assign(self, text=None, *, check=None, apply=True, hook=None):
+        check = check or run('check', '--card', self.ws.card_path)[1]
+        source = Path(self._tmp.name) / 'новая задача.md'
+        source.write_bytes(task_text().encode() if text is None else text)
+        argv = ['assign', '--card', self.ws.card_path, '--task-file', source,
+                '--expected-card-sha256', check['card_sha256'], '--headless']
+        return run(*argv, *(['--apply'] if apply else []), hook=hook)
+
+    def refused(self, text, expected):
+        before = self.ws.card_path.read_bytes()
+        code, result = self.assign(text)
+        self.assertEqual(code, 3, result)
+        self.assertIn(expected, codes(result), result)
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_s01_only_waiting_enables_new_task_button(self):
+        from tools import task_slot_monitor as monitor
+        self.assertTrue(monitor.can_assign_task(self.ready()))
+        for body in ('', task_text(), f'**TASK ID:** `{TASK}`\n'):
+            self.ws.card(make_card(b1=body))
+            check = run('check', '--card', self.ws.card_path)[1]
+            self.assertFalse(monitor.can_assign_task(check))
+            with self.assertRaises(ValueError):
+                monitor.assign_task_argv(self.ws.card_path, check, 'draft.md')
+
+    def test_s02_assign_markdown_and_preserve_all_other_bytes(self):
+        self.ready(); before = self.ws.card_path.read_bytes()
+        code, result = self.assign()
+        self.assertEqual((code, result['result']), (0, 'ASSIGNED'), result)
+        after = self.ws.card_path.read_bytes()
+        self.assertEqual(lines_between(after, tsr.B1_BEGIN, tsr.B1_END), task_text().encode())
+        self.assertEqual(before[before.index(tsr.B1_END.encode()):], after[after.index(tsr.B1_END.encode()):])
+        self.assertEqual(before[:before.index(tsr.B1_BEGIN.encode())], after[:after.index(tsr.B1_BEGIN.encode())])
+        self.assertEqual(result['steps'][-1]['block1']['task_id'], TASK)
+        self.assertFalse((self.ws.root / 'reports').exists())
+
+    def test_s03_preview_does_not_write(self):
+        self.ready(); before = self.ws.card_path.read_bytes()
+        stamp = self.ws.card_path.stat().st_mtime_ns
+        code, result = self.assign(apply=False)
+        self.assertEqual((code, result['result']), (0, 'DRY RUN OK'))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+        self.assertEqual(self.ws.card_path.stat().st_mtime_ns, stamp)
+
+    def test_s04_active_task_cannot_be_overwritten(self):
+        self.ws.card(make_card())
+        self.refused(task_text(TASK2).encode(), 'BLOCK1_NOT_WAITING')
+
+    def test_s05_empty_block_is_not_waiting(self):
+        self.ws.card(make_card(b1=''))
+        self.refused(task_text().encode(), 'BLOCK1_NOT_WAITING')
+
+    def test_s06_stale_observation_cannot_assign_even_if_still_waiting(self):
+        check = self.ready()
+        self.ws.card_path.write_bytes(self.ws.card_path.read_bytes() + b'\n')
+        before = self.ws.card_path.read_bytes()
+        code, result = self.assign(check=check)
+        self.assertEqual(code, 3, result)
+        self.assertIn('CARD_CHANGED', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_s07_parallel_change_is_preserved(self):
+        self.ready(); changed = []
+        def edit(path):
+            changed.append(path.read_bytes() + b'\nConcurrent note\n')
+            path.write_bytes(changed[0])
+        code, result = self.assign(hook=edit)
+        self.assertEqual(code, 3, result)
+        self.assertIn('CARD_CHANGED', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), changed[0])
+
+    def test_s08_double_submit_is_refused_without_duplicate(self):
+        check = self.ready()
+        self.assertEqual(self.assign(check=check)[0], 0)
+        before = self.ws.card_path.read_bytes()
+        code, result = self.assign(check=check)
+        self.assertEqual(code, 3, result)
+        self.assertIn('CARD_CHANGED', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_s09_no_task_id_is_rejected(self):
+        self.ready(); self.refused(('Обычный текст ' * 25).encode(), 'NO_TASK_ID')
+
+    def test_s10_short_task_is_rejected(self):
+        self.ready(); self.refused(f'**TASK ID:** `{TASK}`\n'.encode(), 'TASK_TOO_SHORT')
+
+    def test_s11_waiting_line_is_not_a_new_task(self):
+        self.ready(); self.refused(WAITING_LITERAL.encode(), 'NEW_TASK_REQUIRED')
+
+    def test_s12_whole_card_or_marker_injection_is_rejected(self):
+        self.ready(); self.refused(make_card(), 'CARD_STRUCTURE_IN_TASK')
+        self.refused((task_text() + tsr.B1_END).encode(), 'CARD_STRUCTURE_IN_TASK')
+
+    def test_s13_multiple_task_ids_are_rejected(self):
+        self.ready(); self.refused((task_text() + f'\n**TASK ID:** `{TASK2}`\n').encode(), 'MULTIPLE_TASK_IDS')
+
+    def test_s14_crlf_bom_trailing_spaces_and_unicode_survive(self):
+        self.ready(eol='\r\n', bom=True)
+        body = task_text(extra='**Название:** Новая задача 😊\n')
+        code, result = self.assign(b'\xef\xbb\xbf' + body.encode())
+        self.assertEqual((code, result['result']), (0, 'ASSIGNED'), result)
+        raw = self.ws.card_path.read_bytes()
+        self.assertTrue(raw.startswith(b'\xef\xbb\xbf'))
+        self.assertEqual(lines_between(raw, tsr.B1_BEGIN, tsr.B1_END), body.replace('\n', '\r\n').encode())
+
+    def test_s15_invalid_utf8_nul_and_oversized_input_are_rejected(self):
+        self.ready()
+        self.refused(b'\xff', 'TASK_INVALID_UTF8')
+        self.refused(task_text().encode() + b'\x00', 'TASK_INVALID_CHARACTER')
+        self.refused(b'x' * (tsr.MAX_SNAPSHOT_BYTES + 1), 'TASK_FILE_SIZE_OR_TYPE')
+
+    def test_s16_readback_mismatch_rolls_back(self):
+        self.ready(); before = self.ws.card_path.read_bytes()
+        writer = tsr.atomic_write
+        def damaged(path, data):
+            writer(path, data + b'CORRUPT' if data != before else data)
+        with unittest.mock.patch.object(tsr, 'atomic_write', side_effect=damaged):
+            code, result = self.assign()
+        self.assertEqual(code, 3, result)
+        self.assertIn('READBACK_MISMATCH_ROLLED_BACK', codes(result))
+        self.assertEqual(self.ws.card_path.read_bytes(), before)
+
+    def test_s17_previous_submitted_task_is_not_assigned_again(self):
+        self.ws.card(make_card()); self.ws.package(); self.rotate()
+        self.refused(task_text().encode(), 'TASK_ALREADY_SUBMITTED')
+
+    def test_s18_ui_command_uses_expected_hash_and_core_assignment(self):
+        from tools import task_slot_monitor as monitor
+        check = self.ready()
+        draft = Path(self._tmp.name) / 'draft.md'
+        draft.write_bytes(task_text().encode())
+        command = monitor.assign_task_argv(self.ws.card_path, check, draft)
+        code, result = run(*command)
+        self.assertEqual((code, result['result']), (0, 'ASSIGNED'), result)
+        self.assertEqual(command[0], 'assign')
+        self.assertEqual(result['old_card_sha256'], check['card_sha256'])
+
+    def test_s19_new_id_preserves_filled_slot_and_snapshot_verbatim(self):
+        self.ws.card(make_card()); package = self.ws.package(); self.rotate()
+        before = self.ws.card_path.read_bytes()
+        snapshot = (package / 'handoff_task.md').read_bytes()
+        code, result = self.assign(task_text(TASK2).encode())
+        self.assertEqual((code, result['result'], result['task_id']), (0, 'ASSIGNED', TASK2), result)
+        after = self.ws.card_path.read_bytes()
+        self.assertEqual(before[before.index(tsr.B1_END.encode()):], after[after.index(tsr.B1_END.encode()):])
+        self.assertEqual((package / 'handoff_task.md').read_bytes(), snapshot)
+
+    def test_s20_assignment_respects_existing_rotation_lock(self):
+        self.ready()
+        with tsr.card_lock(self.ws.card_path):
+            self.refused(task_text().encode(), 'LOCKED')
+
+    def test_s21_failed_write_leaves_waiting_and_history_unchanged(self):
+        self.ready()
+        with unittest.mock.patch.object(tsr, 'atomic_write', side_effect=tsr.Refused([tsr.problem('WRITE_FAILED')])):
+            self.refused(task_text().encode(), 'WRITE_FAILED')
+
+    def test_s22_assignment_entrypoint_executes_in_real_headless_child(self):
+        from tools import task_slot_monitor as monitor
+        check = self.ready()
+        draft = Path(self._tmp.name) / 'draft.md'
+        draft.write_bytes(task_text().encode())
+        command = monitor.assign_task_argv(self.ws.card_path, check, draft)
+        child = subprocess.run([sys.executable, '-B', str(SCRIPT), *command, '--headless'],
+                               capture_output=True, text=True, encoding='utf-8', timeout=20)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        self.assertEqual(json.loads(child.stdout)['result'], 'ASSIGNED')
 
 
 class RealCards(unittest.TestCase):

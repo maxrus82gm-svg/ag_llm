@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Mechanical rotation BLOCK 1 -> BLOCK 1.1 of a personal task card (Claude 008, Codex 007).
 
-Rule: Документация/18 -> DOC-BLOCK1-SLOT-01@1 (commit #460). The script moves bytes; it never writes, shortens or
+Rule: Документация/18 -> DOC-BLOCK1-SLOT-01@2 (USER GO 2026-11-04). The script moves bytes; it never shortens or
 rephrases task text. It produces only two fixed lines: the waiting line of BLOCK 1 and the status line of BLOCK 1.1.
 
 Commands (a dry run unless --apply is given):
+  finish           --card CARD --task-id ID --no-chat-amendment [--apply] [--monitor | --headless]
+                   one process: check -> dry-run -> apply -> readback
+  watch            --card CARD [--headless] (read-only; window refreshes local state, never uses Git)
   check            --card CARD
+  assign           --card CARD --task-file FILE --expected-card-sha256 SHA [--apply]
+                   user action: assign new Markdown only to a verified WAITING block
   install-markers  --card CARD [--apply]
   rotate           --card CARD --task-id ID (--no-chat-amendment | --chat-amendment FILE [...])
                    [--report-dir DIR] [--archive-001 FILE] [--previous-archive FILE --previous-archive-ref TEXT]
@@ -45,6 +50,12 @@ PLACEHOLDERS = (
     "и не решение о приёмке. Предыдущая запись заменяется только после подтверждённого постоянного архивирования.",
 )
 STATUS = "SUBMITTED / REVIEW PENDING"
+MIN_TASK_CHARS = 100
+
+
+def task_chars(text):
+    """Whitespace padding does not turn an accidental short note into a task."""
+    return sum(not char.isspace() for char in text)
 META = ("**" + STATUS + "** · TASK ID `{task}` · перенесено {date} · SHA-256 копии `{sha}` · "
         "CHAT-ONLY AMENDMENT: {amend} · снимок `{snap}` · отчёт `{report}`")
 ID = r"[A-Z0-9]+(?:-[A-Z0-9]+)+"
@@ -193,6 +204,8 @@ def classify_block1(texts, base):
     decls = declarations(texts)
     ids = sorted({task for _, task in decls})
     task_id = ids[0] if len(ids) == 1 else None
+    if task_id and task_chars("\n".join(texts)) < MIN_TASK_CHARS:
+        problems.append(problem("TASK_TOO_SHORT", f"fewer than {MIN_TASK_CHARS} non-whitespace characters"))
     if not decls:
         problems.append(problem("NO_TASK_ID"))
     elif len(ids) > 1:
@@ -230,6 +243,8 @@ def classify_block11(lines, texts, base):
               "meta": match.groupdict(), "problems": []}
     if result["copy_sha256"] != match["sha"]:
         result["problems"].append(problem("SLOT_1_1_COPY_CHANGED", "the copy does not match its SHA-256", base + 2))
+    if task_chars(copy.decode("utf-8")) < MIN_TASK_CHARS:
+        result["problems"].append(problem("PREVIOUS_TASK_TOO_SHORT", f"fewer than {MIN_TASK_CHARS} non-whitespace characters"))
     if {task for _, task in declarations(texts[2:])} != {match["task"]}:
         result["problems"].append(problem("SLOT_1_1_TASK_ID_MISMATCH", match["task"], base))
     if result["problems"]:
@@ -289,6 +304,98 @@ def archived_at(copy: bytes, path: Path):
     return None if at < 0 else data[:at].count(b"\n") + 1
 
 
+MAX_SNAPSHOT_BYTES = 4 * 1024 * 1024
+
+
+def snapshot_path(repo, value):
+    """Only one addressed handoff file under reports; no recursive discovery."""
+    path = Path(os.path.abspath(repo / Path(value)))
+    reports = repo / "reports"
+    if not path.is_relative_to(reports) or path.name != "handoff_task.md":
+        raise Refused([problem("UNSAFE_SNAPSHOT_PATH", "expected reports/.../handoff_task.md")])
+    for node in (path, *path.parents):
+        if node == repo:
+            break
+        if node.exists() or node.is_symlink():
+            st = node.lstat()
+            if node.is_symlink() or getattr(st, "st_file_attributes", 0) & 0x400:
+                raise Refused([problem("UNSAFE_SNAPSHOT_PATH", "link/reparse point")])
+    return path
+
+
+def bounded_bytes(path):
+    if not path.exists():
+        return None
+    if not path.is_file() or path.stat().st_size > MAX_SNAPSHOT_BYTES:
+        raise Refused([problem("ARCHIVE_SIZE_OR_TYPE", path.name)])
+    return path.read_bytes()
+
+
+def preserve_previous(slot, args, repo, card_path):
+    """Plan preservation. A local archive is not an assertion of publication."""
+    previous = {"state": slot["state"]}
+    if slot["state"] != "FILLED":
+        previous["archived"] = "NOT_NEEDED"
+        return previous, []
+    previous.update(task_id=slot["task_id"], copy_sha256=slot["copy_sha256"],
+                    publication="NOT VERIFIED")
+    # The exact snapshot reference is already in the slot. Explicit paths are overrides.
+    raw = args.previous_archive or slot["meta"]["snap"]
+    path = snapshot_path(repo, raw)
+    data = bounded_bytes(path)
+    expected_amends = 0 if slot["meta"]["amend"] == "нет" else int(slot["meta"]["amend"].split()[0])
+    copy = slot["copy"].replace(b"\r\n", b"\n")
+    if data is not None:
+        parts = snapshot_parts(data)
+        if not parts or parts[0] != copy or len(parts[1]) != expected_amends:
+            raise Refused([problem("PREVIOUS_SNAPSHOT_CONFLICT", rel(path, repo))])
+        previous.update(archived="IN_SNAPSHOT", action="REUSED", locator=rel(path, repo),
+                        archive_sha256=sha256(data))
+        if args.previous_archive_ref:
+            previous["reference"] = args.previous_archive_ref  # caller-supplied, not independently verified
+        return previous, [(path, data, data)]
+    # An explicit historical archive is an addressed fallback, never a whole-repo search.
+    if args.archive_001 and not expected_amends:
+        archive = Path(args.archive_001).resolve()
+        historical = bounded_bytes(archive)
+        if historical is not None and copy in historical.replace(b"\r\n", b"\n"):
+            previous.update(archived="IN_001", action="REUSED", locator=rel(archive, repo),
+                            archive_sha256=sha256(historical))
+            return previous, [(archive, historical, historical)]
+    if expected_amends:
+        raise Refused([problem("PREVIOUS_AMENDMENTS_MISSING", "cannot reconstruct chat amendments from the card")])
+    data = snapshot_bytes(slot["task_id"], rel(card_path, repo), slot["meta"]["date"],
+                          copy, [], slot["meta"]["report"])
+    previous.update(archived="IN_SNAPSHOT", action="WILL_CREATE", locator=rel(path, repo),
+                    archive_sha256=sha256(data))
+    return previous, [(path, None, data)]
+
+
+def create_snapshot(path, data):
+    """Publish a new immutable snapshot without replacing a concurrently created file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix=".slot-", suffix=".tmp", dir=path.parent, delete=False) as out:
+            tmp = Path(out.name)
+            out.write(data)
+            out.flush()
+            os.fsync(out.fileno())
+        os.link(tmp, path)  # atomic no-replace publication; same volume, fails closed if unsupported
+    except OSError as error:
+        raise Refused([problem("ARCHIVE_CREATE_FAILED", f"{path.name}: {type(error).__name__}")])
+    finally:
+        if tmp is not None:
+            with contextlib.suppress(OSError):
+                tmp.unlink()
+
+
+def progress(args, step, message, color="blue"):
+    if getattr(args, "progress", False):
+        print(json.dumps({"step": step, "message": message, "color": color}, ensure_ascii=False),
+              file=sys.stderr, flush=True)
+
+
 def snapshot_parts(data: bytes):
     lines = split_lines(data.replace(b"\r\n", b"\n"))
     texts = [line.rstrip(b"\n").decode("utf-8", "replace") for line in lines]
@@ -303,9 +410,18 @@ def snapshot_parts(data: bytes):
             a_begin = texts.index(f"<!-- TASK-SNAPSHOT:AMENDMENT-{number}:BEGIN -->", end)
             a_end = texts.index(f"<!-- TASK-SNAPSHOT:AMENDMENT-{number}:END -->", a_begin + 1)
         except ValueError:
+            if any(t.startswith(f"<!-- TASK-SNAPSHOT:AMENDMENT-{number}:") for t in texts[end + 1:]):
+                return None
             break
-        amendments.append(b"".join(lines[a_begin + 1:a_end]))
+        content = b"".join(lines[a_begin + 1:a_end])
+        header = f"## CHAT-ONLY AMENDMENT {number} — SHA-256 `{sha256(content)}`"
+        if header not in texts[end + 1:a_begin]:
+            return None
+        amendments.append(content)
         number += 1
+    markers = [t for t in texts[end + 1:] if t.startswith("<!-- TASK-SNAPSHOT:AMENDMENT-")]
+    if len(markers) != 2 * len(amendments):
+        return None
     return b"".join(lines[begin + 1:end]), amendments
 
 
@@ -379,12 +495,91 @@ def cmd_check(args, proto):
         lines1, texts1, base1 = card.body("b1b", "b1e")
         lines11, texts11, base11 = card.body("b11b", "b11e")
         block1, block11 = classify_block1(texts1, base1), classify_block11(lines11, texts11, base11)
+        if block1.get("task_id"):
+            title = next((t.removeprefix("**Название:**").strip() for t in texts1 if t.startswith("**Название:**")), "")
+            if not title:
+                title = next((t.lstrip("# ").strip() for t in texts1 if t.startswith("# ")), "")
+            block1["title"] = title[:500]
         proto["block1"] = {**public(block1), "lines": len(texts1)}
         proto["block1_1"] = public(block11)
         problems += block1["problems"] + block11["problems"]
     proto["problems"] = problems
     proto["result"] = "INVALID" if problems else "OK"
     return proto, 3 if problems else 0
+
+
+def new_task_bytes(raw, eol=b"\n"):
+    """Validate user Markdown; only normalize CRLF, an initial BOM and final LF."""
+    if len(raw) > MAX_SNAPSHOT_BYTES:
+        raise Refused([problem("TASK_TOO_LARGE", "maximum 4 MiB")])
+    try:
+        text = raw.decode("utf-8-sig").replace("\r\n", "\n")
+    except UnicodeDecodeError:
+        raise Refused([problem("TASK_INVALID_UTF8")])
+    if "\x00" in text:
+        raise Refused([problem("TASK_INVALID_CHARACTER", "NUL")])
+    slot = classify_block1(text.split("\n"), 0)
+    if slot["state"] != "TASK":
+        raise Refused(slot["problems"] or [problem("NEW_TASK_REQUIRED", "paste a complete task, not the waiting line")])
+    if any(TOKEN in line for line in text.split("\n")):
+        raise Refused([problem("CARD_STRUCTURE_IN_TASK", "paste only the task, without card markers")])
+    if not text.endswith("\n"):
+        text += "\n"
+    return text.encode("utf-8").replace(b"\n", eol), slot["task_id"]
+
+
+def cmd_assign(args, proto):
+    """User-initiated assignment: replace WAITING only; never touch block 1.1."""
+    path = Path(args.card).resolve()
+    data = path.read_bytes()
+    check, code = cmd_check(args, {"command": "check"})
+    proto.update(mode="apply" if args.apply else "dry-run", steps=[check], old_card_sha256=sha256(data))
+    if code:
+        raise Refused(check["problems"])
+    if check["card_sha256"] != sha256(data) or args.expected_card_sha256 != sha256(data):
+        raise Refused([problem("CARD_CHANGED", "card changed since the new-task form was opened")])
+    if check["block1"]["state"] != "WAITING":
+        raise Refused([problem("BLOCK1_NOT_WAITING", "finish the current task before assigning another")])
+    source = Path(args.task_file)
+    if not source.is_file() or source.stat().st_size > MAX_SNAPSHOT_BYTES:
+        raise Refused([problem("TASK_FILE_SIZE_OR_TYPE")])
+    card = parse(data)
+    payload, task = new_task_bytes(source.read_bytes(), card.eol)
+    if check["block1_1"].get("task_id") == task:
+        raise Refused([problem("TASK_ALREADY_SUBMITTED", "this TASK ID is already in block 1.1")])
+    new = b"".join(card.lines[:card.idx["b1b"] + 1] + [payload] + card.lines[card.idx["b1e"]:])
+    plan = parse(new)
+    if plan.problems:
+        raise Refused(plan.problems)
+    after = classify_block1(plan.body("b1b", "b1e")[1], 0)
+    unchanged = (card.lines[:card.idx["b1b"] + 1] == plan.lines[:plan.idx["b1b"] + 1]
+                 and card.lines[card.idx["b1e"]:] == plan.lines[plan.idx["b1e"]:])
+    if after["state"] != "TASK" or after["task_id"] != task or not unchanged:
+        raise Refused([problem("PLAN_INVALID")])
+    proto.update(task_id=task, new_card_sha256=sha256(new), task_sha256_lf=sha_lf(payload),
+                 block1_1_and_history_unchanged=True, only_block1_changed=True)
+    if not args.apply:
+        proto.update(result="DRY RUN OK", card_unchanged=True)
+        return proto, 0
+    progress(args, "assign", "Записываем новую задачу в ожидающий БЛОК 1", "green")
+    with card_lock(path):
+        if path.read_bytes() != data:
+            raise Refused([problem("CARD_CHANGED")])
+        if _BEFORE_CARD_WRITE:
+            _BEFORE_CARD_WRITE(path)
+        if path.read_bytes() != data:
+            raise Refused([problem("CARD_CHANGED")])
+        atomic_write(path, new)
+        if path.read_bytes() != new:
+            atomic_write(path, data)
+            raise Refused([problem("READBACK_MISMATCH_ROLLED_BACK")])
+        readback, code = cmd_check(args, {"command": "readback"})
+        if code or readback["card_sha256"] != sha256(new):
+            raise Refused([problem("ASSIGN_READBACK_CONFLICT", "inspect the card; concurrent changes were not overwritten")])
+    proto["steps"].append(readback)
+    proto.update(result="ASSIGNED", card_unchanged=False)
+    progress(args, "done", "Задача записана в БЛОК 1; история сохранена", "green")
+    return proto, 0
 
 
 def cmd_install(args, proto):
@@ -457,7 +652,9 @@ def cmd_rotate(args, proto):
     lines1, texts1, base1 = card.body("b1b", "b1e")
     lines11, texts11, base11 = card.body("b11b", "b11e")
     block1, block11 = classify_block1(texts1, base1), classify_block11(lines11, texts11, base11)
-    if block1["state"] in ("EMPTY", "WAITING"):
+    already = block1["state"] in ("EMPTY", "WAITING") and block11.get("task_id") == task
+    duplicate = block1.get("task_id") == task and block11.get("task_id") == task
+    if block1["state"] in ("EMPTY", "WAITING") and not already:
         problems.append(problem("NOTHING_TO_ROTATE", f"BLOCK 1 is {block1['state']}"))
     problems += block1["problems"]
     if block1.get("task_id") and block1["task_id"] != task:
@@ -478,42 +675,27 @@ def cmd_rotate(args, proto):
             problems.append(problem("CHAT_AMENDMENT_EMPTY", Path(name).name))
             continue
         amendments.append(text if text.endswith(b"\n") else text + b"\n")
-    previous = {"state": block11["state"]}
     if block11["state"] == "INVALID":
         problems += block11["problems"]
-    elif block11["state"] == "FILLED":
-        previous.update(task_id=block11["task_id"], copy_sha256=block11["copy_sha256"])
-        if block11["task_id"] == task:
-            problems.append(problem("ALREADY_ROTATED", "BLOCK 1.1 already holds this TASK"))
-        else:
-            archive = Path(args.archive_001).resolve() if args.archive_001 else find_001(card_path)
-            line = archived_at(block11["copy"], archive)
-            if line:
-                previous.update(archived="IN_001", locator=f"{rel(archive, repo)}:{line}",
-                                archive_sha256=sha256(archive.read_bytes()))
-            elif args.previous_archive:
-                snap = Path(args.previous_archive).resolve()
-                line = archived_at(block11["copy"], snap)
-                if not args.previous_archive_ref:
-                    problems.append(problem("PREVIOUS_ARCHIVE_REF_MISSING", "name the published commit/locator"))
-                elif line:
-                    previous.update(archived="IN_SNAPSHOT", locator=f"{rel(snap, repo)}:{line}",
-                                    archive_sha256=sha256(snap.read_bytes()), reference=args.previous_archive_ref)
-                else:
-                    problems.append(problem("PREVIOUS_SLOT_NOT_ARCHIVED", block11["task_id"]))
-            else:
-                problems.append(problem("PREVIOUS_SLOT_NOT_ARCHIVED", block11["task_id"]))
-    else:
-        previous["archived"] = "NOT_NEEDED"
+    if duplicate and b"".join(lines1).replace(b"\r\n", b"\n") != block11["copy"].replace(b"\r\n", b"\n"):
+        problems.append(problem("SAME_TASK_DIFFERENT_TEXT", "both slots name the same TASK but the texts differ"))
+    if problems:
+        raise Refused(problems)
+    previous, artifacts = preserve_previous(block11, args, repo, card_path)
     proto["previous_slot"] = previous
+    progress(args, "archive", "БЛОК 1.1: " + (block11.get("task_id") or block11["state"]) +
+             (" · точная копия уже есть: " if previous.get("action") == "REUSED" else
+              " · сначала сохраняем копию: " if previous.get("action") == "WILL_CREATE" else " · архивирование не требуется") +
+             previous.get("locator", ""))
     report_dir = Path(args.report_dir).resolve() if args.report_dir else repo / "reports" / task
     problems += package_problems(report_dir)
-    copy = b"".join(lines1)
+    copy = block11["copy"] if already else b"".join(lines1)
     copy_lf = copy.replace(b"\r\n", b"\n")
-    snap_path = report_dir / "handoff_task.md"
+    snap_path = snapshot_path(repo, report_dir / "handoff_task.md")
     reuse = False
-    if snap_path.exists():
-        parts = snapshot_parts(snap_path.read_bytes())
+    initial_snapshot = bounded_bytes(snap_path)
+    if initial_snapshot is not None:
+        parts = snapshot_parts(initial_snapshot)
         if parts == (copy_lf, amendments):
             reuse = True
         else:
@@ -524,8 +706,11 @@ def cmd_rotate(args, proto):
     amend = "нет" if not amendments else f"{len(amendments)} в снимке"
     meta = META.format(task=task, date=date, sha=sha256(copy_lf), amend=amend, snap=snap_rel, report=report_rel)
     eol, idx = card.eol, card.idx
+    new_slot = lines11 if duplicate or already else [meta.encode("utf-8") + eol, eol] + lines1
     new = b"".join(card.lines[:idx["b1b"] + 1] + [WAITING.encode("utf-8") + eol] + card.lines[idx["b1e"]:idx["b11b"] + 1]
-                   + [meta.encode("utf-8") + eol, eol] + lines1 + card.lines[idx["b11e"]:])
+                   + new_slot + card.lines[idx["b11e"]:])
+    if already and block1["state"] == "WAITING":
+        new = data  # even whitespace/mtime remain unchanged on a verified repeat
     after = parse(new)
     if after.problems:
         raise Refused([problem("PLAN_INVALID", json.dumps(after.problems, ensure_ascii=False))])
@@ -535,30 +720,100 @@ def cmd_rotate(args, proto):
     if after1["state"] != "WAITING" or not copied_exact or not same_segments(card, after):
         raise Refused([problem("PLAN_INVALID", "the planned card fails its own readback")])
     snapshot = snapshot_bytes(task, rel(card_path, repo), date, copy_lf, amendments, report_rel)
+    # If the current task is already in 1.1, its snapshot may be planned by preserve_previous.
+    by_path = {p: (old, payload) for p, old, payload in artifacts}
+    if snap_path in by_path:
+        old, payload = by_path[snap_path]
+        if snapshot_parts(payload) != (copy_lf, amendments):
+            raise Refused([problem("SNAPSHOT_CONFLICT", "amendments or task text differ")])
+    else:
+        artifacts.append((snap_path, initial_snapshot, initial_snapshot if reuse else snapshot))
+    artifacts = list({p: (p, old, payload) for p, old, payload in artifacts}.values())
     proto.update({"new_card_sha256": sha256(new), "copy_sha256_lf": sha256(copy_lf), "copy_lines": len(lines1),
                   "copied_exact": True, "outside_slots_unchanged": True, "block1_after": "WAITING",
                   "eol": "CRLF" if eol == b"\r\n" else "LF", "snapshot": snap_rel,
                   "snapshot_state": "EXISTS_IDENTICAL" if reuse else "NEW", "chat_amendments": len(amendments)})
     if not args.apply:
         proto["result"] = "DRY RUN OK"
+        proto["planned_action"] = "ALREADY_ROTATED" if already else "CLEARED_DUPLICATE_BLOCK1" if duplicate else "ROTATED"
         return proto, 0
     with card_lock(card_path):
         if card_path.read_bytes() != data:
             raise Refused([problem("CARD_CHANGED", "the card changed after it was read")])
-        if not reuse:
-            atomic_write(snap_path, snapshot)
-            if snapshot_parts(snap_path.read_bytes()) != (copy_lf, amendments):
+        if getattr(args, "checked_sha256", sha256(data)) != sha256(data):
+            raise Refused([problem("CARD_CHANGED", "card changed since workflow check")])
+        for p, old, payload in artifacts:
+            if bounded_bytes(p) != old:
+                raise Refused([problem("ARCHIVE_CHANGED", rel(p, repo))])
+        for p, old, payload in artifacts:
+            if old is None:
+                snapshot_path(repo, p)  # recheck addressed parents before creating anything
+                create_snapshot(p, payload)
+            if bounded_bytes(p) != payload:
                 raise Refused([problem("SNAPSHOT_READBACK", "the card was not changed")])
         if _BEFORE_CARD_WRITE:
             _BEFORE_CARD_WRITE(card_path)
         if card_path.read_bytes() != data:
             raise Refused([problem("CARD_CHANGED", "the card changed after it was read")])
-        atomic_write(card_path, new)
+        for p, old, payload in artifacts:
+            if bounded_bytes(p) != payload:
+                raise Refused([problem("ARCHIVE_CHANGED", rel(p, repo))])
+        if new != data:
+            atomic_write(card_path, new)
         if card_path.read_bytes() != new:
             atomic_write(card_path, data)
             raise Refused([problem("READBACK_MISMATCH_ROLLED_BACK")])
     proto["snapshot_sha256"] = sha256(snap_path.read_bytes())
-    proto["result"] = "ROTATED"
+    if previous.get("action") == "WILL_CREATE":
+        previous["action"] = "CREATED"
+    proto["result"] = "ALREADY_ROTATED" if already else "CLEARED_DUPLICATE_BLOCK1" if duplicate else "ROTATED"
+    proto["card_unchanged"] = new == data
+    return proto, 0
+
+
+def cmd_finish(args, proto):
+    """One process: check -> dry run -> apply -> readback; no manual edits."""
+    proto["steps"] = []
+    for phase in ("check", "dry-run", "apply", "readback"):
+        if phase in ("apply", "readback") and not args.apply:
+            break
+        progress(args, phase, {"check": "Проверяем оба блока", "dry-run": "Проверяем архив и план переноса",
+                              "apply": "Сохраняем снимки и выполняем перенос", "readback": "Сверяем результат после записи"}[phase], "green")
+        step = {"command": phase}
+        if phase in ("check", "readback"):
+            step, code = cmd_check(args, step)
+            if phase == "check" and code == 0:
+                expected = getattr(args, "expected_card_sha256", None)
+                if expected is not None and expected != step["card_sha256"]:
+                    proto["steps"].append(step)
+                    proto.update(result="NO ROTATE", problems=[problem("CARD_CHANGED", "card changed since manual confirmation")])
+                    return proto, 3
+                args.checked_sha256 = step["card_sha256"]
+                for slot_name in ("block1", "block1_1"):
+                    slot = step[slot_name]
+                    progress(args, "slots", ("БЛОК 1" if slot_name == "block1" else "БЛОК 1.1") +
+                             ": " + slot.get("task_id", slot["state"]))
+        else:
+            saved = args.apply
+            args.apply = phase == "apply"
+            try:
+                step, code = cmd_rotate(args, step)
+            finally:
+                args.apply = saved
+        proto["steps"].append(step)
+        if code:
+            proto.update(result="NO ROTATE", problems=step.get("problems", []))
+            return proto, code
+    final = proto["steps"][-2] if args.apply else proto["steps"][-1]
+    proto["result"] = final["result"]
+    proto["task_id"] = args.task_id
+    if args.apply:
+        readback = proto["steps"][-1]
+        if readback["block1"]["state"] != "WAITING" or readback["block1_1"].get("task_id") != args.task_id:
+            raise Refused([problem("FINAL_READBACK_MISMATCH")])
+    progress(args, "done", "Уже перенесено: повторная запись не требуется" if proto["result"] == "ALREADY_ROTATED"
+             else "Проверка завершена" if not args.apply else "БЛОК 1 освобождён; БЛОК 1.1 и снимок проверены",
+             "blue" if proto["result"] == "ALREADY_ROTATED" else "green")
     return proto, 0
 
 
@@ -568,19 +823,37 @@ def build_parser():
     check = sub.add_parser("check", help="validate markers, TASK IDs and the BLOCK 1.1 copy")
     install = sub.add_parser("install-markers", help="one-time insertion of the four slot markers")
     rotate = sub.add_parser("rotate", help="move BLOCK 1 to BLOCK 1.1 and set BLOCK 1 to waiting")
-    for item in (check, install, rotate):
+    finish = sub.add_parser("finish", help="one workflow: check, dry run, optional apply, readback")
+    watch = sub.add_parser("watch", help="read-only local card status window; never rotates or uses Git")
+    assign = sub.add_parser("assign", help="user assigns Markdown to a WAITING block; never replaces an active task")
+    assign.set_defaults(task_id="NEW-TASK", report_dir=None)
+    assign.add_argument("--task-file", required=True, help="UTF-8 Markdown supplied by the user")
+    assign.add_argument("--expected-card-sha256", required=True, help="hash of the card shown to the user")
+    assign.add_argument("--progress", action="store_true")
+    assign.add_argument("--headless", action="store_true")
+    watch.set_defaults(task_id="STATUS-ONLY", apply=False, report_dir=None, progress=False)
+    watch_display = watch.add_mutually_exclusive_group()
+    watch_display.add_argument("--headless", action="store_true", help="return one check without opening a window")
+    watch_display.add_argument("--new-task", action="store_true", help="open the user task editor only if BLOCK 1 is WAITING; no automatic submission")
+    for item in (check, install, rotate, finish, watch, assign):
         item.add_argument("--card", required=True)
         item.add_argument("--repo", help="repository root (default: the folder above Документация)")
-    for item in (install, rotate):
+    for item in (install, rotate, finish, assign):
         item.add_argument("--apply", action="store_true", help="write the change (default: dry run)")
-    rotate.add_argument("--task-id", required=True, help="the TASK ID that the executor hands in")
-    rotate.add_argument("--no-chat-amendment", action="store_true", help="the TASK had no chat-only AMENDMENT")
-    rotate.add_argument("--chat-amendment", action="append", metavar="FILE", help="exact text of a chat-only AMENDMENT")
-    rotate.add_argument("--report-dir", help="final package folder (default: reports/<TASK-ID>)")
-    rotate.add_argument("--archive-001", help="personal archive №001 (default: found next to the card)")
-    rotate.add_argument("--previous-archive", help="published snapshot holding the previous BLOCK 1.1 copy")
-    rotate.add_argument("--previous-archive-ref", help="commit/locator of that published snapshot")
-    rotate.add_argument("--date", help="transfer date YYYY-MM-DD (default: today)")
+    for item in (rotate, finish):
+        item.add_argument("--task-id", required=True, help="the TASK ID that the executor hands in")
+        item.add_argument("--no-chat-amendment", action="store_true", help="the TASK had no chat-only AMENDMENT")
+        item.add_argument("--chat-amendment", action="append", metavar="FILE", help="exact text of a chat-only AMENDMENT")
+        item.add_argument("--report-dir", help="final package folder (default: reports/<TASK-ID>)")
+        item.add_argument("--archive-001", help="explicit historical archive fallback (no automatic full-history scan)")
+        item.add_argument("--previous-archive", help="override the exact snapshot path already stored in BLOCK 1.1")
+        item.add_argument("--previous-archive-ref", help="optional caller-supplied publication locator; never verified by this tool")
+        item.add_argument("--date", help="transfer date YYYY-MM-DD (default: today)")
+    finish.add_argument("--progress", action="store_true", help="JSON progress events on stderr")
+    finish.add_argument("--expected-card-sha256", help="refuse if the card changed since the user's observation")
+    display = finish.add_mutually_exclusive_group()
+    display.add_argument("--monitor", action="store_true", help="show debug window for this run")
+    display.add_argument("--headless", action="store_true", help="suppress debug window for this run")
     return parser
 
 
@@ -588,20 +861,30 @@ def main(argv=None):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     args = build_parser().parse_args(argv)
-    handler = {"check": cmd_check, "install-markers": cmd_install, "rotate": cmd_rotate}[args.command]
+    handler = {"check": cmd_check, "install-markers": cmd_install, "rotate": cmd_rotate, "finish": cmd_finish,
+               "watch": cmd_check, "assign": cmd_assign}[args.command]
     card_path = Path(args.card).resolve()
     proto = {"command": args.command, "card": rel(card_path, repo_root(card_path, args.repo))}
+    initial_sha = sha256(card_path.read_bytes()) if card_path.is_file() else None
     try:
         proto, code = handler(args, proto)
     except (Refused, FileNotFoundError) as error:
         problems = error.problems if isinstance(error, Refused) else [
             problem("FILE_NOT_FOUND", Path(error.filename or "").name)]
         proto.update({"result": "NO ROTATE" if args.command == "rotate" else "REFUSED", "problems": problems,
-                      "card_unchanged": True})
+                      "card_unchanged": card_path.is_file() and sha256(card_path.read_bytes()) == initial_sha})
         code = 3
+        progress(args, "blocked", "; ".join(p["code"] for p in problems), "red")
     print(json.dumps(proto, ensure_ascii=False, indent=1))
     return code
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "watch" and "--headless" not in sys.argv:
+        from task_slot_monitor import launch
+        sys.exit(launch(sys.argv[1:]))
+    if len(sys.argv) > 1 and sys.argv[1] == "finish" and "--headless" not in sys.argv:
+        from task_slot_monitor import debug_settings, launch
+        if "--monitor" in sys.argv or debug_settings()["enabled"]:
+            sys.exit(launch(sys.argv[1:]))
     sys.exit(main())

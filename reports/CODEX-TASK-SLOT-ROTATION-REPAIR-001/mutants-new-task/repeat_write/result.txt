@@ -1,0 +1,20 @@
+F
+======================================================================
+FAIL: test_a07_repeat_is_successful_without_card_write (tools.test_task_slot_rotate.AutomaticArchive.test_a07_repeat_is_successful_without_card_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 605, in test_a07_repeat_is_successful_without_card_write
+    self.assertEqual((self.ws.card_path.read_bytes(), self.ws.card_path.stat().st_mtime_ns), (before, mtime))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (b'# [5031 chars]0\xb6\xd0\xb4\xd0\xb0\xd1\x82\xd1\x8c.\n', 1793780000078198900) != (b'# [5031 chars]0\xb6\xd0\xb4\xd0\xb0\xd1\x82\xd1\x8c.\n', 1793780000067956200)
+
+First differing element 1:
+1793780000078198900
+1793780000067956200
+
+Diff is 5691 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.042s
+
+FAILED (failures=1)

@@ -1,0 +1,74 @@
+{
+  "task": "CODEX-TASK-SLOT-ROTATION-REPAIR-001 / new-task user amendment",
+  "date": "2026-11-04",
+  "block1": {
+    "state": "WAITING",
+    "problems": [],
+    "lines": 1
+  },
+  "block1_1": {
+    "state": "FILLED",
+    "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+    "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+    "problems": []
+  },
+  "card_sha256": "87ca9acdb7111d4c77517194928a509644f0d0d7d694236c4b8ab9c429855dae",
+  "block1_unchanged": true,
+  "block1_1_and_all_following_bytes_unchanged": true,
+  "rules_prefix_changed_only_as_documented": true,
+  "main_window_before_opening_form": {
+    "time": "2026-11-04 13:13:32",
+    "result": "OK",
+    "block1": {
+      "state": "WAITING",
+      "problems": [],
+      "lines": 1
+    },
+    "new_task_button": {
+      "text": "Новая задача…",
+      "enabled": true,
+      "x": 727,
+      "width": 129,
+      "header_width": 856
+    },
+    "dialog_open": false,
+    "geometry": "880x530+208+208"
+  },
+  "native_editor_self_diagnostics": {
+    "title": "Новая задача — БЛОК 1",
+    "empty": true,
+    "submit_disabled": true,
+    "text_has_focus": true,
+    "resizable": [
+      1,
+      1
+    ],
+    "geometry": "860x650+0+0"
+  },
+  "native_window_seen_via_computer_use": {
+    "main_window_id": 7739870,
+    "count_for_card": 1
+  },
+  "native_editor_open_method": "Supported watch --new-task startup, with WAITING gate; no submission",
+  "native_mouse_click_on_new_task": "NOT RUN: Computer Use geometry/capture unavailable for Tk window",
+  "native_visual_screenshot": "NOT VERIFIED: window capture timed out: timed out waiting on channel",
+  "engineering_note": "Experimental Ctrl+N through Computer Use did not open a form; removed from final code/docs. The visible button and explicit --new-task entry remain.",
+  "native_submit_clickthrough": "NOT RUN; real card intentionally left WAITING",
+  "synthetic_assignment_tests": 22,
+  "total_targeted_tests": 101,
+  "mutation_controls": {
+    "run": 5,
+    "caught": 5,
+    "selectors_already_in_101": true
+  },
+  "shortcut": {
+    "result": "SHORTCUT READY",
+    "name": "Карточка Codex — статус.lnk",
+    "mode": "WATCH_WITH_MANUAL_ACTIONS",
+    "readback": true
+  },
+  "git_operations": 0,
+  "network_requests": 0,
+  "other_personal_cards_modified": 0,
+  "real_task_assignment_performed": false
+}

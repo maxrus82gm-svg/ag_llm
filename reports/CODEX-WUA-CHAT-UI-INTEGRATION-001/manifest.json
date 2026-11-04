@@ -1,5 +1,7 @@
 {
   "task": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+  "status": "LOCAL ONLY / AWAITING INDEPENDENT VERIFICATION",
+  "self_excluded": "manifest.json",
   "files": [
     {
       "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/assignment_source.txt",
@@ -17,6 +19,11 @@
       "sha256": "a628cf92a4d0bf8bcb4964d5d03de96f10bb60240ed67ee487041959221cdaab"
     },
     {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/handoff_task.md",
+      "bytes": 12504,
+      "sha256": "188bd7a9693d543f794ac2acfd00143dd346062dd028ebf23e28c7917647806c"
+    },
+    {
       "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/privacy-before.tap",
       "bytes": 6185,
       "sha256": "84e2654c306f386529c869c4953656eb9cb3de2901d7e584dfcfcf5d09ff6543"
@@ -28,8 +35,48 @@
     },
     {
       "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/report.md",
-      "bytes": 6591,
-      "sha256": "8a78e22a8a7e17822ecb579f742ab661554d117252bcf078069e05de53b45025"
+      "bytes": 7984,
+      "sha256": "fd736ea9f45ed181bd917097d4ca9f93f141908e7ef1cd9c7c780d3ce2d16c0a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_check.json",
+      "bytes": 635,
+      "sha256": "86ead19fbda7ce6f62f19bc5e40295d81c480714afb2ea8c66671435ec2af2ee"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_dry_run.json",
+      "bytes": 652,
+      "sha256": "d4698ecc7f368e772b9f2a1fa250f4f79ef5a10f4f46e93f18ffc7ca36dc0f79"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793774837990986000.json",
+      "bytes": 3400,
+      "sha256": "361b40c5d7b426646155ca5b65207777d00029fe88ae883d168dd1d2f751691f"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793774894221514000.json",
+      "bytes": 6117,
+      "sha256": "1bb114332159ee0ce03ff1f5ba1ff5da7f90bff12328bef18a92e8cf07c14aa4"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793775043261238600.json",
+      "bytes": 6087,
+      "sha256": "a1066792f5751c89e309cd0eee57573451194aa6c4d6b245f5e75aa2f7230f0a"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793775103564216100.json",
+      "bytes": 6087,
+      "sha256": "a74ef22df7adc778d92b6176e44def2ebcd3775bfd37f50b8a931c15e858e426"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793775186789423900.json",
+      "bytes": 4649,
+      "sha256": "e5058d0be1057f2bafc87055f4a1a64711f0812d0cf5eddfac79bbe6004b5bd5"
+    },
+    {
+      "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/slot_finish_1793775243968401300.json",
+      "bytes": 5005,
+      "sha256": "ca36eda54b39fba52ab7dc700f89834102715c1d01d30b0fbd8d1bcab48c84c6"
     },
     {
       "path": "reports/CODEX-WUA-CHAT-UI-INTEGRATION-001/ui-after.tap",
@@ -57,15 +104,14 @@
       "sha256": "1c6ac7d50f57c631e33977add964ffe61db15cd739f4bc7d8924e8748f8511eb"
     },
     {
-      "path": "web_alarm/ui.py",
-      "bytes": 177241,
-      "sha256": "9d81fe511ce2a319077f20910b390c77e53ed61cbb8974a8ae810d65ec24badc"
-    },
-    {
       "path": "test_web_alarm_ultra_chat_ui.js",
       "bytes": 38393,
       "sha256": "937bded03d37d3be0217d27a9e7a7a11a886f933fdf5d1fc34b92e5bf278087b"
+    },
+    {
+      "path": "web_alarm/ui.py",
+      "bytes": 177241,
+      "sha256": "9d81fe511ce2a319077f20910b390c77e53ed61cbb8974a8ae810d65ec24badc"
     }
-  ],
-  "manifest_excludes_itself": true
+  ]
 }

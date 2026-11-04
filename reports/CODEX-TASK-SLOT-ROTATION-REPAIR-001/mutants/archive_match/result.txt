@@ -1,0 +1,17 @@
+F
+======================================================================
+FAIL: test_a04_previous_snapshot_conflict_is_never_overwritten (tools.test_task_slot_rotate.AutomaticArchive.test_a04_previous_snapshot_conflict_is_never_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 581, in test_a04_previous_snapshot_conflict_is_never_overwritten
+    self.assert_refused("PREVIOUS_SNAPSHOT_CONFLICT", task=TASK2)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 123, in assert_refused
+    self.assertEqual(code, 3, proto)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 0 != 3 : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '89cf4dfe60648127a72fac7a7e3867f5dd51933ba0005189f7307bfd0b3b0807', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c', 'publication': 'NOT VERIFIED', 'archived': 'IN_SNAPSHOT', 'action': 'REUSED', 'locator': 'reports/CLAUDE-TEST-SLOT-001/handoff_task.md', 'archive_sha256': 'db6b860efa7147d062cfb0e0bf98b0793ab8ee8b2e79680ba6f41532456eb7ab'}, 'new_card_sha256': '0cf92e11a95d17be63ab1b272eafb792bfe64e6995ddfd47ccc6d7f973ffca17', 'copy_sha256_lf': '4f0e69de3dd55d4ccbc5fb7f137de10511ef3c5b9cd0f00475b26cfae9ff5c70', 'copy_lines': 18, 'copied_exact': True, 'outside_slots_unchanged': True, 'block1_after': 'WAITING', 'eol': 'LF', 'snapshot': 'reports/CLAUDE-TEST-SLOT-002/handoff_task.md', 'snapshot_state': 'NEW', 'chat_amendments': 0, 'result': 'DRY RUN OK', 'planned_action': 'ROTATED'}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.035s
+
+FAILED (failures=1)

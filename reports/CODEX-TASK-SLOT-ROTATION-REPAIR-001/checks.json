@@ -1,0 +1,230 @@
+{
+  "task": "CODEX-TASK-SLOT-ROTATION-REPAIR-001",
+  "date": "2026-11-04",
+  "status": "RESULT READY / AWAITING INDEPENDENT VERIFICATION",
+  "test_command": "python -B -m unittest tools.test_task_slot_rotate.Rotation tools.test_task_slot_rotate.Refusals tools.test_task_slot_rotate.Markers tools.test_task_slot_rotate.Cli tools.test_task_slot_rotate.AutomaticArchive tools.test_task_slot_rotate.ManualFinish tools.test_task_slot_rotate.TaskAssignment",
+  "tests": {
+    "run": 101,
+    "pass": 101,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "exit_code": 0
+  },
+  "new_task_followup": {
+    "new_tests": 22,
+    "evidence": "new_task/",
+    "readback": {
+      "task": "CODEX-TASK-SLOT-ROTATION-REPAIR-001 / new-task user amendment",
+      "date": "2026-11-04",
+      "block1": {
+        "state": "WAITING",
+        "problems": [],
+        "lines": 1
+      },
+      "block1_1": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+        "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+        "problems": []
+      },
+      "card_sha256": "87ca9acdb7111d4c77517194928a509644f0d0d7d694236c4b8ab9c429855dae",
+      "block1_unchanged": true,
+      "block1_1_and_all_following_bytes_unchanged": true,
+      "rules_prefix_changed_only_as_documented": true,
+      "main_window_before_opening_form": {
+        "time": "2026-11-04 13:13:32",
+        "result": "OK",
+        "block1": {
+          "state": "WAITING",
+          "problems": [],
+          "lines": 1
+        },
+        "new_task_button": {
+          "text": "Новая задача…",
+          "enabled": true,
+          "x": 727,
+          "width": 129,
+          "header_width": 856
+        },
+        "dialog_open": false,
+        "geometry": "880x530+208+208"
+      },
+      "native_editor_self_diagnostics": {
+        "title": "Новая задача — БЛОК 1",
+        "empty": true,
+        "submit_disabled": true,
+        "text_has_focus": true,
+        "resizable": [
+          1,
+          1
+        ],
+        "geometry": "860x650+0+0"
+      },
+      "native_window_seen_via_computer_use": {
+        "main_window_id": 7739870,
+        "count_for_card": 1
+      },
+      "native_editor_open_method": "Supported watch --new-task startup, with WAITING gate; no submission",
+      "native_mouse_click_on_new_task": "NOT RUN: Computer Use geometry/capture unavailable for Tk window",
+      "native_visual_screenshot": "NOT VERIFIED: window capture timed out: timed out waiting on channel",
+      "engineering_note": "Experimental Ctrl+N through Computer Use did not open a form; removed from final code/docs. The visible button and explicit --new-task entry remain.",
+      "native_submit_clickthrough": "NOT RUN; real card intentionally left WAITING",
+      "synthetic_assignment_tests": 22,
+      "total_targeted_tests": 101,
+      "mutation_controls": {
+        "run": 5,
+        "caught": 5,
+        "selectors_already_in_101": true
+      },
+      "shortcut": {
+        "result": "SHORTCUT READY",
+        "name": "Карточка Codex — статус.lnk",
+        "mode": "WATCH_WITH_MANUAL_ACTIONS",
+        "readback": true
+      },
+      "git_operations": 0,
+      "network_requests": 0,
+      "other_personal_cards_modified": 0,
+      "real_task_assignment_performed": false
+    },
+    "prior_79_test_evidence_retained": true
+  },
+  "layout_and_design_followup": {
+    "date": "2026-11-04",
+    "status": "CODE SAVED / LIVE WINDOW RESTART PENDING",
+    "layout": "Only editor grid row expands; footer reserved before main log; text requests one line",
+    "manual_send_required": true,
+    "card_unchanged": true,
+    "card_sha256": "87ca9acdb7111d4c77517194928a509644f0d0d7d694236c4b8ab9c429855dae",
+    "existing_targeted_tests": {
+      "run": 101,
+      "pass": 101,
+      "new_tests_added_for_layout": 0
+    },
+    "native_resize_after_fix": "NOT RUN; preserve possible unsent text in existing user window",
+    "user_next_step": "Copy any needed unsent text, close the program, reopen the existing desktop shortcut",
+    "design_document": {
+      "path": "Документация/Скрипт выставления задачи и синхронизации задачи выполненной.md",
+      "new_file": true,
+      "status": "PROPOSAL ONLY",
+      "wikilinks_and_markdown_links": 0,
+      "index_or_card_links_added": 0,
+      "profiles_implemented": false
+    },
+    "core_configuration_and_permissions_changed": false,
+    "git_operations": 0,
+    "network_requests": 0
+  },
+  "manual_finish_followup": {
+    "new_tests": 8,
+    "first_red_errors": 8,
+    "evidence": "manual_finish/",
+    "real_readback": {
+      "real_card_unchanged": true,
+      "card_sha256": "d2caba2031ad20916b17277a23dfbafa154d2d527ec982f3ba8d348693c960ce",
+      "block1": {
+        "state": "WAITING",
+        "problems": [],
+        "lines": 1
+      },
+      "block1_1": {
+        "state": "FILLED",
+        "task_id": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+        "copy_sha256": "40ca1c423ca8e85c03da73ca3854939cfaf884511579b6edb2790685ce4b0628",
+        "problems": []
+      },
+      "manual_finish_enabled_for_current_card": false,
+      "shortcut_readback": {
+        "result": "SHORTCUT READY",
+        "name": "Карточка Codex — статус.lnk",
+        "mode": "WATCH_WITH_MANUAL_FINISH",
+        "readback": true
+      },
+      "watch_process_alive_at_readback": true,
+      "native_window_observation": {
+        "method": "Computer Use sky.list_windows",
+        "old_window_closed_via": "Alt_L+F4; old process exited",
+        "new_window_count_for_card": 1,
+        "new_window_id": 15011740,
+        "title": "Ротация карточки — 000_Задачи Codex",
+        "screenshot": "NOT VERIFIED: window capture timed out: timed out waiting on channel",
+        "manual_dialog_ui_clickthrough": "NOT RUN; live card WAITING; no synthetic GUI claim"
+      },
+      "inspection_retry": "First readback found no owner after prior window observation. No rotation occurred. Reopened exact shortcut target with diagnostic stdout/stderr; check OK, stderr empty, one window observed. Readback does not require a viewer to remain open.",
+      "synthetic_workflow": "8 new tests; positive finish four phases and amendment bytes; negative waiting, declarations, missing package, same-ID/different-ID stale observation",
+      "real_task_rotation_this_followup": "NOT RUN; no task in BLOCK 1",
+      "network_and_git_operations": 0
+    },
+    "prior_71_test_evidence_retained": true
+  },
+  "initial_baseline": {
+    "run": 43,
+    "fail": 1,
+    "exit_code": 1,
+    "finding": "Existing unrelated Claude card INVALID in RealCards; not edited"
+  },
+  "new_tests_old_source": {
+    "run": 16,
+    "pass": 1,
+    "fail": 11,
+    "error": 4,
+    "exit_code": 1,
+    "evidence": "new_tests_old_source_retry.txt"
+  },
+  "first_green_attempt": {
+    "run": 58,
+    "pass": 53,
+    "fail": 5,
+    "error": 0,
+    "exit_code": 1
+  },
+  "mutant_command": "python -B reports/CODEX-TASK-SLOT-ROTATION-REPAIR-001/verify_mutants.py mutants-new-task",
+  "mutants": {
+    "executed": 5,
+    "caught": 5,
+    "outer_exit_code": 0,
+    "selectors_overlap_101_tests": true
+  },
+  "real_workflow": "finish --card Документация/000_Задачи Codex.md --task-id CODEX-WUA-CHAT-UI-INTEGRATION-001 --no-chat-amendment --date 2026-11-04 --apply --monitor",
+  "workflow_result": "ROTATED; later ALREADY_ROTATED",
+  "window": {
+    "dark_theme": true,
+    "default_debug_enabled": false,
+    "font_default": 12,
+    "font_maximum": 16,
+    "refresh_minutes": 30,
+    "auto_close_seconds": 8,
+    "history_limit": 10,
+    "single_instance_observed": true,
+    "auto_close_process_exit_observed": true,
+    "user_visual_feedback": "User reported window visible and satisfactory",
+    "native_capture": "NOT VERIFIED: CUA screenshot timed out",
+    "full_30_minute_cycle": "NOT RUN"
+  },
+  "shortcut": {
+    "result": "SHORTCUT READY",
+    "name": "Карточка Codex — статус.lnk",
+    "mode": "WATCH_WITH_MANUAL_ACTIONS",
+    "readback": true
+  },
+  "readback": {
+    "block1": "WAITING",
+    "block1_1": "CODEX-WUA-CHAT-UI-INTEGRATION-001",
+    "copied_exact": true,
+    "block2_4_unchanged": true,
+    "previous_snapshot_sha256": "ff4eb2759ed6d5111ec137640cb2af77db1998d654fa881ba78f4646a654111d",
+    "card_sha256": "87ca9acdb7111d4c77517194928a509644f0d0d7d694236c4b8ab9c429855dae",
+    "global_000_historical_tail_unchanged": true
+  },
+  "other_platforms_and_github": "NOT RUN; actual headless entrypoint tested without Tkinter/monitor imports",
+  "git_operations": 0,
+  "network_requests": 0,
+  "other_cards_modified": 0,
+  "known_initial_issues": [
+    "Windows os.kill(pid,0) interrupted own first test runner; replaced by process query and guarded by a19",
+    "Multiple pythonw commands in PATH caused first shortcut creation failure; select first by PATH priority",
+    "Raw monitor stdout contained multiple/truncated JSON objects; preserved as *_raw.txt. Full per-run JSON saved separately."
+  ],
+  "manifest_note": "All report files plus addressed final code/docs; no recursive self-hash. Desktop .lnk and TEMP history are not published machine-independent artifacts."
+}

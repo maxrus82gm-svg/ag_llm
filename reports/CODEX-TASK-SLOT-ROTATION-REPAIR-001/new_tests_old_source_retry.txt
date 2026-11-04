@@ -1,0 +1,273 @@
+FFFFFFFFFFFusage: python.exe -m unittest [-h] {check,install-markers,rotate} ...
+python.exe -m unittest: error: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+Eusage: python.exe -m unittest [-h] {check,install-markers,rotate} ...
+python.exe -m unittest: error: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+E.EE
+======================================================================
+ERROR: test_a12_finish_runs_all_phases_and_is_idempotent (tools.test_task_slot_rotate.AutomaticArchive.test_a12_finish_runs_all_phases_and_is_idempotent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Python313\Lib\argparse.py", line 1937, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2169, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "C:\Python313\Lib\argparse.py", line 2144, in consume_positionals
+    take_action(action, args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1998, in take_action
+    argument_values = self._get_values(action, argument_strings)
+  File "C:\Python313\Lib\argparse.py", line 2528, in _get_values
+    self._check_value(action, value[0])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2578, in _check_value
+    raise ArgumentError(action, msg % args)
+argparse.ArgumentError: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 636, in test_a12_finish_runs_all_phases_and_is_idempotent
+    code, p = run(*args)
+              ~~~^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 97, in run
+    code = tsr.main([str(a) for a in argv])
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 590, in main
+    args = build_parser().parse_args(argv)
+  File "C:\Python313\Lib\argparse.py", line 1898, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1908, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1939, in _parse_known_args2
+    self.error(str(err))
+    ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2658, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2645, in exit
+    _sys.exit(status)
+    ~~~~~~~~~^^^^^^^^
+SystemExit: 2
+
+======================================================================
+ERROR: test_a13_finish_dry_run_changes_nothing (tools.test_task_slot_rotate.AutomaticArchive.test_a13_finish_dry_run_changes_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Python313\Lib\argparse.py", line 1937, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2169, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "C:\Python313\Lib\argparse.py", line 2144, in consume_positionals
+    take_action(action, args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1998, in take_action
+    argument_values = self._get_values(action, argument_strings)
+  File "C:\Python313\Lib\argparse.py", line 2528, in _get_values
+    self._check_value(action, value[0])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2578, in _check_value
+    raise ArgumentError(action, msg % args)
+argparse.ArgumentError: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 646, in test_a13_finish_dry_run_changes_nothing
+    code, p = run("finish", "--card", self.ws.card_path, "--task-id", TASK, "--no-chat-amendment", "--date", DATE)
+              ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 97, in run
+    code = tsr.main([str(a) for a in argv])
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 590, in main
+    args = build_parser().parse_args(argv)
+  File "C:\Python313\Lib\argparse.py", line 1898, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1908, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1939, in _parse_known_args2
+    self.error(str(err))
+    ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2658, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2645, in exit
+    _sys.exit(status)
+    ~~~~~~~~~^^^^^^^^
+SystemExit: 2
+
+======================================================================
+ERROR: test_a15_new_snapshot_is_never_overwritten (tools.test_task_slot_rotate.AutomaticArchive.test_a15_new_snapshot_is_never_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 666, in test_a15_new_snapshot_is_never_overwritten
+    with self.assertRaises(tsr.Refused): tsr.create_snapshot(path, b"new")
+                                         ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'task_slot_rotate_under_test' has no attribute 'create_snapshot'
+
+======================================================================
+ERROR: test_a16_snapshot_readback_failure_keeps_card (tools.test_task_slot_rotate.AutomaticArchive.test_a16_snapshot_readback_failure_keeps_card)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 672, in test_a16_snapshot_readback_failure_keeps_card
+    real = tsr.create_snapshot
+           ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'task_slot_rotate_under_test' has no attribute 'create_snapshot'
+
+======================================================================
+FAIL: test_a01_saved_reference_is_used_without_history_scan (tools.test_task_slot_rotate.AutomaticArchive.test_a01_saved_reference_is_used_without_history_scan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 546, in test_a01_saved_reference_is_used_without_history_scan
+    code, p = self.rotate(task=TASK2)
+              ~~~~~~~~~~~^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 117, in rotate
+    return run(*(args + (["--apply"] if apply else [])), hook=hook)
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 97, in run
+    code = tsr.main([str(a) for a in argv])
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 595, in main
+    proto, code = handler(args, proto)
+                  ~~~~~~~^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 489, in cmd_rotate
+    archive = Path(args.archive_001).resolve() if args.archive_001 else find_001(card_path)
+                                                                        ~~~~~~~~^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\mock.py", line 1169, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\mock.py", line 1173, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\unittest\mock.py", line 1228, in _execute_mock_call
+    raise effect
+AssertionError: no history scan
+
+======================================================================
+FAIL: test_a02_missing_previous_snapshot_is_saved_before_replacement (tools.test_task_slot_rotate.AutomaticArchive.test_a02_missing_previous_snapshot_is_saved_before_replacement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 557, in test_a02_missing_previous_snapshot_is_saved_before_replacement
+    self.assertEqual(code, 0, p)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: 3 != 0 : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'apply', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '89cf4dfe60648127a72fac7a7e3867f5dd51933ba0005189f7307bfd0b3b0807', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'PREVIOUS_SLOT_NOT_ARCHIVED', 'detail': 'CLAUDE-TEST-SLOT-001'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a03_dry_run_creates_no_missing_archive (tools.test_task_slot_rotate.AutomaticArchive.test_a03_dry_run_creates_no_missing_archive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 566, in test_a03_dry_run_creates_no_missing_archive
+    self.assertEqual(code, 0, p)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: 3 != 0 : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '89cf4dfe60648127a72fac7a7e3867f5dd51933ba0005189f7307bfd0b3b0807', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'PREVIOUS_SLOT_NOT_ARCHIVED', 'detail': 'CLAUDE-TEST-SLOT-001'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a04_previous_snapshot_conflict_is_never_overwritten (tools.test_task_slot_rotate.AutomaticArchive.test_a04_previous_snapshot_conflict_is_never_overwritten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 575, in test_a04_previous_snapshot_conflict_is_never_overwritten
+    self.assert_refused("PREVIOUS_SNAPSHOT_CONFLICT", task=TASK2)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 125, in assert_refused
+    self.assertIn(expected, codes(proto), proto)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREVIOUS_SNAPSHOT_CONFLICT' not found in {'PREVIOUS_SLOT_NOT_ARCHIVED'} : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '89cf4dfe60648127a72fac7a7e3867f5dd51933ba0005189f7307bfd0b3b0807', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'PREVIOUS_SLOT_NOT_ARCHIVED', 'detail': 'CLAUDE-TEST-SLOT-001'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a05_exact_duplicate_clears_only_block1 (tools.test_task_slot_rotate.AutomaticArchive.test_a05_exact_duplicate_clears_only_block1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 584, in test_a05_exact_duplicate_clears_only_block1
+    self.assertEqual((code, p["result"]), (0, "CLEARED_DUPLICATE_BLOCK1"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (3, 'NO ROTATE') != (0, 'CLEARED_DUPLICATE_BLOCK1')
+
+First differing element 0:
+3
+0
+
+- (3, 'NO ROTATE')
++ (0, 'CLEARED_DUPLICATE_BLOCK1')
+
+======================================================================
+FAIL: test_a06_conflicting_duplicate_refused (tools.test_task_slot_rotate.AutomaticArchive.test_a06_conflicting_duplicate_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 591, in test_a06_conflicting_duplicate_refused
+    self.assert_refused("SAME_TASK_DIFFERENT_TEXT")
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 125, in assert_refused
+    self.assertIn(expected, codes(proto), proto)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'SAME_TASK_DIFFERENT_TEXT' not found in {'ALREADY_ROTATED', 'SNAPSHOT_CONFLICT'} : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-001', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '667286976c5949fcfc038f2a923349e66f37c324f93732f67ab8eff2ead5d3b7', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'ALREADY_ROTATED', 'detail': 'BLOCK 1.1 already holds this TASK'}, {'code': 'SNAPSHOT_CONFLICT', 'detail': 'handoff_task.md exists with another text'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a07_repeat_is_successful_without_card_write (tools.test_task_slot_rotate.AutomaticArchive.test_a07_repeat_is_successful_without_card_write)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 597, in test_a07_repeat_is_successful_without_card_write
+    self.assertEqual((code, p["result"]), (0, "ALREADY_ROTATED"))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (3, 'NO ROTATE') != (0, 'ALREADY_ROTATED')
+
+First differing element 0:
+3
+0
+
+- (3, 'NO ROTATE')
++ (0, 'ALREADY_ROTATED')
+
+======================================================================
+FAIL: test_a08_retry_after_card_write_failure_reuses_archives (tools.test_task_slot_rotate.AutomaticArchive.test_a08_retry_after_card_write_failure_reuses_archives)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 607, in test_a08_retry_after_card_write_failure_reuses_archives
+    self.assertTrue(snap.exists())
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_a09_missing_chat_amendments_block_reconstruction (tools.test_task_slot_rotate.AutomaticArchive.test_a09_missing_chat_amendments_block_reconstruction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 617, in test_a09_missing_chat_amendments_block_reconstruction
+    self.assert_refused("PREVIOUS_AMENDMENTS_MISSING", task=TASK2)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 125, in assert_refused
+    self.assertIn(expected, codes(proto), proto)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'PREVIOUS_AMENDMENTS_MISSING' not found in {'PREVIOUS_SLOT_NOT_ARCHIVED'} : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': 'e948ed1b139c9ee9b51bdeb0dee1ac083680e8372d953acf9c17bbd89bd44e4a', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'PREVIOUS_SLOT_NOT_ARCHIVED', 'detail': 'CLAUDE-TEST-SLOT-001'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a10_archive_changed_before_card_write_is_detected (tools.test_task_slot_rotate.AutomaticArchive.test_a10_archive_changed_before_card_write_is_detected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 623, in test_a10_archive_changed_before_card_write_is_detected
+    self.assertEqual((code, codes(p)), (3, {"ARCHIVE_CHANGED"}), p)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (3, {'PREVIOUS_SLOT_NOT_ARCHIVED'}) != (3, {'ARCHIVE_CHANGED'})
+
+First differing element 1:
+{'PREVIOUS_SLOT_NOT_ARCHIVED'}
+{'ARCHIVE_CHANGED'}
+
+- (3, {'PREVIOUS_SLOT_NOT_ARCHIVED'})
++ (3, {'ARCHIVE_CHANGED'}) : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'apply', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': '89cf4dfe60648127a72fac7a7e3867f5dd51933ba0005189f7307bfd0b3b0807', 'previous_slot': {'state': 'FILLED', 'task_id': 'CLAUDE-TEST-SLOT-001', 'copy_sha256': '9bca3d70deb22ba104ad302b55e4be2e22fe507cd6eb1f0b5df7846cf8db713c'}, 'result': 'NO ROTATE', 'problems': [{'code': 'PREVIOUS_SLOT_NOT_ARCHIVED', 'detail': 'CLAUDE-TEST-SLOT-001'}], 'card_unchanged': True}
+
+======================================================================
+FAIL: test_a11_snapshot_cannot_escape_reports (tools.test_task_slot_rotate.AutomaticArchive.test_a11_snapshot_cannot_escape_reports)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 631, in test_a11_snapshot_cannot_escape_reports
+    self.assert_refused("UNSAFE_SNAPSHOT_PATH", task=TASK2)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 125, in assert_refused
+    self.assertIn(expected, codes(proto), proto)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'UNSAFE_SNAPSHOT_PATH' not found in {'SLOT_1_1_COPY_CHANGED'} : {'command': 'rotate', 'card': 'Документация/000_Задачи Test.md', 'mode': 'dry-run', 'task_id': 'CLAUDE-TEST-SLOT-002', 'status': 'SUBMITTED / REVIEW PENDING', 'old_card_sha256': 'cef97f241abaa740ef36db1734cb54f8596e2e68c52a14b035685c02630b4453', 'previous_slot': {'state': 'INVALID'}, 'result': 'NO ROTATE', 'problems': [{'code': 'SLOT_1_1_COPY_CHANGED', 'detail': 'the copy does not match its SHA-256', 'line': 39}], 'card_unchanged': True}
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.355s
+
+FAILED (failures=11, errors=4)

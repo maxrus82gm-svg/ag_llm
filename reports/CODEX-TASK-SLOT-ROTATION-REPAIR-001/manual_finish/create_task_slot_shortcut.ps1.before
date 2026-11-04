@@ -1,0 +1,31 @@
+param(
+    [string]$Repo = (Split-Path -Parent $PSScriptRoot),
+    [string]$Card = 'Документация/000_Задачи Codex.md',
+    [string]$Destination
+)
+$ErrorActionPreference = 'Stop'
+$repoPath = (Resolve-Path -LiteralPath $Repo).Path
+$cardPath = (Resolve-Path -LiteralPath (Join-Path $repoPath $Card)).Path
+$scriptPath = (Resolve-Path -LiteralPath (Join-Path $repoPath 'tools/task_slot_rotate.py')).Path
+$pythonCommand = Get-Command pythonw.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1
+if (-not $Destination) {
+    $Destination = Join-Path ([Environment]::GetFolderPath('DesktopDirectory')) 'Карточка Codex — статус.lnk'
+}
+$linkPath = [IO.Path]::GetFullPath($Destination)
+if ([IO.Path]::GetExtension($linkPath) -ne '.lnk') { throw 'Expected a .lnk destination' }
+$arguments = '-B "{0}" watch --card "{1}"' -f $scriptPath,$cardPath
+$shortcutShell = New-Object -ComObject WScript.Shell
+$shortcut = $shortcutShell.CreateShortcut($linkPath)
+if ((Test-Path -LiteralPath $linkPath) -and ($shortcut.TargetPath -ne $pythonCommand.Source -or $shortcut.Arguments -ne $arguments)) {
+    throw 'Existing unrelated shortcut: not overwritten'
+}
+$shortcut.TargetPath = $pythonCommand.Source
+$shortcut.Arguments = $arguments
+$shortcut.WorkingDirectory = $repoPath
+$shortcut.Description = 'Только просмотр БЛОКОВ 1/1.1. Обновление каждые 30 минут; без Git и переноса задач.'
+$shortcut.IconLocation = $pythonCommand.Source + ',0'
+$shortcut.WindowStyle = 1
+$shortcut.Save()
+$readback = $shortcutShell.CreateShortcut($linkPath)
+if ($readback.TargetPath -ne $pythonCommand.Source -or $readback.Arguments -ne $arguments) { throw 'Shortcut readback mismatch' }
+[ordered]@{result='SHORTCUT READY'; name=[IO.Path]::GetFileName($linkPath); mode='READ_ONLY_WATCH'; readback=$true} | ConvertTo-Json

@@ -1,0 +1,102 @@
+FFFFFFFFFFFusage: python.exe -m unittest [-h] {check,install-markers,rotate} ...
+python.exe -m unittest: error: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+Eusage: python.exe -m unittest [-h] {check,install-markers,rotate} ...
+python.exe -m unittest: error: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+E.EE
+======================================================================
+ERROR: test_a12_finish_runs_all_phases_and_is_idempotent (tools.test_task_slot_rotate.AutomaticArchive.test_a12_finish_runs_all_phases_and_is_idempotent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Python313\Lib\argparse.py", line 1937, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2169, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "C:\Python313\Lib\argparse.py", line 2144, in consume_positionals
+    take_action(action, args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1998, in take_action
+    argument_values = self._get_values(action, argument_strings)
+  File "C:\Python313\Lib\argparse.py", line 2528, in _get_values
+    self._check_value(action, value[0])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2578, in _check_value
+    raise ArgumentError(action, msg % args)
+argparse.ArgumentError: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 636, in test_a12_finish_runs_all_phases_and_is_idempotent
+    code, p = run(*args)
+              ~~~^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 97, in run
+    code = tsr.main([str(a) for a in argv])
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 590, in main
+    args = build_parser().parse_args(argv)
+  File "C:\Python313\Lib\argparse.py", line 1898, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1908, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1939, in _parse_known_args2
+    self.error(str(err))
+    ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2658, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2645, in exit
+    _sys.exit(status)
+    ~~~~~~~~~^^^^^^^^
+SystemExit: 2
+
+======================================================================
+ERROR: test_a13_finish_dry_run_changes_nothing (tools.test_task_slot_rotate.AutomaticArchive.test_a13_finish_dry_run_changes_nothing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Python313\Lib\argparse.py", line 1937, in _parse_known_args2
+    namespace, args = self._parse_known_args(args, namespace, intermixed)
+                      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2169, in _parse_known_args
+    positionals_end_index = consume_positionals(start_index)
+  File "C:\Python313\Lib\argparse.py", line 2144, in consume_positionals
+    take_action(action, args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1998, in take_action
+    argument_values = self._get_values(action, argument_strings)
+  File "C:\Python313\Lib\argparse.py", line 2528, in _get_values
+    self._check_value(action, value[0])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2578, in _check_value
+    raise ArgumentError(action, msg % args)
+argparse.ArgumentError: argument command: invalid choice: 'finish' (choose from check, install-markers, rotate)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 646, in test_a13_finish_dry_run_changes_nothing
+    code, p = run("finish", "--card", self.ws.card_path, "--task-id", TASK, "--no-chat-amendment", "--date", DATE)
+              ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "M:\GitHub\ag_llm\tools\test_task_slot_rotate.py", line 97, in run
+    code = tsr.main([str(a) for a in argv])
+  File "M:\GitHub\ag_llm\reports\CODEX-TASK-SLOT-ROTATION-REPAIR-001\source_before\task_slot_rotate.py", line 590, in main
+    args = build_parser().parse_args(argv)
+  File "C:\Python313\Lib\argparse.py", line 1898, in parse_args
+    args, argv = self.parse_known_args(args, namespace)
+                 ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1908, in parse_known_args
+    return self._parse_known_args2(args, namespace, intermixed=False)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 1939, in _parse_known_args2
+    self.error(str(err))
+    ~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2658, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\argparse.py", line 2645, in exit
+    _sys.exit(status)
+    ~~~~~~~~~^^^^^^^^
+SystemExit: 2
+
+======================================================================
