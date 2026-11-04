@@ -1,0 +1,139 @@
+{
+  "summary": {
+    "time": "2026-11-04 20:38:51",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+    "result": "ROTATED",
+    "exit_code": 0
+  },
+  "events": [],
+  "protocol": {
+    "command": "finish",
+    "card": "Документация/000_Задачи Codex.md",
+    "steps": [
+      {
+        "command": "check",
+        "card_sha256": "1a3c7dc16a6ca2fd5bb77a888a4b0ccf6d6e5a6a48dea8554aa3e789526efe61",
+        "eol": "LF",
+        "marker_lines": {
+          "b1b": 46,
+          "b1e": 430,
+          "b11b": 436,
+          "b11e": 629
+        },
+        "block1": {
+          "state": "TASK",
+          "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+          "problems": [],
+          "title": "",
+          "lines": 383
+        },
+        "block1_1": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+          "copy_sha256": "c0301361b6bb8055d46b3ef66aae023900ec831b9f14415998f7c08e3a086ae0",
+          "problems": []
+        },
+        "problems": [],
+        "result": "OK"
+      },
+      {
+        "command": "dry-run",
+        "mode": "dry-run",
+        "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+        "status": "SUBMITTED / REVIEW PENDING",
+        "old_card_sha256": "1a3c7dc16a6ca2fd5bb77a888a4b0ccf6d6e5a6a48dea8554aa3e789526efe61",
+        "previous_slot": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+          "copy_sha256": "c0301361b6bb8055d46b3ef66aae023900ec831b9f14415998f7c08e3a086ae0",
+          "publication": "NOT VERIFIED",
+          "archived": "IN_SNAPSHOT",
+          "action": "REUSED",
+          "locator": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/handoff_task.md",
+          "archive_sha256": "869923b66cf1efb0f914317510b57d77171e05ac24bb64bffab3dd2741dce8ff"
+        },
+        "new_card_sha256": "39d6bea2baf5f5b5487f41f05626befb73cf3afba16917cb6662c14279b05e36",
+        "copy_sha256_lf": "d9af4724783c93dc2bb0e028426fa614cd603e9e6f2c2e58296340475d0dad91",
+        "copy_lines": 383,
+        "copied_exact": true,
+        "outside_slots_unchanged": true,
+        "block1_after": "WAITING",
+        "eol": "LF",
+        "snapshot": "reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/handoff_task.md",
+        "snapshot_state": "NEW",
+        "chat_amendments": 0,
+        "result": "DRY RUN OK",
+        "planned_action": "ROTATED"
+      },
+      {
+        "command": "apply",
+        "mode": "apply",
+        "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+        "status": "SUBMITTED / REVIEW PENDING",
+        "old_card_sha256": "1a3c7dc16a6ca2fd5bb77a888a4b0ccf6d6e5a6a48dea8554aa3e789526efe61",
+        "previous_slot": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-CHAT-UX-LIVE-FIX-001",
+          "copy_sha256": "c0301361b6bb8055d46b3ef66aae023900ec831b9f14415998f7c08e3a086ae0",
+          "publication": "NOT VERIFIED",
+          "archived": "IN_SNAPSHOT",
+          "action": "REUSED",
+          "locator": "reports/CODEX-WUA-CHAT-UX-LIVE-FIX-001/amendment_01/handoff_task.md",
+          "archive_sha256": "869923b66cf1efb0f914317510b57d77171e05ac24bb64bffab3dd2741dce8ff"
+        },
+        "new_card_sha256": "39d6bea2baf5f5b5487f41f05626befb73cf3afba16917cb6662c14279b05e36",
+        "copy_sha256_lf": "d9af4724783c93dc2bb0e028426fa614cd603e9e6f2c2e58296340475d0dad91",
+        "copy_lines": 383,
+        "copied_exact": true,
+        "outside_slots_unchanged": true,
+        "block1_after": "WAITING",
+        "eol": "LF",
+        "snapshot": "reports/CODEX-WUA-CHAT-S3-TURN-RECOVERY-001/handoff_task.md",
+        "snapshot_state": "NEW",
+        "chat_amendments": 0,
+        "snapshot_sha256": "b38ad6917ff608a9ae1e809b6c1fb48f9bf593b358cb72fe49975d0c29ab8c9d",
+        "result": "ROTATED",
+        "card_unchanged": false
+      },
+      {
+        "command": "readback",
+        "card_sha256": "39d6bea2baf5f5b5487f41f05626befb73cf3afba16917cb6662c14279b05e36",
+        "eol": "LF",
+        "marker_lines": {
+          "b1b": 46,
+          "b1e": 48,
+          "b11b": 54,
+          "b11e": 440
+        },
+        "block1": {
+          "state": "WAITING",
+          "problems": [],
+          "lines": 1
+        },
+        "block1_1": {
+          "state": "FILLED",
+          "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+          "copy_sha256": "d9af4724783c93dc2bb0e028426fa614cd603e9e6f2c2e58296340475d0dad91",
+          "problems": []
+        },
+        "problems": [],
+        "result": "OK"
+      }
+    ],
+    "result": "ROTATED",
+    "task_id": "CODEX-WUA-CHAT-S3-TURN-RECOVERY-001"
+  },
+  "window": {
+    "geometry": "880x886+-41+488",
+    "state": "normal",
+    "background": "#0c1015",
+    "resizable": [
+      1,
+      1
+    ],
+    "font_size": 12,
+    "block1_text": "БЛОК 1: ОЖИДАЕТ НОВУЮ ЗАДАЧУ",
+    "block1_1_text": "БЛОК 1.1: CODEX-WUA-CHAT-S3-TURN-RECOVERY-001",
+    "auto_close_seconds": 8
+  }
+}
