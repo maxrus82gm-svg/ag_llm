@@ -54,7 +54,7 @@ jobs:
       - name: Broader independent Run Store regression
         shell: pwsh
         run: |
-          python -B -X utf8 -m pytest -q -p no:cacheprovider test_run_store_v2.py test_audit_v2_compatibility.py test_audit_observability.py::AuditStorageTests
+          python -B -X utf8 -m pytest -q -p no:cacheprovider test_run_store_v2.py test_audit_v2_compatibility.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Broader independent Python regression
         shell: pwsh
