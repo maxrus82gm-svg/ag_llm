@@ -5,8 +5,8 @@
   "agent": "codex",
   "title": "Web Alarm Ultra — адресная диагностика нестабильной блокировки Workspace",
   "date": "2026-11-05",
-  "status": "SUBMITTED / REVIEW PENDING",
-  "review": "NOT VERIFIED",
+  "status": "DOC ITERATION CLOSED / DIAGNOSTIC PARTIAL",
+  "review": "PASS / BOUNDED AUTHOR DIAGNOSTIC EVIDENCE; original CI UNKNOWN; independent runtime NOT RUN",
   "sources": {
     "assignment": {
       "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
@@ -15,7 +15,33 @@
     "report": {
       "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/report.md",
       "sha256": "10fc818e901e2e147374aa70c2270f3018f7a99781a2f69567ce2086c251091c"
+    },
+    "review": {
+      "path": "reports/CHATGPT-WEB23-CODEX-WRITER-BUSY-CI-DIAG-REVIEW-20261105/review.md",
+      "sha256": "52cec3776b3c5cf7e90993cc592a396690349b9a7a176c4a853eef4283b1d5ce"
     }
   },
-  "previous": []
+  "previous": [
+    {
+      "schema": 1,
+      "id": "CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001",
+      "history_id": "H-CODEX-000015",
+      "agent": "codex",
+      "title": "Web Alarm Ultra — адресная диагностика нестабильной блокировки Workspace",
+      "date": "2026-11-05",
+      "status": "SUBMITTED / REVIEW PENDING",
+      "review": "NOT VERIFIED",
+      "sources": {
+        "assignment": {
+          "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/handoff_task.md",
+          "sha256": "c24a689c45807e38818cdc18b3d9ddfdc4e1a54c6e0582f6063a42bd7ba942dd"
+        },
+        "report": {
+          "path": "reports/CODEX-WUA-S3-WS-WRITER-BUSY-CI-DIAG-001/report.md",
+          "sha256": "10fc818e901e2e147374aa70c2270f3018f7a99781a2f69567ce2086c251091c"
+        }
+      },
+      "previous": []
+    }
+  ]
 }
