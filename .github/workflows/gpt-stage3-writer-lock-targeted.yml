@@ -1,0 +1,45 @@
+name: GPT Stage3 Writer Lock Targeted
+on:
+  push:
+    branches: [GPT]
+    paths:
+      - .github/workflows/gpt-stage3-writer-lock-targeted.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  writer-lock:
+    runs-on: windows-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            /*.py
+            /web_alarm/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Identify exact source and baseline
+        shell: pwsh
+        run: |
+          python --version
+          git rev-parse HEAD
+          Get-FileHash -Algorithm SHA256 context_storage.py, test_ultra_chat_storage.py
+      - name: Reproduce former WorkspaceBusyError test five times
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Continue'
+          $fail = 0
+          foreach ($round in 1..5) {
+            Write-Output "INDEPENDENT_WRITER_LOCK_TRIAL=$round/5"
+            python -B -X utf8 -m unittest -v test_ultra_chat_storage.ConcurrencyTests.test_two_processes_write_raw_create_and_rename_without_losing_anything 2>&1 | Out-Host
+            $code = $LASTEXITCODE
+            Write-Output "INDEPENDENT_WRITER_LOCK_EXIT=$round/$code"
+            if ($code -ne 0) { $fail++ }
+          }
+          Write-Output "INDEPENDENT_WRITER_LOCK_RESULT: failed=$fail total=5"
+          if ($fail -ne 0) { exit 1 }
